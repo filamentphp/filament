@@ -13,7 +13,7 @@ class MakeResourceCommand extends Command
 
     protected $description = 'Creates a Filament resource class and default page classes.';
 
-    protected $signature = 'make:filament-resource {name?} {--view-page} {--G|generate} {--S|simple} {--F|force}';
+    protected $signature = 'make:filament-resource {name?} {--view} {--G|generate} {--S|simple} {--F|force}';
 
     public function handle(): int
     {
@@ -75,7 +75,7 @@ class MakeResourceCommand extends Command
         if (! $this->option('simple')) {
             $pages .= PHP_EOL . "'create' => Pages\\{$createResourcePageClass}::route('/create'),";
 
-            if ($this->option('view-page')) {
+            if ($this->option('view')) {
                 $pages .= PHP_EOL . "'view' => Pages\\{$viewResourcePageClass}::route('/{record}'),";
             }
 
@@ -83,6 +83,13 @@ class MakeResourceCommand extends Command
         }
 
         $relations = '';
+        $tableActions = [];
+
+        if (! $this->option('view')) {
+            $tableActions[] = 'View';
+        }
+
+        $tableActions[] = 'Edit';
 
         if (! $this->option('simple')) {
             $relations .= PHP_EOL . 'public static function getRelations(): array';
@@ -91,7 +98,11 @@ class MakeResourceCommand extends Command
             $relations .= PHP_EOL . '        //';
             $relations .= PHP_EOL . '    ];';
             $relations .= PHP_EOL . '}' . PHP_EOL;
+
+            $tableActions[] = 'Delete';
         }
+
+        $tableActions = implode('Action::make(),' . PHP_EOL, $tableActions);
 
         $this->copyStubToApp('Resource', $resourcePath, [
             'formSchema' => $this->option('generate') ? $this->getResourceFormSchema(
@@ -102,6 +113,7 @@ class MakeResourceCommand extends Command
             'namespace' => 'App\\Filament\\Resources' . ($resourceNamespace !== '' ? "\\{$resourceNamespace}" : ''),
             'resource' => $resource,
             'resourceClass' => $resourceClass,
+            'tableActions' => $this->indentString($tableActions, 3),
             'tableColumns' => $this->option('generate') ? $this->getResourceTableColumns(
                 ($modelNamespace !== '' ? $modelNamespace : 'App\Models') . '\\' . $modelClass
             ) : $this->indentString('//', 4),
@@ -110,25 +122,21 @@ class MakeResourceCommand extends Command
         ]);
 
         if ($this->option('simple')) {
-            $this->copyStubToApp('DefaultResourcePage', $manageResourcePagePath, [
-                'baseResourcePage' => 'Filament\\Resources\\Pages\\ManageRecords',
-                'baseResourcePageClass' => 'ManageRecords',
+            $this->copyStubToApp('ResourceManagePage', $manageResourcePagePath, [
                 'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
                 'resource' => $resource,
                 'resourceClass' => $resourceClass,
                 'resourcePageClass' => $manageResourcePageClass,
             ]);
         } else {
-            $this->copyStubToApp('DefaultResourcePage', $listResourcePagePath, [
-                'baseResourcePage' => 'Filament\\Resources\\Pages\\ListRecords',
-                'baseResourcePageClass' => 'ListRecords',
+            $this->copyStubToApp('ResourceListPage', $listResourcePagePath, [
                 'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
                 'resource' => $resource,
                 'resourceClass' => $resourceClass,
                 'resourcePageClass' => $listResourcePageClass,
             ]);
 
-            $this->copyStubToApp('DefaultResourcePage', $createResourcePagePath, [
+            $this->copyStubToApp('ResourcePage', $createResourcePagePath, [
                 'baseResourcePage' => 'Filament\\Resources\\Pages\\CreateRecord',
                 'baseResourcePageClass' => 'CreateRecord',
                 'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
@@ -137,20 +145,25 @@ class MakeResourceCommand extends Command
                 'resourcePageClass' => $createResourcePageClass,
             ]);
 
-            if ($this->option('view-page')) {
-                $this->copyStubToApp('DefaultResourcePage', $viewResourcePagePath, [
-                    'baseResourcePage' => 'Filament\\Resources\\Pages\\ViewRecord',
-                    'baseResourcePageClass' => 'ViewRecord',
+            $editPageActions = [];
+
+            if ($this->option('view')) {
+                $this->copyStubToApp('ResourceViewPage', $viewResourcePagePath, [
                     'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
                     'resource' => $resource,
                     'resourceClass' => $resourceClass,
                     'resourcePageClass' => $viewResourcePageClass,
                 ]);
+
+                $editPageActions[] = 'Actions\View';
             }
 
-            $this->copyStubToApp('DefaultResourcePage', $editResourcePagePath, [
-                'baseResourcePage' => 'Filament\\Resources\\Pages\\EditRecord',
-                'baseResourcePageClass' => 'EditRecord',
+            $editPageActions[] = 'Actions\Delete';
+
+            $editPageActions = implode('Action::make(),' . PHP_EOL, $editPageActions);
+
+            $this->copyStubToApp('ResourceEditPage', $editResourcePagePath, [
+                'actions' => $this->indentString($editPageActions, 2),
                 'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
                 'resource' => $resource,
                 'resourceClass' => $resourceClass,

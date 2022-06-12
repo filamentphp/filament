@@ -5,6 +5,9 @@ namespace Filament\Resources\Pages\ListRecords\Concerns;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @deprecated Deleting the Edit page now opens the action in a modal.
+ */
 trait CanEditRecords
 {
     /**

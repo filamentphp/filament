@@ -33,6 +33,12 @@ class {{ resourceClass }} extends Resource
             ])
             ->filters([
                 //
+            ])
+            ->actions([
+{{ tableActions }}
+            ])
+            ->bulkActions([
+                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 {{ relations }}

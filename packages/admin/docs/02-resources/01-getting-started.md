@@ -60,10 +60,10 @@ php artisan make:filament-resource Customer --generate
 
 ### Generating a View page
 
-By default, only List, Create and Edit pages are generated for your resource. If you'd also like a [View page](viewing-records), use the `--view-page` flag:
+By default, only List, Create and Edit pages are generated for your resource. If you'd also like a [View page](viewing-records), use the `--view` flag:
 
 ```bash
-php artisan make:filament-resource Customer --view-page
+php artisan make:filament-resource Customer --view
 ```
 
 ## Record titles
