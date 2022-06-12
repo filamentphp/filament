@@ -222,35 +222,13 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function configureTableAction(Tables\Actions\Action $action): void
     {
-        if ($action instanceof Tables\Actions\DeleteAction) {
-            $this->configureDeleteAction($action);
-
-            return;
-        }
-
-        if ($action instanceof Tables\Actions\EditAction) {
-            $this->configureEditAction($action);
-
-            return;
-        }
-
-        if ($action instanceof Tables\Actions\ForceDeleteAction) {
-            $this->configureForceDeleteAction($action);
-
-            return;
-        }
-
-        if ($action instanceof Tables\Actions\RestoreAction) {
-            $this->configureRestoreAction($action);
-
-            return;
-        }
-
-        if ($action instanceof Tables\Actions\ViewAction) {
-            $this->configureViewAction($action);
-
-            return;
-        }
+        match (true) {
+            $action instanceof Tables\Actions\DeleteAction => $this->configureDeleteAction($action),
+            $action instanceof Tables\Actions\EditAction => $this->configureEditAction($action),
+            $action instanceof Tables\Actions\ForceDeleteAction => $this->configureForceDeleteAction($action),
+            $action instanceof Tables\Actions\RestoreAction => $this->configureRestoreAction($action),
+            $action instanceof Tables\Actions\ViewAction => $this->configureViewAction($action),
+        };
     }
 
     protected function configureDeleteAction(Tables\Actions\DeleteAction $action): void
