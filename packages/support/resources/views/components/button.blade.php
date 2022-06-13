@@ -82,7 +82,7 @@
         x-data="{
             form: null,
             label: {{ \Illuminate\Support\Js::from($slot->toHtml()) }},
-            isDisabled: {{ \Illuminate\Support\Js::from($disabled) }},
+            get isDisabled() { return {{ \Illuminate\Support\Js::from((bool) $disabled) }} },
             isUploadingFile: false,
         }"
         x-bind:disabled="isUploadingFile"
