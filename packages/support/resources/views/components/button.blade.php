@@ -85,7 +85,7 @@
             isUploadingFile: false,
         }"
         @unless ($disabled)
-            x-bind:class="{ 'opacity-70': isUploadingFile, 'cursor-wait' : isUploadingFile }"
+            x-bind:class="{ 'opacity-70 cursor-wait': isUploadingFile }"
         @endunless
         x-bind:disabled="isUploadingFile"
         x-init="
