@@ -40,7 +40,7 @@ php artisan make:filament-resource Customer --simple
 
 Your resource will have a "Manage" page, which is a List page with modals added.
 
-Additionally, your simple resource will have no `getRelations()` method, as relation managers are only displayed on the Edit and View pages, which are not present in simple resources. Everything else is the same.
+Additionally, your simple resource will have no `getRelations()` method, as [relation managers](relation-managers) are only displayed on the Edit and View pages, which are not present in simple resources. Everything else is the same.
 
 ### Automatically generating forms and tables
 
@@ -56,6 +56,14 @@ When creating your resource, you may now use `--generate`:
 
 ```bash
 php artisan make:filament-resource Customer --generate
+```
+
+### Handling soft deletes
+
+By default, you will not be able to interact with deleted records in the admin panel. If you'd like to add functionality to restore, force delete and filter trashed records in your resource, use the `--soft-deletes` flag when generating the resource:
+
+```bash
+php artisan make:filament-resource Customer --soft-deletes
 ```
 
 ### Generating a View page
@@ -178,11 +186,17 @@ public static function table(Table $table): Table
             Tables\Filters\Filter::make('verified')
                 ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
             // ...
+        ])
+        ->actions([
+            Tables\Actions\EditAction::make(),
+        ])
+        ->bulkActions([
+            Tables\Actions\DeleteBulkAction::make(),
         ]);
 }
 ```
 
-Check out the [listing records](listing-records) docs to find out how to implement table [columns](listing-records#columns), [filters](listing-records#filters), [actions](listing-records#actions), [bulk actions](listing-records#bulk-actions) and more.
+Check out the [listing records](listing-records) docs to find out how to add table [columns](listing-records#columns), [filters](listing-records#filters), [actions](listing-records#actions), [bulk actions](listing-records#bulk-actions) and more.
 
 ## Relations
 

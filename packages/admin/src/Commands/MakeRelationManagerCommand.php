@@ -72,6 +72,14 @@ class MakeRelationManagerCommand extends Command
 
         $tableActions[] = 'Tables\Actions\EditAction::make(),';
 
+        if ($this->option('associate')) {
+            $tableActions[] = 'Tables\Actions\DissociateAction::make(),';
+        }
+
+        if ($this->option('attach')) {
+            $tableActions[] = 'Tables\Actions\DetachAction::make(),';
+        }
+
         $tableActions[] = 'Tables\Actions\DeleteAction::make(),';
 
         if ($this->option('soft-deletes')) {
@@ -82,6 +90,14 @@ class MakeRelationManagerCommand extends Command
         $tableActions = implode(PHP_EOL, $tableActions);
 
         $tableBulkActions = [];
+
+        if ($this->option('associate')) {
+            $tableBulkActions[] = 'Tables\Actions\DissociateBulkAction::make(),';
+        }
+
+        if ($this->option('attach')) {
+            $tableBulkActions[] = 'Tables\Actions\DetachBulkAction::make(),';
+        }
 
         $tableBulkActions[] = 'Tables\Actions\DeleteBulkAction::make(),';
 
