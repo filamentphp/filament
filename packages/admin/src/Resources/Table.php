@@ -101,23 +101,53 @@ class Table
         return $this;
     }
 
-    public function pushActions(array $actions): static
+    public function appendActions(array $actions): static
     {
         $this->actions = array_merge($this->actions, $actions);
 
         return $this;
     }
 
-    public function pushBulkActions(array $actions): static
+    public function appendBulkActions(array $actions): static
     {
         $this->bulkActions = array_merge($this->bulkActions, $actions);
 
         return $this;
     }
 
-    public function pushHeaderActions(array $actions): static
+    public function appendHeaderActions(array $actions): static
     {
         $this->headerActions = array_merge($this->headerActions, $actions);
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `appendActions()` instead.
+     */
+    public function pushActions(array $actions): static
+    {
+        $this->appendActions($actions);
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `appendBulkActions()` instead.
+     */
+    public function pushBulkActions(array $actions): static
+    {
+        $this->appendBulkActions($actions);
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `appendHeaderActions()` instead.
+     */
+    public function pushHeaderActions(array $actions): static
+    {
+        $this->appendHeaderActions($actions);
 
         return $this;
     }
