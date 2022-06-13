@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
 
+/**
+ * @deprecated Use `RelationManager` instead, defining actions on the `$table`.
+ */
 class BelongsToManyRelationManager extends RelationManager
 {
     use Concerns\CanAttachRecords;

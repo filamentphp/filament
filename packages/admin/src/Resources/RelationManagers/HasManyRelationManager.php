@@ -4,6 +4,9 @@ namespace Filament\Resources\RelationManagers;
 
 use Filament\Resources\Table;
 
+/**
+ * @deprecated Use `RelationManager` instead, defining actions on the `$table`.
+ */
 class HasManyRelationManager extends RelationManager
 {
     use Concerns\CanAssociateRecords;
