@@ -25,7 +25,7 @@ trait CanReplicateRecords
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/replicate.single.label.default'));
+        $this->label(__('filament-support::actions/replicate.single.label'));
 
         $this->modalHeading(fn (): string => __('filament-support::actions/replicate.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
