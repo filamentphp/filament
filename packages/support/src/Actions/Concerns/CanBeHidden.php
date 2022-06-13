@@ -76,6 +76,10 @@ trait CanBeHidden
     {
         $user = auth()->user();
 
+        if ($this->authorization === null) {
+            return true;
+        }
+
         if (! is_array($this->authorization)) {
             return (bool) $this->evaluate($this->authorization);
         }

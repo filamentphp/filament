@@ -341,6 +341,25 @@ ReplicateAction::make()
 	})
 ```
 
+## Grouping
+
+You may use an `ActionGroup` object to group multiple table actions together in a dropdown:
+
+```php
+use Filament\Tables;
+
+protected function getTableActions(): array
+{
+    return [
+        Tables\Actions\ActionGroup::make([
+            Tables\Actions\ViewAction::make(),
+            Tables\Actions\EditAction::make(),
+            Tables\Actions\DeleteAction::make(),
+        ]),
+    ];
+}
+```
+
 ## Alignment
 
 By default, the row actions in your table will be aligned to the right in the final cell. To change the default alignment, update the configuration value inside of the package config:
