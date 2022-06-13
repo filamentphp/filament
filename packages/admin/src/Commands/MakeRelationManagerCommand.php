@@ -83,8 +83,8 @@ class MakeRelationManagerCommand extends Command
         $tableActions[] = 'Tables\Actions\DeleteAction::make(),';
 
         if ($this->option('soft-deletes')) {
-            $tableActions[] = 'Tables\Actions\RestoreAction::make(),';
             $tableActions[] = 'Tables\Actions\ForceDeleteAction::make(),';
+            $tableActions[] = 'Tables\Actions\RestoreAction::make(),';
         }
 
         $tableActions = implode(PHP_EOL, $tableActions);

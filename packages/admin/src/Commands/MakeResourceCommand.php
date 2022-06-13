@@ -97,8 +97,8 @@ class MakeResourceCommand extends Command
             $tableActions[] = 'Tables\Actions\DeleteAction::make(),';
 
             if ($this->option('soft-deletes')) {
-                $tableActions[] = 'Tables\Actions\RestoreAction::make(),';
                 $tableActions[] = 'Tables\Actions\ForceDeleteAction::make(),';
+                $tableActions[] = 'Tables\Actions\RestoreAction::make(),';
             }
 
             $relations .= PHP_EOL . 'public static function getRelations(): array';
@@ -195,8 +195,8 @@ class MakeResourceCommand extends Command
             $editPageActions[] = 'Actions\DeleteAction::make(),';
 
             if ($this->option('soft-deletes')) {
-                $editPageActions[] = 'Actions\RestoreAction::make(),';
                 $editPageActions[] = 'Actions\ForceDeleteAction::make(),';
+                $editPageActions[] = 'Actions\RestoreAction::make(),';
             }
 
             $editPageActions = implode(PHP_EOL, $editPageActions);
