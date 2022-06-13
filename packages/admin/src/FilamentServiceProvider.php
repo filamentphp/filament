@@ -134,7 +134,7 @@ class FilamentServiceProvider extends PackageServiceProvider
                 match (config('filament.layout.tables.actions.type')) {
                     ButtonAction::class => $action->button(),
                     IconButtonAction::class => $action->iconButton(),
-                    default => $action->link(),
+                    default => null,
                 };
 
                 $action->notifyUsing($notify);
