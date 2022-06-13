@@ -207,11 +207,6 @@ return [
                 'are_collapsible' => true,
             ],
         ],
-        'tables' => [
-            'actions' => [
-                'type' => Action::class,
-            ],
-        ],
     ],
 
     /*
