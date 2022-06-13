@@ -365,6 +365,7 @@
                             @php
                                 $recordUrl = $getRecordUrl($record);
                             @endphp
+                            
                             <x-tables::row
                                 :record-url="$recordUrl"
                                 wire:key="{{ $this->getTableRecordKey($record) }}"
