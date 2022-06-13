@@ -29,6 +29,8 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     protected static ?string $inverseRelationship = null;
 
+    protected static string $view = 'filament::resources.relation-manager';
+
     /**
      * @deprecated Use `$modelLabel` instead.
      */
@@ -44,8 +46,6 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
     protected static ?string $pluralModelLabel = null;
 
     protected static ?string $title = null;
-
-    protected static string $view;
 
     protected function getTableQueryStringIdentifier(): ?string
     {

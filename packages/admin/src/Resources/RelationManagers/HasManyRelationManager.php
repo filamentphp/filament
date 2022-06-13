@@ -16,8 +16,6 @@ class HasManyRelationManager extends RelationManager
     use Concerns\CanEditRecords;
     use Concerns\CanViewRecords;
 
-    protected static string $view = 'filament::resources.relation-managers.has-many-relation-manager';
-
     protected function getResourceTable(): Table
     {
         $table = Table::make();
