@@ -15,7 +15,7 @@ use Filament\Support\Components\ViewComponent;
 class ActionGroup extends ViewComponent
 {
     use CanBeHidden, InteractsWithRecord {
-        isHidden as baseIsHidden;
+        CanBeHidden::isHidden as baseIsHidden;
         InteractsWithRecord::parseAuthorizationArguments insteadof CanBeHidden;
     }
     use HasIcon;
