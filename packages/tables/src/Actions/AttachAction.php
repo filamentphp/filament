@@ -195,7 +195,7 @@ class AttachAction extends Action
         $select = Select::make('recordId')
             ->label(__('filament-support::actions/attach.single.modal.fields.record_id.label'))
             ->searchable()
-            ->getSearchResultsUsing(static fn (Select $component, string $searchQuery): array => $getOptions(search: $searchQuery, searchColumns: $component->getSearchColumns()))
+            ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(search: $search, searchColumns: $component->getSearchColumns()))
             ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle($this->getRelationship()->getRelated()->query()->find($value)))
             ->options(fn (): array => $this->isRecordSelectPreloaded() ? $getOptions() : [])
             ->disableLabel();
