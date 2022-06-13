@@ -86,7 +86,7 @@ class BelongsToManyMultiSelect extends MultiSelect
         $this->titleColumnName = $titleColumnName;
         $this->relationship = $relationshipName;
 
-        $this->getSearchResultsUsing(static function (BelongsToManyMultiSelect $component, ?string $searchQuery) use ($callback): array {
+        $this->getSearchResultsUsing(static function (BelongsToManyMultiSelect $component, ?string $search) use ($callback): array {
             $relationship = $component->getRelationship();
 
             $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getTitleColumnName());
@@ -97,7 +97,7 @@ class BelongsToManyMultiSelect extends MultiSelect
                 ]);
             }
 
-            $searchQuery = strtolower($searchQuery);
+            $search = strtolower($search);
 
             /** @var Connection $databaseConnection */
             $databaseConnection = $relationshipQuery->getConnection();
@@ -108,7 +108,7 @@ class BelongsToManyMultiSelect extends MultiSelect
             };
 
             $relationshipQuery = $relationshipQuery
-                ->where($component->getTitleColumnName(), $searchOperator, "%{$searchQuery}%")
+                ->where($component->getTitleColumnName(), $searchOperator, "%{$search}%")
                 ->limit(50);
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {

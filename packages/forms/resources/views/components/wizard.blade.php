@@ -70,6 +70,7 @@
             collect($getChildComponentContainer()->getComponents())
                 ->filter(static fn (\Filament\Forms\Components\Wizard\Step $step): bool => ! $step->isHidden())
                 ->map(static fn (\Filament\Forms\Components\Wizard\Step $step) => $step->getId())
+                ->values()
                 ->toJson()
         }}'
         x-ref="stepsData"

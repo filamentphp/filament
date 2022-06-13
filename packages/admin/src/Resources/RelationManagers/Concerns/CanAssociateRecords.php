@@ -90,7 +90,7 @@ trait CanAssociateRecords
         return Select::make('recordId')
             ->label(__('filament-support::actions/associate.single.modal.fields.record_id.label'))
             ->searchable()
-            ->getSearchResultsUsing(static function (Select $component, RelationManager $livewire, string $searchQuery): array {
+            ->getSearchResultsUsing(static function (Select $component, RelationManager $livewire, string $search): array {
                 /** @var HasMany $relationship */
                 $relationship = $livewire->getRelationship();
 
@@ -99,7 +99,7 @@ trait CanAssociateRecords
                 /** @var Builder $relationshipQuery */
                 $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleColumnName);
 
-                $searchQuery = strtolower($searchQuery);
+                $search = strtolower($search);
 
                 /** @var Connection $databaseConnection */
                 $databaseConnection = $relationshipQuery->getConnection();
@@ -112,14 +112,14 @@ trait CanAssociateRecords
                 $searchColumns = $component->getSearchColumns() ?? [$titleColumnName];
                 $isFirst = true;
 
-                $relationshipQuery->where(function (Builder $query) use ($isFirst, $searchColumns, $searchOperator, $searchQuery): Builder {
+                $relationshipQuery->where(function (Builder $query) use ($isFirst, $searchColumns, $searchOperator, $search): Builder {
                     foreach ($searchColumns as $searchColumnName) {
                         $whereClause = $isFirst ? 'where' : 'orWhere';
 
                         $query->{$whereClause}(
                             $searchColumnName,
                             $searchOperator,
-                            "%{$searchQuery}%",
+                            "%{$search}%",
                         );
 
                         $isFirst = false;

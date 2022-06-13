@@ -107,10 +107,10 @@ trait InteractsWithForms
         return [];
     }
 
-    public function getSelectSearchResults(string $statePath, string $searchQuery): array
+    public function getSelectSearchResults(string $statePath, string $search): array
     {
         foreach ($this->getCachedForms() as $form) {
-            if ($results = $form->getSelectSearchResults($statePath, $searchQuery)) {
+            if ($results = $form->getSelectSearchResults($statePath, $search)) {
                 return $results;
             }
         }

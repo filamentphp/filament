@@ -73,7 +73,7 @@ trait CanAttachRecords
         return Select::make('recordId')
             ->label(__('filament-support::actions/attach.single.modal.fields.record_id.label'))
             ->searchable()
-            ->getSearchResultsUsing(static function (Select $component, BelongsToManyRelationManager $livewire, string $searchQuery): array {
+            ->getSearchResultsUsing(static function (Select $component, BelongsToManyRelationManager $livewire, string $search): array {
                 /** @var BelongsToMany $relationship */
                 $relationship = $livewire->getRelationship();
 
@@ -82,7 +82,7 @@ trait CanAttachRecords
                 /** @var Builder $relationshipQuery */
                 $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleColumnName);
 
-                $searchQuery = strtolower($searchQuery);
+                $search = strtolower($search);
 
                 /** @var Connection $databaseConnection */
                 $databaseConnection = $relationshipQuery->getConnection();
@@ -95,14 +95,14 @@ trait CanAttachRecords
                 $searchColumns = $component->getSearchColumns() ?? [$titleColumnName];
                 $isFirst = true;
 
-                $relationshipQuery->where(function (Builder $query) use ($isFirst, $searchColumns, $searchOperator, $searchQuery): Builder {
+                $relationshipQuery->where(function (Builder $query) use ($isFirst, $search, $searchColumns, $searchOperator): Builder {
                     foreach ($searchColumns as $searchColumnName) {
                         $whereClause = $isFirst ? 'where' : 'orWhere';
 
                         $query->{$whereClause}(
                             $searchColumnName,
                             $searchOperator,
-                            "%{$searchQuery}%",
+                            "%{$search}%",
                         );
 
                         $isFirst = false;

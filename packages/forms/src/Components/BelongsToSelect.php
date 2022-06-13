@@ -90,7 +90,7 @@ class BelongsToSelect extends Select
         $this->titleColumnName = $titleColumnName;
         $this->relationship = $relationshipName;
 
-        $this->getSearchResultsUsing(static function (BelongsToSelect $component, ?string $searchQuery) use ($callback): array {
+        $this->getSearchResultsUsing(static function (BelongsToSelect $component, ?string $search) use ($callback): array {
             $relationship = $component->getRelationship();
 
             $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getTitleColumnName());
@@ -101,9 +101,9 @@ class BelongsToSelect extends Select
                 ]);
             }
 
-            $searchQuery = strtolower($searchQuery);
+            $search = strtolower($search);
 
-            $relationshipQuery = $component->applySearchConstraint($relationshipQuery, $searchQuery)->limit(50);
+            $relationshipQuery = $component->applySearchConstraint($relationshipQuery, $search)->limit(50);
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
@@ -151,7 +151,7 @@ class BelongsToSelect extends Select
         return $this;
     }
 
-    protected function applySearchConstraint(Builder $query, string $searchQuery): Builder
+    protected function applySearchConstraint(Builder $query, string $search): Builder
     {
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();
@@ -163,14 +163,14 @@ class BelongsToSelect extends Select
 
         $isFirst = true;
 
-        $query->where(function (Builder $query) use ($isFirst, $searchOperator, $searchQuery): Builder {
+        $query->where(function (Builder $query) use ($isFirst, $searchOperator, $search): Builder {
             foreach ($this->getSearchColumns() as $searchColumnName) {
                 $whereClause = $isFirst ? 'where' : 'orWhere';
 
                 $query->{$whereClause}(
                     $searchColumnName,
                     $searchOperator,
-                    "%{$searchQuery}%",
+                    "%{$search}%",
                 );
 
                 $isFirst = false;

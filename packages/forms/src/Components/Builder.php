@@ -222,6 +222,9 @@ class Builder extends Field
         $this->getChildComponentContainers()[$uuid]->hydrateDefaultState();
     }
 
+    /**
+     * @deprecated Use `withBlockLabels()` instead.
+     */
     public function showBlockLabels(bool | Closure $condition = true): static
     {
         $this->withBlockLabels($condition);
