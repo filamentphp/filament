@@ -2,12 +2,22 @@
 
 return [
 
-    'action' => [
+    'single' => [
 
         'label' => 'Dissociera',
 
         'modal' => [
+
             'heading' => 'Dissociera :label',
+
+            'actions' => [
+
+                'dissociate' => [
+                    'label' => 'Dissociera',
+                ],
+
+            ],
+
         ],
 
         'messages' => [
@@ -16,12 +26,22 @@ return [
 
     ],
 
-    'bulk_action' => [
+    'multiple' => [
 
         'label' => 'Dissociera valda',
 
         'modal' => [
+
             'heading' => 'Dissociera valda :label',
+
+            'actions' => [
+
+                'dissociate' => [
+                    'label' => 'Dissociera valda',
+                ],
+
+            ],
+
         ],
 
         'messages' => [

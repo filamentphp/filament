@@ -2,7 +2,7 @@
 
 return [
 
-    'action' => [
+    'single' => [
 
         'label' => 'Associera',
 
@@ -24,7 +24,7 @@ return [
                     'label' => 'Associera',
                 ],
 
-                'associate_and_associate_another' => [
+                'associate_another' => [
                     'label' => 'Associera & associera en till',
                 ],
 

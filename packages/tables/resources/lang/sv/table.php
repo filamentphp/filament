@@ -59,14 +59,25 @@ return [
 
     ],
 
-    'actions' => [
 
-        'replicate' => [
+    'bulk_actions' => [
 
-            'label' => 'Replikera',
+        'force_delete' => [
+
+            'label' => 'Tvinga radering',
 
             'messages' => [
-                'replicated' => 'Raden replikerades',
+                'deleted' => 'Rader raderade',
+            ],
+
+        ],
+
+        'restore' => [
+
+            'label' => 'Återställ',
+
+            'messages' => [
+                'restored' => 'Rader återställda',
             ],
 
         ],
@@ -97,6 +108,18 @@ return [
 
         'select' => [
             'placeholder' => 'Alla',
+        ],
+
+        'trashed' => [
+
+            'label' => 'Raderade rader',
+
+            'only_trashed' => 'Endast raderade rader',
+
+            'with_trashed' => 'Med raderade rader',
+
+            'without_trashed' => 'Utan raderade rader',
+
         ],
 
     ],

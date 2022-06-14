@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'attached' => 'Kopplat',
+            'attached' => 'Kopplad',
         ],
 
     ],

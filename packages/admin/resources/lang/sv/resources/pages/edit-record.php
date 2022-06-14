@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => 'Ändra :label',
+    'title' => 'Redigera :label',
 
-    'breadcrumb' => 'Ändra',
+    'breadcrumb' => 'Redigera',
 
     'form' => [
 

@@ -49,11 +49,11 @@ return [
         'buttons' => [
 
             'add' => [
-                'label' => 'Ny rad',
+                'label' => 'Lägg till rad',
             ],
 
             'delete' => [
-                'label' => 'Radera rad',
+                'label' => 'Ta bort rad',
             ],
 
         ],

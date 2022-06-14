@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'Radera',
+        'label' => 'Tvångsradera',
 
         'modal' => [
 
-            'heading' => 'Radera :label',
+            'heading' => 'Tvångsradera :label',
 
             'actions' => [
 
@@ -21,18 +21,18 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Raderad',
+            'deleted' => 'Rad raderad',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Radera valda',
+        'label' => 'Tvångsradera valda',
 
         'modal' => [
 
-            'heading' => 'Radera valda :label',
+            'heading' => 'Tvångsradera valda :label',
 
             'actions' => [
 
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Raderade',
+            'deleted' => 'Rader raderade',
         ],
 
     ],
