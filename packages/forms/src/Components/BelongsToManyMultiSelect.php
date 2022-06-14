@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 class BelongsToManyMultiSelect extends MultiSelect
 {
-    protected string | Closure | null $titleColumnName = null;
+    protected string | Closure | null $displayColumnName = null;
 
     protected ?Closure $getOptionLabelFromRecordUsing = null;
 
@@ -55,7 +55,7 @@ class BelongsToManyMultiSelect extends MultiSelect
             }
 
             return $relationshipQuery
-                ->pluck($component->getTitleColumnName(), $relatedKeyName)
+                ->pluck($component->getDisplayColumnName(), $relatedKeyName)
                 ->toArray();
         });
 
@@ -81,15 +81,15 @@ class BelongsToManyMultiSelect extends MultiSelect
         return $this;
     }
 
-    public function relationship(string | Closure $relationshipName, string | Closure $titleColumnName, ?Closure $callback = null): static
+    public function relationship(string | Closure $relationshipName, string | Closure $displayColumnName, ?Closure $callback = null): static
     {
-        $this->titleColumnName = $titleColumnName;
+        $this->displayColumnName = $displayColumnName;
         $this->relationship = $relationshipName;
 
-        $this->getSearchResultsUsing(static function (BelongsToManyMultiSelect $component, ?string $search) use ($callback): array {
+        $this->getSearchResultsUsing(static function (BelongsToManyMultiSelect $component, ?string $searchQuery) use ($callback): array {
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getTitleColumnName());
+            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
                 $relationshipQuery = $component->evaluate($callback, [
@@ -97,7 +97,7 @@ class BelongsToManyMultiSelect extends MultiSelect
                 ]);
             }
 
-            $search = strtolower($search);
+            $searchQuery = strtolower($searchQuery);
 
             /** @var Connection $databaseConnection */
             $databaseConnection = $relationshipQuery->getConnection();
@@ -108,7 +108,7 @@ class BelongsToManyMultiSelect extends MultiSelect
             };
 
             $relationshipQuery = $relationshipQuery
-                ->where($component->getTitleColumnName(), $searchOperator, "%{$search}%")
+                ->where($component->getDisplayColumnName(), $searchOperator, "%{$searchQuery}%")
                 ->limit(50);
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
@@ -121,7 +121,7 @@ class BelongsToManyMultiSelect extends MultiSelect
             }
 
             return $relationshipQuery
-                ->pluck($component->getTitleColumnName(), $relationship->getRelatedKeyName())
+                ->pluck($component->getDisplayColumnName(), $relationship->getRelatedKeyName())
                 ->toArray();
         });
 
@@ -132,7 +132,7 @@ class BelongsToManyMultiSelect extends MultiSelect
 
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getTitleColumnName());
+            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
                 $relationshipQuery = $component->evaluate($callback, [
@@ -150,7 +150,7 @@ class BelongsToManyMultiSelect extends MultiSelect
             }
 
             return $relationshipQuery
-                ->pluck($component->getTitleColumnName(), $relationship->getRelatedKeyName())
+                ->pluck($component->getDisplayColumnName(), $relationship->getRelatedKeyName())
                 ->toArray();
         });
 
@@ -174,9 +174,9 @@ class BelongsToManyMultiSelect extends MultiSelect
         return $this->evaluate($this->getOptionLabelFromRecordUsing, ['record' => $record]);
     }
 
-    public function getTitleColumnName(): string
+    public function getDisplayColumnName(): string
     {
-        return $this->evaluate($this->titleColumnName);
+        return $this->evaluate($this->displayColumnName);
     }
 
     public function getLabel(): string

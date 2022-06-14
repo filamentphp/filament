@@ -5,7 +5,6 @@ namespace Filament\Forms\Concerns;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
-use Filament\Support\Actions\Exceptions\Hold;
 
 /**
  * @property ComponentContainer $mountedFormComponentActionForm
@@ -41,7 +40,7 @@ trait HasFormComponentActions
             ->statePath('mountedFormComponentActionData');
     }
 
-    public function callMountedFormComponentAction(?string $arguments = null)
+    public function callMountedFormComponentAction()
     {
         $action = $this->getMountedFormComponentAction();
 
@@ -49,36 +48,12 @@ trait HasFormComponentActions
             return;
         }
 
-        if ($action->isDisabled()) {
-            return;
-        }
-
-        $form = $this->getMountedFormComponentActionForm();
-
-        if ($action->hasForm()) {
-            $action->callBeforeFormValidated();
-
-            $action->formData($form->getState());
-
-            $action->callAfterFormValidated();
-        }
-
-        $action->callBefore();
+        $data = $this->getMountedFormComponentActionForm()->getState();
 
         try {
-            $result = $action->call([
-                'arguments' => json_decode($arguments, associative: true) ?? [],
-                'form' => $form,
-            ]);
-        } catch (Hold $exception) {
-            return;
-        }
-
-        try {
-            return $action->callAfter() ?? $result;
+            return $action->call($data);
         } finally {
             $this->mountedFormComponentAction = null;
-            $action->resetFormData();
 
             $this->dispatchBrowserEvent('close-modal', [
                 'id' => static::class . '-form-component-action',
@@ -106,7 +81,7 @@ trait HasFormComponentActions
             return;
         }
 
-        if ($action->isDisabled()) {
+        if ($action->isHidden()) {
             return;
         }
 
@@ -115,18 +90,10 @@ trait HasFormComponentActions
             fn () => $this->getMountedFormComponentActionForm(),
         );
 
-        if ($action->hasForm()) {
-            $action->callBeforeFormFilled();
-        }
-
         app()->call($action->getMountUsing(), [
             'action' => $action,
             'form' => $this->getMountedFormComponentActionForm(),
         ]);
-
-        if ($action->hasForm()) {
-            $action->callAfterFormFilled();
-        }
 
         if (! $action->shouldOpenModal()) {
             return $this->callMountedFormComponentAction();

@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Filters\Concerns;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -11,9 +10,9 @@ use Illuminate\Support\Str;
 
 trait HasRelationship
 {
-    public function relationship(string $relationshipName, string $titleColumnName = null): static
+    public function relationship(string $relationshipName, string $displayColumnName = null): static
     {
-        $this->column("{$relationshipName}.{$titleColumnName}");
+        $this->column("{$relationshipName}.{$displayColumnName}");
 
         return $this;
     }
@@ -38,12 +37,12 @@ trait HasRelationship
     {
         $relationship = $this->getRelationship();
 
-        $titleColumnName = $this->getRelationshipTitleColumnName();
+        $displayColumnName = $this->getRelationshipDisplayColumnName();
 
-        $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleColumnName);
+        $relationshipQuery = $relationship->getRelated()->query()->orderBy($displayColumnName);
 
         return $relationshipQuery
-            ->pluck($titleColumnName, $this->getRelationshipKey())
+            ->pluck($displayColumnName, $this->getRelationshipKey())
             ->toArray();
     }
 
@@ -52,7 +51,7 @@ trait HasRelationship
         return Str::of($this->getColumn())->contains('.');
     }
 
-    protected function getRelationship(): Relation | Builder
+    protected function getRelationship(): Relation
     {
         $model = app($this->getTable()->getModel());
 
@@ -64,7 +63,7 @@ trait HasRelationship
         return (string) Str::of($this->getColumn())->beforeLast('.');
     }
 
-    protected function getRelationshipTitleColumnName(): string
+    protected function getRelationshipDisplayColumnName(): string
     {
         return (string) Str::of($this->getColumn())->afterLast('.');
     }

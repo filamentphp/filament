@@ -4,36 +4,28 @@ namespace Filament\Resources\Pages\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Str;
 
 trait InteractsWithRecord
 {
-    public $record;
-
-    protected function resolveRecord($key): Model
+    protected function getRecord($key): Model
     {
         $record = static::getResource()::resolveRecordRouteBinding($key);
 
         if ($record === null) {
-            throw (new ModelNotFoundException())->setModel($this->getModel(), [$key]);
+            throw (new ModelNotFoundException())->setModel(static::getModel(), [$key]);
         }
 
         return $record;
     }
 
-    public function getRecord(): Model
-    {
-        return $this->record;
-    }
-
-    public function getRecordTitle(): string
+    protected function getRecordTitle(): ?string
     {
         $resource = static::getResource();
 
         if (! $resource::hasRecordTitle()) {
-            return Str::title($resource::getModelLabel());
+            return null;
         }
 
-        return $resource::getRecordTitle($this->getRecord());
+        return $resource::getRecordTitle($this->record);
     }
 }

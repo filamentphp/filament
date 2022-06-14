@@ -18,7 +18,7 @@ return [
                 'label' => 'Tạo',
             ],
 
-            'create_another' => [
+            'create_and_create_another' => [
                 'label' => 'Tạo & tiếp tục tạo mới',
             ],
 

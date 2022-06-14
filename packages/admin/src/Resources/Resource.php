@@ -6,7 +6,6 @@ use Closure;
 use Filament\Facades\Filament;
 use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\Navigation\NavigationItem;
-use function Filament\Support\get_model_label;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -22,12 +21,7 @@ class Resource
 
     protected static bool $isGloballySearchable = true;
 
-    /**
-     * @deprecated Use `$modelLabel` instead.
-     */
     protected static ?string $label = null;
-
-    protected static ?string $modelLabel = null;
 
     protected static ?string $model = null;
 
@@ -43,12 +37,7 @@ class Resource
 
     protected static bool $shouldRegisterNavigation = true;
 
-    /**
-     * @deprecated Use `$pluralModelLabel` instead.
-     */
     protected static ?string $pluralLabel = null;
-
-    protected static ?string $pluralModelLabel = null;
 
     protected static ?string $recordTitleAttribute = null;
 
@@ -138,31 +127,6 @@ class Resource
         return static::can('deleteAny');
     }
 
-    public static function canForceDelete(Model $record): bool
-    {
-        return static::can('forceDelete', $record);
-    }
-
-    public static function canForceDeleteAny(): bool
-    {
-        return static::can('forceDeleteAny');
-    }
-
-    public static function canReplicate(Model $record): bool
-    {
-        return static::can('replicate', $record);
-    }
-
-    public static function canRestore(Model $record): bool
-    {
-        return static::can('restore', $record);
-    }
-
-    public static function canRestoreAny(): bool
-    {
-        return static::can('restoreAny');
-    }
-
     public static function canGloballySearch(): bool
     {
         return static::$isGloballySearchable && count(static::getGloballySearchableAttributes()) && static::canViewAny();
@@ -175,7 +139,7 @@ class Resource
 
     public static function getBreadcrumb(): string
     {
-        return static::$breadcrumb ?? Str::title(static::getPluralModelLabel());
+        return static::$breadcrumb ?? Str::title(static::getPluralLabel());
     }
 
     public static function getEloquentQuery(): Builder
@@ -250,17 +214,11 @@ class Resource
             ->filter();
     }
 
-    /**
-     * @deprecated Use `getModelLabel()` instead.
-     */
-    public static function getLabel(): ?string
+    public static function getLabel(): string
     {
-        return static::$label;
-    }
-
-    public static function getModelLabel(): string
-    {
-        return static::$modelLabel ?? static::getLabel() ?? get_model_label(static::getModel());
+        return static::$label ?? (string) Str::of(class_basename(static::getModel()))
+            ->kebab()
+            ->replace('-', ' ');
     }
 
     public static function getModel(): string
@@ -275,17 +233,9 @@ class Resource
         return [];
     }
 
-    /**
-     * @deprecated Use `getPluralModelLabel()` instead.
-     */
-    public static function getPluralLabel(): ?string
+    public static function getPluralLabel(): string
     {
-        return static::$pluralLabel;
-    }
-
-    public static function getPluralModelLabel(): string
-    {
-        return static::$pluralModelLabel ?? static::getPluralLabel() ?? Str::plural(static::getModelLabel());
+        return static::$pluralLabel ?? Str::plural(static::getLabel());
     }
 
     public static function getRecordTitleAttribute(): ?string
@@ -427,7 +377,7 @@ class Resource
 
     protected static function getNavigationLabel(): string
     {
-        return static::$navigationLabel ?? Str::title(static::getPluralModelLabel());
+        return static::$navigationLabel ?? Str::title(static::getPluralLabel());
     }
 
     protected static function getNavigationBadge(): ?string

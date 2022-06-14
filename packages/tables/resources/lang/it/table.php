@@ -59,6 +59,19 @@ return [
 
     ],
 
+    'actions' => [
+
+        'replicate' => [
+
+            'label' => 'Duplica',
+
+            'messages' => [
+                'replicated' => 'Record duplicato',
+            ],
+        ],
+
+    ],
+
     'empty' => [
         'heading' => 'Nessun valore trovato',
     ],

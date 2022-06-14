@@ -2,11 +2,8 @@
 
 namespace Filament\Tables\Concerns;
 
-use Closure;
 use Filament\Forms\ComponentContainer;
-use Filament\Support\Actions\Exceptions\Hold;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -27,21 +24,8 @@ trait HasActions
 
     public function cacheTableActions(): void
     {
-        $actions = Action::configureUsing(
-            Closure::fromCallable([$this, 'configureTableAction']),
-            fn (): array => $this->getTableActions(),
-        );
-
-        $this->cachedTableActions = collect($actions)
-            ->mapWithKeys(function (Action | ActionGroup $action, int $index): array {
-                if ($action instanceof ActionGroup) {
-                    foreach ($action->getActions() as $groupedAction) {
-                        $groupedAction->table($this->getCachedTable());
-                    }
-
-                    return [$index => $action];
-                }
-
+        $this->cachedTableActions = collect($this->getTableActions())
+            ->mapWithKeys(function (Action $action): array {
                 $action->table($this->getCachedTable());
 
                 return [$action->getName() => $action];
@@ -49,11 +33,7 @@ trait HasActions
             ->toArray();
     }
 
-    protected function configureTableAction(Action $action): void
-    {
-    }
-
-    public function callMountedTableAction(?string $arguments = null)
+    public function callMountedTableAction()
     {
         $action = $this->getMountedTableAction();
 
@@ -61,37 +41,17 @@ trait HasActions
             return;
         }
 
-        if ($action->isDisabled()) {
+        if ($action->isHidden()) {
             return;
         }
 
-        $form = $this->getMountedTableActionForm();
-
-        if ($action->hasForm()) {
-            $action->callBeforeFormValidated();
-
-            $action->formData($form->getState());
-
-            $action->callAfterFormValidated();
-        }
-
-        $action->callBefore();
+        $data = $this->getMountedTableActionForm()->getState();
 
         try {
-            $result = $action->call([
-                'arguments' => json_decode($arguments, associative: true) ?? [],
-                'form' => $form,
-            ]);
-        } catch (Hold $exception) {
-            return;
-        }
-
-        try {
-            return $action->callAfter() ?? $result;
+            return $action->call($data);
         } finally {
             $this->mountedTableAction = null;
-            $this->mountedTableActionRecord(null);
-            $action->resetFormData();
+            $this->mountedTableActionRecord = null;
 
             $this->dispatchBrowserEvent('close-modal', [
                 'id' => static::class . '-table-action',
@@ -99,15 +59,10 @@ trait HasActions
         }
     }
 
-    public function mountedTableActionRecord($record): void
-    {
-        $this->mountedTableActionRecord = $record;
-    }
-
     public function mountTableAction(string $name, ?string $record = null)
     {
         $this->mountedTableAction = $name;
-        $this->mountedTableActionRecord($record);
+        $this->mountedTableActionRecord = $record;
 
         $action = $this->getMountedTableAction();
 
@@ -115,7 +70,7 @@ trait HasActions
             return;
         }
 
-        if ($action->isDisabled()) {
+        if ($action->isHidden()) {
             return;
         }
 
@@ -124,19 +79,11 @@ trait HasActions
             fn () => $this->getMountedTableActionForm(),
         );
 
-        if ($action->hasForm()) {
-            $action->callBeforeFormFilled();
-        }
-
         app()->call($action->getMountUsing(), [
             'action' => $action,
             'form' => $this->getMountedTableActionForm(),
             'record' => $this->getMountedTableActionRecord(),
         ]);
-
-        if ($action->hasForm()) {
-            $action->callAfterFormFilled();
-        }
 
         if (! $action->shouldOpenModal()) {
             return $this->callMountedTableAction();
@@ -196,34 +143,10 @@ trait HasActions
 
     protected function getCachedTableAction(string $name): ?Action
     {
-        return $this->findTableAction($name)?->record($this->getMountedTableActionRecord());
-    }
+        $action = $this->getCachedTableActions()[$name] ?? null;
+        $action?->record($this->getMountedTableActionRecord());
 
-    protected function findTableAction(string $name): ?Action
-    {
-        $actions = $this->getCachedTableActions();
-
-        $action = $actions[$name] ?? null;
-
-        if ($action) {
-            return $action;
-        }
-
-        foreach ($actions as $action) {
-            if (! $action instanceof ActionGroup) {
-                continue;
-            }
-
-            $groupedAction = $action->getActions()[$name] ?? null;
-
-            if (! $groupedAction) {
-                continue;
-            }
-
-            return $groupedAction;
-        }
-
-        return null;
+        return $action;
     }
 
     protected function getTableActions(): array

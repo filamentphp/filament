@@ -1,6 +1,5 @@
 @captureSlots([
     'actions',
-    'content',
     'footer',
     'header',
     'heading',

@@ -160,7 +160,7 @@ trait InteractsWithTableQuery
         return Str::of($this->getName())->contains('.');
     }
 
-    protected function getRelationshipTitleColumnName(): string
+    protected function getRelationshipDisplayColumnName(): string
     {
         return (string) Str::of($this->getName())->afterLast('.');
     }

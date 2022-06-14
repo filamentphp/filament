@@ -2,14 +2,22 @@
 
 namespace Filament\Resources\RelationManagers\Concerns;
 
+use Filament\Facades\Filament;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 
 trait CanDeleteRecords
 {
-    /**
-     * @deprecated Use `->action()` on the action instead.
-     */
+    protected function canDelete(Model $record): bool
+    {
+        return $this->can('delete', $record);
+    }
+
+    protected function canDeleteAny(): bool
+    {
+        return $this->can('deleteAny');
+    }
+
     public function delete(): void
     {
         $this->callHook('beforeDelete');
@@ -23,17 +31,11 @@ trait CanDeleteRecords
         }
     }
 
-    /**
-     * @deprecated Use `->successNotificationMessage()` on the action instead.
-     */
     protected function getDeletedNotificationMessage(): ?string
     {
-        return __('filament-support::actions/delete.single.messages.deleted');
+        return __('filament::resources/relation-managers/delete.action.messages.deleted');
     }
 
-    /**
-     * @deprecated Use `->action()` on the action instead.
-     */
     public function bulkDelete(): void
     {
         $this->callHook('beforeBulkDelete');
@@ -47,29 +49,32 @@ trait CanDeleteRecords
         }
     }
 
-    /**
-     * @deprecated Use `->successNotificationMessage()` on the action instead.
-     */
     protected function getBulkDeletedNotificationMessage(): ?string
     {
-        return __('filament-support::actions/delete.multiple.messages.deleted');
+        return __('filament::resources/relation-managers/delete.bulk_action.messages.deleted');
     }
 
-    /**
-     * @deprecated Actions are no longer pre-defined.
-     */
     protected function getDeleteAction(): Tables\Actions\Action
     {
-        return Tables\Actions\DeleteAction::make()
-            ->action(fn () => $this->delete());
+        return Filament::makeTableAction('delete')
+            ->label(__('filament::resources/relation-managers/delete.action.label'))
+            ->requiresConfirmation()
+            ->modalHeading(__('filament::resources/relation-managers/delete.action.modal.heading', ['label' => static::getRecordLabel()]))
+            ->action(fn () => $this->delete())
+            ->color('danger')
+            ->icon('heroicon-s-trash')
+            ->hidden(fn (Model $record): bool => ! $this->canDelete($record));
     }
 
-    /**
-     * @deprecated Actions are no longer pre-defined.
-     */
     protected function getDeleteBulkAction(): Tables\Actions\BulkAction
     {
-        return Tables\Actions\DeleteBulkAction::make()
-            ->action(fn () => $this->bulkDelete());
+        return Tables\Actions\BulkAction::make('delete')
+            ->label(__('filament::resources/relation-managers/delete.bulk_action.label'))
+            ->action(fn () => $this->bulkDelete())
+            ->requiresConfirmation()
+            ->modalHeading(__('filament::resources/relation-managers/delete.bulk_action.modal.heading', ['label' => static::getPluralRecordLabel()]))
+            ->deselectRecordsAfterCompletion()
+            ->color('danger')
+            ->icon('heroicon-o-trash');
     }
 }

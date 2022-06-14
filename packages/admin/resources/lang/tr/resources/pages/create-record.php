@@ -18,7 +18,7 @@ return [
                 'label' => 'Oluştur',
             ],
 
-            'create_another' => [
+            'create_and_create_another' => [
                 'label' => 'Oluştur ve başka bir tane oluştur',
             ],
 

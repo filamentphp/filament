@@ -55,8 +55,6 @@
                     </x-slot>
                 @endif
 
-                {{ $action->getModalContent() }}
-
                 @if ($action->hasFormSchema())
                     {{ $this->getMountedActionForm() }}
                 @endif

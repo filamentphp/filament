@@ -59,25 +59,14 @@ return [
 
     ],
 
+    'actions' => [
 
-    'bulk_actions' => [
+        'replicate' => [
 
-        'force_delete' => [
-
-            'label' => 'Force delete',
-
-            'messages' => [
-                'deleted' => 'Records deleted',
-            ],
-
-        ],
-
-        'restore' => [
-
-            'label' => 'Restore',
+            'label' => 'Replicate',
 
             'messages' => [
-                'restored' => 'Records restored',
+                'replicated' => 'Record replicated',
             ],
 
         ],
@@ -108,18 +97,6 @@ return [
 
         'select' => [
             'placeholder' => 'All',
-        ],
-
-        'trashed' => [
-
-            'label' => 'Deleted records',
-
-            'only_trashed' => 'Only deleted records',
-
-            'with_trashed' => 'With deleted records',
-
-            'without_trashed' => 'Without deleted records',
-
         ],
 
     ],

@@ -37,7 +37,7 @@ trait HasComponents
     {
         return collect($this->getComponents($withHidden))
             ->map(static function (Component $component) use ($withHidden) {
-                if ($component->hasChildComponentContainer($withHidden)) {
+                if ($component->hasChildComponentContainer()) {
                     return array_merge([$component], $component->getChildComponentContainer()->getFlatComponents($withHidden));
                 }
 

@@ -59,6 +59,20 @@ return [
 
     ],
 
+    'actions' => [
+
+        'replicate' => [
+
+            'label' => 'Dupliquer',
+
+            'messages' => [
+                'replicated' => 'Enregistrement dupliqué',
+            ],
+
+        ],
+
+    ],
+
     'empty' => [
         'heading' => 'Aucun élément trouvé',
     ],

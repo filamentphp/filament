@@ -18,7 +18,7 @@ return [
                 'label' => 'Buat',
             ],
 
-            'create_another' => [
+            'create_and_create_another' => [
                 'label' => 'Buat & buat lainnya',
             ],
 

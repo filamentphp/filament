@@ -2,9 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
-use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 trait CanSelectRecords
@@ -34,19 +32,7 @@ trait CanSelectRecords
 
     public function getSelectedTableRecords(): Collection
     {
-        if (! ($this instanceof HasRelationshipTable && $this->getRelationship() instanceof BelongsToMany && $this->allowsDuplicates())) {
-            return $this->getTableQuery()->find($this->selectedTableRecords);
-        }
-
-        /** @var BelongsToMany $relationship */
-        $relationship = $this->getRelationship();
-
-        $pivotClass = $relationship->getPivotClass();
-        $pivotKeyName = app($pivotClass)->getKeyName();
-
-        return $this->selectPivotDataInQuery(
-            $relationship->wherePivotIn($pivotKeyName, $this->selectedTableRecords),
-        )->get();
+        return $this->getTableQuery()->find($this->selectedTableRecords);
     }
 
     public function isTableSelectionEnabled(): bool

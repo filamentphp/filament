@@ -2,9 +2,39 @@
 
 return [
 
-    'title' => 'Redigera :label',
+    'title' => 'Ändra :label',
 
-    'breadcrumb' => 'Redigera',
+    'breadcrumb' => 'Ändra',
+
+    'actions' => [
+
+        'delete' => [
+
+            'label' => 'Ta bort',
+
+            'modal' => [
+
+                'heading' => 'Ta bort :label',
+
+                'subheading' => 'Är du säker på att du vill göra det här?',
+
+                'buttons' => [
+
+                    'delete' => [
+                        'label' => 'Ta bort',
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+        'view' => [
+            'label' => 'Visa',
+        ],
+
+    ],
 
     'form' => [
 

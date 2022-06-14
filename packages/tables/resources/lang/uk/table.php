@@ -59,6 +59,20 @@ return [
 
     ],
 
+    'actions' => [
+
+        'replicate' => [
+
+            'label' => 'копіювати',
+
+            'messages' => [
+                'replicated' => 'Запис скопійовано',
+            ],
+
+        ],
+
+    ],
+
     'empty' => [
         'heading' => 'Записів не знайдено',
     ],

@@ -59,6 +59,20 @@ return [
 
     ],
 
+    'actions' => [
+
+        'replicate' => [
+
+            'label' => 'Duplikat data',
+
+            'messages' => [
+                'replicated' => 'Data berhasil diduplikat',
+            ],
+
+        ],
+
+    ],
+
     'empty' => [
         'heading' => 'Tidak ada data yang ditemukan',
     ],

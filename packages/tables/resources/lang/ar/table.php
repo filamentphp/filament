@@ -59,6 +59,20 @@ return [
 
     ],
 
+    'actions' => [
+
+        'replicate' => [
+
+            'label' => 'نسخة',
+
+            'messages' => [
+                'replicated' => 'تم نسخ السجل',
+            ],
+
+        ],
+
+    ],
+
     'empty' => [
         'heading' => 'لا توجد سجلات',
     ],

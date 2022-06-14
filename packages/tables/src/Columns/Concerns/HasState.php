@@ -89,7 +89,7 @@ trait HasState
             return null;
         }
 
-        $state = $record->getRelationValue($relationshipName)->pluck($this->getRelationshipTitleColumnName());
+        $state = $record->getRelationValue($relationshipName)->pluck($this->getRelationshipDisplayColumnName());
 
         if (! count($state)) {
             return null;

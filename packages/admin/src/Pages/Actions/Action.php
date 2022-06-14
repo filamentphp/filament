@@ -2,8 +2,6 @@
 
 namespace Filament\Pages\Actions;
 
-use Closure;
-use Filament\Facades\Filament;
 use Filament\Pages\Actions\Modal\Actions\Action as ModalAction;
 use Filament\Support\Actions\Action as BaseAction;
 use Filament\Support\Actions\Concerns\CanBeDisabled;
@@ -12,12 +10,8 @@ use Filament\Support\Actions\Concerns\CanOpenUrl;
 use Filament\Support\Actions\Concerns\CanSubmitForm;
 use Filament\Support\Actions\Concerns\HasKeyBindings;
 use Filament\Support\Actions\Concerns\HasTooltip;
-use Filament\Support\Actions\Concerns\InteractsWithRecord;
-use Filament\Support\Actions\Contracts\Groupable;
-use Filament\Support\Actions\Contracts\HasRecord;
-use Illuminate\Database\Eloquent\Model;
 
-class Action extends BaseAction implements Groupable, HasRecord
+class Action extends BaseAction
 {
     use CanBeDisabled;
     use CanBeOutlined;
@@ -26,20 +20,12 @@ class Action extends BaseAction implements Groupable, HasRecord
     use Concerns\BelongsToLivewire;
     use HasKeyBindings;
     use HasTooltip;
-    use InteractsWithRecord;
 
     protected string $view = 'filament::pages.actions.button-action';
 
     public function button(): static
     {
         $this->view('filament::pages.actions.button-action');
-
-        return $this;
-    }
-
-    public function grouped(): static
-    {
-        $this->view('filament::pages.actions.grouped-action');
 
         return $this;
     }
@@ -58,7 +44,7 @@ class Action extends BaseAction implements Groupable, HasRecord
         return $this;
     }
 
-    protected function getLivewireCallActionName(): string
+    protected function getLivewireSubmitActionName(): string
     {
         return 'callMountedAction';
     }
@@ -76,18 +62,14 @@ class Action extends BaseAction implements Groupable, HasRecord
         return $action;
     }
 
-    public function notify(string | Closure | null $status, string | Closure | null $message): void
+    public function call(array $data = [])
     {
-        Filament::notify($status, $message);
-    }
+        if ($this->isDisabled()) {
+            return;
+        }
 
-    protected function getDefaultEvaluationParameters(): array
-    {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'record' => $this->resolveEvaluationParameter(
-                'record',
-                fn (): ?Model => $this->getRecord(),
-            ),
+        return app()->call($this->getAction(), [
+            'data' => $data,
         ]);
     }
 }

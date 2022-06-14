@@ -226,8 +226,8 @@
             @if ($header)
                 {{ $header }}
             @elseif ($heading || $headerActions)
-                <div class="px-2 pt-2">
-                    <x-tables::header :actions="$headerActions" class="mb-2">
+                <div class="px-2 pt-2 space-y-2">
+                    <x-tables::header :actions="$headerActions">
                         <x-slot name="heading">
                             {{ $heading }}
                         </x-slot>
@@ -242,8 +242,8 @@
             @endif
 
             @if ($hasFiltersAboveContent)
-                <div class="px-2 pt-2">
-                    <div class="p-4 mb-2">
+                <div class="px-2 pt-2 space-y-2">
+                    <div class="p-4">
                         <x-tables::filters :form="$getFiltersForm()" />
                     </div>
 
@@ -362,12 +362,8 @@
                         @endif
 
                         @foreach ($records as $record)
-                            @php
-                                $recordUrl = $getRecordUrl($record);
-                            @endphp
-
                             <x-tables::row
-                                :record-url="$recordUrl"
+                                :record-url="$getRecordUrl($record)"
                                 wire:key="{{ $this->getTableRecordKey($record) }}"
                                 x-bind:class="{
                                     'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $this->getTableRecordKey($record) }}'),
@@ -396,7 +392,7 @@
                                         :record="$record"
                                         :tooltip="$column->getTooltip()"
                                         :record-action="$getRecordAction()"
-                                        :record-url="$recordUrl"
+                                        :record-url="$getRecordUrl($record)"
                                         :should-open-url-in-new-tab="$column->shouldOpenUrlInNewTab()"
                                         :url="$column->getUrl()"
                                         :class="$getHiddenClasses($column)"
@@ -489,8 +485,6 @@
                     </x-slot>
                 @endif
 
-                {{ $action->getModalContent() }}
-
                 @if ($action->hasFormSchema())
                     {{ $getMountedActionForm() }}
                 @endif
@@ -532,8 +526,6 @@
                         </x-tables::modal.heading>
                     </x-slot>
                 @endif
-
-                {{ $action->getModalContent() }}
 
                 @if ($action->hasFormSchema())
                     {{ $getMountedBulkActionForm() }}

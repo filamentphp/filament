@@ -16,10 +16,10 @@ trait HasRelationManagers
             $managers,
             function (string | RelationGroup $manager): bool {
                 if ($manager instanceof RelationGroup) {
-                    return (bool) count($manager->getManagers(ownerRecord: $this->getRecord()));
+                    return (bool) count($manager->getManagers(ownerRecord: $this->record));
                 }
 
-                return $manager::canViewForRecord($this->getRecord());
+                return $manager::canViewForRecord($this->record);
             },
         );
     }

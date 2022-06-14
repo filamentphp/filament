@@ -18,7 +18,7 @@ return [
                 'label' => 'إضافة',
             ],
 
-            'create_another' => [
+            'create_and_create_another' => [
                 'label' => 'إضافة وبدء إضافة المزيد',
             ],
 

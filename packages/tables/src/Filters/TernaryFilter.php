@@ -62,7 +62,7 @@ class TernaryFilter extends SelectFilter
                 if ($this->queriesRelationships()) {
                     return $query->whereRelation(
                         $this->getRelationshipName(),
-                        $this->getRelationshipTitleColumnName(),
+                        $this->getRelationshipDisplayColumnName(),
                         '!=',
                         null,
                     );
@@ -74,7 +74,7 @@ class TernaryFilter extends SelectFilter
                 if ($this->queriesRelationships()) {
                     return $query->whereRelation(
                         $this->getRelationshipName(),
-                        $this->getRelationshipTitleColumnName(),
+                        $this->getRelationshipDisplayColumnName(),
                         null,
                     );
                 }
@@ -93,7 +93,7 @@ class TernaryFilter extends SelectFilter
                 if ($this->queriesRelationships()) {
                     return $query->whereRelation(
                         $this->getRelationshipName(),
-                        $this->getRelationshipTitleColumnName(),
+                        $this->getRelationshipDisplayColumnName(),
                         true,
                     );
                 }
@@ -104,7 +104,7 @@ class TernaryFilter extends SelectFilter
                 if ($this->queriesRelationships()) {
                     return $query->whereRelation(
                         $this->getRelationshipName(),
-                        $this->getRelationshipTitleColumnName(),
+                        $this->getRelationshipDisplayColumnName(),
                         false,
                     );
                 }

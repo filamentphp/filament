@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Filament\Forms\Components\Wizard\Step;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Htmlable;
 use Livewire\Component as LivewireComponent;
@@ -42,11 +41,7 @@ class Wizard extends Component
                         return;
                     }
 
-                    /** @var Step $currentStep */
-                    $currentStep = $component->getChildComponentContainer()->getComponents()[$currentStep];
-
-                    $currentStep->getChildComponentContainer()->validate();
-                    $currentStep->callAfterValidated();
+                    $component->getChildComponentContainer()->getComponents()[$currentStep]->getChildComponentContainer()->validate();
 
                     /** @var LivewireComponent $livewire */
                     $livewire = $component->getLivewire();

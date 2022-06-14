@@ -2,12 +2,12 @@
 
 namespace Filament\Resources\Pages\CreateRecord\Concerns;
 
-use Filament\Resources\Pages\Concerns\HasActiveFormLocaleSwitcher;
+use Filament\Resources\Pages\Concerns\HasActiveFormLocaleSelect;
 use Illuminate\Database\Eloquent\Model;
 
 trait Translatable
 {
-    use HasActiveFormLocaleSwitcher;
+    use HasActiveFormLocaleSelect;
 
     public function mount(): void
     {
@@ -22,7 +22,7 @@ trait Translatable
 
     protected function setActiveFormLocale(): void
     {
-        $this->activeLocale = $this->activeFormLocale = static::getResource()::getDefaultTranslatableLocale();
+        $this->activeFormLocale = static::getResource()::getDefaultTranslatableLocale();
     }
 
     protected function handleRecordCreation(array $data): Model

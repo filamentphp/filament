@@ -18,7 +18,7 @@ return [
                 'label' => 'Vytvořit',
             ],
 
-            'create_another' => [
+            'create_and_create_another' => [
                 'label' => 'Vytvořit & vytvořit další',
             ],
 

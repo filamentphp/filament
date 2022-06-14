@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 
 class BelongsToSelect extends Select
 {
-    protected string | Closure | null $titleColumnName = null;
+    protected string | Closure | null $displayColumnName = null;
 
     protected ?Closure $getOptionLabelFromRecordUsing = null;
 
@@ -55,7 +55,7 @@ class BelongsToSelect extends Select
                 return $component->getOptionLabelFromRecord($record);
             }
 
-            return $record->getAttributeValue($component->getTitleColumnName());
+            return $record->getAttributeValue($component->getDisplayColumnName());
         });
 
         $this->exists(
@@ -82,18 +82,18 @@ class BelongsToSelect extends Select
 
     public function getSearchColumns(): array
     {
-        return $this->searchColumns ?? [$this->getTitleColumnName()];
+        return $this->searchColumns ?? [$this->getDisplayColumnName()];
     }
 
-    public function relationship(string | Closure $relationshipName, string | Closure $titleColumnName, ?Closure $callback = null): static
+    public function relationship(string | Closure $relationshipName, string | Closure $displayColumnName, ?Closure $callback = null): static
     {
-        $this->titleColumnName = $titleColumnName;
+        $this->displayColumnName = $displayColumnName;
         $this->relationship = $relationshipName;
 
-        $this->getSearchResultsUsing(static function (BelongsToSelect $component, ?string $search) use ($callback): array {
+        $this->getSearchResultsUsing(static function (BelongsToSelect $component, ?string $searchQuery) use ($callback): array {
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getTitleColumnName());
+            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
                 $relationshipQuery = $component->evaluate($callback, [
@@ -101,9 +101,9 @@ class BelongsToSelect extends Select
                 ]);
             }
 
-            $search = strtolower($search);
+            $searchQuery = strtolower($searchQuery);
 
-            $relationshipQuery = $component->applySearchConstraint($relationshipQuery, $search)->limit(50);
+            $relationshipQuery = $component->applySearchConstraint($relationshipQuery, $searchQuery)->limit(50);
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
@@ -115,7 +115,7 @@ class BelongsToSelect extends Select
             }
 
             return $relationshipQuery
-                ->pluck($component->getTitleColumnName(), $relationship->getOwnerKeyName())
+                ->pluck($component->getDisplayColumnName(), $relationship->getOwnerKeyName())
                 ->toArray();
         });
 
@@ -126,7 +126,7 @@ class BelongsToSelect extends Select
 
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getTitleColumnName());
+            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getDisplayColumnName());
 
             if ($callback) {
                 $relationshipQuery = $component->evaluate($callback, [
@@ -144,14 +144,14 @@ class BelongsToSelect extends Select
             }
 
             return $relationshipQuery
-                ->pluck($component->getTitleColumnName(), $relationship->getOwnerKeyName())
+                ->pluck($component->getDisplayColumnName(), $relationship->getOwnerKeyName())
                 ->toArray();
         });
 
         return $this;
     }
 
-    protected function applySearchConstraint(Builder $query, string $search): Builder
+    protected function applySearchConstraint(Builder $query, string $searchQuery): Builder
     {
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();
@@ -163,14 +163,14 @@ class BelongsToSelect extends Select
 
         $isFirst = true;
 
-        $query->where(function (Builder $query) use ($isFirst, $searchOperator, $search): Builder {
+        $query->where(function (Builder $query) use ($isFirst, $searchOperator, $searchQuery): Builder {
             foreach ($this->getSearchColumns() as $searchColumnName) {
                 $whereClause = $isFirst ? 'where' : 'orWhere';
 
                 $query->{$whereClause}(
                     $searchColumnName,
                     $searchOperator,
-                    "%{$search}%",
+                    "%{$searchQuery}%",
                 );
 
                 $isFirst = false;
@@ -199,9 +199,9 @@ class BelongsToSelect extends Select
         return $this->evaluate($this->getOptionLabelFromRecordUsing, ['record' => $record]);
     }
 
-    public function getTitleColumnName(): string
+    public function getDisplayColumnName(): string
     {
-        return $this->evaluate($this->titleColumnName);
+        return $this->evaluate($this->displayColumnName);
     }
 
     public function getLabel(): string

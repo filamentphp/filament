@@ -3,10 +3,10 @@
 return [
 
     'field' => [
-        'label' => 'Global sökning',
+        'label' => 'Global sök',
         'placeholder' => 'Sök',
     ],
 
-    'no_results_message' => 'Inga sökresultat.',
+    'no_results_message' => 'Sökning gav inga resultat.',
 
 ];

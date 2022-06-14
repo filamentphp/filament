@@ -2,12 +2,12 @@
 
 namespace Filament\Resources\Pages\EditRecord\Concerns;
 
-use Filament\Resources\Pages\Concerns\HasActiveFormLocaleSwitcher;
+use Filament\Resources\Pages\Concerns\HasActiveFormLocaleSelect;
 use Illuminate\Database\Eloquent\Model;
 
 trait Translatable
 {
-    use HasActiveFormLocaleSwitcher;
+    use HasActiveFormLocaleSelect;
 
     public $activeFormLocale = null;
 
@@ -38,7 +38,7 @@ trait Translatable
         $resourceLocales = $this->getTranslatableLocales();
         $defaultLocale = $resource::getDefaultTranslatableLocale();
 
-        $this->activeLocale = $this->activeFormLocale = in_array($defaultLocale, $availableLocales) ? $defaultLocale : array_intersect($availableLocales, $resourceLocales)[0] ?? $defaultLocale;
+        $this->activeFormLocale = in_array($defaultLocale, $availableLocales) ? $defaultLocale : array_intersect($availableLocales, $resourceLocales)[0] ?? $defaultLocale;
         $this->record->setLocale($this->activeFormLocale);
     }
 

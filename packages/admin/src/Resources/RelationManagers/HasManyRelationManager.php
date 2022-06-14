@@ -4,9 +4,6 @@ namespace Filament\Resources\RelationManagers;
 
 use Filament\Resources\Table;
 
-/**
- * @deprecated Use `RelationManager` instead, defining actions on the `$table`.
- */
 class HasManyRelationManager extends RelationManager
 {
     use Concerns\CanAssociateRecords;
@@ -16,27 +13,33 @@ class HasManyRelationManager extends RelationManager
     use Concerns\CanEditRecords;
     use Concerns\CanViewRecords;
 
+    protected static string $view = 'filament::resources.relation-managers.has-many-relation-manager';
+
     protected function getResourceTable(): Table
     {
-        $table = Table::make();
+        if (! $this->resourceTable) {
+            $table = Table::make();
 
-        $table->actions([
-            $this->getViewAction(),
-            $this->getEditAction(),
-            $this->getDissociateAction(),
-            $this->getDeleteAction(),
-        ]);
+            $table->actions([
+                $this->getViewAction(),
+                $this->getEditAction(),
+                $this->getDissociateAction(),
+                $this->getDeleteAction(),
+            ]);
 
-        $table->bulkActions(array_merge(
-            ($this->canDeleteAny() ? [$this->getDeleteBulkAction()] : []),
-            ($this->canDissociateAny() ? [$this->getDissociateBulkAction()] : []),
-        ));
+            $table->bulkActions(array_merge(
+                ($this->canDeleteAny() ? [$this->getDeleteBulkAction()] : []),
+                ($this->canDissociateAny() ? [$this->getDissociateBulkAction()] : []),
+            ));
 
-        $table->headerActions(array_merge(
-            ($this->canCreate() ? [$this->getCreateAction()] : []),
-            ($this->canAssociate() ? [$this->getAssociateAction()] : []),
-        ));
+            $table->headerActions(array_merge(
+                ($this->canCreate() ? [$this->getCreateAction()] : []),
+                ($this->canAssociate() ? [$this->getAssociateAction()] : []),
+            ));
 
-        return $this->table($table);
+            $this->resourceTable = static::table($table);
+        }
+
+        return $this->resourceTable;
     }
 }

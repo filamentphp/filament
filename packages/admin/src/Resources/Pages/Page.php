@@ -38,7 +38,7 @@ class Page extends BasePage
         abort_unless(static::getResource()::canViewAny(), 403);
     }
 
-    public function getModel(): string
+    public static function getModel(): string
     {
         return static::getResource()::getModel();
     }

@@ -17,35 +17,25 @@ trait CanAttachRecords
 {
     protected ?Form $resourceAttachForm = null;
 
-    /**
-     * @deprecated Use `->disableAttachAnother()` on the action instead.
-     */
     protected static bool $canAttachAnother = true;
 
-    /**
-     * @deprecated Use `->preloadRecordSelect()` on the action instead.
-     */
     protected static bool $shouldPreloadAttachFormRecordSelectOptions = false;
 
-    /**
-     * @deprecated Use `->disableAttachAnother()` on the action instead.
-     */
+    protected function canAttach(): bool
+    {
+        return $this->can('attach');
+    }
+
     protected static function canAttachAnother(): bool
     {
         return static::$canAttachAnother;
     }
 
-    /**
-     * @deprecated Use `->disableAttachAnother()` on the action instead.
-     */
     public static function disableAttachAnother(): void
     {
         static::$canAttachAnother = false;
     }
 
-    /**
-     * @deprecated Use `->form()` on the action instead.
-     */
     public static function attachForm(Form $form): Form
     {
         return $form->schema([
@@ -53,9 +43,6 @@ trait CanAttachRecords
         ]);
     }
 
-    /**
-     * @deprecated Use `->form()` on the action instead.
-     */
     protected function getResourceAttachForm(): Form
     {
         if (! $this->resourceAttachForm) {
@@ -65,24 +52,21 @@ trait CanAttachRecords
         return $this->resourceAttachForm;
     }
 
-    /**
-     * @deprecated Use `->recordSelect()` on the action instead.
-     */
     protected static function getAttachFormRecordSelect(): Select
     {
         return Select::make('recordId')
-            ->label(__('filament-support::actions/attach.single.modal.fields.record_id.label'))
+            ->label(__('filament::resources/relation-managers/attach.action.modal.fields.record_id.label'))
             ->searchable()
-            ->getSearchResultsUsing(static function (Select $component, BelongsToManyRelationManager $livewire, string $search): array {
+            ->getSearchResultsUsing(static function (Select $component, BelongsToManyRelationManager $livewire, string $searchQuery): array {
                 /** @var BelongsToMany $relationship */
                 $relationship = $livewire->getRelationship();
 
-                $titleColumnName = static::getRecordTitleAttribute();
+                $displayColumnName = static::getRecordTitleAttribute();
 
                 /** @var Builder $relationshipQuery */
-                $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleColumnName);
+                $relationshipQuery = $relationship->getRelated()->query()->orderBy($displayColumnName);
 
-                $search = strtolower($search);
+                $searchQuery = strtolower($searchQuery);
 
                 /** @var Connection $databaseConnection */
                 $databaseConnection = $relationshipQuery->getConnection();
@@ -92,17 +76,17 @@ trait CanAttachRecords
                     default => 'like',
                 };
 
-                $searchColumns = $component->getSearchColumns() ?? [$titleColumnName];
+                $searchColumns = $component->getSearchColumns() ?? [$displayColumnName];
                 $isFirst = true;
 
-                $relationshipQuery->where(function (Builder $query) use ($isFirst, $search, $searchColumns, $searchOperator): Builder {
+                $relationshipQuery->where(function (Builder $query) use ($isFirst, $searchColumns, $searchOperator, $searchQuery): Builder {
                     foreach ($searchColumns as $searchColumnName) {
                         $whereClause = $isFirst ? 'where' : 'orWhere';
 
                         $query->{$whereClause}(
                             $searchColumnName,
                             $searchOperator,
-                            "%{$search}%",
+                            "%{$searchQuery}%",
                         );
 
                         $isFirst = false;
@@ -119,8 +103,8 @@ trait CanAttachRecords
                         static fn (Builder $query): Builder => $query->whereDoesntHave(
                             $livewire->getInverseRelationshipName(),
                             static function (Builder $query) use ($livewire): Builder {
-                                return $query->where($livewire->getOwnerRecord()->getQualifiedKeyName(), $livewire->getOwnerRecord()->getKey());
-                            },
+                                return $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
+                            }
                         ),
                     )
                     ->get()
@@ -128,7 +112,7 @@ trait CanAttachRecords
                     ->toArray();
             })
             ->getOptionLabelUsing(static fn (RelationManager $livewire, $value): ?string => static::getRecordTitle($livewire->getRelationship()->getRelated()->query()->find($value)))
-            ->options(function (BelongsToManyRelationManager $livewire): array {
+            ->options(function (RelationManager $livewire): array {
                 if (! static::$shouldPreloadAttachFormRecordSelectOptions) {
                     return [];
                 }
@@ -136,23 +120,17 @@ trait CanAttachRecords
                 /** @var BelongsToMany $relationship */
                 $relationship = $livewire->getRelationship();
 
-                $titleColumnName = static::getRecordTitleAttribute();
+                $displayColumnName = static::getRecordTitleAttribute();
 
                 $relatedKeyName = $relationship->getRelatedKeyName();
 
                 return $relationship
                     ->getRelated()
                     ->query()
-                    ->orderBy($titleColumnName)
-                    ->when(
-                        ! $livewire->allowsDuplicates(),
-                        static fn (Builder $query): Builder => $query->whereDoesntHave(
-                            $livewire->getInverseRelationshipName(),
-                            static function (Builder $query) use ($livewire): Builder {
-                                return $query->where($livewire->getOwnerRecord()->getQualifiedKeyName(), $livewire->getOwnerRecord()->getKey());
-                            },
-                        ),
-                    )
+                    ->orderBy($displayColumnName)
+                    ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): void {
+                        $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
+                    })
                     ->get()
                     ->mapWithKeys(static fn (Model $record): array => [$record->{$relatedKeyName} => static::getRecordTitle($record)])
                     ->toArray();
@@ -160,17 +138,11 @@ trait CanAttachRecords
             ->disableLabel();
     }
 
-    /**
-     * @deprecated Use `->form()` on the action instead.
-     */
     protected function getAttachFormSchema(): array
     {
         return $this->getResourceAttachForm()->getSchema();
     }
 
-    /**
-     * @deprecated Use `->mountUsing()` on the action instead.
-     */
     protected function fillAttachForm(): void
     {
         $this->callHook('beforeFill');
@@ -182,9 +154,6 @@ trait CanAttachRecords
         $this->callHook('afterAttachFill');
     }
 
-    /**
-     * @deprecated Use `->action()` on the action instead.
-     */
     public function attach(bool $another = false): void
     {
         $form = $this->getMountedTableActionForm();
@@ -216,28 +185,64 @@ trait CanAttachRecords
         if (filled($this->getAttachedNotificationMessage())) {
             $this->notify('success', $this->getAttachedNotificationMessage());
         }
-
-        if ($another) {
-            $this->getMountedTableAction()->hold();
-        }
     }
 
-    /**
-     * @deprecated Use `->successNotificationMessage()` on the action instead.
-     */
     protected function getAttachedNotificationMessage(): ?string
     {
-        return __('filament-support::actions/attach.single.messages.attached');
+        return __('filament::resources/relation-managers/attach.action.messages.attached');
     }
 
-    /**
-     * @deprecated Actions are no longer pre-defined.
-     */
+    public function attachAndAttachAnother(): void
+    {
+        $this->attach(another: true);
+    }
+
     protected function getAttachAction(): Tables\Actions\Action
     {
-        return Tables\Actions\AttachAction::make()
+        return Tables\Actions\Action::make('attach')
+            ->label(__('filament::resources/relation-managers/attach.action.label'))
             ->form($this->getAttachFormSchema())
             ->mountUsing(fn () => $this->fillAttachForm())
-            ->action(fn (array $arguments) => $this->attach($arguments['another'] ?? false));
+            ->modalSubmitAction($this->getAttachActionAttachModalAction())
+            ->modalCancelAction($this->getAttachActionCancelModalAction())
+            ->modalActions($this->getAttachActionModalActions())
+            ->modalHeading(__('filament::resources/relation-managers/attach.action.modal.heading', ['label' => static::getRecordLabel()]))
+            ->modalWidth('lg')
+            ->action(fn () => $this->attach())
+            ->color('secondary')
+            ->button();
+    }
+
+    protected function getAttachActionModalActions(): array
+    {
+        return array_merge(
+            [$this->getAttachActionAttachModalAction()],
+            static::canAttachAnother() ? [$this->getAttachActionAttachAndAttachAnotherModalAction()] : [],
+            [$this->getAttachActionCancelModalAction()],
+        );
+    }
+
+    protected function getAttachActionAttachModalAction(): Tables\Actions\Modal\Actions\Action
+    {
+        return Tables\Actions\Action::makeModalAction('attach')
+            ->label(__('filament::resources/relation-managers/attach.action.modal.actions.attach.label'))
+            ->submit('callMountedTableAction')
+            ->color('primary');
+    }
+
+    protected function getAttachActionAttachAndAttachAnotherModalAction(): Tables\Actions\Modal\Actions\Action
+    {
+        return Tables\Actions\Action::makeModalAction('attachAndAttachAnother')
+            ->label(__('filament::resources/relation-managers/attach.action.modal.actions.attach_and_attach_another.label'))
+            ->action('attachAndAttachAnother')
+            ->color('secondary');
+    }
+
+    protected function getAttachActionCancelModalAction(): Tables\Actions\Modal\Actions\Action
+    {
+        return Tables\Actions\Action::makeModalAction('cancel')
+            ->label(__('filament-support::actions.modal.buttons.cancel.label'))
+            ->cancel()
+            ->color('secondary');
     }
 }

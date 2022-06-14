@@ -1,5 +1,5 @@
 <div {{ $attributes->class(['filament-tables-search-input']) }}>
-    <label for="tableSearchInput" class="sr-only">
+    <label for="tableSearchQueryInput" class="sr-only">
         {{ __('tables::table.fields.search_query.label') }}
     </label>
 
@@ -10,7 +10,7 @@
 
         <input
             wire:model.debounce.500ms="tableSearchQuery"
-            id="tableSearchInput"
+            id="tableSearchQueryInput"
             placeholder="{{ __('tables::table.fields.search_query.placeholder') }}"
             type="search"
             autocomplete="off"

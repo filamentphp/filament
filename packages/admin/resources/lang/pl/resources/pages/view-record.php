@@ -6,4 +6,12 @@ return [
 
     'breadcrumb' => 'Podgląd',
 
+    'actions' => [
+
+        'edit' => [
+            'label' => 'Edytuj',
+        ],
+
+    ],
+
 ];

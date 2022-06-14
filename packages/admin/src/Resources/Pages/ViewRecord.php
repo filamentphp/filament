@@ -4,12 +4,8 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\Action;
-use Filament\Pages\Actions\DeleteAction;
-use Filament\Pages\Actions\EditAction;
-use Filament\Pages\Actions\ForceDeleteAction;
-use Filament\Pages\Actions\ReplicateAction;
-use Filament\Pages\Actions\RestoreAction;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 /**
  * @property ComponentContainer $form
@@ -22,6 +18,8 @@ class ViewRecord extends Page
     use Concerns\UsesResourceForm;
 
     protected static string $view = 'filament::resources.pages.view-record';
+
+    public $record;
 
     public $data;
 
@@ -38,9 +36,9 @@ class ViewRecord extends Page
     {
         static::authorizeResourceAccess();
 
-        $this->record = $this->resolveRecord($record);
+        $this->record = $this->getRecord($record);
 
-        abort_unless(static::getResource()::canView($this->getRecord()), 403);
+        abort_unless(static::getResource()::canView($this->record), 403);
 
         $this->fillForm();
     }
@@ -49,7 +47,7 @@ class ViewRecord extends Page
     {
         $this->callHook('beforeFill');
 
-        $this->form->fill($this->getRecord()->toArray());
+        $this->form->fill($this->record->toArray());
 
         $this->callHook('afterFill');
     }
@@ -62,87 +60,18 @@ class ViewRecord extends Page
             return [];
         }
 
-        if (! $resource::canEdit($this->getRecord())) {
+        if (! $resource::canEdit($this->record)) {
             return [];
         }
 
         return [$this->getEditAction()];
     }
 
-    protected function configureAction(Action $action): void
-    {
-        match (true) {
-            $action instanceof DeleteAction => $this->configureDeleteAction($action),
-            $action instanceof EditAction => $this->configureEditAction($action),
-            $action instanceof ForceDeleteAction => $this->configureForceDeleteAction($action),
-            $action instanceof ReplicateAction => $this->configureReplicateAction($action),
-            $action instanceof RestoreAction => $this->configureRestoreAction($action),
-            default => null,
-        };
-    }
-
-    protected function configureEditAction(EditAction $action): void
-    {
-        $resource = static::getResource();
-
-        $action
-            ->authorize($resource::canEdit($this->getRecord()))
-            ->record($this->getRecord())
-            ->recordTitle($this->getRecordTitle());
-
-        if ($resource::hasPage('edit')) {
-            $action->url(fn (): string => static::getResource()::getUrl('edit', ['record' => $this->getRecord()]));
-
-            return;
-        }
-
-        $action->form($this->getFormSchema());
-    }
-
-    /**
-     * @deprecated Actions are no longer pre-defined.
-     */
     protected function getEditAction(): Action
     {
-        return EditAction::make();
-    }
-
-    protected function configureForceDeleteAction(ForceDeleteAction $action): void
-    {
-        $resource = static::getResource();
-
-        $action
-            ->authorize($resource::canForceDelete($this->getRecord()))
-            ->record($this->getRecord())
-            ->recordTitle($this->getRecordTitle())
-            ->successRedirectUrl($resource::getUrl('index'));
-    }
-
-    protected function configureReplicateAction(ReplicateAction $action): void
-    {
-        $action
-            ->authorize(static::getResource()::canReplicate($this->getRecord()))
-            ->record($this->getRecord())
-            ->recordTitle($this->getRecordTitle());
-    }
-
-    protected function configureRestoreAction(RestoreAction $action): void
-    {
-        $action
-            ->authorize(static::getResource()::canRestore($this->getRecord()))
-            ->record($this->getRecord())
-            ->recordTitle($this->getRecordTitle());
-    }
-
-    protected function configureDeleteAction(DeleteAction $action): void
-    {
-        $resource = static::getResource();
-
-        $action
-            ->authorize($resource::canDelete($this->getRecord()))
-            ->record($this->getRecord())
-            ->recordTitle($this->getRecordTitle())
-            ->successRedirectUrl($resource::getUrl('index'));
+        return Action::make('edit')
+            ->label(__('filament::resources/pages/view-record.actions.edit.label'))
+            ->url(fn () => static::getResource()::getUrl('edit', ['record' => $this->record]));
     }
 
     protected function getTitle(): string
@@ -151,8 +80,14 @@ class ViewRecord extends Page
             return static::$title;
         }
 
+        if (filled($recordTitle = $this->getRecordTitle())) {
+            return __('filament::resources/pages/view-record.title', [
+                'label' => $recordTitle,
+            ]);
+        }
+
         return __('filament::resources/pages/view-record.title', [
-            'label' => $this->getRecordTitle(),
+            'label' => Str::title(static::getResource()::getLabel()),
         ]);
     }
 
@@ -161,20 +96,15 @@ class ViewRecord extends Page
         return [
             'form' => $this->makeForm()
                 ->disabled()
-                ->model($this->getRecord())
-                ->schema($this->getFormSchema())
+                ->model($this->record)
+                ->schema($this->getResourceForm(columns: config('filament.layout.forms.have_inline_labels') ? 1 : 2)->getSchema())
                 ->statePath('data')
                 ->inlineLabel(config('filament.layout.forms.have_inline_labels')),
         ];
     }
 
-    protected function getFormSchema(): array
-    {
-        return $this->getResourceForm(columns: config('filament.layout.forms.have_inline_labels') ? 1 : 2)->getSchema();
-    }
-
     protected function getMountedActionFormModel(): Model
     {
-        return $this->getRecord();
+        return $this->record;
     }
 }

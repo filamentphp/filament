@@ -20,7 +20,7 @@ it('can retrieve search results', function () {
     $post = Post::factory()->create();
 
     Livewire::test(GlobalSearch::class)
-        ->set('search', $post->title)
+        ->set('searchQuery', $post->title)
         ->assertDispatchedBrowserEvent('open-global-search-results')
         ->assertSee($post->title);
 });
@@ -29,7 +29,7 @@ it('can retrieve results via custom search provider', function () {
     Filament::globalSearchProvider(CustomSearchProvider::class);
 
     Livewire::test(GlobalSearch::class)
-        ->set('search', 'foo')
+        ->set('searchQuery', 'foo')
         ->assertDispatchedBrowserEvent('open-global-search-results')
         ->assertSee(['foo', 'bar', 'baz']);
 });

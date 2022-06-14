@@ -3,7 +3,6 @@
     'darkMode' => false,
     'detail' => null,
     'icon' => null,
-    'keyBindings' => null,
     'tag' => 'button',
     'type' => 'button',
 ])

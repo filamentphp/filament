@@ -347,16 +347,15 @@ class Select extends Field
         return $this->searchColumns;
     }
 
-    public function getSearchResults(string $search): array
+    public function getSearchResults(string $searchQuery): array
     {
         if (! $this->getSearchResultsUsing) {
             return [];
         }
 
         $results = $this->evaluate($this->getSearchResultsUsing, [
-            'query' => $search,
-            'search' => $search,
-            'searchQuery' => $search,
+            'query' => $searchQuery,
+            'searchQuery' => $searchQuery,
         ]);
 
         if ($results instanceof Arrayable) {

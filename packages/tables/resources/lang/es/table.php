@@ -59,6 +59,20 @@ return [
 
     ],
 
+    'actions' => [
+
+        'replicate' => [
+
+            'label' => 'Repetir',
+
+            'messages' => [
+                'replicated' => 'Registro replicado',
+            ],
+
+        ],
+
+    ],
+
     'empty' => [
         'heading' => 'No se encontraron registros',
     ],

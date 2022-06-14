@@ -8,17 +8,17 @@ use Livewire\Component;
 
 class GlobalSearch extends Component
 {
-    public $search = '';
+    public $searchQuery = '';
 
     public function getResults(): ?GlobalSearchResults
     {
-        $search = trim($this->search);
+        $searchQuery = trim($this->searchQuery);
 
-        if (blank($search)) {
+        if ($searchQuery === '') {
             return null;
         }
 
-        $results = Filament::getGlobalSearchProvider()->getResults($this->search);
+        $results = Filament::getGlobalSearchProvider()->getResults($this->searchQuery);
 
         if ($results === null) {
             return $results;

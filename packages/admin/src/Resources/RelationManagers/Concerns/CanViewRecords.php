@@ -2,19 +2,15 @@
 
 namespace Filament\Resources\RelationManagers\Concerns;
 
+use Filament\Facades\Filament;
 use Filament\Tables;
+use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
 use Illuminate\Database\Eloquent\Model;
 
 trait CanViewRecords
 {
-    /**
-     * @deprecated Actions are no longer pre-defined.
-     */
     protected static bool $hasViewAction = false;
 
-    /**
-     * @deprecated Actions are no longer pre-defined.
-     */
     protected function hasViewAction(): bool
     {
         return static::$hasViewAction;
@@ -25,9 +21,11 @@ trait CanViewRecords
         return $this->hasViewAction() && $this->can('view', $record);
     }
 
-    /**
-     * @deprecated Use `->mountUsing()` on the action instead.
-     */
+    protected function getViewFormSchema(): array
+    {
+        return $this->getResourceForm(columns: 2, isDisabled: true)->getSchema();
+    }
+
     protected function fillViewForm(): void
     {
         $this->callHook('beforeFill');
@@ -41,12 +39,23 @@ trait CanViewRecords
         $this->callHook('afterViewFill');
     }
 
-    /**
-     * @deprecated Actions are no longer pre-defined.
-     */
-    protected function getViewAction(): Tables\Actions\Action
+    protected function getViewAction(): ?Tables\Actions\Action
     {
-        return Tables\Actions\ViewAction::make()
-            ->mountUsing(fn () => $this->fillViewForm());
+        return Filament::makeTableAction('view')
+            ->label(__('filament::resources/relation-managers/view.action.label'))
+            ->form($this->getViewFormSchema())
+            ->mountUsing(fn () => $this->fillViewForm())
+            ->modalCancelAction(
+                ModalAction::make('close')
+                    ->label(__('filament::resources/relation-managers/view.action.modal.actions.close.label'))
+                    ->cancel()
+                    ->color('secondary'),
+            )
+            ->modalActions(fn (Tables\Actions\Action $action): array => [$action->getModalCancelAction()])
+            ->modalHeading(__('filament::resources/relation-managers/view.action.modal.heading', ['label' => static::getRecordLabel()]))
+            ->action(function () {
+            })
+            ->icon('heroicon-s-eye')
+            ->hidden(fn (Model $record): bool => ! static::canView($record));
     }
 }
