@@ -12004,10 +12004,10 @@ var date_time_picker_default = (Alpine) => {
             return;
           }
           let date2 = this.getSelectedDate();
-          if (this.getMaxDate() !== null && date2.isAfter(this.getMaxDate())) {
+          if (this.getMaxDate() !== null && date2?.isAfter(this.getMaxDate())) {
             date2 = null;
           }
-          if (this.getMinDate() !== null && date2.isBefore(this.getMinDate())) {
+          if (this.getMinDate() !== null && date2?.isBefore(this.getMinDate())) {
             date2 = null;
           }
           const newHour = date2?.hour() ?? 0;

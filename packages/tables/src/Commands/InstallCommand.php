@@ -35,7 +35,7 @@ class InstallCommand extends Command
 
         $configurationKey = $dev ? 'devDependencies' : 'dependencies';
 
-        $packages = json_decode(file_get_contents(base_path('package.json')), true);
+        $packages = json_decode(file_get_contents(base_path('package.json')), associative: true);
 
         $packages[$configurationKey] = static::updateNpmPackageArray(
             array_key_exists($configurationKey, $packages) ? $packages[$configurationKey] : []

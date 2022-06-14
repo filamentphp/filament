@@ -5,31 +5,20 @@ namespace Filament\Tables\Actions;
 use Closure;
 use Filament\Support\Actions\Action as BaseAction;
 use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
+use Illuminate\Database\Eloquent\Collection;
 
 class BulkAction extends BaseAction
 {
     use Concerns\BelongsToTable;
     use Concerns\CanDeselectRecordsAfterCompletion;
-    use Concerns\HasRecords;
+    use Concerns\InteractsWithRecords;
 
     protected string $view = 'tables::actions.bulk-action';
 
-    public function call(array $data = [])
+    public function call(array $parameters = [])
     {
-        if ($this->isHidden()) {
-            return;
-        }
-
-        $action = $this->getAction();
-
-        if (! $action) {
-            return;
-        }
-
         try {
-            return $this->evaluate($action, [
-                'data' => $data,
-            ]);
+            return $this->evaluate($this->getAction(), $parameters);
         } finally {
             if ($this->shouldDeselectRecordsAfterCompletion()) {
                 $this->getLivewire()->deselectAllTableRecords();
@@ -48,7 +37,7 @@ class BulkAction extends BaseAction
         return $action;
     }
 
-    protected function getLivewireSubmitActionName(): string
+    protected function getLivewireCallActionName(): string
     {
         return 'callMountedTableBulkAction';
     }
@@ -69,7 +58,17 @@ class BulkAction extends BaseAction
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [
-            'records' => $this->getRecords(),
+            'records' => $this->resolveEvaluationParameter(
+                'records',
+                fn (): Collection => $this->getRecords(),
+            ),
         ]);
+    }
+
+    protected function parseAuthorizationArguments(array $arguments): array
+    {
+        array_unshift($arguments, $this->getLivewire()->getTableModel());
+
+        return $arguments;
     }
 }

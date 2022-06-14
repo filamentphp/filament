@@ -59,20 +59,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'replicate' => [
-
-            'label' => 'Powiel',
-
-            'messages' => [
-                'replicated' => 'Rekord powielony',
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'Nie znaleziono wyników',
     ],

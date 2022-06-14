@@ -8,5 +8,5 @@ class MakeHasManyThroughCommand extends Commands\MakeHasManyThroughCommand
 {
     protected $hidden = true;
 
-    protected $signature = 'filament:has-many-through {resource?} {relationship?} {recordTitleAttribute?} {--F|force}';
+    protected $signature = 'filament:has-many-through {resource?} {relationship?} {recordTitleAttribute?} {--attach} {--associate} {--soft-deletes} {--view} {--F|force}';
 }

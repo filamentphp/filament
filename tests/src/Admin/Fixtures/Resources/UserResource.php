@@ -49,6 +49,13 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('posts_sum_rating')
                     ->sum('posts', 'rating')
                     ->label('Posts Rating Sum'),
+            ])
+            ->actions([
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 

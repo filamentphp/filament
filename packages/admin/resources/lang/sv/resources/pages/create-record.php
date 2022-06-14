@@ -2,7 +2,9 @@
 
 return [
 
-    'breadcrumb' => 'Skapa ny',
+    'title' => 'Skapa :label',
+
+    'breadcrumb' => 'Skapa',
 
     'form' => [
 
@@ -13,11 +15,11 @@ return [
             ],
 
             'create' => [
-                'label' => 'Skapa ny',
+                'label' => 'Skapa',
             ],
 
-            'create_and_create_another' => [
-                'label' => 'Skapa ny & skapa ny igen',
+            'create_another' => [
+                'label' => 'Skapa & skapa en till',
             ],
 
         ],

@@ -29,6 +29,11 @@ trait InteractsWithTableQuery
         return $query;
     }
 
+    public function applyToBaseQuery(Builder $query, array $data = []): Builder
+    {
+        return $query;
+    }
+
     public function query(?Closure $callback): static
     {
         $this->modifyQueryUsing = $callback;

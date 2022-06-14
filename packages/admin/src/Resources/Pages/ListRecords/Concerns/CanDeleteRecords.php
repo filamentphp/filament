@@ -2,32 +2,34 @@
 
 namespace Filament\Resources\Pages\ListRecords\Concerns;
 
-use Filament\Facades\Filament;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
+/**
+ * @deprecated You may add a `DeleteAction` to the resource table.
+ */
 trait CanDeleteRecords
 {
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function hasDeleteAction(): bool
     {
         return true;
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getDeleteAction(): Tables\Actions\Action
     {
-        $resource = static::getResource();
-
-        return Filament::makeTableAction('delete')
-            ->label(__('filament::resources/pages/list-records.table.actions.delete.label'))
-            ->requiresConfirmation()
-            ->modalHeading(fn (Model $record) => __('filament::resources/pages/list-records.table.actions.delete.modal.heading', ['label' => $resource::hasRecordTitle() ? $resource::getRecordTitle($record) : Str::title($resource::getLabel())]))
-            ->action(fn () => $this->delete())
-            ->color('danger')
-            ->icon('heroicon-s-trash')
-            ->hidden(fn (Model $record): bool => ! $resource::canDelete($record));
+        return Tables\Actions\DeleteAction::make()
+            ->action(fn () => $this->delete());
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function delete(): void
     {
         $this->callHook('beforeDelete');
@@ -41,11 +43,17 @@ trait CanDeleteRecords
         }
     }
 
+    /**
+     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     */
     protected function getDeletedNotificationMessage(): ?string
     {
-        return __('filament::resources/pages/list-records.table.actions.delete.messages.deleted');
+        return __('filament-support::actions/delete.single.messages.deleted');
     }
 
+    /**
+     * @deprecated Use `->using()` on the action instead.
+     */
     protected function handleRecordDeletion(Model $record): void
     {
         $record->delete();
