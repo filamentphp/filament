@@ -4,14 +4,16 @@
 ])
 
 @php
-    $wireClickAction = $action->getAction() ? "mountFormComponentAction('{$action->getComponent()->getStatePath()}', '{$action->getName()}')" : null;
+    $wireClickAction = ($action->getAction() && (! $action->getUrl())) ?
+        "mountFormComponentAction('{$action->getComponent()->getStatePath()}', '{$action->getName()}')" :
+        null;
 @endphp
 
 <x-dynamic-component
     :component="$component"
     :dark-mode="config('forms.dark_mode')"
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes())"
-    :tag="((! $action->getAction()) && $url) ? 'a' : 'button'"
+    :tag="$action->getUrl() ? 'a' : 'button'"
     :wire:click="$action->isEnabled() ? $wireClickAction : null"
     :href="$action->isEnabled() ? $action->getUrl() : null"
     :tooltip="$action->getTooltip()"

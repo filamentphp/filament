@@ -8,5 +8,5 @@ class MakeMorphToManyCommand extends Commands\MakeMorphToManyCommand
 {
     protected $hidden = true;
 
-    protected $signature = 'filament:morph-to-many {resource?} {relationship?} {recordTitleAttribute?} {--F|force}';
+    protected $signature = 'filament:morph-to-many {resource?} {relationship?} {recordTitleAttribute?} {--attach} {--associate} {--soft-deletes} {--view} {--F|force}';
 }

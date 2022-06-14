@@ -2,39 +2,35 @@
 
 namespace Filament\Resources\Pages\ListRecords\Concerns;
 
-use Filament\Resources\Pages\Concerns\UsesResourceForm;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
+/**
+ * @deprecated Deleting the Edit page now opens the action in a modal.
+ */
 trait CanEditRecords
 {
-    use UsesResourceForm;
-
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function hasEditAction(): bool
     {
         return true;
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getEditAction(): Tables\Actions\Action
     {
-        $resource = static::getResource();
-
         return parent::getEditAction()
-            ->url(null)
-            ->form($this->getEditFormSchema())
             ->mountUsing(fn () => $this->fillEditForm())
-            ->modalButton(__('filament::resources/pages/list-records.table.actions.edit.modal.actions.save.label'))
-            ->modalHeading(fn (Model $record) => __('filament::resources/pages/list-records.table.actions.edit.modal.heading', ['label' => $resource::hasRecordTitle() ? $resource::getRecordTitle($record) : Str::title($resource::getLabel())]))
-            ->action(fn () => $this->save())
-            ->hidden(fn (Model $record) => ! $resource::canEdit($record));
+            ->action(fn () => $this->save());
     }
 
-    protected function getEditFormSchema(): array
-    {
-        return $this->getResourceForm(columns: 2)->getSchema();
-    }
-
+    /**
+     * @deprecated Use `->mountUsing()` on the action instead.
+     */
     protected function fillEditForm(): void
     {
         $this->callHook('beforeFill');
@@ -50,11 +46,17 @@ trait CanEditRecords
         $this->callHook('afterEditFill');
     }
 
+    /**
+     * @deprecated Use `->mutateRecordDataUsing()` on the action instead.
+     */
     protected function mutateFormDataBeforeFill(array $data): array
     {
         return $data;
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function save(): void
     {
         $this->callHook('beforeValidate');
@@ -78,11 +80,17 @@ trait CanEditRecords
         }
     }
 
+    /**
+     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     */
     protected function getSavedNotificationMessage(): ?string
     {
-        return __('filament::resources/pages/list-records.table.actions.edit.messages.saved');
+        return __('filament-support::actions/edit.single.messages.saved');
     }
 
+    /**
+     * @deprecated Use `->using()` on the action instead.
+     */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         $record->update($data);
@@ -90,6 +98,9 @@ trait CanEditRecords
         return $record;
     }
 
+    /**
+     * @deprecated Use `->mutateFormDataUsing()` on the action instead.
+     */
     protected function mutateFormDataBeforeSave(array $data): array
     {
         return $data;

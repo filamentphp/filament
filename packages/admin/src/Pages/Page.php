@@ -142,9 +142,9 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
         return static::getUrl();
     }
 
-    protected function getActions(): array | View | null
+    protected function getActions(): array
     {
-        return null;
+        return [];
     }
 
     protected function getFooter(): ?View

@@ -2,6 +2,9 @@
 
 namespace Filament\Resources;
 
+use Filament\Tables\Actions\ActionGroup;
+use Illuminate\Support\Arr;
+
 class Table
 {
     protected array $actions = [];
@@ -29,9 +32,9 @@ class Table
         return app(static::class);
     }
 
-    public function actions(array $actions): static
+    public function actions(array | ActionGroup $actions): static
     {
-        $this->actions = $actions;
+        $this->actions = Arr::wrap($actions);
 
         return $this;
     }
@@ -73,9 +76,9 @@ class Table
         return $this;
     }
 
-    public function headerActions(array $actions): static
+    public function headerActions(array | ActionGroup $actions): static
     {
-        $this->headerActions = $actions;
+        $this->headerActions = Arr::wrap($actions);
 
         return $this;
     }

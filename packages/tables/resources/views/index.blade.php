@@ -226,8 +226,8 @@
             @if ($header)
                 {{ $header }}
             @elseif ($heading || $headerActions)
-                <div class="px-2 pt-2 space-y-2">
-                    <x-tables::header :actions="$headerActions">
+                <div class="px-2 pt-2">
+                    <x-tables::header :actions="$headerActions" class="mb-2">
                         <x-slot name="heading">
                             {{ $heading }}
                         </x-slot>
@@ -242,8 +242,8 @@
             @endif
 
             @if ($hasFiltersAboveContent)
-                <div class="px-2 pt-2 space-y-2">
-                    <div class="p-4">
+                <div class="px-2 pt-2">
+                    <div class="p-4 mb-2">
                         <x-tables::filters :form="$getFiltersForm()" />
                     </div>
 
@@ -365,7 +365,7 @@
                             @php
                                 $recordUrl = $getRecordUrl($record);
                             @endphp
-                            
+
                             <x-tables::row
                                 :record-url="$recordUrl"
                                 wire:key="{{ $this->getTableRecordKey($record) }}"

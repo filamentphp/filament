@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 
 interface HasTable extends HasForms
 {
+    public function allowsDuplicates(): bool;
+
     public function callTableColumnAction(string $columnName, string $recordKey);
 
     public function deselectAllTableRecords(): void;
@@ -44,6 +46,8 @@ interface HasTable extends HasForms
 
     public function getTableFiltersForm(): ComponentContainer;
 
+    public function getTableModel(): string;
+
     public function getTableRecords(): Collection | Paginator;
 
     public function getTableSortColumn(): ?string;
@@ -63,4 +67,12 @@ interface HasTable extends HasForms
     public function getTableColumnToggleForm(): ComponentContainer;
 
     public function getTableRecordKey(Model $record): string;
+
+    public function getTableRecordTitle(Model $record): string;
+
+    public function getTablePluralModelLabel(): string;
+
+    public function getTableModelLabel(): string;
+
+    public function mountedTableActionRecord($record): void;
 }

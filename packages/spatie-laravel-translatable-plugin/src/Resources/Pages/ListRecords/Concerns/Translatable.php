@@ -2,14 +2,14 @@
 
 namespace Filament\Resources\Pages\ListRecords\Concerns;
 
-use Filament\Resources\Pages\Concerns\HasActiveLocaleSelect;
+use Filament\Resources\Pages\Concerns\HasActiveLocaleSwitcher;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 trait Translatable
 {
-    use HasActiveLocaleSelect;
+    use HasActiveLocaleSwitcher;
 
     public function mount(): void
     {

@@ -153,6 +153,25 @@ Action::make('delete')
     ->modalButton('Yes, delete them')
 ```
 
+## Grouping
+
+You may use an `ActionGroup` object to group multiple actions together in a dropdown:
+
+```php
+use Filament\Pages\Actions;
+
+protected function getActions(): array
+{
+    return [
+        Actions\ActionGroup::make([
+            Actions\ViewAction::make(),
+            Actions\EditAction::make(),
+            Actions\DeleteAction::make(),
+        ]),
+    ];
+}
+```
+
 ## Keybindings
 
 You can attach keyboard shortcuts to actions. These use the same key codes as [Mousetrap](https://craig.is/killing/mice):

@@ -6,12 +6,4 @@ return [
 
     'breadcrumb' => 'Перегляд',
 
-    'actions' => [
-
-        'edit' => [
-            'label' => 'Змінити',
-        ],
-
-    ],
-
 ];
