@@ -362,8 +362,12 @@
                         @endif
 
                         @foreach ($records as $record)
+                            @php
+                                $recordUrl = $getRecordUrl($record);
+                            @endphp
+                            
                             <x-tables::row
-                                :record-url="$getRecordUrl($record)"
+                                :record-url="$recordUrl"
                                 wire:key="{{ $this->getTableRecordKey($record) }}"
                                 x-bind:class="{
                                     'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $this->getTableRecordKey($record) }}'),
@@ -392,7 +396,7 @@
                                         :record="$record"
                                         :tooltip="$column->getTooltip()"
                                         :record-action="$getRecordAction()"
-                                        :record-url="$getRecordUrl($record)"
+                                        :record-url="$recordUrl"
                                         :should-open-url-in-new-tab="$column->shouldOpenUrlInNewTab()"
                                         :url="$column->getUrl()"
                                         :class="$getHiddenClasses($column)"
