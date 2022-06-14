@@ -13,7 +13,7 @@ return [
             'fields' => [
 
                 'record_ids' => [
-                    'label' => 'Poster',
+                    'label' => 'Rader',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'attached' => 'Attached',
+            'attached' => 'Kopplat',
         ],
 
     ],
