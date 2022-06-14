@@ -265,6 +265,18 @@ BulkAction::make('delete')
     ->modalButton('Yes, delete them')
 ```
 
+## Custom content
+
+You may define custom content to be rendered inside your modal, which you can specify by passing a Blade view into the `modalContent()` method:
+
+```php
+use Filament\Tables\Actions\BulkAction;
+
+BulkAction::make('advance')
+    ->action(fn () => $this->record->advance())
+    ->modalContent(view('filament.resources.event.actions.advance'))
+```
+
 ## Authorization
 
 You may conditionally show or hide actions and bulk actions for certain users using either the `visible()` or `hidden()` methods, passing a closure:
