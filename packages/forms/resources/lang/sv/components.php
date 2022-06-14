@@ -76,15 +76,15 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'Lägg till filer',
-            'bold' => 'Fetstil',
+            'bold' => 'Fet',
             'bullet_list' => 'Punktlista',
-            'code_block' => 'Kodblock',
+            'code_block' => 'Kod',
             'edit' => 'Skriv',
             'italic' => 'Kursiv',
             'link' => 'Länk',
             'ordered_list' => 'Nummerlista',
             'preview' => 'Förhandsgranska',
-            'strike' => 'Överstruken',
+            'strike' => 'Genomstruken',
         ],
 
     ],
@@ -153,7 +153,7 @@ return [
         'toolbar_buttons' => [
             'attach_files' => 'Lägg till filer',
             'blockquote' => 'Citat',
-            'bold' => 'Fetstil',
+            'bold' => 'Fet',
             'bullet_list' => 'Punktlista',
             'code_block' => 'Kod',
             'h1' => 'Titel',
@@ -163,7 +163,7 @@ return [
             'link' => 'Länk',
             'ordered_list' => 'Nummerlista',
             'redo' => 'Gör om',
-            'strike' => 'Överstruken',
+            'strike' => 'Genomstruken',
             'undo' => 'Ångra',
         ],
 
