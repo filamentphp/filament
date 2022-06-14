@@ -219,10 +219,10 @@ export default (Alpine) => {
 
                     let date = this.getSelectedDate()
 
-                    if (this.getMaxDate() !== null && date.isAfter(this.getMaxDate())) {
+                    if (this.getMaxDate() !== null && date?.isAfter(this.getMaxDate())) {
                         date = null
                     }
-                    if (this.getMinDate() !== null && date.isBefore(this.getMinDate())) {
+                    if (this.getMinDate() !== null && date?.isBefore(this.getMinDate())) {
                         date = null
                     }
 

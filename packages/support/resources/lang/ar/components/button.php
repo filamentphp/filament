@@ -3,9 +3,7 @@
 return [
 
     'messages' => [
-
-        'uploading_file' => 'جاري رفع الملف ...',
-
+        'uploading_file' => 'جاري رفع الملف...',
     ],
 
 ];

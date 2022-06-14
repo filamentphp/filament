@@ -6,12 +6,4 @@ return [
 
     'breadcrumb' => '詳細',
 
-    'actions' => [
-
-        'edit' => [
-            'label' => '編集',
-        ],
-
-    ],
-
 ];

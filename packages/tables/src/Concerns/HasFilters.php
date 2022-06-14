@@ -69,6 +69,13 @@ trait HasFilters
     {
         $data = $this->getTableFiltersForm()->getState();
 
+        foreach ($this->getCachedTableFilters() as $filter) {
+            $filter->applyToBaseQuery(
+                $query,
+                $data[$filter->getName()] ?? [],
+            );
+        }
+
         return $query->where(function (Builder $query) use ($data) {
             foreach ($this->getCachedTableFilters() as $filter) {
                 $filter->apply(

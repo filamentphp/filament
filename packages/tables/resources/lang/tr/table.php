@@ -59,20 +59,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'replicate' => [
-
-            'label' => 'Çoğalt',
-
-            'messages' => [
-                'replicated' => 'Kayıt çoğaltıldı',
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'Kayıt bulunamadı',
     ],

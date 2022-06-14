@@ -2,6 +2,9 @@
 
 namespace Filament\Resources;
 
+use Filament\Tables\Actions\ActionGroup;
+use Illuminate\Support\Arr;
+
 class Table
 {
     protected array $actions = [];
@@ -29,9 +32,9 @@ class Table
         return app(static::class);
     }
 
-    public function actions(array $actions): static
+    public function actions(array | ActionGroup $actions): static
     {
-        $this->actions = $actions;
+        $this->actions = Arr::wrap($actions);
 
         return $this;
     }
@@ -73,9 +76,9 @@ class Table
         return $this;
     }
 
-    public function headerActions(array $actions): static
+    public function headerActions(array | ActionGroup $actions): static
     {
-        $this->headerActions = $actions;
+        $this->headerActions = Arr::wrap($actions);
 
         return $this;
     }
@@ -101,23 +104,53 @@ class Table
         return $this;
     }
 
-    public function pushActions(array $actions): static
+    public function appendActions(array $actions): static
     {
         $this->actions = array_merge($this->actions, $actions);
 
         return $this;
     }
 
-    public function pushBulkActions(array $actions): static
+    public function appendBulkActions(array $actions): static
     {
         $this->bulkActions = array_merge($this->bulkActions, $actions);
 
         return $this;
     }
 
-    public function pushHeaderActions(array $actions): static
+    public function appendHeaderActions(array $actions): static
     {
         $this->headerActions = array_merge($this->headerActions, $actions);
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `appendActions()` instead.
+     */
+    public function pushActions(array $actions): static
+    {
+        $this->appendActions($actions);
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `appendBulkActions()` instead.
+     */
+    public function pushBulkActions(array $actions): static
+    {
+        $this->appendBulkActions($actions);
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `appendHeaderActions()` instead.
+     */
+    public function pushHeaderActions(array $actions): static
+    {
+        $this->appendHeaderActions($actions);
 
         return $this;
     }
