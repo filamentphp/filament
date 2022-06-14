@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Usuń',
+        'label' => 'Usuń trwale',
 
         'modal' => [
 
-            'heading' => 'Usuń :label',
+            'heading' => 'Trwale usuń :label',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Usuń',
+                    'label' => 'Usuń trwale',
                 ],
 
             ],
@@ -21,23 +21,23 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Rekord usunięty',
+            'deleted' => 'Rekord trwale usunięty',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Usuń zaznaczone',
+        'label' => 'Trwale usuń zaznaczone',
 
         'modal' => [
 
-            'heading' => 'Usuń zaznaczone :label',
+            'heading' => 'Trwale usuń zaznaczone :label',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Usuń zaznaczone',
+                    'label' => 'Usuń trwale',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Rekordy usunięte',
+            'deleted' => 'Rekordy trwale usunięte',
         ],
 
     ],

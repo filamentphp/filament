@@ -21,7 +21,7 @@ return [
         ],
 
         'messages' => [
-            'detached' => 'Odłączono',
+            'detached' => 'Rekord odłączony',
         ],
 
     ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'detached' => 'Odłączono',
+            'detached' => 'Rekordy odłączone',
         ],
 
     ],

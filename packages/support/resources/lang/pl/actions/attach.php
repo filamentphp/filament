@@ -25,7 +25,7 @@ return [
                 ],
 
                 'attach_another' => [
-                    'label' => 'Dołącz i dołącz kolejny',
+                    'label' => 'Dołącz i kontynuuj',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'attached' => 'Dołączono',
+            'attached' => 'Rekord dołączony',
         ],
 
     ],

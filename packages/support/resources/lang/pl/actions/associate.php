@@ -25,7 +25,7 @@ return [
                 ],
 
                 'associate_another' => [
-                    'label' => 'Powiąż i powiąż kolejny',
+                    'label' => 'Powiąż i kontynuuj',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'associated' => 'Powiązano',
+            'associated' => 'Utworzono powiązanie',
         ],
 
     ],

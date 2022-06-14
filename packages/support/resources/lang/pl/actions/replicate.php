@@ -6,6 +6,20 @@ return [
 
         'label' => 'Powiel',
 
+        'modal' => [
+
+            'heading' => 'Powiel :label',
+
+            'actions' => [
+
+                'replicate' => [
+                    'label' => 'Powiel',
+                ],
+
+            ],
+
+        ],
+
         'messages' => [
             'replicated' => 'Rekord powielony',
         ],

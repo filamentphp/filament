@@ -19,7 +19,7 @@ return [
             ],
 
             'create_another' => [
-                'label' => 'Utwórz i dodaj kolejny',
+                'label' => 'Utwórz i kontynuuj',
             ],
 
         ],
@@ -27,7 +27,7 @@ return [
     ],
 
     'messages' => [
-        'created' => 'Utworzono',
+        'created' => 'Rekord utworzony',
     ],
 
 ];

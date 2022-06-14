@@ -17,7 +17,7 @@ return [
                 ],
 
                 'create_another' => [
-                    'label' => 'Utwórz i utwórz kolejny',
+                    'label' => 'Utwórz i kontynuuj',
                 ],
 
             ],
@@ -25,7 +25,7 @@ return [
         ],
 
         'messages' => [
-            'created' => 'Utworzono',
+            'created' => 'Rekord utworzony',
         ],
 
     ],
