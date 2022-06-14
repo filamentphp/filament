@@ -84,9 +84,11 @@
             label: {{ \Illuminate\Support\Js::from($slot->toHtml()) }},
             isUploadingFile: false,
         }"
-        @unless ($disabled)
+        @if ($disabled)
+            x-bind:class="{ 'opacity-70': disable }"
+        @else
             x-bind:class="{ 'opacity-70 cursor-wait': isUploadingFile }"
-        @endunless
+        @endif
         x-bind:disabled="isUploadingFile"
         x-init="
             form = $el.closest('form')
