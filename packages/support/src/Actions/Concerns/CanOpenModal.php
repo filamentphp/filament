@@ -4,6 +4,7 @@ namespace Filament\Support\Actions\Concerns;
 
 use Closure;
 use Filament\Support\Actions\Modal\Actions\Action as ModalAction;
+use Illuminate\Contracts\View\View;
 
 trait CanOpenModal
 {
@@ -18,6 +19,8 @@ trait CanOpenModal
     protected ModalAction | Closure | null $modalSubmitAction = null;
 
     protected string | Closure | null $modalButtonLabel = null;
+
+    protected View | Closure | null $modalContent = null;
 
     protected string | Closure | null $modalHeading = null;
 
@@ -63,6 +66,13 @@ trait CanOpenModal
     public function modalButton(string | Closure | null $label = null): static
     {
         $this->modalButtonLabel = $label;
+
+        return $this;
+    }
+
+    public function modalContent(View | Closure | null $content = null): static
+    {
+        $this->modalContent = $content;
 
         return $this;
     }
@@ -158,6 +168,11 @@ trait CanOpenModal
         return __('filament-support::actions/modal.actions.submit.label');
     }
 
+    public function getModalContent(): ?View
+    {
+        return $this->evaluate($this->modalContent);
+    }
+
     public function getModalHeading(): string
     {
         return $this->evaluate($this->modalHeading) ?? $this->getLabel();
@@ -204,7 +219,7 @@ trait CanOpenModal
 
     public function shouldOpenModal(): bool
     {
-        return $this->isConfirmationRequired() || $this->hasFormSchema();
+        return $this->isConfirmationRequired() || $this->hasFormSchema() || $this->getModalContent();
     }
 
     protected function makeExtraModalAction(string $name, ?array $arguments = null): ModalAction

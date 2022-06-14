@@ -489,6 +489,8 @@
                     </x-slot>
                 @endif
 
+                {{ $action->getModalContent() }}
+
                 @if ($action->hasFormSchema())
                     {{ $getMountedActionForm() }}
                 @endif
@@ -530,6 +532,8 @@
                         </x-tables::modal.heading>
                     </x-slot>
                 @endif
+
+                {{ $action->getModalContent() }}
 
                 @if ($action->hasFormSchema())
                     {{ $getMountedBulkActionForm() }}

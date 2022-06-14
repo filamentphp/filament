@@ -23,6 +23,8 @@
                 </x-slot>
             @endif
 
+            {{ $action->getModalContent() }}
+
             {{ $this->getMountedFormComponentActionForm() }}
 
             @if (count($action->getModalActions()))
