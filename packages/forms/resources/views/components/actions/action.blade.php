@@ -4,7 +4,7 @@
 ])
 
 @php
-    $wireClickAction = ((! $action->getAction()) || $action->getUrl()) ?
+    $wireClickAction = ($action->getAction() && (! $action->getUrl())) ?
         "mountFormComponentAction('{$action->getComponent()->getStatePath()}', '{$action->getName()}')" :
         null;
 @endphp
