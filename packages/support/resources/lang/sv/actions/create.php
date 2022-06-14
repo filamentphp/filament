@@ -4,20 +4,20 @@ return [
 
     'single' => [
 
-        'label' => 'Skapa ny',
+        'label' => 'Ny :label',
 
         'modal' => [
 
-            'heading' => 'Skapa ny :label',
+            'heading' => 'Skapa :label',
 
             'actions' => [
 
                 'create' => [
-                    'label' => 'Skapa ny',
+                    'label' => 'Skapa',
                 ],
 
                 'create_another' => [
-                    'label' => 'Skapa ny & skapa ny igen',
+                    'label' => 'Skapa & skapa en till',
                 ],
 
             ],

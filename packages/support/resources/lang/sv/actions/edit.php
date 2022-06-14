@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'Ändra',
+        'label' => 'Redigera',
 
         'modal' => [
 
-            'heading' => 'Ändra :label',
+            'heading' => 'Redigera :label',
 
             'actions' => [
 
@@ -21,7 +21,7 @@ return [
         ],
 
         'messages' => [
-            'saved' => 'Sparat',
+            'saved' => 'Sparad',
         ],
 
     ],
