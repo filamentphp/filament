@@ -73,6 +73,7 @@ class MakePageCommand extends Command
                 ->replace('\\', '/')
                 ->append('.php'),
         );
+
         $viewPath = resource_path(
             (string) Str::of($view)
                 ->replace('.', '/')
@@ -92,7 +93,7 @@ class MakePageCommand extends Command
         if ($resource === null) {
             $this->copyStubToApp('Page', $path, [
                 'class' => $pageClass,
-                'namespace' => 'App\\Filament\\Pages' . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'namespace' => config('filament.pages.namespace') . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
                 'view' => $view,
             ]);
         } else {
