@@ -20,14 +20,14 @@
 >
     <div
         @class([
-            'flex items-center px-4 py-2 bg-gray-100 rtl:space-x-reverse overflow-hidden rounded-t-xl min-h-[56px]',
+            'flex items-center px-4 py-2 bg-gray-100 rtl:space-x-reverse overflow-hidden rounded-t-xl min-h-[56px] filament-forms-section-header-wrapper',
             'dark:bg-gray-900' => config('forms.dark_mode'),
         ])
         @if ($isCollapsible())
             x-bind:class="{ 'rounded-b-xl': isCollapsed }"
         @endif
     >
-        <div class="flex-1">
+        <div class="flex-1 filament-forms-section-header">
             <h3 class="text-xl font-bold tracking-tight">
                 {{ $getHeading() }}
             </h3>
@@ -63,8 +63,9 @@
             x-bind:aria-expanded="(! isCollapsed).toString()"
             @if ($isCollapsed()) x-cloak @endif
         @endif
+        class="filament-forms-section-content-wrapper"
     >
-        <div class="p-6">
+        <div class="p-6 filament-forms-section-content">
             {{ $getChildComponentContainer() }}
         </div>
     </div>
