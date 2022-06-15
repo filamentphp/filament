@@ -8,7 +8,7 @@ trait CanOpenUrl
 {
     protected bool | Closure $shouldOpenUrlInNewTab = false;
 
-    protected string | Closure | null $url = null;
+    protected string | Closure | false | null $url = null;
 
     public function openUrlInNewTab(bool | Closure $condition = true): static
     {
