@@ -26,7 +26,7 @@ trait HasActiveFormLocaleSwitcher
         $this->activeFormLocale = $this->activeLocale;
     }
 
-    protected function getRecordTitle(): ?string
+    public function getRecordTitle(): string
     {
         if ($this->activeFormLocale) {
             $this->record->setLocale($this->activeFormLocale);
