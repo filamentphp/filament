@@ -27,7 +27,7 @@
         x-transition
         x-cloak
         @class([
-            'absolute right-0 rtl:left-0 z-20 mt-4 shadow-xl ring-1 ring-gray-900/10 overflow-hidden rounded-xl w-52 filament-action-group-dropdown',
+            'absolute right-0 rtl:left-0 rtl:right-auto z-20 mt-4 shadow-xl ring-1 ring-gray-900/10 overflow-hidden rounded-xl w-52 filament-action-group-dropdown',
             'dark:ring-white/20' => $darkMode,
         ])
     >

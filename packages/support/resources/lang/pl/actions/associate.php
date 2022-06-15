@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'associated' => 'Powiązano',
+            'associated' => 'Utworzono powiązanie',
         ],
 
     ],

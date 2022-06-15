@@ -59,6 +59,31 @@ return [
 
     ],
 
+
+    'bulk_actions' => [
+
+        'force_delete' => [
+
+            'label' => 'Usuń trwale',
+
+            'messages' => [
+                'deleted' => 'Trwale usunięto',
+            ],
+
+        ],
+
+        'restore' => [
+
+            'label' => 'Przywróć',
+
+            'messages' => [
+                'restored' => 'Przywrócono',
+            ],
+
+        ],
+
+    ],
+
     'empty' => [
         'heading' => 'Nie znaleziono wyników',
     ],
@@ -83,6 +108,18 @@ return [
 
         'select' => [
             'placeholder' => 'Wszystkie',
+        ],
+
+        'trashed' => [
+
+            'label' => 'Usunięte rekordy',
+
+            'only_trashed' => 'Tylko usunięte rekordy',
+
+            'with_trashed' => 'Uwzględnij usunięte rekordy',
+
+            'without_trashed' => 'Bez usuniętych rekordów',
+
         ],
 
     ],

@@ -139,7 +139,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
      */
     protected function getBulkDeletedNotificationMessage(): ?string
     {
-        return __('filament::resources/pages/list-records.table.bulk_actions.delete.messages.deleted');
+        return __('filament-support::actions/delete.multiple.messages.deleted');
     }
 
     /**
