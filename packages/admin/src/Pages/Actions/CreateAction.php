@@ -50,7 +50,7 @@ class CreateAction extends Action
             if ($arguments['another'] ?? false) {
                 $this->callAfter();
                 $this->sendSuccessNotification();
-                
+
                 $this->record(null);
 
                 // Ensure that the form record is anonymized so that relationships aren't loaded.
