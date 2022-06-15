@@ -12,6 +12,7 @@ use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
 class Select extends Field
@@ -437,19 +438,31 @@ class Select extends Field
 
             $search = strtolower($search);
 
-            $relationshipQuery = $component->applySearchConstraint($relationshipQuery, $search)->limit(50);
+            /** @var Connection $databaseConnection */
+            $databaseConnection = $relationshipQuery->getConnection();
+
+            $searchOperator = match ($databaseConnection->getDriverName()) {
+                'pgsql' => 'ilike',
+                default => 'like',
+            };
+
+            $relationshipQuery = $relationshipQuery
+                ->where($component->getRelationshipTitleColumnName(), $searchOperator, "%{$search}%")
+                ->limit(50);
+
+            $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$relationship->getOwnerKeyName()} => $component->getOptionLabelFromRecord($record),
+                        $record->{$keyName} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
 
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleColumnName(), $relationship->getOwnerKeyName())
+                ->pluck($component->getRelationshipTitleColumnName(), $keyName)
                 ->toArray();
         });
 
@@ -468,17 +481,19 @@ class Select extends Field
                 ]);
             }
 
+            $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
+
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$relationship->getRelatedKeyName()} => $component->getOptionLabelFromRecord($record),
+                        $record->{$keyName} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
 
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleColumnName(), $relationship->getRelatedKeyName())
+                ->pluck($component->getRelationshipTitleColumnName(), $keyName)
                 ->toArray();
         });
 
@@ -488,6 +503,26 @@ class Select extends Field
             }
 
             $relationship = $component->getRelationship();
+
+            if ($component->isMultiple()) {
+                $relatedModels = $relationship->getResults();
+
+                $component->state(
+                    // Cast the related keys to a string, otherwise JavaScript does not
+                    // know how to handle deselection.
+                    //
+                    // https://github.com/laravel-filament/filament/issues/1111
+                    $relatedModels
+                        ->pluck($relationship->getRelatedKeyName())
+                        ->map(static fn ($key): string => strval($key))
+                        ->toArray(),
+                );
+
+                return;
+            }
+
+            /** @var BelongsTo $relationship */
+
             $relatedModel = $relationship->getResults();
 
             if (! $relatedModel) {
@@ -517,18 +552,49 @@ class Select extends Field
             return $record->getAttributeValue($component->getRelationshipTitleColumnName());
         });
 
+        $this->getOptionLabelsUsing(static function (Select $component, array $values): array {
+            $relationship = $component->getRelationship();
+            $relatedKeyName = $relationship->getRelatedKeyName();
+
+            $relationshipQuery = $relationship->getRelated()->query()
+                ->whereIn($relatedKeyName, $values);
+
+            if ($component->hasOptionLabelFromRecordUsingCallback()) {
+                return $relationshipQuery
+                    ->get()
+                    ->mapWithKeys(static fn (Model $record) => [
+                        $record->{$relatedKeyName} => $component->getOptionLabelFromRecord($record),
+                    ])
+                    ->toArray();
+            }
+
+            return $relationshipQuery
+                ->pluck($component->getRelationshipTitleColumnName(), $relatedKeyName)
+                ->toArray();
+        });
+
         $this->exists(
-            static fn (Select $component): string => $component->getRelationship()->getModel()::class,
+            static fn (Select $component): ?string => $component->isMultiple() ? null : $component->getRelationship()->getModel()::class,
             static fn (Select $component): string => $component->getRelationship()->getOwnerKeyName(),
         );
 
         $this->saveRelationshipsUsing(static function (Select $component, Model $record, $state) {
+            if ($component->isMultiple()) {
+                $component->getRelationship()->sync($state ?? []);
+
+                return;
+            }
+
             $component->getRelationship()->associate($state);
             $record->save();
         });
 
         $this->createOptionUsing(static function (Select $component, array $data) {
-            return $component->getRelationship()->create($data)->getKey();
+            $record = $component->getRelationship()->getRelated();
+            $record->fill($data);
+            $record->save();
+
+            return $record->getKey();
         });
 
         $this->dehydrated(fn (Select $component): bool => ! $component->isMultiple());
@@ -591,7 +657,7 @@ class Select extends Field
 
     public function getLabel(): string
     {
-        if ($this->label === null) {
+        if ($this->label === null && $this->getRelationship()) {
             return (string) Str::of($this->getRelationshipName())
                 ->before('.')
                 ->kebab()
@@ -602,12 +668,18 @@ class Select extends Field
         return parent::getLabel();
     }
 
-    public function getRelationship(): BelongsTo
+    public function getRelationship(): BelongsTo | BelongsToMany | null
     {
-        return $this->getModelInstance()->{$this->getRelationshipName()}();
+        $name = $this->getRelationshipName();
+
+        if (blank($name)) {
+            return null;
+        }
+
+        return $this->getModelInstance()->{$name}();
     }
 
-    public function getRelationshipName(): string
+    public function getRelationshipName(): ?string
     {
         return $this->evaluate($this->relationship);
     }

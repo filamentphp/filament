@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components;
 
+use App\Models\Plugin;
 use Closure;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -269,9 +270,9 @@ class Repeater extends Field
         return $this;
     }
 
-    public function relationship(string | Closure $name, ?Closure $callback = null): static
+    public function relationship(string | Closure | null $name, ?Closure $callback = null): static
     {
-        $this->relationship = $name;
+        $this->relationship = $name ?? $this->getName();
         $this->modifyRelationshipQueryUsing = $callback;
 
         return $this;
@@ -332,14 +333,20 @@ class Repeater extends Field
         return $this->evaluate($this->orderColumn);
     }
 
-    public function getRelationship(): HasOneOrMany
+    public function getRelationship(): ?HasOneOrMany
     {
-        return $this->getModelInstance()->{$this->getRelationshipName()}();
+        $name = $this->getRelationshipName();
+
+        if (blank($name)) {
+            return null;
+        }
+
+        return $this->getModelInstance()->{$name}();
     }
 
-    public function getRelationshipName(): string
+    public function getRelationshipName(): ?string
     {
-        return $this->evaluate($this->relationship) ?? $this->getName();
+        return $this->evaluate($this->relationship);
     }
 
     public function getCachedExistingRecords(): Collection
