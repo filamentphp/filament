@@ -380,6 +380,7 @@ AttachAction::make()->preloadRecordSelect()
 When you attach record with the `Attach` button, you may wish to define a custom form to add pivot attributes to the relationship:
 
 ```php
+use Filament\Forms;
 use Filament\Tables\Actions\AttachAction;
 
 AttachAction::make()

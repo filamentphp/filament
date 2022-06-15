@@ -32,7 +32,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Koppla loss :label',
+            'heading' => 'Koppla loss valda :label',
 
             'actions' => [
 

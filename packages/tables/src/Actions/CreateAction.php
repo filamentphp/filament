@@ -71,19 +71,23 @@ class CreateAction extends Action
                 return $record;
             });
 
+            $this->record($record);
             $form->model($record)->saveRelationships();
 
             $livewire->mountedTableActionRecord($record->getKey());
 
             if ($arguments['another'] ?? false) {
+                $this->callAfter();
+                $this->sendSuccessNotification();
+
+                $this->record(null);
+
                 // Ensure that the form record is anonymized so that relationships aren't loaded.
                 $form->model($model);
                 $livewire->mountedTableActionRecord(null);
 
                 $form->fill();
 
-                $this->sendSuccessNotification();
-                $this->callAfter();
                 $this->hold();
 
                 return;

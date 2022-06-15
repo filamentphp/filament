@@ -62,7 +62,7 @@ class ActionGroup extends ViewComponent
         }
 
         foreach ($this->getActions() as $action) {
-            if (! $action->isHidden()) {
+            if ($action->isHidden()) {
                 continue;
             }
 

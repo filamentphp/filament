@@ -44,16 +44,20 @@ class CreateAction extends Action
 
             $record = $this->process(fn (array $data): Model => $model::create($data));
 
+            $this->record($record);
             $form->model($record)->saveRelationships();
 
             if ($arguments['another'] ?? false) {
+                $this->callAfter();
+                $this->sendSuccessNotification();
+
+                $this->record(null);
+
                 // Ensure that the form record is anonymized so that relationships aren't loaded.
                 $form->model($model);
 
                 $form->fill();
 
-                $this->sendSuccessNotification();
-                $this->callAfter();
                 $this->hold();
 
                 return;

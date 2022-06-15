@@ -73,10 +73,11 @@ class AssociateAction extends Action
             });
 
             if ($arguments['another'] ?? false) {
+                $this->callAfter();
+                $this->sendSuccessNotification();
+
                 $form->fill();
 
-                $this->sendSuccessNotification();
-                $this->callAfter();
                 $this->hold();
 
                 return;
