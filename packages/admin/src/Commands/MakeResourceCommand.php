@@ -93,14 +93,14 @@ class MakeResourceCommand extends Command
 
         $relations = '';
 
-        if (! $this->option('simple')) {
+        if ($this->option('simple')) {
             $tableActions[] = 'Tables\Actions\DeleteAction::make(),';
 
             if ($this->option('soft-deletes')) {
                 $tableActions[] = 'Tables\Actions\ForceDeleteAction::make(),';
                 $tableActions[] = 'Tables\Actions\RestoreAction::make(),';
             }
-
+        } else {
             $relations .= PHP_EOL . 'public static function getRelations(): array';
             $relations .= PHP_EOL . '{';
             $relations .= PHP_EOL . '    return [';
