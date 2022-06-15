@@ -23,7 +23,7 @@ return [
     ],
 
     'messages' => [
-        'saved' => 'Zapisano',
+        'saved' => 'Zapisano zmiany',
     ],
 
 ];
