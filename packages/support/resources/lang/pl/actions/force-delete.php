@@ -21,7 +21,7 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Rekord trwale usunięty',
+            'deleted' => 'Trwale usunięto',
         ],
 
     ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Rekordy trwale usunięte',
+            'deleted' => 'Trwale usunięto',
         ],
 
     ],

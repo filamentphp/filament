@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'attached' => 'Rekord dołączony',
+            'attached' => 'Dołączono',
         ],
 
     ],

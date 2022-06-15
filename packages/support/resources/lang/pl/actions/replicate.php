@@ -21,7 +21,7 @@ return [
         ],
 
         'messages' => [
-            'replicated' => 'Rekord powielony',
+            'replicated' => 'Powielono',
         ],
 
     ],

@@ -21,7 +21,7 @@ return [
         ],
 
         'messages' => [
-            'restored' => 'Rekord przywrócony',
+            'restored' => 'Przywrócono',
         ],
 
     ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'restored' => 'Rekordy przywrócone',
+            'restored' => 'Przywrócono',
         ],
 
     ],

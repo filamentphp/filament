@@ -25,7 +25,7 @@ return [
         ],
 
         'messages' => [
-            'created' => 'Rekord utworzony',
+            'created' => 'Utworzono',
         ],
 
     ],

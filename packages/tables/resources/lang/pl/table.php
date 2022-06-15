@@ -67,7 +67,7 @@ return [
             'label' => 'Usuń trwale',
 
             'messages' => [
-                'deleted' => 'Rekordy trwale usunięte',
+                'deleted' => 'Trwale usunięto',
             ],
 
         ],
@@ -77,7 +77,7 @@ return [
             'label' => 'Przywróć',
 
             'messages' => [
-                'restored' => 'Rekordy przywrócone',
+                'restored' => 'Przywrócono',
             ],
 
         ],
