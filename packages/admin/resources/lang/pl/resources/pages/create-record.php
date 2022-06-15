@@ -19,7 +19,7 @@ return [
             ],
 
             'create_another' => [
-                'label' => 'Utwórz i kontynuuj',
+                'label' => 'Utwórz i utwórz kolejny',
             ],
 
         ],
