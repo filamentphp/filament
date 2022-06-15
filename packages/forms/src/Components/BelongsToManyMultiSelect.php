@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 class BelongsToManyMultiSelect extends MultiSelect
 {
-    protected string | Closure | null $titleColumnName = null;
+    protected string | Closure | null $relationshipTitleColumnName = null;
 
     protected ?Closure $getOptionLabelFromRecordUsing = null;
 
@@ -55,7 +55,7 @@ class BelongsToManyMultiSelect extends MultiSelect
             }
 
             return $relationshipQuery
-                ->pluck($component->getTitleColumnName(), $relatedKeyName)
+                ->pluck($component->getRelationshipTitleColumnName(), $relatedKeyName)
                 ->toArray();
         });
 
@@ -70,26 +70,14 @@ class BelongsToManyMultiSelect extends MultiSelect
 
             return $record->getKey();
         });
-
-        $this->dehydrated(false);
-    }
-
-    public function preload(bool | Closure $condition = true): static
-    {
-        $this->isPreloaded = $condition;
-
-        return $this;
     }
 
     public function relationship(string | Closure $relationshipName, string | Closure $titleColumnName, ?Closure $callback = null): static
     {
-        $this->titleColumnName = $titleColumnName;
-        $this->relationship = $relationshipName;
-
         $this->getSearchResultsUsing(static function (BelongsToManyMultiSelect $component, ?string $search) use ($callback): array {
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getTitleColumnName());
+            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getRelationshipTitleColumnName());
 
             if ($callback) {
                 $relationshipQuery = $component->evaluate($callback, [
@@ -108,7 +96,7 @@ class BelongsToManyMultiSelect extends MultiSelect
             };
 
             $relationshipQuery = $relationshipQuery
-                ->where($component->getTitleColumnName(), $searchOperator, "%{$search}%")
+                ->where($component->getRelationshipTitleColumnName(), $searchOperator, "%{$search}%")
                 ->limit(50);
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
@@ -121,7 +109,7 @@ class BelongsToManyMultiSelect extends MultiSelect
             }
 
             return $relationshipQuery
-                ->pluck($component->getTitleColumnName(), $relationship->getRelatedKeyName())
+                ->pluck($component->getRelationshipTitleColumnName(), $relationship->getRelatedKeyName())
                 ->toArray();
         });
 
@@ -132,7 +120,7 @@ class BelongsToManyMultiSelect extends MultiSelect
 
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getTitleColumnName());
+            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getRelationshipTitleColumnName());
 
             if ($callback) {
                 $relationshipQuery = $component->evaluate($callback, [
@@ -150,7 +138,7 @@ class BelongsToManyMultiSelect extends MultiSelect
             }
 
             return $relationshipQuery
-                ->pluck($component->getTitleColumnName(), $relationship->getRelatedKeyName())
+                ->pluck($component->getRelationshipTitleColumnName(), $relationship->getRelatedKeyName())
                 ->toArray();
         });
 
@@ -174,9 +162,9 @@ class BelongsToManyMultiSelect extends MultiSelect
         return $this->evaluate($this->getOptionLabelFromRecordUsing, ['record' => $record]);
     }
 
-    public function getTitleColumnName(): string
+    public function getRelationshipTitleColumnName(): string
     {
-        return $this->evaluate($this->titleColumnName);
+        return $this->evaluate($this->relationshipTitleColumnName);
     }
 
     public function getLabel(): string

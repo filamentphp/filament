@@ -5,10 +5,9 @@ namespace Filament\Forms\Components;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 
-class HasManyRepeater extends RelationshipRepeater
+/**
+ * @deprecated use Repeater with the `relationship()` method instead.
+ */
+class HasManyRepeater extends Repeater
 {
-    public function getRelationship(): HasMany | HasOneOrMany
-    {
-        return parent::getRelationship();
-    }
 }

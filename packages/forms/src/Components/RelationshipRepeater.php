@@ -10,16 +10,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Support\Str;
 
+/**
+ * @deprecated use Repeater with the `relationship()` method instead.
+ */
 class RelationshipRepeater extends Repeater
 {
-    protected ?Collection $cachedExistingRecords = null;
-
-    protected string | Closure | null $orderColumn = null;
-
-    protected string | Closure | null $relationship = null;
-
-    protected ?Closure $modifyRelationshipQueryUsing = null;
-
     protected function setUp(): void
     {
         parent::setUp();

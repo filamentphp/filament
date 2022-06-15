@@ -3,6 +3,9 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 use Filament\Forms\ComponentContainer;
@@ -25,6 +28,14 @@ class Repeater extends Field
     protected bool | Closure $isItemMovementDisabled = false;
 
     protected bool | Closure $isInset = false;
+
+    protected ?Collection $cachedExistingRecords = null;
+
+    protected string | Closure | null $orderColumn = null;
+
+    protected string | Closure | null $relationship = null;
+
+    protected ?Closure $modifyRelationshipQueryUsing = null;
 
     protected function setUp(): void
     {
@@ -197,15 +208,32 @@ class Repeater extends Field
 
     public function getChildComponentContainers(bool $withHidden = false): array
     {
-        return collect($this->getState())
-            ->map(function ($itemData, $itemIndex): ComponentContainer {
-                return $this
-                    ->getChildComponentContainer()
-                    ->getClone()
-                    ->statePath($itemIndex)
-                    ->inlineLabel(false);
-            })
-            ->toArray();
+        $containers = collect($this->getState());
+
+        if ($this->getRelationship()) {
+            $records = $this->getCachedExistingRecords();
+
+            $containers
+                ->map(function ($itemData, $itemKey) use ($records): ComponentContainer {
+                    return $this
+                        ->getChildComponentContainer()
+                        ->getClone()
+                        ->statePath($itemKey)
+                        ->model($records[$itemKey] ?? $this->getRelatedModel())
+                        ->inlineLabel(false);
+                });
+        } else {
+            $containers
+                ->map(function ($itemData, $itemIndex): ComponentContainer {
+                    return $this
+                        ->getChildComponentContainer()
+                        ->getClone()
+                        ->statePath($itemIndex)
+                        ->inlineLabel(false);
+                });
+        }
+
+        return $containers->toArray();
     }
 
     public function getCreateItemButtonLabel(): string
@@ -231,5 +259,122 @@ class Repeater extends Field
     public function isInset(): bool
     {
         return (bool) $this->evaluate($this->isInset);
+    }
+
+    public function orderable(string | Closure | null $column = 'sort'): static
+    {
+        $this->orderColumn = $column;
+        $this->disableItemMovement(static fn (Repeater $component): bool => ! $component->evaluate($column));
+
+        return $this;
+    }
+
+    public function relationship(string | Closure $name, ?Closure $callback = null): static
+    {
+        $this->relationship = $name;
+        $this->modifyRelationshipQueryUsing = $callback;
+
+        return $this;
+    }
+
+    public function fillFromRelationship(): void
+    {
+        $this->state(
+            $this->getStateFromRelatedRecords($this->getCachedExistingRecords()),
+        );
+    }
+
+    protected function getStateFromRelatedRecords(Collection $records): array
+    {
+        if (! $records->count()) {
+            return [];
+        }
+
+        $firstRecord = $records->first();
+
+        if (
+            ($activeLocale = $this->getLivewire()->getActiveFormLocale()) &&
+            method_exists($firstRecord, 'getTranslatableAttributes')
+        ) {
+            $translatableAttributes = $firstRecord->getTranslatableAttributes();
+
+            $records = $records->map(function (Model $record) use ($activeLocale, $translatableAttributes): array {
+                $state = $record->toArray();
+
+                if (method_exists($record, 'getTranslation')) {
+                    foreach ($translatableAttributes as $attribute) {
+                        $state[$attribute] = $record->getTranslation($attribute, $activeLocale);
+                    }
+                }
+
+                return $state;
+            });
+        }
+
+        return $records->toArray();
+    }
+
+    public function getLabel(): string
+    {
+        if ($this->label === null && $this->getRelationship()) {
+            return (string) Str::of($this->getRelationshipName())
+                ->before('.')
+                ->kebab()
+                ->replace(['-', '_'], ' ')
+                ->ucfirst();
+        }
+
+        return parent::getLabel();
+    }
+
+    public function getOrderColumn(): ?string
+    {
+        return $this->evaluate($this->orderColumn);
+    }
+
+    public function getRelationship(): HasOneOrMany
+    {
+        return $this->getModelInstance()->{$this->getRelationshipName()}();
+    }
+
+    public function getRelationshipName(): string
+    {
+        return $this->evaluate($this->relationship) ?? $this->getName();
+    }
+
+    public function getCachedExistingRecords(): Collection
+    {
+        if ($this->cachedExistingRecords) {
+            return $this->cachedExistingRecords;
+        }
+
+        $relationship = $this->getRelationship();
+        $relationshipQuery = $relationship->getQuery();
+
+        if ($this->modifyRelationshipQueryUsing) {
+            $this->evaluate($this->modifyRelationshipQueryUsing, [
+                'query' => $relationshipQuery,
+            ]);
+        }
+
+        if ($orderColumn = $this->getOrderColumn()) {
+            $relationshipQuery->orderBy($orderColumn);
+        }
+
+        $localKeyName = $relationship->getLocalKeyName();
+
+        return $this->cachedExistingRecords = $relationshipQuery->get()->mapWithKeys(
+            fn (Model $item): array => ["record-{$item[$localKeyName]}" => $item],
+        );
+    }
+
+    public function clearCachedExistingRecords(): void
+    {
+        $this->cachedExistingRecords = null;
+    }
+
+    protected function getRelatedModel(): string
+    {
+        return $this->getRelationship()->getModel()::class;
     }
 }
