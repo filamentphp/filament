@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'Koppla',
+        'label' => 'Associera',
 
         'modal' => [
 
-            'heading' => 'Koppla :label',
+            'heading' => 'Associera :label',
 
             'fields' => [
 
@@ -20,12 +20,12 @@ return [
 
             'actions' => [
 
-                'attach' => [
-                    'label' => 'Koppla',
+                'associate' => [
+                    'label' => 'Associera',
                 ],
 
-                'attach_another' => [
-                    'label' => 'Koppla & koppla en till',
+                'associate_another' => [
+                    'label' => 'Associera & associera en till',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'attached' => 'Kopplad',
+            'associated' => 'Associerad',
         ],
 
     ],
