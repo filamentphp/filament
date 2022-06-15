@@ -7,4 +7,8 @@ namespace Filament\Forms\Components;
  */
 class MorphManyRepeater extends Repeater
 {
+    public function getRelationshipName(): ?string
+    {
+        return $this->getName();
+    }
 }

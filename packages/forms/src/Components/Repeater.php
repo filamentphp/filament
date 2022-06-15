@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Forms\Contracts\HasForms;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 use Filament\Forms\ComponentContainer;
@@ -208,32 +209,20 @@ class Repeater extends Field
 
     public function getChildComponentContainers(bool $withHidden = false): array
     {
-        $containers = collect($this->getState());
+        $relationship = $this->getRelationship();
 
-        if ($this->getRelationship()) {
-            $records = $this->getCachedExistingRecords();
+        $records = $relationship ? $this->getCachedExistingRecords() : null;
 
-            $containers
-                ->map(function ($itemData, $itemKey) use ($records): ComponentContainer {
-                    return $this
-                        ->getChildComponentContainer()
-                        ->getClone()
-                        ->statePath($itemKey)
-                        ->model($records[$itemKey] ?? $this->getRelatedModel())
-                        ->inlineLabel(false);
-                });
-        } else {
-            $containers
-                ->map(function ($itemData, $itemIndex): ComponentContainer {
-                    return $this
-                        ->getChildComponentContainer()
-                        ->getClone()
-                        ->statePath($itemIndex)
-                        ->inlineLabel(false);
-                });
-        }
-
-        return $containers->toArray();
+        return collect($this->getState())
+            ->map(function ($itemData, $itemKey) use ($records, $relationship): ComponentContainer {
+                return $this
+                    ->getChildComponentContainer()
+                    ->getClone()
+                    ->statePath($itemKey)
+                    ->model($relationship ? $records[$itemKey] ?? $this->getRelatedModel() : null)
+                    ->inlineLabel(false);
+            })
+            ->toArray();
     }
 
     public function getCreateItemButtonLabel(): string
@@ -273,6 +262,82 @@ class Repeater extends Field
     {
         $this->relationship = $name ?? $this->getName();
         $this->modifyRelationshipQueryUsing = $callback;
+
+        $this->afterStateHydrated(null);
+
+        $this->loadStateFromRelationshipsUsing(static function (Repeater $component) {
+            $component->clearCachedExistingRecords();
+
+            $component->fillFromRelationship();
+        });
+
+        $this->saveRelationshipsUsing(static function (Repeater $component, HasForms $livewire, ?array $state) {
+            if (! is_array($state)) {
+                $state = [];
+            }
+
+            $relationship = $component->getRelationship();
+            $localKeyName = $relationship->getLocalKeyName();
+
+            $existingRecords = $component->getCachedExistingRecords();
+
+            $recordsToDelete = [];
+
+            foreach ($existingRecords->pluck($localKeyName) as $keyToCheckForDeletion) {
+                if (array_key_exists("record-{$keyToCheckForDeletion}", $state)) {
+                    continue;
+                }
+
+                $recordsToDelete[] = $keyToCheckForDeletion;
+            }
+
+            $relationship
+                ->whereIn($localKeyName, $recordsToDelete)
+                ->get()
+                ->each(static fn (Model $record) => $record->delete());
+
+            $childComponentContainers = $component->getChildComponentContainers();
+
+            $itemOrder = 1;
+            $orderColumn = $component->getOrderColumn();
+
+            $activeLocale = $livewire->getActiveFormLocale();
+
+            foreach ($childComponentContainers as $itemKey => $item) {
+                $itemData = $item->getState(shouldCallHooksBefore: false);
+
+                if ($orderColumn) {
+                    $itemData[$orderColumn] = $itemOrder;
+
+                    $itemOrder++;
+                }
+
+                if ($record = ($existingRecords[$itemKey] ?? null)) {
+                    $activeLocale && method_exists($record, 'setLocale') && $record->setLocale($activeLocale);
+
+                    $record->fill($itemData)->save();
+
+                    continue;
+                }
+
+                $relatedModel = $component->getRelatedModel();
+
+                $record = new $relatedModel();
+
+                if ($activeLocale && method_exists($record, 'setLocale')) {
+                    $record->setLocale($activeLocale);
+                }
+
+                $record->fill($itemData);
+
+                $record = $relationship->save($record);
+                $item->model($record)->saveRelationships();
+            }
+        });
+
+        $this->dehydrated(false);
+
+        $this->disableItemMovement();
 
         return $this;
     }
