@@ -156,11 +156,11 @@ class FilamentServiceProvider extends PackageServiceProvider
 
         Filament::registerPages(config('filament.pages.register', []));
 
-        if (! $filesystem->exists(config('filament.pages.path'))) {
+        if (! $filesystem->exists(app_path(config('filament.pages.path')))) {
             return;
         }
 
-        Filament::registerPages(collect($filesystem->allFiles(config('filament.pages.path')))
+        Filament::registerPages(collect($filesystem->allFiles(app_path(config('filament.pages.path'))))
             ->map(function (SplFileInfo $file): string {
                 return (string) Str::of(config('filament.pages.namespace'))
                     ->append('\\', $file->getRelativePathname())
@@ -176,7 +176,7 @@ class FilamentServiceProvider extends PackageServiceProvider
 
         Filament::registerResources(config('filament.resources.register', []));
 
-        if (! $filesystem->exists(config('filament.resources.path'))) {
+        if (! $filesystem->exists(app_path(config('filament.resources.path')))) {
             return;
         }
 

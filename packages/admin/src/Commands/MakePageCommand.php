@@ -9,6 +9,7 @@ class MakePageCommand extends Command
 {
     use Concerns\CanManipulateFiles;
     use Concerns\CanValidateInput;
+    use Concerns\CanTransposeStringPath;
 
     protected $description = 'Creates a Filament page class and view.';
 
@@ -16,14 +17,19 @@ class MakePageCommand extends Command
 
     public function handle(): int
     {
-        $page = (string) Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `Settings`)', 'name'))
+        $page = (string)Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `Settings`)', 'name'))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
             ->replace('/', '\\');
-        $pageClass = (string) Str::of($page)->afterLast('\\');
+        $page = (string)Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `Settings`)', 'name'))
+            ->trim('/')
+            ->trim('\\')
+            ->trim(' ')
+            ->replace('/', '\\');
+        $pageClass = (string)Str::of($page)->afterLast('\\');
         $pageNamespace = Str::of($page)->contains('\\') ?
-            (string) Str::of($page)->beforeLast('\\') :
+            (string)Str::of($page)->beforeLast('\\') :
             '';
 
         $resource = null;
@@ -32,49 +38,70 @@ class MakePageCommand extends Command
 
         $resourceInput = $this->option('resource') ?? $this->ask('(Optional) Resource (e.g. `UserResource`)');
 
+
+
+
         if ($resourceInput !== null) {
-            $resource = (string) Str::of($resourceInput)
+            $resource = (string)Str::of($resourceInput)
                 ->studly()
                 ->trim('/')
                 ->trim('\\')
                 ->trim(' ')
                 ->replace('/', '\\');
 
-            if (! Str::of($resource)->endsWith('Resource')) {
+            if (!Str::of($resource)->endsWith('Resource')) {
                 $resource .= 'Resource';
             }
 
-            $resourceClass = (string) Str::of($resource)
+            $resourceClass = (string)Str::of($resource)
                 ->afterLast('\\');
 
             $resourcePage = $this->option('type') ?? $this->choice(
-                'Which type of page would you like to create?',
-                [
-                    'custom' => 'Custom',
-                    'ListRecords' => 'List',
-                    'CreateRecord' => 'Create',
-                    'EditRecord' => 'Edit',
-                    'ViewRecord' => 'View',
-                    'ManageRecords' => 'Manage',
-                ],
-                'custom',
-            );
+                    'Which type of page would you like to create?',
+                    [
+                        'custom' => 'Custom',
+                        'ListRecords' => 'List',
+                        'CreateRecord' => 'Create',
+                        'EditRecord' => 'Edit',
+                        'ViewRecord' => 'View',
+                        'ManageRecords' => 'Manage',
+                    ],
+                    'custom',
+                );
+        }
+
+        $resourcePath = config('filament.resources.path');
+        if ($resourcePath) {
+            if (preg_match('/[$][a-zA-Z]*[$]/', config('filament.resources.path'))) {
+                $resourcePath = (string)Str::of(preg_replace('/[$][a-zA-Z]*[$]/', $resource, config('filament.resources.path')))
+                    ->replace('//', '/');
+            }
+        }
+        $resourceNamespace = (config('filament.resources.namespace'));
+
+        if ($resourceNamespace) {
+            if (preg_match('/[$][a-zA-Z]*[$]/', config('filament.resources.namespace'))) {
+                $resourceNamespace = (string)Str::of(preg_replace('/[$][a-zA-Z]*[$]/', $resource, config('filament.resources.namespace')))
+                    ->replace('\\\\', '\\');
+            }
+
         }
 
         $view = Str::of($page)
-            ->prepend($resource === null ? 'filament\\pages\\' : "filament\\resources\\{$resource}\\pages\\")
+            ->prepend($resource === null ? $this->changeForwardSlashToBackSlashes(Str::lower(config('filament.pages.path'))) : $this->changeForwardSlashToBackSlashes(Str::lower($resourcePath)))
             ->explode('\\')
-            ->map(fn ($segment) => Str::kebab($segment))
+            ->map(fn($segment) => Str::kebab($segment))
             ->implode('.');
 
+
         $path = app_path(
-            (string) Str::of($page)
-                ->prepend($resource === null ? 'Filament\\Pages\\' : "Filament\\Resources\\{$resource}\\Pages\\")
+            (string)Str::of($page)
+                ->prepend($resource === null ? $this->changeForwardSlashToBackSlashes(config('filament.pages.path')) : $this->changeForwardSlashToBackSlashes($resourcePath))
                 ->replace('\\', '/')
                 ->append('.php'),
         );
         $viewPath = resource_path(
-            (string) Str::of($view)
+            (string)Str::of($view)
                 ->replace('.', '/')
                 ->prepend('views/')
                 ->append('.blade.php'),
@@ -85,21 +112,22 @@ class MakePageCommand extends Command
             $resourcePage === 'custom' ? [$viewPath] : [],
         );
 
-        if (! $this->option('force') && $this->checkForCollision($files)) {
+        if (!$this->option('force') && $this->checkForCollision($files)) {
             return static::INVALID;
         }
+
 
         if ($resource === null) {
             $this->copyStubToApp('Page', $path, [
                 'class' => $pageClass,
-                'namespace' => 'App\\Filament\\Pages' . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'namespace' => config('filament.pages.namespace') . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
                 'view' => $view,
             ]);
         } else {
             $this->copyStubToApp($resourcePage === 'custom' ? 'CustomResourcePage' : 'ResourcePage', $path, [
                 'baseResourcePage' => 'Filament\\Resources\\Pages\\' . ($resourcePage === 'custom' ? 'Page' : $resourcePage),
                 'baseResourcePageClass' => $resourcePage === 'custom' ? 'Page' : $resourcePage,
-                'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'namespace' => $resourceNamespace . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
                 'resource' => $resource,
                 'resourceClass' => $resourceClass,
                 'resourcePageClass' => $pageClass,
