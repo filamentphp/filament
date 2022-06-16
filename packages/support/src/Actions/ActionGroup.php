@@ -7,16 +7,13 @@ use Filament\Support\Actions\Concerns\HasColor;
 use Filament\Support\Actions\Concerns\HasIcon;
 use Filament\Support\Actions\Concerns\HasLabel;
 use Filament\Support\Actions\Concerns\HasTooltip;
-use Filament\Support\Actions\Concerns\InteractsWithRecord;
 use Filament\Support\Actions\Contracts\Groupable;
-use Filament\Support\Actions\Contracts\HasRecord;
 use Filament\Support\Components\ViewComponent;
 
 class ActionGroup extends ViewComponent
 {
-    use CanBeHidden, InteractsWithRecord {
-        CanBeHidden::isHidden as baseIsHidden;
-        InteractsWithRecord::parseAuthorizationArguments insteadof CanBeHidden;
+    use CanBeHidden {
+        isHidden as baseIsHidden;
     }
     use HasIcon;
     use HasTooltip;
@@ -45,11 +42,9 @@ class ActionGroup extends ViewComponent
     public function getActions(): array
     {
         return collect($this->actions)
-            ->mapWithKeys(function (Action | Groupable | HasRecord $action): array {
-                $action->record($this->getRecord());
-
-                return [$action->getName() => $action->grouped()];
-            })
+            ->mapWithKeys(fn (Action | Groupable $action): array => [
+                $action->getName() => $action->grouped(),
+            ])
             ->toArray();
     }
 
@@ -62,7 +57,7 @@ class ActionGroup extends ViewComponent
         }
 
         foreach ($this->getActions() as $action) {
-            if (! $action->isHidden()) {
+            if ($action->isHidden()) {
                 continue;
             }
 
