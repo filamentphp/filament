@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 class BelongsToManyCheckboxList extends CheckboxList
 {
-    protected string | Closure | null $displayColumnName = null;
+    protected string | Closure | null $titleColumnName = null;
 
     protected ?Closure $getOptionLabelFromRecordUsing = null;
 
@@ -42,15 +42,15 @@ class BelongsToManyCheckboxList extends CheckboxList
         $this->dehydrated(false);
     }
 
-    public function relationship(string | Closure $relationshipName, string | Closure $displayColumnName, ?Closure $callback = null): static
+    public function relationship(string | Closure $relationshipName, string | Closure $titleColumnName, ?Closure $callback = null): static
     {
-        $this->displayColumnName = $displayColumnName;
+        $this->titleColumnName = $titleColumnName;
         $this->relationship = $relationshipName;
 
         $this->options(static function (BelongsToManyCheckboxList $component) use ($callback): array {
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getDisplayColumnName());
+            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getTitleColumnName());
 
             if ($callback) {
                 $relationshipQuery = $component->evaluate($callback, [
@@ -68,7 +68,7 @@ class BelongsToManyCheckboxList extends CheckboxList
             }
 
             return $relationshipQuery
-                ->pluck($component->getDisplayColumnName(), $relationship->getRelatedKeyName())
+                ->pluck($component->getTitleColumnName(), $relationship->getRelatedKeyName())
                 ->toArray();
         });
 
@@ -92,9 +92,9 @@ class BelongsToManyCheckboxList extends CheckboxList
         return $this->evaluate($this->getOptionLabelFromRecordUsing, ['record' => $record]);
     }
 
-    public function getDisplayColumnName(): string
+    public function getTitleColumnName(): string
     {
-        return $this->evaluate($this->displayColumnName);
+        return $this->evaluate($this->titleColumnName);
     }
 
     public function getLabel(): string

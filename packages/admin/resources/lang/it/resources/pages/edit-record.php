@@ -6,39 +6,6 @@ return [
 
     'breadcrumb' => 'Modifica',
 
-    'actions' => [
-
-        'delete' => [
-
-            'label' => 'Elimina',
-
-            'modal' => [
-
-                'heading' => 'Elimina :label',
-
-                'subheading' => 'Sei sicuro di volerlo fare?',
-
-                'buttons' => [
-
-                    'delete' => [
-                        'label' => 'Elimina',
-                    ],
-
-                ],
-
-            ],
-
-            'messages' => [
-                'deleted' => 'Eliminato',
-            ],
-        ],
-
-        'view' => [
-            'label' => 'Guarda',
-        ],
-
-    ],
-
     'form' => [
 
         'actions' => [

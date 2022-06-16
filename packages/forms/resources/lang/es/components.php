@@ -193,6 +193,11 @@ return [
 
         ],
 
+        'boolean' => [
+            'true' => 'Sí',
+            'false' => 'No',
+        ],
+
         'loading_message' => 'Cargando...',
 
         'no_search_results_message' => 'No se encontraron coincidencias con su búsqueda.',
@@ -207,6 +212,22 @@ return [
 
     'tags_input' => [
         'placeholder' => 'Nueva etiqueta',
+    ],
+
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => 'Anterior',
+            ],
+
+            'next_step' => [
+                'label' => 'Siguiente',
+            ],
+
+        ],
+
     ],
 
 ];

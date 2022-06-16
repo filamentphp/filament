@@ -14,7 +14,7 @@ if (! function_exists('Filament\get_asset_id')) {
             return null;
         }
 
-        $manifest = json_decode(file_get_contents($manifestPath), true);
+        $manifest = json_decode(file_get_contents($manifestPath), associative: true);
 
         $file = "/{$file}";
 

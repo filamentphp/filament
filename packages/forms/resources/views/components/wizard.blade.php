@@ -61,7 +61,7 @@
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $getStatePath() }}') nextStep()"
     x-cloak
     {!! $getId() ? "id=\"{$getId()}\"" : null !!}
-    {{ $attributes->merge($getExtraAttributes())->class(['space-y-6 filament-forms-wizard-component']) }}
+    {{ $attributes->merge($getExtraAttributes())->class(['grid gap-y-6 filament-forms-wizard-component']) }}
     {{ $getExtraAlpineAttributeBag() }}
 >
     <input
@@ -70,6 +70,7 @@
             collect($getChildComponentContainer()->getComponents())
                 ->filter(static fn (\Filament\Forms\Components\Wizard\Step $step): bool => ! $step->isHidden())
                 ->map(static fn (\Filament\Forms\Components\Wizard\Step $step) => $step->getId())
+                ->values()
                 ->toJson()
         }}'
         x-ref="stepsData"

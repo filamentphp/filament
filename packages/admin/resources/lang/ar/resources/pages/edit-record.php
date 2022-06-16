@@ -6,40 +6,6 @@ return [
 
     'breadcrumb' => 'تعديل',
 
-    'actions' => [
-
-        'delete' => [
-
-            'label' => 'حذف',
-
-            'modal' => [
-
-                'heading' => 'حذف :label',
-
-                'subheading' => 'هل أنت متأكد من القيام بهذا؟',
-
-                'buttons' => [
-
-                    'delete' => [
-                        'label' => 'حذف',
-                    ],
-
-                ],
-
-            ],
-
-            'messages' => [
-                'deleted' => 'تم الحذف',
-            ],
-
-        ],
-
-        'view' => [
-            'label' => 'عرض',
-        ],
-
-    ],
-
     'form' => [
 
         'actions' => [

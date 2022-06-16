@@ -59,14 +59,24 @@ return [
 
     ],
 
-    'actions' => [
+    'bulk_actions' => [
 
-        'replicate' => [
+        'force_delete' => [
 
-            'label' => 'تکثیر',
+            'label' => 'حذف دائمی',
 
             'messages' => [
-                'replicated' => 'رکورد تکثیر شد',
+                'deleted' => 'رکوردها حذف شدند',
+            ],
+
+        ],
+
+        'restore' => [
+
+            'label' => 'بازگردانی',
+
+            'messages' => [
+                'restored' => 'رکوردها بازگردانی شدند',
             ],
 
         ],
@@ -82,7 +92,7 @@ return [
         'buttons' => [
 
             'reset' => [
-                'label' => 'پاک کردن فیلترها',
+                'label' => 'حذف فیلترها',
             ],
 
             'close' => [
@@ -97,6 +107,18 @@ return [
 
         'select' => [
             'placeholder' => 'همه',
+        ],
+
+        'trashed' => [
+
+            'label' => 'رکوردهای حذف شده',
+
+            'only_trashed' => 'فقط رکوردهای حذف شده',
+
+            'with_trashed' => 'به همراه رکوردهای حذف شده',
+
+            'without_trashed' => 'بدون رکوردهای حذف شده',
+
         ],
 
     ],

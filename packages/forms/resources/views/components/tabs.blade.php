@@ -32,6 +32,7 @@
             collect($getChildComponentContainer()->getComponents())
                 ->filter(static fn (\Filament\Forms\Components\Tabs\Tab $tab): bool => ! $tab->isHidden())
                 ->map(static fn (\Filament\Forms\Components\Tabs\Tab $tab) => $tab->getId())
+                ->values()
                 ->toJson()
         }}'
         x-ref="tabsData"

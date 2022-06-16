@@ -1,0 +1,19 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Filament\Resources\{{ resource }};
+use Filament\Pages\Actions;
+use Filament\Resources\Pages\ListRecords;
+
+class {{ resourcePageClass }} extends ListRecords
+{
+    protected static string $resource = {{ resourceClass }}::class;
+
+    protected function getActions(): array
+    {
+        return [
+            Actions\CreateAction::make(),
+        ];
+    }
+}

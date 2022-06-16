@@ -40,7 +40,7 @@ php artisan make:filament-resource Customer --simple
 
 Your resource will have a "Manage" page, which is a List page with modals added.
 
-Additionally, your simple resource will have no `getRelations()` method, as relation managers are only displayed on the Edit and View pages, which are not present in simple resources. Everything else is the same.
+Additionally, your simple resource will have no `getRelations()` method, as [relation managers](relation-managers) are only displayed on the Edit and View pages, which are not present in simple resources. Everything else is the same.
 
 ### Automatically generating forms and tables
 
@@ -58,12 +58,20 @@ When creating your resource, you may now use `--generate`:
 php artisan make:filament-resource Customer --generate
 ```
 
-### Generating a View page
+### Handling soft deletes
 
-By default, only List, Create and Edit pages are generated for your resource. If you'd also like a [View page](viewing-records), use the `--view-page` flag:
+By default, you will not be able to interact with deleted records in the admin panel. If you'd like to add functionality to restore, force delete and filter trashed records in your resource, use the `--soft-deletes` flag when generating the resource:
 
 ```bash
-php artisan make:filament-resource Customer --view-page
+php artisan make:filament-resource Customer --soft-deletes
+```
+
+### Generating a View page
+
+By default, only List, Create and Edit pages are generated for your resource. If you'd also like a [View page](viewing-records), use the `--view` flag:
+
+```bash
+php artisan make:filament-resource Customer --view
 ```
 
 ## Record titles
@@ -178,11 +186,17 @@ public static function table(Table $table): Table
             Tables\Filters\Filter::make('verified')
                 ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
             // ...
+        ])
+        ->actions([
+            Tables\Actions\EditAction::make(),
+        ])
+        ->bulkActions([
+            Tables\Actions\DeleteBulkAction::make(),
         ]);
 }
 ```
 
-Check out the [listing records](listing-records) docs to find out how to implement table [columns](listing-records#columns), [filters](listing-records#filters), [actions](listing-records#actions), [bulk actions](listing-records#bulk-actions) and more.
+Check out the [listing records](listing-records) docs to find out how to add table [columns](listing-records#columns), [filters](listing-records#filters), [actions](listing-records#actions), [bulk actions](listing-records#bulk-actions) and more.
 
 ## Relations
 
@@ -389,39 +403,39 @@ For authorization, Filament will observe any [model policies](https://laravel.co
 - `delete()` is used to prevent a single record from being deleted. `deleteAny()` is used to prevent records from being bulk deleted. Filament uses the `deleteAny()` method because iterating through multiple records and checking the `delete()` policy is not very performant.
 - `view()` is used to control [viewing a record](viewing-records).
 
-## Labels
+## Model labels
 
-Each resource has a "label" which is automatically generated from the model name. For example, an `App\Models\Customer` model will have a `customer` label.
+Each resource has a "model label" which is automatically generated from the model name. For example, an `App\Models\Customer` model will have a `customer` label.
 
-The label is used in several parts of the UI, and you may customise it using the `$label` property:
+The label is used in several parts of the UI, and you may customise it using the `$modelLabel` property:
 
 ```php
-protected static ?string $label = 'cliente';
+protected static ?string $modelLabel = 'cliente';
 ```
 
-Alternatively, you may use the `getLabel()` to define a dynamic label:
+Alternatively, you may use the `getModelLabel()` to define a dynamic label:
 
 ```php
-public static function getLabel(): string
+public static function getModelLabel(): string
 {
     return __('filament/resources/customer.label');
 }
 ```
 
-### Plural label
+### Plural model label
 
-Resources also have a "plural label" which is automatically generated from the label. For example, a `customer` label will be pluralized into `customers`.
+Resources also have a "plural model label" which is automatically generated from the model label. For example, a `customer` label will be pluralized into `customers`.
 
-You may customize the plural version of the label using the `$pluralLabel` property:
+You may customize the plural version of the label using the `$pluralModelLabel` property:
 
 ```php
-protected static ?string $pluralLabel = 'clientes';
+protected static ?string $pluralModelLabel = 'clientes';
 ```
 
-Alternatively, you may set a dynamic plural label in the `getPluralLabel()` method:
+Alternatively, you may set a dynamic plural label in the `getPluralModelLabel()` method:
 
 ```php
-public static function getPluralLabel(): string
+public static function getPluralModelLabel(): string
 {
     return __('filament/resources/customer.plural_label');
 }

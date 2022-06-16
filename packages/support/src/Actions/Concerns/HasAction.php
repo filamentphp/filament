@@ -20,7 +20,7 @@ trait HasAction
         $action = $this->action;
 
         if (is_string($action)) {
-            $action = Closure::fromCallable([$this->getLivewire(), $action]);
+            $action = Closure::fromCallable(class_exists($action) ? $action : [$this->getLivewire(), $action]);
         }
 
         return $action;

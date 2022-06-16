@@ -20,14 +20,14 @@
 >
     <div
         @class([
-            'flex items-center px-4 py-2 bg-gray-100 rtl:space-x-reverse overflow-hidden rounded-t-xl min-h-[56px]',
+            'flex items-center px-4 py-2 bg-gray-100 rtl:space-x-reverse overflow-hidden rounded-t-xl min-h-[56px] filament-forms-section-header-wrapper',
             'dark:bg-gray-900' => config('forms.dark_mode'),
         ])
         @if ($isCollapsible())
             x-bind:class="{ 'rounded-b-xl': isCollapsed }"
         @endif
     >
-        <div class="flex-1">
+        <div class="flex-1 filament-forms-section-header">
             <h3 class="text-xl font-bold tracking-tight">
                 {{ $getHeading() }}
             </h3>
@@ -44,7 +44,11 @@
                 x-bind:class="{
                     '-rotate-180': !isCollapsed,
                 }" type="button"
-                class="flex items-center justify-center w-10 h-10 transform rounded-full text-primary-500 hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none">
+                @class([
+                    'flex items-center justify-center w-10 h-10 transform rounded-full text-primary-500 hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none',
+                    '-rotate-180' => ! $isCollapsed(),
+                ])
+            >
                 <svg class="h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                     stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -57,9 +61,11 @@
         @if ($isCollapsible())
             x-bind:class="{ 'invisible h-0 !m-0 overflow-y-hidden': isCollapsed }"
             x-bind:aria-expanded="(! isCollapsed).toString()"
+            @if ($isCollapsed()) x-cloak @endif
         @endif
+        class="filament-forms-section-content-wrapper"
     >
-        <div class="p-6">
+        <div class="p-6 filament-forms-section-content">
             {{ $getChildComponentContainer() }}
         </div>
     </div>

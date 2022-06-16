@@ -4,10 +4,10 @@ title: Viewing Records
 
 ## Creating a resource with a View page
 
-To create a new resource with a View page, you can use the `--view-page` flag:
+To create a new resource with a View page, you can use the `--view` flag:
 
 ```bash
-php artisan make:filament-resource User --view-page
+php artisan make:filament-resource User --view
 ```
 
 ## Adding a View page to an existing resource

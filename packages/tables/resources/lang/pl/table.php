@@ -59,14 +59,25 @@ return [
 
     ],
 
-    'actions' => [
 
-        'replicate' => [
+    'bulk_actions' => [
 
-            'label' => 'Powiel',
+        'force_delete' => [
+
+            'label' => 'Usuń trwale',
 
             'messages' => [
-                'replicated' => 'Rekord powielony',
+                'deleted' => 'Trwale usunięto',
+            ],
+
+        ],
+
+        'restore' => [
+
+            'label' => 'Przywróć',
+
+            'messages' => [
+                'restored' => 'Przywrócono',
             ],
 
         ],
@@ -97,6 +108,18 @@ return [
 
         'select' => [
             'placeholder' => 'Wszystkie',
+        ],
+
+        'trashed' => [
+
+            'label' => 'Usunięte rekordy',
+
+            'only_trashed' => 'Tylko usunięte rekordy',
+
+            'with_trashed' => 'Uwzględnij usunięte rekordy',
+
+            'without_trashed' => 'Bez usuniętych rekordów',
+
         ],
 
     ],

@@ -18,11 +18,11 @@
         @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
             <div
                 x-data="{}"
-                class="hidden transition-all w-screen space-y-6 flex-1 flex flex-col filament-main lg:pl-80 rtl:lg:pl-0 rtl:lg:pr-80"
-                x-bind:class.="{
-                    '!block': true, // Prevent flash, x-cloak not working with charts
+                class="hidden transition-all w-screen h-full space-y-6 flex-col flex-1 filament-main lg:pl-80 rtl:lg:pl-0 rtl:lg:pr-80"
+                x-bind:class="{
                     'lg:pl-[5.4rem] rtl:lg:pr-[5.4rem]': ! $store.sidebar.isOpen
                 }"
+                x-bind:style="'display: flex'" {-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}
             >
         @else
             <div class="w-screen space-y-6 flex-1 flex flex-col lg:pl-80 rtl:lg:pl-0 rtl:lg:pr-80 filament-main">

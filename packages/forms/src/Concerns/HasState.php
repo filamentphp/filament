@@ -194,8 +194,8 @@ trait HasState
     public function fillComponentStateWithNull(bool $shouldOverwrite = true): static
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
-            if ($component->hasChildComponentContainer()) {
-                foreach ($component->getChildComponentContainers() as $container) {
+            if ($component->hasChildComponentContainer(withHidden: true)) {
+                foreach ($component->getChildComponentContainers(withHidden: true) as $container) {
                     $container->fillComponentStateWithNull($shouldOverwrite);
                 }
             } else {

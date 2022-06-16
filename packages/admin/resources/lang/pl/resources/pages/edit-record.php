@@ -6,40 +6,6 @@ return [
 
     'breadcrumb' => 'Edytuj',
 
-    'actions' => [
-
-        'delete' => [
-
-            'label' => 'Usuń',
-
-            'modal' => [
-
-                'heading' => 'Usuń :label',
-
-                'subheading' => 'Czy na pewno chcesz to zrobić?',
-
-                'buttons' => [
-
-                    'delete' => [
-                        'label' => 'Usuń',
-                    ],
-
-                ],
-
-            ],
-
-            'messages' => [
-                'deleted' => 'Usunięto',
-            ],
-
-        ],
-
-        'view' => [
-            'label' => 'Podgląd',
-        ],
-
-    ],
-
     'form' => [
 
         'actions' => [
@@ -57,7 +23,7 @@ return [
     ],
 
     'messages' => [
-        'saved' => 'Zapisano',
+        'saved' => 'Zapisano zmiany',
     ],
 
 ];
