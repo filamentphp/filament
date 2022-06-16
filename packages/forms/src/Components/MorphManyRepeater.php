@@ -5,10 +5,6 @@ namespace Filament\Forms\Components;
 /**
  * @deprecated use Repeater with the `relationship()` method instead.
  */
-class MorphManyRepeater extends Repeater
+class MorphManyRepeater extends RelationshipRepeater
 {
-    public function getRelationshipName(): ?string
-    {
-        return $this->getName();
-    }
 }

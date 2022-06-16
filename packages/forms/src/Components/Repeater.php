@@ -258,7 +258,7 @@ class Repeater extends Field
         return $this;
     }
 
-    public function relationship(string | Closure | null $name, ?Closure $callback = null): static
+    public function relationship(string | Closure | null $name = null, ?Closure $callback = null): static
     {
         $this->relationship = $name ?? $this->getName();
         $this->modifyRelationshipQueryUsing = $callback;
@@ -381,7 +381,7 @@ class Repeater extends Field
 
     public function getLabel(): string
     {
-        if ($this->label === null && $this->getRelationship()) {
+        if ($this->label === null && $this->hasRelationship()) {
             return (string) Str::of($this->getRelationshipName())
                 ->before('.')
                 ->kebab()
@@ -399,13 +399,11 @@ class Repeater extends Field
 
     public function getRelationship(): ?HasOneOrMany
     {
-        $name = $this->getRelationshipName();
-
-        if (blank($name)) {
+        if (! $this->hasRelationship()) {
             return null;
         }
 
-        return $this->getModelInstance()->{$name}();
+        return $this->getModelInstance()->{$this->getRelationshipName()}();
     }
 
     public function getRelationshipName(): ?string
@@ -447,5 +445,10 @@ class Repeater extends Field
     protected function getRelatedModel(): string
     {
         return $this->getRelationship()->getModel()::class;
+    }
+
+    public function hasRelationship(): bool
+    {
+        return filled($this->getRelationshipName());
     }
 }

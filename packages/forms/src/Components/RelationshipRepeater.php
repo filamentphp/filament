@@ -7,4 +7,10 @@ namespace Filament\Forms\Components;
  */
 class RelationshipRepeater extends Repeater
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->relationship();
+    }
 }
