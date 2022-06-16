@@ -49,9 +49,18 @@ class ViewRecord extends Page
     {
         $this->callHook('beforeFill');
 
-        $this->form->fill($this->getRecord()->toArray());
+        $data = $this->getRecord()->toArray();
+
+        $data = $this->mutateFormDataBeforeFill($data);
+
+        $this->form->fill($data);
 
         $this->callHook('afterFill');
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        return $data;
     }
 
     protected function getActions(): array
