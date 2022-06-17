@@ -59,14 +59,14 @@ class ViewRecord extends Page
         $resource = static::getResource();
 
         if (! $resource::hasPage('edit')) {
-            return [];
+            return static::getDefaultActions();
         }
 
         if (! $resource::canEdit($this->getRecord())) {
-            return [];
+            return static::getDefaultActions();
         }
 
-        return [$this->getEditAction()];
+        return array_merge(static::getDefaultActions(), [$this->getEditAction()]);
     }
 
     protected function configureAction(Action $action): void

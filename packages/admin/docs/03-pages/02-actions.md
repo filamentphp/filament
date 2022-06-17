@@ -195,3 +195,32 @@ Action::make('save')
     ->action(fn () => $this->save())
     ->keyBindings(['command+s', 'ctrl+s'])
 ```
+
+## Default actions
+
+You may add default actions to every page by calling the `Page::defaultActions()` method inside the `FilamentServing` event. 
+
+```php
+use Filament\Pages\Page;
+
+Page::defaultActions([
+    Action::make('back')
+        ->url(fn (): string => Url::previous())
+]);
+```
+
+Paired with the `visible()` and `hidden()` methods, this makes for a very powerful tool:
+
+```php
+use Livewire\Component;
+use Filament\Pages\Page;
+use Filament\Resources\Pages\ListRecords;
+
+Page::defaultActions([
+    Action::make('back')
+        ->url(fn (): string => Url::previous())
+        ->hidden(fn(Component $livewire) => $livewire instanceof ListRecords || Url::previous() === Url::current())
+]);
+```
+
+If you want to reliably get the previous URL in a Livewire application such as Filament, you can use the [ralphjsmit/livewire-urls](https://github.com/ralphjsmit/livewire-urls) package.

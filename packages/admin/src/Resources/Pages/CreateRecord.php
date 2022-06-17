@@ -112,6 +112,11 @@ class CreateRecord extends Page implements HasFormActions
         );
     }
 
+    protected function getActions(): array
+    {
+        return static::getDefaultActions();
+    }
+
     protected function getCreateFormAction(): Action
     {
         return Action::make('create')

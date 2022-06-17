@@ -158,10 +158,10 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function getActions(): array
     {
         if (! $this->hasCreateAction()) {
-            return [];
+            return static::getDefaultActions();
         }
 
-        return [$this->getCreateAction()];
+        return array_merge(static::getDefaultActions(), [$this->getCreateAction()]);
     }
 
     /**

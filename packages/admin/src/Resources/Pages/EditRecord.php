@@ -151,8 +151,9 @@ class EditRecord extends Page implements HasFormActions
         $resource = static::getResource();
 
         return array_merge(
-            (($resource::hasPage('view') && $resource::canView($this->getRecord())) ? [$this->getViewAction()] : []),
-            ($resource::canDelete($this->getRecord()) ? [$this->getDeleteAction()] : []),
+            static::getDefaultActions(),
+            ( ( $resource::hasPage('view') && $resource::canView($this->getRecord()) ) ? [$this->getViewAction()] : [] ),
+            ( $resource::canDelete($this->getRecord()) ? [$this->getDeleteAction()] : [] ),
         );
     }
 
