@@ -80,6 +80,21 @@ protected function getActions(): array
 }
 ```
 
+You may also create icon-only buttons by using the `disableLabel()` and `icon()` methods:
+
+```php
+use Filament\Pages\Actions\Action;
+
+protected function getActions(): array
+{
+    return [
+        Action::make('settings')
+            ->disableLabel()
+            ->icon('heroicon-o-arrow-left'),
+    ];
+}
+```
+
 You may customize the size of a button using the `size()` method:
 
 ```php
