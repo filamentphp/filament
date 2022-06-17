@@ -4,7 +4,7 @@ return [
 
     'single' => [
 
-        'label' => 'ساختن',
+        'label' => 'ساختن :label',
 
         'modal' => [
 
