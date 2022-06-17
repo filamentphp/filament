@@ -3,25 +3,40 @@
 namespace Filament\Support\Actions\Concerns;
 
 use Closure;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 
 trait HasLabel
 {
-    protected string | Closure | null $label = null;
+    protected string | Htmlable | Closure | null $label = null;
 
-    public function label(string | Closure | null $label): static
+    protected bool | Closure $isLabelHidden = false;
+
+    public function disableLabel(bool | Closure $condition = true): static
+    {
+        $this->isLabelHidden = $condition;
+
+        return $this;
+    }
+
+    public function label(string | Htmlable | Closure | null $label): static
     {
         $this->label = $label;
 
         return $this;
     }
 
-    public function getLabel(): string
+    public function getLabel(): string | Htmlable | null
     {
-        return $this->evaluate($this->label) ?? (string) Str::of($this->getName())
-            ->before('.')
-            ->kebab()
-            ->replace(['-', '_'], ' ')
-            ->ucfirst();
+        return $this->evaluate($this->label)  ?? (string) Str::of($this->getName())
+                ->before('.')
+                ->kebab()
+                ->replace(['-', '_'], ' ')
+                ->ucfirst();
+    }
+
+    public function isLabelHidden(): bool
+    {
+        return $this->evaluate($this->isLabelHidden);
     }
 }

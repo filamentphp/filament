@@ -29,6 +29,7 @@
     :disabled="$action->isDisabled()"
     :icon="$action->getIcon()"
     :size="$action->getSize()"
+    :is-label-hidden="$action->isLabelHidden()"
 >
     {{ $slot }}
 </x-dynamic-component>
