@@ -64,7 +64,7 @@ abstract class PluginServiceProvider extends PackageServiceProvider
             Facades\Filament::registerPages($this->getPages());
             Facades\Filament::registerResources($this->getResources());
             Facades\Filament::registerWidgets($this->getWidgets());
-            
+
             Facades\Filament::serving(function () {
                 Facades\Filament::registerUserMenuItems($this->getUserMenuItems());
                 Facades\Filament::registerScripts($this->getBeforeCoreScripts(), true);
