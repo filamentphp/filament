@@ -1855,7 +1855,7 @@ You may create your own custom field classes and views, which you can reuse acro
 
 > If you're just creating a simple custom field to use once, you could instead use a [view field](#view) to render any custom Blade file.
 
-To create a custom column class and view, you may use the following command:
+To create a custom field class and view, you may use the following command:
 
 ```bash
 php artisan make:form-field RangeSlider
