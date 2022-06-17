@@ -60,7 +60,7 @@ class BulkAction extends BaseAction
         return array_merge(parent::getDefaultEvaluationParameters(), [
             'records' => $this->resolveEvaluationParameter(
                 'records',
-                fn (): Collection => $this->getRecords(),
+                fn (): ?Collection => $this->getRecords(),
             ),
         ]);
     }
