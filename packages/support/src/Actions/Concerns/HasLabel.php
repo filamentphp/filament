@@ -28,7 +28,7 @@ trait HasLabel
 
     public function getLabel(): string | Htmlable | null
     {
-        return $this->evaluate($this->label)  ?? (string) Str::of($this->getName())
+        return $this->evaluate($this->label) ?? (string) Str::of($this->getName())
                 ->before('.')
                 ->kebab()
                 ->replace(['-', '_'], ' ')
