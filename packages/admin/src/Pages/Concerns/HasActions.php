@@ -23,6 +23,8 @@ trait HasActions
 
     protected ?array $cachedActions = null;
 
+    protected static array $defaultActions = [];
+
     public function callMountedAction(?string $arguments = null)
     {
         $action = $this->getMountedAction();
@@ -226,6 +228,16 @@ trait HasActions
 
     protected function getActions(): array
     {
-        return [];
+        return static::getDefaultActions();
+    }
+
+    public static function defaultActions(array $actions = []): void
+    {
+        static::$defaultActions = $actions;
+    }
+
+    public static function getDefaultActions(): array
+    {
+        return static::$defaultActions;
     }
 }
