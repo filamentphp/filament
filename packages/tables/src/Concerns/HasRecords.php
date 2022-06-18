@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 
 trait HasRecords
@@ -57,7 +58,7 @@ trait HasRecords
 
     protected function resolveTableRecord(?string $key): ?Model
     {
-        if (! ($this instanceof HasRelationshipTable && $this->getRelationship() instanceof BelongsToMany && $this->allowsDuplicates())) {
+        if (! ($this instanceof HasRelationshipTable && $this->getRelationship() instanceof BelongsToMany)) {
             return $this->getTableQuery()->find($key);
         }
 
@@ -67,9 +68,11 @@ trait HasRecords
         $pivotClass = $relationship->getPivotClass();
         $pivotKeyName = app($pivotClass)->getKeyName();
 
-        $record = $this->selectPivotDataInQuery(
-            $relationship->wherePivot($pivotKeyName, $key),
-        )->first();
+        $query = $this->allowsDuplicates() ?
+            $relationship->wherePivot($pivotKeyName, $key) :
+            $relationship->where($relationship->getQualifiedRelatedKeyName(), $key);
+
+        $record = $this->selectPivotDataInQuery($query)->first();
 
         return $record?->setRawAttributes($record->getRawOriginal());
     }
