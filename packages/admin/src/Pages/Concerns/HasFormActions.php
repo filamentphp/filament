@@ -37,4 +37,9 @@ trait HasFormActions
     {
         return [];
     }
+
+    protected function hasFullWidthFormActions(): bool
+    {
+        return false;
+    }
 }

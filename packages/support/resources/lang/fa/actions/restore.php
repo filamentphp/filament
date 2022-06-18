@@ -32,7 +32,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'بازگردانی انتخاب شده :label',
+            'heading' => 'بازگردانی :label انتخاب شده',
 
             'actions' => [
 
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'restored' => 'رکورد ها بازگردانی شدند',
+            'restored' => 'رکوردها بازگردانی شدند',
         ],
 
     ],

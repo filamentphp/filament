@@ -35,7 +35,10 @@ trait CanSelectRecords
     public function getSelectedTableRecords(): Collection
     {
         if (! ($this instanceof HasRelationshipTable && $this->getRelationship() instanceof BelongsToMany && $this->allowsDuplicates())) {
-            return $this->getTableQuery()->find($this->selectedTableRecords);
+            $query = $this->getTableQuery()->whereIn(app($this->getTableModel())->getKeyName(), $this->selectedTableRecords);
+            $this->applySortingToTableQuery($query);
+
+            return $query->get();
         }
 
         /** @var BelongsToMany $relationship */
