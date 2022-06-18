@@ -28,11 +28,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'Forzar el borrado de los elementos seleccionados',
+        'label' => 'Forzar la eliminación de los elementos seleccionados',
 
         'modal' => [
 
-            'heading' => 'Forzar eliminación de los :label seleccionados',
+            'heading' => 'Forzar la eliminación de los :label seleccionados',
 
             'actions' => [
 
