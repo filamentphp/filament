@@ -70,6 +70,7 @@
                 @class([
                     'w-full h-full p-0 placeholder-gray-400 bg-transparent border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none',
                     'dark:bg-gray-700 dark:placeholder-gray-400' => config('forms.dark_mode'),
+                    'cursor-default' => $isDisabled(),
                 ])
             />
 
