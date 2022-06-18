@@ -21,7 +21,7 @@ trait HasActiveLocaleSwitcher
         $this->translatableLocales = $locales;
     }
 
-    protected function getTranslatableLocales(): array
+    public function getTranslatableLocales(): array
     {
         return $this->translatableLocales ?? static::getResource()::getTranslatableLocales();
     }

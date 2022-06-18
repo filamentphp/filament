@@ -313,16 +313,16 @@ More information about `BelongsToManyMultiSelect` is available in the [Form docs
 
 #### Checkbox list field
 
-Filament includes a dedicated checkbox list field that automatically loads options from a `BelongsToMany` relationship:
+Filament can automatically load `CheckboxList` options from a `BelongsToMany` relationship:
 
 ```php
-use Filament\Forms\Components\BelongsToManyCheckboxList;
+use Filament\Forms\Components\CheckboxList;
 
-BelongsToManyCheckboxList::make('technologies')
+CheckboxList::make('technologies')
     ->relationship('technologies', 'name')
 ```
 
-More information about `BelongsToManyCheckboxList` is available in the [Form docs](../../forms/fields#populating-automatically-from-a-belongstomany-relationship-1).
+More information about `CheckboxList` is available in the [Form docs](../../forms/fields#populating-automatically-from-a-relationship-1).
 
 #### Relation manager
 

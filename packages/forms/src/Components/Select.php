@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Exists;
 
 class Select extends Field
 {
@@ -574,9 +576,12 @@ class Select extends Field
                 ->toArray();
         });
 
-        $this->exists(
-            static fn (Select $component): ?string => $component->isMultiple() ? null : $component->getRelationship()->getModel()::class,
-            static fn (Select $component): string => $component->getRelationship()->getOwnerKeyName(),
+        $this->rule(
+            static fn (Select $component): Exists => Rule::exists(
+                $component->getRelationship()->getModel()::class,
+                $component->getRelationship()->getOwnerKeyName(),
+            ),
+            static fn (Select $component): bool => ! $component->isMultiple(),
         );
 
         $this->saveRelationshipsUsing(static function (Select $component, Model $record, $state) {
