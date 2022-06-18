@@ -8,6 +8,12 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Str;
 
 class Select extends Field
 {
@@ -51,6 +57,14 @@ class Select extends Field
     protected string | Closure | null $searchingMessage = null;
 
     protected string | Htmlable | Closure | null $searchPrompt = null;
+
+    protected string | Closure | null $relationshipTitleColumnName = null;
+
+    protected ?Closure $getOptionLabelFromRecordUsing = null;
+
+    protected bool | Closure $isPreloaded = false;
+
+    protected string | Closure | null $relationship = null;
 
     protected function setUp(): void
     {
@@ -212,6 +226,7 @@ class Select extends Field
                     $createdOptionKey;
 
                 $component->state($state);
+                $component->callAfterStateUpdated();
             })
             ->icon('heroicon-o-plus')
             ->iconButton()
@@ -344,7 +359,13 @@ class Select extends Field
 
     public function getSearchColumns(): ?array
     {
-        return $this->searchColumns;
+        $columns = $this->searchColumns;
+
+        if ($this->getRelationship()) {
+            $columns ??= [$this->getRelationshipTitleColumnName()];
+        }
+
+        return $columns;
     }
 
     public function getSearchResults(string $search): array
@@ -390,11 +411,297 @@ class Select extends Field
 
     public function isSearchable(): bool
     {
-        return (bool) $this->evaluate($this->isSearchable);
+        return $this->evaluate($this->isSearchable) || $this->isMultiple();
+    }
+
+    public function preload(bool | Closure $condition = true): static
+    {
+        $this->isPreloaded = $condition;
+
+        return $this;
+    }
+
+    public function relationship(string | Closure $relationshipName, string | Closure $titleColumnName, ?Closure $callback = null): static
+    {
+        $this->relationship = $relationshipName;
+        $this->relationshipTitleColumnName = $titleColumnName;
+
+        $this->getSearchResultsUsing(static function (Select $component, ?string $search) use ($callback): array {
+            $relationship = $component->getRelationship();
+
+            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getRelationshipTitleColumnName());
+
+            if ($callback) {
+                $relationshipQuery = $component->evaluate($callback, [
+                    'query' => $relationshipQuery,
+                ]);
+            }
+
+            $search = strtolower($search);
+
+            /** @var Connection $databaseConnection */
+            $databaseConnection = $relationshipQuery->getConnection();
+
+            $searchOperator = match ($databaseConnection->getDriverName()) {
+                'pgsql' => 'ilike',
+                default => 'like',
+            };
+
+            $relationshipQuery = $relationshipQuery
+                ->where($component->getRelationshipTitleColumnName(), $searchOperator, "%{$search}%")
+                ->limit(50);
+
+            $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
+
+            if ($component->hasOptionLabelFromRecordUsingCallback()) {
+                return $relationshipQuery
+                    ->get()
+                    ->mapWithKeys(static fn (Model $record) => [
+                        $record->{$keyName} => $component->getOptionLabelFromRecord($record),
+                    ])
+                    ->toArray();
+            }
+
+            return $relationshipQuery
+                ->pluck($component->getRelationshipTitleColumnName(), $keyName)
+                ->toArray();
+        });
+
+        $this->options(static function (Select $component) use ($callback): array {
+            if (($component->isSearchable()) && ! $component->isPreloaded()) {
+                return [];
+            }
+
+            $relationship = $component->getRelationship();
+
+            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getRelationshipTitleColumnName());
+
+            if ($callback) {
+                $relationshipQuery = $component->evaluate($callback, [
+                    'query' => $relationshipQuery,
+                ]);
+            }
+
+            $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
+
+            if ($component->hasOptionLabelFromRecordUsingCallback()) {
+                return $relationshipQuery
+                    ->get()
+                    ->mapWithKeys(static fn (Model $record) => [
+                        $record->{$keyName} => $component->getOptionLabelFromRecord($record),
+                    ])
+                    ->toArray();
+            }
+
+            return $relationshipQuery
+                ->pluck($component->getRelationshipTitleColumnName(), $keyName)
+                ->toArray();
+        });
+
+        $this->loadStateFromRelationshipsUsing(static function (Select $component, $state): void {
+            if (filled($state)) {
+                return;
+            }
+
+            $relationship = $component->getRelationship();
+
+            if ($component->isMultiple()) {
+                $relatedModels = $relationship->getResults();
+
+                $component->state(
+                    // Cast the related keys to a string, otherwise JavaScript does not
+                    // know how to handle deselection.
+                    //
+                    // https://github.com/laravel-filament/filament/issues/1111
+                    $relatedModels
+                        ->pluck($relationship->getRelatedKeyName())
+                        ->map(static fn ($key): string => strval($key))
+                        ->toArray(),
+                );
+
+                return;
+            }
+
+            /** @var BelongsTo $relationship */
+
+            $relatedModel = $relationship->getResults();
+
+            if (! $relatedModel) {
+                return;
+            }
+
+            $component->state(
+                $relatedModel->getAttribute(
+                    $relationship->getOwnerKeyName(),
+                ),
+            );
+        });
+
+        $this->getOptionLabelUsing(static function (Select $component, $value) {
+            $relationship = $component->getRelationship();
+
+            $record = $relationship->getRelated()->query()->where($relationship->getOwnerKeyName(), $value)->first();
+
+            if (! $record) {
+                return null;
+            }
+
+            if ($component->hasOptionLabelFromRecordUsingCallback()) {
+                return $component->getOptionLabelFromRecord($record);
+            }
+
+            return $record->getAttributeValue($component->getRelationshipTitleColumnName());
+        });
+
+        $this->getOptionLabelsUsing(static function (Select $component, array $values): array {
+            $relationship = $component->getRelationship();
+            $relatedKeyName = $relationship->getRelatedKeyName();
+
+            $relationshipQuery = $relationship->getRelated()->query()
+                ->whereIn($relatedKeyName, $values);
+
+            if ($component->hasOptionLabelFromRecordUsingCallback()) {
+                return $relationshipQuery
+                    ->get()
+                    ->mapWithKeys(static fn (Model $record) => [
+                        $record->{$relatedKeyName} => $component->getOptionLabelFromRecord($record),
+                    ])
+                    ->toArray();
+            }
+
+            return $relationshipQuery
+                ->pluck($component->getRelationshipTitleColumnName(), $relatedKeyName)
+                ->toArray();
+        });
+
+        $this->exists(
+            static fn (Select $component): ?string => $component->isMultiple() ? null : $component->getRelationship()->getModel()::class,
+            static fn (Select $component): string => $component->getRelationship()->getOwnerKeyName(),
+        );
+
+        $this->saveRelationshipsUsing(static function (Select $component, Model $record, $state) {
+            if ($component->isMultiple()) {
+                $component->getRelationship()->sync($state ?? []);
+
+                return;
+            }
+
+            $component->getRelationship()->associate($state);
+            $record->save();
+        });
+
+        $this->createOptionUsing(static function (Select $component, array $data) {
+            $record = $component->getRelationship()->getRelated();
+            $record->fill($data);
+            $record->save();
+
+            return $record->getKey();
+        });
+
+        $this->dehydrated(fn (Select $component): bool => ! $component->isMultiple());
+
+        return $this;
+    }
+
+    protected function applySearchConstraint(Builder $query, string $search): Builder
+    {
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        $searchOperator = match ($databaseConnection->getDriverName()) {
+            'pgsql' => 'ilike',
+            default => 'like',
+        };
+
+        $isFirst = true;
+
+        $query->where(function (Builder $query) use ($isFirst, $searchOperator, $search): Builder {
+            foreach ($this->getSearchColumns() as $searchColumnName) {
+                $whereClause = $isFirst ? 'where' : 'orWhere';
+
+                $query->{$whereClause}(
+                    $searchColumnName,
+                    $searchOperator,
+                    "%{$search}%",
+                );
+
+                $isFirst = false;
+            }
+
+            return $query;
+        });
+
+        return $query;
+    }
+
+    public function getOptionLabelFromRecordUsing(?Closure $callback): static
+    {
+        $this->getOptionLabelFromRecordUsing = $callback;
+
+        return $this;
+    }
+
+    public function hasOptionLabelFromRecordUsingCallback(): bool
+    {
+        return $this->getOptionLabelFromRecordUsing !== null;
+    }
+
+    public function getOptionLabelFromRecord(Model $record): string
+    {
+        return $this->evaluate($this->getOptionLabelFromRecordUsing, ['record' => $record]);
+    }
+
+    public function getRelationshipTitleColumnName(): string
+    {
+        return $this->evaluate($this->relationshipTitleColumnName);
+    }
+
+    public function getLabel(): string
+    {
+        if ($this->label === null && $this->getRelationship()) {
+            return (string) Str::of($this->getRelationshipName())
+                ->before('.')
+                ->kebab()
+                ->replace(['-', '_'], ' ')
+                ->ucfirst();
+        }
+
+        return parent::getLabel();
+    }
+
+    public function getRelationship(): BelongsTo | BelongsToMany | null
+    {
+        $name = $this->getRelationshipName();
+
+        if (blank($name)) {
+            return null;
+        }
+
+        return $this->getModelInstance()->{$name}();
+    }
+
+    public function getRelationshipName(): ?string
+    {
+        return $this->evaluate($this->relationship);
+    }
+
+    public function isPreloaded(): bool
+    {
+        return $this->evaluate($this->isPreloaded);
+    }
+
+    public function hasDynamicOptions(): bool
+    {
+        return $this->isPreloaded();
     }
 
     public function hasDynamicSearchResults(): bool
     {
-        return $this->getSearchResultsUsing instanceof Closure;
+        return $this->getSearchResultsUsing instanceof Closure || ($this->getRelationship() && ! $this->isPreloaded());
+    }
+
+    public function getActionFormModel(): Model | string | null
+    {
+        return $this->getRelationship()->getModel()::class;
     }
 }
