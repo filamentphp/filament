@@ -862,15 +862,15 @@ CheckboxList::make('technologies')
 
 This method accepts the same options as the `columns()` method of the [grid](layout#grid). This allows you to responsively customize the number of columns at various breakpoints.
 
-### Populating automatically from a `BelongsToMany` relationship
+### Populating automatically from a relationship
 
-You may employ the `relationship()` method of the `BelongsToManyCheckboxList` to configure a relationship to automatically retrieve and save options from:
+You may employ the `relationship()` method to configure a relationship to automatically retrieve and save options from:
 
 ```php
 use App\Models\App;
-use Filament\Forms\Components\BelongsToManyCheckboxList;
+use Filament\Forms\Components\CheckboxList;
 
-BelongsToManyCheckboxList::make('technologies')
+CheckboxList::make('technologies')
     ->relationship('technologies', 'name')
 ```
 
@@ -879,10 +879,10 @@ BelongsToManyCheckboxList::make('technologies')
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 
 ```php
-use Filament\Forms\Components\BelongsToManyCheckboxList;
+use Filament\Forms\Components\CheckboxList;
 use Illuminate\Database\Eloquent\Builder;
 
-BelongsToManyCheckboxList::make('technologies')
+CheckboxList::make('technologies')
     ->relationship('technologies', 'name', fn (Builder $query) => $query->withTrashed())
 ```
 
@@ -893,19 +893,19 @@ $table->string('full_name')->virtualAs('concat(first_name, \' \', last_name)');
 ```
 
 ```php
-use Filament\Forms\Components\BelongsToManyCheckboxList;
+use Filament\Forms\Components\CheckboxList;
 
-BelongsToManyCheckboxList::make('participants')
+CheckboxList::make('participants')
     ->relationship('participants', 'full_name')
 ```
 
 Alternatively, you can use the `getOptionLabelUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
 
 ```php
-use Filament\Forms\Components\BelongsToManyCheckboxList;
+use Filament\Forms\Components\CheckboxList;
 use Illuminate\Database\Eloquent\Model;
 
-BelongsToManyCheckboxList::make('participants')
+CheckboxList::make('participants')
     ->relationship('participants', 'first_name')
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
