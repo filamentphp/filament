@@ -20,8 +20,6 @@ class IdColumn extends TextColumn
             $this->label('ID');
         }
 
-        $this->searchable();
-
         $this->sortable();
 
         $this->url(function (Model $record): ?string {
