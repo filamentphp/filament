@@ -59,32 +59,20 @@ trait HasRecords
     protected function resolveTableRecord(?string $key): ?Model
     {
         if (! ($this instanceof HasRelationshipTable && $this->getRelationship() instanceof BelongsToMany)) {
-            return $this->getTableQuery()
-                ->find($key);
+            return $this->getTableQuery()->find($key);
         }
 
         /** @var BelongsToMany $relationship */
         $relationship = $this->getRelationship();
 
-        if (! $this->allowsDuplicates()) {
-            return $this->resolveBelongsToManyRecord(
-                $relationship->where($relationship->getQualifiedRelatedKeyName(), $key),
-            );
-        }
-
         $pivotClass = $relationship->getPivotClass();
         $pivotKeyName = app($pivotClass)->getKeyName();
 
-        return $this->resolveBelongsToManyRecord(
-            $relationship->wherePivot($pivotKeyName, $key),
-        );
-    }
+        $query = $this->allowsDuplicates() ?
+            $relationship->wherePivot($pivotKeyName, $key) :
+            $relationship->where($relationship->getQualifiedRelatedKeyName(), $key);
 
-    protected function resolveBelongsToManyRecord(Builder | Relation $query): ?Model
-    {
-        $record = $this->selectPivotDataInQuery(
-            $query
-        )->first();
+        $record = $this->selectPivotDataInQuery($query)->first();
 
         return $record?->setRawAttributes($record->getRawOriginal());
     }
