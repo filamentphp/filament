@@ -1,4 +1,5 @@
 @props([
+    'isGrid' => true,
     'default' => 1,
     'sm' => null,
     'md' => null,
@@ -8,7 +9,7 @@
 ])
 
 <div {{ $attributes->class([
-    'grid',
+    'grid' => $isGrid,
     $default ? match ($default) {
         1 => 'grid-cols-1',
         2 => 'grid-cols-2',
