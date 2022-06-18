@@ -53,6 +53,35 @@ return [
             'label' => '展开操作项',
         ],
 
+        'toggle_columns' => [
+            'label' => '切换显示列',
+        ],
+
+    ],
+
+
+    'bulk_actions' => [
+
+        'force_delete' => [
+
+            'label' => '强制删除',
+
+            'messages' => [
+                'deleted' => '记录已删除',
+            ],
+
+        ],
+
+        'restore' => [
+
+            'label' => '恢复',
+
+            'messages' => [
+                'restored' => '记录已恢复',
+            ],
+
+        ],
+
     ],
 
     'empty' => [
@@ -79,6 +108,18 @@ return [
 
         'select' => [
             'placeholder' => '全部',
+        ],
+
+        'trashed' => [
+
+            'label' => '已删除记录',
+
+            'only_trashed' => '仅显示已删除记录',
+
+            'with_trashed' => '显示全部记录',
+
+            'without_trashed' => '不显示已删除记录',
+
         ],
 
     ],

@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => '删除',
+        'label' => '强制删除',
 
         'modal' => [
 
-            'heading' => '删除 :label',
+            'heading' => '强制删除 :label',
 
             'actions' => [
 
@@ -21,23 +21,23 @@ return [
         ],
 
         'messages' => [
-            'deleted' => '已删除',
+            'deleted' => '记录已删除',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => '删除已选项目',
+        'label' => '强制删除已选项目',
 
         'modal' => [
 
-            'heading' => '删除已选 :label',
+            'heading' => '强制删除已选 :label',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => '删除已选项目',
+                    'label' => '删除',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'deleted' => '已删除',
+            'deleted' => '记录已删除',
         ],
 
     ],
