@@ -226,6 +226,7 @@ class Select extends Field
                     $createdOptionKey;
 
                 $component->state($state);
+                $component->callAfterStateUpdated();
             })
             ->icon('heroicon-o-plus')
             ->iconButton()
