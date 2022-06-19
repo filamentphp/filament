@@ -1,6 +1,7 @@
 @props([
     'action',
     'component',
+    'icon' => null,
 ])
 
 @php
@@ -24,7 +25,7 @@
     :disabled="$action->isDisabled()"
     :color="$action->getColor()"
     :tooltip="$action->getTooltip()"
-    :icon="$action->getIcon()"
+    :icon="$icon ?? $action->getIcon()"
     :size="$action->getSize() ?? 'sm'"
 >
     {{ $slot }}
