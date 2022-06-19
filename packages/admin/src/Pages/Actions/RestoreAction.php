@@ -28,7 +28,7 @@ class RestoreAction extends Action
 
         $this->color('secondary');
 
-        $this->icon('heroicon-s-reply');
+        $this->groupedIcon('heroicon-s-reply');
 
         $this->requiresConfirmation();
 

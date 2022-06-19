@@ -36,7 +36,7 @@ trait CanNotify
         $message = $this->evaluate($this->failureNotificationMessage);
 
         if (filled($message)) {
-            $this->notify('failure', $message);
+            $this->notify('danger', $message);
         }
 
         return $this;

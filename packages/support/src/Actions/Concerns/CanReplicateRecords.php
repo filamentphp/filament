@@ -33,8 +33,6 @@ trait CanReplicateRecords
 
         $this->successNotificationMessage(__('filament-support::actions/replicate.single.messages.replicated'));
 
-        $this->icon('heroicon-s-duplicate');
-
         $this->mountUsing(function (Model $record, ?ComponentContainer $form = null): void {
             if (! $this->hasForm()) {
                 return;

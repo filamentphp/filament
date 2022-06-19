@@ -30,8 +30,8 @@
                 ->merge($getExtraAttributes())
                 ->merge($getExtraInputAttributeBag()->getAttributes())
                 ->class([
-                    'block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-600 filament-forms-textarea-component',
-                    'dark:bg-gray-700 dark:border-gray-600 dark:text-white' => config('forms.dark_mode'),
+                    'block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 filament-forms-textarea-component',
+                    'dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-primary-600' => config('forms.dark_mode'),
                     'border-gray-300' => ! $errors->has($getStatePath()),
                     'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
                 ])

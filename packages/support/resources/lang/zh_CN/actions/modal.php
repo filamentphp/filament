@@ -2,7 +2,7 @@
 
 return [
 
-    'confirmation' => '您确定要这样做吗？?',
+    'confirmation' => '您确定要这样操作吗?',
 
     'actions' => [
 

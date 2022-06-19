@@ -23,7 +23,10 @@ trait HasActiveFormLocaleSwitcher
 
     public function updatedActiveLocale(): void
     {
-        $this->activeFormLocale = $this->activeLocale;
+        $this->syncInput(
+            'activeFormLocale',
+            $this->activeLocale,
+        );
     }
 
     public function getRecordTitle(): string
@@ -40,7 +43,7 @@ trait HasActiveFormLocaleSwitcher
         $this->translatableLocales = $locales;
     }
 
-    protected function getTranslatableLocales(): array
+    public function getTranslatableLocales(): array
     {
         return $this->translatableLocales ?? static::getResource()::getTranslatableLocales();
     }

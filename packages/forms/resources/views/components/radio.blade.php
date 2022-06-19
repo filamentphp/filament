@@ -19,6 +19,7 @@
                 :lg="$getColumns('lg')"
                 :xl="$getColumns('xl')"
                 :two-xl="$getColumns('2xl')"
+                :is-grid="! $isInline()"
                 :attributes="$attributes->merge($getExtraAttributes())->class([
                     'filament-forms-radio-component',
                     'flex flex-wrap gap-3' => $isInline(),
