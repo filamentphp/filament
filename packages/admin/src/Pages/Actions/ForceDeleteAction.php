@@ -26,7 +26,7 @@ class ForceDeleteAction extends Action
 
         $this->color('danger');
 
-        $this->icon('heroicon-s-trash');
+        $this->groupedIcon('heroicon-s-trash');
 
         $this->requiresConfirmation();
 

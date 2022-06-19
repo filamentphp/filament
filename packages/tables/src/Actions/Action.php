@@ -6,6 +6,7 @@ use Filament\Support\Actions\Action as BaseAction;
 use Filament\Support\Actions\Concerns\CanBeDisabled;
 use Filament\Support\Actions\Concerns\CanBeOutlined;
 use Filament\Support\Actions\Concerns\CanOpenUrl;
+use Filament\Support\Actions\Concerns\HasGroupedIcon;
 use Filament\Support\Actions\Concerns\HasTooltip;
 use Filament\Support\Actions\Concerns\InteractsWithRecord;
 use Filament\Support\Actions\Contracts\Groupable;
@@ -19,6 +20,7 @@ class Action extends BaseAction implements Groupable, HasRecord
     use CanBeOutlined;
     use CanOpenUrl;
     use Concerns\BelongsToTable;
+    use HasGroupedIcon;
     use HasTooltip;
     use InteractsWithRecord;
 

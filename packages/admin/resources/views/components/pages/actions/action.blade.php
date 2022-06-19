@@ -1,6 +1,7 @@
 @props([
     'action',
     'component',
+    'icon' => null,
 ])
 
 @php
@@ -27,7 +28,7 @@
     :key-bindings="$action->getKeybindings()"
     :tooltip="$action->getTooltip()"
     :disabled="$action->isDisabled()"
-    :icon="$action->getIcon()"
+    :icon="$icon ?? $action->getIcon()"
     :size="$action->getSize()"
 >
     {{ $slot }}
