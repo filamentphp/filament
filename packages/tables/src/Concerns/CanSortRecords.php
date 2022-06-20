@@ -48,7 +48,7 @@ trait CanSortRecords
     {
         foreach ($this->tableSortColumns as $pair) {
             [
-                'column' =>$columnName,
+                'column' => $columnName,
                 'direction' => $direction
             ] = $pair;
 
