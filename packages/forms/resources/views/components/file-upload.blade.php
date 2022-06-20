@@ -42,8 +42,9 @@
     <div
         x-data="fileUploadFormComponent({
             acceptedFileTypes: {{ json_encode($getAcceptedFileTypes()) }},
-            canReorder: {{ $canReorder() ? 'true' : 'false' }},
+            canDownload: {{ $canDownload() ? 'true' : 'false' }},
             canPreview: {{ $canPreview() ? 'true' : 'false' }},
+            canReorder: {{ $canReorder() ? 'true' : 'false' }},
             deleteUploadedFileUsing: async (fileKey) => {
                 return await $wire.deleteUploadedFile('{{ $getStatePath() }}', fileKey)
             },
@@ -69,7 +70,6 @@
                 return await $wire.reorderUploadedFiles('{{ $getStatePath() }}', files)
             },
             shouldAppendFiles: {{ $shouldAppendFiles() ? 'true' : 'false' }},
-            shouldDownload: {{ $shouldDownload() ? 'true' : 'false' }},
             shouldTransformImage: {{ $shouldTransformImage ? 'true' : 'false' }},
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
             uploadButtonPosition: '{{ $getUploadButtonPosition() }}',
