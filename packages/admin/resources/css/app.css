@@ -9,6 +9,10 @@
 
 /* @override: @tailwindcss/forms */
 @layer base {
+    html {
+        -webkit-tap-highlight-color: transparent;
+    }
+
     [dir='rtl'] select {
         background-position: left 0.5rem center !important;
         padding-left: 2.5rem;
