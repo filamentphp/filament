@@ -205,7 +205,7 @@ return [
             'groups' => [
                 'are_collapsible' => true,
             ],
-            'width' => '320px'
+            'width' => null
         ],
     ],
 
