@@ -51,8 +51,15 @@ class Table
         return $this;
     }
 
-    public function defaultSort(array $columns): static
+    public function defaultSort(array|string $columns, ?string $direction = null): static
     {
+        if (is_string($columns)) {
+            $columns = [[
+                'column' => $columns
+                'direction' => $direction ?? 'asc'
+            ]];
+        }
+        
         $this->defaultSortColumns = $columns;
 
         return $this;
