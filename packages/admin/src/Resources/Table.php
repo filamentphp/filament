@@ -174,7 +174,7 @@ class Table
         return $this->columns;
     }
 
-    public function getDefaultSortColumns(): ?string
+    public function getDefaultSortColumns(): ?array
     {
         return $this->defaultSortColumns;
     }
