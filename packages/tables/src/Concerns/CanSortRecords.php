@@ -6,9 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait CanSortRecords
 {
-    public $tableSortColumn = null;
-
-    public $tableSortDirection = null;
+    public $tableSortColumns = null;
 
     public function sortTable(?string $column = null): void
     {
@@ -22,28 +20,21 @@ trait CanSortRecords
             $direction = 'asc';
         }
 
-        $this->tableSortColumn = $direction ? $column : null;
-        $this->tableSortDirection = $direction;
+        
+        $this->tableSortColumns = [
+            'column' => $direction ? $column : null,
+            'direction' => $direction
+        ]
 
         $this->updatedTableSort();
     }
 
-    public function getTableSortColumn(): ?string
+    public function getTableSortColumns(): ?array
     {
-        return $this->tableSortColumn;
+        return $this->tableSortColumns;
     }
 
-    public function getTableSortDirection(): ?string
-    {
-        return $this->tableSortDirection;
-    }
-
-    protected function getDefaultTableSortColumn(): ?string
-    {
-        return null;
-    }
-
-    protected function getDefaultTableSortDirection(): ?string
+    protected function getDefaultTableSortColumns(): ?array
     {
         return null;
     }
@@ -55,24 +46,26 @@ trait CanSortRecords
 
     protected function applySortingToTableQuery(Builder $query): Builder
     {
-        $columnName = $this->tableSortColumn;
+        foreach ($this->tableSortColumns as $pair) {
+            [$columnName, $direction] = $pair;
+            
+            if (! $columnName) {
+                continue;
+            }
 
-        if (! $columnName) {
-            return $query;
+            $direction = $direction === 'desc' ? 'desc' : 'asc';
+
+            if ($column = $this->getCachedTableColumn($columnName)) {
+                $column->applySort($query, $direction);
+
+                continue;
+            }
+
+            if ($columnName === $this->getDefaultTableSortColumn()) {
+                $query->orderBy($columnName, $direction);
+            }            
         }
-
-        $direction = $this->tableSortDirection === 'desc' ? 'desc' : 'asc';
-
-        if ($column = $this->getCachedTableColumn($columnName)) {
-            $column->applySort($query, $direction);
-
-            return $query;
-        }
-
-        if ($columnName === $this->getDefaultTableSortColumn()) {
-            return $query->orderBy($columnName, $direction);
-        }
-
+        
         return $query;
     }
 }
