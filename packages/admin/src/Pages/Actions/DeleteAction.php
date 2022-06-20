@@ -28,6 +28,8 @@ class DeleteAction extends Action
 
         $this->color('danger');
 
+        $this->groupedIcon('heroicon-s-trash');
+
         $this->requiresConfirmation();
 
         $this->keyBindings(['mod+d']);

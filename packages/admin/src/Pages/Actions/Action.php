@@ -10,6 +10,7 @@ use Filament\Support\Actions\Concerns\CanBeDisabled;
 use Filament\Support\Actions\Concerns\CanBeOutlined;
 use Filament\Support\Actions\Concerns\CanOpenUrl;
 use Filament\Support\Actions\Concerns\CanSubmitForm;
+use Filament\Support\Actions\Concerns\HasGroupedIcon;
 use Filament\Support\Actions\Concerns\HasKeyBindings;
 use Filament\Support\Actions\Concerns\HasTooltip;
 use Filament\Support\Actions\Concerns\InteractsWithRecord;
@@ -24,6 +25,7 @@ class Action extends BaseAction implements Groupable, HasRecord
     use CanOpenUrl;
     use CanSubmitForm;
     use Concerns\BelongsToLivewire;
+    use HasGroupedIcon;
     use HasKeyBindings;
     use HasTooltip;
     use InteractsWithRecord;
