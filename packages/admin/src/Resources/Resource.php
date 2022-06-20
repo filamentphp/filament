@@ -286,8 +286,12 @@ class Resource
 
     public static function getPluralModelLabel(): string
     {
+        if (isset(static::$pluralModelLabel)) {
+            return static::$pluralModelLabel;
+        }
+
         return locale_has_pluralization()
-            ? static::$pluralModelLabel ?? static::getPluralLabel() ?? Str::plural(static::getModelLabel())
+            ? static::getPluralLabel() ?? Str::plural(static::getModelLabel())
             : static::getModelLabel();
     }
 

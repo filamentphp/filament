@@ -324,7 +324,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
     protected static function getPluralModelLabel(): string
     {
         if (! locale_has_pluralization()) {
-            return static::getModelLabel();
+            return static::$pluralModelLabel ?? static::getModelLabel();
         }
 
         return static::$pluralModelLabel ?? static::getPluralRecordLabel() ?? (string) Str::of(static::getRelationshipName())
