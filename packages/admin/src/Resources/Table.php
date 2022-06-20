@@ -55,7 +55,7 @@ class Table
     {
         if (is_string($columns)) {
             $columns = [[
-                'column' => $columns
+                'column' => $columns,
                 'direction' => $direction ?? 'asc'
             ]];
         }
