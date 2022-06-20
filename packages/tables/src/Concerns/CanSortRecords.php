@@ -47,7 +47,10 @@ trait CanSortRecords
     protected function applySortingToTableQuery(Builder $query): Builder
     {
         foreach ($this->tableSortColumns as $pair) {
-            [$columnName, $direction] = $pair;
+            [
+                'column' =>$columnName,
+                'direction' => $direction
+            ] = $pair;
 
             if (! $columnName) {
                 continue;
