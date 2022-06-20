@@ -18488,7 +18488,7 @@ if (supported()) {
 
 // node_modules/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.esm.js
 /*!
- * FilePondPluginFileValidateSize 2.2.7
+ * FilePondPluginFileValidateSize 2.2.6
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -18499,11 +18499,11 @@ var plugin = ({addFilter: addFilter2, utils}) => {
       return true;
     }
     const sizeMax = query("GET_MAX_FILE_SIZE");
-    if (sizeMax !== null && file2.size > sizeMax) {
+    if (sizeMax !== null && file2.size >= sizeMax) {
       return false;
     }
     const sizeMin = query("GET_MIN_FILE_SIZE");
-    if (sizeMin !== null && file2.size < sizeMin) {
+    if (sizeMin !== null && file2.size <= sizeMin) {
       return false;
     }
     return true;
@@ -18517,7 +18517,7 @@ var plugin = ({addFilter: addFilter2, utils}) => {
       return resolve(file2);
     }
     const sizeMax = query("GET_MAX_FILE_SIZE");
-    if (sizeMax !== null && file2.size > sizeMax) {
+    if (sizeMax !== null && file2.size >= sizeMax) {
       reject({
         status: {
           main: query("GET_LABEL_MAX_FILE_SIZE_EXCEEDED"),
@@ -18529,7 +18529,7 @@ var plugin = ({addFilter: addFilter2, utils}) => {
       return;
     }
     const sizeMin = query("GET_MIN_FILE_SIZE");
-    if (sizeMin !== null && file2.size < sizeMin) {
+    if (sizeMin !== null && file2.size <= sizeMin) {
       reject({
         status: {
           main: query("GET_LABEL_MIN_FILE_SIZE_EXCEEDED"),
@@ -18583,7 +18583,7 @@ var filepond_plugin_file_validate_size_esm_default = plugin;
 
 // node_modules/filepond-plugin-file-validate-type/dist/filepond-plugin-file-validate-type.esm.js
 /*!
- * FilePondPluginFileValidateType 1.2.8
+ * FilePondPluginFileValidateType 1.2.7
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -18658,16 +18658,13 @@ var plugin2 = ({addFilter: addFilter2, utils}) => {
     const validationResult = validateFile(file2, acceptedFileTypes, typeDetector);
     const handleRejection = () => {
       const acceptedFileTypesMapped = acceptedFileTypes.map(applyMimeTypeMap(query("GET_FILE_VALIDATE_TYPE_LABEL_EXPECTED_TYPES_MAP"))).filter((label) => label !== false);
-      const acceptedFileTypesMapped_unique = acceptedFileTypesMapped.filter(function(item2, index2) {
-        return acceptedFileTypesMapped.indexOf(item2) === index2;
-      });
       reject({
         status: {
           main: query("GET_LABEL_FILE_TYPE_NOT_ALLOWED"),
           sub: replaceInString2(query("GET_FILE_VALIDATE_TYPE_LABEL_EXPECTED_TYPES"), {
-            allTypes: acceptedFileTypesMapped_unique.join(", "),
-            allButLastType: acceptedFileTypesMapped_unique.slice(0, -1).join(", "),
-            lastType: acceptedFileTypesMapped_unique[acceptedFileTypesMapped.length - 1]
+            allTypes: acceptedFileTypesMapped.join(", "),
+            allButLastType: acceptedFileTypesMapped.slice(0, -1).join(", "),
+            lastType: acceptedFileTypesMapped[acceptedFileTypesMapped.length - 1]
           })
         }
       });
@@ -23477,14 +23474,14 @@ var Tokenizer = class {
         l = item2.header.length;
         for (j = 0; j < l; j++) {
           item2.header[j].tokens = [];
-          this.lexer.inline(item2.header[j].text, item2.header[j].tokens);
+          this.lexer.inlineTokens(item2.header[j].text, item2.header[j].tokens);
         }
         l = item2.rows.length;
         for (j = 0; j < l; j++) {
           row = item2.rows[j];
           for (k = 0; k < row.length; k++) {
             row[k].tokens = [];
-            this.lexer.inline(row[k].text, row[k].tokens);
+            this.lexer.inlineTokens(row[k].text, row[k].tokens);
           }
         }
         return item2;
@@ -30739,6 +30736,7 @@ Sortable.mount(Remove, Revert);
 var sortable_esm_default = Sortable;
 
 // packages/forms/resources/js/sortable.js
+window.Sortable = sortable_esm_default;
 window.Livewire.directive("sortable", (el) => {
   el.sortable = sortable_esm_default.create(el, {
     draggable: "[wire\\:sortable\\.item]",

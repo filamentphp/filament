@@ -7,7 +7,7 @@
 <html
     lang="{{ str_replace('_', '-', app()->getLocale()) }}"
     dir="{{ __('filament::layout.direction') ?? 'ltr' }}"
-    class="filament antialiased bg-gray-100 js-focus-visible"
+    class="antialiased bg-gray-100 filament js-focus-visible"
 >
     <head>
         {{ \Filament\Facades\Filament::renderHook('head.start') }}
@@ -30,6 +30,7 @@
             [x-cloak=""], [x-cloak="x-cloak"], [x-cloak="1"] { display: none !important; }
             @media (max-width: 1023px) { [x-cloak="-lg"] { display: none !important; } }
             @media (min-width: 1024px) { [x-cloak="lg"] { display: none !important; } }
+            :root { --sidebar-width: {{ config('filament.layout.sidebar.width') }}; }
         </style>
 
         @livewireStyles
