@@ -56,10 +56,10 @@ class Table
         if (is_string($columns)) {
             $columns = [[
                 'column' => $columns,
-                'direction' => $direction ?? 'asc'
+                'direction' => $direction ?? 'asc',
             ]];
         }
-        
+
         $this->defaultSortColumns = $columns;
 
         return $this;
