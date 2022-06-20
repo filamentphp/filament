@@ -197,6 +197,11 @@ return [
 
         ],
 
+        'boolean' => [
+            'true' => 'بله',
+            'false' => 'خیر',
+        ],
+
         'loading_message' => 'درحال بارگزاری...',
 
         'no_search_results_message' => 'هیچ گزینه ای با جستجوی شما مطابقت ندارد',
@@ -211,6 +216,22 @@ return [
 
     'tags_input' => [
         'placeholder' => 'تگ جدید',
+    ],
+
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => 'قبلی',
+            ],
+
+            'next_step' => [
+                'label' => 'بعدی',
+            ],
+
+        ],
+
     ],
 
 ];

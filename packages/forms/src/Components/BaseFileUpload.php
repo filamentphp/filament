@@ -133,6 +133,19 @@ class BaseFileUpload extends Field
         });
     }
 
+    public function callAfterStateUpdated(): static
+    {
+        if ($callback = $this->afterStateUpdated) {
+            $state = $this->getState();
+
+            $this->evaluate($callback, [
+                'state' => $this->isMultiple() ? $state : Arr::first($state ?? []),
+            ]);
+        }
+
+        return $this;
+    }
+
     public function acceptedFileTypes(array | Arrayable | Closure $types): static
     {
         $this->acceptedFileTypes = $types;

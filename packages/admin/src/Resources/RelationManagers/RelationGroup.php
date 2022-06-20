@@ -22,8 +22,12 @@ class RelationGroup
         return $this->label;
     }
 
-    public function getManagers(Model $ownerRecord): array
+    public function getManagers(?Model $ownerRecord = null): array
     {
+        if (! $ownerRecord) {
+            return $this->managers;
+        }
+
         return array_filter(
             $this->managers,
             fn (string $manager): bool => $manager::canViewForRecord($ownerRecord),

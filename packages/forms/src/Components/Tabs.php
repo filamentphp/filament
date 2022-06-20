@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Components;
 
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
 class Tabs extends Component
@@ -19,7 +18,7 @@ class Tabs extends Component
     public static function make(string $label): static
     {
         $static = app(static::class, ['label' => $label]);
-        $static->setUp();
+        $static->configure();
 
         return $static;
     }
@@ -29,13 +28,5 @@ class Tabs extends Component
         $this->childComponents($tabs);
 
         return $this;
-    }
-
-    public function getConfig(): array
-    {
-        return collect($this->getChildComponentContainer()->getComponents())
-            ->filter(static fn (Tab $tab): bool => ! $tab->isHidden())
-            ->mapWithKeys(static fn (Tab $tab): array => [$tab->getId() => $tab->getLabel()])
-            ->toArray();
     }
 }

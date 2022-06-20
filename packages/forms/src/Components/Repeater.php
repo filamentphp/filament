@@ -6,12 +6,17 @@ use Closure;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Contracts\HasForms;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Support\Str;
 
 class Repeater extends Field
 {
-    use Concerns\CanLimitItemsLength;
     use Concerns\CanBeCollapsed;
+    use Concerns\CanLimitItemsLength;
+    use Concerns\HasContainerGridLayout;
 
     protected string $view = 'forms::components.repeater';
 
@@ -24,6 +29,14 @@ class Repeater extends Field
     protected bool | Closure $isItemMovementDisabled = false;
 
     protected bool | Closure $isInset = false;
+
+    protected ?Collection $cachedExistingRecords = null;
+
+    protected string | Closure | null $orderColumn = null;
+
+    protected string | Closure | null $relationship = null;
+
+    protected ?Closure $modifyRelationshipQueryUsing = null;
 
     protected function setUp(): void
     {
@@ -55,7 +68,7 @@ class Repeater extends Field
 
                     $component->hydrateDefaultItemState($newUuid);
 
-                    $component->collapsed(false);
+                    $component->collapsed(false, shouldMakeComponentCollapsible: false);
                 },
             ],
             'repeater::deleteItem' => [
@@ -196,12 +209,17 @@ class Repeater extends Field
 
     public function getChildComponentContainers(bool $withHidden = false): array
     {
+        $relationship = $this->getRelationship();
+
+        $records = $relationship ? $this->getCachedExistingRecords() : null;
+
         return collect($this->getState())
-            ->map(function ($itemData, $itemIndex): ComponentContainer {
+            ->map(function ($itemData, $itemKey) use ($records, $relationship): ComponentContainer {
                 return $this
                     ->getChildComponentContainer()
                     ->getClone()
-                    ->statePath($itemIndex)
+                    ->statePath($itemKey)
+                    ->model($relationship ? $records[$itemKey] ?? $this->getRelatedModel() : null)
                     ->inlineLabel(false);
             })
             ->toArray();
@@ -230,5 +248,207 @@ class Repeater extends Field
     public function isInset(): bool
     {
         return (bool) $this->evaluate($this->isInset);
+    }
+
+    public function orderable(string | Closure | null $column = 'sort'): static
+    {
+        $this->orderColumn = $column;
+        $this->disableItemMovement(static fn (Repeater $component): bool => ! $component->evaluate($column));
+
+        return $this;
+    }
+
+    public function relationship(string | Closure | null $name = null, ?Closure $callback = null): static
+    {
+        $this->relationship = $name ?? $this->getName();
+        $this->modifyRelationshipQueryUsing = $callback;
+
+        $this->afterStateHydrated(null);
+
+        $this->loadStateFromRelationshipsUsing(static function (Repeater $component) {
+            $component->clearCachedExistingRecords();
+
+            $component->fillFromRelationship();
+        });
+
+        $this->saveRelationshipsUsing(static function (Repeater $component, HasForms $livewire, ?array $state) {
+            if (! is_array($state)) {
+                $state = [];
+            }
+
+            $relationship = $component->getRelationship();
+            $localKeyName = $relationship->getLocalKeyName();
+
+            $existingRecords = $component->getCachedExistingRecords();
+
+            $recordsToDelete = [];
+
+            foreach ($existingRecords->pluck($localKeyName) as $keyToCheckForDeletion) {
+                if (array_key_exists("record-{$keyToCheckForDeletion}", $state)) {
+                    continue;
+                }
+
+                $recordsToDelete[] = $keyToCheckForDeletion;
+            }
+
+            $relationship
+                ->whereIn($localKeyName, $recordsToDelete)
+                ->get()
+                ->each(static fn (Model $record) => $record->delete());
+
+            $childComponentContainers = $component->getChildComponentContainers();
+
+            $itemOrder = 1;
+            $orderColumn = $component->getOrderColumn();
+
+            $activeLocale = $livewire->getActiveFormLocale();
+
+            foreach ($childComponentContainers as $itemKey => $item) {
+                $itemData = $item->getState(shouldCallHooksBefore: false);
+
+                if ($orderColumn) {
+                    $itemData[$orderColumn] = $itemOrder;
+
+                    $itemOrder++;
+                }
+
+                if ($record = ($existingRecords[$itemKey] ?? null)) {
+                    $activeLocale && method_exists($record, 'setLocale') && $record->setLocale($activeLocale);
+
+                    $record->fill($itemData)->save();
+
+                    continue;
+                }
+
+                $relatedModel = $component->getRelatedModel();
+
+                $record = new $relatedModel();
+
+                if ($activeLocale && method_exists($record, 'setLocale')) {
+                    $record->setLocale($activeLocale);
+                }
+
+                $record->fill($itemData);
+
+                $record = $relationship->save($record);
+                $item->model($record)->saveRelationships();
+            }
+        });
+
+        $this->dehydrated(false);
+
+        $this->disableItemMovement();
+
+        return $this;
+    }
+
+    public function fillFromRelationship(): void
+    {
+        $this->state(
+            $this->getStateFromRelatedRecords($this->getCachedExistingRecords()),
+        );
+    }
+
+    protected function getStateFromRelatedRecords(Collection $records): array
+    {
+        if (! $records->count()) {
+            return [];
+        }
+
+        $firstRecord = $records->first();
+
+        if (
+            ($activeLocale = $this->getLivewire()->getActiveFormLocale()) &&
+            method_exists($firstRecord, 'getTranslatableAttributes')
+        ) {
+            $translatableAttributes = $firstRecord->getTranslatableAttributes();
+
+            $records = $records->map(function (Model $record) use ($activeLocale, $translatableAttributes): array {
+                $state = $record->toArray();
+
+                if (method_exists($record, 'getTranslation')) {
+                    foreach ($translatableAttributes as $attribute) {
+                        $state[$attribute] = $record->getTranslation($attribute, $activeLocale);
+                    }
+                }
+
+                return $state;
+            });
+        }
+
+        return $records->toArray();
+    }
+
+    public function getLabel(): string
+    {
+        if ($this->label === null && $this->hasRelationship()) {
+            return (string) Str::of($this->getRelationshipName())
+                ->before('.')
+                ->kebab()
+                ->replace(['-', '_'], ' ')
+                ->ucfirst();
+        }
+
+        return parent::getLabel();
+    }
+
+    public function getOrderColumn(): ?string
+    {
+        return $this->evaluate($this->orderColumn);
+    }
+
+    public function getRelationship(): ?HasOneOrMany
+    {
+        if (! $this->hasRelationship()) {
+            return null;
+        }
+
+        return $this->getModelInstance()->{$this->getRelationshipName()}();
+    }
+
+    public function getRelationshipName(): ?string
+    {
+        return $this->evaluate($this->relationship);
+    }
+
+    public function getCachedExistingRecords(): Collection
+    {
+        if ($this->cachedExistingRecords) {
+            return $this->cachedExistingRecords;
+        }
+
+        $relationship = $this->getRelationship();
+        $relationshipQuery = $relationship->getQuery();
+
+        if ($this->modifyRelationshipQueryUsing) {
+            $this->evaluate($this->modifyRelationshipQueryUsing, [
+                'query' => $relationshipQuery,
+            ]);
+        }
+
+        if ($orderColumn = $this->getOrderColumn()) {
+            $relationshipQuery->orderBy($orderColumn);
+        }
+
+        $localKeyName = $relationship->getLocalKeyName();
+
+        return $this->cachedExistingRecords = $relationshipQuery->get()->mapWithKeys(
+            fn (Model $item): array => ["record-{$item[$localKeyName]}" => $item],
+        );
+    }
+
+    public function clearCachedExistingRecords(): void
+    {
+        $this->cachedExistingRecords = null;
+    }
+
+    protected function getRelatedModel(): string
+    {
+        return $this->getRelationship()->getModel()::class;
+    }
+
+    public function hasRelationship(): bool
+    {
+        return filled($this->getRelationshipName());
     }
 }

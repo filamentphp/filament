@@ -147,6 +147,7 @@
                         <div class="flex items-center space-x-4 rtl:space-x-reverse">
                             @if ($hasToolbarButton('edit'))
                                 <button
+                                    type="button"
                                     x-on:click.prevent="tab = 'edit'"
                                     x-bind:class="{ 'text-gray-400 @if (config('forms.dark_mode')) dark:text-gray-400 @endif': tab !== 'edit' }"
                                     class="text-sm hover:underline"
@@ -157,6 +158,7 @@
 
                             @if ($hasToolbarButton('preview'))
                                 <button
+                                    type="button"
                                     x-on:click.prevent="tab = 'preview'"
                                     x-bind:class="{ 'text-gray-400 @if (config('forms.dark_mode')) dark:text-gray-400 @endif': tab !== 'preview' }"
                                     @class([
@@ -215,8 +217,8 @@
                             {!! $isRequired() ? 'required' : null !!}
                         @endif
                         @class([
-                            'tracking-normal whitespace-pre-wrap overflow-y-hidden font-mono block absolute bg-transparent top-0 text-sm left-0 block z-1 w-full h-full min-h-full resize-none transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-600 caret-black',
-                            'dark:caret-white' => config('forms.dark_mode'),
+                            'tracking-normal whitespace-pre-wrap overflow-y-hidden font-mono block absolute bg-transparent top-0 text-sm left-0 block z-1 w-full h-full min-h-full resize-none transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 caret-black',
+                            'dark:caret-white dark:focus:border-primary-600' => config('forms.dark_mode'),
                             'border-gray-300' => ! $errors->has($getStatePath()),
                             'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                             'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),

@@ -8,8 +8,12 @@ trait EvaluatesClosures
 {
     protected string $evaluationIdentifier;
 
-    public function evaluate($value, array $parameters = [])
+    protected array $evaluationParametersToRemove = [];
+
+    public function evaluate($value, array $parameters = [], array $exceptParameters = [])
     {
+        $this->evaluationParametersToRemove = $exceptParameters;
+
         if ($value instanceof Closure) {
             return app()->call(
                 $value,
@@ -27,5 +31,19 @@ trait EvaluatesClosures
     protected function getDefaultEvaluationParameters(): array
     {
         return [];
+    }
+
+    protected function resolveEvaluationParameter(string $parameter, Closure $value)
+    {
+        if ($this->isEvaluationParameterRemoved($parameter)) {
+            return null;
+        }
+
+        return $value();
+    }
+
+    protected function isEvaluationParameterRemoved(string $parameter): bool
+    {
+        return in_array($parameter, $this->evaluationParametersToRemove);
     }
 }

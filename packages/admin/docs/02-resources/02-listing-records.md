@@ -41,53 +41,34 @@ public static function table(Table $table): Table
 
 [Filters](../../tables/filters) are predefined scopes that administrators can use to filter records in your table. The `$table->filters()` method is used to register these.
 
+### Displaying filters above the table content
+
+To render the filters above the table content instead of in a popover, you may use:
+
+```php
+use Filament\Tables\Filters\Layout;
+use Filament\Resources\Table;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->filters(
+            [
+                // ...
+            ],
+            layout: Layout::AboveContent,
+        );
+}
+```
+
 ## Actions
 
 [Actions](../../tables/actions#single-actions) are buttons that are rendered at the end of table rows. They allow the user to perform a task on a record in the table. To learn how to build actions, see the [full actions documentation](../../tables/actions#single-actions).
 
-To add actions before the default "Edit" / "View" actions, use the `$table->prependActions()` method:
-
-```php
-use Filament\Resources\Table;
-use Filament\Tables;
-
-public static function table(Table $table): Table
-{
-    return $table
-        ->columns([
-            // ...
-        ])
-        ->prependActions([
-            Tables\Actions\Action::make('activate')
-                ->action(fn (Post $record) => $record->activate())
-                ->requiresConfirmation()
-                ->color('success'),
-        ]);
-}
-```
-
-To add actions after the default "Edit" / "View" actions, use the `$table->pushActions()` method:
-
-```php
-use Filament\Resources\Table;
-use Filament\Tables;
-
-public static function table(Table $table): Table
-{
-    return $table
-        ->columns([
-            // ...
-        ])
-        ->pushActions([
-            Tables\Actions\Action::make('activate')
-                ->action(fn (Post $record) => $record->activate())
-                ->requiresConfirmation()
-                ->color('success'),
-        ]);
-}
-```
-
-To replace the default "Edit" / "View" actions, use the `$table->actions()` method:
+To add actions to a table, use the `$table->actions()` method:
 
 ```php
 use Filament\Resources\Table;
@@ -100,6 +81,7 @@ public static function table(Table $table): Table
             // ...
         ])
         ->actions([
+            // ...
             Tables\Actions\Action::make('activate')
                 ->action(fn (Post $record) => $record->activate())
                 ->requiresConfirmation()
@@ -108,7 +90,31 @@ public static function table(Table $table): Table
 }
 ```
 
-## Bulk Actions
+### Grouping actions
+
+You may use an `ActionGroup` object to group multiple table actions together in a dropdown:
+
+```php
+use Filament\Resources\Table;
+use Filament\Tables;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->actions([
+            Tables\Actions\ActionGroup::make([
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
+            ]),
+        ]);
+}
+```
+
+## Bulk actions
 
 [Bulk actions](../../tables/actions#bulk-actions) are buttons that are rendered in a dropdown in the header of the table. They appear when you select records using the checkboxes at the start of each table row. They allow the user to perform a task on multiple records at once in the table. To learn how to build bulk actions, see the [full actions documentation](../../tables/actions#bulk-actions).
 
@@ -125,53 +131,8 @@ public static function table(Table $table): Table
         ->columns([
             // ...
         ])
-        ->prependBulkActions([
-            Tables\Actions\BulkAction::make('activate')
-                ->action(fn (Collection $records) => $records->each->activate())
-                ->requiresConfirmation()
-                ->color('success')
-                ->icon('heroicon-o-check'),
-        ]);
-}
-```
-
-To add bulk actions after the "Delete selected" action, use the `$table->pushBulkActions()` method:
-
-```php
-use Filament\Resources\Table;
-use Filament\Tables;
-use Illuminate\Database\Eloquent\Collection;
-
-public static function table(Table $table): Table
-{
-    return $table
-        ->columns([
-            // ...
-        ])
-        ->pushBulkActions([
-            Tables\Actions\BulkAction::make('activate')
-                ->action(fn (Collection $records) => $records->each->activate())
-                ->requiresConfirmation()
-                ->color('success')
-                ->icon('heroicon-o-check'),
-        ]);
-}
-```
-
-To replace the "Delete selected" action, use the `$table->bulkActions()` method:
-
-```php
-use Filament\Resources\Table;
-use Filament\Tables;
-use Illuminate\Database\Eloquent\Collection;
-
-public static function table(Table $table): Table
-{
-    return $table
-        ->columns([
-            // ...
-        ])
         ->bulkActions([
+            // ...
             Tables\Actions\BulkAction::make('activate')
                 ->action(fn (Collection $records) => $records->each->activate())
                 ->requiresConfirmation()
@@ -183,90 +144,232 @@ public static function table(Table $table): Table
 
 ## Creating records in modals
 
-If your resource is simple, you may wish to create records in modals rather than on the [Create page](creating-records).
+If your resource is simple, you may wish to create records in a modal rather than on the [Create page](creating-records).
 
-If you set up a [modal resource](getting-started#simple-modal-resources) you'll already be able to do this. But, if you have a normal resource and want to open a modal for creating records, add the `CanCreateRecords` trait to the List page class:
+If you set up a [modal resource](getting-started#simple-modal-resources) you'll already be able to do this. But, if you have a normal resource and want to open a modal for creating records, [delete the resource's Create page](getting-started#deleting-pages).
+
+### Customizing data before saving
+
+Sometimes, you may wish to modify form data before it is finally saved to the database. To do this, you may use the `mutateFormDataUsing()` method, which accepts the `$data` as an array, and returns the modified version:
 
 ```php
-use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\CreateAction;
 
-class ListCustomers extends ListRecords
-{
-    use ListRecords\Concerns\CanCreateRecords;
-
-    // ...
-}
+CreateAction::make()
+    ->mutateFormDataUsing(function (array $data): array {
+        $data['user_id'] = auth()->id();
+    
+        return $data;
+    })
 ```
 
-> If your Create page is no longer required, you can [delete it](getting-started#deleting-pages).
+### Customizing the creation process
 
-As per the documentation on [creating records](creating-records), you may use all the same utilities for customisation, but on the List page class instead of the Create page class:
+You can tweak how the record is created using the `process()` method:
 
-- [Customizing data before saving](creating-records#customizing-data-before-saving)
-- [Customizing the creation process](creating-records#customizing-the-creation-process)
-- [Customizing the save notification](creating-records#customizing-the-save-notification)
-- [Lifecycle hooks](creating-records#lifecycle-hooks), with the addition of specific `beforeCreateFill()`, `afterCreateFill()`, `beforeCreateValidate()` and `afterCreateValidate()` hooks in case you also [edit records in modals](#editing-records-in-modals)
+```php
+use Filament\Tables\Actions\CreateAction;
+use Illuminate\Database\Eloquent\Model;
+
+CreateAction::make()
+    ->process(function (array $data): Model {
+        return static::getModel()::create($data);
+    })
+```
+
+### Customizing the save notification
+
+When the record is successfully created, a notification is dispatched to the user, which indicates the success of their action.
+
+To customize the text content of this notification:
+
+```php
+use Filament\Tables\Actions\CreateAction;
+
+CreateAction::make()
+    ->successNotificationMessage('User registered')
+```
+
+And to disable the notification altogether:
+
+```php
+use Filament\Tables\Actions\CreateAction;
+
+CreateAction::make()
+    ->successNotificationMessage(null)
+```
+
+### Lifecycle hooks
+
+Hooks may be used to execute code at various points within an action's lifecycle.
+
+```php
+use Filament\Tables\Actions\CreateAction;
+
+CreateAction::make()
+    ->beforeFormFilled(function () {
+        // Runs before the form fields are populated with their default values.
+    })
+    ->afterFormFilled(function () {
+        // Runs after the form fields are populated with their default values.
+    })
+    ->beforeFormValidated(function () {
+        // Runs before the form fields are validated when the form is submitted.
+    })
+    ->afterFormValidated(function () {
+        // Runs after the form fields are validated when the form is submitted.
+    })
+    ->before(function () {
+        // Runs before the form fields are saved to the database.
+    })
+    ->after(function () {
+        // Runs after the form fields are saved to the database.
+    })
+```
 
 ## Editing records in modals
 
-If your resource is simple, you may wish to edit records in modals rather than on the [Edit page](editing-records).
+If your resource is simple, you may wish to edit records a modal rather than on the [Edit page](editing-records).
 
-If you set up a [modal resource](getting-started#simple-modal-resources) you'll already be able to do this. But, if you have a normal resource and want to open a modal for editing records, add the `CanEditRecords` trait to the List page class:
+If you set up a [modal resource](getting-started#simple-modal-resources) you'll already be able to do this. But, if you have a normal resource and want to open a modal for editing records, [delete the resource's Edit page](getting-started#deleting-pages).
+
+### Customizing data before filling the form
+
+You may wish to modify the data from a record before it is filled into the form. To do this, you may use the `mutateRecordDataUsing()` method to modify the `$data` array, and return the modified version before it is filled into the form:
 
 ```php
-use Filament\Resources\Pages\ListRecords;
+use Filament\Tables\Actions\EditAction;
 
-class ListCustomers extends ListRecords
-{
-    use ListRecords\Concerns\CanEditRecords;
-
-    // ...
-}
+EditAction::make()
+    ->mutateRecordDataUsing(function (array $data): array {
+        $data['user_id'] = auth()->id();
+    
+        return $data;
+    })
 ```
 
-> If your Edit page is no longer required, you can [delete it](getting-started#deleting-pages).
+### Customizing data before saving
 
-As per the documentation on [editing records](editing-records), you may use all the same utilities for customisation, but on the List page class instead of the Edit page class:
+Sometimes, you may wish to modify form data before it is finally saved to the database. To do this, you may define a `mutateFormDataUsing()` method, which accepts the `$data` as an array, and returns it modified:
 
-- [Customizing data before filling the form](editing-records#customizing-data-before-filling-the-form)
-- [Customizing data before saving](editing-records#customizing-data-before-saving)
-- [Customizing the saving process](editing-records#customizing-the-update-process)
-- [Customizing the save notification](editing-records#customizing-the-save-notification)
-- [Lifecycle hooks](editing-records#lifecycle-hooks), with the addition of specific `beforeEditFill()`, `afterEditFill()`, `beforeEditValidate()` and `afterEditValidate()` hooks in case you also [create records in modals](#creating-records-in-modals)
+```php
+use Filament\Tables\Actions\EditAction;
+
+EditAction::make()
+    ->mutateFormDataUsing(function (array $data): array {
+        $data['last_edited_by_id'] = auth()->id();
+    
+        return $data;
+    })
+```
+
+### Customizing the saving process
+
+You can tweak how the record is updated using the `process()` method:
+
+```php
+use Filament\Tables\Actions\EditAction;
+use Illuminate\Database\Eloquent\Model;
+
+EditAction::make()
+    ->process(function (Model $record, array $data): Model {
+        $record->update($data);
+
+        return $record;
+    })
+```
+
+### Customizing the save notification
+
+When the record is successfully updated, a notification is dispatched to the user, which indicates the success of their action.
+
+To customize the text content of this notification:
+
+```php
+use Filament\Tables\Actions\EditAction;
+
+EditAction::make()
+    ->successNotificationMessage('User updated')
+```
+
+And to disable the notification altogether:
+
+```php
+use Filament\Tables\Actions\EditAction;
+
+EditAction::make()
+    ->successNotificationMessage(null)
+```
+
+### Lifecycle hooks
+
+Hooks may be used to execute code at various points within an action's lifecycle.
+
+```php
+use Filament\Tables\Actions\EditAction;
+
+EditAction::make()
+    ->beforeFormFilled(function () {
+        // Runs before the form fields are populated from the database.
+    })
+    ->afterFormFilled(function () {
+        // Runs after the form fields are populated from the database.
+    })
+    ->beforeFormValidated(function () {
+        // Runs before the form fields are validated when the form is saved.
+    })
+    ->afterFormValidated(function () {
+        // Runs after the form fields are validated when the form is saved.
+    })
+    ->before(function () {
+        // Runs before the form fields are saved to the database.
+    })
+    ->after(function () {
+        // Runs after the form fields are saved to the database.
+    })
+```
 
 ## Viewing records in modals
 
-If your resource is simple, you may wish to view records in modals rather than on the [View page](viewing-records).
+If your resource is simple, you may wish to view records in modals rather than on the [View page](viewing-records). If this is the case, you can just [delete the view page](getting-started#deleting-pages).
 
-Simply add the `CanViewRecords` trait to the List page class:
+If your resource doesn't contain a `ViewAction`, you can add one to the `$table->actions()` array:
 
 ```php
-use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Table;
+use Filament\Tables;
 
-class ListCustomers extends ListRecords
+public static function table(Table $table): Table
 {
-    use ListRecords\Concerns\CanViewRecords;
-
-    // ...
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->actions([
+            Tables\Actions\ViewAction::make(),
+            // ...
+        ]);
 }
 ```
 
-> If your View page is no longer required, you can [delete it](getting-started#deleting-pages).
-
 ## Deleting records
 
-By default, you can bulk-delete records in your table. You may also wish to delete single records, using an [action](#actions).
-
-If you set up a [modal resource](getting-started#simple-modal-resources) you'll already be able to do this. But, if you have a normal resource, simply add the `CanDeleteRecords` trait to the List page class:
+By default, you can bulk-delete records in your table. You may also wish to delete single records, using a `DeleteAction`:
 
 ```php
-use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Table;
+use Filament\Tables;
 
-class ListCustomers extends ListRecords
+public static function table(Table $table): Table
 {
-    use ListRecords\Concerns\CanDeleteRecords;
-
-    // ...
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->actions([
+            // ...
+            Tables\Actions\DeleteAction::make(),
+        ]);
 }
 ```
 

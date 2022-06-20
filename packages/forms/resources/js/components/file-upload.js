@@ -34,6 +34,7 @@ export default (Alpine) => {
         getUploadedFileUrlsUsing,
         imageCropAspectRatio,
         imagePreviewHeight,
+        imageResizeMode,
         imageResizeTargetHeight,
         imageResizeTargetWidth,
         isAvatar,
@@ -67,6 +68,7 @@ export default (Alpine) => {
             init: async function () {
                 this.pond = FilePond.create(this.$refs.input, {
                     acceptedFileTypes,
+                    allowPaste: false,
                     allowReorder: canReorder,
                     allowImagePreview: canPreview,
                     allowVideoPreview: canPreview,
@@ -78,6 +80,7 @@ export default (Alpine) => {
                     imagePreviewHeight,
                     imageResizeTargetHeight,
                     imageResizeTargetWidth,
+                    imageResizeMode,
                     itemInsertLocation: shouldAppendFiles ? 'after' : 'before',
                     ...(placeholder && {labelIdle: placeholder}),
                     maxFileSize: maxSize,

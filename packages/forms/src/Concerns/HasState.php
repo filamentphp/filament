@@ -2,7 +2,9 @@
 
 namespace Filament\Forms\Concerns;
 
+use Filament\Forms\Components\BaseFileUpload;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 trait HasState
 {
@@ -23,6 +25,12 @@ trait HasState
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
             if ($component->getStatePath() === $path) {
+                $component->callAfterStateUpdated();
+
+                return true;
+            }
+
+            if ($component instanceof BaseFileUpload && Str::of($path)->startsWith("{$component->getStatePath()}.")) {
                 $component->callAfterStateUpdated();
 
                 return true;
@@ -186,8 +194,8 @@ trait HasState
     public function fillComponentStateWithNull(bool $shouldOverwrite = true): static
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
-            if ($component->hasChildComponentContainer()) {
-                foreach ($component->getChildComponentContainers() as $container) {
+            if ($component->hasChildComponentContainer(withHidden: true)) {
+                foreach ($component->getChildComponentContainers(withHidden: true) as $container) {
                     $container->fillComponentStateWithNull($shouldOverwrite);
                 }
             } else {

@@ -40,7 +40,7 @@ php artisan make:filament-resource Customer --simple
 
 Your resource will have a "Manage" page, which is a List page with modals added.
 
-Additionally, your simple resource will have no `getRelations()` method, as relation managers are only displayed on the Edit and View pages, which are not present in simple resources. Everything else is the same.
+Additionally, your simple resource will have no `getRelations()` method, as [relation managers](relation-managers) are only displayed on the Edit and View pages, which are not present in simple resources. Everything else is the same.
 
 ### Automatically generating forms and tables
 
@@ -58,12 +58,20 @@ When creating your resource, you may now use `--generate`:
 php artisan make:filament-resource Customer --generate
 ```
 
-### Generating a View page
+### Handling soft deletes
 
-By default, only List, Create and Edit pages are generated for your resource. If you'd also like a [View page](viewing-records), use the `--view-page` flag:
+By default, you will not be able to interact with deleted records in the admin panel. If you'd like to add functionality to restore, force delete and filter trashed records in your resource, use the `--soft-deletes` flag when generating the resource:
 
 ```bash
-php artisan make:filament-resource Customer --view-page
+php artisan make:filament-resource Customer --soft-deletes
+```
+
+### Generating a View page
+
+By default, only List, Create and Edit pages are generated for your resource. If you'd also like a [View page](viewing-records), use the `--view` flag:
+
+```bash
+php artisan make:filament-resource Customer --view
 ```
 
 ## Record titles
@@ -82,7 +90,7 @@ This is required for features like [global search](global-search) to work.
 
 ## Forms
 
-Resource classes contain a static `form()` method that is used to build the forms on the create and Edit pages:
+Resource classes contain a static `form()` method that is used to build the forms on the Create and Edit pages:
 
 ```php
 use Filament\Forms;
@@ -178,11 +186,17 @@ public static function table(Table $table): Table
             Tables\Filters\Filter::make('verified')
                 ->query(fn (Builder $query): Builder => $query->whereNotNull('email_verified_at')),
             // ...
+        ])
+        ->actions([
+            Tables\Actions\EditAction::make(),
+        ])
+        ->bulkActions([
+            Tables\Actions\DeleteBulkAction::make(),
         ]);
 }
 ```
 
-Check out the [listing records](listing-records) docs to find out how to implement table [columns](listing-records#columns), [filters](listing-records#filters), [actions](listing-records#actions), [bulk actions](listing-records#bulk-actions) and more.
+Check out the [listing records](listing-records) docs to find out how to add table [columns](listing-records#columns), [filters](listing-records#filters), [actions](listing-records#actions), [bulk actions](listing-records#bulk-actions) and more.
 
 ## Relations
 
@@ -192,16 +206,16 @@ Filament has many utilities available for managing resource relationships. Which
 
 #### Select field
 
-Filament includes a dedicated select field that automatically loads options from a `BelongsTo` relationship:
+Filament includes the ability automatically loads options from a `BelongsTo` relationship:
 
 ```php
-use Filament\Forms\Components\BelongsToSelect;
+use Filament\Forms\Components\Select;
 
-BelongsToSelect::make('author_id')
+Select::make('author_id')
     ->relationship('author', 'name')
 ```
 
-More information about `BelongsToSelect` is available in the [Form docs](../../forms/fields#populating-automatically-from-a-belongsto-relationship).
+More information is available in the [Form docs](../../forms/fields#populating-automatically-from-a-relationship).
 
 #### Layout component
 
@@ -258,14 +272,13 @@ For more information on relation managers, see the [full documentation](relation
 
 #### Repeater
 
-Alternatively, if you're looking to edit the relationship from the main form, you could use a [repeater](../../forms/fields#populating-automatically-from-a-hasmany-relationship):
+Alternatively, if you're looking to edit the relationship from the main form, you could use a [repeater](../../forms/fields#populating-automatically-from-a-relationship):
 
 ```php
-use App\Models\App;
-use Filament\Forms\Components\HasManyRepeater;
+use Filament\Forms\Components\Repeater;
  
-HasManyRepeater::make('qualifications')
-    ->relationship('qualifications')
+Repeater::make('qualifications')
+    ->relationship()
     ->schema([
         // ...
     ])
@@ -287,12 +300,12 @@ For more information on relation managers, see the [full documentation](relation
 
 #### Multi-select field
 
-Filament includes a dedicated multi-select field that automatically loads options from a `BelongsToMany` relationship:
+Filament can automatically load `MultiSelect` options from a `BelongsToMany` relationship:
 
 ```php
-use Filament\Forms\Components\BelongsToManyMultiSelect;
+use Filament\Forms\Components\MultiSelect;
 
-BelongsToManyMultiSelect::make('technologies')
+MultiSelect::make('technologies')
     ->relationship('technologies', 'name')
 ```
 
@@ -300,16 +313,16 @@ More information about `BelongsToManyMultiSelect` is available in the [Form docs
 
 #### Checkbox list field
 
-Filament includes a dedicated checkbox list field that automatically loads options from a `BelongsToMany` relationship:
+Filament can automatically load `CheckboxList` options from a `BelongsToMany` relationship:
 
 ```php
-use Filament\Forms\Components\BelongsToManyCheckboxList;
+use Filament\Forms\Components\CheckboxList;
 
-BelongsToManyCheckboxList::make('technologies')
+CheckboxList::make('technologies')
     ->relationship('technologies', 'name')
 ```
 
-More information about `BelongsToManyCheckboxList` is available in the [Form docs](../../forms/fields#populating-automatically-from-a-belongstomany-relationship-1).
+More information about `CheckboxList` is available in the [Form docs](../../forms/fields#populating-automatically-from-a-relationship-1).
 
 #### Relation manager
 
@@ -354,14 +367,12 @@ For more information on relation managers, see the [full documentation](relation
 
 #### Repeater
 
-Alternatively, if you're looking to edit the relationship from the main form, you could use a [repeater](../../forms/fields#populating-automatically-from-a-morphmany-relationship):
+Alternatively, if you're looking to edit the relationship from the main form, you could use a [repeater](../../forms/fields#populating-automatically-from-a-relationship):
 
 ```php
-use App\Models\App;
-use Filament\Forms\Components\MorphManyRepeater;
+use Filament\Forms\Components\Repeater;
  
-MorphManyRepeater::make('qualifications')
-    ->relationship('qualifications')
+Repeater::make('qualifications')
     ->schema([
         // ...
     ])
@@ -389,39 +400,39 @@ For authorization, Filament will observe any [model policies](https://laravel.co
 - `delete()` is used to prevent a single record from being deleted. `deleteAny()` is used to prevent records from being bulk deleted. Filament uses the `deleteAny()` method because iterating through multiple records and checking the `delete()` policy is not very performant.
 - `view()` is used to control [viewing a record](viewing-records).
 
-## Labels
+## Model labels
 
-Each resource has a "label" which is automatically generated from the model name. For example, an `App\Models\Customer` model will have a `customer` label.
+Each resource has a "model label" which is automatically generated from the model name. For example, an `App\Models\Customer` model will have a `customer` label.
 
-The label is used in several parts of the UI, and you may customise it using the `$label` property:
+The label is used in several parts of the UI, and you may customise it using the `$modelLabel` property:
 
 ```php
-protected static ?string $label = 'cliente';
+protected static ?string $modelLabel = 'cliente';
 ```
 
-Alternatively, you may use the `getLabel()` to define a dynamic label:
+Alternatively, you may use the `getModelLabel()` to define a dynamic label:
 
 ```php
-public static function getLabel(): string
+public static function getModelLabel(): string
 {
     return __('filament/resources/customer.label');
 }
 ```
 
-### Plural label
+### Plural model label
 
-Resources also have a "plural label" which is automatically generated from the label. For example, a `customer` label will be pluralized into `customers`.
+Resources also have a "plural model label" which is automatically generated from the model label. For example, a `customer` label will be pluralized into `customers`.
 
-You may customize the plural version of the label using the `$pluralLabel` property:
+You may customize the plural version of the label using the `$pluralModelLabel` property:
 
 ```php
-protected static ?string $pluralLabel = 'clientes';
+protected static ?string $pluralModelLabel = 'clientes';
 ```
 
-Alternatively, you may set a dynamic plural label in the `getPluralLabel()` method:
+Alternatively, you may set a dynamic plural label in the `getPluralModelLabel()` method:
 
 ```php
-public static function getPluralLabel(): string
+public static function getPluralModelLabel(): string
 {
     return __('filament/resources/customer.plural_label');
 }
@@ -454,12 +465,30 @@ The `$navigationIcon` property supports the name of any Blade component. By defa
 protected static ?string $navigationIcon = 'heroicon-o-user-group';
 ```
 
+Alternatively, you may set a dynamic navigation icon in the `getNavigationIcon()` method:
+
+```php
+public static function getNavigationIcon(): string
+{
+    return 'heroicon-o-user-group';
+}
+```
+
 ### Sorting navigation items
 
 The `$navigationSort` property allows you to specify the order in which navigation items are listed:
 
 ```php
 protected static ?int $navigationSort = 2;
+```
+
+Alternatively, you may set a dynamic navigation item order in the `getNavigationSort()` method:
+
+```php
+public static function getNavigationSort(): ?int
+{
+    return 2;
+}
 ```
 
 ### Grouping navigation items

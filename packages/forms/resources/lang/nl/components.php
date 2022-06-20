@@ -1,6 +1,134 @@
 <?php
 
 return [
+    'builder' => [
+
+        'collapsed' => 'Inhoud toegeklapt',
+
+        'buttons' => [
+
+            'create_item' => [
+                'label' => 'Voeg toe aan :label',
+            ],
+
+            'delete_item' => [
+                'label' => 'Verwijder',
+            ],
+
+            'move_item_down' => [
+                'label' => 'Naar beneden',
+            ],
+
+            'move_item_up' => [
+                'label' => 'Naar boven',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Klap toe',
+            ],
+
+            'expand_item' => [
+                'label' => 'Klap open',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Klap alles toe',
+            ],
+
+            'expand_all' => [
+                'label' => 'Klap alles open',
+            ],
+
+        ],
+
+    ],
+
+    'key_value' => [
+
+        'buttons' => [
+
+            'add' => [
+                'label' => 'Voeg rij toe',
+            ],
+
+            'delete' => [
+                'label' => 'Verwijder rij',
+            ],
+
+        ],
+
+        'fields' => [
+
+            'key' => [
+                'label' => 'Sleutel',
+            ],
+
+            'value' => [
+                'label' => 'Waarde',
+            ],
+
+        ],
+
+    ],
+
+    'markdown_editor' => [
+
+        'toolbar_buttons' => [
+            'attach_files' => 'Voeg bestand toe',
+            'bold' => 'Vetdruk',
+            'bullet_list' => 'Bullets',
+            'code_block' => 'Codeblok',
+            'edit' => 'Editeer',
+            'italic' => 'Schuingedrukt',
+            'link' => 'Link',
+            'ordered_list' => 'Nummers',
+            'preview' => 'Preview',
+            'strike' => 'Doorgehaald',
+        ],
+
+    ],
+
+    'repeater' => [
+
+        'collapsed' => 'Inhoud toegeklapt',
+
+        'buttons' => [
+
+            'create_item' => [
+                'label' => 'Voeg toe aan :label',
+            ],
+
+            'delete_item' => [
+                'label' => 'Verwijder',
+            ],
+
+            'move_item_down' => [
+                'label' => 'Naar beneden',
+            ],
+
+            'move_item_up' => [
+                'label' => 'Naar boven',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Klap toe',
+            ],
+
+            'expand_item' => [
+                'label' => 'Klap open',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Klap alles toe',
+            ],
+
+            'expand_all' => [
+                'label' => 'Klap alles open',
+            ],
+
+        ],
+
+    ],
 
     'rich_editor' => [
 

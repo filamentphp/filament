@@ -37,6 +37,7 @@
         $imageCropAspectRatio = $getImageCropAspectRatio();
         $imageResizeTargetHeight = $getImageResizeTargetHeight();
         $imageResizeTargetWidth = $getImageResizeTargetWidth();
+        $imageResizeMode = $getImageResizeMode();
         $shouldTransformImage = $imageCropAspectRatio || $imageResizeTargetHeight || $imageResizeTargetWidth;
     @endphp
     <div
@@ -53,6 +54,7 @@
             },
             imageCropAspectRatio: {{ $imageCropAspectRatio ? "'{$imageCropAspectRatio}'" : 'null' }},
             imagePreviewHeight: {{ ($height = $getImagePreviewHeight()) ? "'{$height}'" : 'null' }},
+            imageResizeMode: {{ $imageResizeMode ? "'{$imageResizeMode}'" : 'null' }},
             imageResizeTargetHeight: {{ $imageResizeTargetHeight ? "'{$imageResizeTargetHeight}'" : 'null' }},
             imageResizeTargetWidth: {{ $imageResizeTargetWidth ? "'{$imageResizeTargetWidth}'" : 'null' }},
             isAvatar: {{ $isAvatar() ? 'true' : 'false' }},

@@ -6,15 +6,23 @@ trait HasAction
 {
     protected ?string $action = null;
 
-    public function action(string | null $action): static
+    protected ?array $actionArguments = null;
+
+    public function action(?string $action, ?array $arguments = []): static
     {
         $this->action = $action;
+        $this->actionArguments = $arguments;
 
         return $this;
     }
 
-    public function getAction(): string | null
+    public function getAction(): ?string
     {
         return $this->action;
+    }
+
+    public function getActionArguments(): ?array
+    {
+        return $this->actionArguments;
     }
 }

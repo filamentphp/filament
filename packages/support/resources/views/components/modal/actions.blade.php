@@ -6,7 +6,7 @@
 
 <div {{ $attributes->class([
     'filament-modal-actions',
-    'flex items-center space-x-4 rtl:space-x-reverse' => ! $fullWidth,
+    'flex flex-wrap items-center gap-4 rtl:space-x-reverse' => ! $fullWidth,
     'flex-row-reverse space-x-reverse' => (! $fullWidth) && ($align === 'right'),
     'justify-center' => (! $fullWidth) && ($align === 'center'),
     'grid gap-2 grid-cols-[repeat(auto-fit,minmax(0,1fr))]' => $fullWidth,

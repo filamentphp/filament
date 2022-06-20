@@ -84,7 +84,7 @@ class Builder extends Field
 
                     $component->hydrateDefaultItemState($newUuid);
 
-                    $component->collapsed(false);
+                    $component->collapsed(false, shouldMakeComponentCollapsible: false);
                 },
             ],
             'builder::deleteItem' => [
@@ -222,6 +222,9 @@ class Builder extends Field
         $this->getChildComponentContainers()[$uuid]->hydrateDefaultState();
     }
 
+    /**
+     * @deprecated Use `withBlockLabels()` instead.
+     */
     public function showBlockLabels(bool | Closure $condition = true): static
     {
         $this->withBlockLabels($condition);

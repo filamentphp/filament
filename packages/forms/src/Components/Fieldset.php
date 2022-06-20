@@ -18,7 +18,7 @@ class Fieldset extends Component implements CanEntangleWithSingularRelationships
     public static function make(string $label): static
     {
         $static = app(static::class, ['label' => $label]);
-        $static->setUp();
+        $static->configure();
 
         return $static;
     }

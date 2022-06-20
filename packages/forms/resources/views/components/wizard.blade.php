@@ -1,18 +1,26 @@
+@php
+    $isRtl = __('filament::layout.direction') === 'rtl';
+    $previousArrowIcon = $isRtl ? 'heroicon-o-chevron-right' : 'heroicon-o-chevron-left';
+    $nextArrowIcon = $isRtl ? 'heroicon-o-chevron-left' : 'heroicon-o-chevron-right';
+@endphp
+
 <div
     x-data="{
 
-        step: '{{ count($getConfig()) ? array_key_first($getConfig()) : null }}',
+        step: null,
 
-        steps: @js($getConfig()),
+        init: function () {
+            this.step = this.getSteps()[0]
+        },
 
         nextStep: function () {
             let nextStepIndex = this.getStepIndex(this.step) + 1
 
-            if (nextStepIndex >= Object.keys(this.steps).length) {
+            if (nextStepIndex >= this.getSteps().length) {
                 return
             }
 
-            this.step = this.getIndexedSteps()[nextStepIndex][0]
+            this.step = this.getSteps()[nextStepIndex]
 
             this.scrollToTop()
         },
@@ -24,7 +32,7 @@
                 return
             }
 
-            this.step = this.getIndexedSteps()[previousStepIndex][0]
+            this.step = this.getSteps()[previousStepIndex]
 
             this.scrollToTop()
         },
@@ -34,11 +42,11 @@
         },
 
         getStepIndex: function (step) {
-            return this.getIndexedSteps().findIndex((indexedStep) => indexedStep[0] === step)
+            return this.getSteps().findIndex((indexedStep) => indexedStep === step)
         },
 
-        getIndexedSteps: function () {
-            return Object.entries(this.steps)
+        getSteps: function () {
+            return JSON.parse(this.$refs.stepsData.value)
         },
 
         isFirstStep: function () {
@@ -46,16 +54,28 @@
         },
 
         isLastStep: function () {
-            return (this.getStepIndex(this.step) + 1) >= Object.keys(this.steps).length
+            return (this.getStepIndex(this.step) + 1) >= this.getSteps().length
         },
 
     }"
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $getStatePath() }}') nextStep()"
     x-cloak
     {!! $getId() ? "id=\"{$getId()}\"" : null !!}
-    {{ $attributes->merge($getExtraAttributes())->class(['space-y-6 filament-forms-wizard-component']) }}
+    {{ $attributes->merge($getExtraAttributes())->class(['grid gap-y-6 filament-forms-wizard-component']) }}
     {{ $getExtraAlpineAttributeBag() }}
 >
+    <input
+        type="hidden"
+        value='{{
+            collect($getChildComponentContainer()->getComponents())
+                ->filter(static fn (\Filament\Forms\Components\Wizard\Step $step): bool => ! $step->isHidden())
+                ->map(static fn (\Filament\Forms\Components\Wizard\Step $step) => $step->getId())
+                ->values()
+                ->toJson()
+        }}'
+        x-ref="stepsData"
+    />
+
     <ol
         {!! $getLabel() ? 'aria-label="' . $getLabel() . '"' : null !!}
         role="list"
@@ -71,7 +91,7 @@
                     x-on:click="if (getStepIndex(step) > {{ $loop->index }}) step = '{{ $step->getId() }}'"
                     x-bind:aria-current="getStepIndex(step) === {{ $loop->index }} ? 'step' : null"
                     x-bind:class="{
-                        'cursor-not-allowed': getStepIndex(step) <= {{ $loop->index }},
+                        'cursor-not-allowed pointer-events-none': getStepIndex(step) <= {{ $loop->index }},
                     }"
                     role="step"
                     class="flex items-center h-full text-left w-full"
@@ -147,7 +167,7 @@
                 @if (! $loop->first)
                     <div class="hidden absolute top-0 left-0 w-3 inset-0 md:block" aria-hidden="true">
                         <svg @class([
-                            'h-full w-full text-gray-300',
+                            'h-full w-full text-gray-300 rtl:rotate-180',
                             'dark:text-gray-700' => config('forms.dark_mode'),
                         ]) viewBox="0 0 12 82" fill="none" preserveAspectRatio="none">
                             <path d="M0.5 0V31L10.5 41L0.5 51V82" stroke="currentcolor" vector-effect="non-scaling-stroke" />
@@ -167,7 +187,7 @@
     <div class="flex items-center justify-between">
         <div>
             <x-forms::button
-                icon="heroicon-s-chevron-left"
+                :icon="$previousArrowIcon"
                 x-show="! isFirstStep()"
                 x-cloak
                 x-on:click="previousStep"
@@ -184,7 +204,7 @@
 
         <div>
             <x-forms::button
-                icon="heroicon-s-chevron-right"
+                :icon="$nextArrowIcon"
                 icon-position="after"
                 x-show="! isLastStep()"
                 x-cloak

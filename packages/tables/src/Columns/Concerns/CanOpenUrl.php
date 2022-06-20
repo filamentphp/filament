@@ -10,7 +10,7 @@ trait CanOpenUrl
 
     protected string | Closure | null $url = null;
 
-    public function openUrlInNewTab(bool $condition = true): static
+    public function openUrlInNewTab(bool | Closure $condition = true): static
     {
         $this->shouldOpenUrlInNewTab = $condition;
 
@@ -19,7 +19,7 @@ trait CanOpenUrl
 
     public function url(string | Closure | null $url, bool | Closure $shouldOpenInNewTab = false): static
     {
-        $this->shouldOpenUrlInNewTab = $shouldOpenInNewTab;
+        $this->openUrlInNewTab($shouldOpenInNewTab);
         $this->url = $url;
 
         return $this;

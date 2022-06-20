@@ -82,6 +82,25 @@ protected function getCards(): array
 }
 ```
 
+## Card extra HTML attributes
+
+You may also pass extra HTML attributes to cards using `extraAttributes()`:
+
+```php
+protected function getCards(): array
+{
+    return [
+        Card::make('Processed', '192.1k')
+            ->color('success')
+            ->extraAttributes([
+                'class' => 'cursor-pointer',
+                'wire:click' => '$emitUp("setStatusFilter", "processed")',
+            ]),
+        // ...
+    ];
+}
+```
+
 ## Card charts
 
 You may also add or chain a `chart()` to each card to provide historical data. The `chart()` method accepts an array of data points to plot:

@@ -19,7 +19,7 @@ class Tab extends Component implements CanConcealComponents
     public static function make(string $label): static
     {
         $static = app(static::class, ['label' => $label]);
-        $static->setUp();
+        $static->configure();
 
         return $static;
     }

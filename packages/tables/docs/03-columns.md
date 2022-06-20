@@ -318,6 +318,14 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('created_at')->dateTime()
 ```
 
+You may use the `since()` method to format the column's state using [Carbon's `diffForHumans()`](https://carbon.nesbot.com/docs/#api-humandiff):
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('created_at')->since()
+```
+
 The `money()` method allows you to easily format monetary values, in any currency. This functionality uses [`akaunting/laravel-money`](https://github.com/akaunting/laravel-money) internally:
 
 ```php
@@ -331,7 +339,26 @@ You may `limit()` the length of the cell's value:
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('description')->limit('50')
+TextColumn::make('description')->limit(50)
+```
+
+You may also reuse the value that is being passed to `limit()`:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('description')
+    ->limit(50)
+    ->tooltip(function (TextColumn $column): ?string {
+        $state = $column->getState();
+    
+        if (strlen($state) <= $column->getLimit()) {
+            return null;
+        }
+        
+        // Only render the tooltip if the column contents exceeds the length limit.
+        return $state;
+    })
 ```
 
 If your column value is HTML, you may render it using `html()`:
@@ -437,6 +464,25 @@ use Filament\Tables\Columns\ImageColumn;
 ImageColumn::make('header_image')->disk('s3')
 ```
 
+### Private images
+
+Filament can generate temporary URLs to render private images, you may set the `visibility()` to `private`:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('header_image')->visibility('private')
+```
+
+You may customize the extra HTML attributes of the image using `extraImgAttributes()`:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('logo')
+    ->extraImgAttributes(['title' => 'Company logo']),
+```
+
 ## Icon column
 
 Icon columns render a Blade icon component representing their contents:
@@ -528,6 +574,49 @@ BadgeColumn::make('status')
         'warning' => fn ($state): bool => $state === 'reviewing',
         'success' => fn ($state): bool => $state === 'published',
     ])
+```
+
+Badges may also have an icon:
+
+```php
+use Filament\Tables\Columns\BadgeColumn;
+
+BadgeColumn::make('status')
+    ->icons([
+        'heroicon-o-x',
+        'heroicon-o-document' => 'draft',
+        'heroicon-o-refresh' => 'reviewing',
+        'heroicon-o-truck' => 'published',
+    ])
+```
+
+Alternatively, you may conditionally display an icon using a closure:
+
+```php
+use Filament\Tables\Columns\BadgeColumn;
+
+BadgeColumn::make('status')
+    ->icons([
+        'heroicon-o-x',
+        'heroicon-o-document' => fn ($state): bool => $state === 'draft',
+        'heroicon-o-refresh' => fn ($state): bool => $state === 'reviewing',
+        'heroicon-o-truck' => fn ($state): bool => $state === 'published',
+    ])
+```
+
+You may set the position of an icon using `iconPosition()`:
+
+```php
+use Filament\Tables\Columns\BadgeColumn;
+
+BadgeColumn::make('status')
+    ->icons([
+        'heroicon-o-x',
+        'heroicon-o-document' => 'draft',
+        'heroicon-o-refresh' => 'reviewing',
+        'heroicon-o-truck' => 'published',
+    ])
+    ->iconPosition('after') // `before` or `after`
 ```
 
 ## Tags column

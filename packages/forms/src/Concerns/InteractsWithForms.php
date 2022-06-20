@@ -4,6 +4,7 @@ namespace Filament\Forms\Concerns;
 
 use Closure;
 use Filament\Forms\ComponentContainer;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use Livewire\TemporaryUploadedFile;
@@ -22,6 +23,8 @@ trait InteractsWithForms
 
     protected bool $isCachingForms = false;
 
+    protected bool $hasModalViewRendered = false;
+
     public function __get($property)
     {
         if ((! $this->isCachingForms) && $form = $this->getCachedForm($property)) {
@@ -29,10 +32,23 @@ trait InteractsWithForms
         }
 
         if ($property === 'modal') {
-            return view('forms::components.actions.modal.index');
+            return $this->getModalViewOnce();
         }
 
         return parent::__get($property);
+    }
+
+    protected function getModalViewOnce(): ?View
+    {
+        if ($this->hasModalViewRendered) {
+            return null;
+        }
+
+        try {
+            return view('forms::components.actions.modal.index');
+        } finally {
+            $this->hasModalViewRendered = true;
+        }
     }
 
     public function dispatchFormEvent(...$args): void
@@ -91,10 +107,10 @@ trait InteractsWithForms
         return [];
     }
 
-    public function getSelectSearchResults(string $statePath, string $searchQuery): array
+    public function getSelectSearchResults(string $statePath, string $search): array
     {
         foreach ($this->getCachedForms() as $form) {
-            if ($results = $form->getSelectSearchResults($statePath, $searchQuery)) {
+            if ($results = $form->getSelectSearchResults($statePath, $search)) {
                 return $results;
             }
         }

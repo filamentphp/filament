@@ -250,7 +250,6 @@ protected function getTableQueryStringIdentifier(): string
 You may use simple pagination by overriding `paginateTableQuery()` method on your Livewire component:
 
 ```php
-
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 

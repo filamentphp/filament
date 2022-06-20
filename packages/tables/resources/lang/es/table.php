@@ -59,14 +59,25 @@ return [
 
     ],
 
-    'actions' => [
 
-        'replicate' => [
+    'bulk_actions' => [
 
-            'label' => 'Repetir',
+        'force_delete' => [
+
+            'label' => 'Forzar eliminación',
 
             'messages' => [
-                'replicated' => 'Registro replicado',
+                'deleted' => 'Registros eliminados',
+            ],
+
+        ],
+
+        'restore' => [
+
+            'label' => 'Restaurar',
+
+            'messages' => [
+                'restored' => 'Registros restaurados',
             ],
 
         ],
@@ -97,6 +108,18 @@ return [
 
         'select' => [
             'placeholder' => 'Todos',
+        ],
+
+        'trashed' => [
+
+            'label' => 'Registros eliminados',
+
+            'only_trashed' => 'Solo registros eliminados',
+
+            'with_trashed' => 'Con resgistros eliminados',
+
+            'without_trashed' => 'Sin registros eliminados',
+
         ],
 
     ],

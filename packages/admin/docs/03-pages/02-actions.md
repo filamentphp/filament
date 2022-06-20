@@ -80,6 +80,22 @@ protected function getActions(): array
 }
 ```
 
+You may customize the size of a button using the `size()` method:
+
+```php
+use Filament\Pages\Actions\Action;
+
+protected function getActions(): array
+{
+    return [
+        Action::make('settings')
+            ->label('Settings')
+            ->url(route('settings'))
+            ->size('lg'), // `sm`, `md` or `lg`
+    ];
+}
+```
+
 ## Modals
 
 Actions may require additional confirmation or form information before they run. You may open a modal before an action is executed to do this.
@@ -135,6 +151,37 @@ Action::make('delete')
     ->modalHeading('Delete posts')
     ->modalSubheading('Are you sure you\'d like to delete these posts? This cannot be undone.')
     ->modalButton('Yes, delete them')
+```
+
+## Custom content
+
+You may define custom content to be rendered inside your modal, which you can specify by passing a Blade view into the `modalContent()` method:
+
+```php
+use Filament\Pages\Actions\Action;
+
+Action::make('advance')
+    ->action(fn () => $this->record->advance())
+    ->modalContent(view('filament.pages.actions.advance'))
+```
+
+## Grouping
+
+You may use an `ActionGroup` object to group multiple actions together in a dropdown:
+
+```php
+use Filament\Pages\Actions;
+
+protected function getActions(): array
+{
+    return [
+        Actions\ActionGroup::make([
+            Actions\ViewAction::make(),
+            Actions\EditAction::make(),
+            Actions\DeleteAction::make(),
+        ]),
+    ];
+}
 ```
 
 ## Keybindings

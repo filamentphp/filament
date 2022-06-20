@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Htmlable;
@@ -17,15 +18,15 @@ class Wizard extends Component
 
     protected string $view = 'forms::components.wizard';
 
-    final public function __construct(array $steps = [])
+    final public function __construct(array | Closure $steps = [])
     {
         $this->steps($steps);
     }
 
-    public static function make(array $steps = []): static
+    public static function make(array | Closure $steps = []): static
     {
         $static = app(static::class, ['steps' => $steps]);
-        $static->setUp();
+        $static->configure();
 
         return $static;
     }
@@ -41,7 +42,11 @@ class Wizard extends Component
                         return;
                     }
 
-                    $component->getChildComponentContainer()->getComponents()[$currentStep]->getChildComponentContainer()->validate();
+                    /** @var Step $currentStep */
+                    $currentStep = $component->getChildComponentContainer()->getComponents()[$currentStep];
+
+                    $currentStep->getChildComponentContainer()->validate();
+                    $currentStep->callAfterValidated();
 
                     /** @var LivewireComponent $livewire */
                     $livewire = $component->getLivewire();
@@ -53,7 +58,7 @@ class Wizard extends Component
         ]);
     }
 
-    public function steps(array $steps): static
+    public function steps(array | Closure $steps): static
     {
         $this->childComponents($steps);
 
@@ -72,14 +77,6 @@ class Wizard extends Component
         $this->submitAction = $action;
 
         return $this;
-    }
-
-    public function getConfig(): array
-    {
-        return collect($this->getChildComponentContainer()->getComponents())
-            ->filter(static fn (Step $step): bool => ! $step->isHidden())
-            ->mapWithKeys(static fn (Step $step): array => [$step->getId() => $step->getLabel()])
-            ->toArray();
     }
 
     public function getCancelAction(): string | Htmlable | null

@@ -12000,16 +12000,28 @@ var date_time_picker_default = (Alpine) => {
           this.setState(date2.second(this.second ?? 0));
         });
         this.$watch("state", () => {
+          if (this.state === void 0) {
+            return;
+          }
           let date2 = this.getSelectedDate();
-          if (this.getMaxDate() !== null && date2.isAfter(this.getMaxDate())) {
+          if (this.getMaxDate() !== null && date2?.isAfter(this.getMaxDate())) {
             date2 = null;
           }
-          if (this.getMinDate() !== null && date2.isBefore(this.getMinDate())) {
+          if (this.getMinDate() !== null && date2?.isBefore(this.getMinDate())) {
             date2 = null;
           }
-          this.hour = date2?.hour() ?? 0;
-          this.minute = date2?.minute() ?? 0;
-          this.second = date2?.second() ?? 0;
+          const newHour = date2?.hour() ?? 0;
+          if (this.hour !== newHour) {
+            this.hour = newHour;
+          }
+          const newMinute = date2?.minute() ?? 0;
+          if (this.minute !== newMinute) {
+            this.minute = newMinute;
+          }
+          const newSecond = date2?.second() ?? 0;
+          if (this.second !== newSecond) {
+            this.second = newSecond;
+          }
           this.setDisplayText();
         });
       },
@@ -12096,6 +12108,9 @@ var date_time_picker_default = (Alpine) => {
         return date.isValid() ? date : null;
       },
       getSelectedDate: function() {
+        if (this.state === void 0) {
+          return null;
+        }
         let date = esm_default(this.state);
         if (!date.isValid()) {
           return null;
@@ -21863,7 +21878,7 @@ var file_upload_default = (Alpine) => {
     imagePreviewHeight,
     imageResizeTargetHeight,
     imageResizeTargetWidth,
-    isAvatar,
+    imageResizeMode,
     loadingIndicatorPosition,
     panelAspectRatio,
     panelLayout,
@@ -21874,7 +21889,6 @@ var file_upload_default = (Alpine) => {
     removeUploadedFileUsing,
     reorderUploadedFilesUsing,
     shouldAppendFiles,
-    shouldDownload,
     shouldTransformImage,
     state: state2,
     uploadButtonPosition,
@@ -21890,6 +21904,7 @@ var file_upload_default = (Alpine) => {
       init: async function() {
         this.pond = create$f(this.$refs.input, {
           acceptedFileTypes,
+          allowPaste: false,
           allowReorder: canReorder,
           allowImagePreview: canPreview,
           allowVideoPreview: canPreview,
@@ -21901,11 +21916,11 @@ var file_upload_default = (Alpine) => {
           imagePreviewHeight,
           imageResizeTargetHeight,
           imageResizeTargetWidth,
+          imageResizeMode,
           itemInsertLocation: shouldAppendFiles ? "after" : "before",
           ...placeholder && {labelIdle: placeholder},
           maxFileSize: maxSize,
           minFileSize: minSize,
-          onactivatefile: this.downloadFile,
           styleButtonProcessItemPosition: uploadButtonPosition,
           styleButtonRemoveItemPosition: removeUploadedFileButtonPosition,
           styleLoadIndicatorPosition: loadingIndicatorPosition,
@@ -21952,15 +21967,6 @@ var file_upload_default = (Alpine) => {
         this.pond.on("reorderfiles", async (files) => {
           const orderedFileKeys = files.map((file2) => file2.source instanceof File ? file2.serverId : this.uploadedFileUrlIndex[file2.source] ?? null).filter((fileKey) => fileKey);
           await reorderUploadedFilesUsing(shouldAppendFiles ? orderedFileKeys : orderedFileKeys.reverse());
-        });
-        this.pond.on("initfile", async (fileItem) => {
-          if (!shouldDownload) {
-            return;
-          }
-          if (isAvatar) {
-            return;
-          }
-          this.prependDownloadLink(fileItem);
         });
         this.pond.on("processfilestart", async () => {
           this.dispatchFormEvent("file-upload-started");
@@ -22010,29 +22016,6 @@ var file_upload_default = (Alpine) => {
           });
         }
         return shouldAppendFiles ? files : files.reverse();
-      },
-      prependDownloadLink: function(fileItem) {
-        if (fileItem.origin !== FileOrigin$1.LOCAL) {
-          return;
-        }
-        const elem = document.getElementById(`filepond--item-${fileItem.id}`);
-        const fileInfo2 = elem.querySelector(".filepond--file-info-main");
-        const downloadLink = this.getDownloadLink(fileItem);
-        if (!downloadLink) {
-          return;
-        }
-        fileInfo2.prepend(downloadLink);
-      },
-      getDownloadLink: function(fileItem) {
-        let fileSource = fileItem.source;
-        if (!fileSource) {
-          return;
-        }
-        const anchor = document.createElement("a");
-        anchor.className = "filepond--download-icon";
-        anchor.href = fileSource;
-        anchor.download = fileItem.file.name;
-        return anchor;
       }
     };
   });
@@ -25125,7 +25108,8 @@ var select_default = (Alpine) => {
           renderChoiceLimit: 50,
           searchChoices: !hasDynamicSearchResults,
           searchFields: ["label"],
-          searchResultLimit: 50
+          searchResultLimit: 50,
+          shouldSort: false
         });
         await this.refreshChoices({withInitialOptions: true});
         if (![null, void 0, ""].includes(this.state)) {

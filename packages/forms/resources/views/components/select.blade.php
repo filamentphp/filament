@@ -22,6 +22,10 @@
             {{ $prefixAction }}
         @endif
 
+        @if ($icon = $getPrefixIcon())
+            <x-dynamic-component :component="$icon" class="w-5 h-5" />
+        @endif
+
         @if ($label = $getPrefixLabel())
             <span @class($affixLabelClasses)>
                 {{ $label }}
@@ -41,7 +45,7 @@
                     @endif
                     {{ $attributes->merge($getExtraInputAttributes())->merge($getExtraAttributes())->class([
                         'text-gray-900 block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 disabled:opacity-70',
-                        'dark:bg-gray-700 dark:text-white' => config('forms.dark_mode'),
+                        'dark:bg-gray-700 dark:text-white dark:focus:border-primary-600' => config('forms.dark_mode'),
                         'border-gray-300' => ! $errors->has($getStatePath()),
                         'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                         'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
@@ -106,6 +110,10 @@
             <span @class($affixLabelClasses)>
                 {{ $label }}
             </span>
+        @endif
+
+        @if ($icon = $getSuffixIcon())
+            <x-dynamic-component :component="$icon" class="w-5 h-5" />
         @endif
 
         @if (($suffixAction = $getSuffixAction()) && (! $suffixAction->isHidden()))
