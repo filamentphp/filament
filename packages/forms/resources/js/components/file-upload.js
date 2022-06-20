@@ -35,6 +35,7 @@ export default (Alpine) => {
         imagePreviewHeight,
         imageResizeTargetHeight,
         imageResizeTargetWidth,
+        isAvatar,
         loadingIndicatorPosition,
         panelAspectRatio,
         panelLayout,
@@ -148,6 +149,18 @@ export default (Alpine) => {
                     await reorderUploadedFilesUsing(shouldAppendFiles ? orderedFileKeys : orderedFileKeys.reverse())
                 })
 
+                this.pond.on('initfile', async (fileItem) => {
+                    if(! shouldDownload) {
+                        return
+                    }
+
+                    if(isAvatar){
+                        return
+                    }
+
+                    this.prependDownloadLink(fileItem)
+                })
+
                 this.pond.on('processfilestart', async () => {
                     this.dispatchFormEvent('file-upload-started')
                 })
@@ -217,36 +230,41 @@ export default (Alpine) => {
                 return shouldAppendFiles ? files : files.reverse()
             },
 
-            downloadFile: async function(fileItem) {
-                if(! shouldDownload) {
-                    return
-                }
-
+            prependDownloadLink: function(fileItem)
+            {
                 if(fileItem.origin !== FilePond.FileOrigin.LOCAL) {
                     return
                 }
 
-                let file = fileItem.file
+                const elem = document.getElementById(`filepond--item-${fileItem.id}`)
 
-                if (! file) {
+                const fileInfo = elem.querySelector(".filepond--file-info-main")
+
+                const downloadLink = this.getDownloadLink(fileItem)
+
+                if(! downloadLink) {
                     return
                 }
 
-                const blobURL = window.URL.createObjectURL(file)
+                fileInfo.prepend(downloadLink)
+            },
+
+            getDownloadLink: function(fileItem) {
+                let fileSource = fileItem.source
+
+                if (! fileSource) {
+                    return
+                }
 
                 const anchor = document.createElement('a')
 
-                anchor.style.display = 'none'
-                anchor.href = blobURL
-                anchor.download = file.name
+                anchor.className = "filepond--download-icon"
 
-                document.body.appendChild(anchor)
+                anchor.href = fileSource
 
-                anchor.click()
+                anchor.download = fileItem.file.name
 
-                anchor.remove()
-
-                window.URL.revokeObjectURL(blobURL)
+                return anchor
             }
         }
     })

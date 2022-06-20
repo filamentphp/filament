@@ -54,6 +54,7 @@
             imagePreviewHeight: {{ ($height = $getImagePreviewHeight()) ? "'{$height}'" : 'null' }},
             imageResizeTargetHeight: {{ $imageResizeTargetHeight ? "'{$imageResizeTargetHeight}'" : 'null' }},
             imageResizeTargetWidth: {{ $imageResizeTargetWidth ? "'{$imageResizeTargetWidth}'" : 'null' }},
+            isAvatar: {{ $isAvatar() ? 'true' : 'false' }},
             loadingIndicatorPosition: '{{ $getLoadingIndicatorPosition() }}',
             panelAspectRatio: {{ ($aspectRatio = $getPanelAspectRatio()) ? "'{$aspectRatio}'" : 'null' }},
             panelLayout: {{ ($layout = $getPanelLayout()) ? "'{$layout}'" : 'null' }},

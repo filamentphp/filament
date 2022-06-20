@@ -21863,6 +21863,7 @@ var file_upload_default = (Alpine) => {
     imagePreviewHeight,
     imageResizeTargetHeight,
     imageResizeTargetWidth,
+    isAvatar,
     loadingIndicatorPosition,
     panelAspectRatio,
     panelLayout,
@@ -21952,6 +21953,15 @@ var file_upload_default = (Alpine) => {
           const orderedFileKeys = files.map((file2) => file2.source instanceof File ? file2.serverId : this.uploadedFileUrlIndex[file2.source] ?? null).filter((fileKey) => fileKey);
           await reorderUploadedFilesUsing(shouldAppendFiles ? orderedFileKeys : orderedFileKeys.reverse());
         });
+        this.pond.on("initfile", async (fileItem) => {
+          if (!shouldDownload) {
+            return;
+          }
+          if (isAvatar) {
+            return;
+          }
+          this.prependDownloadLink(fileItem);
+        });
         this.pond.on("processfilestart", async () => {
           this.dispatchFormEvent("file-upload-started");
         });
@@ -22001,26 +22011,28 @@ var file_upload_default = (Alpine) => {
         }
         return shouldAppendFiles ? files : files.reverse();
       },
-      downloadFile: async function(fileItem) {
-        if (!shouldDownload) {
-          return;
-        }
+      prependDownloadLink: function(fileItem) {
         if (fileItem.origin !== FileOrigin$1.LOCAL) {
           return;
         }
-        let file2 = fileItem.file;
-        if (!file2) {
+        const elem = document.getElementById(`filepond--item-${fileItem.id}`);
+        const fileInfo2 = elem.querySelector(".filepond--file-info-main");
+        const downloadLink = this.getDownloadLink(fileItem);
+        if (!downloadLink) {
           return;
         }
-        const blobURL = window.URL.createObjectURL(file2);
+        fileInfo2.prepend(downloadLink);
+      },
+      getDownloadLink: function(fileItem) {
+        let fileSource = fileItem.source;
+        if (!fileSource) {
+          return;
+        }
         const anchor = document.createElement("a");
-        anchor.style.display = "none";
-        anchor.href = blobURL;
-        anchor.download = file2.name;
-        document.body.appendChild(anchor);
-        anchor.click();
-        anchor.remove();
-        window.URL.revokeObjectURL(blobURL);
+        anchor.className = "filepond--download-icon";
+        anchor.href = fileSource;
+        anchor.download = fileItem.file.name;
+        return anchor;
       }
     };
   });
