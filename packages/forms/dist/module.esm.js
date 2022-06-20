@@ -21870,15 +21870,17 @@ window.FilePond = filepond_esm_exports;
 var file_upload_default = (Alpine) => {
   Alpine.data("fileUploadFormComponent", ({
     acceptedFileTypes,
-    canReorder,
+    canDownload,
     canPreview,
+    canReorder,
     deleteUploadedFileUsing,
     getUploadedFileUrlsUsing,
     imageCropAspectRatio,
     imagePreviewHeight,
+    imageResizeMode,
     imageResizeTargetHeight,
     imageResizeTargetWidth,
-    imageResizeMode,
+    isAvatar,
     loadingIndicatorPosition,
     panelAspectRatio,
     panelLayout,
@@ -21968,6 +21970,15 @@ var file_upload_default = (Alpine) => {
           const orderedFileKeys = files.map((file2) => file2.source instanceof File ? file2.serverId : this.uploadedFileUrlIndex[file2.source] ?? null).filter((fileKey) => fileKey);
           await reorderUploadedFilesUsing(shouldAppendFiles ? orderedFileKeys : orderedFileKeys.reverse());
         });
+        this.pond.on("initfile", async (fileItem) => {
+          if (!canDownload) {
+            return;
+          }
+          if (isAvatar) {
+            return;
+          }
+          this.insertDownloadLink(fileItem);
+        });
         this.pond.on("processfilestart", async () => {
           this.dispatchFormEvent("file-upload-started");
         });
@@ -22016,6 +22027,27 @@ var file_upload_default = (Alpine) => {
           });
         }
         return shouldAppendFiles ? files : files.reverse();
+      },
+      insertDownloadLink: function(file2) {
+        if (file2.origin !== FileOrigin$1.LOCAL) {
+          return;
+        }
+        const url = this.getDownloadUrl(file2);
+        if (!url) {
+          return;
+        }
+        document.getElementById(`filepond--item-${file2.id}`).querySelector(".filepond--file-info-main").prepend(url);
+      },
+      getDownloadUrl: function(file2) {
+        let fileSource = file2.source;
+        if (!fileSource) {
+          return;
+        }
+        const anchor = document.createElement("a");
+        anchor.className = "filepond--download-icon";
+        anchor.href = fileSource;
+        anchor.download = file2.file.name;
+        return anchor;
       }
     };
   });
@@ -30739,6 +30771,7 @@ Sortable.mount(Remove, Revert);
 var sortable_esm_default = Sortable;
 
 // packages/forms/resources/js/sortable.js
+window.Sortable = sortable_esm_default;
 window.Livewire.directive("sortable", (el) => {
   el.sortable = sortable_esm_default.create(el, {
     draggable: "[wire\\:sortable\\.item]",

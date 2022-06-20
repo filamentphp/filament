@@ -20,7 +20,7 @@ trait CanSelectRecords
     {
         $query = $this->getFilteredTableQuery();
 
-        return $query->pluck($query->getModel()->getKeyName())->toArray();
+        return $query->pluck($query->getModel()->getQualifiedKeyName())->toArray();
     }
 
     public function getAllTableRecordsCount(): int
@@ -35,7 +35,7 @@ trait CanSelectRecords
     public function getSelectedTableRecords(): Collection
     {
         if (! ($this instanceof HasRelationshipTable && $this->getRelationship() instanceof BelongsToMany && $this->allowsDuplicates())) {
-            $query = $this->getTableQuery()->whereIn(app($this->getTableModel())->getKeyName(), $this->selectedTableRecords);
+            $query = $this->getTableQuery()->whereIn(app($this->getTableModel())->getQualifiedKeyName(), $this->selectedTableRecords);
             $this->applySortingToTableQuery($query);
 
             return $query->get();
@@ -45,7 +45,7 @@ trait CanSelectRecords
         $relationship = $this->getRelationship();
 
         $pivotClass = $relationship->getPivotClass();
-        $pivotKeyName = app($pivotClass)->getKeyName();
+        $pivotKeyName = app($pivotClass)->getQualifiedKeyName();
 
         return $this->selectPivotDataInQuery(
             $relationship->wherePivotIn($pivotKeyName, $this->selectedTableRecords),

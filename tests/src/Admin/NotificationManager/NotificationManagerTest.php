@@ -29,6 +29,6 @@ it('will not dispatch notify event if Livewire component redirects', function ()
         ->toBeArray()
         ->toHaveLength(1)
         ->sequence(
-            fn ($notification) => $notification->message->toBe('Saved!')
+            fn ($notification) => $notification->message->toContain('Saved!')
         );
 });

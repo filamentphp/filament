@@ -27,15 +27,17 @@ window.FilePond = FilePond;
 export default (Alpine) => {
     Alpine.data('fileUploadFormComponent', ({
         acceptedFileTypes,
-        canReorder,
+        canDownload,
         canPreview,
+        canReorder,
         deleteUploadedFileUsing,
         getUploadedFileUrlsUsing,
         imageCropAspectRatio,
         imagePreviewHeight,
+        imageResizeMode,
         imageResizeTargetHeight,
         imageResizeTargetWidth,
-        imageResizeMode,
+        isAvatar,
         loadingIndicatorPosition,
         panelAspectRatio,
         panelLayout,
@@ -149,6 +151,18 @@ export default (Alpine) => {
                     await reorderUploadedFilesUsing(shouldAppendFiles ? orderedFileKeys : orderedFileKeys.reverse())
                 })
 
+                this.pond.on('initfile', async (fileItem) => {
+                    if (! canDownload) {
+                        return
+                    }
+
+                    if (isAvatar) {
+                        return
+                    }
+
+                    this.insertDownloadLink(fileItem)
+                })
+
                 this.pond.on('processfilestart', async () => {
                     this.dispatchFormEvent('file-upload-started')
                 })
@@ -216,6 +230,36 @@ export default (Alpine) => {
                 }
 
                 return shouldAppendFiles ? files : files.reverse()
+            },
+
+            insertDownloadLink: function (file) {
+                if (file.origin !== FilePond.FileOrigin.LOCAL) {
+                    return
+                }
+
+                const url = this.getDownloadUrl(file)
+
+                if (! url) {
+                    return
+                }
+
+                document.getElementById(`filepond--item-${file.id}`)
+                    .querySelector('.filepond--file-info-main')
+                    .prepend(url)
+            },
+
+            getDownloadUrl: function (file) {
+                let fileSource = file.source
+
+                if (! fileSource) {
+                    return
+                }
+
+                const anchor = document.createElement('a')
+                anchor.className = 'filepond--download-icon'
+                anchor.href = fileSource
+                anchor.download = file.file.name
+                return anchor
             }
         }
     })
