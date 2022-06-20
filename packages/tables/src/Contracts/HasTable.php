@@ -50,9 +50,7 @@ interface HasTable extends HasForms
 
     public function getTableRecords(): Collection | Paginator;
 
-    public function getTableSortColumn(): ?string;
-
-    public function getTableSortDirection(): ?string;
+    public function getTableSortColumns(): ?array;
 
     public function isTableFilterable(): bool;
 
