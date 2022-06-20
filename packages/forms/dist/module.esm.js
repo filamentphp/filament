@@ -30739,6 +30739,7 @@ Sortable.mount(Remove, Revert);
 var sortable_esm_default = Sortable;
 
 // packages/forms/resources/js/sortable.js
+window.Sortable = sortable_esm_default;
 window.Livewire.directive("sortable", (el) => {
   el.sortable = sortable_esm_default.create(el, {
     draggable: "[wire\\:sortable\\.item]",
