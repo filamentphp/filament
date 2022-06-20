@@ -61,7 +61,7 @@ trait CanSortRecords
                 continue;
             }
 
-            if ($columnName === $this->getDefaultTableSortColumn()) {
+            if ($columnName === $this->getDefaultTableSortColumns()) {
                 $query->orderBy($columnName, $direction);
             }
         }
