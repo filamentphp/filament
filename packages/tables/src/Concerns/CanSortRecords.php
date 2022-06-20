@@ -21,10 +21,10 @@ trait CanSortRecords
         }
 
 
-        $this->tableSortColumns = [
+        $this->tableSortColumns = [[
             'column' => $direction ? $column : null,
             'direction' => $direction,
-        ];
+        ]];
 
         $this->updatedTableSort();
     }
