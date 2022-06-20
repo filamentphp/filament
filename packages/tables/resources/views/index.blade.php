@@ -333,11 +333,11 @@
                             @foreach ($columns as $column)
                                 <x-tables::header-cell
                                     :extra-attributes="$column->getExtraHeaderAttributes()"
-                                    :is-sort-column="$getSortColumn() === $column->getName()"
+                                    :is-sort-column="collect($getSortColumns() ?? [])->contains(fn ($pair) => $pair['column'] === $column->getName())" 
                                     :name="$column->getName()"
                                     :alignment="$column->getAlignment()"
                                     :sortable="$column->isSortable()"
-                                    :sort-direction="$getSortDirection()"
+                                    :sort-direction="collect($getSortColumns() ?? [])->filter(fn ($pair) => $pair['column'] === $column->getName())->pluck('direction')->first())"
                                     :class="$getHiddenClasses($column)"
                                 >
                                     {{ $column->getLabel() }}
