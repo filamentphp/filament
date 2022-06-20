@@ -62,7 +62,7 @@ class TagsColumn extends Column
         return $this->limit && count($this->getTags()) > $this->limit;
     }
 
-    public function getMoreTags(): array
+    public function getRemainingTags(): array
     {
         return array_slice($this->getTags(), $this->limit);
     }
