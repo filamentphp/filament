@@ -13,9 +13,7 @@ class Table
 
     protected array $columns = [];
 
-    protected ?string $defaultSortColumn = null;
-
-    protected ?string $defaultSortDirection = null;
+    protected ?array $defaultSortColumns = null;
 
     protected array $filters = [];
 
@@ -53,10 +51,9 @@ class Table
         return $this;
     }
 
-    public function defaultSort(string $column, string $direction = 'asc'): static
+    public function defaultSort(array $columns): static
     {
-        $this->defaultSortColumn = $column;
-        $this->defaultSortDirection = $direction;
+        $this->defaultSortColumns = $columns;
 
         return $this;
     }
@@ -170,14 +167,9 @@ class Table
         return $this->columns;
     }
 
-    public function getDefaultSortColumn(): ?string
+    public function getDefaultSortColumns(): ?string
     {
-        return $this->defaultSortColumn;
-    }
-
-    public function getDefaultSortDirection(): ?string
-    {
-        return $this->defaultSortDirection;
+        return $this->defaultSortColumns;
     }
 
     public function getFilters(): array
