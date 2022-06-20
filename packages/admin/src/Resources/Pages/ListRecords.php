@@ -327,14 +327,9 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->authorize(static::getResource()::canRestoreAny());
     }
 
-    protected function getDefaultTableSortColumn(): ?string
+    protected function getDefaultTableSortColumns(): ?array
     {
-        return $this->getResourceTable()->getDefaultSortColumn();
-    }
-
-    protected function getDefaultTableSortDirection(): ?string
-    {
-        return $this->getResourceTable()->getDefaultSortDirection();
+        return $this->getResourceTable()->getDefaultSortColumns();
     }
 
     protected function getTableActions(): array
