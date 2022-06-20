@@ -65,7 +65,7 @@ trait HasRecords
         $relationship = $this->getRelationship();
 
         $pivotClass = $relationship->getPivotClass();
-        $pivotKeyName = app($pivotClass)->getKeyName();
+        $pivotKeyName = app($pivotClass)->getQualifiedKeyName();
 
         $record = $this->selectPivotDataInQuery(
             $relationship->wherePivot($pivotKeyName, $key),
@@ -89,7 +89,7 @@ trait HasRecords
         $relationship = $this->getRelationship();
 
         $pivotClass = $relationship->getPivotClass();
-        $pivotKeyName = app($pivotClass)->getKeyName();
+        $pivotKeyName = app($pivotClass)->getQualifiedKeyName();
 
         return $record->getAttributeValue($pivotKeyName);
     }

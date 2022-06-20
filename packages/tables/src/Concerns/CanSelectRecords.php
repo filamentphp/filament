@@ -20,7 +20,7 @@ trait CanSelectRecords
     {
         $query = $this->getFilteredTableQuery();
 
-        return $query->pluck($query->getModel()->getKeyName())->toArray();
+        return $query->pluck($query->getModel()->getQualifiedKeyName())->toArray();
     }
 
     public function getAllTableRecordsCount(): int
@@ -42,7 +42,7 @@ trait CanSelectRecords
         $relationship = $this->getRelationship();
 
         $pivotClass = $relationship->getPivotClass();
-        $pivotKeyName = app($pivotClass)->getKeyName();
+        $pivotKeyName = app($pivotClass)->getQualifiedKeyName();
 
         return $this->selectPivotDataInQuery(
             $relationship->wherePivotIn($pivotKeyName, $this->selectedTableRecords),
