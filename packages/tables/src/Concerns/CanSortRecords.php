@@ -20,10 +20,10 @@ trait CanSortRecords
             $direction = 'asc';
         }
 
-        
+
         $this->tableSortColumns = [
             'column' => $direction ? $column : null,
-            'direction' => $direction
+            'direction' => $direction,
         ];
 
         $this->updatedTableSort();
@@ -48,7 +48,7 @@ trait CanSortRecords
     {
         foreach ($this->tableSortColumns as $pair) {
             [$columnName, $direction] = $pair;
-            
+
             if (! $columnName) {
                 continue;
             }
@@ -63,9 +63,9 @@ trait CanSortRecords
 
             if ($columnName === $this->getDefaultTableSortColumn()) {
                 $query->orderBy($columnName, $direction);
-            }            
+            }
         }
-        
+
         return $query;
     }
 }
