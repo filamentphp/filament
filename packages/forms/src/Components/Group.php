@@ -18,7 +18,7 @@ class Group extends Component implements CanEntangleWithSingularRelationships
     public static function make(array $schema = []): static
     {
         $static = app(static::class, ['schema' => $schema]);
-        $static->setUp();
+        $static->configure();
 
         return $static;
     }
