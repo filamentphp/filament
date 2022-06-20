@@ -11,7 +11,7 @@ trait CanSortRecords
     public function sortTable(?string $column = null): void
     {
         if (collect($this->tableSortColumns)->contains(fn ($pair) => $pair['column'] === $column)) {
-            $direction = match (collect($this->tableSortColumns)->filter(fn ($pair) => $pair['column'] === $column->getName())->pluck('direction')->first()) {
+            $direction = match (collect($this->tableSortColumns)->filter(fn ($pair) => $pair['column'] === $column)->pluck('direction')->first()) {
                 'asc' => 'desc',
                 'desc' => null,
                 default => 'asc',
