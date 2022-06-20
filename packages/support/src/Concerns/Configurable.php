@@ -27,11 +27,11 @@ trait Configurable
         try {
             return $during();
         } finally {
-            array_pop(
-                $isImportant ?
-                    static::$importantConfigurations[static::class] :
-                    static::$configurations[static::class]
-            );
+            if ($isImportant) {
+                array_pop(static::$importantConfigurations[static::class]);
+            } else {
+                array_pop(static::$configurations[static::class]);
+            }
         }
     }
 
