@@ -85,7 +85,6 @@ export default (Alpine) => {
                     ...(placeholder && {labelIdle: placeholder}),
                     maxFileSize: maxSize,
                     minFileSize: minSize,
-                    onactivatefile: this.downloadFile,
                     styleButtonProcessItemPosition: uploadButtonPosition,
                     styleButtonRemoveItemPosition: removeUploadedFileButtonPosition,
                     styleLoadIndicatorPosition: loadingIndicatorPosition,
@@ -238,15 +237,15 @@ export default (Alpine) => {
                     return
                 }
 
-                const downloadUrl = this.getDownloadUrl(file)
+                const url = this.getDownloadUrl(file)
 
-                if (! downloadUrl) {
+                if (! url) {
                     return
                 }
 
                 document.getElementById(`filepond--item-${file.id}`)
                     .querySelector('.filepond--file-info-main')
-                    .prepend(downloadLink)
+                    .prepend(url)
             },
 
             getDownloadUrl: function (file) {
