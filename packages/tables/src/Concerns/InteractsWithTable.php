@@ -67,8 +67,7 @@ trait InteractsWithTable
             $this->tableRecordsPerPage = $this->getDefaultTableRecordsPerPageSelectOption();
         }
 
-        $this->tableSortColumn ??= $this->getDefaultTableSortColumn();
-        $this->tableSortDirection ??= $this->getDefaultTableSortDirection();
+        $this->tableSortColumns ??= $this->getDefaultTableSortColumns();
     }
 
     protected function getCachedTable(): Table
