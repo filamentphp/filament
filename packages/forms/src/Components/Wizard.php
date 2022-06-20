@@ -26,7 +26,7 @@ class Wizard extends Component
     public static function make(array | Closure $steps = []): static
     {
         $static = app(static::class, ['steps' => $steps]);
-        $static->setUp();
+        $static->configure();
 
         return $static;
     }

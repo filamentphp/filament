@@ -2,6 +2,7 @@
 
 namespace Filament;
 
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\Livewire;
 use Livewire\Response;
@@ -15,7 +16,7 @@ class NotificationManager
         session()->push('filament.notifications', [
             'id' => uniqid(),
             'status' => $status,
-            'message' => $message,
+            'message' => Str::markdown($message),
         ]);
 
         $this->notifications = session()->get('filament.notifications');
