@@ -341,14 +341,9 @@ class Table extends ViewComponent
         return $callback($record);
     }
 
-    public function getSortColumn(): ?string
+    public function getSortColumns(): array
     {
-        return $this->getLivewire()->getTableSortColumn();
-    }
-
-    public function getSortDirection(): ?string
-    {
-        return $this->getLivewire()->getTableSortDirection();
+        return $this->getLivewire()->getTableSortColumns();
     }
 
     public function isFilterable(): bool
