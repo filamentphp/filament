@@ -9,6 +9,10 @@ return [
             'placeholder' => 'Search',
         ],
 
+        'tags' => [
+            'more_results' => 'and %d more',
+        ],
+
     ],
 
     'pagination' => [
