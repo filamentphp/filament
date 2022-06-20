@@ -344,14 +344,9 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return $this->table(Table::make());
     }
 
-    protected function getDefaultTableSortColumn(): ?string
+    protected function getDefaultTableSortColumns(): ?array
     {
-        return $this->getResourceTable()->getDefaultSortColumn();
-    }
-
-    protected function getDefaultTableSortDirection(): ?string
-    {
-        return $this->getResourceTable()->getDefaultSortDirection();
+        return $this->getResourceTable()->getDefaultSortColumns();
     }
 
     public function getTableRecordTitle(Model $record): string
