@@ -10,8 +10,8 @@ trait CanSortRecords
 
     public function sortTable(?string $column = null): void
     {
-        if ($column === $this->tableSortColumn) {
-            $direction = match ($this->tableSortDirection) {
+        if (collect($this->tableSortColumns)->contains(fn ($pair) => $pair['column'] === $column)) {
+            $direction = match (collect($this->tableSortColumns)->filter(fn ($pair) => $pair['column'] === $column->getName())->pluck('direction')->first()) {
                 'asc' => 'desc',
                 'desc' => null,
                 default => 'asc',
