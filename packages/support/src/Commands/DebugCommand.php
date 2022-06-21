@@ -38,6 +38,7 @@ class DebugCommand extends Command
 
             $this->line('Running filament:upgrade');
             $this->call('filament:upgrade');
+
             $this->newLine();
             $this->info('Done');
         } else {
@@ -45,10 +46,10 @@ class DebugCommand extends Command
             $this->checkLiverwireDirectory();
             $this->checkVendorViews();
 
+            $this->newLine();
             if ($this->hasFixes) {
                 $this->line("run command with --fix flag to apply fixes");
             } else {
-                $this->newLine();
                 $this->info('nothing to fix. 😁 💪');
             }
         }
@@ -108,6 +109,8 @@ class DebugCommand extends Command
             $this->warn('You have published vendor views!');
             /** @param SplFileInfo $file */
             $this->table(['files'], collect($vendorFiles)->map(fn ($file) => [Str::after($file->getPathname(), base_path() . '/')])->toArray());
+        } else {
+            $this->line('No vendor view files');
         }
     }
 
