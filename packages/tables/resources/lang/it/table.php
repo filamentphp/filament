@@ -10,7 +10,7 @@ return [
         ],
 
         'tags' => [
-            'more_results' => 'e altri %d',
+            'more_results' => 'e altri :count',
         ],
 
     ],

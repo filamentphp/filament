@@ -73,9 +73,8 @@ class TagsColumn extends Column
             return null;
         }
 
-        return sprintf(
-            __('tables::table.fields.tags.more_results'),
-            count($this->getTags()) - $this->limit
-        );
+        return __('tables::table.fields.tags.more_results', [
+            'count' => count($this->getTags()) - $this->limit,
+        ]);
     }
 }
