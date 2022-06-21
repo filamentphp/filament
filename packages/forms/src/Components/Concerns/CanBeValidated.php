@@ -149,7 +149,7 @@ trait CanBeValidated
                     $ignorable,
                     fn (Unique $rule) => $rule->ignore(
                         $ignorable->getOriginal($ignorable->getKeyName()),
-                        $ignorable->getKeyName(),
+                        $ignorable->getQualifiedKeyName(),
                     ),
                 );
 
