@@ -148,8 +148,8 @@ trait CanBeValidated
                 ->when(
                     $ignorable,
                     fn (Unique $rule) => $rule->ignore(
-                        $ignorable->getOriginal($ignorable->getQualifiedKeyName()),
-                        $ignorable->getQualifiedKeyName(),
+                        $ignorable->getOriginal($ignorable->getKeyName()),
+                        $ignorable->getKeyName(),
                     ),
                 );
 
