@@ -2,6 +2,7 @@
 
 namespace Filament\Support;
 
+use Filament\Support\Commands\DebugCommand;
 use Illuminate\Support\Facades\Blade;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -13,6 +14,9 @@ class SupportServiceProvider extends PackageServiceProvider
         $package
             ->name('filament-support')
             ->hasTranslations()
+            ->hasCommands([
+                DebugCommand::class,
+            ])
             ->hasViews();
     }
 
