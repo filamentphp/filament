@@ -72,6 +72,7 @@ trait CanAttachRecords
     {
         return Select::make('recordId')
             ->label(__('filament-support::actions/attach.single.modal.fields.record_id.label'))
+            ->required()
             ->searchable()
             ->getSearchResultsUsing(static function (Select $component, BelongsToManyRelationManager $livewire, string $search): array {
                 /** @var BelongsToMany $relationship */
