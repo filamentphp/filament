@@ -152,7 +152,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function getTitle(): string
     {
-        return static::$title ?? Str::title(static::getResource()::getPluralModelLabel());
+        return static::$title ?? Str::headline(static::getResource()::getPluralModelLabel());
     }
 
     protected function getActions(): array
