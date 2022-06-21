@@ -2,9 +2,9 @@
 
 namespace Filament\Support\Commands;
 
-use Illuminate\Support\Str;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 use Livewire\Commands\ComponentParser;
 use SplFileInfo;
 
@@ -55,7 +55,9 @@ class DebugCommand extends Command
 
     protected function showVersionInfo()
     {
-        if ($this->runFix) return;
+        if ($this->runFix) {
+            return;
+        }
 
         $versions = $this->getVersionInfo();
         $this->table(['package', 'version'], $versions);
@@ -89,7 +91,9 @@ class DebugCommand extends Command
         $filesystem = app(Filesystem::class);
         foreach ($this->vendorViewDirectories as $directory) {
             $path = resource_path('views/vendor/') . $directory;
-            if (!file_exists($path)) continue;
+            if (! file_exists($path)) {
+                continue;
+            }
             $files = $filesystem->allFiles($path);
             if (filled($files)) {
                 $vendorFiles = array_merge($vendorFiles, $files);
@@ -106,16 +110,21 @@ class DebugCommand extends Command
 
     protected function runFixVendorViews()
     {
-        if (!$this->runFix) return;
+        if (! $this->runFix) {
+            return;
+        }
 
         /** @var Filesystem $filesystem */
         $filesystem = app(Filesystem::class);
         foreach ($this->vendorViewDirectories as $directory) {
             $path = resource_path('views/vendor/') . $directory;
             $backupPath = $path . '_backup';
-            if (!file_exists($path)) continue;
+            if (! file_exists($path)) {
+                continue;
+            }
             if (file_exists($backupPath)) {
                 $this->warn("{$backupPath} existed, skipping..");
+
                 continue;
             }
             $filesystem->moveDirectory($path, $backupPath);
@@ -145,7 +154,9 @@ class DebugCommand extends Command
 
     protected function runFixLivewireDirectory()
     {
-        if (!$this->runFix) return;
+        if (! $this->runFix) {
+            return;
+        }
 
         $directory = $this->getLiverwireDirectory();
 
@@ -155,7 +166,10 @@ class DebugCommand extends Command
 
         mkdir($directory);
 
-        if (file_exists($directory)) $this->info($directory . ' created');
-        else $this->warn('Error creating ' . $directory);
+        if (file_exists($directory)) {
+            $this->info($directory . ' created');
+        } else {
+            $this->warn('Error creating ' . $directory);
+        }
     }
 }
