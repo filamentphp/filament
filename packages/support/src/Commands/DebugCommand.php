@@ -47,6 +47,9 @@ class DebugCommand extends Command
 
             if ($this->hasFixes) {
                 $this->line("run command with --fix flag to apply fixes");
+            } else {
+                $this->newLine();
+                $this->info('nothing to fix. 😁 💪');
             }
         }
 
