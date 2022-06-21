@@ -91,7 +91,7 @@ trait HasRecords
         $relationship = $this->getRelationship();
 
         $pivotClass = $relationship->getPivotClass();
-        $pivotKeyName = app($pivotClass)->getQualifiedKeyName();
+        $pivotKeyName = app($pivotClass)->getKeyName();
 
         return $record->getAttributeValue($pivotKeyName);
     }

@@ -190,6 +190,7 @@ class AssociateAction extends Action
 
         $select = Select::make('recordId')
             ->label(__('filament-support::actions/associate.single.modal.fields.record_id.label'))
+            ->required()
             ->searchable()
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(search: $search, searchColumns: $component->getSearchColumns()))
             ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle($this->getRelationship()->getRelated()->query()->find($value)))

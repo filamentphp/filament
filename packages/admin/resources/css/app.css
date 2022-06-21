@@ -7,16 +7,19 @@
 @tailwind components;
 @tailwind utilities;
 
-/* @override: @tailwindcss/forms */
 @layer base {
-    [dir='rtl'] select {
-        background-position: left 0.5rem center !important;
-        padding-left: 2.5rem;
-        padding-right: 0.75rem;
+    html {
+        -webkit-tap-highlight-color: transparent;
     }
 
     :root.dark {
         color-scheme: dark;
+    }
+
+    [dir='rtl'] select {
+        background-position: left 0.5rem center !important;
+        padding-left: 2.5rem;
+        padding-right: 0.75rem;
     }
 }
 
