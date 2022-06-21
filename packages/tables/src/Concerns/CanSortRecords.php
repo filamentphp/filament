@@ -20,7 +20,6 @@ trait CanSortRecords
             $direction = 'asc';
         }
 
-
         $this->tableSortColumns = [[
             'column' => $direction ? $column : null,
             'direction' => $direction,
@@ -34,9 +33,9 @@ trait CanSortRecords
         return $this->tableSortColumns;
     }
 
-    protected function getDefaultTableSortColumns(): ?array
+    protected function getDefaultTableSortColumns(): array
     {
-        return null;
+        return [];
     }
 
     public function updatedTableSort(): void
@@ -64,7 +63,7 @@ trait CanSortRecords
                 continue;
             }
 
-            if ($columnName === $this->getDefaultTableSortColumns()) {
+            if (collect($this->getDefaultTableSortColumns())->contains(fn (array $pair) => $columnName === $pair['column'])) {
                 $query->orderBy($columnName, $direction);
             }
         }
