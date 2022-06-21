@@ -22,6 +22,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected static string $view = 'filament::resources.pages.list-records';
 
     protected $queryString = [
+        'tableFilters',
         'tableSortColumn',
         'tableSortDirection',
         'tableSearchQuery' => ['except' => ''],
