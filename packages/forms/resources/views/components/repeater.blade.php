@@ -95,7 +95,7 @@
                                     <div class="flex-1"></div>
 
                                     <ul @class([
-                                        'flex divide-x',
+                                        'flex divide-x rtl:divide-x-reverse',
                                         'dark:divide-gray-700' => config('forms.dark_mode'),
                                     ])>
                                         @unless ($isItemDeletionDisabled)
