@@ -193,6 +193,11 @@ return [
 
         ],
 
+        'boolean' => [
+            'true' => 'Ya',
+            'false' => 'Tidak',
+        ],
+
         'loading_message' => 'Loading...',
 
         'no_search_results_message' => 'Tidak ada data yang sesuai dengan pencarian anda.',

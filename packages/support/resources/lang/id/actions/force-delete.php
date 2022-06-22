@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'Hapus',
+        'label' => 'Hapus paksa',
 
         'modal' => [
 
-            'heading' => 'Hapus :label',
+            'heading' => 'Hapus paksa :label',
 
             'actions' => [
 
@@ -28,16 +28,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Hapus yang dipilih',
+        'label' => 'Hapus paksa data yang dipilih',
 
         'modal' => [
 
-            'heading' => 'Hapus :label yang dipilih',
+            'heading' => 'Hapus paksa :label yang dipilih',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Hapus yang dipilih',
+                    'label' => 'Hapus',
                 ],
 
             ],
