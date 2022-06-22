@@ -59,31 +59,6 @@ return [
 
     ],
 
-
-    'bulk_actions' => [
-
-        'force_delete' => [
-
-            'label' => 'Tvinga radering',
-
-            'messages' => [
-                'deleted' => 'Rader raderade',
-            ],
-
-        ],
-
-        'restore' => [
-
-            'label' => 'Återställ',
-
-            'messages' => [
-                'restored' => 'Rader återställda',
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'Inga rader hittades',
     ],
