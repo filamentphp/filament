@@ -59,6 +59,31 @@ return [
 
     ],
 
+
+    'bulk_actions' => [
+
+        'force_delete' => [
+
+            'label' => 'Zorla Sil',
+
+            'messages' => [
+                'deleted' => 'Kayıtlar kalıcı olarak silindi',
+            ],
+
+        ],
+
+        'restore' => [
+
+            'label' => 'Restore',
+
+            'messages' => [
+                'restored' => 'Kayıtlar geri yüklendi',
+            ],
+
+        ],
+
+    ],
+
     'empty' => [
         'heading' => 'Kayıt bulunamadı',
     ],
@@ -83,6 +108,18 @@ return [
 
         'select' => [
             'placeholder' => 'Tümü',
+        ],
+
+        'trashed' => [
+
+            'label' => 'Silinen kayıtlar',
+
+            'only_trashed' => 'Sadece silinen kayıtlar',
+
+            'with_trashed' => 'Silinen kayıtlar ile',
+
+            'without_trashed' => 'Silinen kayıtlar olmadan',
+
         ],
 
     ],
