@@ -7,9 +7,17 @@
     'tooltip' => null,
 ])
 
-<div x-data="{ isOpen: false }" {{ $attributes->class(['relative']) }}>
+<div
+    x-data="actionGroupTableComponent({
+        mountTableActionUsing: async (...args) => {
+            return await $wire.mountTableAction(...args)
+        }
+    })"
+    {{ $attributes->class(['relative']) }}
+>
     <x-filament-support::icon-button
-        x-on:click="isOpen = ! isOpen"
+        x-ref="trigger"
+        x-on:click="toggleDropdown"
         :color="$color"
         :dark-mode="$darkMode"
         :icon="$icon"
@@ -21,25 +29,28 @@
         </x-slot>
     </x-filament-support::icon-button>
 
-    <div
-        x-show="isOpen"
-        x-on:click.away="isOpen = false"
-        x-transition
-        x-cloak
-        @class([
-            'absolute right-0 rtl:left-0 rtl:right-auto z-20 mt-4 shadow-xl ring-1 ring-gray-900/10 overflow-hidden rounded-xl w-52 filament-action-group-dropdown',
-            'dark:ring-white/20' => $darkMode,
-        ])
-    >
-        <ul @class([
-            'py-1 space-y-1 bg-white shadow rounded-xl',
-            'dark:bg-gray-700 dark:divide-gray-600' => $darkMode,
-        ])>
-            @foreach ($actions as $action)
-                @if (! $action->isHidden())
-                    {{ $action }}
-                @endif
-            @endforeach
-        </ul>
-    </div>
+    <template x-teleport="body">
+        <div
+            x-ref="dropdown"
+            x-show="isOpen"
+            x-on:click.away="isOpen = false"
+            x-transition
+            x-cloak
+            @class([
+                'absolute right-0 rtl:left-0 rtl:right-auto z-20 mt-4 shadow-xl ring-1 ring-gray-900/10 overflow-hidden rounded-xl w-52 filament-action-group-dropdown',
+                'dark:ring-white/20' => $darkMode,
+            ])
+        >
+            <ul @class([
+                'py-1 space-y-1 bg-white shadow rounded-xl',
+                'dark:bg-gray-700 dark:divide-gray-600' => $darkMode,
+            ])>
+                @foreach ($actions as $action)
+                    @if (! $action->isHidden())
+                        {{ $action }}
+                    @endif
+                @endforeach
+            </ul>
+        </div>
+    </template>
 </div>
