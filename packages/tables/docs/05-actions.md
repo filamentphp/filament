@@ -50,6 +50,7 @@ use Filament\Tables\Actions\Action;
 
 Action::make('edit')
     ->url(fn (Post $record): string => route('posts.edit', $record))
+    ->openUrlInNewTab()
 ```
 
 ### Bulk actions
