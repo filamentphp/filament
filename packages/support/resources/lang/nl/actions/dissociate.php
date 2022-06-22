@@ -12,7 +12,7 @@ return [
 
             'actions' => [
 
-                'detach' => [
+                'dissociate' => [
                     'label' => 'Ontkoppelen',
                 ],
 
@@ -21,7 +21,7 @@ return [
         ],
 
         'messages' => [
-            'detached' => 'Ontkoppeld',
+            'dissociated' => 'Ontkoppeld',
         ],
 
     ],
@@ -36,7 +36,7 @@ return [
 
             'actions' => [
 
-                'detach' => [
+                'dissociate' => [
                     'label' => 'Ontkoppelen',
                 ],
 
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'detached' => 'Ontkoppeld',
+            'dissociated' => 'Ontkoppeld',
         ],
 
     ],

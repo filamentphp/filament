@@ -17,6 +17,7 @@ return [
         'logout' => [
             'label' => 'Uitloggen',
         ],
+
     ],
 
 ];

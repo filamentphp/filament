@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'Verwijderen',
+        'label' => 'Geforceerd verwijderen',
 
         'modal' => [
 
-            'heading' => ':Label verwijderen',
+            'heading' => ':Label geforceerd verwijderen',
 
             'actions' => [
 
@@ -28,11 +28,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'Geselecteerde verwijderen',
+        'label' => 'Geselecteerde geforceerd verwijderen',
 
         'modal' => [
 
-            'heading' => 'Geselecteerde :label verwijderen',
+            'heading' => 'Geselecteerde :label geforceerd verwijderen',
 
             'actions' => [
 
