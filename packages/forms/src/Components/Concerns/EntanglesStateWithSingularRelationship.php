@@ -51,13 +51,12 @@ trait EntanglesStateWithSingularRelationship
                 $record->setLocale($activeLocale);
             }
 
-            $record->fill($state);
-
             $relationship = $component->getRelationship();
 
             if ($relationship instanceof BelongsTo) {
-                $relationship->associate($record->save());
+                $relationship->associate($record->create($state));
             } else {
+                $record->fill($state);
                 $relationship->save($record);
             }
         });
