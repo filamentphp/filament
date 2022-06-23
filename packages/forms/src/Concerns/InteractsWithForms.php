@@ -155,10 +155,16 @@ trait InteractsWithForms
         try {
             return parent::validate($rules, $messages, $attributes);
         } catch (ValidationException $exception) {
+            $this->onValidationError($exception);
+
             $this->focusConcealedComponents(array_keys($exception->validator->failed()));
 
             throw $exception;
         }
+    }
+
+    protected function onValidationError(ValidationException $exception): void
+    {
     }
 
     public function validateOnly($field, $rules = null, $messages = [], $attributes = [])
