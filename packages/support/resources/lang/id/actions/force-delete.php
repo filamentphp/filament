@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'Hapus paksa',
+        'label' => 'Hapus selamanya',
 
         'modal' => [
 
-            'heading' => 'Hapus paksa :label',
+            'heading' => 'Hapus selamanya :label',
 
             'actions' => [
 
@@ -28,11 +28,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'Hapus paksa data yang dipilih',
+        'label' => 'Hapus selamanya data yang dipilih',
 
         'modal' => [
 
-            'heading' => 'Hapus paksa :label yang dipilih',
+            'heading' => 'Hapus selamanya :label yang dipilih',
 
             'actions' => [
 
