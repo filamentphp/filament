@@ -21,7 +21,7 @@ return [
             'actions' => [
 
                 'attach' => [
-                    'label' => 'Data',
+                    'label' => 'Lampirkan',
                 ],
 
                 'attach_another' => [
