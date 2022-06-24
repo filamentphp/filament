@@ -25,18 +25,18 @@ class FormsServiceProvider extends PackageServiceProvider
             Commands\MakeLayoutComponentCommand::class,
         ];
 
-        $aliases = [];
+        return array_reduce(
+            $commands,
+            static function ($commands, $command) {
+                $aliasClass = 'Filament\\Forms\\Commands\\Aliases\\' . class_basename($command);
+                
+                if (class_exists($aliasClass)) {
+                    $commands[] = $aliasClass;
+                }
 
-        foreach ($commands as $command) {
-            $class = 'Filament\\Forms\\Commands\\Aliases\\' . class_basename($command);
-
-            if (! class_exists($class)) {
-                continue;
-            }
-
-            $aliases[] = $class;
-        }
-
-        return array_merge($commands, $aliases);
+                return $commands;
+            },
+            $commands
+        );
     }
 }
