@@ -194,33 +194,6 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')->placeholder('John Doe')
 ```
 
-### Responsive layouts
-
-If your field is in a grid layout, you may specify the number of columns it spans at any breakpoint:
-
-```php
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\TextInput;
-
-Grid::make([
-    'default' => 1,
-    'sm' => 3,
-    'xl' => 6,
-    '2xl' => 8,
-])
-    ->schema([
-        TextInput::make('name')
-            ->columnSpan([
-                'sm' => 2,
-                'xl' => 3,
-                '2xl' => 4,
-            ]),
-        // ...
-    ])
-```
-
-> More information about grids is available in the [layout documentation](layout#grid).
-
 ### Global settings
 
 If you wish to change the default behaviour of a field globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the component using. For example, if you wish to make all checkboxes [`inline(false)`](#checkbox), you can do it like so:
