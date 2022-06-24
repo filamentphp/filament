@@ -31,13 +31,14 @@ protected static ?string $navigationGroup = 'Settings';
 
 All items in the same navigation group will be displayed together under the same group label, "Settings" in this case. Ungrouped items will remain at the top of the sidebar.
 
-### Ordering navigation groups
+### Customizing and Ordering navigation groups
 
-If you wish to enforce a specific order for your navigation groups, you may call `Filament::registerNavigationGroups()` from the `boot()` method of any service provider.
+If you wish to customize or enforce a specific order for your navigation groups, you may call `Filament::registerNavigationGroups()` from the `boot()` method of any service provider.
 
 ```php
 use Filament\Facades\Filament;
 use Illuminate\Support\ServiceProvider;
+use Filament\Navigation\NavigationGroup;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -45,9 +46,24 @@ class AppServiceProvider extends ServiceProvider
     {
         Filament::serving(function () {
             Filament::registerNavigationGroups([
-                'Shop',
-                'Blog',
-                'Settings',
+                NavigationGroup::make()
+                    ->label('Shop')
+                    ->icon('heroicon-o-shopping-cart')
+                    ->sort(1)
+                    ->collapsible()
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Blog')
+                    ->icon('heroicon-o-pencil')
+                    ->sort(2)
+                    ->collapsible()
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Settings')
+                    ->icon('heroicon-o-cog')
+                    ->sort(3)
+                    ->collapsible()
+                    ->collapsed(),
             ]);
         });
     }
@@ -104,25 +120,30 @@ If you want to register a new group, you can call the `NavigationBuilder::group`
 ```php
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationBuilder;
+use Filament\Navigation\NavigationGroup;
 
 Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
-    return $builder->group('Settings', [
-        // An array of `NavigationItem` objects.
-    ]);
+    return $builder->group(NavigationGroup::make()
+        ->label('Content')
+        ->items([
+            // An array of `NavigationItem` objects.
+        ]));
 });
 ```
 
-You provide the name of the group and an array of `NavigationItem` objects to be rendered. If you've got a `Resource` or `Page` you'd like to register in this group, you can use the following syntax:
+You provide a `NavigationGroup` object to which you can add items. If you've got a `Resource` or `Page` you'd like to register in this group, you can use the following syntax:
 
 ```php
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationBuilder;
 
 Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
-    return $builder->group('Content', [
-        ...PageResource::getNavigationItems(),
-        ...CategoryResource::getNavigationItems(),
-    ]);
+    return $builder->group(NavigationGroup::make()
+        ->label('Content')
+        ->items([
+            ...PageResource::getNavigationItems(),
+            ...CategoryResource::getNavigationItems(),
+        ]);
 });
 ```
 

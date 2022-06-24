@@ -10,6 +10,7 @@ use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
+use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\UserMenuItem;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +24,7 @@ class FilamentManager
 
     protected bool $isNavigationMounted = false;
 
+    /** @var \Filament\Navigation\NavigationGroup[] $items */
     protected array $navigationGroups = [];
 
     protected array $navigationItems = [];
@@ -66,12 +68,7 @@ class FilamentManager
         /** @var \Filament\Navigation\NavigationBuilder $builder */
         $builder = app()->call($this->navigationBuilder);
 
-        return collect([
-            null => [
-                'items' => $builder->getItems(),
-                'collapsible' => false,
-            ],
-        ])
+        return collect([NavigationGroup::make()->items($builder->getItems())->collapsible(false)])
             ->merge($builder->getGroups())
             ->toArray();
     }
@@ -98,9 +95,19 @@ class FilamentManager
         $this->isNavigationMounted = true;
     }
 
+    /** @param \Filament\Navigation\NavigationGroup | string[] $groups */
     public function registerNavigationGroups(array $groups): void
     {
-        $this->navigationGroups = array_merge($this->navigationGroups, $groups);
+        $this->navigationGroups = array_merge(
+            $this->navigationGroups,
+            array_map(function (NavigationGroup | string $groupOrName) {
+                if ($groupOrName instanceof NavigationGroup) {
+                    return $groupOrName;
+                }
+                return NavigationGroup::make()
+                    ->label($groupOrName);
+            }, $groups)
+        );
     }
 
     public function registerNavigationItems(array $items): void
@@ -201,31 +208,9 @@ class FilamentManager
             ->sortBy(fn (Navigation\NavigationItem $item): int => $item->getSort())
             ->groupBy(fn (Navigation\NavigationItem $item): ?string => $item->getGroup());
 
-        $sortedGroups = $groupedItems
-            ->keys()
-            ->sortBy(function (?string $group): int {
-                if (! $group) {
-                    return -1;
-                }
-
-                $sort = array_search($group, $this->navigationGroups);
-
-                if ($sort === false) {
-                    return count($this->navigationGroups);
-                }
-
-                return $sort;
-            });
-
-        return $sortedGroups
-            ->mapWithKeys(function (?string $group) use ($groupedItems): array {
-                return [
-                    $group => [
-                        'items' => $groupedItems->get($group),
-                        'collapsible' => config('filament.layout.sidebar.groups.are_collapsible'),
-                    ],
-                ];
-            })
+        return collect($this->navigationGroups)
+            ->map(fn (NavigationGroup $group): array => $group->items($groupedItems->get($group->getName())))
+            ->sortBy(fn (array $group): int => $group['group']->getSort())
             ->toArray();
     }
 

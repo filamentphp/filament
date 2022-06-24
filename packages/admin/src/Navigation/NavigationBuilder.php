@@ -8,20 +8,24 @@ class NavigationBuilder
 {
     use Conditionable;
 
-    /** @var array<string, \Filament\Navigation\NavigationItem[]> */
+    /** @var array<\Filament\Navigation\NavigationGroup, \Filament\Navigation\NavigationItem[]> */
     protected array $groups = [];
 
     /** @var \Filament\Navigation\NavigationItem[] */
     protected array $items = [];
 
-    public function group(string $name, array $items = [], bool $collapsible = true): static
+    public function group(string | NavigationGroup $nameOrGroup, array $items = [], bool $collapsible = true): static
     {
-        $this->groups[$name] = [
-            'items' => collect($items)->map(
-                fn (NavigationItem $item, int $index) => $item->group($name)->sort($index),
-            )->toArray(),
-            'collapsible' => $collapsible,
-        ];
+        if ($nameOrGroup instanceof NavigationGroup) {
+            $group = $nameOrGroup;
+        } else {
+            $group = NavigationGroup::make()
+                ->label($nameOrGroup)
+                ->items($items)
+                ->collapsible($collapsible)
+                ->sort(count($this->groups));
+        }
+        $this->groups[] = $group;
 
         return $this;
     }

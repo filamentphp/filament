@@ -50,9 +50,15 @@
         {{ \Filament\Facades\Filament::renderHook('sidebar.start') }}
 
         <ul class="px-6 space-y-6">
-            @foreach (\Filament\Facades\Filament::getNavigation() as $group => ['items' => $items, 'collapsible' => $collapsible])
-                <x-filament::layouts.app.sidebar.group :label="$group" :collapsible="$collapsible">
-                    @foreach ($items as $item)
+            @foreach (\Filament\Facades\Filament::getNavigation() as $group)
+                <x-filament::layouts.app.sidebar.group
+                    :label="$group->getLabel()"
+                    :collapsible="$group->isCollapsible()"
+                    :collapsed="$group->isCollapsed()"
+                    :active="$group->isActive()"
+                    :icon="$group->getIcon()"
+                >
+                    @foreach ($group->getItems() as $item)
                         <x-filament::layouts.app.sidebar.item
                             :active="$item->isActive()"
                             :icon="$item->getIcon()"
