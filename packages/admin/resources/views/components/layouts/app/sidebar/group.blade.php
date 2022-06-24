@@ -1,12 +1,11 @@
 @props([
     'collapsible' => true,
     'collapsed' => false,
-    'active' => false,
     'icon' => null,
     'label' => null,
 ])
 
-<li x-data="{ label: {{ \Illuminate\Support\Js::from($label) }} }" @if($collapsed && !$active)x-init="$store.sidebar.collapseGroup(label)"@endif class="filament-sidebar-group">
+<li x-data="{ label: {{ \Illuminate\Support\Js::from($label) }} }" @if($collapsed)x-init="$store.sidebar.collapseGroup(label)"@endif class="filament-sidebar-group">
     @if ($label)
         <button
             @if ($collapsible)
@@ -19,8 +18,7 @@
         >
             <p @class([
                 'flex items-center justify-center gap-3 font-bold uppercase text-gray-600 text-xs tracking-wider',
-                'dark:text-gray-300' => (! $active) && config('filament.dark_mode'),
-                'bg-primary-500 text-white' => $active,
+                'dark:text-gray-300' => config('filament.dark_mode'),
             ])>
                 @if($icon)
                     <x-dynamic-component :component="$icon" class="h-5 w-5 shrink-0" />
@@ -32,7 +30,7 @@
             @if ($collapsible)
                 <x-heroicon-o-chevron-down :class="\Illuminate\Support\Arr::toCssClasses([
                     'w-3 h-3 text-gray-600 transition-all',
-                    'dark:text-gray-300' =>  (! $active) && config('filament.dark_mode'),
+                    'dark:text-gray-300' =>  config('filament.dark_mode'),
                 ])" x-bind:class="$store.sidebar.groupIsCollapsed(label) || '-rotate-180'" x-cloak />
             @endif
         </button>
