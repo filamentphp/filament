@@ -55,7 +55,6 @@
                     :label="$group->getLabel()"
                     :collapsible="$group->isCollapsible()"
                     :collapsed="$group->isCollapsed()"
-                    :active="$group->isActive()"
                     :icon="$group->getIcon()"
                 >
                     @foreach ($group->getItems() as $item)
