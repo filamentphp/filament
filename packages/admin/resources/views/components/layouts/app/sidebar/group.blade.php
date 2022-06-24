@@ -33,13 +33,13 @@
                 <x-heroicon-o-chevron-down :class="\Illuminate\Support\Arr::toCssClasses([
                     'w-3 h-3 text-gray-600 transition-all',
                     'dark:text-gray-300' =>  (! $active) && config('filament.dark_mode'),
-                ])" x-bind:class="$store.sidebar.groupIsCollapsed(label, {{ \Illuminate\Support\Js::from($collapsed) }}) || '-rotate-180'" x-cloak />
+                ])" x-bind:class="$store.sidebar.groupIsCollapsed(label) || '-rotate-180'" x-cloak />
             @endif
         </button>
     @endif
 
     <ul
-        x-show="! ($store.sidebar.groupIsCollapsed(label, {{ \Illuminate\Support\Js::from($collapsed) }}) && {{ config('filament.layout.sidebar.is_collapsible_on_desktop') ? '$store.sidebar.isOpen' : 'true' }})"
+        x-show="! ($store.sidebar.groupIsCollapsed(label) && {{ config('filament.layout.sidebar.is_collapsible_on_desktop') ? '$store.sidebar.isOpen' : 'true' }})"
         x-collapse.duration.200ms
         @class([
             'text-sm space-y-1 -mx-3',
