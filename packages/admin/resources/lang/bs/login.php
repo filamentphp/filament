@@ -31,8 +31,8 @@ return [
     ],
 
     'messages' => [
-        'failed' => 'These credentials do not match our records.',
-        'throttled' => 'Too many login attempts. Please try again in :seconds seconds.',
+        'failed' => 'Ovi akreditivi se ne poklapaju sa našom evidencijom.',
+        'throttled' => 'TPreviše pokušaja prijave. Pokušajte ponovo za :seconds sekundi.',
     ],
 
 ];
