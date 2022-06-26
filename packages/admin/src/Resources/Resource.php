@@ -343,7 +343,8 @@ class Resource
 
     public static function getSlug(): string
     {
-        return static::$slug ?? (string) Str::of(class_basename(static::getModel()))
+        return static::$slug ?? (string) Str::of(static::getModel())
+            ->remove('App\\Models\\')
             ->plural()
             ->kebab()
             ->slug();
