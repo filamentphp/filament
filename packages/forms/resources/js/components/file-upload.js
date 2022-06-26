@@ -112,6 +112,7 @@ export default (Alpine) => {
                             }, error, progress)
                         },
                         remove: async (source, load) => {
+                            this.shouldUpdateState = false
                             let fileKey = this.uploadedFileUrlIndex[source] ?? null
 
                             if (! fileKey) {
@@ -121,6 +122,7 @@ export default (Alpine) => {
                             await deleteUploadedFileUsing(fileKey)
 
                             load()
+                            this.shouldUpdateState = true
                         },
                         revert: async (uniqueFileId, load) => {
                             await removeUploadedFileUsing(uniqueFileId)
