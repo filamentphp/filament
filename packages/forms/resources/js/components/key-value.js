@@ -72,7 +72,7 @@ export default (Alpine) => {
             // after a state update, which would otherwise be done by the `state`
             // watcher. If rows are updated again, duplicate keys are removed.
             //
-            // https://github.com/laravel-filament/filament/issues/1107
+            // https://github.com/filamentphp/filament/issues/1107
             this.shouldUpdateRows = false
 
             this.state = state

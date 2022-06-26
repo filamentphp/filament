@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Verwijder :label',
+            'heading' => ':Label verwijderen',
 
             'actions' => [
 
@@ -28,16 +28,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Verwijder geselecteerde',
+        'label' => 'Geselecteerde verwijderen',
 
         'modal' => [
 
-            'heading' => 'Verwijder geselecteerde :label',
+            'heading' => 'Geselecteerde :label verwijderen',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Verwijder geselecteerde',
+                    'label' => 'Verwijderen',
                 ],
 
             ],

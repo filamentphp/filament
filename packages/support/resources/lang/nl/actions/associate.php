@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Koppel :label',
+            'heading' => ':Label koppelen',
 
             'fields' => [
 

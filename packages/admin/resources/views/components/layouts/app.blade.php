@@ -22,7 +22,7 @@
                 x-bind:class="{
                     'lg:pl-[5.4rem] rtl:lg:pr-[5.4rem]': ! $store.sidebar.isOpen
                 }"
-                x-bind:style="'display: flex'" {-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}
+                x-bind:style="'display: flex'" {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
             >
         @else
             <div class="flex flex-col flex-1 w-screen space-y-6 lg:pl-[var(--sidebar-width)] rtl:lg:pl-0 rtl:lg:pr-[var(--sidebar-width)] filament-main">

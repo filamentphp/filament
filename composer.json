@@ -55,7 +55,12 @@
         }
     },
     "scripts": {
-        "test": "./vendor/bin/pest --parallel && ./vendor/bin/phpstan analyse"
+        "test:pest": "pest --parallel",
+        "test:phpstan": "phpstan analyse",
+        "test": [
+            "@test:pest",
+            "@test:phpstan"
+        ]
     },
     "minimum-stability": "dev",
     "prefer-stable": true

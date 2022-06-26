@@ -2,10 +2,10 @@
     "name": "filament/spatie-laravel-translatable-plugin",
     "description": "Filament support for `spatie/laravel-translatable`.",
     "license": "MIT",
-    "homepage": "https://github.com/laravel-filament/filament",
+    "homepage": "https://github.com/filamentphp/filament",
     "support": {
-        "issues": "https://github.com/laravel-filament/filament/issues",
-        "source": "https://github.com/laravel-filament/filament"
+        "issues": "https://github.com/filamentphp/filament/issues",
+        "source": "https://github.com/filamentphp/filament"
     },
     "require": {
         "php": "^8.0",

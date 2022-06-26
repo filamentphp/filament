@@ -250,13 +250,16 @@ trait HasState
 
         $containerPath = $this->getContainer()->getStatePath();
 
-        if (blank($containerPath)) {
-            return $path;
+        while (Str::of($path)->startsWith('../')) {
+            $containerPath = Str::contains($containerPath, '.') ?
+                (string) Str::of($containerPath)->beforeLast('.') :
+                null;
+
+            $path = (string) Str::of($path)->after('../');
         }
 
-        while (Str::of($path)->startsWith('../')) {
-            $containerPath = (string) Str::of($containerPath)->beforeLast('.');
-            $path = (string) Str::of($path)->after('../');
+        if (blank($containerPath)) {
+            return $path;
         }
 
         return "{$containerPath}.{$path}";
