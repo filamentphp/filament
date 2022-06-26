@@ -21944,12 +21944,14 @@ var file_upload_default = (Alpine) => {
               }, error2, progress);
             },
             remove: async (source, load) => {
+              this.shouldUpdateState = false
               let fileKey = this.uploadedFileUrlIndex[source] ?? null;
               if (!fileKey) {
                 return;
               }
               await deleteUploadedFileUsing(fileKey);
               load();
+              this.shouldUpdateState = true
             },
             revert: async (uniqueFileId, load) => {
               await removeUploadedFileUsing(uniqueFileId);
