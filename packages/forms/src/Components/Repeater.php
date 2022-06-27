@@ -10,6 +10,7 @@ use Filament\Forms\Contracts\HasForms;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
 class Repeater extends Field
@@ -277,13 +278,14 @@ class Repeater extends Field
             }
 
             $relationship = $component->getRelationship();
-            $localKeyName = $relationship->getLocalKeyName();
+            $relatedQualifiedKeyName = $relationship->getRelated()->getQualifiedKeyName();
+            $relatedKeyName = $relationship->getRelated()->getKeyName();
 
             $existingRecords = $component->getCachedExistingRecords();
 
             $recordsToDelete = [];
 
-            foreach ($existingRecords->pluck($localKeyName) as $keyToCheckForDeletion) {
+            foreach ($existingRecords->pluck($relatedKeyName) as $keyToCheckForDeletion) {
                 if (array_key_exists("record-{$keyToCheckForDeletion}", $state)) {
                     continue;
                 }
@@ -292,7 +294,7 @@ class Repeater extends Field
             }
 
             $relationship
-                ->whereIn($localKeyName, $recordsToDelete)
+                ->whereIn($relatedQualifiedKeyName, $recordsToDelete)
                 ->get()
                 ->each(static fn (Model $record) => $record->delete());
 
@@ -397,7 +399,7 @@ class Repeater extends Field
         return $this->evaluate($this->orderColumn);
     }
 
-    public function getRelationship(): ?HasOneOrMany
+    public function getRelationship(): HasOneOrMany|BelongsToMany|null
     {
         if (! $this->hasRelationship()) {
             return null;
@@ -430,10 +432,10 @@ class Repeater extends Field
             $relationshipQuery->orderBy($orderColumn);
         }
 
-        $localKeyName = $relationship->getLocalKeyName();
+        $relatedKeyName = $relationship->getRelated()->getKeyName();
 
         return $this->cachedExistingRecords = $relationshipQuery->get()->mapWithKeys(
-            fn (Model $item): array => ["record-{$item[$localKeyName]}" => $item],
+            fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
         );
     }
 
