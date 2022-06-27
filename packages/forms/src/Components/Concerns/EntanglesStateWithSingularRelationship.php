@@ -22,17 +22,13 @@ trait EntanglesStateWithSingularRelationship
         $this->relationship = $relationshipName;
         $this->statePath($relationshipName);
 
-        $this->loadStateFromRelationshipsUsing(static function (Component $component) {
-            /** @var Component | CanEntangleWithSingularRelationships $component */
-
+        $this->loadStateFromRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component) {
             $component->clearCachedExistingRecord();
 
             $component->fillFromRelationship();
         });
 
-        $this->saveRelationshipsUsing(static function (Component $component, HasForms $livewire): void {
-            /** @var Component | CanEntangleWithSingularRelationships $component */
-
+        $this->saveRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component, HasForms $livewire): void {
             $state = $component->getChildComponentContainer()->getState(shouldCallHooksBefore: false);
 
             $record = $component->getCachedExistingRecord();
@@ -55,13 +51,12 @@ trait EntanglesStateWithSingularRelationship
                 $record->setLocale($activeLocale);
             }
 
-            $record->fill($state);
-
             $relationship = $component->getRelationship();
 
             if ($relationship instanceof BelongsTo) {
-                $relationship->associate($record->save());
+                $relationship->associate($record->create($state));
             } else {
+                $record->fill($state);
                 $relationship->save($record);
             }
         });

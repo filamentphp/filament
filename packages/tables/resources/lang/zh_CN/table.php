@@ -53,6 +53,10 @@ return [
             'label' => '展开操作项',
         ],
 
+        'toggle_columns' => [
+            'label' => '切换显示列',
+        ],
+
     ],
 
     'empty' => [
@@ -79,6 +83,18 @@ return [
 
         'select' => [
             'placeholder' => '全部',
+        ],
+
+        'trashed' => [
+
+            'label' => '已删除记录',
+
+            'only_trashed' => '仅显示已删除记录',
+
+            'with_trashed' => '显示全部记录',
+
+            'without_trashed' => '不显示已删除记录',
+
         ],
 
     ],

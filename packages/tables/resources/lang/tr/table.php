@@ -59,20 +59,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'replicate' => [
-
-            'label' => 'Çoğalt',
-
-            'messages' => [
-                'replicated' => 'Kayıt çoğaltıldı',
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'Kayıt bulunamadı',
     ],
@@ -97,6 +83,18 @@ return [
 
         'select' => [
             'placeholder' => 'Tümü',
+        ],
+
+        'trashed' => [
+
+            'label' => 'Silinen kayıtlar',
+
+            'only_trashed' => 'Sadece silinen kayıtlar',
+
+            'with_trashed' => 'Silinen kayıtlar ile',
+
+            'without_trashed' => 'Silinen kayıtlar olmadan',
+
         ],
 
     ],

@@ -59,20 +59,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'replicate' => [
-
-            'label' => 'Replicate',
-
-            'messages' => [
-                'replicated' => 'Record replicated',
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'No records found',
     ],
@@ -97,6 +83,18 @@ return [
 
         'select' => [
             'placeholder' => 'All',
+        ],
+
+        'trashed' => [
+
+            'label' => 'Deleted records',
+
+            'only_trashed' => 'Only deleted records',
+
+            'with_trashed' => 'With deleted records',
+
+            'without_trashed' => 'Without deleted records',
+
         ],
 
     ],

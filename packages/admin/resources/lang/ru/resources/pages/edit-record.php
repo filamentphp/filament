@@ -6,36 +6,6 @@ return [
 
     'breadcrumb' => 'Редактирование',
 
-    'actions' => [
-
-        'delete' => [
-
-            'label' => 'Удалить',
-
-            'modal' => [
-
-                'heading' => 'Удалить :label',
-
-                'subheading' => 'Вы уверены, что хотите это сделать?',
-
-                'buttons' => [
-
-                    'delete' => [
-                        'label' => 'Удалить',
-                    ],
-
-                ],
-
-            ],
-
-        ],
-
-        'view' => [
-            'label' => 'Посмотреть',
-        ],
-
-    ],
-
     'form' => [
 
         'actions' => [

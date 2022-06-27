@@ -2,11 +2,11 @@
 
 namespace Filament\Resources\Pages\ViewRecord\Concerns;
 
-use Filament\Resources\Pages\Concerns\HasActiveFormLocaleSelect;
+use Filament\Resources\Pages\Concerns\HasActiveFormLocaleSwitcher;
 
 trait Translatable
 {
-    use HasActiveFormLocaleSelect;
+    use HasActiveFormLocaleSwitcher;
 
     protected function fillForm(): void
     {
@@ -35,7 +35,7 @@ trait Translatable
         $resourceLocales = $this->getTranslatableLocales();
         $defaultLocale = $resource::getDefaultTranslatableLocale();
 
-        $this->activeFormLocale = in_array($defaultLocale, $availableLocales) ? $defaultLocale : array_intersect($availableLocales, $resourceLocales)[0] ?? $defaultLocale;
+        $this->activeLocale = $this->activeFormLocale = in_array($defaultLocale, $availableLocales) ? $defaultLocale : array_intersect($availableLocales, $resourceLocales)[0] ?? $defaultLocale;
         $this->record->setLocale($this->activeFormLocale);
     }
 

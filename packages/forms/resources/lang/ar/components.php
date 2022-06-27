@@ -209,4 +209,20 @@ return [
         'placeholder' => 'كلمة مفتاحية جديدة',
     ],
 
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => 'الخطوة السابقة',
+            ],
+
+            'next_step' => [
+                'label' => 'الخطوة التالية',
+            ],
+
+        ],
+
+    ],
+
 ];

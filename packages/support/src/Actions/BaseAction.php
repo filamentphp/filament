@@ -29,7 +29,7 @@ abstract class BaseAction extends ViewComponent
     public static function make(string $name): static
     {
         $static = app(static::class, ['name' => $name]);
-        $static->setUp();
+        $static->configure();
 
         return $static;
     }

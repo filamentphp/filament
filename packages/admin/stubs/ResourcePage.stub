@@ -3,6 +3,7 @@
 namespace {{ namespace }};
 
 use App\Filament\Resources\{{ resource }};
+use Filament\Pages\Actions;
 use {{ baseResourcePage }};
 
 class {{ resourcePageClass }} extends {{ baseResourcePageClass }}

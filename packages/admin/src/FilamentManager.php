@@ -11,7 +11,6 @@ use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Navigation\UserMenuItem;
-use Filament\Tables\Actions\Action;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -352,16 +351,5 @@ class FilamentManager
     public function getMeta(): array
     {
         return array_unique($this->meta);
-    }
-
-    public function makeTableAction(string $name): Action
-    {
-        $type = config('filament.layout.tables.actions.type');
-
-        if (blank($type) || (! class_exists($type))) {
-            $type = Action::class;
-        }
-
-        return $type::make($name);
     }
 }

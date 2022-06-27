@@ -1,9 +1,11 @@
 @captureSlots([
     'actions',
+    'content',
     'footer',
     'header',
     'heading',
     'subheading',
+    'trigger',
 ])
 
 <x-filament-support::modal

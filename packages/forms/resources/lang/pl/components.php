@@ -193,7 +193,12 @@ return [
 
         ],
 
-        'loading_message' => 'Ładowanie...',
+        'boolean' => [
+            'true' => 'Tak',
+            'false' => 'Nie',
+        ],
+
+        'loading_message' => 'Wczytywanie...',
 
         'no_search_results_message' => 'Żadne wyniki nie pasują do Twojego wyszukiwania.',
 
@@ -207,6 +212,22 @@ return [
 
     'tags_input' => [
         'placeholder' => 'Nowy tag',
+    ],
+
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => 'Poprzedni',
+            ],
+
+            'next_step' => [
+                'label' => 'Następny',
+            ],
+
+        ],
+
     ],
 
 ];

@@ -8,6 +8,8 @@ use Illuminate\Support\Str;
 
 class Step extends Component
 {
+    protected ?Closure $afterValidated = null;
+
     protected string | Closure | null $description = null;
 
     protected string | Closure | null $icon = null;
@@ -23,9 +25,16 @@ class Step extends Component
     public static function make(string $label): static
     {
         $static = app(static::class, ['label' => $label]);
-        $static->setUp();
+        $static->configure();
 
         return $static;
+    }
+
+    public function afterValidated(?Closure $callback): static
+    {
+        $this->afterValidated = $callback;
+
+        return $this;
     }
 
     public function description(string | Closure | null $description): static
@@ -40,6 +49,11 @@ class Step extends Component
         $this->icon = $icon;
 
         return $this;
+    }
+
+    public function callAfterValidated(): void
+    {
+        $this->evaluate($this->afterValidated);
     }
 
     public function getDescription(): ?string
