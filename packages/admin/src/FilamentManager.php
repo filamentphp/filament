@@ -94,9 +94,7 @@ class FilamentManager
             $resource::registerNavigationItems();
         }
 
-        if (! $this->navigationGroups) {
-            $this->navigationGroups = [UnlabelledNavigationGroup::make()];
-        }
+        $this->navigationGroups = Arr::prepend($this->navigationGroups, UnlabelledNavigationGroup::make());
 
         $this->isNavigationMounted = true;
     }

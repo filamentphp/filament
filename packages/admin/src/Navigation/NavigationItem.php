@@ -33,9 +33,13 @@ class NavigationItem
         return $this;
     }
 
-    public function group(?string $group): static
+    public function group(string | NavigationGroup | null $group): static
     {
-        $this->group = $group;
+        if ($group instanceof NavigationGroup) {
+            $this->group = $group->getLabel();
+        } else {
+            $this->group = $group;
+        }
 
         return $this;
     }
