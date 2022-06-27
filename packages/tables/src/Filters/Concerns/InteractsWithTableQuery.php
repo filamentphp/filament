@@ -25,9 +25,9 @@ trait InteractsWithTableQuery
 
         $callback = $this->modifyQueryUsing;
         $this->evaluate($callback, [
-			'query' => $query,
-			'data'  => $data,
-		]);
+            'query' => $query,
+            'data' => $data,
+        ]);
 
         return $query;
     }
