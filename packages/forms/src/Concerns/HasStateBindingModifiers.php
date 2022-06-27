@@ -33,13 +33,11 @@ trait HasStateBindingModifiers
     {
         $modifiers = $this->getStateBindingModifiers();
 
-        $merged = array_merge([$expression], $modifiers);
-
         if ($except) {
-            unset($merged[array_search($except, $merged, false)]);
+            unset($modifiers[array_search($except, $modifiers, false)]);
         }
 
-        return implode('.', $merged);
+        return implode('.', array_merge([$expression], $modifiers));
     }
 
     public function getStateBindingModifiers(): array
