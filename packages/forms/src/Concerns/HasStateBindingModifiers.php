@@ -34,7 +34,7 @@ trait HasStateBindingModifiers
         $modifiers = $this->getStateBindingModifiers();
 
         $merged = array_merge([$expression], $modifiers);
-        
+
         if ($except) {
             unset($merged[array_search($except, $merged, false)]);
         }
