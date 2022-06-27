@@ -24,7 +24,10 @@ trait InteractsWithTableQuery
         }
 
         $callback = $this->modifyQueryUsing;
-        $callback($query, $data);
+        $this->evaluate($callback, [
+            'query' => $query,
+            'data' => $data,
+        ]);
 
         return $query;
     }

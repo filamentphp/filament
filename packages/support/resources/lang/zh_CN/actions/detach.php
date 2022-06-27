@@ -32,7 +32,7 @@ return [
 
         'modal' => [
 
-            'heading' => '分离已选的 :label',
+            'heading' => '分离已选 :label',
 
             'actions' => [
 

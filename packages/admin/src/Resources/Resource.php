@@ -175,7 +175,7 @@ class Resource
 
     public static function getBreadcrumb(): string
     {
-        return static::$breadcrumb ?? Str::title(static::getPluralModelLabel());
+        return static::$breadcrumb ?? Str::headline(static::getPluralModelLabel());
     }
 
     public static function getEloquentQuery(): Builder
@@ -427,7 +427,7 @@ class Resource
 
     protected static function getNavigationLabel(): string
     {
-        return static::$navigationLabel ?? Str::title(static::getPluralModelLabel());
+        return static::$navigationLabel ?? Str::headline(static::getPluralModelLabel());
     }
 
     protected static function getNavigationBadge(): ?string

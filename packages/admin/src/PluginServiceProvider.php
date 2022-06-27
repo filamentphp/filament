@@ -63,10 +63,10 @@ abstract class PluginServiceProvider extends PackageServiceProvider
         $this->app->resolving('filament', function () {
             Facades\Filament::registerPages($this->getPages());
             Facades\Filament::registerResources($this->getResources());
-            Facades\Filament::registerUserMenuItems($this->getUserMenuItems());
             Facades\Filament::registerWidgets($this->getWidgets());
 
             Facades\Filament::serving(function () {
+                Facades\Filament::registerUserMenuItems($this->getUserMenuItems());
                 Facades\Filament::registerScripts($this->getBeforeCoreScripts(), true);
                 Facades\Filament::registerScripts($this->getScripts());
                 Facades\Filament::registerStyles($this->getStyles());

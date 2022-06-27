@@ -85,6 +85,18 @@ return [
             'placeholder' => 'Tümü',
         ],
 
+        'trashed' => [
+
+            'label' => 'Silinen kayıtlar',
+
+            'only_trashed' => 'Sadece silinen kayıtlar',
+
+            'with_trashed' => 'Silinen kayıtlar ile',
+
+            'without_trashed' => 'Silinen kayıtlar olmadan',
+
+        ],
+
     ],
 
     'selection_indicator' => [

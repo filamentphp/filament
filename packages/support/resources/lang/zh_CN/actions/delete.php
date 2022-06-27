@@ -32,7 +32,7 @@ return [
 
         'modal' => [
 
-            'heading' => '删除已选的 :label',
+            'heading' => '删除已选 :label',
 
             'actions' => [
 

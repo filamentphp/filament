@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Aanmaken :label',
+            'heading' => ':Label aanmaken',
 
             'actions' => [
 
