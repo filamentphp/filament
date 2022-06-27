@@ -29,11 +29,17 @@ trait HasStateBindingModifiers
         return $this;
     }
 
-    public function applyStateBindingModifiers($expression): string
+    public function applyStateBindingModifiers($expression, ?string $except = null): string
     {
         $modifiers = $this->getStateBindingModifiers();
 
-        return implode('.', array_merge([$expression], $modifiers));
+        $merged = array_merge([$expression], $modifiers);
+        
+        if ($except) {
+            unset($merged[array_search($except, $merged, false)]);
+        }
+
+        return implode('.', $merged);
     }
 
     public function getStateBindingModifiers(): array
