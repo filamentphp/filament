@@ -62,6 +62,8 @@ export default (Alpine) => {
             shouldUpdateState: true,
 
             state,
+            
+            lastState: null,
 
             uploadedFileUrlIndex: {},
 
@@ -139,6 +141,13 @@ export default (Alpine) => {
                     if (Object.values(this.state).filter((file) => file.startsWith('livewire-file:')).length) {
                         return
                     }
+                    
+                    // Don't do anything if the state hasn't changed
+                    if (JSON.stringify(this.state) === this.lastState) {
+                        return
+                    }
+                    
+                    this.lastState = JSON.stringify(this.state)
 
                     this.pond.files = await this.getFiles()
                 })
