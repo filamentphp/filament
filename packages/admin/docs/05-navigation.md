@@ -143,7 +143,7 @@ Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
         ->items([
             ...PageResource::getNavigationItems(),
             ...CategoryResource::getNavigationItems(),
-        ]);
+        ]));
 });
 ```
 

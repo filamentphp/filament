@@ -8,7 +8,7 @@ class NavigationBuilder
 {
     use Conditionable;
 
-    /** @var array<\Filament\Navigation\NavigationGroup, \Filament\Navigation\NavigationItem[]> */
+    /** @var array<\Filament\Navigation\NavigationGroup> */
     protected array $groups = [];
 
     /** @var \Filament\Navigation\NavigationItem[] */

@@ -95,7 +95,7 @@ class FilamentManager
         $this->isNavigationMounted = true;
     }
 
-    /** @param \Filament\Navigation\NavigationGroup | string[] $groups */
+    /** @param \Filament\Navigation\NavigationGroup[] | string[] $groups */
     public function registerNavigationGroups(array $groups): void
     {
         $this->navigationGroups = array_merge(
@@ -209,7 +209,7 @@ class FilamentManager
             ->groupBy(fn (Navigation\NavigationItem $item): ?string => $item->getGroup());
 
         return collect($this->navigationGroups)
-            ->map(fn (NavigationGroup $group): array => $group->items($groupedItems->get($group->getName())))
+            ->map(fn (NavigationGroup $group): NavigationGroup => $group->items($groupedItems->get($group->getLabel(), [])))
             ->sortBy(fn (array $group): int => $group['group']->getSort())
             ->toArray();
     }

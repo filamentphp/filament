@@ -40,7 +40,7 @@ class NavigationGroup
     /** @param \Filament\Navigation\NavigationItem[] $items */
     public function items(array $items): static
     {
-        $this->items = collect($items)->map(
+        $this->items = collect($this->items)->merge($items)->filter()->map(
             fn (NavigationItem $item, int $index) => $item->group($this->label)->sort($index),
         )->toArray();
 
