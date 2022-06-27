@@ -2,7 +2,7 @@
     'form'
 ])
 
-<div class="space-y-6 filament-tables-filters">
+<div class="space-y-6 filament-tables-filters-form">
     {{ $form }}
 
     <div class="text-right">
