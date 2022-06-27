@@ -3,6 +3,7 @@
 namespace Filament\Navigation;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 class NavigationGroup
 {
@@ -38,7 +39,7 @@ class NavigationGroup
     }
 
     /** @param \Filament\Navigation\NavigationItem[] $items */
-    public function items(array $items): static
+    public function items(array | Collection $items): static
     {
         $this->items = collect($this->items)->merge($items)->filter()->map(
             fn (NavigationItem $item, int $index) => $item->group($this->label)->sort($index),

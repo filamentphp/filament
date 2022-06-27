@@ -11,10 +11,12 @@ use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\UnlabelledNavigationGroup;
 use Filament\Navigation\UserMenuItem;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\HtmlString;
 
@@ -90,6 +92,10 @@ class FilamentManager
 
         foreach ($this->getResources() as $resource) {
             $resource::registerNavigationItems();
+        }
+
+        if (! $this->navigationGroups) {
+            $this->navigationGroups = [UnlabelledNavigationGroup::make()];
         }
 
         $this->isNavigationMounted = true;
@@ -208,9 +214,9 @@ class FilamentManager
             ->sortBy(fn (Navigation\NavigationItem $item): int => $item->getSort())
             ->groupBy(fn (Navigation\NavigationItem $item): ?string => $item->getGroup());
 
-        return collect($this->navigationGroups)
+        return collect($this->getNavigationGroups())
             ->map(fn (NavigationGroup $group): NavigationGroup => $group->items($groupedItems->get($group->getLabel(), [])))
-            ->sortBy(fn (array $group): int => $group['group']->getSort())
+            ->sortBy(fn (NavigationGroup $group): int => $group->getSort())
             ->toArray();
     }
 
@@ -288,9 +294,7 @@ class FilamentManager
 
     public function getUrl(): ?string
     {
-        $flatNavigation = Arr::flatten($this->getNavigation());
-
-        $firstItem = $flatNavigation[0] ?? null;
+        $firstItem = $this->getNavigation()[0]?->getItems()[0] ?? null;
 
         if (! $firstItem) {
             return null;
