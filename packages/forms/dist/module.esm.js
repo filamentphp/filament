@@ -21902,6 +21902,7 @@ var file_upload_default = (Alpine) => {
       pond: null,
       shouldUpdateState: true,
       state: state2,
+      lastState: null,
       uploadedFileUrlIndex: {},
       init: async function() {
         this.pond = create$f(this.$refs.input, {
@@ -21964,6 +21965,10 @@ var file_upload_default = (Alpine) => {
           if (Object.values(this.state).filter((file2) => file2.startsWith("livewire-file:")).length) {
             return;
           }
+          if (JSON.stringify(this.state) === this.lastState) {
+            return;
+          }
+          this.lastState = JSON.stringify(this.state);
           this.pond.files = await this.getFiles();
         });
         this.pond.on("reorderfiles", async (files) => {
