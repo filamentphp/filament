@@ -46,7 +46,7 @@
                     })"
                     type="text"
                     wire:ignore
-                    @if (in_array('lazy', $getStateBindingModifiers())) x-on:blur="$wire.$refresh" @endif
+                    @if ($isLazy()) x-on:blur="$wire.$refresh" @endif 
                     {{ $getExtraAlpineAttributeBag() }}
                 @endunless
                 dusk="filament.forms.{{ $getStatePath() }}"
