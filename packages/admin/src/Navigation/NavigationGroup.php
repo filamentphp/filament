@@ -2,7 +2,6 @@
 
 namespace Filament\Navigation;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 class NavigationGroup

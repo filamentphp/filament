@@ -2,8 +2,6 @@
 
 use Filament\Tests\TestCase;
 
-use function Pest\Laravel\get;
-
 uses(TestCase::class);
 
 it('can create navigation items', function () {

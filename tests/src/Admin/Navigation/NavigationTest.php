@@ -7,8 +7,6 @@ use Filament\Navigation\NavigationItem;
 use Filament\Navigation\UnlabelledNavigationGroup;
 use Filament\Tests\TestCase;
 
-use function Pest\Laravel\get;
-
 uses(TestCase::class);
 
 it('builds the default navigation', function () {

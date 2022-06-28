@@ -16,7 +16,6 @@ use Filament\Navigation\UserMenuItem;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\HtmlString;
 
@@ -26,7 +25,7 @@ class FilamentManager
 
     protected bool $isNavigationMounted = false;
 
-    /** @var \Filament\Navigation\NavigationGroup[] $items */
+    /** @var \Filament\Navigation\NavigationGroup[] */
     protected array $navigationGroups = [];
 
     protected array $navigationItems = [];
@@ -108,6 +107,7 @@ class FilamentManager
                 if ($groupOrName instanceof NavigationGroup) {
                     return $groupOrName;
                 }
+
                 return NavigationGroup::make()
                     ->label($groupOrName);
             }, $groups)
