@@ -11,18 +11,18 @@
         <div @class([
             'w-screen px-6 -mt-16 space-y-8 md:mt-0 md:px-2',
             match($width) {
-                    'xs' => 'max-w-xs',
-                    'sm' => 'max-w-sm',
-                    'md' => 'max-w-md',
-                    'lg' => 'max-w-lg',
-                    'xl' => 'max-w-xl',
-                    '2xl' => 'max-w-2xl',
-                    '3xl' => 'max-w-3xl',
-                    '4xl' => 'max-w-4xl',
-                    '5xl' => 'max-w-5xl',
-                    '6xl' => 'max-w-6xl',
-                    '7xl' => 'max-w-7xl',
-                }
+                'xs' => 'max-w-xs',
+                'sm' => 'max-w-sm',
+                'md' => 'max-w-md',
+                'lg' => 'max-w-lg',
+                'xl' => 'max-w-xl',
+                '2xl' => 'max-w-2xl',
+                '3xl' => 'max-w-3xl',
+                '4xl' => 'max-w-4xl',
+                '5xl' => 'max-w-5xl',
+                '6xl' => 'max-w-6xl',
+                '7xl' => 'max-w-7xl',
+            }
         ])>
             <div @class([
                 'p-8 space-y-4 bg-white/50 backdrop-blur-xl border border-gray-200 shadow-2xl rounded-2xl relative',
