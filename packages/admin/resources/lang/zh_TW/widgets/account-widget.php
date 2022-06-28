@@ -5,7 +5,7 @@ return [
     'buttons' => [
 
         'logout' => [
-            'label' => '退出登錄',
+            'label' => '登出',
         ],
 
     ],
