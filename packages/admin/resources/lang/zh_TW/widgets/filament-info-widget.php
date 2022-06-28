@@ -5,7 +5,7 @@ return [
     'buttons' => [
 
         'visit_documentation' => [
-            'label' => '文檔',
+            'label' => '說明文件',
         ],
 
         'visit_github' => [
