@@ -4,8 +4,6 @@
 
 <div
     x-data="{
-        isOpen: false,
-
         mode: null,
 
         theme: null,
@@ -50,7 +48,7 @@
     {{ $attributes->class(['relative']) }}
 >
     <button
-        x-on:click="isOpen = ! isOpen"
+        x-on:click="$float($refs.panel, {placement: 'bottom-end', offset: 8})"
         @class([
             'block flex-shrink-0 w-10 h-10 rounded-full bg-gray-200 bg-cover bg-center',
             'dark:bg-gray-900' => config('filament.dark_mode'),
@@ -59,8 +57,7 @@
     ></button>
 
     <div
-        x-show="isOpen"
-        x-on:click.away="isOpen = false"
+        x-ref="panel"
         x-transition:enter="transition"
         x-transition:enter-start="-translate-y-1 opacity-0"
         x-transition:enter-end="translate-y-0 opacity-100"
@@ -68,7 +65,7 @@
         x-transition:leave-start="translate-y-0 opacity-100"
         x-transition:leave-end="-translate-y-1 opacity-0"
         x-cloak
-        class="absolute z-10 right-0 rtl:right-auto rtl:left-0 mt-2 shadow-xl rounded-xl w-52 top-full"
+        class="absolute z-10 hidden shadow-xl rounded-xl w-52 top-full"
     >
         <ul @class([
             'py-1 space-y-1 overflow-hidden bg-white shadow rounded-xl',

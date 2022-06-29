@@ -56,7 +56,6 @@
                 @foreach ($containers as $uuid => $item)
                     <li
                         x-data="{
-                            isCreateButtonDropdownOpen: false,
                             isCreateButtonVisible: false,
                             isCollapsed: @js($isCollapsed()),
                         }"
@@ -171,15 +170,15 @@
 
                         @if ((! $loop->last) && (! $isItemCreationDisabled) && (! $isItemMovementDisabled))
                             <div
-                                x-show="isCreateButtonVisible || isCreateButtonDropdownOpen"
+                                x-show="isCreateButtonVisible"
                                 x-transition
                                 class="absolute inset-x-0 bottom-0 z-10 flex items-center justify-center h-12 -mb-12"
                             >
-                                <div class="relative flex justify-center">
+                                <div x-data class="relative flex justify-center">
                                     <x-forms::icon-button
                                         :label="$getCreateItemBetweenButtonLabel()"
                                         icon="heroicon-o-plus"
-                                        x-on:click="isCreateButtonDropdownOpen = true"
+                                        x-on:click="$float($refs.panel, {placement: 'bottom', flip: true})"
                                         type="button"
                                     />
 
@@ -187,6 +186,7 @@
                                         :blocks="$getBlocks()"
                                         :create-after-item="$uuid"
                                         :state-path="$getStatePath()"
+                                        class="py-2"
                                     />
                                 </div>
                             </div>
@@ -197,10 +197,10 @@
         @endif
 
         @if (! $isItemCreationDisabled)
-            <div x-data="{ isCreateButtonDropdownOpen: false }" class="relative flex justify-center">
+            <div x-data class="relative flex justify-center">
                 <x-forms::button
                     size="sm"
-                    x-on:click="isCreateButtonDropdownOpen = true"
+                    x-on:click="$float($refs.panel, {placement: 'bottom', offset: 8, flip: true})"
                     type="button"
                 >
                     {{ $getCreateItemButtonLabel() }}
