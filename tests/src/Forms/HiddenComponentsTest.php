@@ -103,7 +103,7 @@ test('components can be hidden based on Livewire component', function () {
     $components = ComponentContainer::make(Foo::make())
         ->components([
             TextInput::make('foo')
-                ->hiddenOn(Foo::class)
+                ->hiddenOn(Foo::class),
         ])
         ->getComponents();
 
@@ -113,7 +113,7 @@ test('components can be hidden based on Livewire component', function () {
     $components = ComponentContainer::make(Bar::make())
         ->components([
             TextInput::make('foo')
-                ->hiddenOn(Foo::class)
+                ->hiddenOn(Foo::class),
         ])
         ->getComponents();
 
@@ -128,7 +128,7 @@ test('components can be hidden based on Livewire component', function () {
     $components = ComponentContainer::make(Bar::make())
         ->components([
             TextInput::make('foo')
-                ->hiddenOn([Foo::class, Bar::class])
+                ->hiddenOn([Foo::class, Bar::class]),
         ])
         ->getComponents();
 
@@ -140,7 +140,7 @@ test('components can be visible based on Livewire component', function () {
     $components = ComponentContainer::make(Foo::make())
         ->components([
             TextInput::make('foo')
-                ->visibleOn(Foo::class)
+                ->visibleOn(Foo::class),
         ])
         ->getComponents();
 
@@ -150,7 +150,7 @@ test('components can be visible based on Livewire component', function () {
     $components = ComponentContainer::make(Bar::make())
         ->components([
             TextInput::make('foo')
-                ->visibleOn(Foo::class)
+                ->visibleOn(Foo::class),
         ])
         ->getComponents();
 
@@ -165,7 +165,7 @@ test('components can be visible based on Livewire component', function () {
     $components = ComponentContainer::make(Bar::make())
         ->components([
             TextInput::make('foo')
-                ->visibleOn([Foo::class, Bar::class])
+                ->visibleOn([Foo::class, Bar::class]),
         ])
         ->getComponents();
 
@@ -173,5 +173,9 @@ test('components can be visible based on Livewire component', function () {
         ->toHaveLength(1);
 });
 
-class Foo extends Livewire {}
-class Bar extends Livewire {}
+class Foo extends Livewire
+{
+}
+class Bar extends Livewire
+{
+}
