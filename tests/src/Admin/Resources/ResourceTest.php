@@ -60,7 +60,7 @@ it('can retrieve a page\'s URL', function () {
         ->toContain(strval($post->getRouteKey()));
 });
 
-it('can store the filters in the session when the user is authenticated', function () {
+it('can store the filters in the session', function () {
     [$postA, $postB, $postC] = Post::factory(3)
         ->sequence(
             ['rating' => 2],
