@@ -27,7 +27,7 @@ trait HasActions
     {
         $action = $this->getMountedAction();
 
-        if (!$action) {
+        if (! $action) {
             return;
         }
 
@@ -74,7 +74,7 @@ trait HasActions
 
         $action = $this->getMountedAction();
 
-        if (!$action) {
+        if (! $action) {
             return;
         }
 
@@ -100,7 +100,7 @@ trait HasActions
             $action->callAfterFormFilled();
         }
 
-        if (!$action->shouldOpenModal()) {
+        if (! $action->shouldOpenModal()) {
             return $this->callMountedAction();
         }
 
@@ -150,7 +150,7 @@ trait HasActions
 
     public function getMountedAction(): ?Action
     {
-        if (!$this->mountedAction) {
+        if (! $this->mountedAction) {
             return null;
         }
 
@@ -160,7 +160,7 @@ trait HasActions
             return $action;
         }
 
-        if (!$this instanceof Contracts\HasFormActions) {
+        if (! $this instanceof Contracts\HasFormActions) {
             return null;
         }
 
@@ -178,11 +178,11 @@ trait HasActions
     {
         $action = $this->getMountedAction();
 
-        if (!$action) {
+        if (! $action) {
             return null;
         }
 
-        if ((!$this->isCachingForms) && $this->hasCachedForm('mountedActionForm')) {
+        if ((! $this->isCachingForms) && $this->hasCachedForm('mountedActionForm')) {
             return $this->getCachedForm('mountedActionForm');
         }
 
@@ -208,13 +208,13 @@ trait HasActions
         }
 
         foreach ($actions as $action) {
-            if (!$action instanceof ActionGroup) {
+            if (! $action instanceof ActionGroup) {
                 continue;
             }
 
             $groupedAction = $action->getActions()[$name] ?? null;
 
-            if (!$groupedAction) {
+            if (! $groupedAction) {
                 continue;
             }
 

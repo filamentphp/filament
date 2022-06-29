@@ -42,7 +42,7 @@ trait HasBulkActions
     {
         $action = $this->getMountedTableBulkAction();
 
-        if (!$action) {
+        if (! $action) {
             return;
         }
 
@@ -91,7 +91,7 @@ trait HasBulkActions
 
         $action = $this->getMountedTableBulkAction();
 
-        if (!$action) {
+        if (! $action) {
             return;
         }
 
@@ -118,7 +118,7 @@ trait HasBulkActions
             $action->callAfterFormFilled();
         }
 
-        if (!$action->shouldOpenModal()) {
+        if (! $action->shouldOpenModal()) {
             return $this->callMountedTableBulkAction();
         }
 
@@ -138,7 +138,7 @@ trait HasBulkActions
 
     public function getMountedTableBulkAction(): ?BulkAction
     {
-        if (!$this->mountedTableBulkAction) {
+        if (! $this->mountedTableBulkAction) {
             return null;
         }
 
@@ -149,11 +149,11 @@ trait HasBulkActions
     {
         $action = $this->getMountedTableBulkAction();
 
-        if (!$action) {
+        if (! $action) {
             return null;
         }
 
-        if ((!$this->isCachingForms) && $this->hasCachedForm('mountedTableBulkActionForm')) {
+        if ((! $this->isCachingForms) && $this->hasCachedForm('mountedTableBulkActionForm')) {
             return $this->getCachedForm('mountedTableBulkActionForm');
         }
 

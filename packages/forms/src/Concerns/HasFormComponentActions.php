@@ -27,11 +27,11 @@ trait HasFormComponentActions
     {
         $action = $this->getMountedFormComponentAction();
 
-        if (!$action) {
+        if (! $action) {
             return null;
         }
 
-        if ((!$this->isCachingForms) && $this->hasCachedForm('mountedFormComponentActionForm')) {
+        if ((! $this->isCachingForms) && $this->hasCachedForm('mountedFormComponentActionForm')) {
             return $this->getCachedForm('mountedFormComponentActionForm');
         }
 
@@ -45,7 +45,7 @@ trait HasFormComponentActions
     {
         $action = $this->getMountedFormComponentAction();
 
-        if (!$action) {
+        if (! $action) {
             return;
         }
 
@@ -88,7 +88,7 @@ trait HasFormComponentActions
 
     public function getMountedFormComponentAction(): ?Action
     {
-        if (!$this->mountedFormComponentAction) {
+        if (! $this->mountedFormComponentAction) {
             return null;
         }
 
@@ -102,7 +102,7 @@ trait HasFormComponentActions
 
         $action = $this->getMountedFormComponentAction();
 
-        if (!$action) {
+        if (! $action) {
             return;
         }
 
@@ -128,7 +128,7 @@ trait HasFormComponentActions
             $action->callAfterFormFilled();
         }
 
-        if (!$action->shouldOpenModal()) {
+        if (! $action->shouldOpenModal()) {
             return $this->callMountedFormComponentAction();
         }
 
@@ -141,7 +141,7 @@ trait HasFormComponentActions
 
     public function getMountedFormComponentActionComponent(): ?Component
     {
-        if (!$this->hasMountedFormComponentAction()) {
+        if (! $this->hasMountedFormComponentAction()) {
             return null;
         }
 
