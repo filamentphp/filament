@@ -57,7 +57,7 @@ trait HasActions
     {
         $action = $this->getMountedTableAction();
 
-        if (! $action) {
+        if (!$action) {
             return;
         }
 
@@ -79,7 +79,7 @@ trait HasActions
 
         try {
             $result = $action->call([
-                'arguments' => json_decode($arguments, associative: true) ?? [],
+                'arguments' => $arguments ? json_decode($arguments, associative: true) : [],
                 'form' => $form,
             ]);
         } catch (Hold $exception) {
@@ -111,7 +111,7 @@ trait HasActions
 
         $action = $this->getMountedTableAction();
 
-        if (! $action) {
+        if (!$action) {
             return;
         }
 
@@ -138,7 +138,7 @@ trait HasActions
             $action->callAfterFormFilled();
         }
 
-        if (! $action->shouldOpenModal()) {
+        if (!$action->shouldOpenModal()) {
             return $this->callMountedTableAction();
         }
 
@@ -156,7 +156,7 @@ trait HasActions
 
     public function getMountedTableAction(): ?Action
     {
-        if (! $this->mountedTableAction) {
+        if (!$this->mountedTableAction) {
             return null;
         }
 
@@ -167,11 +167,11 @@ trait HasActions
     {
         $action = $this->getMountedTableAction();
 
-        if (! $action) {
+        if (!$action) {
             return null;
         }
 
-        if ((! $this->isCachingForms) && $this->hasCachedForm('mountedTableActionForm')) {
+        if ((!$this->isCachingForms) && $this->hasCachedForm('mountedTableActionForm')) {
             return $this->getCachedForm('mountedTableActionForm');
         }
 
@@ -210,13 +210,13 @@ trait HasActions
         }
 
         foreach ($actions as $action) {
-            if (! $action instanceof ActionGroup) {
+            if (!$action instanceof ActionGroup) {
                 continue;
             }
 
             $groupedAction = $action->getActions()[$name] ?? null;
 
-            if (! $groupedAction) {
+            if (!$groupedAction) {
                 continue;
             }
 
