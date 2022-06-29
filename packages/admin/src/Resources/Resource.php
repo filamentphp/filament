@@ -183,6 +183,33 @@ class Resource
         return static::getModel()::query();
     }
 
+    public static function getLastFilteredEloquentQuery(): Builder
+    {
+        $indexClassname = static::getPages()['index']['class'] ?? null;
+
+        $filterData = filled($indexClassname)
+            ? session()->get("filament.{$indexClassname}.tableFilters")
+            : [];
+
+        $query = static::getEloquentQuery();
+
+        $table = static::table(Table::make());
+
+        return $query->when(
+            $filterData,
+            function (Builder $query) use ($table, $filterData) {
+                return $query->where(function (Builder $query) use ($table, $filterData) {
+                    foreach ($table->getFilters() as $filter) {
+                        $filter->apply(
+                            $query,
+                            $filterData[$filter->getName()] ?? [],
+                        );
+                    }
+                });
+            }
+        );
+    }
+
     public static function getGloballySearchableAttributes(): array
     {
         $titleAttribute = static::getRecordTitleAttribute();
