@@ -15,6 +15,8 @@ class Block extends Component
 
     protected string | Closure | null $icon = null;
 
+    protected ?array $labelState = null;
+
     final public function __construct(string $name)
     {
         $this->name($name);
@@ -32,6 +34,13 @@ class Block extends Component
         return $this;
     }
 
+    public function labelState(?array $state): static
+    {
+        $this->labelState = $state;
+
+        return $this;
+    }
+
     public function getIcon(): ?string
     {
         return $this->evaluate($this->icon);
@@ -39,7 +48,11 @@ class Block extends Component
 
     public function getLabel(): string
     {
-        return parent::getLabel() ?? (string) Str::of($this->getName())
+        $label = $this->evaluate($this->label, array_merge(
+            $this->labelState ? ['state' => $this->labelState] : [],
+        ));
+
+        return $label ?? (string) Str::of($this->getName())
             ->kebab()
             ->replace(['-', '_'], ' ')
             ->ucfirst();
