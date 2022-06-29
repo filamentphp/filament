@@ -35,6 +35,6 @@ if (! function_exists('Filament\get_asset_id')) {
 if (! function_exists('Filament\locale_has_pluralization')) {
     function locale_has_pluralization(): bool
     {
-        return (new MessageSelector)->getPluralIndex(app()->getLocale(), 10) > 0;
+        return (new MessageSelector())->getPluralIndex(app()->getLocale(), 10) > 0;
     }
 }
