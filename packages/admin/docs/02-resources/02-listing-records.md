@@ -413,7 +413,7 @@ Action::make('previous')
     ->label('Previous')
 ```
 
-Please note that function will reapply the filters on the `getEloquentQuery()` method and *not* on the `getTableQuery()` method of your index page. That means that if you made customizations to your query only on the index page, you should reapply those customizations as well.
+Please note that the function will reapply the filters on the `getEloquentQuery()` method and *not* on the `getTableQuery()` method of your index page. That means that if you made customizations to your query only on the index page, you should reapply those customizations as well.
 
 ```php
 public static function getLastFilteredEloquentQuery(): Builder
