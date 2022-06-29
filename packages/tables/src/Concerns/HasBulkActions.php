@@ -132,7 +132,7 @@ trait HasBulkActions
     public function getCachedTableBulkActions(): array
     {
         return collect($this->cachedTableBulkActions)
-            ->filter(fn (BulkAction $action): bool => !$action->isHidden())
+            ->filter(fn (BulkAction $action): bool => ! $action->isHidden())
             ->toArray();
     }
 
