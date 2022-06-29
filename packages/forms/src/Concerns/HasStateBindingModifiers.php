@@ -56,7 +56,7 @@ trait HasStateBindingModifiers
 
         return ['defer'];
     }
-    
+
     public function isLazy(): bool
     {
         return in_array('lazy', $this->getStateBindingModifiers(), false);
