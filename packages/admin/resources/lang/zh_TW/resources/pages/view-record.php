@@ -2,8 +2,8 @@
 
 return [
 
-    'title' => ':label 詳情',
+    'title' => '檢視 :label',
 
-    'breadcrumb' => '詳情',
+    'breadcrumb' => '檢視',
 
 ];

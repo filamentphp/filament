@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => '創建 :label',
+    'title' => '建立 :label',
 
-    'breadcrumb' => '創建',
+    'breadcrumb' => '建立',
 
     'form' => [
 
@@ -15,11 +15,11 @@ return [
             ],
 
             'create' => [
-                'label' => '保存',
+                'label' => '建立',
             ],
 
             'create_another' => [
-                'label' => '保存並創建另一個',
+                'label' => '建立後再建立另一個',
             ],
 
         ],
@@ -27,7 +27,7 @@ return [
     ],
 
     'messages' => [
-        'created' => '已創建',
+        'created' => '已建立',
     ],
 
 ];
