@@ -323,13 +323,17 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     protected static function getPluralModelLabel(): string
     {
-        if (! locale_has_pluralization()) {
-            return static::$pluralModelLabel ?? static::getModelLabel();
+        if (filled($label = static::$pluralModelLabel ?? static::getPluralRecordLabel())) {
+            return $label;
         }
 
-        return static::$pluralModelLabel ?? static::getPluralRecordLabel() ?? (string) Str::of(static::getRelationshipName())
-            ->kebab()
-            ->replace('-', ' ');
+        if (locale_has_pluralization()) {
+            return (string) Str::of(static::getRelationshipName())
+                ->kebab()
+                ->replace('-', ' ');
+        }
+
+        return static::getModelLabel();
     }
 
     protected function getRelatedModel(): string

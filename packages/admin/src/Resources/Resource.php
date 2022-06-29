@@ -286,13 +286,15 @@ class Resource
 
     public static function getPluralModelLabel(): string
     {
-        if (isset(static::$pluralModelLabel)) {
-            return static::$pluralModelLabel;
+        if (filled($label = static::$pluralModelLabel ?? static::getPluralLabel())) {
+            return $label;
         }
 
-        return locale_has_pluralization()
-            ? static::getPluralLabel() ?? Str::plural(static::getModelLabel())
-            : static::getModelLabel();
+        if (locale_has_pluralization()) {
+            return Str::plural(static::getModelLabel());
+        }
+
+        return static::getModelLabel();
     }
 
     public static function getRecordTitleAttribute(): ?string

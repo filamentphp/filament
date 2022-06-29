@@ -23,7 +23,7 @@ it('can generate a label based on the model name', function () {
         ->toBe('post');
 });
 
-it('can generate a plural label based on locale and the model name', function () {
+it('can generate a plural label based on the model name and locale', function () {
     $originalLocale = app()->getLocale();
 
     app()->setLocale('en');
