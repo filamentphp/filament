@@ -9,7 +9,7 @@
     @endif
 
     @class([
-        'fixed inset-y-0 left-0 rtl:left-auto rtl:right-0 z-20 flex flex-col h-screen overflow-hidden shadow-2xl transition-all bg-white filament-sidebar lg:border-r w-[var(--sidebar-width)] lg:z-0',
+        'fixed inset-y-0 left-0 rtl:left-auto rtl:right-0 z-20 flex flex-col h-screen overflow-hidden shadow-2xl transition-all bg-white filament-sidebar lg:border-r rtl:lg:border-r-0 rtl:lg:border-l w-[var(--sidebar-width)] lg:z-0',
         'lg:translate-x-0' => ! config('filament.layout.sidebar.is_collapsible_on_desktop'),
         'dark:bg-gray-800 dark:border-gray-700' => config('filament.dark_mode'),
     ])
