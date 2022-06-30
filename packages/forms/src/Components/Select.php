@@ -363,7 +363,7 @@ class Select extends Field
     {
         $columns = $this->searchColumns;
 
-        if ($this->getRelationship()) {
+        if ($this->hasRelationship()) {
             $columns ??= [$this->getRelationshipTitleColumnName()];
         }
 
@@ -663,7 +663,7 @@ class Select extends Field
 
     public function getLabel(): string
     {
-        if ($this->label === null && $this->getRelationship()) {
+        if ($this->label === null && $this->hasRelationship()) {
             return (string) Str::of($this->getRelationshipName())
                 ->before('.')
                 ->kebab()
@@ -690,6 +690,11 @@ class Select extends Field
         return $this->evaluate($this->relationship);
     }
 
+    public function hasRelationship(): bool
+    {
+        return filled($this->getRelationshipName());
+    }
+
     public function isPreloaded(): bool
     {
         return $this->evaluate($this->isPreloaded);
@@ -702,11 +707,15 @@ class Select extends Field
 
     public function hasDynamicSearchResults(): bool
     {
-        return $this->getSearchResultsUsing instanceof Closure || ($this->getRelationship() && ! $this->isPreloaded());
+        return $this->getSearchResultsUsing instanceof Closure || ($this->hasRelationship() && ! $this->isPreloaded());
     }
 
     public function getActionFormModel(): Model | string | null
     {
-        return $this->getRelationship()->getModel()::class;
+        if ($this->hasRelationship()) {
+            return $this->getRelationship()->getModel()::class;
+        }
+
+        return parent::getActionFormModel();
     }
 }

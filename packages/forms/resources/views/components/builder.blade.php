@@ -51,6 +51,7 @@
             >
                 @php
                     $hasBlockLabels = $hasBlockLabels();
+                    $hasBlockNumbers = $hasBlockNumbers();
                 @endphp
 
                 @foreach ($containers as $uuid => $item)
@@ -101,9 +102,21 @@
                                         'flex-none px-4 text-xs font-medium text-gray-600 truncate',
                                         'dark:text-gray-400' => config('forms.dark_mode'),
                                     ])>
+                                        @php
+                                            $block = $item->getParentComponent();
+
+                                            $block->labelState($item->getRawState());
+                                        @endphp
+
                                         {{ $item->getParentComponent()->getLabel() }}
 
-                                        <small class="font-mono">{{ $loop->iteration }}</small>
+                                        @php
+                                            $block->labelState(null);
+                                        @endphp
+
+                                        @if ($hasBlockNumbers)
+                                            <small class="font-mono">{{ $loop->iteration }}</small>
+                                        @endif
                                     </p>
                                 @endif
 
