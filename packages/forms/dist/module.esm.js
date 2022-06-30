@@ -10474,14 +10474,14 @@ var require_choices = __commonJS((exports, module) => {
           var $$observable = function() {
             return typeof Symbol === "function" && Symbol.observable || "@@observable";
           }();
-          var randomString = function randomString2() {
+          var randomString2 = function randomString3() {
             return Math.random().toString(36).substring(7).split("").join(".");
           };
           var ActionTypes = {
-            INIT: "@@redux/INIT" + randomString(),
-            REPLACE: "@@redux/REPLACE" + randomString(),
+            INIT: "@@redux/INIT" + randomString2(),
+            REPLACE: "@@redux/REPLACE" + randomString2(),
             PROBE_UNKNOWN_ACTION: function PROBE_UNKNOWN_ACTION() {
-              return "@@redux/PROBE_UNKNOWN_ACTION" + randomString();
+              return "@@redux/PROBE_UNKNOWN_ACTION" + randomString2();
             }
           };
           function isPlainObject(obj) {
@@ -11944,9 +11944,6 @@ var date_time_picker_default = (Alpine) => {
             this.focusedYear = year;
           }
           this.setupDaysGrid();
-          this.$nextTick(() => {
-            this.evaluatePosition();
-          });
         });
         this.$watch("hour", () => {
           let hour = +this.hour;
@@ -12060,19 +12057,6 @@ var date_time_picker_default = (Alpine) => {
         this.focusedDate ??= date;
         return date.date() === day && date.month() === this.focusedDate.month() && date.year() === this.focusedDate.year();
       },
-      evaluatePosition: function() {
-        let availableHeight = window.innerHeight - this.$refs.button.offsetHeight;
-        let element = this.$refs.button;
-        while (element) {
-          availableHeight -= element.offsetTop;
-          element = element.offsetParent;
-        }
-        if (this.$refs.picker.offsetHeight <= availableHeight) {
-          this.$refs.picker.style.bottom = "auto";
-          return;
-        }
-        this.$refs.picker.style.bottom = `${this.$refs.button.offsetHeight}px`;
-      },
       focusPreviousDay: function() {
         this.focusedDate ??= esm_default().tz(timezone2);
         this.focusedDate = this.focusedDate.subtract(1, "day");
@@ -12121,9 +12105,6 @@ var date_time_picker_default = (Alpine) => {
         this.focusedDate = this.getSelectedDate() ?? this.getMinDate() ?? esm_default().tz(timezone2);
         this.setupDaysGrid();
         this.open = true;
-        this.$nextTick(() => {
-          this.evaluatePosition();
-        });
       },
       selectDate: function(day = null) {
         if (day) {
@@ -12164,13 +12145,6 @@ var date_time_picker_default = (Alpine) => {
         }
         this.state = date.hour(this.hour ?? 0).minute(this.minute ?? 0).second(this.second ?? 0).format("YYYY-MM-DD HH:mm:ss");
         this.setDisplayText();
-      },
-      togglePickerVisibility: function() {
-        if (this.open) {
-          this.closePicker();
-          return;
-        }
-        this.openPicker();
       }
     };
   });
@@ -32064,26 +32038,69 @@ var buildConfigFromModifiers = (modifiers) => {
   }
   return config;
 };
+var randomString = (length) => {
+  var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz".split("");
+  var str = "";
+  if (!length) {
+    length = Math.floor(Math.random() * chars.length);
+  }
+  for (var i = 0; i < length; i++) {
+    str += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return str;
+};
 function src_default(Alpine) {
+  const defaultOptions2 = {
+    dismissable: true,
+    trap: false
+  };
+  const atTriggers = document.querySelectorAll('[\\@click*="$float"]');
+  const xTriggers = document.querySelectorAll('[x-on\\:click*="$float"]');
+  const triggers = [...atTriggers, ...xTriggers].forEach(function(trig) {
+    const parentComponent = trig.parentElement.closest("[x-data]");
+    const panel2 = parentComponent.querySelector('[x-ref="panel"]');
+    if (!trig.hasAttribute("aria-expanded")) {
+      trig.setAttribute("aria-expanded", false);
+    }
+    if (!panel2.hasAttribute("id")) {
+      const panelId = `panel-${randomString(8)}`;
+      trig.setAttribute("aria-controls", panelId);
+      panel2.setAttribute("id", panelId);
+    } else {
+      trig.setAttribute("aria-controls", panel2.getAttribute("id"));
+    }
+    panel2.setAttribute("aria-modal", true);
+    panel2.setAttribute("role", "dialog");
+  });
   Alpine.magic("float", (el) => {
-    return (floatEl, modifiers = {}, dismissable = true) => {
+    return (modifiers = {}, settings = {}) => {
+      const options2 = {...defaultOptions2, ...settings};
       const config = Object.keys(modifiers).length > 0 ? buildConfigFromModifiers(modifiers) : {middleware: [autoPlacement()]};
+      const parentComponent = el.parentElement.closest("[x-data]");
+      const trigger = el;
+      const panel2 = parentComponent.querySelector('[x-ref="panel"]');
       function isFloating() {
-        return floatEl.style.display == "block";
+        return panel2.style.display == "block";
       }
       function closePanel() {
-        floatEl.style.display = "";
-        autoUpdate(el, floatEl, update);
+        panel2.style.display = "";
+        trigger.setAttribute("aria-expanded", false);
+        if (options2.trap)
+          panel2.setAttribute("x-trap", false);
+        autoUpdate(el, panel2, update);
       }
       function openPanel() {
-        floatEl.style.display = "block";
+        panel2.style.display = "block";
+        trigger.setAttribute("aria-expanded", true);
+        if (options2.trap)
+          panel2.setAttribute("x-trap", true);
         update();
       }
       function togglePanel() {
         isFloating() ? closePanel() : openPanel();
       }
       async function update() {
-        return await computePosition2(el, floatEl, config).then(({middlewareData, placement, x, y}) => {
+        return await computePosition2(el, panel2, config).then(({middlewareData, placement, x, y}) => {
           if (middlewareData.arrow) {
             const ax = middlewareData.arrow?.x;
             const ay = middlewareData.arrow?.y;
@@ -32104,20 +32121,19 @@ function src_default(Alpine) {
           }
           if (middlewareData.hide) {
             const {referenceHidden} = middlewareData.hide;
-            Object.assign(floatEl.style, {
+            Object.assign(panel2.style, {
               visibility: referenceHidden ? "hidden" : "visible"
             });
           }
-          Object.assign(floatEl.style, {
+          Object.assign(panel2.style, {
             left: `${x}px`,
             top: `${y}px`
           });
         });
       }
-      if (dismissable) {
+      if (options2.dismissable) {
         window.addEventListener("click", (event) => {
-          const parent = el.closest("[x-data]");
-          if (!parent.contains(event.target) && isFloating()) {
+          if (!parentComponent.contains(event.target) && isFloating()) {
             togglePanel();
           }
         });

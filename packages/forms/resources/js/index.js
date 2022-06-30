@@ -8,8 +8,8 @@ import SelectFormComponentAlpinePlugin from './components/select'
 import TagsInputFormComponentAlpinePlugin from './components/tags-input'
 import TextInputFormComponentAlpinePlugin from './components/text-input'
 import TextareaFormComponentAlpinePlugin from './components/textarea'
-import './sortable'
 import FloatingUI from '@awcodes/alpine-floating-ui'
+import './sortable'
 
 export default (Alpine) => {
     Alpine.plugin(ColorPickerFormComponentAlpinePlugin)
