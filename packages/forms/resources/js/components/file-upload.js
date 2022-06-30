@@ -174,7 +174,6 @@ export default (Alpine) => {
                     this.insertDownloadLink(fileItem)
                 })
 
-
                 this.pond.on('initfile', async (fileItem) => {
                     if (! canOpen) {
                         return
