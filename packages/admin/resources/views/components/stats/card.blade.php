@@ -29,6 +29,7 @@
             @if ($icon)
                 <x-dynamic-component :component="$icon" class="w-4 h-4" />
             @endif
+
             <span>{{ $label }}</span>
         </div>
 
@@ -58,65 +59,62 @@
 
     @if ($chart)
         <div
-            x-title="card-chart"
+            x-title="filament-stats-card-chart"
             x-data="{
+                chart: null,
+
                 labels: {{ json_encode(array_keys($chart)) }},
                 values: {{ json_encode(array_values($chart)) }},
 
-                init() {
-                    chart = Chart.getChart(this.$refs.canvas)
-
-                    chart ? this.update(chart) : this.create()
+                init: function () {
+                    this.chart ? this.updateChart() : this.initChart()
                 },
 
-                create: function() {
-                    new Chart(
-                        this.$refs.canvas,
-                        {
-                            type: 'line',
-                            data: {
-                                labels: this.labels,
-                                datasets: [{
-                                    data: this.values,
-                                    backgroundColor: getComputedStyle($refs.backgroundColorElement).color,
-                                    borderColor: getComputedStyle($refs.borderColorElement).color,
-                                    borderWidth: 2,
-                                    fill: 'start',
-                                    tension: 0.5,
-                                }],
-                            },
-                            options: {
-                                elements: {
-                                    point: {
-                                        radius: 0,
-                                    },
-                                },
-                                maintainAspectRatio: false,
-                                plugins: {
-                                    legend: {
-                                        display: false,
-                                    },
-                                },
-                                scales: {
-                                    x:  {
-                                        display: false,
-                                    },
-                                    y:  {
-                                        display: false,
-                                    },
-                                },
-                                tooltips: {
-                                    enabled: false,
+                initChart: function () {
+                    return this.chart = new Chart(this.$refs.canvas, {
+                        type: 'line',
+                        data: {
+                            labels: this.labels,
+                            datasets: [{
+                                data: this.values,
+                                backgroundColor: getComputedStyle($refs.backgroundColorElement).color,
+                                borderColor: getComputedStyle($refs.borderColorElement).color,
+                                borderWidth: 2,
+                                fill: 'start',
+                                tension: 0.5,
+                            }],
+                        },
+                        options: {
+                            elements: {
+                                point: {
+                                    radius: 0,
                                 },
                             },
-                        }
-                    )
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false,
+                                },
+                            },
+                            scales: {
+                                x:  {
+                                    display: false,
+                                },
+                                y:  {
+                                    display: false,
+                                },
+                            },
+                            tooltips: {
+                                enabled: false,
+                            },
+                        },
+                    })
                 },
 
-                update: function(chart) {
-                    chart.data.labels = this.labels
-                    chart.data.datasets[0].data = this.values
-                    chart.update()
+                updateChart: function () {
+                    this.chart.data.labels = this.labels
+                    this.chart.data.datasets[0].data = this.values
+                    this.chart.update()
                 },
             }"
             class="absolute bottom-0 inset-x-0 rounded-b-2xl overflow-hidden"
