@@ -42,11 +42,14 @@
                 @else
                     x-data="textInputFormComponent({
                         {{ $hasMask() ? "getMaskOptionsUsing: (IMask) => ({$getJsonMaskConfiguration()})," : null }}
-                        state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')', except: 'lazy') }},
+                        state: $wire.{{ $isLazy()
+                                        ? $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\').defer', except: 'lazy')
+                                        : $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')')
+                                        }},
                     })"
                     type="text"
                     wire:ignore
-                    @if ($isLazy()) x-on:blur="$wire.$refresh" @endif 
+                    @if ($isLazy()) x-on:blur="$wire.$refresh" @endif
                     {{ $getExtraAlpineAttributeBag() }}
                 @endunless
                 dusk="filament.forms.{{ $getStatePath() }}"
