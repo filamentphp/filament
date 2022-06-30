@@ -1,10 +1,11 @@
 @props([
     'action',
     'component',
+    'icon' => null,
 ])
 
 @php
-    if (! $action->getAction()) {
+    if ((! $action->getAction()) || $action->getUrl()) {
         $wireClickAction = null;
     } elseif ($action->shouldOpenModal() || ($action->getAction() instanceof \Closure)) {
         $wireClickAction = "mountAction('{$action->getName()}')";
@@ -18,7 +19,7 @@
     :dark-mode="config('filament.dark_mode')"
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes())"
     :form="$action->getForm()"
-    :tag="((! $action->getAction()) && $action->getUrl()) ? 'a' : 'button'"
+    :tag="$action->getUrl() ? 'a' : 'button'"
     :wire:click="$action->isEnabled() ? $wireClickAction : null"
     :href="$action->isEnabled() ? $action->getUrl() : null"
     :target="$action->shouldOpenUrlInNewTab() ? '_blank' : null"
@@ -27,7 +28,7 @@
     :key-bindings="$action->getKeybindings()"
     :tooltip="$action->getTooltip()"
     :disabled="$action->isDisabled()"
-    :icon="$action->getIcon()"
+    :icon="$icon ?? $action->getIcon()"
     :size="$action->getSize()"
 >
     {{ $slot }}

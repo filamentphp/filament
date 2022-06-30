@@ -59,20 +59,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'replicate' => [
-
-            'label' => 'Powiel',
-
-            'messages' => [
-                'replicated' => 'Rekord powielony',
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'Nie znaleziono wyników',
     ],
@@ -97,6 +83,18 @@ return [
 
         'select' => [
             'placeholder' => 'Wszystkie',
+        ],
+
+        'trashed' => [
+
+            'label' => 'Usunięte rekordy',
+
+            'only_trashed' => 'Tylko usunięte rekordy',
+
+            'with_trashed' => 'Uwzględnij usunięte rekordy',
+
+            'without_trashed' => 'Bez usuniętych rekordów',
+
         ],
 
     ],

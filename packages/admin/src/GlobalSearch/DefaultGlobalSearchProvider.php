@@ -21,7 +21,7 @@ class DefaultGlobalSearchProvider implements Contracts\GlobalSearchProvider
                 continue;
             }
 
-            $builder->category($resource::getPluralLabel(), $resourceResults);
+            $builder->category($resource::getPluralModelLabel(), $resourceResults);
         }
 
         return $builder;

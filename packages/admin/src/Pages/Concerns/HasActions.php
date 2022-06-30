@@ -2,9 +2,12 @@
 
 namespace Filament\Pages\Concerns;
 
+use Closure;
 use Filament\Forms;
 use Filament\Pages\Actions\Action;
+use Filament\Pages\Actions\ActionGroup;
 use Filament\Pages\Contracts;
+use Filament\Support\Actions\Exceptions\Hold;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -20,7 +23,7 @@ trait HasActions
 
     protected ?array $cachedActions = null;
 
-    public function callMountedAction()
+    public function callMountedAction(?string $arguments = null)
     {
         $action = $this->getMountedAction();
 
@@ -28,16 +31,36 @@ trait HasActions
             return;
         }
 
-        if ($action->isHidden()) {
+        if ($action->isDisabled()) {
             return;
         }
 
-        $data = $this->getMountedActionForm()->getState();
+        $form = $this->getMountedActionForm();
+
+        if ($action->hasForm()) {
+            $action->callBeforeFormValidated();
+
+            $action->formData($form->getState());
+
+            $action->callAfterFormValidated();
+        }
+
+        $action->callBefore();
 
         try {
-            return $action->call($data);
+            $result = $action->call([
+                'arguments' => $arguments ? json_decode($arguments, associative: true) : [],
+                'form' => $form,
+            ]);
+        } catch (Hold $exception) {
+            return;
+        }
+
+        try {
+            return $action->callAfter() ?? $result;
         } finally {
             $this->mountedAction = null;
+            $action->resetFormData();
 
             $this->dispatchBrowserEvent('close-modal', [
                 'id' => 'page-action',
@@ -55,7 +78,7 @@ trait HasActions
             return;
         }
 
-        if ($action->isHidden()) {
+        if ($action->isDisabled()) {
             return;
         }
 
@@ -64,10 +87,18 @@ trait HasActions
             fn () => $this->getMountedActionForm(),
         );
 
+        if ($action->hasForm()) {
+            $action->callBeforeFormFilled();
+        }
+
         app()->call($action->getMountUsing(), [
             'action' => $action,
             'form' => $this->getMountedActionForm(),
         ]);
+
+        if ($action->hasForm()) {
+            $action->callAfterFormFilled();
+        }
 
         if (! $action->shouldOpenModal()) {
             return $this->callMountedAction();
@@ -91,13 +122,30 @@ trait HasActions
 
     protected function cacheActions(): void
     {
-        $this->cachedActions = collect($this->getActions())
-            ->mapWithKeys(function (Action $action): array {
+        $actions = Action::configureUsing(
+            Closure::fromCallable([$this, 'configureAction']),
+            fn (): array => $this->getActions(),
+        );
+
+        $this->cachedActions = collect($actions)
+            ->mapWithKeys(function (Action | ActionGroup $action, int $index): array {
+                if ($action instanceof ActionGroup) {
+                    foreach ($action->getActions() as $groupedAction) {
+                        $groupedAction->livewire($this);
+                    }
+
+                    return [$index => $action];
+                }
+
                 $action->livewire($this);
 
                 return [$action->getName() => $action];
             })
             ->toArray();
+    }
+
+    protected function configureAction(Action $action): void
+    {
     }
 
     public function getMountedAction(): ?Action
@@ -151,7 +199,29 @@ trait HasActions
 
     protected function getCachedAction(string $name): ?Action
     {
-        return $this->getCachedActions()[$name] ?? null;
+        $actions = $this->getCachedActions();
+
+        $action = $actions[$name] ?? null;
+
+        if ($action) {
+            return $action;
+        }
+
+        foreach ($actions as $action) {
+            if (! $action instanceof ActionGroup) {
+                continue;
+            }
+
+            $groupedAction = $action->getActions()[$name] ?? null;
+
+            if (! $groupedAction) {
+                continue;
+            }
+
+            return $groupedAction;
+        }
+
+        return null;
     }
 
     protected function getActions(): array

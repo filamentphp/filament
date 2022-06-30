@@ -12004,10 +12004,10 @@ var date_time_picker_default = (Alpine) => {
             return;
           }
           let date2 = this.getSelectedDate();
-          if (this.getMaxDate() !== null && date2.isAfter(this.getMaxDate())) {
+          if (this.getMaxDate() !== null && date2?.isAfter(this.getMaxDate())) {
             date2 = null;
           }
-          if (this.getMinDate() !== null && date2.isBefore(this.getMinDate())) {
+          if (this.getMinDate() !== null && date2?.isBefore(this.getMinDate())) {
             date2 = null;
           }
           const newHour = date2?.hour() ?? 0;
@@ -12100,11 +12100,11 @@ var date_time_picker_default = (Alpine) => {
         ];
       },
       getMaxDate: function() {
-        let date = esm_default(this.$refs.maxDate.value);
+        let date = esm_default(this.$refs.maxDate?.value);
         return date.isValid() ? date : null;
       },
       getMinDate: function() {
-        let date = esm_default(this.$refs.minDate.value);
+        let date = esm_default(this.$refs.minDate?.value);
         return date.isValid() ? date : null;
       },
       getSelectedDate: function() {
@@ -21870,14 +21870,17 @@ window.FilePond = filepond_esm_exports;
 var file_upload_default = (Alpine) => {
   Alpine.data("fileUploadFormComponent", ({
     acceptedFileTypes,
-    canReorder,
+    canDownload,
     canPreview,
+    canReorder,
     deleteUploadedFileUsing,
     getUploadedFileUrlsUsing,
     imageCropAspectRatio,
     imagePreviewHeight,
+    imageResizeMode,
     imageResizeTargetHeight,
     imageResizeTargetWidth,
+    isAvatar,
     loadingIndicatorPosition,
     panelAspectRatio,
     panelLayout,
@@ -21899,6 +21902,7 @@ var file_upload_default = (Alpine) => {
       pond: null,
       shouldUpdateState: true,
       state: state2,
+      lastState: null,
       uploadedFileUrlIndex: {},
       init: async function() {
         this.pond = create$f(this.$refs.input, {
@@ -21915,6 +21919,7 @@ var file_upload_default = (Alpine) => {
           imagePreviewHeight,
           imageResizeTargetHeight,
           imageResizeTargetWidth,
+          imageResizeMode,
           itemInsertLocation: shouldAppendFiles ? "after" : "before",
           ...placeholder && {labelIdle: placeholder},
           maxFileSize: maxSize,
@@ -21960,11 +21965,24 @@ var file_upload_default = (Alpine) => {
           if (Object.values(this.state).filter((file2) => file2.startsWith("livewire-file:")).length) {
             return;
           }
+          if (JSON.stringify(this.state) === this.lastState) {
+            return;
+          }
+          this.lastState = JSON.stringify(this.state);
           this.pond.files = await this.getFiles();
         });
         this.pond.on("reorderfiles", async (files) => {
           const orderedFileKeys = files.map((file2) => file2.source instanceof File ? file2.serverId : this.uploadedFileUrlIndex[file2.source] ?? null).filter((fileKey) => fileKey);
           await reorderUploadedFilesUsing(shouldAppendFiles ? orderedFileKeys : orderedFileKeys.reverse());
+        });
+        this.pond.on("initfile", async (fileItem) => {
+          if (!canDownload) {
+            return;
+          }
+          if (isAvatar) {
+            return;
+          }
+          this.insertDownloadLink(fileItem);
         });
         this.pond.on("processfilestart", async () => {
           this.dispatchFormEvent("file-upload-started");
@@ -22014,6 +22032,27 @@ var file_upload_default = (Alpine) => {
           });
         }
         return shouldAppendFiles ? files : files.reverse();
+      },
+      insertDownloadLink: function(file2) {
+        if (file2.origin !== FileOrigin$1.LOCAL) {
+          return;
+        }
+        const url = this.getDownloadUrl(file2);
+        if (!url) {
+          return;
+        }
+        document.getElementById(`filepond--item-${file2.id}`).querySelector(".filepond--file-info-main").prepend(url);
+      },
+      getDownloadUrl: function(file2) {
+        let fileSource = file2.source;
+        if (!fileSource) {
+          return;
+        }
+        const anchor = document.createElement("a");
+        anchor.className = "filepond--download-icon";
+        anchor.href = fileSource;
+        anchor.download = file2.file.name;
+        return anchor;
       }
     };
   });
@@ -30737,6 +30776,7 @@ Sortable.mount(Remove, Revert);
 var sortable_esm_default = Sortable;
 
 // packages/forms/resources/js/sortable.js
+window.Sortable = sortable_esm_default;
 window.Livewire.directive("sortable", (el) => {
   el.sortable = sortable_esm_default.create(el, {
     draggable: "[wire\\:sortable\\.item]",

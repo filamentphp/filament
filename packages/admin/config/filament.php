@@ -4,7 +4,6 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\MirrorConfigToSubpackages;
 use Filament\Pages;
-use Filament\Tables\Actions\Action;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -34,7 +33,7 @@ return [
     | Filament Core Path
     |--------------------------------------------------------------------------
     |
-    | This is the path which Filament will use to load it's core routes and assets.
+    | This is the path which Filament will use to load its core routes and assets.
     | You may change it if it conflicts with your other routes.
     |
     */
@@ -206,11 +205,7 @@ return [
             'groups' => [
                 'are_collapsible' => true,
             ],
-        ],
-        'tables' => [
-            'actions' => [
-                'type' => Action::class,
-            ],
+            'width' => null,
         ],
     ],
 

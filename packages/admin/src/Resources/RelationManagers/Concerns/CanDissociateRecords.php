@@ -2,22 +2,33 @@
 
 namespace Filament\Resources\RelationManagers\Concerns;
 
-use Filament\Facades\Filament;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 trait CanDissociateRecords
 {
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected static bool $hasDissociateAction = false;
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected static bool $hasDissociateBulkAction = false;
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function hasDissociateAction(): bool
     {
         return static::$hasDissociateAction;
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function hasDissociateBulkAction(): bool
     {
         return static::$hasDissociateBulkAction;
@@ -33,6 +44,9 @@ trait CanDissociateRecords
         return $this->hasDissociateBulkAction() && $this->can('dissociateAny');
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function dissociate(): void
     {
         $this->callHook('beforeDissociate');
@@ -52,11 +66,17 @@ trait CanDissociateRecords
         }
     }
 
+    /**
+     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     */
     protected function getDissociatedNotificationMessage(): ?string
     {
-        return __('filament::resources/relation-managers/dissociate.action.messages.dissociated');
+        return __('filament-support::actions/dissociate.single.messages.dissociated');
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function bulkDissociate(): void
     {
         $this->callHook('beforeBulkDissociate');
@@ -76,32 +96,29 @@ trait CanDissociateRecords
         }
     }
 
+    /**
+     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     */
     protected function getBulkDissociatedNotificationMessage(): ?string
     {
-        return __('filament::resources/relation-managers/dissociate.bulk_action.messages.dissociated');
+        return __('filament-support::actions/dissociate.multiple.messages.dissociated');
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getDissociateAction(): Tables\Actions\Action
     {
-        return Filament::makeTableAction('dissociate')
-            ->label(__('filament::resources/relation-managers/dissociate.action.label'))
-            ->requiresConfirmation()
-            ->modalHeading(__('filament::resources/relation-managers/dissociate.action.modal.heading', ['label' => static::getRecordLabel()]))
-            ->action(fn () => $this->dissociate())
-            ->color('danger')
-            ->icon('heroicon-s-x')
-            ->hidden(fn (Model $record): bool => ! $this->canDissociate($record));
+        return Tables\Actions\DissociateAction::make()
+            ->action(fn () => $this->dissociate());
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getDissociateBulkAction(): Tables\Actions\BulkAction
     {
-        return Tables\Actions\BulkAction::make('dissociate')
-            ->label(__('filament::resources/relation-managers/dissociate.bulk_action.label'))
-            ->action(fn () => $this->bulkDissociate())
-            ->requiresConfirmation()
-            ->modalHeading(__('filament::resources/relation-managers/dissociate.bulk_action.modal.heading', ['label' => static::getPluralRecordLabel()]))
-            ->deselectRecordsAfterCompletion()
-            ->color('danger')
-            ->icon('heroicon-o-x');
+        return Tables\Actions\DissociateBulkAction::make()
+            ->action(fn () => $this->bulkDissociate());
     }
 }

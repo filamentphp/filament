@@ -2,13 +2,14 @@
 
 namespace Filament\Pages\Actions;
 
+use Closure;
 use Illuminate\Contracts\Support\Arrayable;
 
 class SelectAction extends Action
 {
     use Concerns\HasId;
 
-    protected array | Arrayable $options = [];
+    protected array | Arrayable | Closure $options = [];
 
     protected ?string $placeholder = null;
 
@@ -19,7 +20,7 @@ class SelectAction extends Action
         $this->view('filament::pages.actions.select-action');
     }
 
-    public function options(array | Arrayable $options): static
+    public function options(array | Arrayable | Closure $options): static
     {
         $this->options = $options;
 
@@ -35,7 +36,7 @@ class SelectAction extends Action
 
     public function getOptions(): array
     {
-        $options = $this->options;
+        $options = $this->evaluate($this->options);
 
         if ($options instanceof Arrayable) {
             $options = $options->toArray();

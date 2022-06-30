@@ -25,15 +25,6 @@ If you're using them in admin panel resources or relation managers, you must put
 public static function table(Table $table): Table
 {
     return $table
-        // Add the actions before the default action/s (before Edit or View)
-        ->prependActions([
-            // ...
-        ])
-        // Add the actions after the default action/s (after Edit or View)
-        ->pushActions([
-            // ...
-        ])
-        // Override the default action/s (instead of Edit or View)
         ->actions([
             // ...
         ]);
@@ -50,6 +41,7 @@ use Filament\Tables\Actions\Action;
 
 Action::make('edit')
     ->url(fn (Post $record): string => route('posts.edit', $record))
+    ->openUrlInNewTab()
 ```
 
 ### Bulk actions
@@ -73,15 +65,6 @@ If you're using them in admin panel resources or relation managers, you must put
 public static function table(Table $table): Table
 {
     return $table
-        // Add the actions before the default action (before Delete)
-        ->prependBulkActions([
-            // ...
-        ])
-        // Add the actions after the default action (after Delete)
-        ->pushBulkActions([
-            // ...
-        ])
-        // Override the default action (instead of Delete)
         ->bulkActions([
             // ...
         ]);
@@ -265,6 +248,18 @@ BulkAction::make('delete')
     ->modalButton('Yes, delete them')
 ```
 
+## Custom content
+
+You may define custom content to be rendered inside your modal, which you can specify by passing a Blade view into the `modalContent()` method:
+
+```php
+use Filament\Tables\Actions\BulkAction;
+
+BulkAction::make('advance')
+    ->action(fn () => $this->record->advance())
+    ->modalContent(view('filament.resources.event.actions.advance'))
+```
+
 ## Authorization
 
 You may conditionally show or hide actions and bulk actions for certain users using either the `visible()` or `hidden()` methods, passing a closure:
@@ -289,7 +284,7 @@ This package includes an action to replicate table records. You may use it like 
 ```php
 use Filament\Tables\Actions\ReplicateAction;
 
-ReplicateAction::make('replicate')
+ReplicateAction::make()
 ```
 
 The `excludeAttributes()` method is used to instruct the action which columns to be excluded from replication:
@@ -297,7 +292,7 @@ The `excludeAttributes()` method is used to instruct the action which columns to
 ```php
 use Filament\Tables\Actions\ReplicateAction;
 
-ReplicateAction::make('replicate')->excludeAttributes('slug')
+ReplicateAction::make()->excludeAttributes('slug')
 ```
 
 The `beforeReplicaSaved()` method can be used to invoke a Closure before saving the replica:
@@ -306,7 +301,7 @@ The `beforeReplicaSaved()` method can be used to invoke a Closure before saving 
 use Filament\Tables\Actions\ReplicateAction;
 use Illuminate\Database\Eloquent\Model;
 
-ReplicateAction::make('replicate')
+ReplicateAction::make()
     ->beforeReplicaSaved(function (Model $replica): void {
         // ...
     })
@@ -318,7 +313,7 @@ The `afterReplicaSaved()` method can be used to invoke a Closure after saving th
 use Filament\Tables\Actions\ReplicateAction;
 use Illuminate\Database\Eloquent\Model;
 
-ReplicateAction::make('replicate')
+ReplicateAction::make()
     ->afterReplicaSaved(function (Model $replica): void {
         // ...
     })
@@ -331,7 +326,7 @@ Just like [normal actions](#custom-forms), you can provide a [form schema](/docs
 ```php
 use Filament\Tables\Actions\ReplicateAction;
 
-ReplicateAction::make('replicate')
+ReplicateAction::make()
 	->excludeAttributes(['title'])
 	->form([
 		TextInput::make('title')->required(),
@@ -339,6 +334,25 @@ ReplicateAction::make('replicate')
 	->beforeReplicaSaved(function (Model $replica, array $data): void {
 		$replica->fill($data);
 	})
+```
+
+## Grouping
+
+You may use an `ActionGroup` object to group multiple table actions together in a dropdown:
+
+```php
+use Filament\Tables;
+
+protected function getTableActions(): array
+{
+    return [
+        Tables\Actions\ActionGroup::make([
+            Tables\Actions\ViewAction::make(),
+            Tables\Actions\EditAction::make(),
+            Tables\Actions\DeleteAction::make(),
+        ]),
+    ];
+}
 ```
 
 ## Alignment

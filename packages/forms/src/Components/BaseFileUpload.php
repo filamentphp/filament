@@ -17,9 +17,11 @@ class BaseFileUpload extends Field
 {
     protected array | Arrayable | Closure | null $acceptedFileTypes = null;
 
-    protected bool | Closure $canReorder = false;
+    protected bool | Closure $canDownload = false;
 
     protected bool | Closure $canPreview = true;
+
+    protected bool | Closure $canReorder = false;
 
     protected string | Closure | null $directory = null;
 
@@ -171,6 +173,13 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function enableDownload(bool | Closure $condition = true): static
+    {
+        $this->canDownload = $condition;
+
+        return $this;
+    }
+
     public function enableReordering(bool | Closure $condition = true): static
     {
         $this->canReorder = $condition;
@@ -178,9 +187,9 @@ class BaseFileUpload extends Field
         return $this;
     }
 
-    public function disablePreview(bool | Closure $condition = false): static
+    public function disablePreview(bool | Closure $condition = true): static
     {
-        $this->canPreview = $condition;
+        $this->canPreview = fn (BaseFileUpload $component): bool => ! $component->evaluate($condition);
 
         return $this;
     }
@@ -274,14 +283,19 @@ class BaseFileUpload extends Field
         return $this;
     }
 
-    public function canReorder(): bool
+    public function canDownload(): bool
     {
-        return $this->evaluate($this->canReorder);
+        return $this->evaluate($this->canDownload);
     }
 
     public function canPreview(): bool
     {
         return $this->evaluate($this->canPreview);
+    }
+
+    public function canReorder(): bool
+    {
+        return $this->evaluate($this->canReorder);
     }
 
     public function getAcceptedFileTypes(): ?array

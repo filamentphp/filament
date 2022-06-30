@@ -27,14 +27,17 @@ window.FilePond = FilePond;
 export default (Alpine) => {
     Alpine.data('fileUploadFormComponent', ({
         acceptedFileTypes,
-        canReorder,
+        canDownload,
         canPreview,
+        canReorder,
         deleteUploadedFileUsing,
         getUploadedFileUrlsUsing,
         imageCropAspectRatio,
         imagePreviewHeight,
+        imageResizeMode,
         imageResizeTargetHeight,
         imageResizeTargetWidth,
+        isAvatar,
         loadingIndicatorPosition,
         panelAspectRatio,
         panelLayout,
@@ -59,6 +62,8 @@ export default (Alpine) => {
             shouldUpdateState: true,
 
             state,
+            
+            lastState: null,
 
             uploadedFileUrlIndex: {},
 
@@ -77,6 +82,7 @@ export default (Alpine) => {
                     imagePreviewHeight,
                     imageResizeTargetHeight,
                     imageResizeTargetWidth,
+                    imageResizeMode,
                     itemInsertLocation: shouldAppendFiles ? 'after' : 'before',
                     ...(placeholder && {labelIdle: placeholder}),
                     maxFileSize: maxSize,
@@ -135,6 +141,13 @@ export default (Alpine) => {
                     if (Object.values(this.state).filter((file) => file.startsWith('livewire-file:')).length) {
                         return
                     }
+                    
+                    // Don't do anything if the state hasn't changed
+                    if (JSON.stringify(this.state) === this.lastState) {
+                        return
+                    }
+                    
+                    this.lastState = JSON.stringify(this.state)
 
                     this.pond.files = await this.getFiles()
                 })
@@ -145,6 +158,18 @@ export default (Alpine) => {
                         .filter(fileKey => fileKey)
 
                     await reorderUploadedFilesUsing(shouldAppendFiles ? orderedFileKeys : orderedFileKeys.reverse())
+                })
+
+                this.pond.on('initfile', async (fileItem) => {
+                    if (! canDownload) {
+                        return
+                    }
+
+                    if (isAvatar) {
+                        return
+                    }
+
+                    this.insertDownloadLink(fileItem)
                 })
 
                 this.pond.on('processfilestart', async () => {
@@ -214,6 +239,36 @@ export default (Alpine) => {
                 }
 
                 return shouldAppendFiles ? files : files.reverse()
+            },
+
+            insertDownloadLink: function (file) {
+                if (file.origin !== FilePond.FileOrigin.LOCAL) {
+                    return
+                }
+
+                const url = this.getDownloadUrl(file)
+
+                if (! url) {
+                    return
+                }
+
+                document.getElementById(`filepond--item-${file.id}`)
+                    .querySelector('.filepond--file-info-main')
+                    .prepend(url)
+            },
+
+            getDownloadUrl: function (file) {
+                let fileSource = file.source
+
+                if (! fileSource) {
+                    return
+                }
+
+                const anchor = document.createElement('a')
+                anchor.className = 'filepond--download-icon'
+                anchor.href = fileSource
+                anchor.download = file.file.name
+                return anchor
             }
         }
     })

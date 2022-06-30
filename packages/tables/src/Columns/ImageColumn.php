@@ -27,6 +27,8 @@ class ImageColumn extends Column
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->disk(config('tables.default_filesystem_disk'));
     }
 

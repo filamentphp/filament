@@ -18,7 +18,7 @@ return [
                 'label' => '作成',
             ],
 
-            'create_and_create_another' => [
+            'create_another' => [
                 'label' => '保存して、続けて作成',
             ],
 

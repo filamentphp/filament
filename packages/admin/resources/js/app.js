@@ -1,4 +1,4 @@
-import '../css/app.css'
+//import '../css/app.css'
 
 import Alpine from 'alpinejs'
 import Chart from 'chart.js/auto'

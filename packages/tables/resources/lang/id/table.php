@@ -59,20 +59,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'replicate' => [
-
-            'label' => 'Duplikat data',
-
-            'messages' => [
-                'replicated' => 'Data berhasil diduplikat',
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'Tidak ada data yang ditemukan',
     ],
@@ -99,6 +85,18 @@ return [
             'placeholder' => 'Semua',
         ],
 
+        'trashed' => [
+
+            'label' => 'Data yang dihapus',
+
+            'only_trashed' => 'Hanya data yang sudah dihapus',
+
+            'with_trashed' => 'Dengan data yang sudah dihapus',
+
+            'without_trashed' => 'Tanpa data yang sudah dihapus',
+
+        ],
+
     ],
 
     'selection_indicator' => [
@@ -108,7 +106,7 @@ return [
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Pilih semua :count',
+                'label' => 'Pilih semua (:count)',
             ],
 
             'deselect_all' => [

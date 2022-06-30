@@ -6,14 +6,10 @@ title: Relation managers
 
 "Relation managers" in Filament allow administrators to list, create, attach, associate, edit, detach, dissociate and delete related records without leaving the resource's Edit page. Resource classes contain a static `getRelations()` method that is used to register relation managers for your resource.
 
-To create a relation manager, you can use one of the following commands, depending on the relationship type:
+To create a relation manager, you can use the `make:filament-relation-manager` command:
 
 ```bash
-php artisan make:filament-has-many CategoryResource posts title
-php artisan make:filament-has-many-through ProjectResource deployments title
-php artisan make:filament-belongs-to-many UserResource teams name
-php artisan make:filament-morph-many PostResource replies title
-php artisan make:filament-morph-to-many TagResource posts title
+php artisan make:filament-relation-manager CategoryResource posts title
 ```
 
 - `CategoryResource` is the name of the resource class for the parent model.
@@ -25,6 +21,7 @@ This will create a `CategoryResource/RelationManagers/PostsRelationManager.php` 
 ```php
 use Filament\Forms;
 use Filament\Resources\Form;
+use Filament\Resources\Table;
 use Filament\Tables;
 
 public static function form(Form $form): Form
@@ -66,11 +63,19 @@ protected static ?string $inverseRelationship = 'section'; // Since the inverse 
 
 Once a table and form have been defined for the relation manager, visit the [Edit](editing-records) or [View](viewing-records) page of your resource to see it in action.
 
+### Handling soft deletes
+
+By default, you will not be able to interact with deleted records in the relation manager. If you'd like to add functionality to restore, force delete and filter trashed records in your relation manager, use the `--soft-deletes` flag when generating the relation manager:
+
+```bash
+php artisan make:filament-relation-manager CategoryResource posts title --soft-deletes
+```
+
 ## Listing records
 
 Related records will be listed in a table. The entire relation manager is based around this table, which contains actions to [create](#creating-records), [edit](#editing-records), [attach / detach](#attaching-and-detaching-records), [associate / dissociate](#associating-and-dissociating-records), and delete records.
 
-As per the documentation on [listing records](listing-records), you may use all the same utilities for customisation, but on the relation manager class instead of the List page class:
+As per the documentation on [listing records](listing-records), you may use all the same utilities for customisation on the relation manager:
 
 - [Columns](listing-records#columns)
 - [Filters](listing-records#filters)
@@ -102,13 +107,6 @@ Please ensure that any pivot attributes are listed in the `withPivot()` method o
 
 ## Creating records
 
-As per the documentation on [creating records](creating-records), you may use all the same utilities for customisation, but on the relation manager class instead of the Create page class:
-
-- [Customizing data before saving](creating-records#customizing-data-before-saving)
-- [Customizing the creation process](creating-records#customizing-the-creation-process)
-- [Customizing the save notification](creating-records#customizing-the-save-notification)
-- [Lifecycle hooks](creating-records#lifecycle-hooks), with the addition of specific `beforeCreateFill()`, `afterCreateFill()`, `beforeCreateValidate()` and `afterCreateValidate()`
-
 ### Creating with pivot attributes
 
 For `BelongsToMany` and `MorphToMany` relationships, you may also add pivot table attributes. For example, if you have a `TeamsRelationManager` for your `UserResource`, and you want to add the `role` pivot attribute to the create form, you can use:
@@ -131,15 +129,86 @@ public static function form(Form $form): Form
 
 Please ensure that any pivot attributes are listed in the `withPivot()` method of the relationship *and* inverse relationship.
 
+### Customizing data before saving
+
+Sometimes, you may wish to modify form data before it is finally saved to the database. To do this, you may use the `mutateFormDataUsing()` method, which accepts the `$data` as an array, and returns the modified version:
+
+```php
+use Filament\Tables\Actions\CreateAction;
+
+CreateAction::make()
+    ->mutateFormDataUsing(function (array $data): array {
+        $data['user_id'] = auth()->id();
+    
+        return $data;
+    })
+```
+
+### Customizing the creation process
+
+You can tweak how the record is created using the `process()` method:
+
+```php
+use Filament\Tables\Actions\CreateAction;
+use Illuminate\Database\Eloquent\Model;
+
+CreateAction::make()
+    ->process(function (array $data): Model {
+        return static::getModel()::create($data);
+    })
+```
+
+### Customizing the save notification
+
+When the record is successfully created, a notification is dispatched to the user, which indicates the success of their action.
+
+To customize the text content of this notification:
+
+```php
+use Filament\Tables\Actions\CreateAction;
+
+CreateAction::make()
+    ->successNotificationMessage('User registered')
+```
+
+And to disable the notification altogether:
+
+```php
+use Filament\Tables\Actions\CreateAction;
+
+CreateAction::make()
+    ->successNotificationMessage(null)
+```
+
+### Lifecycle hooks
+
+Hooks may be used to execute code at various points within an action's lifecycle.
+
+```php
+use Filament\Tables\Actions\CreateAction;
+
+CreateAction::make()
+    ->beforeFormFilled(function () {
+        // Runs before the form fields are populated with their default values.
+    })
+    ->afterFormFilled(function () {
+        // Runs after the form fields are populated with their default values.
+    })
+    ->beforeFormValidated(function () {
+        // Runs before the form fields are validated when the form is submitted.
+    })
+    ->afterFormValidated(function () {
+        // Runs after the form fields are validated when the form is submitted.
+    })
+    ->before(function () {
+        // Runs before the form fields are saved to the database.
+    })
+    ->after(function () {
+        // Runs after the form fields are saved to the database.
+    })
+```
+
 ## Editing records
-
-As per the documentation on [editing records](editing-records), you may use all the same utilities for customisation, but on the relation manager instead of the Edit page class:
-
-- [Customizing data before filling the form](editing-records#customizing-data-before-filling-the-form)
-- [Customizing data before saving](editing-records#customizing-data-before-saving)
-- [Customizing the saving process](editing-records#customizing-the-update-process)
-- [Customizing the save notification](editing-records#customizing-the-save-notification)
-- [Lifecycle hooks](editing-records#lifecycle-hooks), with the addition of specific `beforeEditFill()`, `afterEditFill()`, `beforeEditValidate()` and `afterEditValidate()`
 
 ### Editing with pivot attributes
 
@@ -163,24 +232,147 @@ public static function form(Form $form): Form
 
 Please ensure that any pivot attributes are listed in the `withPivot()` method of the relationship *and* inverse relationship.
 
-## Viewing records
+### Customizing data before filling the form
 
-Filament is able to show information about a record in a modal. To enable this functionality, you may add the `$hasViewAction` property to the relation manager:
+You may wish to modify the data from a record before it is filled into the form. To do this, you may use the `mutateRecordDataUsing()` method to modify the `$data` array, and return the modified version before it is filled into the form:
 
 ```php
-protected static bool $hasViewAction = true;
+use Filament\Tables\Actions\EditAction;
+
+EditAction::make()
+    ->mutateRecordDataUsing(function (array $data): array {
+        $data['user_id'] = auth()->id();
+    
+        return $data;
+    })
+```
+
+### Customizing data before saving
+
+Sometimes, you may wish to modify form data before it is finally saved to the database. To do this, you may define a `mutateFormDataUsing()` method, which accepts the `$data` as an array, and returns it modified:
+
+```php
+use Filament\Tables\Actions\EditAction;
+
+EditAction::make()
+    ->mutateFormDataUsing(function (array $data): array {
+        $data['last_edited_by_id'] = auth()->id();
+    
+        return $data;
+    })
+```
+
+### Customizing the saving process
+
+You can tweak how the record is updated using the `process()` method:
+
+```php
+use Filament\Tables\Actions\EditAction;
+use Illuminate\Database\Eloquent\Model;
+
+EditAction::make()
+    ->process(function (Model $record, array $data): Model {
+        $record->update($data);
+
+        return $record;
+    })
+```
+
+### Customizing the save notification
+
+When the record is successfully updated, a notification is dispatched to the user, which indicates the success of their action.
+
+To customize the text content of this notification:
+
+```php
+use Filament\Tables\Actions\EditAction;
+
+EditAction::make()
+    ->successNotificationMessage('User updated')
+```
+
+And to disable the notification altogether:
+
+```php
+use Filament\Tables\Actions\EditAction;
+
+EditAction::make()
+    ->successNotificationMessage(null)
+```
+
+### Lifecycle hooks
+
+Hooks may be used to execute code at various points within an action's lifecycle.
+
+```php
+use Filament\Tables\Actions\EditAction;
+
+EditAction::make()
+    ->beforeFormFilled(function () {
+        // Runs before the form fields are populated from the database.
+    })
+    ->afterFormFilled(function () {
+        // Runs after the form fields are populated from the database.
+    })
+    ->beforeFormValidated(function () {
+        // Runs before the form fields are validated when the form is saved.
+    })
+    ->afterFormValidated(function () {
+        // Runs after the form fields are validated when the form is saved.
+    })
+    ->before(function () {
+        // Runs before the form fields are saved to the database.
+    })
+    ->after(function () {
+        // Runs after the form fields are saved to the database.
+    })
 ```
 
 ## Attaching and detaching records
 
 Filament is able to attach and detach records for `BelongsToMany` and `MorphToMany` relationships.
 
-### Preloading the attachment modal select options
+When generating your relation manager, you may pass the `--attach` flag to also add `AttachAction`, `DetachAction` and `DetachBulkAction` to the table:
 
-By default, as you search for a record to attach, options will load from the database via AJAX. If you wish to preload these options when the form is first loaded instead, you can use the `$shouldPreloadAttachFormRecordSelectOptions` property:
+```bash
+php artisan make:filament-relation-manager CategoryResource posts title --attach
+```
+
+Alternatively, if you've already generated your resource, you can just add the actions to the `$table` arrays:
 
 ```php
-protected static bool $shouldPreloadAttachFormRecordSelectOptions = true;
+use Filament\Resources\Table;
+use Filament\Tables;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->headerActions([
+            // ...
+            Tables\Actions\AttachAction::make(),
+        ])
+        ->actions([
+            // ...
+            Tables\Actions\DetachAction::make(),
+        ])
+        ->bulkActions([
+            // ...
+            Tables\Actions\DetachBulkAction::make(),
+        ]);
+}
+```
+
+### Preloading the attachment modal select options
+
+By default, as you search for a record to attach, options will load from the database via AJAX. If you wish to preload these options when the form is first loaded instead, you can use the `preloadRecordSelect()` method of `AttachAction`:
+
+```php
+use Filament\Tables\Actions\AttachAction;
+
+AttachAction::make()->preloadRecordSelect()
 ```
 
 ### Attaching with pivot attributes
@@ -189,20 +381,16 @@ When you attach record with the `Attach` button, you may wish to define a custom
 
 ```php
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Tables\Actions\AttachAction;
 
-public static function attachForm(Form $form): Form
-{
-    return $form
-        ->schema([
-            static::getAttachFormRecordSelect(),
-            Forms\Components\TextInput::make('role')->required(),
-            // ...
-        ]);
-}
+AttachAction::make()
+    ->form(fn (AttachAction $action): array => [
+        $action->getRecordSelect(),
+        Forms\Components\TextInput::make('role')->required(),
+    ])
 ```
 
-As included in the above example, you may use `getAttachFormRecordSelect()` to create a select field for the record to attach.
+In this example, `$action->getRecordSelect()` outputs the select field to pick the record to attach. The `role` text input is then saved to the pivot table's `role` column.
 
 Please ensure that any pivot attributes are listed in the `withPivot()` method of the relationship *and* inverse relationship.
 
@@ -220,26 +408,76 @@ protected bool $allowsDuplicates = true;
 
 ## Associating and dissociating records
 
-Filament is able to associate and dissociate records for `HasMany`, `HasManyThrough` and `MorphMany` relationships. To enable this functionality, you may add the following properties to the relation manager:
+Filament is able to associate and dissociate records for `HasMany`, `HasManyThrough` and `MorphMany` relationships.
 
-```php
-protected static bool $hasAssociateAction = true;
-protected static bool $hasDissociateAction = true;
-protected static bool $hasDissociateBulkAction = true;
+When generating your relation manager, you may pass the `--associate` flag to also add `AssociateAction`, `DissociateAction` and `DissociateBulkAction` to the table:
+
+```bash
+php artisan make:filament-relation-manager CategoryResource posts title --associate
 ```
 
-Each property represents a different action that you are able to enable for the relation manager:
+Alternatively, if you've already generated your resource, you can just add the actions to the `$table` arrays:
 
-- `$hasAssociateAction` enables an "Associate" button in the header of the table.
-- `$hasDissociateAction` enables a "Dissociate" button on each row of the table.
-- `$hasDissociateBulkAction` enables a "Dissociate" bulk action, which is available when you select one or more records.
+```php
+use Filament\Resources\Table;
+use Filament\Tables;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->headerActions([
+            // ...
+            Tables\Actions\AssociateAction::make(),
+        ])
+        ->actions([
+            // ...
+            Tables\Actions\DissociateAction::make(),
+        ])
+        ->bulkActions([
+            // ...
+            Tables\Actions\DissociateBulkAction::make(),
+        ]);
+}
+```
 
 ### Preloading the associate modal select options
 
-By default, as you search for a record to associate, options will load from the database via AJAX. If you wish to preload these options when the form is first loaded instead, you can use the `$shouldPreloadAssociateFormRecordSelectOptions` property:
+By default, as you search for a record to associate, options will load from the database via AJAX. If you wish to preload these options when the form is first loaded instead, you can use the `preloadRecordSelect()` method of `AssociateAction`:
 
 ```php
-protected static bool $shouldPreloadAssociateFormRecordSelectOptions = true;
+use Filament\Tables\Actions\AssociateAction;
+
+AssociateAction::make()->preloadRecordSelect()
+```
+
+## Viewing records
+
+When generating your relation manager, you may pass the `--view` flag to also add a `ViewAction` to the table:
+
+```bash
+php artisan make:filament-relation-manager CategoryResource posts title --view
+```
+
+Alternatively, if you've already generated your resource, you can just add the `ViewAction` to the `$table->actions()` array:
+
+```php
+use Filament\Resources\Table;
+use Filament\Tables;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->actions([
+            Tables\Actions\ViewAction::make(),
+            // ...
+        ]);
+}
 ```
 
 ## Grouping relation managers
@@ -259,5 +497,20 @@ public static function getRelations(): array
         ]),
         // ...
     ];
+}
+```
+
+## Conditional visibility
+
+By default, relation managers will be visible if the `viewAny()` method for the related model policy returns `true`.
+
+You may use the `canViewForRecord()` method to determine if the relation manager should be visible for a specific owner record:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+public static function canViewForRecord(Model $ownerRecord): bool
+{
+    return $ownerRecord->status === Status::Draft
 }
 ```

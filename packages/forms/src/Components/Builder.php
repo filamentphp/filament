@@ -29,6 +29,8 @@ class Builder extends Field
 
     protected bool | Closure $hasBlockLabels = true;
 
+    protected bool | Closure $hasBlockNumbers = true;
+
     protected bool | Closure $isInset = false;
 
     protected function setUp(): void
@@ -222,6 +224,9 @@ class Builder extends Field
         $this->getChildComponentContainers()[$uuid]->hydrateDefaultState();
     }
 
+    /**
+     * @deprecated Use `withBlockLabels()` instead.
+     */
     public function showBlockLabels(bool | Closure $condition = true): static
     {
         $this->withBlockLabels($condition);
@@ -232,6 +237,13 @@ class Builder extends Field
     public function withBlockLabels(bool | Closure $condition = true): static
     {
         $this->hasBlockLabels = $condition;
+
+        return $this;
+    }
+
+    public function withBlockNumbers(bool | Closure $condition = true): static
+    {
+        $this->hasBlockNumbers = $condition;
 
         return $this;
     }
@@ -297,6 +309,11 @@ class Builder extends Field
     public function hasBlockLabels(): bool
     {
         return (bool) $this->evaluate($this->hasBlockLabels);
+    }
+
+    public function hasBlockNumbers(): bool
+    {
+        return (bool) $this->evaluate($this->hasBlockNumbers);
     }
 
     public function isInset(): bool

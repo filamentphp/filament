@@ -194,33 +194,6 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')->placeholder('John Doe')
 ```
 
-### Responsive layouts
-
-If your field is in a grid layout, you may specify the number of columns it spans at any breakpoint:
-
-```php
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\TextInput;
-
-Grid::make([
-    'default' => 1,
-    'sm' => 3,
-    'xl' => 6,
-    '2xl' => 8,
-])
-    ->schema([
-        TextInput::make('name')
-            ->columnSpan([
-                'sm' => 2,
-                'xl' => 3,
-                '2xl' => 4,
-            ]),
-        // ...
-    ])
-```
-
-> More information about grids is available in the [layout documentation](layout#grid).
-
 ### Global settings
 
 If you wish to change the default behaviour of a field globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the component using. For example, if you wish to make all checkboxes [`inline(false)`](#checkbox), you can do it like so:
@@ -495,7 +468,7 @@ The `getOptionLabelUsing()` method accepts a callback that transforms the select
 ```php
 Select::make('authorId')
     ->searchable()
-    ->getSearchResultsUsing(fn (string $searchQuery) => User::where('name', 'like', "%{$searchQuery}%")->limit(50)->pluck('name', 'id'))
+    ->getSearchResultsUsing(fn (string $search) => User::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id'))
     ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name),
 ```
 
@@ -522,14 +495,14 @@ Commonly, you may desire "dependant" select inputs, which populate their options
 
 Some of the techniques described in the [advanced forms](advanced) section are required to create dependant selects. These techniques can be applied across all form components for many dynamic customisation possibilities.
 
-### Populating automatically from a `BelongsTo` relationship
+### Populating automatically from a relationship
 
-You may employ the `relationship()` method of the `BelongsToSelect` to configure a relationship to automatically retrieve and save options from:
+You may employ the `relationship()` method of the `Select` to configure a `BelongsTo` relationship to automatically retrieve and save options from:
 
 ```php
-use Filament\Forms\Components\BelongsToSelect;
+use Filament\Forms\Components\Select;
 
-BelongsToSelect::make('authorId')
+Select::make('authorId')
     ->relationship('author', 'name')
 ```
 
@@ -538,10 +511,10 @@ BelongsToSelect::make('authorId')
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 
 ```php
-use Filament\Forms\Components\BelongsToSelect;
+use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 
-BelongsToSelect::make('authorId')
+Select::make('authorId')
     ->relationship('author', 'name', fn (Builder $query) => $query->withTrashed())
 ```
 
@@ -552,19 +525,19 @@ $table->string('full_name')->virtualAs('concat(first_name, \' \', last_name)');
 ```
 
 ```php
-use Filament\Forms\Components\BelongsToSelect;
+use Filament\Forms\Components\Select;
 
-BelongsToSelect::make('authorId')
+Select::make('authorId')
     ->relationship('author', 'full_name')
 ```
 
 Alternatively, you can use the `getOptionLabelUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
 
 ```php
-use Filament\Forms\Components\BelongsToSelect;
+use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Model;
 
-BelongsToSelect::make('authorId')
+Select::make('authorId')
     ->relationship('author', 'first_name')
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
@@ -574,10 +547,10 @@ BelongsToSelect::make('authorId')
 You may define a custom form that can be used to create a new record and attach it to the `BelongsTo` relationship:
 
 ```php
-use Filament\Forms\Components\BelongsToSelect;
+use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Model;
 
-BelongsToSelect::make('authorId')
+Select::make('authorId')
     ->relationship('author', 'name')
     ->createOptionForm([
         Forms\Components\TextInput::make('name')
@@ -648,19 +621,19 @@ The `getOptionLabelsUsing()` method accepts a callback that transforms the selec
 use Filament\Forms\Components\MultiSelect;
 
 MultiSelect::make('technologies')
-    ->getSearchResultsUsing(fn (string $searchQuery) => Technology::where('name', 'like', "%{$searchQuery}%")->limit(50)->pluck('name', 'id'))
+    ->getSearchResultsUsing(fn (string $search) => Technology::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id'))
     ->getOptionLabelsUsing(fn (array $values) => Technology::find($values)->pluck('name')),
 ```
 
 ### Populating automatically from a `BelongsToMany` relationship
 
-You may employ the `relationship()` method of the `BelongsToManyMultiSelect` to configure a relationship to automatically retrieve and save options from:
+You may employ the `relationship()` method of the `MultiSelect` to configure a relationship to automatically retrieve and save options from:
 
 ```php
 use App\Models\App;
-use Filament\Forms\Components\BelongsToManyMultiSelect;
+use Filament\Forms\Components\MultiSelect;
 
-BelongsToManyMultiSelect::make('technologies')
+MultiSelect::make('technologies')
     ->relationship('technologies', 'name')
 ```
 
@@ -669,10 +642,10 @@ BelongsToManyMultiSelect::make('technologies')
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 
 ```php
-use Filament\Forms\Components\BelongsToManyMultiSelect;
+use Filament\Forms\Components\MultiSelect;
 use Illuminate\Database\Eloquent\Builder;
 
-BelongsToManyMultiSelect::make('technologies')
+MultiSelect::make('technologies')
     ->relationship('technologies', 'name', fn (Builder $query) => $query->withTrashed())
 ```
 
@@ -683,19 +656,19 @@ $table->string('full_name')->virtualAs('concat(first_name, \' \', last_name)');
 ```
 
 ```php
-use Filament\Forms\Components\BelongsToManyMultiSelect;
+use Filament\Forms\Components\MultiSelect;
 
-BelongsToManyMultiSelect::make('participants')
+MultiSelect::make('participants')
     ->relationship('participants', 'full_name')
 ```
 
 Alternatively, you can use the `getOptionLabelUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
 
 ```php
-use Filament\Forms\Components\BelongsToManyMultiSelect;
+use Filament\Forms\Components\MultiSelect;
 use Illuminate\Database\Eloquent\Model;
 
-BelongsToManyMultiSelect::make('participants')
+MultiSelect::make('participants')
     ->relationship('participants', 'first_name')
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
@@ -862,15 +835,15 @@ CheckboxList::make('technologies')
 
 This method accepts the same options as the `columns()` method of the [grid](layout#grid). This allows you to responsively customize the number of columns at various breakpoints.
 
-### Populating automatically from a `BelongsToMany` relationship
+### Populating automatically from a relationship
 
-You may employ the `relationship()` method of the `BelongsToManyCheckboxList` to configure a relationship to automatically retrieve and save options from:
+You may employ the `relationship()` method to configure a relationship to automatically retrieve and save options from:
 
 ```php
 use App\Models\App;
-use Filament\Forms\Components\BelongsToManyCheckboxList;
+use Filament\Forms\Components\CheckboxList;
 
-BelongsToManyCheckboxList::make('technologies')
+CheckboxList::make('technologies')
     ->relationship('technologies', 'name')
 ```
 
@@ -879,10 +852,10 @@ BelongsToManyCheckboxList::make('technologies')
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 
 ```php
-use Filament\Forms\Components\BelongsToManyCheckboxList;
+use Filament\Forms\Components\CheckboxList;
 use Illuminate\Database\Eloquent\Builder;
 
-BelongsToManyCheckboxList::make('technologies')
+CheckboxList::make('technologies')
     ->relationship('technologies', 'name', fn (Builder $query) => $query->withTrashed())
 ```
 
@@ -893,19 +866,19 @@ $table->string('full_name')->virtualAs('concat(first_name, \' \', last_name)');
 ```
 
 ```php
-use Filament\Forms\Components\BelongsToManyCheckboxList;
+use Filament\Forms\Components\CheckboxList;
 
-BelongsToManyCheckboxList::make('participants')
+CheckboxList::make('participants')
     ->relationship('participants', 'full_name')
 ```
 
 Alternatively, you can use the `getOptionLabelUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
 
 ```php
-use Filament\Forms\Components\BelongsToManyCheckboxList;
+use Filament\Forms\Components\CheckboxList;
 use Illuminate\Database\Eloquent\Model;
 
-BelongsToManyCheckboxList::make('participants')
+CheckboxList::make('participants')
     ->relationship('participants', 'first_name')
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
@@ -1187,7 +1160,7 @@ FileUpload::make('attachments')
     ->maxFiles(5)
 ```
 
-You can also enable the re-ordering of uploaded files using the 'enableReordering()' method:
+You can also enable the re-ordering of uploaded files using the `enableReordering()` method:
 
 ```php
 use Filament\Forms\Components\FileUpload;
@@ -1195,6 +1168,16 @@ use Filament\Forms\Components\FileUpload;
 FileUpload::make('attachments')
     ->multipe()
     ->enableReordering()
+```
+
+If you wish to add a download button to each uploaded file, you can use the `enableDownload()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->multipe()
+    ->enableDownload()
 ```
 
 > Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/docs/spatie-laravel-media-library-plugin) for more information.
@@ -1447,16 +1430,16 @@ Repeater::make('qualifications')
     ->collapsed()
 ```
 
-### Populating automatically from a `HasMany` relationship
+### Populating automatically from a relationship
 
-You may employ the `relationship()` method of the `HasManyRepeater` to configure a relationship to automatically retrieve and save repeater items:
+You may employ the `relationship()` method of the repeater to configure a relationship to automatically retrieve and save repeater items:
 
 ```php
 use App\Models\App;
-use Filament\Forms\Components\HasManyRepeater;
+use Filament\Forms\Components\Repeater;
 
-HasManyRepeater::make('qualifications')
-    ->relationship('qualifications')
+Repeater::make('qualifications')
+    ->relationship()
     ->schema([
         // ...
     ])
@@ -1466,14 +1449,13 @@ HasManyRepeater::make('qualifications')
 
 #### Ordering items
 
-By default, ordering `HasManyRepeater` items is disabled. This is because your related model needs an `sort` column to store the order of related records. To enable ordering, you may use the `orderable()` method:
+By default, ordering relationship repeater items is disabled. This is because your related model needs an `sort` column to store the order of related records. To enable ordering, you may use the `orderable()` method:
 
 ```php
-use App\Models\App;
-use Filament\Forms\Components\HasManyRepeater;
+use Filament\Forms\Components\Repeater;
 
-HasManyRepeater::make('qualifications')
-    ->relationship('qualifications')
+Repeater::make('qualifications')
+    ->relationship()
     ->schema([
         // ...
     ])
@@ -1485,35 +1467,15 @@ This assumes that your related model has a `sort` column.
 If you use something like [`spatie/eloquent-sortable`](https://github.com/spatie/eloquent-sortable) with an order column such as `order_column`, you may pass this in to `orderable()`:
 
 ```php
-use App\Models\App;
-use Filament\Forms\Components\HasManyRepeater;
+use Filament\Forms\Components\Repeater;
 
-HasManyRepeater::make('qualifications')
-    ->relationship('qualifications')
+Repeater::make('qualifications')
+    ->relationship()
     ->schema([
         // ...
     ])
     ->orderable('order_column')
 ```
-
-### Populating automatically from a `MorphMany` relationship
-
-You may employ the `relationship()` method of the `MorphManyRepeater` to configure a relationship to automatically retrieve and save repeater items:
-
-```php
-use App\Models\App;
-use Filament\Forms\Components\MorphManyRepeater;
-
-MorphManyRepeater::make('qualifications')
-    ->relationship('qualifications')
-    ->schema([
-        // ...
-    ])
-```
-
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
-
-The `MorphManyRepeater` component also allows you to store the order of related records. Follow [these instructions](#ordering-items) to enable that functionality.
 
 ### Grid layout
 
@@ -1855,7 +1817,7 @@ You may create your own custom field classes and views, which you can reuse acro
 
 > If you're just creating a simple custom field to use once, you could instead use a [view field](#view) to render any custom Blade file.
 
-To create a custom column class and view, you may use the following command:
+To create a custom field class and view, you may use the following command:
 
 ```bash
 php artisan make:form-field RangeSlider

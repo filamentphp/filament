@@ -44,7 +44,7 @@
 
         <div class="flex-1 space-y-1">
             <div class="flex items-center justify-between font-medium">
-                <p
+                <div
                     class="text-sm leading-6"
                     x-bind:class="{
                         'text-danger-900 @if (config('filament.dark_mode')) dark:text-danger-200 @endif': notification.status === 'danger',
@@ -52,8 +52,8 @@
                         'text-warning-900 @if (config('filament.dark_mode')) dark:text-warning-200 @endif': notification.status === 'warning',
                         'text-gray-900 @if (config('filament.dark_mode')) dark:text-gray-200 @endif': ! ['warning', 'success', 'danger'].includes(notification.status)
                     }"
-                    x-text="notification.message"
-                ></p>
+                    x-html="notification.message"
+                ></div>
             </div>
         </div>
     </div>

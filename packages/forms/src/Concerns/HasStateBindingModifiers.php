@@ -29,9 +29,13 @@ trait HasStateBindingModifiers
         return $this;
     }
 
-    public function applyStateBindingModifiers($expression): string
+    public function applyStateBindingModifiers($expression, ?string $except = null): string
     {
         $modifiers = $this->getStateBindingModifiers();
+
+        if ($except) {
+            unset($modifiers[array_search($except, $modifiers, false)]);
+        }
 
         return implode('.', array_merge([$expression], $modifiers));
     }
@@ -51,5 +55,10 @@ trait HasStateBindingModifiers
         }
 
         return ['defer'];
+    }
+
+    public function isLazy(): bool
+    {
+        return in_array('lazy', $this->getStateBindingModifiers(), false);
     }
 }

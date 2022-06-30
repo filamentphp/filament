@@ -6,7 +6,6 @@ use Filament\Forms\ComponentContainer;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Contracts\HasFormActions;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 /**
  * @property ComponentContainer $form
@@ -89,14 +88,14 @@ class CreateRecord extends Page implements HasFormActions
         return __('filament::resources/pages/create-record.messages.created');
     }
 
-    public function createAndCreateAnother(): void
+    public function createAnother(): void
     {
         $this->create(another: true);
     }
 
     protected function handleRecordCreation(array $data): Model
     {
-        return static::getModel()::create($data);
+        return $this->getModel()::create($data);
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array
@@ -108,7 +107,7 @@ class CreateRecord extends Page implements HasFormActions
     {
         return array_merge(
             [$this->getCreateFormAction()],
-            static::canCreateAnother() ? [$this->getCreateAndCreateAnotherFormAction()] : [],
+            static::canCreateAnother() ? [$this->getCreateAnotherFormAction()] : [],
             [$this->getCancelFormAction()],
         );
     }
@@ -126,11 +125,11 @@ class CreateRecord extends Page implements HasFormActions
         return $this->getCreateFormAction();
     }
 
-    protected function getCreateAndCreateAnotherFormAction(): Action
+    protected function getCreateAnotherFormAction(): Action
     {
         return Action::make('createAnother')
-            ->label(__('filament::resources/pages/create-record.form.actions.create_and_create_another.label'))
-            ->action('createAndCreateAnother')
+            ->label(__('filament::resources/pages/create-record.form.actions.create_another.label'))
+            ->action('createAnother')
             ->keyBindings(['mod+shift+s'])
             ->color('secondary');
     }
@@ -150,7 +149,7 @@ class CreateRecord extends Page implements HasFormActions
         }
 
         return __('filament::resources/pages/create-record.title', [
-            'label' => Str::title(static::getResource()::getLabel()),
+            'label' => static::getResource()::getModelLabel(),
         ]);
     }
 
@@ -158,11 +157,16 @@ class CreateRecord extends Page implements HasFormActions
     {
         return [
             'form' => $this->makeForm()
-                ->model(static::getModel())
-                ->schema($this->getResourceForm(columns: config('filament.layout.forms.have_inline_labels') ? 1 : 2)->getSchema())
+                ->model($this->getModel())
+                ->schema($this->getFormSchema())
                 ->statePath('data')
                 ->inlineLabel(config('filament.layout.forms.have_inline_labels')),
         ];
+    }
+
+    protected function getFormSchema(): array
+    {
+        return $this->getResourceForm(columns: config('filament.layout.forms.have_inline_labels') ? 1 : 2)->getSchema();
     }
 
     protected function getRedirectUrl(): string
@@ -182,7 +186,7 @@ class CreateRecord extends Page implements HasFormActions
 
     protected function getMountedActionFormModel(): string
     {
-        return static::getModel();
+        return $this->getModel();
     }
 
     protected static function canCreateAnother(): bool
