@@ -9,8 +9,8 @@ return [
             "label" => "Endgültig löschen",
 
             "messages" => [
-                "deleted" => "Gelöscht"
-            ]
+                "deleted" => "Gelöscht",
+            ],
 
         ],
 
@@ -19,8 +19,8 @@ return [
             "label" => "Wiederherstellen",
 
             "messages" => [
-                "restored" => "Wiederhergestellt"
-            ]
+                "restored" => "Wiederhergestellt",
+            ],
 
         ],
 
@@ -29,29 +29,29 @@ return [
     "buttons" => [
 
         "filter" => [
-            "label" => "Filtern"
+            "label" => "Filtern",
         ],
 
         "open_actions" => [
-            "label" => "Aktionen öffnen"
+            "label" => "Aktionen öffnen",
         ],
 
         "toggle_columns" => [
-            "label" => "Spalten auswählen"
+            "label" => "Spalten auswählen",
         ],
 
     ],
 
     "empty" => [
-        "heading" => "Keine Datensätze gefunden"
+        "heading" => "Keine Datensätze gefunden",
     ],
 
     "fields" => [
 
         "search_query" => [
             "label" => "Suche",
-            "placeholder" => "Suche"
-        ]
+            "placeholder" => "Suche",
+        ],
 
     ],
 
@@ -60,21 +60,21 @@ return [
         "buttons" => [
 
             "close" => [
-                "label" => "Schließen"
+                "label" => "Schließen",
             ],
 
             "reset" => [
-                "label" => "Filter zurücksetzen"
+                "label" => "Filter zurücksetzen",
             ],
 
         ],
 
         "multi_select" => [
-            "placeholder" => "Alle"
+            "placeholder" => "Alle",
         ],
 
         "select" => [
-            "placeholder" => "Alle"
+            "placeholder" => "Alle",
         ],
 
         "trashed" => [
@@ -91,15 +91,15 @@ return [
         "buttons" => [
 
             "go_to_page" => [
-                "label" => "Weiter zur Seite :page"
+                "label" => "Weiter zur Seite :page",
             ],
 
             "next" => [
-                "label" => "Nächste"
+                "label" => "Nächste",
             ],
 
             "previous" => [
-                "label" => "Vorherige"
+                "label" => "Vorherige",
             ],
 
         ],
@@ -107,8 +107,8 @@ return [
         "fields" => [
 
             "records_per_page" => [
-                "label" => "pro Seite"
-            ]
+                "label" => "pro Seite",
+            ],
 
         ],
 
@@ -123,11 +123,11 @@ return [
         "buttons" => [
 
             "deselect_all" => [
-                "label" => "Auswahl aufheben"
+                "label" => "Auswahl aufheben",
             ],
 
             "select_all" => [
-                "label" => "Alle :count Datensätze auswählen"
+                "label" => "Alle :count Datensätze auswählen",
             ],
 
         ],
