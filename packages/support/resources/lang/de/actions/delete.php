@@ -7,7 +7,7 @@ return [
         'label' => 'Ausgewählte löschen',
 
         'messages' => [
-            'deleted' => 'Gelöscht'
+            'deleted' => 'Gelöscht',
         ],
 
         'modal' => [
@@ -15,8 +15,8 @@ return [
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Ausgewählte löschen'
-                ]
+                    'label' => 'Ausgewählte löschen',
+                ],
 
             ],
 
@@ -30,7 +30,7 @@ return [
         'label' => 'Löschen',
 
         'messages' => [
-            'deleted' => 'Gelöscht'
+            'deleted' => 'Gelöscht',
         ],
 
         'modal' => [
@@ -38,12 +38,12 @@ return [
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Löschen'
-                ]
+                    'label' => 'Löschen',
+                ],
 
             ],
 
-            'heading' => ':label löschen'
+            'heading' => ':label löschen',
         ],
 
     ],

@@ -7,7 +7,7 @@ return [
         'label' => 'Erstellen',
 
         'messages' => [
-            'created' => 'Erstellt'
+            'created' => 'Erstellt',
         ],
 
         'modal' => [
@@ -15,11 +15,11 @@ return [
             'actions' => [
 
                 'create' => [
-                    'label' => 'Erstellen'
+                    'label' => 'Erstellen',
                 ],
 
                 'create_another' => [
-                    'label' => 'Erstellen & weiterer Eintrag'
+                    'label' => 'Erstellen & weiterer Eintrag',
                 ],
 
             ],

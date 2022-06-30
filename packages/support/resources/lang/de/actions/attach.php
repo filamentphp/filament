@@ -7,7 +7,7 @@ return [
         'label' => 'Verknüpfen',
 
         'messages' => [
-            'attached' => 'Verknüpft'
+            'attached' => 'Verknüpft',
         ],
 
         'modal' => [
@@ -15,11 +15,11 @@ return [
             'actions' => [
 
                 'attach' => [
-                    'label' => 'Verknüpfen'
+                    'label' => 'Verknüpfen',
                 ],
 
                 'attach_another' => [
-                    'label' => 'Verknüpfen & weiterer Eintrag'
+                    'label' => 'Verknüpfen & weiterer Eintrag',
                 ],
 
             ],
@@ -27,8 +27,8 @@ return [
             'fields' => [
 
                 'record_ids' => [
-                    'label' => 'Einträge'
-                ]
+                    'label' => 'Einträge',
+                ],
 
             ],
 

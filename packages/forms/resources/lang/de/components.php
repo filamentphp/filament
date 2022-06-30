@@ -6,35 +6,35 @@ return [
         'buttons' => [
 
             'collapse_all' => [
-                'label' => 'Alle einklappen'
+                'label' => 'Alle einklappen',
             ],
 
             'collapse_item' => [
-                'label' => 'Einklappen'
+                'label' => 'Einklappen',
             ],
 
             'create_item' => [
-                'label' => 'Zu :label hinzufügen'
+                'label' => 'Zu :label hinzufügen',
             ],
 
             'delete_item' => [
-                'label' => 'Löschen'
+                'label' => 'Löschen',
             ],
 
             'expand_all' => [
-                'label' => 'Alle ausklappen'
+                'label' => 'Alle ausklappen',
             ],
 
             'expand_item' => [
-                'label' => 'Ausklappen'
+                'label' => 'Ausklappen',
             ],
 
             'move_item_down' => [
-                'label' => 'Runter verschieben'
+                'label' => 'Runter verschieben',
             ],
 
             'move_item_up' => [
-                'label' => 'Hoch verschieben'
+                'label' => 'Hoch verschieben',
             ],
 
         ],
@@ -47,11 +47,11 @@ return [
         'buttons' => [
 
             'add' => [
-                'label' => 'Zeile hinzufügen'
+                'label' => 'Zeile hinzufügen',
             ],
 
             'delete' => [
-                'label' => 'Zeile löschen'
+                'label' => 'Zeile löschen',
             ],
 
         ],
@@ -59,12 +59,12 @@ return [
         'fields' => [
 
             'key' => [
-                'label' => 'Schlüssel'
+                'label' => 'Schlüssel',
             ],
 
             'value' => [
-                'label' => 'Wert'
-            ]
+                'label' => 'Wert',
+            ],
 
         ],
 
@@ -92,35 +92,35 @@ return [
         'buttons' => [
 
             'collapse_all' => [
-                'label' => 'Alle einklappen'
+                'label' => 'Alle einklappen',
             ],
 
             'collapse_item' => [
-                'label' => 'Einklappen'
+                'label' => 'Einklappen',
             ],
 
             'create_item' => [
-                'label' => 'Zu :label hinzufügen'
+                'label' => 'Zu :label hinzufügen',
             ],
 
             'delete_item' => [
-                'label' => 'Löschen'
+                'label' => 'Löschen',
             ],
 
             'expand_all' => [
-                'label' => 'Alle ausklappen'
+                'label' => 'Alle ausklappen',
             ],
 
             'expand_item' => [
-                'label' => 'Ausklappen'
+                'label' => 'Ausklappen',
             ],
 
             'move_item_down' => [
-                'label' => 'Runter verschieben'
+                'label' => 'Runter verschieben',
             ],
 
             'move_item_up' => [
-                'label' => 'Hoch verschieben'
+                'label' => 'Hoch verschieben',
             ],
 
         ],
@@ -136,7 +136,7 @@ return [
 
                 'buttons' => [
                     'link' => 'Verlinken',
-                    'unlink' => 'Verlinkung aufheben'
+                    'unlink' => 'Verlinkung aufheben',
                 ],
 
                 'label' => 'URL',
@@ -174,12 +174,12 @@ return [
                     'actions' => [
 
                         'create' => [
-                            'label' => 'Erstellen'
-                        ]
+                            'label' => 'Erstellen',
+                        ],
 
                     ],
 
-                    'heading' => 'Erstellen'
+                    'heading' => 'Erstellen',
                 ],
 
             ],
@@ -187,7 +187,7 @@ return [
 
         'boolean' => [
             'false' => 'Nein',
-            'true' => 'Ja'
+            'true' => 'Ja',
         ],
 
         'loading_message' => 'Lädt...',
@@ -198,7 +198,7 @@ return [
     ],
 
     'tags_input' => [
-        'placeholder' => 'Neues Etikett'
+        'placeholder' => 'Neues Etikett',
     ],
 
     'wizard' => [
@@ -206,12 +206,12 @@ return [
         'buttons' => [
 
             'next_step' => [
-                'label' => 'Weiter'
+                'label' => 'Weiter',
             ],
 
             'previous_step' => [
-                'label' => 'Zurück'
-            ]
+                'label' => 'Zurück',
+            ],
 
         ],
 

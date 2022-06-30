@@ -5,15 +5,15 @@ return [
     'actions' => [
 
         'cancel' => [
-            'label' => 'Abbrechen'
+            'label' => 'Abbrechen',
         ],
 
         'confirm' => [
-            'label' => 'Bestätigen'
+            'label' => 'Bestätigen',
         ],
 
         'submit' => [
-            'label' => 'Absenden'
+            'label' => 'Absenden',
         ],
 
     ],
