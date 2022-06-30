@@ -1,33 +1,15 @@
 <?php
 
 return [
-
     'single' => [
-
         'label' => 'Erstellen',
-
+        'messages' => ['created' => 'Erstellt'],
         'modal' => [
-
-            'heading' => ':label erstellen',
-
             'actions' => [
-
-                'create' => [
-                    'label' => 'Erstellen',
-                ],
-
-                'create_another' => [
-                    'label' => 'Erstellen & weiterer Eintrag',
-                ],
-
+                'create' => ['label' => 'Erstellen'],
+                'create_another' => ['label' => 'Erstellen & weiterer Eintrag'],
             ],
-
+            'heading' => ':label erstellen',
         ],
-
-        'messages' => [
-            'created' => 'Erstellt',
-        ],
-
     ],
-
 ];

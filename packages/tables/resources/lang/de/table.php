@@ -1,100 +1,45 @@
 <?php
-
 return [
-
-    'fields' => [
-
-        'search_query' => [
-            'label' => 'Suche',
-            'placeholder' => 'Suche',
-        ],
-
+    "bulk_actions" => [
+        "force_delete" => ["label" => "Endgültig löschen", "messages" => ["deleted" => "Gelöscht"]],
+        "restore" => ["label" => "Wiederherstellen", "messages" => ["restored" => "Wiederhergestellt"]]
     ],
-
-    'pagination' => [
-
-        'label' => 'Seitennavigation',
-
-        'overview' => ':first bis :last von :total Ergebnissen',
-
-        'fields' => [
-
-            'records_per_page' => [
-                'label' => 'pro Seite',
-            ],
-
-        ],
-
-        'buttons' => [
-
-            'go_to_page' => [
-                'label' => 'Weiter zur Seite :page',
-            ],
-
-            'next' => [
-                'label' => 'Nächste',
-            ],
-
-            'previous' => [
-                'label' => 'Vorherige',
-            ],
-
-        ],
-
+    "buttons" => [
+        "filter" => ["label" => "Filtern"],
+        "open_actions" => ["label" => "Aktionen öffnen"],
+        "toggle_columns" => ["label" => "Spalten auswählen"]
     ],
-
-    'buttons' => [
-
-        'filter' => [
-            'label' => 'Filtern',
+    "empty" => ["heading" => "Keine Datensätze gefunden"],
+    "fields" => ["search_query" => ["label" => "Suche", "placeholder" => "Suche"]],
+    "filters" => [
+        "buttons" => [
+            "close" => ["label" => "Schließen"],
+            "reset" => ["label" => "Filter zurücksetzen"]
         ],
-
-        'open_actions' => [
-            'label' => 'Aktionen öffnen',
-        ],
-
+        "multi_select" => ["placeholder" => "Alle"],
+        "select" => ["placeholder" => "Alle"],
+        "trashed" => [
+            "label" => "Gelöschte Einträge",
+            "only_trashed" => "Nur gelöschte Einträge",
+            "with_trashed" => "Mit gelöschten Einträgen",
+            "without_trashed" => "Ohne gelöschte Einträge"
+        ]
     ],
-
-    'empty' => [
-        'heading' => 'Keine Datensätze gefunden',
+    "pagination" => [
+        "buttons" => [
+            "go_to_page" => ["label" => "Weiter zur Seite :page"],
+            "next" => ["label" => "Nächste"],
+            "previous" => ["label" => "Vorherige"]
+        ],
+        "fields" => ["records_per_page" => ["label" => "pro Seite"]],
+        "label" => "Seitennavigation",
+        "overview" => ":first bis :last von :total Ergebnissen"
     ],
-
-    'filters' => [
-
-        'buttons' => [
-
-            'reset' => [
-                'label' => 'Filter zurücksetzen',
-            ],
-
+    "selection_indicator" => [
+        "buttons" => [
+            "deselect_all" => ["label" => "Auswahl aufheben"],
+            "select_all" => ["label" => "Alle :count Datensätze auswählen"]
         ],
-
-        'multi_select' => [
-            'placeholder' => 'Alle',
-        ],
-
-        'select' => [
-            'placeholder' => 'Alle',
-        ],
-
-    ],
-
-    'selection_indicator' => [
-
-        'selected_count' => '1 Datensatz ausgewählt ausgewählt.|:count Datensätze ausgewählt.',
-
-        'buttons' => [
-
-            'select_all' => [
-                'label' => 'Alle :count Datensätze auswählen',
-            ],
-
-            'deselect_all' => [
-                'label' => 'Auswahl aufheben',
-            ],
-
-        ],
-
-    ],
-
+        "selected_count" => "1 Datensatz ausgewählt ausgewählt.|:count Datensätze ausgewählt."
+    ]
 ];

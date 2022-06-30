@@ -1,53 +1,17 @@
 <?php
 
 return [
-
-    'single' => [
-
-        'label' => 'Trennen',
-
-        'modal' => [
-
-            'heading' => ':label trennen',
-
-            'actions' => [
-
-                'detach' => [
-                    'label' => 'Trennen',
-                ],
-
-            ],
-
-        ],
-
-        'messages' => [
-            'detached' => 'Getrennt',
-        ],
-
-    ],
-
     'multiple' => [
-
         'label' => 'Ausgewählte trennen',
-
+        'messages' => ['detached' => 'Getrennt'],
         'modal' => [
-
+            'actions' => ['detach' => ['label' => 'Ausgewählte trennen']],
             'heading' => 'Ausgewählte :label trennen',
-
-            'actions' => [
-
-                'detach' => [
-                    'label' => 'Ausgewählte trennen',
-                ],
-
-            ],
-
         ],
-
-        'messages' => [
-            'detached' => 'Getrennt',
-        ],
-
     ],
-
+    'single' => [
+        'label' => 'Trennen',
+        'messages' => ['detached' => 'Getrennt'],
+        'modal' => ['actions' => ['detach' => ['label' => 'Trennen']], 'heading' => ':label trennen'],
+    ],
 ];

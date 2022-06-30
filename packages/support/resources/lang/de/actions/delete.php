@@ -1,53 +1,17 @@
 <?php
 
 return [
-
-    'single' => [
-
-        'label' => 'Löschen',
-
-        'modal' => [
-
-            'heading' => ':label löschen',
-
-            'actions' => [
-
-                'delete' => [
-                    'label' => 'Löschen',
-                ],
-
-            ],
-
-        ],
-
-        'messages' => [
-            'deleted' => 'Gelöscht',
-        ],
-
-    ],
-
     'multiple' => [
-
         'label' => 'Ausgewählte löschen',
-
+        'messages' => ['deleted' => 'Gelöscht'],
         'modal' => [
-
+            'actions' => ['delete' => ['label' => 'Ausgewählte löschen']],
             'heading' => 'Ausgewählte :label löschen',
-
-            'actions' => [
-
-                'delete' => [
-                    'label' => 'Ausgewählte löschen',
-                ],
-
-            ],
-
         ],
-
-        'messages' => [
-            'deleted' => 'Gelöscht',
-        ],
-
     ],
-
+    'single' => [
+        'label' => 'Löschen',
+        'messages' => ['deleted' => 'Gelöscht'],
+        'modal' => ['actions' => ['delete' => ['label' => 'Löschen']], 'heading' => ':label löschen'],
+    ],
 ];
