@@ -7,7 +7,7 @@ return [
         'label' => 'Bearbeiten',
 
         'messages' => [
-            'saved' => 'Gespeichert'
+            'saved' => 'Gespeichert',
         ],
 
         'modal' => [
@@ -15,8 +15,8 @@ return [
             'actions' => [
 
                 'save' => [
-                    'label' => 'Speichern'
-                ]
+                    'label' => 'Speichern',
+                ],
 
             ],
 

@@ -4,23 +4,23 @@ return [
     'buttons' => [
 
         'submit' => [
-            'label' => 'Anmelden'
-        ]
+            'label' => 'Anmelden',
+        ],
 
     ],
 
     'fields' => [
 
         'email' => [
-            'label' => 'E-Mail-Adresse'
+            'label' => 'E-Mail-Adresse',
         ],
 
         'password' => [
-            'label' => 'Passwort'
+            'label' => 'Passwort',
         ],
 
         'remember' => [
-            'label' => 'Angemeldet bleiben'
+            'label' => 'Angemeldet bleiben',
         ],
 
     ],
