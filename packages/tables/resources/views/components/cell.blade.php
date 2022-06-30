@@ -26,7 +26,7 @@
         x-tooltip.raw="{{ $tooltip }}"
     @endif
 >
-    @if ($action || ((is_null($url)) && $recordAction))
+    @if ($action || ($recordAction && $url === null))
         <button
             wire:click="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $this->getTableRecordKey($record) }}')"
             wire:target="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $this->getTableRecordKey($record) }}')"
@@ -37,7 +37,7 @@
         >
             {{ $slot }}
         </button>
-    @elseif ($url || (is_null($url) && $recordUrl))
+    @elseif ($url || ($recordUrl && $url === null))
         <a
             href="{{ $url ?: $recordUrl }}"
             {{ $shouldOpenUrlInNewTab ? 'target="_blank"' : null }}
