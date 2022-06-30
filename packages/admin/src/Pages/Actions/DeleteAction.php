@@ -32,8 +32,6 @@ class DeleteAction extends Action
 
         $this->requiresConfirmation();
 
-        $this->keyBindings(['mod+d']);
-
         $this->hidden(static function (Model $record): bool {
             if (! method_exists($record, 'trashed')) {
                 return false;
