@@ -1,12 +1,28 @@
 <?php
 
 return [
+
     'single' => [
+
         'label' => 'Bearbeiten',
-        'messages' => ['saved' => 'Gespeichert'],
+
+        'messages' => [
+            'saved' => 'Gespeichert'
+        ],
+
         'modal' => [
-            'actions' => ['save' => ['label' => 'Speichern']],
+
+            'actions' => [
+
+                'save' => [
+                    'label' => 'Speichern'
+                ]
+
+            ],
+
             'heading' => ':label bearbeiten',
         ],
+
     ],
+
 ];
