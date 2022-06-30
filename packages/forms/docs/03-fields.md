@@ -1170,7 +1170,7 @@ FileUpload::make('attachments')
     ->enableReordering()
 ```
 
-You can add a button to open the file in a new tab to each uploaded file with the `enableOpen()` method:
+You can add a button to open each file in a new tab with the `enableOpen()` method:
 
 ```php
 use Filament\Forms\Components\FileUpload;
@@ -1180,7 +1180,7 @@ FileUpload::make('attachments')
     ->enableOpen()
 ```
 
-If you wish to add a download button to each uploaded file instead, you can use the `enableDownload()` method:
+If you wish to add a download button to each file instead, you can use the `enableDownload()` method:
 
 ```php
 use Filament\Forms\Components\FileUpload;
