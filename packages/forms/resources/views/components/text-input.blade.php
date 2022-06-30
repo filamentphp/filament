@@ -42,10 +42,7 @@
                 @else
                     x-data="textInputFormComponent({
                         {{ $hasMask() ? "getMaskOptionsUsing: (IMask) => ({$getJsonMaskConfiguration()})," : null }}
-                        state: $wire.{{ $isLazy()
-                                        ? $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\').defer', except: 'lazy')
-                                        : $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')')
-                                        }},
+                        state: $wire.{{ $isLazy() ? 'entangle(\'' . $getStatePath() . '\').defer' : $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
                     })"
                     type="text"
                     wire:ignore
