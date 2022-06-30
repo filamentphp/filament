@@ -13,9 +13,9 @@ class UiAvatarsProvider implements Contracts\AvatarProvider
         $name = Str::of(Filament::getUserName($user))
             ->trim()
             ->explode(' ')
-            ->map(fn (string $segment): string => $segment[0] ?? '')
-            ->join('+');
+            ->map(fn (string $segment): string => filled($segment) ? mb_substr($segment, 0, 1) : '')
+            ->join(' ');
 
-        return 'https://ui-avatars.com/api/?name=' . $name . '&color=FFFFFF&background=111827';
+        return 'https://ui-avatars.com/api/?name=' . urlencode($name) . '&color=FFFFFF&background=111827';
     }
 }
