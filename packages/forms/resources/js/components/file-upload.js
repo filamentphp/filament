@@ -163,7 +163,7 @@ export default (Alpine) => {
                 })
 
                 this.pond.on('initfile', async (fileItem) => {
-                    if (! (canOpen || canDownload)) {
+                    if (! canDownload) {
                         return
                     }
 
@@ -171,7 +171,20 @@ export default (Alpine) => {
                         return
                     }
 
-                    this.insertLinkToFile(fileItem)
+                    this.insertDownloadLink(fileItem)
+                })
+
+
+                this.pond.on('initfile', async (fileItem) => {
+                    if (! canOpen) {
+                        return
+                    }
+
+                    if (isAvatar) {
+                        return
+                    }
+
+                    this.insertOpenLink(fileItem)
                 })
 
                 this.pond.on('processfilestart', async () => {
@@ -243,23 +256,40 @@ export default (Alpine) => {
                 return shouldAppendFiles ? files : files.reverse()
             },
 
-            insertLinkToFile: function (file) {
+            insertDownloadLink: function (file) {
                 if (file.origin !== FilePond.FileOrigin.LOCAL) {
                     return
                 }
 
-                const url = this.getFileUrl(file)
+                const anchor = this.getDownloadLink(file)
 
-                if (! url) {
+                if (! anchor) {
                     return
                 }
 
                 document.getElementById(`filepond--item-${file.id}`)
                     .querySelector('.filepond--file-info-main')
-                    .prepend(url)
+                    .prepend(anchor)
             },
 
-            getFileUrl: function (file) {
+
+            insertOpenLink: function (file) {
+                if (file.origin !== FilePond.FileOrigin.LOCAL) {
+                    return
+                }
+
+                const anchor = this.getOpenLink(file)
+
+                if (! anchor) {
+                    return
+                }
+
+                document.getElementById(`filepond--item-${file.id}`)
+                    .querySelector('.filepond--file-info-main')
+                    .prepend(anchor)
+            },
+
+            getDownloadLink: function (file) {
                 let fileSource = file.source
 
                 if (! fileSource) {
@@ -267,15 +297,26 @@ export default (Alpine) => {
                 }
 
                 const anchor = document.createElement('a')
-                anchor.className = canDownload ? 'filepond--download-icon' : 'filepond--external-icon'
+                anchor.className = 'filepond--download-icon'
+                anchor.href = fileSource
+                anchor.download = file.file.name
+
+                return anchor
+            },
+
+            getOpenLink: function (file) {
+                let fileSource = file.source
+
+                if (! fileSource) {
+                    return
+                }
+
+                const anchor = document.createElement('a')
+                anchor.className = 'filepond--external-icon'
                 anchor.href = fileSource
 
                 if (shouldOpenInNewTab) {
                     anchor.target = '_blank'
-                }
-
-                if (canDownload) {
-                    anchor.download = file.file.name
                 }
 
                 return anchor
