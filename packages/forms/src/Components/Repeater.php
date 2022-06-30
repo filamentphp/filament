@@ -39,6 +39,12 @@ class Repeater extends Field
 
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
+    protected ?Closure $mutateRelationshipDataBeforeCreateUsing = null;
+
+    protected ?Closure $mutateRelationshipDataBeforeFillUsing = null;
+
+    protected ?Closure $mutateRelationshipDataBeforeSaveUsing = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -315,6 +321,8 @@ class Repeater extends Field
                 if ($record = ($existingRecords[$itemKey] ?? null)) {
                     $activeLocale && method_exists($record, 'setLocale') && $record->setLocale($activeLocale);
 
+                    $itemData = $component->mutateRelationshipDataBeforeSave($itemData);
+
                     $record->fill($itemData)->save();
 
                     continue;
@@ -327,6 +335,8 @@ class Repeater extends Field
                 if ($activeLocale && method_exists($record, 'setLocale')) {
                     $record->setLocale($activeLocale);
                 }
+
+                $itemData = $component->mutateRelationshipDataBeforeCreateUsing($itemData);
 
                 $record->fill($itemData);
 
@@ -355,28 +365,21 @@ class Repeater extends Field
             return [];
         }
 
-        $firstRecord = $records->first();
+        $activeLocale = $this->getLivewire()->getActiveFormLocale();
 
-        if (
-            ($activeLocale = $this->getLivewire()->getActiveFormLocale()) &&
-            method_exists($firstRecord, 'getTranslatableAttributes')
-        ) {
-            $translatableAttributes = $firstRecord->getTranslatableAttributes();
-
-            $records = $records->map(function (Model $record) use ($activeLocale, $translatableAttributes): array {
+        return $records
+            ->map(function (Model $record) use ($activeLocale): array {
                 $state = $record->toArray();
 
-                if (method_exists($record, 'getTranslation')) {
-                    foreach ($translatableAttributes as $attribute) {
+                if ($activeLocale && method_exists($record, 'getTranslatableAttributes') && method_exists($record, 'getTranslation')) {
+                    foreach ($record->getTranslatableAttributes() as $attribute) {
                         $state[$attribute] = $record->getTranslation($attribute, $activeLocale);
                     }
                 }
 
-                return $state;
-            });
-        }
-
-        return $records->toArray();
+                return $this->mutateRelationshipDataBeforeFill($state);
+            })
+            ->toArray();
     }
 
     public function getLabel(): string
@@ -450,5 +453,59 @@ class Repeater extends Field
     public function hasRelationship(): bool
     {
         return filled($this->getRelationshipName());
+    }
+
+    public function mutateRelationshipDataBeforeCreateUsing(?Closure $callback): static
+    {
+        $this->mutateRelationshipDataBeforeCreateUsing = $callback;
+
+        return $this;
+    }
+
+    public function mutateRelationshipDataBeforeCreate(array $data): array
+    {
+        if ($this->mutateRelationshipDataBeforeCreateUsing instanceof Closure) {
+            $data = $this->evaluate($this->mutateRelationshipDataBeforeCreateUsing, [
+                'data' => $data,
+            ]);
+        }
+
+        return $data;
+    }
+
+    public function mutateRelationshipDataBeforeSaveUsing(?Closure $callback): static
+    {
+        $this->mutateRelationshipDataBeforeSaveUsing = $callback;
+
+        return $this;
+    }
+
+    public function mutateRelationshipDataBeforeFill(array $data): array
+    {
+        if ($this->mutateRelationshipDataBeforeFillUsing instanceof Closure) {
+            $data = $this->evaluate($this->mutateRelationshipDataBeforeFillUsing, [
+                'data' => $data,
+            ]);
+        }
+
+        return $data;
+    }
+
+    public function mutateRelationshipDataBeforeFillUsing(?Closure $callback): static
+    {
+        $this->mutateRelationshipDataBeforeFillUsing = $callback;
+
+        return $this;
+    }
+
+    public function mutateRelationshipDataBeforeSave(array $data): array
+    {
+        if ($this->mutateRelationshipDataBeforeSaveUsing instanceof Closure) {
+            $data = $this->evaluate($this->mutateRelationshipDataBeforeSaveUsing, [
+                'data' => $data,
+            ]);
+        }
+
+        return $data;
     }
 }
