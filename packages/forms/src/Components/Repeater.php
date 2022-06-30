@@ -278,14 +278,12 @@ class Repeater extends Field
             }
 
             $relationship = $component->getRelationship();
-            $relatedQualifiedKeyName = $relationship->getRelated()->getQualifiedKeyName();
-            $relatedKeyName = $relationship->getRelated()->getKeyName();
 
             $existingRecords = $component->getCachedExistingRecords();
 
             $recordsToDelete = [];
 
-            foreach ($existingRecords->pluck($relatedKeyName) as $keyToCheckForDeletion) {
+            foreach ($existingRecords->pluck($relationship->getRelated()->getKeyName()) as $keyToCheckForDeletion) {
                 if (array_key_exists("record-{$keyToCheckForDeletion}", $state)) {
                     continue;
                 }
@@ -294,7 +292,7 @@ class Repeater extends Field
             }
 
             $relationship
-                ->whereIn($relatedQualifiedKeyName, $recordsToDelete)
+                ->whereIn($relationship->getRelated()->getQualifiedKeyName(), $recordsToDelete)
                 ->get()
                 ->each(static fn (Model $record) => $record->delete());
 
@@ -399,7 +397,7 @@ class Repeater extends Field
         return $this->evaluate($this->orderColumn);
     }
 
-    public function getRelationship(): HasOneOrMany|BelongsToMany|null
+    public function getRelationship(): HasOneOrMany | BelongsToMany | null
     {
         if (! $this->hasRelationship()) {
             return null;
