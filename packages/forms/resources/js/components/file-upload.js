@@ -28,6 +28,8 @@ export default (Alpine) => {
     Alpine.data('fileUploadFormComponent', ({
         acceptedFileTypes,
         canDownload,
+        canOpen,
+        shouldOpenInNewTab,
         canPreview,
         canReorder,
         deleteUploadedFileUsing,
@@ -62,7 +64,7 @@ export default (Alpine) => {
             shouldUpdateState: true,
 
             state,
-            
+
             lastState: null,
 
             uploadedFileUrlIndex: {},
@@ -141,12 +143,12 @@ export default (Alpine) => {
                     if (Object.values(this.state).filter((file) => file.startsWith('livewire-file:')).length) {
                         return
                     }
-                    
+
                     // Don't do anything if the state hasn't changed
                     if (JSON.stringify(this.state) === this.lastState) {
                         return
                     }
-                    
+
                     this.lastState = JSON.stringify(this.state)
 
                     this.pond.files = await this.getFiles()
@@ -161,7 +163,7 @@ export default (Alpine) => {
                 })
 
                 this.pond.on('initfile', async (fileItem) => {
-                    if (! canDownload) {
+                    if (! (canOpen || canDownload)) {
                         return
                     }
 
@@ -169,7 +171,7 @@ export default (Alpine) => {
                         return
                     }
 
-                    this.insertDownloadLink(fileItem)
+                    this.insertLinkToFile(fileItem)
                 })
 
                 this.pond.on('processfilestart', async () => {
@@ -241,12 +243,12 @@ export default (Alpine) => {
                 return shouldAppendFiles ? files : files.reverse()
             },
 
-            insertDownloadLink: function (file) {
+            insertLinkToFile: function (file) {
                 if (file.origin !== FilePond.FileOrigin.LOCAL) {
                     return
                 }
 
-                const url = this.getDownloadUrl(file)
+                const url = this.getFileUrl(file)
 
                 if (! url) {
                     return
@@ -257,7 +259,7 @@ export default (Alpine) => {
                     .prepend(url)
             },
 
-            getDownloadUrl: function (file) {
+            getFileUrl: function (file) {
                 let fileSource = file.source
 
                 if (! fileSource) {
@@ -265,9 +267,17 @@ export default (Alpine) => {
                 }
 
                 const anchor = document.createElement('a')
-                anchor.className = 'filepond--download-icon'
+                anchor.className = canDownload ? 'filepond--download-icon' : 'filepond--external-icon'
                 anchor.href = fileSource
-                anchor.download = file.file.name
+
+                if (shouldOpenInNewTab) {
+                    anchor.target = '_blank'
+                }
+
+                if (canDownload) {
+                    anchor.download = file.file.name
+                }
+
                 return anchor
             }
         }

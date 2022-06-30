@@ -44,6 +44,8 @@
         x-data="fileUploadFormComponent({
             acceptedFileTypes: {{ json_encode($getAcceptedFileTypes()) }},
             canDownload: {{ $canDownload() ? 'true' : 'false' }},
+            canOpen: {{ $canOpen() ? 'true' : 'false' }},
+            shouldOpenInNewTab: {{ $shouldOpenInNewTab() ? 'true' : 'false' }},
             canPreview: {{ $canPreview() ? 'true' : 'false' }},
             canReorder: {{ $canReorder() ? 'true' : 'false' }},
             deleteUploadedFileUsing: async (fileKey) => {
