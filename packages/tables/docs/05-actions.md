@@ -25,15 +25,6 @@ If you're using them in admin panel resources or relation managers, you must put
 public static function table(Table $table): Table
 {
     return $table
-        // Add the actions before the default action/s (before Edit or View)
-        ->prependActions([
-            // ...
-        ])
-        // Add the actions after the default action/s (after Edit or View)
-        ->pushActions([
-            // ...
-        ])
-        // Override the default action/s (instead of Edit or View)
         ->actions([
             // ...
         ]);
@@ -74,15 +65,6 @@ If you're using them in admin panel resources or relation managers, you must put
 public static function table(Table $table): Table
 {
     return $table
-        // Add the actions before the default action (before Delete)
-        ->prependBulkActions([
-            // ...
-        ])
-        // Add the actions after the default action (after Delete)
-        ->pushBulkActions([
-            // ...
-        ])
-        // Override the default action (instead of Delete)
         ->bulkActions([
             // ...
         ]);

@@ -12100,11 +12100,11 @@ var date_time_picker_default = (Alpine) => {
         ];
       },
       getMaxDate: function() {
-        let date = esm_default(this.$refs.maxDate.value);
+        let date = esm_default(this.$refs.maxDate?.value);
         return date.isValid() ? date : null;
       },
       getMinDate: function() {
-        let date = esm_default(this.$refs.minDate.value);
+        let date = esm_default(this.$refs.minDate?.value);
         return date.isValid() ? date : null;
       },
       getSelectedDate: function() {

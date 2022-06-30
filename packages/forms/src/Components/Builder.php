@@ -29,6 +29,8 @@ class Builder extends Field
 
     protected bool | Closure $hasBlockLabels = true;
 
+    protected bool | Closure $hasBlockNumbers = true;
+
     protected bool | Closure $isInset = false;
 
     protected function setUp(): void
@@ -239,6 +241,13 @@ class Builder extends Field
         return $this;
     }
 
+    public function withBlockNumbers(bool | Closure $condition = true): static
+    {
+        $this->hasBlockNumbers = $condition;
+
+        return $this;
+    }
+
     public function getBlock($name): ?Block
     {
         return Arr::first(
@@ -300,6 +309,11 @@ class Builder extends Field
     public function hasBlockLabels(): bool
     {
         return (bool) $this->evaluate($this->hasBlockLabels);
+    }
+
+    public function hasBlockNumbers(): bool
+    {
+        return (bool) $this->evaluate($this->hasBlockNumbers);
     }
 
     public function isInset(): bool
