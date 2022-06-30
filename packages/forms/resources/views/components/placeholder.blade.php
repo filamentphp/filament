@@ -9,6 +9,6 @@
     :state-path="$getStatePath()"
 >
     <div {{ $attributes->merge($getExtraAttributes())->class('filament-forms-placeholder-component') }}>
-        {{ $getContent() }}
+        {!! $getContent() !!}
     </div>
 </x-dynamic-component>
