@@ -336,7 +336,7 @@ class Repeater extends Field
                     $record->setLocale($activeLocale);
                 }
 
-                $itemData = $component->mutateRelationshipDataBeforeCreateUsing($itemData);
+                $itemData = $component->mutateRelationshipDataBeforeCreate($itemData);
 
                 $record->fill($itemData);
 
