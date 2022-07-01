@@ -202,7 +202,7 @@ return [
             'false' => 'خیر',
         ],
 
-        'loading_message' => 'درحال بارگزاری...',
+        'loading_message' => 'درحال بارگذاری...',
 
         'no_search_results_message' => 'هیچ گزینه ای با جستجوی شما مطابقت ندارد',
 

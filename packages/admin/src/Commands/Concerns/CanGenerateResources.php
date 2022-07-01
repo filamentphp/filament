@@ -183,7 +183,7 @@ trait CanGenerateResources
 
     protected function getModelTable(string $model): ?Table
     {
-        if (! class_exists($model)) {
+        if ((! class_exists($model)) && (! class_exists($model = "App\\Models\\{$model}"))) {
             return null;
         }
 

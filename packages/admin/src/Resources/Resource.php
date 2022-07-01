@@ -5,6 +5,7 @@ namespace Filament\Resources;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\GlobalSearch\GlobalSearchResult;
+use function Filament\locale_has_pluralization;
 use Filament\Navigation\NavigationItem;
 use function Filament\Support\get_model_label;
 use Illuminate\Database\Connection;
@@ -175,7 +176,7 @@ class Resource
 
     public static function getBreadcrumb(): string
     {
-        return static::$breadcrumb ?? Str::title(static::getPluralModelLabel());
+        return static::$breadcrumb ?? Str::headline(static::getPluralModelLabel());
     }
 
     public static function getEloquentQuery(): Builder
@@ -285,7 +286,15 @@ class Resource
 
     public static function getPluralModelLabel(): string
     {
-        return static::$pluralModelLabel ?? static::getPluralLabel() ?? Str::plural(static::getModelLabel());
+        if (filled($label = static::$pluralModelLabel ?? static::getPluralLabel())) {
+            return $label;
+        }
+
+        if (locale_has_pluralization()) {
+            return Str::plural(static::getModelLabel());
+        }
+
+        return static::getModelLabel();
     }
 
     public static function getRecordTitleAttribute(): ?string
@@ -427,7 +436,7 @@ class Resource
 
     protected static function getNavigationLabel(): string
     {
-        return static::$navigationLabel ?? Str::title(static::getPluralModelLabel());
+        return static::$navigationLabel ?? Str::headline(static::getPluralModelLabel());
     }
 
     protected static function getNavigationBadge(): ?string

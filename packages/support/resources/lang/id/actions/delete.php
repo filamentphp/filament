@@ -32,7 +32,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Hapus yang dipilih :label',
+            'heading' => 'Hapus :label yang dipilih',
 
             'actions' => [
 

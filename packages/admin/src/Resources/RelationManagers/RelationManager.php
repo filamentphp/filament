@@ -4,6 +4,7 @@ namespace Filament\Resources\RelationManagers;
 
 use Filament\Facades\Filament;
 use Filament\Http\Livewire\Concerns\CanNotify;
+use function Filament\locale_has_pluralization;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Tables;
@@ -278,7 +279,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     public static function getTitle(): string
     {
-        return static::$title ?? Str::title(static::getPluralModelLabel());
+        return static::$title ?? Str::headline(static::getPluralModelLabel());
     }
 
     public static function getTitleForRecord(Model $ownerRecord): string
@@ -306,7 +307,10 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     protected static function getModelLabel(): string
     {
-        return static::$modelLabel ?? static::getRecordLabel() ?? Str::singular(static::getPluralModelLabel());
+        return static::$modelLabel ?? static::getRecordLabel() ?? (string) Str::of(static::getRelationshipName())
+            ->kebab()
+            ->replace('-', ' ')
+            ->singular();
     }
 
     /**
@@ -319,9 +323,17 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     protected static function getPluralModelLabel(): string
     {
-        return static::$pluralModelLabel ?? static::getPluralRecordLabel() ?? (string) Str::of(static::getRelationshipName())
-            ->kebab()
-            ->replace('-', ' ');
+        if (filled($label = static::$pluralModelLabel ?? static::getPluralRecordLabel())) {
+            return $label;
+        }
+
+        if (locale_has_pluralization()) {
+            return (string) Str::of(static::getRelationshipName())
+                ->kebab()
+                ->replace('-', ' ');
+        }
+
+        return static::getModelLabel();
     }
 
     protected function getRelatedModel(): string

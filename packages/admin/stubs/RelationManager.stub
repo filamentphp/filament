@@ -20,7 +20,9 @@ class {{ managerClass }} extends RelationManager
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('{{ recordTitleAttribute }}')
+                    ->required()
+                    ->maxLength(255),
             ]);
     }
 
@@ -28,7 +30,7 @@ class {{ managerClass }} extends RelationManager
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('{{ recordTitleAttribute }}'),
             ])
             ->filters([
 {{ tableFilters }}

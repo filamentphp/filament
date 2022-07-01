@@ -159,7 +159,7 @@ trait InteractsWithTable
                 $this->selectPivotDataInQuery($query);
             }
 
-            // https://github.com/laravel-filament/filament/issues/2079
+            // https://github.com/filamentphp/filament/issues/2079
             $query->withCasts(
                 app($relationship->getPivotClass())->getCasts(),
             );

@@ -59,31 +59,6 @@ return [
 
     ],
 
-
-    'bulk_actions' => [
-
-        'force_delete' => [
-
-            'label' => '强制删除',
-
-            'messages' => [
-                'deleted' => '记录已删除',
-            ],
-
-        ],
-
-        'restore' => [
-
-            'label' => '恢复',
-
-            'messages' => [
-                'restored' => '记录已恢复',
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => '没有找到相关记录',
     ],

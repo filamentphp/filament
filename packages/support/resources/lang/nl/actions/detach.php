@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Ontkoppel :label',
+            'heading' => ':Label ontkoppelen',
 
             'actions' => [
 
@@ -28,16 +28,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Ontkoppel geselecteerde',
+        'label' => 'Geselecteerde ontkoppelen',
 
         'modal' => [
 
-            'heading' => 'Ontkoppel geselecteerde :label',
+            'heading' => 'Geselecteerde :label ontkoppelen',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Ontkoppel geselecteerde',
+                    'label' => 'Ontkoppelen',
                 ],
 
             ],

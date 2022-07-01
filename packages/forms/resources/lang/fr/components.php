@@ -209,4 +209,19 @@ return [
         'placeholder' => 'Nouveau tag',
     ],
 
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => 'Précédent',
+            ],
+
+            'next_step' => [
+                'label' => 'Suivant',
+            ],
+
+        ],
+
+    ],
 ];
