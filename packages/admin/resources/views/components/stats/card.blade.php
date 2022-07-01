@@ -29,6 +29,7 @@
             @if ($icon)
                 <x-dynamic-component :component="$icon" class="w-4 h-4" />
             @endif
+
             <span>{{ $label }}</span>
         </div>
 
@@ -57,56 +58,70 @@
     </div>
 
     @if ($chart)
-        <div class="absolute bottom-0 inset-x-0 rounded-b-2xl overflow-hidden">
-            <canvas
-                x-data="{
-                    chart: null,
+        <div
+            x-title="filament-stats-card-chart"
+            x-data="{
+                chart: null,
 
-                    init: function () {
-                        chart = new Chart(
-                            $el,
-                            {
-                                type: 'line',
-                                data: {
-                                    labels: {{ json_encode(array_keys($chart)) }},
-                                    datasets: [{
-                                        data: {{ json_encode(array_values($chart)) }},
-                                        backgroundColor: getComputedStyle($refs.backgroundColorElement).color,
-                                        borderColor: getComputedStyle($refs.borderColorElement).color,
-                                        borderWidth: 2,
-                                        fill: 'start',
-                                        tension: 0.5,
-                                    }],
+                labels: {{ json_encode(array_keys($chart)) }},
+                values: {{ json_encode(array_values($chart)) }},
+
+                init: function () {
+                    this.chart ? this.updateChart() : this.initChart()
+                },
+
+                initChart: function () {
+                    return this.chart = new Chart(this.$refs.canvas, {
+                        type: 'line',
+                        data: {
+                            labels: this.labels,
+                            datasets: [{
+                                data: this.values,
+                                backgroundColor: getComputedStyle($refs.backgroundColorElement).color,
+                                borderColor: getComputedStyle($refs.borderColorElement).color,
+                                borderWidth: 2,
+                                fill: 'start',
+                                tension: 0.5,
+                            }],
+                        },
+                        options: {
+                            elements: {
+                                point: {
+                                    radius: 0,
                                 },
-                                options: {
-                                    elements: {
-                                        point: {
-                                            radius: 0,
-                                        },
-                                    },
-                                    maintainAspectRatio: false,
-                                    plugins: {
-                                        legend: {
-                                            display: false,
-                                        },
-                                    },
-                                    scales: {
-                                        x:  {
-                                            display: false,
-                                        },
-                                        y:  {
-                                            display: false,
-                                        },
-                                    },
-                                    tooltips: {
-                                        enabled: false,
-                                    },
+                            },
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false,
                                 },
-                            }
-                        )
-                    },
-                }"
+                            },
+                            scales: {
+                                x:  {
+                                    display: false,
+                                },
+                                y:  {
+                                    display: false,
+                                },
+                            },
+                            tooltips: {
+                                enabled: false,
+                            },
+                        },
+                    })
+                },
+
+                updateChart: function () {
+                    this.chart.data.labels = this.labels
+                    this.chart.data.datasets[0].data = this.values
+                    this.chart.update()
+                },
+            }"
+            class="absolute bottom-0 inset-x-0 rounded-b-2xl overflow-hidden"
+        >
+            <canvas
                 wire:ignore
+                x-ref="canvas"
                 class="h-6"
             >
                 <span

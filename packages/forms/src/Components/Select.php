@@ -720,6 +720,10 @@ class Select extends Field
 
     public function getActionFormModel(): Model | string | null
     {
-        return $this->getRelationship()->getModel()::class;
+        if ($this->hasRelationship()) {
+            return $this->getRelationship()->getModel()::class;
+        }
+
+        return parent::getActionFormModel();
     }
 }

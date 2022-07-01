@@ -9,6 +9,8 @@ trait HasActions
 {
     protected array $actions = [];
 
+    protected Model | string | null $actionFormModel = null;
+
     public function registerActions(array $actions): static
     {
         $this->actions = array_merge(
@@ -29,9 +31,16 @@ trait HasActions
         return $this->actions;
     }
 
+    public function actionFormModel(Model | string | null $model): static
+    {
+        $this->actionFormModel = $model;
+
+        return $this;
+    }
+
     public function getActionFormModel(): Model | string | null
     {
-        return $this->getRecord() ?? $this->getModel();
+        return $this->actionFormModel ?? $this->getRecord() ?? $this->getModel();
     }
 
     public function hasAction(string $name): bool
