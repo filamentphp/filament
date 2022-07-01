@@ -93,7 +93,7 @@
                 @class([
                     'absolute z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-md',
                     'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
-                    'p-4 min-w-64 w-fit' => $hasDate(),
+                    'p-4 min-w-[16rem] w-fit' => $hasDate(),
                 ])
             >
                 <div class="space-y-3">
