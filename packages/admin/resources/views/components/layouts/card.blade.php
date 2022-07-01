@@ -1,6 +1,6 @@
 @props([
     'title' => null,
-    'width' => 'md'
+    'width' => 'md',
 ])
 
 <x-filament::layouts.base :title="$title">
