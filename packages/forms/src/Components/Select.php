@@ -479,9 +479,12 @@ class Select extends Field
             $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getRelationshipTitleColumnName());
 
             if ($callback) {
-                $relationshipQuery = $component->evaluate($callback, [
+                $newRelationshipQuery = $component->evaluate($callback, [
                     'query' => $relationshipQuery,
                 ]);
+
+                // If a new query object is returned, use it instead.
+                $relationshipQuery = $newRelationshipQuery ?? $relationshipQuery;
             }
 
             $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
@@ -702,12 +705,20 @@ class Select extends Field
 
     public function hasDynamicOptions(): bool
     {
-        return $this->isPreloaded();
+        if ($this->hasRelationship()) {
+            return $this->isPreloaded();
+        }
+
+        return $this->options instanceof Closure;
     }
 
     public function hasDynamicSearchResults(): bool
     {
-        return $this->getSearchResultsUsing instanceof Closure || ($this->hasRelationship() && ! $this->isPreloaded());
+        if ($this->hasRelationship()) {
+            return ! $this->isPreloaded();
+        }
+
+        return $this->getSearchResultsUsing instanceof Closure;
     }
 
     public function getActionFormModel(): Model | string | null
