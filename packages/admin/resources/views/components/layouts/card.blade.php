@@ -23,7 +23,7 @@
                 '6xl' => 'max-w-6xl',
                 '7xl' => 'max-w-7xl',
                 default => $width,
-            }
+            },
         ])>
             <div @class([
                 'p-8 space-y-4 bg-white/50 backdrop-blur-xl border border-gray-200 shadow-2xl rounded-2xl relative',
