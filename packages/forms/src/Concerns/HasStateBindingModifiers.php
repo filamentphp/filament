@@ -8,6 +8,8 @@ trait HasStateBindingModifiers
 {
     protected $stateBindingModifiers = null;
 
+    protected string $debounce = '500ms';
+
     public function reactive(): static
     {
         $this->stateBindingModifiers([]);
@@ -22,6 +24,14 @@ trait HasStateBindingModifiers
         return $this;
     }
 
+    public function debounce(string $delay='500ms'): static
+    {
+        $this->stateBindingModifiers(["debounce.$delay"]);
+        $this->debounce = $delay;
+
+        return $this;
+    }
+
     public function stateBindingModifiers(array $modifiers): static
     {
         $this->stateBindingModifiers = $modifiers;
@@ -29,12 +39,12 @@ trait HasStateBindingModifiers
         return $this;
     }
 
-    public function applyStateBindingModifiers($expression, ?string $except = null): string
+    public function applyStateBindingModifiers(string $expression): string
     {
         $modifiers = $this->getStateBindingModifiers();
 
-        if ($except && is_int($index = array_search($except, $modifiers, false))) {
-            unset($modifiers[$index]);
+        if (str_starts_with($expression, 'entangle')) {
+            return collect($modifiers)->contains('defer') ? "$expression.defer" : $expression;
         }
 
         return implode('.', array_merge([$expression], $modifiers));
@@ -60,5 +70,10 @@ trait HasStateBindingModifiers
     public function isLazy(): bool
     {
         return in_array('lazy', $this->getStateBindingModifiers(), false);
+    }
+
+    public function getDebounce(): string
+    {
+        return $this->debounce;
     }
 }
