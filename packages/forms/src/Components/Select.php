@@ -479,9 +479,12 @@ class Select extends Field
             $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getRelationshipTitleColumnName());
 
             if ($callback) {
-                $relationshipQuery = $component->evaluate($callback, [
+                $newRelationshipQuery = $component->evaluate($callback, [
                     'query' => $relationshipQuery,
                 ]);
+
+                // If a new query object is returned, use it instead.
+                $relationshipQuery = $newRelationshipQuery ?? $relationshipQuery;
             }
 
             $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
