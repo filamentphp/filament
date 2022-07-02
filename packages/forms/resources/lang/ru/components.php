@@ -4,29 +4,47 @@ return [
 
     'builder' => [
 
+        'collapsed' => 'Содержимое свернуто',
+
         'buttons' => [
 
-            'create_item' => [
-                'label' => 'Добавить к :label',
-            ],
+             'create_item' => [
+                 'label' => 'Добавить к :label',
+             ],
 
-            'create_item_between' => [
+             'create_item_between' => [
                 'label' => 'Добавить между',
             ],
 
-            'delete_item' => [
-                'label' => 'Удалить',
-            ],
+             'delete_item' => [
+                 'label' => 'Удалить',
+             ],
 
-            'move_item_down' => [
-                'label' => 'Переместить ниже',
-            ],
+             'move_item_down' => [
+                 'label' => 'Переместить вниз',
+             ],
 
-            'move_item_up' => [
-                'label' => 'Переместить выше',
-            ],
+             'move_item_up' => [
+                 'label' => 'Переместить вверх',
+             ],
 
-        ],
+             'collapse_item' => [
+                 'label' => 'Свернуть',
+             ],
+
+             'expand_item' => [
+                 'label' => 'Развернуть',
+             ],
+
+             'collapse_all' => [
+                 'label' => 'Свернуть все',
+             ],
+
+             'expand_all' => [
+                 'label' => 'Развернуть все',
+             ],
+
+         ],
 
     ],
 
@@ -77,6 +95,8 @@ return [
 
     'repeater' => [
 
+        'collapsed' => 'Содержимое свернуто',
+
         'buttons' => [
 
             'create_item' => [
@@ -88,11 +108,27 @@ return [
             ],
 
             'move_item_down' => [
-                'label' => 'Переместить ниже',
+                'label' => 'Переместить вниз',
             ],
 
             'move_item_up' => [
-                'label' => 'Переместить выше',
+                'label' => 'Переместить вверх',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Свернуть',
+            ],
+
+            'expand_item' => [
+                'label' => 'Развернуть',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Свернуть все',
+            ],
+
+            'expand_all' => [
+                'label' => 'Развернуть все',
             ],
 
         ],
@@ -138,13 +174,57 @@ return [
     ],
 
     'select' => [
+
+        'actions' => [
+
+            'create_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Создать',
+
+                    'actions' => [
+
+                        'create' => [
+                            'label' => 'Создать',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+        'loading_message' => 'Загрузка...',
+
         'no_search_results_message' => 'Нет вариантов, соответствующих вашему запросу.',
-        'placeholder' => 'Выберите опцию',
+        
+        'placeholder' => 'Выберите вариант',
+        
+        'searching_message' => 'Поиск...',
+
         'search_prompt' => 'Введите текст для поиска...',
     ],
 
     'tags_input' => [
         'placeholder' => 'Новый тег',
+    ],
+
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => 'Назад',
+            ],
+
+            'next_step' => [
+                'label' => 'Далее',
+            ],
+
+        ],
+
     ],
 
 ];

@@ -2,12 +2,22 @@
 
 return [
 
-    'direction' => 'ltr',
+     'direction' => 'ltr',
 
-    'buttons' => [
-        'logout' => [
-            'label' => 'Выход',
-        ],
-    ],
+     'buttons' => [
+
+         'dark_mode' => [
+             'label' => 'Включить темный режим',
+         ],
+
+         'light_mode' => [
+             'label' => 'Включить светлый режим',
+         ],
+
+         'logout' => [
+             'label' => 'Выйти',
+         ],
+
+     ],
 
 ];
