@@ -2,32 +2,32 @@
 
 return [
 
-    'single' => [
+     'single' => [
 
-        'label' => 'Создать',
+         'label' => 'Создать',
 
-        'modal' => [
+         'modal' => [
 
-            'heading' => 'Создать :label',
+             'heading' => 'Создать :label',
 
-            'actions' => [
+             'actions' => [
 
-                'create' => [
-                    'label' => 'Создать',
-                ],
+                 'create' => [
+                     'label' => 'Создать',
+                 ],
 
-                'create_another' => [
-                    'label' => 'Создать и Создать еще',
-                ],
+                 'create_another' => [
+                     'label' => 'Создать и создать еще один',
+                 ],
 
-            ],
+             ],
 
-        ],
+         ],
 
-        'messages' => [
-            'created' => 'Создано',
-        ],
+         'messages' => [
+             'created' => 'Создано',
+         ],
 
-    ],
+     ],
 
 ];
