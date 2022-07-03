@@ -53,6 +53,10 @@ return [
             'label' => 'Open actions',
         ],
 
+        'toggle_columns' => [
+            'label' => 'Переключить столбцы',
+        ],
+
     ],
 
     'empty' => [
@@ -67,6 +71,18 @@ return [
                 'label' => 'Сбросить фильтры',
             ],
 
+            'close' => [
+                'label' => 'Закрыть',
+            ],
+
+        ],
+
+        'multi_select' => [
+            'placeholder' => 'Все',
+        ],
+
+        'select' => [
+            'placeholder' => 'Все',
         ],
 
     ],
