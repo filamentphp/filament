@@ -4,8 +4,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.0",
-        "ext-intl": "*",
-        "tgalopin/html-sanitizer": "^1.5"
+        "ext-intl": "*"
     },
     "require-dev": {
         "akaunting/laravel-money": "^1.2|^2.0|^3.0",
@@ -25,7 +24,8 @@
         "spatie/laravel-package-tools": "^1.9",
         "spatie/laravel-ray": "^1.29",
         "spatie/laravel-tags": "^4.2",
-        "symplify/monorepo-builder": "^10.0"
+        "symplify/monorepo-builder": "^10.0",
+        "tgalopin/html-sanitizer": "^1.5"
     },
     "autoload": {
         "files": [
