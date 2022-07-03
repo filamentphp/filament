@@ -21,7 +21,7 @@ class SpatieTagsInput extends TagsInput
             }
 
             $type = $component->getType();
-            $tags = $record->tagsWithType($type);
+            $tags = $record->load('tags')->tagsWithType($type);
 
             $component->state($tags->pluck('name')->toArray());
         });

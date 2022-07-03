@@ -33,7 +33,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         static::authorizeResourceAccess();
     }
 
-    public function getBreadcrumb(): string
+    public function getBreadcrumb(): ?string
     {
         return static::$breadcrumb ?? __('filament::resources/pages/list-records.breadcrumb');
     }

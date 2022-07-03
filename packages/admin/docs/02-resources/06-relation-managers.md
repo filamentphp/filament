@@ -146,14 +146,14 @@ CreateAction::make()
 
 ### Customizing the creation process
 
-You can tweak how the record is created using the `process()` method:
+You can tweak how the record is created using the `using()` method:
 
 ```php
 use Filament\Tables\Actions\CreateAction;
 use Illuminate\Database\Eloquent\Model;
 
 CreateAction::make()
-    ->process(function (array $data): Model {
+    ->using(function (array $data): Model {
         return static::getModel()::create($data);
     })
 ```
@@ -264,14 +264,14 @@ EditAction::make()
 
 ### Customizing the saving process
 
-You can tweak how the record is updated using the `process()` method:
+You can tweak how the record is updated using the `using()` method:
 
 ```php
 use Filament\Tables\Actions\EditAction;
 use Illuminate\Database\Eloquent\Model;
 
 EditAction::make()
-    ->process(function (Model $record, array $data): Model {
+    ->using(function (Model $record, array $data): Model {
         $record->update($data);
 
         return $record;
