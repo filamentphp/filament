@@ -6,7 +6,6 @@ use Closure;
 use Filament\Support\Actions\Modal\Actions\Action as ModalAction;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\HtmlString;
 
 trait CanOpenModal
 {
