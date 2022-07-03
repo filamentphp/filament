@@ -2,8 +2,6 @@
 
 namespace Filament\Support;
 
-use HtmlSanitizer\Sanitizer;
-use HtmlSanitizer\SanitizerInterface;
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
 
