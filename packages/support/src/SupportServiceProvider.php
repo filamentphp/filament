@@ -52,7 +52,8 @@ class SupportServiceProvider extends PackageServiceProvider
         });
 
         Stringable::macro('sanitizeHtml', function (): Stringable {
-            return new static(Str::sanitizeHtml($this->value));
+            /** @phpstan-ignore-next-line */
+            return new Stringable(Str::sanitizeHtml($this->value));
         });
     }
 }
