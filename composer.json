@@ -4,7 +4,8 @@
     "license": "MIT",
     "require": {
         "php": "^8.0",
-        "ext-intl": "*"
+        "ext-intl": "*",
+        "tgalopin/html-sanitizer": "^1.5"
     },
     "require-dev": {
         "akaunting/laravel-money": "^1.2|^2.0|^3.0",
