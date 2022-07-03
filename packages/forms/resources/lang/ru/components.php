@@ -199,9 +199,9 @@ return [
         'loading_message' => 'Загрузка...',
 
         'no_search_results_message' => 'Нет вариантов, соответствующих вашему запросу.',
-        
+
         'placeholder' => 'Выберите вариант',
-        
+
         'searching_message' => 'Поиск...',
 
         'search_prompt' => 'Введите текст для поиска...',
