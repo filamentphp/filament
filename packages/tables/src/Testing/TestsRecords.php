@@ -3,11 +3,7 @@
 namespace Filament\Tables\Testing;
 
 use Closure;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Columns\Column;
 use Filament\Tables\Contracts\HasTable;
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Testing\Assert;
