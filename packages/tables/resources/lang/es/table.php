@@ -5,7 +5,7 @@ return [
     'fields' => [
 
         'search_query' => [
-            'label' => 'Buscar',
+            'label' => 'Búsqueda',
             'placeholder' => 'Buscar',
         ],
 
@@ -53,28 +53,31 @@ return [
             'label' => 'Abrir acciones',
         ],
 
+        'toggle_columns' => [
+            'label' => 'Alternar columnas',
+        ],
+
     ],
 
-    'actions' => [
 
-        'modal' => [
+    'bulk_actions' => [
 
-            'requires_confirmation_subheading' => '¿Estás seguro de que quieres hacer esto?',
+        'force_delete' => [
 
-            'buttons' => [
+            'label' => 'Forzar eliminación',
 
-                'cancel' => [
-                    'label' => 'Cancelar',
-                ],
+            'messages' => [
+                'deleted' => 'Registros eliminados',
+            ],
 
-                'confirm' => [
-                    'label' => 'Confirmar',
-                ],
+        ],
 
-                'submit' => [
-                    'label' => 'Enviar',
-                ],
+        'restore' => [
 
+            'label' => 'Restaurar',
+
+            'messages' => [
+                'restored' => 'Registros restaurados',
             ],
 
         ],
@@ -105,6 +108,18 @@ return [
 
         'select' => [
             'placeholder' => 'Todos',
+        ],
+
+        'trashed' => [
+
+            'label' => 'Registros eliminados',
+
+            'only_trashed' => 'Solo registros eliminados',
+
+            'with_trashed' => 'Con resgistros eliminados',
+
+            'without_trashed' => 'Sin registros eliminados',
+
         ],
 
     ],

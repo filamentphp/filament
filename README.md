@@ -3,13 +3,13 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/laravel-filament/filament/actions"><img alt="Tests passing" src="https://img.shields.io/badge/Tests-passing-green?style=for-the-badge&logo=github"></a>
+    <a href="https://github.com/filamentphp/filament/actions"><img alt="Tests passing" src="https://img.shields.io/badge/Tests-passing-green?style=for-the-badge&logo=github"></a>
     <a href="https://laravel.com"><img alt="Laravel v8.x" src="https://img.shields.io/badge/Laravel-v8.x-FF2D20?style=for-the-badge&logo=laravel"></a>
     <a href="https://laravel-livewire.com"><img alt="Livewire v2.x" src="https://img.shields.io/badge/Livewire-v2.x-FB70A9?style=for-the-badge"></a>
     <a href="https://php.net"><img alt="PHP 8.0" src="https://img.shields.io/badge/PHP-8.0-777BB4?style=for-the-badge&logo=php"></a>
 </p>
 
-Filament is a collection of tools for rapidly building beautiful TALL stack interfaces, designed for humans.
+Admin panel, form builder and table builder for Laravel. Built with the TALL stack. Designed for humans.
 
 ## Packages
 
@@ -67,25 +67,30 @@ If you want to contribute to Filament packages, you may want to test it in a rea
 Install the packages in your app's `composer.json`:
 
 ```json
-"require": {
-    "filament/filament": "dev-fix/error-message as 2.x-dev",
-    "filament/forms": "dev-fix/error-message as 2.x-dev",
-    "filament/tables": "dev-fix/error-message as 2.x-dev",
-},
-"repositories": [
-    {
-        "type": "path",
-        "url": "filament/packages/*"
-    }
-]
+{
+    ...
+    "require": {
+        "filament/filament": "dev-fix/error-message as 2.x-dev",
+        "filament/forms": "dev-fix/error-message as 2.x-dev",
+        "filament/support": "dev-fix/error-message as 2.x-dev",
+        "filament/tables": "dev-fix/error-message as 2.x-dev"
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "filament/packages/*"
+        }
+    ],
+    ...
+}
 ```
 
 Now, run `composer update`.
 
 ## Need Help?
 
-🐞 If you spot a bug, please [submit a detailed issue](https://github.com/laravel-filament/filament/issues/new), and wait for assistance.
+🐞 If you spot a bug, please [submit a detailed issue](https://github.com/filamentphp/filament/issues/new), and wait for assistance.
 
-🤔 If you have a question or feature request, please [start a new discussion](https://github.com/laravel-filament/filament/discussions/new). We also have a [Discord community](https://discord.gg/cpqnMTHZja). For quick help, ask questions in the appropriate package help channel.
+🤔 If you have a question or feature request, please [start a new discussion](https://github.com/filamentphp/filament/discussions/new). We also have a [Discord community](https://discord.gg/cpqnMTHZja). For quick help, ask questions in the appropriate package help channel.
 
-🔐 If you discover a vulnerability, please review our [security policy](https://github.com/laravel-filament/filament/blob/2.x/SECURITY.md).
+🔐 If you discover a vulnerability, please review our [security policy](https://github.com/filamentphp/filament/blob/2.x/SECURITY.md).

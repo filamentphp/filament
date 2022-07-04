@@ -14,6 +14,6 @@ class Settings extends Page
             $this->redirect('/');
         }
 
-        $this->notify('success', 'Foobar!');
+        $this->notify('success', 'Saved!');
     }
 }

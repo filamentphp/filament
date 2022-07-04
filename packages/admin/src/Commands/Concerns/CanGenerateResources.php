@@ -26,9 +26,11 @@ trait CanGenerateResources
                 continue;
             }
 
-            if (Str::of($column->getName())->endsWith([
-                '_at',
-                '_token',
+            if (Str::of($column->getName())->is([
+                'created_at',
+                'deleted_at',
+                'updated_at',
+                '*_token',
             ])) {
                 continue;
             }
@@ -181,7 +183,7 @@ trait CanGenerateResources
 
     protected function getModelTable(string $model): ?Table
     {
-        if (! class_exists($model)) {
+        if ((! class_exists($model)) && (! class_exists($model = "App\\Models\\{$model}"))) {
             return null;
         }
 

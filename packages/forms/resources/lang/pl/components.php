@@ -4,14 +4,12 @@ return [
 
     'builder' => [
 
+        'collapsed' => 'Treść zwinięta',
+
         'buttons' => [
 
             'create_item' => [
                 'label' => 'Dodaj do :label',
-            ],
-
-            'create_item_between' => [
-                'label' => 'Dodaj pomiędzy',
             ],
 
             'delete_item' => [
@@ -24,6 +22,22 @@ return [
 
             'move_item_up' => [
                 'label' => 'Przesuń w górę',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Zwiń',
+            ],
+
+            'expand_item' => [
+                'label' => 'Rozwiń',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Zwiń wszystko',
+            ],
+
+            'expand_all' => [
+                'label' => 'Rozwiń wszystko',
             ],
 
         ],
@@ -75,13 +89,9 @@ return [
 
     ],
 
-    'multi_select' => [
-        'no_search_results_message' => 'Żadne wyniki nie pasują do Twojego wyszukiwania.',
-        'placeholder' => 'Wybierz z listy',
-        'search_prompt' => 'Zacznij pisać aby wyszukać...',
-    ],
-
     'repeater' => [
+
+        'collapsed' => 'Treść zwinięta',
 
         'buttons' => [
 
@@ -99,6 +109,22 @@ return [
 
             'move_item_up' => [
                 'label' => 'Przesuń w górę',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Zwiń',
+            ],
+
+            'expand_item' => [
+                'label' => 'Rozwiń',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Zwiń wszystko',
+            ],
+
+            'expand_all' => [
+                'label' => 'Rozwiń wszystko',
             ],
 
         ],
@@ -144,13 +170,64 @@ return [
     ],
 
     'select' => [
+
+        'actions' => [
+
+            'create_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Utwórz',
+
+                    'actions' => [
+
+                        'create' => [
+                            'label' => 'Utwórz',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+        'boolean' => [
+            'true' => 'Tak',
+            'false' => 'Nie',
+        ],
+
+        'loading_message' => 'Wczytywanie...',
+
         'no_search_results_message' => 'Żadne wyniki nie pasują do Twojego wyszukiwania.',
+
         'placeholder' => 'Wybierz z listy',
+
+        'searching_message' => 'Szukanie...',
+
         'search_prompt' => 'Zacznij pisać aby wyszukać...',
+
     ],
 
     'tags_input' => [
         'placeholder' => 'Nowy tag',
+    ],
+
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => 'Poprzedni',
+            ],
+
+            'next_step' => [
+                'label' => 'Następny',
+            ],
+
+        ],
+
     ],
 
 ];

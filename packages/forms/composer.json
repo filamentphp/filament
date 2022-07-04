@@ -2,15 +2,16 @@
     "name": "filament/forms",
     "description": "Effortlessly build TALL-powered forms.",
     "license": "MIT",
-    "homepage": "https://github.com/laravel-filament/filament",
+    "homepage": "https://github.com/filamentphp/filament",
     "support": {
-        "issues": "https://github.com/laravel-filament/filament/issues",
-        "source": "https://github.com/laravel-filament/filament"
+        "issues": "https://github.com/filamentphp/filament/issues",
+        "source": "https://github.com/filamentphp/filament"
     },
     "require": {
         "php": "^8.0",
         "blade-ui-kit/blade-heroicons": "^1.2",
         "danharrin/date-format-converter": "^0.2",
+        "filament/support": "self.version",
         "illuminate/console": "^8.6|^9.0",
         "illuminate/contracts": "^8.6|^9.0",
         "illuminate/database": "^8.6|^9.0",

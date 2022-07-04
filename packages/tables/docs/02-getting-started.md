@@ -121,7 +121,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
     protected function getTableActions(): array
     {
         return [ // [tl! collapse:start]
-            Tables\Actions\LinkAction::make('edit')
+            Tables\Actions\Action::make('edit')
                 ->url(fn (Post $record): string => route('posts.edit', $record)),
         ]; // [tl! collapse:end]
     }
@@ -250,7 +250,6 @@ protected function getTableQueryStringIdentifier(): string
 You may use simple pagination by overriding `paginateTableQuery()` method on your Livewire component:
 
 ```php
-
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -370,10 +369,11 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
     protected function getTableEmptyStateActions(): array
     {
         return [
-            Tables\Actions\ButtonAction::make('create')
+            Tables\Actions\Action::make('create')
                 ->label('Create post')
                 ->url(route('posts.create'))
-                ->icon('heroicon-o-plus'),
+                ->icon('heroicon-o-plus')
+                ->button(),
         ];
     } // [tl! focus:end]
     

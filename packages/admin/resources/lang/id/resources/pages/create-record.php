@@ -18,8 +18,8 @@ return [
                 'label' => 'Buat',
             ],
 
-            'create_and_create_another' => [
-                'label' => 'Buat & Buat lainnya',
+            'create_another' => [
+                'label' => 'Buat & buat lainnya',
             ],
 
         ],
@@ -27,7 +27,7 @@ return [
     ],
 
     'messages' => [
-        'created' => 'Telah dibuat',
+        'created' => 'Data berhasil dibuat',
     ],
 
 ];

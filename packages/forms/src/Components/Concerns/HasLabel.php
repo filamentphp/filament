@@ -3,13 +3,13 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
-use Illuminate\Support\HtmlString;
+use Illuminate\Contracts\Support\Htmlable;
 
 trait HasLabel
 {
     protected bool | Closure $isLabelHidden = false;
 
-    protected string | HtmlString | Closure | null $label = null;
+    protected string | Htmlable | Closure | null $label = null;
 
     public function disableLabel(bool | Closure $condition = true): static
     {
@@ -18,14 +18,14 @@ trait HasLabel
         return $this;
     }
 
-    public function label(string | HtmlString | Closure | null $label): static
+    public function label(string | Htmlable | Closure | null $label): static
     {
         $this->label = $label;
 
         return $this;
     }
 
-    public function getLabel(): string | HtmlString | null
+    public function getLabel(): string | Htmlable | null
     {
         return $this->evaluate($this->label);
     }

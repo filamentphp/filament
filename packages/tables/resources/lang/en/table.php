@@ -59,32 +59,6 @@ return [
 
     ],
 
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Are you sure you would like to do this?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Cancel',
-                ],
-
-                'confirm' => [
-                    'label' => 'Confirm',
-                ],
-
-                'submit' => [
-                    'label' => 'Submit',
-                ],
-
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'No records found',
     ],
@@ -109,6 +83,18 @@ return [
 
         'select' => [
             'placeholder' => 'All',
+        ],
+
+        'trashed' => [
+
+            'label' => 'Deleted records',
+
+            'only_trashed' => 'Only deleted records',
+
+            'with_trashed' => 'With deleted records',
+
+            'without_trashed' => 'Without deleted records',
+
         ],
 
     ],

@@ -2,7 +2,7 @@
 
 namespace Filament\Forms\Components;
 
-use Illuminate\Support\HtmlString;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 
 class Placeholder extends Component
@@ -24,7 +24,7 @@ class Placeholder extends Component
     public static function make(string $name): static
     {
         $static = app(static::class, ['name' => $name]);
-        $static->setUp();
+        $static->configure();
 
         return $static;
     }
@@ -53,7 +53,7 @@ class Placeholder extends Component
         return parent::getId() ?? $this->getStatePath();
     }
 
-    public function getLabel(): string | HtmlString | null
+    public function getLabel(): string | Htmlable | null
     {
         return parent::getLabel() ?? (string) Str::of($this->getName())
             ->kebab()

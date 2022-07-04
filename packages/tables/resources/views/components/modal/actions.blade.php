@@ -1,14 +1,7 @@
-@props([
-    'align' => 'left',
-    'fullWidth' => false,
-])
-
-<div {{ $attributes->class([
-    'filament-tables-modal-actions',
-    'flex flex-wrap items-center gap-4' => ! $fullWidth,
-    'justify-end' => (! $fullWidth) && ($align === 'right'),
-    'justify-center' => (! $fullWidth) && ($align === 'center'),
-    'grid gap-2 grid-cols-[repeat(auto-fit,minmax(0,1fr))]' => $fullWidth,
-]) }}>
+<x-filament-support::modal.actions
+    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)"
+    :align="config('tables.layout.actions.modal.actions.alignment')"
+    :dark-mode="config('tables.dark_mode')"
+>
     {{ $slot }}
-</div>
+</x-filament-support::modal.actions>

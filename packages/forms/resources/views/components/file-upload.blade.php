@@ -33,21 +33,31 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
+    @php
+        $imageCropAspectRatio = $getImageCropAspectRatio();
+        $imageResizeTargetHeight = $getImageResizeTargetHeight();
+        $imageResizeTargetWidth = $getImageResizeTargetWidth();
+        $imageResizeMode = $getImageResizeMode();
+        $shouldTransformImage = $imageCropAspectRatio || $imageResizeTargetHeight || $imageResizeTargetWidth;
+    @endphp
     <div
         x-data="fileUploadFormComponent({
             acceptedFileTypes: {{ json_encode($getAcceptedFileTypes()) }},
-            canReorder: {{ $canReorder() ? 'true' : 'false' }},
+            canDownload: {{ $canDownload() ? 'true' : 'false' }},
             canPreview: {{ $canPreview() ? 'true' : 'false' }},
+            canReorder: {{ $canReorder() ? 'true' : 'false' }},
             deleteUploadedFileUsing: async (fileKey) => {
                 return await $wire.deleteUploadedFile('{{ $getStatePath() }}', fileKey)
             },
             getUploadedFileUrlsUsing: async () => {
                 return await $wire.getUploadedFileUrls('{{ $getStatePath() }}')
             },
-            imageCropAspectRatio: {{ ($aspectRatio = $getImageCropAspectRatio()) ? "'{$aspectRatio}'" : 'null' }},
+            imageCropAspectRatio: {{ $imageCropAspectRatio ? "'{$imageCropAspectRatio}'" : 'null' }},
             imagePreviewHeight: {{ ($height = $getImagePreviewHeight()) ? "'{$height}'" : 'null' }},
-            imageResizeTargetHeight: {{ ($height = $getImageResizeTargetHeight()) ? "'{$height}'" : 'null' }},
-            imageResizeTargetWidth: {{ ($width = $getImageResizeTargetWidth()) ? "'{$width}'" : 'null' }},
+            imageResizeMode: {{ $imageResizeMode ? "'{$imageResizeMode}'" : 'null' }},
+            imageResizeTargetHeight: {{ $imageResizeTargetHeight ? "'{$imageResizeTargetHeight}'" : 'null' }},
+            imageResizeTargetWidth: {{ $imageResizeTargetWidth ? "'{$imageResizeTargetWidth}'" : 'null' }},
+            isAvatar: {{ $isAvatar() ? 'true' : 'false' }},
             loadingIndicatorPosition: '{{ $getLoadingIndicatorPosition() }}',
             panelAspectRatio: {{ ($aspectRatio = $getPanelAspectRatio()) ? "'{$aspectRatio}'" : 'null' }},
             panelLayout: {{ ($layout = $getPanelLayout()) ? "'{$layout}'" : 'null' }},
@@ -62,10 +72,11 @@
                 return await $wire.reorderUploadedFiles('{{ $getStatePath() }}', files)
             },
             shouldAppendFiles: {{ $shouldAppendFiles() ? 'true' : 'false' }},
+            shouldTransformImage: {{ $shouldTransformImage ? 'true' : 'false' }},
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
             uploadButtonPosition: '{{ $getUploadButtonPosition() }}',
             uploadProgressIndicatorPosition: '{{ $getUploadProgressIndicatorPosition() }}',
-            uploadUsing: async (fileKey, file, success, error, progress) => {
+            uploadUsing: (fileKey, file, success, error, progress) => {
                 $wire.upload(`{{ $getStatePath() }}.${fileKey}`, file, () => {
                     success(fileKey)
                 }, error, progress)

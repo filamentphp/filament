@@ -4,14 +4,12 @@ return [
 
     'builder' => [
 
+        'collapsed' => 'İçerik daraltıldı',
+
         'buttons' => [
 
             'create_item' => [
                 'label' => ':label kaynağına ekle',
-            ],
-
-            'create_item_between' => [
-                'label' => 'Arasına ekle',
             ],
 
             'delete_item' => [
@@ -24,6 +22,22 @@ return [
 
             'move_item_up' => [
                 'label' => 'Yukarı taşı',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Daralt',
+            ],
+
+            'expand_item' => [
+                'label' => 'Genişlet',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Tümünü daralt',
+            ],
+
+            'expand_all' => [
+                'label' => 'Tümünü genişlet',
             ],
 
         ],
@@ -75,13 +89,9 @@ return [
 
     ],
 
-    'multi_select' => [
-        'no_search_results_message' => 'Aramanızla eşleşen seçenek yok.',
-        'placeholder' => 'Bir seçenek seçin',
-        'search_prompt' => 'Aramak için yazmaya başlayın...',
-    ],
-
     'repeater' => [
+
+        'collapsed' => 'İçerik daraltıldı',
 
         'buttons' => [
 
@@ -99,6 +109,22 @@ return [
 
             'move_item_up' => [
                 'label' => 'Yukarı taşı',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Daralt',
+            ],
+
+            'expand_item' => [
+                'label' => 'Genişlet',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Tümünü daralt',
+            ],
+
+            'expand_all' => [
+                'label' => 'Tümünü genişlet',
             ],
 
         ],
@@ -144,13 +170,64 @@ return [
     ],
 
     'select' => [
+
+        'actions' => [
+
+            'create_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Oluştur',
+
+                    'actions' => [
+
+                        'create' => [
+                            'label' => 'Oluştur',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+        'boolean' => [
+            'true' => 'Evet',
+            'false' => 'Hayır',
+        ],
+
+        'loading_message' => 'Yükleniyor...',
+
         'no_search_results_message' => 'Aramanızla eşleşen seçenek yok.',
+
         'placeholder' => 'Bir seçenek seçin',
+
+        'searching_message' => 'Aranıyor...',
+
         'search_prompt' => 'Aramak için yazmaya başlayın...',
+
     ],
 
     'tags_input' => [
         'placeholder' => 'Yeni etiket',
+    ],
+
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => 'Geri',
+            ],
+
+            'next_step' => [
+                'label' => 'İleri',
+            ],
+
+        ],
+
     ],
 
 ];

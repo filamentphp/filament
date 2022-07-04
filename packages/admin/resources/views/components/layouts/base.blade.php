@@ -1,3 +1,4 @@
+
 @props([
     'title' => null,
 ])
@@ -6,7 +7,7 @@
 <html
     lang="{{ str_replace('_', '-', app()->getLocale()) }}"
     dir="{{ __('filament::layout.direction') ?? 'ltr' }}"
-    class="filament antialiased bg-gray-100 js-focus-visible"
+    class="antialiased bg-gray-100 filament js-focus-visible"
 >
     <head>
         {{ \Filament\Facades\Filament::renderHook('head.start') }}
@@ -23,19 +24,22 @@
             <link rel="icon" href="{{ $favicon }}">
         @endif
 
-        <title>{{ $title ? "{$title} - " : null }} {{ config('app.name') }}</title>
+        <title>{{ $title ? "{$title} - " : null }} {{ config('filament.brand') }}</title>
 
         <style>
-            [x-cloak=""], [x-cloak="1"] { display: none !important; }
+            [x-cloak=""], [x-cloak="x-cloak"], [x-cloak="1"] { display: none !important; }
             @media (max-width: 1023px) { [x-cloak="-lg"] { display: none !important; } }
             @media (min-width: 1024px) { [x-cloak="lg"] { display: none !important; } }
+            :root { --sidebar-width: {{ config('filament.layout.sidebar.width') ?? '20rem' }}; }
         </style>
 
         @livewireStyles
 
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap" rel="stylesheet" />
+        @if (filled($fontsUrl = config('filament.google_fonts')))
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="{{ $fontsUrl }}" rel="stylesheet" />
+        @endif
 
         @foreach (\Filament\Facades\Filament::getStyles() as $name => $path)
             @if (Str::of($path)->startsWith(['http://', 'https://']))

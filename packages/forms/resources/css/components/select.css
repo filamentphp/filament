@@ -1,0 +1,248 @@
+.choices {
+    @apply relative overflow-hidden;
+}
+
+.choices:focus {
+    @apply outline-none;
+}
+
+.choices:last-child {
+    @apply mb-0;
+}
+
+.choices.is-open {
+    @apply overflow-visible;
+}
+
+.choices.is-disabled .choices__inner,
+.choices.is-disabled .choices__input {
+    @apply select-none;
+}
+
+.choices.is-disabled .choices__item {
+    @apply cursor-not-allowed pointer-events-none;
+}
+
+.choices [hidden] {
+    display: none !important;
+}
+
+.choices[data-type*=select-one] {
+    @apply cursor-pointer;
+}
+
+.choices[data-type*=select-one] .choices__input {
+    @apply block w-full p-2 border-b m-0;
+}
+
+.dark .choices[data-type*=select-one] .choices__input {
+    @apply bg-gray-700;
+}
+
+.choices[data-type*=select-multiple] .choices__inner {
+    @apply cursor-text;
+}
+
+.choices__inner {
+    @apply py-2 px-3 inline-block align-top w-full bg-white bg-no-repeat border border-gray-300 transition duration-75 rounded-lg shadow-sm;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+    background-position: right .5rem center;
+    background-size: 1.5em 1.5em;
+}
+
+.dark .choices__inner {
+    @apply border-gray-600 bg-gray-700 text-white;
+}
+
+[dir=rtl] .choices__inner {
+    background-position: left .5rem center;
+}
+
+.is-focused .choices__inner, .is-open .choices__inner {
+    @apply border-primary-600 ring-1 ring-inset ring-primary-600;
+}
+
+.choices__list {
+    @apply m-0 pl-0 list-none;
+}
+
+.choices__list--single {
+    @apply pr-12 inline-block w-full;
+}
+
+[dir=rtl] .choices__list--single {
+    @apply pl-12 pr-0;
+}
+
+.choices__list--single .choices__item {
+    @apply w-full;
+}
+
+.choices__list--multiple {
+    @apply pr-6 flex flex-wrap gap-1;
+}
+
+[dir=rtl] .choices__list--multiple {
+    @apply pl-6 pr-0;
+}
+
+.choices__list--multiple:not(:empty) {
+    @apply flex mb-1;
+}
+
+.choices__list--multiple .choices__item {
+    @apply inline-flex gap-2 items-center justify-between cursor-pointer break-all box-border px-2 py-0.5 text-sm font-medium tracking-tight text-primary-700 rounded-lg bg-primary-500/10 space-x-1;
+}
+
+.dark .choices__list--multiple .choices__item {
+    @apply text-primary-500;
+}
+
+[dir=rtl] .choices__list--multiple .choices__item {
+    @apply break-normal space-x-reverse;
+}
+
+.choices__list--dropdown, .choices__list[aria-expanded] {
+    @apply mt-2 rounded-lg invisible z-[1] absolute w-full bg-white border border-gray-300 shadow-sm top-full overflow-hidden break-words will-change-[visibility];
+}
+
+.dark .choices__list--dropdown, .dark .choices__list[aria-expanded] {
+    @apply bg-gray-700 border-gray-600;
+}
+
+.is-active.choices__list--dropdown, .is-active.choices__list[aria-expanded] {
+    @apply visible z-10;
+}
+
+.choices__list--dropdown .choices__list, .choices__list[aria-expanded] .choices__list {
+    @apply relative max-h-60 overflow-auto will-change-scroll;
+}
+
+.choices__list--dropdown .choices__item, .choices__list[aria-expanded] .choices__item {
+    @apply relative px-3 py-2;
+}
+
+[dir=rtl] .choices__list--dropdown .choices__item,
+[dir=rtl] .choices__list[aria-expanded] .choices__item {
+    @apply text-right;
+}
+
+.choices__list--dropdown .choices__item--selectable.is-highlighted, .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
+    @apply bg-primary-600 text-white;
+}
+
+.choices__list--dropdown .choices__item--selectable.is-highlighted::after, .choices__list[aria-expanded] .choices__item--selectable.is-highlighted::after {
+    @apply opacity-70;
+}
+
+.choices__item {
+    @apply cursor-default;
+}
+
+.choices__item--selectable {
+    @apply cursor-pointer;
+}
+
+.choices__item--disabled {
+    @apply cursor-not-allowed pointer-events-none select-none opacity-70;
+}
+
+.choices__placeholder {
+    @apply opacity-70;
+}
+
+.choices__button {
+    @apply appearance-none border-0 bg-transparent bg-no-repeat bg-center cursor-pointer;
+    text-indent: -9999px;
+}
+
+.choices__button:focus {
+    @apply outline-none;
+}
+
+.choices[data-type*=select-one] .choices__button {
+    @apply p-0 absolute right-0 mr-9 h-4 w-4 opacity-60;
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjMDAwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==");
+    background-size: 0.7em 0.7em;
+    top: calc(50% - 0.55em);
+}
+
+.dark .choices[data-type*=select-one] .choices__button {
+    @apply opacity-30;
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==");
+}
+
+[dir=rtl] .choices[data-type*=select-one] .choices__button {
+    @apply left-0 right-auto ml-9 mr-0;
+}
+
+.choices[data-type*=select-one] .choices__button:hover,
+.choices[data-type*=select-one] .choices__button:focus {
+    @apply opacity-75;
+}
+
+.dark .choices[data-type*=select-one] .choices__button:hover,
+.dark .choices[data-type*=select-one] .choices__button:focus {
+    @apply opacity-60;
+}
+
+.choices[data-type*=select-one] .choices__item[data-value=""] .choices__button {
+    @apply hidden;
+}
+
+.choices[data-type*=select-multiple] .choices__button {
+    @apply text-primary-700 inline-block w-3 h-3 opacity-60;
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjMDAwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==");
+    background-size: 0.6em 0.6em;
+}
+
+.dark .choices[data-type*=select-multiple] .choices__button {
+    @apply opacity-75;
+    background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==");
+}
+
+.choices[data-type*=select-multiple] .choices__button:hover,
+.choices[data-type*=select-multiple] .choices__button:focus {
+    @apply opacity-75;
+}
+
+.dark .choices[data-type*=select-multiple] .choices__button:hover,
+.dark .choices[data-type*=select-multiple] .choices__button:focus {
+    @apply opacity-100;
+}
+
+/* !important is used to override default Tailwind input styling */
+
+.choices__list--dropdown .choices__input {
+    padding: 0.5rem 0.75rem !important;
+    border-top-width: 0 !important;
+    border-left-width: 0 !important;
+    border-bottom-width: 1px !important;
+    border-right-width: 0 !important;
+    border-color: rgb(209 213 219) !important;
+}
+
+.dark .choices__list--dropdown .choices__input {
+    @apply placeholder-gray-300;
+    border-color: rgb(75 85 99) !important;
+}
+
+.choices__input {
+    @apply inline-block border-0 max-w-full;
+    border-color: transparent !important;
+    background-color: transparent !important;
+    padding: 0 !important;
+}
+
+.choices__input:focus {
+    outline-color: transparent !important;
+    box-shadow: var(--tw-ring-inset) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;
+}
+
+.choices__input::-webkit-search-decoration, .choices__input::-webkit-search-cancel-button, .choices__input::-webkit-search-results-button, .choices__input::-webkit-search-results-decoration {
+    @apply hidden;
+}
+
+.choices__input::-ms-clear, .choices__input::-ms-reveal {
+    @apply hidden w-0 h-0;
+}

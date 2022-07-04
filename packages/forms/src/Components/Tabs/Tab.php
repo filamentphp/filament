@@ -19,7 +19,7 @@ class Tab extends Component implements CanConcealComponents
     public static function make(string $label): static
     {
         $static = app(static::class, ['label' => $label]);
-        $static->setUp();
+        $static->configure();
 
         return $static;
     }
@@ -27,5 +27,15 @@ class Tab extends Component implements CanConcealComponents
     public function getId(): string
     {
         return $this->getContainer()->getParentComponent()->getId() . '-' . parent::getId() . '-tab';
+    }
+
+    public function getColumnsConfig(): array
+    {
+        return $this->columns ?? $this->getContainer()->getColumnsConfig();
+    }
+
+    public function canConcealComponents(): bool
+    {
+        return true;
     }
 }

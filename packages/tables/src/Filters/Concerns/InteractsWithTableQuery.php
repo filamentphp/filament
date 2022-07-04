@@ -24,8 +24,17 @@ trait InteractsWithTableQuery
         }
 
         $callback = $this->modifyQueryUsing;
-        $callback($query, $data);
+        $this->evaluate($callback, [
+            'data' => $data,
+            'query' => $query,
+            'state' => $data,
+        ]);
 
+        return $query;
+    }
+
+    public function applyToBaseQuery(Builder $query, array $data = []): Builder
+    {
         return $query;
     }
 

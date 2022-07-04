@@ -2,39 +2,41 @@
 
 namespace Filament\Tables\Filters;
 
-use Illuminate\Support\Traits\Conditionable;
-use Illuminate\Support\Traits\Macroable;
-use Illuminate\Support\Traits\Tappable;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Toggle;
 
-class Filter
+class Filter extends BaseFilter
 {
-    use Concerns\BelongsToTable;
-    use Concerns\CanBeHidden;
-    use Concerns\CanSpanColumns;
-    use Concerns\EvaluatesClosures;
-    use Concerns\HasDefaultState;
-    use Concerns\HasFormSchema;
-    use Concerns\HasLabel;
-    use Concerns\HasName;
-    use Concerns\InteractsWithTableQuery;
-    use Conditionable;
-    use Macroable;
-    use Tappable;
+    public string $formComponent = Checkbox::class;
 
-    final public function __construct(string $name)
+    public function toggle(): static
     {
-        $this->name($name);
+        $this->formComponent(Toggle::class);
+
+        return $this;
     }
 
-    public static function make(string $name): static
+    public function checkbox(): static
     {
-        $static = app(static::class, ['name' => $name]);
-        $static->setUp();
+        $this->formComponent(Checkbox::class);
 
-        return $static;
+        return $this;
     }
 
-    protected function setUp(): void
+    public function formComponent(string $component): static
     {
+        $this->formComponent = $component;
+
+        return $this;
+    }
+
+    public function getFormSchema(): array
+    {
+        return $this->evaluate($this->formSchema) ?? [
+            $this->formComponent::make('isActive')
+                ->label($this->getLabel())
+                ->default($this->getDefaultState())
+                ->columnSpan($this->getColumnSpan()),
+        ];
     }
 }

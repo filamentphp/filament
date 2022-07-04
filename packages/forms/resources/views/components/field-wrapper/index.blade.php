@@ -39,7 +39,7 @@
 
                 @if ($hint || $hintIcon)
                     <x-forms::field-wrapper.hint :icon="$hintIcon">
-                        {!! filled($hint) ? \Illuminate\Support\Str::markdown($hint) : null !!}
+                        {!! filled($hint) ? \Illuminate\Support\Str::of($hint)->markdown()->sanitizeHtml() : null !!}
                     </x-forms::field-wrapper.hint>
                 @endif
             </div>
@@ -55,7 +55,7 @@
 
         @if ($helperText)
             <x-forms::field-wrapper.helper-text>
-                {!! \Illuminate\Support\Str::markdown($helperText) !!}
+                {!! \Illuminate\Support\Str::of($helperText)->markdown()->sanitizeHtml() !!}
             </x-forms::field-wrapper.helper-text>
         @endif
     </div>

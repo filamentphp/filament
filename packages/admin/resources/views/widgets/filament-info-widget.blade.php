@@ -38,7 +38,7 @@
                 </span>
 
                 <a
-                    href="https://github.com/laravel-filament/filament"
+                    href="https://github.com/filamentphp/filament"
                     target="_blank"
                     rel="noopener noreferrer"
                     @class([

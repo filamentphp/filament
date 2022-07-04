@@ -26,7 +26,7 @@
 ]) }}>
     @if (filled($state))
         <div @class([
-            'inline-flex items-center justify-center space-x-1 min-h-6 px-2 py-0.5 text-sm font-medium tracking-tight rounded-xl whitespace-normal',
+            'inline-flex items-center justify-center space-x-1 rtl:space-x-reverse min-h-6 px-2 py-0.5 text-sm font-medium tracking-tight rounded-xl whitespace-normal',
             $stateColor => $stateColor,
         ])>
             @if ($stateIcon && $iconPosition === 'before')

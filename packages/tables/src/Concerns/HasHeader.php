@@ -12,7 +12,12 @@ trait HasHeader
 
     public function cacheTableHeaderActions(): void
     {
-        $this->cachedTableHeaderActions = collect($this->getTableHeaderActions())
+        $actions = Action::configureUsing(
+            fn (Action $action) => $this->configureTableAction($action->button()),
+            fn (): array => $this->getTableHeaderActions(),
+        );
+
+        $this->cachedTableHeaderActions = collect($actions)
             ->mapWithKeys(function (Action $action): array {
                 $action->table($this->getCachedTable());
 

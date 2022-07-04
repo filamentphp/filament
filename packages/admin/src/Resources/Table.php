@@ -2,6 +2,9 @@
 
 namespace Filament\Resources;
 
+use Filament\Tables\Actions\ActionGroup;
+use Illuminate\Support\Arr;
+
 class Table
 {
     protected array $actions = [];
@@ -16,6 +19,8 @@ class Table
 
     protected array $filters = [];
 
+    protected ?string $filtersLayout = null;
+
     protected array $headerActions = [];
 
     final public function __construct()
@@ -27,9 +32,9 @@ class Table
         return app(static::class);
     }
 
-    public function actions(array $actions): static
+    public function actions(array | ActionGroup $actions): static
     {
-        $this->actions = $actions;
+        $this->actions = Arr::wrap($actions);
 
         return $this;
     }
@@ -56,16 +61,24 @@ class Table
         return $this;
     }
 
-    public function filters(array $filters): static
+    public function filters(array $filters, ?string $layout = null): static
     {
         $this->filters = $filters;
+        $this->filtersLayout($layout);
 
         return $this;
     }
 
-    public function headerActions(array $actions): static
+    public function filtersLayout(?string $filtersLayout): static
     {
-        $this->headerActions = $actions;
+        $this->filtersLayout = $filtersLayout;
+
+        return $this;
+    }
+
+    public function headerActions(array | ActionGroup $actions): static
+    {
+        $this->headerActions = Arr::wrap($actions);
 
         return $this;
     }
@@ -91,23 +104,53 @@ class Table
         return $this;
     }
 
-    public function pushActions(array $actions): static
+    public function appendActions(array $actions): static
     {
         $this->actions = array_merge($this->actions, $actions);
 
         return $this;
     }
 
-    public function pushBulkActions(array $actions): static
+    public function appendBulkActions(array $actions): static
     {
         $this->bulkActions = array_merge($this->bulkActions, $actions);
 
         return $this;
     }
 
-    public function pushHeaderActions(array $actions): static
+    public function appendHeaderActions(array $actions): static
     {
         $this->headerActions = array_merge($this->headerActions, $actions);
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `appendActions()` instead.
+     */
+    public function pushActions(array $actions): static
+    {
+        $this->appendActions($actions);
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `appendBulkActions()` instead.
+     */
+    public function pushBulkActions(array $actions): static
+    {
+        $this->appendBulkActions($actions);
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `appendHeaderActions()` instead.
+     */
+    public function pushHeaderActions(array $actions): static
+    {
+        $this->appendHeaderActions($actions);
 
         return $this;
     }
@@ -140,6 +183,11 @@ class Table
     public function getFilters(): array
     {
         return $this->filters;
+    }
+
+    public function getFiltersLayout(): ?string
+    {
+        return $this->filtersLayout;
     }
 
     public function getHeaderActions(): array

@@ -7,6 +7,7 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use Livewire\TemporaryUploadedFile;
+use Throwable;
 
 trait HasFileAttachments
 {
@@ -111,10 +112,14 @@ trait HasFileAttachments
         }
 
         if ($storage->getVisibility($file) === 'private') {
-            return $storage->temporaryUrl(
-                $file,
-                now()->addMinutes(5),
-            );
+            try {
+                return $storage->temporaryUrl(
+                    $file,
+                    now()->addMinutes(5),
+                );
+            } catch (Throwable $exception) {
+                // This driver does not support creating temporary URLs.
+            }
         }
 
         return $storage->url($file);

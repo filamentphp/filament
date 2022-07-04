@@ -18,8 +18,8 @@ return [
                 'label' => 'Utwórz',
             ],
 
-            'create_and_create_another' => [
-                'label' => 'Utwórz i dodaj kolejną',
+            'create_another' => [
+                'label' => 'Utwórz i utwórz kolejny',
             ],
 
         ],

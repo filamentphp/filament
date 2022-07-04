@@ -6,40 +6,6 @@ return [
 
     'breadcrumb' => 'တည်းဖြတ်ပါ',
 
-    'actions' => [
-
-        'delete' => [
-
-            'label' => 'ဖျက်ပါ',
-
-            'modal' => [
-
-                'heading' => ':label ကိုဖျက်ပါ',
-
-                'subheading' => 'ဒါကို လုပ်ချင်တာ သေချာလား',
-
-                'buttons' => [
-
-                    'delete' => [
-                        'label' => 'ဖျက်ပါ',
-                    ],
-
-                ],
-
-            ],
-
-            'messages' => [
-                'deleted' => 'ဖျက်ပြီးပါပြီ',
-            ],
-
-        ],
-
-        'view' => [
-            'label' => 'စစ်ဆေးပါ',
-        ],
-
-    ],
-
     'form' => [
 
         'actions' => [

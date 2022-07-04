@@ -3,15 +3,16 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
-class RichEditor extends Field implements Contracts\HasFileAttachments
+class RichEditor extends Field implements Contracts\CanBeLengthConstrained, Contracts\HasFileAttachments
 {
     use Concerns\CanBeLengthConstrained;
-    use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasFileAttachments;
     use Concerns\HasPlaceholder;
     use Concerns\InteractsWithToolbarButtons;
+    use HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.rich-editor';
 

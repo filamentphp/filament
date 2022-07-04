@@ -27,6 +27,27 @@ trait SupportsSelectFields
         return null;
     }
 
+    public function getSelectOptionLabels(string $statePath): array
+    {
+        foreach ($this->getComponents() as $component) {
+            if ($component instanceof Select && $component->getStatePath() === $statePath) {
+                return $component->getOptionLabels();
+            }
+
+            foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
+                if ($results = $container->getSelectOptionLabels($statePath)) {
+                    return $results;
+                }
+            }
+        }
+
+        return [];
+    }
+
     public function getSelectOptions(string $statePath): array
     {
         foreach ($this->getComponents() as $component) {
@@ -48,11 +69,11 @@ trait SupportsSelectFields
         return [];
     }
 
-    public function getSelectSearchResults(string $statePath, string $searchQuery): array
+    public function getSelectSearchResults(string $statePath, string $search): array
     {
         foreach ($this->getComponents() as $component) {
             if ($component instanceof Select && $component->getStatePath() === $statePath) {
-                return $component->getSearchResults($searchQuery);
+                return $component->getSearchResults($search);
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
@@ -60,7 +81,7 @@ trait SupportsSelectFields
                     continue;
                 }
 
-                if ($results = $container->getSelectSearchResults($statePath, $searchQuery)) {
+                if ($results = $container->getSelectSearchResults($statePath, $search)) {
                     return $results;
                 }
             }

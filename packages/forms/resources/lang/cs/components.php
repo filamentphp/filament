@@ -4,14 +4,12 @@ return [
 
     'builder' => [
 
+        'collapsed' => 'Obsah je skrytý',
+
         'buttons' => [
 
             'create_item' => [
                 'label' => 'Přidat k :label',
-            ],
-
-            'create_item_between' => [
-                'label' => 'Přidat mezi',
             ],
 
             'delete_item' => [
@@ -24,6 +22,22 @@ return [
 
             'move_item_up' => [
                 'label' => 'Posunout nahoru',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Skrýt',
+            ],
+
+            'expand_item' => [
+                'label' => 'Zobrazit',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Skrýt vše',
+            ],
+
+            'expand_all' => [
+                'label' => 'Zobrazit vše',
             ],
 
         ],
@@ -75,13 +89,9 @@ return [
 
     ],
 
-    'multi_select' => [
-        'no_search_results_message' => 'Vašemu hledání neodpovídají žádné výsledky.',
-        'placeholder' => 'Zvolte některou z možností',
-        'search_prompt' => 'Začněte psát pro začátek vyhledávání...',
-    ],
-
     'repeater' => [
+
+        'collapsed' => 'Obsah je zavřený',
 
         'buttons' => [
 
@@ -99,6 +109,22 @@ return [
 
             'move_item_up' => [
                 'label' => 'Posunout nahoru',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Skrýt',
+            ],
+
+            'expand_item' => [
+                'label' => 'Zobrazit',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Skrýt vše',
+            ],
+
+            'expand_all' => [
+                'label' => 'Zobrazit vše',
             ],
 
         ],
@@ -128,7 +154,7 @@ return [
             'attach_files' => 'Přidat soubory',
             'blockquote' => 'Bloková citace',
             'bold' => 'Tučně',
-            'bullet_list' => 'List s odrážkami',
+            'bullet_list' => 'Seznam s odrážkami',
             'code_block' => 'Blok kódu',
             'h1' => 'Nadpis 1',
             'h2' => 'Nadpis 2',
@@ -144,13 +170,58 @@ return [
     ],
 
     'select' => [
+
+        'actions' => [
+
+            'create_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Vytvořit',
+
+                    'actions' => [
+
+                        'create' => [
+                            'label' => 'Vytvořit',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+        'loading_message' => 'Načítání...',
+
         'no_search_results_message' => 'Vašemu hledání neodpovídají žádné výsledky.',
+
         'placeholder' => 'Zvolte některou z možností',
-        'search_prompt' => 'Začněte psát pro začátek vyhledávání...',
+
+        'searching_message' => 'Hledání...',
+
+        'search_prompt' => 'Zadejte hledaný výraz...',
     ],
 
     'tags_input' => [
         'placeholder' => 'Nový štítek',
+    ],
+
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => 'Zpět',
+            ],
+
+            'next_step' => [
+                'label' => 'Další',
+            ],
+
+        ],
+
     ],
 
 ];

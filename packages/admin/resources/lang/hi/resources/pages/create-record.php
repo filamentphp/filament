@@ -18,7 +18,7 @@ return [
                 'label' => 'बनाएँ',
             ],
 
-            'create_and_create_another' => [
+            'create_another' => [
                 'label' => 'बनाएँ और एक और बनाएँ',
             ],
 

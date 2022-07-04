@@ -19,13 +19,22 @@ it('can generate a slug based on the model name', function () {
 });
 
 it('can generate a label based on the model name', function () {
-    expect(PostResource::getLabel())
+    expect(PostResource::getModelLabel())
         ->toBe('post');
 });
 
-it('can generate a plural label based on the model name', function () {
-    expect(PostResource::getPluralLabel())
+it('can generate a plural label based on the model name and locale', function () {
+    $originalLocale = app()->getLocale();
+
+    app()->setLocale('en');
+    expect(PostResource::getPluralModelLabel())
         ->toBe('posts');
+
+    app()->setLocale('id');
+    expect(PostResource::getPluralModelLabel())
+        ->toBe('post');
+
+    app()->setLocale($originalLocale);
 });
 
 it('can retrieve a record\'s title', function () {

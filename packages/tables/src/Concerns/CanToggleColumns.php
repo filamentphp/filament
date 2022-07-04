@@ -13,14 +13,6 @@ trait CanToggleColumns
 {
     public array $toggledTableColumns = [];
 
-    public function prepareToggledTableColumns(): void
-    {
-        $this->toggledTableColumns = session()->get(
-            $this->getTableColumnToggleFormStateSessionKey(),
-            $this->getDefaultTableColumnToggleState()
-        );
-    }
-
     protected function getDefaultTableColumnToggleState(): array
     {
         $state = [];
@@ -58,7 +50,15 @@ trait CanToggleColumns
 
     public function getTableColumnToggleForm(): ComponentContainer
     {
-        return $this->toggleTableColumnForm;
+        if ((! $this->isCachingForms) && $this->hasCachedForm('toggleTableColumnForm')) {
+            return $this->getCachedForm('toggleTableColumnForm');
+        }
+
+        return $this->makeForm()
+            ->schema($this->getTableColumnToggleFormSchema())
+            ->columns($this->getTableColumnToggleFormColumns())
+            ->statePath('toggledTableColumns')
+            ->reactive();
     }
 
     protected function getTableColumnToggleFormSchema(): array
@@ -91,6 +91,6 @@ trait CanToggleColumns
     {
         $table = class_basename($this::class);
 
-        return $table . '_toggled_columns';
+        return "tables.{$table}_toggled_columns";
     }
 }

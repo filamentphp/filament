@@ -6,6 +6,7 @@ use Closure;
 
 /**
  * @deprecated Use `\Filament\Forms\Components\FileUpload` instead, with the `multiple()` method.
+ * @see FileUpload
  */
 class MultipleFileUpload extends Field
 {
@@ -21,7 +22,7 @@ class MultipleFileUpload extends Field
     {
         parent::setUp();
 
-        $this->dehydrateStateUsing(function (array $state): array {
+        $this->dehydrateStateUsing(static function (array $state): array {
             return array_values($state);
         });
     }

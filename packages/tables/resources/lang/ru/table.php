@@ -53,30 +53,8 @@ return [
             'label' => 'Open actions',
         ],
 
-    ],
-
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Вы уверены, что хотите это сделать?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Отменить',
-                ],
-
-                'confirm' => [
-                    'label' => 'Подтвердить',
-                ],
-
-                'submit' => [
-                    'label' => 'Отправить',
-                ],
-
-            ],
-
+        'toggle_columns' => [
+            'label' => 'Переключить столбцы',
         ],
 
     ],
@@ -93,6 +71,18 @@ return [
                 'label' => 'Сбросить фильтры',
             ],
 
+            'close' => [
+                'label' => 'Закрыть',
+            ],
+
+        ],
+
+        'multi_select' => [
+            'placeholder' => 'Все',
+        ],
+
+        'select' => [
+            'placeholder' => 'Все',
         ],
 
     ],

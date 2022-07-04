@@ -6,14 +6,7 @@ use Filament\Forms\ComponentContainer;
 
 trait HasColumns
 {
-    protected array $columns = [
-        'default' => 1,
-        'sm' => null,
-        'md' => null,
-        'lg' => null,
-        'xl' => null,
-        '2xl' => null,
-    ];
+    protected ?array $columns = null;
 
     public function columns(array | int | null $columns = 2): static
     {
@@ -23,23 +16,35 @@ trait HasColumns
             ];
         }
 
-        $this->columns = array_merge($this->columns, $columns);
+        $this->columns = array_merge($this->columns ?? [], $columns);
 
         return $this;
     }
 
     public function getColumns($breakpoint = null): array | int | null
     {
-        if ($this instanceof ComponentContainer && $this->getParentComponent()) {
-            $columns = $this->getParentComponent()->getColumns();
-        } else {
-            $columns = $this->columns;
-        }
+        $columns = $this->getColumnsConfig();
 
         if ($breakpoint !== null) {
-            $columns = $columns[$breakpoint] ?? null;
+            return $columns[$breakpoint] ?? null;
         }
 
         return $columns;
+    }
+
+    public function getColumnsConfig(): array
+    {
+        if ($this instanceof ComponentContainer && $this->getParentComponent()) {
+            return $this->getParentComponent()->getColumnsConfig();
+        }
+
+        return $this->columns ?? [
+            'default' => 1,
+            'sm' => null,
+            'md' => null,
+            'lg' => null,
+            'xl' => null,
+            '2xl' => null,
+        ];
     }
 }

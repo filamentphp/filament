@@ -1,5 +1,9 @@
+@props([
+    'maxContentWidth' => null,
+])
+
 <x-filament::layouts.base :title="$title">
-    <div class="flex min-h-screen w-full filament-app-layout">
+    <div class="flex w-full min-h-screen overflow-x-hidden filament-app-layout">
         <div
             x-data="{}"
             x-cloak
@@ -14,14 +18,14 @@
         @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
             <div
                 x-data="{}"
-                class="hidden transition-all w-screen space-y-6 flex-1 flex flex-col filament-main lg:pl-80 rtl:lg:pl-0 rtl:lg:pr-80"
-                x-bind:class.="{
-                    '!block': true, // Prevent flash, x-cloak not working with charts
+                class="flex-col flex-1 hidden w-screen h-full space-y-6 transition-all filament-main lg:pl-[var(--sidebar-width)] rtl:lg:pl-0 rtl:lg:pr-[var(--sidebar-width)]"
+                x-bind:class="{
                     'lg:pl-[5.4rem] rtl:lg:pr-[5.4rem]': ! $store.sidebar.isOpen
                 }"
+                x-bind:style="'display: flex'" {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
             >
         @else
-            <div class="w-screen space-y-6 flex-1 flex flex-col lg:pl-80 rtl:lg:pl-0 rtl:lg:pr-80 filament-main">
+            <div class="flex flex-col flex-1 w-screen space-y-6 lg:pl-[var(--sidebar-width)] rtl:lg:pl-0 rtl:lg:pr-[var(--sidebar-width)] filament-main">
         @endif
             <header @class([
                 'h-[4rem] shrink-0 w-full border-b flex items-center filament-main-topbar',
@@ -29,7 +33,7 @@
             ])>
                 <div @class([
                     'flex items-center w-full px-2 mx-auto sm:px-4 md:px-6 lg:px-8',
-                    match (config('filament.layout.max_content_width')) {
+                    match ($maxContentWidth ?? config('filament.layout.max_content_width')) {
                         'xl' => 'max-w-xl',
                         '2xl' => 'max-w-2xl',
                         '3xl' => 'max-w-3xl',
@@ -52,7 +56,7 @@
                         <x-heroicon-o-menu class="w-6 h-6" />
                     </button>
 
-                    <div class="flex-1 flex gap-4 items-center justify-between">
+                    <div class="flex items-center justify-between flex-1 gap-4">
                         <x-filament::layouts.app.topbar.breadcrumbs :breadcrumbs="$breadcrumbs" />
 
                         @livewire('filament.core.global-search')
@@ -64,7 +68,7 @@
 
             <div @class([
                 'flex-1 w-full px-4 mx-auto md:px-6 lg:px-8 filament-main-content',
-                match (config('filament.layout.max_content_width')) {
+                match ($maxContentWidth ?? config('filament.layout.max_content_width')) {
                     'xl' => 'max-w-xl',
                     '2xl' => 'max-w-2xl',
                     '3xl' => 'max-w-3xl',
@@ -75,7 +79,11 @@
                     default => 'max-w-7xl',
                 },
             ])>
+                {{ \Filament\Facades\Filament::renderHook('content.start') }}
+
                 {{ $slot }}
+
+                {{ \Filament\Facades\Filament::renderHook('content.end') }}
             </div>
 
             <div class="py-4 shrink-0 filament-main-footer">

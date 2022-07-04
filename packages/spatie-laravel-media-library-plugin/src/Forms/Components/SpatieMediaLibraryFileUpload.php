@@ -3,12 +3,14 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Hoa\File\Temporary\Temporary;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Livewire\TemporaryUploadedFile;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\FileAdder;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Throwable;
 
 class SpatieMediaLibraryFileUpload extends FileUpload
 {
@@ -16,20 +18,18 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
     protected string | Closure | null $conversion = null;
 
+    protected array | Closure | null $customProperties = null;
+
     protected string | Closure | null $mediaName = null;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->afterStateHydrated(function (SpatieMediaLibraryFileUpload $component, ?HasMedia $record): void {
-            if (! $record) {
-                $component->state([]);
+        $this->loadStateFromRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component, HasMedia $record): void {
+            /** @var Model&HasMedia $record */
 
-                return;
-            }
-
-            $files = $record->getMedia($component->getCollection())
+            $files = $record->load('media')->getMedia($component->getCollection())
                 ->when(
                     ! $component->isMultiple(),
                     fn (Collection $files): Collection => $files->take(1),
@@ -44,11 +44,19 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             $component->state($files);
         });
 
+        $this->afterStateHydrated(static function (BaseFileUpload $component, string | array | null $state): void {
+            if (is_array($state)) {
+                return;
+            }
+
+            $component->state([]);
+        });
+
         $this->beforeStateDehydrated(null);
 
         $this->dehydrated(false);
 
-        $this->getUploadedFileUrlUsing(function (SpatieMediaLibraryFileUpload $component, string $file): ?string {
+        $this->getUploadedFileUrlUsing(static function (SpatieMediaLibraryFileUpload $component, string $file): ?string {
             if (! $component->getRecord()) {
                 return null;
             }
@@ -59,7 +67,13 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             $media = $mediaClass::findByUuid($file);
 
             if ($component->getVisibility() === 'private') {
-                return $media?->getTemporaryUrl(now()->addMinutes(5));
+                try {
+                    return $media?->getTemporaryUrl(
+                        now()->addMinutes(5),
+                    );
+                } catch (Throwable $exception) {
+                    // This driver does not support creating temporary URLs.
+                }
             }
 
             if ($component->getConversion() && $media->hasGeneratedConversion($component->getConversion())) {
@@ -69,11 +83,11 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             return $media?->getUrl();
         });
 
-        $this->saveRelationshipsUsing(function (SpatieMediaLibraryFileUpload $component) {
+        $this->saveRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component) {
             $component->saveUploadedFiles();
         });
 
-        $this->saveUploadedFileUsing(function (SpatieMediaLibraryFileUpload $component, TemporaryUploadedFile $file, ?Model $record): string {
+        $this->saveUploadedFileUsing(static function (SpatieMediaLibraryFileUpload $component, TemporaryUploadedFile $file, ?Model $record): string {
             if (! method_exists($record, 'addMediaFromString')) {
                 return $file;
             }
@@ -81,17 +95,18 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             /** @var FileAdder $mediaAdder */
             $mediaAdder = $record->addMediaFromString($file->get());
 
-            $filename = $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : $file->getFilename();
+            $filename = $component->getUploadedFileNameForStorage($file);
 
             $media = $mediaAdder
                 ->usingFileName($filename)
-                ->usingName($component->getMediaName() ?? '')
+                ->usingName($component->getMediaName($file) ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
+                ->withCustomProperties($component->getCustomProperties())
                 ->toMediaCollection($component->getCollection(), $component->getDiskName());
 
             return $media->getAttributeValue('uuid');
         });
 
-        $this->deleteUploadedFileUsing(function (SpatieMediaLibraryFileUpload $component, string $file): void {
+        $this->deleteUploadedFileUsing(static function (SpatieMediaLibraryFileUpload $component, string $file): void {
             if (! $file) {
                 return;
             }
@@ -101,7 +116,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             $mediaClass::findByUuid($file)?->delete();
         });
 
-        $this->reorderUploadedFilesUsing(function (SpatieMediaLibraryFileUpload $component, array $state): array {
+        $this->reorderUploadedFilesUsing(static function (SpatieMediaLibraryFileUpload $component, array $state): array {
             $uuids = array_filter(array_values($state));
             $mappedIds = Media::query()->whereIn('uuid', $uuids)->pluck('id', 'uuid')->toArray();
 
@@ -125,6 +140,13 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this;
     }
 
+    public function customProperties(array | Closure | null $properties): static
+    {
+        $this->customProperties = $properties;
+
+        return $this;
+    }
+
     public function getCollection(): string
     {
         return $this->evaluate($this->collection) ?? 'default';
@@ -135,6 +157,11 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this->evaluate($this->conversion);
     }
 
+    public function getCustomProperties(): array
+    {
+        return $this->evaluate($this->customProperties) ?? [];
+    }
+
     public function mediaName(string | Closure | null $name): static
     {
         $this->mediaName = $name;
@@ -142,8 +169,10 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this;
     }
 
-    public function getMediaName(): ?string
+    public function getMediaName(TemporaryUploadedFile $file): ?string
     {
-        return $this->evaluate($this->mediaName);
+        return $this->evaluate($this->mediaName, [
+            'file' => $file,
+        ]);
     }
 }

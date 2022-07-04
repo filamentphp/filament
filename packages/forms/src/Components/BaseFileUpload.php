@@ -11,14 +11,17 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Livewire\TemporaryUploadedFile;
+use Throwable;
 
 class BaseFileUpload extends Field
 {
     protected array | Arrayable | Closure | null $acceptedFileTypes = null;
 
-    protected bool | Closure $canReorder = false;
+    protected bool | Closure $canDownload = false;
 
     protected bool | Closure $canPreview = true;
+
+    protected bool | Closure $canReorder = false;
 
     protected string | Closure | null $directory = null;
 
@@ -52,7 +55,7 @@ class BaseFileUpload extends Field
     {
         parent::setUp();
 
-        $this->afterStateHydrated(function (BaseFileUpload $component, string | array | null $state): void {
+        $this->afterStateHydrated(static function (BaseFileUpload $component, string | array | null $state): void {
             if (blank($state)) {
                 $component->state([]);
 
@@ -60,13 +63,14 @@ class BaseFileUpload extends Field
             }
 
             $files = collect(Arr::wrap($state))
-                ->mapWithKeys(fn (string $file): array => [(string) Str::uuid() => $file])
+                ->filter(static fn (string $file) => blank($file) || $component->getDisk()->exists($file))
+                ->mapWithKeys(static fn (string $file): array => [((string) Str::uuid()) => $file])
                 ->toArray();
 
             $component->state($files);
         });
 
-        $this->afterStateUpdated(function (BaseFileUpload $component, $state) {
+        $this->afterStateUpdated(static function (BaseFileUpload $component, $state) {
             if (blank($state)) {
                 return;
             }
@@ -78,11 +82,11 @@ class BaseFileUpload extends Field
             $component->state([(string) Str::uuid() => $state]);
         });
 
-        $this->beforeStateDehydrated(function (BaseFileUpload $component): void {
+        $this->beforeStateDehydrated(static function (BaseFileUpload $component): void {
             $component->saveUploadedFiles();
         });
 
-        $this->dehydrateStateUsing(function (BaseFileUpload $component, ?array $state): string | array | null {
+        $this->dehydrateStateUsing(static function (BaseFileUpload $component, ?array $state): string | array | null {
             $files = array_values($state ?? []);
 
             if ($component->isMultiple()) {
@@ -92,7 +96,7 @@ class BaseFileUpload extends Field
             return $files[0] ?? null;
         });
 
-        $this->getUploadedFileUrlUsing(function (BaseFileUpload $component, string $file): ?string {
+        $this->getUploadedFileUrlUsing(static function (BaseFileUpload $component, string $file): ?string {
             /** @var FilesystemAdapter $storage */
             $storage = $component->getDisk();
 
@@ -101,20 +105,24 @@ class BaseFileUpload extends Field
             }
 
             if ($storage->getVisibility($file) === 'private') {
-                return $storage->temporaryUrl(
-                    $file,
-                    now()->addMinutes(5),
-                );
+                try {
+                    return $storage->temporaryUrl(
+                        $file,
+                        now()->addMinutes(5),
+                    );
+                } catch (Throwable $exception) {
+                    // This driver does not support creating temporary URLs.
+                }
             }
 
             return $storage->url($file);
         });
 
-        $this->getUploadedFileNameForStorageUsing(function (BaseFileUpload $component, TemporaryUploadedFile $file) {
+        $this->getUploadedFileNameForStorageUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file) {
             return $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : $file->getFilename();
         });
 
-        $this->saveUploadedFileUsing(function (BaseFileUpload $component, TemporaryUploadedFile $file): string {
+        $this->saveUploadedFileUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file): string {
             $storeMethod = $component->getVisibility() === 'public' ? 'storePubliclyAs' : 'storeAs';
 
             return $file->{$storeMethod}(
@@ -125,12 +133,25 @@ class BaseFileUpload extends Field
         });
     }
 
+    public function callAfterStateUpdated(): static
+    {
+        if ($callback = $this->afterStateUpdated) {
+            $state = $this->getState();
+
+            $this->evaluate($callback, [
+                'state' => $this->isMultiple() ? $state : Arr::first($state ?? []),
+            ]);
+        }
+
+        return $this;
+    }
+
     public function acceptedFileTypes(array | Arrayable | Closure $types): static
     {
         $this->acceptedFileTypes = $types;
 
-        $this->rule(function () {
-            $types = implode(',', ($this->getAcceptedFileTypes() ?? []));
+        $this->rule(static function (BaseFileUpload $component) {
+            $types = implode(',', ($component->getAcceptedFileTypes() ?? []));
 
             return "mimetypes:{$types}";
         });
@@ -152,6 +173,13 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function enableDownload(bool | Closure $condition = true): static
+    {
+        $this->canDownload = $condition;
+
+        return $this;
+    }
+
     public function enableReordering(bool | Closure $condition = true): static
     {
         $this->canReorder = $condition;
@@ -159,9 +187,9 @@ class BaseFileUpload extends Field
         return $this;
     }
 
-    public function disablePreview(bool | Closure $condition = false): static
+    public function disablePreview(bool | Closure $condition = true): static
     {
-        $this->canPreview = $condition;
+        $this->canPreview = fn (BaseFileUpload $component): bool => ! $component->evaluate($condition);
 
         return $this;
     }
@@ -177,8 +205,8 @@ class BaseFileUpload extends Field
     {
         $this->maxSize = $size;
 
-        $this->rule(function (): string {
-            $size = $this->getMaxSize();
+        $this->rule(static function (BaseFileUpload $component): string {
+            $size = $component->getMaxSize();
 
             return "max:{$size}";
         });
@@ -190,8 +218,8 @@ class BaseFileUpload extends Field
     {
         $this->minSize = $size;
 
-        $this->rule(function (): string {
-            $size = $this->getMinSize();
+        $this->rule(static function (BaseFileUpload $component): string {
+            $size = $component->getMinSize();
 
             return "min:{$size}";
         });
@@ -255,14 +283,19 @@ class BaseFileUpload extends Field
         return $this;
     }
 
-    public function canReorder(): bool
+    public function canDownload(): bool
     {
-        return $this->evaluate($this->canReorder);
+        return $this->evaluate($this->canDownload);
     }
 
     public function canPreview(): bool
     {
         return $this->evaluate($this->canPreview);
+    }
+
+    public function canReorder(): bool
+    {
+        return $this->evaluate($this->canReorder);
     }
 
     public function getAcceptedFileTypes(): ?array
@@ -397,7 +430,7 @@ class BaseFileUpload extends Field
         $fileKeys = array_flip($fileKeys);
 
         $state = collect($this->getState())
-            ->sortBy(fn ($file, $fileKey) => $fileKeys[$fileKey] ?? null) // $fileKey may not be present in $fileKeys if it was added to the state during the reorder call
+            ->sortBy(static fn ($file, $fileKey) => $fileKeys[$fileKey] ?? null) // $fileKey may not be present in $fileKeys if it was added to the state during the reorder call
             ->toArray();
 
         $this->state($state);
@@ -405,30 +438,25 @@ class BaseFileUpload extends Field
 
     public function getUploadedFileUrls(): ?array
     {
-        $uploadedFileUrls = collect($this->getState())
-            ->mapWithKeys(function (TemporaryUploadedFile | string $file, string $fileKey) {
+        return collect($this->getState() ?? [])
+            ->mapWithKeys(function (TemporaryUploadedFile | string $file, string $fileKey): array {
                 if ($file instanceof TemporaryUploadedFile) {
-                    return null;
+                    return [$fileKey => null];
                 }
 
                 $callback = $this->getUploadedFileUrlUsing;
 
                 if (! $callback) {
-                    return null;
+                    return [$fileKey => null];
                 }
 
                 $url = $this->evaluate($callback, [
                     'file' => $file,
                 ]);
 
-                if (! $url) {
-                    return null;
-                }
-
-                return [$fileKey => $url];
-            })->toArray();
-
-        return $uploadedFileUrls;
+                return [$fileKey => ($url ?: null)];
+            })
+            ->toArray();
     }
 
     public function saveUploadedFiles(): void

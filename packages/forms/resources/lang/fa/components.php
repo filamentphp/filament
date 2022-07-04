@@ -6,16 +6,58 @@ return [
         'filepond_locale' => 'fa_ir',
     ],
 
+    'builder' => [
+
+        'collapsed' => 'محتوا جمع شد',
+
+        'buttons' => [
+
+            'create_item' => [
+                'label' => 'افزودن به :label',
+            ],
+
+            'delete_item' => [
+                'label' => 'حذف',
+            ],
+
+            'move_item_down' => [
+                'label' => 'پایین آوردن',
+            ],
+
+            'move_item_up' => [
+                'label' => 'بالا بردن',
+            ],
+
+            'collapse_item' => [
+                'label' => 'جمع کردن',
+            ],
+
+            'expand_item' => [
+                'label' => 'باز کردن',
+            ],
+
+            'collapse_all' => [
+                'label' => 'جمع کردن همه',
+            ],
+
+            'expand_all' => [
+                'label' => 'باز کردن همه',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [
 
             'add' => [
-                'label' => 'اضافه ردیف',
+                'label' => 'افزودن ردیف',
             ],
 
             'delete' => [
-                'label' => 'حذف ریدیف',
+                'label' => 'حذف ردیف',
             ],
 
         ],
@@ -37,24 +79,60 @@ return [
     'markdown_editor' => [
 
         'toolbar_buttons' => [
-            'attach_files' => 'پوستن فایلها',
-            'bold' => 'پر رنگ',
-            'bullet_list' => 'گولوله',
-            'code_block' => 'کود',
+            'attach_files' => 'پیوستن فایل ها',
+            'bold' => 'پررنگ',
+            'bullet_list' => 'لیست نامرتب',
+            'code_block' => 'بلاک کد',
             'edit' => 'نوشتن',
-            'italic' => 'خوابیده',
-            'link' => 'ارتباط',
-            'ordered_list' => 'اعداد',
+            'italic' => 'مورب',
+            'link' => 'لینک',
+            'ordered_list' => 'لیست مرتب',
             'preview' => 'پیش نمایش',
             'strike' => 'خط زده',
         ],
 
     ],
 
-    'multi_select' => [
-        'no_search_results_message' => 'هیچ گزینه ای با جستجوی شما مطابقت ندارد',
-        'placeholder' => 'یک گزینه را انتخاب کنید',
-        'search_prompt' => 'برای جستجو تایپ کنید...',
+    'repeater' => [
+
+        'collapsed' => 'محتوا جمع شد',
+
+        'buttons' => [
+
+            'create_item' => [
+                'label' => 'افزودن به :label',
+            ],
+
+            'delete_item' => [
+                'label' => 'حذف',
+            ],
+
+            'move_item_down' => [
+                'label' => 'پایین آوردن',
+            ],
+
+            'move_item_up' => [
+                'label' => 'بالا بردن',
+            ],
+
+            'collapse_item' => [
+                'label' => 'جمع کردن',
+            ],
+
+            'expand_item' => [
+                'label' => 'باز کردن',
+            ],
+
+            'collapse_all' => [
+                'label' => 'جمع کردن همه',
+            ],
+
+            'expand_all' => [
+                'label' => 'باز کردن همه',
+            ],
+
+        ],
+
     ],
 
     'rich_editor' => [
@@ -64,45 +142,96 @@ return [
             'link' => [
 
                 'buttons' => [
-                    'link' => 'ارتباط',
-                    'unlink' => 'لغو ارتباط',
+                    'link' => 'لینک',
+                    'unlink' => 'لغو لینک',
                 ],
 
-                'label' => 'آدرس انترنیتی',
+                'label' => 'آدرس اینترنتی',
 
-                'placeholder' => 'یک آدرس انترنیتی وارید کنید',
+                'placeholder' => 'یک آدرس اینترنتی وارد کنید',
 
             ],
 
         ],
 
         'toolbar_buttons' => [
-            'attach_files' => 'پیوستن فایلها',
+            'attach_files' => 'پیوستن فایل ها',
             'blockquote' => 'نقل قول',
             'bold' => 'پررنگ',
-            'bullet_list' => 'گولوله',
-            'code_block' => 'کود',
-            'h1' => 'عنوان',
-            'h2' => 'عنوان برجسته',
-            'h3' => 'زیرنویس',
-            'italic' => 'خوابیده',
-            'link' => 'ارتباط',
-            'ordered_list' => 'اعداد',
-            'redo' => 'انجام مجدد',
+            'bullet_list' => 'لیست نامرتب',
+            'code_block' => 'بلوک کد',
+            'h1' => 'عنوان اصلی',
+            'h2' => 'عنوان فرعی',
+            'h3' => 'زیرعنوان',
+            'italic' => 'مورب',
+            'link' => 'لینک',
+            'ordered_list' => 'لیست مرتب',
+            'redo' => 'جلو',
             'strike' => 'خط زده',
-            'undo' => 'واگرد',
+            'undo' => 'عقب',
         ],
 
     ],
 
     'select' => [
+
+        'actions' => [
+
+            'create_option' => [
+
+                'modal' => [
+
+                    'heading' => 'ساختن',
+
+                    'actions' => [
+
+                        'create' => [
+                            'label' => 'ساختن',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+        'boolean' => [
+            'true' => 'بله',
+            'false' => 'خیر',
+        ],
+
+        'loading_message' => 'درحال بارگذاری...',
+
         'no_search_results_message' => 'هیچ گزینه ای با جستجوی شما مطابقت ندارد',
+
         'placeholder' => 'یک گزینه را انتخاب کنید',
+
+        'searching_message' => 'درحال جستجو...',
+
         'search_prompt' => 'برای جستجو تایپ کنید...',
+
     ],
 
     'tags_input' => [
         'placeholder' => 'تگ جدید',
+    ],
+
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => 'قبلی',
+            ],
+
+            'next_step' => [
+                'label' => 'بعدی',
+            ],
+
+        ],
+
     ],
 
 ];

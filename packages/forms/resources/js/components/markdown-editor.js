@@ -1,5 +1,6 @@
 import '@github/file-attachment-element'
 import '@github/markdown-toolbar-element'
+import DOMPurify from 'dompurify'
 import { marked } from 'marked'
 import { highlight } from 'mdhl'
 
@@ -21,8 +22,8 @@ export default (Alpine) => {
 
             init: function () {
                 if (this.state !== null) {
-                    this.$nextTick(() => { 
-                        this.render() 
+                    this.$nextTick(() => {
+                        this.render()
                     })
                 }
 
@@ -41,7 +42,7 @@ export default (Alpine) => {
                 this.overlay = highlight(this.state)
 
                 this.preview = null
-                this.preview = marked(this.state)
+                this.preview = DOMPurify.sanitize(marked(this.state))
             },
 
             checkForAutoInsertion($event) {

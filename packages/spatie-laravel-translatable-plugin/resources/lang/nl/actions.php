@@ -2,7 +2,7 @@
 
 return [
 
-    'active_form_locale' => [
+    'active_locale' => [
         'label' => 'Taal',
     ],
 

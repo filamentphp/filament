@@ -5,6 +5,7 @@ namespace Filament\Tables\Columns\Concerns;
 use Akaunting\Money;
 use Closure;
 use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\TextColumn;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
@@ -14,17 +15,29 @@ trait CanFormatState
 {
     protected ?Closure $formatStateUsing = null;
 
+    protected ?int $limit = null;
+
     protected string | Closure | null $prefix = null;
 
     protected string | Closure | null $suffix = null;
+
+    protected string | Closure | null $timezone = null;
 
     public function date(?string $format = null, ?string $timezone = null): static
     {
         $format ??= config('tables.date_format');
 
-        $timezone ??= config('app.timezone');
+        $this->formatStateUsing(static function (Column $column, $state) use ($format, $timezone): ?string {
+            /** @var TextColumn $column */
 
-        $this->formatStateUsing(fn ($state): ?string => $state ? Carbon::parse($state)->setTimezone($timezone)->translatedFormat($format) : null);
+            if (blank($state)) {
+                return null;
+            }
+
+            return Carbon::parse($state)
+                ->setTimezone($timezone ?? $column->getTimezone())
+                ->translatedFormat($format);
+        });
 
         return $this;
     }
@@ -38,16 +51,35 @@ trait CanFormatState
         return $this;
     }
 
+    public function since(?string $timezone = null): static
+    {
+        $this->formatStateUsing(static function (Column $column, $state) use ($timezone): ?string {
+            /** @var TextColumn $column */
+
+            if (blank($state)) {
+                return null;
+            }
+
+            return Carbon::parse($state)
+                ->setTimezone($timezone ?? $column->getTimezone())
+                ->diffForHumans();
+        });
+
+        return $this;
+    }
+
     public function enum(array | Arrayable $options, $default = null): static
     {
-        $this->formatStateUsing(fn ($state): ?string => $options[$state] ?? ($default ?? $state));
+        $this->formatStateUsing(static fn ($state): ?string => $options[$state] ?? ($default ?? $state));
 
         return $this;
     }
 
     public function limit(int $length = 100, string $end = '...'): static
     {
-        $this->formatStateUsing(function ($state) use ($length, $end): ?string {
+        $this->limit = $length;
+
+        $this->formatStateUsing(static function ($state) use ($length, $end): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -74,7 +106,7 @@ trait CanFormatState
 
     public function html(): static
     {
-        return $this->formatStateUsing(fn ($state): HtmlString => new HtmlString($state));
+        return $this->formatStateUsing(static fn ($state): HtmlString => Str::of($state)->sanitizeHtml()->toHtmlString());
     }
 
     public function formatStateUsing(?Closure $callback): static
@@ -86,7 +118,7 @@ trait CanFormatState
 
     public function money(string | Closure $currency = 'usd', bool $shouldConvert = false): static
     {
-        $this->formatStateUsing(function (Column $column, $state) use ($currency, $shouldConvert): ?string {
+        $this->formatStateUsing(static function (Column $column, $state) use ($currency, $shouldConvert): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -122,6 +154,11 @@ trait CanFormatState
         return $state;
     }
 
+    public function getLimit(): ?int
+    {
+        return $this->limit;
+    }
+
     public function time(?string $format = null, ?string $timezone = null): static
     {
         $format ??= config('tables.time_format');
@@ -129,5 +166,17 @@ trait CanFormatState
         $this->date($format, $timezone);
 
         return $this;
+    }
+
+    public function timezone(string | Closure | null $timezone): static
+    {
+        $this->timezone = $timezone;
+
+        return $this;
+    }
+
+    public function getTimezone(): string
+    {
+        return $this->evaluate($this->timezone) ?? config('app.timezone');
     }
 }

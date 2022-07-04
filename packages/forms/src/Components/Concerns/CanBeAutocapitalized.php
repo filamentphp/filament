@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Forms\Components\Field;
 
 trait CanBeAutocapitalized
 {
@@ -17,8 +18,8 @@ trait CanBeAutocapitalized
 
     public function disableAutocapitalize(bool | Closure $condition = true): static
     {
-        $this->autocapitalize(function () use ($condition): ?string {
-            return $this->evaluate($condition) ? 'off' : null;
+        $this->autocapitalize(static function (Field $component) use ($condition): ?string {
+            return $component->evaluate($condition) ? 'off' : null;
         });
 
         return $this;

@@ -2,43 +2,9 @@
 
 return [
 
-    'title' => 'ویرایش :label',
+    'title' => 'اصلاح :label',
 
-    'breadcrumb' => 'ویرایش',
-
-    'actions' => [
-
-        'delete' => [
-
-            'label' => 'حذف',
-
-            'modal' => [
-
-                'heading' => 'حذف :label',
-
-                'subheading' => 'آیا برای انجام اینکار مطمئن هستید؟',
-
-                'buttons' => [
-
-                    'delete' => [
-                        'label' => 'حذف',
-                    ],
-
-                ],
-
-            ],
-
-            'messages' => [
-                'deleted' => 'حذف شد',
-            ],
-
-        ],
-
-        'view' => [
-            'label' => 'مشاهده',
-        ],
-
-    ],
+    'breadcrumb' => 'اصلاح',
 
     'form' => [
 

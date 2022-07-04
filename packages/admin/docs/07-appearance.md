@@ -65,25 +65,14 @@ In `config/filament.php`, set the `layouts.sidebar.is_collapsible_on_desktop` to
 ],
 ```
 
-If you use a [custom theme](#building-themes), make sure to load the Tippy's CSS files as well:
-
-```bash
-npm install tippy.js --save-dev
-```
-
-```css
-@import '~tippy.js/dist/tippy.css';
-@import '~tippy.js/themes/light.css';
-```
-
 ## Building themes
 
 Filament allows you to change the fonts and color scheme used in the UI, by compiling a custom stylesheet to replace the default one. This custom stylesheet is called a "theme".
 
-Themes use [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, and the Tailwind Typography plugin. You may install these through NPM:
+Themes use [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, and the Tailwind Typography plugin, and [Tippy.js](https://atomiks.github.io/tippyjs/). You may install these through NPM:
 
 ```bash
-npm install tailwindcss @tailwindcss/forms @tailwindcss/typography --save-dev
+npm install tailwindcss @tailwindcss/forms @tailwindcss/typography tippy.js --save-dev
 ```
 
 To finish installing Tailwind, you must create a new `tailwind.config.js` file in the root of your project. The easiest way to do this is by running `npx tailwindcss init`.
@@ -91,7 +80,7 @@ To finish installing Tailwind, you must create a new `tailwind.config.js` file i
 In `tailwind.config.js`, register the plugins you installed, and add custom colors used by the form builder:
 
 ```js
-const colors = require('tailwindcss/colors')
+const colors = require('tailwindcss/colors') // [tl! focus]
 
 module.exports = {
     content: [
@@ -123,19 +112,15 @@ In your `webpack.mix.js` file, Register Tailwind CSS as a PostCSS plugin :
 ```js
 const mix = require('laravel-mix')
 
-mix.postCss('resources/css/app.css', 'public/css', [
+mix.postCss('resources/css/filament.css', 'public/css', [
     require('tailwindcss'), // [tl! focus]
 ])
 ```
 
-In `/resources/css/app.css`, import `filament/forms` vendor CSS and [TailwindCSS](https://tailwindcss.com):
+In `/resources/css/filament.css`, import Filament's vendor CSS:
 
 ```css
-@import '../../vendor/filament/forms/dist/module.esm.css';
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import '../../vendor/filament/filament/resources/css/app.css';
 ```
 
 Now, you may register the theme file in a service provider's `boot()` method:
@@ -144,8 +129,20 @@ Now, you may register the theme file in a service provider's `boot()` method:
 use Filament\Facades\Filament;
 
 Filament::serving(function () {
-    Filament::registerTheme(mix('css/app.css'));
+    Filament::registerTheme(mix('css/filament.css'));
 });
+```
+
+### Loading Google Fonts
+
+If you specify a custom font family in your `tailwind.config.js`, you may wish to import it via Google Fonts.
+
+You must [publish the configuration](installation#publishing-the-configuration) in order to access this feature.
+
+Set the `google_fonts` config option to a new Google Fonts URL to load:
+
+```php
+'google_fonts' => 'https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap',
 ```
 
 ## Changing the maximum content width
@@ -163,6 +160,12 @@ In `config/filament.php`, set the `layouts.max_content_width` to any value betwe
 ```
 
 The default is `7xl`.
+
+You may override the maximum content width for a specific page in the admin panel by using the `$maxContentWidth` property:
+
+```php
+protected ?string $maxContentWidth = 'full';
+```
 
 ## Including frontend assets
 
@@ -249,9 +252,11 @@ The available hooks are as follows:
 
 - `body.start` - after `<body>`
 - `body.end` - before `</body>`
-- `global-search.start` - after [global search](resources#global-search) input
-- `global-search.end` - before [global search](resources#global-search) input
 - `head.start` - after `<head>`
 - `head.end` - before `</head>`
-- `sidebar.start` - after [sidebar](navigation) content
-- `sidebar.end` - before [sidebar](navigation) content
+- `content.start` - before page content
+- `content.end` - after page content
+- `sidebar.start` - before [sidebar](navigation) content
+- `sidebar.end` - after [sidebar](navigation) content
+- `global-search.start` - before [global search](resources/global-search) input
+- `global-search.end` - after [global search](resources/global-search) input

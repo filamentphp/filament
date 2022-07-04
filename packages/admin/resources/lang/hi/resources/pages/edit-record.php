@@ -6,36 +6,6 @@ return [
 
     'breadcrumb' => 'संपादन',
 
-    'actions' => [
-
-        'delete' => [
-
-            'label' => 'हटाएँ',
-
-            'modal' => [
-
-                'heading' => ':label हटाएँ',
-
-                'subheading' => 'क्या आप वाकई ऐसा करना चाहेंगे?',
-
-                'buttons' => [
-
-                    'delete' => [
-                        'label' => 'हटाएँ',
-                    ],
-
-                ],
-
-            ],
-
-        ],
-
-        'view' => [
-            'label' => 'देखें',
-        ],
-
-    ],
-
     'form' => [
 
         'actions' => [

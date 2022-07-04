@@ -3,12 +3,13 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
 class FileUpload extends BaseFileUpload
 {
-    use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;
+    use HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.file-upload';
 
@@ -19,6 +20,8 @@ class FileUpload extends BaseFileUpload
     protected string | Closure | null $imageResizeTargetHeight = null;
 
     protected string | Closure | null $imageResizeTargetWidth = null;
+
+    protected string | Closure | null $imageResizeMode = null;
 
     protected bool | Closure $isAvatar = false;
 
@@ -104,6 +107,13 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
+    public function imageResizeMode(string | Closure | null $mode): static
+    {
+        $this->imageResizeMode = $mode;
+
+        return $this;
+    }
+
     public function loadingIndicatorPosition(string | Closure | null $position): static
     {
         $this->loadingIndicatorPosition = $position;
@@ -164,6 +174,11 @@ class FileUpload extends BaseFileUpload
     public function getImageResizeTargetWidth(): ?string
     {
         return $this->evaluate($this->imageResizeTargetWidth);
+    }
+
+    public function getImageResizeMode(): ?string
+    {
+        return $this->evaluate($this->imageResizeMode);
     }
 
     public function getLoadingIndicatorPosition(): string

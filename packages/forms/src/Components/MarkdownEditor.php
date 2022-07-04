@@ -3,14 +3,15 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
-class MarkdownEditor extends Field implements Contracts\HasFileAttachments
+class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, Contracts\HasFileAttachments
 {
     use Concerns\CanBeLengthConstrained;
-    use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasFileAttachments;
     use Concerns\HasPlaceholder;
     use Concerns\InteractsWithToolbarButtons;
+    use HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.markdown-editor';
 

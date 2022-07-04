@@ -21,7 +21,7 @@ return [
     | Default Filesystem Disk
     |--------------------------------------------------------------------------
     |
-    | This is the storage disk Filament will use to put media. You may use any
+    | This is the storage disk Filament will use to find media. You may use any
     | of the disks defined in the `config/filesystems.php`.
     |
     */
@@ -44,18 +44,37 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Pagination
+    |--------------------------------------------------------------------------
+    |
+    | This is the configuration for the pagination of tables.
+    |
+    */
+
+    'pagination' => [
+        'default_records_per_page' => 10,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Layout
     |--------------------------------------------------------------------------
     |
     | This is the configuration for the general layout of tables.
     |
-    | The alignment of row actions can be changed, so that they are in the
-    | `right`, `left` or `center` of the last cell.
-    |
     */
 
     'layout' => [
-        'action_alignment' => 'right',
+        'actions' => [
+            'cell' => [
+                'alignment' => 'right',
+            ],
+            'modal' => [
+                'actions' => [
+                    'alignment' => 'left',
+                ],
+            ],
+        ],
     ],
 
 ];

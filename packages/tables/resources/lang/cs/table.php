@@ -53,30 +53,8 @@ return [
             'label' => 'Otevřít panel akcí',
         ],
 
-    ],
-
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Opravdu chcete tuto akci provést?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Zrušit',
-                ],
-
-                'confirm' => [
-                    'label' => 'Potvrdit',
-                ],
-
-                'submit' => [
-                    'label' => 'Odeslat',
-                ],
-
-            ],
-
+        'toggle_columns' => [
+            'label' => 'Skrýt/zobrazit sloupce',
         ],
 
     ],
@@ -85,9 +63,33 @@ return [
         'heading' => 'Žádné záznamy nenalezeny',
     ],
 
+    'filters' => [
+
+        'buttons' => [
+
+            'reset' => [
+                'label' => 'Resetovat filtry',
+            ],
+
+            'close' => [
+                'label' => 'Zavřít',
+            ],
+
+        ],
+
+        'multi_select' => [
+            'placeholder' => 'Vše',
+        ],
+
+        'select' => [
+            'placeholder' => 'Vše',
+        ],
+
+    ],
+
     'selection_indicator' => [
 
-        'selected_count' => '1 záznam zvolen.|:count záznamů zvoleno.',
+        'selected_count' => '{1} 1 záznam zvolen.|[2,4] :count záznamy zvoleny.|[5,*] :count záznamů zvoleno.',
 
         'buttons' => [
 

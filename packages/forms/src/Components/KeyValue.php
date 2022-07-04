@@ -3,10 +3,11 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
 class KeyValue extends Field
 {
-    use Concerns\HasExtraAlpineAttributes;
+    use HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.key-value';
 
@@ -36,10 +37,10 @@ class KeyValue extends Field
 
         $this->default([]);
 
-        $this->dehydrateStateUsing(function (?array $state) {
+        $this->dehydrateStateUsing(static function (?array $state) {
             return collect($state ?? [])
-                ->filter(fn (?string $value, ?string $key): bool => filled($key))
-                ->map(fn (?string $value): ?string => filled($value) ? $value : null)
+                ->filter(static fn (?string $value, ?string $key): bool => filled($key))
+                ->map(static fn (?string $value): ?string => filled($value) ? $value : null)
                 ->toArray();
         });
 

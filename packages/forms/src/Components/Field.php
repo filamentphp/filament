@@ -2,7 +2,7 @@
 
 namespace Filament\Forms\Components;
 
-use Illuminate\Support\HtmlString;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 
 class Field extends Component implements Contracts\HasValidationRules
@@ -13,6 +13,8 @@ class Field extends Component implements Contracts\HasValidationRules
     use Concerns\HasHint;
     use Concerns\HasName;
 
+    protected string $viewIdentifier = 'field';
+
     final public function __construct(string $name)
     {
         $this->name($name);
@@ -22,7 +24,7 @@ class Field extends Component implements Contracts\HasValidationRules
     public static function make(string $name): static
     {
         $static = app(static::class, ['name' => $name]);
-        $static->setUp();
+        $static->configure();
 
         return $static;
     }
@@ -32,17 +34,12 @@ class Field extends Component implements Contracts\HasValidationRules
         return parent::getId() ?? $this->getStatePath();
     }
 
-    public function getLabel(): string | HtmlString | null
+    public function getLabel(): string | Htmlable | null
     {
         return parent::getLabel() ?? (string) Str::of($this->getName())
             ->afterLast('.')
             ->kebab()
             ->replace(['-', '_'], ' ')
             ->ucfirst();
-    }
-
-    protected function hasDefaultState(): bool
-    {
-        return true;
     }
 }

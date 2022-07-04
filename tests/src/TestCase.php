@@ -8,6 +8,7 @@ use Filament\FilamentServiceProvider;
 use Filament\Forms\FormsServiceProvider;
 use Filament\SpatieLaravelSettingsPluginServiceProvider;
 use Filament\SpatieLaravelTranslatablePluginServiceProvider;
+use Filament\Support\SupportServiceProvider;
 use Filament\Tables\TablesServiceProvider;
 use Filament\Tests\Models\User;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
@@ -28,6 +29,7 @@ abstract class TestCase extends BaseTestCase
             LivewireServiceProvider::class,
             SpatieLaravelSettingsPluginServiceProvider::class,
             SpatieLaravelTranslatablePluginServiceProvider::class,
+            SupportServiceProvider::class,
             TablesServiceProvider::class,
         ];
     }

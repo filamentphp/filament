@@ -5,6 +5,7 @@ namespace Filament;
 use Closure;
 use Exception;
 use Filament\Events\ServingFilament;
+use Filament\Facades\FilamentNotification;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 use Filament\Models\Contracts\HasAvatar;
@@ -78,7 +79,7 @@ class FilamentManager
     public function globalSearchProvider(string $provider): void
     {
         if (! in_array(GlobalSearchProvider::class, class_implements($provider))) {
-            throw new Exception('Global search provider ' . $provider . ' does not implement the ' . GlobalSearchProvider::class . ' interface.');
+            throw new Exception("Global search provider {$provider} does not implement the " . GlobalSearchProvider::class . ' interface.');
         }
 
         $this->globalSearchProvider = $provider;
@@ -168,7 +169,7 @@ class FilamentManager
 
     public function notify(string $status, string $message, bool $isAfterRedirect = false): void
     {
-        NotificationManager::notify($status, $message);
+        FilamentNotification::notify($status, $message);
     }
 
     public function getGlobalSearchProvider(): GlobalSearchProvider
@@ -221,7 +222,7 @@ class FilamentManager
                 return [
                     $group => [
                         'items' => $groupedItems->get($group),
-                        'collapsible' => true,
+                        'collapsible' => config('filament.layout.sidebar.groups.are_collapsible'),
                     ],
                 ];
             })

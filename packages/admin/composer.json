@@ -2,15 +2,16 @@
     "name": "filament/filament",
     "description": "Effortlessly build TALL-powered admin panels.",
     "license": "MIT",
-    "homepage": "https://github.com/laravel-filament/filament",
+    "homepage": "https://github.com/filamentphp/filament",
     "support": {
-        "issues": "https://github.com/laravel-filament/filament/issues",
-        "source": "https://github.com/laravel-filament/filament"
+        "issues": "https://github.com/filamentphp/filament/issues",
+        "source": "https://github.com/filamentphp/filament"
     },
     "require": {
         "php": "^8.0",
         "danharrin/livewire-rate-limiting": "^0.3|^1.0",
         "filament/forms": "self.version",
+        "filament/support": "self.version",
         "filament/tables": "self.version",
         "illuminate/auth": "^8.6|^9.0",
         "illuminate/console": "^8.6|^9.0",

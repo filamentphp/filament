@@ -1,12 +1,12 @@
 @props([
-    'label' => null,
     'collapsible' => true,
+    'label' => null,
 ])
 
-<li x-data="{ label: @js($label) }" class="filament-sidebar-group">
+<li x-data="{ label: {{ \Illuminate\Support\Js::from($label) }} }" class="filament-sidebar-group">
     @if ($label)
         <button
-            @if($collapsible)
+            @if ($collapsible)
                 x-on:click.prevent="$store.sidebar.toggleCollapsedGroup(label)"
             @endif
             @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
@@ -21,24 +21,23 @@
                 {{ $label }}
             </p>
 
-            @if($collapsible)
+            @if ($collapsible)
                 <x-heroicon-o-chevron-down :class="\Illuminate\Support\Arr::toCssClasses([
-                    'w-3 h-3 text-gray-600',
+                    'w-3 h-3 text-gray-600 transition-all',
                     'dark:text-gray-300' => config('filament.dark_mode'),
-                ])" x-show="$store.sidebar.groupIsCollapsed(label)" x-cloak />
-
-                <x-heroicon-o-chevron-up :class="\Illuminate\Support\Arr::toCssClasses([
-                    'w-3 h-3 text-gray-600',
-                    'dark:text-gray-300' => config('filament.dark_mode'),
-                ])" x-show="! $store.sidebar.groupIsCollapsed(label)" />
+                ])" x-bind:class="$store.sidebar.groupIsCollapsed(label) || '-rotate-180'" x-cloak />
             @endif
         </button>
     @endif
 
-    <ul x-show="! $store.sidebar.groupIsCollapsed(label)" x-collapse.duration.200ms @class([
-        'text-sm space-y-1 -mx-3',
-        'mt-2' => $label,
-    ])>
+    <ul
+        x-show="! ($store.sidebar.groupIsCollapsed(label) && {{ config('filament.layout.sidebar.is_collapsible_on_desktop') ? '$store.sidebar.isOpen' : 'true' }})"
+        x-collapse.duration.200ms
+        @class([
+            'text-sm space-y-1 -mx-3',
+            'mt-2' => $label,
+        ])
+    >
         {{ $slot }}
     </ul>
 </li>

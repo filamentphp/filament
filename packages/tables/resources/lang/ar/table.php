@@ -53,30 +53,8 @@ return [
             'label' => 'فتح الإجراءات',
         ],
 
-    ],
-
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'هل أنت متأكد من القيام بهذا؟',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'إلغاء',
-                ],
-
-                'confirm' => [
-                    'label' => 'تأكيد',
-                ],
-
-                'submit' => [
-                    'label' => 'إعتماد',
-                ],
-
-            ],
-
+        'toggle_columns' => [
+            'label' => 'تبديل الأعمدة',
         ],
 
     ],

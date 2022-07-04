@@ -2,13 +2,15 @@
 
 namespace Filament\Tables\Concerns;
 
+use Exception;
 use Filament\Forms;
+use Filament\Tables\Contracts\HasRelationshipTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
-/**
- * @method Builder getTableQuery()
- */
 trait InteractsWithTable
 {
     use CanPaginateRecords;
@@ -19,7 +21,7 @@ trait InteractsWithTable
     use HasActions;
     use HasBulkActions;
     use HasColumns;
-    use HasContentFooter;
+    use HasContent;
     use HasEmptyState;
     use HasFilters;
     use HasHeader;
@@ -27,6 +29,8 @@ trait InteractsWithTable
     use HasRecordAction;
     use HasRecordUrl;
     use Forms\Concerns\InteractsWithForms;
+
+    protected bool $hasMounted = false;
 
     protected Table $table;
 
@@ -40,11 +44,21 @@ trait InteractsWithTable
         $this->cacheTableHeaderActions();
 
         $this->cacheTableColumns();
+        $this->cacheForm('toggleTableColumnForm', $this->getTableColumnToggleForm());
 
         $this->cacheTableFilters();
-        $this->getTableFiltersForm()->fill($this->tableFilters);
+        $this->cacheForm('tableFiltersForm', $this->getTableFiltersForm());
 
-        $this->prepareToggledTableColumns();
+        if (! $this->hasMounted) {
+            $this->getTableColumnToggleForm()->fill(session()->get(
+                $this->getTableColumnToggleFormStateSessionKey(),
+                $this->getDefaultTableColumnToggleState()
+            ));
+
+            $this->getTableFiltersForm()->fill($this->tableFilters);
+
+            $this->hasMounted = true;
+        }
     }
 
     public function mountInteractsWithTable(): void
@@ -65,6 +79,7 @@ trait InteractsWithTable
     protected function getTable(): Table
     {
         return $this->makeTable()
+            ->content($this->getTableContent())
             ->contentFooter($this->getTableContentFooter())
             ->description($this->getTableDescription())
             ->emptyState($this->getTableEmptyState())
@@ -73,6 +88,7 @@ trait InteractsWithTable
             ->emptyStateIcon($this->getTableEmptyStateIcon())
             ->enablePagination($this->isTablePaginationEnabled())
             ->filtersFormWidth($this->getTableFiltersFormWidth())
+            ->filtersLayout($this->getTableFiltersLayout())
             ->recordAction($this->getTableRecordAction())
             ->getRecordUrlUsing($this->getTableRecordUrlUsing())
             ->header($this->getTableHeader())
@@ -100,32 +116,72 @@ trait InteractsWithTable
         return $this->getTableForms();
     }
 
+    public function getActiveTableLocale(): ?string
+    {
+        return null;
+    }
+
     protected function getTableForms(): array
     {
         return [
-            'mountedTableActionForm' => $this->makeForm()
-                ->schema(($action = $this->getMountedTableAction()) ? $action->getFormSchema() : [])
-                ->model($this->getMountedTableActionRecord() ?? $this->getTableQuery()->getModel()::class)
-                ->statePath('mountedTableActionData'),
-            'mountedTableBulkActionForm' => $this->makeForm()
-                ->schema(($action = $this->getMountedTableBulkAction()) ? $action->getFormSchema() : [])
-                ->model($this->getTableQuery()->getModel()::class)
-                ->statePath('mountedTableBulkActionData'),
-            'tableFiltersForm' => $this->makeForm()
-                ->schema($this->getTableFiltersFormSchema())
-                ->columns($this->getTableFiltersFormColumns())
-                ->statePath('tableFilters')
-                ->reactive(),
-            'toggleTableColumnForm' => $this->makeForm()
-                ->schema($this->getTableColumnToggleFormSchema())
-                ->columns($this->getTableColumnToggleFormColumns())
-                ->statePath('toggledTableColumns')
-                ->reactive(),
+            'mountedTableActionForm' => $this->getMountedTableActionForm(),
+            'mountedTableBulkActionForm' => $this->getMountedTableBulkActionForm(),
         ];
     }
 
     protected function makeTable(): Table
     {
         return Table::make($this);
+    }
+
+    protected function getTableQuery(): Builder | Relation
+    {
+        if (! $this instanceof HasRelationshipTable) {
+            $livewireClass = static::class;
+
+            throw new Exception("Class [{$livewireClass}] must define a [getTableQuery()] method.");
+        }
+
+        $relationship = $this->getRelationship();
+
+        $query = $relationship->getQuery();
+
+        if ($relationship instanceof HasManyThrough) {
+            // https://github.com/laravel/framework/issues/4962
+            $query->select($query->getModel()->getTable().'.*');
+
+            return $query;
+        }
+
+        if ($relationship instanceof BelongsToMany) {
+            // https://github.com/laravel/framework/issues/4962
+            if (! $this->allowsDuplicates()) {
+                $this->selectPivotDataInQuery($query);
+            }
+
+            // https://github.com/filamentphp/filament/issues/2079
+            $query->withCasts(
+                app($relationship->getPivotClass())->getCasts(),
+            );
+        }
+
+        return $query;
+    }
+
+    protected function selectPivotDataInQuery(Builder | Relation $query): Builder | Relation
+    {
+        if (! $this instanceof HasRelationshipTable) {
+            return $query;
+        }
+
+        /** @var BelongsToMany $relationship */
+        $relationship = $this->getRelationship();
+
+        $query->select(
+            $relationship->getTable().'.*',
+            $query->getModel()->getTable().'.*',
+        );
+
+        return $query;
     }
 }

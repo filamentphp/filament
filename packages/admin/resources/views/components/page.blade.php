@@ -1,6 +1,6 @@
 @props([
     'modals' => null,
-    'widgetRecord' => null,
+    'widgetData' => [],
 ])
 
 <div {{ $attributes->class(['filament-page']) }}>
@@ -16,13 +16,13 @@
         @endif
 
         @if ($headerWidgets = $this->getHeaderWidgets())
-            <x-filament::widgets :widgets="$headerWidgets" :data="['record' => $widgetRecord]" />
+            <x-filament::widgets :widgets="$headerWidgets" :data="$widgetData" />
         @endif
 
         {{ $slot }}
 
         @if ($footerWidgets = $this->getFooterWidgets())
-            <x-filament::widgets :widgets="$footerWidgets" :data="['record' => $widgetRecord]" />
+            <x-filament::widgets :widgets="$footerWidgets" :data="$widgetData" />
         @endif
 
         @if ($footer = $this->getFooter())
@@ -35,7 +35,7 @@
             $action = $this->getMountedAction();
         @endphp
 
-        <x-filament::modal id="page-action" :width="$action?->getModalWidth()" display-classes="block">
+        <x-filament::modal id="page-action" :visible="filled($action)" :width="$action?->getModalWidth()" display-classes="block">
             @if ($action)
                 @if ($action->isModalCentered())
                     <x-slot name="heading">
@@ -55,22 +55,26 @@
                     </x-slot>
                 @endif
 
+                {{ $action->getModalContent() }}
+
                 @if ($action->hasFormSchema())
                     {{ $this->getMountedActionForm() }}
                 @endif
 
-                <x-slot name="footer">
-                    <x-filament::modal.actions :full-width="$action->isModalCentered()">
-                        @foreach ($action->getModalActions() as $modalAction)
-                            {{ $modalAction }}
-                        @endforeach
-                    </x-filament::modal.actions>
-                </x-slot>
+                @if (count($action->getModalActions()))
+                    <x-slot name="footer">
+                        <x-filament::modal.actions :full-width="$action->isModalCentered()">
+                            @foreach ($action->getModalActions() as $modalAction)
+                                {{ $modalAction }}
+                            @endforeach
+                        </x-filament::modal.actions>
+                    </x-slot>
+                @endif
             @endif
         </x-filament::modal>
     </form>
 
-    {{ $modals }}
+    {{ $this->modal }}
 
     @stack('modals')
 

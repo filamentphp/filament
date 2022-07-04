@@ -20,7 +20,7 @@
 
     <div class="grid gap-2 sm:grid-cols-3 sm:gap-4 sm:items-start">
         @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hint)
-            <div class="flex items-center justify-between gap-2 sm:gap-1 sm:items-start sm:flex-col sm:pt-2 rtl:space-x-reverse">
+            <div class="flex items-center justify-between gap-2 sm:gap-1 sm:items-start sm:flex-col sm:pt-2">
                 @if ($label && (! $labelSrOnly))
                     <x-forms::field-wrapper.label
                         :for="$id"
@@ -39,7 +39,7 @@
 
                 @if ($hint || $hintIcon)
                     <x-forms::field-wrapper.hint :icon="$hintIcon">
-                        {!! filled($hint) ? \Illuminate\Support\Str::markdown($hint) : null !!}
+                        {!! filled($hint) ? \Illuminate\Support\Str::of($hint)->markdown()->sanitizeHtml() : null !!}
                     </x-forms::field-wrapper.hint>
                 @endif
             </div>
@@ -56,7 +56,7 @@
 
             @if ($helperText)
                 <x-forms::field-wrapper.helper-text>
-                    {!! \Illuminate\Support\Str::markdown($helperText) !!}
+                    {!! \Illuminate\Support\Str::of($helperText)->markdown()->sanitizeHtml() !!}
                 </x-forms::field-wrapper.helper-text>
             @endif
         </div>

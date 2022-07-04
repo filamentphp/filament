@@ -2,78 +2,105 @@
 
 namespace Filament\Tables\Actions;
 
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Contracts\View\View;
-use Illuminate\Support\Traits\Conditionable;
-use Illuminate\Support\Traits\Macroable;
-use Illuminate\Support\Traits\Tappable;
-use Illuminate\View\Component;
+use Filament\Support\Actions\Action as BaseAction;
+use Filament\Support\Actions\Concerns\CanBeDisabled;
+use Filament\Support\Actions\Concerns\CanBeOutlined;
+use Filament\Support\Actions\Concerns\CanOpenUrl;
+use Filament\Support\Actions\Concerns\HasGroupedIcon;
+use Filament\Support\Actions\Concerns\HasTooltip;
+use Filament\Support\Actions\Concerns\InteractsWithRecord;
+use Filament\Support\Actions\Contracts\Groupable;
+use Filament\Support\Actions\Contracts\HasRecord;
+use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
+use Illuminate\Database\Eloquent\Model;
 
-class Action extends Component implements Htmlable
+class Action extends BaseAction implements Groupable, HasRecord
 {
+    use CanBeDisabled;
+    use CanBeOutlined;
+    use CanOpenUrl;
     use Concerns\BelongsToTable;
-    use Concerns\CanBeDisabled;
-    use Concerns\CanBeHidden;
-    use Concerns\CanBeMounted;
-    use Concerns\CanOpenModal;
-    use Concerns\CanOpenUrl;
-    use Concerns\CanRequireConfirmation;
-    use Concerns\EvaluatesClosures;
-    use Concerns\HasAction;
-    use Concerns\HasColor;
-    use Concerns\HasFormSchema;
-    use Concerns\HasIcon;
-    use Concerns\HasLabel;
-    use Concerns\HasName;
-    use Concerns\HasRecord;
-    use Concerns\HasView;
-    use Concerns\HasTooltip;
-    use Conditionable;
-    use Macroable;
-    use Tappable;
+    use HasGroupedIcon;
+    use HasTooltip;
+    use InteractsWithRecord;
 
-    final public function __construct(string $name)
+    protected string $view = 'tables::actions.link-action';
+
+    public function button(): static
     {
-        $this->name($name);
+        $this->view('tables::actions.button-action');
+
+        return $this;
     }
 
-    public static function make(string $name): static
+    public function grouped(): static
     {
-        $static = app(static::class, ['name' => $name]);
-        $static->setUp();
+        $this->view('tables::actions.grouped-action');
 
-        return $static;
+        return $this;
     }
 
-    protected function setUp(): void
+    public function link(): static
     {
+        $this->view('tables::actions.link-action');
+
+        return $this;
     }
 
-    public function call(array $data = [])
+    public function iconButton(): static
     {
-        if ($this->isHidden()) {
-            return;
-        }
+        $this->view('tables::actions.icon-button-action');
 
-        return $this->evaluate($this->getAction(), [
-            'data' => $data,
-        ]);
+        return $this;
     }
 
-    protected function getLivewireSubmitActionName(): string
+    protected function getLivewireCallActionName(): string
     {
         return 'callMountedTableAction';
     }
 
-    public function toHtml(): string
+    protected static function getModalActionClass(): string
     {
-        return $this->render()->render();
+        return ModalAction::class;
     }
 
-    public function render(): View
+    public static function makeModalAction(string $name): ModalAction
     {
-        return view($this->getView(), array_merge($this->data(), [
-            'action' => $this,
-        ]));
+        /** @var ModalAction $action */
+        $action = parent::makeModalAction($name);
+
+        return $action;
+    }
+
+    protected function getDefaultEvaluationParameters(): array
+    {
+        return array_merge(parent::getDefaultEvaluationParameters(), [
+            'record' => $this->resolveEvaluationParameter(
+                'record',
+                fn (): ?Model => $this->getRecord(),
+            ),
+        ]);
+    }
+
+    public function getRecordTitle(?Model $record = null): string
+    {
+        $record ??= $this->getRecord();
+
+        return $this->getCustomRecordTitle($record) ?? $this->getLivewire()->getTableRecordTitle($record);
+    }
+
+    public function getModelLabel(): string
+    {
+        return $this->getCustomModelLabel() ?? $this->getLivewire()->getTableModelLabel();
+    }
+
+    public function getPluralModelLabel(): string
+    {
+        return $this->getCustomPluralModelLabel() ?? $this->getLivewire()->getTablePluralModelLabel();
+    }
+
+    public function getModel(): string
+    {
+        return $this->getCustomModel() ?? $this->getLivewire()->getTableModel();
     }
 }

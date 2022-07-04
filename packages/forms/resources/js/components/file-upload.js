@@ -27,14 +27,17 @@ window.FilePond = FilePond;
 export default (Alpine) => {
     Alpine.data('fileUploadFormComponent', ({
         acceptedFileTypes,
-        canReorder,
+        canDownload,
         canPreview,
+        canReorder,
         deleteUploadedFileUsing,
         getUploadedFileUrlsUsing,
         imageCropAspectRatio,
         imagePreviewHeight,
+        imageResizeMode,
         imageResizeTargetHeight,
         imageResizeTargetWidth,
+        isAvatar,
         loadingIndicatorPosition,
         panelAspectRatio,
         panelLayout,
@@ -45,6 +48,7 @@ export default (Alpine) => {
         removeUploadedFileUsing,
         reorderUploadedFilesUsing,
         shouldAppendFiles,
+        shouldTransformImage,
         state,
         uploadButtonPosition,
         uploadProgressIndicatorPosition,
@@ -58,22 +62,27 @@ export default (Alpine) => {
             shouldUpdateState: true,
 
             state,
+            
+            lastState: null,
 
             uploadedFileUrlIndex: {},
 
             init: async function () {
                 this.pond = FilePond.create(this.$refs.input, {
                     acceptedFileTypes,
+                    allowPaste: false,
                     allowReorder: canReorder,
                     allowImagePreview: canPreview,
                     allowVideoPreview: canPreview,
                     allowAudioPreview: canPreview,
+                    allowImageTransform: shouldTransformImage,
                     credits: false,
                     files: await this.getFiles(),
                     imageCropAspectRatio,
                     imagePreviewHeight,
                     imageResizeTargetHeight,
                     imageResizeTargetWidth,
+                    imageResizeMode,
                     itemInsertLocation: shouldAppendFiles ? 'after' : 'before',
                     ...(placeholder && {labelIdle: placeholder}),
                     maxFileSize: maxSize,
@@ -132,6 +141,13 @@ export default (Alpine) => {
                     if (Object.values(this.state).filter((file) => file.startsWith('livewire-file:')).length) {
                         return
                     }
+                    
+                    // Don't do anything if the state hasn't changed
+                    if (JSON.stringify(this.state) === this.lastState) {
+                        return
+                    }
+                    
+                    this.lastState = JSON.stringify(this.state)
 
                     this.pond.files = await this.getFiles()
                 })
@@ -143,6 +159,51 @@ export default (Alpine) => {
 
                     await reorderUploadedFilesUsing(shouldAppendFiles ? orderedFileKeys : orderedFileKeys.reverse())
                 })
+
+                this.pond.on('initfile', async (fileItem) => {
+                    if (! canDownload) {
+                        return
+                    }
+
+                    if (isAvatar) {
+                        return
+                    }
+
+                    this.insertDownloadLink(fileItem)
+                })
+
+                this.pond.on('processfilestart', async () => {
+                    this.dispatchFormEvent('file-upload-started')
+                })
+
+                this.pond.on('processfileprogress', async () => {
+                    this.dispatchFormEvent('file-upload-started')
+                })
+
+                this.pond.on('processfile', async () => {
+                    this.dispatchFormEvent('file-upload-finished')
+                })
+
+                this.pond.on('processfiles', async () => {
+                    this.dispatchFormEvent('file-upload-finished')
+                })
+
+                this.pond.on('processfileabort', async () => {
+                    this.dispatchFormEvent('file-upload-finished')
+                })
+
+                this.pond.on('processfilerevert', async () => {
+                    this.dispatchFormEvent('file-upload-finished')
+                })
+            },
+
+            dispatchFormEvent: function (name) {
+                this.$el.closest('form')?.dispatchEvent(
+                    new CustomEvent(name, {
+                        composed: true,
+                        cancelable: true,
+                    })
+                )
             },
 
             getUploadedFileUrls: async function () {
@@ -153,7 +214,7 @@ export default (Alpine) => {
                 this.uploadedFileUrlIndex = Object.entries(this.fileKeyIndex)
                     .filter(value => value)
                     .reduce((obj, [key, value]) => {
-                        obj[value] = key 
+                        obj[value] = key
 
                         return obj
                     }, {})
@@ -178,6 +239,36 @@ export default (Alpine) => {
                 }
 
                 return shouldAppendFiles ? files : files.reverse()
+            },
+
+            insertDownloadLink: function (file) {
+                if (file.origin !== FilePond.FileOrigin.LOCAL) {
+                    return
+                }
+
+                const url = this.getDownloadUrl(file)
+
+                if (! url) {
+                    return
+                }
+
+                document.getElementById(`filepond--item-${file.id}`)
+                    .querySelector('.filepond--file-info-main')
+                    .prepend(url)
+            },
+
+            getDownloadUrl: function (file) {
+                let fileSource = file.source
+
+                if (! fileSource) {
+                    return
+                }
+
+                const anchor = document.createElement('a')
+                anchor.className = 'filepond--download-icon'
+                anchor.href = fileSource
+                anchor.download = file.file.name
+                return anchor
             }
         }
     })

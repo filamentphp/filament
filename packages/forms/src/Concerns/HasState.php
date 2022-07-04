@@ -2,7 +2,9 @@
 
 namespace Filament\Forms\Concerns;
 
+use Filament\Forms\Components\BaseFileUpload;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 trait HasState
 {
@@ -28,6 +30,12 @@ trait HasState
                 return true;
             }
 
+            if ($component instanceof BaseFileUpload && Str::of($path)->startsWith("{$component->getStatePath()}.")) {
+                $component->callAfterStateUpdated();
+
+                return true;
+            }
+
             foreach ($component->getChildComponentContainers() as $container) {
                 if ($container->callAfterStateUpdated($path)) {
                     return true;
@@ -47,10 +55,6 @@ trait HasState
 
             $component->callBeforeStateDehydrated();
 
-            if ($component->getRecord()?->exists) {
-                $component->saveRelationships();
-            }
-
             foreach ($component->getChildComponentContainers() as $container) {
                 if ($container->isHidden()) {
                     continue;
@@ -63,8 +67,6 @@ trait HasState
 
     public function dehydrateState(array &$state = []): array
     {
-        $this->callBeforeStateDehydrated();
-
         foreach ($this->getComponents() as $component) {
             if ($component->isHidden()) {
                 continue;
@@ -133,23 +135,44 @@ trait HasState
 
     public function fill(?array $state = null): static
     {
-        if ($state !== null) {
+        if ($state === null) {
+            return $this->fillWithDefaults();
+        }
+
+        $livewire = $this->getLivewire();
+
+        if ($statePath = $this->getStatePath()) {
+            data_set($livewire, $statePath, $state);
+        } else {
+            $this->fillComponentStateWithNull();
+
+            foreach ($state as $key => $value) {
+                data_set($livewire, $key, $value);
+            }
+        }
+
+        $this->loadStateFromRelationships();
+
+        $this->callAfterStateHydrated();
+
+        $this->fillComponentStateWithNull(shouldOverwrite: false);
+
+        return $this;
+    }
+
+    protected function fillWithDefaults(): static
+    {
+        if ($statePath = $this->getStatePath()) {
             $livewire = $this->getLivewire();
 
-            if ($statePath = $this->getStatePath()) {
-                data_set($livewire, $statePath, $state);
-            } else {
-                foreach ($state as $key => $value) {
-                    data_set($livewire, $key, $value);
-                }
-            }
-
-            $this->fillMissingComponentStateWithNull();
-
-            $this->callAfterStateHydrated();
+            data_set($livewire, $statePath, []);
         } else {
-            $this->hydrateDefaultState();
+            $this->fillComponentStateWithNull();
         }
+
+        $this->hydrateDefaultState();
+
+        $this->fillComponentStateWithNull(shouldOverwrite: false);
 
         return $this;
     }
@@ -168,15 +191,15 @@ trait HasState
         return $this;
     }
 
-    public function fillMissingComponentStateWithNull(): static
+    public function fillComponentStateWithNull(bool $shouldOverwrite = true): static
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
-            if ($component->hasChildComponentContainer()) {
-                foreach ($component->getChildComponentContainers() as $container) {
-                    $container->fillMissingComponentStateWithNull();
+            if ($component->hasChildComponentContainer(withHidden: true)) {
+                foreach ($component->getChildComponentContainers(withHidden: true) as $container) {
+                    $container->fillComponentStateWithNull($shouldOverwrite);
                 }
             } else {
-                $component->fillMissingStateWithNull();
+                $component->fillStateWithNull($shouldOverwrite);
             }
         }
 
@@ -190,9 +213,15 @@ trait HasState
         return $this;
     }
 
-    public function getState(): array
+    public function getState(bool $shouldCallHooksBefore = true): array
     {
         $state = $this->validate();
+
+        if ($shouldCallHooksBefore) {
+            $this->callBeforeStateDehydrated();
+            $this->saveRelationships();
+            $this->loadStateFromRelationships();
+        }
 
         $this->dehydrateState($state);
         $this->mutateDehydratedState($state);
@@ -202,6 +231,11 @@ trait HasState
         }
 
         return $state;
+    }
+
+    public function getRawState(): array
+    {
+        return data_get($this->getLivewire(), $this->getStatePath()) ?? [];
     }
 
     public function getStateOnly(array $keys): array

@@ -50,39 +50,17 @@ return [
         ],
 
         'open_actions' => [
-            'label' => 'Open actions',
+            'label' => 'Aksi',
         ],
 
-    ],
-
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Apakah Anda yakin ingin melakukan ini?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Batalkan',
-                ],
-
-                'confirm' => [
-                    'label' => 'Konfirmasi',
-                ],
-
-                'submit' => [
-                    'label' => 'Kirim',
-                ],
-
-            ],
-
+        'toggle_columns' => [
+            'label' => 'Pilih kolom',
         ],
 
     ],
 
     'empty' => [
-        'heading' => 'Data tidak ditemukan',
+        'heading' => 'Tidak ada data yang ditemukan',
     ],
 
     'filters' => [
@@ -91,6 +69,10 @@ return [
 
             'reset' => [
                 'label' => 'Atur ulang filter',
+            ],
+
+            'close' => [
+                'label' => 'Tutup',
             ],
 
         ],
@@ -103,6 +85,18 @@ return [
             'placeholder' => 'Semua',
         ],
 
+        'trashed' => [
+
+            'label' => 'Data yang dihapus',
+
+            'only_trashed' => 'Hanya data yang sudah dihapus',
+
+            'with_trashed' => 'Dengan data yang sudah dihapus',
+
+            'without_trashed' => 'Tanpa data yang sudah dihapus',
+
+        ],
+
     ],
 
     'selection_indicator' => [
@@ -112,7 +106,7 @@ return [
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Pilih semua :count',
+                'label' => 'Pilih semua (:count)',
             ],
 
             'deselect_all' => [

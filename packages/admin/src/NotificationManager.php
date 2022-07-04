@@ -2,31 +2,38 @@
 
 namespace Filament;
 
+use Illuminate\Support\Str;
 use Livewire\Component;
+use Livewire\Livewire;
 use Livewire\Response;
 
 class NotificationManager
 {
-    protected static array $notifications = [];
+    protected array $notifications = [];
 
-    public static function notify(string $status, string $message): void
+    public function notify(string $status, string $message): void
     {
-        session()->push('notifications', [
+        session()->push('filament.notifications', [
             'id' => uniqid(),
             'status' => $status,
-            'message' => $message,
+            'message' => (string) Str::of($message)->markdown()->sanitizeHtml(),
         ]);
 
-        static::$notifications = session()->get('notifications');
+        $this->notifications = session()->get('filament.notifications');
     }
 
-    public static function handleLivewireResponses(Component $component, Response $response): Response
+    public function handleLivewireResponses(Component $component, Response $response): Response
     {
+        if (! Livewire::isLivewireRequest()) {
+            return $response;
+        }
+
         if ($component->redirectTo !== null) {
             return $response;
         }
 
-        $notifications = static::$notifications;
+        $notifications = $this->notifications;
+        session()->forget('filament.notifications');
 
         if (count($notifications) > 0) {
             $component->dispatchBrowserEvent('notify', $notifications);

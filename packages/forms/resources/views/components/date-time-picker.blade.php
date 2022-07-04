@@ -23,10 +23,7 @@
         x-data="dateTimePickerFormComponent({
             displayFormat: '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
             firstDayOfWeek: {{ $getFirstDayOfWeek() }},
-            format: '{{ convert_date_format($getFormat())->to('day.js') }}',
             isAutofocused: {{ $isAutofocused() ? 'true' : 'false' }},
-            maxDate: '{{ $getMaxDate() }}',
-            minDate: '{{ $getMinDate() }}',
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
         x-on:click.away="closePicker()"
@@ -35,6 +32,9 @@
         {{ $attributes->merge($getExtraAttributes())->class(['relative filament-forms-date-time-picker-component']) }}
         {{ $getExtraAlpineAttributeBag() }}
     >
+        <input x-ref="maxDate" type="hidden" value="{{ $getMaxDate() }}" />
+        <input x-ref="minDate" type="hidden" value="{{ $getMinDate() }}" />
+
         <button
             @unless($isDisabled())
                 x-ref="button"
@@ -93,7 +93,7 @@
                 @class([
                     'absolute z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-md',
                     'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
-                    'p-4 w-64' => $hasDate(),
+                    'p-4 min-w-[16rem] w-fit' => $hasDate(),
                 ])
             >
                 <div class="space-y-3">
@@ -154,7 +154,7 @@
                                         'bg-primary-50 @if (config('forms.dark_mode')) dark:bg-primary-100 dark:text-gray-600 @endif': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day && ! dayIsDisabled(day),
                                         'bg-primary-200 @if (config('forms.dark_mode')) dark:text-gray-600 @endif': focusedDate.date() === day && ! dayIsSelected(day),
                                         'bg-primary-500 text-white': dayIsSelected(day),
-                                        'cursor-not-allowed': dayIsDisabled(day),
+                                        'cursor-not-allowed pointer-events-none': dayIsDisabled(day),
                                         'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
                                     }"
                                     x-bind:dusk="'filament.forms.{{ $getStatePath() }}' + '.focusedDate.' + day"

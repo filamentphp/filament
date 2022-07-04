@@ -53,36 +53,14 @@ return [
             'label' => 'بازکردن عملیات',
         ],
 
-    ],
-
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'آیا برای انجام این کار مطمئن هستید؟',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'لغو',
-                ],
-
-                'confirm' => [
-                    'label' => 'تایید',
-                ],
-
-                'submit' => [
-                    'label' => 'ثبت',
-                ],
-
-            ],
-
+        'toggle_columns' => [
+            'label' => 'باز/بستن ستون ها',
         ],
 
     ],
 
     'empty' => [
-        'heading' => 'هیچ آیتمی یافت نشد',
+        'heading' => 'هیچ رکوردی یافت نشد',
     ],
 
     'filters' => [
@@ -90,7 +68,11 @@ return [
         'buttons' => [
 
             'reset' => [
-                'label' => 'پاک کردن فیلترها',
+                'label' => 'حذف فیلترها',
+            ],
+
+            'close' => [
+                'label' => 'بستن',
             ],
 
         ],
@@ -101,6 +83,18 @@ return [
 
         'select' => [
             'placeholder' => 'همه',
+        ],
+
+        'trashed' => [
+
+            'label' => 'رکوردهای حذف شده',
+
+            'only_trashed' => 'فقط رکوردهای حذف شده',
+
+            'with_trashed' => 'به همراه رکوردهای حذف شده',
+
+            'without_trashed' => 'بدون رکوردهای حذف شده',
+
         ],
 
     ],

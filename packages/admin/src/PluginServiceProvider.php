@@ -2,6 +2,7 @@
 
 namespace Filament;
 
+use Filament\Resources\RelationManagers\RelationGroup;
 use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -59,21 +60,18 @@ abstract class PluginServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->app->singletonIf(
-            'filament',
-            fn (): FilamentManager => app(FilamentManager::class),
-        );
+        $this->app->resolving('filament', function () {
+            Facades\Filament::registerPages($this->getPages());
+            Facades\Filament::registerResources($this->getResources());
+            Facades\Filament::registerWidgets($this->getWidgets());
 
-        Facades\Filament::registerPages($this->getPages());
-        Facades\Filament::registerResources($this->getResources());
-        Facades\Filament::registerUserMenuItems($this->getUserMenuItems());
-        Facades\Filament::registerWidgets($this->getWidgets());
-
-        Facades\Filament::serving(function () {
-            Facades\Filament::registerScripts($this->getBeforeCoreScripts(), true);
-            Facades\Filament::registerScripts($this->getScripts());
-            Facades\Filament::registerStyles($this->getStyles());
-            Facades\Filament::registerScriptData($this->getScriptData());
+            Facades\Filament::serving(function () {
+                Facades\Filament::registerUserMenuItems($this->getUserMenuItems());
+                Facades\Filament::registerScripts($this->getBeforeCoreScripts(), true);
+                Facades\Filament::registerScripts($this->getScripts());
+                Facades\Filament::registerStyles($this->getStyles());
+                Facades\Filament::registerScriptData($this->getScriptData());
+            });
         });
     }
 
@@ -84,7 +82,15 @@ abstract class PluginServiceProvider extends PackageServiceProvider
         }
 
         foreach ($this->getRelationManagers() as $manager) {
-            Livewire::component($manager::getName(), $manager);
+            if ($manager instanceof RelationGroup) {
+                foreach ($manager->getManagers() as $groupedManager) {
+                    $this->registerRelationManager($groupedManager);
+                }
+
+                return;
+            }
+
+            $this->registerRelationManager($manager);
         }
 
         foreach ($this->getResources() as $resource) {
@@ -106,6 +112,11 @@ abstract class PluginServiceProvider extends PackageServiceProvider
         }
 
         $this->registerMacros();
+    }
+
+    protected function registerRelationManager(string $manager): void
+    {
+        Livewire::component($manager::getName(), $manager);
     }
 
     protected function getCommands(): array

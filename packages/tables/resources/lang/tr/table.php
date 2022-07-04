@@ -53,30 +53,8 @@ return [
             'label' => 'Eylemleri aç',
         ],
 
-    ],
-
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Bunu yapmak istediğinizden emin misiniz?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'İptal',
-                ],
-
-                'confirm' => [
-                    'label' => 'Onayla',
-                ],
-
-                'submit' => [
-                    'label' => 'Gönder',
-                ],
-
-            ],
-
+        'toggle_columns' => [
+            'label' => 'Sütunları göster/gizle',
         ],
 
     ],
@@ -93,6 +71,10 @@ return [
                 'label' => 'Filtrelemeyi sıfırla',
             ],
 
+            'close' => [
+                'label' => 'Kapat',
+            ],
+
         ],
 
         'multi_select' => [
@@ -101,6 +83,18 @@ return [
 
         'select' => [
             'placeholder' => 'Tümü',
+        ],
+
+        'trashed' => [
+
+            'label' => 'Silinen kayıtlar',
+
+            'only_trashed' => 'Sadece silinen kayıtlar',
+
+            'with_trashed' => 'Silinen kayıtlar ile',
+
+            'without_trashed' => 'Silinen kayıtlar olmadan',
+
         ],
 
     ],

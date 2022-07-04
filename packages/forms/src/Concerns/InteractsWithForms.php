@@ -2,7 +2,9 @@
 
 namespace Filament\Forms\Concerns;
 
+use Closure;
 use Filament\Forms\ComponentContainer;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use Livewire\TemporaryUploadedFile;
@@ -11,20 +13,42 @@ use Livewire\WithFileUploads;
 trait InteractsWithForms
 {
     use WithFileUploads;
+    use HasFormComponentActions;
 
     public array $componentFileAttachments = [];
 
     protected ?array $cachedForms = null;
 
+    protected bool $hasCachedForms = false;
+
     protected bool $isCachingForms = false;
+
+    protected bool $hasModalViewRendered = false;
 
     public function __get($property)
     {
-        if (! $this->isCachingForms && $form = $this->getCachedForm($property)) {
+        if ((! $this->isCachingForms) && $form = $this->getCachedForm($property)) {
             return $form;
         }
 
+        if ($property === 'modal') {
+            return $this->getModalViewOnce();
+        }
+
         return parent::__get($property);
+    }
+
+    protected function getModalViewOnce(): ?View
+    {
+        if ($this->hasModalViewRendered) {
+            return null;
+        }
+
+        try {
+            return view('forms::components.actions.modal.index');
+        } finally {
+            $this->hasModalViewRendered = true;
+        }
     }
 
     public function dispatchFormEvent(...$args): void
@@ -50,33 +74,11 @@ trait InteractsWithForms
         return null;
     }
 
-    public function getMultiSelectOptionLabels(string $statePath): array
+    public function getSelectOptionLabels(string $statePath): array
     {
         foreach ($this->getCachedForms() as $form) {
-            if ($labels = $form->getMultiSelectOptionLabels($statePath)) {
+            if ($labels = $form->getSelectOptionLabels($statePath)) {
                 return $labels;
-            }
-        }
-
-        return [];
-    }
-
-    public function getMultiSelectOptions(string $statePath): array
-    {
-        foreach ($this->getCachedForms() as $form) {
-            if ($results = $form->getMultiSelectOptions($statePath)) {
-                return $results;
-            }
-        }
-
-        return [];
-    }
-
-    public function getMultiSelectSearchResults(string $statePath, string $searchQuery): array
-    {
-        foreach ($this->getCachedForms() as $form) {
-            if ($results = $form->getMultiSelectSearchResults($statePath, $searchQuery)) {
-                return $results;
             }
         }
 
@@ -105,10 +107,10 @@ trait InteractsWithForms
         return [];
     }
 
-    public function getSelectSearchResults(string $statePath, string $searchQuery): array
+    public function getSelectSearchResults(string $statePath, string $search): array
     {
         foreach ($this->getCachedForms() as $form) {
-            if ($results = $form->getSelectSearchResults($statePath, $searchQuery)) {
+            if ($results = $form->getSelectSearchResults($statePath, $search)) {
                 return $results;
             }
         }
@@ -170,6 +172,11 @@ trait InteractsWithForms
         }
     }
 
+    public function getActiveFormLocale(): ?string
+    {
+        return null;
+    }
+
     protected function callBeforeAndAfterSyncHooks($name, $value, $callback): void
     {
         parent::callBeforeAndAfterSyncHooks($name, $value, $callback);
@@ -179,28 +186,35 @@ trait InteractsWithForms
         }
     }
 
-    protected function cacheForm(string $name): ComponentContainer
+    protected function cacheForm(string $name, ComponentContainer | Closure | null $form): ?ComponentContainer
     {
         $this->isCachingForms = true;
 
-        if ($this->cachedForms === null) {
-            $this->cacheForms();
-        } else {
-            $this->cachedForms[$name] = $this->getUncachedForms()[$name];
+        $form = value($form);
+
+        if ($form) {
+            $this->cachedForms[$name] = $form;
         }
 
         $this->isCachingForms = false;
 
-        return $this->cachedForms[$name];
+        return $form;
     }
 
     protected function cacheForms(): array
     {
         $this->isCachingForms = true;
 
-        $this->cachedForms = $this->getUncachedForms();
+        $this->cachedForms = array_filter($this->getUncachedForms());
 
         $this->isCachingForms = false;
+
+        $this->hasCachedForms = true;
+
+        $this->cacheForm(
+            'mountedFormComponentActionForm',
+            $this->getMountedFormComponentActionForm(),
+        );
 
         return $this->cachedForms;
     }
@@ -223,6 +237,25 @@ trait InteractsWithForms
         return $forms;
     }
 
+    protected function hasCachedForm($name): bool
+    {
+        return array_key_exists($name, $this->getCachedForms());
+    }
+
+    protected function getCachedForm($name): ?ComponentContainer
+    {
+        return $this->getCachedForms()[$name] ?? null;
+    }
+
+    protected function getCachedForms(): array
+    {
+        if (! $this->hasCachedForms) {
+            return $this->cacheForms();
+        }
+
+        return $this->cachedForms;
+    }
+
     protected function focusConcealedComponents(array $statePaths): void
     {
         $componentToFocus = null;
@@ -238,20 +271,6 @@ trait InteractsWithForms
                 'id' => $concealingComponent->getId(),
             ]);
         }
-    }
-
-    protected function getCachedForm($name): ?ComponentContainer
-    {
-        return $this->getCachedForms()[$name] ?? null;
-    }
-
-    protected function getCachedForms(): array
-    {
-        if ($this->cachedForms === null) {
-            return $this->cacheForms();
-        }
-
-        return $this->cachedForms;
     }
 
     protected function getFormModel(): Model | string | null

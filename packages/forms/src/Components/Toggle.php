@@ -3,12 +3,13 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
 class Toggle extends Field
 {
     use Concerns\CanBeAccepted;
     use Concerns\CanBeInline;
-    use Concerns\HasExtraAlpineAttributes;
+    use HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.toggle';
 
@@ -22,7 +23,7 @@ class Toggle extends Field
 
         $this->default(false);
 
-        $this->afterStateHydrated(function (Toggle $component, $state): void {
+        $this->afterStateHydrated(static function (Toggle $component, $state): void {
             $component->state((bool) $state);
         });
 

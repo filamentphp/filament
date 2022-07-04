@@ -6,36 +6,6 @@ return [
 
     'breadcrumb' => 'Upravit',
 
-    'actions' => [
-
-        'delete' => [
-
-            'label' => 'Smazat',
-
-            'modal' => [
-
-                'heading' => 'Smazat :label',
-
-                'subheading' => 'Opravdu chcete akci provést?',
-
-                'buttons' => [
-
-                    'delete' => [
-                        'label' => 'Smazat',
-                    ],
-
-                ],
-
-            ],
-
-        ],
-
-        'view' => [
-            'label' => 'Zobrazit',
-        ],
-
-    ],
-
     'form' => [
 
         'actions' => [
