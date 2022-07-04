@@ -153,8 +153,8 @@ use Filament\Tables\Actions\CreateAction;
 use Illuminate\Database\Eloquent\Model;
 
 CreateAction::make()
-    ->using(function (array $data): Model {
-        return static::getModel()::create($data);
+    ->using(function ($livewire, array $data): Model {
+        return $livewire->getRelatedModel()::create($data);
     })
 ```
 
