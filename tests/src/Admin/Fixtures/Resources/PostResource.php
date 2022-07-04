@@ -22,7 +22,7 @@ class PostResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('title')->required(),
                 Forms\Components\MarkdownEditor::make('content'),
-                Forms\Components\BelongsToSelect::make('author_id')
+                Forms\Components\Select::make('author_id')
                     ->relationship('author', 'name')
                     ->required(),
                 Forms\Components\TagsInput::make('tags'),
@@ -36,8 +36,12 @@ class PostResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title'),
-                Tables\Columns\TextColumn::make('author.name'),
+                Tables\Columns\TextColumn::make('title')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('author.name')
+                    ->sortable()
+                    ->searchable(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

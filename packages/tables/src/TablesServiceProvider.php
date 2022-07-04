@@ -3,6 +3,9 @@
 namespace Filament\Tables;
 
 use Filament\Tables\Testing\TestsActions;
+use Filament\Tables\Testing\TestsColumns;
+use Filament\Tables\Testing\TestsFilters;
+use Filament\Tables\Testing\TestsRecords;
 use Livewire\Testing\TestableLivewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -44,5 +47,8 @@ class TablesServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         TestableLivewire::mixin(new TestsActions());
+        TestableLivewire::mixin(new TestsColumns());
+        TestableLivewire::mixin(new TestsFilters());
+        TestableLivewire::mixin(new TestsRecords());
     }
 }

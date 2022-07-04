@@ -24,6 +24,24 @@ namespace Livewire\Testing {
         public function assertHasTableBulkActionErrors(array $keys = []): static {}
 
         public function assertHasNoTableBulkActionErrors(array $keys = []): static {}
+
+        public function assertCanRenderTableColumn(string $name): static {}
+
+        public function assertTableColumnExists(string $name): static {}
+
+        public function sortTable(?string $column = null, ?string $direction = null): static {}
+
+        public function searchTable(?string $search = null): static {}
+
+        public function filterTable(string $filter, array $data = ['value' => true]): static {}
+
+        public function resetTableFilters(): static {}
+
+        public function assertCanSeeTableRecords(array | Collection $records, bool $inOrder = false): static {}
+
+        public function assertCanNotSeeTableRecords(array | Collection $records): static {}
+
+        public function assertCountTableRecords(int $count): static {}
     }
 
 }

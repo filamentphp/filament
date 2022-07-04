@@ -187,9 +187,7 @@ it('can delete', function () {
     ])
         ->callPageAction('delete');
 
-    $this->assertDatabaseMissing(Post::class, [
-        'id' => $post->id,
-    ]);
+    $this->assertModelMissing($post);
 });
 ```
 
