@@ -15,7 +15,7 @@ class Field extends Component implements Contracts\HasValidationRules
 
     protected string $viewIdentifier = 'field';
 
-    final public function __construct(string $name)
+    public function __construct(string $name)
     {
         $this->name($name);
         $this->statePath($name);

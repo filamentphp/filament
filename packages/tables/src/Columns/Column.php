@@ -30,7 +30,7 @@ class Column extends ViewComponent
     protected string $evaluationIdentifier = 'column';
     protected string $viewIdentifier = 'column';
 
-    final public function __construct(string $name)
+    public function __construct(string $name)
     {
         $this->name($name);
     }
