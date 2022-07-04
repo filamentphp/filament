@@ -150,11 +150,12 @@ You can tweak how the record is created using the `using()` method:
 
 ```php
 use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Model;
 
 CreateAction::make()
-    ->using(function ($livewire, array $data): Model {
-        return $livewire->getRelatedModel()::create($data);
+    ->using(function (HasRelationshipTable $livewire, array $data): Model {
+        return $livewire->getRelationship()->create($data);
     })
 ```
 
