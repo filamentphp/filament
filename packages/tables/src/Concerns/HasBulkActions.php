@@ -163,7 +163,7 @@ trait HasBulkActions
             ->statePath('mountedTableBulkActionData');
     }
 
-    protected function getCachedTableBulkAction(string $name): ?BulkAction
+    public function getCachedTableBulkAction(string $name): ?BulkAction
     {
         $action = $this->getCachedTableBulkActions()[$name] ?? null;
         $action?->records($this->getSelectedTableRecords());

@@ -194,7 +194,7 @@ trait HasActions
         return $this->cachedMountedTableActionRecord = $this->resolveTableRecord($recordKey);
     }
 
-    protected function getCachedTableAction(string $name): ?Action
+    public function getCachedTableAction(string $name): ?Action
     {
         return $this->findTableAction($name)?->record($this->getMountedTableActionRecord());
     }

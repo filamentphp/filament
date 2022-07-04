@@ -15,11 +15,12 @@ use Filament\Http\Responses\Auth\LogoutResponse;
 use Filament\Pages\Dashboard;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
-use Filament\Testing\TestsPages;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\BulkAction as TableBulkAction;
 use Filament\Tables\Actions\ButtonAction;
 use Filament\Tables\Actions\IconButtonAction;
+use Filament\Testing\TestsActions;
+use Filament\Testing\TestsPages;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Filament\Widgets\Widget;
@@ -102,11 +103,11 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        TestableLivewire::mixin(new TestsPages());
-
         $this->bootLivewireComponents();
 
         $this->bootTableActionConfiguration();
+
+        TestableLivewire::mixin(new TestsPages());
     }
 
     protected function bootLivewireComponents(): void

@@ -37,7 +37,7 @@ it('can render page', function () {
 
 ##### Creating
 
-You may check that data is correctly saved into the database by `set()`ting each property of the form and then asserting that the database contains an identical record:
+You may check that data is correctly saved into the database by calling `fillForm()` with your form data, and then asserting that the database contains a matching record:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -46,11 +46,14 @@ it('can create', function () {
     $newData = Post::factory()->make();
 
     livewire(PostResource\Pages\CreatePost::class)
-        ->set('data.author_id', $newData->author->getKey())
-        ->set('data.content', $newData->content)
-        ->set('data.tags', $newData->tags)
-        ->set('data.title', $newData->title)
-        ->call('create');
+        ->fillForm([
+            'author_id' => $newData->author->getKey(),
+            'content' => $newData->content,
+            'tags' => $newData->tags,
+            'title' => $newData->title,
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas(Post::class, [
         'author_id' => $newData->author->getKey(),
@@ -63,7 +66,7 @@ it('can create', function () {
 
 ##### Validation
 
-Livewire provides users with `assertHasErrors()` to ensure that data is properly validated in a form:
+Use `assertHasFormErrors()` to ensure that data is properly validated in a form:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -72,9 +75,11 @@ it('can validate input', function () {
     $newData = Post::factory()->make();
 
     livewire(PostResource\Pages\CreatePost::class)
-        ->set('data.title', null)
+        ->fillForm([
+            'title' => null,
+        ])
         ->call('create')
-        ->assertHasErrors(['data.title' => 'required']);
+        ->assertHasFormErrors(['title' => 'required']);
 });
 ```
 
@@ -94,7 +99,7 @@ it('can render page', function () {
 
 ##### Filling existing data
 
-To check that the form is filled with the correct data from the database, you may `assertSet()` that the data in the form matches that of the record:
+To check that the form is filled with the correct data from the database, you may `assertFormSet()` that the data in the form matches that of the record:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -105,16 +110,18 @@ it('can retrieve data', function () {
     livewire(PostResource\Pages\EditPost::class, [
         'record' => $post->getKey(),
     ])
-        ->assertSet('data.author_id', $post->author->getKey())
-        ->assertSet('data.content', $post->content)
-        ->assertSet('data.tags', $post->tags)
-        ->assertSet('data.title', $post->title);
+        ->assertFormSet([
+            'author_id' => $post->author->getKey(),
+            'content' => $post->content,
+            'tags' => $post->tags,
+            'title' => $post->title,
+        ]);
 });
 ```
 
 ##### Saving
 
-You may check that data is correctly saved into the database by `set()`ting each property of the form and then asserting that the database contains an identical record:
+You may check that data is correctly saved into the database by calling `fillForm()` with your form data, and then asserting that the database contains a matching record:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -126,11 +133,14 @@ it('can save', function () {
     livewire(PostResource\Pages\EditPost::class, [
         'record' => $post->getKey(),
     ])
-        ->set('data.author_id', $newData->author->getKey())
-        ->set('data.content', $newData->content)
-        ->set('data.tags', $newData->tags)
-        ->set('data.title', $newData->title)
-        ->call('save');
+        ->fillForm([
+            'author_id' => $newData->author->getKey(),
+            'content' => $newData->content,
+            'tags' => $newData->tags,
+            'title' => $newData->title,
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
 
     expect($post->refresh())
         ->author->toBeSameModel($newData->author)
@@ -142,7 +152,7 @@ it('can save', function () {
 
 ##### Validation
 
-Livewire provides users with `assertHasErrors()` to ensure that data is properly validated in a form:
+Use `assertHasFormErrors()` to ensure that data is properly validated in a form:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -154,9 +164,32 @@ it('can validate input', function () {
     livewire(PostResource\Pages\EditPost::class, [
         'record' => $post->getKey(),
     ])
-        ->set('data.title', null)
+        ->fillForm([
+            'title' => null,
+        ])
         ->call('save')
-        ->assertHasErrors(['data.title' => 'required']);
+        ->assertHasFormErrors(['title' => 'required']);
+});
+```
+
+##### Deleting
+
+You can test the `DeleteAction` using `callPageAction()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can delete', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostResource\Pages\EditPost::class, [
+        'record' => $post->getKey(),
+    ])
+        ->callPageAction('delete');
+
+    $this->assertDatabaseMissing(Post::class, [
+        'id' => $post->id,
+    ]);
 });
 ```
 
@@ -187,9 +220,11 @@ it('can retrieve data', function () {
     livewire(PostResource\Pages\ViewPost::class, [
         'record' => $post->getKey(),
     ])
-        ->assertSet('data.author_id', $post->author->getKey())
-        ->assertSet('data.content', $post->content)
-        ->assertSet('data.tags', $post->tags)
-        ->assertSet('data.title', $post->title);
+        ->assertFormSet([
+            'author_id' => $post->author->getKey(),
+            'content' => $post->content,
+            'tags' => $post->tags,
+            'title' => $post->title,
+        ]);
 });
 ```

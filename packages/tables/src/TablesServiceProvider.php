@@ -2,6 +2,9 @@
 
 namespace Filament\Tables;
 
+use Filament\Tables\Testing\TestsActions;
+use Filament\Testing\TestsPages;
+use Livewire\Testing\TestableLivewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -37,5 +40,10 @@ class TablesServiceProvider extends PackageServiceProvider
         }
 
         return array_merge($commands, $aliases);
+    }
+
+    public function packageBooted(): void
+    {
+        TestableLivewire::mixin(new TestsActions());
     }
 }
