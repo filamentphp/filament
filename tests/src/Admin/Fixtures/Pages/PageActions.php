@@ -4,9 +4,7 @@ namespace Filament\Tests\Admin\Fixtures\Pages;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Actions\Action;
-use Filament\Pages\Actions\ButtonAction;
 use Filament\Pages\Page;
-use Illuminate\Contracts\View\View;
 
 class PageActions extends Page
 {
