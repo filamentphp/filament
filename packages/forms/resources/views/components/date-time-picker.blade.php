@@ -26,9 +26,6 @@
             isAutofocused: {{ $isAutofocused() ? 'true' : 'false' }},
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
-        x-on:click.away="closePicker()"
-        x-on:keydown.escape.stop="closePicker()"
-        x-on:blur="closePicker()"
         {{ $attributes->merge($getExtraAttributes())->class(['relative filament-forms-date-time-picker-component']) }}
         {{ $getExtraAlpineAttributeBag() }}
     >
@@ -38,7 +35,7 @@
         <button
             @unless($isDisabled())
                 x-ref="button"
-                x-on:click="togglePickerVisibility()"
+                x-on:click="$float({placement: 'bottom-start', offset: 8, flip: {} }, {trap: true}); openPicker()"
                 x-on:keydown.enter.stop.prevent="open ? selectDate() : openPicker()"
                 x-on:keydown.arrow-left.stop.prevent="focusPreviousDay()"
                 x-on:keydown.arrow-right.stop.prevent="focusNextDay()"
@@ -47,7 +44,6 @@
                 x-on:keydown.backspace.stop.prevent="clearState()"
                 x-on:keydown.clear.stop.prevent="clearState()"
                 x-on:keydown.delete.stop.prevent="clearState()"
-                x-bind:aria-expanded="open"
                 aria-label="{{ $getPlaceholder() }}"
                 dusk="filament.forms.{{ $getStatePath() }}.open"
             @endunless
@@ -84,14 +80,10 @@
 
         @unless ($isDisabled())
             <div
-                x-ref="picker"
-                x-on:click.away="closePicker()"
-                x-show.transition="open"
-                aria-modal="true"
-                role="dialog"
+                x-ref="panel"
                 x-cloak
                 @class([
-                    'absolute z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-md',
+                    'absolute hidden z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-md',
                     'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
                     'p-4 min-w-[16rem] w-fit' => $hasDate(),
                 ])

@@ -4,13 +4,13 @@
 ])
 
 <div
-    x-data="{ isOpen: false }"
+    x-data
     {{ $attributes->class(['relative inline-block filament-tables-column-toggling']) }}
 >
     <x-tables::toggleable.trigger />
 
     <div
-        x-show="isOpen"
+        x-ref="panel"
         x-cloak
         x-on:click.away="isOpen = false"
         x-transition:enter="ease duration-300"
@@ -20,7 +20,7 @@
         x-transition:leave-start="opacity-100 translate-y-0"
         x-transition:leave-end="opacity-0 translate-y-2"
         @class([
-            'absolute right-0 rtl:right-auto rtl:left-0 z-10 w-screen pl-24 mt-2 top-full transition rtl:pl-0 rtl:pr-24',
+            'absolute hidden z-10 w-screen pl-24 top-full transition rtl:pl-0 rtl:pr-24',
             match ($width) {
                 'xs' => 'max-w-xs',
                 'md' => 'max-w-md',

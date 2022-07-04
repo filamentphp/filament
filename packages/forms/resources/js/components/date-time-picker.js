@@ -140,10 +140,6 @@ export default (Alpine) => {
                     }
 
                     this.setupDaysGrid()
-
-                    this.$nextTick(() => {
-                        this.evaluatePosition()
-                    })
                 })
 
                 this.$watch('hour', () => {
@@ -299,26 +295,6 @@ export default (Alpine) => {
                     date.year() === this.focusedDate.year()
             },
 
-            evaluatePosition: function () {
-                let availableHeight = window.innerHeight - this.$refs.button.offsetHeight
-
-                let element = this.$refs.button
-
-                while (element) {
-                    availableHeight -= element.offsetTop
-
-                    element = element.offsetParent
-                }
-
-                if (this.$refs.picker.offsetHeight <= availableHeight) {
-                    this.$refs.picker.style.bottom = 'auto'
-
-                    return
-                }
-
-                this.$refs.picker.style.bottom = `${this.$refs.button.offsetHeight}px`
-            },
-
             focusPreviousDay: function () {
                 this.focusedDate ??= dayjs().tz(timezone)
 
@@ -388,10 +364,6 @@ export default (Alpine) => {
                 this.setupDaysGrid()
 
                 this.open = true
-
-                this.$nextTick(() => {
-                    this.evaluatePosition()
-                })
             },
 
             selectDate: function (day = null) {
@@ -451,16 +423,6 @@ export default (Alpine) => {
                     .format('YYYY-MM-DD HH:mm:ss')
 
                 this.setDisplayText()
-            },
-
-            togglePickerVisibility: function () {
-                if (this.open) {
-                    this.closePicker()
-
-                    return
-                }
-
-                this.openPicker()
             },
         }
     })

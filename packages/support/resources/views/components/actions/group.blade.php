@@ -7,9 +7,9 @@
     'tooltip' => null,
 ])
 
-<div x-data="{ isOpen: false }" {{ $attributes->class(['relative']) }}>
+<div x-data {{ $attributes->class(['relative']) }}>
     <x-filament-support::icon-button
-        x-on:click="isOpen = ! isOpen"
+        x-on:click="$float({ placement: 'bottom-end', offset: 16, flip: {}, shift: {} }, {trap: true})"
         :color="$color"
         :dark-mode="$darkMode"
         :icon="$icon"
@@ -22,12 +22,11 @@
     </x-filament-support::icon-button>
 
     <div
-        x-show="isOpen"
-        x-on:click.away="isOpen = false"
+        x-ref="panel"
         x-transition
         x-cloak
         @class([
-            'absolute right-0 rtl:left-0 rtl:right-auto z-20 mt-4 shadow-xl ring-1 ring-gray-900/10 overflow-hidden rounded-xl w-52 filament-action-group-dropdown',
+            'absolute hidden z-20 shadow-xl ring-1 ring-gray-900/10 overflow-hidden rounded-xl w-52 filament-action-group-dropdown',
             'dark:ring-white/20' => $darkMode,
         ])
     >
