@@ -6,6 +6,7 @@ use Filament\Tests\Admin\Fixtures\Resources\PostResource;
 use Filament\Tests\Admin\Fixtures\Resources\UserResource;
 use Filament\Tests\Admin\Resources\TestCase;
 use Filament\Tests\Models\Post;
+use Filament\Tests\Tables\Fixtures\PostsTable;
 use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
@@ -85,6 +86,16 @@ it('can search posts by author', function () {
         ->assertCanSeeTableRecords($searchedPosts)
         ->assertCountTableRecords($searchedPosts->count())
         ->assertCanNotSeeTableRecords($posts->where('author.name', '!=', $author));
+});
+
+it('can filter posts by `is_published`', function () {
+    $posts = Post::factory()->count(10)->create();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertCanSeeTableRecords($posts)
+        ->filterTable('is_published')
+        ->assertCanSeeTableRecords($posts->where('is_published', true))
+        ->assertCanNotSeeTableRecords($posts->where('is_published', false));
 });
 
 it('can delete posts', function () {

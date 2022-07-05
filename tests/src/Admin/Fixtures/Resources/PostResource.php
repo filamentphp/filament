@@ -9,6 +9,7 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tests\Admin\Fixtures\Resources\PostResource\Pages;
 use Filament\Tests\Models\Post;
+use Illuminate\Database\Eloquent\Builder;
 
 class PostResource extends Resource
 {
@@ -44,7 +45,8 @@ class PostResource extends Resource
                     ->searchable(),
             ])
             ->filters([
-                Tables\Filters\Filter::make('is_published'),
+                Tables\Filters\Filter::make('is_published')
+                    ->query(fn (Builder $query) => $query->where('is_published', true)),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
