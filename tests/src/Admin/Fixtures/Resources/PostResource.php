@@ -43,6 +43,9 @@ class PostResource extends Resource
                     ->sortable()
                     ->searchable(),
             ])
+            ->filters([
+                Tables\Filters\Filter::make('is_published'),
+            ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
