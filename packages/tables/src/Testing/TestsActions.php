@@ -3,6 +3,8 @@
 namespace Filament\Tables\Testing;
 
 use Closure;
+use Filament\Support\Actions\Action as BaseAction;
+use Filament\Support\Testing\TestsActions as BaseTestsActions;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Contracts\HasTable;
@@ -15,12 +17,15 @@ use Livewire\Testing\TestableLivewire;
  * @method HasTable instance()
  *
  * @mixin TestableLivewire
+ * @mixin BaseTestsActions
  */
 class TestsActions
 {
     public function callTableAction(): Closure
     {
         return function (string $name, $record = null, array $data = [], array $arguments = []): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableActionExists($name);
 
@@ -33,7 +38,7 @@ class TestsActions
 
             $this->call('mountTableAction', $name, $record);
 
-            $action = $livewire->getCachedTableAction($name);
+            $action = $livewire->getCachedTableAction($name) ?? $livewire->getCachedTableEmptyStateAction($name) ?? $livewire->getCachedTableHeaderAction($name);
 
             if (! $action->shouldOpenModal()) {
                 $this->assertNotDispatchedBrowserEvent('open-modal');
@@ -53,7 +58,7 @@ class TestsActions
 
             $this->call('callMountedTableAction', json_encode($arguments));
 
-            if ($livewire->mountedTableAction !== $name) {
+            if ($this->get('mountedTableAction') !== $name) {
                 $this->assertDispatchedBrowserEvent('close-modal', [
                     'id' => "{$livewireClass}-table-action",
                 ]);
@@ -66,15 +71,15 @@ class TestsActions
     public function assertTableActionExists(): Closure
     {
         return function (string $name): static {
-            $table = $this->instance();
-            $tableClass = $table::class;
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
 
-            $action = $table->getCachedTableAction($name);
+            $action = $livewire->getCachedTableAction($name) ?? $livewire->getCachedTableEmptyStateAction($name) ?? $livewire->getCachedTableHeaderAction($name);
 
             Assert::assertInstanceOf(
                 Action::class,
                 $action,
-                message: "Failed asserting that a table action with name [{$name}] exists on the [{$tableClass}] component.",
+                message: "Failed asserting that a table action with name [{$name}] exists on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -84,6 +89,8 @@ class TestsActions
     public function assertTableActionHeld(): Closure
     {
         return function (string $name): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableActionExists($name);
 
@@ -134,6 +141,8 @@ class TestsActions
     public function callTableBulkAction(): Closure
     {
         return function (string $name, array | Collection $records, array $data = [], array $arguments = []): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 
@@ -173,7 +182,7 @@ class TestsActions
 
             $this->call('callMountedTableBulkAction', json_encode($arguments));
 
-            if ($livewire->mountedTableBulkAction !== $name) {
+            if ($this->get('mountedTableBulkAction') !== $name) {
                 $this->assertDispatchedBrowserEvent('close-modal', [
                     'id' => "{$livewireClass}-table-bulk-action",
                 ]);
@@ -186,15 +195,15 @@ class TestsActions
     public function assertTableBulkActionExists(): Closure
     {
         return function (string $name): static {
-            $table = $this->instance();
-            $tableClass = $table::class;
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
 
-            $action = $table->getCachedTableBulkAction($name);
+            $action = $livewire->getCachedTableBulkAction($name);
 
             Assert::assertInstanceOf(
                 BulkAction::class,
                 $action,
-                message: "Failed asserting that a table bulk action with name [{$name}] exists on the [{$tableClass}] component.",
+                message: "Failed asserting that a table bulk action with name [{$name}] exists on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -204,6 +213,8 @@ class TestsActions
     public function assertTableBulkActionHeld(): Closure
     {
         return function (string $name): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 

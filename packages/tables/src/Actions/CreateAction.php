@@ -17,9 +17,9 @@ class CreateAction extends Action
 
     protected bool | Closure $isCreateAnotherDisabled = false;
 
-    public static function make(string $name = 'create'): static
+    public static function getDefaultName(): ?string
     {
-        return parent::make($name);
+        return 'create';
     }
 
     protected function setUp(): void

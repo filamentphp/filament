@@ -177,6 +177,7 @@ it('can validate input', function () {
 You can test the `DeleteAction` using `callPageAction()`:
 
 ```php
+use Filament\Pages\Actions\DeleteAction;
 use function Pest\Livewire\livewire;
 
 it('can delete', function () {
@@ -185,7 +186,7 @@ it('can delete', function () {
     livewire(PostResource\Pages\EditPost::class, [
         'record' => $post->getKey(),
     ])
-        ->callPageAction('delete');
+        ->callPageAction(DeleteAction::class);
 
     $this->assertModelMissing($post);
 });

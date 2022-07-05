@@ -3,18 +3,18 @@
 use Filament\Tests\Admin\Fixtures\Pages\PageActions;
 use Filament\Tests\Admin\Pages\TestCase;
 use Illuminate\Support\Str;
-use Livewire\Livewire;
+use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
 
-it('can call a page action', function () {
-    Livewire::test(PageActions::class)
+it('can call an action', function () {
+    livewire(PageActions::class)
         ->callPageAction('simple')
         ->assertEmitted('simple-called');
 });
 
-it('can call a page action with data', function () {
-    Livewire::test(PageActions::class)
+it('can call an action with data', function () {
+    livewire(PageActions::class)
         ->callPageAction('form', data: [
             'payload' => $payload = Str::random(),
         ])
@@ -24,16 +24,16 @@ it('can call a page action with data', function () {
         ]);
 });
 
-it('can validate a page action form data', function () {
-    Livewire::test(PageActions::class)
+it('can validate an action form data', function () {
+    livewire(PageActions::class)
         ->callPageAction('form', data: [
             'payload' => null,
         ])
         ->assertHasPageActionErrors(['payload' => 'required']);
 });
 
-it('can call a page action with arguments', function () {
-    Livewire::test(PageActions::class)
+it('can call an action with arguments', function () {
+    livewire(PageActions::class)
         ->callPageAction('arguments', arguments: [
             'payload' => $payload = Str::random(),
         ])
@@ -42,8 +42,8 @@ it('can call a page action with arguments', function () {
         ]);
 });
 
-it('can call a page action and hold', function () {
-    Livewire::test(PageActions::class)
+it('can call an action and hold', function () {
+    livewire(PageActions::class)
         ->callPageAction('hold')
         ->assertEmitted('hold-called')
         ->assertPageActionHeld('hold');

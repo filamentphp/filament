@@ -67,12 +67,12 @@ class TestsRecords
     public function assertCountTableRecords(): Closure
     {
         return function (int $count): static {
-            $tableClass = $this->instance()::class;
+            $livewireClass = $this->instance()::class;
 
             Assert::assertSame(
                 $count,
                 $this->instance()->getAllTableRecordsCount(),
-                message: "Failed asserting that the [{$tableClass}] table has [{$count}] records in total.",
+                message: "Failed asserting that the [{$livewireClass}] table has [{$count}] records in total.",
             );
 
             return $this;

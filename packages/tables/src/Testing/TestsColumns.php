@@ -41,15 +41,15 @@ class TestsColumns
     public function assertTableColumnExists(): Closure
     {
         return function (string $name): static {
-            $table = $this->instance();
-            $tableClass = $table::class;
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
 
-            $action = $table->getCachedTableColumn($name);
+            $action = $livewire->getCachedTableColumn($name);
 
             Assert::assertInstanceOf(
                 Column::class,
                 $action,
-                message: "Failed asserting that a table column with name [{$name}] exists on the [{$tableClass}] component.",
+                message: "Failed asserting that a table column with name [{$name}] exists on the [{$livewireClass}] component.",
             );
 
             return $this;

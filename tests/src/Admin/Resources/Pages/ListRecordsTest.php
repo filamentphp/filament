@@ -1,5 +1,7 @@
 <?php
 
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tests\Admin\Fixtures\Resources\PostResource;
 use Filament\Tests\Admin\Fixtures\Resources\UserResource;
 use Filament\Tests\Admin\Resources\TestCase;
@@ -23,14 +25,14 @@ it('can list posts', function () {
         ->assertCanSeeTableRecords($posts);
 });
 
-it('can list post titles', function () {
+it('can render post titles', function () {
     Post::factory()->count(10)->create();
 
     livewire(PostResource\Pages\ListPosts::class)
         ->assertCanRenderTableColumn('title');
 });
 
-it('can list post authors', function () {
+it('can render post authors', function () {
     Post::factory()->count(10)->create();
 
     livewire(PostResource\Pages\ListPosts::class)
@@ -89,7 +91,7 @@ it('can delete posts', function () {
     $post = Post::factory()->create();
 
     livewire(PostResource\Pages\ListPosts::class)
-        ->callTableAction('delete', $post);
+        ->callTableAction(DeleteAction::class, $post);
 
     $this->assertModelMissing($post);
 });
@@ -98,7 +100,7 @@ it('can bulk delete posts', function () {
     $posts = Post::factory()->count(10)->create();
 
     livewire(PostResource\Pages\ListPosts::class)
-        ->callTableBulkAction('delete', $posts);
+        ->callTableBulkAction(DeleteBulkAction::class, $posts);
 
     foreach ($posts as $post) {
         $this->assertModelMissing($post);

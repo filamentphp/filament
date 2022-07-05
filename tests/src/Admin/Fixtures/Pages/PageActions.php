@@ -8,7 +8,7 @@ use Filament\Pages\Page;
 
 class PageActions extends Page
 {
-    protected static string $view = 'fixtures.pages.actions';
+    protected static string $view = 'admin.fixtures.pages.actions';
 
     protected function getActions(): array
     {

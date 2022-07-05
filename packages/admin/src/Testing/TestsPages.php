@@ -5,6 +5,7 @@ namespace Filament\Testing;
 use Closure;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Page;
+use Filament\Support\Testing\TestsActions;
 use Illuminate\Testing\Assert;
 use Livewire\Testing\TestableLivewire;
 
@@ -12,6 +13,7 @@ use Livewire\Testing\TestableLivewire;
  * @method Page instance()
  *
  * @mixin TestableLivewire
+ * @mixin TestsActions
  */
 class TestsPages
 {
@@ -76,14 +78,14 @@ class TestsPages
     public function callPageAction(): Closure
     {
         return function (string $name, array $data = [], array $arguments = []): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
             $this->call('mountAction', $name);
 
-            $livewire = $this->instance();
-
-            $action = $livewire->getCachedAction($name);
+            $action = $this->instance()->getCachedAction($name);
 
             if (! $action->shouldOpenModal()) {
                 $this->assertNotDispatchedBrowserEvent('open-modal');
@@ -103,7 +105,7 @@ class TestsPages
 
             $this->call('callMountedAction', json_encode($arguments));
 
-            if ($livewire->mountedAction !== $name) {
+            if ($this->get('mountedAction') !== $name) {
                 $this->assertDispatchedBrowserEvent('close-modal', [
                     'id' => 'page-action',
                 ]);
@@ -116,15 +118,15 @@ class TestsPages
     public function assertPageActionExists(): Closure
     {
         return function (string $name): static {
-            $page = $this->instance();
-            $pageClass = $page::class;
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
 
-            $action = $page->getCachedAction($name);
+            $action = $livewire->getCachedAction($name);
 
             Assert::assertInstanceOf(
                 Action::class,
                 $action,
-                message: "Failed asserting that an action with name [{$name}] exists on the [{$pageClass}] page.",
+                message: "Failed asserting that an action with name [{$name}] exists on the [{$livewireClass}] page.",
             );
 
             return $this;
@@ -134,6 +136,8 @@ class TestsPages
     public function assertPageActionHeld(): Closure
     {
         return function (string $name): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
