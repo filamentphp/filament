@@ -33,7 +33,7 @@ namespace Livewire\Testing {
 
         public function searchTable(?string $search = null): static {}
 
-        public function filterTable(string $filter, array $data = ['value' => true]): static {}
+        public function filterTable(string $filter, ?array $data = null): static {}
 
         public function resetTableFilters(): static {}
 

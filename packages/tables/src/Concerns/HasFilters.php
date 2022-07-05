@@ -5,6 +5,7 @@ namespace Filament\Tables\Concerns;
 use Filament\Forms;
 use Filament\Forms\ComponentContainer;
 use Filament\Tables\Filters\BaseFilter;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\Layout;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -33,6 +34,11 @@ trait HasFilters
         return collect($this->cachedTableFilters)
             ->filter(fn (BaseFilter $filter): bool => ! $filter->isHidden())
             ->toArray();
+    }
+
+    public function getCachedTableFilter(string $name): ?Filter
+    {
+        return $this->getCachedTableFilters()[$name] ?? null;
     }
 
     public function getTableFiltersForm(): Forms\ComponentContainer
