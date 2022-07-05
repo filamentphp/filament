@@ -3,7 +3,6 @@
 namespace Filament\Tables\Testing;
 
 use Closure;
-use Filament\Support\Actions\Action as BaseAction;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Filters\Filter;
