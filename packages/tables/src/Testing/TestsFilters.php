@@ -3,7 +3,6 @@
 namespace Filament\Tables\Testing;
 
 use Closure;
-use Filament\Tables\Columns\Column;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Testing\Assert;
