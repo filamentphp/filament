@@ -7,7 +7,6 @@ use Filament\GlobalSearch\GlobalSearchResults;
 use Filament\Http\Livewire\GlobalSearch;
 use Filament\Tests\Admin\GlobalSearch\TestCase;
 use Filament\Tests\Models\Post;
-use Livewire\Livewire;
 use function Pest\Livewire\livewire;
 
 uses(TestCase::class);

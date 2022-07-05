@@ -61,4 +61,3 @@ it('can search posts with relationship', function () {
         ->assertCountTableRecords($searchedPosts->count())
         ->assertCanNotSeeTableRecords($posts->where('author.name', '!=', $author));
 });
-

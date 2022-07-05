@@ -4,12 +4,6 @@ namespace Filament\Support\Testing;
 
 use Closure;
 use Filament\Support\Actions\Action as BaseAction;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Contracts\HasTable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
-use Illuminate\Testing\Assert;
 use Livewire\Component;
 use Livewire\Testing\TestableLivewire;
 

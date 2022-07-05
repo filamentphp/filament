@@ -3,7 +3,6 @@
 use Filament\Tests\Admin\Fixtures\Pages\Settings;
 use Filament\Tests\Admin\NotificationManager\TestCase;
 use Illuminate\Support\Facades\Session;
-use Livewire\Livewire;
 use Livewire\LivewireManager;
 use function Pest\Livewire\livewire;
 

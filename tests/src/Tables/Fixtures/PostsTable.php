@@ -2,13 +2,11 @@
 
 namespace Filament\Tests\Tables\Fixtures;
 
-use Filament\Forms;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables;
 use Filament\Tests\Models\Post;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire\Component;
 
 class PostsTable extends Component implements Tables\Contracts\HasTable
