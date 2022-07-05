@@ -24,12 +24,13 @@ it('can call an action with data', function () {
         ]);
 });
 
-it('can validate an action form data', function () {
+it('can validate an action\'s data', function () {
     livewire(PageActions::class)
         ->callPageAction('form', data: [
             'payload' => null,
         ])
-        ->assertHasPageActionErrors(['payload' => 'required']);
+        ->assertHasPageActionErrors(['payload' => ['required']])
+        ->assertNotEmitted('form-called');
 });
 
 it('can call an action with arguments', function () {

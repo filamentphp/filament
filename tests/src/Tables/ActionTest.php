@@ -41,12 +41,13 @@ it('can call an action with data', function () {
         ]);
 });
 
-it('can validate an action form data', function () {
+it('can validate an action\'s data', function () {
     livewire(PostsTable::class)
         ->callTableAction('form', data: [
             'payload' => null,
         ])
-        ->assertHasTableActionErrors(['payload' => 'required']);
+        ->assertHasTableActionErrors(['payload' => ['required']])
+        ->assertNotEmitted('form-called');
 });
 
 it('can call an action with arguments', function () {
