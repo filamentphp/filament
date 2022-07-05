@@ -22,6 +22,15 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
             Tables\Columns\TextColumn::make('author.name')
                 ->sortable()
                 ->searchable(),
+            Tables\Columns\BooleanColumn::make('is_published'),
+        ];
+    }
+
+    protected function getTableFilters(): array
+    {
+        return [
+            Tables\Filters\Filter::make('is_published')
+                ->query(fn (Builder $query) => $query->where('is_published', true)),
         ];
     }
 

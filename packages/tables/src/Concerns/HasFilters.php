@@ -73,7 +73,7 @@ trait HasFilters
 
     protected function applyFiltersToTableQuery(Builder $query): Builder
     {
-        $data = $this->getTableFiltersForm()->getState();
+        $data = $this->getTableFiltersForm()->getRawState();
 
         foreach ($this->getCachedTableFilters() as $filter) {
             $filter->applyToBaseQuery(
