@@ -58,15 +58,12 @@ class CreateAction extends Action
                     $data = Arr::except($data, $pivotColumns);
                 }
 
-                $record = $relationship->create($data);
-
+                $pivotData = [];
                 if ($relationship instanceof BelongsToMany) {
                     $pivotData = Arr::only($data, $pivotColumns);
-
-                    if (count($pivotColumns)) {
-                        $record->{$relationship->getPivotAccessor()}->update($pivotData);
-                    }
                 }
+
+                $record = $relationship->create($data, $pivotData);
 
                 return $record;
             });
