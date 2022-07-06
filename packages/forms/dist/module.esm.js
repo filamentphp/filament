@@ -34,7 +34,7 @@ var require_customParseFormat = __commonJS((exports, module) => {
     typeof exports == "object" && typeof module != "undefined" ? module.exports = t2() : typeof define == "function" && define.amd ? define(t2) : (e2 = typeof globalThis != "undefined" ? globalThis : e2 || self).dayjs_plugin_customParseFormat = t2();
   }(exports, function() {
     "use strict";
-    var e2 = {LTS: "h:mm:ss A", LT: "h:mm A", L: "MM/DD/YYYY", LL: "MMMM D, YYYY", LLL: "MMMM D, YYYY h:mm A", LLLL: "dddd, MMMM D, YYYY h:mm A"}, t2 = /(\[[^[]*\])|([-:/.()\s]+)|(A|a|YYYY|YY?|MM?M?M?|Do|DD?|hh?|HH?|mm?|ss?|S{1,3}|z|ZZ?)/g, n2 = /\d\d/, r2 = /\d\d?/, i = /\d*[^\s\d-_:/()]+/, o2 = {}, s2 = function(e3) {
+    var e2 = {LTS: "h:mm:ss A", LT: "h:mm A", L: "MM/DD/YYYY", LL: "MMMM D, YYYY", LLL: "MMMM D, YYYY h:mm A", LLLL: "dddd, MMMM D, YYYY h:mm A"}, t2 = /(\[[^[]*\])|([-_:/.,()\s]+)|(A|a|YYYY|YY?|MM?M?M?|Do|DD?|hh?|HH?|mm?|ss?|S{1,3}|z|ZZ?)/g, n2 = /\d\d/, r2 = /\d\d?/, i = /\d*[^-_:/,()\s\d]+/, o2 = {}, s2 = function(e3) {
       return (e3 = +e3) + (e3 > 68 ? 1900 : 2e3);
     };
     var a2 = function(e3) {
@@ -12193,7 +12193,7 @@ __export(filepond_esm_exports, {
   supported: () => supported
 });
 /*!
- * FilePond 4.30.3
+ * FilePond 4.30.4
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -13250,7 +13250,7 @@ var InteractionMethod = {
   PASTE: 4,
   NONE: 5
 };
-var getUniqueId = () => Math.random().toString(36).substr(2, 9);
+var getUniqueId = () => Math.random().toString(36).substring(2, 11);
 var arrayRemove = (arr, index2) => arr.splice(index2, 1);
 var run = (cb, sync) => {
   if (sync) {
@@ -14364,7 +14364,7 @@ var createFileProcessor = (processFn, options2) => {
   };
   return api;
 };
-var getFilenameWithoutExtension = (name2) => name2.substr(0, name2.lastIndexOf(".")) || name2;
+var getFilenameWithoutExtension = (name2) => name2.substring(0, name2.lastIndexOf(".")) || name2;
 var createFileStub = (source) => {
   let data3 = [source.name, source.size, source.type];
   if (source instanceof Blob || isBase64DataURI(source)) {
@@ -17522,7 +17522,7 @@ var create$e = ({root: root2, props}) => {
 var write$9 = ({root: root2, props, actions: actions2}) => {
   route$5({root: root2, props, actions: actions2});
   actions2.filter((action) => /^DID_SET_STYLE_/.test(action.type)).filter((action) => !isEmpty(action.data.value)).map(({type, data: data3}) => {
-    const name2 = toCamels(type.substr(8).toLowerCase(), "_");
+    const name2 = toCamels(type.substring(8).toLowerCase(), "_");
     root2.element.dataset[name2] = data3.value;
     root2.invalidateLayout();
   });
@@ -17695,9 +17695,16 @@ var exceedsMaxFiles = (root2, items) => {
   let maxItems = root2.query("GET_MAX_FILES");
   const totalBrowseItems = items.length;
   if (!allowMultiple && totalBrowseItems > 1) {
+    root2.dispatch("DID_THROW_MAX_FILES", {
+      source: items,
+      error: createResponse("warning", 0, "Max files")
+    });
     return true;
   }
-  maxItems = allowMultiple ? maxItems : allowReplace ? maxItems : 1;
+  maxItems = allowMultiple ? maxItems : 1;
+  if (!allowMultiple && allowReplace) {
+    return false;
+  }
   const hasMaxItems = isInt(maxItems);
   if (hasMaxItems && totalItems + totalBrowseItems > maxItems) {
     root2.dispatch("DID_THROW_MAX_FILES", {
@@ -24266,11 +24273,18 @@ var Tokenizer = class {
         if (!endEarly) {
           const nextBulletRegex = new RegExp(`^ {0,${Math.min(3, indent - 1)}}(?:[*+-]|\\d{1,9}[.)])((?: [^\\n]*)?(?:\\n|$))`);
           const hrRegex = new RegExp(`^ {0,${Math.min(3, indent - 1)}}((?:- *){3,}|(?:_ *){3,}|(?:\\* *){3,})(?:\\n+|$)`);
+          const fencesBeginRegex = new RegExp(`^( {0,${Math.min(3, indent - 1)}})(\`\`\`|~~~)`);
           while (src) {
             rawLine = src.split("\n", 1)[0];
             line = rawLine;
             if (this.options.pedantic) {
               line = line.replace(/^ {1,4}(?=( {4})*[^ ])/g, "  ");
+            }
+            if (fencesBeginRegex.test(line)) {
+              break;
+            }
+            if (this.rules.block.heading.test(line)) {
+              break;
             }
             if (nextBulletRegex.test(line)) {
               break;
