@@ -38,7 +38,7 @@
     >
         <div @class([
             'px-6 py-4 bg-white border border-gray-300 space-y-6 shadow-xl rounded-xl',
-            'dark:bg-gray-800 dark-border-gray-700' => config('tables.dark_mode'),
+            'dark:bg-gray-800 dark:border-gray-700' => config('tables.dark_mode'),
         ])>
             {{ $form }}
         </div>
