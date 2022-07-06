@@ -8269,8 +8269,8 @@ var require_choices = __commonJS((exports, module) => {
             value: true
           });
           exports2.diff = exports2.cloneObject = exports2.existsInArray = exports2.dispatchEvent = exports2.sortByScore = exports2.sortByAlpha = exports2.strToEl = exports2.sanitise = exports2.isScrolledIntoView = exports2.getAdjacentEl = exports2.wrap = exports2.isType = exports2.getType = exports2.generateId = exports2.generateChars = exports2.getRandomNumber = void 0;
-          var getRandomNumber2 = function(min, max) {
-            return Math.floor(Math.random() * (max - min) + min);
+          var getRandomNumber2 = function(min3, max3) {
+            return Math.floor(Math.random() * (max3 - min3) + min3);
           };
           exports2.getRandomNumber = getRandomNumber2;
           var generateChars = function(length) {
@@ -9181,7 +9181,7 @@ var require_choices = __commonJS((exports, module) => {
           const EXTENDED_SEARCH_UNAVAILABLE = "Extended search is not available";
           const INCORRECT_INDEX_TYPE = "Incorrect 'index' type";
           const LOGICAL_SEARCH_INVALID_QUERY_FOR_KEY = (key) => `Invalid value for key ${key}`;
-          const PATTERN_LENGTH_TOO_LARGE = (max) => `Pattern length exceeds max of ${max}.`;
+          const PATTERN_LENGTH_TOO_LARGE = (max3) => `Pattern length exceeds max of ${max3}.`;
           const MISSING_KEY_PROPERTY = (name2) => `Missing ${name2} property in key`;
           const INVALID_KEY_WEIGHT_VALUE = (key) => `Property 'weight' in key '${key}' must be a positive integer`;
           const hasOwn = Object.prototype.hasOwnProperty;
@@ -10474,14 +10474,14 @@ var require_choices = __commonJS((exports, module) => {
           var $$observable = function() {
             return typeof Symbol === "function" && Symbol.observable || "@@observable";
           }();
-          var randomString = function randomString2() {
+          var randomString2 = function randomString3() {
             return Math.random().toString(36).substring(7).split("").join(".");
           };
           var ActionTypes = {
-            INIT: "@@redux/INIT" + randomString(),
-            REPLACE: "@@redux/REPLACE" + randomString(),
+            INIT: "@@redux/INIT" + randomString2(),
+            REPLACE: "@@redux/REPLACE" + randomString2(),
             PROBE_UNKNOWN_ACTION: function PROBE_UNKNOWN_ACTION() {
-              return "@@redux/PROBE_UNKNOWN_ACTION" + randomString();
+              return "@@redux/PROBE_UNKNOWN_ACTION" + randomString2();
             }
           };
           function isPlainObject(obj) {
@@ -10895,8 +10895,8 @@ var require_choices = __commonJS((exports, module) => {
 });
 
 // node_modules/vanilla-colorful/lib/utils/math.js
-var clamp = (number, min = 0, max = 1) => {
-  return number > max ? max : number < min ? min : number;
+var clamp = (number, min3 = 0, max3 = 1) => {
+  return number > max3 ? max3 : number < min3 ? min3 : number;
 };
 var round = (number, digits = 0, base = Math.pow(10, digits)) => {
   return Math.round(base * number) / base;
@@ -11011,13 +11011,13 @@ var rgbaToHex = ({r: r2, g, b}) => {
   return "#" + format(r2) + format(g) + format(b);
 };
 var rgbaToHsva = ({r: r2, g, b, a: a2}) => {
-  const max = Math.max(r2, g, b);
-  const delta = max - Math.min(r2, g, b);
-  const hh = delta ? max === r2 ? (g - b) / delta : max === g ? 2 + (b - r2) / delta : 4 + (r2 - g) / delta : 0;
+  const max3 = Math.max(r2, g, b);
+  const delta = max3 - Math.min(r2, g, b);
+  const hh = delta ? max3 === r2 ? (g - b) / delta : max3 === g ? 2 + (b - r2) / delta : 4 + (r2 - g) / delta : 0;
   return {
     h: round(60 * (hh < 0 ? hh + 6 : hh)),
-    s: round(max ? delta / max * 100 : 0),
-    v: round(max / 255 * 100),
+    s: round(max3 ? delta / max3 * 100 : 0),
+    v: round(max3 / 255 * 100),
     a: a2
   };
 };
@@ -11153,8 +11153,8 @@ var Hue = class extends Slider {
     ]);
     this.el.setAttribute("aria-valuenow", `${round(h)}`);
   }
-  getMove(offset, key) {
-    return {h: key ? clamp(this.h + offset.x * 360, 0, 360) : 360 * offset.x};
+  getMove(offset2, key) {
+    return {h: key ? clamp(this.h + offset2.x * 360, 0, 360) : 360 * offset2.x};
   }
 };
 
@@ -11177,10 +11177,10 @@ var Saturation = class extends Slider {
     ]);
     this.el.setAttribute("aria-valuetext", `Saturation ${round(hsva.s)}%, Brightness ${round(hsva.v)}%`);
   }
-  getMove(offset, key) {
+  getMove(offset2, key) {
     return {
-      s: key ? clamp(this.hsva.s + offset.x * 100, 0, 100) : offset.x * 100,
-      v: key ? clamp(this.hsva.v - offset.y * 100, 0, 100) : Math.round(100 - offset.y * 100)
+      s: key ? clamp(this.hsva.s + offset2.x * 100, 0, 100) : offset2.x * 100,
+      v: key ? clamp(this.hsva.v - offset2.y * 100, 0, 100) : Math.round(100 - offset2.y * 100)
     };
   }
 };
@@ -11348,8 +11348,8 @@ var Alpha = class extends Slider {
     this.el.setAttribute("aria-valuenow", `${v}`);
     this.el.setAttribute("aria-valuetext", `${v}%`);
   }
-  getMove(offset, key) {
-    return {a: key ? clamp(this.hsva.a + offset.x) : offset.x};
+  getMove(offset2, key) {
+    return {a: key ? clamp(this.hsva.a + offset2.x) : offset2.x};
   }
 };
 
@@ -11944,9 +11944,6 @@ var date_time_picker_default = (Alpine) => {
             this.focusedYear = year;
           }
           this.setupDaysGrid();
-          this.$nextTick(() => {
-            this.evaluatePosition();
-          });
         });
         this.$watch("hour", () => {
           let hour = +this.hour;
@@ -12060,19 +12057,6 @@ var date_time_picker_default = (Alpine) => {
         this.focusedDate ??= date;
         return date.date() === day && date.month() === this.focusedDate.month() && date.year() === this.focusedDate.year();
       },
-      evaluatePosition: function() {
-        let availableHeight = window.innerHeight - this.$refs.button.offsetHeight;
-        let element = this.$refs.button;
-        while (element) {
-          availableHeight -= element.offsetTop;
-          element = element.offsetParent;
-        }
-        if (this.$refs.picker.offsetHeight <= availableHeight) {
-          this.$refs.picker.style.bottom = "auto";
-          return;
-        }
-        this.$refs.picker.style.bottom = `${this.$refs.button.offsetHeight}px`;
-      },
       focusPreviousDay: function() {
         this.focusedDate ??= esm_default().tz(timezone2);
         this.focusedDate = this.focusedDate.subtract(1, "day");
@@ -12121,9 +12105,6 @@ var date_time_picker_default = (Alpine) => {
         this.focusedDate = this.getSelectedDate() ?? this.getMinDate() ?? esm_default().tz(timezone2);
         this.setupDaysGrid();
         this.open = true;
-        this.$nextTick(() => {
-          this.evaluatePosition();
-        });
       },
       selectDate: function(day = null) {
         if (day) {
@@ -12164,13 +12145,6 @@ var date_time_picker_default = (Alpine) => {
         }
         this.state = date.hour(this.hour ?? 0).minute(this.minute ?? 0).second(this.second ?? 0).format("YYYY-MM-DD HH:mm:ss");
         this.setDisplayText();
-      },
-      togglePickerVisibility: function() {
-        if (this.open) {
-          this.closePicker();
-          return;
-        }
-        this.openPicker();
       }
     };
   });
@@ -12329,9 +12303,9 @@ var IS_BROWSER = (() => typeof window !== "undefined" && typeof window.document 
 var isBrowser = () => IS_BROWSER;
 var testElement = isBrowser() ? createElement("svg") : {};
 var getChildCount = "children" in testElement ? (el) => el.children.length : (el) => el.childNodes.length;
-var getViewRect = (elementRect, childViews, offset, scale) => {
-  const left = offset[0] || elementRect.left;
-  const top = offset[1] || elementRect.top;
+var getViewRect = (elementRect, childViews, offset2, scale) => {
+  const left = offset2[0] || elementRect.left;
+  const top = offset2[1] || elementRect.top;
   const right = left + elementRect.width;
   const bottom = top + elementRect.height * (scale[1] || 1);
   const rect = {
@@ -13633,7 +13607,7 @@ var hasRoomForItem = (state2) => {
   }
   return false;
 };
-var limit = (value, min, max) => Math.max(Math.min(max, value), min);
+var limit = (value, min3, max3) => Math.max(Math.min(max3, value), min3);
 var arrayInsert = (arr, index2, item2) => arr.splice(index2, 0, item2);
 var insertItem = (items, item2, index2) => {
   if (isEmpty(item2)) {
@@ -14043,12 +14017,12 @@ var processFileChunked = (apiUrl, action, name2, file2, metadata, load, error2, 
   };
   const lastChunkIndex = Math.floor(file2.size / chunkSize);
   for (let i = 0; i <= lastChunkIndex; i++) {
-    const offset = i * chunkSize;
-    const data3 = file2.slice(offset, offset + chunkSize, "application/offset+octet-stream");
+    const offset2 = i * chunkSize;
+    const data3 = file2.slice(offset2, offset2 + chunkSize, "application/offset+octet-stream");
     chunks[i] = {
       index: i,
       size: data3.size,
-      offset,
+      offset: offset2,
       data: data3,
       file: file2,
       progress: 0,
@@ -14161,10 +14135,10 @@ var processFileChunked = (apiUrl, action, name2, file2, metadata, load, error2, 
       processChunks();
     });
   } else {
-    requestTransferOffset((offset) => {
+    requestTransferOffset((offset2) => {
       if (state2.aborted)
         return;
-      chunks.filter((chunk) => chunk.offset < offset).forEach((chunk) => {
+      chunks.filter((chunk) => chunk.offset < offset2).forEach((chunk) => {
         chunk.status = ChunkStatus.COMPLETE;
         chunk.progress = chunk.size;
       });
@@ -14243,8 +14217,8 @@ var createRevertFunction = (apiUrl = "", action) => {
     return request;
   };
 };
-var getRandomNumber = (min = 0, max = 1) => min + Math.random() * (max - min);
-var createPerceivedPerformanceUpdater = (cb, duration = 1e3, offset = 0, tickMin = 25, tickMax = 250) => {
+var getRandomNumber = (min3 = 0, max3 = 1) => min3 + Math.random() * (max3 - min3);
+var createPerceivedPerformanceUpdater = (cb, duration = 1e3, offset2 = 0, tickMin = 25, tickMax = 250) => {
   let timeout = null;
   const start = Date.now();
   const tick = () => {
@@ -18744,10 +18718,10 @@ var plugin3 = ({addFilter: addFilter2, utils}) => {
         return;
       return updateCrop(item2, {rotation});
     });
-    item2.extend("setImageCropFlip", (flip) => {
-      if (!allowCrop(item2, query) || !isObject2(flip))
+    item2.extend("setImageCropFlip", (flip2) => {
+      if (!allowCrop(item2, query) || !isObject2(flip2))
         return;
-      return updateCrop(item2, {flip});
+      return updateCrop(item2, {flip: flip2});
     });
     item2.extend("setImageCropAspectRatio", (newAspectRatio) => {
       if (!allowCrop(item2, query) || typeof newAspectRatio === "undefined")
@@ -18824,8 +18798,8 @@ var Marker = {
   Orientation: 274,
   Unknown: 65280
 };
-var getUint16 = (view, offset, little = false) => view.getUint16(offset, little);
-var getUint32 = (view, offset, little = false) => view.getUint32(offset, little);
+var getUint16 = (view, offset2, little = false) => view.getUint16(offset2, little);
+var getUint32 = (view, offset2, little = false) => view.getUint32(offset2, little);
 var getImageOrientation = (file2) => new Promise((resolve, reject) => {
   const reader = new FileReader();
   reader.onload = function(e2) {
@@ -18835,28 +18809,28 @@ var getImageOrientation = (file2) => new Promise((resolve, reject) => {
       return;
     }
     const length = view.byteLength;
-    let offset = 2;
-    while (offset < length) {
-      const marker = getUint16(view, offset);
-      offset += 2;
+    let offset2 = 2;
+    while (offset2 < length) {
+      const marker = getUint16(view, offset2);
+      offset2 += 2;
       if (marker === Marker.APP1) {
-        if (getUint32(view, offset += 2) !== Marker.EXIF) {
+        if (getUint32(view, offset2 += 2) !== Marker.EXIF) {
           break;
         }
-        const little = getUint16(view, offset += 6) === Marker.TIFF;
-        offset += getUint32(view, offset + 4, little);
-        const tags = getUint16(view, offset, little);
-        offset += 2;
+        const little = getUint16(view, offset2 += 6) === Marker.TIFF;
+        offset2 += getUint32(view, offset2 + 4, little);
+        const tags = getUint16(view, offset2, little);
+        offset2 += 2;
         for (let i = 0; i < tags; i++) {
-          if (getUint16(view, offset + i * 12, little) === Marker.Orientation) {
-            resolve(getUint16(view, offset + i * 12 + 8, little));
+          if (getUint16(view, offset2 + i * 12, little) === Marker.Orientation) {
+            resolve(getUint16(view, offset2 + i * 12 + 8, little));
             return;
           }
         }
       } else if ((marker & Marker.Unknown) !== Marker.Unknown) {
         break;
       } else {
-        offset += getUint16(view, offset);
+        offset2 += getUint16(view, offset2);
       }
     }
     resolve(-1);
@@ -19407,10 +19381,10 @@ var createImageCanvasWrapper = (_) => _.utils.createView({
     root2.ref.bitmap = root2.appendChildView(root2.createChildView(createBitmapView(_), {image: props.image}));
   },
   write: ({root: root2, props}) => {
-    const {flip} = props.crop;
+    const {flip: flip2} = props.crop;
     const {bitmap} = root2.ref;
-    bitmap.scaleX = flip.horizontal ? -1 : 1;
-    bitmap.scaleY = flip.vertical ? -1 : 1;
+    bitmap.scaleX = flip2.horizontal ? -1 : 1;
+    bitmap.scaleY = flip2.vertical ? -1 : 1;
   }
 });
 var createClipView = (_) => _.utils.createView({
@@ -20389,9 +20363,9 @@ var canvasRelease = (canvas) => {
   const ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, 1, 1);
 };
-var isFlipped = (flip) => flip && (flip.horizontal || flip.vertical);
-var getBitmap = (image, orientation, flip) => {
-  if (orientation <= 1 && !isFlipped(flip)) {
+var isFlipped = (flip2) => flip2 && (flip2.horizontal || flip2.vertical);
+var getBitmap = (image, orientation, flip2) => {
+  if (orientation <= 1 && !isFlipped(flip2)) {
     image.width = image.naturalWidth;
     image.height = image.naturalHeight;
     return image;
@@ -20411,13 +20385,13 @@ var getBitmap = (image, orientation, flip) => {
   if (orientation) {
     ctx.transform.apply(ctx, getImageOrientationMatrix(width, height, orientation));
   }
-  if (isFlipped(flip)) {
+  if (isFlipped(flip2)) {
     const matrix2 = [1, 0, 0, 1, 0, 0];
-    if (!swapped && flip.horizontal || swapped & flip.vertical) {
+    if (!swapped && flip2.horizontal || swapped & flip2.vertical) {
       matrix2[0] = -1;
       matrix2[4] = width;
     }
-    if (!swapped && flip.vertical || swapped && flip.horizontal) {
+    if (!swapped && flip2.vertical || swapped && flip2.horizontal) {
       matrix2[3] = -1;
       matrix2[5] = height;
     }
@@ -21107,17 +21081,17 @@ var TransformWorker = () => {
     };
   }
 };
-var correctOrientation = (view, offset) => {
-  if (view.getUint32(offset + 4, false) !== 1165519206)
+var correctOrientation = (view, offset2) => {
+  if (view.getUint32(offset2 + 4, false) !== 1165519206)
     return;
-  offset += 4;
-  const intelByteAligned = view.getUint16(offset += 6, false) === 18761;
-  offset += view.getUint32(offset + 4, intelByteAligned);
-  const tags = view.getUint16(offset, intelByteAligned);
-  offset += 2;
+  offset2 += 4;
+  const intelByteAligned = view.getUint16(offset2 += 6, false) === 18761;
+  offset2 += view.getUint32(offset2 + 4, intelByteAligned);
+  const tags = view.getUint16(offset2, intelByteAligned);
+  offset2 += 2;
   for (let i = 0; i < tags; i++) {
-    if (view.getUint16(offset + i * 12, intelByteAligned) === 274) {
-      view.setUint16(offset + i * 12 + 8, 1, intelByteAligned);
+    if (view.getUint16(offset2 + i * 12, intelByteAligned) === 274) {
+      view.setUint16(offset2 + i * 12 + 8, 1, intelByteAligned);
       return true;
     }
   }
@@ -21127,26 +21101,26 @@ var readData = (data3) => {
   const view = new DataView(data3);
   if (view.getUint16(0) !== 65496)
     return null;
-  let offset = 2;
+  let offset2 = 2;
   let marker;
   let markerLength;
   let orientationCorrected = false;
-  while (offset < view.byteLength) {
-    marker = view.getUint16(offset, false);
-    markerLength = view.getUint16(offset + 2, false) + 2;
+  while (offset2 < view.byteLength) {
+    marker = view.getUint16(offset2, false);
+    markerLength = view.getUint16(offset2 + 2, false) + 2;
     const isData = marker >= 65504 && marker <= 65519 || marker === 65534;
     if (!isData) {
       break;
     }
     if (!orientationCorrected) {
-      orientationCorrected = correctOrientation(view, offset, markerLength);
+      orientationCorrected = correctOrientation(view, offset2, markerLength);
     }
-    if (offset + markerLength > view.byteLength) {
+    if (offset2 + markerLength > view.byteLength) {
       break;
     }
-    offset += markerLength;
+    offset2 += markerLength;
   }
-  return data3.slice(0, offset);
+  return data3.slice(0, offset2);
 };
 var getImageHead = (file2) => new Promise((resolve) => {
   const reader = new FileReader();
@@ -23216,7 +23190,7 @@ function createDOMPurify() {
   var cloneNode = lookupGetter(ElementPrototype, "cloneNode");
   var getNextSibling = lookupGetter(ElementPrototype, "nextSibling");
   var getChildNodes = lookupGetter(ElementPrototype, "childNodes");
-  var getParentNode = lookupGetter(ElementPrototype, "parentNode");
+  var getParentNode2 = lookupGetter(ElementPrototype, "parentNode");
   if (typeof HTMLTemplateElement2 === "function") {
     var template = document2.createElement("template");
     if (template.content && template.content.ownerDocument) {
@@ -23233,7 +23207,7 @@ function createDOMPurify() {
   } catch (_) {
   }
   var hooks = {};
-  DOMPurify.isSupported = typeof getParentNode === "function" && implementation && typeof implementation.createHTMLDocument !== "undefined" && documentMode !== 9;
+  DOMPurify.isSupported = typeof getParentNode2 === "function" && implementation && typeof implementation.createHTMLDocument !== "undefined" && documentMode !== 9;
   var MUSTACHE_EXPR$1 = MUSTACHE_EXPR, ERB_EXPR$1 = ERB_EXPR, DATA_ATTR$1 = DATA_ATTR, ARIA_ATTR$1 = ARIA_ATTR, IS_SCRIPT_OR_DATA$1 = IS_SCRIPT_OR_DATA, ATTR_WHITESPACE$1 = ATTR_WHITESPACE;
   var IS_ALLOWED_URI$1 = IS_ALLOWED_URI;
   var ALLOWED_TAGS = null;
@@ -23413,7 +23387,7 @@ function createDOMPurify() {
   var ALL_MATHML_TAGS = addToSet({}, mathMl$1);
   addToSet(ALL_MATHML_TAGS, mathMlDisallowed);
   var _checkValidNamespace = function _checkValidNamespace2(element) {
-    var parent = getParentNode(element);
+    var parent = getParentNode2(element);
     if (!parent || !parent.tagName) {
       parent = {
         namespaceURI: HTML_NAMESPACE,
@@ -23576,7 +23550,7 @@ function createDOMPurify() {
           return false;
       }
       if (KEEP_CONTENT && !FORBID_CONTENTS[tagName]) {
-        var parentNode = getParentNode(currentNode) || currentNode.parentNode;
+        var parentNode = getParentNode2(currentNode) || currentNode.parentNode;
         var childNodes = getChildNodes(currentNode) || currentNode.childNodes;
         if (childNodes && parentNode) {
           var childCount = childNodes.length;
@@ -24014,8 +23988,8 @@ function merge(obj) {
   return obj;
 }
 function splitCells(tableRow, count) {
-  const row = tableRow.replace(/\|/g, (match, offset, str) => {
-    let escaped = false, curr = offset;
+  const row = tableRow.replace(/\|/g, (match, offset2, str) => {
+    let escaped = false, curr = offset2;
     while (--curr >= 0 && str[curr] === "\\")
       escaped = !escaped;
     if (escaped) {
@@ -26692,7 +26666,7 @@ var ContinuousTailDetails = /* @__PURE__ */ function() {
     }
   }, {
     key: "shift",
-    value: function shift() {
+    value: function shift2() {
       if (!this.value.length)
         return "";
       var shiftChar = this.value[this.value.length - 1];
@@ -27484,7 +27458,7 @@ var ChunksTailDetails = /* @__PURE__ */ function() {
     }
   }, {
     key: "shift",
-    value: function shift() {
+    value: function shift2() {
       if (!this.chunks.length)
         return "";
       var ci = this.chunks.length - 1;
@@ -27519,8 +27493,8 @@ var PatternCursor = /* @__PURE__ */ function() {
     } : {
       index: this.masked._blocks.length,
       offset: 0
-    }), offset = _ref2.offset, index2 = _ref2.index;
-    this.offset = offset;
+    }), offset2 = _ref2.offset, index2 = _ref2.index;
+    this.offset = offset2;
     this.index = index2;
     this.ok = false;
   }
@@ -28792,9 +28766,9 @@ var InputMask = /* @__PURE__ */ function() {
         return this.updateValue();
       var details = new ActionDetails(this.el.value, this.cursorPos, this.value, this._selection);
       var oldRawValue = this.masked.rawInputValue;
-      var offset = this.masked.splice(details.startChangePos, details.removed.length, details.inserted, details.removeDirection).offset;
+      var offset2 = this.masked.splice(details.startChangePos, details.removed.length, details.inserted, details.removeDirection).offset;
       var removeDirection = oldRawValue === this.masked.rawInputValue ? details.removeDirection : DIRECTION.NONE;
-      var cursorPos = this.masked.nearestInputPos(details.startChangePos + offset, removeDirection);
+      var cursorPos = this.masked.nearestInputPos(details.startChangePos + offset2, removeDirection);
       if (removeDirection !== DIRECTION.NONE)
         cursorPos = this.masked.nearestInputPos(cursorPos, DIRECTION.NONE);
       this.updateControl();
@@ -29502,6 +29476,1396 @@ var textarea_default = (Alpine) => {
     }
   }));
 };
+
+// node_modules/@awcodes/alpine-floating-ui/dist/module.esm.js
+function getSide(placement) {
+  return placement.split("-")[0];
+}
+function getAlignment(placement) {
+  return placement.split("-")[1];
+}
+function getMainAxisFromPlacement(placement) {
+  return ["top", "bottom"].includes(getSide(placement)) ? "x" : "y";
+}
+function getLengthFromAxis(axis) {
+  return axis === "y" ? "height" : "width";
+}
+function computeCoordsFromPlacement(_ref2, placement, rtl) {
+  let {
+    reference,
+    floating
+  } = _ref2;
+  const commonX = reference.x + reference.width / 2 - floating.width / 2;
+  const commonY = reference.y + reference.height / 2 - floating.height / 2;
+  const mainAxis = getMainAxisFromPlacement(placement);
+  const length = getLengthFromAxis(mainAxis);
+  const commonAlign = reference[length] / 2 - floating[length] / 2;
+  const side = getSide(placement);
+  const isVertical = mainAxis === "x";
+  let coords;
+  switch (side) {
+    case "top":
+      coords = {
+        x: commonX,
+        y: reference.y - floating.height
+      };
+      break;
+    case "bottom":
+      coords = {
+        x: commonX,
+        y: reference.y + reference.height
+      };
+      break;
+    case "right":
+      coords = {
+        x: reference.x + reference.width,
+        y: commonY
+      };
+      break;
+    case "left":
+      coords = {
+        x: reference.x - floating.width,
+        y: commonY
+      };
+      break;
+    default:
+      coords = {
+        x: reference.x,
+        y: reference.y
+      };
+  }
+  switch (getAlignment(placement)) {
+    case "start":
+      coords[mainAxis] -= commonAlign * (rtl && isVertical ? -1 : 1);
+      break;
+    case "end":
+      coords[mainAxis] += commonAlign * (rtl && isVertical ? -1 : 1);
+      break;
+  }
+  return coords;
+}
+var computePosition = async (reference, floating, config) => {
+  const {
+    placement = "bottom",
+    strategy = "absolute",
+    middleware = [],
+    platform: platform2
+  } = config;
+  const rtl = await (platform2.isRTL == null ? void 0 : platform2.isRTL(floating));
+  if (true) {
+    if (platform2 == null) {
+      console.error(["Floating UI: `platform` property was not passed to config. If you", "want to use Floating UI on the web, install @floating-ui/dom", "instead of the /core package. Otherwise, you can create your own", "`platform`: https://floating-ui.com/docs/platform"].join(" "));
+    }
+    if (middleware.filter((_ref2) => {
+      let {
+        name: name2
+      } = _ref2;
+      return name2 === "autoPlacement" || name2 === "flip";
+    }).length > 1) {
+      throw new Error(["Floating UI: duplicate `flip` and/or `autoPlacement`", "middleware detected. This will lead to an infinite loop. Ensure only", "one of either has been passed to the `middleware` array."].join(" "));
+    }
+  }
+  let rects = await platform2.getElementRects({
+    reference,
+    floating,
+    strategy
+  });
+  let {
+    x,
+    y
+  } = computeCoordsFromPlacement(rects, placement, rtl);
+  let statefulPlacement = placement;
+  let middlewareData = {};
+  let _debug_loop_count_ = 0;
+  for (let i = 0; i < middleware.length; i++) {
+    if (true) {
+      _debug_loop_count_++;
+      if (_debug_loop_count_ > 100) {
+        throw new Error(["Floating UI: The middleware lifecycle appears to be", "running in an infinite loop. This is usually caused by a `reset`", "continually being returned without a break condition."].join(" "));
+      }
+    }
+    const {
+      name: name2,
+      fn: fn2
+    } = middleware[i];
+    const {
+      x: nextX,
+      y: nextY,
+      data: data3,
+      reset
+    } = await fn2({
+      x,
+      y,
+      initialPlacement: placement,
+      placement: statefulPlacement,
+      strategy,
+      middlewareData,
+      rects,
+      platform: platform2,
+      elements: {
+        reference,
+        floating
+      }
+    });
+    x = nextX != null ? nextX : x;
+    y = nextY != null ? nextY : y;
+    middlewareData = {
+      ...middlewareData,
+      [name2]: {
+        ...middlewareData[name2],
+        ...data3
+      }
+    };
+    if (reset) {
+      if (typeof reset === "object") {
+        if (reset.placement) {
+          statefulPlacement = reset.placement;
+        }
+        if (reset.rects) {
+          rects = reset.rects === true ? await platform2.getElementRects({
+            reference,
+            floating,
+            strategy
+          }) : reset.rects;
+        }
+        ({
+          x,
+          y
+        } = computeCoordsFromPlacement(rects, statefulPlacement, rtl));
+      }
+      i = -1;
+      continue;
+    }
+  }
+  return {
+    x,
+    y,
+    placement: statefulPlacement,
+    strategy,
+    middlewareData
+  };
+};
+function expandPaddingObject(padding) {
+  return {
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    ...padding
+  };
+}
+function getSideObjectFromPadding(padding) {
+  return typeof padding !== "number" ? expandPaddingObject(padding) : {
+    top: padding,
+    right: padding,
+    bottom: padding,
+    left: padding
+  };
+}
+function rectToClientRect(rect) {
+  return {
+    ...rect,
+    top: rect.y,
+    left: rect.x,
+    right: rect.x + rect.width,
+    bottom: rect.y + rect.height
+  };
+}
+async function detectOverflow(middlewareArguments, options2) {
+  var _await$platform$isEle;
+  if (options2 === void 0) {
+    options2 = {};
+  }
+  const {
+    x,
+    y,
+    platform: platform2,
+    rects,
+    elements,
+    strategy
+  } = middlewareArguments;
+  const {
+    boundary = "clippingAncestors",
+    rootBoundary = "viewport",
+    elementContext = "floating",
+    altBoundary = false,
+    padding = 0
+  } = options2;
+  const paddingObject = getSideObjectFromPadding(padding);
+  const altContext = elementContext === "floating" ? "reference" : "floating";
+  const element = elements[altBoundary ? altContext : elementContext];
+  const clippingClientRect = rectToClientRect(await platform2.getClippingRect({
+    element: ((_await$platform$isEle = await (platform2.isElement == null ? void 0 : platform2.isElement(element))) != null ? _await$platform$isEle : true) ? element : element.contextElement || await (platform2.getDocumentElement == null ? void 0 : platform2.getDocumentElement(elements.floating)),
+    boundary,
+    rootBoundary,
+    strategy
+  }));
+  const elementClientRect = rectToClientRect(platform2.convertOffsetParentRelativeRectToViewportRelativeRect ? await platform2.convertOffsetParentRelativeRectToViewportRelativeRect({
+    rect: elementContext === "floating" ? {
+      ...rects.floating,
+      x,
+      y
+    } : rects.reference,
+    offsetParent: await (platform2.getOffsetParent == null ? void 0 : platform2.getOffsetParent(elements.floating)),
+    strategy
+  }) : rects[elementContext]);
+  return {
+    top: clippingClientRect.top - elementClientRect.top + paddingObject.top,
+    bottom: elementClientRect.bottom - clippingClientRect.bottom + paddingObject.bottom,
+    left: clippingClientRect.left - elementClientRect.left + paddingObject.left,
+    right: elementClientRect.right - clippingClientRect.right + paddingObject.right
+  };
+}
+var min = Math.min;
+var max = Math.max;
+function within(min$1, value, max$1) {
+  return max(min$1, min(value, max$1));
+}
+var arrow = (options2) => ({
+  name: "arrow",
+  options: options2,
+  async fn(middlewareArguments) {
+    const {
+      element,
+      padding = 0
+    } = options2 != null ? options2 : {};
+    const {
+      x,
+      y,
+      placement,
+      rects,
+      platform: platform2
+    } = middlewareArguments;
+    if (element == null) {
+      if (true) {
+        console.warn("Floating UI: No `element` was passed to the `arrow` middleware.");
+      }
+      return {};
+    }
+    const paddingObject = getSideObjectFromPadding(padding);
+    const coords = {
+      x,
+      y
+    };
+    const axis = getMainAxisFromPlacement(placement);
+    const length = getLengthFromAxis(axis);
+    const arrowDimensions = await platform2.getDimensions(element);
+    const minProp = axis === "y" ? "top" : "left";
+    const maxProp = axis === "y" ? "bottom" : "right";
+    const endDiff = rects.reference[length] + rects.reference[axis] - coords[axis] - rects.floating[length];
+    const startDiff = coords[axis] - rects.reference[axis];
+    const arrowOffsetParent = await (platform2.getOffsetParent == null ? void 0 : platform2.getOffsetParent(element));
+    const clientSize = arrowOffsetParent ? axis === "y" ? arrowOffsetParent.clientHeight || 0 : arrowOffsetParent.clientWidth || 0 : 0;
+    const centerToReference = endDiff / 2 - startDiff / 2;
+    const min3 = paddingObject[minProp];
+    const max3 = clientSize - arrowDimensions[length] - paddingObject[maxProp];
+    const center2 = clientSize / 2 - arrowDimensions[length] / 2 + centerToReference;
+    const offset2 = within(min3, center2, max3);
+    return {
+      data: {
+        [axis]: offset2,
+        centerOffset: center2 - offset2
+      }
+    };
+  }
+});
+var hash$1 = {
+  left: "right",
+  right: "left",
+  bottom: "top",
+  top: "bottom"
+};
+function getOppositePlacement(placement) {
+  return placement.replace(/left|right|bottom|top/g, (matched) => hash$1[matched]);
+}
+function getAlignmentSides(placement, rects, rtl) {
+  if (rtl === void 0) {
+    rtl = false;
+  }
+  const alignment = getAlignment(placement);
+  const mainAxis = getMainAxisFromPlacement(placement);
+  const length = getLengthFromAxis(mainAxis);
+  let mainAlignmentSide = mainAxis === "x" ? alignment === (rtl ? "end" : "start") ? "right" : "left" : alignment === "start" ? "bottom" : "top";
+  if (rects.reference[length] > rects.floating[length]) {
+    mainAlignmentSide = getOppositePlacement(mainAlignmentSide);
+  }
+  return {
+    main: mainAlignmentSide,
+    cross: getOppositePlacement(mainAlignmentSide)
+  };
+}
+var hash = {
+  start: "end",
+  end: "start"
+};
+function getOppositeAlignmentPlacement(placement) {
+  return placement.replace(/start|end/g, (matched) => hash[matched]);
+}
+var sides = ["top", "right", "bottom", "left"];
+var allPlacements = /* @__PURE__ */ sides.reduce((acc, side) => acc.concat(side, side + "-start", side + "-end"), []);
+function getPlacementList(alignment, autoAlignment, allowedPlacements) {
+  const allowedPlacementsSortedByAlignment = alignment ? [...allowedPlacements.filter((placement) => getAlignment(placement) === alignment), ...allowedPlacements.filter((placement) => getAlignment(placement) !== alignment)] : allowedPlacements.filter((placement) => getSide(placement) === placement);
+  return allowedPlacementsSortedByAlignment.filter((placement) => {
+    if (alignment) {
+      return getAlignment(placement) === alignment || (autoAlignment ? getOppositeAlignmentPlacement(placement) !== placement : false);
+    }
+    return true;
+  });
+}
+var autoPlacement = function(options2) {
+  if (options2 === void 0) {
+    options2 = {};
+  }
+  return {
+    name: "autoPlacement",
+    options: options2,
+    async fn(middlewareArguments) {
+      var _middlewareData$autoP, _middlewareData$autoP2, _middlewareData$autoP3, _middlewareData$autoP4, _placementsSortedByLe;
+      const {
+        x,
+        y,
+        rects,
+        middlewareData,
+        placement,
+        platform: platform2,
+        elements
+      } = middlewareArguments;
+      const {
+        alignment = null,
+        allowedPlacements = allPlacements,
+        autoAlignment = true,
+        ...detectOverflowOptions
+      } = options2;
+      const placements = getPlacementList(alignment, autoAlignment, allowedPlacements);
+      const overflow = await detectOverflow(middlewareArguments, detectOverflowOptions);
+      const currentIndex = (_middlewareData$autoP = (_middlewareData$autoP2 = middlewareData.autoPlacement) == null ? void 0 : _middlewareData$autoP2.index) != null ? _middlewareData$autoP : 0;
+      const currentPlacement = placements[currentIndex];
+      if (currentPlacement == null) {
+        return {};
+      }
+      const {
+        main,
+        cross
+      } = getAlignmentSides(currentPlacement, rects, await (platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating)));
+      if (placement !== currentPlacement) {
+        return {
+          x,
+          y,
+          reset: {
+            placement: placements[0]
+          }
+        };
+      }
+      const currentOverflows = [overflow[getSide(currentPlacement)], overflow[main], overflow[cross]];
+      const allOverflows = [...(_middlewareData$autoP3 = (_middlewareData$autoP4 = middlewareData.autoPlacement) == null ? void 0 : _middlewareData$autoP4.overflows) != null ? _middlewareData$autoP3 : [], {
+        placement: currentPlacement,
+        overflows: currentOverflows
+      }];
+      const nextPlacement = placements[currentIndex + 1];
+      if (nextPlacement) {
+        return {
+          data: {
+            index: currentIndex + 1,
+            overflows: allOverflows
+          },
+          reset: {
+            placement: nextPlacement
+          }
+        };
+      }
+      const placementsSortedByLeastOverflow = allOverflows.slice().sort((a2, b) => a2.overflows[0] - b.overflows[0]);
+      const placementThatFitsOnAllSides = (_placementsSortedByLe = placementsSortedByLeastOverflow.find((_ref2) => {
+        let {
+          overflows
+        } = _ref2;
+        return overflows.every((overflow2) => overflow2 <= 0);
+      })) == null ? void 0 : _placementsSortedByLe.placement;
+      const resetPlacement = placementThatFitsOnAllSides != null ? placementThatFitsOnAllSides : placementsSortedByLeastOverflow[0].placement;
+      if (resetPlacement !== placement) {
+        return {
+          data: {
+            index: currentIndex + 1,
+            overflows: allOverflows
+          },
+          reset: {
+            placement: resetPlacement
+          }
+        };
+      }
+      return {};
+    }
+  };
+};
+function getExpandedPlacements(placement) {
+  const oppositePlacement = getOppositePlacement(placement);
+  return [getOppositeAlignmentPlacement(placement), oppositePlacement, getOppositeAlignmentPlacement(oppositePlacement)];
+}
+var flip = function(options2) {
+  if (options2 === void 0) {
+    options2 = {};
+  }
+  return {
+    name: "flip",
+    options: options2,
+    async fn(middlewareArguments) {
+      var _middlewareData$flip;
+      const {
+        placement,
+        middlewareData,
+        rects,
+        initialPlacement,
+        platform: platform2,
+        elements
+      } = middlewareArguments;
+      const {
+        mainAxis: checkMainAxis = true,
+        crossAxis: checkCrossAxis = true,
+        fallbackPlacements: specifiedFallbackPlacements,
+        fallbackStrategy = "bestFit",
+        flipAlignment = true,
+        ...detectOverflowOptions
+      } = options2;
+      const side = getSide(placement);
+      const isBasePlacement = side === initialPlacement;
+      const fallbackPlacements = specifiedFallbackPlacements || (isBasePlacement || !flipAlignment ? [getOppositePlacement(initialPlacement)] : getExpandedPlacements(initialPlacement));
+      const placements = [initialPlacement, ...fallbackPlacements];
+      const overflow = await detectOverflow(middlewareArguments, detectOverflowOptions);
+      const overflows = [];
+      let overflowsData = ((_middlewareData$flip = middlewareData.flip) == null ? void 0 : _middlewareData$flip.overflows) || [];
+      if (checkMainAxis) {
+        overflows.push(overflow[side]);
+      }
+      if (checkCrossAxis) {
+        const {
+          main,
+          cross
+        } = getAlignmentSides(placement, rects, await (platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating)));
+        overflows.push(overflow[main], overflow[cross]);
+      }
+      overflowsData = [...overflowsData, {
+        placement,
+        overflows
+      }];
+      if (!overflows.every((side2) => side2 <= 0)) {
+        var _middlewareData$flip$, _middlewareData$flip2;
+        const nextIndex = ((_middlewareData$flip$ = (_middlewareData$flip2 = middlewareData.flip) == null ? void 0 : _middlewareData$flip2.index) != null ? _middlewareData$flip$ : 0) + 1;
+        const nextPlacement = placements[nextIndex];
+        if (nextPlacement) {
+          return {
+            data: {
+              index: nextIndex,
+              overflows: overflowsData
+            },
+            reset: {
+              placement: nextPlacement
+            }
+          };
+        }
+        let resetPlacement = "bottom";
+        switch (fallbackStrategy) {
+          case "bestFit": {
+            var _overflowsData$slice$;
+            const placement2 = (_overflowsData$slice$ = overflowsData.slice().sort((a2, b) => a2.overflows.filter((overflow2) => overflow2 > 0).reduce((acc, overflow2) => acc + overflow2, 0) - b.overflows.filter((overflow2) => overflow2 > 0).reduce((acc, overflow2) => acc + overflow2, 0))[0]) == null ? void 0 : _overflowsData$slice$.placement;
+            if (placement2) {
+              resetPlacement = placement2;
+            }
+            break;
+          }
+          case "initialPlacement":
+            resetPlacement = initialPlacement;
+            break;
+        }
+        if (placement !== resetPlacement) {
+          return {
+            reset: {
+              placement: resetPlacement
+            }
+          };
+        }
+      }
+      return {};
+    }
+  };
+};
+function getSideOffsets(overflow, rect) {
+  return {
+    top: overflow.top - rect.height,
+    right: overflow.right - rect.width,
+    bottom: overflow.bottom - rect.height,
+    left: overflow.left - rect.width
+  };
+}
+function isAnySideFullyClipped(overflow) {
+  return sides.some((side) => overflow[side] >= 0);
+}
+var hide = function(_temp) {
+  let {
+    strategy = "referenceHidden",
+    ...detectOverflowOptions
+  } = _temp === void 0 ? {} : _temp;
+  return {
+    name: "hide",
+    async fn(middlewareArguments) {
+      const {
+        rects
+      } = middlewareArguments;
+      switch (strategy) {
+        case "referenceHidden": {
+          const overflow = await detectOverflow(middlewareArguments, {
+            ...detectOverflowOptions,
+            elementContext: "reference"
+          });
+          const offsets = getSideOffsets(overflow, rects.reference);
+          return {
+            data: {
+              referenceHiddenOffsets: offsets,
+              referenceHidden: isAnySideFullyClipped(offsets)
+            }
+          };
+        }
+        case "escaped": {
+          const overflow = await detectOverflow(middlewareArguments, {
+            ...detectOverflowOptions,
+            altBoundary: true
+          });
+          const offsets = getSideOffsets(overflow, rects.floating);
+          return {
+            data: {
+              escapedOffsets: offsets,
+              escaped: isAnySideFullyClipped(offsets)
+            }
+          };
+        }
+        default: {
+          return {};
+        }
+      }
+    }
+  };
+};
+function convertValueToCoords(placement, rects, value, rtl) {
+  if (rtl === void 0) {
+    rtl = false;
+  }
+  const side = getSide(placement);
+  const alignment = getAlignment(placement);
+  const isVertical = getMainAxisFromPlacement(placement) === "x";
+  const mainAxisMulti = ["left", "top"].includes(side) ? -1 : 1;
+  const crossAxisMulti = rtl && isVertical ? -1 : 1;
+  const rawValue = typeof value === "function" ? value({
+    ...rects,
+    placement
+  }) : value;
+  const isNumber2 = typeof rawValue === "number";
+  let {
+    mainAxis,
+    crossAxis,
+    alignmentAxis
+  } = isNumber2 ? {
+    mainAxis: rawValue,
+    crossAxis: 0,
+    alignmentAxis: null
+  } : {
+    mainAxis: 0,
+    crossAxis: 0,
+    alignmentAxis: null,
+    ...rawValue
+  };
+  if (alignment && typeof alignmentAxis === "number") {
+    crossAxis = alignment === "end" ? alignmentAxis * -1 : alignmentAxis;
+  }
+  return isVertical ? {
+    x: crossAxis * crossAxisMulti,
+    y: mainAxis * mainAxisMulti
+  } : {
+    x: mainAxis * mainAxisMulti,
+    y: crossAxis * crossAxisMulti
+  };
+}
+var offset = function(value) {
+  if (value === void 0) {
+    value = 0;
+  }
+  return {
+    name: "offset",
+    options: value,
+    async fn(middlewareArguments) {
+      const {
+        x,
+        y,
+        placement,
+        rects,
+        platform: platform2,
+        elements
+      } = middlewareArguments;
+      const diffCoords = convertValueToCoords(placement, rects, value, await (platform2.isRTL == null ? void 0 : platform2.isRTL(elements.floating)));
+      return {
+        x: x + diffCoords.x,
+        y: y + diffCoords.y,
+        data: diffCoords
+      };
+    }
+  };
+};
+function getCrossAxis(axis) {
+  return axis === "x" ? "y" : "x";
+}
+var shift = function(options2) {
+  if (options2 === void 0) {
+    options2 = {};
+  }
+  return {
+    name: "shift",
+    options: options2,
+    async fn(middlewareArguments) {
+      const {
+        x,
+        y,
+        placement
+      } = middlewareArguments;
+      const {
+        mainAxis: checkMainAxis = true,
+        crossAxis: checkCrossAxis = false,
+        limiter = {
+          fn: (_ref2) => {
+            let {
+              x: x2,
+              y: y2
+            } = _ref2;
+            return {
+              x: x2,
+              y: y2
+            };
+          }
+        },
+        ...detectOverflowOptions
+      } = options2;
+      const coords = {
+        x,
+        y
+      };
+      const overflow = await detectOverflow(middlewareArguments, detectOverflowOptions);
+      const mainAxis = getMainAxisFromPlacement(getSide(placement));
+      const crossAxis = getCrossAxis(mainAxis);
+      let mainAxisCoord = coords[mainAxis];
+      let crossAxisCoord = coords[crossAxis];
+      if (checkMainAxis) {
+        const minSide = mainAxis === "y" ? "top" : "left";
+        const maxSide = mainAxis === "y" ? "bottom" : "right";
+        const min3 = mainAxisCoord + overflow[minSide];
+        const max3 = mainAxisCoord - overflow[maxSide];
+        mainAxisCoord = within(min3, mainAxisCoord, max3);
+      }
+      if (checkCrossAxis) {
+        const minSide = crossAxis === "y" ? "top" : "left";
+        const maxSide = crossAxis === "y" ? "bottom" : "right";
+        const min3 = crossAxisCoord + overflow[minSide];
+        const max3 = crossAxisCoord - overflow[maxSide];
+        crossAxisCoord = within(min3, crossAxisCoord, max3);
+      }
+      const limitedCoords = limiter.fn({
+        ...middlewareArguments,
+        [mainAxis]: mainAxisCoord,
+        [crossAxis]: crossAxisCoord
+      });
+      return {
+        ...limitedCoords,
+        data: {
+          x: limitedCoords.x - x,
+          y: limitedCoords.y - y
+        }
+      };
+    }
+  };
+};
+var inline2 = function(options2) {
+  if (options2 === void 0) {
+    options2 = {};
+  }
+  return {
+    name: "inline",
+    options: options2,
+    async fn(middlewareArguments) {
+      var _await$platform$getCl;
+      const {
+        placement,
+        elements,
+        rects,
+        platform: platform2,
+        strategy
+      } = middlewareArguments;
+      const {
+        padding = 2,
+        x,
+        y
+      } = options2;
+      const fallback = rectToClientRect(platform2.convertOffsetParentRelativeRectToViewportRelativeRect ? await platform2.convertOffsetParentRelativeRectToViewportRelativeRect({
+        rect: rects.reference,
+        offsetParent: await (platform2.getOffsetParent == null ? void 0 : platform2.getOffsetParent(elements.floating)),
+        strategy
+      }) : rects.reference);
+      const clientRects = (_await$platform$getCl = await (platform2.getClientRects == null ? void 0 : platform2.getClientRects(elements.reference))) != null ? _await$platform$getCl : [];
+      const paddingObject = getSideObjectFromPadding(padding);
+      function getBoundingClientRect2() {
+        if (clientRects.length === 2 && clientRects[0].left > clientRects[1].right && x != null && y != null) {
+          var _clientRects$find;
+          return (_clientRects$find = clientRects.find((rect) => x > rect.left - paddingObject.left && x < rect.right + paddingObject.right && y > rect.top - paddingObject.top && y < rect.bottom + paddingObject.bottom)) != null ? _clientRects$find : fallback;
+        }
+        if (clientRects.length >= 2) {
+          if (getMainAxisFromPlacement(placement) === "x") {
+            const firstRect = clientRects[0];
+            const lastRect = clientRects[clientRects.length - 1];
+            const isTop = getSide(placement) === "top";
+            const top2 = firstRect.top;
+            const bottom2 = lastRect.bottom;
+            const left2 = isTop ? firstRect.left : lastRect.left;
+            const right2 = isTop ? firstRect.right : lastRect.right;
+            const width2 = right2 - left2;
+            const height2 = bottom2 - top2;
+            return {
+              top: top2,
+              bottom: bottom2,
+              left: left2,
+              right: right2,
+              width: width2,
+              height: height2,
+              x: left2,
+              y: top2
+            };
+          }
+          const isLeftSide = getSide(placement) === "left";
+          const maxRight = max(...clientRects.map((rect) => rect.right));
+          const minLeft = min(...clientRects.map((rect) => rect.left));
+          const measureRects = clientRects.filter((rect) => isLeftSide ? rect.left === minLeft : rect.right === maxRight);
+          const top = measureRects[0].top;
+          const bottom = measureRects[measureRects.length - 1].bottom;
+          const left = minLeft;
+          const right = maxRight;
+          const width = right - left;
+          const height = bottom - top;
+          return {
+            top,
+            bottom,
+            left,
+            right,
+            width,
+            height,
+            x: left,
+            y: top
+          };
+        }
+        return fallback;
+      }
+      const resetRects = await platform2.getElementRects({
+        reference: {
+          getBoundingClientRect: getBoundingClientRect2
+        },
+        floating: elements.floating,
+        strategy
+      });
+      if (rects.reference.x !== resetRects.reference.x || rects.reference.y !== resetRects.reference.y || rects.reference.width !== resetRects.reference.width || rects.reference.height !== resetRects.reference.height) {
+        return {
+          reset: {
+            rects: resetRects
+          }
+        };
+      }
+      return {};
+    }
+  };
+};
+function isWindow(value) {
+  return value && value.document && value.location && value.alert && value.setInterval;
+}
+function getWindow(node) {
+  if (node == null) {
+    return window;
+  }
+  if (!isWindow(node)) {
+    const ownerDocument = node.ownerDocument;
+    return ownerDocument ? ownerDocument.defaultView || window : window;
+  }
+  return node;
+}
+function getComputedStyle$1(element) {
+  return getWindow(element).getComputedStyle(element);
+}
+function getNodeName(node) {
+  return isWindow(node) ? "" : node ? (node.nodeName || "").toLowerCase() : "";
+}
+function isHTMLElement(value) {
+  return value instanceof getWindow(value).HTMLElement;
+}
+function isElement(value) {
+  return value instanceof getWindow(value).Element;
+}
+function isNode2(value) {
+  return value instanceof getWindow(value).Node;
+}
+function isShadowRoot(node) {
+  const OwnElement = getWindow(node).ShadowRoot;
+  return node instanceof OwnElement || node instanceof ShadowRoot;
+}
+function isOverflowElement(element) {
+  const {
+    overflow,
+    overflowX,
+    overflowY
+  } = getComputedStyle$1(element);
+  return /auto|scroll|overlay|hidden/.test(overflow + overflowY + overflowX);
+}
+function isTableElement(element) {
+  return ["table", "td", "th"].includes(getNodeName(element));
+}
+function isContainingBlock(element) {
+  const isFirefox = navigator.userAgent.toLowerCase().includes("firefox");
+  const css2 = getComputedStyle$1(element);
+  return css2.transform !== "none" || css2.perspective !== "none" || css2.contain === "paint" || ["transform", "perspective"].includes(css2.willChange) || isFirefox && css2.willChange === "filter" || isFirefox && (css2.filter ? css2.filter !== "none" : false);
+}
+function isLayoutViewport() {
+  return !/^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+}
+var min2 = Math.min;
+var max2 = Math.max;
+var round2 = Math.round;
+function getBoundingClientRect(element, includeScale, isFixedStrategy) {
+  if (includeScale === void 0) {
+    includeScale = false;
+  }
+  if (isFixedStrategy === void 0) {
+    isFixedStrategy = false;
+  }
+  const clientRect = element.getBoundingClientRect();
+  let scaleX = 1;
+  let scaleY = 1;
+  if (includeScale && isHTMLElement(element)) {
+    scaleX = element.offsetWidth > 0 ? round2(clientRect.width) / element.offsetWidth || 1 : 1;
+    scaleY = element.offsetHeight > 0 ? round2(clientRect.height) / element.offsetHeight || 1 : 1;
+  }
+  const win = isElement(element) ? getWindow(element) : window;
+  const addVisualOffsets = !isLayoutViewport() && isFixedStrategy;
+  const x = (clientRect.left + (addVisualOffsets ? win.visualViewport.offsetLeft : 0)) / scaleX;
+  const y = (clientRect.top + (addVisualOffsets ? win.visualViewport.offsetTop : 0)) / scaleY;
+  const width = clientRect.width / scaleX;
+  const height = clientRect.height / scaleY;
+  return {
+    width,
+    height,
+    top: y,
+    right: x + width,
+    bottom: y + height,
+    left: x,
+    x,
+    y
+  };
+}
+function getDocumentElement(node) {
+  return ((isNode2(node) ? node.ownerDocument : node.document) || window.document).documentElement;
+}
+function getNodeScroll(element) {
+  if (isElement(element)) {
+    return {
+      scrollLeft: element.scrollLeft,
+      scrollTop: element.scrollTop
+    };
+  }
+  return {
+    scrollLeft: element.pageXOffset,
+    scrollTop: element.pageYOffset
+  };
+}
+function getWindowScrollBarX(element) {
+  return getBoundingClientRect(getDocumentElement(element)).left + getNodeScroll(element).scrollLeft;
+}
+function isScaled(element) {
+  const rect = getBoundingClientRect(element);
+  return round2(rect.width) !== element.offsetWidth || round2(rect.height) !== element.offsetHeight;
+}
+function getRectRelativeToOffsetParent(element, offsetParent, strategy) {
+  const isOffsetParentAnElement = isHTMLElement(offsetParent);
+  const documentElement = getDocumentElement(offsetParent);
+  const rect = getBoundingClientRect(element, isOffsetParentAnElement && isScaled(offsetParent), strategy === "fixed");
+  let scroll = {
+    scrollLeft: 0,
+    scrollTop: 0
+  };
+  const offsets = {
+    x: 0,
+    y: 0
+  };
+  if (isOffsetParentAnElement || !isOffsetParentAnElement && strategy !== "fixed") {
+    if (getNodeName(offsetParent) !== "body" || isOverflowElement(documentElement)) {
+      scroll = getNodeScroll(offsetParent);
+    }
+    if (isHTMLElement(offsetParent)) {
+      const offsetRect = getBoundingClientRect(offsetParent, true);
+      offsets.x = offsetRect.x + offsetParent.clientLeft;
+      offsets.y = offsetRect.y + offsetParent.clientTop;
+    } else if (documentElement) {
+      offsets.x = getWindowScrollBarX(documentElement);
+    }
+  }
+  return {
+    x: rect.left + scroll.scrollLeft - offsets.x,
+    y: rect.top + scroll.scrollTop - offsets.y,
+    width: rect.width,
+    height: rect.height
+  };
+}
+function getParentNode(node) {
+  if (getNodeName(node) === "html") {
+    return node;
+  }
+  return node.assignedSlot || node.parentNode || (isShadowRoot(node) ? node.host : null) || getDocumentElement(node);
+}
+function getTrueOffsetParent(element) {
+  if (!isHTMLElement(element) || getComputedStyle(element).position === "fixed") {
+    return null;
+  }
+  return element.offsetParent;
+}
+function getContainingBlock(element) {
+  let currentNode = getParentNode(element);
+  if (isShadowRoot(currentNode)) {
+    currentNode = currentNode.host;
+  }
+  while (isHTMLElement(currentNode) && !["html", "body"].includes(getNodeName(currentNode))) {
+    if (isContainingBlock(currentNode)) {
+      return currentNode;
+    } else {
+      currentNode = currentNode.parentNode;
+    }
+  }
+  return null;
+}
+function getOffsetParent(element) {
+  const window2 = getWindow(element);
+  let offsetParent = getTrueOffsetParent(element);
+  while (offsetParent && isTableElement(offsetParent) && getComputedStyle(offsetParent).position === "static") {
+    offsetParent = getTrueOffsetParent(offsetParent);
+  }
+  if (offsetParent && (getNodeName(offsetParent) === "html" || getNodeName(offsetParent) === "body" && getComputedStyle(offsetParent).position === "static" && !isContainingBlock(offsetParent))) {
+    return window2;
+  }
+  return offsetParent || getContainingBlock(element) || window2;
+}
+function getDimensions(element) {
+  if (isHTMLElement(element)) {
+    return {
+      width: element.offsetWidth,
+      height: element.offsetHeight
+    };
+  }
+  const rect = getBoundingClientRect(element);
+  return {
+    width: rect.width,
+    height: rect.height
+  };
+}
+function convertOffsetParentRelativeRectToViewportRelativeRect(_ref2) {
+  let {
+    rect,
+    offsetParent,
+    strategy
+  } = _ref2;
+  const isOffsetParentAnElement = isHTMLElement(offsetParent);
+  const documentElement = getDocumentElement(offsetParent);
+  if (offsetParent === documentElement) {
+    return rect;
+  }
+  let scroll = {
+    scrollLeft: 0,
+    scrollTop: 0
+  };
+  const offsets = {
+    x: 0,
+    y: 0
+  };
+  if (isOffsetParentAnElement || !isOffsetParentAnElement && strategy !== "fixed") {
+    if (getNodeName(offsetParent) !== "body" || isOverflowElement(documentElement)) {
+      scroll = getNodeScroll(offsetParent);
+    }
+    if (isHTMLElement(offsetParent)) {
+      const offsetRect = getBoundingClientRect(offsetParent, true);
+      offsets.x = offsetRect.x + offsetParent.clientLeft;
+      offsets.y = offsetRect.y + offsetParent.clientTop;
+    }
+  }
+  return {
+    ...rect,
+    x: rect.x - scroll.scrollLeft + offsets.x,
+    y: rect.y - scroll.scrollTop + offsets.y
+  };
+}
+function getViewportRect(element, strategy) {
+  const win = getWindow(element);
+  const html2 = getDocumentElement(element);
+  const visualViewport = win.visualViewport;
+  let width = html2.clientWidth;
+  let height = html2.clientHeight;
+  let x = 0;
+  let y = 0;
+  if (visualViewport) {
+    width = visualViewport.width;
+    height = visualViewport.height;
+    const layoutViewport = isLayoutViewport();
+    if (layoutViewport || !layoutViewport && strategy === "fixed") {
+      x = visualViewport.offsetLeft;
+      y = visualViewport.offsetTop;
+    }
+  }
+  return {
+    width,
+    height,
+    x,
+    y
+  };
+}
+function getDocumentRect(element) {
+  var _element$ownerDocumen;
+  const html2 = getDocumentElement(element);
+  const scroll = getNodeScroll(element);
+  const body = (_element$ownerDocumen = element.ownerDocument) == null ? void 0 : _element$ownerDocumen.body;
+  const width = max2(html2.scrollWidth, html2.clientWidth, body ? body.scrollWidth : 0, body ? body.clientWidth : 0);
+  const height = max2(html2.scrollHeight, html2.clientHeight, body ? body.scrollHeight : 0, body ? body.clientHeight : 0);
+  let x = -scroll.scrollLeft + getWindowScrollBarX(element);
+  const y = -scroll.scrollTop;
+  if (getComputedStyle$1(body || html2).direction === "rtl") {
+    x += max2(html2.clientWidth, body ? body.clientWidth : 0) - width;
+  }
+  return {
+    width,
+    height,
+    x,
+    y
+  };
+}
+function getNearestOverflowAncestor(node) {
+  const parentNode = getParentNode(node);
+  if (["html", "body", "#document"].includes(getNodeName(parentNode))) {
+    return node.ownerDocument.body;
+  }
+  if (isHTMLElement(parentNode) && isOverflowElement(parentNode)) {
+    return parentNode;
+  }
+  return getNearestOverflowAncestor(parentNode);
+}
+function getOverflowAncestors(node, list2) {
+  var _node$ownerDocument;
+  if (list2 === void 0) {
+    list2 = [];
+  }
+  const scrollableAncestor = getNearestOverflowAncestor(node);
+  const isBody = scrollableAncestor === ((_node$ownerDocument = node.ownerDocument) == null ? void 0 : _node$ownerDocument.body);
+  const win = getWindow(scrollableAncestor);
+  const target = isBody ? [win].concat(win.visualViewport || [], isOverflowElement(scrollableAncestor) ? scrollableAncestor : []) : scrollableAncestor;
+  const updatedList = list2.concat(target);
+  return isBody ? updatedList : updatedList.concat(getOverflowAncestors(getParentNode(target)));
+}
+function contains(parent, child) {
+  const rootNode = child.getRootNode == null ? void 0 : child.getRootNode();
+  if (parent.contains(child)) {
+    return true;
+  } else if (rootNode && isShadowRoot(rootNode)) {
+    let next = child;
+    do {
+      if (next && parent === next) {
+        return true;
+      }
+      next = next.parentNode || next.host;
+    } while (next);
+  }
+  return false;
+}
+function getInnerBoundingClientRect(element, strategy) {
+  const clientRect = getBoundingClientRect(element, false, strategy === "fixed");
+  const top = clientRect.top + element.clientTop;
+  const left = clientRect.left + element.clientLeft;
+  return {
+    top,
+    left,
+    x: left,
+    y: top,
+    right: left + element.clientWidth,
+    bottom: top + element.clientHeight,
+    width: element.clientWidth,
+    height: element.clientHeight
+  };
+}
+function getClientRectFromClippingAncestor(element, clippingParent, strategy) {
+  if (clippingParent === "viewport") {
+    return rectToClientRect(getViewportRect(element, strategy));
+  }
+  if (isElement(clippingParent)) {
+    return getInnerBoundingClientRect(clippingParent, strategy);
+  }
+  return rectToClientRect(getDocumentRect(getDocumentElement(element)));
+}
+function getClippingAncestors(element) {
+  const clippingAncestors = getOverflowAncestors(element);
+  const canEscapeClipping = ["absolute", "fixed"].includes(getComputedStyle$1(element).position);
+  const clipperElement = canEscapeClipping && isHTMLElement(element) ? getOffsetParent(element) : element;
+  if (!isElement(clipperElement)) {
+    return [];
+  }
+  return clippingAncestors.filter((clippingAncestors2) => isElement(clippingAncestors2) && contains(clippingAncestors2, clipperElement) && getNodeName(clippingAncestors2) !== "body");
+}
+function getClippingRect(_ref2) {
+  let {
+    element,
+    boundary,
+    rootBoundary,
+    strategy
+  } = _ref2;
+  const mainClippingAncestors = boundary === "clippingAncestors" ? getClippingAncestors(element) : [].concat(boundary);
+  const clippingAncestors = [...mainClippingAncestors, rootBoundary];
+  const firstClippingAncestor = clippingAncestors[0];
+  const clippingRect = clippingAncestors.reduce((accRect, clippingAncestor) => {
+    const rect = getClientRectFromClippingAncestor(element, clippingAncestor, strategy);
+    accRect.top = max2(rect.top, accRect.top);
+    accRect.right = min2(rect.right, accRect.right);
+    accRect.bottom = min2(rect.bottom, accRect.bottom);
+    accRect.left = max2(rect.left, accRect.left);
+    return accRect;
+  }, getClientRectFromClippingAncestor(element, firstClippingAncestor, strategy));
+  return {
+    width: clippingRect.right - clippingRect.left,
+    height: clippingRect.bottom - clippingRect.top,
+    x: clippingRect.left,
+    y: clippingRect.top
+  };
+}
+var platform = {
+  getClippingRect,
+  convertOffsetParentRelativeRectToViewportRelativeRect,
+  isElement,
+  getDimensions,
+  getOffsetParent,
+  getDocumentElement,
+  getElementRects: (_ref2) => {
+    let {
+      reference,
+      floating,
+      strategy
+    } = _ref2;
+    return {
+      reference: getRectRelativeToOffsetParent(reference, getOffsetParent(floating), strategy),
+      floating: {
+        ...getDimensions(floating),
+        x: 0,
+        y: 0
+      }
+    };
+  },
+  getClientRects: (element) => Array.from(element.getClientRects()),
+  isRTL: (element) => getComputedStyle$1(element).direction === "rtl"
+};
+function autoUpdate(reference, floating, update, options2) {
+  if (options2 === void 0) {
+    options2 = {};
+  }
+  const {
+    ancestorScroll: _ancestorScroll = true,
+    ancestorResize: _ancestorResize = true,
+    elementResize: _elementResize = true,
+    animationFrame = false
+  } = options2;
+  let cleanedUp = false;
+  const ancestorScroll = _ancestorScroll && !animationFrame;
+  const ancestorResize = _ancestorResize && !animationFrame;
+  const elementResize = _elementResize && !animationFrame;
+  const ancestors = ancestorScroll || ancestorResize ? [...isElement(reference) ? getOverflowAncestors(reference) : [], ...getOverflowAncestors(floating)] : [];
+  ancestors.forEach((ancestor) => {
+    ancestorScroll && ancestor.addEventListener("scroll", update, {
+      passive: true
+    });
+    ancestorResize && ancestor.addEventListener("resize", update);
+  });
+  let observer = null;
+  if (elementResize) {
+    observer = new ResizeObserver(update);
+    isElement(reference) && observer.observe(reference);
+    observer.observe(floating);
+  }
+  let frameId;
+  let prevRefRect = animationFrame ? getBoundingClientRect(reference) : null;
+  if (animationFrame) {
+    frameLoop();
+  }
+  function frameLoop() {
+    if (cleanedUp) {
+      return;
+    }
+    const nextRefRect = getBoundingClientRect(reference);
+    if (prevRefRect && (nextRefRect.x !== prevRefRect.x || nextRefRect.y !== prevRefRect.y || nextRefRect.width !== prevRefRect.width || nextRefRect.height !== prevRefRect.height)) {
+      update();
+    }
+    prevRefRect = nextRefRect;
+    frameId = requestAnimationFrame(frameLoop);
+  }
+  return () => {
+    var _observer;
+    cleanedUp = true;
+    ancestors.forEach((ancestor) => {
+      ancestorScroll && ancestor.removeEventListener("scroll", update);
+      ancestorResize && ancestor.removeEventListener("resize", update);
+    });
+    (_observer = observer) == null ? void 0 : _observer.disconnect();
+    observer = null;
+    if (animationFrame) {
+      cancelAnimationFrame(frameId);
+    }
+  };
+}
+var computePosition2 = (reference, floating, options2) => computePosition(reference, floating, {
+  platform,
+  ...options2
+});
+var buildConfigFromModifiers = (modifiers) => {
+  const config = {
+    placement: "bottom",
+    middleware: []
+  };
+  const keys = Object.keys(modifiers);
+  const getModifierArgument = (modifier) => {
+    return modifiers[modifier];
+  };
+  if (keys.includes("offset")) {
+    config.middleware.push(offset(getModifierArgument("offset")));
+  }
+  if (keys.includes("placement")) {
+    config.placement = getModifierArgument("placement");
+  }
+  if (keys.includes("autoPlacement") && !keys.includes("flip")) {
+    config.middleware.push(autoPlacement(getModifierArgument("autoPlacement")));
+  }
+  if (keys.includes("flip")) {
+    config.middleware.push(flip(getModifierArgument("flip")));
+  }
+  if (keys.includes("shift")) {
+    config.middleware.push(shift(getModifierArgument("shift")));
+  }
+  if (keys.includes("inline")) {
+    config.middleware.push(inline2(getModifierArgument("inline")));
+  }
+  if (keys.includes("arrow")) {
+    config.middleware.push(arrow(getModifierArgument("arrow")));
+  }
+  if (keys.includes("hide")) {
+    config.middleware.push(hide(getModifierArgument("hide")));
+  }
+  return config;
+};
+var randomString = (length) => {
+  var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz".split("");
+  var str = "";
+  if (!length) {
+    length = Math.floor(Math.random() * chars.length);
+  }
+  for (var i = 0; i < length; i++) {
+    str += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return str;
+};
+function src_default(Alpine) {
+  const defaultOptions2 = {
+    dismissable: true,
+    trap: false
+  };
+  const atTriggers = document.querySelectorAll('[\\@click*="$float"]');
+  const xTriggers = document.querySelectorAll('[x-on\\:click*="$float"]');
+  const triggers = [...atTriggers, ...xTriggers].forEach(function(trig) {
+    const parentComponent = trig.parentElement.closest("[x-data]");
+    const panel2 = parentComponent.querySelector('[x-ref="panel"]');
+    if (!trig.hasAttribute("aria-expanded")) {
+      trig.setAttribute("aria-expanded", false);
+    }
+    if (!panel2.hasAttribute("id")) {
+      const panelId = `panel-${randomString(8)}`;
+      trig.setAttribute("aria-controls", panelId);
+      panel2.setAttribute("id", panelId);
+    } else {
+      trig.setAttribute("aria-controls", panel2.getAttribute("id"));
+    }
+    panel2.setAttribute("aria-modal", true);
+    panel2.setAttribute("role", "dialog");
+  });
+  Alpine.magic("float", (el) => {
+    return (modifiers = {}, settings = {}) => {
+      const options2 = {...defaultOptions2, ...settings};
+      const config = Object.keys(modifiers).length > 0 ? buildConfigFromModifiers(modifiers) : {middleware: [autoPlacement()]};
+      const parentComponent = el.parentElement.closest("[x-data]");
+      const trigger = el;
+      const panel2 = parentComponent.querySelector('[x-ref="panel"]');
+      function isFloating() {
+        return panel2.style.display == "block";
+      }
+      function closePanel() {
+        panel2.style.display = "";
+        trigger.setAttribute("aria-expanded", false);
+        if (options2.trap)
+          panel2.setAttribute("x-trap", false);
+        autoUpdate(el, panel2, update);
+      }
+      function openPanel() {
+        panel2.style.display = "block";
+        trigger.setAttribute("aria-expanded", true);
+        if (options2.trap)
+          panel2.setAttribute("x-trap", true);
+        update();
+      }
+      function togglePanel() {
+        isFloating() ? closePanel() : openPanel();
+      }
+      async function update() {
+        return await computePosition2(el, panel2, config).then(({middlewareData, placement, x, y}) => {
+          if (middlewareData.arrow) {
+            const ax = middlewareData.arrow?.x;
+            const ay = middlewareData.arrow?.y;
+            const aEl = config.middleware.filter((middleware) => middleware.name == "arrow")[0].options.element;
+            const staticSide = {
+              top: "bottom",
+              right: "left",
+              bottom: "top",
+              left: "right"
+            }[placement.split("-")[0]];
+            Object.assign(aEl.style, {
+              left: ax != null ? `${ax}px` : "",
+              top: ay != null ? `${ay}px` : "",
+              right: "",
+              bottom: "",
+              [staticSide]: "-4px"
+            });
+          }
+          if (middlewareData.hide) {
+            const {referenceHidden} = middlewareData.hide;
+            Object.assign(panel2.style, {
+              visibility: referenceHidden ? "hidden" : "visible"
+            });
+          }
+          Object.assign(panel2.style, {
+            left: `${x}px`,
+            top: `${y}px`
+          });
+        });
+      }
+      if (options2.dismissable) {
+        window.addEventListener("click", (event) => {
+          if (!parentComponent.contains(event.target) && isFloating()) {
+            togglePanel();
+          }
+        });
+        window.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && isFloating()) {
+            togglePanel();
+          }
+        }, true);
+      }
+      togglePanel();
+    };
+  });
+}
+var module_default = src_default;
 
 // node_modules/sortablejs/modular/sortable.esm.js
 /**!
@@ -31710,11 +33074,13 @@ var js_default = (Alpine) => {
   Alpine.plugin(tags_input_default);
   Alpine.plugin(text_input_default);
   Alpine.plugin(textarea_default);
+  Alpine.plugin(module_default);
 };
 export {
   color_picker_default2 as ColorPickerFormComponentAlpinePlugin,
   date_time_picker_default as DateTimePickerFormComponentAlpinePlugin,
   file_upload_default as FileUploadFormComponentAlpinePlugin,
+  module_default as FloatingUI,
   key_value_default as KeyValueFormComponentAlpinePlugin,
   markdown_editor_default as MarkdownEditorFormComponentAlpinePlugin,
   rich_editor_default as RichEditorFormComponentAlpinePlugin,
