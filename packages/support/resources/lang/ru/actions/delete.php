@@ -2,52 +2,52 @@
 
 return [
 
-    'single' => [
+     'single' => [
 
-        'label' => 'Удалить',
+         'label' => 'Удалить',
 
-        'modal' => [
+         'modal' => [
 
-            'heading' => 'Удалить :label',
+             'heading' => 'Удалить :label',
 
-            'actions' => [
+             'actions' => [
 
-                'delete' => [
-                    'label' => 'Удалить',
-                ],
+                 'delete' => [
+                     'label' => 'Удалить',
+                 ],
 
-            ],
+             ],
 
-        ],
+         ],
 
-        'messages' => [
-            'deleted' => 'Удалено',
-        ],
+         'messages' => [
+             'deleted' => 'Удалено',
+         ],
 
-    ],
+     ],
 
-    'multiple' => [
+     'multiple' => [
 
-        'label' => 'Удалить выбранное',
+         'label' => 'Удалить отмеченное',
 
-        'modal' => [
+         'modal' => [
 
-            'heading' => 'Удалить выбранные :label',
+             'heading' => 'Удалить отмеченное :label',
 
-            'actions' => [
+             'actions' => [
 
-                'delete' => [
-                    'label' => 'Удалить выбранное',
-                ],
+                 'delete' => [
+                     'label' => 'Удалить отмеченное',
+                 ],
 
-            ],
+             ],
 
-        ],
+         ],
 
-        'messages' => [
-            'deleted' => 'Удалено',
-        ],
+         'messages' => [
+             'deleted' => 'Удалено',
+         ],
 
-    ],
+     ],
 
 ];

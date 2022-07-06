@@ -18,7 +18,7 @@ class Page extends BasePage
         ];
     }
 
-    public function getBreadcrumb(): string
+    public function getBreadcrumb(): ?string
     {
         return static::$breadcrumb ?? static::getTitle();
     }
@@ -27,10 +27,12 @@ class Page extends BasePage
     {
         $resource = static::getResource();
 
-        return [
-            $resource::getUrl() => $resource::getBreadcrumb(),
-            $this->getBreadcrumb(),
-        ];
+        $breadcrumb = $this->getBreadcrumb();
+
+        return array_merge(
+            [$resource::getUrl() => $resource::getBreadcrumb()],
+            (filled($breadcrumb) ? [$breadcrumb] : []),
+        );
     }
 
     public static function authorizeResourceAccess(): void

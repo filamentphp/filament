@@ -9,6 +9,7 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
@@ -66,7 +67,7 @@ trait HasRecords
         $relationship = $this->getRelationship();
 
         $pivotClass = $relationship->getPivotClass();
-        $pivotKeyName = app($pivotClass)->getQualifiedKeyName();
+        $pivotKeyName = app($pivotClass)->getKeyName();
 
         $query = $this->allowsDuplicates() ?
             $relationship->wherePivot($pivotKeyName, $key) :
