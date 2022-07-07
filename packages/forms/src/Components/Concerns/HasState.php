@@ -189,9 +189,13 @@ trait HasState
 
     public function getOldState()
     {
+        if (! Livewire::isLivewireRequest()) {
+            return null;
+        }
+
         $state = request('serverMemo.data.' . $this->getStatePath());
 
-        if (blank($state) || ! Livewire::isLivewireRequest()) {
+        if (blank($state)) {
             return null;
         }
 
