@@ -40,9 +40,9 @@ class TestsFilters
                 } else {
                     $data = ['value' => $data];
                 }
-            } else if ($filter instanceof MultiSelectFilter) {
+            } elseif ($filter instanceof MultiSelectFilter) {
                 $data = ['values' => Arr::wrap($data ?? [])];
-            } else if ($filter instanceof SelectFilter) {
+            } elseif ($filter instanceof SelectFilter) {
                 $data = ['value' => $data];
             } else {
                 $data = ['isActive' => $data === true || $data === null];
