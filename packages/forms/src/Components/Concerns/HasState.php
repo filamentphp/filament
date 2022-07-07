@@ -187,7 +187,7 @@ trait HasState
         return $state;
     }
 
-    public function getOld()
+    public function getOldState()
     {
         $state = request('serverMemo.data.' . $this->getStatePath());
 
