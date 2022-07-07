@@ -46,12 +46,9 @@ it('can search records', function () {
 
     $title = $posts->first()->title;
 
-    $searchedPosts = $posts->where('title', $title);
-
     livewire(PostsTable::class)
         ->searchTable($title)
-        ->assertCanSeeTableRecords($searchedPosts)
-        ->assertCountTableRecords($searchedPosts->count())
+        ->assertCanSeeTableRecords($posts->where('title', $title))
         ->assertCanNotSeeTableRecords($posts->where('title', '!=', $title));
 });
 
@@ -60,11 +57,8 @@ it('can search posts with relationship', function () {
 
     $author = $posts->first()->author->name;
 
-    $searchedPosts = $posts->where('author.name', $author);
-
     livewire(PostsTable::class)
         ->searchTable($author)
-        ->assertCanSeeTableRecords($searchedPosts)
-        ->assertCountTableRecords($searchedPosts->count())
+        ->assertCanSeeTableRecords($posts->where('author.name', $author))
         ->assertCanNotSeeTableRecords($posts->where('author.name', '!=', $author));
 });

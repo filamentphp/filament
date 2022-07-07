@@ -29,11 +29,11 @@ namespace Livewire\Testing {
 
         public function assertTableColumnExists(string $name): static {}
 
-        public function sortTable(?string $column = null, ?string $direction = null): static {}
+        public function sortTable(?string $name = null, ?string $direction = null): static {}
 
         public function searchTable(?string $search = null): static {}
 
-        public function filterTable(string $filter, ?array $data = null): static {}
+        public function filterTable(string $name, ?array $data = null): static {}
 
         public function resetTableFilters(): static {}
 

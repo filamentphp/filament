@@ -64,12 +64,9 @@ it('can search posts by title', function () {
 
     $title = $posts->first()->title;
 
-    $searchedPosts = $posts->where('title', $title);
-
     livewire(PostResource\Pages\ListPosts::class)
         ->searchTable($title)
-        ->assertCanSeeTableRecords($searchedPosts)
-        ->assertCountTableRecords($searchedPosts->count())
+        ->assertCanSeeTableRecords($posts->where('title', $title))
         ->assertCanNotSeeTableRecords($posts->where('title', '!=', $title));
 });
 
@@ -78,12 +75,9 @@ it('can search posts by author', function () {
 
     $author = $posts->first()->author->name;
 
-    $searchedPosts = $posts->where('author.name', $author);
-
     livewire(PostResource\Pages\ListPosts::class)
         ->searchTable($author)
-        ->assertCanSeeTableRecords($searchedPosts)
-        ->assertCountTableRecords($searchedPosts->count())
+        ->assertCanSeeTableRecords($posts->where('author.name', $author))
         ->assertCanNotSeeTableRecords($posts->where('author.name', '!=', $author));
 });
 

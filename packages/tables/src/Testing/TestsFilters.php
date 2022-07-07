@@ -6,6 +6,10 @@ use Closure;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\MultiSelectFilter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
+use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
 use Livewire\Testing\TestableLivewire;
 
@@ -18,19 +22,33 @@ class TestsFilters
 {
     public function filterTable(): Closure
     {
-        return function (string $filter, ?array $data = null): static {
+        return function (string $name, $data = null): static {
             /**
-             * @var string $filter
+             * @var string $name
              * @phpstan-ignore-next-line
              */
-            $filter = $this->parseFilterName($filter);
+            $name = $this->parseFilterName($name);
 
             /** @phpstan-ignore-next-line */
-            $this->assertTableFilterExists($filter);
+            $this->assertTableFilterExists($name);
 
-            $data ??= ['isActive' => true];
+            $filter = $this->instance()->getCachedTableFilter($name);
 
-            $this->set("tableFilters.{$filter}", $data);
+            if ($filter instanceof TernaryFilter) {
+                if ($data === true || ($data === null && func_num_args() === 1)) {
+                    $data = ['value' => true];
+                } else {
+                    $data = ['value' => $data];
+                }
+            } else if ($filter instanceof MultiSelectFilter) {
+                $data = ['values' => Arr::wrap($data ?? [])];
+            } else if ($filter instanceof SelectFilter) {
+                $data = ['value' => $data];
+            } else {
+                $data = ['isActive' => $data === true || $data === null];
+            }
+
+            $this->set("tableFilters.{$filter->getName()}", $data);
 
             return $this;
         };

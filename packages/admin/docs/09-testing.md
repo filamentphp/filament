@@ -2,7 +2,7 @@
 title: Testing
 ---
 
-All examples in this guide will be written using [Pest](https://pestphp.com).
+All examples in this guide will be written using [Pest](https://pestphp.com). However, you can easily adapt this to a PHPUnit.
 
 Since all pages in the admin panel are Livewire components, we're just using Livewire testing helpers everywhere. If you've never tested Livewire components before, please read [this guide](https://laravel-livewire.com/docs/testing) from the Livewire docs.
 
@@ -22,6 +22,35 @@ protected function setUp(): void
 ## Resources
 
 ### Pages
+
+#### List
+
+##### Routing & render
+
+To ensure that the List page for the `PostResource` is able to render successfully, generate a page URL, perform a request to this URL and ensure that it is successful:
+
+```php
+it('can render page', function () {
+    $this->get(PostResource::getUrl('index'))->assertSuccessful();
+});
+```
+
+##### Table
+
+Filament includes a selection of helpers for testing tables. A full guide to testing tables can be found [in the Table Builder documentation](../tables/testing).
+
+To use a table [testing helper](../tables/testing), make assertions on the resource's List page class, which holds the table:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can list posts', function () {
+    $posts = Post::factory()->count(10)->create();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertCanSeeTableRecords($posts);
+});
+```
 
 #### Create
 
@@ -225,5 +254,109 @@ it('can retrieve data', function () {
             'tags' => $post->tags,
             'title' => $post->title,
         ]);
+});
+```
+
+### Relation managers
+
+##### Render
+
+To ensure that a relation manager is able to render successfully, mount the Livewire component:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can render relation manager', function () {
+    $category = Category::factory()
+        ->has(Post::factory()->count(10))
+        ->create();
+
+    livewire(CategoryResource\RelationManagers\PostsRelationManager::class, [
+        'ownerRecord' => $category,
+    ])
+        ->assertSuccessful();
+});
+```
+
+##### Table
+
+Filament includes a selection of helpers for testing tables. A full guide to testing tables can be found [in the Table Builder documentation](../tables/testing).
+
+To use a table [testing helper](../tables/testing), make assertions on the relation manager class, which holds the table:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can list posts', function () {
+    $category = Category::factory()
+        ->has(Post::factory()->count(10))
+        ->create();
+
+    livewire(CategoryResource\RelationManagers\PostsRelationManager::class, [
+        'ownerRecord' => $category,
+    ])
+        ->assertCanSeeTableRecords($category->posts);
+});
+```
+
+## Page actions
+
+You can call a [page action](pages/actions) by passing its name or class to `callPageAction()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can send invoices', function () {
+    $invoice = Invoice::factory()->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->callPageAction('send', $post);
+
+    expect($invoice->refresh())
+        ->isSent()->toBeTrue();
+});
+```
+
+To pass an array of data into an action, use the `data` parameter:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can send invoices', function () {
+    $invoice = Invoice::factory()->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->callPageAction('send', $post, data: [
+            'email' => $email = fake()->email(),
+        ])
+        ->assertHasNoPageActionErrors();
+
+    expect($invoice->refresh())
+        ->isSent()->toBeTrue()
+        ->recipient_email->toBe($email);
+});
+```
+
+`assertHasNoPageActionErrors()` is used to assert that no validation errors occurred when submitting the action form.
+
+To check if a validation error has occurred with the data, use `assertHasPageActionErrors()`, similar to `assertHasErrors()` in Livewire:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can validate invoice recipient email', function () {
+    $invoice = Invoice::factory()->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->callPageAction('send', $post, data: [
+            'email' => Str::random(),
+        ])
+        ->assertHasPageActionErrors(['email' => ['email']]);
 });
 ```

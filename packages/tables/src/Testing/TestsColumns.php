@@ -58,8 +58,8 @@ class TestsColumns
 
     public function sortTable(): Closure
     {
-        return function (?string $column = null, ?string $direction = null): static {
-            $this->call('sortTable', $column, $direction);
+        return function (?string $name = null, ?string $direction = null): static {
+            $this->call('sortTable', $name, $direction);
 
             return $this;
         };
