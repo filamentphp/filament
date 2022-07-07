@@ -38,6 +38,7 @@ class Component extends ViewComponent
             'get' => $this->getGetCallback(),
             'livewire' => $this->getLivewire(),
             'model' => $this->getModel(),
+            'old' => $this->getOld(),
             'record' => $this->getRecord(),
             'set' => $this->getSetCallback(),
             'state' => $this->shouldEvaluateWithState() ? $this->getState() : null,

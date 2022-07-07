@@ -186,6 +186,17 @@ trait HasState
         return $state;
     }
 
+    public function getOld()
+    {
+        $state = request('serverMemo.data.' . $this->getStatePath());
+
+        if (blank($state) || ! Livewire::isLivewireRequest()) {
+            return null;
+        }
+
+        return $state;
+    }
+
     public function getStatePath(bool $isAbsolute = true): string
     {
         $pathComponents = [];
