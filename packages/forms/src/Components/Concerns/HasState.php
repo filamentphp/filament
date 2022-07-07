@@ -60,7 +60,9 @@ trait HasState
     public function callAfterStateUpdated(): static
     {
         if ($callback = $this->afterStateUpdated) {
-            $this->evaluate($callback);
+            $this->evaluate($callback, [
+                'old' => $this->getOldState(),
+            ]);
         }
 
         return $this;
