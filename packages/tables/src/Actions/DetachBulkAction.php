@@ -13,9 +13,9 @@ class DetachBulkAction extends BulkAction
     use CanCustomizeProcess;
     use Concerns\InteractsWithRelationship;
 
-    public static function make(string $name = 'detach'): static
+    public static function getDefaultName(): ?string
     {
-        return parent::make($name);
+        return 'detach';
     }
 
     protected function setUp(): void

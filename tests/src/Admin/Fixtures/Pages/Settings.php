@@ -6,7 +6,7 @@ use Filament\Pages\Page;
 
 class Settings extends Page
 {
-    protected static string $view = 'fixtures.pages.settings';
+    protected static string $view = 'admin.fixtures.pages.settings';
 
     public function notificationManager(bool $redirect = false)
     {

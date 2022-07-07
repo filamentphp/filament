@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Filters;
 
+use Exception;
 use Filament\Support\Components\Component;
 use Illuminate\Support\Traits\Conditionable;
 
@@ -24,12 +25,25 @@ class BaseFilter extends Component
         $this->name($name);
     }
 
-    public static function make(string $name): static
+    public static function make(?string $name = null): static
     {
-        $static = app(static::class, ['name' => $name]);
+        $filterClass = static::class;
+
+        $name ??= static::getDefaultName();
+
+        if (blank($name)) {
+            throw new Exception("Filter of class [$filterClass] must have a unique name, passed to the [make()] method.");
+        }
+
+        $static = app($filterClass, ['name' => $name]);
         $static->configure();
 
         return $static;
+    }
+
+    public static function getDefaultName(): ?string
+    {
+        return null;
     }
 
     protected function getDefaultEvaluationParameters(): array
