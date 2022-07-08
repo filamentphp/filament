@@ -57,6 +57,10 @@
                 class="shrink-0 p-3 text-sm font-medium"
                 x-bind:class="{ 'bg-white @if (config('forms.dark_mode')) dark:bg-gray-800 @endif': tab === '{{ $tab->getId() }}' }"
             >
+                @if ($tab->hasIcon())
+                    <x-dynamic-component :component="$tab->getIcon()" class="h-5 w-5 mr-1 text-gray-500 @if (config('forms.dark_mode')) dark:text-gray-400 @endif inline"/>
+                @endif
+
                 {{ $tab->getLabel() }}
             </button>
         @endforeach
