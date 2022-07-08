@@ -202,7 +202,7 @@ return [
     ],
 
     'tags_input' => [
-         'placeholder' => 'Nuovo tag',
+        'placeholder' => 'Nuovo tag',
     ],
 
     'wizard' => [

@@ -9,9 +9,9 @@ class DeleteAction extends Action
 {
     use CanCustomizeProcess;
 
-    public static function make(string $name = 'delete'): static
+    public static function getDefaultName(): ?string
     {
-        return parent::make($name);
+        return 'delete';
     }
 
     protected function setUp(): void

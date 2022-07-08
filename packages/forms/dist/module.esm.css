@@ -1613,7 +1613,7 @@ trix-editor .attachment__metadata .attachment__size {
   @apply select-none;
 }
 .choices.is-disabled .choices__item {
-  @apply cursor-not-allowed pointer-events-none;
+  @apply cursor-not-allowed pointer-events-none opacity-70;
 }
 .choices [hidden] {
   display: none !important;

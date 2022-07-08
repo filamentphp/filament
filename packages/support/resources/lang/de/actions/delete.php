@@ -2,37 +2,15 @@
 
 return [
 
-    'single' => [
+    'multiple' => [
 
-        'label' => 'Löschen',
-
-        'modal' => [
-
-            'heading' => ':label löschen',
-
-            'actions' => [
-
-                'delete' => [
-                    'label' => 'Löschen',
-                ],
-
-            ],
-
-        ],
+        'label' => 'Ausgewählte löschen',
 
         'messages' => [
             'deleted' => 'Gelöscht',
         ],
 
-    ],
-
-    'multiple' => [
-
-        'label' => 'Ausgewählte löschen',
-
         'modal' => [
-
-            'heading' => 'Ausgewählte :label löschen',
 
             'actions' => [
 
@@ -42,10 +20,30 @@ return [
 
             ],
 
+            'heading' => 'Ausgewählte :label löschen',
         ],
+
+    ],
+
+    'single' => [
+
+        'label' => 'Löschen',
 
         'messages' => [
             'deleted' => 'Gelöscht',
+        ],
+
+        'modal' => [
+
+            'actions' => [
+
+                'delete' => [
+                    'label' => 'Löschen',
+                ],
+
+            ],
+
+            'heading' => ':label löschen',
         ],
 
     ],

@@ -22,7 +22,7 @@
     {!! $getId() ? "id=\"{$getId()}\"" : null !!}
     {{ $attributes->merge($getExtraAttributes())->class([
         'rounded-xl shadow-sm border border-gray-300 bg-white filament-forms-tabs-component',
-        'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
+        'dark:bg-gray-800 dark:border-gray-700' => config('forms.dark_mode'),
     ]) }}
     {{ $getExtraAlpineAttributeBag() }}
 >
@@ -43,7 +43,7 @@
         role="tablist"
         @class([
             'rounded-t-xl flex overflow-y-auto bg-gray-100',
-            'dark:bg-gray-800' => config('forms.dark_mode'),
+            'dark:bg-gray-700' => config('forms.dark_mode'),
         ])
     >
         @foreach ($getChildComponentContainer()->getComponents() as $tab)
@@ -55,7 +55,7 @@
                 role="tab"
                 x-bind:tabindex="tab === '{{ $tab->getId() }}' ? 0 : -1"
                 class="shrink-0 p-3 text-sm font-medium"
-                x-bind:class="{ 'bg-white @if (config('forms.dark_mode')) dark:bg-gray-700 @endif': tab === '{{ $tab->getId() }}' }"
+                x-bind:class="{ 'bg-white @if (config('forms.dark_mode')) dark:bg-gray-800 @endif': tab === '{{ $tab->getId() }}' }"
             >
                 {{ $tab->getLabel() }}
             </button>

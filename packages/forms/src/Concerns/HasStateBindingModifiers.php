@@ -33,8 +33,8 @@ trait HasStateBindingModifiers
     {
         $modifiers = $this->getStateBindingModifiers();
 
-        if ($except) {
-            unset($modifiers[array_search($except, $modifiers, false)]);
+        if ($except && is_int($index = array_search($except, $modifiers, false))) {
+            unset($modifiers[$index]);
         }
 
         return implode('.', array_merge([$expression], $modifiers));

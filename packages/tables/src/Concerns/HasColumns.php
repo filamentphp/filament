@@ -47,7 +47,7 @@ trait HasColumns
             ->toArray();
     }
 
-    protected function getCachedTableColumn(string $name): ?Column
+    public function getCachedTableColumn(string $name): ?Column
     {
         return $this->getCachedTableColumns()[$name] ?? null;
     }
