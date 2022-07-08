@@ -3,7 +3,18 @@
 ])
 
 <x-filament::layouts.base :title="$title">
-    <div class="flex w-full min-h-screen overflow-x-hidden filament-app-layout">
+    <div class="flex w-full min-h-screen overflow-x-hidden filament-app-layout"
+         x-init="
+            Alpine.store('errors', {
+                any: @js($errors->any()),
+                all: @js($errors->all()),
+            })
+            Livewire.hook('message.processed', (message, component) => {
+                $store.errors.any = Object.keys(message.response.serverMemo.errors).length > 0
+                $store.errors.all = Array.from(Object.values(message.response.serverMemo.errors).flat())
+            })
+        "
+    >
         <div
             x-data="{}"
             x-cloak
