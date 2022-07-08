@@ -94,14 +94,14 @@ return [
             'move_item_up' => [
                 'label' => 'Mover para cima',
             ],
-           
+
              'collapse_all' => [
-                'label' => 'Recolher todos'
+                'label' => 'Recolher todos',
             ],
 
             'expand_all' => [
-                'label' => 'Expandir todos'
-            ]
+                'label' => 'Expandir todos',
+            ],
 
         ],
 
