@@ -4,12 +4,6 @@
         x-on:open-form-section.window="if ($event.detail.id == $el.id) isCollapsed = false"
         x-on:collapse-form-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
         x-on:toggle-form-section.window="if ($event.detail.id == $el.id) isCollapsed = ! isCollapsed"
-        x-on:expand-concealing-component.window="
-            if ($event.detail.id === $el.id) {
-                isCollapsed = false
-                $el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-            }
-        "
     @endif
     id="{{ $getId() }}"
     {{ $attributes->merge($getExtraAttributes())->class([
@@ -25,6 +19,10 @@
         ])
         @if ($isCollapsible())
             x-bind:class="{ 'rounded-b-xl': isCollapsed }"
+            x-on:click="
+                isCollapsed = ! isCollapsed
+                setTimeout(() => $el.scrollIntoView({behavior: 'smooth', block: 'start', inline: 'start'}), 150)
+            "
         @endif
     >
         <div
@@ -32,7 +30,6 @@
                 'flex-1 filament-forms-section-header',
                 'cursor-pointer' => $isCollapsible(),
             ])
-            @if ($isCollapsible()) x-on:click="isCollapsed = ! isCollapsed" @endif
         >
             <h3 class="text-xl font-bold tracking-tight pointer-events-none">
                 {{ $getHeading() }}
