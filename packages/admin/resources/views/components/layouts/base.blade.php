@@ -26,7 +26,7 @@
 
         <title>{{ $title ? "{$title} - " : null }} {{ config('filament.brand') }}</title>
 
-        {{ \Filament\Facades\Filament::renderHook('styles.before') }}
+        {{ \Filament\Facades\Filament::renderHook('styles.start') }}
 
         <style>
             [x-cloak=""], [x-cloak="x-cloak"], [x-cloak="1"] { display: none !important; }
@@ -55,7 +55,7 @@
 
         <link rel="stylesheet" href="{{ \Filament\Facades\Filament::getThemeUrl() }}" />
 
-        {{ \Filament\Facades\Filament::renderHook('styles.after') }}
+        {{ \Filament\Facades\Filament::renderHook('styles.end') }}
 
         @if (config('filament.dark_mode'))
             <script>
@@ -96,7 +96,7 @@
 
         @stack('beforeCoreScripts')
 
-        {{ \Filament\Facades\Filament::renderHook('scripts.before') }}
+        {{ \Filament\Facades\Filament::renderHook('scripts.start') }}
 
         <script src="{{ route('filament.asset', [
             'id' => Filament\get_asset_id('app.js'),
@@ -113,7 +113,7 @@
             @endif
         @endforeach
 
-        {{ \Filament\Facades\Filament::renderHook('scripts.after') }}
+        {{ \Filament\Facades\Filament::renderHook('scripts.end') }}
 
         @stack('scripts')
 
