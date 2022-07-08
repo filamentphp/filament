@@ -27,13 +27,19 @@
             x-bind:class="{ 'rounded-b-xl': isCollapsed }"
         @endif
     >
-        <div class="flex-1 filament-forms-section-header">
-            <h3 class="text-xl font-bold tracking-tight">
+        <div
+            @class([
+                'flex-1 filament-forms-section-header',
+                'cursor-pointer' => $isCollapsible(),
+            ])
+            @if ($isCollapsible()) x-on:click="isCollapsed = ! isCollapsed" @endif
+        >
+            <h3 class="text-xl font-bold tracking-tight pointer-events-none">
                 {{ $getHeading() }}
             </h3>
 
             @if ($description = $getDescription())
-                <p class="text-gray-500">
+                <p class="text-gray-500 pointer-events-none">
                     {{ $description }}
                 </p>
             @endif
