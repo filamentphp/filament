@@ -1,6 +1,7 @@
 <div
     @if ($isCollapsible())
         x-data="{ isCollapsed: {{ $isCollapsed() ? 'true' : 'false' }} }"
+        x-init="$watch('$store?.errors?.any', () => isCollapsed = $store?.errors?.any ? false : isCollapsed )"
         x-on:open-form-section.window="if ($event.detail.id == $el.id) isCollapsed = false"
         x-on:collapse-form-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
         x-on:toggle-form-section.window="if ($event.detail.id == $el.id) isCollapsed = ! isCollapsed"
