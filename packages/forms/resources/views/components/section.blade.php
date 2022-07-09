@@ -4,6 +4,13 @@
         x-on:open-form-section.window="if ($event.detail.id == $el.id) isCollapsed = false"
         x-on:collapse-form-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
         x-on:toggle-form-section.window="if ($event.detail.id == $el.id) isCollapsed = ! isCollapsed"
+        x-on:expand-concealing-component.window="
+            if ($event.detail.id === $el.id) {
+                isCollapsed = false
+                $el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                setTimeout(() => $el.scrollIntoView({behavior: 'smooth', block: 'start', inline: 'start'}), 150)
+            }
+        "
     @endif
     id="{{ $getId() }}"
     {{ $attributes->merge($getExtraAttributes())->class([
@@ -48,7 +55,7 @@
         </div>
 
         @if ($isCollapsible())
-            <button x-on:click="isCollapsed = ! isCollapsed"
+            <button x-on:click.stop="isCollapsed = ! isCollapsed"
                 x-bind:class="{
                     '-rotate-180': !isCollapsed,
                 }" type="button"
