@@ -30,7 +30,7 @@
                 if (! isCollapsed) {
                     setTimeout(
                         () => $el.scrollIntoView({behavior: 'smooth', block: 'start', inline: 'start'}),
-                        150,
+                        100,
                     )
                 }
             "
