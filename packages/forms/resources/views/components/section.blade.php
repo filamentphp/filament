@@ -5,6 +5,12 @@
         x-on:open-form-section.window="if ($event.detail.id == $el.id) isCollapsed = false"
         x-on:collapse-form-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
         x-on:toggle-form-section.window="if ($event.detail.id == $el.id) isCollapsed = ! isCollapsed"
+        x-on:expand-concealing-component.window="
+            if ($event.detail.id === $el.id) {
+                isCollapsed = false
+                setTimeout(() => $el.scrollIntoView({behavior: 'smooth', block: 'start', inline: 'start'}), 100)
+            }
+        "
     @endif
     id="{{ $getId() }}"
     {{ $attributes->merge($getExtraAttributes())->class([
