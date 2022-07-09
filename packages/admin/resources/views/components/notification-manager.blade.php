@@ -4,10 +4,21 @@
         add: function (event) {
             this.notifications = this.notifications.concat(event.detail)
         },
+        addError: function (notificationObject) {
+            this.notifications = this.notifications.concat(notificationObject)
+        },
         remove: function (notification) {
             this.notifications = this.notifications.filter(i => i.id !== notification.id)
         },
     }"
+    x-init="
+        $watch('$store.errors.all', () => {
+            notifications = [];
+            setTimeout(() =>
+                $store.errors.all.forEach((message, index) => addError({id: index, status: 'danger', message: message })),
+            100)
+        })
+    "
     x-on:notify.window="add($event)"
     @class([
         'flex fixed inset-0 z-50 p-3 pointer-events-none filament-notifications',
