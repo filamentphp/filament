@@ -8,12 +8,10 @@
             Alpine.store('errors', {
                 any: @js($errors->any()),
                 all: @js($errors->all()),
-                entries: [],
             })
             Livewire.hook('message.processed', (message, component) => {
                 $store.errors.any = Object.keys(message.response.serverMemo.errors).length > 0
                 $store.errors.all[component.id] = Array.from(Object.values(message.response.serverMemo.errors).flat())
-                $store.errors.entries[component.id] = Array.from(Object.entries(message.response.serverMemo.errors).flat())
             })
         "
     >
