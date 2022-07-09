@@ -7,8 +7,7 @@
         x-on:expand-concealing-component.window="
             if ($event.detail.id === $el.id) {
                 isCollapsed = false
-                $el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                setTimeout(() => $el.scrollIntoView({behavior: 'smooth', block: 'start', inline: 'start'}), 150)
+                setTimeout(() => $el.scrollIntoView({behavior: 'smooth', block: 'start', inline: 'start'}), 100)
             }
         "
     @endif
