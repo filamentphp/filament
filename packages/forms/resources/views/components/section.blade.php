@@ -1,16 +1,10 @@
 <div
     @if ($isCollapsible())
         x-data="{ isCollapsed: {{ $isCollapsed() ? 'true' : 'false' }} }"
-        x-init="$watch('$store?.errors?.any', () => isCollapsed = $store?.errors?.any ? false : isCollapsed )"
+        x-init="$watch('$store.errors?.all', () => isCollapsed = $el.getElementsByClassName('filament-forms-field-wrapper-error-message')[0] ? false : isCollapsed )"
         x-on:open-form-section.window="if ($event.detail.id == $el.id) isCollapsed = false"
         x-on:collapse-form-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
         x-on:toggle-form-section.window="if ($event.detail.id == $el.id) isCollapsed = ! isCollapsed"
-        x-on:expand-concealing-component.window="
-            if ($event.detail.id === $el.id) {
-                isCollapsed = false
-                $el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-            }
-        "
     @endif
     id="{{ $getId() }}"
     {{ $attributes->merge($getExtraAttributes())->class([
