@@ -266,7 +266,7 @@ class Select extends Field
         return $this;
     }
 
-    public function getOptionLabelsUsing(Closure $callback): static
+    public function getOptionLabelsUsing(?Closure $callback): static
     {
         $this->getOptionLabelsUsing = $callback;
 
