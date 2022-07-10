@@ -44,6 +44,8 @@ class Select extends Field
 
     protected ?Closure $getSearchResultsUsing = null;
 
+    protected bool | Closure $isHtmlAllowed = false;
+
     protected bool | Closure | null $isOptionDisabled = null;
 
     protected bool | Closure | null $isPlaceholderSelectionDisabled = false;
@@ -110,6 +112,13 @@ class Select extends Field
         $this->placeholder(__('forms::components.select.placeholder'));
     }
 
+    public function allowHtml(bool | Closure $condition = true): static
+    {
+        $this->isHtmlAllowed = $condition;
+
+        return $this;
+    }
+
     public function boolean(?string $trueLabel = null, ?string $falseLabel = null, ?string $placeholder = null): static
     {
         $this->options([
@@ -120,7 +129,7 @@ class Select extends Field
         $this->placeholder($placeholder ?? '-');
 
         return $this;
-    }
+    }    
 
     public function createOptionAction(?Closure $callback): static
     {
@@ -257,7 +266,7 @@ class Select extends Field
         return $this;
     }
 
-    public function getOptionLabelsUsing(?Closure $callback): static
+    public function getOptionLabelsUsing(Closure $callback): static
     {
         $this->getOptionLabelsUsing = $callback;
 
@@ -387,6 +396,11 @@ class Select extends Field
         }
 
         return $results;
+    }
+    
+    public function isHtmlAllowed(): bool
+    {
+        return $this->evaluate($this->isHtmlAllowed);
     }
 
     public function isMultiple(): bool
