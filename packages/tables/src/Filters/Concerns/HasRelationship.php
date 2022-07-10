@@ -4,6 +4,7 @@ namespace Filament\Tables\Filters\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -22,7 +23,7 @@ trait HasRelationship
     {
         $relationship = $this->getRelationship();
 
-        if ($relationship instanceof MorphToMany) {
+        if ($relationship instanceof MorphToMany || $relationship instanceof BelongsToMany) {
             $keyColumn = $relationship->getQualifiedRelatedKeyName();
         } elseif ($relationship instanceof HasOneThrough) {
             $keyColumn = $relationship->getQualifiedForeignKeyName();
