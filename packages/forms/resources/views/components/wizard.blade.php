@@ -10,7 +10,7 @@
         step: null,
 
         init: function () {
-            this.step = this.getSteps()[0]
+            this.step = this.getSteps()[{{ $getStartOnStep() }}]
         },
 
         nextStep: function () {
