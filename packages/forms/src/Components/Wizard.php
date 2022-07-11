@@ -16,6 +16,8 @@ class Wizard extends Component
 
     protected string | Htmlable | null $submitAction = null;
 
+    public int | Closure $startStep = 1;
+
     protected string $view = 'forms::components.wizard';
 
     final public function __construct(array | Closure $steps = [])
@@ -63,6 +65,18 @@ class Wizard extends Component
         $this->childComponents($steps);
 
         return $this;
+    }
+
+    public function startOnStep(int | Closure $startStep): static
+    {
+        $this->startStep = $startStep;
+
+        return $this;
+    }
+
+    public function getStartStep(): int
+    {
+        return $this->evaluate($this->startStep);
     }
 
     public function cancelAction(string | Htmlable | null $action): static
