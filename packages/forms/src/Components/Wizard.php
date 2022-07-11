@@ -74,11 +74,6 @@ class Wizard extends Component
         return $this;
     }
 
-    public function getStartStep(): int
-    {
-        return $this->evaluate($this->startStep);
-    }
-
     public function cancelAction(string | Htmlable | null $action): static
     {
         $this->cancelAction = $action;
@@ -101,5 +96,10 @@ class Wizard extends Component
     public function getSubmitAction(): string | Htmlable | null
     {
         return $this->submitAction;
+    }
+
+    public function getStartStep(): int
+    {
+        return $this->evaluate($this->startStep);
     }
 }
