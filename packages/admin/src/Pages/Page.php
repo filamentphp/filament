@@ -39,6 +39,8 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
 
     protected static string | array $middlewares = [];
 
+    public static ?Closure $reportValidationErrorUsing = null;
+
     protected ?string $maxContentWidth = null;
 
     public static function registerNavigationItems(): void
@@ -207,6 +209,10 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
 
     protected function onValidationError(ValidationException $exception): void
     {
-        $this->notify('danger', $exception->getMessage());
+        if (! static::$reportValidationErrorUsing) {
+            return;
+        }
+
+        (static::$reportValidationErrorUsing)($exception);
     }
 }

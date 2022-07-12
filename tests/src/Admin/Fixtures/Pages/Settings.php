@@ -2,11 +2,16 @@
 
 namespace Filament\Tests\Admin\Fixtures\Pages;
 
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
 
 class Settings extends Page
 {
     protected static string $view = 'admin.fixtures.pages.settings';
+
+    public $name;
 
     public function notificationManager(bool $redirect = false)
     {
@@ -15,5 +20,17 @@ class Settings extends Page
         }
 
         $this->notify('success', 'Saved!');
+    }
+
+    protected function getFormSchema(): array
+    {
+        return [
+            TextInput::make('name')->required(),
+        ];
+    }
+
+    public function save()
+    {
+        $this->form->getState();
     }
 }
