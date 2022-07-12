@@ -42,8 +42,6 @@ class Notification extends ViewComponent implements Wireable
             'icon' => $this->icon,
             'status' => $this->status,
         ];
-
-        // return get_object_vars($this);
     }
 
     public static function fromLivewire($value): static
