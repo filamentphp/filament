@@ -11,8 +11,6 @@ class Notification extends ViewComponent implements Wireable
 
     public string $id;
 
-    public bool $closed = false;
-
     public string $title;
 
     public ?string $description = null;
@@ -74,18 +72,6 @@ class Notification extends ViewComponent implements Wireable
     public function getId(): string
     {
         return $this->id;
-    }
-
-    public function closed(bool $closed): self
-    {
-        $this->closed = $closed;
-
-        return $this;
-    }
-
-    public function getClosed(): bool
-    {
-        return $this->closed;
     }
 
     public function title(string $title): self
@@ -159,12 +145,5 @@ class Notification extends ViewComponent implements Wireable
             'warning' => 'heroicon-o-exclamation-circle',
             'danger' => 'heroicon-o-x-circle',
         };
-    }
-
-    public function close(): static
-    {
-        $this->closed(true);
-
-        return $this;
     }
 }
