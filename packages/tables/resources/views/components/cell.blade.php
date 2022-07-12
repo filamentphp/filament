@@ -1,6 +1,7 @@
 @props([
     'action' => null,
     'alignment' => null,
+    'isClickDisabled' => false,
     'name',
     'record',
     'recordAction' => null,
@@ -26,7 +27,9 @@
         x-tooltip.raw="{{ $tooltip }}"
     @endif
 >
-    @if ($action || ((is_null($url)) && $recordAction))
+    @if ($isClickDisabled)
+        {{ $slot }}
+    @elseif ($action || ((! $url) && $recordAction))
         <button
             wire:click="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $this->getTableRecordKey($record) }}')"
             wire:target="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $this->getTableRecordKey($record) }}')"
@@ -37,7 +40,7 @@
         >
             {{ $slot }}
         </button>
-    @elseif ($url || (is_null($url) && $recordUrl))
+    @elseif ($url || $recordUrl)
         <a
             href="{{ $url ?: $recordUrl }}"
             {{ $shouldOpenUrlInNewTab ? 'target="_blank"' : null }}

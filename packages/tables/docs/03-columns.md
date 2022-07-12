@@ -159,7 +159,7 @@ Alternatively, you can also disable URL entirely:
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('title')
-    ->disableUrl()
+    ->disableClick()
 ```
 
 ### Setting a default value

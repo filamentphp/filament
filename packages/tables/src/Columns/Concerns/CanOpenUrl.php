@@ -8,7 +8,7 @@ trait CanOpenUrl
 {
     protected bool | Closure $shouldOpenUrlInNewTab = false;
 
-    protected string | Closure | false | null $url = null;
+    protected string | Closure | null $url = null;
 
     public function openUrlInNewTab(bool | Closure $condition = true): static
     {
@@ -17,17 +17,10 @@ trait CanOpenUrl
         return $this;
     }
 
-    public function url(string | Closure | false | null $url, bool | Closure $shouldOpenInNewTab = false): static
+    public function url(string | Closure | null $url, bool | Closure $shouldOpenInNewTab = false): static
     {
         $this->openUrlInNewTab($shouldOpenInNewTab);
         $this->url = $url;
-
-        return $this;
-    }
-
-    public function disableUrl(): static
-    {
-        $this->url = false;
 
         return $this;
     }
