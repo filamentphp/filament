@@ -11,13 +11,12 @@ trait CanNotify
         string $message = null,
         bool $isAfterRedirect = false,
     ): void {
-        $this->emit(
-            'notificationSent',
-            $status instanceof Notification
-                ? $status
-                : Notification::make()
-                    ->title($message)
-                    ->status($status),
-        );
+        $notification = $status instanceof Notification
+            ? $status
+            : Notification::make()
+                ->title($message)
+                ->status($status);
+
+        $this->emit('notificationSent', $notification->toLivewire());
     }
 }
