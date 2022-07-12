@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Facades\Filament;
+use Filament\Pages\Actions\DeleteAction;
 use Filament\Tests\Admin\Fixtures\Resources\PostResource;
 use Filament\Tests\Admin\Resources\TestCase;
 use Filament\Tests\Models\Post;
@@ -26,10 +27,13 @@ it('can retrieve data', function () {
     livewire(PostResource\Pages\EditPost::class, [
         'record' => $post->getKey(),
     ])
-        ->assertSet('data.author_id', $post->author->getKey())
-        ->assertSet('data.content', $post->content)
-        ->assertSet('data.tags', $post->tags)
-        ->assertSet('data.title', $post->title);
+        ->assertFormSet([
+            'author_id' => $post->author->getKey(),
+            'content' => $post->content,
+            'tags' => $post->tags,
+            'title' => $post->title,
+            'rating' => $post->rating,
+        ]);
 });
 
 it('can save', function () {
@@ -39,11 +43,15 @@ it('can save', function () {
     livewire(PostResource\Pages\EditPost::class, [
         'record' => $post->getKey(),
     ])
-        ->set('data.author_id', $newData->author->getKey())
-        ->set('data.content', $newData->content)
-        ->set('data.tags', $newData->tags)
-        ->set('data.title', $newData->title)
-        ->call('save');
+        ->fillForm([
+            'author_id' => $newData->author->getKey(),
+            'content' => $newData->content,
+            'tags' => $newData->tags,
+            'title' => $newData->title,
+            'rating' => $newData->rating,
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
 
     expect($post->refresh())
         ->author->toBeSameModel($newData->author)
@@ -54,12 +62,24 @@ it('can save', function () {
 
 it('can validate input', function () {
     $post = Post::factory()->create();
-    $newData = Post::factory()->make();
 
     livewire(PostResource\Pages\EditPost::class, [
         'record' => $post->getKey(),
     ])
-        ->set('data.title', null)
+        ->fillForm([
+            'title' => null,
+        ])
         ->call('save')
-        ->assertHasErrors(['data.title' => 'required']);
+        ->assertHasFormErrors(['title' => 'required']);
+});
+
+it('can delete', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostResource\Pages\EditPost::class, [
+        'record' => $post->getKey(),
+    ])
+        ->callPageAction(DeleteAction::class);
+
+    $this->assertModelMissing($post);
 });

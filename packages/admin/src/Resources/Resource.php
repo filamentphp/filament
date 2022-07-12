@@ -5,6 +5,7 @@ namespace Filament\Resources;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\GlobalSearch\GlobalSearchResult;
+use function Filament\locale_has_pluralization;
 use Filament\Navigation\NavigationItem;
 use function Filament\Support\get_model_label;
 use Illuminate\Database\Connection;
@@ -285,7 +286,15 @@ class Resource
 
     public static function getPluralModelLabel(): string
     {
-        return static::$pluralModelLabel ?? static::getPluralLabel() ?? Str::plural(static::getModelLabel());
+        if (filled($label = static::$pluralModelLabel ?? static::getPluralLabel())) {
+            return $label;
+        }
+
+        if (locale_has_pluralization()) {
+            return Str::plural(static::getModelLabel());
+        }
+
+        return static::getModelLabel();
     }
 
     public static function getRecordTitleAttribute(): ?string
@@ -295,7 +304,7 @@ class Resource
 
     public static function getRecordTitle(?Model $record): ?string
     {
-        return $record?->getAttribute(static::getRecordTitleAttribute()) ?? $record?->getKey();
+        return $record?->getAttribute(static::getRecordTitleAttribute()) ?? static::getModelLabel();
     }
 
     public static function getRelations(): array

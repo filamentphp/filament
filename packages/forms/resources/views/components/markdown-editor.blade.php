@@ -238,14 +238,9 @@
             </div>
 
             <div @class([
-                'block w-full h-full min-h-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:border-primary-300',
-                'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
-            ]) x-show="tab === 'preview'" x-cloak style="min-height: 150px;">
-                <div @class([
-                    'prose block w-full max-w-none rounded-lg border border-gray-300 bg-white p-3 shadow-sm',
-                    'dark:prose-invert dark:border-gray-600 dark:bg-gray-700' => config('forms.dark_mode'),
-                ]) x-html="preview"></div>
-            </div>
+                'prose max-w-none block w-full h-full min-h-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:border-primary-300',
+                'dark:prose-invert dark:border-gray-600 dark:bg-gray-700' => config('forms.dark_mode'),
+            ]) x-show="tab === 'preview'" x-html="preview" x-cloak style="min-height: 150px;"></div>
         </div>
     </div>
 </x-dynamic-component>

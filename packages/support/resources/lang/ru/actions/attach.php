@@ -2,40 +2,40 @@
 
 return [
 
-    'single' => [
+     'single' => [
 
-        'label' => 'Прикрепить',
+         'label' => 'Прикрепить',
 
-        'modal' => [
+         'modal' => [
 
-            'heading' => 'Прикрепить :label',
+             'heading' => 'Прикрепить :label',
 
-            'fields' => [
+             'fields' => [
 
-                'record_ids' => [
-                    'label' => 'Записи',
-                ],
+                 'record_ids' => [
+                     'label' => 'Записи',
+                 ],
 
-            ],
+             ],
 
-            'actions' => [
+             'actions' => [
 
-                'attach' => [
-                    'label' => 'Прикрепить',
-                ],
+                 'attach' => [
+                     'label' => 'Прикрепить',
+                 ],
 
-                'attach_another' => [
-                    'label' => 'Прикрепить и Прикрепить еще',
-                ],
+                 'attach_another' => [
+                     'label' => 'Прикрепить и прикрепить еще',
+                 ],
 
-            ],
+             ],
 
-        ],
+         ],
 
-        'messages' => [
-            'attached' => 'Прикреплено',
-        ],
+         'messages' => [
+             'attached' => 'Прикреплено',
+         ],
 
-    ],
+     ],
 
 ];
