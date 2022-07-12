@@ -29,7 +29,7 @@
 >
     @if ($isClickDisabled)
         {{ $slot }}
-    @elseif ($action || ((! $url) && $recordAction))
+    @elseif ($action || ($recordAction && $url === null))
         <button
             wire:click="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $this->getTableRecordKey($record) }}')"
             wire:target="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $this->getTableRecordKey($record) }}')"

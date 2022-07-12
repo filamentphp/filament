@@ -153,15 +153,6 @@ TextColumn::make('title')
     ->openUrlInNewTab()
 ```
 
-Alternatively, you can also disable URL entirely:
-
-```php
-use Filament\Tables\Columns\TextColumn;
-
-TextColumn::make('title')
-    ->disableClick()
-```
-
 ### Setting a default value
 
 To set a default value for fields with a `null` state, you may use the `default()` method:
