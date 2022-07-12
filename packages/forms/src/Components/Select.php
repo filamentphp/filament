@@ -129,7 +129,7 @@ class Select extends Field
         $this->placeholder($placeholder ?? '-');
 
         return $this;
-    }    
+    }
 
     public function createOptionAction(?Closure $callback): static
     {
@@ -397,7 +397,7 @@ class Select extends Field
 
         return $results;
     }
-    
+
     public function isHtmlAllowed(): bool
     {
         return $this->evaluate($this->isHtmlAllowed);
