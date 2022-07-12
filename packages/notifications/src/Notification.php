@@ -18,7 +18,7 @@ class Notification extends ViewComponent implements Wireable
 
     protected ?string $icon = null;
 
-    protected ?string $status = null;
+    protected string $iconColor = 'secondary';
 
     public function __construct()
     {
@@ -33,6 +33,10 @@ class Notification extends ViewComponent implements Wireable
         return $static;
     }
 
+    protected function setUp(): void
+    {
+    }
+
     public function toLivewire(): array
     {
         return [
@@ -40,7 +44,7 @@ class Notification extends ViewComponent implements Wireable
             'title' => $this->title,
             'description' => $this->description,
             'icon' => $this->icon,
-            'status' => $this->status,
+            'iconColor' => $this->iconColor,
         ];
     }
 
@@ -53,11 +57,6 @@ class Notification extends ViewComponent implements Wireable
         }
 
         return $static;
-    }
-
-    protected function setUp(): void
-    {
-        $this->success();
     }
 
     public function id(string $id): static
@@ -96,40 +95,7 @@ class Notification extends ViewComponent implements Wireable
         return $this->description;
     }
 
-    public function status(string $status): static
-    {
-        $this->status = $status;
-
-        return $this;
-    }
-
-    public function getStatus(): string
-    {
-        return $this->status;
-    }
-
-    public function success(): static
-    {
-        $this->status('success');
-
-        return $this;
-    }
-
-    public function warning(): static
-    {
-        $this->status('warning');
-
-        return $this;
-    }
-
-    public function danger(): static
-    {
-        $this->status('danger');
-
-        return $this;
-    }
-
-    public function icon(string $icon): static
+    public function icon(?string $icon): static
     {
         $this->icon = $icon;
 
@@ -138,11 +104,52 @@ class Notification extends ViewComponent implements Wireable
 
     public function getIcon(): ?string
     {
-        return $this->icon ?? match ($this->getStatus()) {
-            'success' => 'heroicon-o-check-circle',
-            'warning' => 'heroicon-o-exclamation-circle',
-            'danger' => 'heroicon-o-x-circle',
-            default => null,
+        return $this->icon;
+    }
+
+    public function iconColor(string $color): static
+    {
+        $this->iconColor = $color;
+
+        return $this;
+    }
+
+    public function getIconColor(): ?string
+    {
+        return $this->iconColor;
+    }
+
+    public function status(string $status): static
+    {
+        return match ($status) {
+            'success' => $this->success(),
+            'warning' => $this->warning(),
+            'danger' => $this->danger(),
+            default => $this,
         };
+    }
+
+    public function success(): static
+    {
+        $this->icon('heroicon-o-check-circle');
+        $this->iconColor('success');
+
+        return $this;
+    }
+
+    public function warning(): static
+    {
+        $this->icon('heroicon-o-exclamation-circle');
+        $this->iconColor('warning');
+
+        return $this;
+    }
+
+    public function danger(): static
+    {
+        $this->icon('heroicon-o-x-circle');
+        $this->iconColor('danger');
+
+        return $this;
     }
 }
