@@ -10,15 +10,15 @@ class Notification extends ViewComponent implements Wireable
 {
     protected string $view = 'notifications::components.notification';
 
-    public string $id;
+    protected string $id;
 
-    public string $title;
+    protected ?string $title = null;
 
-    public ?string $description = null;
+    protected ?string $description = null;
 
-    public ?string $icon = null;
+    protected ?string $icon = null;
 
-    public ?string $status = null;
+    protected ?string $status = null;
 
     public function __construct()
     {
@@ -79,7 +79,7 @@ class Notification extends ViewComponent implements Wireable
         return $this;
     }
 
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
