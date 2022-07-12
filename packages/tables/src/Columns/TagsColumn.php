@@ -40,7 +40,7 @@ class TagsColumn extends Column
         return $this;
     }
 
-    public function limit (int | Closure | null $limit = 3): static
+    public function limit(int | Closure | null $limit = 3): static
     {
         $this->limit = $limit;
 
