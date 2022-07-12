@@ -399,6 +399,7 @@
                                         :record-url="$recordUrl"
                                         :should-open-url-in-new-tab="$column->shouldOpenUrlInNewTab()"
                                         :url="$column->getUrl()"
+                                        :is-click-disabled="$column->isClickDisabled()"
                                         :class="$getHiddenClasses($column)"
                                         wire:loading.remove.delay
                                         wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"

@@ -10,6 +10,7 @@ class Column extends ViewComponent
 {
     use Concerns\BelongsToTable;
     use Concerns\CanAggregateRelatedModels;
+    use Concerns\CanBeDisabled;
     use Concerns\CanBeHidden;
     use Concerns\CanBeSearchable;
     use Concerns\CanBeSortable;
