@@ -3,8 +3,6 @@
 namespace Filament\Tests\Admin\Fixtures\Pages;
 
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
 
 class Settings extends Page
