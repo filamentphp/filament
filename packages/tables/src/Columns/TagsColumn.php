@@ -10,6 +10,8 @@ class TagsColumn extends Column
 
     protected string | Closure | null $separator = null;
 
+    protected int | Closure | null $limit = null;
+
     public function getTags(): array
     {
         $tags = $this->getState();
@@ -38,8 +40,32 @@ class TagsColumn extends Column
         return $this;
     }
 
+    public function limit (int | Closure | null $limit = 3): static
+    {
+        $this->limit = $limit;
+
+        return $this;
+    }
+
     public function getSeparator(): ?string
     {
         return $this->evaluate($this->separator);
+    }
+
+    public function getLimit(): ?int
+    {
+        return $this->evaluate($this->limit);
+    }
+
+    public function hasActiveLimit(): bool
+    {
+        $limit = $this->getLimit();
+
+        return $limit && count($this->getTags()) > $limit;
+    }
+
+    public function getMoreTags(): array
+    {
+        return array_slice($this->getTags(), $this->getLimit());
     }
 }
