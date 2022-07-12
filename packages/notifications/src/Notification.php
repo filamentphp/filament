@@ -2,6 +2,7 @@
 
 namespace Filament\Notifications;
 
+use Filament\Notifications\Actions\Action;
 use Filament\Support\Components\ViewComponent;
 use Livewire\Wireable;
 use Illuminate\Support\Str;
@@ -19,6 +20,8 @@ class Notification extends ViewComponent implements Wireable
     protected ?string $icon = null;
 
     protected string $iconColor = 'secondary';
+
+    protected array $actions = [];
 
     public function __construct()
     {
@@ -45,6 +48,7 @@ class Notification extends ViewComponent implements Wireable
             'description' => $this->description,
             'icon' => $this->icon,
             'iconColor' => $this->iconColor,
+            'actions' => array_map(fn (Action $action): array => $action->toLivewire(), $this->actions),
         ];
     }
 
@@ -53,6 +57,12 @@ class Notification extends ViewComponent implements Wireable
         $static = static::make();
 
         foreach ($value as $key => $value) {
+            if ($key === 'actions') {
+                $static->{$key} = array_map(fn (array $action): Action => Action::fromLivewire($action), $value);
+
+                continue;
+            }
+
             $static->{$key} = $value;
         }
 
@@ -151,5 +161,17 @@ class Notification extends ViewComponent implements Wireable
         $this->iconColor('danger');
 
         return $this;
+    }
+
+    public function actions(array $actions): static
+    {
+        $this->actions = $actions;
+
+        return $this;
+    }
+
+    public function getActions(): array
+    {
+        return $this->actions;
     }
 }

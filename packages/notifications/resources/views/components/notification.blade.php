@@ -30,6 +30,14 @@
         @if ($getDescription())
             <p class="text-gray-500 dark:text-gray-400">{{ $getDescription() }}</p>
         @endif
+
+        @if ($getActions())
+            <div class="flex gap-3 mt-4">
+                @foreach($getActions() as $action)
+                    {{ $action }}
+                @endforeach
+            </div>
+        @endunless
     </div>
 
     <x-heroicon-s-x class="h-6 w-5 text-gray-400 dark:text-gray-500" x-on:click="close" />
