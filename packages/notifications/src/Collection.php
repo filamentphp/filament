@@ -14,7 +14,7 @@ class Collection extends BaseCollection implements Wireable
             ->toArray();
     }
 
-    public static function fromLivewire($value): self
+    public static function fromLivewire($value): static
     {
         return (new static($value))->map(
             fn (array $notification): Notification => Notification::fromLivewire($notification),

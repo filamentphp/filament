@@ -24,7 +24,7 @@ class Notification extends ViewComponent implements Wireable
         $this->id(uniqid());
     }
 
-    public static function make(): self
+    public static function make(): static
     {
         $static = app(static::class);
         $static->setUp();
@@ -46,7 +46,7 @@ class Notification extends ViewComponent implements Wireable
         // return get_object_vars($this);
     }
 
-    public static function fromLivewire($value): self
+    public static function fromLivewire($value): static
     {
         $static = static::make();
 
@@ -62,7 +62,7 @@ class Notification extends ViewComponent implements Wireable
         $this->success();
     }
 
-    public function id(string $id): self
+    public function id(string $id): static
     {
         $this->id = $id;
 
@@ -74,7 +74,7 @@ class Notification extends ViewComponent implements Wireable
         return $this->id;
     }
 
-    public function title(string $title): self
+    public function title(string $title): static
     {
         $this->title = $title;
 
@@ -86,7 +86,7 @@ class Notification extends ViewComponent implements Wireable
         return $this->title;
     }
 
-    public function description(?string $description): self
+    public function description(?string $description): static
     {
         $this->description = $description;
 
@@ -98,7 +98,7 @@ class Notification extends ViewComponent implements Wireable
         return $this->description;
     }
 
-    public function status(string $status): self
+    public function status(string $status): static
     {
         $this->status = $status;
 
@@ -110,28 +110,28 @@ class Notification extends ViewComponent implements Wireable
         return $this->status;
     }
 
-    public function success(): self
+    public function success(): static
     {
         $this->status('success');
 
         return $this;
     }
 
-    public function warning(): self
+    public function warning(): static
     {
         $this->status('warning');
 
         return $this;
     }
 
-    public function danger(): self
+    public function danger(): static
     {
         $this->status('danger');
 
         return $this;
     }
 
-    public function icon(string $icon): self
+    public function icon(string $icon): static
     {
         $this->icon = $icon;
 
