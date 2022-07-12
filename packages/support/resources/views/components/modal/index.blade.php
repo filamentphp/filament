@@ -47,13 +47,8 @@
         class="fixed inset-0 z-40 flex items-center min-h-screen p-4 overflow-y-auto transition"
     >
         <div
-            @if (filled($id))
-                x-on:click="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
-            @else
-                x-on:click="isOpen = false"
-            @endif
             aria-hidden="true"
-            class="fixed inset-0 w-full h-full bg-black/50 cursor-pointer filament-modal-close-overlay"
+            class="fixed inset-0 w-full h-full bg-black/50 filament-modal-close-overlay"
         ></div>
 
         <div
