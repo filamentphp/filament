@@ -145,6 +145,7 @@ class Notification extends ViewComponent implements Wireable
             'success' => 'heroicon-o-check-circle',
             'warning' => 'heroicon-o-exclamation-circle',
             'danger' => 'heroicon-o-x-circle',
+            default => null,
         };
     }
 }
