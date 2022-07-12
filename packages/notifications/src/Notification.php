@@ -29,7 +29,6 @@ class Notification extends ViewComponent implements Wireable
     {
         $static = app(static::class);
         $static->setUp();
-        $static->success();
 
         return $static;
     }
