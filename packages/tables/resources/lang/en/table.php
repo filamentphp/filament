@@ -2,15 +2,19 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 'and :count more',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
             'label' => 'Search',
             'placeholder' => 'Search',
-        ],
-
-        'tags' => [
-            'more_results' => 'and :count more',
         ],
 
     ],

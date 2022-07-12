@@ -10,7 +10,7 @@ class TagsColumn extends Column
 
     protected string | Closure | null $separator = null;
 
-    protected ?int $limit = null;
+    protected int | Closure | null $limit = null;
 
     public function getTags(): array
     {
@@ -40,7 +40,7 @@ class TagsColumn extends Column
         return $this;
     }
 
-    public function limit(int $limit): static
+    public function limit (int | Closure | null $limit = 3): static
     {
         $this->limit = $limit;
 
@@ -54,27 +54,18 @@ class TagsColumn extends Column
 
     public function getLimit(): ?int
     {
-        return $this->limit;
+        return $this->evaluate($this->limit);
     }
 
-    public function hasMoreTags(): bool
+    public function hasActiveLimit(): bool
     {
-        return $this->limit && count($this->getTags()) > $this->limit;
+        $limit = $this->getLimit();
+
+        return $limit && count($this->getTags()) > $limit;
     }
 
-    public function getRemainingTags(): array
+    public function getMoreTags(): array
     {
-        return array_slice($this->getTags(), $this->limit);
-    }
-
-    public function getMoreLabel(): ?string
-    {
-        if (! $this->hasMoreTags()) {
-            return null;
-        }
-
-        return __('tables::table.fields.tags.more_results', [
-            'count' => count($this->getTags()) - $this->limit,
-        ]);
+        return array_slice($this->getTags(), $this->getLimit());
     }
 }

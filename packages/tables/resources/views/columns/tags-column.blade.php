@@ -20,7 +20,9 @@
         </span>
     @endforeach
 
-    @if ($getMoreLabel())
-        <span class="text-xs ml-1">{{ $getMoreLabel() }}</span>
+    @if ($hasActiveLimit())
+        <span class="text-xs ml-1">
+            {{ trans_choice('tables::table.columns.tags.more', count($getTags()) - $getLimit()) }}
+        </span>
     @endif
 </div>
