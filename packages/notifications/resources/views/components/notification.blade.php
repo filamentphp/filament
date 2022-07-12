@@ -19,9 +19,11 @@
             ])"
         />
     @endif
+
     <div class="grid flex-1">
         <span class="font-medium">{{ $getTitle() }}</span>
         <p class="text-neutral-500 dark:text-neutral-400">{{ $getDescription() }}</p>
     </div>
+
     <x-heroicon-s-x class="h-6 w-5 text-neutral-400 dark:text-neutral-500" x-on:click="close" />
 </div>
