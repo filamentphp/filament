@@ -11,6 +11,7 @@
         "php": "^8.0",
         "filament/support": "self.version",
         "illuminate/contracts": "^8.6|^9.0",
+        "illuminate/support": "^8.6|^9.0",
         "livewire/livewire": "^2.6",
         "spatie/laravel-package-tools": "^1.9"
     },

@@ -4,6 +4,7 @@ namespace Filament\Notifications;
 
 use Filament\Support\Components\ViewComponent;
 use Livewire\Wireable;
+use Illuminate\Support\Str;
 
 class Notification extends ViewComponent implements Wireable
 {
@@ -21,7 +22,7 @@ class Notification extends ViewComponent implements Wireable
 
     public function __construct()
     {
-        $this->id(uniqid());
+        $this->id(Str::uuid());
     }
 
     public static function make(): static
