@@ -197,7 +197,7 @@ trait HasActions
         return null;
     }
 
-    protected function getCachedAction(string $name): ?Action
+    public function getCachedAction(string $name): ?Action
     {
         $actions = $this->getCachedActions();
 

@@ -11,9 +11,9 @@ class DissociateAction extends Action
     use CanCustomizeProcess;
     use Concerns\InteractsWithRelationship;
 
-    public static function make(string $name = 'dissociate'): static
+    public static function getDefaultName(): ?string
     {
-        return parent::make($name);
+        return 'dissociate';
     }
 
     protected function setUp(): void

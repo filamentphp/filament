@@ -1166,7 +1166,7 @@ You can also enable the re-ordering of uploaded files using the `enableReorderin
 use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('attachments')
-    ->multipe()
+    ->multiple()
     ->enableReordering()
 ```
 
@@ -1176,7 +1176,7 @@ If you wish to add a download button to each uploaded file, you can use the `ena
 use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('attachments')
-    ->multipe()
+    ->multiple()
     ->enableDownload()
 ```
 

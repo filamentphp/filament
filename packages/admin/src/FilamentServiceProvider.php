@@ -19,6 +19,7 @@ use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\BulkAction as TableBulkAction;
 use Filament\Tables\Actions\ButtonAction;
 use Filament\Tables\Actions\IconButtonAction;
+use Filament\Testing\TestsPages;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
 use Filament\Widgets\Widget;
@@ -27,6 +28,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\Livewire;
+use Livewire\Testing\TestableLivewire;
 use ReflectionClass;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -103,6 +105,8 @@ class FilamentServiceProvider extends PackageServiceProvider
         $this->bootLivewireComponents();
 
         $this->bootTableActionConfiguration();
+
+        TestableLivewire::mixin(new TestsPages());
     }
 
     protected function bootLivewireComponents(): void

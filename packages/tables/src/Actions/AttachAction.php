@@ -26,9 +26,9 @@ class AttachAction extends Action
 
     protected string | Closure | null $recordTitleAttribute = null;
 
-    public static function make(string $name = 'attach'): static
+    public static function getDefaultName(): ?string
     {
-        return parent::make($name);
+        return 'attach';
     }
 
     protected function setUp(): void

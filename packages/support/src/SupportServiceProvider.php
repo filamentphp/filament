@@ -2,11 +2,13 @@
 
 namespace Filament\Support;
 
+use Filament\Support\Testing\TestsActions;
 use HtmlSanitizer\Sanitizer;
 use HtmlSanitizer\SanitizerInterface;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
+use Livewire\Testing\TestableLivewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -39,6 +41,8 @@ class SupportServiceProvider extends PackageServiceProvider
                 ]);
             },
         );
+
+        TestableLivewire::mixin(new TestsActions());
     }
 
     public function packageBooted()

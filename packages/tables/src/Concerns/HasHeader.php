@@ -33,7 +33,7 @@ trait HasHeader
             ->toArray();
     }
 
-    protected function getCachedTableHeaderAction(string $name): ?Action
+    public function getCachedTableHeaderAction(string $name): ?Action
     {
         return $this->getCachedTableHeaderActions()[$name] ?? null;
     }

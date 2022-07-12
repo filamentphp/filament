@@ -10,9 +10,9 @@ class ViewAction extends Action
 {
     protected ?Closure $mutateRecordDataUsing = null;
 
-    public static function make(string $name = 'view'): static
+    public static function getDefaultName(): ?string
     {
-        return parent::make($name);
+        return 'view';
     }
 
     protected function setUp(): void
