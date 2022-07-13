@@ -111,6 +111,8 @@ class Action extends ViewComponent implements Wireable
     public function getLabel(): string
     {
         return $this->label ?? (string) Str::of($this->getName())
+            ->kebab()
+            ->replace(['-', '_'], ' ')
             ->ucfirst();
     }
 
@@ -182,6 +184,11 @@ class Action extends ViewComponent implements Wireable
         return $this;
     }
 
+    public function getExtraAttributes(): array
+    {
+        return $this->extraAttributes;
+    }
+
     public function outlined(bool $condition = true): static
     {
         $this->isOutlined = $condition;
@@ -192,11 +199,6 @@ class Action extends ViewComponent implements Wireable
     public function isOutlined(): bool
     {
         return $this->isOutlined;
-    }
-
-    public function getExtraAttributes(): array
-    {
-        return $this->extraAttributes;
     }
 
     public function getExtraAttributeBag(): ComponentAttributeBag
