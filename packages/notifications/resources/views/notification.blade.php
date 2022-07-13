@@ -25,10 +25,10 @@
     @endif
 
     <div class="grid flex-1">
-        <span class="font-medium">{{ $getTitle() }}</span>
+        <h4 class="h-6 flex items-center font-medium text-sm">{{ $getTitle() }}</h4>
 
         @if ($getDescription())
-            <p class="text-gray-500 dark:text-gray-400">{{ $getDescription() }}</p>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $getDescription() }}</p>
         @endif
 
         @if ($getActions())
