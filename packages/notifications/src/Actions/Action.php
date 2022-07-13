@@ -2,6 +2,7 @@
 
 namespace Filament\Notifications\Actions;
 
+use Closure;
 use Filament\Support\Actions\BaseAction;
 use Filament\Support\Actions\Concerns\CanBeOutlined;
 use Filament\Support\Actions\Concerns\CanOpenUrl;
@@ -16,7 +17,7 @@ class Action extends BaseAction implements Wireable
 
     protected string $viewIdentifier = 'action';
 
-    protected ?string $event = null;
+    protected string | Closure | null $event = null;
 
     protected bool $shouldCloseNotification = false;
 
@@ -66,7 +67,7 @@ class Action extends BaseAction implements Wireable
         return $this;
     }
 
-    public function event(?string $event): static
+    public function event(string | Closure | null $event): static
     {
         $this->event = $event;
 
@@ -75,7 +76,7 @@ class Action extends BaseAction implements Wireable
 
     public function getEvent(): ?string
     {
-        return $this->event;
+        return $this->evaluate($this->event);
     }
 
     public function closeNotification(bool $condition = true): static
