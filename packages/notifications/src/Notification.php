@@ -2,26 +2,26 @@
 
 namespace Filament\Notifications;
 
+use Closure;
 use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Concerns\HasIcon;
 use Filament\Support\Components\ViewComponent;
 use Livewire\Wireable;
 use Illuminate\Support\Str;
 
 class Notification extends ViewComponent implements Wireable
 {
+    use HasIcon;
+
     protected string $view = 'notifications::notification';
 
     protected string $id;
 
-    protected ?string $title = null;
+    protected string | Closure | null $title = null;
 
-    protected ?string $description = null;
+    protected string | Closure | null $description = null;
 
-    protected ?string $icon = null;
-
-    protected string $iconColor = 'secondary';
-
-    protected array $actions = [];
+    protected array | Closure $actions = [];
 
     public function __construct()
     {
@@ -38,6 +38,7 @@ class Notification extends ViewComponent implements Wireable
 
     protected function setUp(): void
     {
+        $this->iconColor('secondary');
     }
 
     public function toLivewire(): array
@@ -81,7 +82,7 @@ class Notification extends ViewComponent implements Wireable
         return $this->id;
     }
 
-    public function title(string $title): static
+    public function title(string | Closure | null $title): static
     {
         $this->title = $title;
 
@@ -90,10 +91,10 @@ class Notification extends ViewComponent implements Wireable
 
     public function getTitle(): ?string
     {
-        return $this->title;
+        return $this->evaluate($this->title);
     }
 
-    public function description(?string $description): static
+    public function description(string | Closure | null $description): static
     {
         $this->description = $description;
 
@@ -102,31 +103,19 @@ class Notification extends ViewComponent implements Wireable
 
     public function getDescription(): ?string
     {
-        return $this->description;
+        return $this->evaluate($this->description);
     }
 
-    public function icon(?string $icon): static
+    public function actions(array | Closure $actions): static
     {
-        $this->icon = $icon;
+        $this->actions = $actions;
 
         return $this;
     }
 
-    public function getIcon(): ?string
+    public function getActions(): array
     {
-        return $this->icon;
-    }
-
-    public function iconColor(string $color): static
-    {
-        $this->iconColor = $color;
-
-        return $this;
-    }
-
-    public function getIconColor(): ?string
-    {
-        return $this->iconColor;
+        return $this->evaluate($this->actions);
     }
 
     public function status(string $status): static
@@ -161,17 +150,5 @@ class Notification extends ViewComponent implements Wireable
         $this->iconColor('danger');
 
         return $this;
-    }
-
-    public function actions(array $actions): static
-    {
-        $this->actions = $actions;
-
-        return $this;
-    }
-
-    public function getActions(): array
-    {
-        return $this->actions;
     }
 }
