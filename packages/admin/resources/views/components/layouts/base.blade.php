@@ -26,6 +26,8 @@
 
         <title>{{ $title ? "{$title} - " : null }} {{ config('filament.brand') }}</title>
 
+        {{ \Filament\Facades\Filament::renderHook('styles.start') }}
+
         <style>
             [x-cloak=""], [x-cloak="x-cloak"], [x-cloak="1"] { display: none !important; }
             @media (max-width: 1023px) { [x-cloak="-lg"] { display: none !important; } }
@@ -52,6 +54,8 @@
         @endforeach
 
         <link rel="stylesheet" href="{{ \Filament\Facades\Filament::getThemeUrl() }}" />
+
+        {{ \Filament\Facades\Filament::renderHook('styles.end') }}
 
         @if (config('filament.dark_mode'))
             <script>
@@ -92,6 +96,8 @@
 
         @stack('beforeCoreScripts')
 
+        {{ \Filament\Facades\Filament::renderHook('scripts.start') }}
+
         <script src="{{ route('filament.asset', [
             'id' => Filament\get_asset_id('app.js'),
             'file' => 'app.js',
@@ -106,6 +112,8 @@
                 ]) }}"></script>
             @endif
         @endforeach
+
+        {{ \Filament\Facades\Filament::renderHook('scripts.end') }}
 
         @stack('scripts')
 

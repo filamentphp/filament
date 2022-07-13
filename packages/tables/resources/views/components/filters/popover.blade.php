@@ -20,7 +20,7 @@
         x-transition:leave-start="opacity-100 translate-y-0"
         x-transition:leave-end="opacity-0 translate-y-2"
         @class([
-            'absolute right-0 z-10 w-screen pl-12 mt-2 top-full transition rtl:right-auto rtl:left-0 rtl:pl-0 rtl:pr-12',
+            'absolute right-0 z-10 w-screen pl-12 mt-4 top-full transition rtl:right-auto rtl:left-0 rtl:pl-0 rtl:pr-12',
             match ($width) {
                 'xs' => 'max-w-xs',
                 'md' => 'max-w-md',
@@ -37,8 +37,8 @@
         ])
     >
         <div @class([
-            'px-6 py-4 bg-white space-y-6 shadow-xl rounded-xl',
-            'dark:bg-gray-700' => config('tables.dark_mode'),
+            'px-6 py-4 bg-white border border-gray-300 space-y-6 shadow-xl rounded-xl',
+            'dark:bg-gray-800 dark:border-gray-700' => config('tables.dark_mode'),
         ])>
             <x-tables::icon-button
                 icon="heroicon-o-x"

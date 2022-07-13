@@ -106,7 +106,7 @@ trait CanFormatState
 
     public function html(): static
     {
-        return $this->formatStateUsing(static fn ($state): HtmlString => new HtmlString($state));
+        return $this->formatStateUsing(static fn ($state): HtmlString => Str::of($state)->sanitizeHtml()->toHtmlString());
     }
 
     public function formatStateUsing(?Closure $callback): static

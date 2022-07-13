@@ -67,6 +67,7 @@
             @else
                 <div
                     x-data="selectFormComponent({
+                        isHtmlAllowed: @js($isHtmlAllowed()),
                         getOptionLabelUsing: async () => {
                             return await $wire.getSelectOptionLabel(@js($getStatePath()))
                         },

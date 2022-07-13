@@ -2,99 +2,137 @@
 
 return [
 
-    'fields' => [
+    "bulk_actions" => [
 
-        'search_query' => [
-            'label' => 'Suche',
-            'placeholder' => 'Suche',
-        ],
+        "force_delete" => [
 
-    ],
+            "label" => "Endgültig löschen",
 
-    'pagination' => [
-
-        'label' => 'Seitennavigation',
-
-        'overview' => ':first bis :last von :total Ergebnissen',
-
-        'fields' => [
-
-            'records_per_page' => [
-                'label' => 'pro Seite',
+            "messages" => [
+                "deleted" => "Gelöscht",
             ],
 
         ],
 
-        'buttons' => [
+        "restore" => [
 
-            'go_to_page' => [
-                'label' => 'Weiter zur Seite :page',
-            ],
+            "label" => "Wiederherstellen",
 
-            'next' => [
-                'label' => 'Nächste',
-            ],
-
-            'previous' => [
-                'label' => 'Vorherige',
+            "messages" => [
+                "restored" => "Wiederhergestellt",
             ],
 
         ],
 
     ],
 
-    'buttons' => [
+    "buttons" => [
 
-        'filter' => [
-            'label' => 'Filtern',
+        "filter" => [
+            "label" => "Filtern",
         ],
 
-        'open_actions' => [
-            'label' => 'Aktionen öffnen',
+        "open_actions" => [
+            "label" => "Aktionen öffnen",
         ],
 
-    ],
-
-    'empty' => [
-        'heading' => 'Keine Datensätze gefunden',
-    ],
-
-    'filters' => [
-
-        'buttons' => [
-
-            'reset' => [
-                'label' => 'Filter zurücksetzen',
-            ],
-
-        ],
-
-        'multi_select' => [
-            'placeholder' => 'Alle',
-        ],
-
-        'select' => [
-            'placeholder' => 'Alle',
+        "toggle_columns" => [
+            "label" => "Spalten auswählen",
         ],
 
     ],
 
-    'selection_indicator' => [
+    "empty" => [
+        "heading" => "Keine Datensätze gefunden",
+    ],
 
-        'selected_count' => '1 Datensatz ausgewählt ausgewählt.|:count Datensätze ausgewählt.',
+    "fields" => [
 
-        'buttons' => [
+        "search_query" => [
+            "label" => "Suche",
+            "placeholder" => "Suche",
+        ],
 
-            'select_all' => [
-                'label' => 'Alle :count Datensätze auswählen',
+    ],
+
+    "filters" => [
+
+        "buttons" => [
+
+            "close" => [
+                "label" => "Schließen",
             ],
 
-            'deselect_all' => [
-                'label' => 'Auswahl aufheben',
+            "reset" => [
+                "label" => "Filter zurücksetzen",
             ],
 
         ],
 
+        "multi_select" => [
+            "placeholder" => "Alle",
+        ],
+
+        "select" => [
+            "placeholder" => "Alle",
+        ],
+
+        "trashed" => [
+            "label" => "Gelöschte Einträge",
+            "only_trashed" => "Nur gelöschte Einträge",
+            "with_trashed" => "Mit gelöschten Einträgen",
+            "without_trashed" => "Ohne gelöschte Einträge",
+        ],
+
+    ],
+
+    "pagination" => [
+
+        "buttons" => [
+
+            "go_to_page" => [
+                "label" => "Weiter zur Seite :page",
+            ],
+
+            "next" => [
+                "label" => "Nächste",
+            ],
+
+            "previous" => [
+                "label" => "Vorherige",
+            ],
+
+        ],
+
+        "fields" => [
+
+            "records_per_page" => [
+                "label" => "pro Seite",
+            ],
+
+        ],
+
+        "label" => "Seitennavigation",
+
+        "overview" => ":first bis :last von :total Ergebnissen",
+
+    ],
+
+    "selection_indicator" => [
+
+        "buttons" => [
+
+            "deselect_all" => [
+                "label" => "Auswahl aufheben",
+            ],
+
+            "select_all" => [
+                "label" => "Alle :count Datensätze auswählen",
+            ],
+
+        ],
+
+        "selected_count" => "1 Datensatz ausgewählt ausgewählt.|:count Datensätze ausgewählt.",
     ],
 
 ];

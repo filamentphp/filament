@@ -26,9 +26,9 @@ class AssociateAction extends Action
 
     protected string | Closure | null $recordTitleAttribute = null;
 
-    public static function make(string $name = 'associate'): static
+    public static function getDefaultName(): ?string
     {
-        return parent::make($name);
+        return 'associate';
     }
 
     protected function setUp(): void

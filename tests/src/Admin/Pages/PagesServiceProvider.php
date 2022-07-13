@@ -3,6 +3,7 @@
 namespace Filament\Tests\Admin\Pages;
 
 use Filament\PluginServiceProvider;
+use Filament\Tests\Admin\Fixtures\Pages\PageActions;
 use Filament\Tests\Admin\Fixtures\Pages\Settings;
 
 class PagesServiceProvider extends PluginServiceProvider
@@ -13,6 +14,7 @@ class PagesServiceProvider extends PluginServiceProvider
     {
         return [
             Settings::class,
+            PageActions::class,
         ];
     }
 }

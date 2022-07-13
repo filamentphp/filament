@@ -6,9 +6,11 @@ return [
 
         'label' => 'Bearbeiten',
 
-        'modal' => [
+        'messages' => [
+            'saved' => 'Gespeichert',
+        ],
 
-            'heading' => ':label bearbeiten',
+        'modal' => [
 
             'actions' => [
 
@@ -18,10 +20,7 @@ return [
 
             ],
 
-        ],
-
-        'messages' => [
-            'saved' => 'Gespeichert',
+            'heading' => ':label bearbeiten',
         ],
 
     ],

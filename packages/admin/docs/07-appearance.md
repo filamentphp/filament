@@ -258,5 +258,9 @@ The available hooks are as follows:
 - `content.end` - after page content
 - `sidebar.start` - before [sidebar](navigation) content
 - `sidebar.end` - after [sidebar](navigation) content
+- `scripts.start` - before scripts are defined
+- `scripts.end` - after scripts are defined
+- `styles.start` - before styles are defined
+- `styles.end` - after styles are defined
 - `global-search.start` - before [global search](resources/global-search) input
 - `global-search.end` - after [global search](resources/global-search) input

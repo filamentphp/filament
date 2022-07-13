@@ -7,15 +7,15 @@ return [
     'buttons' => [
 
         'dark_mode' => [
-            'label' => '切換暗黑模式',
+            'label' => '切換至暗色模式',
         ],
 
         'light_mode' => [
-            'label' => '切換明亮模式',
+            'label' => '切換至亮色模式',
         ],
 
         'logout' => [
-            'label' => '退出登錄',
+            'label' => '登出',
         ],
 
     ],

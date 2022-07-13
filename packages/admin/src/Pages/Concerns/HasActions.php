@@ -49,7 +49,7 @@ trait HasActions
 
         try {
             $result = $action->call([
-                'arguments' => json_decode($arguments, associative: true) ?? [],
+                'arguments' => $arguments ? json_decode($arguments, associative: true) : [],
                 'form' => $form,
             ]);
         } catch (Hold $exception) {
@@ -197,7 +197,7 @@ trait HasActions
         return null;
     }
 
-    protected function getCachedAction(string $name): ?Action
+    public function getCachedAction(string $name): ?Action
     {
         $actions = $this->getCachedActions();
 

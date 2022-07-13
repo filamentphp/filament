@@ -79,7 +79,7 @@ trait HasActions
 
         try {
             $result = $action->call([
-                'arguments' => json_decode($arguments, associative: true) ?? [],
+                'arguments' => $arguments ? json_decode($arguments, associative: true) : [],
                 'form' => $form,
             ]);
         } catch (Hold $exception) {
@@ -194,7 +194,7 @@ trait HasActions
         return $this->cachedMountedTableActionRecord = $this->resolveTableRecord($recordKey);
     }
 
-    protected function getCachedTableAction(string $name): ?Action
+    public function getCachedTableAction(string $name): ?Action
     {
         return $this->findTableAction($name)?->record($this->getMountedTableActionRecord());
     }
