@@ -98,7 +98,7 @@
 
         {{ \Filament\Facades\Filament::renderHook('scripts.start') }}
 
-        <script src="{{ route('filament.asset', [
+        <script defer src="{{ route('filament.asset', [
             'id' => Filament\get_asset_id('app.js'),
             'file' => 'app.js',
         ]) }}"></script>
