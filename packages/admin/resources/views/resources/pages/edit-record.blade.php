@@ -1,4 +1,4 @@
-<x-filament::page :widget-data="['record' => $record, 'pageClass' => $pageClass]" class="filament-resources-edit-record-page">
+<x-filament::page :widget-data="['record' => $record]" class="filament-resources-edit-record-page">
     <x-filament::form wire:submit.prevent="save">
         {{ $this->form }}
 
@@ -11,6 +11,6 @@
     @if (count($relationManagers = $this->getRelationManagers()))
         <x-filament::hr />
 
-        <x-filament::resources.relation-managers :active-manager="$activeRelationManager" :managers="$relationManagers" :owner-record="$record" :page-class="$pageClass" />
+        <x-filament::resources.relation-managers :active-manager="$activeRelationManager" :managers="$relationManagers" :owner-record="$record" :page-class="static::class" />
     @endif
 </x-filament::page>
