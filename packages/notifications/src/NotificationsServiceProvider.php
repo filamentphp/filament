@@ -13,6 +13,7 @@ class NotificationsServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('notifications')
+            ->hasConfigFile()
             ->hasViews();
     }
 

@@ -1,5 +1,8 @@
 <div
-    class="pointer-events-auto mb-4 flex w-full gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-lg transition duration-300 dark:border-gray-700 dark:bg-gray-900"
+    @class([
+        'pointer-events-auto mb-4 flex w-full gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-lg transition duration-300',
+        'dark:border-gray-700 dark:bg-gray-900' => config('notifications.dark_mode'),
+    ])
     x-data="notificationComponent({ notification: {{ Js::from($toLivewire()) }} })"
     x-show="show"
     x-transition:enter-start="translate-x-12 opacity-0"
@@ -25,10 +28,24 @@
     @endif
 
     <div class="grid flex-1">
-        <h4 class="h-6 flex items-center font-medium text-sm">{{ $getTitle() }}</h4>
+        <h4
+            @class([
+                'h-6 flex items-center font-medium text-sm text-gray-900',
+                'dark:text-gray-200' => config('notifications.dark_mode'),
+            ])
+        >
+            {{ $getTitle() }}
+        </h4>
 
         @if ($getDescription())
-            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ $getDescription() }}</p>
+            <p
+                @class([
+                    'mt-1 text-sm text-gray-500',
+                    'dark:text-gray-400' => config('notifications.dark_mode'),
+                ])
+            >
+                {{ $getDescription() }}
+            </p>
         @endif
 
         @if ($getActions())
@@ -40,5 +57,11 @@
         @endunless
     </div>
 
-    <x-heroicon-s-x class="h-6 w-5 text-gray-400 dark:text-gray-500" x-on:click="close" />
+    <x-heroicon-s-x
+        @class([
+            'h-6 w-5 text-gray-400',
+            'dark:text-gray-500' => config('notifications.dark_mode'),
+        ])
+        x-on:click="close"
+    />
 </div>
