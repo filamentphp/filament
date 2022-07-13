@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 class Notification extends ViewComponent implements Wireable
 {
-    protected string $view = 'notifications::components.notification';
+    protected string $view = 'notifications::notification';
 
     protected string $id;
 

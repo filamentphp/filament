@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 class Action extends ViewComponent implements Wireable
 {
-    protected string $view = 'notifications::components.action';
+    protected string $view = 'notifications::actions.action';
 
     protected string $name;
 
