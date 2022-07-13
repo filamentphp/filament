@@ -58,10 +58,7 @@
     </div>
 
     <x-heroicon-s-x
-        @class([
-            'h-6 w-5 text-gray-400',
-            'dark:text-gray-500' => config('notifications.dark_mode'),
-        ])
+        class="h-6 w-5 text-gray-400 transition-all"
         x-on:click="close"
     />
 </div>
