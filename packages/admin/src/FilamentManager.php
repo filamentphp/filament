@@ -43,6 +43,8 @@ class FilamentManager
 
     protected ?string $themeUrl = null;
 
+    protected bool $themeUsesVite = false;
+
     protected array $userMenuItems = [];
 
     protected array $widgets = [];
@@ -142,9 +144,13 @@ class FilamentManager
         $this->styles = array_merge($this->styles, $styles);
     }
 
-    public function registerTheme(string $url): void
+    public function registerTheme(string $url, bool $vite = false): void
     {
         $this->themeUrl = $url;
+
+        if ($vite) {
+            $this->themeUsesVite = true;
+        }
     }
 
     public function registerUserMenuItems(array $items): void
@@ -299,6 +305,11 @@ class FilamentManager
             'id' => get_asset_id('app.css'),
             'file' => 'app.css',
         ]);
+    }
+
+    public function themeUsesVite(): bool
+    {
+        return $this->themeUsesVite;
     }
 
     public function getUrl(): ?string

@@ -41,11 +41,12 @@ use Illuminate\Support\HtmlString;
  * @method static void registerScripts(array $scripts, bool $shouldBeLoadedBeforeCoreScripts = false)
  * @method static void registerScriptData(array $data)
  * @method static void registerStyles(array $styles)
- * @method static void registerTheme(string $url)
+ * @method static void registerTheme(string $url, bool $vite = false)
  * @method static void registerUserMenuItems(array $items)
  * @method static void registerWidgets(array $widgets)
  * @method static HtmlString renderHook(string $name)
  * @method static void serving(Closure $callback)
+ * @method static bool themeUsesVite()
  *
  * @see FilamentManager
  */

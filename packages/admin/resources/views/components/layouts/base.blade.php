@@ -53,7 +53,11 @@
             @endif
         @endforeach
 
-        <link rel="stylesheet" href="{{ \Filament\Facades\Filament::getThemeUrl() }}" />
+        @if (\Filament\Facades\Filament::themeUsesVite())
+            @vite(\Filament\Facades\Filament::getThemeUrl())
+        @else
+            <link rel="stylesheet" href="{{ \Filament\Facades\Filament::getThemeUrl() }}" />
+        @endif
 
         {{ \Filament\Facades\Filament::renderHook('styles.end') }}
 
