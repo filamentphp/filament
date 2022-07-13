@@ -26,6 +26,8 @@ class EditRecord extends Page implements HasFormActions
 
     public $data;
 
+    public string $pageClass;
+
     protected $queryString = [
         'activeRelationManager',
     ];
@@ -44,6 +46,8 @@ class EditRecord extends Page implements HasFormActions
         abort_unless(static::getResource()::canEdit($this->getRecord()), 403);
 
         $this->fillForm();
+
+        $this->pageClass = $this::class;
     }
 
     protected function fillForm(): void

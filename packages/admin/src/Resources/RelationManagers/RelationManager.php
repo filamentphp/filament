@@ -24,6 +24,8 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     public Model $ownerRecord;
 
+    public string $pageClass;
+
     protected static ?string $recordTitleAttribute = null;
 
     protected static string $relationship;

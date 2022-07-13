@@ -25,6 +25,8 @@ class ViewRecord extends Page
 
     public $data;
 
+    public string $pageClass;
+
     protected $queryString = [
         'activeRelationManager',
     ];
@@ -43,6 +45,8 @@ class ViewRecord extends Page
         abort_unless(static::getResource()::canView($this->getRecord()), 403);
 
         $this->fillForm();
+
+        $this->pageClass = $this::class;
     }
 
     protected function fillForm(): void
