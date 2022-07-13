@@ -28,24 +28,24 @@
     @endif
 
     <div class="grid flex-1">
-        <h4
+        <div
             @class([
                 'h-6 flex items-center font-medium text-sm text-gray-900',
                 'dark:text-gray-200' => config('notifications.dark_mode'),
             ])
         >
-            {!! \Illuminate\Support\Str::of($getTitle())->inlineMarkdown()->sanitizeHtml() !!}
-        </h4>
+            {!! \Illuminate\Support\Str::of($getTitle())->markdown()->sanitizeHtml() !!}
+        </div>
 
         @if ($getDescription())
-            <p
+            <div
                 @class([
                     'mt-1 text-sm text-gray-500',
                     'dark:text-gray-400' => config('notifications.dark_mode'),
                 ])
             >
-                {!! \Illuminate\Support\Str::of($getDescription())->inlineMarkdown()->sanitizeHtml() !!}
-            </p>
+                {!! \Illuminate\Support\Str::of($getDescription())->markdown()->sanitizeHtml() !!}
+            </div>
         @endif
 
         @if ($getActions())
