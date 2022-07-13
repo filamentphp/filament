@@ -51,16 +51,16 @@ class Action extends ViewComponent implements Wireable
     public function toLivewire(): array
     {
         return [
-            'view' => $this->view,
-            'name' => $this->name,
-            'label' => $this->label,
-            'color' => $this->color,
-            'shouldOpenUrlInNewTab' => $this->shouldOpenUrlInNewTab,
-            'url' => $this->url,
-            'event' => $this->event,
-            'shouldCloseNotification' => $this->shouldCloseNotification,
-            'isOutlined' => $this->isOutlined,
-            'extraAttributes' => $this->extraAttributes,
+            'view' => $this->getView(),
+            'name' => $this->getName(),
+            'label' => $this->getLabel(),
+            'color' => $this->getColor(),
+            'shouldOpenUrlInNewTab' => $this->shouldOpenUrlInNewTab(),
+            'url' => $this->getUrl(),
+            'event' => $this->getEvent(),
+            'shouldCloseNotification' => $this->shouldCloseNotification(),
+            'isOutlined' => $this->isOutlined(),
+            'extraAttributes' => $this->getExtraAttributes(),
         ];
     }
 

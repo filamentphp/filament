@@ -43,12 +43,12 @@ class Notification extends ViewComponent implements Wireable
     public function toLivewire(): array
     {
         return [
-            'id' => $this->id,
-            'title' => $this->title,
-            'description' => $this->description,
-            'icon' => $this->icon,
-            'iconColor' => $this->iconColor,
-            'actions' => array_map(fn (Action $action): array => $action->toLivewire(), $this->actions),
+            'id' => $this->getId(),
+            'title' => $this->getTitle(),
+            'description' => $this->getDescription(),
+            'icon' => $this->getIcon(),
+            'iconColor' => $this->getIconColor(),
+            'actions' => array_map(fn (Action $action): array => $action->toLivewire(), $this->getActions()),
         ];
     }
 
