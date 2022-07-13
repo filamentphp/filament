@@ -5,10 +5,13 @@ namespace Filament\Notifications\Actions;
 use Filament\Support\Components\ViewComponent;
 use Livewire\Wireable;
 use Illuminate\Support\Str;
+use Illuminate\View\ComponentAttributeBag;
 
 class Action extends ViewComponent implements Wireable
 {
-    protected string $view = 'notifications::actions.action';
+    protected string $view = 'notifications::actions.link-action';
+
+    protected string $viewIdentifier = 'action';
 
     protected string $name;
 
@@ -23,6 +26,10 @@ class Action extends ViewComponent implements Wireable
     protected bool $shouldCloseNotification = false;
 
     protected ?string $event = null;
+
+    protected bool $isOutlined = false;
+
+    protected array $extraAttributes = [];
 
     public function __construct(string $name)
     {
@@ -44,6 +51,7 @@ class Action extends ViewComponent implements Wireable
     public function toLivewire(): array
     {
         return [
+            'view' => $this->view,
             'name' => $this->name,
             'label' => $this->label,
             'color' => $this->color,
@@ -51,6 +59,8 @@ class Action extends ViewComponent implements Wireable
             'url' => $this->url,
             'event' => $this->event,
             'shouldCloseNotification' => $this->shouldCloseNotification,
+            'isOutlined' => $this->isOutlined,
+            'extraAttributes' => $this->extraAttributes,
         ];
     }
 
@@ -63,6 +73,20 @@ class Action extends ViewComponent implements Wireable
         }
 
         return $static;
+    }
+
+    public function button(): static
+    {
+        $this->view('notifications::actions.button-action');
+
+        return $this;
+    }
+
+    public function link(): static
+    {
+        $this->view('tables::actions.link-action');
+
+        return $this;
     }
 
     public function name(string $name): static
@@ -149,5 +173,34 @@ class Action extends ViewComponent implements Wireable
     public function shouldCloseNotification(): bool
     {
         return $this->shouldCloseNotification;
+    }
+
+    public function extraAttributes(array $attributes): static
+    {
+        $this->extraAttributes = $attributes;
+
+        return $this;
+    }
+
+    public function outlined(bool $condition = true): static
+    {
+        $this->isOutlined = $condition;
+
+        return $this;
+    }
+
+    public function isOutlined(): bool
+    {
+        return $this->isOutlined;
+    }
+
+    public function getExtraAttributes(): array
+    {
+        return $this->extraAttributes;
+    }
+
+    public function getExtraAttributeBag(): ComponentAttributeBag
+    {
+        return new ComponentAttributeBag($this->getExtraAttributes());
     }
 }
