@@ -34,7 +34,7 @@
                 'dark:text-gray-200' => config('notifications.dark_mode'),
             ])
         >
-            {{ $getTitle() }}
+            {!! \Illuminate\Support\Str::of($getTitle())->inlineMarkdown()->sanitizeHtml() !!}
         </h4>
 
         @if ($getDescription())
@@ -44,7 +44,7 @@
                     'dark:text-gray-400' => config('notifications.dark_mode'),
                 ])
             >
-                {{ $getDescription() }}
+                {!! \Illuminate\Support\Str::of($getDescription())->inlineMarkdown()->sanitizeHtml() !!}
             </p>
         @endif
 
