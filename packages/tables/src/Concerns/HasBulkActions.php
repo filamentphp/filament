@@ -50,6 +50,8 @@ trait HasBulkActions
             return;
         }
 
+        $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
+
         $form = $this->getMountedTableBulkActionForm();
 
         if ($action->hasForm()) {
@@ -64,7 +66,6 @@ trait HasBulkActions
 
         try {
             $result = $action->call([
-                'arguments' => $arguments ? json_decode($arguments, associative: true) : [],
                 'form' => $form,
             ]);
         } catch (Hold $exception) {
@@ -75,7 +76,10 @@ trait HasBulkActions
             return $action->callAfter() ?? $result;
         } finally {
             $this->mountedTableBulkAction = null;
+
             $this->selectedTableRecords = [];
+
+            $action->resetArguments();
             $action->resetFormData();
 
             $this->dispatchBrowserEvent('close-modal', [
