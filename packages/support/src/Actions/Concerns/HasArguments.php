@@ -2,8 +2,6 @@
 
 namespace Filament\Support\Actions\Concerns;
 
-use Closure;
-
 trait HasArguments
 {
     protected array $arguments = [];
