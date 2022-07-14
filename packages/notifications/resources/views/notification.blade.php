@@ -1,6 +1,6 @@
 <div
     @class([
-        'pointer-events-auto mb-4 flex w-full gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-lg transition duration-300',
+        'pointer-events-auto mb-4 flex w-full gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-lg transition duration-300 filament-notifications-notification',
         'dark:border-gray-700 dark:bg-gray-800' => config('notifications.dark_mode'),
     ])
     x-data="notificationComponent({ notification: {{ Js::from($toLivewire()) }} })"
@@ -15,7 +15,7 @@
         <x-dynamic-component
             :component="$getIcon()"
             :class="Arr::toCssClasses([
-                'h-6 w-6',
+                'h-6 w-6 filament-notifications-notification-icon',
                 match ($getIconColor()) {
                     'success' => 'text-success-400',
                     'warning' => 'text-warning-400',
@@ -30,7 +30,7 @@
     <div class="grid flex-1">
         <div
             @class([
-                'h-6 flex items-center font-medium text-sm text-gray-900',
+                'h-6 flex items-center font-medium text-sm text-gray-900 filament-notifications-notification-title',
                 'dark:text-gray-200' => config('notifications.dark_mode'),
             ])
         >
@@ -40,7 +40,7 @@
         @if ($getDescription())
             <div
                 @class([
-                    'mt-1 text-sm text-gray-500',
+                    'mt-1 text-sm text-gray-500 filament-notifications-notification-description',
                     'dark:text-gray-400' => config('notifications.dark_mode'),
                 ])
             >
@@ -49,7 +49,7 @@
         @endif
 
         @if ($getActions())
-            <div class="flex gap-3 mt-4">
+            <div class="flex gap-3 mt-4 filament-notifications-notification-actions">
                 @foreach($getActions() as $action)
                     {{ $action }}
                 @endforeach
@@ -58,7 +58,7 @@
     </div>
 
     <x-heroicon-s-x
-        class="h-6 w-5 text-gray-400 transition-all"
+        class="h-6 w-5 text-gray-400 transition-all filament-notifications-notification-close-button"
         x-on:click="close"
     />
 </div>
