@@ -231,12 +231,13 @@ trait HasState
 
     protected function getGetCallback(): Closure
     {
-        return function (Component | string $path, bool $isAbsolute = false) {
+        return function (Component | string $path, bool $isAbsolute = false, $default = null) {
             $livewire = $this->getLivewire();
 
             return data_get(
                 $livewire,
-                $this->generateStatePathForCallback($path, $isAbsolute)
+                $this->generateStatePathForCallback($path, $isAbsolute),
+                $default
             );
         };
     }
