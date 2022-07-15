@@ -9,6 +9,8 @@ namespace Livewire\Testing {
 
         public function assertTableActionExists(string $name): static {}
 
+        public function assertTableActionNotExists(string $name): static {}
+
         public function assertTableActionHeld(string $name): static {}
 
         public function assertHasTableActionErrors(array $keys = []): static {}
