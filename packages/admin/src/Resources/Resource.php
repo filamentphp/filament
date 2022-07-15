@@ -5,6 +5,7 @@ namespace Filament\Resources;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\GlobalSearch\GlobalSearchResult;
+use Illuminate\Support\Stringable;
 use function Filament\locale_has_pluralization;
 use Filament\Navigation\NavigationItem;
 use function Filament\Support\get_model_label;
@@ -352,11 +353,21 @@ class Resource
 
     public static function getSlug(): string
     {
-        return static::$slug ?? (string) Str::of(static::getModel())
-            ->remove('App\\Models\\')
-            ->plural()
-            ->kebab()
-            ->slug();
+        if (filled(static::$slug)) {
+            return static::$slug;
+        }
+
+        $slug = Str::of(static::getModel())
+            ->afterLast('\\Models\\')
+            ->explode('\\')
+            ->map(fn (string $string) => Str::of($string)->kebab()->slug())
+            ->implode('/');
+
+        if (locale_has_pluralization()) {
+            $slug = Str::plural($slug);
+        }
+
+        return $slug;
     }
 
     public static function getUrl($name = 'index', $params = []): string
