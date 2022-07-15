@@ -6,8 +6,8 @@ use Closure;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Concerns\HasIcon;
 use Filament\Support\Components\ViewComponent;
-use Livewire\Wireable;
 use Illuminate\Support\Str;
+use Livewire\Wireable;
 
 class Notification extends ViewComponent implements Wireable
 {
