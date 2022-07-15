@@ -140,16 +140,25 @@ class EditUser extends EditRecord
     {
         // Runs after the form fields are saved to the database.
     }
+}
+```
 
-    protected function beforeDelete(): void
-    {
-        // Runs before the record is deleted.
-    }
+### Lifecycle hooks for deleting records
 
-    protected function afterDelete(): void
-    {
-        // Runs after the record is deleted.
-    }
+You can use the `before()` and `after()` methods to execute code before and after a record is deleted:
+
+```php
+protected function getActions(): array
+{
+    return [
+        DeleteAction::make()
+            ->before(function () {
+                // ...
+            })
+            ->after(function () {
+                // ...
+            }),
+    ];
 }
 ```
 

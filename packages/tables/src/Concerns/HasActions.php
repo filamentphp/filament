@@ -65,6 +65,8 @@ trait HasActions
             return;
         }
 
+        $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
+
         $form = $this->getMountedTableActionForm();
 
         if ($action->hasForm()) {
@@ -79,7 +81,6 @@ trait HasActions
 
         try {
             $result = $action->call([
-                'arguments' => json_decode($arguments, associative: true) ?? [],
                 'form' => $form,
             ]);
         } catch (Hold $exception) {
@@ -90,7 +91,10 @@ trait HasActions
             return $action->callAfter() ?? $result;
         } finally {
             $this->mountedTableAction = null;
+
             $this->mountedTableActionRecord(null);
+
+            $action->resetArguments();
             $action->resetFormData();
 
             $this->dispatchBrowserEvent('close-modal', [
@@ -194,7 +198,7 @@ trait HasActions
         return $this->cachedMountedTableActionRecord = $this->resolveTableRecord($recordKey);
     }
 
-    protected function getCachedTableAction(string $name): ?Action
+    public function getCachedTableAction(string $name): ?Action
     {
         return $this->findTableAction($name)?->record($this->getMountedTableActionRecord());
     }

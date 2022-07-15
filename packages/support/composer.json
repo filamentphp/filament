@@ -12,7 +12,8 @@
         "illuminate/contracts": "^8.6|^9.0",
         "illuminate/support": "^8.6|^9.0",
         "illuminate/view": "^8.6|^9.0",
-        "spatie/laravel-package-tools": "^1.9"
+        "spatie/laravel-package-tools": "^1.9",
+        "tgalopin/html-sanitizer": "^1.5"
     },
     "autoload": {
         "files": [

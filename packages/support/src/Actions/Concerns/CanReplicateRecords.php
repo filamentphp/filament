@@ -16,9 +16,9 @@ trait CanReplicateRecords
 
     protected array | Closure | null $excludedAttributes = null;
 
-    public static function make(string $name = 'replicate'): static
+    public static function getDefaultName(): ?string
     {
-        return parent::make($name);
+        return 'replicate';
     }
 
     protected function setUp(): void

@@ -9,9 +9,9 @@ class RestoreAction extends Action
 {
     use CanCustomizeProcess;
 
-    public static function make(string $name = 'restore'): static
+    public static function getDefaultName(): ?string
     {
-        return parent::make($name);
+        return 'restore';
     }
 
     protected function setUp(): void

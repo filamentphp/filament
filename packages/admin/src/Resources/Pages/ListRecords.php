@@ -22,6 +22,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected static string $view = 'filament::resources.pages.list-records';
 
     protected $queryString = [
+        'tableFilters',
         'tableSortColumn',
         'tableSortDirection',
         'tableSearchQuery' => ['except' => ''],
@@ -32,7 +33,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         static::authorizeResourceAccess();
     }
 
-    public function getBreadcrumb(): string
+    public function getBreadcrumb(): ?string
     {
         return static::$breadcrumb ?? __('filament::resources/pages/list-records.breadcrumb');
     }

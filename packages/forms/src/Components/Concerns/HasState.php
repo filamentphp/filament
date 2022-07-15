@@ -5,6 +5,7 @@ namespace Filament\Forms\Components\Concerns;
 use Closure;
 use Filament\Forms\Components\Component;
 use Illuminate\Support\Str;
+use Livewire\Livewire;
 
 trait HasState
 {
@@ -59,7 +60,9 @@ trait HasState
     public function callAfterStateUpdated(): static
     {
         if ($callback = $this->afterStateUpdated) {
-            $this->evaluate($callback);
+            $this->evaluate($callback, [
+                'old' => $this->getOldState(),
+            ]);
         }
 
         return $this;
@@ -178,6 +181,21 @@ trait HasState
         if (is_array($state)) {
             return $state;
         }
+
+        if (blank($state)) {
+            return null;
+        }
+
+        return $state;
+    }
+
+    public function getOldState()
+    {
+        if (! Livewire::isLivewireRequest()) {
+            return null;
+        }
+
+        $state = request('serverMemo.data.' . $this->getStatePath());
 
         if (blank($state)) {
             return null;

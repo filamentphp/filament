@@ -53,6 +53,8 @@ trait HasFormComponentActions
             return;
         }
 
+        $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
+
         $form = $this->getMountedFormComponentActionForm();
 
         if ($action->hasForm()) {
@@ -67,7 +69,6 @@ trait HasFormComponentActions
 
         try {
             $result = $action->call([
-                'arguments' => json_decode($arguments, associative: true) ?? [],
                 'form' => $form,
             ]);
         } catch (Hold $exception) {
@@ -78,6 +79,8 @@ trait HasFormComponentActions
             return $action->callAfter() ?? $result;
         } finally {
             $this->mountedFormComponentAction = null;
+
+            $action->resetArguments();
             $action->resetFormData();
 
             $this->dispatchBrowserEvent('close-modal', [
