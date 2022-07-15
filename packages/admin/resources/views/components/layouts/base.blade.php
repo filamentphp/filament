@@ -78,6 +78,8 @@
 
         {{ $slot }}
 
+        {{ \Filament\Facades\Filament::renderHook('scripts.start') }}
+
         @livewireScripts
 
         <script>
@@ -86,9 +88,9 @@
 
         @foreach (\Filament\Facades\Filament::getBeforeCoreScripts() as $name => $path)
             @if (Str::of($path)->startsWith(['http://', 'https://']))
-                <script src="{{ $path }}"></script>
+                <script defer src="{{ $path }}"></script>
             @else
-                <script src="{{ route('filament.asset', [
+                <script defer src="{{ route('filament.asset', [
                     'file' => "{$name}.js",
                 ]) }}"></script>
             @endif
@@ -96,26 +98,24 @@
 
         @stack('beforeCoreScripts')
 
-        {{ \Filament\Facades\Filament::renderHook('scripts.start') }}
-
-        <script src="{{ route('filament.asset', [
+        <script defer src="{{ route('filament.asset', [
             'id' => Filament\get_asset_id('app.js'),
             'file' => 'app.js',
         ]) }}"></script>
 
         @foreach (\Filament\Facades\Filament::getScripts() as $name => $path)
             @if (Str::of($path)->startsWith(['http://', 'https://']))
-                <script src="{{ $path }}"></script>
+                <script defer src="{{ $path }}"></script>
             @else
-                <script src="{{ route('filament.asset', [
+                <script defer src="{{ route('filament.asset', [
                     'file' => "{$name}.js",
                 ]) }}"></script>
             @endif
         @endforeach
 
-        {{ \Filament\Facades\Filament::renderHook('scripts.end') }}
-
         @stack('scripts')
+
+        {{ \Filament\Facades\Filament::renderHook('scripts.end') }}
 
         {{ \Filament\Facades\Filament::renderHook('body.end') }}
     </body>
