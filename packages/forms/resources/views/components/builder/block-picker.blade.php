@@ -19,7 +19,6 @@
         @foreach ($blocks as $block)
             <x-forms::dropdown.item
                 :wire:click="'dispatchFormEvent(\'builder::createItem\', \'' . $statePath . '\', \'' . $block->getName() . '\'' . ($createAfterItem ? ', \'' . $createAfterItem . '\'' : '') . ')'"
-                x-on:click="isCreateButtonDropdownOpen = false"
                 :icon="$block->getIcon()"
             >
                 {{ $block->getLabel() }}

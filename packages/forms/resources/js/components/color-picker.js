@@ -4,6 +4,7 @@ import 'vanilla-colorful/rgb-string-color-picker'
 import 'vanilla-colorful/rgba-string-color-picker'
 
 import '../../css/components/color-picker.css'
+import dayjs from 'dayjs/esm'
 
 export default (Alpine) => {
     Alpine.data('colorPickerFormComponent', ({
@@ -12,8 +13,6 @@ export default (Alpine) => {
         state,
     }) => {
         return {
-            isOpen: false,
-
             state,
 
             init: function () {
@@ -22,35 +21,31 @@ export default (Alpine) => {
                 }
 
                 if (isAutofocused) {
-                    this.openPicker()
+                    this.togglePanelVisibility()
                 }
 
                 this.$refs.input.addEventListener('change', (event) => {
                     this.setState(event.target.value)
                 });
 
-                this.$refs.picker.addEventListener('color-changed', (event) => {
+                this.$refs.panel.addEventListener('color-changed', (event) => {
                     this.setState(event.detail.value)
                 });
             },
 
-            openPicker: function () {
+            togglePanelVisibility: function () {
                 if (isDisabled) {
                     return
                 }
 
-                this.isOpen = true
-            },
-
-            closePicker: function () {
-                this.isOpen = false
+                this.$float({ placement: 'bottom-start', offset: 8, flip: {}, shift: {} })
             },
 
             setState: function (value) {
                 this.state = value
 
                 this.$refs.input.value = value
-                this.$refs.picker.color = value
+                this.$refs.panel.color = value
             }
         }
     })

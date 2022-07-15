@@ -28,6 +28,7 @@ export default (Alpine) => {
         displayFormat,
         firstDayOfWeek,
         isAutofocused,
+        isDisabled,
         state,
     }) => {
         const timezone = dayjs.tz.guess()
@@ -50,8 +51,6 @@ export default (Alpine) => {
             isClearingState: false,
 
             minute: null,
-
-            open: false,
 
             second: null,
 
@@ -84,7 +83,7 @@ export default (Alpine) => {
                 this.setDayLabels()
 
                 if (isAutofocused) {
-                    this.$nextTick(() => this.openPicker())
+                    this.$nextTick(() => this.togglePanelVisibility())
                 }
 
                 dayjs.addLocaleListeners(() => {
@@ -246,13 +245,7 @@ export default (Alpine) => {
 
                 this.setState(null)
 
-                this.closePicker()
-
                 this.$nextTick(() => this.isClearingState = false)
-            },
-
-            closePicker: function () {
-                this.open = false
             },
 
             dateIsDisabled: function (date) {
@@ -358,12 +351,18 @@ export default (Alpine) => {
                 return date
             },
 
-            openPicker: function () {
-                this.focusedDate = this.getSelectedDate() ?? this.getMinDate() ?? dayjs().tz(timezone)
+            togglePanelVisibility: function () {
+                if (isDisabled) {
+                    return
+                }
 
-                this.setupDaysGrid()
+                if (! this.isOpen()) {
+                    this.focusedDate = this.getSelectedDate() ?? this.getMinDate() ?? dayjs().tz(timezone)
 
-                this.open = true
+                    this.setupDaysGrid()
+                }
+
+                this.$float({ placement: 'bottom-start', offset: 8, flip: {}, shift: {} })
             },
 
             selectDate: function (day = null) {
@@ -423,6 +422,10 @@ export default (Alpine) => {
                     .format('YYYY-MM-DD HH:mm:ss')
 
                 this.setDisplayText()
+            },
+
+            isOpen: function () {
+                return this.$refs.panel.style.display === 'block'
             },
         }
     })

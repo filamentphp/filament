@@ -48,7 +48,7 @@
     {{ $attributes->class(['relative']) }}
 >
     <button
-        x-on:click="$float({placement: 'bottom-end', offset: 8}, {trap: true})"
+        x-on:click="$float({ placement: 'bottom-end', offset: 8 })"
         @class([
             'block flex-shrink-0 w-10 h-10 rounded-full bg-gray-200 bg-cover bg-center',
             'dark:bg-gray-900' => config('filament.dark_mode'),

@@ -23,7 +23,8 @@
         x-data="dateTimePickerFormComponent({
             displayFormat: '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
             firstDayOfWeek: {{ $getFirstDayOfWeek() }},
-            isAutofocused: {{ $isAutofocused() ? 'true' : 'false' }},
+            isAutofocused: @js($isAutofocused()),
+            isDisabled: @js($isDisabled()),
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
         {{ $attributes->merge($getExtraAttributes())->class(['relative filament-forms-date-time-picker-component']) }}
@@ -35,9 +36,9 @@
         <button
             @unless($isDisabled())
                 x-ref="button"
-                x-on:click="$float({placement: 'bottom-start', offset: 8, flip: {} }, {trap: true}); openPicker()"
-                x-on:keydown.enter.stop.prevent="open ? selectDate() : openPicker()"
-                x-on:keydown.arrow-left.stop.prevent="focusPreviousDay()"
+                x-on:click="togglePanelVisibility()"
+                x-on:keydown.enter.stop.prevent="isOpen() ? selectDate() : togglePanelVisibility()"
+                x-on:keydown.arrow-left.stop.prevent="console.log('hey'); focusPreviousDay()"
                 x-on:keydown.arrow-right.stop.prevent="focusNextDay()"
                 x-on:keydown.arrow-up.stop.prevent="focusPreviousWeek()"
                 x-on:keydown.arrow-down.stop.prevent="focusNextWeek()"

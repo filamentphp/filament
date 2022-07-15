@@ -9,7 +9,7 @@
 
 <div x-data {{ $attributes->class(['relative']) }}>
     <x-filament-support::icon-button
-        x-on:click="$float({ placement: 'bottom-end', offset: 16, flip: {}, shift: {} }, {trap: true})"
+        x-on:click="$float({ placement: 'bottom-end', offset: 8, flip: {}, shift: {} })"
         :color="$color"
         :dark-mode="$darkMode"
         :icon="$icon"
