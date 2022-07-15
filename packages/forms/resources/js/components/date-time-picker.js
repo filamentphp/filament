@@ -357,13 +357,13 @@ export default (Alpine) => {
             },
 
             getMaxDate: function () {
-                let date = dayjs(this.$refs.maxDate.value)
+                let date = dayjs(this.$refs.maxDate?.value)
 
                 return date.isValid() ? date : null
             },
 
             getMinDate: function () {
-                let date = dayjs(this.$refs.minDate.value)
+                let date = dayjs(this.$refs.minDate?.value)
 
                 return date.isValid() ? date : null
             },

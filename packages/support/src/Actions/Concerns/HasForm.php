@@ -6,7 +6,7 @@ use Closure;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Wizard;
 
-trait HasFormSchema
+trait HasForm
 {
     protected array $formData = [];
 

@@ -4,9 +4,9 @@ namespace Filament\Pages\Actions;
 
 class LocaleSwitcher extends SelectAction
 {
-    public static function make(string $name = 'activeLocale'): static
+    public static function getDefaultName(): ?string
     {
-        return parent::make($name);
+        return 'activeLocale';
     }
 
     protected function setUp(): void

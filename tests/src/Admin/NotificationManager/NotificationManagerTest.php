@@ -3,13 +3,13 @@
 use Filament\Tests\Admin\Fixtures\Pages\Settings;
 use Filament\Tests\Admin\NotificationManager\TestCase;
 use Illuminate\Support\Facades\Session;
-use Livewire\Livewire;
 use Livewire\LivewireManager;
+use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
 
 it('can immediately dispatch notify event to browser', function () {
-    $component = Livewire::test(Settings::class);
+    $component = livewire(Settings::class);
 
     LivewireManager::$isLivewireRequestTestingOverride = true;
 
@@ -21,7 +21,7 @@ it('can immediately dispatch notify event to browser', function () {
 });
 
 it('will not dispatch notify event if Livewire component redirects', function () {
-    Livewire::test(Settings::class)
+    livewire(Settings::class)
         ->call('notificationManager', redirect: true)
         ->assertNotDispatchedBrowserEvent('notify');
 
@@ -29,6 +29,6 @@ it('will not dispatch notify event if Livewire component redirects', function ()
         ->toBeArray()
         ->toHaveLength(1)
         ->sequence(
-            fn ($notification) => $notification->message->toBe('Saved!')
+            fn ($notification) => $notification->message->toContain('Saved!')
         );
 });

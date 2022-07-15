@@ -51,6 +51,7 @@
             >
                 @php
                     $hasBlockLabels = $hasBlockLabels();
+                    $hasBlockNumbers = $hasBlockNumbers();
                 @endphp
 
                 @foreach ($containers as $uuid => $item)
@@ -85,7 +86,7 @@
                                         wire:keydown.prevent.arrow-down="dispatchFormEvent('builder::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                         type="button"
                                         @class([
-                                            'flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-r transition hover:text-gray-300',
+                                            'flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-r rtl:border-l rtl:border-r-0 transition hover:text-gray-300',
                                             'dark:text-gray-400 dark:border-gray-700 dark:hover:text-gray-500' => config('forms.dark_mode'),
                                         ])
                                     >
@@ -102,16 +103,28 @@
                                         'flex-none px-4 text-xs font-medium text-gray-600 truncate',
                                         'dark:text-gray-400' => config('forms.dark_mode'),
                                     ])>
+                                        @php
+                                            $block = $item->getParentComponent();
+
+                                            $block->labelState($item->getRawState());
+                                        @endphp
+
                                         {{ $item->getParentComponent()->getLabel() }}
 
-                                        <small class="font-mono">{{ $loop->iteration }}</small>
+                                        @php
+                                            $block->labelState(null);
+                                        @endphp
+
+                                        @if ($hasBlockNumbers)
+                                            <small class="font-mono">{{ $loop->iteration }}</small>
+                                        @endif
                                     </p>
                                 @endif
 
                                 <div class="flex-1"></div>
 
                                 <ul @class([
-                                    'flex divide-x',
+                                    'flex divide-x rtl:divide-x-reverse',
                                     'dark:divide-gray-700' => config('forms.dark_mode'),
                                 ])>
                                     @unless ($isItemDeletionDisabled)

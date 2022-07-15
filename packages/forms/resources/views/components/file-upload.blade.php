@@ -43,8 +43,9 @@
     <div
         x-data="fileUploadFormComponent({
             acceptedFileTypes: {{ json_encode($getAcceptedFileTypes()) }},
-            canReorder: {{ $canReorder() ? 'true' : 'false' }},
+            canDownload: {{ $canDownload() ? 'true' : 'false' }},
             canPreview: {{ $canPreview() ? 'true' : 'false' }},
+            canReorder: {{ $canReorder() ? 'true' : 'false' }},
             deleteUploadedFileUsing: async (fileKey) => {
                 return await $wire.deleteUploadedFile('{{ $getStatePath() }}', fileKey)
             },
@@ -53,9 +54,10 @@
             },
             imageCropAspectRatio: {{ $imageCropAspectRatio ? "'{$imageCropAspectRatio}'" : 'null' }},
             imagePreviewHeight: {{ ($height = $getImagePreviewHeight()) ? "'{$height}'" : 'null' }},
+            imageResizeMode: {{ $imageResizeMode ? "'{$imageResizeMode}'" : 'null' }},
             imageResizeTargetHeight: {{ $imageResizeTargetHeight ? "'{$imageResizeTargetHeight}'" : 'null' }},
             imageResizeTargetWidth: {{ $imageResizeTargetWidth ? "'{$imageResizeTargetWidth}'" : 'null' }},
-            imageResizeMode: {{ $imageResizeMode ? "'{$imageResizeMode}'" : 'null' }},
+            isAvatar: {{ $isAvatar() ? 'true' : 'false' }},
             loadingIndicatorPosition: '{{ $getLoadingIndicatorPosition() }}',
             panelAspectRatio: {{ ($aspectRatio = $getPanelAspectRatio()) ? "'{$aspectRatio}'" : 'null' }},
             panelLayout: {{ ($layout = $getPanelLayout()) ? "'{$layout}'" : 'null' }},

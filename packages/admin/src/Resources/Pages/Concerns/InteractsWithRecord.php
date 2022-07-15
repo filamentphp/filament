@@ -31,7 +31,7 @@ trait InteractsWithRecord
         $resource = static::getResource();
 
         if (! $resource::hasRecordTitle()) {
-            return Str::title($resource::getModelLabel());
+            return Str::headline($resource::getModelLabel());
         }
 
         return $resource::getRecordTitle($this->getRecord());

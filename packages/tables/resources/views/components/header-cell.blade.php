@@ -39,7 +39,6 @@
                 @else
                     <x-heroicon-s-chevron-down :class="\Illuminate\Support\Arr::toCssClasses(['w-3 h-3', 'opacity-25' => ! $isSortColumn])" />
                 @endif
-
             </span>
         @endif
     </button>

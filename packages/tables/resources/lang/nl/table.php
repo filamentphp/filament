@@ -13,7 +13,7 @@ return [
 
     'pagination' => [
 
-        'label' => 'Paginatie navigatie',
+        'label' => 'Paginering navigatie',
 
         'overview' => 'Toont :first tot :last van :total resultaten',
 
@@ -46,11 +46,15 @@ return [
     'buttons' => [
 
         'filter' => [
-            'label' => 'Filter',
+            'label' => 'Filteren',
         ],
 
         'open_actions' => [
             'label' => 'Acties openen',
+        ],
+
+        'toggle_columns' => [
+            'label' => 'Kolommen in-/uitschakelen',
         ],
 
     ],
@@ -64,11 +68,11 @@ return [
         'buttons' => [
 
             'reset' => [
-                'label' => 'Reset filters',
+                'label' => 'Filters resetten',
             ],
 
             'close' => [
-                'label' => 'Sluit',
+                'label' => 'Sluiten',
             ],
 
         ],
@@ -81,11 +85,23 @@ return [
             'placeholder' => 'Alles',
         ],
 
+        'trashed' => [
+
+            'label' => 'Verwijderde records',
+
+            'only_trashed' => 'Alleen verwijderde records',
+
+            'with_trashed' => 'Met verwijderde records records',
+
+            'without_trashed' => 'Zonder verwijderde records',
+
+        ],
+
     ],
 
     'selection_indicator' => [
 
-        'selected_count' => '1 rij geselecteerd.|:count rijen geselecteerd.',
+        'selected_count' => '1 record geselecteerd.|:count records geselecteerd.',
 
 
         'buttons' => [
@@ -95,7 +111,7 @@ return [
             ],
 
             'deselect_all' => [
-                'label' => 'Deselecteer alles',
+                'label' => 'Alles deselecteren',
             ],
 
         ],

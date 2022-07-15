@@ -7,7 +7,7 @@
 <html
     lang="{{ str_replace('_', '-', app()->getLocale()) }}"
     dir="{{ __('filament::layout.direction') ?? 'ltr' }}"
-    class="filament antialiased bg-gray-100 js-focus-visible"
+    class="antialiased bg-gray-100 filament js-focus-visible"
 >
     <head>
         {{ \Filament\Facades\Filament::renderHook('head.start') }}
@@ -26,10 +26,13 @@
 
         <title>{{ $title ? "{$title} - " : null }} {{ config('filament.brand') }}</title>
 
+        {{ \Filament\Facades\Filament::renderHook('styles.start') }}
+
         <style>
             [x-cloak=""], [x-cloak="x-cloak"], [x-cloak="1"] { display: none !important; }
             @media (max-width: 1023px) { [x-cloak="-lg"] { display: none !important; } }
             @media (min-width: 1024px) { [x-cloak="lg"] { display: none !important; } }
+            :root { --sidebar-width: {{ config('filament.layout.sidebar.width') ?? '20rem' }}; }
         </style>
 
         @livewireStyles
@@ -52,6 +55,8 @@
 
         <link rel="stylesheet" href="{{ \Filament\Facades\Filament::getThemeUrl() }}" />
 
+        {{ \Filament\Facades\Filament::renderHook('styles.end') }}
+
         @if (config('filament.dark_mode'))
             <script>
                 const theme = localStorage.getItem('theme')
@@ -73,6 +78,8 @@
 
         {{ $slot }}
 
+        {{ \Filament\Facades\Filament::renderHook('scripts.start') }}
+
         @livewireScripts
 
         <script>
@@ -81,9 +88,9 @@
 
         @foreach (\Filament\Facades\Filament::getBeforeCoreScripts() as $name => $path)
             @if (Str::of($path)->startsWith(['http://', 'https://']))
-                <script src="{{ $path }}"></script>
+                <script defer src="{{ $path }}"></script>
             @else
-                <script src="{{ route('filament.asset', [
+                <script defer src="{{ route('filament.asset', [
                     'file' => "{$name}.js",
                 ]) }}"></script>
             @endif
@@ -91,22 +98,24 @@
 
         @stack('beforeCoreScripts')
 
-        <script src="{{ route('filament.asset', [
+        <script defer src="{{ route('filament.asset', [
             'id' => Filament\get_asset_id('app.js'),
             'file' => 'app.js',
         ]) }}"></script>
 
         @foreach (\Filament\Facades\Filament::getScripts() as $name => $path)
             @if (Str::of($path)->startsWith(['http://', 'https://']))
-                <script src="{{ $path }}"></script>
+                <script defer src="{{ $path }}"></script>
             @else
-                <script src="{{ route('filament.asset', [
+                <script defer src="{{ route('filament.asset', [
                     'file' => "{$name}.js",
                 ]) }}"></script>
             @endif
         @endforeach
 
         @stack('scripts')
+
+        {{ \Filament\Facades\Filament::renderHook('scripts.end') }}
 
         {{ \Filament\Facades\Filament::renderHook('body.end') }}
     </body>

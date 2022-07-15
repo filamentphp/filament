@@ -368,7 +368,7 @@
 
                             <x-tables::row
                                 :record-url="$recordUrl"
-                                wire:key="{{ $this->getTableRecordKey($record) }}"
+                                wire:key="table.records.{{ $this->getTableRecordKey($record) }}"
                                 x-bind:class="{
                                     'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $this->getTableRecordKey($record) }}'),
                                 }"
@@ -399,6 +399,7 @@
                                         :record-url="$recordUrl"
                                         :should-open-url-in-new-tab="$column->shouldOpenUrlInNewTab()"
                                         :url="$column->getUrl()"
+                                        :is-click-disabled="$column->isClickDisabled()"
                                         :class="$getHiddenClasses($column)"
                                         wire:loading.remove.delay
                                         wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"

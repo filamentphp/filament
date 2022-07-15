@@ -5,6 +5,7 @@ namespace Filament\Forms\Components\Concerns;
 use Closure;
 use Filament\Forms\Components\Component;
 use Illuminate\Support\Str;
+use Livewire\Livewire;
 
 trait HasState
 {
@@ -59,7 +60,9 @@ trait HasState
     public function callAfterStateUpdated(): static
     {
         if ($callback = $this->afterStateUpdated) {
-            $this->evaluate($callback);
+            $this->evaluate($callback, [
+                'old' => $this->getOldState(),
+            ]);
         }
 
         return $this;
@@ -186,6 +189,21 @@ trait HasState
         return $state;
     }
 
+    public function getOldState()
+    {
+        if (! Livewire::isLivewireRequest()) {
+            return null;
+        }
+
+        $state = request('serverMemo.data.' . $this->getStatePath());
+
+        if (blank($state)) {
+            return null;
+        }
+
+        return $state;
+    }
+
     public function getStatePath(bool $isAbsolute = true): string
     {
         $pathComponents = [];
@@ -250,13 +268,16 @@ trait HasState
 
         $containerPath = $this->getContainer()->getStatePath();
 
-        if (blank($containerPath)) {
-            return $path;
+        while (Str::of($path)->startsWith('../')) {
+            $containerPath = Str::contains($containerPath, '.') ?
+                (string) Str::of($containerPath)->beforeLast('.') :
+                null;
+
+            $path = (string) Str::of($path)->after('../');
         }
 
-        while (Str::of($path)->startsWith('../')) {
-            $containerPath = (string) Str::of($containerPath)->beforeLast('.');
-            $path = (string) Str::of($path)->after('../');
+        if (blank($containerPath)) {
+            return $path;
         }
 
         return "{$containerPath}.{$path}";

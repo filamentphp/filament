@@ -146,15 +146,16 @@ CreateAction::make()
 
 ### Customizing the creation process
 
-You can tweak how the record is created using the `process()` method:
+You can tweak how the record is created using the `using()` method:
 
 ```php
 use Filament\Tables\Actions\CreateAction;
+use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Model;
 
 CreateAction::make()
-    ->process(function (array $data): Model {
-        return static::getModel()::create($data);
+    ->using(function (HasRelationshipTable $livewire, array $data): Model {
+        return $livewire->getRelationship()->create($data);
     })
 ```
 
@@ -264,14 +265,14 @@ EditAction::make()
 
 ### Customizing the saving process
 
-You can tweak how the record is updated using the `process()` method:
+You can tweak how the record is updated using the `using()` method:
 
 ```php
 use Filament\Tables\Actions\EditAction;
 use Illuminate\Database\Eloquent\Model;
 
 EditAction::make()
-    ->process(function (Model $record, array $data): Model {
+    ->using(function (Model $record, array $data): Model {
         $record->update($data);
 
         return $record;
@@ -497,5 +498,20 @@ public static function getRelations(): array
         ]),
         // ...
     ];
+}
+```
+
+## Conditional visibility
+
+By default, relation managers will be visible if the `viewAny()` method for the related model policy returns `true`.
+
+You may use the `canViewForRecord()` method to determine if the relation manager should be visible for a specific owner record:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+public static function canViewForRecord(Model $ownerRecord): bool
+{
+    return $ownerRecord->status === Status::Draft
 }
 ```

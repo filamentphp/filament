@@ -53,12 +53,14 @@
             @endunless
             type="button"
             {{ $getExtraTriggerAttributeBag()->class([
-                'bg-white relative w-full border py-2 pl-3 pr-10 rtl:pl-10 rtl:pr-3 text-left cursor-default rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600',
+                'bg-white relative w-full border py-2 pl-3 pr-10 rtl:pl-10 rtl:pr-3 text-left cursor-default rounded-lg shadow-sm',
+                'focus-within:ring-1 focus-within:border-primary-600 focus-within:ring-inset focus-within:ring-primary-600' => ! $isDisabled(),
                 'dark:bg-gray-700' => config('forms.dark_mode'),
                 'border-gray-300' => ! $errors->has($getStatePath()),
                 'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                 'border-danger-600' => $errors->has($getStatePath()),
-                'text-gray-500' => $isDisabled(),
+                'opacity-70' => $isDisabled(),
+                'dark:text-gray-300' => $isDisabled() && config('forms.dark_mode'),
             ]) }}
         >
             <input
@@ -69,6 +71,7 @@
                 @class([
                     'w-full h-full p-0 placeholder-gray-400 bg-transparent border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none',
                     'dark:bg-gray-700 dark:placeholder-gray-400' => config('forms.dark_mode'),
+                    'cursor-default' => $isDisabled(),
                 ])
             />
 
@@ -93,7 +96,7 @@
                 @class([
                     'absolute z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-md',
                     'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
-                    'p-4 min-w-64 w-fit' => $hasDate(),
+                    'p-4 min-w-[16rem] w-fit' => $hasDate(),
                 ])
             >
                 <div class="space-y-3">

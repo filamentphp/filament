@@ -24,7 +24,8 @@
         "spatie/laravel-package-tools": "^1.9",
         "spatie/laravel-ray": "^1.29",
         "spatie/laravel-tags": "^4.2",
-        "symplify/monorepo-builder": "^10.0"
+        "symplify/monorepo-builder": "^10.0",
+        "tgalopin/html-sanitizer": "^1.5"
     },
     "autoload": {
         "files": [
@@ -55,7 +56,12 @@
         }
     },
     "scripts": {
-        "test": "./vendor/bin/pest --parallel && ./vendor/bin/phpstan analyse"
+        "test:pest": "pest --parallel",
+        "test:phpstan": "phpstan analyse",
+        "test": [
+            "@test:pest",
+            "@test:phpstan"
+        ]
     },
     "minimum-stability": "dev",
     "prefer-stable": true

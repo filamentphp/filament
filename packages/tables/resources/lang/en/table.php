@@ -2,6 +2,14 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 'and :count more',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -55,31 +63,6 @@ return [
 
         'toggle_columns' => [
             'label' => 'Toggle columns',
-        ],
-
-    ],
-
-
-    'bulk_actions' => [
-
-        'force_delete' => [
-
-            'label' => 'Force delete',
-
-            'messages' => [
-                'deleted' => 'Records deleted',
-            ],
-
-        ],
-
-        'restore' => [
-
-            'label' => 'Restore',
-
-            'messages' => [
-                'restored' => 'Records restored',
-            ],
-
         ],
 
     ],

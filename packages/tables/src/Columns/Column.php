@@ -10,6 +10,7 @@ class Column extends ViewComponent
 {
     use Concerns\BelongsToTable;
     use Concerns\CanAggregateRelatedModels;
+    use Concerns\CanBeDisabled;
     use Concerns\CanBeHidden;
     use Concerns\CanBeSearchable;
     use Concerns\CanBeSortable;
@@ -38,7 +39,7 @@ class Column extends ViewComponent
     public static function make(string $name): static
     {
         $static = app(static::class, ['name' => $name]);
-        $static->setUp();
+        $static->configure();
 
         return $static;
     }

@@ -72,7 +72,7 @@ class CheckboxList extends Field
             // Cast the related keys to a string, otherwise Livewire does not
             // know how to handle deselection.
             //
-            // https://github.com/laravel-filament/filament/issues/1111
+            // https://github.com/filamentphp/filament/issues/1111
                 $relatedModels
                     ->pluck($relationship->getRelatedKeyName())
                     ->map(static fn ($key): string => strval($key))

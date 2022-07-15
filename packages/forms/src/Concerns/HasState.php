@@ -233,6 +233,11 @@ trait HasState
         return $state;
     }
 
+    public function getRawState(): array
+    {
+        return data_get($this->getLivewire(), $this->getStatePath()) ?? [];
+    }
+
     public function getStateOnly(array $keys): array
     {
         return Arr::only($this->getState(), $keys);
