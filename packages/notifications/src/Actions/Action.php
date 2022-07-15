@@ -2,6 +2,7 @@
 
 namespace Filament\Notifications\Actions;
 
+use Closure;
 use Filament\Notifications\Actions\Concerns\HasEvent;
 use Filament\Support\Actions\BaseAction;
 use Filament\Support\Actions\Concerns\CanBeOutlined;
@@ -18,7 +19,7 @@ class Action extends BaseAction implements Wireable
 
     protected string $viewIdentifier = 'action';
 
-    protected bool $shouldCloseNotification = false;
+    protected bool | Closure $shouldCloseNotification = false;
 
     public function toLivewire(): array
     {
@@ -67,7 +68,7 @@ class Action extends BaseAction implements Wireable
         return $this;
     }
 
-    public function closeNotification(bool $condition = true): static
+    public function closeNotification(bool | Closure $condition = true): static
     {
         $this->shouldCloseNotification = $condition;
 
@@ -76,6 +77,6 @@ class Action extends BaseAction implements Wireable
 
     public function shouldCloseNotification(): bool
     {
-        return $this->shouldCloseNotification;
+        return $this->evaluate($this->shouldCloseNotification);
     }
 }

@@ -2,11 +2,13 @@
 
 namespace Filament\Support\Actions\Modal\Actions\Concerns;
 
+use Closure;
+
 trait CanCancelAction
 {
-    protected bool $canCancelAction = false;
+    protected bool | Closure $canCancelAction = false;
 
-    public function cancel(bool $condition = true): static
+    public function cancel(bool | Closure $condition = true): static
     {
         $this->canCancelAction = $condition;
 
@@ -15,6 +17,6 @@ trait CanCancelAction
 
     public function canCancelAction(): bool
     {
-        return $this->canCancelAction;
+        return $this->evaluate($this->canCancelAction);
     }
 }
