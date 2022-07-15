@@ -5,7 +5,6 @@ namespace Filament\Resources;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\GlobalSearch\GlobalSearchResult;
-use Illuminate\Support\Stringable;
 use function Filament\locale_has_pluralization;
 use Filament\Navigation\NavigationItem;
 use function Filament\Support\get_model_label;
