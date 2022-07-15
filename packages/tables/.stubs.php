@@ -21,6 +21,8 @@ namespace Livewire\Testing {
 
         public function assertTableBulkActionExists(string $name): static {}
 
+        public function assertTableBulkActionNotExists(string $name): static {}
+
         public function assertTableBulkActionHeld(string $name): static {}
 
         public function assertHasTableBulkActionErrors(array $keys = []): static {}
