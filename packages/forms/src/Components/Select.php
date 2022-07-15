@@ -44,6 +44,8 @@ class Select extends Field
 
     protected ?Closure $getSearchResultsUsing = null;
 
+    protected bool | Closure $isHtmlAllowed = false;
+
     protected bool | Closure | null $isOptionDisabled = null;
 
     protected bool | Closure | null $isPlaceholderSelectionDisabled = false;
@@ -108,6 +110,13 @@ class Select extends Field
         $this->searchPrompt(__('forms::components.select.search_prompt'));
 
         $this->placeholder(__('forms::components.select.placeholder'));
+    }
+
+    public function allowHtml(bool | Closure $condition = true): static
+    {
+        $this->isHtmlAllowed = $condition;
+
+        return $this;
     }
 
     public function boolean(?string $trueLabel = null, ?string $falseLabel = null, ?string $placeholder = null): static
@@ -387,6 +396,11 @@ class Select extends Field
         }
 
         return $results;
+    }
+
+    public function isHtmlAllowed(): bool
+    {
+        return $this->evaluate($this->isHtmlAllowed);
     }
 
     public function isMultiple(): bool

@@ -15,12 +15,12 @@
 
 @php
     $buttonClasses = array_merge([
-        'inline-flex items-center justify-center gap-1 font-medium rounded-lg border transition-colors focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset filament-button',
+        'inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset filament-button',
         'dark:focus:ring-offset-0' => $darkMode,
         'opacity-70 cursor-not-allowed pointer-events-none' => $disabled,
-        'h-9 px-4 text-sm' => $size === 'md',
-        'h-8 px-3 text-sm' => $size === 'sm',
-        'h-11 px-6 text-lg' => $size === 'lg',
+        'min-h-[2.25rem] px-4 text-sm' => $size === 'md',
+        'min-h-[2rem] px-3 text-sm' => $size === 'sm',
+        'min-h-[2.75rem] px-6 text-lg' => $size === 'lg',
     ], $outlined ? [
         'shadow focus:ring-white' => $color !== 'secondary',
         'text-primary-600 border-primary-600 hover:bg-primary-600/20 focus:bg-primary-700/20 focus:ring-offset-primary-700' => $color === 'primary',

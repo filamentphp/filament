@@ -2,6 +2,7 @@
     'activeManager',
     'managers',
     'ownerRecord',
+    'pageClass',
 ])
 
 <div class="space-y-2 filament-resources-relation-managers-container">
@@ -52,7 +53,7 @@
                     $manager = $managers[$activeManager];
                 @endphp
 
-                @livewire(\Livewire\Livewire::getAlias($manager, $manager::getName()), ['ownerRecord' => $ownerRecord], key($manager))
+                @livewire(\Livewire\Livewire::getAlias($manager, $manager::getName()), ['ownerRecord' => $ownerRecord, 'pageClass' => $pageClass], key($manager))
             @endif
         </div>
     @endif

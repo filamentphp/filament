@@ -35,6 +35,8 @@ trait HasActions
             return;
         }
 
+        $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
+
         $form = $this->getMountedActionForm();
 
         if ($action->hasForm()) {
@@ -49,7 +51,6 @@ trait HasActions
 
         try {
             $result = $action->call([
-                'arguments' => $arguments ? json_decode($arguments, associative: true) : [],
                 'form' => $form,
             ]);
         } catch (Hold $exception) {
@@ -60,6 +61,8 @@ trait HasActions
             return $action->callAfter() ?? $result;
         } finally {
             $this->mountedAction = null;
+
+            $action->resetArguments();
             $action->resetFormData();
 
             $this->dispatchBrowserEvent('close-modal', [
@@ -197,7 +200,7 @@ trait HasActions
         return null;
     }
 
-    protected function getCachedAction(string $name): ?Action
+    public function getCachedAction(string $name): ?Action
     {
         $actions = $this->getCachedActions();
 
