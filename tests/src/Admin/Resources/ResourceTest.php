@@ -77,6 +77,11 @@ it('can generate a label based on the model name', function () {
         ->toBe('post');
 });
 
+it('can generate a label based on the multi-word model name', function () {
+    expect(PostCategoryResource::getModelLabel())
+        ->toBe('post category');
+});
+
 it('can generate a plural label based on the model name and locale', function () {
     $originalLocale = app()->getLocale();
 
@@ -87,6 +92,20 @@ it('can generate a plural label based on the model name and locale', function ()
     app()->setLocale('id');
     expect(PostResource::getPluralModelLabel())
         ->toBe('post');
+
+    app()->setLocale($originalLocale);
+});
+
+it('can generate a plural label based on the multi-word model name and locale', function () {
+    $originalLocale = app()->getLocale();
+
+    app()->setLocale('en');
+    expect(PostCategoryResource::getPluralModelLabel())
+        ->toBe('post categories');
+
+    app()->setLocale('id');
+    expect(PostCategoryResource::getPluralModelLabel())
+        ->toBe('post category');
 
     app()->setLocale($originalLocale);
 });
