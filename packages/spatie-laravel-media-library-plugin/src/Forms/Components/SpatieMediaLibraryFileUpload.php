@@ -28,7 +28,6 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
         $this->loadStateFromRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component, HasMedia $record): void {
             /** @var Model&HasMedia $record */
-
             $files = $record->load('media')->getMedia($component->getCollection())
                 ->when(
                     ! $component->isMultiple(),

@@ -23,6 +23,7 @@ trait HasActions
     protected array $cachedTableActions;
 
     protected ?Model $cachedMountedTableActionRecord = null;
+
     protected $cachedMountedTableActionRecordKey = null;
 
     public function cacheTableActions(): void
