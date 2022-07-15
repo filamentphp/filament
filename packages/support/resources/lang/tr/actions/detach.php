@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => ':label Ayır',
+            'heading' => ':label ayır',
 
             'actions' => [
 
@@ -32,7 +32,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Seçiliyi ayır :label',
+            'heading' => ':label seçiliyi ayır ',
 
             'actions' => [
 

@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => ':label Düzenle',
+            'heading' => ':label düzenle',
 
             'actions' => [
 
