@@ -56,6 +56,24 @@ class TestsColumns
         };
     }
 
+    public function assertTableColumnNotExists(): Closure
+    {
+        return function (string $name): static {
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedTableColumn($name);
+
+            Assert::assertNotInstanceOf(
+                Column::class,
+                $action,
+                message: "Failed asserting that a table column with name [{$name}] does not exist on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
     public function sortTable(): Closure
     {
         return function (?string $name = null, ?string $direction = null): static {

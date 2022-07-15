@@ -29,6 +29,8 @@ namespace Livewire\Testing {
 
         public function assertTableColumnExists(string $name): static {}
 
+        public function assertTableColumnNotExists(string $name): static {}
+
         public function sortTable(?string $name = null, ?string $direction = null): static {}
 
         public function searchTable(?string $search = null): static {}
