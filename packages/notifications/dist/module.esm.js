@@ -10,6 +10,9 @@ var notification_default = (Alpine) => {
       this.top = this.$el.getBoundingClientRect().top;
       this.computedStyle = window.getComputedStyle(this.$el);
       this.$nextTick(() => this.show = true);
+      if (this.notification.duration !== null) {
+        setTimeout(() => this.close(), this.notification.duration);
+      }
       Livewire.on("notificationClosed", (notification2) => {
         this.skipAnimation = true;
         if (notification2.id === this.notification.id) {

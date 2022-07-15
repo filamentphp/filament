@@ -4,6 +4,7 @@ namespace Filament\Notifications;
 
 use Closure;
 use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Concerns\HasDuration;
 use Filament\Notifications\Concerns\HasIcon;
 use Filament\Support\Components\ViewComponent;
 use Illuminate\Support\Str;
@@ -11,6 +12,7 @@ use Livewire\Wireable;
 
 class Notification extends ViewComponent implements Wireable
 {
+    use HasDuration;
     use HasIcon;
 
     protected string $view = 'notifications::notification';
@@ -50,6 +52,7 @@ class Notification extends ViewComponent implements Wireable
             'icon' => $this->getIcon(),
             'iconColor' => $this->getIconColor(),
             'actions' => array_map(fn (Action $action): array => $action->toLivewire(), $this->getActions()),
+            'duration' => $this->getDuration(),
         ];
     }
 

@@ -10,6 +10,10 @@ export default (Alpine) => {
             this.computedStyle = window.getComputedStyle(this.$el)
             this.$nextTick(() => (this.show = true))
 
+            if (this.notification.duration !== null) {
+                setTimeout(() => this.close(), this.notification.duration)
+            }
+
             Livewire.on('notificationClosed', (notification) => {
                 this.skipAnimation = true
 
