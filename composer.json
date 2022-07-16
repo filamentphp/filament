@@ -57,6 +57,7 @@
         }
     },
     "scripts": {
+        "pint": "pint",
         "test:pest": "pest --parallel",
         "test:phpstan": "phpstan analyse",
         "test": [
