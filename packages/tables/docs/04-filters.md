@@ -277,10 +277,10 @@ protected function getTableFiltersLayout(): ?string
 
 ## Persist filters in session
 
-To persist the table filters in the user's session, use the `shouldStoreTableFiltersInSession()` method:
+To persist the table filters in the user's session, use the `shouldPersistTableFiltersInSession()` method:
 
 ```php
-protected function shouldStoreTableFiltersInSession(): bool
+protected function shouldPersistTableFiltersInSession(): bool
 {
     return true;
 }

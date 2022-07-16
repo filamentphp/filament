@@ -83,6 +83,11 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
         return Post::query();
     }
 
+    protected function shouldPersistTableFiltersInSession(): bool
+    {
+        return true;
+    }
+
     public function render(): View
     {
         return view('tables.fixtures.table');

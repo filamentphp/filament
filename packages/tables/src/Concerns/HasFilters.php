@@ -61,7 +61,7 @@ trait HasFilters
 
     public function updatedTableFilters(): void
     {
-        if ($this->shouldStoreTableFiltersInSession()) {
+        if ($this->shouldPersistTableFiltersInSession()) {
             session()->put(
                 $this->getTableFiltersSessionKey(),
                 $this->tableFilters,
@@ -151,7 +151,7 @@ trait HasFilters
         return "tables.{$table}_filters";
     }
 
-    protected function shouldStoreTableFiltersInSession(): bool
+    protected function shouldPersistTableFiltersInSession(): bool
     {
         return false;
     }

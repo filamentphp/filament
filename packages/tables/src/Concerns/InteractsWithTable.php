@@ -60,7 +60,7 @@ trait InteractsWithTable
 
         $filtersSessionKey = $this->getTableFiltersSessionKey();
 
-        if ($this->shouldStoreTableFiltersInSession() && session()->has($filtersSessionKey)) {
+        if ($this->shouldPersistTableFiltersInSession() && session()->has($filtersSessionKey)) {
             $this->tableFilters = array_merge(
                 $this->tableFilters ?? [],
                 session()->get($filtersSessionKey) ?? [],
