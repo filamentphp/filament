@@ -2,7 +2,7 @@
 
 return [
 
-    'direction' => 'ltr',
+    'direction' => 'soldan sağa',
 
     'buttons' => [
 

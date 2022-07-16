@@ -26021,6 +26021,7 @@ var rich_editor_default = (Alpine) => {
 var import_choices = __toModule(require_choices());
 var select_default = (Alpine) => {
   Alpine.data("selectFormComponent", ({
+    isHtmlAllowed,
     getOptionLabelUsing,
     getOptionLabelsUsing,
     getOptionsUsing,
@@ -26046,7 +26047,7 @@ var select_default = (Alpine) => {
       state: state2,
       init: async function() {
         this.select = new import_choices.default(this.$refs.input, {
-          allowHTML: false,
+          allowHTML: isHtmlAllowed,
           duplicateItemsAllowed: false,
           itemSelectText: "",
           loadingText: loadingMessage,

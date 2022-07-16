@@ -2,52 +2,52 @@
 
 return [
 
-     'single' => [
+    'single' => [
 
-         'label' => 'Открепить',
+        'label' => 'Открепить',
 
-         'modal' => [
+        'modal' => [
 
-             'heading' => 'Открепить :label',
+            'heading' => 'Открепить :label',
 
-             'actions' => [
+            'actions' => [
 
-                 'detach' => [
-                     'label' => 'Открепить',
-                 ],
+                'detach' => [
+                    'label' => 'Открепить',
+                ],
 
-             ],
+            ],
 
-         ],
+        ],
 
-         'messages' => [
-             'detached' => 'Откреплено',
-         ],
+        'messages' => [
+            'detached' => 'Откреплено',
+        ],
 
-     ],
+    ],
 
-     'multiple' => [
+    'multiple' => [
 
-         'label' => 'Открепить',
+        'label' => 'Открепить',
 
-         'modal' => [
+        'modal' => [
 
-             'heading' => 'Открепить отмеченное :label',
+            'heading' => 'Открепить отмеченное :label',
 
-             'actions' => [
+            'actions' => [
 
-                 'detach' => [
-                     'label' => 'Открепить отмеченное',
-                 ],
+                'detach' => [
+                    'label' => 'Открепить отмеченное',
+                ],
 
-             ],
+            ],
 
-         ],
+        ],
 
-         'messages' => [
-             'detached' => 'Откреплено',
-         ],
+        'messages' => [
+            'detached' => 'Откреплено',
+        ],
 
-     ],
+    ],
 
 ];

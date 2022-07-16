@@ -2,24 +2,24 @@
 
 return [
 
-     'single' => [
+    'single' => [
 
-         'label' => 'Просмотр',
+        'label' => 'Просмотр',
 
-         'modal' => [
+        'modal' => [
 
-             'heading' => 'Просмотр :label',
+            'heading' => 'Просмотр :label',
 
-             'actions' => [
+            'actions' => [
 
-                 'close' => [
-                     'label' => 'Закрыть',
-                 ],
+                'close' => [
+                    'label' => 'Закрыть',
+                ],
 
-             ],
+            ],
 
-         ],
+        ],
 
-     ],
+    ],
 
 ];

@@ -12,6 +12,7 @@
         "canvural/phpstan-blade-rule": "^0.1.0",
         "danharrin/livewire-rate-limiting": "^0.3|^1.0",
         "doctrine/dbal": "^3.2",
+        "laravel/pint": "^1.0",
         "league/flysystem-aws-s3-v3": "^1.0|^2.0|^3.0",
         "nunomaduro/larastan": "^1.0",
         "orchestra/testbench": "^6.0|^7.0",
@@ -57,6 +58,7 @@
         }
     },
     "scripts": {
+        "pint": "pint",
         "test:pest": "pest --parallel",
         "test:phpstan": "phpstan analyse",
         "test": [

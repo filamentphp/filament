@@ -61,6 +61,13 @@ trait HasFilters
 
     public function updatedTableFilters(): void
     {
+        if ($this->shouldPersistTableFiltersInSession()) {
+            session()->put(
+                $this->getTableFiltersSessionKey(),
+                $this->tableFilters,
+            );
+        }
+
         $this->deselectAllTableRecords();
 
         $this->resetPage();
@@ -69,6 +76,8 @@ trait HasFilters
     public function resetTableFiltersForm(): void
     {
         $this->getTableFiltersForm()->fill();
+
+        $this->updatedTableFilters();
     }
 
     protected function applyFiltersToTableQuery(Builder $query): Builder
@@ -133,5 +142,17 @@ trait HasFilters
     protected function getTableFiltersLayout(): ?string
     {
         return null;
+    }
+
+    public function getTableFiltersSessionKey(): string
+    {
+        $table = class_basename($this::class);
+
+        return "tables.{$table}_filters";
+    }
+
+    protected function shouldPersistTableFiltersInSession(): bool
+    {
+        return false;
     }
 }

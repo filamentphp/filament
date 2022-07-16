@@ -20,6 +20,7 @@ abstract class BaseAction extends ViewComponent
     use HasExtraAttributes;
 
     protected string $evaluationIdentifier = 'action';
+
     protected string $viewIdentifier = 'action';
 
     final public function __construct(string $name)
