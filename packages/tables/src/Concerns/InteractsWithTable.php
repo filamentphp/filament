@@ -148,7 +148,7 @@ trait InteractsWithTable
 
         if ($relationship instanceof HasManyThrough) {
             // https://github.com/laravel/framework/issues/4962
-            $query->select($query->getModel()->getTable().'.*');
+            $query->select($query->getModel()->getTable() . '.*');
 
             return $query;
         }
@@ -178,8 +178,8 @@ trait InteractsWithTable
         $relationship = $this->getRelationship();
 
         $query->select(
-            $relationship->getTable().'.*',
-            $query->getModel()->getTable().'.*',
+            $relationship->getTable() . '.*',
+            $query->getModel()->getTable() . '.*',
         );
 
         return $query;

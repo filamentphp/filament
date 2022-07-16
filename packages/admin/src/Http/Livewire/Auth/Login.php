@@ -23,7 +23,9 @@ class Login extends Component implements HasForms
     use WithRateLimiting;
 
     public $email = '';
+
     public $password = '';
+
     public $remember = false;
 
     public function mount(): void

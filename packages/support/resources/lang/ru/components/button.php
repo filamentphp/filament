@@ -2,8 +2,8 @@
 
 return [
 
-     'messages' => [
-         'uploading_file' => 'Загрузка файла...',
-     ],
+    'messages' => [
+        'uploading_file' => 'Загрузка файла...',
+    ],
 
 ];
