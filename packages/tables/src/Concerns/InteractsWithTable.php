@@ -49,16 +49,31 @@ trait InteractsWithTable
         $this->cacheTableFilters();
         $this->cacheForm('tableFiltersForm', $this->getTableFiltersForm());
 
-        if (! $this->hasMounted) {
-            $this->getTableColumnToggleForm()->fill(session()->get(
-                $this->getTableColumnToggleFormStateSessionKey(),
-                $this->getDefaultTableColumnToggleState()
-            ));
-
-            $this->getTableFiltersForm()->fill($this->tableFilters);
-
-            $this->hasMounted = true;
+        if ($this->hasMounted) {
+            return;
         }
+
+        $this->getTableColumnToggleForm()->fill(session()->get(
+            $this->getTableColumnToggleFormStateSessionKey(),
+            $this->getDefaultTableColumnToggleState()
+        ));
+
+        $filtersSessionKey = $this->getTableFiltersSessionKey();
+
+        if ($this->shouldStoreTableFiltersInSession() && session()->has($filtersSessionKey)) {
+            $this->tableFilters = array_merge(
+                $this->tableFilters ?? [],
+                session()->get($filtersSessionKey) ?? [],
+            );
+        }
+
+        if (! count($this->tableFilters ?? [])) {
+            $this->tableFilters = null;
+        }
+
+        $this->getTableFiltersForm()->fill($this->tableFilters);
+
+        $this->hasMounted = true;
     }
 
     public function mountInteractsWithTable(): void

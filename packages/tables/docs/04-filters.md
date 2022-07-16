@@ -274,3 +274,14 @@ protected function getTableFiltersLayout(): ?string
     return Layout::AboveContent;
 }
 ```
+
+## Persist filters in session
+
+To persist the table filters in the user's session, use the `shouldStoreTableFiltersInSession()` method:
+
+```php
+protected function shouldStoreTableFiltersInSession(): bool
+{
+    return true;
+}
+```
