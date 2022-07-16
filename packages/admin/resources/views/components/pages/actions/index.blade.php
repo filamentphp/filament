@@ -1,6 +1,6 @@
 @props([
     'actions',
-    'align' => config('filament.layout.forms.actions.alignment', 'left'),
+    'align' => 'left',
     'fullWidth' => false,
 ])
 
