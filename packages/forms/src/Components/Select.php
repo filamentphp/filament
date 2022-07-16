@@ -44,6 +44,8 @@ class Select extends Field
 
     protected ?Closure $getSearchResultsUsing = null;
 
+    protected bool | Closure $isHtmlAllowed = false;
+
     protected bool | Closure | null $isOptionDisabled = null;
 
     protected bool | Closure | null $isPlaceholderSelectionDisabled = false;
@@ -108,6 +110,13 @@ class Select extends Field
         $this->searchPrompt(__('forms::components.select.search_prompt'));
 
         $this->placeholder(__('forms::components.select.placeholder'));
+    }
+
+    public function allowHtml(bool | Closure $condition = true): static
+    {
+        $this->isHtmlAllowed = $condition;
+
+        return $this;
     }
 
     public function boolean(?string $trueLabel = null, ?string $falseLabel = null, ?string $placeholder = null): static
@@ -363,7 +372,7 @@ class Select extends Field
     {
         $columns = $this->searchColumns;
 
-        if ($this->getRelationship()) {
+        if ($this->hasRelationship()) {
             $columns ??= [$this->getRelationshipTitleColumnName()];
         }
 
@@ -387,6 +396,11 @@ class Select extends Field
         }
 
         return $results;
+    }
+
+    public function isHtmlAllowed(): bool
+    {
+        return $this->evaluate($this->isHtmlAllowed);
     }
 
     public function isMultiple(): bool
@@ -479,9 +493,12 @@ class Select extends Field
             $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getRelationshipTitleColumnName());
 
             if ($callback) {
-                $relationshipQuery = $component->evaluate($callback, [
+                $newRelationshipQuery = $component->evaluate($callback, [
                     'query' => $relationshipQuery,
                 ]);
+
+                // If a new query object is returned, use it instead.
+                $relationshipQuery = $newRelationshipQuery ?? $relationshipQuery;
             }
 
             $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
@@ -525,7 +542,6 @@ class Select extends Field
             }
 
             /** @var BelongsTo $relationship */
-
             $relatedModel = $relationship->getResults();
 
             if (! $relatedModel) {
@@ -663,7 +679,7 @@ class Select extends Field
 
     public function getLabel(): string
     {
-        if ($this->label === null && $this->getRelationship()) {
+        if ($this->label === null && $this->hasRelationship()) {
             return (string) Str::of($this->getRelationshipName())
                 ->before('.')
                 ->kebab()
@@ -690,6 +706,11 @@ class Select extends Field
         return $this->evaluate($this->relationship);
     }
 
+    public function hasRelationship(): bool
+    {
+        return filled($this->getRelationshipName());
+    }
+
     public function isPreloaded(): bool
     {
         return $this->evaluate($this->isPreloaded);
@@ -697,16 +718,28 @@ class Select extends Field
 
     public function hasDynamicOptions(): bool
     {
-        return $this->isPreloaded();
+        if ($this->hasRelationship()) {
+            return $this->isPreloaded();
+        }
+
+        return $this->options instanceof Closure;
     }
 
     public function hasDynamicSearchResults(): bool
     {
-        return $this->getSearchResultsUsing instanceof Closure || ($this->getRelationship() && ! $this->isPreloaded());
+        if ($this->hasRelationship()) {
+            return ! $this->isPreloaded();
+        }
+
+        return $this->getSearchResultsUsing instanceof Closure;
     }
 
     public function getActionFormModel(): Model | string | null
     {
-        return $this->getRelationship()->getModel()::class;
+        if ($this->hasRelationship()) {
+            return $this->getRelationship()->getModel()::class;
+        }
+
+        return parent::getActionFormModel();
     }
 }

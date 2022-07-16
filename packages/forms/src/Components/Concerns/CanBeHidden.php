@@ -19,9 +19,17 @@ trait CanBeHidden
         return $this;
     }
 
-    public function hiddenOn(string $livewireClass): static
+    public function hiddenOn(string | array $livewireClass): static
     {
-        $this->hidden(static fn (HasForms $livewire): bool => $livewire instanceof $livewireClass);
+        $this->hidden(static function (HasForms $livewire) use ($livewireClass): bool {
+            foreach (Arr::wrap($livewireClass) as $class) {
+                if ($livewire instanceof $class) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
 
         return $this;
     }
@@ -56,7 +64,7 @@ trait CanBeHidden
 
         $this->hidden(static function (Closure $get) use ($paths): bool {
             foreach ($paths as $path) {
-                if (! ! $get($path)) {
+                if ((bool) $get($path)) {
                     return true;
                 }
             }
@@ -74,9 +82,17 @@ trait CanBeHidden
         return $this;
     }
 
-    public function visibleOn(string $livewireClass): static
+    public function visibleOn(string | array $livewireClass): static
     {
-        $this->visible(static fn (HasForms $livewire): bool => $livewire instanceof $livewireClass);
+        $this->visible(static function (HasForms $livewire) use ($livewireClass): bool {
+            foreach (Arr::wrap($livewireClass) as $class) {
+                if ($livewire instanceof $class) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
 
         return $this;
     }

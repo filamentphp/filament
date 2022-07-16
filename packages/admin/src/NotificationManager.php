@@ -16,7 +16,7 @@ class NotificationManager
         session()->push('filament.notifications', [
             'id' => uniqid(),
             'status' => $status,
-            'message' => Str::markdown($message),
+            'message' => (string) Str::of($message)->markdown()->sanitizeHtml(),
         ]);
 
         $this->notifications = session()->get('filament.notifications');

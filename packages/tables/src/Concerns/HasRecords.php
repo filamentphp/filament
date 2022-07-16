@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use function Filament\locale_has_pluralization;
 use function Filament\Support\get_model_label;
 use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -65,7 +66,7 @@ trait HasRecords
         $relationship = $this->getRelationship();
 
         $pivotClass = $relationship->getPivotClass();
-        $pivotKeyName = app($pivotClass)->getQualifiedKeyName();
+        $pivotKeyName = app($pivotClass)->getKeyName();
 
         $query = $this->allowsDuplicates() ?
             $relationship->wherePivot($pivotKeyName, $key) :
@@ -108,6 +109,10 @@ trait HasRecords
 
     public function getTablePluralModelLabel(): string
     {
-        return Str::plural($this->getTableModelLabel());
+        if (locale_has_pluralization()) {
+            return Str::plural($this->getTableModelLabel());
+        }
+
+        return $this->getTableModelLabel();
     }
 }

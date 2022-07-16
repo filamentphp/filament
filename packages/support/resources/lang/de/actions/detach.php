@@ -2,37 +2,15 @@
 
 return [
 
-    'single' => [
+    'multiple' => [
 
-        'label' => 'Trennen',
-
-        'modal' => [
-
-            'heading' => ':label trennen',
-
-            'actions' => [
-
-                'detach' => [
-                    'label' => 'Trennen',
-                ],
-
-            ],
-
-        ],
+        'label' => 'Ausgewählte trennen',
 
         'messages' => [
             'detached' => 'Getrennt',
         ],
 
-    ],
-
-    'multiple' => [
-
-        'label' => 'Ausgewählte trennen',
-
         'modal' => [
-
-            'heading' => 'Ausgewählte :label trennen',
 
             'actions' => [
 
@@ -42,12 +20,32 @@ return [
 
             ],
 
+            'heading' => 'Ausgewählte :label trennen',
+
         ],
+
+    ],
+
+    'single' => [
+
+        'label' => 'Trennen',
 
         'messages' => [
             'detached' => 'Getrennt',
         ],
 
+        'modal' => [
+
+            'actions' => [
+
+                'detach' => [
+                    'label' => 'Trennen',
+                ],
+
+            ],
+
+            'heading' => ':label trennen',
+        ],
     ],
 
 ];

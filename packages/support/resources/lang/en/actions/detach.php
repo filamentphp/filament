@@ -37,7 +37,7 @@ return [
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Detach selected',
+                    'label' => 'Detach',
                 ],
 
             ],

@@ -32,7 +32,7 @@ trait HasEmptyState
             ->toArray();
     }
 
-    protected function getCachedTableEmptyStateAction(string $name): ?Action
+    public function getCachedTableEmptyStateAction(string $name): ?Action
     {
         return $this->getCachedTableEmptyStateActions()[$name] ?? null;
     }

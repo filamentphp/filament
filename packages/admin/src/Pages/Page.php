@@ -11,6 +11,7 @@ use Filament\Tables\Contracts\RendersFormComponentActionModal;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 class Page extends Component implements Forms\Contracts\HasForms, RendersFormComponentActionModal
@@ -37,6 +38,8 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
     protected static string $view;
 
     protected static string | array $middlewares = [];
+
+    public static ?Closure $reportValidationErrorUsing = null;
 
     protected ?string $maxContentWidth = null;
 
@@ -202,5 +205,14 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
     protected static function shouldRegisterNavigation(): bool
     {
         return static::$shouldRegisterNavigation;
+    }
+
+    protected function onValidationError(ValidationException $exception): void
+    {
+        if (! static::$reportValidationErrorUsing) {
+            return;
+        }
+
+        (static::$reportValidationErrorUsing)($exception);
     }
 }

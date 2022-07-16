@@ -95,6 +95,14 @@ return [
                 'label' => 'Mover para cima',
             ],
 
+            'collapse_all' => [
+                'label' => 'Recolher todos',
+            ],
+
+            'expand_all' => [
+                'label' => 'Expandir todos',
+            ],
+
         ],
 
     ],

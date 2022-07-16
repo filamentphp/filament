@@ -29,7 +29,6 @@ trait CanFormatState
 
         $this->formatStateUsing(static function (Column $column, $state) use ($format, $timezone): ?string {
             /** @var TextColumn $column */
-
             if (blank($state)) {
                 return null;
             }
@@ -55,7 +54,6 @@ trait CanFormatState
     {
         $this->formatStateUsing(static function (Column $column, $state) use ($timezone): ?string {
             /** @var TextColumn $column */
-
             if (blank($state)) {
                 return null;
             }
@@ -106,7 +104,7 @@ trait CanFormatState
 
     public function html(): static
     {
-        return $this->formatStateUsing(static fn ($state): HtmlString => new HtmlString($state));
+        return $this->formatStateUsing(static fn ($state): HtmlString => Str::of($state)->sanitizeHtml()->toHtmlString());
     }
 
     public function formatStateUsing(?Closure $callback): static

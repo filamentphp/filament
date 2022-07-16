@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Sil: :label',
+            'heading' => ':label sil',
 
             'actions' => [
 
@@ -32,12 +32,12 @@ return [
 
         'modal' => [
 
-            'heading' => 'Seçiliyi sil: :label',
+            'heading' => ':label seçiliyi sil',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Seçiliyi sil',
+                    'label' => 'Sil',
                 ],
 
             ],

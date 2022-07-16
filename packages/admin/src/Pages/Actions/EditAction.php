@@ -8,9 +8,9 @@ class EditAction extends Action
 {
     use CanCustomizeProcess;
 
-    public static function make(string $name = 'edit'): static
+    public static function getDefaultName(): ?string
     {
-        return parent::make($name);
+        return 'edit';
     }
 
     protected function setUp(): void
