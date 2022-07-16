@@ -38,7 +38,7 @@
                 x-ref="button"
                 x-on:click="togglePanelVisibility()"
                 x-on:keydown.enter.stop.prevent="isOpen() ? selectDate() : togglePanelVisibility()"
-                x-on:keydown.arrow-left.stop.prevent="console.log('hey'); focusPreviousDay()"
+                x-on:keydown.arrow-left.stop.prevent="focusPreviousDay()"
                 x-on:keydown.arrow-right.stop.prevent="focusNextDay()"
                 x-on:keydown.arrow-up.stop.prevent="focusPreviousWeek()"
                 x-on:keydown.arrow-down.stop.prevent="focusNextWeek()"
