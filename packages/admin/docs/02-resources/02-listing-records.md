@@ -392,36 +392,6 @@ protected function getTableQuery(): Builder
 }
 ```
 
-## Replicating the Eloquent query
-
-When you create a table with filters, Filament will automatically store the data of the filters in the session. This means that you can replicate the last query that was used on the index page.
-
-For example, you could use this on an Edit-page to add buttons to the next or previous record:
-
-```php
-Action::make('previous')
-    ->url(function() {
-        $previousRecord = YourResource::getLastFilteredEloquentQuery()
-            ->where('id', '<', $this->record->id)
-            ->take(1)
-            ->first();
-            
-        return YourResource::getUrl('edit', ['record' => $previousRecord]);
-    })
-    ->icon('heroicon-o-arrow-left')
-    ->color('secondary')
-    ->label('Previous')
-```
-
-Please note that the function will reapply the filters on the `getEloquentQuery()` method and *not* on the `getTableQuery()` method of your index page. That means that if you made customizations to your query only on the index page, you should reapply those customizations as well.
-
-```php
-public static function getLastFilteredEloquentQuery(): Builder
-{
-    return parent::getLastFilteredEloquentQuery()->withoutGlobalScopes();
-}
-```
-
 ## Custom view
 
 For further customization opportunities, you can override the static `$view` property on the page class to a custom view in your app:

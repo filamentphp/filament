@@ -17,11 +17,6 @@ trait HasFilters
 
     public $tableFilters = null;
 
-    public function mountHasFilters(): void
-    {
-        $this->resetFiltersInSession();
-    }
-
     public function cacheTableFilters(): void
     {
         $this->cachedTableFilters = collect($this->getTableFilters())
@@ -63,10 +58,6 @@ trait HasFilters
         $this->deselectAllTableRecords();
 
         $this->resetPage();
-
-        if ($this->shouldStoreFiltersInSession()) {
-            $this->storeFiltersInSession();
-        }
     }
 
     public function resetTableFiltersForm(): void
@@ -136,26 +127,5 @@ trait HasFilters
     protected function getTableFiltersLayout(): ?string
     {
         return null;
-    }
-
-    protected function shouldStoreFiltersInSession(): bool
-    {
-        return false;
-    }
-
-    protected function resetFiltersInSession(): void
-    {
-        $componentClassname = static::class;
-
-        session()->put("filament.{$componentClassname}.tableFilters", []);
-    }
-
-    protected function storeFiltersInSession(): void
-    {
-        $componentClassname = static::class;
-
-        $data = $this->getTableFiltersForm()->getState();
-
-        session()->put("filament.{$componentClassname}.tableFilters", $data);
     }
 }

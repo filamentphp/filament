@@ -391,11 +391,6 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return static::getResource()::getEloquentQuery();
     }
 
-    protected function shouldStoreFiltersInSession(): bool
-    {
-        return true;
-    }
-
     protected function getMountedActionFormModel(): string
     {
         return $this->getModel();

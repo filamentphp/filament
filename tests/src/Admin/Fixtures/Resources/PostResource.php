@@ -9,7 +9,6 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tests\Admin\Fixtures\Resources\PostResource\Pages;
 use Filament\Tests\Models\Post;
-use Illuminate\Database\Eloquent\Builder;
 
 class PostResource extends Resource
 {
@@ -46,19 +45,6 @@ class PostResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
-            ])
-            ->filters([
-                Tables\Filters\Filter::make('rating')
-                    ->form([
-                        Forms\Components\TextInput::make('minimum_rating')
-                            ->numeric(),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query->when(
-                            $data['minimum_rating'],
-                            fn (Builder $query, $minimumRating) => $query->where('rating', '>=', $minimumRating)
-                        );
-                    }),
             ]);
     }
 

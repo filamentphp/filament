@@ -16,13 +16,13 @@ trait BelongsToTable
         return $this;
     }
 
-    public function getTable(): ?Table
+    public function getTable(): Table
     {
-        return $this->table ?? null;
+        return $this->table;
     }
 
-    public function getLivewire(): ?HasTable
+    public function getLivewire(): HasTable
     {
-        return $this->getTable()?->getLivewire();
+        return $this->getTable()->getLivewire();
     }
 }
