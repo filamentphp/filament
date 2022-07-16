@@ -19,6 +19,8 @@ class BaseFileUpload extends Field
 
     protected bool | Closure $canDownload = false;
 
+    protected bool | Closure $canOpen = false;
+
     protected bool | Closure $canPreview = true;
 
     protected bool | Closure $canReorder = false;
@@ -180,6 +182,13 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function enableOpen(bool | Closure $condition = true): static
+    {
+        $this->canOpen = $condition;
+
+        return $this;
+    }
+
     public function enableReordering(bool | Closure $condition = true): static
     {
         $this->canReorder = $condition;
@@ -286,6 +295,11 @@ class BaseFileUpload extends Field
     public function canDownload(): bool
     {
         return $this->evaluate($this->canDownload);
+    }
+
+    public function canOpen(): bool
+    {
+        return $this->evaluate($this->canOpen);
     }
 
     public function canPreview(): bool
