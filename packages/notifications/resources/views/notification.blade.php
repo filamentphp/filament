@@ -14,7 +14,7 @@
     @if ($getIcon())
         <x-dynamic-component
             :component="$getIcon()"
-            :class="Arr::toCssClasses([
+            :class="\Illuminate\Support\Arr::toCssClasses([
                 'h-6 w-6 filament-notifications-notification-icon',
                 match ($getIconColor()) {
                     'success' => 'text-success-400',
