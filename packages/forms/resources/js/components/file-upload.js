@@ -29,7 +29,6 @@ export default (Alpine) => {
         acceptedFileTypes,
         canDownload,
         canOpen,
-        shouldOpenInNewTab,
         canPreview,
         canReorder,
         deleteUploadedFileUsing,
@@ -311,12 +310,9 @@ export default (Alpine) => {
                 }
 
                 const anchor = document.createElement('a')
-                anchor.className = 'filepond--external-icon'
+                anchor.className = 'filepond--open-icon'
                 anchor.href = fileSource
-
-                if (shouldOpenInNewTab) {
-                    anchor.target = '_blank'
-                }
+                anchor.target = '_blank'
 
                 return anchor
             }

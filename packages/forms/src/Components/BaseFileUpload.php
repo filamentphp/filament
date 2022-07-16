@@ -21,8 +21,6 @@ class BaseFileUpload extends Field
 
     protected bool | Closure $canOpen = false;
 
-    protected bool | Closure $shouldOpenInNewTab = true;
-
     protected bool | Closure $canPreview = true;
 
     protected bool | Closure $canReorder = false;
@@ -184,10 +182,9 @@ class BaseFileUpload extends Field
         return $this;
     }
 
-    public function enableOpen(bool | Closure $condition = true, bool | Closure $newTab = true): static
+    public function enableOpen(bool | Closure $condition = true): static
     {
         $this->canOpen = $condition;
-        $this->shouldOpenInNewTab = $newTab;
 
         return $this;
     }
@@ -303,11 +300,6 @@ class BaseFileUpload extends Field
     public function canOpen(): bool
     {
         return $this->evaluate($this->canOpen);
-    }
-
-    public function shouldOpenInNewTab(): bool
-    {
-        return $this->evaluate($this->shouldOpenInNewTab);
     }
 
     public function canPreview(): bool
