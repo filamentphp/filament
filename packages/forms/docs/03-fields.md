@@ -1504,7 +1504,8 @@ Repeater::make('members')
 This method accepts the same options as the `columns()` method of the [grid](layout#grid). This allows you to responsively customize the number of grid columns at various breakpoints.
 
 ### Item labels
-You may add a label for items by using the `itemLabel` method:
+
+You may add a label for repeater items using the `itemLabel()` method:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -1515,8 +1516,10 @@ Repeater::make('members')
         TextInput::make('name')
             ->lazy(),
     ])
-    ->itemLabel(fn (array $itemData) => $itemData['name']),
+    ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
 ```
+
+Any fields that you use from `$state` should be `reactive()` or `lazy()` if you wish to see the item label update live as you use the form.
 
 ## Builder
 
