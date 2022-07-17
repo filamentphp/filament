@@ -28,8 +28,12 @@ trait HasChildComponents
         return $this->evaluate($this->childComponents);
     }
 
-    public function getChildComponentContainer(): ComponentContainer
+    public function getChildComponentContainer($key = null): ComponentContainer
     {
+        if (filled($key)) {
+            return $this->getChildComponentContainers()[$key];
+        }
+
         return ComponentContainer::make($this->getLivewire())
             ->parentComponent($this)
             ->components($this->getChildComponents());

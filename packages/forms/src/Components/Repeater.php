@@ -37,6 +37,8 @@ class Repeater extends Field
 
     protected string | Closure | null $relationship = null;
 
+    protected string | Closure | null $itemLabel = null;
+
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
     protected ?Closure $mutateRelationshipDataBeforeCreateUsing = null;
@@ -352,6 +354,13 @@ class Repeater extends Field
         return $this;
     }
 
+    public function itemLabel(string | Closure | null $label): static
+    {
+        $this->itemLabel = $label;
+
+        return $this;
+    }
+
     public function fillFromRelationship(): void
     {
         $this->state(
@@ -438,6 +447,18 @@ class Repeater extends Field
         return $this->cachedExistingRecords = $relationshipQuery->get()->mapWithKeys(
             fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
         );
+    }
+
+    public function getItemLabel(string $uuid): ?string
+    {
+        return $this->evaluate($this->itemLabel, [
+            'state' => $this->getChildComponentContainer($uuid)->getRawState(),
+        ]);
+    }
+
+    public function hasItemLabels(): bool
+    {
+        return $this->itemLabel !== null;
     }
 
     public function clearCachedExistingRecords(): void

@@ -98,16 +98,17 @@ trait EntanglesStateWithSingularRelationship
         return $state;
     }
 
-    public function getChildComponentContainer(): ComponentContainer
+    public function getChildComponentContainer($key = null): ComponentContainer
     {
+        $container = parent::getChildComponentContainer($key);
+
         $relationship = $this->getRelationship();
 
         if (! $relationship) {
-            return parent::getChildComponentContainer();
+            return $container;
         }
 
-        return parent::getChildComponentContainer()
-            ->model($this->getCachedExistingRecord() ?? $this->getRelatedModel());
+        return $container->model($this->getCachedExistingRecord() ?? $this->getRelatedModel());
     }
 
     public function getRelationship(): BelongsTo | HasOne | MorphOne | null
