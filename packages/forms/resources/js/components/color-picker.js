@@ -7,46 +7,48 @@ import '../../css/components/color-picker.css'
 import dayjs from 'dayjs/esm'
 
 export default (Alpine) => {
-    Alpine.data('colorPickerFormComponent', ({
-        isAutofocused,
-        isDisabled,
-        state,
-    }) => {
-        return {
-            state,
+    Alpine.data(
+        'colorPickerFormComponent',
+        ({ isAutofocused, isDisabled, state }) => {
+            return {
+                state,
 
-            init: function () {
-                if (! (this.state === null || this.state === '')) {
-                    this.setState(this.state)
-                }
+                init: function () {
+                    if (!(this.state === null || this.state === '')) {
+                        this.setState(this.state)
+                    }
 
-                if (isAutofocused) {
-                    this.togglePanelVisibility()
-                }
+                    if (isAutofocused) {
+                        this.togglePanelVisibility(this.$refs.input)
+                    }
 
-                this.$refs.input.addEventListener('change', (event) => {
-                    this.setState(event.target.value)
-                });
+                    this.$refs.input.addEventListener('change', (event) => {
+                        this.setState(event.target.value)
+                    })
 
-                this.$refs.panel.addEventListener('color-changed', (event) => {
-                    this.setState(event.detail.value)
-                });
-            },
+                    this.$refs.panel.addEventListener(
+                        'color-changed',
+                        (event) => {
+                            this.setState(event.detail.value)
+                        }
+                    )
+                },
 
-            togglePanelVisibility: function () {
-                if (isDisabled) {
-                    return
-                }
+                togglePanelVisibility: function () {
+                    if (isDisabled) {
+                        return
+                    }
 
-                this.$float({ placement: 'bottom-start', offset: 8, flip: {}, shift: {} })
-            },
+                    this.$refs.panel.toggle(this.$refs.input)
+                },
 
-            setState: function (value) {
-                this.state = value
+                setState: function (value) {
+                    this.state = value
 
-                this.$refs.input.value = value
-                this.$refs.panel.color = value
+                    this.$refs.input.value = value
+                    this.$refs.panel.color = value
+                },
             }
         }
-    })
+    )
 }

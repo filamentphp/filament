@@ -191,7 +191,7 @@
                                     <x-forms::icon-button
                                         :label="$getCreateItemBetweenButtonLabel()"
                                         icon="heroicon-o-plus"
-                                        x-on:click="$float({ placement: 'bottom', flip: {} })"
+                                        x-on:click="$refs.panel.toggle"
                                         type="button"
                                     />
 
@@ -213,7 +213,7 @@
             <div x-data class="relative flex justify-center">
                 <x-forms::button
                     size="sm"
-                    x-on:click="$float({ placement: 'bottom', offset: 8, flip: {} })"
+                    x-on:click="$refs.panel.toggle"
                     type="button"
                 >
                     {{ $getCreateItemButtonLabel() }}

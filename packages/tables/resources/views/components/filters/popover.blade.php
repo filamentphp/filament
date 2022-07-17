@@ -12,6 +12,7 @@
     <div
         x-ref="panel"
         x-cloak
+        x-float.placement.bottom-end.flip.offset="{offset: 8}"
         x-transition:enter="ease duration-300"
         x-transition:enter-start="opacity-0 -translate-y-2"
         x-transition:enter-end="opacity-100 translate-y-0"
@@ -41,7 +42,7 @@
         ])>
             <x-tables::icon-button
                 icon="heroicon-o-x"
-                x-on:click="isOpen = ! isOpen"
+                x-on:click="$refs.panel.close"
                 :label=" __('tables::table.filters.buttons.close.label')"
                 color="secondary"
                 {{ $attributes->class(['absolute top-3 right-3 rtl:right-auto rtl:left-3']) }}

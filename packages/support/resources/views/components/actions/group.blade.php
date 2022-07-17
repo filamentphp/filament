@@ -9,7 +9,7 @@
 
 <div x-data {{ $attributes->class(['relative']) }}>
     <x-filament-support::icon-button
-        x-on:click="$float({ placement: 'bottom-end', offset: 8, flip: {}, shift: {} })"
+        x-on:click="$refs.panel.toggle"
         :color="$color"
         :dark-mode="$darkMode"
         :icon="$icon"
@@ -25,6 +25,7 @@
         x-ref="panel"
         x-transition
         x-cloak
+        x-float.placement.bottom-end.flip.offset.shift="{offset: 8}"
         @class([
             'absolute hidden z-20 shadow-xl ring-1 ring-gray-900/10 overflow-hidden rounded-xl w-52 filament-action-group-dropdown',
             'dark:ring-white/20' => $darkMode,
