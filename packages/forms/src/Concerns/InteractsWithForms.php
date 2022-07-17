@@ -300,7 +300,7 @@ trait InteractsWithForms
 
     protected function getRules(): array
     {
-        $rules = \Livewire\Component::getRules();
+        $rules = parent::getRules();
 
         foreach ($this->getCachedForms() as $form) {
             $rules = array_merge($rules, $form->getValidationRules());
