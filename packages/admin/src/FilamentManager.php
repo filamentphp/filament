@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\HtmlString;
-use Illuminate\Support\Str;
 
 class FilamentManager
 {
