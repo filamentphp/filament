@@ -44,12 +44,9 @@ class Tab extends Component implements CanConcealComponents
         return $this->columns ?? $this->getContainer()->getColumnsConfig();
     }
 
-    public function getIcon(): ?string {
+    public function getIcon(): ?string
+    {
         return $this->evaluate($this->icon);
-    }
-
-    public function hasIcon(): bool {
-        return (bool) $this->getIcon();
     }
 
     public function canConcealComponents(): bool
