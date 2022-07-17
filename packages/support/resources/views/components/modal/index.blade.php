@@ -47,7 +47,7 @@
         class="fixed inset-0 z-40 flex items-center min-h-screen p-4 overflow-y-auto transition"
     >
         <div
-            @if(config('support.modal.close_on_backdrop_click'))
+            @if (config('filament-support.modal.is_closed_by_clicking_away', true))
                 @if (filled($id))
                     x-on:click="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
                 @else
@@ -57,7 +57,7 @@
             aria-hidden="true"
             @class([
                 'fixed inset-0 w-full h-full bg-black/50 filament-modal-close-overlay',
-                'cursor-pointer' => config('support.modal.close_on_backdrop_click')
+                'cursor-pointer' => config('filament-support.modal.is_closed_by_clicking_away', true)
             ])
         ></div>
 

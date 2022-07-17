@@ -18,6 +18,7 @@ class SupportServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('filament-support')
+            ->hasConfigFile()
             ->hasTranslations()
             ->hasViews();
     }
