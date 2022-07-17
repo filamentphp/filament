@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 
 class FilamentManager
 {
@@ -296,8 +297,8 @@ class FilamentManager
 
     public function getThemeLink(): Htmlable
     {
-        if ($this->theme instanceof Htmlable) {
-            return $this->theme;
+        if (Str::of($this->theme)->contains('<link')) {
+            return $this->theme instanceof Htmlable ? $this->theme : new HtmlString($this->theme);
         }
 
         $url = $this->theme ?? route('filament.asset', [
