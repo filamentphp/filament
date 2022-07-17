@@ -16,6 +16,7 @@
         $isItemCreationDisabled = $isItemCreationDisabled();
         $isItemDeletionDisabled = $isItemDeletionDisabled();
         $isItemMovementDisabled = $isItemMovementDisabled();
+        $hasItemLabels = $hasItemLabels();
     @endphp
 
     @if ((count($containers) > 1) && $isCollapsible)
@@ -68,7 +69,7 @@
                                 'dark:bg-gray-800 dark:border-gray-600' => config('forms.dark_mode'),
                             ])
                         >
-                            @if ((! $isItemMovementDisabled) || (! $isItemDeletionDisabled) || $isCollapsible)
+                            @if ((! $isItemMovementDisabled) || (! $isItemDeletionDisabled) || $isCollapsible || $hasItemLabels)
                                 <header @class([
                                     'flex items-center h-10 overflow-hidden border-b bg-gray-50 rounded-t-xl',
                                     'dark:bg-gray-800 dark:border-gray-700' => config('forms.dark_mode'),

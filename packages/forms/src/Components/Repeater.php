@@ -451,11 +451,14 @@ class Repeater extends Field
 
     public function getItemLabel(string $uuid): ?string
     {
-        $itemData = data_get($this->getLivewire(), "{$this->getStatePath()}.{$uuid}");
-
         return $this->evaluate($this->itemLabel, [
-            'itemData' => $itemData,
+            'state' => $this->getChildComponentContainer($uuid)->getRawState(),
         ]);
+    }
+
+    public function hasItemLabels(): bool
+    {
+        return $this->itemLabel !== null;
     }
 
     public function clearCachedExistingRecords(): void
