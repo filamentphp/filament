@@ -48,7 +48,7 @@
     {{ $attributes->class(['relative']) }}
 >
     <button
-        x-on:click="$float({ placement: 'bottom-end', offset: 8 })"
+        x-on:click="$refs.panel.toggle"
         @class([
             'block flex-shrink-0 w-10 h-10 rounded-full bg-gray-200 bg-cover bg-center',
             'dark:bg-gray-900' => config('filament.dark_mode'),
@@ -58,6 +58,7 @@
 
     <div
         x-ref="panel"
+        x-float.placement.bottom-end.offset="{offset: 8}"
         x-transition:enter="transition"
         x-transition:enter-start="-translate-y-1 opacity-0"
         x-transition:enter-end="translate-y-0 opacity-100"

@@ -11804,11 +11804,7 @@ var esm_default = dayjs;
 
 // packages/forms/resources/js/components/color-picker.js
 var color_picker_default2 = (Alpine) => {
-  Alpine.data("colorPickerFormComponent", ({
-    isAutofocused,
-    isDisabled,
-    state: state2
-  }) => {
+  Alpine.data("colorPickerFormComponent", ({isAutofocused, isDisabled, state: state2}) => {
     return {
       state: state2,
       init: function() {
@@ -11816,7 +11812,7 @@ var color_picker_default2 = (Alpine) => {
           this.setState(this.state);
         }
         if (isAutofocused) {
-          this.togglePanelVisibility();
+          this.togglePanelVisibility(this.$refs.input);
         }
         this.$refs.input.addEventListener("change", (event) => {
           this.setState(event.target.value);
@@ -11829,7 +11825,7 @@ var color_picker_default2 = (Alpine) => {
         if (isDisabled) {
           return;
         }
-        this.$float({placement: "bottom-start", offset: 8, flip: {}, shift: {}});
+        this.$refs.panel.toggle(this.$refs.input);
       },
       setState: function(value) {
         this.state = value;
@@ -11899,7 +11895,7 @@ var date_time_picker_default = (Alpine) => {
         this.setMonths();
         this.setDayLabels();
         if (isAutofocused) {
-          this.$nextTick(() => this.togglePanelVisibility());
+          this.$nextTick(() => this.togglePanelVisibility(this.$refs.button));
         }
         esm_default.addLocaleListeners(() => {
           this.setDisplayText();
@@ -12101,7 +12097,7 @@ var date_time_picker_default = (Alpine) => {
           this.focusedDate = this.getSelectedDate() ?? this.getMinDate() ?? esm_default().tz(timezone2);
           this.setupDaysGrid();
         }
-        this.$float({placement: "bottom-start", offset: 8, flip: {}, shift: {}});
+        this.$refs.panel.toggle(this.$refs.button);
       },
       selectDate: function(day = null) {
         if (day) {
@@ -33199,10 +33195,10 @@ var js_default = (Alpine) => {
   Alpine.plugin(module_default);
 };
 export {
+  module_default as AlpineFloatingUI,
   color_picker_default2 as ColorPickerFormComponentAlpinePlugin,
   date_time_picker_default as DateTimePickerFormComponentAlpinePlugin,
   file_upload_default as FileUploadFormComponentAlpinePlugin,
-  module_default as FloatingUI,
   key_value_default as KeyValueFormComponentAlpinePlugin,
   markdown_editor_default as MarkdownEditorFormComponentAlpinePlugin,
   rich_editor_default as RichEditorFormComponentAlpinePlugin,
