@@ -37,7 +37,7 @@ return [
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Dissociate selected',
+                    'label' => 'Dissociate',
                 ],
 
             ],

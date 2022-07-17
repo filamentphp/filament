@@ -2,28 +2,28 @@
 
 return [
 
-     'single' => [
+    'single' => [
 
-         'label' => 'Изменить',
+        'label' => 'Изменить',
 
-         'modal' => [
+        'modal' => [
 
-             'heading' => 'Изменить :label',
+            'heading' => 'Изменить :label',
 
-             'actions' => [
+            'actions' => [
 
-                 'save' => [
-                     'label' => 'Сохранить',
-                 ],
+                'save' => [
+                    'label' => 'Сохранить',
+                ],
 
-             ],
+            ],
 
-         ],
+        ],
 
-         'messages' => [
-             'saved' => 'Сохранено',
-         ],
+        'messages' => [
+            'saved' => 'Сохранено',
+        ],
 
-     ],
+    ],
 
 ];

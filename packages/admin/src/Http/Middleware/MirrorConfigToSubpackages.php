@@ -19,7 +19,7 @@ class MirrorConfigToSubpackages
         $config->set('forms.default_filesystem_disk', $defaultFilesystemDisk);
         $config->set('tables.default_filesystem_disk', $defaultFilesystemDisk);
 
-        $actionsAlignment = $config->get('filament.layout.forms.actions.alignment');
+        $actionsAlignment = $config->get('filament.layout.actions.modal.actions.alignment');
         $config->set('forms.components.actions.modal.actions.alignment', $actionsAlignment);
         $config->set('tables.layout.actions.modal.actions.alignment', $actionsAlignment);
 

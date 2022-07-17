@@ -273,6 +273,7 @@ Tabs::make('Heading')
                 // ...
             ]),
         Tabs\Tab::make('Label 3')
+            ->icon('heroicon-o-eye') // Optional icon
             ->schema([
                 // ...
             ]),

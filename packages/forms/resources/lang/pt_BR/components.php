@@ -95,7 +95,7 @@ return [
                 'label' => 'Mover para cima',
             ],
 
-             'collapse_all' => [
+            'collapse_all' => [
                 'label' => 'Recolher todos',
             ],
 

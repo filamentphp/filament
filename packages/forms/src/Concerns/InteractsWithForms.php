@@ -306,15 +306,7 @@ trait InteractsWithForms
 
     protected function getRules(): array
     {
-        $rules = [];
-
-        if (method_exists($this, 'rules')) {
-            $rules = $this->rules();
-        }
-
-        if (property_exists($this, 'rules')) {
-            $rules = $this->rules;
-        }
+        $rules = parent::getRules();
 
         foreach ($this->getCachedForms() as $form) {
             $rules = array_merge($rules, $form->getValidationRules());

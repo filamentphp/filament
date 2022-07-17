@@ -31,6 +31,8 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
         return [
             Tables\Filters\Filter::make('is_published')
                 ->query(fn (Builder $query) => $query->where('is_published', true)),
+            Tables\Filters\SelectFilter::make('author')
+                ->relationship('author', 'name'),
         ];
     }
 
@@ -81,6 +83,11 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
     protected function getTableQuery(): Builder
     {
         return Post::query();
+    }
+
+    protected function shouldPersistTableFiltersInSession(): bool
+    {
+        return true;
     }
 
     public function render(): View

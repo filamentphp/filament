@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => ':label Oluştur',
+    'title' => ':label oluştur',
 
     'breadcrumb' => 'Oluştur',
 
@@ -19,7 +19,7 @@ return [
             ],
 
             'create_another' => [
-                'label' => 'Oluştur ve başka bir tane oluştur',
+                'label' => 'Oluştur ve başka bir taneye başla',
             ],
 
         ],

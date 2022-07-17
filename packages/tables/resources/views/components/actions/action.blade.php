@@ -27,6 +27,7 @@
     :tooltip="$action->getTooltip()"
     :icon="$icon ?? $action->getIcon()"
     :size="$action->getSize() ?? 'sm'"
+    dusk="filament.tables.action.{{ $action->getName() }}"
 >
     {{ $slot }}
 </x-dynamic-component>

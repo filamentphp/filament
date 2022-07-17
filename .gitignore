@@ -7,7 +7,6 @@
 /vendor.nosync
 /.vscode
 .DS_Store
-.php-cs-fixer.cache
 .phpunit.result.cache
 composer.phar
 Thumbs.db
