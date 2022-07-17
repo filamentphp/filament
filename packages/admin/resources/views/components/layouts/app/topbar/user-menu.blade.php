@@ -58,7 +58,7 @@
 
     <div
         x-ref="panel"
-        x-float.placement.bottom-end.offset="{offset: 8}"
+        x-float.placement.bottom-end.offset="{ offset: 8 }"
         x-transition:enter="transition"
         x-transition:enter-start="-translate-y-1 opacity-0"
         x-transition:enter-end="translate-y-0 opacity-100"

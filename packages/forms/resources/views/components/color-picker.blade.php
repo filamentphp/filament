@@ -75,7 +75,7 @@
             <div
                 x-cloak
                 x-ref="panel"
-                x-float.placement.bottom-start.offset.flip.shift="{offset: 8}"
+                x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                 @class([
                     'hidden absolute z-10 shadow-lg',
                     'opacity-70 pointer-events-none' => $isDisabled(),

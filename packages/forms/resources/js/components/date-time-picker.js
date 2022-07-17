@@ -382,7 +382,7 @@ export default (Alpine) => {
                         return
                     }
 
-                    if (!this.isOpen()) {
+                    if (! this.isOpen()) {
                         this.focusedDate =
                             this.getSelectedDate() ??
                             this.getMinDate() ??

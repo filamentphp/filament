@@ -8,7 +8,7 @@
     x-ref="panel"
     x-transition
     x-cloak
-    x-float.placement.bottom.flip.offset="{offset: 8}"
+    x-float.placement.bottom.flip.offset="{ offset: 8 }"
     {{ $attributes->class([
         'absolute hidden z-20 w-52 filament-forms-builder-component-block-picker',
     ]) }}
