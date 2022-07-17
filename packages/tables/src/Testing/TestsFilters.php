@@ -5,7 +5,6 @@ namespace Filament\Tables\Testing;
 use Closure;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\BaseFilter;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\MultiSelectFilter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -78,7 +77,7 @@ class TestsFilters
             $action = $livewire->getCachedTableFilter($name);
 
             Assert::assertInstanceOf(
-                Filter::class,
+                BaseFilter::class,
                 $action,
                 message: "Failed asserting that a table filter with name [{$name}] exists on the [{$livewireClass}] component.",
             );
