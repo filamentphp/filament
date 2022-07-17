@@ -29967,8 +29967,8 @@ var flip = function(options2) {
         let resetPlacement = "bottom";
         switch (fallbackStrategy) {
           case "bestFit": {
-            var _overflowsData$slice$;
-            const placement2 = (_overflowsData$slice$ = overflowsData.slice().sort((a2, b) => a2.overflows.filter((overflow2) => overflow2 > 0).reduce((acc, overflow2) => acc + overflow2, 0) - b.overflows.filter((overflow2) => overflow2 > 0).reduce((acc, overflow2) => acc + overflow2, 0))[0]) == null ? void 0 : _overflowsData$slice$.placement;
+            var _overflowsData$map$so;
+            const placement2 = (_overflowsData$map$so = overflowsData.map((d) => [d, d.overflows.filter((overflow2) => overflow2 > 0).reduce((acc, overflow2) => acc + overflow2, 0)]).sort((a2, b) => a2[1] - b[1])[0]) == null ? void 0 : _overflowsData$map$so[0].placement;
             if (placement2) {
               resetPlacement = placement2;
             }
@@ -30059,12 +30059,11 @@ function convertValueToCoords(placement, rects, value, rtl) {
     ...rects,
     placement
   }) : value;
-  const isNumber2 = typeof rawValue === "number";
   let {
     mainAxis,
     crossAxis,
     alignmentAxis
-  } = isNumber2 ? {
+  } = typeof rawValue === "number" ? {
     mainAxis: rawValue,
     crossAxis: 0,
     alignmentAxis: null
@@ -30306,6 +30305,9 @@ function isNode2(value) {
   return value instanceof getWindow(value).Node;
 }
 function isShadowRoot(node) {
+  if (typeof ShadowRoot === "undefined") {
+    return false;
+  }
   const OwnElement = getWindow(node).ShadowRoot;
   return node instanceof OwnElement || node instanceof ShadowRoot;
 }
@@ -30332,6 +30334,7 @@ var min2 = Math.min;
 var max2 = Math.max;
 var round2 = Math.round;
 function getBoundingClientRect(element, includeScale, isFixedStrategy) {
+  var _win$visualViewport$o, _win$visualViewport, _win$visualViewport$o2, _win$visualViewport2;
   if (includeScale === void 0) {
     includeScale = false;
   }
@@ -30347,8 +30350,8 @@ function getBoundingClientRect(element, includeScale, isFixedStrategy) {
   }
   const win = isElement(element) ? getWindow(element) : window;
   const addVisualOffsets = !isLayoutViewport() && isFixedStrategy;
-  const x = (clientRect.left + (addVisualOffsets ? win.visualViewport.offsetLeft : 0)) / scaleX;
-  const y = (clientRect.top + (addVisualOffsets ? win.visualViewport.offsetTop : 0)) / scaleY;
+  const x = (clientRect.left + (addVisualOffsets ? (_win$visualViewport$o = (_win$visualViewport = win.visualViewport) == null ? void 0 : _win$visualViewport.offsetLeft) != null ? _win$visualViewport$o : 0 : 0)) / scaleX;
+  const y = (clientRect.top + (addVisualOffsets ? (_win$visualViewport$o2 = (_win$visualViewport2 = win.visualViewport) == null ? void 0 : _win$visualViewport2.offsetTop) != null ? _win$visualViewport$o2 : 0 : 0)) / scaleY;
   const width = clientRect.width / scaleX;
   const height = clientRect.height / scaleY;
   return {
@@ -30563,11 +30566,11 @@ function getOverflowAncestors(node, list2) {
   const win = getWindow(scrollableAncestor);
   const target = isBody ? [win].concat(win.visualViewport || [], isOverflowElement(scrollableAncestor) ? scrollableAncestor : []) : scrollableAncestor;
   const updatedList = list2.concat(target);
-  return isBody ? updatedList : updatedList.concat(getOverflowAncestors(getParentNode(target)));
+  return isBody ? updatedList : updatedList.concat(getOverflowAncestors(target));
 }
 function contains(parent, child) {
-  const rootNode = child.getRootNode == null ? void 0 : child.getRootNode();
-  if (parent.contains(child)) {
+  const rootNode = child == null ? void 0 : child.getRootNode == null ? void 0 : child.getRootNode();
+  if (parent != null && parent.contains(child)) {
     return true;
   } else if (rootNode && isShadowRoot(rootNode)) {
     let next = child;
@@ -30759,6 +30762,48 @@ var buildConfigFromModifiers = (modifiers) => {
   }
   return config;
 };
+var buildDirectiveConfigFromModifiers = (modifiers, settings) => {
+  const config = {
+    component: {
+      trap: false
+    },
+    float: {
+      placement: "bottom",
+      middleware: []
+    }
+  };
+  const getModifierArgument = (modifier) => {
+    return modifiers[modifiers.indexOf(modifier) + 1];
+  };
+  if (modifiers.includes("trap")) {
+    config.component.trap = true;
+  }
+  if (modifiers.includes("offset")) {
+    config.float.middleware.push(offset(settings["offset"] || 10));
+  }
+  if (modifiers.includes("placement")) {
+    config.float.placement = getModifierArgument("placement");
+  }
+  if (modifiers.includes("autoPlacement") && !modifiers.includes("flip")) {
+    config.float.middleware.push(autoPlacement(settings["autoPlacement"]));
+  }
+  if (modifiers.includes("flip")) {
+    config.float.middleware.push(flip(settings["flip"]));
+  }
+  if (modifiers.includes("shift")) {
+    config.float.middleware.push(shift(settings["shift"]));
+  }
+  if (modifiers.includes("inline")) {
+    config.float.middleware.push(inline2(settings["inline"]));
+  }
+  if (modifiers.includes("arrow")) {
+    config.float.middleware.push(arrow(settings["arrow"]));
+  }
+  if (modifiers.includes("hide")) {
+    config.float.middleware.push(hide(settings["hide"]));
+  }
+  return config;
+};
 var randomString = (length) => {
   var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz".split("");
   var str = "";
@@ -30775,31 +30820,36 @@ function src_default(Alpine) {
     dismissable: true,
     trap: false
   };
-  const atTriggers = document.querySelectorAll('[\\@click*="$float"]');
-  const xTriggers = document.querySelectorAll('[x-on\\:click*="$float"]');
-  const triggers = [...atTriggers, ...xTriggers].forEach(function(trig) {
-    const parentComponent = trig.parentElement.closest("[x-data]");
-    const panel2 = parentComponent.querySelector('[x-ref="panel"]');
-    if (!trig.hasAttribute("aria-expanded")) {
-      trig.setAttribute("aria-expanded", false);
+  function setupA11y(component, trigger, panel2 = null) {
+    if (!trigger)
+      return;
+    if (!trigger.hasAttribute("aria-expanded")) {
+      trigger.setAttribute("aria-expanded", false);
     }
     if (!panel2.hasAttribute("id")) {
       const panelId = `panel-${randomString(8)}`;
-      trig.setAttribute("aria-controls", panelId);
+      trigger.setAttribute("aria-controls", panelId);
       panel2.setAttribute("id", panelId);
     } else {
-      trig.setAttribute("aria-controls", panel2.getAttribute("id"));
+      trigger.setAttribute("aria-controls", panel2.getAttribute("id"));
     }
     panel2.setAttribute("aria-modal", true);
     panel2.setAttribute("role", "dialog");
+  }
+  const atMagicTrigger = document.querySelectorAll('[\\@click^="$float"]');
+  const xMagicTrigger = document.querySelectorAll('[x-on\\:click^="$float"]');
+  [...atMagicTrigger, ...xMagicTrigger].forEach((trigger) => {
+    const component = trigger.parentElement.closest("[x-data]");
+    const panel2 = component.querySelector('[x-ref="panel"]');
+    setupA11y(component, trigger, panel2);
   });
   Alpine.magic("float", (el) => {
     return (modifiers = {}, settings = {}) => {
       const options2 = {...defaultOptions2, ...settings};
       const config = Object.keys(modifiers).length > 0 ? buildConfigFromModifiers(modifiers) : {middleware: [autoPlacement()]};
-      const parentComponent = el.parentElement.closest("[x-data]");
       const trigger = el;
-      const panel2 = parentComponent.querySelector('[x-ref="panel"]');
+      const component = el.parentElement.closest("[x-data]");
+      const panel2 = component.querySelector('[x-ref="panel"]');
       function isFloating() {
         return panel2.style.display == "block";
       }
@@ -30854,7 +30904,7 @@ function src_default(Alpine) {
       }
       if (options2.dismissable) {
         window.addEventListener("click", (event) => {
-          if (!parentComponent.contains(event.target) && isFloating()) {
+          if (!component.contains(event.target) && isFloating()) {
             togglePanel();
           }
         });
@@ -30865,6 +30915,75 @@ function src_default(Alpine) {
         }, true);
       }
       togglePanel();
+    };
+  });
+  Alpine.directive("float", (panel2, {modifiers, expression}, {evaluate}) => {
+    const settings = expression ? evaluate(expression) : {};
+    const config = modifiers.length > 0 ? buildDirectiveConfigFromModifiers(modifiers, settings) : {};
+    const clickAway = (event) => !panel2.parentElement.closest("[x-data]").contains(event.target) ? panel2.close() : null;
+    const keyEscape = (event) => event.key === "Escape" ? panel2.close() : null;
+    async function update() {
+      return await computePosition2(panel2.trigger, panel2, config.float).then(({middlewareData, placement, x, y}) => {
+        if (middlewareData.arrow) {
+          const ax = middlewareData.arrow?.x;
+          const ay = middlewareData.arrow?.y;
+          const aEl = config.float.middleware.filter((middleware) => middleware.name == "arrow")[0].options.element;
+          const staticSide = {
+            top: "bottom",
+            right: "left",
+            bottom: "top",
+            left: "right"
+          }[placement.split("-")[0]];
+          Object.assign(aEl.style, {
+            left: ax != null ? `${ax}px` : "",
+            top: ay != null ? `${ay}px` : "",
+            right: "",
+            bottom: "",
+            [staticSide]: "-4px"
+          });
+        }
+        if (middlewareData.hide) {
+          const {referenceHidden} = middlewareData.hide;
+          Object.assign(panel2.style, {
+            visibility: referenceHidden ? "hidden" : "visible"
+          });
+        }
+        Object.assign(panel2.style, {
+          left: `${x}px`,
+          top: `${y}px`
+        });
+      });
+    }
+    const refName = panel2.getAttribute("x-ref");
+    const component = panel2.parentElement.closest("[x-data]");
+    const atTrigger = component.querySelectorAll(`[\\@click^="$refs.${refName}"]`);
+    const xTrigger = component.querySelectorAll(`[x-on\\:click^="$refs.${refName}"]`);
+    setupA11y(component, [...atTrigger, ...xTrigger][0], panel2);
+    panel2.isOpen = false;
+    panel2.trigger = null;
+    panel2.open = async function(event) {
+      panel2.trigger = event.currentTarget ? event.currentTarget : event;
+      panel2.isOpen = true;
+      panel2.style.display = "block";
+      panel2.trigger.setAttribute("aria-expanded", true);
+      if (config.component.trap)
+        panel2.setAttribute("x-trap", true);
+      await update();
+      window.addEventListener("click", clickAway);
+      window.addEventListener("keydown", keyEscape, true);
+    };
+    panel2.close = function() {
+      panel2.isOpen = false;
+      panel2.style.display = "";
+      panel2.trigger.setAttribute("aria-expanded", false);
+      if (config.component.trap)
+        panel2.setAttribute("x-trap", false);
+      autoUpdate(panel2.trigger, panel2, update);
+      window.removeEventListener("click", clickAway);
+      window.removeEventListener("keydown", keyEscape, false);
+    };
+    panel2.toggle = function(event) {
+      panel2.isOpen ? panel2.close() : panel2.open(event);
     };
   });
 }
