@@ -1,6 +1,10 @@
 <x-filament::page
     :widget-data="['record' => $record]"
-    class="filament-resources-edit-record-page filament-resource-{{ str_replace('/', '-', $this->getResource()::getSlug()) }} filament-record-{{ $this->getRecord()->getKey() }}"
+    :class="[
+        'filament-resources-create-record-page',
+        'filament-resources-' . str_replace('/', '-', $this->getResource()::getSlug()),
+        'filament-resources-record-' . $record->getKey(),
+    ]"
 >
     <x-filament::form wire:submit.prevent="save">
         {{ $this->form }}
