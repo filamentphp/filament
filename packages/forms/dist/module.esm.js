@@ -30947,7 +30947,7 @@ function src_default(Alpine) {
   Alpine.directive("float", (panel2, {modifiers, expression}, {evaluate}) => {
     const settings = expression ? evaluate(expression) : {};
     const config = modifiers.length > 0 ? buildDirectiveConfigFromModifiers(modifiers, settings) : {};
-    const clickAway = (event) => !panel2.parentElement.closest("[x-data]").contains(event.target) ? panel2.close() : null;
+    const clickAway = (event) => panel2.parentElement && !panel2.parentElement.closest("[x-data]").contains(event.target) ? panel2.close() : null;
     const keyEscape = (event) => event.key === "Escape" ? panel2.close() : null;
     async function update() {
       return await computePosition2(panel2.trigger, panel2, config.float).then(({middlewareData, placement, x, y}) => {
