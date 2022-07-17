@@ -107,7 +107,36 @@ module.exports = {
 
 You may specify your own colors, which will be used throughout the admin panel.
 
-In your `webpack.mix.js` file, Register Tailwind CSS as a PostCSS plugin :
+If you use Vite to compile assets, in your `vite.config.js` file, register the `filament.css` theme file:
+
+```js
+import { defineConfig } from 'vite'
+import laravel from 'laravel-vite-plugin'
+
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: [
+                // ...
+                'resources/css/filament.css',
+            ],
+            // ...
+        }),
+    ],
+})
+```
+
+And add Tailwind to the `postcss.config.js` file:
+
+```js
+module.exports = {
+    plugins: {
+        tailwindcss: {},
+    },
+}
+```
+
+Or if you're using Mix instead of Vite, in your `webpack.mix.js` file, register Tailwind CSS as a PostCSS plugin:
 
 ```js
 const mix = require('laravel-mix')
@@ -127,9 +156,18 @@ Now, you may register the theme file in a service provider's `boot()` method:
 
 ```php
 use Filament\Facades\Filament;
+use Illuminate\Foundation\Vite;
 
 Filament::serving(function () {
-    Filament::registerTheme(mix('css/filament.css'));
+    // Using Vite
+    Filament::registerTheme(
+        app(Vite::class)('resources/css/filament.css'),
+    );
+
+    // Using Mix
+    Filament::registerTheme(
+        mix('css/filament.css'),
+    );
 });
 ```
 
