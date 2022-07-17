@@ -93,7 +93,7 @@ class ImageColumn extends Column
             return null;
         }
 
-        if (is_integer($height)) {
+        if (is_int($height)) {
             return "{$height}px";
         }
 
@@ -146,7 +146,7 @@ class ImageColumn extends Column
             return null;
         }
 
-        if (is_integer($width)) {
+        if (is_int($width)) {
             return "{$width}px";
         }
 

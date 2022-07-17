@@ -8,7 +8,8 @@ use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\Concerns\CreatesApplication;
 use Orchestra\Testbench\Foundation\Application;
 
-$basePathLocator = new class() {
+$basePathLocator = new class()
+{
     use CreatesApplication;
 };
 

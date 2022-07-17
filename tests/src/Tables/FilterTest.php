@@ -28,3 +28,24 @@ it('can reset filters', function () {
         ->resetTableFilters()
         ->assertCanSeeTableRecords($unpublishedPosts);
 });
+
+it('can persist filters in the user\'s session', function () {
+    $posts = Post::factory()->count(10)->create();
+
+    $unpublishedPosts = $posts->where('is_published', false);
+
+    livewire(PostsTable::class)
+        ->assertCanSeeTableRecords($posts)
+        ->filterTable('is_published')
+        ->assertCanNotSeeTableRecords($unpublishedPosts);
+
+    livewire(PostsTable::class)
+        ->assertCanNotSeeTableRecords($unpublishedPosts);
+
+    livewire(PostsTable::class)
+        ->resetTableFilters()
+        ->assertCanSeeTableRecords($unpublishedPosts);
+
+    livewire(PostsTable::class)
+        ->assertCanSeeTableRecords($unpublishedPosts);
+});

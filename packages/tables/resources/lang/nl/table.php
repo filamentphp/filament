@@ -103,7 +103,6 @@ return [
 
         'selected_count' => '1 record geselecteerd.|:count records geselecteerd.',
 
-
         'buttons' => [
 
             'select_all' => [

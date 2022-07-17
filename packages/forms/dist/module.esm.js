@@ -21848,6 +21848,7 @@ var file_upload_default = (Alpine) => {
   Alpine.data("fileUploadFormComponent", ({
     acceptedFileTypes,
     canDownload,
+    canOpen,
     canPreview,
     canReorder,
     deleteUploadedFileUsing,
@@ -21961,6 +21962,15 @@ var file_upload_default = (Alpine) => {
           }
           this.insertDownloadLink(fileItem);
         });
+        this.pond.on("initfile", async (fileItem) => {
+          if (!canOpen) {
+            return;
+          }
+          if (isAvatar) {
+            return;
+          }
+          this.insertOpenLink(fileItem);
+        });
         this.pond.on("processfilestart", async () => {
           this.dispatchFormEvent("file-upload-started");
         });
@@ -22014,13 +22024,23 @@ var file_upload_default = (Alpine) => {
         if (file2.origin !== FileOrigin$1.LOCAL) {
           return;
         }
-        const url = this.getDownloadUrl(file2);
-        if (!url) {
+        const anchor = this.getDownloadLink(file2);
+        if (!anchor) {
           return;
         }
-        document.getElementById(`filepond--item-${file2.id}`).querySelector(".filepond--file-info-main").prepend(url);
+        document.getElementById(`filepond--item-${file2.id}`).querySelector(".filepond--file-info-main").prepend(anchor);
       },
-      getDownloadUrl: function(file2) {
+      insertOpenLink: function(file2) {
+        if (file2.origin !== FileOrigin$1.LOCAL) {
+          return;
+        }
+        const anchor = this.getOpenLink(file2);
+        if (!anchor) {
+          return;
+        }
+        document.getElementById(`filepond--item-${file2.id}`).querySelector(".filepond--file-info-main").prepend(anchor);
+      },
+      getDownloadLink: function(file2) {
         let fileSource = file2.source;
         if (!fileSource) {
           return;
@@ -22029,6 +22049,17 @@ var file_upload_default = (Alpine) => {
         anchor.className = "filepond--download-icon";
         anchor.href = fileSource;
         anchor.download = file2.file.name;
+        return anchor;
+      },
+      getOpenLink: function(file2) {
+        let fileSource = file2.source;
+        if (!fileSource) {
+          return;
+        }
+        const anchor = document.createElement("a");
+        anchor.className = "filepond--open-icon";
+        anchor.href = fileSource;
+        anchor.target = "_blank";
         return anchor;
       }
     };

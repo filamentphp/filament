@@ -5,7 +5,7 @@ return [
     'buttons' => [
 
         'visit_documentation' => [
-            'label' => 'Belgeler',
+            'label' => 'Dökümantasyon',
         ],
 
         'visit_github' => [

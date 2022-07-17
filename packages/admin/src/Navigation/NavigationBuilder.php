@@ -33,7 +33,7 @@ class NavigationBuilder
         return $this;
     }
 
-    /** @param \Filament\Navigation\NavigationItem[] $items */
+    /** @param  \Filament\Navigation\NavigationItem[]  $items */
     public function items(array $items): static
     {
         $this->items = array_merge($this->items, $items);

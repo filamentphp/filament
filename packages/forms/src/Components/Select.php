@@ -542,7 +542,6 @@ class Select extends Field
             }
 
             /** @var BelongsTo $relationship */
-
             $relatedModel = $relationship->getResults();
 
             if (! $relatedModel) {
