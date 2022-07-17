@@ -7,7 +7,7 @@ use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
 
-it('can filter records', function () {
+it('can filter records by boolean column', function () {
     $posts = Post::factory()->count(10)->create();
 
     livewire(PostsTable::class)
@@ -15,6 +15,18 @@ it('can filter records', function () {
         ->filterTable('is_published')
         ->assertCanSeeTableRecords($posts->where('is_published', true))
         ->assertCanNotSeeTableRecords($posts->where('is_published', false));
+});
+
+it('can filter records by relationship', function () {
+    $posts = Post::factory()->count(10)->create();
+
+    $author = $posts->first()->author;
+
+    livewire(PostsTable::class)
+        ->assertCanSeeTableRecords($posts)
+        ->filterTable('author', $author)
+        ->assertCanSeeTableRecords($posts->where('author_id', $author->getKey()))
+        ->assertCanNotSeeTableRecords($posts->where('author_id', '!=', $author->getKey()));
 });
 
 it('can reset filters', function () {
