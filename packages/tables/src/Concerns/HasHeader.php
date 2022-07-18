@@ -15,7 +15,7 @@ trait HasHeader
     {
         $actions = Action::configureUsing(
             Closure::fromCallable([$this, 'configureTableAction']),
-            fn (): array => $this->getTableActions(),
+            fn (): array => $this->getTableHeaderActions(),
         );
 
         $this->cachedTableHeaderActions = collect($actions)
