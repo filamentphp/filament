@@ -60,52 +60,52 @@
                         'dark:divide-gray-600' => config('forms.dark_mode'),
                     ])
                 >
-                <template x-for="(row, index) in rows" x-bind:key="index" x-ref="rowTemplate">
-                    <tr @class([
-                        'divide-x',
-                        'dark:divide-gray-600' => config('forms.dark_mode'),
-                    ])>
-                        <td>
-                            <input
-                                type="text"
-                                x-model="row.key"
-                                x-on:input.debounce.{{ $getDebounce() }}="updateState"
-                                {!! ($placeholder = $getKeyPlaceholder()) ? "placeholder=\"{$placeholder}\"" : '' !!}
-                                @if ((! $canEditKeys()) || $isDisabled())
-                                    disabled
-                                @endif
-                                class="w-full px-4 py-3 font-mono text-sm bg-transparent border-0 focus:ring-0"
-                            >
-                        </td>
-
-                        <td class="whitespace-nowrap">
-                            <input
-                                type="text"
-                                x-model="row.value"
-                                x-on:input.debounce.{{ $getDebounce() }}="updateState"
-                                {!! ($placeholder = $getValuePlaceholder()) ? "placeholder=\"{$placeholder}\"" : '' !!}
-                                @if ((! $canEditValues()) || $isDisabled())
-                                    disabled
-                                @endif
-                                class="w-full px-4 py-3 font-mono text-sm bg-transparent border-0 focus:ring-0"
-                            >
-                        </td>
-
-                        @if ($canDeleteRows() && $isEnabled())
-                            <td x-show="rows.length > 1" class="whitespace-nowrap">
-                                <div class="flex items-center justify-center">
-                                    <button
-                                        x-on:click="deleteRow(index)"
-                                        type="button"
-                                        class="text-danger-600 hover:text-danger-700"
-                                    >
-                                        <x-heroicon-o-trash class="w-4 h-4" />
-                                    </button>
-                                </div>
+                    <template x-for="(row, index) in rows" x-bind:key="index" x-ref="rowTemplate">
+                        <tr @class([
+                            'divide-x',
+                            'dark:divide-gray-600' => config('forms.dark_mode'),
+                        ])>
+                            <td>
+                                <input
+                                    type="text"
+                                    x-model="row.key"
+                                    x-on:input.debounce.{{ $getDebounce() }}="updateState"
+                                    {!! ($placeholder = $getKeyPlaceholder()) ? "placeholder=\"{$placeholder}\"" : '' !!}
+                                    @if ((! $canEditKeys()) || $isDisabled())
+                                        disabled
+                                    @endif
+                                    class="w-full px-4 py-3 font-mono text-sm bg-transparent border-0 focus:ring-0"
+                                >
                             </td>
-                        @endif
-                    </tr>
-                </template>
+
+                            <td class="whitespace-nowrap">
+                                <input
+                                    type="text"
+                                    x-model="row.value"
+                                    x-on:input.debounce.{{ $getDebounce() }}="updateState"
+                                    {!! ($placeholder = $getValuePlaceholder()) ? "placeholder=\"{$placeholder}\"" : '' !!}
+                                    @if ((! $canEditValues()) || $isDisabled())
+                                        disabled
+                                    @endif
+                                    class="w-full px-4 py-3 font-mono text-sm bg-transparent border-0 focus:ring-0"
+                                >
+                            </td>
+
+                            @if ($canDeleteRows() && $isEnabled())
+                                <td x-show="rows.length > 1" class="whitespace-nowrap">
+                                    <div class="flex items-center justify-center">
+                                        <button
+                                            x-on:click="deleteRow(index)"
+                                            type="button"
+                                            class="text-danger-600 hover:text-danger-700"
+                                        >
+                                            <x-heroicon-o-trash class="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                </td>
+                            @endif
+                        </tr>
+                    </template>
                 </tbody>
             </table>
 
