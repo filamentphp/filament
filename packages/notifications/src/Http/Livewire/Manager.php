@@ -22,7 +22,12 @@ class Manager extends Component
 
     public function add(array $notification): void
     {
-        $this->notifications->push(Notification::fromLivewire($notification));
+        $notification = Notification::fromLivewire($notification);
+
+        match (config('notifications.layout.push')) {
+            'top' => $this->notifications->prepend($notification),
+            'bottom' => $this->notifications->push($notification),
+        };
     }
 
     public function render(): View

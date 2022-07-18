@@ -1,6 +1,6 @@
 <div
     @class([
-        'pointer-events-auto mb-4 flex w-full gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-lg transition duration-300 filament-notifications-notification',
+        'filament-notifications-notification pointer-events-auto mb-4 flex w-full max-w-md gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-lg transition duration-300',
         'dark:border-gray-700 dark:bg-gray-800' => config('notifications.dark_mode'),
     ])
     x-data="notificationComponent({ notification: {{ Js::from($toLivewire()) }} })"
