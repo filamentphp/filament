@@ -28,6 +28,8 @@ trait HasHeader
                     return [$index => $action];
                 }
 
+                $action->table($this->getCachedTable());
+
                 return [$action->getName() => $action];
             })
             ->toArray();
