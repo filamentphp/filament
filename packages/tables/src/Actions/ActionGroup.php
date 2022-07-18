@@ -7,7 +7,6 @@ use Filament\Support\Actions\Concerns\InteractsWithRecord;
 
 class ActionGroup extends BaseActionGroup
 {
-    use Concerns\BelongsToTable;
     use InteractsWithRecord;
 
     protected string $view = 'tables::actions.group';

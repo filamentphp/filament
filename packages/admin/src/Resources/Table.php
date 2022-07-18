@@ -2,6 +2,7 @@
 
 namespace Filament\Resources;
 
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Support\Arr;
 
@@ -192,6 +193,12 @@ class Table
 
     public function getHeaderActions(): array
     {
-        return $this->headerActions;
+        return array_filter($this->headerActions, function (Action | ActionGroup $action) {
+            if ($action instanceof ActionGroup) {
+                return count(array_filter($action->getActions(), fn (Action $groupedAction) => ! $groupedAction->isHidden()));
+            }
+
+            return ! $action->isHidden();
+        });
     }
 }
