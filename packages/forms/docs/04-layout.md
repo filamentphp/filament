@@ -303,7 +303,7 @@ Wizard::make([
 ])
 ```
 
-> We have different setup instructions you're looking to add a wizard to an admin panel [resource Create page](../admin/creating-records#wizards) or a table [action](../tables/actions#wizards). Following that documentation will ensure that the ability to submit the form is only available on the last step.
+> We have different setup instructions you're looking to add a wizard to an admin panel [resource Create page](../admin/resources/creating-records#wizards) or a table [action](../tables/actions#wizards). Following that documentation will ensure that the ability to submit the form is only available on the last step.
 
 Each step has a mandatory label. You may optionally also add a description for extra detail:
 
