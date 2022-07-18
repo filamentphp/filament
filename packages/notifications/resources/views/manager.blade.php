@@ -16,6 +16,7 @@
             default => 'max-w-full',
         },
     ])
+    role="status"
 >
     @foreach($notifications as $notification)
         {{ $notification }}
