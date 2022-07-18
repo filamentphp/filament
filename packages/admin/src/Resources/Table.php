@@ -193,12 +193,6 @@ class Table
 
     public function getHeaderActions(): array
     {
-        return array_filter($this->headerActions, function (Action | ActionGroup $action) {
-            if ($action instanceof ActionGroup) {
-                return count(array_filter($action->getActions(), fn (Action $groupedAction) => ! $groupedAction->isHidden()));
-            }
-
-            return ! $action->isHidden();
-        });
+        return $this->headerActions;
     }
 }

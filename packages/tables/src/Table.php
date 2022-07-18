@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Support\Components\ViewComponent;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Contracts\HasTable;
@@ -227,7 +228,10 @@ class Table extends ViewComponent
 
     public function getEmptyStateActions(): array
     {
-        return $this->getLivewire()->getCachedTableEmptyStateActions();
+        return array_filter(
+            $this->getLivewire()->getCachedTableEmptyStateActions(),
+            fn (Action $action): bool => ! $action->isHidden(),
+        );
     }
 
     public function getEmptyStateDescription(): ?string
@@ -282,7 +286,13 @@ class Table extends ViewComponent
 
     public function getHeaderActions(): array
     {
-        return $this->getLivewire()->getCachedTableHeaderActions();
+        return array_filter($this->getLivewire()->getCachedTableHeaderActions(), function (Action | ActionGroup $action): bool {
+            if ($action instanceof ActionGroup) {
+                return (bool) count(array_filter($action->getActions(), fn (Action $groupedAction) => ! $groupedAction->isHidden()));
+            }
+
+            return ! $action->isHidden();
+        });
     }
 
     public function getHeading(): ?string
