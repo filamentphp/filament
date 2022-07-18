@@ -75,8 +75,6 @@ class Repeater extends Field
 
                     $component->getChildComponentContainers()[$newUuid]->fill();
 
-                    $component->hydrateDefaultItemState($newUuid);
-
                     $component->collapsed(false, shouldMakeComponentCollapsible: false);
                 },
             ],
@@ -209,11 +207,6 @@ class Repeater extends Field
         $this->isInset = $condition;
 
         return $this;
-    }
-
-    public function hydrateDefaultItemState(string $uuid): void
-    {
-        $this->getChildComponentContainers()[$uuid]->hydrateDefaultState();
     }
 
     public function getChildComponentContainers(bool $withHidden = false): array
