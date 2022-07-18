@@ -25,7 +25,7 @@
         x-ref="panel"
         x-transition
         x-cloak
-        x-float.placement.bottom-end.flip.offset.shift="{ offset: 8 }"
+        x-float.placement.bottom-end.flip.offset.shift.teleport="{ offset: 8 }"
         @class([
             'absolute hidden z-20 shadow-xl ring-1 ring-gray-900/10 overflow-hidden rounded-xl w-52 filament-action-group-dropdown',
             'dark:ring-white/20' => $darkMode,
