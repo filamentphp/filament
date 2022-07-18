@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static StatefulGuard auth()
  * @method static array getBeforeCoreScripts()
  * @method static GlobalSearchProvider getGlobalSearchProvider()
+ * @method static string getLocale()
  * @method static array getPages()
  * @method static string | null getModelResource(string | Model $model)
  * @method static array getNavigation()

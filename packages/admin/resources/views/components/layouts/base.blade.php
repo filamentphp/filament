@@ -4,7 +4,7 @@
 
 <!DOCTYPE html>
 <html
-    lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+    lang="{{ str_replace('_', '-', \Filament\Facades\Filament::getLocale()) }}"
     dir="{{ __('filament::layout.direction') ?? 'ltr' }}"
     class="antialiased bg-gray-100 filament js-focus-visible"
 >

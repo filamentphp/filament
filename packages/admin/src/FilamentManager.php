@@ -43,7 +43,7 @@ class FilamentManager
 
     protected array $meta = [];
 
-    protected string | Htmlable | null $theme = null;
+    protected string|Htmlable|null $theme = null;
 
     protected array $userMenuItems = [];
 
@@ -144,7 +144,7 @@ class FilamentManager
         $this->styles = array_merge($this->styles, $styles);
     }
 
-    public function registerTheme(string | Htmlable | null $theme): void
+    public function registerTheme(string|Htmlable|null $theme): void
     {
         $this->theme = $theme;
     }
@@ -177,6 +177,11 @@ class FilamentManager
     public function getGlobalSearchProvider(): GlobalSearchProvider
     {
         return app($this->globalSearchProvider);
+    }
+
+    public function getLocale(): string
+    {
+        return config('filament.locale') ?? app()->getLocale();
     }
 
     public function renderHook(string $name): Htmlable
@@ -258,7 +263,7 @@ class FilamentManager
             ->toArray();
     }
 
-    public function getModelResource(string | Model $model): ?string
+    public function getModelResource(string|Model $model): ?string
     {
         if ($model instanceof Model) {
             $model = $model::class;
