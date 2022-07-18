@@ -5,10 +5,10 @@ namespace Filament\Tables\Testing;
 use Closure;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\BaseFilter;
-use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\MultiSelectFilter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
 use Livewire\Testing\TestableLivewire;
@@ -41,9 +41,12 @@ class TestsFilters
                     $data = ['value' => $data];
                 }
             } elseif ($filter instanceof MultiSelectFilter) {
-                $data = ['values' => Arr::wrap($data ?? [])];
+                $data = ['values' => array_map(
+                    fn ($record) => $record instanceof Model ? $record->getKey() : $record,
+                    Arr::wrap($data ?? []),
+                )];
             } elseif ($filter instanceof SelectFilter) {
-                $data = ['value' => $data];
+                $data = ['value' => $data instanceof Model ? $data->getKey() : $data];
             } else {
                 $data = ['isActive' => $data === true || $data === null];
             }
@@ -78,7 +81,7 @@ class TestsFilters
             $action = $livewire->getCachedTableFilter($name);
 
             Assert::assertInstanceOf(
-                Filter::class,
+                BaseFilter::class,
                 $action,
                 message: "Failed asserting that a table filter with name [{$name}] exists on the [{$livewireClass}] component.",
             );

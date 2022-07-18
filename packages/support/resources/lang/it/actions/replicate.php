@@ -7,7 +7,7 @@ return [
         'label' => 'Duplica',
 
         'messages' => [
-            'replicated' => 'Record duplicato',
+            'replicated' => 'Duplicato',
         ],
 
     ],

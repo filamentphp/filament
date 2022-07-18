@@ -54,9 +54,19 @@
                 x-on:click="tab = '{{ $tab->getId() }}'"
                 role="tab"
                 x-bind:tabindex="tab === '{{ $tab->getId() }}' ? 0 : -1"
-                class="shrink-0 p-3 text-sm font-medium"
+                class="flex items-center gap-2 shrink-0 p-3 text-sm font-medium"
                 x-bind:class="{ 'bg-white @if (config('forms.dark_mode')) dark:bg-gray-800 @endif': tab === '{{ $tab->getId() }}' }"
             >
+                @if ($icon = $tab->getIcon())
+                    <x-dynamic-component
+                        :component="$icon"
+                        :class="\Illuminate\Support\Arr::toCssClasses([
+                            'h-4 w-4 text-gray-500',
+                            'dark:text-gray-400' => config('forms.dark_mode'),
+                        ])"
+                    />
+                @endif
+
                 {{ $tab->getLabel() }}
             </button>
         @endforeach

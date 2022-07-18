@@ -2,40 +2,40 @@
 
 return [
 
-     'single' => [
+    'single' => [
 
-         'label' => 'Подключить',
+        'label' => 'Подключить',
 
-         'modal' => [
+        'modal' => [
 
-             'heading' => 'Подключить :label',
+            'heading' => 'Подключить :label',
 
-             'fields' => [
+            'fields' => [
 
-                 'record_ids' => [
-                     'label' => 'Записи',
-                 ],
+                'record_ids' => [
+                    'label' => 'Записи',
+                ],
 
-             ],
+            ],
 
-             'actions' => [
+            'actions' => [
 
-                 'associate' => [
-                     'label' => 'Подключить',
-                 ],
+                'associate' => [
+                    'label' => 'Подключить',
+                ],
 
-                 'associate_another' => [
-                     'label' => 'Подключить и Подключить другое',
-                 ],
+                'associate_another' => [
+                    'label' => 'Подключить и Подключить другое',
+                ],
 
-             ],
+            ],
 
-         ],
+        ],
 
-         'messages' => [
-             'associated' => 'Подключено',
-         ],
+        'messages' => [
+            'associated' => 'Подключено',
+        ],
 
-     ],
+    ],
 
 ];

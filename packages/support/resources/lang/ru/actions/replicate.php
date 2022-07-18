@@ -2,14 +2,14 @@
 
 return [
 
-     'single' => [
+    'single' => [
 
-         'label' => 'Копировать',
+        'label' => 'Копировать',
 
-         'messages' => [
-             'replicated' => 'Запись скопирована',
-         ],
+        'messages' => [
+            'replicated' => 'Запись скопирована',
+        ],
 
-     ],
+    ],
 
 ];

@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Ayır',
+        'label' => 'Ayrıştır',
 
         'modal' => [
 
-            'heading' => 'Ayır :label',
+            'heading' => ':label ayrıştır',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Ayır',
+                    'label' => 'Ayrıştır',
                 ],
 
             ],
@@ -21,23 +21,23 @@ return [
         ],
 
         'messages' => [
-            'dissociated' => 'Ayrıldı',
+            'dissociated' => 'Ayrıştırıldı',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Seçiliyi ayır',
+        'label' => 'Seçiliyi ayrıştır',
 
         'modal' => [
 
-            'heading' => 'Seçiliyi ayır :label',
+            'heading' => ':label seçiliyi ayrıştır',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Seçiliyi ayır',
+                    'label' => 'Seçiliyi ayrıştır',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'dissociated' => 'Ayrıldı',
+            'dissociated' => 'Ayrıştırıldı',
         ],
 
     ],

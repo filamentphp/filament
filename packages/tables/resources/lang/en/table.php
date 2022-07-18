@@ -2,6 +2,14 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 'and :count more',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [

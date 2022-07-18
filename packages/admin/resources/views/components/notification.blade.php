@@ -53,6 +53,7 @@
                         'text-gray-900 @if (config('filament.dark_mode')) dark:text-gray-200 @endif': ! ['warning', 'success', 'danger'].includes(notification.status)
                     }"
                     x-html="notification.message"
+                    dusk="filament.notifications.notification"
                 ></div>
             </div>
         </div>

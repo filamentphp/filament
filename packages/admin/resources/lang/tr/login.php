@@ -4,7 +4,7 @@ return [
 
     'title' => 'Giriş yap',
 
-    'heading' => 'Hesabınıza girip yapın',
+    'heading' => 'Hesabınıza giriş yapın',
 
     'buttons' => [
 
@@ -31,8 +31,8 @@ return [
     ],
 
     'messages' => [
-        'failed' => 'Bu kimlik bilgileri kayıtlarımızla eşleşmiyor.',
-        'throttled' => 'Çok fazla giriş denemesi. Lütfen :seconds saniye içinde tekrar deneyin.',
+        'failed' => 'Bu kimlik bilgileri kayıtlarla eşleşmiyor.',
+        'throttled' => 'Çok fazla giriş denemesi. Lütfen :seconds saniye sonra tekrar deneyin.',
     ],
 
 ];

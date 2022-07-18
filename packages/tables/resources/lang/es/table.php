@@ -59,7 +59,6 @@ return [
 
     ],
 
-
     'bulk_actions' => [
 
         'force_delete' => [

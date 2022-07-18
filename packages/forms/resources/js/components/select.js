@@ -4,6 +4,7 @@ import '../../css/components/select.css'
 
 export default (Alpine) => {
     Alpine.data('selectFormComponent', ({
+        isHtmlAllowed,
         getOptionLabelUsing,
         getOptionLabelsUsing,
         getOptionsUsing,
@@ -34,7 +35,7 @@ export default (Alpine) => {
 
             init: async function () {
                 this.select = new Choices(this.$refs.input, {
-                    allowHTML: false,
+                    allowHTML: isHtmlAllowed,
                     duplicateItemsAllowed: false,
                     itemSelectText: '',
                     loadingText: loadingMessage,

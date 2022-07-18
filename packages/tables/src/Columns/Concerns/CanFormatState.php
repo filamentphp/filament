@@ -29,7 +29,6 @@ trait CanFormatState
 
         $this->formatStateUsing(static function (Column $column, $state) use ($format, $timezone): ?string {
             /** @var TextColumn $column */
-
             if (blank($state)) {
                 return null;
             }
@@ -55,7 +54,6 @@ trait CanFormatState
     {
         $this->formatStateUsing(static function (Column $column, $state) use ($timezone): ?string {
             /** @var TextColumn $column */
-
             if (blank($state)) {
                 return null;
             }
