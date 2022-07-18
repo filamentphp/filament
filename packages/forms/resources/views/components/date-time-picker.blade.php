@@ -141,7 +141,7 @@
                             <template x-for="day in daysInFocusedMonth" x-bind:key="day">
                                 <div
                                     x-text="day"
-                                    x-on:click="dayIsDisabled(day) || selectDate(day)"
+                                    x-on:click="dayIsDisabled(day) || selectDate(day); @if($shouldCloseOnDateSelection()) togglePanelVisibility() @endif"
                                     x-on:mouseenter="setFocusedDay(day)"
                                     role="option"
                                     x-bind:aria-selected="focusedDate.date() === day"
