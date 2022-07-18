@@ -33,6 +33,7 @@ export default (Alpine) => {
             firstDayOfWeek,
             isAutofocused,
             isDisabled,
+            shouldCloseOnDateSelection,
             state,
         }) => {
             const timezone = dayjs.tz.guess()
@@ -382,7 +383,7 @@ export default (Alpine) => {
                         return
                     }
 
-                    if (! this.isOpen()) {
+                    if (!this.isOpen()) {
                         this.focusedDate =
                             this.getSelectedDate() ??
                             this.getMinDate() ??
@@ -402,6 +403,10 @@ export default (Alpine) => {
                     this.focusedDate ??= dayjs().tz(timezone)
 
                     this.setState(this.focusedDate)
+
+                    if (shouldCloseOnDateSelection) {
+                        this.togglePanelVisibility()
+                    }
                 },
 
                 setDisplayText: function () {

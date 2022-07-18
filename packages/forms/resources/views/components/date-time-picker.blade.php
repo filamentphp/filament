@@ -25,6 +25,7 @@
             firstDayOfWeek: {{ $getFirstDayOfWeek() }},
             isAutofocused: @js($isAutofocused()),
             isDisabled: @js($isDisabled()),
+            shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
         {{ $attributes->merge($getExtraAttributes())->class(['relative filament-forms-date-time-picker-component']) }}

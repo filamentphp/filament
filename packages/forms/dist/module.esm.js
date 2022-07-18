@@ -11863,6 +11863,7 @@ var date_time_picker_default = (Alpine) => {
     firstDayOfWeek,
     isAutofocused,
     isDisabled,
+    shouldCloseOnDateSelection,
     state: state2
   }) => {
     const timezone2 = esm_default.tz.guess();
@@ -12105,6 +12106,9 @@ var date_time_picker_default = (Alpine) => {
         }
         this.focusedDate ??= esm_default().tz(timezone2);
         this.setState(this.focusedDate);
+        if (shouldCloseOnDateSelection) {
+          this.togglePanelVisibility();
+        }
       },
       setDisplayText: function() {
         this.displayText = this.getSelectedDate() ? this.getSelectedDate().format(displayFormat) : "";
