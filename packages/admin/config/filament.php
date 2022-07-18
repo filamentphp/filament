@@ -35,6 +35,7 @@ return [
     | ...
     |
     */
+
     'locale' => null,
 
     /*
