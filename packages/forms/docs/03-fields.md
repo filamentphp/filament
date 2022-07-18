@@ -531,7 +531,7 @@ Select::make('authorId')
     ->relationship('author', 'full_name')
 ```
 
-Alternatively, you can use the `getOptionLabelUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
+Alternatively, you can use the `getOptionLabelFromRecordUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -662,7 +662,7 @@ MultiSelect::make('participants')
     ->relationship('participants', 'full_name')
 ```
 
-Alternatively, you can use the `getOptionLabelUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
+Alternatively, you can use the `getOptionLabelFromRecordUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
 
 ```php
 use Filament\Forms\Components\MultiSelect;
@@ -872,7 +872,7 @@ CheckboxList::make('participants')
     ->relationship('participants', 'full_name')
 ```
 
-Alternatively, you can use the `getOptionLabelUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
+Alternatively, you can use the `getOptionLabelFromRecordUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
 
 ```php
 use Filament\Forms\Components\CheckboxList;
