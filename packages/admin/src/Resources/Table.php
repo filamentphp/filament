@@ -2,7 +2,6 @@
 
 namespace Filament\Resources;
 
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Support\Arr;
 
