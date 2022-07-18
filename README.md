@@ -89,8 +89,8 @@ Now, run `composer update`.
 
 ## Need Help?
 
-🐞 If you spot a bug, please [submit a detailed issue](https://github.com/filamentphp/filament/issues/new), and wait for assistance.
+🐞 If you spot a bug, please [submit a detailed issue](https://github.com/filamentphp/filament/issues/new?assignees=&labels=bug%2Cunconfirmed&template=bug_report.yml), and wait for assistance.
 
-🤔 If you have a question or feature request, please [start a new discussion](https://github.com/filamentphp/filament/discussions/new). We also have a [Discord community](https://discord.gg/cpqnMTHZja). For quick help, ask questions in the appropriate package help channel.
+🤔 If you have a question or feature request, please [start a new discussion](https://github.com/filamentphp/filament/discussions/new). We also have a [Discord community](https://filamentphp.com/discord). For quick help, ask questions in the appropriate channel.
 
 🔐 If you discover a vulnerability, please review our [security policy](https://github.com/filamentphp/filament/blob/2.x/SECURITY.md).
