@@ -49,8 +49,6 @@ class Login extends Component implements HasForms
                     'minutes' => ceil($exception->secondsUntilAvailable / 60),
                 ]),
             ]);
-
-            return null;
         }
 
         $data = $this->form->getState();
@@ -62,8 +60,6 @@ class Login extends Component implements HasForms
             throw ValidationException::withMessages([
                 'email' => __('filament::login.messages.failed'),
             ]);
-
-            return null;
         }
 
         return app(LoginResponse::class);
