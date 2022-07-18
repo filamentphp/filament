@@ -30,7 +30,7 @@ class DateTimePicker extends Field
 
     protected bool | Closure $isWithoutTime = false;
 
-    protected bool | Closure $closeOnDateSelection = false;
+    protected bool | Closure $shouldCloseOnDateSelection = false;
 
     protected CarbonInterface | string | Closure | null $maxDate = null;
 
@@ -186,7 +186,7 @@ class DateTimePicker extends Field
 
     public function closeOnDateSelection(bool | Closure $condition = true): static
     {
-        $this->closeOnDateSelection = $condition;
+        $this->shouldCloseOnDateSelection = $condition;
 
         return $this;
     }
@@ -284,7 +284,7 @@ class DateTimePicker extends Field
 
     public function shouldCloseOnDateSelection(): bool
     {
-        return $this->closeOnDateSelection;
+        return $this->evaluate($this->shouldCloseOnDateSelection);
     }
 
     protected function getDefaultFirstDayOfWeek(): int

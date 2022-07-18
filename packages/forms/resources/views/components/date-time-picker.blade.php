@@ -25,6 +25,7 @@
             firstDayOfWeek: {{ $getFirstDayOfWeek() }},
             isAutofocused: @js($isAutofocused()),
             isDisabled: @js($isDisabled()),
+            shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
         {{ $attributes->merge($getExtraAttributes())->class(['relative filament-forms-date-time-picker-component']) }}
@@ -141,7 +142,7 @@
                             <template x-for="day in daysInFocusedMonth" x-bind:key="day">
                                 <div
                                     x-text="day"
-                                    x-on:click="dayIsDisabled(day) || selectDate(day); @if($shouldCloseOnDateSelection()) togglePanelVisibility() @endif"
+                                    x-on:click="dayIsDisabled(day) || selectDate(day)"
                                     x-on:mouseenter="setFocusedDay(day)"
                                     role="option"
                                     x-bind:aria-selected="focusedDate.date() === day"
