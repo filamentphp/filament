@@ -356,17 +356,12 @@ class Resource
             return static::$slug;
         }
 
-        $slug = Str::of(static::getModel())
+        return Str::of(static::getModel())
             ->afterLast('\\Models\\')
+            ->plural()
             ->explode('\\')
             ->map(fn (string $string) => Str::of($string)->kebab()->slug())
             ->implode('/');
-
-        if (locale_has_pluralization()) {
-            $slug = Str::plural($slug);
-        }
-
-        return $slug;
     }
 
     public static function getUrl($name = 'index', $params = []): string
