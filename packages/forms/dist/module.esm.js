@@ -30800,6 +30800,7 @@ var buildDirectiveConfigFromModifiers = (modifiers, settings) => {
     },
     float: {
       placement: "bottom",
+      strategy: "absolute",
       middleware: []
     }
   };
@@ -30808,6 +30809,9 @@ var buildDirectiveConfigFromModifiers = (modifiers, settings) => {
   };
   if (modifiers.includes("trap")) {
     config.component.trap = true;
+  }
+  if (modifiers.includes("teleport")) {
+    config.float.strategy = "fixed";
   }
   if (modifiers.includes("offset")) {
     config.float.middleware.push(offset(settings["offset"] || 10));
@@ -30951,40 +30955,12 @@ function src_default(Alpine) {
   Alpine.directive("float", (panel2, {modifiers, expression}, {evaluate}) => {
     const settings = expression ? evaluate(expression) : {};
     const config = modifiers.length > 0 ? buildDirectiveConfigFromModifiers(modifiers, settings) : {};
+    let cleanup = null;
+    if (config.float.strategy == "fixed") {
+      panel2.style.position = "fixed";
+    }
     const clickAway = (event) => panel2.parentElement && !panel2.parentElement.closest("[x-data]").contains(event.target) ? panel2.close() : null;
     const keyEscape = (event) => event.key === "Escape" ? panel2.close() : null;
-    async function update() {
-      return await computePosition2(panel2.trigger, panel2, config.float).then(({middlewareData, placement, x, y}) => {
-        if (middlewareData.arrow) {
-          const ax = middlewareData.arrow?.x;
-          const ay = middlewareData.arrow?.y;
-          const aEl = config.float.middleware.filter((middleware) => middleware.name == "arrow")[0].options.element;
-          const staticSide = {
-            top: "bottom",
-            right: "left",
-            bottom: "top",
-            left: "right"
-          }[placement.split("-")[0]];
-          Object.assign(aEl.style, {
-            left: ax != null ? `${ax}px` : "",
-            top: ay != null ? `${ay}px` : "",
-            right: "",
-            bottom: "",
-            [staticSide]: "-4px"
-          });
-        }
-        if (middlewareData.hide) {
-          const {referenceHidden} = middlewareData.hide;
-          Object.assign(panel2.style, {
-            visibility: referenceHidden ? "hidden" : "visible"
-          });
-        }
-        Object.assign(panel2.style, {
-          left: `${x}px`,
-          top: `${y}px`
-        });
-      });
-    }
     const refName = panel2.getAttribute("x-ref");
     const component = panel2.parentElement.closest("[x-data]");
     const atTrigger = component.querySelectorAll(`[\\@click^="$refs.${refName}"]`);
@@ -30999,7 +30975,38 @@ function src_default(Alpine) {
       panel2.trigger.setAttribute("aria-expanded", true);
       if (config.component.trap)
         panel2.setAttribute("x-trap", true);
-      await update();
+      cleanup = autoUpdate(panel2.trigger, panel2, () => {
+        computePosition2(panel2.trigger, panel2, config.float).then(({middlewareData, placement, x, y}) => {
+          if (middlewareData.arrow) {
+            const ax = middlewareData.arrow?.x;
+            const ay = middlewareData.arrow?.y;
+            const aEl = config.float.middleware.filter((middleware) => middleware.name == "arrow")[0].options.element;
+            const staticSide = {
+              top: "bottom",
+              right: "left",
+              bottom: "top",
+              left: "right"
+            }[placement.split("-")[0]];
+            Object.assign(aEl.style, {
+              left: ax != null ? `${ax}px` : "",
+              top: ay != null ? `${ay}px` : "",
+              right: "",
+              bottom: "",
+              [staticSide]: "-4px"
+            });
+          }
+          if (middlewareData.hide) {
+            const {referenceHidden} = middlewareData.hide;
+            Object.assign(panel2.style, {
+              visibility: referenceHidden ? "hidden" : "visible"
+            });
+          }
+          Object.assign(panel2.style, {
+            left: `${x}px`,
+            top: `${y}px`
+          });
+        });
+      });
       window.addEventListener("click", clickAway);
       window.addEventListener("keydown", keyEscape, true);
     };
@@ -31009,7 +31016,7 @@ function src_default(Alpine) {
       panel2.trigger.setAttribute("aria-expanded", false);
       if (config.component.trap)
         panel2.setAttribute("x-trap", false);
-      autoUpdate(panel2.trigger, panel2, update);
+      cleanup();
       window.removeEventListener("click", clickAway);
       window.removeEventListener("keydown", keyEscape, false);
     };
