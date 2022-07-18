@@ -285,7 +285,7 @@ class DateTimePicker extends Field
     public function shouldCloseOnDateSelection(): bool
     {
         return $this->closeOnDateSelection;
-    }    
+    }
 
     protected function getDefaultFirstDayOfWeek(): int
     {
