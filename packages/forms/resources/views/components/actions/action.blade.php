@@ -14,7 +14,7 @@
     :dark-mode="config('forms.dark_mode')"
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes())"
     :tag="$action->getUrl() ? 'a' : 'button'"
-    :wire:click="$action->isEnabled() ? $wireClickAction : null"
+    :wire:click="$wireClickAction"
     :href="$action->isEnabled() ? $action->getUrl() : null"
     :tooltip="$action->getTooltip()"
     :target="$action->shouldOpenUrlInNewTab() ? '_blank' : null"
