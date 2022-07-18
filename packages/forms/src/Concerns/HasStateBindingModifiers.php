@@ -24,7 +24,7 @@ trait HasStateBindingModifiers
         return $this;
     }
 
-    public function debounce(string $delay='500ms'): static
+    public function debounce(string $delay = '500ms'): static
     {
         $this->stateBindingModifiers(["debounce.$delay"]);
         $this->debounce = $delay;
