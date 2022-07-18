@@ -10,6 +10,7 @@
     x-bind:class="{ 'absolute': !show }"
     id="notification-{{ $getId() }}"
     wire:key="notification-{{ $getId() }}"
+    dusk="filament.notifications.notification"
 >
     @if ($getIcon())
         <x-dynamic-component
