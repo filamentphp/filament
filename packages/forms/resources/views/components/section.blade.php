@@ -27,12 +27,15 @@
             x-bind:class="{ 'rounded-b-xl': isCollapsed }"
             x-on:click="
                 isCollapsed = ! isCollapsed
-                if (! isCollapsed) {
-                    setTimeout(
-                        () => $el.scrollIntoView({behavior: 'smooth', block: 'start', inline: 'start'}),
-                        100,
-                    )
+                
+                if (isCollapsed) {
+                    return
                 }
+                
+                setTimeout(
+                    () => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }),
+                    100,
+                )
             "
         @endif
     >
