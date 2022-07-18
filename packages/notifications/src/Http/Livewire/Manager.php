@@ -27,6 +27,7 @@ class Manager extends Component
         match (config('notifications.layout.push')) {
             'top' => $this->notifications->prepend($notification),
             'bottom' => $this->notifications->push($notification),
+            default => null,
         };
     }
 
