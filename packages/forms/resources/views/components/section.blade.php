@@ -7,7 +7,8 @@
         x-on:expand-concealing-component.window="
             if ($event.detail.id === $el.id) {
                 isCollapsed = false
-                $el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                
+                setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 100)
             }
         "
     @endif
@@ -25,22 +26,39 @@
         ])
         @if ($isCollapsible())
             x-bind:class="{ 'rounded-b-xl': isCollapsed }"
+            x-on:click="
+                isCollapsed = ! isCollapsed
+                
+                if (isCollapsed) {
+                    return
+                }
+                
+                setTimeout(
+                    () => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }),
+                    100,
+                )
+            "
         @endif
     >
-        <div class="flex-1 filament-forms-section-header">
-            <h3 class="text-xl font-bold tracking-tight">
+        <div
+            @class([
+                'flex-1 filament-forms-section-header',
+                'cursor-pointer' => $isCollapsible(),
+            ])
+        >
+            <h3 class="text-xl font-bold tracking-tight pointer-events-none">
                 {{ $getHeading() }}
             </h3>
 
             @if ($description = $getDescription())
-                <p class="text-gray-500">
+                <p class="text-gray-500 pointer-events-none">
                     {{ $description }}
                 </p>
             @endif
         </div>
 
         @if ($isCollapsible())
-            <button x-on:click="isCollapsed = ! isCollapsed"
+            <button x-on:click.stop="isCollapsed = ! isCollapsed"
                 x-bind:class="{
                     '-rotate-180': !isCollapsed,
                 }" type="button"
