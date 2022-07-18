@@ -14,15 +14,21 @@ trait HasHeader
     public function cacheTableHeaderActions(): void
     {
         $actions = Action::configureUsing(
-            fn (Action $action) => $this->configureTableAction($action->button()),
-            fn (): array => $this->getTableHeaderActions(),
+            Closure::fromCallable([$this, 'configureTableAction']),
+            fn (): array => $this->getTableActions(),
         );
 
         $this->cachedTableHeaderActions = collect($actions)
-            ->mapWithKeys(function (Action | ActionGroup $action): array {
-                $action->table($this->getCachedTable());
+            ->mapWithKeys(function (Action | ActionGroup $action, int $index): array {
+                if ($action instanceof ActionGroup) {
+                    foreach ($action->getActions() as $groupedAction) {
+                        $groupedAction->table($this->getCachedTable());
+                    }
 
-                return [$action instanceof Action ? $action->getName() : null => $action];
+                    return [$index => $action];
+                }
+
+                return [$action->getName() => $action];
             })
             ->toArray();
     }
