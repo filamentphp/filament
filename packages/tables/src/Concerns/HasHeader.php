@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Contracts\View\View;
 
 trait HasHeader
@@ -18,10 +19,10 @@ trait HasHeader
         );
 
         $this->cachedTableHeaderActions = collect($actions)
-            ->mapWithKeys(function (Action $action): array {
+            ->mapWithKeys(function (Action | ActionGroup $action): array {
                 $action->table($this->getCachedTable());
 
-                return [$action->getName() => $action];
+                return [$action instanceof Action ? $action->getName() : null => $action];
             })
             ->toArray();
     }
@@ -29,7 +30,7 @@ trait HasHeader
     public function getCachedTableHeaderActions(): array
     {
         return collect($this->cachedTableHeaderActions)
-            ->filter(fn (Action $action): bool => ! $action->isHidden())
+            ->filter(fn (Action | ActionGroup $action): bool => ! $action->isHidden())
             ->toArray();
     }
 
