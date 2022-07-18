@@ -56,8 +56,8 @@ return [
     | Filament Locale
     |--------------------------------------------------------------------------
     |
-    | This setting determines the locale used for Filament. Set it to `null` to
-    | use the application locale instead.
+    | This setting determines the locale used by Filament. Set it to `null` to
+    | fall back to the application locale instead.
     |
     */
 
