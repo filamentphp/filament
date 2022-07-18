@@ -22973,7 +22973,7 @@ function applyStyle(button, stylesToApply) {
 }
 
 // node_modules/dompurify/dist/purify.es.js
-/*! @license DOMPurify 2.3.9 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.3.9/LICENSE */
+/*! @license DOMPurify 2.3.10 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.3.10/LICENSE */
 function _typeof(obj) {
   "@babel/helpers - typeof";
   return _typeof = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? function(obj2) {
@@ -23197,6 +23197,9 @@ var _createTrustedTypesPolicy = function _createTrustedTypesPolicy2(trustedTypes
     return trustedTypes.createPolicy(policyName, {
       createHTML: function createHTML(html2) {
         return html2;
+      },
+      createScriptURL: function createScriptURL(scriptUrl) {
+        return scriptUrl;
       }
     });
   } catch (_) {
@@ -23209,7 +23212,7 @@ function createDOMPurify() {
   var DOMPurify = function DOMPurify2(root2) {
     return createDOMPurify(root2);
   };
-  DOMPurify.version = "2.3.9";
+  DOMPurify.version = "2.3.10";
   DOMPurify.removed = [];
   if (!window2 || !window2.document || window2.document.nodeType !== 9) {
     DOMPurify.isSupported = false;
@@ -23694,6 +23697,20 @@ function createDOMPurify() {
       var lcTag = transformCaseFunc(currentNode.nodeName);
       if (!_isValidAttribute(lcTag, lcName, value)) {
         continue;
+      }
+      if (trustedTypesPolicy && _typeof(trustedTypes) === "object" && typeof trustedTypes.getAttributeType === "function") {
+        if (namespaceURI)
+          ;
+        else {
+          switch (trustedTypes.getAttributeType(lcTag, lcName)) {
+            case "TrustedHTML":
+              value = trustedTypesPolicy.createHTML(value);
+              break;
+            case "TrustedScriptURL":
+              value = trustedTypesPolicy.createScriptURL(value);
+              break;
+          }
+        }
       }
       try {
         if (namespaceURI) {
