@@ -2,6 +2,7 @@
     :action="$action"
     component="notifications::button"
     :outlined="$isOutlined()"
+    :icon-position="$getIconPosition()"
     class="filament-notifications-button-action"
 >
     {{ $getLabel() }}
