@@ -37,7 +37,7 @@ class NavigationGroup
         return $this;
     }
 
-    /** @param \Filament\Navigation\NavigationItem[] $items */
+    /** @param  \Filament\Navigation\NavigationItem[]  $items */
     public function items(array | Collection $items): static
     {
         $this->items = collect($this->items)->merge($items)->filter()->map(

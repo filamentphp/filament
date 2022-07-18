@@ -100,7 +100,7 @@ class FilamentManager
         $this->isNavigationMounted = true;
     }
 
-    /** @param \Filament\Navigation\NavigationGroup[] | string[] $groups */
+    /** @param  \Filament\Navigation\NavigationGroup[] | string[]  $groups */
     public function registerNavigationGroups(array $groups): void
     {
         $this->navigationGroups = array_merge(
