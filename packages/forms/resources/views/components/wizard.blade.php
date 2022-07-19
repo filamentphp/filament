@@ -209,7 +209,6 @@
                 x-show="! isLastStep()"
                 x-cloak
                 x-on:click="$wire.dispatchFormEvent('wizard::nextStep', '{{ $getStatePath() }}', getStepIndex(step))"
-                wire:loading.attr.delay="disabled"
                 wire:loading.class.delay="opacity-70 cursor-wait"
                 size="sm"
             >
