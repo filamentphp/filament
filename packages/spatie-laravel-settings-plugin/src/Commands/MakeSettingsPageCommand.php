@@ -49,7 +49,7 @@ class MakeSettingsPageCommand extends Command
             'settingsClass' => $settingsClass,
         ]);
 
-        $this->info("Successfully created {$page}!");
+        $this->components->info("Successfully created {$page}!");
 
         return static::SUCCESS;
     }

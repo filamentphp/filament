@@ -75,7 +75,7 @@ class MakeWidgetCommand extends Command
         }
 
         if ($this->option('chart')) {
-            $chart = $this->choice(
+            $chart = $this->components->choice(
                 'Chart type',
                 [
                     'Bar chart',
@@ -114,10 +114,10 @@ class MakeWidgetCommand extends Command
             $this->copyStubToApp('WidgetView', $viewPath);
         }
 
-        $this->info("Successfully created {$widget}!");
+        $this->components->info("Successfully created {$widget}!");
 
         if ($resource !== null) {
-            $this->info("Make sure to register the widget in `{$resourceClass}::getWidgets()`, and then again in `getHeaderWidgets()` or `getFooterWidgets()` of any `{$resourceClass}` page.");
+            $this->components->info("Make sure to register the widget in `{$resourceClass}::getWidgets()`, and then again in `getHeaderWidgets()` or `getFooterWidgets()` of any `{$resourceClass}` page.");
         }
 
         return static::SUCCESS;

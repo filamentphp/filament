@@ -20,16 +20,16 @@ class InstallCommand extends Command
         $filesystem->delete(resource_path('js/bootstrap.js'));
         $filesystem->copyDirectory(__DIR__ . '/../../stubs/scaffolding', base_path());
 
-        $this->info('Scaffolding installed successfully.');
+        $this->components->info('Scaffolding installed successfully.');
 
-        $this->comment('Please run `npm install && npm run dev` to compile your new assets.');
+        $this->components->info('Please run `npm install && npm run dev` to compile your new assets.');
 
         return static::SUCCESS;
     }
 
     protected static function updateNpmPackages(bool $dev = true): void
     {
-        if (! file_exists(base_path('package.json'))) {
+        if (!file_exists(base_path('package.json'))) {
             return;
         }
 

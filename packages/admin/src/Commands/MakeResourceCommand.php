@@ -210,7 +210,7 @@ class MakeResourceCommand extends Command
             ]);
         }
 
-        $this->info("Successfully created {$resource}!");
+        $this->components->info("Successfully created {$resource}!");
 
         return static::SUCCESS;
     }

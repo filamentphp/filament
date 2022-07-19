@@ -23,7 +23,7 @@ class UpgradeCommand extends Command
             $this->call($command);
         }
 
-        $this->info('Successfully upgraded!');
+        $this->components->info('Successfully upgraded!');
 
         return static::SUCCESS;
     }

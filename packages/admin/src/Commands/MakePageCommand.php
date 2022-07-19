@@ -47,7 +47,7 @@ class MakePageCommand extends Command
             $resourceClass = (string) Str::of($resource)
                 ->afterLast('\\');
 
-            $resourcePage = $this->option('type') ?? $this->choice(
+            $resourcePage = $this->option('type') ?? $this->components->choice(
                 'Which type of page would you like to create?',
                 [
                     'custom' => 'Custom',
@@ -111,10 +111,10 @@ class MakePageCommand extends Command
             $this->copyStubToApp('PageView', $viewPath);
         }
 
-        $this->info("Successfully created {$page}!");
+        $this->components->info("Successfully created {$page}!");
 
         if ($resource !== null) {
-            $this->info("Make sure to register the page in `{$resourceClass}::getPages()`.");
+            $this->components->info("Make sure to register the page in `{$resourceClass}::getPages()`.");
         }
 
         return static::SUCCESS;

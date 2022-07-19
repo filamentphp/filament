@@ -22,7 +22,7 @@ trait CanValidateInput
         );
 
         if ($validator->fails()) {
-            $this->error($validator->errors()->first());
+            $this->components->error($validator->errors()->first());
 
             $input = $this->validateInput($callback, $field, $rules);
         }
