@@ -2,6 +2,8 @@
 
 namespace Filament\Support;
 
+use Composer\InstalledVersions;
+use Filament\Facades\Filament;
 use Filament\Support\Testing\TestsActions;
 use HtmlSanitizer\Sanitizer;
 use HtmlSanitizer\SanitizerInterface;
@@ -11,6 +13,7 @@ use Illuminate\Support\Stringable;
 use Livewire\Testing\TestableLivewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Illuminate\Foundation\Console\AboutCommand;
 
 class SupportServiceProvider extends PackageServiceProvider
 {
@@ -60,5 +63,17 @@ class SupportServiceProvider extends PackageServiceProvider
             /** @phpstan-ignore-next-line */
             return new Stringable(Str::sanitizeHtml($this->value));
         });
+
+        if (class_exists(AboutCommand::class)) {
+            AboutCommand::add('Filament', [
+                'Version' => InstalledVersions::getPrettyVersion('filament/support'),
+                'Packages' => collect([
+                    'admin' => InstalledVersions::isInstalled('filament/filament'),
+                    'forms' => InstalledVersions::isInstalled('filament/forms'),
+                    'tables' => InstalledVersions::isInstalled('filament/tables'),
+                ])->filter()->keys()->join(', '),
+                'Views' => is_dir(resource_path('views/vendor/filament')) ? '<fg=red;options=bold>PUBLISHED</>' : '<fg=green;options=bold>NOT PUBLISHED</>',
+            ]);
+        }
     }
 }
