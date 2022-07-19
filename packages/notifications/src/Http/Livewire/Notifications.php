@@ -7,7 +7,7 @@ use Filament\Notifications\Notification;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class Manager extends Component
+class Notifications extends Component
 {
     public Collection $notifications;
 
@@ -33,6 +33,6 @@ class Manager extends Component
 
     public function render(): View
     {
-        return view('notifications::manager');
+        return view('notifications::notifications');
     }
 }

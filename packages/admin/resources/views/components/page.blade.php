@@ -78,5 +78,5 @@
 
     @stack('modals')
 
-    <x-filament::notification-manager />
+    <livewire:notifications />
 </div>

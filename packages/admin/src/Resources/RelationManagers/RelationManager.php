@@ -3,8 +3,8 @@
 namespace Filament\Resources\RelationManagers;
 
 use Filament\Facades\Filament;
-use Filament\Http\Livewire\Concerns\CanNotify;
 use function Filament\locale_has_pluralization;
+use Filament\Notifications\Http\Livewire\Concerns\CanNotify;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Tables;
