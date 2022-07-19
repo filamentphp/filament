@@ -3,7 +3,7 @@
 ])
 
 <div
-    x-data
+    x-data="{}"
     x-cloak
     {{ $attributes->class(['relative filament-tables-bulk-actions']) }}
 >

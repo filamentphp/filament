@@ -13,7 +13,6 @@
         x-show="isOpen"
         x-cloak
         x-on:click.away="isOpen = false"
-        x-float.placement.bottom-end.flip.offset="{ offset: 8 }"
         x-transition:enter="ease duration-300"
         x-transition:enter-start="opacity-0 -translate-y-2"
         x-transition:enter-end="opacity-100 translate-y-0"
