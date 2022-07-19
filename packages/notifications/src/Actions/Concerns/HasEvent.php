@@ -12,7 +12,7 @@ trait HasEvent
 
     public function event(
         string | Closure | null $event,
-        array | Closure $data,
+        array | Closure $data = [],
     ): static
     {
         $this->event = $event;

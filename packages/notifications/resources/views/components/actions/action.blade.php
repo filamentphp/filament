@@ -4,9 +4,18 @@
 ])
 
 @php
-    $wireClickAction = $action->getEvent()
-        ? '$emit(\''.$action->getEvent().'\','.Js::from($action->getEventData()).')'
-        : null;
+    $wireClickAction = null;
+
+    if ($action->getEvent()) {
+        $emitArguments = collect([
+            $action->getEvent(),
+            ...$action->getEventData(),
+        ])
+            ->map(fn (mixed $value) => \Illuminate\Support\Js::from($value)->toHtml())
+            ->implode(', ');
+
+        $wireClickAction = "\$emit($emitArguments)";
+    }
 @endphp
 
 <x-dynamic-component
