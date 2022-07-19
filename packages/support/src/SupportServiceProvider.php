@@ -65,7 +65,7 @@ class SupportServiceProvider extends PackageServiceProvider
 
         if (class_exists(AboutCommand::class)) {
             AboutCommand::add('Filament', [
-                'Version' => InstalledVersions::getPrettyVersion('filament/filament'),
+                'Version' => InstalledVersions::getPrettyVersion('filament/support'),
                 'Packages' => collect([
                     'admin' => InstalledVersions::isInstalled('filament/filament'),
                     'forms' => InstalledVersions::isInstalled('filament/forms'),
