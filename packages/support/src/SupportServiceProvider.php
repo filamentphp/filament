@@ -3,17 +3,16 @@
 namespace Filament\Support;
 
 use Composer\InstalledVersions;
-use Filament\Facades\Filament;
 use Filament\Support\Testing\TestsActions;
 use HtmlSanitizer\Sanitizer;
 use HtmlSanitizer\SanitizerInterface;
+use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 use Livewire\Testing\TestableLivewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Illuminate\Foundation\Console\AboutCommand;
 
 class SupportServiceProvider extends PackageServiceProvider
 {
