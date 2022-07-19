@@ -78,7 +78,7 @@ body:
       validations:
           required: true
     - type: input
-      id: repository
+      id: reproduction
       attributes:
           label: Reproduction repository
           description: The URL of a public Git repository which contains the minimal amount of code to reproduce the problem. This allows us to fix the problem much quicker.
