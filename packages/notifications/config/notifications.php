@@ -36,7 +36,7 @@ return [
 
         'alignment' => [
             'horizontal' => 'right',
-            'vertical' => 'bottom',
+            'vertical' => 'top',
         ],
 
         'max_width' => null,
