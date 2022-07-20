@@ -5,7 +5,6 @@ namespace Filament\Notifications\Http\Livewire;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Str;
 use Livewire\Component;
 
 class Notifications extends Component
