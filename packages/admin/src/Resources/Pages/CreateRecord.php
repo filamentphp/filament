@@ -3,6 +3,7 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Forms\ComponentContainer;
+use Filament\Notifications\Notification;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Contracts\HasFormActions;
 use Illuminate\Database\Eloquent\Model;
@@ -65,8 +66,9 @@ class CreateRecord extends Page implements HasFormActions
 
         if (filled($this->getCreatedNotificationMessage())) {
             $this->notify(
-                'success',
-                $this->getCreatedNotificationMessage(),
+                Notification::make()
+                    ->title($this->getCreatedNotificationMessage())
+                    ->success(),
             );
         }
 

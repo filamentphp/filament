@@ -3,6 +3,7 @@
 namespace Filament\Pages;
 
 use Filament\Forms\ComponentContainer;
+use Filament\Notifications\Notification;
 use Filament\Pages\Actions\Action;
 use Illuminate\Support\Str;
 
@@ -64,7 +65,11 @@ class SettingsPage extends Page
         }
 
         if (filled($this->getSavedNotificationMessage())) {
-            $this->notify('success', $this->getSavedNotificationMessage());
+            $this->notify(
+                Notification::make()
+                    ->title($this->getSavedNotificationMessage())
+                    ->success(),
+            );
         }
     }
 

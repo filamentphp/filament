@@ -3,6 +3,7 @@
 namespace Filament\Resources\Pages;
 
 use Closure;
+use Filament\Notifications\Notification;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\CreateAction;
 use Filament\Resources\Pages\Concerns\UsesResourceForm;
@@ -131,7 +132,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         $this->callHook('afterBulkDelete');
 
         if (filled($this->getBulkDeletedNotificationMessage())) {
-            $this->notify('success', $this->getBulkDeletedNotificationMessage());
+            $this->notify(
+                Notification::make()
+                    ->title($this->getBulkDeletedNotificationMessage())
+                    ->success(),
+            );
         }
     }
 

@@ -86,8 +86,8 @@ class EditRecord extends Page implements HasFormActions
         if (filled($this->getSavedNotificationMessage())) {
             $this->notify(
                 Notification::make()
-                    ->success()
-                    ->title($this->getSavedNotificationMessage()),
+                    ->title($this->getSavedNotificationMessage())
+                    ->success(),
             );
         }
 
@@ -135,8 +135,9 @@ class EditRecord extends Page implements HasFormActions
 
         if (filled($this->getDeletedNotificationMessage())) {
             $this->notify(
-                'success',
-                $this->getDeletedNotificationMessage(),
+                Notification::make()
+                    ->title($this->getDeletedNotificationMessage())
+                    ->success(),
             );
         }
 

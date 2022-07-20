@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\RelationManagers\Concerns;
 
+use Filament\Notifications\Notification;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 
@@ -55,7 +56,11 @@ trait CanEditRecords
         $this->callHook('afterSave');
 
         if (filled($this->getSavedNotificationMessage())) {
-            $this->notify('success', $this->getSavedNotificationMessage());
+            $this->notify(
+                Notification::make()
+                    ->title($this->getSavedNotificationMessage())
+                    ->success(),
+            );
         }
     }
 

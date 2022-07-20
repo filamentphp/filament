@@ -3,6 +3,7 @@
 namespace Filament\Resources\RelationManagers\Concerns;
 
 use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\BelongsToManyRelationManager;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -215,7 +216,11 @@ trait CanAttachRecords
         }
 
         if (filled($this->getAttachedNotificationMessage())) {
-            $this->notify('success', $this->getAttachedNotificationMessage());
+            $this->notify(
+                Notification::make()
+                    ->title($this->getAttachedNotificationMessage())
+                    ->success(),
+            );
         }
 
         if ($another) {

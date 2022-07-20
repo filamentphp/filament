@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\RelationManagers\Concerns;
 
+use Filament\Notifications\Notification;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,7 +20,11 @@ trait CanDeleteRecords
         $this->callHook('afterDelete');
 
         if (filled($this->getDeletedNotificationMessage())) {
-            $this->notify('success', $this->getDeletedNotificationMessage());
+            $this->notify(
+                Notification::make()
+                    ->title($this->getDeletedNotificationMessage())
+                    ->success(),
+            );
         }
     }
 
@@ -43,7 +48,11 @@ trait CanDeleteRecords
         $this->callHook('afterBulkDelete');
 
         if (filled($this->getBulkDeletedNotificationMessage())) {
-            $this->notify('success', $this->getBulkDeletedNotificationMessage());
+            $this->notify(
+                Notification::make()
+                    ->title($this->getBulkDeletedNotificationMessage())
+                    ->success(),
+            );
         }
     }
 
