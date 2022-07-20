@@ -2,7 +2,6 @@
 
 namespace Filament\Pages\Actions;
 
-use Filament\Notifications\Facades\Notification as NotificationFacade;
 use Filament\Notifications\Notification;
 use Filament\Pages\Actions\Modal\Actions\Action as ModalAction;
 use Filament\Support\Actions\Action as BaseAction;
@@ -80,7 +79,7 @@ class Action extends BaseAction implements Groupable, HasRecord
 
     public function notify(Notification $notification): void
     {
-        NotificationFacade::send($notification);
+        $notification->send();
     }
 
     protected function getDefaultEvaluationParameters(): array
