@@ -4,7 +4,6 @@
 ])
 
 <div
-    wire:ignore
     x-data
     {{ $attributes->class(['relative inline-block filament-tables-column-toggling']) }}
 >
@@ -13,6 +12,8 @@
     <div
         x-ref="toggleablePanel"
         x-float.placement.bottom-end.offset="{ offset: 8 }"
+        wire:ignore.self
+        wire:key="toggleablePanel"
         x-cloak
         x-transition:enter="ease duration-300"
         x-transition:enter-start="opacity-0 -translate-y-2"

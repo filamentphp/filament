@@ -4,14 +4,16 @@
 ])
 
 <div
+    x-data
     {{ $attributes->class(['relative inline-block filament-tables-filters']) }}
-    wire:ignore
 >
     <x-tables::filters.trigger />
 
     <div
         x-ref="popoverPanel"
         x-float.placement.bottom-end.offset="{ offset: 8 }"
+        wire:ignore.self
+        wire:key="popoverPanel"
         x-cloak
         x-transition:enter="ease duration-300"
         x-transition:enter-start="opacity-0 -translate-y-2"
@@ -39,7 +41,7 @@
         <div @class([
             'px-6 py-4 bg-white border border-gray-300 space-y-6 shadow-xl rounded-xl',
             'dark:bg-gray-800 dark:border-gray-700' => config('tables.dark_mode'),
-        ])>
+        ]) wire:ignore.self>
             <x-tables::icon-button
                 icon="heroicon-o-x"
                 x-on:click="$refs.popoverPanel.close"
