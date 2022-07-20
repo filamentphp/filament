@@ -4,10 +4,8 @@
         'dark:border-gray-700 dark:bg-gray-800' => config('notifications.dark_mode'),
     ])
     x-data="notificationComponent({ notification: {{ \Illuminate\Support\Js::from($toLivewire()) }} })"
-    x-show="show"
     x-transition:enter-start="translate-x-12 opacity-0"
     x-transition:leave-end="scale-95 opacity-0"
-    x-bind:class="{ 'absolute': !show }"
     id="notification-{{ $getId() }}"
     wire:key="notification-{{ $getId() }}"
     dusk="filament.notifications.notification"
@@ -35,7 +33,7 @@
                 'dark:text-gray-200' => config('notifications.dark_mode'),
             ])
         >
-            {!! \Illuminate\Support\Str::of($getTitle())->markdown()->sanitizeHtml() !!}
+            {!! \Illuminate\Support\Str::of($getTitle())->markdown()->sanitizeHtml() !!} {{ $getId() }}
         </div>
 
         @if ($getDescription())

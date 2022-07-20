@@ -24,8 +24,14 @@ class MirrorConfigToSubpackages
         $config->set('forms.components.actions.modal.actions.alignment', $actionsAlignment);
         $config->set('tables.layout.actions.modal.actions.alignment', $actionsAlignment);
 
-        $config->set('notifications.layout.alignment.horizontal', $config->get('filament.layout.notifications.alignment'));
-        $config->set('notifications.layout.alignment.vertical', $config->get('filament.layout.notifications.vertical_alignment'));
+        $config->set(
+            'notifications.layout.alignment.horizontal',
+            $config->get('filament.layout.notifications.alignment') ?? $config->get('notifications.layout.alignment.horizontal'),
+        );
+        $config->set(
+            'notifications.layout.alignment.vertical',
+            $config->get('filament.layout.notifications.vertical_alignment') ?? $config->get('notifications.layout.alignment.vertical'),
+        );
 
         return $next($request);
     }

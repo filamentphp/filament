@@ -203,7 +203,7 @@ return [
         'max_content_width' => null,
         'notifications' => [
             'vertical_alignment' => 'top',
-            'alignment' => 'right',
+            'alignment' => 'center',
         ],
         'sidebar' => [
             'is_collapsible_on_desktop' => false,

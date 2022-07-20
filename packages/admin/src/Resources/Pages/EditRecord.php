@@ -3,6 +3,7 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Forms\ComponentContainer;
+use Filament\Notifications\Notification;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\DeleteAction;
 use Filament\Pages\Actions\ForceDeleteAction;
@@ -84,8 +85,9 @@ class EditRecord extends Page implements HasFormActions
 
         if (filled($this->getSavedNotificationMessage())) {
             $this->notify(
-                'success',
-                $this->getSavedNotificationMessage(),
+                Notification::make()
+                    ->success()
+                    ->title($this->getSavedNotificationMessage()),
             );
         }
 

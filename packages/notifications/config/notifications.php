@@ -36,12 +36,10 @@ return [
 
         'alignment' => [
             'horizontal' => 'right',
-            'vertical' => 'top',
+            'vertical' => 'bottom',
         ],
 
         'max_width' => null,
-
-        'push' => 'top',
 
     ],
 
