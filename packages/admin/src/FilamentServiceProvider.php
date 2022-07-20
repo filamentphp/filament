@@ -11,14 +11,11 @@ use Filament\Http\Responses\Auth\Contracts\LoginResponse as LoginResponseContrac
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
 use Filament\Http\Responses\Auth\LoginResponse;
 use Filament\Http\Responses\Auth\LogoutResponse;
-use Filament\Notifications\Facades\Notification as NotificationFacade;
-use Filament\Notifications\Notification;
 use Filament\Notifications\NotificationManager;
 use Filament\Pages\Dashboard;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action as TableAction;
-use Filament\Tables\Actions\BulkAction as TableBulkAction;
 use Filament\Tables\Actions\ButtonAction;
 use Filament\Tables\Actions\IconButtonAction;
 use Filament\Testing\TestsPages;
@@ -130,24 +127,12 @@ class FilamentServiceProvider extends PackageServiceProvider
     protected function bootTableActionConfiguration(): void
     {
         Filament::serving(function (): void {
-            $notify = function (Notification $notification): void {
-                NotificationFacade::send($notification);
-            };
-
-            TableAction::configureUsing(function (TableAction $action) use ($notify): TableAction {
+            TableAction::configureUsing(function (TableAction $action): TableAction {
                 match (config('filament.layout.tables.actions.type')) {
                     ButtonAction::class => $action->button(),
                     IconButtonAction::class => $action->iconButton(),
                     default => null,
                 };
-
-                $action->notifyUsing($notify);
-
-                return $action;
-            });
-
-            TableBulkAction::configureUsing(function (TableBulkAction $action) use ($notify): TableBulkAction {
-                $action->notifyUsing($notify);
 
                 return $action;
             });

@@ -11,26 +11,6 @@ trait CanNotify
 
     protected string | Closure | null $successNotificationMessage = null;
 
-    protected ?Closure $notifyUsing = null;
-
-    public function notifyUsing(?Closure $callback): static
-    {
-        $this->notifyUsing = $callback;
-
-        return $this;
-    }
-
-    public function notify(Notification $notification): void
-    {
-        if (! $this->notifyUsing) {
-            return;
-        }
-
-        $this->evaluate($this->notifyUsing, [
-            'notification' => $notification,
-        ]);
-    }
-
     public function sendFailureNotification(): static
     {
         $message = $this->evaluate($this->failureNotificationMessage);
