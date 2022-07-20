@@ -3,7 +3,8 @@
         'filament-notifications-notification pointer-events-auto mb-4 flex w-full max-w-md gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-lg transition duration-300',
         'dark:border-gray-700 dark:bg-gray-800' => config('notifications.dark_mode'),
     ])
-    x-data="notificationComponent({ notification: {{ \Illuminate\Support\Js::from($toLivewire()) }} })"
+    x-data="notificationComponent({ notification: {{ \Illuminate\Support\Js::from($toArray()) }} })"
+    x-show="isVisible"
     x-transition:enter-start="translate-x-12 opacity-0"
     x-transition:leave-end="scale-95 opacity-0"
     id="notification-{{ $getId() }}"
