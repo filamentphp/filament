@@ -23,7 +23,7 @@ class Notifications extends Component
 
     public function pullNotificationsFromSession(): void
     {
-        foreach (session()->pull('filament.notifications') ?? [] as $notification) {
+        foreach (session()->pull('filament.notifications', []) as $notification) {
             $notification = Notification::fromLivewire($notification);
 
             $this->notifications->put(

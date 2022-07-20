@@ -32,7 +32,7 @@ class NotificationManager
             return $response;
         }
 
-        if (count(session()->get('filament.notifications') ?? []) > 0) {
+        if (count(session()->get('filament.notifications', [])) > 0) {
             $component->emit('dispatchNewNotifications');
         }
 
