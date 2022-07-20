@@ -18,11 +18,10 @@ class Settings extends Page
             $this->redirect('/');
         }
 
-        $this->notify(
-            Notification::make()
-                ->title('Saved!')
-                ->success(),
-        );
+        Notification::make()
+            ->title('Saved!')
+            ->success()
+            ->send();
     }
 
     protected function getFormSchema(): array

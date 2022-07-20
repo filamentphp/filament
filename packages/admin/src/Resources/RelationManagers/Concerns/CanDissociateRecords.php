@@ -63,11 +63,10 @@ trait CanDissociateRecords
         $this->callHook('afterDissociate');
 
         if (filled($this->getDissociatedNotificationMessage())) {
-            $this->notify(
-                Notification::make()
-                    ->title($this->getDissociatedNotificationMessage())
-                    ->success(),
-            );
+            Notification::make()
+                ->title($this->getDissociatedNotificationMessage())
+                ->success()
+                ->send();
         }
     }
 
@@ -97,11 +96,10 @@ trait CanDissociateRecords
         $this->callHook('afterBulkDissociate');
 
         if (filled($this->getBulkDissociatedNotificationMessage())) {
-            $this->notify(
-                Notification::make()
-                    ->title($this->getBulkDissociatedNotificationMessage())
-                    ->success(),
-            );
+            Notification::make()
+                ->title($this->getBulkDissociatedNotificationMessage())
+                ->success()
+                ->send();
         }
     }
 

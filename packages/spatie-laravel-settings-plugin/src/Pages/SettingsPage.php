@@ -65,11 +65,10 @@ class SettingsPage extends Page
         }
 
         if (filled($this->getSavedNotificationMessage())) {
-            $this->notify(
-                Notification::make()
-                    ->title($this->getSavedNotificationMessage())
-                    ->success(),
-            );
+            Notification::make()
+                ->title($this->getSavedNotificationMessage())
+                ->success()
+                ->send();
         }
     }
 

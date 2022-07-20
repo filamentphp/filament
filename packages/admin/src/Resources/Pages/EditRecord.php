@@ -84,11 +84,10 @@ class EditRecord extends Page implements HasFormActions
         $shouldRedirect = $shouldRedirect && ($redirectUrl = $this->getRedirectUrl());
 
         if (filled($this->getSavedNotificationMessage())) {
-            $this->notify(
-                Notification::make()
-                    ->title($this->getSavedNotificationMessage())
-                    ->success(),
-            );
+            Notification::make()
+                ->title($this->getSavedNotificationMessage())
+                ->success()
+                ->send();
         }
 
         if ($shouldRedirect) {
@@ -134,11 +133,10 @@ class EditRecord extends Page implements HasFormActions
         $this->callHook('afterDelete');
 
         if (filled($this->getDeletedNotificationMessage())) {
-            $this->notify(
-                Notification::make()
-                    ->title($this->getDeletedNotificationMessage())
-                    ->success(),
-            );
+            Notification::make()
+                ->title($this->getDeletedNotificationMessage())
+                ->success()
+                ->send();
         }
 
         $this->redirect($this->getDeleteRedirectUrl());

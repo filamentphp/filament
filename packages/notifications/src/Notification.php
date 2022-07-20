@@ -6,6 +6,7 @@ use Closure;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Concerns\HasDuration;
 use Filament\Notifications\Concerns\HasIcon;
+use Filament\Notifications\Facades\Notification as NotificationFacade;
 use Filament\Support\Components\ViewComponent;
 use Illuminate\Support\Str;
 use Livewire\Wireable;
@@ -151,6 +152,13 @@ class Notification extends ViewComponent implements Wireable
     {
         $this->icon('heroicon-o-x-circle');
         $this->iconColor('danger');
+
+        return $this;
+    }
+
+    public function send(): static
+    {
+        NotificationFacade::send($this);
 
         return $this;
     }

@@ -216,11 +216,10 @@ trait CanAttachRecords
         }
 
         if (filled($this->getAttachedNotificationMessage())) {
-            $this->notify(
-                Notification::make()
-                    ->title($this->getAttachedNotificationMessage())
-                    ->success(),
-            );
+            Notification::make()
+                ->title($this->getAttachedNotificationMessage())
+                ->success()
+                ->send();
         }
 
         if ($another) {

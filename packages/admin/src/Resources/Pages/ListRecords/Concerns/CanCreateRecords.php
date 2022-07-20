@@ -97,11 +97,10 @@ trait CanCreateRecords
         }
 
         if (filled($this->getCreatedNotificationMessage())) {
-            $this->notify(
-                Notification::make()
-                    ->title($this->getCreatedNotificationMessage())
-                    ->success(),
-            );
+            Notification::make()
+                ->title($this->getCreatedNotificationMessage())
+                ->success()
+                ->send();
         }
 
         if ($another) {

@@ -38,7 +38,8 @@ trait CanNotify
         if (filled($message)) {
             Notification::make()
                 ->title($message)
-                ->danger();
+                ->danger()
+                ->send();
         }
 
         return $this;
@@ -51,7 +52,8 @@ trait CanNotify
         if (filled($message)) {
             Notification::make()
                 ->title($message)
-                ->success();
+                ->success()
+                ->send();
         }
 
         return $this;

@@ -40,11 +40,10 @@ trait CanDeleteRecords
         $this->callHook('afterDelete');
 
         if (filled($this->getDeletedNotificationMessage())) {
-            $this->notify(
-                Notification::make()
-                    ->title($this->getDeletedNotificationMessage())
-                    ->success(),
-            );
+            Notification::make()
+                ->title($this->getDeletedNotificationMessage())
+                ->success()
+                ->send();
         }
     }
 

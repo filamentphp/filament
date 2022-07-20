@@ -10,7 +10,6 @@ use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Navigation\UserMenuItem;
-use Filament\Notifications\Facades\Notification as NotificationFacade;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Support\Htmlable;
@@ -181,7 +180,7 @@ class FilamentManager
                 ->status($status);
         }
 
-        NotificationFacade::send($status);
+        $status->send();
     }
 
     public function getGlobalSearchProvider(): GlobalSearchProvider

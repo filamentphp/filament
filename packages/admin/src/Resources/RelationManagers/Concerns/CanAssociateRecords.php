@@ -223,11 +223,10 @@ trait CanAssociateRecords
             $form->fill();
         }
 
-        $this->notify(
-            Notification::make()
-                ->title(__('filament-support::actions/associate.single.messages.associated'))
-                ->success(),
-        );
+        Notification::make()
+            ->title(__('filament-support::actions/associate.single.messages.associated'))
+            ->success()
+            ->send();
 
         if ($another) {
             $this->getMountedTableAction()->hold();

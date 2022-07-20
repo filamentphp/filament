@@ -30,11 +30,10 @@ trait CanDetachRecords
         $this->callHook('afterDetach');
 
         if (filled($this->getDetachedNotificationMessage())) {
-            $this->notify(
-                Notification::make()
-                    ->title($this->getDetachedNotificationMessage())
-                    ->success()
-            );
+            Notification::make()
+                ->title($this->getDetachedNotificationMessage())
+                ->success()
+                ->send();
         }
     }
 
@@ -69,11 +68,10 @@ trait CanDetachRecords
         $this->callHook('afterBulkDetach');
 
         if (filled($this->getBulkDetachedNotificationMessage())) {
-            $this->notify(
-                Notification::make()
-                    ->title($this->getBulkDetachedNotificationMessage())
-                    ->success(),
-            );
+            Notification::make()
+                ->title($this->getBulkDetachedNotificationMessage())
+                ->success()
+                ->send();
         }
     }
 

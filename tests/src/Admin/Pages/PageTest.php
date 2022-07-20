@@ -1,6 +1,5 @@
 <?php
 
-use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Tests\Admin\Fixtures\Pages\Settings;
@@ -22,11 +21,10 @@ it('can generate a slug based on the page name', function () {
 
 it('can report validation errors', function () {
     Page::$reportValidationErrorUsing = function (ValidationException $exception) {
-        Filament::notify(
-            Notification::make()
-                ->title($exception->getMessage())
-                ->danger(),
-        );
+        Notification::make()
+            ->title($exception->getMessage())
+            ->danger()
+            ->send();
     };
 
     $component = livewire(Settings::class);
