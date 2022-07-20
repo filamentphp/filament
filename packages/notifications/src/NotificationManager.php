@@ -8,7 +8,7 @@ use Livewire\Response;
 
 class NotificationManager
 {
-    public function notify(Notification | string $notification, string $message): void
+    public function notify(Notification | string $notification, ?string $message): void
     {
         if (! $notification instanceof Notification) {
             $notification = Notification::make()
@@ -22,7 +22,7 @@ class NotificationManager
         );
     }
 
-    public function handleLivewireResponses(Component $component, Response $response): Response
+    public function handleLivewireResponse(Component $component, Response $response): Response
     {
         if (! Livewire::isLivewireRequest()) {
             return $response;

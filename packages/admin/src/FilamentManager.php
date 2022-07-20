@@ -5,12 +5,13 @@ namespace Filament;
 use Closure;
 use Exception;
 use Filament\Events\ServingFilament;
-use Filament\Facades\FilamentNotification;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Navigation\UserMenuItem;
+use Filament\Notifications\Facades\Notification as NotificationFacade;
+use Filament\Notifications\Notification;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -169,9 +170,9 @@ class FilamentManager
         Event::listen(ServingFilament::class, $callback);
     }
 
-    public function notify(string $status, string $message, bool $isAfterRedirect = false): void
+    public function notify(Notification | string $notification, ?string $message, bool $isAfterRedirect = false): void
     {
-        FilamentNotification::notify($status, $message);
+        NotificationFacade::notify($notification, $message);
     }
 
     public function getGlobalSearchProvider(): GlobalSearchProvider
