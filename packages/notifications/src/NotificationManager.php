@@ -12,7 +12,7 @@ class NotificationManager
     {
         session()->push(
             'filament.notifications',
-            $notification->toLivewire(),
+            $notification->toArray(),
         );
     }
 

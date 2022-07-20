@@ -2,16 +2,17 @@
 
 namespace Filament\Notifications\Actions;
 
-use Closure;
+use Filament\Notifications\Actions\Concerns\CanCloseNotification;
 use Filament\Notifications\Actions\Concerns\HasEvent;
 use Filament\Support\Actions\BaseAction;
 use Filament\Support\Actions\Concerns\CanBeOutlined;
 use Filament\Support\Actions\Concerns\CanOpenUrl;
-use Livewire\Wireable;
+use Illuminate\Contracts\Support\Arrayable;
 
-class Action extends BaseAction implements Wireable
+class Action extends BaseAction implements Arrayable
 {
     use CanBeOutlined;
+    use CanCloseNotification;
     use CanOpenUrl;
     use HasEvent;
 
@@ -19,36 +20,37 @@ class Action extends BaseAction implements Wireable
 
     protected string $viewIdentifier = 'action';
 
-    protected bool | Closure $shouldCloseNotification = false;
-
-    public function toLivewire(): array
+    public function toArray(): array
     {
         return [
             'view' => $this->getView(),
-            'isDisabled' => $this->isDisabled(),
-            'isHidden' => $this->isHidden(),
-            'color' => $this->getColor(),
+            'name' => $this->getName(),
+            'label' => $this->getLabel(),
             'icon' => $this->getIcon(),
             'iconPosition' => $this->getIconPosition(),
-            'label' => $this->getLabel(),
-            'name' => $this->getName(),
+            'color' => $this->getColor(),
             'size' => $this->getSize(),
-            'extraAttributes' => $this->getExtraAttributes(),
-            'shouldOpenUrlInNewTab' => $this->shouldOpenUrlInNewTab(),
-            'url' => $this->getUrl(),
             'isOutlined' => $this->isOutlined(),
+            'isDisabled' => $this->isDisabled(),
+            'isHidden' => $this->isHidden(),
+            'url' => $this->getUrl(),
+            'shouldOpenUrlInNewTab' => $this->shouldOpenUrlInNewTab(),
             'event' => $this->getEvent(),
             'eventData' => $this->getEventData(),
             'shouldCloseNotification' => $this->shouldCloseNotification(),
+            'extraAttributes' => $this->getExtraAttributes(),
         ];
     }
 
-    public static function fromLivewire($value): static
+    public static function fromArray($value): static
     {
         $static = static::make($value['name']);
 
         foreach ($value as $key => $value) {
-            $static->{$key} = $value;
+            match ($key) {
+                'name' => null,
+                default => $static->{$key} = $value,
+            };
         }
 
         return $static;
@@ -66,17 +68,5 @@ class Action extends BaseAction implements Wireable
         $this->view('notifications::actions.link-action');
 
         return $this;
-    }
-
-    public function closeNotification(bool | Closure $condition = true): static
-    {
-        $this->shouldCloseNotification = $condition;
-
-        return $this;
-    }
-
-    public function shouldCloseNotification(): bool
-    {
-        return $this->evaluate($this->shouldCloseNotification);
     }
 }

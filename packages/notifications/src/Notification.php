@@ -2,49 +2,43 @@
 
 namespace Filament\Notifications;
 
-use Closure;
 use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Concerns\HasActions;
+use Filament\Notifications\Concerns\HasDescription;
 use Filament\Notifications\Concerns\HasDuration;
 use Filament\Notifications\Concerns\HasIcon;
+use Filament\Notifications\Concerns\HasId;
+use Filament\Notifications\Concerns\HasTitle;
 use Filament\Notifications\Facades\Notification as NotificationFacade;
 use Filament\Support\Components\ViewComponent;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Str;
-use Livewire\Wireable;
 
-class Notification extends ViewComponent implements Wireable
+class Notification extends ViewComponent implements Arrayable
 {
+    use HasActions;
+    use HasDescription;
     use HasDuration;
     use HasIcon;
+    use HasId;
+    use HasTitle;
 
     protected string $view = 'notifications::notification';
 
-    protected string $id;
-
-    protected string | Closure | null $title = null;
-
-    protected string | Closure | null $description = null;
-
-    protected array | Closure $actions = [];
-
-    public function __construct()
+    public function __construct(string $id)
     {
-        $this->id(Str::orderedUuid());
+        $this->id($id);
     }
 
-    public static function make(): static
+    public static function make(?string $id = null): static
     {
-        $static = app(static::class);
-        $static->setUp();
+        $static = app(static::class, ['id' => $id ?? Str::orderedUuid()]);
+        $static->configure();
 
         return $static;
     }
 
-    protected function setUp(): void
-    {
-        $this->iconColor('secondary');
-    }
-
-    public function toLivewire(): array
+    public function toArray(): array
     {
         return [
             'id' => $this->getId(),
@@ -52,74 +46,31 @@ class Notification extends ViewComponent implements Wireable
             'description' => $this->getDescription(),
             'icon' => $this->getIcon(),
             'iconColor' => $this->getIconColor(),
-            'actions' => array_map(fn (Action $action): array => $action->toLivewire(), $this->getActions()),
+            'actions' => collect($this->getActions())->toArray(),
             'duration' => $this->getDuration(),
         ];
     }
 
-    public static function fromLivewire($value): static
+    public static function fromArray($value): static
     {
-        $static = static::make();
+        $static = static::make($value['id']);
 
         foreach ($value as $key => $value) {
-            if ($key === 'actions') {
-                $static->{$key} = array_map(fn (array $action): Action => Action::fromLivewire($action), $value);
-
-                continue;
-            }
-
-            $static->{$key} = $value;
+            match ($key) {
+                'id' => null,
+                'actions' => $static->actions = array_map(fn (array $action): Action => Action::fromArray($action), $value),
+                default => $static->{$key} = $value,
+            };
         }
 
         return $static;
     }
 
-    public function id(string $id): static
+    public function send(): static
     {
-        $this->id = $id;
+        NotificationFacade::send($this);
 
         return $this;
-    }
-
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    public function title(string | Closure | null $title): static
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
-    public function getTitle(): ?string
-    {
-        return $this->evaluate($this->title);
-    }
-
-    public function description(string | Closure | null $description): static
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    public function getDescription(): ?string
-    {
-        return $this->evaluate($this->description);
-    }
-
-    public function actions(array | Closure $actions): static
-    {
-        $this->actions = $actions;
-
-        return $this;
-    }
-
-    public function getActions(): array
-    {
-        return $this->evaluate($this->actions);
     }
 
     public function status(string $status): static
@@ -152,13 +103,6 @@ class Notification extends ViewComponent implements Wireable
     {
         $this->icon('heroicon-o-x-circle');
         $this->iconColor('danger');
-
-        return $this;
-    }
-
-    public function send(): static
-    {
-        NotificationFacade::send($this);
 
         return $this;
     }
