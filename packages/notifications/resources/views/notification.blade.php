@@ -33,7 +33,7 @@
                 'dark:text-gray-200' => config('notifications.dark_mode'),
             ])
         >
-            {!! \Illuminate\Support\Str::of($getTitle())->markdown()->sanitizeHtml() !!} {{ $getId() }}
+            {!! \Illuminate\Support\Str::of($getTitle())->markdown()->sanitizeHtml() !!}
         </div>
 
         @if ($getDescription())
