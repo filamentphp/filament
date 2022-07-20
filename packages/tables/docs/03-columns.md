@@ -341,7 +341,7 @@ The `money()` method allows you to easily format monetary values, in any currenc
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('price')->money('eur')
+TextColumn::make('price')->money('eur', true)
 ```
 
 You may `limit()` the length of the cell's value:
