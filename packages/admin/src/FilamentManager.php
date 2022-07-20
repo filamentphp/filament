@@ -170,17 +170,14 @@ class FilamentManager
     }
 
     /**
-     * @deprecated Use \Filament\Notifications\Facades\Notification::send() instead.
+     * @deprecated Use \Filament\Notifications\Notification::send() instead.
      */
-    public function notify(Notification | string $status, ?string $message = null, bool $isAfterRedirect = false): void
+    public function notify(string $status, string $message, bool $isAfterRedirect = false): void
     {
-        if (! $status instanceof Notification) {
-            $status = Notification::make()
-                ->title($message)
-                ->status($status);
-        }
-
-        $status->send();
+        Notification::make()
+            ->title($message)
+            ->status($status)
+            ->send();
     }
 
     public function getGlobalSearchProvider(): GlobalSearchProvider

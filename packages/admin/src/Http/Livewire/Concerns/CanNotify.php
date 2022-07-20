@@ -3,14 +3,13 @@
 namespace Filament\Http\Livewire\Concerns;
 
 use Filament\Facades\Filament;
-use Filament\Notifications\Notification;
 
 /**
- * @deprecated Use \Filament\Notifications\Http\Livewire\Concerns\CanNotify instead.
+ * @deprecated Use \Filament\Notifications\Notification::send() instead.
  */
 trait CanNotify
 {
-    public function notify(Notification | string $status, ?string $message = null, bool $isAfterRedirect = false): void
+    public function notify(string $status, string $message, bool $isAfterRedirect = false): void
     {
         Filament::notify($status, $message);
     }
