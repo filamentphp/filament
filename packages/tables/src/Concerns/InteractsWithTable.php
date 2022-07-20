@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 trait InteractsWithTable
 {
+    use CanBeStriped;
     use CanPaginateRecords;
     use CanSearchRecords;
     use CanSelectRecords;

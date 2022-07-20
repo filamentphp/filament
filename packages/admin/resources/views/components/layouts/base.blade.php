@@ -1,4 +1,3 @@
-
 @props([
     'title' => null,
 ])
@@ -44,8 +43,10 @@
         @endif
 
         @foreach (\Filament\Facades\Filament::getStyles() as $name => $path)
-            @if (Str::of($path)->startsWith(['http://', 'https://']))
+            @if (\Illuminate\Support\Str::of($path)->startsWith(['http://', 'https://']))
                 <link rel="stylesheet" href="{{ $path }}" />
+            @elseif (\Illuminate\Support\Str::of($path)->startsWith('<'))
+                {!! $path !!}
             @else
                 <link rel="stylesheet" href="{{ route('filament.asset', [
                     'file' => "{$name}.css",
@@ -53,7 +54,7 @@
             @endif
         @endforeach
 
-        <link rel="stylesheet" href="{{ \Filament\Facades\Filament::getThemeUrl() }}" />
+        {{ \Filament\Facades\Filament::getThemeLink() }}
 
         {{ \Filament\Facades\Filament::renderHook('styles.end') }}
 
@@ -87,8 +88,10 @@
         </script>
 
         @foreach (\Filament\Facades\Filament::getBeforeCoreScripts() as $name => $path)
-            @if (Str::of($path)->startsWith(['http://', 'https://']))
+            @if (\Illuminate\Support\Str::of($path)->startsWith(['http://', 'https://']))
                 <script defer src="{{ $path }}"></script>
+            @elseif (\Illuminate\Support\Str::of($path)->startsWith('<'))
+                {!! $path !!}
             @else
                 <script defer src="{{ route('filament.asset', [
                     'file' => "{$name}.js",
@@ -104,8 +107,10 @@
         ]) }}"></script>
 
         @foreach (\Filament\Facades\Filament::getScripts() as $name => $path)
-            @if (Str::of($path)->startsWith(['http://', 'https://']))
+            @if (\Illuminate\Support\Str::of($path)->startsWith(['http://', 'https://']))
                 <script defer src="{{ $path }}"></script>
+            @elseif (\Illuminate\Support\Str::of($path)->startsWith('<'))
+                {!! $path !!}
             @else
                 <script defer src="{{ route('filament.asset', [
                     'file' => "{$name}.js",

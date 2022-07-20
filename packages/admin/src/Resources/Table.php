@@ -56,7 +56,7 @@ class Table
     public function defaultSort(string $column, string $direction = 'asc'): static
     {
         $this->defaultSortColumn = $column;
-        $this->defaultSortDirection = $direction;
+        $this->defaultSortDirection = strtolower($direction);
 
         return $this;
     }

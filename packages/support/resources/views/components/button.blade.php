@@ -75,7 +75,7 @@
             x-tooltip.raw="{{ $tooltip }}"
         @endif
         type="{{ $type }}"
-        wire:loading.attr.delay="disabled"
+        wire:loading.attr="disabled"
         {!! $hasLoadingIndicator ? 'wire:loading.class.delay="opacity-70 cursor-wait"' : '' !!}
         {!! ($hasLoadingIndicator && $loadingIndicatorTarget) ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
         {!! $disabled ? 'disabled' : '' !!}

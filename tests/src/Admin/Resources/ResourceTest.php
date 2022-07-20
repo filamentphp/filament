@@ -16,60 +16,24 @@ it('can retrieve Eloquent query for model', function () {
         ->getModel()->toBeInstanceOf(Post::class);
 });
 
-it('can generate a slug based on the model name and locale', function () {
-    $originalLocale = app()->getLocale();
-
-    app()->setLocale('en');
+it('can generate a slug based on the model name', function () {
     expect(PostResource::getSlug())
         ->toBe('posts');
-
-    app()->setLocale('id');
-    expect(PostResource::getSlug())
-        ->toBe('post');
-
-    app()->setLocale($originalLocale);
 });
 
-it('can generate a slug based on the multi-word model name and locale', function () {
-    $originalLocale = app()->getLocale();
-
-    app()->setLocale('en');
+it('can generate a slug based on the multi-word model name', function () {
     expect(PostCategoryResource::getSlug())
         ->toBe('post-categories');
-
-    app()->setLocale('id');
-    expect(PostCategoryResource::getSlug())
-        ->toBe('post-category');
-
-    app()->setLocale($originalLocale);
 });
 
-it('can generate a nested slug based on the model name and locale', function () {
-    $originalLocale = app()->getLocale();
-
-    app()->setLocale('en');
+it('can generate a nested slug based on the model name', function () {
     expect(OrderResource::getSlug())
         ->toBe('shop/orders');
-
-    app()->setLocale('id');
-    expect(OrderResource::getSlug())
-        ->toBe('shop/order');
-
-    app()->setLocale($originalLocale);
 });
 
-it('can generate a nested slug based on the multi-word model name and locale', function () {
-    $originalLocale = app()->getLocale();
-
-    app()->setLocale('en');
+it('can generate a nested slug based on the multi-word model name', function () {
     expect(OrderInvoiceResource::getSlug())
         ->toBe('shop/order-invoices');
-
-    app()->setLocale('id');
-    expect(OrderInvoiceResource::getSlug())
-        ->toBe('shop/order-invoice');
-
-    app()->setLocale($originalLocale);
 });
 
 it('can generate a label based on the model name', function () {

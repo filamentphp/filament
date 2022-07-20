@@ -31,6 +31,8 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
         return [
             Tables\Filters\Filter::make('is_published')
                 ->query(fn (Builder $query) => $query->where('is_published', true)),
+            Tables\Filters\SelectFilter::make('author')
+                ->relationship('author', 'name'),
         ];
     }
 

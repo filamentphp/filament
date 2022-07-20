@@ -368,7 +368,8 @@
 
                             <x-tables::row
                                 :record-url="$recordUrl"
-                                wire:key="table.records.{{ $this->getTableRecordKey($record) }}"
+                                :wire:key="'table.records.' . $this->getTableRecordKey($record)"
+                                :striped="$this->isTableStriped()"
                                 x-bind:class="{
                                     'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $this->getTableRecordKey($record) }}'),
                                 }"
