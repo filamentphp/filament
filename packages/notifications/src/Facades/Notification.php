@@ -6,7 +6,7 @@ use Filament\Notifications\NotificationManager;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static void notify(Notification | string $notification, string $message)
+ * @method static void send(Notification $notification)
  *
  * @see NotificationManager
  */

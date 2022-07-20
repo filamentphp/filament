@@ -11,7 +11,8 @@ use Filament\Http\Responses\Auth\Contracts\LoginResponse as LoginResponseContrac
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
 use Filament\Http\Responses\Auth\LoginResponse;
 use Filament\Http\Responses\Auth\LogoutResponse;
-use Filament\Notifications\Facades\Notification;
+use Filament\Notifications\Facades\Notification as NotificationFacade;
+use Filament\Notifications\Notification;
 use Filament\Notifications\NotificationManager;
 use Filament\Pages\Dashboard;
 use Filament\Pages\Page;
@@ -117,8 +118,6 @@ class FilamentServiceProvider extends PackageServiceProvider
             MirrorConfigToSubpackages::class,
         ]);
 
-        Livewire::listen('component.dehydrate', [Notification::class, 'handleLivewireResponse']);
-
         Livewire::component('filament.core.auth.login', Login::class);
         Livewire::component('filament.core.global-search', GlobalSearch::class);
         Livewire::component('filament.core.pages.dashboard', Dashboard::class);
@@ -131,8 +130,8 @@ class FilamentServiceProvider extends PackageServiceProvider
     protected function bootTableActionConfiguration(): void
     {
         Filament::serving(function (): void {
-            $notify = function (string $status, string $message): void {
-                Filament::notify($status, $message);
+            $notify = function (Notification $notification): void {
+                NotificationFacade::send($notification);
             };
 
             TableAction::configureUsing(function (TableAction $action) use ($notify): TableAction {

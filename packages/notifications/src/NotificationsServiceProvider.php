@@ -2,6 +2,7 @@
 
 namespace Filament\Notifications;
 
+use Filament\Notifications\Facades\Notification;
 use Filament\Notifications\Http\Livewire\Notifications;
 use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
@@ -19,6 +20,7 @@ class NotificationsServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        Livewire::listen('component.dehydrate', [Notification::class, 'handleLivewireResponse']);
         Livewire::component('notifications', Notifications::class);
     }
 }

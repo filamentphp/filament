@@ -33,7 +33,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getWidgets()
  * @method static void globalSearchProvider(string $provider)
  * @method static void navigation(\Closure $builder)
- * @method static void notify(Notification | string $notification, string $message, bool $isAfterRedirect = false)
+ * @method static void notify(Notification | string $status, ?string $message = null, bool $isAfterRedirect = false)
  * @method static void registerNavigationGroups(array $groups)
  * @method static void registerNavigationItems(array $items)
  * @method static void registerPages(array $pages)

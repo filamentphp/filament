@@ -8,14 +8,8 @@ use Livewire\Response;
 
 class NotificationManager
 {
-    public function notify(Notification | string $notification, ?string $message): void
+    public function send(Notification $notification): void
     {
-        if (! $notification instanceof Notification) {
-            $notification = Notification::make()
-                ->title($message)
-                ->status($notification);
-        }
-
         session()->push(
             'filament.notifications',
             $notification->toLivewire(),
