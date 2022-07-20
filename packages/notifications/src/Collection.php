@@ -7,6 +7,11 @@ use Livewire\Wireable;
 
 class Collection extends BaseCollection implements Wireable
 {
+    final public function __construct($items = [])
+    {
+        parent::__construct($items);
+    }
+
     public function toLivewire(): array
     {
         return $this
@@ -14,12 +19,12 @@ class Collection extends BaseCollection implements Wireable
             ->toArray();
     }
 
-    public static function fromLivewire($value): self
+    public static function fromLivewire($value): static
     {
-        $self = new self();
-        $self->items = $value;
-        $self->transform(fn (array $notification): Notification => Notification::fromLivewire($notification));
+        $static = new static();
+        $static->items = $value;
+        $static->transform(fn (array $notification): Notification => Notification::fromLivewire($notification));
 
-        return $self;
+        return $static;
     }
 }

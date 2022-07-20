@@ -27,7 +27,7 @@ class Notification extends ViewComponent implements Wireable
 
     public function __construct()
     {
-        $this->id(Str::uuid());
+        $this->id(Str::orderedUuid());
     }
 
     public static function make(): static

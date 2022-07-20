@@ -51,7 +51,7 @@
 
         @if ($getActions())
             <div class="flex gap-3 mt-4 filament-notifications-notification-actions">
-                @foreach($getActions() as $action)
+                @foreach ($getActions() as $action)
                     {{ $action }}
                 @endforeach
             </div>

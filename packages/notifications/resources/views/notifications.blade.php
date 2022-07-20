@@ -22,7 +22,7 @@
     ])
     role="status"
 >
-    @foreach($notifications as $notification)
+    @foreach ($notifications as $notification)
         {{ $notification }}
     @endforeach
 </div>

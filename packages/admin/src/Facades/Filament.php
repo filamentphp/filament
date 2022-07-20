@@ -5,6 +5,7 @@ namespace Filament\Facades;
 use Closure;
 use Filament\FilamentManager;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
+use Filament\Notifications\Notification;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Contracts\Support\Htmlable;
@@ -32,7 +33,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getWidgets()
  * @method static void globalSearchProvider(string $provider)
  * @method static void navigation(\Closure $builder)
- * @method static void notify(string $status, string $message, bool $isAfterRedirect = false)
+ * @method static void notify(Notification | string $notification, string $message, bool $isAfterRedirect = false)
  * @method static void registerNavigationGroups(array $groups)
  * @method static void registerNavigationItems(array $items)
  * @method static void registerPages(array $pages)

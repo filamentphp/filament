@@ -5,6 +5,7 @@ namespace Filament\Notifications\Http\Livewire;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class Notifications extends Component
@@ -12,23 +13,30 @@ class Notifications extends Component
     public Collection $notifications;
 
     protected $listeners = [
-        'notificationSent' => 'add',
+        'dispatchNewNotifications' => 'pullNotificationsFromSession',
     ];
 
     public function mount(): void
     {
         $this->notifications = new Collection();
+        $this->pullNotificationsFromSession();
     }
 
-    public function add(array $notification): void
+    public function pullNotificationsFromSession(): void
     {
-        $notification = Notification::fromLivewire($notification);
+        foreach (session()->pull('filament.notifications') ?? [] as $notification) {
+            $notification = Notification::fromLivewire($notification);
 
-        match (config('notifications.layout.push')) {
-            'top' => $this->notifications->prepend($notification),
-            'bottom' => $this->notifications->push($notification),
-            default => null,
-        };
+            $this->notifications->put(
+                $notification->getId(),
+                $notification,
+            );
+        }
+    }
+
+    public function close(string $id): void
+    {
+        $this->notifications->forget($id);
     }
 
     public function render(): View

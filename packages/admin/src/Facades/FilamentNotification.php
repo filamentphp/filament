@@ -2,11 +2,12 @@
 
 namespace Filament\Facades;
 
-use Filament\NotificationManager;
+use Filament\Notifications\Notification;
+use Filament\Notifications\NotificationManager;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static void notify(string $status, string $message)
+ * @method static void notify(Notification | string $notification, string $message)
  *
  * @see NotificationManager
  */
