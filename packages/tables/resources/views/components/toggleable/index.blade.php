@@ -13,7 +13,7 @@
         x-ref="toggleablePanel"
         x-float.placement.bottom-end.offset="{ offset: 8 }"
         wire:ignore.self
-        wire:key="toggleablePanel"
+        wire:key="toggleablePanel-{{ $this->id }}"
         x-cloak
         x-transition:enter="ease duration-300"
         x-transition:enter-start="opacity-0 -translate-y-2"
