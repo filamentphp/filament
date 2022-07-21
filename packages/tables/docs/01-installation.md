@@ -70,7 +70,7 @@ module.exports = {
 }
 ```
 
-Of course, you may specify your own custom `primary` and `danger` colors, which will be used instead.
+Of course, you may specify your own custom `primary`, `success`, `warning` and `danger` colors, which will be used instead.
 
 In your `webpack.mix.js` file, Register Tailwind CSS as a PostCSS plugin :
 
@@ -93,14 +93,16 @@ In `/resources/css/app.css`, import `filament/forms` vendor CSS and [TailwindCSS
 @tailwind utilities;
 ```
 
-In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), the `filament/forms` and `@alpinejs/focus` plugins, and register them:
+In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), the `filament/forms`, `filament/notifications` and `@alpinejs/focus` plugins, and register them:
 ```js
 import Alpine from 'alpinejs'
-import FormsAlpinePlugin from '../../vendor/filament/forms/dist/module.esm'
 import Focus from '@alpinejs/focus'
+import FormsAlpinePlugin from '../../vendor/filament/forms/dist/module.esm'
+import NotificationsAlpinePlugin from '../../vendor/filament/notifications/dist/module.esm'
 
-Alpine.plugin(FormsAlpinePlugin)
 Alpine.plugin(Focus)
+Alpine.plugin(FormsAlpinePlugin)
+Alpine.plugin(NotificationsAlpinePlugin)
 
 window.Alpine = Alpine
 
@@ -136,6 +138,8 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
 
     <body class="antialiased">
         {{ $slot }}
+
+        <livewire:notifications />
     </body>
 </html>
 ```
