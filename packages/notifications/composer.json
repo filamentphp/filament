@@ -9,6 +9,7 @@
     },
     "require": {
         "php": "^8.0",
+        "blade-ui-kit/blade-heroicons": "^1.2",
         "filament/support": "self.version",
         "illuminate/contracts": "^8.6|^9.0",
         "illuminate/support": "^8.6|^9.0",
