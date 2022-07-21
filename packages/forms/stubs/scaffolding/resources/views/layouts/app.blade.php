@@ -22,5 +22,7 @@
 
     <body class="antialiased">
         {{ $slot }}
+
+        <livewire:notifications />
     </body>
 </html>
