@@ -15,7 +15,7 @@
         <x-dynamic-component
             :component="$getIcon()"
             :class="\Illuminate\Support\Arr::toCssClasses([
-                'h-6 w-6 filament-notifications-notification-icon',
+                'filament-notifications-notification-icon h-6 w-6',
                 match ($getIconColor()) {
                     'success' => 'text-success-400',
                     'warning' => 'text-warning-400',
@@ -30,7 +30,7 @@
     <div class="grid flex-1">
         <div
             @class([
-                'h-6 flex items-center font-medium text-sm text-gray-900 filament-notifications-notification-title',
+                'filament-notifications-notification-title flex h-6 items-center text-sm font-medium text-gray-900',
                 'dark:text-gray-200' => config('notifications.dark_mode'),
             ])
         >
@@ -40,7 +40,7 @@
         @if ($getBody())
             <div
                 @class([
-                    'mt-1 text-sm text-gray-500 filament-notifications-notification-body',
+                    'filament-notifications-notification-body mt-1 text-sm text-gray-500',
                     'dark:text-gray-400' => config('notifications.dark_mode'),
                 ])
             >
@@ -49,7 +49,7 @@
         @endif
 
         @if ($getActions())
-            <div class="flex gap-3 mt-4 filament-notifications-notification-actions">
+            <div class="filament-notifications-notification-actions mt-4 flex gap-3">
                 @foreach ($getActions() as $action)
                     {{ $action }}
                 @endforeach
@@ -58,7 +58,7 @@
     </div>
 
     <x-heroicon-s-x
-        class="h-6 w-5 text-gray-400 transition-all filament-notifications-notification-close-button"
+        class="filament-notifications-notification-close-button h-6 w-5 cursor-pointer text-gray-400"
         x-on:click="close"
     />
 </div>
