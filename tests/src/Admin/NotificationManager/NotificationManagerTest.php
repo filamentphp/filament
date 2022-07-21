@@ -16,8 +16,6 @@ it('can immediately emit notificationsSent event', function () {
     $component
         ->call('notificationManager')
         ->assertEmitted('notificationsSent');
-
-    expect(Session::get('filament.notifications'))->toBeEmpty();
 });
 
 it('will not emit notificationsSent event if Livewire component redirects', function () {
