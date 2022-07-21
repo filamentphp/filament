@@ -8,27 +8,27 @@ use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
 
-it('can immediately dispatch notify event to browser', function () {
+it('can immediately emit dispatchNewNotifications event', function () {
     $component = livewire(Settings::class);
 
     LivewireManager::$isLivewireRequestTestingOverride = true;
 
     $component
         ->call('notificationManager')
-        ->assertDispatchedBrowserEvent('notify');
+        ->assertEmitted('dispatchNewNotifications');
 
     expect(Session::get('filament.notifications'))->toBeEmpty();
 });
 
-it('will not dispatch notify event if Livewire component redirects', function () {
+it('will not emit dispatchNewNotifications event if Livewire component redirects', function () {
     livewire(Settings::class)
         ->call('notificationManager', redirect: true)
-        ->assertNotDispatchedBrowserEvent('notify');
+        ->assertNotEmitted('dispatchNewNotifications');
 
     expect(Session::get('filament.notifications'))
         ->toBeArray()
         ->toHaveLength(1)
         ->sequence(
-            fn ($notification) => $notification->message->toContain('Saved!')
+            fn ($notification) => $notification->title->toContain('Saved!')
         );
 });
