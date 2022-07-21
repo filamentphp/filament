@@ -16,7 +16,7 @@ The form builder comes pre-installed inside the [admin panel 2.x](/docs/admin/2.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/iy1DO8JXRDQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-To get started with the form builder quickly, you can set up [Alpine.js](https://alpinejs.dev), [TailwindCSS](https://tailwindcss.com) and [Livewire](https://laravel-livewire.com) with these commands:
+To get started with the form builder quickly, you can set up [Alpine.js](https://alpinejs.dev), [Tailwind CSS](https://tailwindcss.com) and [Livewire](https://laravel-livewire.com) with these commands:
 
 ```bash
 composer require filament/forms:"^2.0"
@@ -87,7 +87,7 @@ mix.js('resources/js/app.js', 'public/js')
     ])
 ```
 
-In `/resources/css/app.css`, import `filament/forms` vendor CSS and [TailwindCSS](https://tailwindcss.com):
+In `/resources/css/app.css`, import `filament/forms` vendor CSS and [Tailwind CSS](https://tailwindcss.com):
 
 ```css
 @import '../../vendor/filament/forms/dist/module.esm.css';

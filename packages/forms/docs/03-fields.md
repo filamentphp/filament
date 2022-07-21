@@ -587,7 +587,7 @@ use Filament\Forms\Components\Select;
 
 MultiSelect::make('technologies')
     ->options([
-        'tailwind' => 'TailwindCSS',
+        'tailwind' => 'Tailwind CSS',
         'alpine' => 'Alpine.js',
         'laravel' => 'Laravel',
         'livewire' => 'Laravel Livewire',
@@ -792,7 +792,7 @@ use Filament\Forms\Components\CheckboxList;
 
 CheckboxList::make('technologies')
     ->options([
-        'tailwind' => 'TailwindCSS',
+        'tailwind' => 'Tailwind CSS',
         'alpine' => 'Alpine.js',
         'laravel' => 'Laravel',
         'livewire' => 'Laravel Livewire',
@@ -823,7 +823,7 @@ use Filament\Forms\Components\CheckboxList;
 
 CheckboxList::make('technologies')
     ->options([
-        'tailwind' => 'TailwindCSS',
+        'tailwind' => 'Tailwind CSS',
         'alpine' => 'Alpine.js',
         'laravel' => 'Laravel',
         'livewire' => 'Laravel Livewire',

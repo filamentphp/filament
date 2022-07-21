@@ -14,7 +14,7 @@ The table builder comes pre-installed inside the [admin panel 2.x](/docs/admin/2
 
 ## New Laravel projects
 
-To get started with the table builder quickly, you can set up [Alpine.js](https://alpinejs.dev), [TailwindCSS](https://tailwindcss.com) and [Livewire](https://laravel-livewire.com) with these commands:
+To get started with the table builder quickly, you can set up [Alpine.js](https://alpinejs.dev), [Tailwind CSS](https://tailwindcss.com) and [Livewire](https://laravel-livewire.com) with these commands:
 
 ```bash
 composer require filament/tables:"^2.0"
@@ -83,7 +83,7 @@ mix.js('resources/js/app.js', 'public/js')
     ])
 ```
 
-In `/resources/css/app.css`, import `filament/forms` vendor CSS and [TailwindCSS](https://tailwindcss.com):
+In `/resources/css/app.css`, import `filament/forms` vendor CSS and [Tailwind CSS](https://tailwindcss.com):
 
 ```css
 @import '../../vendor/filament/forms/dist/module.esm.css';
