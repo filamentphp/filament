@@ -8,22 +8,22 @@ use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
 
-it('can immediately emit dispatchNewNotifications event', function () {
+it('can immediately emit notificationsSent event', function () {
     $component = livewire(Settings::class);
 
     LivewireManager::$isLivewireRequestTestingOverride = true;
 
     $component
         ->call('notificationManager')
-        ->assertEmitted('dispatchNewNotifications');
+        ->assertEmitted('notificationsSent');
 
     expect(Session::get('filament.notifications'))->toBeEmpty();
 });
 
-it('will not emit dispatchNewNotifications event if Livewire component redirects', function () {
+it('will not emit notificationsSent event if Livewire component redirects', function () {
     livewire(Settings::class)
         ->call('notificationManager', redirect: true)
-        ->assertNotEmitted('dispatchNewNotifications');
+        ->assertNotEmitted('notificationsSent');
 
     expect(Session::get('filament.notifications'))
         ->toBeArray()

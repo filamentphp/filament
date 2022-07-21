@@ -27,7 +27,7 @@ class NotificationManager
         }
 
         if (count(session()->get('filament.notifications', [])) > 0) {
-            $component->emit('dispatchNewNotifications');
+            $component->emit('notificationsSent');
         }
 
         return $response;

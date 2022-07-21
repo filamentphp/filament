@@ -12,7 +12,7 @@ class Notifications extends Component
     public Collection $notifications;
 
     protected $listeners = [
-        'dispatchNewNotifications' => 'pullNotificationsFromSession',
+        'notificationsSent' => 'pullNotificationsFromSession',
     ];
 
     public function mount(): void
