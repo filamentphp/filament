@@ -9,7 +9,6 @@ use Filament\Notifications\Concerns\HasDuration;
 use Filament\Notifications\Concerns\HasIcon;
 use Filament\Notifications\Concerns\HasId;
 use Filament\Notifications\Concerns\HasTitle;
-use Filament\Notifications\Facades\Notification as NotificationFacade;
 use Filament\Support\Components\ViewComponent;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Str;
@@ -68,7 +67,10 @@ class Notification extends ViewComponent implements Arrayable
 
     public function send(): static
     {
-        NotificationFacade::send($this);
+        session()->push(
+            'filament.notifications',
+            $this->toArray(),
+        );
 
         return $this;
     }

@@ -2,9 +2,10 @@
 
 namespace Filament\Notifications;
 
-use Filament\Notifications\Facades\Notification;
 use Filament\Notifications\Http\Livewire\Notifications;
+use Livewire\Component;
 use Livewire\Livewire;
+use Livewire\Response;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -14,21 +15,29 @@ class NotificationsServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('notifications')
-            ->hasCommands($this->getCommands())
+            ->hasCommands(Commands\InstallCommand::class)
             ->hasConfigFile()
             ->hasViews();
     }
 
-    protected function getCommands(): array
-    {
-        return [
-            Commands\InstallCommand::class,
-        ];
-    }
-
     public function packageBooted(): void
     {
-        Livewire::listen('component.dehydrate', [Notification::class, 'handleLivewireResponse']);
         Livewire::component('notifications', Notifications::class);
+
+        Livewire::listen('component.dehydrate', function (Component $component, Response $response): Response {
+            if (! Livewire::isLivewireRequest()) {
+                return $response;
+            }
+
+            if ($component->redirectTo !== null) {
+                return $response;
+            }
+
+            if (count(session()->get('filament.notifications', [])) > 0) {
+                $component->emit('notificationsSent');
+            }
+
+            return $response;
+        });
     }
 }
