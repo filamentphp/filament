@@ -1,0 +1,166 @@
+---
+title: Installation
+---
+
+## Requirements
+
+Filament has a few requirements to run:
+
+- PHP 8.0+
+- Laravel v8.0+
+- Livewire v2.0+
+
+The notifications package comes pre-installed inside the [admin panel 2.x](/docs/admin/2.x), but you must still follow the installation instructions below if you're using it in the rest of your app.
+
+## New Laravel projects
+
+To get started with the notifications package quickly, you can set up [Alpine.js](https://alpinejs.dev), [Tailwind CSS](https://tailwindcss.com) and [Livewire](https://laravel-livewire.com) with these commands:
+
+```bash
+composer require filament/notifications:"^2.0"
+php artisan notifications:install
+npm install
+npm run dev
+```
+
+> These commands will ruthlessly overwrite existing files in your application, hence why we only recommend using this method for new projects.
+
+You're now ready to start [sending notifications](getting-started)!
+
+## Existing Laravel projects
+
+You may download the notifications package using Composer:
+
+```bash
+composer require filament/notifications:"^2.0"
+```
+
+The package uses [Alpine.js](https://alpinejs.dev) and [Tailwind CSS](https://tailwindcss.com). You may install these through NPM:
+
+```bash
+npm install alpinejs tailwindcss --save-dev
+```
+
+To finish installing Tailwind, you must create a new `tailwind.config.js` file in the root of your project. The easiest way to do this is by running `npx tailwindcss init`.
+
+In `tailwind.config.js`, add custom colors used by the form builder:
+
+```js
+const colors = require('tailwindcss/colors') // [tl! focus]
+
+module.exports = {
+    content: [
+        './resources/**/*.blade.php',
+        './vendor/filament/**/*.blade.php', // [tl! focus]
+    ],
+    theme: {
+        extend: {
+            colors: { // [tl! focus:start]
+                danger: colors.rose,
+                primary: colors.blue,
+                success: colors.green,
+                warning: colors.yellow,
+            }, // [tl! focus:end]
+        },
+    },
+}
+```
+
+Of course, you may specify your own custom `primary`, `success`, `warning` and `danger` colors, which will be used instead.
+
+In your `webpack.mix.js` file, Register Tailwind CSS as a PostCSS plugin :
+
+```js
+const mix = require('laravel-mix')
+
+mix.js('resources/js/app.js', 'public/js')
+    .postCss('resources/css/app.css', 'public/css', [
+        require('tailwindcss'), // [tl! focus]
+    ])
+```
+
+In `/resources/css/app.css`, import [Tailwind CSS](https://tailwindcss.com):
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), the `filament/notifications` plugin, and register it:
+
+```js
+import Alpine from 'alpinejs'
+import NotificationsAlpinePlugin from '../../vendor/filament/notifications/dist/module.esm'
+
+Alpine.plugin(NotificationsAlpinePlugin)
+
+window.Alpine = Alpine
+
+Alpine.start()
+```
+
+Compile your new CSS and JS assets using `npm run dev`.
+
+Finally, create a new `resources/views/layouts/app.blade.php` layout file for Livewire components:
+
+```blade
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+
+        <meta name="application-name" content="{{ config('app.name') }}">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>{{ config('app.name') }}</title>
+
+        <!-- Styles -->
+        <style>[x-cloak] { display: none !important; }</style>
+        @livewireStyles
+        <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+
+        <!-- Scripts -->
+        @livewireScripts
+        <script src="{{ mix('js/app.js') }}" defer></script>
+        @stack('scripts')
+    </head>
+
+    <body class="antialiased">
+        {{ $slot }}
+
+        <livewire:notifications />
+    </body>
+</html>
+```
+
+You're now ready to start [sending notifications](getting-started)!
+
+## Publishing the configuration
+
+If you wish, you may publish the configuration of the package using:
+
+```bash
+php artisan vendor:publish --tag=notifications-config
+```
+
+## Upgrade Guide
+
+To upgrade the package to the latest version, you must run:
+
+```bash
+composer update
+php artisan config:clear
+php artisan view:clear
+```
+
+To do this automatically, we recommend adding these commands to your `composer.json`'s `post-update-cmd`:
+
+```json
+"post-update-cmd": [
+    // ...
+    "@php artisan config:clear",
+    "@php artisan view:clear"
+],
+```
