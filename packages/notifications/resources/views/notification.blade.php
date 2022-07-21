@@ -4,7 +4,17 @@
         'filament-notifications-notification pointer-events-auto flex w-full max-w-md gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-lg transition duration-300',
         'dark:border-gray-700 dark:bg-gray-800' => config('notifications.dark_mode'),
     ])"
-    x-transition:enter-start="translate-x-12 opacity-0"
+    :x-transition:enter-start="\Illuminate\Support\Arr::toCssClasses([
+        'opacity-0',
+        match (config('notifications.layout.alignment.horizontal')) {
+            'left' => '-translate-x-12',
+            'right' => 'translate-x-12',
+            'center' => match (config('notifications.layout.alignment.vertical')) {
+                'top' => '-translate-y-12',
+                'bottom' => 'translate-y-12',
+            },
+        },
+    ])"
     x-transition:leave-end="scale-95 opacity-0"
 >
     @if ($getIcon())
