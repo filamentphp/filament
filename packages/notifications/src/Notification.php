@@ -4,7 +4,7 @@ namespace Filament\Notifications;
 
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Concerns\HasActions;
-use Filament\Notifications\Concerns\HasDescription;
+use Filament\Notifications\Concerns\HasBody;
 use Filament\Notifications\Concerns\HasDuration;
 use Filament\Notifications\Concerns\HasIcon;
 use Filament\Notifications\Concerns\HasId;
@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
 class Notification extends ViewComponent implements Arrayable
 {
     use HasActions;
-    use HasDescription;
+    use HasBody;
     use HasDuration;
     use HasIcon;
     use HasId;
@@ -42,7 +42,7 @@ class Notification extends ViewComponent implements Arrayable
         return [
             'id' => $this->getId(),
             'title' => $this->getTitle(),
-            'description' => $this->getDescription(),
+            'body' => $this->getBody(),
             'icon' => $this->getIcon(),
             'iconColor' => $this->getIconColor(),
             'actions' => collect($this->getActions())->toArray(),

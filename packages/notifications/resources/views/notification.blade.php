@@ -37,14 +37,14 @@
             {!! \Illuminate\Support\Str::of($getTitle())->markdown()->sanitizeHtml() !!}
         </div>
 
-        @if ($getDescription())
+        @if ($getBody())
             <div
                 @class([
-                    'mt-1 text-sm text-gray-500 filament-notifications-notification-description',
+                    'mt-1 text-sm text-gray-500 filament-notifications-notification-body',
                     'dark:text-gray-400' => config('notifications.dark_mode'),
                 ])
             >
-                {!! \Illuminate\Support\Str::of($getDescription())->markdown()->sanitizeHtml() !!}
+                {!! \Illuminate\Support\Str::of($getBody())->markdown()->sanitizeHtml() !!}
             </div>
         @endif
 
