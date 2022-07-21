@@ -12,7 +12,7 @@ export default (Alpine) => {
             }
 
             Livewire.hook('message.received', () => {
-                this.top = this.$el.getBoundingClientRect().top
+                this.top = this.$refs.notification.getBoundingClientRect().top
             })
 
             Livewire.hook('message.processed', () => {
@@ -21,9 +21,9 @@ export default (Alpine) => {
         },
 
         animate: function () {
-            const top = this.$el.getBoundingClientRect().top
+            const top = this.$refs.notification.getBoundingClientRect().top
 
-            this.$el.animate(
+            this.$refs.notification.animate(
                 [
                     { transform: `translateY(${this.top - top}px)` },
                     { transform: 'translateY(0px)' },
@@ -31,9 +31,10 @@ export default (Alpine) => {
                 {
                     duration:
                         parseFloat(
-                            window.getComputedStyle(this.$el).transitionDuration
+                            window.getComputedStyle(this.$refs.notification)
+                                .transitionDuration
                         ) * 1000,
-                    easing: window.getComputedStyle(this.$el)
+                    easing: window.getComputedStyle(this.$refs.notification)
                         .transitionTimingFunction,
                 }
             )
