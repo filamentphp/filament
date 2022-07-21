@@ -14,8 +14,16 @@ class NotificationsServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('notifications')
+            ->hasCommands($this->getCommands())
             ->hasConfigFile()
             ->hasViews();
+    }
+
+    protected function getCommands(): array
+    {
+        return [
+            Commands\InstallCommand::class,
+        ];
     }
 
     public function packageBooted(): void
