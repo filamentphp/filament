@@ -1,4 +1,5 @@
 <x-notifications::notification
+    :notification="$notification"
     :class="\Illuminate\Support\Arr::toCssClasses([
         'filament-notifications-notification pointer-events-auto mb-4 flex w-full max-w-md gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-lg transition duration-300',
         'dark:border-gray-700 dark:bg-gray-800' => config('notifications.dark_mode'),

@@ -9,20 +9,20 @@ var notification_default = (Alpine) => {
         setTimeout(() => this.close(), notification.duration);
       }
       Livewire.hook("message.received", () => {
-        this.top = this.$refs.notification.getBoundingClientRect().top;
+        this.top = this.$el.getBoundingClientRect().top;
       });
       Livewire.hook("message.processed", () => {
         this.animate();
       });
     },
     animate: function() {
-      const top = this.$refs.notification.getBoundingClientRect().top;
-      this.$refs.notification.animate([
+      const top = this.$el.getBoundingClientRect().top;
+      this.$el.animate([
         {transform: `translateY(${this.top - top}px)`},
         {transform: "translateY(0px)"}
       ], {
-        duration: parseFloat(window.getComputedStyle(this.$refs.notification).transitionDuration) * 1e3,
-        easing: window.getComputedStyle(this.$refs.notification).transitionTimingFunction
+        duration: parseFloat(window.getComputedStyle(this.$el).transitionDuration) * 1e3,
+        easing: window.getComputedStyle(this.$el).transitionTimingFunction
       });
       this.top = top;
     },

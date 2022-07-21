@@ -22,11 +22,6 @@
     role="status"
 >
     @foreach ($notifications as $notification)
-        <div
-            x-data="notificationComponent({ notification: {{ \Illuminate\Support\Js::from($notification->toArray()) }} })"
-            wire:key="notification-{{ $notification->getId() }}"
-        >
-            {{ $notification }}
-        </div>
+        {{ $notification }}
     @endforeach
 </div>

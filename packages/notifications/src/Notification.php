@@ -24,6 +24,8 @@ class Notification extends ViewComponent implements Arrayable
 
     protected string $view = 'notifications::notification';
 
+    protected string $viewIdentifier = 'notification';
+
     public function __construct(string $id)
     {
         $this->id($id);
