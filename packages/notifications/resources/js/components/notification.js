@@ -1,30 +1,32 @@
 export default (Alpine) => {
     Alpine.data('notificationComponent', ({ $wire, notification }) => ({
-        isVisible: false,
-
-        top: null,
+        isEntering: true,
 
         isClosing: false,
 
-        init: function () {
-            this.top = this.$el.getBoundingClientRect().top
+        computedStyle: null,
 
-            this.$nextTick(() => (this.isVisible = true))
+        top: null,
+
+        init: function () {
+            this.computedStyle = window.getComputedStyle(this.$el)
+
+            this.$nextTick(() => (this.isEntering = false))
 
             if (notification.duration !== null) {
                 setTimeout(() => this.close(), notification.duration)
             }
 
-            Livewire.hook('message.received', (message) => {
-                if (message.component.fingerprint.name !== 'notifications') {
+            Livewire.hook('message.received', (_, component) => {
+                if (component.fingerprint.name !== 'notifications') {
                     return
                 }
 
-                this.top = this.$el.getBoundingClientRect().top
+                this.top = this.getTop()
             })
 
-            Livewire.hook('message.processed', (message) => {
-                if (message.component.fingerprint.name !== 'notifications') {
+            Livewire.hook('message.processed', (_, component) => {
+                if (component.fingerprint.name !== 'notifications') {
                     return
                 }
 
@@ -37,9 +39,7 @@ export default (Alpine) => {
         },
 
         animate: function () {
-            const top = this.$el.getBoundingClientRect().top
-
-            this.$el.getAnimations().forEach((animation) => animation.finish())
+            const top = this.getTop()
 
             this.$el.animate(
                 [
@@ -47,12 +47,8 @@ export default (Alpine) => {
                     { transform: 'translateY(0px)' },
                 ],
                 {
-                    duration:
-                        parseFloat(
-                            window.getComputedStyle(this.$el).transitionDuration
-                        ) * 1000,
-                    easing: window.getComputedStyle(this.$el)
-                        .transitionTimingFunction,
+                    duration: this.getTransitionDuration(),
+                    easing: this.computedStyle.transitionTimingFunction,
                 }
             )
 
@@ -61,7 +57,19 @@ export default (Alpine) => {
 
         close: function () {
             this.isClosing = true
-            $wire.close(notification.id)
+
+            setTimeout(
+                () => $wire.close(notification.id),
+                this.getTransitionDuration()
+            )
+        },
+
+        getTop: function () {
+            return this.$el.getBoundingClientRect().top
+        },
+
+        getTransitionDuration: function () {
+            return parseFloat(this.computedStyle.transitionDuration) * 1000
         },
     }))
 }

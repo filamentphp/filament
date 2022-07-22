@@ -1,23 +1,24 @@
 // packages/notifications/resources/js/components/notification.js
 var notification_default = (Alpine) => {
   Alpine.data("notificationComponent", ({$wire, notification}) => ({
-    isVisible: false,
-    top: null,
+    isEntering: true,
     isClosing: false,
+    computedStyle: null,
+    top: null,
     init: function() {
-      this.top = this.$el.getBoundingClientRect().top;
-      this.$nextTick(() => this.isVisible = true);
+      this.computedStyle = window.getComputedStyle(this.$el);
+      this.$nextTick(() => this.isEntering = false);
       if (notification.duration !== null) {
         setTimeout(() => this.close(), notification.duration);
       }
-      Livewire.hook("message.received", (message) => {
-        if (message.component.fingerprint.name !== "notifications") {
+      Livewire.hook("message.received", (_, component) => {
+        if (component.fingerprint.name !== "notifications") {
           return;
         }
-        this.top = this.$el.getBoundingClientRect().top;
+        this.top = this.getTop();
       });
-      Livewire.hook("message.processed", (message) => {
-        if (message.component.fingerprint.name !== "notifications") {
+      Livewire.hook("message.processed", (_, component) => {
+        if (component.fingerprint.name !== "notifications") {
           return;
         }
         if (this.isClosing) {
@@ -27,20 +28,25 @@ var notification_default = (Alpine) => {
       });
     },
     animate: function() {
-      const top = this.$el.getBoundingClientRect().top;
-      this.$el.getAnimations().forEach((animation) => animation.finish());
+      const top = this.getTop();
       this.$el.animate([
         {transform: `translateY(${this.top - top}px)`},
         {transform: "translateY(0px)"}
       ], {
-        duration: parseFloat(window.getComputedStyle(this.$el).transitionDuration) * 1e3,
-        easing: window.getComputedStyle(this.$el).transitionTimingFunction
+        duration: this.getTransitionDuration(),
+        easing: this.computedStyle.transitionTimingFunction
       });
       this.top = top;
     },
     close: function() {
       this.isClosing = true;
-      $wire.close(notification.id);
+      setTimeout(() => $wire.close(notification.id), this.getTransitionDuration());
+    },
+    getTop: function() {
+      return this.$el.getBoundingClientRect().top;
+    },
+    getTransitionDuration: function() {
+      return parseFloat(this.computedStyle.transitionDuration) * 1e3;
     }
   }));
 };

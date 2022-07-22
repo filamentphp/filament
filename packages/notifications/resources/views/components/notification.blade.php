@@ -8,7 +8,8 @@
         $wire: $wire,
         notification: {{ \Illuminate\Support\Js::from($notification->toArray()) }},
     })"
-    x-show="isVisible"
+    x-show="!isEntering"
+    x-bind:class="{ 'opacity-0': isClosing }"
     wire:key="notification-{{ $notification->getId() }}"
     dusk="filament.notifications.notification"
 >
