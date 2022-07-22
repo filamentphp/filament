@@ -4,18 +4,32 @@ var notification_default = (Alpine) => {
     isEntering: true,
     isClosing: false,
     computedStyle: null,
-    top: null,
     init: function() {
       this.computedStyle = window.getComputedStyle(this.$el);
-      this.$nextTick(() => this.isEntering = false);
+      this.configureAnimations();
       if (notification.duration !== null) {
         setTimeout(() => this.close(), notification.duration);
       }
+      this.$nextTick(() => this.isEntering = false);
+    },
+    configureAnimations: function() {
+      let animation;
       Livewire.hook("message.received", (_, component) => {
         if (component.fingerprint.name !== "notifications") {
           return;
         }
-        this.top = this.getTop();
+        const oldTop = this.getTop();
+        animation = () => {
+          const newTop = this.getTop();
+          this.$el.animate([
+            {transform: `translateY(${oldTop - newTop}px)`},
+            {transform: "translateY(0px)"}
+          ], {
+            duration: this.getTransitionDuration(),
+            easing: this.computedStyle.transitionTimingFunction
+          });
+        };
+        this.$el.getAnimations().forEach((animation2) => animation2.finish());
       });
       Livewire.hook("message.processed", (_, component) => {
         if (component.fingerprint.name !== "notifications") {
@@ -24,19 +38,8 @@ var notification_default = (Alpine) => {
         if (this.isClosing) {
           return;
         }
-        this.animate();
+        animation();
       });
-    },
-    animate: function() {
-      const top = this.getTop();
-      this.$el.animate([
-        {transform: `translateY(${this.top - top}px)`},
-        {transform: "translateY(0px)"}
-      ], {
-        duration: this.getTransitionDuration(),
-        easing: this.computedStyle.transitionTimingFunction
-      });
-      this.top = top;
     },
     close: function() {
       this.isClosing = true;
