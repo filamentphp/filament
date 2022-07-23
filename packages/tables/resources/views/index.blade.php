@@ -223,14 +223,14 @@
 >
     <x-tables::container>
         <div
-            x-show="hasHeader = (@js($renderHeader = ($header || $heading || $headerActions || $isReorderable || $isSearchVisible || $hasFilters || $isColumnToggleFormVisible)) || selectedRecords.length)"
+            x-show="hasHeader = (@js($renderHeader = ($header || $heading || ($headerActions && (! $isReorderable)) || $isReorderable || $isSearchVisible || $hasFilters || $isColumnToggleFormVisible)) || selectedRecords.length)"
             {!! ! $renderHeader ? 'x-cloak' : null !!}
         >
             @if ($header)
                 {{ $header }}
-            @elseif ($heading || $headerActions)
+            @elseif ($heading || ($headerActions && (! $isReorderable)))
                 <div class="px-2 pt-2">
-                    <x-tables::header :actions="$headerActions" class="mb-2">
+                    <x-tables::header :actions="$isReorderable ? [] : $headerActions" class="mb-2">
                         <x-slot name="heading">
                             {{ $heading }}
                         </x-slot>
@@ -277,9 +277,9 @@
                     @endif
                 </div>
 
-                @if (($isSearchVisible || $hasFiltersPopover && (! $isReordering)) || $isColumnToggleFormVisible)
+                @if ($isSearchVisible || $hasFiltersPopover || $isColumnToggleFormVisible)
                     <div class="w-full flex items-center justify-end gap-2 md:max-w-md">
-                        @if ($isSearchVisible && (! $isReordering))
+                        @if ($isSearchVisible)
                             <div class="flex-1">
                                 <x-tables::search-input/>
                             </div>
@@ -293,7 +293,7 @@
                             />
                         @endif
 
-                        @if ($hasFiltersPopover && (! $isReordering))
+                        @if ($hasFiltersPopover)
                             <x-tables::filters.popover
                                 :form="$getFiltersForm()"
                                 :width="$getFiltersFormWidth()"
@@ -364,7 +364,9 @@
                             @endif
                         </x-slot>
 
-                        @if ($isSelectionEnabled && (! $isReordering))
+                        @if ($isReordering)
+                            <x-tables::reorder.indicator :colspan="$columnsCount" />
+                        @elseif ($isSelectionEnabled)
                             <x-tables::selection-indicator
                                 :all-records-count="$getAllRecordsCount()"
                                 :colspan="$columnsCount"

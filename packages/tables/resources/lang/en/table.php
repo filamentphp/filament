@@ -115,6 +115,8 @@ return [
 
     ],
 
+    'reorder_indicator' => 'Drag and drop the records into order.',
+
     'selection_indicator' => [
 
         'selected_count' => '1 record selected.|:count records selected.',

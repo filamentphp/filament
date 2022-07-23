@@ -31,6 +31,11 @@ trait CanReorderRecords
         return $this->isTableReorderable() && $this->isTableReordering;
     }
 
+    protected function isTablePaginationEnabledDuringReordering(): bool
+    {
+        return false;
+    }
+
     protected function isTableReorderable(): bool
     {
         return filled($this->getTableReorderColumn());

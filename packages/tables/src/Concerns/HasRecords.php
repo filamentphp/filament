@@ -49,7 +49,10 @@ trait HasRecords
 
         $this->applySortingToTableQuery($query);
 
-        if ($this->isTableReordering() || ! $this->isTablePaginationEnabled()) {
+        if (
+            (! $this->isTablePaginationEnabled()) ||
+            ($this->isTableReordering() && (! $this->isTablePaginationEnabledDuringReordering()))
+        ) {
             return $this->records = $query->get();
         }
 
