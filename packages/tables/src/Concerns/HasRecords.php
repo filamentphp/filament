@@ -49,11 +49,11 @@ trait HasRecords
 
         $this->applySortingToTableQuery($query);
 
-        $this->records = $this->isTablePaginationEnabled() ?
-            $this->paginateTableQuery($query) :
-            $query->get();
+        if ($this->isTableReordering() || ! $this->isTablePaginationEnabled()) {
+            return $this->records = $query->get();
+        }
 
-        return $this->records;
+        return $this->records = $this->paginateTableQuery($query);
     }
 
     protected function resolveTableRecord(?string $key): ?Model

@@ -149,6 +149,11 @@ class Resource
         return static::can('forceDeleteAny');
     }
 
+    public static function canReorder(): bool
+    {
+        return static::can('reorder');
+    }
+
     public static function canReplicate(Model $record): bool
     {
         return static::can('replicate', $record);

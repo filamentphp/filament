@@ -40,6 +40,8 @@ class Table extends ViewComponent
 
     protected ?string $columnToggleFormWidth = null;
 
+    protected ?string $reorderColumn = null;
+
     protected ?string $recordAction = null;
 
     protected ?Closure $getRecordUrlUsing = null;
@@ -47,6 +49,8 @@ class Table extends ViewComponent
     protected ?View $header = null;
 
     protected string | Closure | null $heading = null;
+
+    protected bool $isReorderable = false;
 
     protected bool $isPaginationEnabled = true;
 
@@ -180,6 +184,20 @@ class Table extends ViewComponent
     public function recordsPerPageSelectOptions(array $options): static
     {
         $this->recordsPerPageSelectOptions = $options;
+
+        return $this;
+    }
+
+    public function reorderColumn(?string $column): static
+    {
+        $this->reorderColumn = $column;
+
+        return $this;
+    }
+
+    public function reorderable(bool $condition = true): static
+    {
+        $this->isReorderable = $condition;
 
         return $this;
     }
@@ -349,6 +367,21 @@ class Table extends ViewComponent
         }
 
         return $callback($record);
+    }
+
+    public function getReorderColumn(): ?string
+    {
+        return $this->reorderColumn;
+    }
+
+    public function isReorderable(): bool
+    {
+        return $this->isReorderable;
+    }
+
+    public function isReordering(): bool
+    {
+        return $this->getLivewire()->isTableReordering();
     }
 
     public function getSortColumn(): ?string

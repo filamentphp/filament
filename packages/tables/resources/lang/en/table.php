@@ -53,6 +53,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Finish reordering records',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Reorder records',
+        ],
+
         'filter' => [
             'label' => 'Filter',
         ],
