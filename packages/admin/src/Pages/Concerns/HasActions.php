@@ -97,6 +97,7 @@ trait HasActions
         app()->call($action->getMountUsing(), [
             'action' => $action,
             'form' => $this->getMountedActionForm(),
+            'record' => $this->getMountedActionFormModel(),
         ]);
 
         if ($action->hasForm()) {
