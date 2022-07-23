@@ -1,16 +1,17 @@
 // packages/notifications/resources/js/components/notification.js
 var notification_default = (Alpine) => {
   Alpine.data("notificationComponent", ({$wire, notification}) => ({
-    isEntering: true,
-    isClosing: false,
+    phase: "enter-start",
     computedStyle: null,
+    hasTransitionLeaveAttribute: false,
     init: function() {
       this.computedStyle = window.getComputedStyle(this.$el);
+      this.hasTransitionLeaveAttribute = this.$el.hasAttribute("x-transition:leave") || this.$el.hasAttribute("x-transition:leave-start") || this.$el.hasAttribute("x-transition:leave-end");
       this.configureAnimations();
       if (notification.duration !== null) {
         setTimeout(() => this.close(), notification.duration);
       }
-      this.$nextTick(() => this.isEntering = false);
+      this.$nextTick(() => this.phase = "enter-end");
     },
     configureAnimations: function() {
       let animation;
@@ -35,15 +36,18 @@ var notification_default = (Alpine) => {
         if (component.fingerprint.name !== "notifications") {
           return;
         }
-        if (this.isClosing) {
+        if (this.phase.startsWith("leave-")) {
           return;
         }
         animation();
       });
     },
     close: function() {
-      this.isClosing = true;
-      setTimeout(() => $wire.close(notification.id), this.getTransitionDuration());
+      this.phase = "leave-start";
+      this.$nextTick(() => {
+        setTimeout(() => $wire.close(notification.id), this.hasTransitionLeaveAttribute ? this.getTransitionDuration() : 0);
+        this.phase = "leave-end";
+      });
     },
     getTop: function() {
       return this.$el.getBoundingClientRect().top;
