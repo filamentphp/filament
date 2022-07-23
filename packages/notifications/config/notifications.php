@@ -27,9 +27,6 @@ return [
     | corresponding to Tailwind screens from `sm` to `2xl`.
     | Leave it empty for no maximum.
     |
-    | The push setting determines if new notifications will be added to the
-    | `top` or `bottom` of the list.
-    |
     */
 
     'layout' => [
