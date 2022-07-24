@@ -22973,7 +22973,7 @@ function applyStyle(button, stylesToApply) {
 }
 
 // node_modules/dompurify/dist/purify.es.js
-/*! @license DOMPurify 2.3.9 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.3.9/LICENSE */
+/*! @license DOMPurify 2.3.10 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.3.10/LICENSE */
 function _typeof(obj) {
   "@babel/helpers - typeof";
   return _typeof = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? function(obj2) {
@@ -23197,6 +23197,9 @@ var _createTrustedTypesPolicy = function _createTrustedTypesPolicy2(trustedTypes
     return trustedTypes.createPolicy(policyName, {
       createHTML: function createHTML(html2) {
         return html2;
+      },
+      createScriptURL: function createScriptURL(scriptUrl) {
+        return scriptUrl;
       }
     });
   } catch (_) {
@@ -23209,7 +23212,7 @@ function createDOMPurify() {
   var DOMPurify = function DOMPurify2(root2) {
     return createDOMPurify(root2);
   };
-  DOMPurify.version = "2.3.9";
+  DOMPurify.version = "2.3.10";
   DOMPurify.removed = [];
   if (!window2 || !window2.document || window2.document.nodeType !== 9) {
     DOMPurify.isSupported = false;
@@ -23694,6 +23697,20 @@ function createDOMPurify() {
       var lcTag = transformCaseFunc(currentNode.nodeName);
       if (!_isValidAttribute(lcTag, lcName, value)) {
         continue;
+      }
+      if (trustedTypesPolicy && _typeof(trustedTypes) === "object" && typeof trustedTypes.getAttributeType === "function") {
+        if (namespaceURI)
+          ;
+        else {
+          switch (trustedTypes.getAttributeType(lcTag, lcName)) {
+            case "TrustedHTML":
+              value = trustedTypesPolicy.createHTML(value);
+              break;
+            case "TrustedScriptURL":
+              value = trustedTypesPolicy.createScriptURL(value);
+              break;
+          }
+        }
       }
       try {
         if (namespaceURI) {
@@ -30800,6 +30817,7 @@ var buildDirectiveConfigFromModifiers = (modifiers, settings) => {
     },
     float: {
       placement: "bottom",
+      strategy: "absolute",
       middleware: []
     }
   };
@@ -30808,6 +30826,9 @@ var buildDirectiveConfigFromModifiers = (modifiers, settings) => {
   };
   if (modifiers.includes("trap")) {
     config.component.trap = true;
+  }
+  if (modifiers.includes("teleport")) {
+    config.float.strategy = "fixed";
   }
   if (modifiers.includes("offset")) {
     config.float.middleware.push(offset(settings["offset"] || 10));
@@ -30951,40 +30972,12 @@ function src_default(Alpine) {
   Alpine.directive("float", (panel2, {modifiers, expression}, {evaluate}) => {
     const settings = expression ? evaluate(expression) : {};
     const config = modifiers.length > 0 ? buildDirectiveConfigFromModifiers(modifiers, settings) : {};
+    let cleanup = null;
+    if (config.float.strategy == "fixed") {
+      panel2.style.position = "fixed";
+    }
     const clickAway = (event) => panel2.parentElement && !panel2.parentElement.closest("[x-data]").contains(event.target) ? panel2.close() : null;
     const keyEscape = (event) => event.key === "Escape" ? panel2.close() : null;
-    async function update() {
-      return await computePosition2(panel2.trigger, panel2, config.float).then(({middlewareData, placement, x, y}) => {
-        if (middlewareData.arrow) {
-          const ax = middlewareData.arrow?.x;
-          const ay = middlewareData.arrow?.y;
-          const aEl = config.float.middleware.filter((middleware) => middleware.name == "arrow")[0].options.element;
-          const staticSide = {
-            top: "bottom",
-            right: "left",
-            bottom: "top",
-            left: "right"
-          }[placement.split("-")[0]];
-          Object.assign(aEl.style, {
-            left: ax != null ? `${ax}px` : "",
-            top: ay != null ? `${ay}px` : "",
-            right: "",
-            bottom: "",
-            [staticSide]: "-4px"
-          });
-        }
-        if (middlewareData.hide) {
-          const {referenceHidden} = middlewareData.hide;
-          Object.assign(panel2.style, {
-            visibility: referenceHidden ? "hidden" : "visible"
-          });
-        }
-        Object.assign(panel2.style, {
-          left: `${x}px`,
-          top: `${y}px`
-        });
-      });
-    }
     const refName = panel2.getAttribute("x-ref");
     const component = panel2.parentElement.closest("[x-data]");
     const atTrigger = component.querySelectorAll(`[\\@click^="$refs.${refName}"]`);
@@ -30999,7 +30992,38 @@ function src_default(Alpine) {
       panel2.trigger.setAttribute("aria-expanded", true);
       if (config.component.trap)
         panel2.setAttribute("x-trap", true);
-      await update();
+      cleanup = autoUpdate(panel2.trigger, panel2, () => {
+        computePosition2(panel2.trigger, panel2, config.float).then(({middlewareData, placement, x, y}) => {
+          if (middlewareData.arrow) {
+            const ax = middlewareData.arrow?.x;
+            const ay = middlewareData.arrow?.y;
+            const aEl = config.float.middleware.filter((middleware) => middleware.name == "arrow")[0].options.element;
+            const staticSide = {
+              top: "bottom",
+              right: "left",
+              bottom: "top",
+              left: "right"
+            }[placement.split("-")[0]];
+            Object.assign(aEl.style, {
+              left: ax != null ? `${ax}px` : "",
+              top: ay != null ? `${ay}px` : "",
+              right: "",
+              bottom: "",
+              [staticSide]: "-4px"
+            });
+          }
+          if (middlewareData.hide) {
+            const {referenceHidden} = middlewareData.hide;
+            Object.assign(panel2.style, {
+              visibility: referenceHidden ? "hidden" : "visible"
+            });
+          }
+          Object.assign(panel2.style, {
+            left: `${x}px`,
+            top: `${y}px`
+          });
+        });
+      });
       window.addEventListener("click", clickAway);
       window.addEventListener("keydown", keyEscape, true);
     };
@@ -31009,7 +31033,7 @@ function src_default(Alpine) {
       panel2.trigger.setAttribute("aria-expanded", false);
       if (config.component.trap)
         panel2.setAttribute("x-trap", false);
-      autoUpdate(panel2.trigger, panel2, update);
+      cleanup();
       window.removeEventListener("click", clickAway);
       window.removeEventListener("keydown", keyEscape, false);
     };
