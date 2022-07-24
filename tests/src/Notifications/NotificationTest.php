@@ -149,13 +149,13 @@ it('can send notifications', function () {
 });
 
 it('can close notifications', function () {
-    Notification::make($id = Str::random())->send();
+    ($notification = Notification::make())->send();
 
     $component = livewire(Notifications::class);
 
     $component
         ->emit('notificationsSent')
-        ->call('close', $id);
+        ->call('close', $notification->getId());
 
     expect($component->instance()->notifications)
         ->toBeInstanceOf(Collection::class)
