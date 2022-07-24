@@ -55,11 +55,10 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
     public static function getNavigationItems(): array
     {
         return [
-            NavigationItem::make()
+            NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
                 ->icon(static::getNavigationIcon())
                 ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName()))
-                ->label(static::getNavigationLabel())
                 ->sort(static::getNavigationSort())
                 ->badge(static::getNavigationBadge())
                 ->url(static::getNavigationUrl()),
