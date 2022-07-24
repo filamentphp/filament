@@ -2,14 +2,9 @@
 
 namespace Filament\Tests\Admin\Fixtures\Resources;
 
-use Filament\Forms;
-use Filament\Resources\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
-use Filament\Tables;
 use Filament\Tests\Admin\Fixtures\Resources\ProductResource\Pages;
 use Filament\Tests\Models\Product;
-use Illuminate\Database\Eloquent\Builder;
 
 class ProductResource extends Resource
 {
