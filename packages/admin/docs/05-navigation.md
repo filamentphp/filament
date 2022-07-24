@@ -17,9 +17,16 @@ protected static function getNavigationBadge(): ?string
 {
     return static::getModel()::count();
 }
+
+protected static function getNavigationBadgeColor(): ?string
+{
+    return static::getModel()::count() > 10 ? 'warning' : 'primary';
+}
 ```
 
 The `$navigationIcon` supports the name of any Blade component, and passes a set of formatting classes to it. By default, the [Blade Heroicons](https://github.com/blade-ui-kit/blade-heroicons) package is installed, so you may use the name of any [Heroicon](https://heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
+
+If a badge value is returned by `getNavigationBadge()`, it will display using the primary Tailwind color by default. To style the badge contextually, return either `danger`, `warning`, or `success` from the `getNavigationBadgeColor()` function.
 
 ## Grouping navigation items
 
@@ -69,7 +76,7 @@ public static function getNavigationItems(): array
             ->icon($icon)
             ->isActiveWhen($closure)
             ->label($label)
-            ->badge($badge)
+            ->badge($badge, $badgeColor)
             ->sort($sort)
             ->url($url),
     ];
