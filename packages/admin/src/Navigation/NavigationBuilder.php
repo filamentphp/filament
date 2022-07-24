@@ -2,9 +2,7 @@
 
 namespace Filament\Navigation;
 
-use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Conditionable;
-use function Pest\Laravel\instance;
 
 class NavigationBuilder
 {
@@ -38,7 +36,7 @@ class NavigationBuilder
         return $this;
     }
 
-    /** @param NavigationGroup[] $groups */
+    /** @param  NavigationGroup[]  $groups */
     public function groups(array $groups): static
     {
         $this->groups = array_merge($this->groups, $groups);
@@ -46,7 +44,7 @@ class NavigationBuilder
         return $this;
     }
 
-    /** @param NavigationItem[] $items */
+    /** @param  NavigationItem[]  $items */
     public function items(array $items): static
     {
         $this->items = array_merge($this->items, $items);
