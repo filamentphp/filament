@@ -134,6 +134,11 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
     {
         return null;
     }
+    
+    protected static function getNavigationBadgeColor(): ?string
+    {
+        return null;
+    }
 
     protected static function getNavigationSort(): ?int
     {
