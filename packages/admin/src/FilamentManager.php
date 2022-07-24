@@ -320,6 +320,17 @@ class FilamentManager
         return $this->styles;
     }
 
+    /**
+     * @deprecated Use `getThemeLink()` instead.
+     */
+    public function getThemeUrl(): string
+    {
+        return $this->theme ?? route('filament.asset', [
+            'id' => get_asset_id('app.css'),
+            'file' => 'app.css',
+        ]);
+    }
+
     public function getThemeLink(): Htmlable
     {
         if (Str::of($this->theme)->contains('<link')) {
