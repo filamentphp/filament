@@ -5,13 +5,16 @@ namespace Filament\Pages;
 use Filament\Forms\ComponentContainer;
 use Filament\Notifications\Notification;
 use Filament\Pages\Actions\Action;
+use Filament\Pages\Contracts\HasFormActions;
 use Illuminate\Support\Str;
 
 /**
  * @property ComponentContainer $form
  */
-class SettingsPage extends Page
+class SettingsPage extends Page implements HasFormActions
 {
+    use Concerns\HasFormActions;
+
     protected static string $settings;
 
     protected static string $view = 'filament-spatie-laravel-settings-plugin::pages.settings-page';
@@ -102,10 +105,21 @@ class SettingsPage extends Page
     protected function getFormActions(): array
     {
         return [
-            Action::make('save')
-                ->label(__('filament-spatie-laravel-settings-plugin::pages/settings-page.form.actions.save.label'))
-                ->submit('save'),
+            $this->getSaveFormAction(),
         ];
+    }
+
+    protected function getSaveFormAction(): Action
+    {
+        return Action::make('save')
+            ->label(__('filament-spatie-laravel-settings-plugin::pages/settings-page.form.actions.save.label'))
+            ->submit('save')
+            ->keyBindings(['mod+s']);
+    }
+
+    protected function getSubmitFormAction(): Action
+    {
+        return $this->getSaveFormAction();
     }
 
     protected function getForms(): array

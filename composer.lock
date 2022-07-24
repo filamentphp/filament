@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "769a69a0c6d85a80f733fdf36daa54c4",
+    "content-hash": "21c2313cf9ce7f9b707716871a2468c0",
     "packages": [],
     "packages-dev": [
         {
@@ -127,16 +127,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.231.9",
+            "version": "3.231.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "fbda3e544226b44f79ead89de78f220d30ef3796"
+                "reference": "8f8742caa42b260950320c98ddc5da4926e2373d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/fbda3e544226b44f79ead89de78f220d30ef3796",
-                "reference": "fbda3e544226b44f79ead89de78f220d30ef3796",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8f8742caa42b260950320c98ddc5da4926e2373d",
+                "reference": "8f8742caa42b260950320c98ddc5da4926e2373d",
                 "shasum": ""
             },
             "require": {
@@ -213,9 +213,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.231.9"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.231.12"
             },
-            "time": "2022-07-19T18:14:37+00:00"
+            "time": "2022-07-22T18:19:47+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -369,16 +369,16 @@
         },
         {
             "name": "brianium/paratest",
-            "version": "v6.6.0",
+            "version": "v6.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/paratestphp/paratest.git",
-                "reference": "bce7b965a5fe5028a53c3151042ca12777600acd"
+                "reference": "ae5803ce4558f855c7d955baa2d90b93ec40c4b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/paratestphp/paratest/zipball/bce7b965a5fe5028a53c3151042ca12777600acd",
-                "reference": "bce7b965a5fe5028a53c3151042ca12777600acd",
+                "url": "https://api.github.com/repos/paratestphp/paratest/zipball/ae5803ce4558f855c7d955baa2d90b93ec40c4b7",
+                "reference": "ae5803ce4558f855c7d955baa2d90b93ec40c4b7",
                 "shasum": ""
             },
             "require": {
@@ -445,7 +445,7 @@
             ],
             "support": {
                 "issues": "https://github.com/paratestphp/paratest/issues",
-                "source": "https://github.com/paratestphp/paratest/tree/v6.6.0"
+                "source": "https://github.com/paratestphp/paratest/tree/v6.6.1"
             },
             "funding": [
                 {
@@ -457,7 +457,7 @@
                     "type": "paypal"
                 }
             ],
-            "time": "2022-07-12T07:15:58+00:00"
+            "time": "2022-07-22T14:07:17+00:00"
         },
         {
             "name": "brick/math",
@@ -2892,16 +2892,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v9.21.1",
+            "version": "v9.21.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "eee833e46de5301aa533ce1b7f5372d375b00fd8"
+                "reference": "569d7a2e361895f90e66bb4e02db89c27691a0e7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/eee833e46de5301aa533ce1b7f5372d375b00fd8",
-                "reference": "eee833e46de5301aa533ce1b7f5372d375b00fd8",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/569d7a2e361895f90e66bb4e02db89c27691a0e7",
+                "reference": "569d7a2e361895f90e66bb4e02db89c27691a0e7",
                 "shasum": ""
             },
             "require": {
@@ -3068,7 +3068,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2022-07-20T13:40:59+00:00"
+            "time": "2022-07-22T14:16:44+00:00"
         },
         {
             "name": "laravel/pint",
@@ -13007,8 +13007,9 @@
     "prefer-lowest": false,
     "platform": {
         "php": "^8.0",
-        "ext-intl": "*"
+        "ext-intl": "*",
+        "composer-runtime-api": "^2.1"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.1.0"
 }
