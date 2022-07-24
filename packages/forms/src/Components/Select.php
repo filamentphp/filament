@@ -453,19 +453,12 @@ class Select extends Field
                 ]);
             }
 
-            $search = strtolower($search);
+            $component->applySearchConstraint(
+                $relationshipQuery,
+                strtolower($search),
+            );
 
-            /** @var Connection $databaseConnection */
-            $databaseConnection = $relationshipQuery->getConnection();
-
-            $searchOperator = match ($databaseConnection->getDriverName()) {
-                'pgsql' => 'ilike',
-                default => 'like',
-            };
-
-            $relationshipQuery = $relationshipQuery
-                ->where($component->getRelationshipTitleColumnName(), $searchOperator, "%{$search}%")
-                ->limit(50);
+            $relationshipQuery->limit(50);
 
             $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
 
