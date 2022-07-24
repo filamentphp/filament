@@ -61,7 +61,7 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
                 ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName()))
                 ->label(static::getNavigationLabel())
                 ->sort(static::getNavigationSort())
-                ->badge(static::getNavigationBadge())
+                ->badge(static::getNavigationBadge(), static::getNavigationBadgeColor())
                 ->url(static::getNavigationUrl()),
         ];
     }
