@@ -6,11 +6,8 @@ use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Http\Livewire\Notifications;
 use Filament\Notifications\Notification;
-use Filament\Tests\Admin\Fixtures\Pages\Settings;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Session;
-use Livewire\LivewireManager;
 use Illuminate\Support\Str;
 use function Pest\Livewire\livewire;
 
@@ -39,20 +36,20 @@ it('can send notifications', function () {
     Notification::make($id = Str::random())
         ->actions([
             Action::make($actionName = Str::random())
-                ->closeNotification($shouldActionCloseNotification = !! rand(0, 1))
+                ->closeNotification($shouldActionCloseNotification = (bool) rand(0, 1))
                 ->color($actionColor = $getRandomColor())
-                ->disabled($isActionDisabled = !! rand(0, 1))
+                ->disabled($isActionDisabled = (bool) rand(0, 1))
                 ->event($actionEvent = Str::random())
                 ->eventData($actionEventData = [Str::random()])
                 ->extraAttributes($actionExtraAttributes = ['x' . Str::random(15) => Str::random()]) // Attributes must start with a letter
                 ->icon($actionIcon = $getRandomIcon())
                 ->iconPosition($actionIconPosition = Arr::random(['after', 'before']))
                 ->label($actionLabel = Str::random())
-                ->outlined($isActionOutlined = !! rand(0, 1))
+                ->outlined($isActionOutlined = (bool) rand(0, 1))
                 ->size($actionSize = Arr::random(['sm', 'md', 'lg']))
                 ->url(
                     $actionUrl = Str::random(),
-                    shouldOpenInNewTab: $shouldActionOpenUrlInNewTab = !! rand(0, 1),
+                    shouldOpenInNewTab: $shouldActionOpenUrlInNewTab = (bool) rand(0, 1),
                 ),
         ])
         ->body($body = Str::random())

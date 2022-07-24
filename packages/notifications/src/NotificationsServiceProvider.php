@@ -4,10 +4,6 @@ namespace Filament\Notifications;
 
 use Filament\Notifications\Http\Livewire\Notifications;
 use Filament\Notifications\Testing\TestsNotifications;
-use Filament\Tables\Testing\TestsActions;
-use Filament\Tables\Testing\TestsColumns;
-use Filament\Tables\Testing\TestsFilters;
-use Filament\Tables\Testing\TestsRecords;
 use Livewire\Component;
 use Livewire\Livewire;
 use Livewire\Response;

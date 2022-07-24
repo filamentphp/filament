@@ -4,12 +4,9 @@ namespace Filament\Notifications\Testing;
 
 use Closure;
 use Filament\Notifications\Notification;
-use Filament\Support\Actions\Action as BaseAction;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Livewire\Component;
 use Livewire\Testing\TestableLivewire;
-use Pest\Expectation;
 
 /**
  * @method Component instance()
