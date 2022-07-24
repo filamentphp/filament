@@ -64,14 +64,27 @@ class SupportServiceProvider extends PackageServiceProvider
         });
 
         if (class_exists(AboutCommand::class)) {
+            $packages = [
+                'filament',
+                'forms',
+                'tables',
+                'support',
+            ];
+
             AboutCommand::add('Filament', [
                 'Version' => InstalledVersions::getPrettyVersion('filament/support'),
-                'Packages' => collect([
-                    'admin' => InstalledVersions::isInstalled('filament/filament'),
-                    'forms' => InstalledVersions::isInstalled('filament/forms'),
-                    'tables' => InstalledVersions::isInstalled('filament/tables'),
-                ])->filter()->keys()->join(', '),
-                'Views' => is_dir(resource_path('views/vendor/filament')) ? '<fg=red;options=bold>PUBLISHED</>' : '<fg=green;options=bold>NOT PUBLISHED</>',
+                'Packages' => collect($packages)
+                    ->filter(fn (string $package): bool => InstalledVersions::isInstalled("filament/{$package}"))
+                    ->join(', '),
+                'Views' => function () use ($packages): string {
+                    $publishedViewPaths = collect($packages)->filter(fn (string $package): bool => is_dir(resource_path("views/vendor/{$package}")));
+
+                    if (! $publishedViewPaths->count()) {
+                        return '<fg=green;options=bold>NOT PUBLISHED</>';
+                    }
+
+                    return "<fg=red;options=bold>PUBLISHED:</> {$publishedViewPaths->join(', ')}";
+                },
             ]);
         }
     }
