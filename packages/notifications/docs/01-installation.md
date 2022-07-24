@@ -10,14 +10,19 @@ Filament has a few requirements to run:
 - Laravel v8.0+
 - Livewire v2.0+
 
-The notifications package comes pre-installed inside the [admin panel 2.x](/docs/admin/2.x), but you must still follow the installation instructions below if you're using it in the rest of your app.
+Notifications come pre-installed inside the [admin panel 2.x](/docs/admin/2.x), but you must still follow the installation instructions below if you're using it in the rest of your app.
 
-## New Laravel projects
-
-To get started with the notifications package quickly, you can set up [Alpine.js](https://alpinejs.dev), [Tailwind CSS](https://tailwindcss.com) and [Livewire](https://laravel-livewire.com) with these commands:
+First, require the notifications package using Composer:
 
 ```bash
 composer require filament/notifications:"^2.0"
+```
+
+## New Laravel projects
+
+To get started with notifications quickly, you can set up [Livewire](https://laravel-livewire.com), [Alpine.js](https://alpinejs.dev) and [Tailwind CSS](https://tailwindcss.com) with these commands:
+
+```bash
 php artisan notifications:install
 npm install
 npm run dev
@@ -29,21 +34,22 @@ You're now ready to start [sending notifications](getting-started)!
 
 ## Existing Laravel projects
 
-You may download the notifications package using Composer:
+The package uses the following dependencies:
 
-```bash
-composer require filament/notifications:"^2.0"
-```
+- [Alpine.js](https://alpinejs.dev)
+- [Tailwind CSS](https://tailwindcss.com)
 
-The package uses [Alpine.js](https://alpinejs.dev) and [Tailwind CSS](https://tailwindcss.com). You may install these through NPM:
+You may install these through NPM:
 
 ```bash
 npm install alpinejs tailwindcss --save-dev
 ```
 
+### Configuring Tailwind CSS
+
 To finish installing Tailwind, you must create a new `tailwind.config.js` file in the root of your project. The easiest way to do this is by running `npx tailwindcss init`.
 
-In `tailwind.config.js`, add custom colors used by the form builder:
+In `tailwind.config.js`, add custom colors used by notifications:
 
 ```js
 const colors = require('tailwindcss/colors') // [tl! focus]
@@ -68,7 +74,54 @@ module.exports = {
 
 Of course, you may specify your own custom `primary`, `success`, `warning` and `danger` colors, which will be used instead.
 
-In your `webpack.mix.js` file, Register Tailwind CSS as a PostCSS plugin :
+### Bundling assets
+
+New Laravel projects use Vite for bundling assets by default. However, your project may still use Laravel Mix. Read the steps below for the bundler used in your project.
+
+#### Vite
+
+If you're using Vite, you should manually install [Autoprefixer](https://github.com/postcss/autoprefixer) through NPM:
+
+```bash
+npm install autoprefixer --save-dev
+```
+
+Create a `postcss.config.js` file in the root of your project, and register Tailwind CSS and Autoprefixer as plugins:
+
+```js
+module.exports = {
+    plugins: {
+        tailwindcss: {},
+        autoprefixer: {},
+    },
+}
+```
+
+You may also want to update your `vite.config.js` file to refresh the page after Livewire components have been updated:
+
+```js
+import { defineConfig } from 'vite';
+import laravel, { refreshPaths } from 'laravel-vite-plugin'; // [tl! focus]
+
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: [
+                'resources/css/app.css',
+                'resources/js/app.js',
+            ],
+            refresh: [ // [tl! focus:start]
+                ...refreshPaths,
+                'app/Http/Livewire/**',
+            ], // [tl! focus:end]
+        }),
+    ],
+});
+```
+
+#### Laravel Mix
+
+In your `webpack.mix.js` file, register Tailwind CSS as a PostCSS plugin :
 
 ```js
 const mix = require('laravel-mix')
@@ -79,6 +132,8 @@ mix.js('resources/js/app.js', 'public/js')
     ])
 ```
 
+### Configuring styles
+
 In `/resources/css/app.css`, import [Tailwind CSS](https://tailwindcss.com):
 
 ```css
@@ -87,7 +142,9 @@ In `/resources/css/app.css`, import [Tailwind CSS](https://tailwindcss.com):
 @tailwind utilities;
 ```
 
-In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), the `filament/notifications` plugin, and register it:
+### Configuring scripts
+
+In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev) and the `filament/notifications` plugin, and register it:
 
 ```js
 import Alpine from 'alpinejs'
@@ -100,7 +157,11 @@ window.Alpine = Alpine
 Alpine.start()
 ```
 
+### Compiling assets
+
 Compile your new CSS and JS assets using `npm run dev`.
+
+### Configuring layout
 
 Finally, create a new `resources/views/layouts/app.blade.php` layout file for Livewire components:
 
@@ -137,7 +198,7 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
 
 You're now ready to start [sending notifications](getting-started)!
 
-## Publishing the configuration
+## Publishing configuration
 
 If you wish, you may publish the configuration of the package using:
 
@@ -145,7 +206,7 @@ If you wish, you may publish the configuration of the package using:
 php artisan vendor:publish --tag=notifications-config
 ```
 
-## Upgrade Guide
+## Upgrading
 
 To upgrade the package to the latest version, you must run:
 
