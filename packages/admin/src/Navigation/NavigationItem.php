@@ -15,6 +15,7 @@ class NavigationItem
     protected string $label;
 
     protected ?string $badge = null;
+
     protected ?string $badgeColor = null;
 
     protected bool $shouldOpenUrlInNewTab = false;
