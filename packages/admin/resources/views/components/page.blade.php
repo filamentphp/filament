@@ -78,5 +78,5 @@
 
     @stack('modals')
 
-    <livewire:notifications />
+    @livewire('notifications')
 </div>

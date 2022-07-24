@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "21c2313cf9ce7f9b707716871a2468c0",
+    "content-hash": "6ec650e8fe072cab332db6d88dc211c2",
     "packages": [],
     "packages-dev": [
         {
@@ -2098,6 +2098,51 @@
                 "source": "https://github.com/FakerPHP/Faker/tree/v1.20.0"
             },
             "time": "2022-07-20T13:12:54+00:00"
+        },
+        {
+            "name": "filament/support",
+            "version": "2.x-dev",
+            "dist": {
+                "type": "path",
+                "url": "packages/support",
+                "reference": "2cc30771f859343983b522490ba249a18bccad2d"
+            },
+            "require": {
+                "illuminate/contracts": "^8.6|^9.0",
+                "illuminate/support": "^8.6|^9.0",
+                "illuminate/view": "^8.6|^9.0",
+                "php": "^8.0",
+                "spatie/laravel-package-tools": "^1.9",
+                "tgalopin/html-sanitizer": "^1.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Filament\\Support\\SupportServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
+                "psr-4": {
+                    "Filament\\Support\\": "src"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Associated helper methods and foundation code for Filament packages.",
+            "homepage": "https://github.com/filamentphp/filament",
+            "support": {
+                "issues": "https://github.com/filamentphp/filament/issues",
+                "source": "https://github.com/filamentphp/filament"
+            },
+            "transport-options": {
+                "relative": true
+            }
         },
         {
             "name": "filp/whoops",

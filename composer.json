@@ -13,6 +13,7 @@
         "canvural/phpstan-blade-rule": "^0.1.0",
         "danharrin/livewire-rate-limiting": "^0.3|^1.0",
         "doctrine/dbal": "^3.2",
+        "filament/support": "^2.14",
         "laravel/pint": "^1.0",
         "league/flysystem-aws-s3-v3": "^1.0|^2.0|^3.0",
         "nunomaduro/larastan": "^1.0",
@@ -68,5 +69,11 @@
         ]
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "path",
+            "url": "packages/support"
+        }
+    ]
 }

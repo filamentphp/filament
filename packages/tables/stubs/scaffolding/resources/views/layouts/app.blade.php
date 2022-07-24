@@ -23,6 +23,6 @@
     <body class="antialiased">
         {{ $slot }}
 
-        <livewire:notifications />
+        @livewire('notifications')
     </body>
 </html>

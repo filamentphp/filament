@@ -130,7 +130,7 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
     <body class="antialiased">
         {{ $slot }}
 
-        <livewire:notifications />
+        @livewire('notifications')
     </body>
 </html>
 ```

@@ -43,26 +43,24 @@ class Notification extends ViewComponent implements Arrayable
     {
         return [
             'id' => $this->getId(),
-            'title' => $this->getTitle(),
+            'actions' => collect($this->getActions())->toArray(),
             'body' => $this->getBody(),
+            'duration' => $this->getDuration(),
             'icon' => $this->getIcon(),
             'iconColor' => $this->getIconColor(),
-            'actions' => collect($this->getActions())->toArray(),
-            'duration' => $this->getDuration(),
+            'title' => $this->getTitle(),
         ];
     }
 
     public static function fromArray($value): static
     {
         $static = static::make($value['id']);
-
-        foreach ($value as $key => $value) {
-            match ($key) {
-                'id' => null,
-                'actions' => $static->actions = array_map(fn (array $action): Action => Action::fromArray($action), $value),
-                default => $static->{$key} = $value,
-            };
-        }
+        $static->actions(array_map(fn (array $action): Action => Action::fromArray($action), $value['actions']));
+        $static->body($value['body']);
+        $static->duration($value['duration']);
+        $static->icon($value['icon']);
+        $static->iconColor($value['iconColor']);
+        $static->title($value['title']);
 
         return $static;
     }

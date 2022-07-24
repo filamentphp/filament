@@ -23,35 +23,41 @@ class Action extends BaseAction implements Arrayable
     public function toArray(): array
     {
         return [
-            'view' => $this->getView(),
             'name' => $this->getName(),
-            'label' => $this->getLabel(),
-            'icon' => $this->getIcon(),
-            'iconPosition' => $this->getIconPosition(),
             'color' => $this->getColor(),
-            'size' => $this->getSize(),
-            'isOutlined' => $this->isOutlined(),
-            'isDisabled' => $this->isDisabled(),
-            'isHidden' => $this->isHidden(),
-            'url' => $this->getUrl(),
-            'shouldOpenUrlInNewTab' => $this->shouldOpenUrlInNewTab(),
             'event' => $this->getEvent(),
             'eventData' => $this->getEventData(),
-            'shouldCloseNotification' => $this->shouldCloseNotification(),
             'extraAttributes' => $this->getExtraAttributes(),
+            'icon' => $this->getIcon(),
+            'iconPosition' => $this->getIconPosition(),
+            'isOutlined' => $this->isOutlined(),
+            'isDisabled' => $this->isDisabled(),
+            'label' => $this->getLabel(),
+            'shouldCloseNotification' => $this->shouldCloseNotification(),
+            'shouldOpenUrlInNewTab' => $this->shouldOpenUrlInNewTab(),
+            'size' => $this->getSize(),
+            'url' => $this->getUrl(),
         ];
     }
 
     public static function fromArray($value): static
     {
         $static = static::make($value['name']);
-
-        foreach ($value as $key => $value) {
-            match ($key) {
-                'name' => null,
-                default => $static->{$key} = $value,
-            };
-        }
+        $static->closeNotification($value['shouldCloseNotification']);
+        $static->color($value['color']);
+        $static->disabled($value['isDisabled']);
+        $static->event($value['event']);
+        $static->eventData($value['eventData']);
+        $static->extraAttributes($value['extraAttributes']);
+        $static->icon($value['icon']);
+        $static->iconPosition($value['iconPosition']);
+        $static->label($value['label']);
+        $static->outlined($value['isOutlined']);
+        $static->size($value['size']);
+        $static->url(
+            $value['url'],
+            shouldOpenInNewTab: $value['shouldOpenUrlInNewTab'],
+        );
 
         return $static;
     }

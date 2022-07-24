@@ -78,11 +78,11 @@ class Action extends BaseAction implements Groupable, HasRecord
         return $action;
     }
 
-    public function notify(Notification | string $status, string $message): void
+    public function notify(Notification | string $status, ?string $message = null): void
     {
-        $status instanceof Notification
-            ? $status->send()
-            : Filament::notify($status, $message);
+        $status instanceof Notification ?
+            $status->send() :
+            Filament::notify($status, $message);
     }
 
     protected function getDefaultEvaluationParameters(): array
