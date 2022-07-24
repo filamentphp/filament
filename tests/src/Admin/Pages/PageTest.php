@@ -31,5 +31,5 @@ it('can report validation errors', function () {
     $component
         ->call('save')
         ->assertHasErrors(['name' => ['required']])
-        ->assertNotified($component->instance()->getErrorBag()->first());
+        ->assertNotified();
 });
