@@ -58,6 +58,7 @@
                             :icon="$item->getIcon()"
                             :url="$item->getUrl()"
                             :badge="$item->getBadge()"
+                            :badgeColor="$item->getBadgeColor()"
                             :shouldOpenUrlInNewTab="$item->shouldOpenUrlInNewTab()"
                         >
                             {{ $item->getLabel() }}
