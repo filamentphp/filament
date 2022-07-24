@@ -449,6 +449,11 @@ class Resource
     {
         return null;
     }
+    
+    protected static function getNavigationBadgeColor(): ?string
+    {
+        return null;
+    }
 
     protected static function getNavigationSort(): ?int
     {
