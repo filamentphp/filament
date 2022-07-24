@@ -35,10 +35,10 @@ class NavigationItem
         return app(static::class, ['label' => $label]);
     }
 
-    public function badge(?string $badge, ?string $badgeColor = null): static
+    public function badge(?string $badge, ?string $color = null): static
     {
         $this->badge = $badge;
-        $this->badgeColor = $badgeColor;
+        $this->badgeColor = $color;
 
         return $this;
     }
@@ -97,7 +97,7 @@ class NavigationItem
     {
         return $this->badge;
     }
-    
+
     public function getBadgeColor(): ?string
     {
         return $this->badgeColor;

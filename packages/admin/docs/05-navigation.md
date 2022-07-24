@@ -12,21 +12,29 @@ protected static ?string $navigationIcon = 'heroicon-o-document-text';
 protected static ?string $navigationLabel = 'Custom Navigation Label';
 
 protected static ?int $navigationSort = 3;
+```
 
+The `$navigationIcon` supports the name of any Blade component, and passes a set of formatting classes to it. By default, the [Blade Heroicons](https://github.com/blade-ui-kit/blade-heroicons) package is installed, so you may use the name of any [Heroicon](https://heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
+
+## Navigation item badges
+
+To add a badge next to the navigation item, you can use the `getNavigationBadge()` method and return the content of the badge:
+
+```php
 protected static function getNavigationBadge(): ?string
 {
     return static::getModel()::count();
 }
+```
 
+If a badge value is returned by `getNavigationBadge()`, it will display using the primary Tailwind color by default. To style the badge contextually, return either `danger`, `warning`, or `success` from the `getNavigationBadgeColor()` method:
+
+```php
 protected static function getNavigationBadgeColor(): ?string
 {
     return static::getModel()::count() > 10 ? 'warning' : 'primary';
 }
 ```
-
-The `$navigationIcon` supports the name of any Blade component, and passes a set of formatting classes to it. By default, the [Blade Heroicons](https://github.com/blade-ui-kit/blade-heroicons) package is installed, so you may use the name of any [Heroicon](https://heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
-
-If a badge value is returned by `getNavigationBadge()`, it will display using the primary Tailwind color by default. To style the badge contextually, return either `danger`, `warning`, or `success` from the `getNavigationBadgeColor()` function.
 
 ## Grouping navigation items
 

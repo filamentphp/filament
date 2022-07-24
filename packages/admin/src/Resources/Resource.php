@@ -84,7 +84,7 @@ class Resource
                 ->group(static::getNavigationGroup())
                 ->icon(static::getNavigationIcon())
                 ->isActiveWhen(fn () => request()->routeIs("{$routeBaseName}.*"))
-                ->badge(static::getNavigationBadge(), static::getNavigationBadgeColor())
+                ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
         ];
@@ -448,7 +448,7 @@ class Resource
     {
         return null;
     }
-    
+
     protected static function getNavigationBadgeColor(): ?string
     {
         return null;

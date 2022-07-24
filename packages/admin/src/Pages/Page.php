@@ -60,7 +60,7 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
                 ->icon(static::getNavigationIcon())
                 ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName()))
                 ->sort(static::getNavigationSort())
-                ->badge(static::getNavigationBadge(), static::getNavigationBadgeColor())
+                ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->url(static::getNavigationUrl()),
         ];
     }
@@ -133,7 +133,7 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
     {
         return null;
     }
-    
+
     protected static function getNavigationBadgeColor(): ?string
     {
         return null;
