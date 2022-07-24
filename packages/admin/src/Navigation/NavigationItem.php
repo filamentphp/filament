@@ -15,6 +15,7 @@ class NavigationItem
     protected string $label;
 
     protected ?string $badge = null;
+    protected ?string $badgeColor = null;
 
     protected bool $shouldOpenUrlInNewTab = false;
 
@@ -26,9 +27,10 @@ class NavigationItem
     {
     }
 
-    public function badge(?string $badge): static
+    public function badge(?string $badge, ?string $badgeColor = null): static
     {
         $this->badge = $badge;
+        $this->badgeColor = $badgeColor;
 
         return $this;
     }
@@ -91,6 +93,11 @@ class NavigationItem
     public function getBadge(): ?string
     {
         return $this->badge;
+    }
+    
+    public function getBadgeColor(): ?string
+    {
+        return $this->badgeColor;
     }
 
     public function getGroup(): ?string
