@@ -26,7 +26,9 @@ trait Translatable
         }
 
         $data = $this->mutateFormDataBeforeFill($data);
+
         $this->form->fill($data);
+
         $this->callHook('afterFill');
     }
 
