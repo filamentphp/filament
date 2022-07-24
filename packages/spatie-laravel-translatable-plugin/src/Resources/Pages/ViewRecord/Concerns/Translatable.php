@@ -22,6 +22,8 @@ trait Translatable
             $data[$attribute] = $this->record->getTranslation($attribute, $this->activeFormLocale);
         }
 
+        $data = $this->mutateFormDataBeforeFill($data);
+
         $this->form->fill($data);
 
         $this->callHook('afterFill');
