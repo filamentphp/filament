@@ -22,21 +22,29 @@ Alpine.store('sidebar', {
 
     collapsedGroups: Alpine.$persist([]).as('collapsedGroups'),
 
-    groupIsCollapsed(group) {
+    groupIsCollapsed: function (group) {
         return this.collapsedGroups.includes(group)
     },
 
-    toggleCollapsedGroup(group) {
+    collapseGroup: function (group) {
+        if (this.collapsedGroups.includes(group)) {
+            return
+        }
+
+        this.collapsedGroups = this.collapsedGroups.concat(group)
+    },
+
+    toggleCollapsedGroup: function (group) {
         this.collapsedGroups = this.collapsedGroups.includes(group) ?
-            this.collapsedGroups.filter(g => g !== group) :
+            this.collapsedGroups.filter(collapsedGroup => collapsedGroup !== group) :
             this.collapsedGroups.concat(group)
     },
 
-    close() {
+    close: function () {
         this.isOpen = false
     },
 
-    open() {
+    open: function () {
         this.isOpen = true
     },
 })
@@ -45,7 +53,6 @@ Alpine.store(
     'theme',
     window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light',
 )
-
 
 window.addEventListener('dark-mode-toggled', (event) => {
     Alpine.store('theme', event.detail)

@@ -2,26 +2,31 @@
 
 namespace Filament\Navigation;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Traits\Conditionable;
+use function Pest\Laravel\instance;
 
 class NavigationBuilder
 {
     use Conditionable;
 
-    /** @var array<string, \Filament\Navigation\NavigationItem[]> */
+    /** @var NavigationGroup[] */
     protected array $groups = [];
 
-    /** @var \Filament\Navigation\NavigationItem[] */
+    /** @var NavigationItem[] */
     protected array $items = [];
 
-    public function group(string $name, array $items = [], bool $collapsible = true): static
+    public function group(NavigationGroup | string $group, array $items = [], ?bool $collapsible = null): static
     {
-        $this->groups[$name] = [
-            'items' => collect($items)->map(
-                fn (NavigationItem $item, int $index) => $item->group($name)->sort($index),
-            )->toArray(),
-            'collapsible' => $collapsible,
-        ];
+        if ($group instanceof NavigationGroup) {
+            $this->groups[] = $group;
+
+            return $this;
+        }
+
+        $this->groups[] = NavigationGroup::make($group)
+            ->items($items)
+            ->collapsible($collapsible);
 
         return $this;
     }
@@ -33,7 +38,15 @@ class NavigationBuilder
         return $this;
     }
 
-    /** @param  \Filament\Navigation\NavigationItem[]  $items */
+    /** @param NavigationGroup[] $groups */
+    public function groups(array $groups): static
+    {
+        $this->groups = array_merge($this->groups, $groups);
+
+        return $this;
+    }
+
+    /** @param NavigationItem[] $items */
     public function items(array $items): static
     {
         $this->items = array_merge($this->items, $items);
@@ -41,13 +54,20 @@ class NavigationBuilder
         return $this;
     }
 
-    public function getGroups(): array
+    public function getNavigation(): array
     {
-        return $this->groups;
-    }
+        $navigation = collect();
 
-    public function getItems(): array
-    {
-        return $this->items;
+        $items = $this->items;
+
+        if (count($items)) {
+            $navigation->push(
+                NavigationGroup::make()->items($items),
+            );
+        }
+
+        return $navigation
+            ->merge($this->groups)
+            ->toArray();
     }
 }
