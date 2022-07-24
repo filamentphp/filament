@@ -94,10 +94,8 @@ trait HasActions
             $action->callBeforeFormFilled();
         }
 
-        app()->call($action->getMountUsing(), [
-            'action' => $action,
+        $action->mount([
             'form' => $this->getMountedActionForm(),
-            'record' => $this->getMountedActionFormModel(),
         ]);
 
         if ($action->hasForm()) {
