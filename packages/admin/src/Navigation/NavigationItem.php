@@ -23,8 +23,16 @@ class NavigationItem
 
     protected string | Closure | null $url = null;
 
-    final public function __construct()
+    final public function __construct(?string $label = null)
     {
+        if (filled($label)) {
+            $this->label($label);
+        }
+    }
+
+    public static function make(?string $label = null): static
+    {
+        return app(static::class, ['label' => $label]);
     }
 
     public function badge(?string $badge, ?string $badgeColor = null): static
@@ -61,11 +69,6 @@ class NavigationItem
         $this->label = $label;
 
         return $this;
-    }
-
-    public static function make(): static
-    {
-        return app(static::class);
     }
 
     public function openUrlInNewTab(bool $condition = true): static

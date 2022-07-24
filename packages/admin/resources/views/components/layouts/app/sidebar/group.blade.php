@@ -1,5 +1,6 @@
 @props([
     'collapsible' => true,
+    'icon' => null,
     'label' => null,
 ])
 
@@ -14,12 +15,18 @@
             @endif
             class="flex items-center justify-between w-full"
         >
-            <p @class([
-                'font-bold uppercase text-gray-600 text-xs tracking-wider',
+            <div @class([
+                'flex items-center gap-4 text-gray-600',
                 'dark:text-gray-300' => config('filament.dark_mode'),
             ])>
-                {{ $label }}
-            </p>
+                @if ($icon)
+                    <x-dynamic-component :component="$icon" class="ml-1 w-3 h-3 flex-shrink-0" />
+                @endif
+
+                <p class="flex-1 font-bold uppercase text-xs tracking-wider">
+                    {{ $label }}
+                </p>
+            </div>
 
             @if ($collapsible)
                 <x-heroicon-o-chevron-down :class="\Illuminate\Support\Arr::toCssClasses([

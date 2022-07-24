@@ -49,10 +49,25 @@
         <x-filament::layouts.app.sidebar.start />
         {{ \Filament\Facades\Filament::renderHook('sidebar.start') }}
 
+        @php
+            $navigation = \Filament\Facades\Filament::getNavigation();
+
+            $collapsedNavigationGroupLabels = collect($navigation)
+                ->filter(fn (\Filament\Navigation\NavigationGroup $group): bool => $group->isCollapsed())
+                ->map(fn (\Filament\Navigation\NavigationGroup $group): string => $group->getLabel())
+                ->values();
+        @endphp
+
+        <script>
+            if (localStorage.getItem('collapsedGroups') === null) {
+                localStorage.setItem('collapsedGroups', JSON.stringify(@js($collapsedNavigationGroupLabels)))
+            }
+        </script>
+
         <ul class="px-6 space-y-6">
-            @foreach (\Filament\Facades\Filament::getNavigation() as $group => ['items' => $items, 'collapsible' => $collapsible])
-                <x-filament::layouts.app.sidebar.group :label="$group" :collapsible="$collapsible">
-                    @foreach ($items as $item)
+            @foreach ($navigation as $group)
+                <x-filament::layouts.app.sidebar.group :label="$group->getLabel()" :icon="$group->getIcon()" :collapsible="$group->isCollapsible()">
+                    @foreach ($group->getItems() as $item)
                         <x-filament::layouts.app.sidebar.item
                             :active="$item->isActive()"
                             :icon="$item->getIcon()"
