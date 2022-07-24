@@ -85,7 +85,7 @@ class Resource
                 ->icon(static::getNavigationIcon())
                 ->isActiveWhen(fn () => request()->routeIs("{$routeBaseName}.*"))
                 ->label(static::getNavigationLabel())
-                ->badge(static::getNavigationBadge())
+                ->badge(static::getNavigationBadge(), static::getNavigationBadgeColor())
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
         ];
