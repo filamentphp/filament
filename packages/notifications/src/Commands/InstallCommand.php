@@ -53,8 +53,9 @@ class InstallCommand extends Command
     {
         return array_merge(
             [
-                'alpinejs' => '^3.4',
-                'tailwindcss' => '^3.0',
+                'alpinejs' => '^3.10.3',
+                'autoprefixer' => '^10.4.7',
+                'tailwindcss' => '^3.1',
             ],
             Arr::except($packages, [
                 'axios',
