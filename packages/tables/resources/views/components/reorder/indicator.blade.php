@@ -6,7 +6,7 @@
     <td class="px-4 py-2 whitespace-nowrap text-sm" colspan="{{ $colspan }}">
         <div>
             <x-filament-support::loading-indicator
-                wire:loading
+                wire:loading.delay
                 wire:target="reorderTable"
                 class="animate-spin w-4 h-4 mr-3 text-primary-600"
             />
