@@ -292,7 +292,7 @@ The `excludeAttributes()` method is used to instruct the action which columns to
 ```php
 use Filament\Tables\Actions\ReplicateAction;
 
-ReplicateAction::make()->excludeAttributes('slug')
+ReplicateAction::make()->excludeAttributes(['slug'])
 ```
 
 The `beforeReplicaSaved()` method can be used to invoke a Closure before saving the replica:
