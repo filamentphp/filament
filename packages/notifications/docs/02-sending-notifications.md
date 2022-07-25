@@ -2,6 +2,8 @@
 title: Sending notifications
 ---
 
+> To start, make sure the package is [installed](installation) - `@livewire('notifications')` should be in your Blade layout somewhere.
+
 Notifications are sent using a `Notification` object that's constructed through a fluent API. Calling the `send()` method on the `Notification` object will dispatch the notification and display it in your application. As the session is used to flash notifications, they can be sent from anywhere in your code, not just Livewire components.
 
 ```php
