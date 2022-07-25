@@ -16,19 +16,30 @@ class NavigationItem
 
     protected ?string $badge = null;
 
+    protected ?string $badgeColor = null;
+
     protected bool $shouldOpenUrlInNewTab = false;
 
     protected ?int $sort = null;
 
     protected string | Closure | null $url = null;
 
-    final public function __construct()
+    final public function __construct(?string $label = null)
     {
+        if (filled($label)) {
+            $this->label($label);
+        }
     }
 
-    public function badge(?string $badge): static
+    public static function make(?string $label = null): static
+    {
+        return app(static::class, ['label' => $label]);
+    }
+
+    public function badge(?string $badge, ?string $color = null): static
     {
         $this->badge = $badge;
+        $this->badgeColor = $color;
 
         return $this;
     }
@@ -61,11 +72,6 @@ class NavigationItem
         return $this;
     }
 
-    public static function make(): static
-    {
-        return app(static::class);
-    }
-
     public function openUrlInNewTab(bool $condition = true): static
     {
         $this->shouldOpenUrlInNewTab = $condition;
@@ -91,6 +97,11 @@ class NavigationItem
     public function getBadge(): ?string
     {
         return $this->badge;
+    }
+
+    public function getBadgeColor(): ?string
+    {
+        return $this->badgeColor;
     }
 
     public function getGroup(): ?string
