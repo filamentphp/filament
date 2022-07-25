@@ -31,7 +31,7 @@ trait CanReorderRecords
         return $this->isTableReorderable() && $this->isTableReordering;
     }
 
-    protected function isTablePaginationEnabledDuringReordering(): bool
+    protected function isTablePaginationEnabledWhileReordering(): bool
     {
         return false;
     }

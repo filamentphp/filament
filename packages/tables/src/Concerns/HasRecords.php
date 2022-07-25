@@ -51,7 +51,7 @@ trait HasRecords
 
         if (
             (! $this->isTablePaginationEnabled()) ||
-            ($this->isTableReordering() && (! $this->isTablePaginationEnabledDuringReordering()))
+            ($this->isTableReordering() && (! $this->isTablePaginationEnabledWhileReordering()))
         ) {
             return $this->records = $query->get();
         }
