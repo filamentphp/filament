@@ -4,15 +4,17 @@
 ])
 
 <div
-    x-data="{ isOpen: false }"
+    x-data="{}"
     {{ $attributes->class(['relative inline-block filament-tables-filters']) }}
 >
     <x-tables::filters.trigger />
 
     <div
-        x-show="isOpen"
+        x-ref="popoverPanel"
+        x-float.placement.bottom-end.offset="{ offset: 8 }"
+        wire:ignore.self
+        wire:key="popoverPanel-{{ $this->id }}"
         x-cloak
-        x-on:click.away="isOpen = false"
         x-transition:enter="ease duration-300"
         x-transition:enter-start="opacity-0 -translate-y-2"
         x-transition:enter-end="opacity-100 translate-y-0"
@@ -20,7 +22,7 @@
         x-transition:leave-start="opacity-100 translate-y-0"
         x-transition:leave-end="opacity-0 translate-y-2"
         @class([
-            'absolute right-0 z-10 w-screen pl-12 mt-4 top-full transition rtl:right-auto rtl:left-0 rtl:pl-0 rtl:pr-12',
+            'absolute hidden z-10 w-screen top-full transition',
             match ($width) {
                 'xs' => 'max-w-xs',
                 'md' => 'max-w-md',
@@ -39,10 +41,10 @@
         <div @class([
             'px-6 py-4 bg-white border border-gray-300 space-y-6 shadow-xl rounded-xl',
             'dark:bg-gray-800 dark:border-gray-700' => config('tables.dark_mode'),
-        ])>
+        ]) wire:ignore.self>
             <x-tables::icon-button
                 icon="heroicon-o-x"
-                x-on:click="isOpen = ! isOpen"
+                x-on:click="$refs.popoverPanel.close"
                 :label=" __('tables::table.filters.buttons.close.label')"
                 color="secondary"
                 {{ $attributes->class(['absolute top-3 right-3 rtl:right-auto rtl:left-3']) }}
