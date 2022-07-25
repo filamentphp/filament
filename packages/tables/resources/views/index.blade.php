@@ -331,16 +331,16 @@
                                         name="checkbox"
                                         x-on:click="toggleSelectRecordsOnPage"
                                         x-bind:checked="
-                                        if (areRecordsSelected(getRecordsOnPage())) {
-                                            $el.checked = true
+                                            if (areRecordsSelected(getRecordsOnPage())) {
+                                                $el.checked = true
 
-                                            return 'checked'
-                                        }
+                                                return 'checked'
+                                            }
 
-                                        $el.checked = false
+                                            $el.checked = false
 
-                                        return null
-                                    "
+                                            return null
+                                        "
                                     ></x-slot>
                                 </x-tables::checkbox-cell>
                             @endif
