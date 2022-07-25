@@ -52,7 +52,7 @@ class Notification extends ViewComponent implements Arrayable
         ];
     }
 
-    public static function fromArray($data): static
+    public static function fromArray(array $data): static
     {
         $static = static::make($data['id']);
         $static->actions(array_map(fn (array $action): Action => Action::fromArray($action), $data['actions']));

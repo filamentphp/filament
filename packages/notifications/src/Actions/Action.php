@@ -42,7 +42,7 @@ class Action extends BaseAction implements Arrayable
         ];
     }
 
-    public static function fromArray($data): static
+    public static function fromArray(array $data): static
     {
         $static = static::make($data['name']);
 
