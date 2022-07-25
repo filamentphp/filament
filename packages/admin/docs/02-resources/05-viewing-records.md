@@ -1,5 +1,5 @@
 ---
-title: Viewing Records
+title: Viewing records
 ---
 
 ## Creating a resource with a View page

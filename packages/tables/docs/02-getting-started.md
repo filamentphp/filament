@@ -1,5 +1,5 @@
 ---
-title: Getting Started
+title: Getting started
 ---
 
 ## Preparing your Livewire component
