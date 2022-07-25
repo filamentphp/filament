@@ -1,7 +1,7 @@
 <x-notifications::notification
     :notification="$notification"
     :class="\Illuminate\Support\Arr::toCssClasses([
-        'pointer-events-auto flex w-full max-w-sm gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-lg transition duration-300',
+        'flex w-full max-w-sm gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-lg transition duration-300',
         'dark:border-gray-700 dark:bg-gray-800' => config('notifications.dark_mode'),
     ])"
     :x-transition:enter-start="\Illuminate\Support\Arr::toCssClasses([

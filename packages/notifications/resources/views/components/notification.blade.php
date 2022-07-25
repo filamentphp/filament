@@ -3,7 +3,7 @@
 ])
 
 <div
-    {{ $attributes->class('filament-notifications-notification') }}
+    {{ $attributes->class('filament-notifications-notification pointer-events-auto') }}
     x-data="notificationComponent({
         $wire: $wire,
         notification: {{ \Illuminate\Support\Js::from($notification->toArray()) }},
