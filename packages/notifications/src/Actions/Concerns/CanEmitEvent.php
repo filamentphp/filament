@@ -4,7 +4,7 @@ namespace Filament\Notifications\Actions\Concerns;
 
 use Closure;
 
-trait CanEmit
+trait CanEmitEvent
 {
     protected string | Closure | null $event = null;
 

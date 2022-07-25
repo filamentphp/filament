@@ -36,7 +36,7 @@ it('can send notifications', function () {
     Notification::make($id = Str::random())
         ->actions([
             Action::make($actionName = Str::random())
-                ->closeNotification($shouldActionCloseNotification = (bool) rand(0, 1))
+                ->close($shouldActionCloseNotification = (bool) rand(0, 1))
                 ->color($actionColor = $getRandomColor())
                 ->disabled($isActionDisabled = (bool) rand(0, 1))
                 ->emit($actionEvent = Str::random(), $actionEventData = [Str::random()])

@@ -3,7 +3,7 @@
 namespace Filament\Notifications\Actions;
 
 use Filament\Notifications\Actions\Concerns\CanCloseNotification;
-use Filament\Notifications\Actions\Concerns\CanEmit;
+use Filament\Notifications\Actions\Concerns\CanEmitEvent;
 use Filament\Support\Actions\BaseAction;
 use Filament\Support\Actions\Concerns\CanBeOutlined;
 use Filament\Support\Actions\Concerns\CanOpenUrl;
@@ -13,7 +13,7 @@ class Action extends BaseAction implements Arrayable
 {
     use CanBeOutlined;
     use CanCloseNotification;
-    use CanEmit;
+    use CanEmitEvent;
     use CanOpenUrl;
 
     protected string $view = 'notifications::actions.link-action';
@@ -43,7 +43,7 @@ class Action extends BaseAction implements Arrayable
     public static function fromArray($value): static
     {
         $static = static::make($value['name']);
-        $static->closeNotification($value['shouldCloseNotification']);
+        $static->close($value['shouldCloseNotification']);
         $static->color($value['color']);
         $static->disabled($value['isDisabled']);
         $static->emit($value['event'], $value['eventData']);

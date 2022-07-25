@@ -8,7 +8,7 @@ trait CanCloseNotification
 {
     protected bool | Closure $shouldCloseNotification = false;
 
-    public function closeNotification(bool | Closure $condition = true): static
+    public function close(bool | Closure $condition = true): static
     {
         $this->shouldCloseNotification = $condition;
 
