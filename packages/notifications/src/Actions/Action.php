@@ -8,6 +8,7 @@ use Filament\Support\Actions\BaseAction;
 use Filament\Support\Actions\Concerns\CanBeOutlined;
 use Filament\Support\Actions\Concerns\CanOpenUrl;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Str;
 
 class Action extends BaseAction implements Arrayable
 {
@@ -37,25 +38,36 @@ class Action extends BaseAction implements Arrayable
             'shouldOpenUrlInNewTab' => $this->shouldOpenUrlInNewTab(),
             'size' => $this->getSize(),
             'url' => $this->getUrl(),
+            'view' => $this->getView(),
         ];
     }
 
-    public static function fromArray($value): static
+    public static function fromArray($data): static
     {
-        $static = static::make($value['name']);
-        $static->close($value['shouldCloseNotification']);
-        $static->color($value['color']);
-        $static->disabled($value['isDisabled']);
-        $static->emit($value['event'], $value['eventData']);
-        $static->extraAttributes($value['extraAttributes']);
-        $static->icon($value['icon']);
-        $static->iconPosition($value['iconPosition']);
-        $static->label($value['label']);
-        $static->outlined($value['isOutlined']);
-        $static->size($value['size']);
-        $static->url($value['url'], $value['shouldOpenUrlInNewTab']);
+        $static = static::make($data['name']);
+
+        if ($static->getView() !== $data['view'] && static::isViewSafe($data['view'])) {
+            $static->view($data['view']);
+        }
+
+        $static->close($data['shouldCloseNotification']);
+        $static->color($data['color']);
+        $static->disabled($data['isDisabled']);
+        $static->emit($data['event'], $data['eventData']);
+        $static->extraAttributes($data['extraAttributes']);
+        $static->icon($data['icon']);
+        $static->iconPosition($data['iconPosition']);
+        $static->label($data['label']);
+        $static->outlined($data['isOutlined']);
+        $static->size($data['size']);
+        $static->url($data['url'], $data['shouldOpenUrlInNewTab']);
 
         return $static;
+    }
+
+    protected static function isViewSafe(string $view): bool
+    {
+        return Str::startsWith($view, 'notifications::actions.');
     }
 
     public function button(): static

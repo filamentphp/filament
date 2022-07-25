@@ -52,15 +52,15 @@ class Notification extends ViewComponent implements Arrayable
         ];
     }
 
-    public static function fromArray($value): static
+    public static function fromArray($data): static
     {
-        $static = static::make($value['id']);
-        $static->actions(array_map(fn (array $action): Action => Action::fromArray($action), $value['actions']));
-        $static->body($value['body']);
-        $static->duration($value['duration']);
-        $static->icon($value['icon']);
-        $static->iconColor($value['iconColor']);
-        $static->title($value['title']);
+        $static = static::make($data['id']);
+        $static->actions(array_map(fn (array $action): Action => Action::fromArray($action), $data['actions']));
+        $static->body($data['body']);
+        $static->duration($data['duration']);
+        $static->icon($data['icon']);
+        $static->iconColor($data['iconColor']);
+        $static->title($data['title']);
 
         return $static;
     }
