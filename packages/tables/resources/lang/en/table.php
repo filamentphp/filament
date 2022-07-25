@@ -53,6 +53,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Finish reordering records',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Reorder records',
+        ],
+
         'filter' => [
             'label' => 'Filter',
         ],
@@ -106,6 +114,8 @@ return [
         ],
 
     ],
+
+    'reorder_indicator' => 'Drag and drop the records into order.',
 
     'selection_indicator' => [
 

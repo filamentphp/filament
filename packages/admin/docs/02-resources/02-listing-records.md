@@ -373,6 +373,36 @@ public static function table(Table $table): Table
 }
 ```
 
+## Reordering records
+
+To allow the user to reorder records using drag and drop in your table, you can use the `reorderable()` method:
+
+```php
+use Filament\Resources\Table;
+
+public static function table(Table $table): Table
+{
+    return $table
+        // ...
+        ->reorderable('sort');
+}
+```
+
+When making the table reorderable, a new button will be available on the table to toggle reordering. Pagination will be disabled in reorder mode to allow you to move records between pages.
+
+The `reorderable()` method passes in the name of a column to store the record order in. If you use something like [`spatie/eloquent-sortable`](https://github.com/spatie/eloquent-sortable) with an order column such as `order_column`, you may pass this in to `orderable()`:
+
+```php
+use Filament\Resources\Table;
+
+public static function table(Table $table): Table
+{
+    return $table
+        // ...
+        ->reorderable('order_column');
+}
+```
+
 ## Authorization
 
 For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app.

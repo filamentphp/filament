@@ -401,6 +401,39 @@ protected $queryString = [
 ];
 ```
 
+## Reordering records
+
+To allow the user to reorder records using drag and drop in your table, you can use the `getTableReorderColumn()` method:
+
+```php
+protected function getTableReorderColumn(): ?string
+{
+    return 'sort';
+}
+```
+
+When making the table reorderable, a new button will be available on the table to toggle reordering.
+
+The `getTableReorderColumn()` method returns the name of a column to store the record order in. If you use something like [`spatie/eloquent-sortable`](https://github.com/spatie/eloquent-sortable) with an order column such as `order_column`, you may return this instead:
+
+```php
+protected function getTableReorderColumn(): ?string
+{
+    return 'order_column';
+}
+```
+
+### Enabling pagination while reordering
+
+Pagination will be disabled in reorder mode to allow you to move records between pages. It is generally bad UX to re-enable pagination while reordering, but if you are sure them you can use:
+
+```php
+protected function isTablePaginationEnabledWhileReordering(): bool
+{
+    return true;
+}
+```
+
 ## Using the form builder
 
 Internally, the table builder uses the [form builder](/docs/forms) to implement filtering, actions, and bulk actions. Because of this, the form builder is already set up on your Livewire component and ready to use with your own custom forms.
