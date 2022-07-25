@@ -95,7 +95,6 @@ If a column is sortable(), you may choose to sort it by default using the `getDe
     }
 ```
 
-
 ### Searching
 
 Columns may be searchable, by using the text input in the top right of the table. To make a column searchable, you must use the `searchable()` method:
