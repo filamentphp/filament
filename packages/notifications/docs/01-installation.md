@@ -30,7 +30,7 @@ npm run dev
 
 > These commands will ruthlessly overwrite existing files in your application, hence why we only recommend using this method for new projects.
 
-You're now ready to start [sending notifications](getting-started)!
+You're now ready to start [sending notifications](sending-notifications)!
 
 ## Existing Laravel projects
 
@@ -196,7 +196,7 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
 </html>
 ```
 
-You're now ready to start [sending notifications](getting-started)!
+You're now ready to start [sending notifications](sending-notifications)!
 
 ## Publishing configuration
 
