@@ -23,10 +23,6 @@ return [
     |
     | This is the configuration for the general layout of notifications.
     |
-    | You may set a maximum horizontal position using the max width setting,
-    | corresponding to Tailwind screens from `sm` to `2xl`.
-    | Leave it empty for no maximum.
-    |
     */
 
     'layout' => [
