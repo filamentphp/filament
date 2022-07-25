@@ -79,6 +79,8 @@
 
         {{ $slot }}
 
+        @livewire('notifications')
+
         {{ \Filament\Facades\Filament::renderHook('scripts.start') }}
 
         @livewireScripts

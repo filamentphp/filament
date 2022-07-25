@@ -108,8 +108,8 @@ module.exports = {
 You may also want to update your `vite.config.js` file to refresh the page after Livewire components or custom form components have been updated:
 
 ```js
-import { defineConfig } from 'vite';
-import laravel, { refreshPaths } from 'laravel-vite-plugin'; // [tl! focus]
+import { defineConfig } from 'vite'
+import laravel, { refreshPaths } from 'laravel-vite-plugin' // [tl! focus]
 
 export default defineConfig({
     plugins: [
@@ -125,7 +125,7 @@ export default defineConfig({
             ], // [tl! focus:end]
         }),
     ],
-});
+})
 ```
 
 #### Laravel Mix
@@ -192,14 +192,10 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
 
         <title>{{ config('app.name') }}</title>
 
-        <!-- Styles -->
         <style>[x-cloak] { display: none !important; }</style>
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
-        <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-
-        <!-- Scripts -->
         @livewireScripts
-        <script src="{{ mix('js/app.js') }}" defer></script>
         @stack('scripts')
     </head>
 

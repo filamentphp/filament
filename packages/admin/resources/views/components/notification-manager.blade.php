@@ -1,0 +1,3 @@
+@php
+    /** @deprecated */
+@endphp

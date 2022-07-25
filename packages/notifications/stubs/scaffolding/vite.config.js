@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite';
-import laravel, { refreshPaths } from 'laravel-vite-plugin';
+import { defineConfig } from 'vite'
+import laravel, { refreshPaths } from 'laravel-vite-plugin'
 
 export default defineConfig({
     plugins: [
@@ -14,4 +14,4 @@ export default defineConfig({
             ],
         }),
     ],
-});
+})

@@ -77,6 +77,4 @@
     {{ $this->modal }}
 
     @stack('modals')
-
-    @livewire('notifications')
 </div>
