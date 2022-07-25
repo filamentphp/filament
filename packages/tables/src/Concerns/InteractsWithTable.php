@@ -15,6 +15,7 @@ trait InteractsWithTable
 {
     use CanBeStriped;
     use CanPaginateRecords;
+    use CanReorderRecords;
     use CanSearchRecords;
     use CanSelectRecords;
     use CanSortRecords;
@@ -110,7 +111,9 @@ trait InteractsWithTable
             ->header($this->getTableHeader())
             ->heading($this->getTableHeading())
             ->model($this->getTableQuery()->getModel()::class)
-            ->recordsPerPageSelectOptions($this->getTableRecordsPerPageSelectOptions());
+            ->recordsPerPageSelectOptions($this->getTableRecordsPerPageSelectOptions())
+            ->reorderColumn($this->getTableReorderColumn())
+            ->reorderable($this->isTableReorderable());
     }
 
     protected function getTableQueryStringIdentifier(): ?string

@@ -75,4 +75,8 @@ interface HasTable extends HasForms
     public function getTableModelLabel(): string;
 
     public function mountedTableActionRecord($record): void;
+
+    public function toggleTableReordering(): void;
+
+    public function isTableReordering(): bool;
 }
