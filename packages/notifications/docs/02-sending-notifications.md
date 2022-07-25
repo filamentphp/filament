@@ -116,7 +116,7 @@ Notifications support actions that render a button or link which may open a URL 
 
 ```php
 use Filament\Notifications\Actions\Action; // [tl! focus]
-use Filament\Notifications\Notification; // [tl! focus]
+use Filament\Notifications\Notification;
 
 Notification::make()
     ->title('Saved successfully')
