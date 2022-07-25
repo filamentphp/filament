@@ -1,9 +1,9 @@
 @props([
     'active' => false,
-    'badge',
-    'badgeColor',
+    'badge' => null,
+    'badgeColor' => null,
     'icon',
-    'shouldOpenUrlInNewTab',
+    'shouldOpenUrlInNewTab' => false,
     'url',
 ])
 
@@ -57,6 +57,10 @@
                             'text-danger-700 bg-danger-500/10' => ! $active,
                             'dark:text-danger-500' => (! $active) && config('tables.dark_mode'),
                         ],
+                        'secondary' => [
+                            'text-gray-700 bg-gray-500/10' => ! $active,
+                            'dark:text-gray-500' => (! $active) && config('tables.dark_mode'),
+                        ],
                         'success' => [
                             'text-success-700 bg-success-500/10' => ! $active,
                             'dark:text-success-500' => (! $active) && config('tables.dark_mode'),
@@ -65,9 +69,12 @@
                             'text-warning-700 bg-warning-500/10' => ! $active,
                             'dark:text-warning-500' => (! $active) && config('filament.dark_mode'),
                         ],
+                        'primary', null => [
+                            'text-primary-700 bg-primary-500/10' => ! $active,
+                            'dark:text-primary-500' => (! $active) && config('tables.dark_mode'),
+                        ],
                         default => [
-                            'text-primary-700 bg-primary-500/20' => ! $active,
-                            'dark:text-primary-500' => (! $active) && config('filament.dark_mode'),
+                            $badgeColor => ! $active,
                         ],
                     },
                 ])> {{ $badge }} </span>
