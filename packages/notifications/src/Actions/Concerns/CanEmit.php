@@ -4,13 +4,13 @@ namespace Filament\Notifications\Actions\Concerns;
 
 use Closure;
 
-trait HasEvent
+trait CanEmit
 {
     protected string | Closure | null $event = null;
 
     protected array | Closure $eventData = [];
 
-    public function event(
+    public function emit(
         string | Closure | null $event,
         array | Closure $data = [],
     ): static

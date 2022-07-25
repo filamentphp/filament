@@ -39,8 +39,7 @@ it('can send notifications', function () {
                 ->closeNotification($shouldActionCloseNotification = (bool) rand(0, 1))
                 ->color($actionColor = $getRandomColor())
                 ->disabled($isActionDisabled = (bool) rand(0, 1))
-                ->event($actionEvent = Str::random())
-                ->eventData($actionEventData = [Str::random()])
+                ->emit($actionEvent = Str::random(), $actionEventData = [Str::random()])
                 ->extraAttributes($actionExtraAttributes = ['x' . Str::random(15) => Str::random()]) // Attributes must start with a letter
                 ->icon($actionIcon = $getRandomIcon())
                 ->iconPosition($actionIconPosition = Arr::random(['after', 'before']))

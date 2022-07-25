@@ -3,7 +3,7 @@
 namespace Filament\Notifications\Actions;
 
 use Filament\Notifications\Actions\Concerns\CanCloseNotification;
-use Filament\Notifications\Actions\Concerns\HasEvent;
+use Filament\Notifications\Actions\Concerns\CanEmit;
 use Filament\Support\Actions\BaseAction;
 use Filament\Support\Actions\Concerns\CanBeOutlined;
 use Filament\Support\Actions\Concerns\CanOpenUrl;
@@ -13,8 +13,8 @@ class Action extends BaseAction implements Arrayable
 {
     use CanBeOutlined;
     use CanCloseNotification;
+    use CanEmit;
     use CanOpenUrl;
-    use HasEvent;
 
     protected string $view = 'notifications::actions.link-action';
 
@@ -46,18 +46,14 @@ class Action extends BaseAction implements Arrayable
         $static->closeNotification($value['shouldCloseNotification']);
         $static->color($value['color']);
         $static->disabled($value['isDisabled']);
-        $static->event($value['event']);
-        $static->eventData($value['eventData']);
+        $static->emit($value['event'], $value['eventData']);
         $static->extraAttributes($value['extraAttributes']);
         $static->icon($value['icon']);
         $static->iconPosition($value['iconPosition']);
         $static->label($value['label']);
         $static->outlined($value['isOutlined']);
         $static->size($value['size']);
-        $static->url(
-            $value['url'],
-            shouldOpenInNewTab: $value['shouldOpenUrlInNewTab'],
-        );
+        $static->url($value['url'], $value['shouldOpenUrlInNewTab']);
 
         return $static;
     }
