@@ -32,6 +32,7 @@ Next, create the view, in this example `resources/views/notifications/notificati
 
 ```blade
 <x-notifications::notification :notification="$notification">
+    {{-- Notification content --}}
 </x-notifications::notification>
 ```
 
@@ -44,9 +45,17 @@ Getters for all notification properties will be available in the view. So, a cus
     x-transition:enter-start="opacity-0"
     x-transition:leave-end="opacity-0"
 >
-    <h4>{{ $getTitle() }}</h4>
-    <p>{{ $getBody() }}</p>
-    <span x-on:click="close">Close</span>
+    <h4>
+        {{ $getTitle() }}
+    </h4>
+    
+    <p>
+        {{ $getBody() }}
+    </p>
+    
+    <span x-on:click="close">
+        Close
+    </span>
 </x-notifications::notification>
 ```
 

@@ -17,16 +17,16 @@ trait HasIcon
         return $this;
     }
 
-    public function getIcon(): ?string
-    {
-        return $this->evaluate($this->icon);
-    }
-
     public function iconColor(string | Closure | null $color): static
     {
         $this->iconColor = $color;
 
         return $this;
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->evaluate($this->icon);
     }
 
     public function getIconColor(): ?string
