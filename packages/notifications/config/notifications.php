@@ -30,14 +30,10 @@ return [
     */
 
     'layout' => [
-
         'alignment' => [
             'horizontal' => 'right',
             'vertical' => 'top',
         ],
-
-        'max_width' => null,
-
     ],
 
 ];
