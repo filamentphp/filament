@@ -1,6 +1,6 @@
 <div
     @class([
-        'pointer-events-none fixed inset-4 z-50 mx-auto flex justify-end gap-3 filament-notifications',
+        'filament-notifications pointer-events-none fixed inset-4 z-50 mx-auto flex justify-end gap-3',
         match (config('notifications.layout.alignment.horizontal')) {
             'left' => 'items-start',
             'center' => 'items-center',
