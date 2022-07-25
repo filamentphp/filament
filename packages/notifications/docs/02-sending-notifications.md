@@ -107,7 +107,7 @@ Notification::make()
     ->success()
     ->body('Changes to the **post** have been saved.')
     ->actions([ // [tl! focus:start]
-        Action::make('show')
+        Action::make('view')
             ->button(),
         Action::make('undo')
             ->color('danger'),
@@ -124,7 +124,7 @@ Notification::make()
     ->success()
     ->body('Changes to the **post** have been saved.')
     ->actions([
-        Action::make('show')
+        Action::make('view')
             ->button()
             ->url(route('posts.show', $post)) // [tl! focus:start]
             ->openUrlInNewTab(), // [tl! focus:end]
@@ -143,7 +143,7 @@ Notification::make()
     ->success()
     ->body('Changes to the **post** have been saved.')
     ->actions([
-        Action::make('show')
+        Action::make('view')
             ->button()
             ->url(route('posts.show', $post))
             ->openUrlInNewTab(),
@@ -163,7 +163,7 @@ Notification::make()
     ->success()
     ->body('Changes to the **post** have been saved.')
     ->actions([
-        Action::make('show')
+        Action::make('view')
             ->button()
             ->url(route('posts.show', $post))
             ->openUrlInNewTab(),
