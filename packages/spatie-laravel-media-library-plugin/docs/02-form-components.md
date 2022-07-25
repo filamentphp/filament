@@ -1,5 +1,5 @@
 ---
-title: Form Components
+title: Form components
 ---
 
 You may use the field in the same way as the [original file upload](/docs/forms/fields#file-upload) field:

@@ -11,6 +11,7 @@
         "php": "^8.0",
         "blade-ui-kit/blade-heroicons": "^1.2",
         "danharrin/date-format-converter": "^0.2",
+        "filament/notifications": "self.version",
         "filament/support": "self.version",
         "illuminate/console": "^8.6|^9.0",
         "illuminate/contracts": "^8.6|^9.0",

@@ -13,6 +13,7 @@
         "canvural/phpstan-blade-rule": "^0.1.0",
         "danharrin/livewire-rate-limiting": "^0.3|^1.0",
         "doctrine/dbal": "^3.2",
+        "filament/support": "^2.14",
         "laravel/pint": "^1.0",
         "league/flysystem-aws-s3-v3": "^1.0|^2.0|^3.0",
         "nunomaduro/larastan": "^1.0",
@@ -43,6 +44,7 @@
                 "packages/spatie-laravel-translatable-plugin/src"
             ],
             "Filament\\Forms\\": "packages/forms/src",
+            "Filament\\Notifications\\": "packages/notifications/src",
             "Filament\\Support\\": "packages/support/src",
             "Filament\\Tables\\": "packages/tables/src",
             "Filament\\Tests\\": "tests/src",
@@ -67,5 +69,11 @@
         ]
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "repositories": [
+        {
+            "type": "path",
+            "url": "packages/support"
+        }
+    ]
 }

@@ -12,12 +12,17 @@ Filament has a few requirements to run:
 
 The table builder comes pre-installed inside the [admin panel 2.x](/docs/admin/2.x), but you must still follow the installation instructions below if you're using it in the rest of your app.
 
-## New Laravel projects
-
-To get started with the table builder quickly, you can set up [Alpine.js](https://alpinejs.dev), [TailwindCSS](https://tailwindcss.com) and [Livewire](https://laravel-livewire.com) with these commands:
+First, require the table builder using Composer:
 
 ```bash
 composer require filament/tables:"^2.0"
+```
+
+## New Laravel projects
+
+To get started with the table builder quickly, you can set up [Livewire](https://laravel-livewire.com), [Alpine.js](https://alpinejs.dev) and [Tailwind CSS](https://tailwindcss.com) with these commands:
+
+```bash
 php artisan tables:install
 npm install
 npm run dev
@@ -29,17 +34,20 @@ You're now ready to start [building tables](getting-started)!
 
 ## Existing Laravel projects
 
-You may download the table builder using Composer:
+The package uses the following dependencies:
 
-```bash
-composer require filament/tables:"^2.0"
-```
+- [Alpine.js](https://alpinejs.dev)
+- [Tailwind CSS](https://tailwindcss.com)
+- [Tailwind CSS Forms plugin](https://github.com/tailwindlabs/tailwindcss-forms)
+- [Tailwind CSS Typography plugin](https://tailwindcss.com/docs/typography-plugin)
 
-The package uses [Alpine.js](https://alpinejs.dev),  [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, and the Tailwind Typography plugin. You may install these through NPM:
+You may install these through NPM:
 
 ```bash
 npm install alpinejs @alpinejs/focus tailwindcss @tailwindcss/forms @tailwindcss/typography --save-dev
 ```
+
+### Configuring Tailwind CSS
 
 To finish installing Tailwind, you must create a new `tailwind.config.js` file in the root of your project. The easiest way to do this is by running `npx tailwindcss init`.
 
@@ -70,7 +78,68 @@ module.exports = {
 }
 ```
 
-Of course, you may specify your own custom `primary` and `danger` colors, which will be used instead.
+Of course, you may specify your own custom `primary`, `success`, `warning` and `danger` colors, which will be used instead.
+
+### Bundling assets
+
+New Laravel projects use Vite for bundling assets by default. However, your project may still use Laravel Mix. Read the steps below for the bundler used in your project.
+
+#### Vite
+
+If you're using Vite, you should manually install [Autoprefixer](https://github.com/postcss/autoprefixer) through NPM:
+
+```bash
+npm install autoprefixer --save-dev
+```
+
+Create a `postcss.config.js` file in the root of your project, and register Tailwind CSS and Autoprefixer as plugins:
+
+```js
+module.exports = {
+    plugins: {
+        tailwindcss: {},
+        autoprefixer: {},
+    },
+}
+```
+
+You may also want to update your `vite.config.js` file to refresh the page after Livewire components or custom table columns have been updated:
+
+```js
+import { defineConfig } from 'vite';
+import laravel, { refreshPaths } from 'laravel-vite-plugin'; // [tl! focus]
+
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: [
+                'resources/css/app.css',
+                'resources/js/app.js',
+            ],
+            refresh: [ // [tl! focus:start]
+                ...refreshPaths,
+                'app/Http/Livewire/**',
+                'app/Tables/Columns/**',
+            ], // [tl! focus:end]
+        }),
+    ],
+});
+```
+
+#### Laravel Mix
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XslPKxtMR70" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+In your `webpack.mix.js` file, register Tailwind CSS as a PostCSS plugin :
+
+```js
+const mix = require('laravel-mix')
+
+mix.js('resources/js/app.js', 'public/js')
+    .postCss('resources/css/app.css', 'public/css', [
+        require('tailwindcss'), // [tl! focus]
+    ])
+```
 
 In your `webpack.mix.js` file, Register Tailwind CSS as a PostCSS plugin :
 
@@ -83,7 +152,9 @@ mix.js('resources/js/app.js', 'public/js')
     ])
 ```
 
-In `/resources/css/app.css`, import `filament/forms` vendor CSS and [TailwindCSS](https://tailwindcss.com):
+### Configuring styles
+
+In `/resources/css/app.css`, import `filament/forms` vendor CSS and [Tailwind CSS](https://tailwindcss.com):
 
 ```css
 @import '../../vendor/filament/forms/dist/module.esm.css';
@@ -93,21 +164,30 @@ In `/resources/css/app.css`, import `filament/forms` vendor CSS and [TailwindCSS
 @tailwind utilities;
 ```
 
-In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), the `filament/forms` and `@alpinejs/focus` plugins, and register them:
+### Configuring scripts
+
+In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), the `filament/forms`, `filament/notifications` and `@alpinejs/focus` plugins, and register them:
+
 ```js
 import Alpine from 'alpinejs'
-import FormsAlpinePlugin from '../../vendor/filament/forms/dist/module.esm'
 import Focus from '@alpinejs/focus'
+import FormsAlpinePlugin from '../../vendor/filament/forms/dist/module.esm'
+import NotificationsAlpinePlugin from '../../vendor/filament/notifications/dist/module.esm'
 
-Alpine.plugin(FormsAlpinePlugin)
 Alpine.plugin(Focus)
+Alpine.plugin(FormsAlpinePlugin)
+Alpine.plugin(NotificationsAlpinePlugin)
 
 window.Alpine = Alpine
 
 Alpine.start()
 ```
 
+### Compiling assets
+
 Compile your new CSS and JS assets using `npm run dev`.
+
+### Configuring layout
 
 Finally, create a new `resources/views/layouts/app.blade.php` layout file for Livewire components:
 
@@ -123,26 +203,24 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
 
         <title>{{ config('app.name') }}</title>
 
-        <!-- Styles -->
         <style>[x-cloak] { display: none !important; }</style>
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
-        <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-
-        <!-- Scripts -->
         @livewireScripts
-        <script src="{{ mix('js/app.js') }}" defer></script>
         @stack('scripts')
     </head>
 
     <body class="antialiased">
         {{ $slot }}
+
+        @livewire('notifications')
     </body>
 </html>
 ```
 
 You're now ready to start [building tables](getting-started)!
 
-## Publishing the configuration
+## Publishing configuration
 
 If you wish, you may publish the configuration of the package using:
 
@@ -150,7 +228,7 @@ If you wish, you may publish the configuration of the package using:
 php artisan vendor:publish --tag=tables-config
 ```
 
-## Publishing the translations
+## Publishing translations
 
 If you wish to translate the package, you may publish the language files using:
 
@@ -158,7 +236,7 @@ If you wish to translate the package, you may publish the language files using:
 php artisan vendor:publish --tag=tables-translations
 ```
 
-## Upgrade Guide
+## Upgrading
 
 To upgrade the package to the latest version, you must run:
 

@@ -3,8 +3,7 @@ const colors = require('tailwindcss/colors')
 module.exports = {
     content: [
         './resources/**/*.blade.php',
-        '../forms/resources/**/*.blade.php',
-        '../tables/resources/**/*.blade.php',
+        './vendor/filament/**/*.blade.php',
     ],
     theme: {
         extend: {
@@ -16,8 +15,4 @@ module.exports = {
             },
         },
     },
-    plugins: [
-        require('@tailwindcss/forms'),
-        require('@tailwindcss/typography'),
-    ],
 }

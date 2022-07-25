@@ -12,6 +12,7 @@
         "akaunting/laravel-money": "^1.2|^2.0|^3.0",
         "blade-ui-kit/blade-heroicons": "^1.2",
         "filament/forms": "self.version",
+        "filament/notifications": "self.version",
         "filament/support": "self.version",
         "illuminate/console": "^8.6|^9.0",
         "illuminate/contracts": "^8.6|^9.0",

@@ -1,5 +1,5 @@
 ---
-title: Listing Records
+title: Listing records
 ---
 
 ## Columns

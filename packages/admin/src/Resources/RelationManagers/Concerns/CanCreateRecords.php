@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\RelationManagers\Concerns;
 
+use Filament\Notifications\Notification;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 
@@ -78,7 +79,10 @@ trait CanCreateRecords
         }
 
         if (filled($this->getCreatedNotificationMessage())) {
-            $this->notify('success', $this->getCreatedNotificationMessage());
+            Notification::make()
+                ->title($this->getCreatedNotificationMessage())
+                ->success()
+                ->send();
         }
 
         if ($another) {

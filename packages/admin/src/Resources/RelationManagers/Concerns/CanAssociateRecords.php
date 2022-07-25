@@ -3,6 +3,7 @@
 namespace Filament\Resources\RelationManagers\Concerns;
 
 use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -222,7 +223,10 @@ trait CanAssociateRecords
             $form->fill();
         }
 
-        $this->notify('success', __('filament-support::actions/associate.single.messages.associated'));
+        Notification::make()
+            ->title(__('filament-support::actions/associate.single.messages.associated'))
+            ->success()
+            ->send();
 
         if ($another) {
             $this->getMountedTableAction()->hold();

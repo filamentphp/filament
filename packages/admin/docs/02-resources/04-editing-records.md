@@ -1,5 +1,5 @@
 ---
-title: Editing Records
+title: Editing records
 ---
 
 ## Customizing data before filling the form

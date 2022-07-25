@@ -3,6 +3,7 @@
 namespace Filament\Support\Actions\Concerns;
 
 use Closure;
+use Filament\Notifications\Notification;
 
 trait CanNotify
 {
@@ -10,33 +11,15 @@ trait CanNotify
 
     protected string | Closure | null $successNotificationMessage = null;
 
-    protected ?Closure $notifyUsing = null;
-
-    public function notifyUsing(?Closure $callback): static
-    {
-        $this->notifyUsing = $callback;
-
-        return $this;
-    }
-
-    public function notify(string | Closure $status, string | Closure $message): void
-    {
-        if (! $this->notifyUsing) {
-            return;
-        }
-
-        $this->evaluate($this->notifyUsing, [
-            'message' => $this->evaluate($message),
-            'status' => $this->evaluate($status),
-        ]);
-    }
-
     public function sendFailureNotification(): static
     {
         $message = $this->evaluate($this->failureNotificationMessage);
 
         if (filled($message)) {
-            $this->notify('danger', $message);
+            Notification::make()
+                ->title($message)
+                ->danger()
+                ->send();
         }
 
         return $this;
@@ -47,7 +30,10 @@ trait CanNotify
         $message = $this->evaluate($this->successNotificationMessage);
 
         if (filled($message)) {
-            $this->notify('success', $message);
+            Notification::make()
+                ->title($message)
+                ->success()
+                ->send();
         }
 
         return $this;

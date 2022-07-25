@@ -1,5 +1,5 @@
 ---
-title: Getting Started
+title: Getting started
 ---
 
 Filament allows you to build dynamic dashboards, comprised of "widget" cards, very easily.

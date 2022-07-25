@@ -3,6 +3,7 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Forms\ComponentContainer;
+use Filament\Notifications\Notification;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\DeleteAction;
 use Filament\Pages\Actions\ForceDeleteAction;
@@ -83,10 +84,10 @@ class EditRecord extends Page implements HasFormActions
         $shouldRedirect = $shouldRedirect && ($redirectUrl = $this->getRedirectUrl());
 
         if (filled($this->getSavedNotificationMessage())) {
-            $this->notify(
-                'success',
-                $this->getSavedNotificationMessage(),
-            );
+            Notification::make()
+                ->title($this->getSavedNotificationMessage())
+                ->success()
+                ->send();
         }
 
         if ($shouldRedirect) {
@@ -132,10 +133,10 @@ class EditRecord extends Page implements HasFormActions
         $this->callHook('afterDelete');
 
         if (filled($this->getDeletedNotificationMessage())) {
-            $this->notify(
-                'success',
-                $this->getDeletedNotificationMessage(),
-            );
+            Notification::make()
+                ->title($this->getDeletedNotificationMessage())
+                ->success()
+                ->send();
         }
 
         $this->redirect($this->getDeleteRedirectUrl());

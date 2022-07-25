@@ -3,6 +3,7 @@
 namespace Filament\Tests\Admin\Fixtures\Pages;
 
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 
 class Settings extends Page
@@ -21,7 +22,10 @@ class Settings extends Page
             $this->redirect('/');
         }
 
-        $this->notify('success', 'Saved!');
+        Notification::make()
+            ->title('Saved!')
+            ->success()
+            ->send();
     }
 
     protected function getFormSchema(): array

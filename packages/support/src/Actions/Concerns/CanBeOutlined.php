@@ -2,11 +2,13 @@
 
 namespace Filament\Support\Actions\Concerns;
 
+use Closure;
+
 trait CanBeOutlined
 {
-    protected bool $isOutlined = false;
+    protected bool | Closure $isOutlined = false;
 
-    public function outlined(bool $condition = true): static
+    public function outlined(bool | Closure $condition = true): static
     {
         $this->isOutlined = $condition;
 
@@ -15,6 +17,6 @@ trait CanBeOutlined
 
     public function isOutlined(): bool
     {
-        return $this->isOutlined;
+        return $this->evaluate($this->isOutlined);
     }
 }

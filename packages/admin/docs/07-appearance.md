@@ -137,7 +137,7 @@ module.exports = {
 }
 ```
 
-Or if you're using Mix instead of Vite, in your `webpack.mix.js` file, register Tailwind CSS as a PostCSS plugin:
+Or if you're using Laravel Mix instead of Vite, in your `webpack.mix.js` file, register Tailwind CSS as a PostCSS plugin:
 
 ```js
 const mix = require('laravel-mix')
@@ -165,7 +165,7 @@ Filament::serving(function () {
         app(Vite::class)('resources/css/filament.css'),
     );
 
-    // Using Mix
+    // Using Laravel Mix
     Filament::registerTheme(
         mix('css/filament.css'),
     );

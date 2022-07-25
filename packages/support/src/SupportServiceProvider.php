@@ -67,8 +67,9 @@ class SupportServiceProvider extends PackageServiceProvider
             $packages = [
                 'filament',
                 'forms',
-                'tables',
+                'notifications',
                 'support',
+                'tables',
             ];
 
             AboutCommand::add('Filament', [
