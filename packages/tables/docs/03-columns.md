@@ -89,7 +89,7 @@ If a column is sortable(), you may choose to sort it by default using the `getDe
         return 'full_name';
     }
 
-    protected function getDefaultTableSortDirection(): string
+    protected function getDefaultTableSortDirection(): ?string
     {
         return 'asc';
     }
