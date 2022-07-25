@@ -84,7 +84,7 @@ TextColumn::make('full_name')
 If a column is sortable(), you may choose to sort it by default using the `getDefaultTableSortColumn()` and `getDefaultTableSortDirection` methods:
 
 ```php
-    protected function getDefaultTableSortColumn(): string
+    protected function getDefaultTableSortColumn(): ?string
     {
         return 'full_name';
     }
