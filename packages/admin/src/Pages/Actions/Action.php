@@ -2,8 +2,6 @@
 
 namespace Filament\Pages\Actions;
 
-use Filament\Facades\Filament;
-use Filament\Notifications\Notification;
 use Filament\Pages\Actions\Modal\Actions\Action as ModalAction;
 use Filament\Support\Actions\Action as BaseAction;
 use Filament\Support\Actions\Concerns\CanBeDisabled;
