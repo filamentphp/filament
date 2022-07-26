@@ -88,7 +88,7 @@ return [
     ],
 
     'reorder_indicator' => 'Faites glisser et déposez les enregistrements dans l\'ordre.',
-    
+
     'selection_indicator' => [
 
         'selected_count' => '1 élément sélectionné.|:count éléments sélectionnés.',
