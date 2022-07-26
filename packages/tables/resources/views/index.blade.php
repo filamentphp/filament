@@ -223,14 +223,14 @@
 >
     <x-tables::container>
         <div
-            x-show="hasHeader = (@js($renderHeader = ($header || $heading || ($headerActions && (! $isReorderable)) || $isReorderable || $isSearchVisible || $hasFilters || $isColumnToggleFormVisible)) || selectedRecords.length)"
+            x-show="hasHeader = (@js($renderHeader = ($header || $heading || ($headerActions && (! $isReordering)) || $isReorderable || $isSearchVisible || $hasFilters || $isColumnToggleFormVisible)) || selectedRecords.length)"
             {!! ! $renderHeader ? 'x-cloak' : null !!}
         >
             @if ($header)
                 {{ $header }}
-            @elseif ($heading || ($headerActions && (! $isReorderable)))
+            @elseif ($heading || ($headerActions && (! $isReordering)))
                 <div class="px-2 pt-2">
-                    <x-tables::header :actions="$isReorderable ? [] : $headerActions" class="mb-2">
+                    <x-tables::header :actions="$isReordering ? [] : $headerActions" class="mb-2">
                         <x-slot name="heading">
                             {{ $heading }}
                         </x-slot>

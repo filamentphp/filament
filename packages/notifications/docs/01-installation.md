@@ -32,6 +32,8 @@ npm run dev
 
 You're now ready to start [sending notifications](sending-notifications)!
 
+![Filament Notifications](https://user-images.githubusercontent.com/44533235/180972526-da7ebb2f-24f6-4cf4-8e4c-d261574384ab.jpg)
+
 ## Existing Laravel projects
 
 The package uses the following dependencies:
