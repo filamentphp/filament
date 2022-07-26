@@ -85,6 +85,6 @@ class NavigationGroup
 
     public function isCollapsible(): bool
     {
-        return $this->isCollapsible ?? config('filament.layout.sidebar.groups.are_collapsible');
+        return $this->isCollapsible ?? config('filament.layout.sidebar.groups.are_collapsible') ?? true;
     }
 }
