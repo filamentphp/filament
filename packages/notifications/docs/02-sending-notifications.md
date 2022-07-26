@@ -143,7 +143,7 @@ Notification::make()
         Action::make('view')
             ->button(),
         Action::make('undo')
-            ->color('danger'),
+            ->color('secondary'),
     ]) // [tl! focus:end]
     ->send();
 ```
@@ -167,7 +167,7 @@ Notification::make()
             ->button()
             ->url(route('posts.show', $post), shouldOpenInNewTab: true) // [tl! focus]
         Action::make('undo')
-            ->color('danger'),
+            ->color('secondary'),
     ])
     ->send();
 ```
@@ -189,7 +189,7 @@ Notification::make()
             ->button()
             ->url(route('posts.show', $post), shouldOpenInNewTab: true),
         Action::make('undo')
-            ->color('danger')
+            ->color('secondary')
             ->emit('undoEditingPost', [$post->id]), // [tl! focus]
     ])
     ->send();
