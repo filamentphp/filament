@@ -240,7 +240,7 @@
                         </x-slot>
                     </x-tables::header>
 
-                    <x-tables::hr x-show="@js($isReorderable || $isSearchVisible || $hasFilters || $isColumnToggleFormVisible) || selectedRecords.length" />
+                    <x-tables::hr :x-show="\Illuminate\Support\Js::from($isReorderable || $isSearchVisible || $hasFilters || $isColumnToggleFormVisible) . ' || selectedRecords.length'" />
                 </div>
             @endif
 
@@ -250,7 +250,7 @@
                         <x-tables::filters :form="$getFiltersForm()" />
                     </div>
 
-                    <x-tables::hr x-show="@js($isReorderable || $isSearchVisible || $isColumnToggleFormVisible) || selectedRecords.length" />
+                    <x-tables::hr :x-show="\Illuminate\Support\Js::from($isReorderable || $isSearchVisible || $isColumnToggleFormVisible) . ' || selectedRecords.length'" />
                 </div>
             @endif
 
