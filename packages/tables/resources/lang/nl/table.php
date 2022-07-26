@@ -46,13 +46,13 @@ return [
     'buttons' => [
 
         'disable_reordering' => [
-            'label' => 'Ordenen afronden',
+            'label' => 'Ordenen voltooien',
         ],
 
         'enable_reordering' => [
             'label' => 'Records ordenen',
         ],
-        
+
         'filter' => [
             'label' => 'Filteren',
         ],
@@ -106,7 +106,7 @@ return [
         ],
 
     ],
-    
+
     'reorder_indicator' => 'Sleep de records in de juiste volgorde.',
 
     'selection_indicator' => [
