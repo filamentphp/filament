@@ -99,6 +99,8 @@ return [
 
     ],
 
+    'reorder_indicator' => 'برای تغییر ترتیب بکشید و رها کنید.',
+
     'selection_indicator' => [
 
         'selected_count' => '1 آیتم انتخاب شده.|:count آیتم انتخاب شده.',
