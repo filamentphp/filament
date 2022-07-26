@@ -50,7 +50,7 @@ return [
         ],
 
         'enable_reordering' => [
-            'label' => 'Opnieuw ordenen',
+            'label' => 'Records ordenen',
         ],
         
         'filter' => [
