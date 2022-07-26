@@ -46,11 +46,11 @@ return [
     'buttons' => [
 
         'disable_reordering' => [
-            'label' => 'Ordenen voltooien',
+            'label' => 'Herordenen van records voltooien',
         ],
 
         'enable_reordering' => [
-            'label' => 'Records ordenen',
+            'label' => 'Records herordenen',
         ],
 
         'filter' => [
