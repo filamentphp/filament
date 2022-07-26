@@ -31,6 +31,12 @@ composer require filament/forms
 composer require filament/tables
 ```
 
+### Notifications • [Documentation](https://filamentphp.com/docs/notifications)
+
+```bash
+composer require filament/notifications
+```
+
 ### Spatie Media Library Plugin • [Documentation](https://filamentphp.com/docs/spatie-laravel-media-library-plugin)
 
 ```bash
@@ -72,6 +78,7 @@ Install the packages in your app's `composer.json`:
     "require": {
         "filament/filament": "dev-fix/error-message as 2.x-dev",
         "filament/forms": "dev-fix/error-message as 2.x-dev",
+        "filament/notifications": "dev-fix/error-message as 2.x-dev",
         "filament/support": "dev-fix/error-message as 2.x-dev",
         "filament/tables": "dev-fix/error-message as 2.x-dev"
     },
