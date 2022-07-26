@@ -425,7 +425,7 @@ protected function getTableReorderColumn(): ?string
 
 ### Enabling pagination while reordering
 
-Pagination will be disabled in reorder mode to allow you to move records between pages. It is generally bad UX to re-enable pagination while reordering, but if you are sure them you can use:
+Pagination will be disabled in reorder mode to allow you to move records between pages. It is generally bad UX to re-enable pagination while reordering, but if you are sure then you can use:
 
 ```php
 protected function isTablePaginationEnabledWhileReordering(): bool
