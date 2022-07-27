@@ -5,6 +5,7 @@
     'icon' => null,
     'keyBindings' => null,
     'label' => null,
+    'size' => 'md',
     'tag' => 'button',
     'tooltip' => null,
     'type' => 'button',
@@ -22,7 +23,12 @@
         'opacity-70 cursor-not-allowed pointer-events-none' => $disabled,
     ];
 
-    $iconClasses = 'w-5 h-5 filament-icon-button-icon';
+    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
+        'filament-icon-button-icon',
+        'w-5 h-5' => $size === 'md',
+        'w-4 h-4' => $size === 'sm',
+        'w-6 h-6' => $size === 'lg',
+    ]);
 @endphp
 
 @if ($tag === 'button')
