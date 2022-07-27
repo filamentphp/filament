@@ -240,7 +240,6 @@ To do this automatically, we recommend adding these commands to your `composer.j
 ```json
 "post-update-cmd": [
     // ...
-    "@php artisan config:clear",
-    "@php artisan view:clear"
+    "@php artisan filament:upgrade"
 ],
 ```
