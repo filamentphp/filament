@@ -132,7 +132,7 @@ return [
 
         ],
 
-        'selected_count' => '1 Datensatz ausgewählt ausgewählt.|:count Datensätze ausgewählt.',
+        'selected_count' => '1 Datensatz ausgewählt.|:count Datensätze ausgewählt.',
     ],
 
 ];
