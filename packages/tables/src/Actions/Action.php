@@ -91,7 +91,7 @@ class Action extends BaseAction implements Groupable, HasRecord
 
     public function getModelLabel(): string
     {
-        return $this->getCustomModelLabel() ?? $this->getLivewire()->getTableModelLabel();
+        return __($this->getCustomModelLabel() ?? $this->getLivewire()->getTableModelLabel());
     }
 
     public function getPluralModelLabel(): string

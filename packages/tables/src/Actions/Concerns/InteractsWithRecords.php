@@ -47,7 +47,7 @@ trait InteractsWithRecords
             return $label;
         }
 
-        return $this->getLivewire()->getTableModelLabel();
+        return __($this->getLivewire()->getTableModelLabel());
     }
 
     public function getPluralModelLabel(): string

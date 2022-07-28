@@ -18,10 +18,10 @@ trait HasLabel
 
     public function getLabel(): string
     {
-        return $this->evaluate($this->label) ?? (string) Str::of($this->getName())
+        return __($this->evaluate($this->label) ?? (string) Str::of($this->getName())
             ->before('.')
             ->kebab()
             ->replace(['-', '_'], ' ')
-            ->ucfirst();
+            ->ucfirst());
     }
 }

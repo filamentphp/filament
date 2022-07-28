@@ -75,7 +75,7 @@ class NavigationGroup
 
     public function getLabel(): ?string
     {
-        return $this->label;
+        return __($this->label);
     }
 
     public function isCollapsed(): bool

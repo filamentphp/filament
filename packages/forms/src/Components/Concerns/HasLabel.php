@@ -27,7 +27,7 @@ trait HasLabel
 
     public function getLabel(): string | Htmlable | null
     {
-        return $this->evaluate($this->label);
+        return __($this->evaluate($this->label));
     }
 
     public function isLabelHidden(): bool

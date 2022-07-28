@@ -190,7 +190,7 @@ class Card extends Component implements Htmlable
 
     public function getLabel(): string | Htmlable
     {
-        return $this->label;
+        return __($this->label);
     }
 
     public function getId(): string

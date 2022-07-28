@@ -114,11 +114,11 @@ class CheckboxList extends Field
     public function getLabel(): string
     {
         if ($this->label === null && $this->getRelationship()) {
-            return (string) Str::of($this->getRelationshipName())
+            return __((string) Str::of($this->getRelationshipName())
                 ->before('.')
                 ->kebab()
                 ->replace(['-', '_'], ' ')
-                ->ucfirst();
+                ->ucfirst());
         }
 
         return parent::getLabel();

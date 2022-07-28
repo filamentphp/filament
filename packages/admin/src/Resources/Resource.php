@@ -260,12 +260,12 @@ class Resource
      */
     public static function getLabel(): ?string
     {
-        return static::$label;
+        return __(static::$label);
     }
 
     public static function getModelLabel(): string
     {
-        return static::$modelLabel ?? static::getLabel() ?? get_model_label(static::getModel());
+        return __(static::$modelLabel ?? static::getLabel() ?? get_model_label(static::getModel()));
     }
 
     public static function getModel(): string

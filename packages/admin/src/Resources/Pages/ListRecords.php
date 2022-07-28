@@ -420,7 +420,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     public function getModelLabel(): string
     {
-        return static::getResource()::getModelLabel();
+        return __(static::getResource()::getModelLabel());
     }
 
     public function getPluralModelLabel(): string

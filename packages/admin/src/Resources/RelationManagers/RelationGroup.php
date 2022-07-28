@@ -19,7 +19,7 @@ class RelationGroup
 
     public function getLabel(): string
     {
-        return $this->label;
+        return __($this->label);
     }
 
     public function getManagers(?Model $ownerRecord = null): array

@@ -36,7 +36,7 @@ class ActionGroup extends ViewComponent
 
     public function getLabel(): ?string
     {
-        return $this->evaluate($this->label);
+        return __($this->evaluate($this->label));
     }
 
     public function getActions(): array

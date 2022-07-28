@@ -36,10 +36,10 @@ class Field extends Component implements Contracts\HasValidationRules
 
     public function getLabel(): string | Htmlable | null
     {
-        return parent::getLabel() ?? (string) Str::of($this->getName())
+        return __(parent::getLabel() ?? (string) Str::of($this->getName())
             ->afterLast('.')
             ->kebab()
             ->replace(['-', '_'], ' ')
-            ->ucfirst();
+            ->ucfirst());
     }
 }

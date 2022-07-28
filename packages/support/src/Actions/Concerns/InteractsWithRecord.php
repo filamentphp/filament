@@ -109,7 +109,7 @@ trait InteractsWithRecord
             return null;
         }
 
-        return get_model_label($model);
+        return __(get_model_label($model));
     }
 
     public function getCustomModelLabel(): ?string

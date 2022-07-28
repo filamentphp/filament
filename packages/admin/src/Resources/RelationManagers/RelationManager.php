@@ -309,10 +309,10 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     protected static function getModelLabel(): string
     {
-        return static::$modelLabel ?? static::getRecordLabel() ?? (string) Str::of(static::getRelationshipName())
+        return __(static::$modelLabel ?? static::getRecordLabel() ?? (string) Str::of(static::getRelationshipName())
             ->kebab()
             ->replace('-', ' ')
-            ->singular();
+            ->singular());
     }
 
     /**
