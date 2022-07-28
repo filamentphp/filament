@@ -1,7 +1,9 @@
 <?php
 
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\TextInput;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
@@ -37,4 +39,14 @@ it('has state binding modifiers', function () {
 
     expect($field)
         ->applyStateBindingModifiers($expression = Str::random())->toBe(implode('.', array_merge([$expression], $modifiers)));
+});
+
+it('can auto register actions', function () {
+    $component = TextInput::make('name')
+        ->prefixAction(
+            Action::make('test')
+        );
+
+    expect($component->getActions())
+        ->toHaveKey('test');
 });

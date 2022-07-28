@@ -33,6 +33,10 @@ trait HasAffixes
 
     public function prefixAction(Action | Closure | null $action): static
     {
+        if ($action instanceof Action) {
+            $this->autoRegisterAction($action);
+        }
+
         $this->prefixAction = $action;
 
         return $this;
@@ -40,6 +44,10 @@ trait HasAffixes
 
     public function suffixAction(Action | Closure | null $action): static
     {
+        if ($action instanceof Action) {
+            $this->autoRegisterAction($action);
+        }
+
         $this->suffixAction = $action;
 
         return $this;
@@ -64,6 +72,15 @@ trait HasAffixes
         $this->suffixIcon = $iconName;
 
         return $this;
+    }
+
+    private function autoRegisterAction(Action $action): void
+    {
+        if (! $this->getAction($action->getName())) {
+            $this->registerActions([
+                $action->getName() => $action,
+            ]);
+        }
     }
 
     public function getPrefixAction(): ?Action
