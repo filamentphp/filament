@@ -50,11 +50,11 @@ class Block extends Component
     {
         $label = $this->evaluate($this->label, array_merge(
             $this->labelState ? ['state' => $this->labelState] : [],
-        ));
-
-        return $label ?? (string) Str::of($this->getName())
+        ))??(string) Str::of($this->getName())
             ->kebab()
             ->replace(['-', '_'], ' ')
             ->ucfirst();
+
+        return ($this->isLabelLocalized())?__($label):$label;
     }
 }

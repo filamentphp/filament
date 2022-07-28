@@ -34,10 +34,11 @@ trait HasLabel
 
     public function getLabel(): string | Htmlable | null
     {
+        $label = $this->evaluate($this->label);
         if ($this->isLabelLocalized()){
-            return __($this->evaluate($this->label));
+            return __($label);
         }
-        return $this->evaluate($this->label);
+        return $label;
     }
 
     public function isLabelLocalized(): bool

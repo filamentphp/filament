@@ -387,11 +387,12 @@ class Repeater extends Field
     public function getLabel(): string
     {
         if ($this->label === null && $this->hasRelationship()) {
-            return (string) Str::of($this->getRelationshipName())
+            $label = (string) Str::of($this->getRelationshipName())
                 ->before('.')
                 ->kebab()
                 ->replace(['-', '_'], ' ')
                 ->ucfirst();
+            return ($this->isLabelLocalized())?__($label):$label;
         }
 
         return parent::getLabel();

@@ -55,10 +55,11 @@ class Placeholder extends Component
 
     public function getLabel(): string | Htmlable | null
     {
-        return parent::getLabel() ?? (string) Str::of($this->getName())
+        $label =parent::getLabel() ?? (string) Str::of($this->getName())
             ->kebab()
             ->replace(['-', '_'], ' ')
             ->ucfirst();
+        return ($this->isLabelLocalized())?__($label):$label;
     }
 
     public function getContent()
