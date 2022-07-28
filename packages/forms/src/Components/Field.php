@@ -34,9 +34,13 @@ class Field extends Component implements Contracts\HasValidationRules
         return parent::getId() ?? $this->getStatePath();
     }
 
-    public function getLabel(): string | Htmlable | null
+    public function getLabel(): string|Htmlable|null
     {
-        return parent::getLabel() ?? (string) Str::of($this->getName())
+        return parent::getLabel() ?? ($this->isLabelLocalized()) ? __((string) Str::of($this->getName())
+            ->afterLast('.')
+            ->kebab()
+            ->replace(['-', '_'], ' ')
+            ->ucfirst()) : (string) Str::of($this->getName())
             ->afterLast('.')
             ->kebab()
             ->replace(['-', '_'], ' ')

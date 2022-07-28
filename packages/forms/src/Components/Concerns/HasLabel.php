@@ -35,7 +35,6 @@ trait HasLabel
     public function getLabel(): string | Htmlable | null
     {
         if ($this->isLabelLocalized()){
-
             return __($this->evaluate($this->label));
         }
         return $this->evaluate($this->label);
