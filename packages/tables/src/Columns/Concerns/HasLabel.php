@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 trait HasLabel
 {
     protected string | Closure | null $label = null;
+
     protected bool | Closure $isLabelLocalized = false;
 
     public function label(string | Closure | null $label): static
@@ -16,12 +17,14 @@ trait HasLabel
 
         return $this;
     }
+
     public function localizeLabel(bool | Closure $condition = true): static
     {
         $this->isLabelLocalized = $condition;
 
         return $this;
     }
+
     public function isLabelLocalized(): bool
     {
         return $this->evaluate($this->isLabelLocalized);
@@ -34,6 +37,7 @@ trait HasLabel
             ->kebab()
             ->replace(['-', '_'], ' ')
             ->ucfirst();
-        return ($this->isLabelLocalized())?__($label):$label;
+
+        return ($this->isLabelLocalized()) ? __($label) : $label;
     }
 }

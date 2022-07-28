@@ -8,7 +8,9 @@ use Illuminate\Contracts\Support\Htmlable;
 trait HasLabel
 {
     protected bool | Closure $isLabelHidden = false;
+
     protected bool | Closure $isLabelLocalized = false;
+
     protected string | Htmlable | Closure | null $label = null;
 
     public function disableLabel(bool | Closure $condition = true): static
@@ -35,9 +37,10 @@ trait HasLabel
     public function getLabel(): string | Htmlable | null
     {
         $label = $this->evaluate($this->label);
-        if ($this->isLabelLocalized()){
+        if ($this->isLabelLocalized()) {
             return __($label);
         }
+
         return $label;
     }
 
@@ -45,6 +48,7 @@ trait HasLabel
     {
         return $this->evaluate($this->isLabelLocalized);
     }
+
     public function isLabelHidden(): bool
     {
         return $this->evaluate($this->isLabelHidden);

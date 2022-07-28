@@ -392,7 +392,8 @@ class Repeater extends Field
                 ->kebab()
                 ->replace(['-', '_'], ' ')
                 ->ucfirst();
-            return ($this->isLabelLocalized())?__($label):$label;
+
+            return ($this->isLabelLocalized()) ? __($label) : $label;
         }
 
         return parent::getLabel();
