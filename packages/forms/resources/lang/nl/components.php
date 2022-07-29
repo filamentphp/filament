@@ -102,7 +102,7 @@ return [
                 'label' => 'Verwijderen',
             ],
 
-            'duplicate_item' => [
+            'clone_item' => [
                 'label' => 'Dupliceren',
             ],
 

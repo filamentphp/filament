@@ -27,11 +27,11 @@ class Repeater extends Field
 
     protected bool | Closure $isItemDeletionDisabled = false;
 
-    protected bool | Closure $isItemDuplicationDisabled = false;
-
     protected bool | Closure $isItemMovementDisabled = false;
 
     protected bool | Closure $isInset = false;
+
+    protected bool | Closure $isCloneable = false;
 
     protected ?Collection $cachedExistingRecords = null;
 
@@ -94,7 +94,7 @@ class Repeater extends Field
                     data_set($livewire, $statePath, $items);
                 },
             ],
-            'repeater::duplicateItem' => [
+            'repeater::cloneItem' => [
                 function (Repeater $component, string $statePath, string $duplicateUuid): void {
                     if ($statePath !== $component->getStatePath()) {
                         return;
@@ -215,9 +215,9 @@ class Repeater extends Field
         return $this;
     }
 
-    public function disableItemDuplication(bool | Closure $condition = true): static
+    public function isCloneable(bool | Closure $condition = true): static
     {
-        $this->isItemDuplicationDisabled = $condition;
+        $this->isCloneable = $condition;
 
         return $this;
     }

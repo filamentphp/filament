@@ -13,9 +13,9 @@
         $containers = $getChildComponentContainers();
 
         $isCollapsible = $isCollapsible();
+        $isCloneable = $isCloneable();
         $isItemCreationDisabled = $isItemCreationDisabled();
         $isItemDeletionDisabled = $isItemDeletionDisabled();
-        $isItemDuplicationDisabled = $isItemDuplicationDisabled();
         $isItemMovementDisabled = $isItemMovementDisabled();
         $hasItemLabels = $hasItemLabels();
     @endphp
@@ -107,10 +107,10 @@
                                         'flex divide-x rtl:divide-x-reverse',
                                         'dark:divide-gray-700' => config('forms.dark_mode'),
                                     ])>
-                                        @unless ($isItemDuplicationDisabled)
+                                        @if ($isCloneable)
                                             <li>
                                                 <button
-                                                    wire:click="dispatchFormEvent('repeater::duplicateItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                    wire:click="dispatchFormEvent('repeater::cloneItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                     type="button"
                                                     @class([
                                                         'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-300',
@@ -118,7 +118,7 @@
                                                     ])
                                                 >
                                                     <span class="sr-only">
-                                                        {{ __('forms::components.repeater.buttons.duplicate_item.label') }}
+                                                        {{ __('forms::components.repeater.buttons.clone_item.label') }}
                                                     </span>
 
                                                     <x-heroicon-s-duplicate class="w-4 h-4"/>

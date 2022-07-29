@@ -103,8 +103,8 @@ return [
                 'label' => 'Delete',
             ],
 
-            'duplicate_item' => [
-                'label' => 'Duplicate',
+            'clone_item' => [
+                'label' => 'Clone',
             ],
 
             'move_item_down' => [
