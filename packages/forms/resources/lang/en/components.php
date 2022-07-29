@@ -103,6 +103,10 @@ return [
                 'label' => 'Delete',
             ],
 
+            'duplicate_item' => [
+                'label' => 'Duplicate',
+            ],
+
             'move_item_down' => [
                 'label' => 'Move down',
             ],

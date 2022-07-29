@@ -27,6 +27,8 @@ class Repeater extends Field
 
     protected bool | Closure $isItemDeletionDisabled = false;
 
+    protected bool | Closure $isItemDuplicationDisabled = false;
+
     protected bool | Closure $isItemMovementDisabled = false;
 
     protected bool | Closure $isInset = false;
@@ -90,6 +92,21 @@ class Repeater extends Field
 
                     $livewire = $component->getLivewire();
                     data_set($livewire, $statePath, $items);
+                },
+            ],
+            'repeater::duplicateItem' => [
+                function (Repeater $component, string $statePath, string $duplicateUuid): void {
+                    if ($statePath !== $component->getStatePath()) {
+                        return;
+                    }
+
+                    $newUuid = (string) Str::uuid();
+
+                    $livewire = $component->getLivewire();
+                    data_set($livewire, "{$statePath}.{$newUuid}",
+                        data_get($livewire, "{$statePath}.{$duplicateUuid}"));
+
+                    $component->collapsed(false, shouldMakeComponentCollapsible: false);
                 },
             ],
             'repeater::moveItemDown' => [
@@ -195,6 +212,13 @@ class Repeater extends Field
         return $this;
     }
 
+    public function disableItemDuplication(bool | Closure $condition = true): static
+    {
+        $this->isItemDuplicationDisabled = $condition;
+
+        return $this;
+    }
+
     public function disableItemMovement(bool | Closure $condition = true): static
     {
         $this->isItemMovementDisabled = $condition;
@@ -245,6 +269,11 @@ class Repeater extends Field
     public function isItemDeletionDisabled(): bool
     {
         return $this->evaluate($this->isItemDeletionDisabled) || $this->isDisabled();
+    }
+
+    public function isItemDuplicationDisabled(): bool
+    {
+        return $this->evaluate($this->isItemDuplicationDisabled) || $this->isDisabled();
     }
 
     public function isInset(): bool

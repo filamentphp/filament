@@ -15,6 +15,7 @@
         $isCollapsible = $isCollapsible();
         $isItemCreationDisabled = $isItemCreationDisabled();
         $isItemDeletionDisabled = $isItemDeletionDisabled();
+        $isItemDuplicationDisabled = $isItemDuplicationDisabled();
         $isItemMovementDisabled = $isItemMovementDisabled();
         $hasItemLabels = $hasItemLabels();
     @endphp
@@ -106,6 +107,24 @@
                                         'flex divide-x rtl:divide-x-reverse',
                                         'dark:divide-gray-700' => config('forms.dark_mode'),
                                     ])>
+                                        @unless ($isItemDuplicationDisabled)
+                                            <li>
+                                                <button
+                                                    wire:click="dispatchFormEvent('repeater::duplicateItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                    type="button"
+                                                    @class([
+                                                        'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-300',
+                                                        'dark:text-gray-400 dark:border-gray-700 dark:hover:text-gray-500' => config('forms.dark_mode'),
+                                                    ])
+                                                >
+                                                    <span class="sr-only">
+                                                        {{ __('forms::components.repeater.buttons.duplicate_item.label') }}
+                                                    </span>
+
+                                                    <x-heroicon-s-duplicate class="w-4 h-4"/>
+                                                </button>
+                                            </li>
+                                        @endunless
                                         @unless ($isItemDeletionDisabled)
                                             <li>
                                                 <button
