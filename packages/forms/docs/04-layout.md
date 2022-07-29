@@ -273,13 +273,30 @@ Tabs::make('Heading')
                 // ...
             ]),
         Tabs\Tab::make('Label 3')
-            ->icon('heroicon-o-eye') // Optional icon
             ->schema([
                 // ...
             ]),
     ])
 ```
-By default the first `Tab` will be marked as active, to change this behaviour you can use the `activeTab()` method of `Tabs` component to set a default active `Tab` of your own.
+The first `Tab` will be marked as active by default. You can change the default tab using the `activeTab()` method on the `Tabs` component.
+
+You can also add badges and icons to the `Tab` components using the `badge()` and `icon()` methods.
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Heading')
+    ->tabs([
+        Tabs\Tab::make('Notifications')
+            ->icon('heroicon-o-bell')
+            ->badge('39')
+            ->schema([
+                // ...
+            ]),
+        // ...
+    ])
+```
+  
 ## Wizard
 
 Similar to [tabs](#tabs), you may want to use a multistep form wizard to reduce the number of components that are visible at once. These are especially useful if your form has a definite chronological order, in which you want each step to be validated as the user progresses.
