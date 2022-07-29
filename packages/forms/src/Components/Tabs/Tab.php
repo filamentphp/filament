@@ -11,6 +11,8 @@ class Tab extends Component implements CanConcealComponents
 {
     protected string $view = 'forms::components.tabs.tab';
 
+    protected string | Closure | null $badge = null;
+
     protected string | Closure | null $icon = null;
 
     final public function __construct(string $label)
@@ -34,6 +36,13 @@ class Tab extends Component implements CanConcealComponents
         return $this;
     }
 
+    public function badge(string | Closure | null $badge): static
+    {
+        $this->badge = $badge;
+
+        return $this;
+    }
+
     public function getId(): string
     {
         return $this->getContainer()->getParentComponent()->getId() . '-' . parent::getId() . '-tab';
@@ -49,6 +58,11 @@ class Tab extends Component implements CanConcealComponents
         return $this->evaluate($this->icon);
     }
 
+    public function getBadge(): ?string
+    {
+        return $this->evaluate($this->badge);
+    }
+    
     public function canConcealComponents(): bool
     {
         return true;

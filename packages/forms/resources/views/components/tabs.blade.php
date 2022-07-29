@@ -55,19 +55,31 @@
                 role="tab"
                 x-bind:tabindex="tab === '{{ $tab->getId() }}' ? 0 : -1"
                 class="flex items-center gap-2 shrink-0 p-3 text-sm font-medium"
-                x-bind:class="{ 'bg-white @if (config('forms.dark_mode')) dark:bg-gray-800 @endif': tab === '{{ $tab->getId() }}' }"
+                x-bind:class="{
+                    'text-gray-400 dark:text-gray-400': tab !== '{{ $tab->getId() }}',
+                    'bg-white text-primary-600 dark:bg-gray-800': tab === '{{ $tab->getId() }}'
+                }"
             >
                 @if ($icon = $tab->getIcon())
                     <x-dynamic-component
                         :component="$icon"
-                        :class="\Illuminate\Support\Arr::toCssClasses([
-                            'h-4 w-4 text-gray-500',
-                            'dark:text-gray-400' => config('forms.dark_mode'),
-                        ])"
+                        class="h-5 w-5"
                     />
                 @endif
 
-                {{ $tab->getLabel() }}
+                <span>{{ $tab->getLabel() }}</span>
+
+                @if ($tab->getBadge())
+                    <span
+                        class="inline-flex items-center justify-center ml-auto rtl:ml-0 rtl:mr-auto min-h-4 px-2 py-0.5 text-xs font-medium tracking-tight rounded-xl whitespace-normal transition"
+                        x-bind:class="{
+                            'text-gray-400 bg-gray-500/10 dark:bg-gray-600 dark:text-gray-400': tab !== '{{ $tab->getId() }}',
+                            'bg-gray-500/10 text-primary-600 font-medium': tab === '{{ $tab->getId() }}'
+                        }"
+                    >
+                        {{ $tab->getBadge() }}
+                    </span>
+                @endif
             </button>
         @endforeach
     </div>
