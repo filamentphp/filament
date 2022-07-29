@@ -4,7 +4,7 @@
         tab: null,
 
         init: function () {
-            this.tab = this.getTabs()[{{ $getActiveTab() }} - 1]
+            this.tab = this.getTabs()[@js($getActiveTab() - 1)]
         },
 
         getTabs: function () {
