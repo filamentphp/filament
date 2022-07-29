@@ -13,9 +13,11 @@ return [
         'light_mode' => [
             'label' => 'Chuyển chế độ sáng',
         ],
+
         'logout' => [
             'label' => 'Đăng xuất',
         ],
+        
     ],
 
 ];
