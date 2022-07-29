@@ -77,13 +77,13 @@ jobs:
                           return issues.data
                       }
 
-                      async function updateIssue(state, assignees = []) {
+                      async function updateIssue(state, state_reason = null) {
                           await github.issues.update({
-                              issue_number: context.issue.number,
                               owner: context.repo.owner,
                               repo: context.repo.repo,
+                              issue_number: context.issue.number,
                               state,
-                              assignees,
+                              state_reason,
                           })
                       }
 
@@ -113,7 +113,7 @@ jobs:
 
                           await createComment(comment)
 
-                          await updateIssue('closed')
+                          await updateIssue('closed', 'not_planned')
                       }
 
                       async function openWithComment(comment) {
