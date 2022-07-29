@@ -2,20 +2,20 @@
 
 return [
 
-     'form' => [
+    'form' => [
 
-         'actions' => [
+        'actions' => [
 
-             'save' => [
-                 'label' => 'Зберегти',
-             ],
+            'save' => [
+                'label' => 'Зберегти',
+            ],
 
-         ],
+        ],
 
-     ],
+    ],
 
-     'messages' => [
-         'saved' => 'Збережено',
-     ],
+    'messages' => [
+        'saved' => 'Збережено',
+    ],
 
 ];

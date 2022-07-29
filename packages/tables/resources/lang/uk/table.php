@@ -117,7 +117,6 @@ return [
 
     'reorder_indicator' => 'Drag-n-drop порядок записів.',
 
-
     'selection_indicator' => [
 
         'selected_count' => 'Вибрано 1 запис.|Вибрано :count записів.',
