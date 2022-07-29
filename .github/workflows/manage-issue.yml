@@ -158,7 +158,7 @@ jobs:
                           Hey @${user}! We're sorry to hear that you've hit this issue. 💛
                       `.trim()
 
-                      const NO_REPRO_URL = ! url.startsWith('https://github.com/')
+                      const NO_REPRO_URL = ! url.includes('https://github.com/')
                       const NO_REPRO_STEPS = reproSteps.length < 25
 
                       if (NO_REPRO_URL || NO_REPRO_STEPS) {
