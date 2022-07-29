@@ -12,10 +12,6 @@ return [
                 'label' => 'Добавить к :label',
             ],
 
-            'create_item_between' => [
-                'label' => 'Добавить между',
-            ],
-
             'delete_item' => [
                 'label' => 'Удалить',
             ],
