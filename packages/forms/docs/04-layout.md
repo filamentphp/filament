@@ -279,7 +279,7 @@ Tabs::make('Heading')
             ]),
     ])
 ```
-
+By default the first `Tab` will be marked as active, to change this behaviour you can use the `activeTab()` method of `Tabs` component to set a default active `Tab` of your own.
 ## Wizard
 
 Similar to [tabs](#tabs), you may want to use a multistep form wizard to reduce the number of components that are visible at once. These are especially useful if your form has a definite chronological order, in which you want each step to be validated as the user progresses.
