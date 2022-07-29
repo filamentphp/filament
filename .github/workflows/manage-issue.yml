@@ -192,6 +192,6 @@ jobs:
                         closeWithComment(comment)
                     } else {
                         openWithComment(`
-                            Thank you for providing repro steps! Re-opening issue now for triage.
+                            Thank you for providing repro steps! Re-opening issue now.
                         `)
                     }
