@@ -103,8 +103,11 @@ class Repeater extends Field
                     $newUuid = (string) Str::uuid();
 
                     $livewire = $component->getLivewire();
-                    data_set($livewire, "{$statePath}.{$newUuid}",
-                        data_get($livewire, "{$statePath}.{$duplicateUuid}"));
+                    data_set(
+                        $livewire,
+                        "{$statePath}.{$newUuid}",
+                        data_get($livewire, "{$statePath}.{$duplicateUuid}")
+                    );
 
                     $component->collapsed(false, shouldMakeComponentCollapsible: false);
                 },
