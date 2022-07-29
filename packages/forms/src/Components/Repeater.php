@@ -215,7 +215,7 @@ class Repeater extends Field
         return $this;
     }
 
-    public function isCloneable(bool | Closure $condition = true): static
+    public function cloneable(bool | Closure $condition = true): static
     {
         $this->isCloneable = $condition;
 
@@ -274,9 +274,9 @@ class Repeater extends Field
         return $this->evaluate($this->isItemDeletionDisabled) || $this->isDisabled();
     }
 
-    public function isItemDuplicationDisabled(): bool
+    public function isCloneable(): bool
     {
-        return $this->evaluate($this->isItemDuplicationDisabled) || $this->isDisabled();
+        return $this->evaluate($this->isCloneable) || $this->isDisabled();
     }
 
     public function isInset(): bool
