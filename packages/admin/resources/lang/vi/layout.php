@@ -17,7 +17,7 @@ return [
         'logout' => [
             'label' => 'Đăng xuất',
         ],
-        
+
     ],
 
 ];
