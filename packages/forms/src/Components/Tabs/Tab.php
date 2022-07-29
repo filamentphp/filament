@@ -62,7 +62,7 @@ class Tab extends Component implements CanConcealComponents
     {
         return $this->evaluate($this->badge);
     }
-    
+
     public function canConcealComponents(): bool
     {
         return true;
