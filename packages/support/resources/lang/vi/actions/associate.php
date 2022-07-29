@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'Đính kèm',
+        'label' => 'Liên kết',
 
         'modal' => [
 
-            'heading' => 'Đính kèm :label',
+            'heading' => 'Liên kết :label',
 
             'fields' => [
 
@@ -20,12 +20,12 @@ return [
 
             'actions' => [
 
-                'attach' => [
-                    'label' => 'Đình kèm',
+                'associate' => [
+                    'label' => 'Liên kết',
                 ],
 
-                'attach_another' => [
-                    'label' => 'Đính kèm & tiếp tục đính kèm với mục khác',
+                'associate_another' => [
+                    'label' => 'Liên kết & tiếp tục liên kết với mục khác',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'attached' => 'Đã đính kèm',
+            'associated' => 'Đã liên kết',
         ],
 
     ],
