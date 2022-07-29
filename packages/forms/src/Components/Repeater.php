@@ -172,7 +172,7 @@ class Repeater extends Field
             }
 
             foreach (range(1, $count) as $index) {
-                $items[] = [];
+                $items[(string) Str::uuid()] = [];
             }
 
             return $items;
