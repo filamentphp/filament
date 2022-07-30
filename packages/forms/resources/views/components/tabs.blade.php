@@ -71,10 +71,10 @@
 
                 @if ($tab->getBadge())
                     <span
-                        class="inline-flex items-center justify-center ml-auto rtl:ml-0 rtl:mr-auto min-h-4 px-2 py-0.5 text-xs font-medium tracking-tight rounded-xl whitespace-normal transition"
+                        class="inline-flex items-center justify-center ml-auto rtl:ml-0 rtl:mr-auto min-h-4 px-2 py-0.5 text-xs font-medium tracking-tight rounded-xl whitespace-normal"
                         x-bind:class="{
-                            'text-gray-400 bg-gray-500/10 @if (config('forms.dark_mode')) dark:bg-gray-600 dark:text-gray-400 @endif': tab !== '{{ $tab->getId() }}',
-                            'bg-primary-500/10 text-primary-500 font-medium': tab === '{{ $tab->getId() }}'
+                            'bg-gray-200 text-gray-500 @if (config('forms.dark_mode')) dark:bg-gray-600 dark:text-gray-400 @endif': tab !== '{{ $tab->getId() }}',
+                            'bg-primary-500/10 text-primary-600 font-medium': tab === '{{ $tab->getId() }}'
                         }"
                     >
                         {{ $tab->getBadge() }}
