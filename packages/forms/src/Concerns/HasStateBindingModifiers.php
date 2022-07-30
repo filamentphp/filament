@@ -2,13 +2,15 @@
 
 namespace Filament\Forms\Concerns;
 
+use Closure;
 use Filament\Forms\Components\Component;
+use Illuminate\Support\Str;
 
 trait HasStateBindingModifiers
 {
     protected $stateBindingModifiers = null;
 
-    protected string $debounce = '500ms';
+    protected string | int | null $debounce = null;
 
     public function reactive(): static
     {
@@ -24,15 +26,14 @@ trait HasStateBindingModifiers
         return $this;
     }
 
-    public function debounce(string $delay = '500ms'): static
+    public function debounce(string | int | null $delay = '500ms'): static
     {
-        $this->stateBindingModifiers(["debounce.$delay"]);
         $this->debounce = $delay;
 
         return $this;
     }
 
-    public function stateBindingModifiers(array $modifiers): static
+    public function stateBindingModifiers(?array $modifiers): static
     {
         $this->stateBindingModifiers = $modifiers;
 
@@ -43,10 +44,6 @@ trait HasStateBindingModifiers
     {
         $modifiers = $this->getStateBindingModifiers();
 
-        if (str_starts_with($expression, 'entangle')) {
-            return collect($modifiers)->contains('defer') ? "$expression.defer" : $expression;
-        }
-
         return implode('.', array_merge([$expression], $modifiers));
     }
 
@@ -54,6 +51,10 @@ trait HasStateBindingModifiers
     {
         if ($this->stateBindingModifiers !== null) {
             return $this->stateBindingModifiers;
+        }
+        
+        if ($this->debounce) {
+            return ['debounce', $this->debounce];
         }
 
         if ($this instanceof Component) {
@@ -72,7 +73,7 @@ trait HasStateBindingModifiers
         return in_array('lazy', $this->getStateBindingModifiers(), false);
     }
 
-    public function getDebounce(): string
+    public function getDebounce(): string | int | null
     {
         return $this->debounce;
     }
