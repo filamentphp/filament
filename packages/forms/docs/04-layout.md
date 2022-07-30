@@ -278,9 +278,32 @@ Tabs::make('Heading')
             ]),
     ])
 ```
-The first `Tab` will be marked as active by default. You can change the default tab using the `activeTab()` method on the `Tabs` component.
 
-You can also add badges and icons to the `Tab` components using the `badge()` and `icon()` methods.
+The first `Tab` will be activated by default.
+You can change the default tab using the `activeTab()` method on the `Tabs` component:
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Heading')
+    ->tabs([
+        Tabs\Tab::make('Label 1')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Label 2')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Label 3')
+            ->schema([
+                // ...
+            ]),
+    ])
+    ->activeTab(2)
+```
+
+Tabs may have an icon and badge, which you can set using the `icon()` and `badge()` methods:
 
 ```php
 use Filament\Forms\Components\Tabs;
@@ -288,8 +311,8 @@ use Filament\Forms\Components\Tabs;
 Tabs::make('Heading')
     ->tabs([
         Tabs\Tab::make('Notifications')
-            ->icon('heroicon-o-bell')
-            ->badge('39')
+            ->icon('heroicon-o-bell') // [tl! focus:start]
+            ->badge('39') // [tl! focus:end]
             ->schema([
                 // ...
             ]),
