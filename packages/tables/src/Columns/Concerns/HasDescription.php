@@ -10,9 +10,10 @@ trait HasDescription
 
     protected bool | Closure | null $showDescriptionOnTop = null;
 
-    public function description(string | Closure | null $description): static
+    public function description(string | Closure | null $description, bool | Closure | null $showDescriptionOnTop = false): static
     {
         $this->description = $description;
+        $this->showDescriptionOnTop($showDescriptionOnTop);
 
         return $this;
     }
