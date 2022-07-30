@@ -2,9 +2,7 @@
 
 namespace Filament\Forms\Concerns;
 
-use Closure;
 use Filament\Forms\Components\Component;
-use Illuminate\Support\Str;
 
 trait HasStateBindingModifiers
 {
@@ -52,7 +50,7 @@ trait HasStateBindingModifiers
         if ($this->stateBindingModifiers !== null) {
             return $this->stateBindingModifiers;
         }
-        
+
         if ($this->debounce) {
             return ['debounce', $this->debounce];
         }
