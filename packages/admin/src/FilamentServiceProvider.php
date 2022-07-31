@@ -24,12 +24,10 @@ use Filament\Widgets\Widget;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Livewire\Component;
 use Livewire\Livewire;
 use Livewire\Testing\TestableLivewire;
 use ReflectionClass;
 use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Symfony\Component\Finder\SplFileInfo;
 
 class FilamentServiceProvider extends PluginServiceProvider
