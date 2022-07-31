@@ -31,7 +31,7 @@
     $labelClasses = 'truncate';
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'mr-2 -ml-1 w-6 h-6 flex-shrink-0 rtl:ml-2 rtl:-mr-1',
+        'mr-2 -ml-1 w-5 h-5 flex-shrink-0 rtl:ml-2 rtl:-mr-1',
         'group-hover:text-white group-focus:text-white' => $hasHoverAndFocusState,
         'text-primary-500' => $color === 'primary',
         'text-danger-500' => $color === 'danger',
