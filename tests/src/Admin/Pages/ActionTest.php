@@ -49,3 +49,9 @@ it('can call an action and hold', function () {
         ->assertEmitted('hold-called')
         ->assertPageActionHeld('hold');
 });
+
+it('can hide an action', function () {
+    livewire(PageActions::class)
+        ->assertPageActionVisible('visible')
+        ->assertPageActionHidden('hidden');
+});

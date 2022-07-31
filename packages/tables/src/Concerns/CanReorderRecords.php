@@ -15,7 +15,7 @@ trait CanReorderRecords
         $orderColumn = $this->getTableReorderColumn();
 
         foreach ($order as $index => $recordKey) {
-            $this->resolveTableRecord($recordKey)->update([
+            $this->getTableRecord($recordKey)->update([
                 $orderColumn => $index + 1,
             ]);
         }

@@ -62,3 +62,9 @@ it('can search posts with relationship', function () {
         ->assertCanSeeTableRecords($posts->where('author.name', $author))
         ->assertCanNotSeeTableRecords($posts->where('author.name', '!=', $author));
 });
+
+it('can hide a column', function () {
+    livewire(PostsTable::class)
+        ->assertTableColumnVisible('visible')
+        ->assertTableColumnHidden('hidden');
+});

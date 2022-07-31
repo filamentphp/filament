@@ -113,7 +113,8 @@ trait InteractsWithTable
             ->model($this->getTableQuery()->getModel()::class)
             ->recordsPerPageSelectOptions($this->getTableRecordsPerPageSelectOptions())
             ->reorderColumn($this->getTableReorderColumn())
-            ->reorderable($this->isTableReorderable());
+            ->reorderable($this->isTableReorderable())
+            ->striped($this->isTableStriped());
     }
 
     protected function getTableQueryStringIdentifier(): ?string

@@ -66,3 +66,15 @@ it('can call an action and hold', function () {
         ->assertEmitted('hold-called')
         ->assertTableActionHeld('hold');
 });
+
+it('can hide an action', function () {
+    livewire(PostsTable::class)
+        ->assertTableActionVisible('visible')
+        ->assertTableActionHidden('hidden');
+});
+
+it('can hide a bulk action', function () {
+    livewire(PostsTable::class)
+        ->assertTableBulkActionVisible('visible')
+        ->assertTableBulkActionHidden('hidden');
+});

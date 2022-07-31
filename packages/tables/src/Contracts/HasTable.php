@@ -66,6 +66,8 @@ interface HasTable extends HasForms
 
     public function getTableColumnToggleForm(): ComponentContainer;
 
+    public function getTableRecord(?string $key): ?Model;
+
     public function getTableRecordKey(Model $record): string;
 
     public function getTableRecordTitle(Model $record): string;

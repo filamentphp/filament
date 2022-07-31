@@ -85,6 +85,11 @@ trait HasRecords
         return $this->getTableQuery()->getModel()::class;
     }
 
+    public function getTableRecord(?string $key): ?Model
+    {
+        return $this->resolveTableRecord($key);
+    }
+
     public function getTableRecordKey(Model $record): string
     {
         if (! ($this instanceof HasRelationshipTable && $this->getRelationship() instanceof BelongsToMany && $this->allowsDuplicates())) {
