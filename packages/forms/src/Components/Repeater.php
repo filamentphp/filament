@@ -37,6 +37,8 @@ class Repeater extends Field
 
     protected string | Closure | null $relationship = null;
 
+    protected string | Closure | null $itemLabel = null;
+
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
     protected ?Closure $mutateRelationshipDataBeforeCreateUsing = null;
@@ -72,8 +74,6 @@ class Repeater extends Field
                     data_set($livewire, "{$statePath}.{$newUuid}", []);
 
                     $component->getChildComponentContainers()[$newUuid]->fill();
-
-                    $component->hydrateDefaultItemState($newUuid);
 
                     $component->collapsed(false, shouldMakeComponentCollapsible: false);
                 },
@@ -172,7 +172,7 @@ class Repeater extends Field
             }
 
             foreach (range(1, $count) as $index) {
-                $items[] = [];
+                $items[(string) Str::uuid()] = [];
             }
 
             return $items;
@@ -207,11 +207,6 @@ class Repeater extends Field
         $this->isInset = $condition;
 
         return $this;
-    }
-
-    public function hydrateDefaultItemState(string $uuid): void
-    {
-        $this->getChildComponentContainers()[$uuid]->hydrateDefaultState();
     }
 
     public function getChildComponentContainers(bool $withHidden = false): array
@@ -352,6 +347,13 @@ class Repeater extends Field
         return $this;
     }
 
+    public function itemLabel(string | Closure | null $label): static
+    {
+        $this->itemLabel = $label;
+
+        return $this;
+    }
+
     public function fillFromRelationship(): void
     {
         $this->state(
@@ -438,6 +440,18 @@ class Repeater extends Field
         return $this->cachedExistingRecords = $relationshipQuery->get()->mapWithKeys(
             fn (Model $item): array => ["record-{$item[$relatedKeyName]}" => $item],
         );
+    }
+
+    public function getItemLabel(string $uuid): ?string
+    {
+        return $this->evaluate($this->itemLabel, [
+            'state' => $this->getChildComponentContainer($uuid)->getRawState(),
+        ]);
+    }
+
+    public function hasItemLabels(): bool
+    {
+        return $this->itemLabel !== null;
     }
 
     public function clearCachedExistingRecords(): void

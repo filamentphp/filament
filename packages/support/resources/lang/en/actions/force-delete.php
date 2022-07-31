@@ -21,7 +21,7 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Record deleted',
+            'deleted' => 'Deleted',
         ],
 
     ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Records deleted',
+            'deleted' => 'Deleted',
         ],
 
     ],

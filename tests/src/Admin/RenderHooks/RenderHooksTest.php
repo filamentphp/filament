@@ -18,7 +18,7 @@ test('render hooks can be registered', function () {
 });
 
 test('render hooks can render view files', function () {
-    Filament::registerRenderHook('view-foo', function (): \Illuminate\Contracts\View\View {
+    Filament::registerRenderHook('view-foo', function (): Illuminate\Contracts\View\View {
         return view('admin.fixtures.pages.render-hooks.foo');
     });
 

@@ -8,6 +8,7 @@ import SelectFormComponentAlpinePlugin from './components/select'
 import TagsInputFormComponentAlpinePlugin from './components/tags-input'
 import TextInputFormComponentAlpinePlugin from './components/text-input'
 import TextareaFormComponentAlpinePlugin from './components/textarea'
+import AlpineFloatingUI from '@awcodes/alpine-floating-ui'
 import './sortable'
 
 export default (Alpine) => {
@@ -21,6 +22,7 @@ export default (Alpine) => {
     Alpine.plugin(TagsInputFormComponentAlpinePlugin)
     Alpine.plugin(TextInputFormComponentAlpinePlugin)
     Alpine.plugin(TextareaFormComponentAlpinePlugin)
+    Alpine.plugin(AlpineFloatingUI)
 }
 
 export {
@@ -33,5 +35,6 @@ export {
     SelectFormComponentAlpinePlugin,
     TagsInputFormComponentAlpinePlugin,
     TextInputFormComponentAlpinePlugin,
-    TextareaFormComponentAlpinePlugin
+    TextareaFormComponentAlpinePlugin,
+    AlpineFloatingUI,
 }

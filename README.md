@@ -31,6 +31,12 @@ composer require filament/forms
 composer require filament/tables
 ```
 
+### Notifications • [Documentation](https://filamentphp.com/docs/notifications)
+
+```bash
+composer require filament/notifications
+```
+
 ### Spatie Media Library Plugin • [Documentation](https://filamentphp.com/docs/spatie-laravel-media-library-plugin)
 
 ```bash
@@ -72,6 +78,7 @@ Install the packages in your app's `composer.json`:
     "require": {
         "filament/filament": "dev-fix/error-message as 2.x-dev",
         "filament/forms": "dev-fix/error-message as 2.x-dev",
+        "filament/notifications": "dev-fix/error-message as 2.x-dev",
         "filament/support": "dev-fix/error-message as 2.x-dev",
         "filament/tables": "dev-fix/error-message as 2.x-dev"
     },
@@ -89,8 +96,8 @@ Now, run `composer update`.
 
 ## Need Help?
 
-🐞 If you spot a bug, please [submit a detailed issue](https://github.com/filamentphp/filament/issues/new), and wait for assistance.
+🐞 If you spot a bug, please [submit a detailed issue](https://github.com/filamentphp/filament/issues/new?assignees=&labels=bug%2Cunconfirmed&template=bug_report.yml), and wait for assistance.
 
-🤔 If you have a question or feature request, please [start a new discussion](https://github.com/filamentphp/filament/discussions/new). We also have a [Discord community](https://discord.gg/cpqnMTHZja). For quick help, ask questions in the appropriate package help channel.
+🤔 If you have a question or feature request, please [start a new discussion](https://github.com/filamentphp/filament/discussions/new). We also have a [Discord community](https://filamentphp.com/discord). For quick help, ask questions in the appropriate channel.
 
 🔐 If you discover a vulnerability, please review our [security policy](https://github.com/filamentphp/filament/blob/2.x/SECURITY.md).

@@ -21,7 +21,7 @@ return [
         ],
 
         'messages' => [
-            'replicated' => 'Record replicated',
+            'replicated' => 'Replicated',
         ],
 
     ],

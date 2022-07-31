@@ -3,7 +3,6 @@
 namespace Filament;
 
 use Filament\Facades\Filament;
-use Filament\Facades\FilamentNotification;
 use Filament\Http\Livewire\Auth\Login;
 use Filament\Http\Livewire\GlobalSearch;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -16,7 +15,6 @@ use Filament\Pages\Dashboard;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action as TableAction;
-use Filament\Tables\Actions\BulkAction as TableBulkAction;
 use Filament\Tables\Actions\ButtonAction;
 use Filament\Tables\Actions\IconButtonAction;
 use Filament\Testing\TestsPages;
@@ -90,10 +88,6 @@ class FilamentServiceProvider extends PackageServiceProvider
             return new FilamentManager();
         });
 
-        $this->app->scoped(NotificationManager::class, function (): NotificationManager {
-            return new NotificationManager();
-        });
-
         $this->app->bind(LoginResponseContract::class, LoginResponse::class);
         $this->app->bind(LogoutResponseContract::class, LogoutResponse::class);
 
@@ -116,8 +110,6 @@ class FilamentServiceProvider extends PackageServiceProvider
             MirrorConfigToSubpackages::class,
         ]);
 
-        Livewire::listen('component.dehydrate', [FilamentNotification::class, 'handleLivewireResponses']);
-
         Livewire::component('filament.core.auth.login', Login::class);
         Livewire::component('filament.core.global-search', GlobalSearch::class);
         Livewire::component('filament.core.pages.dashboard', Dashboard::class);
@@ -130,24 +122,12 @@ class FilamentServiceProvider extends PackageServiceProvider
     protected function bootTableActionConfiguration(): void
     {
         Filament::serving(function (): void {
-            $notify = function (string $status, string $message): void {
-                Filament::notify($status, $message);
-            };
-
-            TableAction::configureUsing(function (TableAction $action) use ($notify): TableAction {
+            TableAction::configureUsing(function (TableAction $action): TableAction {
                 match (config('filament.layout.tables.actions.type')) {
                     ButtonAction::class => $action->button(),
                     IconButtonAction::class => $action->iconButton(),
                     default => null,
                 };
-
-                $action->notifyUsing($notify);
-
-                return $action;
-            });
-
-            TableBulkAction::configureUsing(function (TableBulkAction $action) use ($notify): TableBulkAction {
-                $action->notifyUsing($notify);
 
                 return $action;
             });

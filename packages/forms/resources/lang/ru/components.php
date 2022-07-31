@@ -8,43 +8,39 @@ return [
 
         'buttons' => [
 
-             'create_item' => [
-                 'label' => 'Добавить к :label',
-             ],
-
-             'create_item_between' => [
-                'label' => 'Добавить между',
+            'create_item' => [
+                'label' => 'Добавить к :label',
             ],
 
-             'delete_item' => [
-                 'label' => 'Удалить',
-             ],
+            'delete_item' => [
+                'label' => 'Удалить',
+            ],
 
-             'move_item_down' => [
-                 'label' => 'Переместить вниз',
-             ],
+            'move_item_down' => [
+                'label' => 'Переместить вниз',
+            ],
 
-             'move_item_up' => [
-                 'label' => 'Переместить вверх',
-             ],
+            'move_item_up' => [
+                'label' => 'Переместить вверх',
+            ],
 
-             'collapse_item' => [
-                 'label' => 'Свернуть',
-             ],
+            'collapse_item' => [
+                'label' => 'Свернуть',
+            ],
 
-             'expand_item' => [
-                 'label' => 'Развернуть',
-             ],
+            'expand_item' => [
+                'label' => 'Развернуть',
+            ],
 
-             'collapse_all' => [
-                 'label' => 'Свернуть все',
-             ],
+            'collapse_all' => [
+                'label' => 'Свернуть все',
+            ],
 
-             'expand_all' => [
-                 'label' => 'Развернуть все',
-             ],
+            'expand_all' => [
+                'label' => 'Развернуть все',
+            ],
 
-         ],
+        ],
 
     ],
 

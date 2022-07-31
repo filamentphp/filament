@@ -75,14 +75,14 @@ return [
     'markdown_editor' => [
 
         'toolbar_buttons' => [
-            'attach_files' => 'Dosya Ekle',
+            'attach_files' => 'Dosya ekle',
             'bold' => 'Kalın',
             'bullet_list' => 'Liste',
             'code_block' => 'Kod bloğu',
             'edit' => 'Düzenle',
-            'italic' => 'Italik',
+            'italic' => 'Eğik',
             'link' => 'Bağlantı',
-            'ordered_list' => 'Numaralı liste',
+            'ordered_list' => 'Sıralı liste',
             'preview' => 'Önizleme',
             'strike' => 'Üstü çizili',
         ],
@@ -159,9 +159,9 @@ return [
             'h1' => 'Ana başlık',
             'h2' => 'Başlık',
             'h3' => 'Alt başlık',
-            'italic' => 'Italik',
+            'italic' => 'Eğik',
             'link' => 'Bağlantı',
-            'ordered_list' => 'Numaralı liste',
+            'ordered_list' => 'Sıralı liste',
             'redo' => 'Yinele',
             'strike' => 'Üstü çizili',
             'undo' => 'Geri al',
@@ -200,7 +200,7 @@ return [
 
         'loading_message' => 'Yükleniyor...',
 
-        'no_search_results_message' => 'Aramanızla eşleşen seçenek yok.',
+        'no_search_results_message' => 'Aramayla eşleşen bir seçenek yok.',
 
         'placeholder' => 'Bir seçenek seçin',
 

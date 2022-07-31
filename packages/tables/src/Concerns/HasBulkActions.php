@@ -112,10 +112,8 @@ trait HasBulkActions
             $action->callBeforeFormFilled();
         }
 
-        app()->call($action->getMountUsing(), [
-            'action' => $action,
+        $action->mount([
             'form' => $this->getMountedTableBulkActionForm(),
-            'records' => $this->getSelectedTableRecords(),
         ]);
 
         if ($action->hasForm()) {

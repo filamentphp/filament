@@ -531,7 +531,7 @@ Select::make('authorId')
     ->relationship('author', 'full_name')
 ```
 
-Alternatively, you can use the `getOptionLabelUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
+Alternatively, you can use the `getOptionLabelFromRecordUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -587,7 +587,7 @@ use Filament\Forms\Components\Select;
 
 MultiSelect::make('technologies')
     ->options([
-        'tailwind' => 'TailwindCSS',
+        'tailwind' => 'Tailwind CSS',
         'alpine' => 'Alpine.js',
         'laravel' => 'Laravel',
         'livewire' => 'Laravel Livewire',
@@ -662,7 +662,7 @@ MultiSelect::make('participants')
     ->relationship('participants', 'full_name')
 ```
 
-Alternatively, you can use the `getOptionLabelUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
+Alternatively, you can use the `getOptionLabelFromRecordUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
 
 ```php
 use Filament\Forms\Components\MultiSelect;
@@ -792,7 +792,7 @@ use Filament\Forms\Components\CheckboxList;
 
 CheckboxList::make('technologies')
     ->options([
-        'tailwind' => 'TailwindCSS',
+        'tailwind' => 'Tailwind CSS',
         'alpine' => 'Alpine.js',
         'laravel' => 'Laravel',
         'livewire' => 'Laravel Livewire',
@@ -823,7 +823,7 @@ use Filament\Forms\Components\CheckboxList;
 
 CheckboxList::make('technologies')
     ->options([
-        'tailwind' => 'TailwindCSS',
+        'tailwind' => 'Tailwind CSS',
         'alpine' => 'Alpine.js',
         'laravel' => 'Laravel',
         'livewire' => 'Laravel Livewire',
@@ -872,7 +872,7 @@ CheckboxList::make('participants')
     ->relationship('participants', 'full_name')
 ```
 
-Alternatively, you can use the `getOptionLabelUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
+Alternatively, you can use the `getOptionLabelFromRecordUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
 
 ```php
 use Filament\Forms\Components\CheckboxList;
@@ -1170,7 +1170,17 @@ FileUpload::make('attachments')
     ->enableReordering()
 ```
 
-If you wish to add a download button to each uploaded file, you can use the `enableDownload()` method:
+You can add a button to open each file in a new tab with the `enableOpen()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->multipe()
+    ->enableOpen()
+```
+
+If you wish to add a download button to each file instead, you can use the `enableDownload()` method:
 
 ```php
 use Filament\Forms\Components\FileUpload;
@@ -1492,6 +1502,24 @@ Repeater::make('members')
 ```
 
 This method accepts the same options as the `columns()` method of the [grid](layout#grid). This allows you to responsively customize the number of grid columns at various breakpoints.
+
+### Item labels
+
+You may add a label for repeater items using the `itemLabel()` method:
+
+```php
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TextInput;
+
+Repeater::make('members')
+    ->schema([
+        TextInput::make('name')
+            ->lazy(),
+    ])
+    ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
+```
+
+Any fields that you use from `$state` should be `reactive()` or `lazy()` if you wish to see the item label update live as you use the form.
 
 ## Builder
 

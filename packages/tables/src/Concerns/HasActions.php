@@ -23,6 +23,7 @@ trait HasActions
     protected array $cachedTableActions;
 
     protected ?Model $cachedMountedTableActionRecord = null;
+
     protected $cachedMountedTableActionRecordKey = null;
 
     public function cacheTableActions(): void
@@ -132,10 +133,8 @@ trait HasActions
             $action->callBeforeFormFilled();
         }
 
-        app()->call($action->getMountUsing(), [
-            'action' => $action,
+        $action->mount([
             'form' => $this->getMountedTableActionForm(),
-            'record' => $this->getMountedTableActionRecord(),
         ]);
 
         if ($action->hasForm()) {

@@ -77,6 +77,4 @@
     {{ $this->modal }}
 
     @stack('modals')
-
-    <x-filament::notification-manager />
 </div>

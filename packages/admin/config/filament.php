@@ -27,7 +27,6 @@ return [
 
     'path' => env('FILAMENT_PATH', 'admin'),
 
-
     /*
     |--------------------------------------------------------------------------
     | Filament Core Path
@@ -39,7 +38,6 @@ return [
     */
 
     'core_path' => env('FILAMENT_CORE_PATH', 'filament'),
-
 
     /*
     |--------------------------------------------------------------------------
@@ -186,6 +184,13 @@ return [
     */
 
     'layout' => [
+        'actions' => [
+            'modal' => [
+                'actions' => [
+                    'alignment' => 'left',
+                ],
+            ],
+        ],
         'forms' => [
             'actions' => [
                 'alignment' => 'left',
@@ -198,7 +203,7 @@ return [
         'max_content_width' => null,
         'notifications' => [
             'vertical_alignment' => 'top',
-            'alignment' => 'center',
+            'alignment' => 'right',
         ],
         'sidebar' => [
             'is_collapsible_on_desktop' => false,

@@ -29,6 +29,7 @@ class Column extends ViewComponent
     use HasExtraAttributes;
 
     protected string $evaluationIdentifier = 'column';
+
     protected string $viewIdentifier = 'column';
 
     final public function __construct(string $name)

@@ -3,11 +3,16 @@
 namespace Filament\Tests\Admin\Fixtures\Pages;
 
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 
 class Settings extends Page
 {
     protected static string $view = 'admin.fixtures.pages.settings';
+
+    protected static ?string $navigationIcon = 'heroicon-o-cog';
+
+    protected static ?int $navigationSort = 2;
 
     public $name;
 
@@ -17,7 +22,10 @@ class Settings extends Page
             $this->redirect('/');
         }
 
-        $this->notify('success', 'Saved!');
+        Notification::make()
+            ->title('Saved!')
+            ->success()
+            ->send();
     }
 
     protected function getFormSchema(): array

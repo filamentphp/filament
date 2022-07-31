@@ -45,6 +45,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Herordenen van records voltooien',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Records herordenen',
+        ],
+
         'filter' => [
             'label' => 'Filteren',
         ],
@@ -99,10 +107,11 @@ return [
 
     ],
 
+    'reorder_indicator' => 'Sleep de records in de juiste volgorde.',
+
     'selection_indicator' => [
 
         'selected_count' => '1 record geselecteerd.|:count records geselecteerd.',
-
 
         'buttons' => [
 

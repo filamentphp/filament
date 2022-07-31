@@ -17,10 +17,13 @@ if (! function_exists('Filament\Support\get_model_label')) {
 if (! function_exists('Filament\Support\prepare_inherited_attributes')) {
     function prepare_inherited_attributes(ComponentAttributeBag $attributes): ComponentAttributeBag
     {
+        $originalAttributes = $attributes->getAttributes();
+
         $attributes->setAttributes(
-            collect($attributes->getAttributes())
+            collect($originalAttributes)
+                ->filter(fn ($value, string $name): bool => ! Str::of($name)->startsWith('x-'))
                 ->mapWithKeys(fn ($value, string $name): array => [Str::camel($name) => $value])
-                ->merge($attributes->getAttributes())
+                ->merge($originalAttributes)
                 ->toArray(),
         );
 

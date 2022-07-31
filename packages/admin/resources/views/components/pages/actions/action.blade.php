@@ -20,7 +20,7 @@
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes())"
     :form="$action->getForm()"
     :tag="$action->getUrl() ? 'a' : 'button'"
-    :wire:click="$action->isEnabled() ? $wireClickAction : null"
+    :wire:click="$wireClickAction"
     :href="$action->isEnabled() ? $action->getUrl() : null"
     :target="$action->shouldOpenUrlInNewTab() ? '_blank' : null"
     :type="$action->canSubmitForm() ? 'submit' : 'button'"
@@ -30,6 +30,7 @@
     :disabled="$action->isDisabled()"
     :icon="$icon ?? $action->getIcon()"
     :size="$action->getSize()"
+    dusk="filament.admin.action.{{ $action->getName() }}"
 >
     {{ $slot }}
 </x-dynamic-component>

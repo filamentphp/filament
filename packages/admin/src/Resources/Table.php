@@ -23,6 +23,8 @@ class Table
 
     protected array $headerActions = [];
 
+    protected ?string $reorderColumn = null;
+
     final public function __construct()
     {
     }
@@ -56,7 +58,7 @@ class Table
     public function defaultSort(string $column, string $direction = 'asc'): static
     {
         $this->defaultSortColumn = $column;
-        $this->defaultSortDirection = $direction;
+        $this->defaultSortDirection = strtolower($direction);
 
         return $this;
     }
@@ -155,6 +157,13 @@ class Table
         return $this;
     }
 
+    public function reorderable(?string $column = 'sort'): static
+    {
+        $this->reorderColumn = $column;
+
+        return $this;
+    }
+
     public function getActions(): array
     {
         return $this->actions;
@@ -193,5 +202,10 @@ class Table
     public function getHeaderActions(): array
     {
         return $this->headerActions;
+    }
+
+    public function getReorderColumn(): ?string
+    {
+        return $this->reorderColumn;
     }
 }

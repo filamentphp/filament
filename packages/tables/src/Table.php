@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Support\Components\ViewComponent;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Contracts\HasTable;
@@ -39,6 +40,8 @@ class Table extends ViewComponent
 
     protected ?string $columnToggleFormWidth = null;
 
+    protected ?string $reorderColumn = null;
+
     protected ?string $recordAction = null;
 
     protected ?Closure $getRecordUrlUsing = null;
@@ -46,6 +49,8 @@ class Table extends ViewComponent
     protected ?View $header = null;
 
     protected string | Closure | null $heading = null;
+
+    protected bool $isReorderable = false;
 
     protected bool $isPaginationEnabled = true;
 
@@ -61,7 +66,7 @@ class Table extends ViewComponent
 
     protected string $viewIdentifier = 'table';
 
-    public const LOADING_TARGETS = ['gotoPage', 'tableFilters', 'resetTableFiltersForm', 'tableSearchQuery', 'tableRecordsPerPage', '$set'];
+    public const LOADING_TARGETS = ['previousPage', 'nextPage', 'gotoPage', 'tableFilters', 'resetTableFiltersForm', 'tableSearchQuery', 'tableRecordsPerPage', '$set'];
 
     final public function __construct(HasTable $livewire)
     {
@@ -254,7 +259,10 @@ class Table extends ViewComponent
 
     public function getEmptyStateActions(): array
     {
-        return $this->getLivewire()->getCachedTableEmptyStateActions();
+        return array_filter(
+            $this->getLivewire()->getCachedTableEmptyStateActions(),
+            fn (Action $action): bool => ! $action->isHidden(),
+        );
     }
 
     public function getEmptyStateDescription(): ?string
@@ -369,6 +377,21 @@ class Table extends ViewComponent
         }
 
         return $callback($record);
+    }
+
+    public function getReorderColumn(): ?string
+    {
+        return $this->reorderColumn;
+    }
+
+    public function isReorderable(): bool
+    {
+        return $this->isReorderable;
+    }
+
+    public function isReordering(): bool
+    {
+        return $this->getLivewire()->isTableReordering();
     }
 
     public function getSortColumn(): ?string

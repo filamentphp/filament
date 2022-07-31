@@ -7,6 +7,6 @@ return [
         'placeholder' => 'Ara',
     ],
 
-    'no_results_message' => 'Arama sonucu bulunamadı.',
+    'no_results_message' => 'Sonuç bulunamadı.',
 
 ];

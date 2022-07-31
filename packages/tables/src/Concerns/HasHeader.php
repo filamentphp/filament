@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Contracts\View\View;
 
 trait HasHeader
@@ -13,12 +14,20 @@ trait HasHeader
     public function cacheTableHeaderActions(): void
     {
         $actions = Action::configureUsing(
-            fn (Action $action) => $this->configureTableAction($action->button()),
+            Closure::fromCallable([$this, 'configureTableAction']),
             fn (): array => $this->getTableHeaderActions(),
         );
 
         $this->cachedTableHeaderActions = collect($actions)
-            ->mapWithKeys(function (Action $action): array {
+            ->mapWithKeys(function (Action | ActionGroup $action, int $index): array {
+                if ($action instanceof ActionGroup) {
+                    foreach ($action->getActions() as $groupedAction) {
+                        $groupedAction->table($this->getCachedTable());
+                    }
+
+                    return [$index => $action];
+                }
+
                 $action->table($this->getCachedTable());
 
                 return [$action->getName() => $action];
@@ -28,14 +37,34 @@ trait HasHeader
 
     public function getCachedTableHeaderActions(): array
     {
-        return collect($this->cachedTableHeaderActions)
-            ->filter(fn (Action $action): bool => ! $action->isHidden())
-            ->toArray();
+        return $this->cachedTableHeaderActions;
     }
 
     public function getCachedTableHeaderAction(string $name): ?Action
     {
-        return $this->getCachedTableHeaderActions()[$name] ?? null;
+        $actions = $this->getCachedTableHeaderActions();
+
+        $action = $actions[$name] ?? null;
+
+        if ($action) {
+            return $action;
+        }
+
+        foreach ($actions as $action) {
+            if (! $action instanceof ActionGroup) {
+                continue;
+            }
+
+            $groupedAction = $action->getActions()[$name] ?? null;
+
+            if (! $groupedAction) {
+                continue;
+            }
+
+            return $groupedAction;
+        }
+
+        return null;
     }
 
     protected function getTableDescription(): ?string

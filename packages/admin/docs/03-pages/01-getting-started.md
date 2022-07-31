@@ -1,5 +1,5 @@
 ---
-title: Getting Started
+title: Getting started
 ---
 
 Filament allows you to create completely custom pages for the admin panel.

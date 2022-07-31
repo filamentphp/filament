@@ -80,12 +80,11 @@ class Resource
         $routeBaseName = static::getRouteBaseName();
 
         return [
-            NavigationItem::make()
+            NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
                 ->icon(static::getNavigationIcon())
                 ->isActiveWhen(fn () => request()->routeIs("{$routeBaseName}.*"))
-                ->label(static::getNavigationLabel())
-                ->badge(static::getNavigationBadge())
+                ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
         ];
@@ -147,6 +146,11 @@ class Resource
     public static function canForceDeleteAny(): bool
     {
         return static::can('forceDeleteAny');
+    }
+
+    public static function canReorder(): bool
+    {
+        return static::can('reorder');
     }
 
     public static function canReplicate(Model $record): bool
@@ -356,17 +360,12 @@ class Resource
             return static::$slug;
         }
 
-        $slug = Str::of(static::getModel())
+        return Str::of(static::getModel())
             ->afterLast('\\Models\\')
+            ->plural()
             ->explode('\\')
             ->map(fn (string $string) => Str::of($string)->kebab()->slug())
             ->implode('/');
-
-        if (locale_has_pluralization()) {
-            $slug = Str::plural($slug);
-        }
-
-        return $slug;
     }
 
     public static function getUrl($name = 'index', $params = []): string
@@ -451,6 +450,11 @@ class Resource
     }
 
     protected static function getNavigationBadge(): ?string
+    {
+        return null;
+    }
+
+    protected static function getNavigationBadgeColor(): ?string
     {
         return null;
     }

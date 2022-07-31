@@ -24,7 +24,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     public Model $ownerRecord;
 
-    public string $pageClass;
+    public ?string $pageClass = null;
 
     protected static ?string $recordTitleAttribute = null;
 
@@ -408,6 +408,16 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return $this->getResourceTable()->getHeaderActions();
     }
 
+    protected function getTableReorderColumn(): ?string
+    {
+        return $this->getResourceTable()->getReorderColumn();
+    }
+
+    protected function isTableReorderable(): bool
+    {
+        return filled($this->getTableReorderColumn()) && $this->canReorder();
+    }
+
     protected function getTableHeading(): ?string
     {
         return static::getTitle();
@@ -476,6 +486,11 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
     protected function canForceDeleteAny(): bool
     {
         return $this->can('forceDeleteAny');
+    }
+
+    protected function canReorder(): bool
+    {
+        return $this->can('reorder');
     }
 
     protected function canReplicate(Model $record): bool

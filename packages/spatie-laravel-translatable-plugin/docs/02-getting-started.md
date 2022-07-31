@@ -1,5 +1,5 @@
 ---
-title: Getting Started
+title: Getting started
 ---
 
 This guide assumes that you've already set up your model to be translatable as per [Spatie's documentation](https://github.com/spatie/laravel-translatable#making-a-model-translatable).
@@ -41,8 +41,10 @@ class ListBlogPosts extends ListRecords
     
     protected function getActions(): array
     {
-        LocaleSwitcher::make(),
-        // ...
+        return [
+            Actions\LocaleSwitcher::make(),
+            // ...
+        ];
     }
     
     // ...
@@ -59,7 +61,10 @@ class CreateBlogPost extends CreateRecord
     
     protected function getActions(): array
     {
-        Actions\LocaleSwitcher::make(),
+        return [
+            Actions\LocaleSwitcher::make(),
+            // ...
+        ];
     }
     
     // ...
@@ -76,8 +81,10 @@ class EditBlogPost extends EditRecord
     
     protected function getActions(): array
     {
-        Actions\LocaleSwitcher::make(),
-        // ...
+        return [
+            Actions\LocaleSwitcher::make(),
+            // ...
+        ];
     }
     
     // ...
@@ -96,8 +103,10 @@ class ViewBlogPost extends ViewRecord
     
     protected function getActions(): array
     {
-        Actions\LocaleSwitcher::make(),
-        // ...
+        return [
+            Actions\LocaleSwitcher::make(),
+            // ...
+        ];
     }
     
     // ...

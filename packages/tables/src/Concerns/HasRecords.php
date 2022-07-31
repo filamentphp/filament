@@ -9,7 +9,6 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
@@ -50,11 +49,14 @@ trait HasRecords
 
         $this->applySortingToTableQuery($query);
 
-        $this->records = $this->isTablePaginationEnabled() ?
-            $this->paginateTableQuery($query) :
-            $query->get();
+        if (
+            (! $this->isTablePaginationEnabled()) ||
+            ($this->isTableReordering() && (! $this->isTablePaginationEnabledWhileReordering()))
+        ) {
+            return $this->records = $query->get();
+        }
 
-        return $this->records;
+        return $this->records = $this->paginateTableQuery($query);
     }
 
     protected function resolveTableRecord(?string $key): ?Model
