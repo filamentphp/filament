@@ -32,7 +32,7 @@ use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 use Symfony\Component\Finder\SplFileInfo;
 
-class FilamentServiceProvider extends PackageServiceProvider
+class FilamentServiceProvider extends PluginServiceProvider
 {
     public function configurePackage(Package $package): void
     {
@@ -78,11 +78,7 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->app->resolving('filament', function (): void {
-            $this->discoverPages();
-            $this->discoverResources();
-            $this->discoverWidgets();
-        });
+        parent::packageRegistered();
 
         $this->app->scoped('filament', function (): FilamentManager {
             return new FilamentManager();
@@ -96,6 +92,8 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        parent::packageBooted();
+
         $this->bootLivewireComponents();
 
         $this->bootTableActionConfiguration();
@@ -134,64 +132,67 @@ class FilamentServiceProvider extends PackageServiceProvider
         });
     }
 
-    protected function discoverPages(): void
+    protected function getPages(): array
     {
         $filesystem = app(Filesystem::class);
 
-        Filament::registerPages(config('filament.pages.register', []));
+        $pages = config('filament.pages.register', []);
 
         if (! $filesystem->exists(config('filament.pages.path'))) {
-            return;
+            return $pages;
         }
 
-        Filament::registerPages(collect($filesystem->allFiles(config('filament.pages.path')))
+        return collect($filesystem->allFiles(config('filament.pages.path')))
             ->map(function (SplFileInfo $file): string {
                 return (string) Str::of(config('filament.pages.namespace'))
                     ->append('\\', $file->getRelativePathname())
                     ->replace(['/', '.php'], ['\\', '']);
             })
             ->filter(fn (string $class): bool => is_subclass_of($class, Page::class) && (! (new ReflectionClass($class))->isAbstract()))
-            ->toArray());
+            ->merge($pages)
+            ->toArray();
     }
 
-    protected function discoverResources(): void
+    protected function getResources(): array
     {
         $filesystem = app(Filesystem::class);
 
-        Filament::registerResources(config('filament.resources.register', []));
+        $resources = config('filament.resources.register', []);
 
         if (! $filesystem->exists(config('filament.resources.path'))) {
-            return;
+            return $resources;
         }
 
-        Filament::registerResources(collect($filesystem->allFiles(config('filament.resources.path')))
+        return collect($filesystem->allFiles(config('filament.resources.path')))
             ->map(function (SplFileInfo $file): string {
                 return (string) Str::of(config('filament.resources.namespace'))
                     ->append('\\', $file->getRelativePathname())
                     ->replace(['/', '.php'], ['\\', '']);
             })
             ->filter(fn (string $class): bool => is_subclass_of($class, Resource::class) && (! (new ReflectionClass($class))->isAbstract()))
-            ->toArray());
+            ->merge($resources)
+            ->toArray();
     }
 
-    protected function discoverWidgets(): void
+    protected function getWidgets(): array
     {
         $filesystem = app(Filesystem::class);
 
-        Filament::registerWidgets(config('filament.widgets.register', []));
+        $widgets = config('filament.widgets.register', []);
 
         if (! $filesystem->exists(config('filament.widgets.path'))) {
-            return;
+            return $widgets;
         }
 
-        Filament::registerWidgets(collect($filesystem->allFiles(config('filament.widgets.path')))
+        return collect($filesystem->allFiles(config('filament.widgets.path')))
             ->map(function (SplFileInfo $file): string {
                 return (string) Str::of(config('filament.widgets.namespace'))
                     ->append('\\', $file->getRelativePathname())
                     ->replace(['/', '.php'], ['\\', '']);
             })
             ->filter(fn ($class): bool => is_subclass_of($class, Widget::class) && (! (new ReflectionClass($class))->isAbstract()))
-            ->toArray());
+            ->merge($widgets)
+            ->toArray();
     }
 
     protected function mergeConfig(array $original, array $merging): array
@@ -226,33 +227,5 @@ class FilamentServiceProvider extends PackageServiceProvider
         $config = $this->app['config']->get($key, []);
 
         $this->app['config']->set($key, $this->mergeConfig(require $path, $config));
-    }
-
-    protected function registerLivewireComponentDirectory(string $directory, string $namespace, string $aliasPrefix = ''): void
-    {
-        $filesystem = app(Filesystem::class);
-
-        if (! $filesystem->isDirectory($directory)) {
-            return;
-        }
-
-        collect($filesystem->allFiles($directory))
-            ->map(function (SplFileInfo $file) use ($namespace): string {
-                return (string) Str::of($namespace)
-                    ->append('\\', $file->getRelativePathname())
-                    ->replace(['/', '.php'], ['\\', '']);
-            })
-            ->filter(fn (string $class): bool => is_subclass_of($class, Component::class) && (! (new ReflectionClass($class))->isAbstract()))
-            ->each(function (string $class) use ($namespace, $aliasPrefix): void {
-                $alias = Str::of($class)
-                    ->after($namespace . '\\')
-                    ->replace(['/', '\\'], '.')
-                    ->prepend($aliasPrefix)
-                    ->explode('.')
-                    ->map([Str::class, 'kebab'])
-                    ->implode('.');
-
-                Livewire::component($alias, $class);
-            });
     }
 }
