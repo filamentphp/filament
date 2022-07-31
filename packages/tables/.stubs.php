@@ -9,7 +9,9 @@ namespace Livewire\Testing {
 
         public function assertTableActionExists(string $name): static {}
 
-        public function assertTableActionNotExists(string $name): static {}
+        public function assertTableActionVisible(string $name, $record = null): static {}
+
+        public function assertTableActionHidden(string $name, $record = null): static {}
 
         public function assertTableActionHeld(string $name): static {}
 
@@ -21,7 +23,9 @@ namespace Livewire\Testing {
 
         public function assertTableBulkActionExists(string $name): static {}
 
-        public function assertTableBulkActionNotExists(string $name): static {}
+        public function assertTableBulkActionVisible(string $name): static {}
+
+        public function assertTableBulkActionHidden(string $name): static {}
 
         public function assertTableBulkActionHeld(string $name): static {}
 
@@ -33,7 +37,9 @@ namespace Livewire\Testing {
 
         public function assertTableColumnExists(string $name): static {}
 
-        public function assertTableColumnNotExists(string $name): static {}
+        public function assertTableColumnVisible(string $name): static {}
+
+        public function assertTableColumnHidden(string $name): static {}
 
         public function sortTable(?string $name = null, ?string $direction = null): static {}
 

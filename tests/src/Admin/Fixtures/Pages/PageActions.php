@@ -36,6 +36,9 @@ class PageActions extends Page
 
                     $action->hold();
                 }),
+            Action::make('visible'),
+            Action::make('hidden')
+                ->hidden(),
         ];
     }
 }

@@ -21,7 +21,7 @@ trait HasColumns
 
     public function callTableColumnAction(string $name, string $recordKey)
     {
-        $record = $this->resolveTableRecord($recordKey);
+        $record = $this->getTableRecord($recordKey);
 
         if (! $record) {
             return;

@@ -25,15 +25,15 @@ class TestsActions
         return function (string $name, $record = null, array $data = [], array $arguments = []): static {
             $name = $this->parseActionName($name);
 
-            /** @phpstan-ignore-next-line */
-            $this->assertTableActionExists($name);
-
             $livewire = $this->instance();
             $livewireClass = $livewire::class;
 
             if ($record instanceof Model) {
                 $record = $livewire->getTableRecordKey($record);
             }
+
+            /** @phpstan-ignore-next-line */
+            $this->assertTableActionVisible($name, $record);
 
             $this->call('mountTableAction', $name, $record);
 
@@ -85,18 +85,54 @@ class TestsActions
         };
     }
 
-    public function assertTableActionNotExists(): Closure
+    public function assertTableActionVisible(): Closure
     {
-        return function (string $name): static {
+        return function (string $name, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableActionExists($name);
+
             $livewire = $this->instance();
             $livewireClass = $livewire::class;
 
-            $action = $livewire->getCachedTableAction($name) ?? $livewire->getCachedTableEmptyStateAction($name) ?? $livewire->getCachedTableHeaderAction($name);
+            if (! $record instanceof Model) {
+                $record = $livewire->getTableRecord($record);
+            }
 
-            Assert::assertNotInstanceOf(
-                Action::class,
-                $action,
-                message: "Failed asserting that a table action with name [{$name}] does not exist on the [{$livewireClass}] component.",
+            $action = $livewire->getCachedTableAction($name) ?? $livewire->getCachedTableEmptyStateAction($name) ?? $livewire->getCachedTableHeaderAction($name);
+            $action->record($record);
+
+            Assert::assertFalse(
+                $action->isHidden(),
+                message: filled($record) ?
+                    "Failed asserting that a table action with name [{$name}] is visible on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$name}] is visible on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableActionHidden(): Closure
+    {
+        return function (string $name, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            if (! $record instanceof Model) {
+                $record = $livewire->getTableRecord($record);
+            }
+
+            $action = $livewire->getCachedTableAction($name) ?? $livewire->getCachedTableEmptyStateAction($name) ?? $livewire->getCachedTableHeaderAction($name);
+            $action->record($record);
+
+            Assert::assertTrue(
+                $action->isHidden(),
+                message: filled($record) ?
+                    "Failed asserting that a table action with name [{$name}] is hidden on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$name}] is hidden on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -161,7 +197,7 @@ class TestsActions
             $name = $this->parseActionName($name);
 
             /** @phpstan-ignore-next-line */
-            $this->assertTableBulkActionExists($name);
+            $this->assertTableBulkActionVisible($name);
 
             $livewire = $this->instance();
             $livewireClass = $livewire::class;
@@ -227,18 +263,40 @@ class TestsActions
         };
     }
 
-    public function assertTableBulkActionNotExists(): Closure
+    public function assertTableBulkActionVisible(): Closure
     {
         return function (string $name): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableBulkActionExists($name);
+
             $livewire = $this->instance();
             $livewireClass = $livewire::class;
 
             $action = $livewire->getCachedTableBulkAction($name);
 
-            Assert::assertNotInstanceOf(
-                BulkAction::class,
-                $action,
-                message: "Failed asserting that a table bulk action with name [{$name}] does not exist on the [{$livewireClass}] component.",
+            Assert::assertFalse(
+                $action->isHidden(),
+                message: "Failed asserting that a table bulk action with name [{$name}] is visible on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableBulkActionHidden(): Closure
+    {
+        return function (string $name): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableBulkActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedTableBulkAction($name);
+
+            Assert::assertTrue(
+                $action->isHidden(),
+                message: "Failed asserting that a table bulk action with name [{$name}] is hidden on the [{$livewireClass}] component.",
             );
 
             return $this;

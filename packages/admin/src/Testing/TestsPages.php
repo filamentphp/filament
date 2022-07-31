@@ -81,7 +81,7 @@ class TestsPages
             $name = $this->parseActionName($name);
 
             /** @phpstan-ignore-next-line */
-            $this->assertPageActionExists($name);
+            $this->assertPageActionVisible($name);
 
             $this->call('mountAction', $name);
 
@@ -127,6 +127,46 @@ class TestsPages
                 Action::class,
                 $action,
                 message: "Failed asserting that an action with name [{$name}] exists on the [{$livewireClass}] page.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertPageActionVisible(): Closure
+    {
+        return function (string $name): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertPageActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedAction($name);
+
+            Assert::assertFalse(
+                $action->isHidden(),
+                message: "Failed asserting that an action with name [{$name}] is visible on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertPageActionHidden(): Closure
+    {
+        return function (string $name): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertPageActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedAction($name);
+
+            Assert::assertTrue(
+                $action->isHidden(),
+                message: "Failed asserting that an action with name [{$name}] is hidden on the [{$livewireClass}] component.",
             );
 
             return $this;

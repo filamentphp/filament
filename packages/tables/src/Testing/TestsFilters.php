@@ -78,11 +78,11 @@ class TestsFilters
             $livewire = $this->instance();
             $livewireClass = $livewire::class;
 
-            $action = $livewire->getCachedTableFilter($name);
+            $filter = $livewire->getCachedTableFilter($name);
 
             Assert::assertInstanceOf(
                 BaseFilter::class,
-                $action,
+                $filter,
                 message: "Failed asserting that a table filter with name [{$name}] exists on the [{$livewireClass}] component.",
             );
 

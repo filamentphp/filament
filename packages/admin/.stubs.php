@@ -15,6 +15,10 @@ namespace Livewire\Testing {
 
         public function assertPageActionExists(string $name): static {}
 
+        public function assertPageActionVisible(string $name): static {}
+
+        public function assertPageActionHidden(string $name): static {}
+
         public function assertPageActionHeld(string $name): static {}
 
         public function assertHasPageActionErrors(array $keys = []): static {}
