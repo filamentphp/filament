@@ -24,6 +24,7 @@ use Filament\Widgets\Widget;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Livewire\Component;
 use Livewire\Livewire;
 use Livewire\Testing\TestableLivewire;
 use ReflectionClass;
@@ -78,9 +79,9 @@ class FilamentServiceProvider extends PluginServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->registerComponents();
-
         parent::packageRegistered();
+
+        $this->registerComponents();
 
         $this->app->scoped('filament', function (): FilamentManager {
             return new FilamentManager();
