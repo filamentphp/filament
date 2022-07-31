@@ -158,8 +158,14 @@ class FilamentServiceProvider extends PluginServiceProvider
 
             if ($filePath->startsWith(config('filament.pages.path')) && is_subclass_of($fileClass, Page::class)) {
                 $this->pages[] = $fileClass;
-            } elseif ($filePath->startsWith(config('filament.widgets.path')) && is_subclass_of($fileClass, Widget::class)) {
+
+                continue;
+            }
+
+            if ($filePath->startsWith(config('filament.widgets.path')) && is_subclass_of($fileClass, Widget::class)) {
                 $this->widgets[] = $fileClass;
+
+                continue;
             }
 
             if (! is_subclass_of($fileClass, Component::class)) {
