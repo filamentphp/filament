@@ -94,7 +94,10 @@ trait InteractsWithTable
             ->header($this->getTableHeader())
             ->heading($this->getTableHeading())
             ->model($this->getTableQuery()->getModel()::class)
-            ->recordsPerPageSelectOptions($this->getTableRecordsPerPageSelectOptions());
+            ->recordsPerPageSelectOptions($this->getTableRecordsPerPageSelectOptions())
+            ->reorderColumn($this->getTableReorderColumn())
+            ->reorderable($this->isTableReorderable())
+            ->striped($this->isTableStriped());
     }
 
     protected function getTableQueryStringIdentifier(): ?string

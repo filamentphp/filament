@@ -9,6 +9,8 @@
     $headerActions = $getHeaderActions();
     $heading = $getHeading();
     $isSearchVisible = $isSearchable();
+    $isSelectionEnabled = $isSelectionEnabled();
+    $isStriped = $isStriped();
     $hasFilters = $isFilterable();
     $hasFiltersPopover = $hasFilters && ($getFiltersLayout() === Layout::Popover);
     $hasFiltersAboveContent = $hasFilters && ($getFiltersLayout() === Layout::AboveContent);
@@ -363,12 +365,17 @@
 
                         @foreach ($records as $record)
                             @php
+                                $recordKey = $getRecordKey($record);
                                 $recordUrl = $getRecordUrl($record);
                             @endphp
 
                             <x-tables::row
                                 :record-url="$recordUrl"
-                                wire:key="table.records.{{ $this->getTableRecordKey($record) }}"
+                                wire:key="table.records.{{ $recordKey }}"
+                                :wire:key="'table.records.' . $recordKey"
+                                :wire:sortable.item="$isReordering ? $recordKey : null"
+                                :wire:sortable.handle="$isReordering"
+                                :striped="$isStriped"
                                 x-bind:class="{
                                     'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $this->getTableRecordKey($record) }}'),
                                 }"
