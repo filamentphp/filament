@@ -13,6 +13,7 @@ use Filament\Http\Responses\Auth\LoginResponse;
 use Filament\Http\Responses\Auth\LogoutResponse;
 use Filament\Pages\Dashboard;
 use Filament\Pages\Page;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\ButtonAction;
@@ -166,6 +167,10 @@ class FilamentServiceProvider extends PluginServiceProvider
             if ($filePath->startsWith(config('filament.widgets.path')) && is_subclass_of($fileClass, Widget::class)) {
                 $this->widgets[] = $fileClass;
 
+                continue;
+            }
+
+            if (is_subclass_of($fileClass, RelationManager::class)) {
                 continue;
             }
 
