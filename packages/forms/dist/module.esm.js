@@ -26081,7 +26081,6 @@ var select_default = (Alpine) => {
           placeholderValue: placeholder,
           removeItemButton: true,
           renderChoiceLimit: 50,
-          searchChoices: !hasDynamicSearchResults,
           searchFields: ["label"],
           searchResultLimit: 50,
           shouldSort: false
