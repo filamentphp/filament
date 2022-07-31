@@ -93,6 +93,7 @@ trait HasActions
         } finally {
             $this->mountedTableAction = null;
 
+            $action->record(null);
             $this->mountedTableActionRecord(null);
 
             $action->resetArguments();

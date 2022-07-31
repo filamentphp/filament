@@ -86,7 +86,7 @@ class CreateAction extends Action
 
                 return;
             }
-            $this->record(null); // Ensure the record is reset to solve issue #3070
+
             $this->success();
         });
     }

@@ -62,6 +62,8 @@ trait HasActions
         } finally {
             $this->mountedAction = null;
 
+            $action->record(null);
+
             $action->resetArguments();
             $action->resetFormData();
 
