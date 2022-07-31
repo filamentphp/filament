@@ -32,6 +32,8 @@ use Symfony\Component\Finder\SplFileInfo;
 
 class FilamentServiceProvider extends PluginServiceProvider
 {
+    protected array $livewireComponents = [];
+
     public function configurePackage(Package $package): void
     {
         $package
@@ -76,6 +78,8 @@ class FilamentServiceProvider extends PluginServiceProvider
 
     public function packageRegistered(): void
     {
+        $this->registerComponents();
+
         parent::packageRegistered();
 
         $this->app->scoped('filament', function (): FilamentManager {
@@ -99,6 +103,106 @@ class FilamentServiceProvider extends PluginServiceProvider
         TestableLivewire::mixin(new TestsPages());
     }
 
+    protected function registerComponents(): void
+    {
+        $this->pages = config('filament.pages.register', []);
+        $this->resources = config('filament.resources.register', []);
+        $this->widgets = config('filament.widgets.register', []);
+
+        $directory = config('filament.livewire.path');
+        $namespace = config('filament.livewire.namespace');
+
+        $this->registerComponentsFromDirectory(
+            Page::class,
+            $this->pages,
+            config('filament.pages.path'),
+            config('filament.pages.namespace'),
+        );
+
+        $this->registerComponentsFromDirectory(
+            Resource::class,
+            $this->resources,
+            config('filament.resources.path'),
+            config('filament.resources.namespace'),
+        );
+
+        $this->registerComponentsFromDirectory(
+            Widget::class,
+            $this->widgets,
+            config('filament.widgets.path'),
+            config('filament.widgets.namespace'),
+        );
+
+        $filesystem = app(Filesystem::class);
+
+        if (! $filesystem->isDirectory($directory)) {
+            return;
+        }
+
+        foreach ($filesystem->allFiles($directory) as $file) {
+            $fileClass = (string) Str::of($namespace)
+                ->append('\\', $file->getRelativePathname())
+                ->replace(['/', '.php'], ['\\', '']);
+
+            if ((new ReflectionClass($fileClass))->isAbstract()) {
+                continue;
+            }
+
+            $filePath = Str::of($directory . '/' . $file->getRelativePathname());
+
+            if ($filePath->startsWith(config('filament.resources.path')) && is_subclass_of($fileClass, Resource::class)) {
+                $this->resources[] = $fileClass;
+
+                continue;
+            }
+
+            if ($filePath->startsWith(config('filament.pages.path')) && is_subclass_of($fileClass, Page::class)) {
+                $this->pages[] = $fileClass;
+            } elseif ($filePath->startsWith(config('filament.widgets.path')) && is_subclass_of($fileClass, Widget::class)) {
+                $this->widgets[] = $fileClass;
+            }
+
+            if (! is_subclass_of($fileClass, Component::class)) {
+                continue;
+            }
+
+            $livewireAlias = Str::of($fileClass)
+                ->after($namespace . '\\')
+                ->replace(['/', '\\'], '.')
+                ->prepend('filament.')
+                ->explode('.')
+                ->map([Str::class, 'kebab'])
+                ->implode('.');
+
+            $this->livewireComponents[$livewireAlias] = $fileClass;
+        }
+    }
+
+    protected function registerComponentsFromDirectory(string $baseClass, array &$register, string $directory, string $namespace): void
+    {
+        if (Str::of($directory)->startsWith(config('filament.livewire.path'))) {
+            return;
+        }
+
+        $filesystem = app(Filesystem::class);
+
+        if (! $filesystem->exists($directory)) {
+            return;
+        }
+
+        $register = array_merge(
+            $register,
+            collect($filesystem->allFiles($namespace))
+                ->map(function (SplFileInfo $file) use ($namespace): string {
+                    return (string) Str::of($namespace)
+                        ->append('\\', $file->getRelativePathname())
+                        ->replace(['/', '.php'], ['\\', '']);
+                })
+                ->filter(fn (string $class): bool => is_subclass_of($class, $baseClass) && (! (new ReflectionClass($class))->isAbstract()))
+                ->toArray(),
+        );
+    }
+
     protected function bootLivewireComponents(): void
     {
         Livewire::addPersistentMiddleware([
@@ -106,13 +210,15 @@ class FilamentServiceProvider extends PluginServiceProvider
             MirrorConfigToSubpackages::class,
         ]);
 
-        Livewire::component('filament.core.auth.login', Login::class);
-        Livewire::component('filament.core.global-search', GlobalSearch::class);
-        Livewire::component('filament.core.pages.dashboard', Dashboard::class);
-        Livewire::component('filament.core.widgets.account-widget', AccountWidget::class);
-        Livewire::component('filament.core.widgets.filament-info-widget', FilamentInfoWidget::class);
-
-        $this->registerLivewireComponentDirectory(config('filament.livewire.path'), config('filament.livewire.namespace'), 'filament.');
+        foreach (array_merge($this->livewireComponents, [
+            'filament.core.auth.login' => Login::class,
+            'filament.core.global-search' => GlobalSearch::class,
+            'filament.core.pages.dashboard' => Dashboard::class,
+            'filament.core.widgets.account-widget' => AccountWidget::class,
+            'filament.core.widgets.filament-info-widget' => FilamentInfoWidget::class,
+        ]) as $alias => $class) {
+            Livewire::component($alias, $class);
+        }
     }
 
     protected function bootTableActionConfiguration(): void
@@ -128,69 +234,6 @@ class FilamentServiceProvider extends PluginServiceProvider
                 return $action;
             });
         });
-    }
-
-    protected function getPages(): array
-    {
-        $filesystem = app(Filesystem::class);
-
-        $pages = config('filament.pages.register', []);
-
-        if (! $filesystem->exists(config('filament.pages.path'))) {
-            return $pages;
-        }
-
-        return collect($filesystem->allFiles(config('filament.pages.path')))
-            ->map(function (SplFileInfo $file): string {
-                return (string) Str::of(config('filament.pages.namespace'))
-                    ->append('\\', $file->getRelativePathname())
-                    ->replace(['/', '.php'], ['\\', '']);
-            })
-            ->filter(fn (string $class): bool => is_subclass_of($class, Page::class) && (! (new ReflectionClass($class))->isAbstract()))
-            ->merge($pages)
-            ->toArray();
-    }
-
-    protected function getResources(): array
-    {
-        $filesystem = app(Filesystem::class);
-
-        $resources = config('filament.resources.register', []);
-
-        if (! $filesystem->exists(config('filament.resources.path'))) {
-            return $resources;
-        }
-
-        return collect($filesystem->allFiles(config('filament.resources.path')))
-            ->map(function (SplFileInfo $file): string {
-                return (string) Str::of(config('filament.resources.namespace'))
-                    ->append('\\', $file->getRelativePathname())
-                    ->replace(['/', '.php'], ['\\', '']);
-            })
-            ->filter(fn (string $class): bool => is_subclass_of($class, Resource::class) && (! (new ReflectionClass($class))->isAbstract()))
-            ->merge($resources)
-            ->toArray();
-    }
-
-    protected function getWidgets(): array
-    {
-        $filesystem = app(Filesystem::class);
-
-        $widgets = config('filament.widgets.register', []);
-
-        if (! $filesystem->exists(config('filament.widgets.path'))) {
-            return $widgets;
-        }
-
-        return collect($filesystem->allFiles(config('filament.widgets.path')))
-            ->map(function (SplFileInfo $file): string {
-                return (string) Str::of(config('filament.widgets.namespace'))
-                    ->append('\\', $file->getRelativePathname())
-                    ->replace(['/', '.php'], ['\\', '']);
-            })
-            ->filter(fn ($class): bool => is_subclass_of($class, Widget::class) && (! (new ReflectionClass($class))->isAbstract()))
-            ->merge($widgets)
-            ->toArray();
     }
 
     protected function mergeConfig(array $original, array $merging): array

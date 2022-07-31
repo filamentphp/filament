@@ -185,32 +185,4 @@ abstract class PluginServiceProvider extends PackageServiceProvider
     protected function registerMacros(): void
     {
     }
-
-    protected function registerLivewireComponentDirectory(string $directory, string $namespace, string $aliasPrefix = ''): void
-    {
-        $filesystem = app(Filesystem::class);
-
-        if (! $filesystem->isDirectory($directory)) {
-            return;
-        }
-
-        collect($filesystem->allFiles($directory))
-            ->map(function (SplFileInfo $file) use ($namespace): string {
-                return (string) Str::of($namespace)
-                    ->append('\\', $file->getRelativePathname())
-                    ->replace(['/', '.php'], ['\\', '']);
-            })
-            ->filter(fn (string $class): bool => is_subclass_of($class, Component::class) && (! (new ReflectionClass($class))->isAbstract()))
-            ->each(function (string $class) use ($namespace, $aliasPrefix): void {
-                $alias = Str::of($class)
-                    ->after($namespace . '\\')
-                    ->replace(['/', '\\'], '.')
-                    ->prepend($aliasPrefix)
-                    ->explode('.')
-                    ->map([Str::class, 'kebab'])
-                    ->implode('.');
-
-                Livewire::component($alias, $class);
-            });
-    }
 }
