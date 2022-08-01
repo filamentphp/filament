@@ -5,13 +5,13 @@
         'whitespace-normal' => $canWrap(),
     ]) }}
 >
-    @if(($showDescriptionOnTop = $getShowDescriptionOnTop()) && ($description = $getDescription()))
+    @if(($descriptionPosition = $getDescriptionPosition()) === 'above' && ($description = $getDescription()))
         <span class="block text-sm text-gray-400"> {!! \Illuminate\Support\Str::of($description)->markdown()->sanitizeHtml() !!}</span>
     @endif
 
     {{ $getFormattedState() }}
 
-    @if(! $showDescriptionOnTop && ($description = $getDescription()))
+    @if($descriptionPosition === 'below' && ($description = $getDescription()))
         <span class="block text-sm text-gray-400">{!! \Illuminate\Support\Str::of($description)->markdown()->sanitizeHtml() !!}</span>
     @endif
 </div>

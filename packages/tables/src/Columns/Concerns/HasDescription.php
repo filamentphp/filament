@@ -9,12 +9,12 @@ trait HasDescription
 {
     protected string | Closure | null $description = null;
 
-    protected bool | Closure | null $showDescriptionOnTop = null;
+    protected string | Closure | null $descriptionPosition = 'below';
 
-    public function description(string | Closure | HtmlString | null $description, bool | Closure | null $showDescriptionOnTop = false): static
+    public function description(string | Closure | HtmlString | null $description, string | Closure | null $descriptionPosition = 'below'): static
     {
         $this->description = $description;
-        $this->showDescriptionOnTop($showDescriptionOnTop);
+        $this->descriptionPosition($descriptionPosition);
 
         return $this;
     }
@@ -24,15 +24,15 @@ trait HasDescription
         return $this->evaluate($this->description);
     }
 
-    public function showDescriptionOnTop(bool | Closure | null $showDescriptionOnTop = true): static
+    public function descriptionPosition(string | Closure | null $descriptionPosition = 'string'): static
     {
-        $this->showDescriptionOnTop = $showDescriptionOnTop;
+        $this->descriptionPosition = $descriptionPosition;
 
         return $this;
     }
 
-    public function getShowDescriptionOnTop(): bool
+    public function getDescriptionPosition(): string
     {
-        return $this->evaluate($this->showDescriptionOnTop) ?? false;
+        return $this->evaluate($this->descriptionPosition) ?? 'below';
     }
 }
