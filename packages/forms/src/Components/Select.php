@@ -471,8 +471,10 @@ class Select extends Field
                 strtolower($search),
             );
 
-            if (isset($relationshipQuery->limit)) {
-                $component->optionsLimit($relationshipQuery->limit);
+            $baseRelationshipQuery = $relationshipQuery->getQuery();
+
+            if (isset($baseRelationshipQuery->limit)) {
+                $component->optionsLimit($baseRelationshipQuery->limit);
             } else {
                 $relationshipQuery->limit($component->getOptionsLimit());
             }
