@@ -26058,6 +26058,7 @@ var select_default = (Alpine) => {
     maxItems,
     noSearchResultsMessage,
     options: options2,
+    optionsLimit,
     placeholder,
     searchingMessage,
     searchPrompt,
@@ -26080,9 +26081,9 @@ var select_default = (Alpine) => {
           noResultsText: noSearchResultsMessage,
           placeholderValue: placeholder,
           removeItemButton: true,
-          renderChoiceLimit: 50,
+          renderChoiceLimit: optionsLimit,
           searchFields: ["label"],
-          searchResultLimit: 50,
+          searchResultLimit: optionsLimit,
           shouldSort: false
         });
         await this.refreshChoices({withInitialOptions: true});

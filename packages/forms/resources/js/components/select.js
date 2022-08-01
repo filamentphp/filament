@@ -17,6 +17,7 @@ export default (Alpine) => {
         maxItems,
         noSearchResultsMessage,
         options,
+        optionsLimit,
         placeholder,
         searchingMessage,
         searchPrompt,
@@ -44,9 +45,9 @@ export default (Alpine) => {
                     noResultsText: noSearchResultsMessage,
                     placeholderValue: placeholder,
                     removeItemButton: true,
-                    renderChoiceLimit: 50,
+                    renderChoiceLimit: optionsLimit,
                     searchFields: ['label'],
-                    searchResultLimit: 50,
+                    searchResultLimit: optionsLimit,
                     shouldSort: false,
                 })
 
