@@ -7,14 +7,21 @@ use Illuminate\Support\HtmlString;
 
 trait HasDescription
 {
-    protected string | Closure | null $description = null;
+    protected string | HtmlString | Closure | null $description = null;
 
     protected string | Closure | null $descriptionPosition = null;
 
-    public function description(string | Closure | HtmlString | null $description, string | Closure | null $descriptionPosition = 'below'): static
+    public function description(string | HtmlString | Closure | null $description, string | Closure | null $position = 'below'): static
     {
         $this->description = $description;
-        $this->descriptionPosition($descriptionPosition);
+        $this->descriptionPosition($position);
+
+        return $this;
+    }
+
+    public function descriptionPosition(string | Closure | null $position): static
+    {
+        $this->descriptionPosition = $position;
 
         return $this;
     }
@@ -22,13 +29,6 @@ trait HasDescription
     public function getDescription(): string | HtmlString | null
     {
         return $this->evaluate($this->description);
-    }
-
-    public function descriptionPosition(string | Closure | null $descriptionPosition): static
-    {
-        $this->descriptionPosition = $descriptionPosition;
-
-        return $this;
     }
 
     public function getDescriptionPosition(): string
