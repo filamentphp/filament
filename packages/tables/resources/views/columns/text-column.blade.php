@@ -6,12 +6,12 @@
     ]) }}
 >
     @if(($showDescriptionOnTop = $getShowDescriptionOnTop()) && ($description = $getDescription()))
-        <span class="block text-sm text-gray-400">{{ $description }}</span>
+        <span class="block text-sm text-gray-400"> {!! \Illuminate\Support\Str::of($description)->markdown()->sanitizeHtml() !!}</span>
     @endif
 
     {{ $getFormattedState() }}
 
     @if(! $showDescriptionOnTop && ($description = $getDescription()))
-        <span class="block text-sm text-gray-400">{{ $description }}</span>
+        <span class="block text-sm text-gray-400">{!! \Illuminate\Support\Str::of($description)->markdown()->sanitizeHtml() !!}</span>
     @endif
 </div>

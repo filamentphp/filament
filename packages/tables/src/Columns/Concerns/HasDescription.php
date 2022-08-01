@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
+use Illuminate\Support\HtmlString;
 
 trait HasDescription
 {
@@ -10,7 +11,7 @@ trait HasDescription
 
     protected bool | Closure | null $showDescriptionOnTop = null;
 
-    public function description(string | Closure | null $description, bool | Closure | null $showDescriptionOnTop = false): static
+    public function description(string | Closure | HtmlString | null $description, bool | Closure | null $showDescriptionOnTop = false): static
     {
         $this->description = $description;
         $this->showDescriptionOnTop($showDescriptionOnTop);
@@ -18,7 +19,7 @@ trait HasDescription
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getDescription(): string | HtmlString | null
     {
         return $this->evaluate($this->description);
     }
