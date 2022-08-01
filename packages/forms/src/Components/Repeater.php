@@ -95,7 +95,7 @@ class Repeater extends Field
                 },
             ],
             'repeater::cloneItem' => [
-                function (Repeater $component, string $statePath, string $duplicateUuid): void {
+                function (Repeater $component, string $statePath, string $uuidToDuplicate): void {
                     if ($statePath !== $component->getStatePath()) {
                         return;
                     }
@@ -106,7 +106,7 @@ class Repeater extends Field
                     data_set(
                         $livewire,
                         "{$statePath}.{$newUuid}",
-                        data_get($livewire, "{$statePath}.{$duplicateUuid}")
+                        data_get($livewire, "{$statePath}.{$uuidToDuplicate}"),
                     );
 
                     $component->collapsed(false, shouldMakeComponentCollapsible: false);
