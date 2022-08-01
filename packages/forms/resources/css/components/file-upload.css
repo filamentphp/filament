@@ -45,9 +45,10 @@
 
 .filepond--root[data-style-panel-layout='grid'] .filepond--item {
     width: calc(50% - 0.5em);
+    display: inline;
 }
 
-@media screen(md) {
+@media screen(lg) {
     .filepond--root[data-style-panel-layout='grid'] .filepond--item {
         width: calc(33.33% - 0.5em);
     }
