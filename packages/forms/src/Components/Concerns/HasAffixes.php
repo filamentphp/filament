@@ -4,7 +4,6 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Filament\Forms\Components\Actions\Action;
-use Illuminate\Support\Arr;
 
 trait HasAffixes
 {
