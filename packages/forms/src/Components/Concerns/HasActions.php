@@ -28,8 +28,6 @@ trait HasActions
         return $this->getActions()[$name] ?? null;
     }
 
-    // When the component `HasAffixes`, this is overridden by
-    // `HasAffixes::getActions()` to auto-register affix actions.
     public function getActions(): array
     {
         return $this->actions;
