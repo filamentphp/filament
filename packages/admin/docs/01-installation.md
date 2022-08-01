@@ -63,25 +63,16 @@ If you wish to translate the package, you may publish the language files using:
 php artisan vendor:publish --tag=filament-translations
 ```
 
-## Upgrade Guide
+## Upgrading
 
 To upgrade the package to the latest version, you must run:
-
-```bash
-php artisan config:clear
-php artisan livewire:discover
-php artisan route:clear
-php artisan view:clear
-```
-
-Alternatively, you may use the `filament:upgrade` command to do this all at once:
 
 ```bash
 composer update
 php artisan filament:upgrade
 ```
 
-We recommend adding these commands to your `composer.json`'s `post-update-cmd`:
+We recommend adding the `filament:upgrade` command to your `composer.json`'s `post-update-cmd` to run it automatically:
 
 ```json
 "post-update-cmd": [

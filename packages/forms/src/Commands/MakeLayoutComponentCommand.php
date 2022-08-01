@@ -2,12 +2,13 @@
 
 namespace Filament\Forms\Commands;
 
+use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
 class MakeLayoutComponentCommand extends Command
 {
-    use Concerns\CanManipulateFiles;
+    use CanManipulateFiles;
     use Concerns\CanValidateInput;
 
     protected $description = 'Creates a form layout component class and view.';
