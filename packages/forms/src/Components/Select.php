@@ -70,6 +70,8 @@ class Select extends Field
 
     protected string | Closure | null $relationship = null;
 
+    protected int | Closure $optionsLimit = 50;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -332,6 +334,13 @@ class Select extends Field
         return $this;
     }
 
+    public function optionsLimit(int | Closure $limit): static
+    {
+        $this->optionsLimit = $limit;
+
+        return $this;
+    }
+
     public function getOptionLabel(): ?string
     {
         return $this->evaluate($this->getOptionLabelUsing, [
@@ -462,7 +471,11 @@ class Select extends Field
                 strtolower($search),
             );
 
-            $relationshipQuery->limit(50);
+            if (isset($relationshipQuery->limit)) {
+                $component->optionsLimit($relationshipQuery->limit);
+            } else {
+                $relationshipQuery->limit($this->getOptionsLimit());
+            }
 
             $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
 
@@ -738,5 +751,10 @@ class Select extends Field
         }
 
         return parent::getActionFormModel();
+    }
+
+    public function getOptionsLimit(): int
+    {
+        return $this->evaluate($this->optionsLimit);
     }
 }
