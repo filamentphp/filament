@@ -13,12 +13,9 @@ trait HasActions
 
     public function registerActions(array $actions): static
     {
-        $this->actions = array_merge(
-            $actions,
-            collect($actions)
-                ->mapWithKeys(fn (Action $action): array => [$action->getName() => $action->component($this)])
-                ->all(),
-        );
+        foreach ($actions as $action) {
+            $this->actions[$action->getName()] = $action->component($this);
+        }
 
         return $this;
     }
