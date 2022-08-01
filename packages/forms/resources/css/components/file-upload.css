@@ -47,7 +47,7 @@
     width: calc(50% - 0.5em);
 }
 
-@media (min-width: 50em) {
+@media screen(md) {
     .filepond--root[data-style-panel-layout='grid'] .filepond--item {
         width: calc(33.33% - 0.5em);
     }
