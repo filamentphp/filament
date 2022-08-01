@@ -49,17 +49,6 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('title')->label('Post title')
 ```
 
-### Setting a description
-
-You can display a description of the column below or above the actual column text using the `description()` method. By default, the description is displayed below the column text, but you can change the position by using the `descriptionPosition()` method and passing `above` as it's parameter. Accepted values are `above` and `below`. You may also update the position by passing it as the second argument to the `description()` method. 
-
-```php
-use Filament\Tables\Columns\TextColumn;
-
-TextColumn::make('title')
-    ->description(fn(Post $record) => $record->description, descriptionPosition: 'below');
-```
-
 ### Sorting
 
 Columns may be sortable, by clicking on the column label. To make a column sortable, you must use the `sortable()` method:
@@ -344,6 +333,24 @@ TextColumn::make('users_avg_age')->avg('users', 'age')
 In this example, `users` is the name of the relationship, while `age` is the field that is being averaged. The name of the column must be `users_avg_age`, as this is the convention that [Laravel uses](https://laravel.com/docs/9.x/eloquent-relationships#other-aggregate-functions) for storing the result.
 
 ## Text column
+
+You can display a description below the contents of a text column using the `description()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('title')
+    ->description(fn (Post $record): string => $record->description);
+```
+
+By default, the description is displayed below the main text, but you can move it above using the second parameter:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('title')
+    ->description(fn (Post $record): string => $record->description, position: 'above');
+```
 
 You may use the `date()` and `dateTime()` methods to format the column's state using [PHP date formatting tokens](https://www.php.net/manual/en/datetime.format.php):
 
