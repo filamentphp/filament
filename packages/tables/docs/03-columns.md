@@ -51,18 +51,13 @@ TextColumn::make('title')->label('Post title')
 
 ### Setting a description
 
-You can display a description of the column below or above the actual column text using the `description()` method. By default, the description is displayed below the column text, but you can change the position by using the `showDescriptionOnTop()` method.
+You can display a description of the column below or above the actual column text using the `description()` method. By default, the description is displayed below the column text, but you can change the position by using the `descriptionPosition()` method and passing `above` as it's parameter. Accepted values are `above` and `below`. You may also update the position by passing it as the second argument to the `description()` method. 
 
 ```php
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('title')
-    ->description(fn(Post $record) => $record->description);
-
-// Show the description above the actual column content:
-TextColumn::make('title')
-    ->description(fn(Post $record) => $record->description)
-    ->showDescriptionOnTop();
+    ->description(fn(Post $record) => $record->description, descriptionPosition: 'below');
 ```
 
 ### Sorting
