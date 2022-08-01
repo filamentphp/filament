@@ -88,6 +88,7 @@
                         maxItems: @js($getMaxItems()),
                         noSearchResultsMessage: @js($getNoSearchResultsMessage()),
                         options: @js($getOptions()),
+                        optionsLimit: @js($getOptionsLimit()),
                         placeholder: @js($getPlaceholder()),
                         searchingMessage: @js($getSearchingMessage()),
                         searchPrompt: @js($getSearchPrompt()),
