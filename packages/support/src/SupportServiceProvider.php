@@ -30,18 +30,7 @@ class SupportServiceProvider extends PackageServiceProvider
         $this->app->scoped(
             SanitizerInterface::class,
             function () {
-                return Sanitizer::create([
-                    'extensions' => [
-                        'basic',
-                        'code',
-                        'details',
-                        'extra',
-                        'iframe',
-                        'image',
-                        'list',
-                        'table',
-                    ],
-                ]);
+                return Sanitizer::create(require __DIR__ . '/../config/html-sanitizer.php');
             },
         );
 

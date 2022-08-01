@@ -13,8 +13,7 @@ trait CanEmitEvent
     public function emit(
         string | Closure | null $event,
         array | Closure $data = [],
-    ): static
-    {
+    ): static {
         $this->event = $event;
         $this->eventData = $data;
 

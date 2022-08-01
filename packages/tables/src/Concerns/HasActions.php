@@ -93,6 +93,7 @@ trait HasActions
         } finally {
             $this->mountedTableAction = null;
 
+            $action->record(null);
             $this->mountedTableActionRecord(null);
 
             $action->resetArguments();
@@ -194,7 +195,7 @@ trait HasActions
 
         $this->cachedMountedTableActionRecordKey = $recordKey;
 
-        return $this->cachedMountedTableActionRecord = $this->resolveTableRecord($recordKey);
+        return $this->cachedMountedTableActionRecord = $this->getTableRecord($recordKey);
     }
 
     public function getCachedTableAction(string $name): ?Action

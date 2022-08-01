@@ -158,7 +158,7 @@ jobs:
                           Hey @${user}! We're sorry to hear that you've hit this issue. 💛
                       `.trim()
 
-                      const NO_REPRO_URL = ! url.includes('https://github.com/')
+                      const NO_REPRO_URL = (! url.includes('https://github.com/')) || url.includes('https://github.com/filamentphp/')
                       const NO_REPRO_STEPS = reproSteps.length < 25
 
                       if (NO_REPRO_URL || NO_REPRO_STEPS) {
@@ -171,7 +171,7 @@ jobs:
                               comment += `
                                   However, it looks like you forgot to fill in the reproduction repository URL. Can you edit your original post and then we'll look at your issue?
 
-                                  That would allow us to download it and review your bug much easier, so it can be fixed quicker. Please make sure to give us some instructions on where to find the bug, and include a database seeder with everything we need to set it up quickly.
+                                  We need a public Git repository which contains a Laravel app with the minimal amount of Filament code to reproduce the problem. That would allow us to download it and review your bug much easier, so it can be fixed quicker. Please make sure to include a database seeder with everything we need to set the app up quickly.
                               `
                           }
 

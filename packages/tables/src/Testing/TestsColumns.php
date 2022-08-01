@@ -19,7 +19,7 @@ class TestsColumns
     {
         return function (string $name): static {
             /** @phpstan-ignore-next-line */
-            $this->assertTableColumnExists($name);
+            $this->assertTableColumnVisible($name);
 
             $livewire = $this->instance();
 
@@ -44,12 +44,52 @@ class TestsColumns
             $livewire = $this->instance();
             $livewireClass = $livewire::class;
 
-            $action = $livewire->getCachedTableColumn($name);
+            $column = $livewire->getCachedTableColumn($name);
 
             Assert::assertInstanceOf(
                 Column::class,
-                $action,
+                $column,
                 message: "Failed asserting that a table column with name [{$name}] exists on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableColumnVisible(): Closure
+    {
+        return function (string $name): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableColumnExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $column = $livewire->getCachedTableColumn($name);
+
+            Assert::assertFalse(
+                $column->isHidden(),
+                message: "Failed asserting that a table column with name [{$name}] is visible on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableColumnHidden(): Closure
+    {
+        return function (string $name): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableColumnExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $column = $livewire->getCachedTableColumn($name);
+
+            Assert::assertTrue(
+                $column->isHidden(),
+                message: "Failed asserting that a table column with name [{$name}] is hidden on the [{$livewireClass}] component.",
             );
 
             return $this;

@@ -1440,6 +1440,20 @@ Repeater::make('qualifications')
     ->collapsed()
 ```
 
+### Cloning items
+
+You may allow repeater items to be duplicated using the `cloneable()` method:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('qualifications')
+    ->schema([
+        // ...
+    ])
+    ->cloneable()
+```
+
 ### Populating automatically from a relationship
 
 You may employ the `relationship()` method of the repeater to configure a relationship to automatically retrieve and save repeater items:

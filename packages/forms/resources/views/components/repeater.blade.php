@@ -13,6 +13,7 @@
         $containers = $getChildComponentContainers();
 
         $isCollapsible = $isCollapsible();
+        $isCloneable = $isCloneable();
         $isItemCreationDisabled = $isItemCreationDisabled();
         $isItemDeletionDisabled = $isItemDeletionDisabled();
         $isItemMovementDisabled = $isItemMovementDisabled();
@@ -69,7 +70,7 @@
                                 'dark:bg-gray-800 dark:border-gray-600' => config('forms.dark_mode'),
                             ])
                         >
-                            @if ((! $isItemMovementDisabled) || (! $isItemDeletionDisabled) || $isCollapsible || $hasItemLabels)
+                            @if ((! $isItemMovementDisabled) || (! $isItemDeletionDisabled) || $isCloneable || $isCollapsible || $hasItemLabels)
                                 <header @class([
                                     'flex items-center h-10 overflow-hidden border-b bg-gray-50 rounded-t-xl',
                                     'dark:bg-gray-800 dark:border-gray-700' => config('forms.dark_mode'),
@@ -106,6 +107,25 @@
                                         'flex divide-x rtl:divide-x-reverse',
                                         'dark:divide-gray-700' => config('forms.dark_mode'),
                                     ])>
+                                        @if ($isCloneable)
+                                            <li>
+                                                <button
+                                                    wire:click="dispatchFormEvent('repeater::cloneItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                    type="button"
+                                                    @class([
+                                                        'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-300',
+                                                        'dark:text-gray-400 dark:border-gray-700 dark:hover:text-gray-500' => config('forms.dark_mode'),
+                                                    ])
+                                                >
+                                                    <span class="sr-only">
+                                                        {{ __('forms::components.repeater.buttons.clone_item.label') }}
+                                                    </span>
+
+                                                    <x-heroicon-s-duplicate class="w-4 h-4"/>
+                                                </button>
+                                            </li>
+                                        @endunless
+                                        
                                         @unless ($isItemDeletionDisabled)
                                             <li>
                                                 <button
@@ -128,7 +148,7 @@
                                         @if ($isCollapsible)
                                             <li>
                                                 <button
-                                                    x-on:click="isCollapsed = !isCollapsed"
+                                                    x-on:click="isCollapsed = ! isCollapsed"
                                                     type="button"
                                                     @class([
                                                         'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-300',

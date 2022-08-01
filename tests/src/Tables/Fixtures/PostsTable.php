@@ -23,6 +23,9 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
                 ->sortable()
                 ->searchable(),
             Tables\Columns\BooleanColumn::make('is_published'),
+            Tables\Columns\TextColumn::make('visible'),
+            Tables\Columns\TextColumn::make('hidden')
+                ->hidden(),
         ];
     }
 
@@ -62,6 +65,9 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
 
                     $action->hold();
                 }),
+            Tables\Actions\Action::make('visible'),
+            Tables\Actions\Action::make('hidden')
+                ->hidden(),
         ];
     }
 
@@ -77,6 +83,9 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
     {
         return [
             Tables\Actions\DeleteBulkAction::make(),
+            Tables\Actions\BulkAction::make('visible'),
+            Tables\Actions\BulkAction::make('hidden')
+                ->hidden(),
         ];
     }
 

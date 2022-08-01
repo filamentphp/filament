@@ -2,6 +2,14 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 'dan :count lainnya',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -44,6 +52,14 @@ return [
     ],
 
     'buttons' => [
+
+        'disable_reordering' => [
+            'label' => 'Selesaikan mengurutkan ulang data',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Mengurutkan ulang data',
+        ],
 
         'filter' => [
             'label' => 'Filter',
@@ -98,6 +114,8 @@ return [
         ],
 
     ],
+
+    'reorder_indicator' => 'Seret dan lepaskan data kedalam urutan.',
 
     'selection_indicator' => [
 

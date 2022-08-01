@@ -334,6 +334,24 @@ In this example, `users` is the name of the relationship, while `age` is the fie
 
 ## Text column
 
+You can display a description below the contents of a text column using the `description()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('title')
+    ->description(fn (Post $record): string => $record->description);
+```
+
+By default, the description is displayed below the main text, but you can move it above using the second parameter:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('title')
+    ->description(fn (Post $record): string => $record->description, position: 'above');
+```
+
 You may use the `date()` and `dateTime()` methods to format the column's state using [PHP date formatting tokens](https://www.php.net/manual/en/datetime.format.php):
 
 ```php
