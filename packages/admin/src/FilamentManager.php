@@ -259,7 +259,7 @@ class FilamentManager
 
                 return $sort;
             })
-            ->toArray();
+            ->all();
     }
 
     public function getNavigationGroups(): array
@@ -286,7 +286,7 @@ class FilamentManager
     {
         return collect($this->userMenuItems)
             ->sort(fn (UserMenuItem $item): int => $item->getSort())
-            ->toArray();
+            ->all();
     }
 
     public function getModelResource(string | Model $model): ?string
@@ -399,7 +399,7 @@ class FilamentManager
         return collect($this->widgets)
             ->unique()
             ->sortBy(fn (string $widget): int => $widget::getSort())
-            ->toArray();
+            ->all();
     }
 
     public function getMeta(): array

@@ -212,7 +212,7 @@ class FilamentServiceProvider extends PluginServiceProvider
                         ->replace(['/', '.php'], ['\\', '']);
                 })
                 ->filter(fn (string $class): bool => is_subclass_of($class, $baseClass) && (! (new ReflectionClass($class))->isAbstract()))
-                ->toArray(),
+                ->all(),
         );
     }
 

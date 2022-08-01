@@ -18,21 +18,23 @@ trait HasHeader
             fn (): array => $this->getTableHeaderActions(),
         );
 
-        $this->cachedTableHeaderActions = collect($actions)
-            ->mapWithKeys(function (Action | ActionGroup $action, int $index): array {
-                if ($action instanceof ActionGroup) {
-                    foreach ($action->getActions() as $groupedAction) {
-                        $groupedAction->table($this->getCachedTable());
-                    }
+        $this->cachedTableHeaderActions = [];
 
-                    return [$index => $action];
+        foreach ($actions as $index => $action) {
+            if ($action instanceof ActionGroup) {
+                foreach ($action->getActions() as $groupedAction) {
+                    $groupedAction->table($this->getCachedTable());
                 }
 
-                $action->table($this->getCachedTable());
+                $this->cachedTableHeaderActions[$index] = $action;
 
-                return [$action->getName() => $action];
-            })
-            ->toArray();
+                continue;
+            }
+
+            $action->table($this->getCachedTable());
+
+            $this->cachedTableHeaderActions[$action->getName()] = $action;
+        }
     }
 
     public function getCachedTableHeaderActions(): array

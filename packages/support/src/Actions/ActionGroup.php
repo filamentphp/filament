@@ -41,11 +41,13 @@ class ActionGroup extends ViewComponent
 
     public function getActions(): array
     {
-        return collect($this->actions)
-            ->mapWithKeys(fn (Action | Groupable $action): array => [
-                $action->getName() => $action->grouped(),
-            ])
-            ->toArray();
+        $actions = [];
+
+        foreach ($this->actions as $action) {
+            $actions[$action->getName()] = $action->grouped();
+        }
+
+        return $actions;
     }
 
     public function isHidden(): bool

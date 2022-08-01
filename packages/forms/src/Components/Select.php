@@ -99,9 +99,13 @@ class Select extends Field
         $this->getOptionLabelsUsing(static function (Select $component, array $values): array {
             $options = $component->getOptions();
 
-            return collect($values)
-                ->mapWithKeys(fn ($value) => [$value => $options[$value] ?? $value])
-                ->toArray();
+            $labels = [];
+
+            foreach ($values as $value) {
+                $labels[$value] = $options[$value] ?? $value;
+            }
+
+            return $labels;
         });
 
         $this->loadingMessage(__('forms::components.select.loading_message'));

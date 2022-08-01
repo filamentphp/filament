@@ -165,7 +165,7 @@ class TestsActions
 
                         return ["mountedTableActionData.{$key}" => $value];
                     })
-                    ->toArray(),
+                    ->all(),
             );
 
             return $this;
@@ -184,7 +184,7 @@ class TestsActions
 
                         return ["mountedTableActionData.{$key}" => $value];
                     })
-                    ->toArray(),
+                    ->all(),
             );
 
             return $this;
@@ -329,7 +329,7 @@ class TestsActions
 
                         return ["mountedTableBulkActionData.{$key}" => $value];
                     })
-                    ->toArray(),
+                    ->all(),
             );
 
             return $this;
@@ -348,7 +348,7 @@ class TestsActions
 
                         return ["mountedTableBulkActionData.{$key}" => $value];
                     })
-                    ->toArray(),
+                    ->all(),
             );
 
             return $this;
