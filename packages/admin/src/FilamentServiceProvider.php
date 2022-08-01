@@ -190,8 +190,12 @@ class FilamentServiceProvider extends PluginServiceProvider
         }
     }
 
-    protected function registerComponentsFromDirectory(string $baseClass, array &$register, string $directory, string $namespace): void
+    protected function registerComponentsFromDirectory(string $baseClass, array &$register, ?string $directory, ?string $namespace): void
     {
+        if (blank($directory) || blank($namespace)) {
+            return;
+        }
+
         if (Str::of($directory)->startsWith(config('filament.livewire.path'))) {
             return;
         }
@@ -225,9 +229,6 @@ class FilamentServiceProvider extends PluginServiceProvider
         foreach (array_merge($this->livewireComponents, [
             'filament.core.auth.login' => Login::class,
             'filament.core.global-search' => GlobalSearch::class,
-            'filament.core.pages.dashboard' => Dashboard::class,
-            'filament.core.widgets.account-widget' => AccountWidget::class,
-            'filament.core.widgets.filament-info-widget' => FilamentInfoWidget::class,
         ]) as $alias => $class) {
             Livewire::component($alias, $class);
         }
