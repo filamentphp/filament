@@ -77,6 +77,12 @@ trait HasActions
     {
         $this->mountedAction = $name;
 
+        /**
+         * in cases where page action is used on the same page as a table action,
+         * the modal will still have old mountedTableAction value.
+         **/
+        $this->mountedTableAction = null;
+
         $action = $this->getMountedAction();
 
         if (! $action) {
