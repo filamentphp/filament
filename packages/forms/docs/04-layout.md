@@ -273,13 +273,52 @@ Tabs::make('Heading')
                 // ...
             ]),
         Tabs\Tab::make('Label 3')
-            ->icon('heroicon-o-eye') // Optional icon
             ->schema([
                 // ...
             ]),
     ])
 ```
 
+The first tab will be open by default. You can change the default open tab using the `activeTab()` method:
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Heading')
+    ->tabs([
+        Tabs\Tab::make('Label 1')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Label 2')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Label 3')
+            ->schema([
+                // ...
+            ]),
+    ])
+    ->activeTab(2)
+```
+
+Tabs may have an icon and badge, which you can set using the `icon()` and `badge()` methods:
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Heading')
+    ->tabs([
+        Tabs\Tab::make('Notifications')
+            ->icon('heroicon-o-bell') // [tl! focus:start]
+            ->badge('39') // [tl! focus:end]
+            ->schema([
+                // ...
+            ]),
+        // ...
+    ])
+```
+  
 ## Wizard
 
 Similar to [tabs](#tabs), you may want to use a multistep form wizard to reduce the number of components that are visible at once. These are especially useful if your form has a definite chronological order, in which you want each step to be validated as the user progresses.
