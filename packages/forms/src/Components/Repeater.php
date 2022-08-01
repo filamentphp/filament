@@ -276,7 +276,7 @@ class Repeater extends Field
 
     public function isCloneable(): bool
     {
-        return $this->evaluate($this->isCloneable) || $this->isDisabled();
+        return $this->evaluate($this->isCloneable) && (! $this->isDisabled());
     }
 
     public function isInset(): bool
