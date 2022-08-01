@@ -40,13 +40,3 @@ it('has state binding modifiers', function () {
     expect($field)
         ->applyStateBindingModifiers($expression = Str::random())->toBe(implode('.', array_merge([$expression], $modifiers)));
 });
-
-it('can auto register actions', function () {
-    $component = TextInput::make('name')
-        ->prefixAction(
-            Action::make('test')
-        );
-
-    expect($component->getActions())
-        ->toHaveKey('test');
-});

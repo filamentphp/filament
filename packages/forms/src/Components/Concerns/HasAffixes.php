@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Filament\Forms\Components\Actions\Action;
+use Illuminate\Support\Arr;
 
 trait HasAffixes
 {
@@ -33,10 +34,6 @@ trait HasAffixes
 
     public function prefixAction(Action | Closure | null $action): static
     {
-        if ($action instanceof Action) {
-            $this->autoRegisterAction($action);
-        }
-
         $this->prefixAction = $action;
 
         return $this;
@@ -44,10 +41,6 @@ trait HasAffixes
 
     public function suffixAction(Action | Closure | null $action): static
     {
-        if ($action instanceof Action) {
-            $this->autoRegisterAction($action);
-        }
-
         $this->suffixAction = $action;
 
         return $this;
@@ -74,23 +67,14 @@ trait HasAffixes
         return $this;
     }
 
-    private function autoRegisterAction(Action $action): void
-    {
-        if (! $this->getAction($action->getName())) {
-            $this->registerActions([
-                $action->getName() => $action,
-            ]);
-        }
-    }
-
     public function getPrefixAction(): ?Action
     {
-        return $this->evaluate($this->prefixAction);
+        return $this->evaluate($this->prefixAction)?->component($this);
     }
 
     public function getSuffixAction(): ?Action
     {
-        return $this->evaluate($this->suffixAction);
+        return $this->evaluate($this->suffixAction)?->component($this);
     }
 
     public function getPrefixLabel()
@@ -116,5 +100,17 @@ trait HasAffixes
     public function getSuffixIcon()
     {
         return $this->evaluate($this->suffixIcon);
+    }
+
+    public function getActions(): array
+    {
+        $prefixAction = $this->getPrefixAction();
+        $suffixAction = $this->getSuffixAction();
+
+        return array_merge(
+            parent::getActions(),
+            $prefixAction ? [$prefixAction->getName() => $prefixAction->component($this)] : [],
+            $suffixAction ? [$suffixAction->getName() => $suffixAction->component($this)] : [],
+        );
     }
 }

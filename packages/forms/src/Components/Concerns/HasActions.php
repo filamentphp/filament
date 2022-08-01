@@ -14,8 +14,10 @@ trait HasActions
     public function registerActions(array $actions): static
     {
         $this->actions = array_merge(
-            $this->actions,
-            array_map(fn (Action $action): Action => $action->component($this), $actions),
+            $actions,
+            collect($actions)
+                ->mapWithKeys(fn (Action $action): array => [$action->getName() => $action->component($this)])
+                ->all(),
         );
 
         return $this;
@@ -26,6 +28,8 @@ trait HasActions
         return $this->getActions()[$name] ?? null;
     }
 
+    // When the component `HasAffixes`, this is overridden by
+    // `HasAffixes::getActions()` to auto-register affix actions.
     public function getActions(): array
     {
         return $this->actions;
