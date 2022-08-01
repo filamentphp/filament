@@ -56,9 +56,11 @@ class Repeater extends Field
         $this->defaultItems(1);
 
         $this->afterStateHydrated(static function (Repeater $component, ?array $state): void {
-            $items = collect($state ?? [])
-                ->mapWithKeys(static fn ($itemData) => [(string) Str::uuid() => $itemData])
-                ->toArray();
+            $items = [];
+
+            foreach ($state as $itemData) {
+                $items[(string) Str::uuid()] = $itemData;
+            }
 
             $component->state($items);
         });
@@ -242,16 +244,21 @@ class Repeater extends Field
 
         $records = $relationship ? $this->getCachedExistingRecords() : null;
 
-        return collect($this->getState())
-            ->map(function ($itemData, $itemKey) use ($records, $relationship): ComponentContainer {
+        $state = $this->getState();
+
+        array_walk(
+            $state,
+            function ($itemData, $itemKey) use ($records, $relationship): ComponentContainer {
                 return $this
                     ->getChildComponentContainer()
                     ->getClone()
                     ->statePath($itemKey)
                     ->model($relationship ? $records[$itemKey] ?? $this->getRelatedModel() : null)
                     ->inlineLabel(false);
-            })
-            ->toArray();
+            },
+        );
+
+        return $state;
     }
 
     public function getCreateItemButtonLabel(): string

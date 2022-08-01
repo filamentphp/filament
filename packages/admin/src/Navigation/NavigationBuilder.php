@@ -66,6 +66,6 @@ class NavigationBuilder
 
         return $navigation
             ->merge($this->groups)
-            ->toArray();
+            ->all();
     }
 }

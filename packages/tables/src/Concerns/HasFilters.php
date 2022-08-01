@@ -19,20 +19,21 @@ trait HasFilters
 
     public function cacheTableFilters(): void
     {
-        $this->cachedTableFilters = collect($this->getTableFilters())
-            ->mapWithKeys(function (BaseFilter $filter): array {
-                $filter->table($this->getCachedTable());
+        $this->cachedTableFilters = [];
 
-                return [$filter->getName() => $filter];
-            })
-            ->toArray();
+        foreach ($this->getTableFilters() as $filter) {
+            $filter->table($this->getCachedTable());
+
+            $this->cachedTableFilters[$filter->getName()] = $filter;
+        }
     }
 
     public function getCachedTableFilters(): array
     {
-        return collect($this->cachedTableFilters)
-            ->filter(fn (BaseFilter $filter): bool => ! $filter->isHidden())
-            ->toArray();
+        return array_filter(
+            $this->cachedTableFilters,
+            fn (BaseFilter $filter): bool => ! $filter->isHidden(),
+        );
     }
 
     public function getCachedTableFilter(string $name): ?BaseFilter

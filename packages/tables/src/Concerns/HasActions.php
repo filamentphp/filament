@@ -33,21 +33,23 @@ trait HasActions
             fn (): array => $this->getTableActions(),
         );
 
-        $this->cachedTableActions = collect($actions)
-            ->mapWithKeys(function (Action | ActionGroup $action, int $index): array {
-                if ($action instanceof ActionGroup) {
-                    foreach ($action->getActions() as $groupedAction) {
-                        $groupedAction->table($this->getCachedTable());
-                    }
+        $this->cachedTableActions = [];
 
-                    return [$index => $action];
+        foreach ($actions as $index => $action) {
+            if ($action instanceof ActionGroup) {
+                foreach ($action->getActions() as $groupedAction) {
+                    $groupedAction->table($this->getCachedTable());
                 }
 
-                $action->table($this->getCachedTable());
+                $this->cachedTableActions[$index] = $action;
 
-                return [$action->getName() => $action];
-            })
-            ->toArray();
+                continue;
+            }
+
+            $action->table($this->getCachedTable());
+
+            $this->cachedTableActions[$action->getName()] = $action;
+        }
     }
 
     protected function configureTableAction(Action $action): void

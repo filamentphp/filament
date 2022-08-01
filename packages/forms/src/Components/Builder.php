@@ -40,9 +40,11 @@ class Builder extends Field
         $this->default([]);
 
         $this->afterStateHydrated(static function (Builder $component, ?array $state): void {
-            $items = collect($state ?? [])
-                ->mapWithKeys(static fn ($itemData) => [(string) Str::uuid() => $itemData])
-                ->toArray();
+            $items = [];
+
+            foreach ($state as $itemData) {
+                $items[(string) Str::uuid()] = $itemData;
+            }
 
             $component->state($items);
         });
@@ -266,7 +268,7 @@ class Builder extends Field
                     ->statePath("{$itemIndex}.data")
                     ->inlineLabel(false),
             )
-            ->toArray();
+            ->all();
     }
 
     public function getCreateItemBetweenButtonLabel(): string

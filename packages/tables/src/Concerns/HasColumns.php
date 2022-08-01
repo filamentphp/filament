@@ -10,13 +10,13 @@ trait HasColumns
 
     public function cacheTableColumns(): void
     {
-        $this->cachedTableColumns = collect($this->getTableColumns())
-            ->mapWithKeys(function (Column $column): array {
-                $column->table($this->getCachedTable());
+        $this->cachedTableColumns = [];
 
-                return [$column->getName() => $column];
-            })
-            ->toArray();
+        foreach ($this->getTableColumns() as $column) {
+            $column->table($this->getCachedTable());
+
+            $this->cachedTableColumns[$column->getName()] = $column;
+        }
     }
 
     public function callTableColumnAction(string $name, string $recordKey)

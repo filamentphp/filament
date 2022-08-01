@@ -49,7 +49,7 @@ class TestsPages
 
                         return ["data.{$key}" => $value];
                     })
-                    ->toArray(),
+                    ->all(),
             );
 
             return $this;
@@ -68,7 +68,7 @@ class TestsPages
 
                         return ["data.{$key}" => $value];
                     })
-                    ->toArray(),
+                    ->all(),
             );
 
             return $this;
@@ -199,7 +199,7 @@ class TestsPages
 
                         return ["mountedActionData.{$key}" => $value];
                     })
-                    ->toArray(),
+                    ->all(),
             );
 
             return $this;
@@ -218,7 +218,7 @@ class TestsPages
 
                         return ["mountedActionData.{$key}" => $value];
                     })
-                    ->toArray(),
+                    ->all(),
             );
 
             return $this;

@@ -67,7 +67,7 @@ class BaseFileUpload extends Field
             $files = collect(Arr::wrap($state))
                 ->filter(static fn (string $file) => blank($file) || $component->getDisk()->exists($file))
                 ->mapWithKeys(static fn (string $file): array => [((string) Str::uuid()) => $file])
-                ->toArray();
+                ->all();
 
             $component->state($files);
         });
@@ -445,32 +445,34 @@ class BaseFileUpload extends Field
 
         $state = collect($this->getState())
             ->sortBy(static fn ($file, $fileKey) => $fileKeys[$fileKey] ?? null) // $fileKey may not be present in $fileKeys if it was added to the state during the reorder call
-            ->toArray();
+            ->all();
 
         $this->state($state);
     }
 
     public function getUploadedFileUrls(): ?array
     {
-        return collect($this->getState() ?? [])
-            ->mapWithKeys(function (TemporaryUploadedFile | string $file, string $fileKey): array {
-                if ($file instanceof TemporaryUploadedFile) {
-                    return [$fileKey => null];
-                }
+        $urls = [];
 
-                $callback = $this->getUploadedFileUrlUsing;
+        foreach ($this->getState() ?? [] as $fileKey => $file) {
+            if ($file instanceof TemporaryUploadedFile) {
+                $urls[$fileKey] = null;
 
-                if (! $callback) {
-                    return [$fileKey => null];
-                }
+                continue;
+            }
 
-                $url = $this->evaluate($callback, [
-                    'file' => $file,
-                ]);
+            $callback = $this->getUploadedFileUrlUsing;
 
-                return [$fileKey => ($url ?: null)];
-            })
-            ->toArray();
+            if (! $callback) {
+                return [$fileKey => null];
+            }
+
+            $urls[$fileKey] = $this->evaluate($callback, [
+                'file' => $file,
+            ]) ?: null;
+        }
+
+        return $urls;
     }
 
     public function saveUploadedFiles(): void

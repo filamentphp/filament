@@ -25,13 +25,13 @@ trait HasBulkActions
             fn (): array => $this->getTableBulkActions(),
         );
 
-        $this->cachedTableBulkActions = collect($actions)
-            ->mapWithKeys(function (BulkAction $action): array {
-                $action->table($this->getCachedTable());
+        $this->cachedTableBulkActions = [];
 
-                return [$action->getName() => $action];
-            })
-            ->toArray();
+        foreach ($actions as $action) {
+            $action->table($this->getCachedTable());
+
+            $this->cachedTableBulkActions[$action->getName()] = $action;
+        }
     }
 
     protected function configureTableBulkAction(BulkAction $action): void
