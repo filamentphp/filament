@@ -9,7 +9,7 @@ trait HasDescription
 {
     protected string | Closure | null $description = null;
 
-    protected string | Closure | null $descriptionPosition = 'below';
+    protected string | Closure | null $descriptionPosition = null;
 
     public function description(string | Closure | HtmlString | null $description, string | Closure | null $descriptionPosition = 'below'): static
     {
@@ -24,7 +24,7 @@ trait HasDescription
         return $this->evaluate($this->description);
     }
 
-    public function descriptionPosition(string | Closure | null $descriptionPosition = 'string'): static
+    public function descriptionPosition(string | Closure | null $descriptionPosition): static
     {
         $this->descriptionPosition = $descriptionPosition;
 
