@@ -279,8 +279,7 @@ Tabs::make('Heading')
     ])
 ```
 
-The first `Tab` will be activated by default.
-You can change the default tab using the `activeTab()` method on the `Tabs` component:
+The first tab will be open by default. You can change the default open tab using the `activeTab()` method:
 
 ```php
 use Filament\Forms\Components\Tabs;
