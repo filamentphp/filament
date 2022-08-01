@@ -474,7 +474,7 @@ class Select extends Field
             if (isset($relationshipQuery->limit)) {
                 $component->optionsLimit($relationshipQuery->limit);
             } else {
-                $relationshipQuery->limit($this->getOptionsLimit());
+                $relationshipQuery->limit($component->getOptionsLimit());
             }
 
             $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
