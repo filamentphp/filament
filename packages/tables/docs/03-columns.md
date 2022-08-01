@@ -49,6 +49,22 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('title')->label('Post title')
 ```
 
+### Setting a description
+
+You can display a description of the column below or above the actual column text using the `description()` method. By default, the description is displayed below the column text, but you can change the position by using the `showDescriptionOnTop()` method.
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('title')
+    ->description(fn(Post $record) => $record->description);
+
+// Show the description above the actual column content:
+TextColumn::make('title')
+    ->description(fn(Post $record) => $record->description)
+    ->showDescriptionOnTop();
+```
+
 ### Sorting
 
 Columns may be sortable, by clicking on the column label. To make a column sortable, you must use the `sortable()` method:
