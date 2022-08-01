@@ -204,7 +204,7 @@ class FilamentServiceProvider extends PluginServiceProvider
 
         $register = array_merge(
             $register,
-            collect($filesystem->allFiles($namespace))
+            collect($filesystem->allFiles($directory))
                 ->map(function (SplFileInfo $file) use ($namespace): string {
                     return (string) Str::of($namespace)
                         ->append('\\', $file->getRelativePathname())
