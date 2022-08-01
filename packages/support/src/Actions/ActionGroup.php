@@ -7,7 +7,6 @@ use Filament\Support\Actions\Concerns\HasColor;
 use Filament\Support\Actions\Concerns\HasIcon;
 use Filament\Support\Actions\Concerns\HasLabel;
 use Filament\Support\Actions\Concerns\HasTooltip;
-use Filament\Support\Actions\Contracts\Groupable;
 use Filament\Support\Components\ViewComponent;
 
 class ActionGroup extends ViewComponent
