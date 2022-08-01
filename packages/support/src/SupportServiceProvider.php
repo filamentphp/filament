@@ -52,7 +52,7 @@ class SupportServiceProvider extends PackageServiceProvider
             return new Stringable(Str::sanitizeHtml($this->value));
         });
 
-        if (class_exists(AboutCommand::class)) {
+        if (class_exists(AboutCommand::class) && class_exists(InstalledVersions::class)) {
             $packages = [
                 'filament',
                 'forms',
