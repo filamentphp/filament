@@ -2,13 +2,14 @@
 
 namespace Filament\Commands;
 
+use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 
 class MakeSettingsPageCommand extends Command
 {
-    use Concerns\CanManipulateFiles;
+    use CanManipulateFiles;
     use Concerns\CanValidateInput;
 
     protected $description = 'Creates a Filament settings page class.';

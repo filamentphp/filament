@@ -2,12 +2,13 @@
 
 namespace Filament\Commands;
 
+use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
 class MakePageCommand extends Command
 {
-    use Concerns\CanManipulateFiles;
+    use CanManipulateFiles;
     use Concerns\CanValidateInput;
 
     protected $description = 'Creates a Filament page class and view.';
