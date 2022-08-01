@@ -123,7 +123,7 @@ export default defineConfig({
 
 #### Laravel Mix
 
-In your `webpack.mix.js` file, register Tailwind CSS as a PostCSS plugin :
+In your `webpack.mix.js` file, register Tailwind CSS as a PostCSS plugin:
 
 ```js
 const mix = require('laravel-mix')
