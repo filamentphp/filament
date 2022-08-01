@@ -22,20 +22,10 @@ composer require filament/spatie-laravel-settings-plugin:"^2.0"
 
 You're now ready to start building [settings pages](getting-started)!
 
-## Upgrading
+## Upgrade Guide
 
 To upgrade the package to the latest version, you must run:
 
 ```bash
 composer update
-php artisan filament:upgrade
-```
-
-We recommend adding the `filament:upgrade` command to your `composer.json`'s `post-update-cmd` to run it automatically:
-
-```json
-"post-update-cmd": [
-    // ...
-    "@php artisan filament:upgrade"
-],
 ```

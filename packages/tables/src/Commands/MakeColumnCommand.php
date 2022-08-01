@@ -2,13 +2,12 @@
 
 namespace Filament\Tables\Commands;
 
-use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
 class MakeColumnCommand extends Command
 {
-    use CanManipulateFiles;
+    use Concerns\CanManipulateFiles;
     use Concerns\CanValidateInput;
 
     protected $description = 'Creates a table column class and cell view.';

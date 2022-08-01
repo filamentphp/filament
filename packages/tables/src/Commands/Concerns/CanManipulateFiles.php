@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Support\Commands\Concerns;
+namespace Filament\Tables\Commands\Concerns;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;

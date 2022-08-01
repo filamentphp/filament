@@ -2,14 +2,13 @@
 
 namespace Filament\Commands;
 
-use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
 class MakeRelationManagerCommand extends Command
 {
-    use CanManipulateFiles;
     use Concerns\CanIndentStrings;
+    use Concerns\CanManipulateFiles;
     use Concerns\CanValidateInput;
 
     protected $description = 'Creates a Filament relation manager class for a resource.';

@@ -2,13 +2,12 @@
 
 namespace Filament\Forms\Commands;
 
-use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
 class MakeFieldCommand extends Command
 {
-    use CanManipulateFiles;
+    use Concerns\CanManipulateFiles;
     use Concerns\CanValidateInput;
 
     protected $description = 'Creates a form field class and view.';

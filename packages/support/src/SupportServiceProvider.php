@@ -20,7 +20,6 @@ class SupportServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('filament-support')
-            ->hasCommand(Commands\UpgradeCommand::class)
             ->hasConfigFile()
             ->hasTranslations()
             ->hasViews();
