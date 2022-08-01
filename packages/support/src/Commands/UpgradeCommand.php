@@ -1,13 +1,11 @@
 <?php
 
-namespace Filament\Commands;
+namespace Filament\Support\Commands;
 
 use Illuminate\Console\Command;
 
 class UpgradeCommand extends Command
 {
-    use Concerns\CanManipulateFiles;
-
     protected $description = 'Upgrade Filament to the latest version.';
 
     protected $signature = 'filament:upgrade';

@@ -38,7 +38,7 @@ You must also [prepare your Eloquent model](https://spatie.be/docs/laravel-media
 
 You're now ready to start using the [form components](form-components) and [table columns](table-columns)!
 
-## Upgrade Guide
+## Upgrading
 
 To upgrade the package to the latest version, you must run:
 

@@ -231,16 +231,14 @@ To upgrade the package to the latest version, you must run:
 
 ```bash
 composer update
-php artisan config:clear
-php artisan view:clear
+php artisan filament:upgrade
 ```
 
-To do this automatically, we recommend adding these commands to your `composer.json`'s `post-update-cmd`:
+We recommend adding the `filament:upgrade` command to your `composer.json`'s `post-update-cmd` to run it automatically:
 
 ```json
 "post-update-cmd": [
     // ...
-    "@php artisan config:clear",
-    "@php artisan view:clear"
+    "@php artisan filament:upgrade"
 ],
 ```
