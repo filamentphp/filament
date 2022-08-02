@@ -490,7 +490,7 @@ class Select extends Field
 
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated()->query(); //->orderBy($component->getRelationshipTitleColumnName());
+            $relationshipQuery = $relationship->getRelated()->query();
 
             if ($callback) {
                 $newRelationshipQuery = $component->evaluate($callback, [
@@ -499,6 +499,10 @@ class Select extends Field
 
                 // If a new query object is returned, use it instead.
                 $relationshipQuery = $newRelationshipQuery ?? $relationshipQuery;
+            }
+
+            if (empty($relationshipQuery->getQuery()->orders)) {
+                $relationshipQuery->orderBy($component->getRelationshipTitleColumnName());
             }
 
             $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
