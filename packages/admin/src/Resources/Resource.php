@@ -5,6 +5,7 @@ namespace Filament\Resources;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\GlobalSearch\GlobalSearchResult;
+use function Filament\locale_has_pluralization;
 use Filament\Navigation\NavigationItem;
 
 use function Filament\Support\get_model_label;
@@ -81,12 +82,11 @@ class Resource
         $routeBaseName = static::getRouteBaseName();
 
         return [
-            NavigationItem::make()
+            NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
                 ->icon(static::getNavigationIcon())
                 ->isActiveWhen(fn () => request()->routeIs("{$routeBaseName}.*"))
-                ->label(static::getNavigationLabel())
-                ->badge(static::getNavigationBadge())
+                ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
         ];
@@ -150,6 +150,11 @@ class Resource
         return static::can('forceDeleteAny');
     }
 
+    public static function canReorder(): bool
+    {
+        return static::can('reorder');
+    }
+
     public static function canReplicate(Model $record): bool
     {
         return static::can('replicate', $record);
@@ -177,7 +182,7 @@ class Resource
 
     public static function getBreadcrumb(): string
     {
-        return static::$breadcrumb ?? Str::title(static::getPluralModelLabel());
+        return static::$breadcrumb ?? Str::headline(static::getPluralModelLabel());
     }
 
     public static function getEloquentQuery(): Builder
@@ -287,7 +292,15 @@ class Resource
 
     public static function getPluralModelLabel(): string
     {
-        return static::$pluralModelLabel ?? static::getPluralLabel() ?? Str::plural(static::getModelLabel());
+        if (filled($label = static::$pluralModelLabel ?? static::getPluralLabel())) {
+            return $label;
+        }
+
+        if (locale_has_pluralization()) {
+            return Str::plural(static::getModelLabel());
+        }
+
+        return static::getModelLabel();
     }
 
     public static function getRecordTitleAttribute(): ?string
@@ -297,7 +310,7 @@ class Resource
 
     public static function getRecordTitle(?Model $record): ?string
     {
-        return $record?->getAttribute(static::getRecordTitleAttribute()) ?? $record?->getKey();
+        return $record?->getAttribute(static::getRecordTitleAttribute()) ?? static::getModelLabel();
     }
 
     public static function getRelations(): array
@@ -345,10 +358,16 @@ class Resource
 
     public static function getSlug(): string
     {
-        return static::$slug ?? (string) Str::of(class_basename(static::getModel()))
+        if (filled(static::$slug)) {
+            return static::$slug;
+        }
+
+        return Str::of(static::getModel())
+            ->afterLast('\\Models\\')
             ->plural()
-            ->kebab()
-            ->slug();
+            ->explode('\\')
+            ->map(fn (string $string) => Str::of($string)->kebab()->slug())
+            ->implode('/');
     }
 
     public static function getUrl($name = 'index', $params = []): string
@@ -429,10 +448,15 @@ class Resource
 
     protected static function getNavigationLabel(): string
     {
-        return static::$navigationLabel ?? Str::title(static::getPluralModelLabel());
+        return static::$navigationLabel ?? Str::headline(static::getPluralModelLabel());
     }
 
     protected static function getNavigationBadge(): ?string
+    {
+        return null;
+    }
+
+    protected static function getNavigationBadgeColor(): ?string
     {
         return null;
     }

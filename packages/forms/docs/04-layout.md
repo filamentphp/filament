@@ -54,6 +54,61 @@ Card::make()->columns(2)
 
 > For more information about creating advanced, responsive column layouts, please see the [grid section](#grid). All column options in that section are also available in other layout components.
 
+#### Controlling field column span
+
+You may specify the number of columns that any component may span in the parent grid:
+
+```php
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\TextInput;
+
+Grid::make(3)
+    ->schema([
+        TextInput::make('name')
+            ->columnSpan(2),
+        // ...
+    ])
+```
+
+You may use `columnSpan('full')` to ensure that a column spans the full width of the parent grid, however many columns it has:
+
+```php
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\TextInput;
+
+Grid::make(3)
+    ->schema([
+        TextInput::make('name')
+            ->columnSpan('full'),
+        // ...
+    ])
+```
+
+Instead, you can even define how many columns a component may consume at any breakpoint:
+
+```php
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\TextInput;
+
+Grid::make([
+    'default' => 1,
+    'sm' => 3,
+    'xl' => 6,
+    '2xl' => 8,
+])
+    ->schema([
+        TextInput::make('name')
+            ->columnSpan([
+                'sm' => 2,
+                'xl' => 3,
+                '2xl' => 4,
+            ]),
+        // ...
+    ])
+```
+
 ### Setting an ID
 
 You may define an ID for the component using the `id()` method:
@@ -132,6 +187,17 @@ Grid::make()
 
 By default, grid components will create a two column grid for [the Tailwind `md` breakpoint](https://tailwindcss.com/docs/responsive-design#overview) and higher.
 
+You may pass a different number of columns to the grid's `md` breakpoint:
+
+```php
+use Filament\Forms\Components\Grid;
+
+Grid::make(3)
+    ->schema([
+        // ...
+    ])
+```
+
 To customize the number of columns in any grid at different [breakpoints](https://tailwindcss.com/docs/responsive-design#overview), you may pass an array of breakpoints and columns:
 
 ```php
@@ -160,29 +226,6 @@ Grid::make([
     'xl' => 6,
 ])
     ->schema([
-        // ...
-    ])
-```
-
-You may specify the number of columns that any component may span, at any breakpoint in an identical way:
-
-```php
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\TextInput;
-
-Grid::make([
-    'default' => 1,
-    'sm' => 3,
-    'xl' => 6,
-    '2xl' => 8,
-])
-    ->schema([
-        TextInput::make('name')
-            ->columnSpan([
-                'sm' => 2,
-                'xl' => 3,
-                '2xl' => 4,
-            ]),
         // ...
     ])
 ```
@@ -236,6 +279,46 @@ Tabs::make('Heading')
     ])
 ```
 
+The first tab will be open by default. You can change the default open tab using the `activeTab()` method:
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Heading')
+    ->tabs([
+        Tabs\Tab::make('Label 1')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Label 2')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Label 3')
+            ->schema([
+                // ...
+            ]),
+    ])
+    ->activeTab(2)
+```
+
+Tabs may have an icon and badge, which you can set using the `icon()` and `badge()` methods:
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Heading')
+    ->tabs([
+        Tabs\Tab::make('Notifications')
+            ->icon('heroicon-o-bell') // [tl! focus:start]
+            ->badge('39') // [tl! focus:end]
+            ->schema([
+                // ...
+            ]),
+        // ...
+    ])
+```
+  
 ## Wizard
 
 Similar to [tabs](#tabs), you may want to use a multistep form wizard to reduce the number of components that are visible at once. These are especially useful if your form has a definite chronological order, in which you want each step to be validated as the user progresses.
@@ -259,9 +342,13 @@ Wizard::make([
 ])
 ```
 
+> We have different setup instructions you're looking to add a wizard to an admin panel [resource Create page](../admin/resources/creating-records#wizards) or a table [action](../tables/actions#wizards). Following that documentation will ensure that the ability to submit the form is only available on the last step.
+
 Each step has a mandatory label. You may optionally also add a description for extra detail:
 
 ```php
+use Filament\Forms\Components\Wizard;
+
 Wizard\Step::make('Order')
     ->description('Review your basket')
     ->schema([
@@ -272,6 +359,8 @@ Wizard\Step::make('Order')
 Steps may also have an icon, which can be the name of any Blade icon component:
 
 ```php
+use Filament\Forms\Components\Wizard;
+
 Wizard\Step::make('Order')
     ->icon('heroicon-o-shopping-bag')
     ->schema([
@@ -279,7 +368,20 @@ Wizard\Step::make('Order')
     ]),
 ```
 
-You may also add wizards to table [actions](../tables/actions#wizards) and admin [Create pages](../admin/creating-records#wizards).
+You may use the `submitAction()` method to render submit button HTML or a view at the end of the wizard, on the last step. This provides a clearer UX than displaying a submit button below the wizard at all times:
+
+```php
+use Filament\Forms\Components\Wizard;
+use Illuminate\Support\HtmlString;
+
+Wizard::make([
+    // ...
+])->submitAction(view('order-form.submit-button'))
+
+Wizard::make([
+    // ...
+])->submitAction(new HtmlString('<button type="submit">Submit</button>'))
+```
 
 ## Section
 

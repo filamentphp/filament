@@ -16,9 +16,9 @@ trait CanReplicateRecords
 
     protected array | Closure | null $excludedAttributes = null;
 
-    public static function make(string $name = 'replicate'): static
+    public static function getDefaultName(): ?string
     {
-        return parent::make($name);
+        return 'replicate';
     }
 
     protected function setUp(): void
@@ -32,8 +32,6 @@ trait CanReplicateRecords
         $this->modalButton(__('filament-support::actions/replicate.single.modal.actions.replicate.label'));
 
         $this->successNotificationMessage(__('filament-support::actions/replicate.single.messages.replicated'));
-
-        $this->icon('heroicon-s-duplicate');
 
         $this->mountUsing(function (Model $record, ?ComponentContainer $form = null): void {
             if (! $this->hasForm()) {

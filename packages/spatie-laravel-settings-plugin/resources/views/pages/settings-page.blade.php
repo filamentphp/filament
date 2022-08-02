@@ -2,6 +2,9 @@
     <x-filament::form wire:submit.prevent="save">
         {{ $this->form }}
 
-        <x-filament::pages.actions :actions="$this->getFormActions()" />
+        <x-filament::form.actions
+            :actions="$this->getCachedFormActions()"
+            :full-width="$this->hasFullWidthFormActions()"
+        />
     </x-filament::form>
 </x-filament::page>

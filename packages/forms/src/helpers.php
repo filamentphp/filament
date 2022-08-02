@@ -27,7 +27,6 @@ if (! function_exists('Filament\Forms\array_move_after')) {
     }
 }
 
-
 if (! function_exists('Filament\Forms\array_move_before')) {
     function array_move_before(array $array, $keyToMoveBefore): array
     {

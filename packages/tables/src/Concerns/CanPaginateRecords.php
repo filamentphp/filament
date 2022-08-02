@@ -45,7 +45,7 @@ trait CanPaginateRecords
 
     protected function getTableRecordsPerPageSelectOptions(): array
     {
-        return [5, 10, 25, 50];
+        return config('tables.pagination.records_per_page_select_options', [5, 10, 25, 50]);
     }
 
     protected function getDefaultTableRecordsPerPageSelectOption(): int

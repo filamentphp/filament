@@ -4,22 +4,16 @@ return [
 
     'builder' => [
 
+        'collapsed' => '内容已收起',
+
         'buttons' => [
 
             'create_item' => [
                 'label' => '添加 :label',
             ],
 
-            'create_item_between' => [
-                'label' => '插入',
-            ],
-
             'delete_item' => [
                 'label' => '删除',
-            ],
-
-            'move_item' => [
-                'label' => '移动',
             ],
 
             'move_item_down' => [
@@ -28,6 +22,22 @@ return [
 
             'move_item_up' => [
                 'label' => '上移',
+            ],
+
+            'collapse_item' => [
+                'label' => '收起',
+            ],
+
+            'expand_item' => [
+                'label' => '展开',
+            ],
+
+            'collapse_all' => [
+                'label' => '全部收起',
+            ],
+
+            'expand_all' => [
+                'label' => '全部展开',
             ],
 
         ],
@@ -81,6 +91,8 @@ return [
 
     'repeater' => [
 
+        'collapsed' => '内容已收起',
+
         'buttons' => [
 
             'create_item' => [
@@ -97,6 +109,22 @@ return [
 
             'move_item_up' => [
                 'label' => '上移',
+            ],
+
+            'collapse_item' => [
+                'label' => '收起',
+            ],
+
+            'expand_item' => [
+                'label' => '展开',
+            ],
+
+            'collapse_all' => [
+                'label' => '全部收起',
+            ],
+
+            'expand_all' => [
+                'label' => '全部展开',
             ],
 
         ],
@@ -142,13 +170,64 @@ return [
     ],
 
     'select' => [
-        'no_search_results_message' => '没有选项匹配您的搜索.',
-        'placeholder' => '请选择',
-        'search_prompt' => '搜索...',
+
+        'actions' => [
+
+            'create_option' => [
+
+                'modal' => [
+
+                    'heading' => '创建',
+
+                    'actions' => [
+
+                        'create' => [
+                            'label' => '创建',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+        'boolean' => [
+            'true' => '是',
+            'false' => '否',
+        ],
+
+        'loading_message' => '加载中...',
+
+        'no_search_results_message' => '没有选项匹配您的搜索',
+
+        'placeholder' => '选择选项',
+
+        'searching_message' => '搜索中...',
+
+        'search_prompt' => '输入内容以搜索...',
+
     ],
 
     'tags_input' => [
         'placeholder' => '新标签',
+    ],
+
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => '上一步',
+            ],
+
+            'next_step' => [
+                'label' => '下一步',
+            ],
+
+        ],
+
     ],
 
 ];

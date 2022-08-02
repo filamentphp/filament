@@ -21,7 +21,7 @@ return [
         ],
 
         'messages' => [
-            'restored' => 'Record restored',
+            'restored' => 'Restored',
         ],
 
     ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'restored' => 'Records restored',
+            'restored' => 'Restored',
         ],
 
     ],

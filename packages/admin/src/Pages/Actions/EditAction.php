@@ -8,9 +8,9 @@ class EditAction extends Action
 {
     use CanCustomizeProcess;
 
-    public static function make(string $name = 'edit'): static
+    public static function getDefaultName(): ?string
     {
-        return parent::make($name);
+        return 'edit';
     }
 
     protected function setUp(): void
@@ -18,5 +18,7 @@ class EditAction extends Action
         parent::setUp();
 
         $this->label(__('filament-support::actions/edit.single.label'));
+
+        $this->groupedIcon('heroicon-s-pencil');
     }
 }

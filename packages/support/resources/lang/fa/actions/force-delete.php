@@ -32,7 +32,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'حذف دائمی انتخاب شده :label',
+            'heading' => 'حذف دائمی :label انتخاب شده',
 
             'actions' => [
 

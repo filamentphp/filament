@@ -4,9 +4,9 @@ namespace Filament\Pages\Actions;
 
 class LocaleSwitcher extends SelectAction
 {
-    public static function make(string $name = 'activeLocale'): static
+    public static function getDefaultName(): ?string
     {
-        return parent::make($name);
+        return 'activeLocale';
     }
 
     protected function setUp(): void
@@ -22,11 +22,13 @@ class LocaleSwitcher extends SelectAction
                 return [];
             }
 
-            return collect($livewire->getTranslatableLocales())
-                ->mapWithKeys(function (string $locale): array {
-                    return [$locale => locale_get_display_name($locale, app()->getLocale())];
-                })
-                ->toArray();
+            $locales = [];
+
+            foreach ($livewire->getTranslatableLocales() as $locale) {
+                $locales[$locale] = locale_get_display_name($locale, app()->getLocale());
+            }
+
+            return $locales;
         });
     }
 }

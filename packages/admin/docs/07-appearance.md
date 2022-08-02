@@ -69,10 +69,10 @@ In `config/filament.php`, set the `layouts.sidebar.is_collapsible_on_desktop` to
 
 Filament allows you to change the fonts and color scheme used in the UI, by compiling a custom stylesheet to replace the default one. This custom stylesheet is called a "theme".
 
-Themes use [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, and the Tailwind Typography plugin, and [Tippy.js](https://atomiks.github.io/tippyjs/). You may install these through NPM:
+Themes use [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, and the Tailwind Typography plugin, [Autoprefixer](https://github.com/postcss/autoprefixer), and [Tippy.js](https://atomiks.github.io/tippyjs/). You may install these through NPM:
 
 ```bash
-npm install tailwindcss @tailwindcss/forms @tailwindcss/typography tippy.js --save-dev
+npm install tailwindcss @tailwindcss/forms @tailwindcss/typography autoprefixer tippy.js --save-dev
 ```
 
 To finish installing Tailwind, you must create a new `tailwind.config.js` file in the root of your project. The easiest way to do this is by running `npx tailwindcss init`.
@@ -107,7 +107,37 @@ module.exports = {
 
 You may specify your own colors, which will be used throughout the admin panel.
 
-In your `webpack.mix.js` file, Register Tailwind CSS as a PostCSS plugin :
+If you use Vite to compile assets, in your `vite.config.js` file, register the `filament.css` theme file:
+
+```js
+import { defineConfig } from 'vite'
+import laravel from 'laravel-vite-plugin'
+
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: [
+                // ...
+                'resources/css/filament.css',
+            ],
+            // ...
+        }),
+    ],
+})
+```
+
+And add Tailwind to the `postcss.config.js` file:
+
+```js
+module.exports = {
+    plugins: {
+        tailwindcss: {},
+        autoprefixer: {},
+    },
+}
+```
+
+Or if you're using Laravel Mix instead of Vite, in your `webpack.mix.js` file, register Tailwind CSS as a PostCSS plugin:
 
 ```js
 const mix = require('laravel-mix')
@@ -127,9 +157,18 @@ Now, you may register the theme file in a service provider's `boot()` method:
 
 ```php
 use Filament\Facades\Filament;
+use Illuminate\Foundation\Vite;
 
 Filament::serving(function () {
-    Filament::registerTheme(mix('css/filament.css'));
+    // Using Vite
+    Filament::registerTheme(
+        app(Vite::class)('resources/css/filament.css'),
+    );
+
+    // Using Laravel Mix
+    Filament::registerTheme(
+        mix('css/filament.css'),
+    );
 });
 ```
 
@@ -258,5 +297,9 @@ The available hooks are as follows:
 - `content.end` - after page content
 - `sidebar.start` - before [sidebar](navigation) content
 - `sidebar.end` - after [sidebar](navigation) content
+- `scripts.start` - before scripts are defined
+- `scripts.end` - after scripts are defined
+- `styles.start` - before styles are defined
+- `styles.end` - after styles are defined
 - `global-search.start` - before [global search](resources/global-search) input
 - `global-search.end` - after [global search](resources/global-search) input

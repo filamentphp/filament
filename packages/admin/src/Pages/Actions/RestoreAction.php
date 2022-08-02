@@ -9,9 +9,9 @@ class RestoreAction extends Action
 {
     use CanCustomizeProcess;
 
-    public static function make(string $name = 'restore'): static
+    public static function getDefaultName(): ?string
     {
-        return parent::make($name);
+        return 'restore';
     }
 
     protected function setUp(): void
@@ -28,7 +28,7 @@ class RestoreAction extends Action
 
         $this->color('secondary');
 
-        $this->icon('heroicon-s-reply');
+        $this->groupedIcon('heroicon-s-reply');
 
         $this->requiresConfirmation();
 

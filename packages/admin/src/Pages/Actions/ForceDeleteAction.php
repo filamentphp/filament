@@ -9,9 +9,9 @@ class ForceDeleteAction extends Action
 {
     use CanCustomizeProcess;
 
-    public static function make(string $name = 'forceDelete'): static
+    public static function getDefaultName(): ?string
     {
-        return parent::make($name);
+        return 'forceDelete';
     }
 
     protected function setUp(): void
@@ -26,7 +26,7 @@ class ForceDeleteAction extends Action
 
         $this->color('danger');
 
-        $this->icon('heroicon-s-trash');
+        $this->groupedIcon('heroicon-s-trash');
 
         $this->requiresConfirmation();
 

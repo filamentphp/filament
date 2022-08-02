@@ -4,54 +4,51 @@ import 'vanilla-colorful/rgb-string-color-picker'
 import 'vanilla-colorful/rgba-string-color-picker'
 
 import '../../css/components/color-picker.css'
+import dayjs from 'dayjs/esm'
 
 export default (Alpine) => {
-    Alpine.data('colorPickerFormComponent', ({
-        isAutofocused,
-        isDisabled,
-        state,
-    }) => {
-        return {
-            isOpen: false,
+    Alpine.data(
+        'colorPickerFormComponent',
+        ({ isAutofocused, isDisabled, state }) => {
+            return {
+                state,
 
-            state,
+                init: function () {
+                    if (!(this.state === null || this.state === '')) {
+                        this.setState(this.state)
+                    }
 
-            init: function () {
-                if (! (this.state === null || this.state === '')) {
-                    this.setState(this.state)
-                }
+                    if (isAutofocused) {
+                        this.togglePanelVisibility(this.$refs.input)
+                    }
 
-                if (isAutofocused) {
-                    this.openPicker()
-                }
+                    this.$refs.input.addEventListener('change', (event) => {
+                        this.setState(event.target.value)
+                    })
 
-                this.$refs.input.addEventListener('change', (event) => {
-                    this.setState(event.target.value)
-                });
+                    this.$refs.panel.addEventListener(
+                        'color-changed',
+                        (event) => {
+                            this.setState(event.detail.value)
+                        }
+                    )
+                },
 
-                this.$refs.picker.addEventListener('color-changed', (event) => {
-                    this.setState(event.detail.value)
-                });
-            },
+                togglePanelVisibility: function () {
+                    if (isDisabled) {
+                        return
+                    }
 
-            openPicker: function () {
-                if (isDisabled) {
-                    return
-                }
+                    this.$refs.panel.toggle(this.$refs.input)
+                },
 
-                this.isOpen = true
-            },
+                setState: function (value) {
+                    this.state = value
 
-            closePicker: function () {
-                this.isOpen = false
-            },
-
-            setState: function (value) {
-                this.state = value
-
-                this.$refs.input.value = value
-                this.$refs.picker.color = value
+                    this.$refs.input.value = value
+                    this.$refs.panel.color = value
+                },
             }
         }
-    })
+    )
 }

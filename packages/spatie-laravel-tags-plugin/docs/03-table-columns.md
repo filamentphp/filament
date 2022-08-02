@@ -1,5 +1,5 @@
 ---
-title: Table Columns
+title: Table columns
 ---
 
 This guide assumes that you've already set up your model attach tags as per [Spatie's documentation](https://spatie.be/docs/laravel-tags/basic-usage/using-tags).

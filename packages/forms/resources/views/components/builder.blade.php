@@ -51,12 +51,12 @@
             >
                 @php
                     $hasBlockLabels = $hasBlockLabels();
+                    $hasBlockNumbers = $hasBlockNumbers();
                 @endphp
 
                 @foreach ($containers as $uuid => $item)
                     <li
                         x-data="{
-                            isCreateButtonDropdownOpen: false,
                             isCreateButtonVisible: false,
                             isCollapsed: @js($isCollapsed()),
                         }"
@@ -85,7 +85,7 @@
                                         wire:keydown.prevent.arrow-down="dispatchFormEvent('builder::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                         type="button"
                                         @class([
-                                            'flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-r transition hover:text-gray-300',
+                                            'flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-r rtl:border-l rtl:border-r-0 transition hover:text-gray-300',
                                             'dark:text-gray-400 dark:border-gray-700 dark:hover:text-gray-500' => config('forms.dark_mode'),
                                         ])
                                     >
@@ -102,16 +102,28 @@
                                         'flex-none px-4 text-xs font-medium text-gray-600 truncate',
                                         'dark:text-gray-400' => config('forms.dark_mode'),
                                     ])>
+                                        @php
+                                            $block = $item->getParentComponent();
+
+                                            $block->labelState($item->getRawState());
+                                        @endphp
+
                                         {{ $item->getParentComponent()->getLabel() }}
 
-                                        <small class="font-mono">{{ $loop->iteration }}</small>
+                                        @php
+                                            $block->labelState(null);
+                                        @endphp
+
+                                        @if ($hasBlockNumbers)
+                                            <small class="font-mono">{{ $loop->iteration }}</small>
+                                        @endif
                                     </p>
                                 @endif
 
                                 <div class="flex-1"></div>
 
                                 <ul @class([
-                                    'flex divide-x',
+                                    'flex divide-x rtl:divide-x-reverse',
                                     'dark:divide-gray-700' => config('forms.dark_mode'),
                                 ])>
                                     @unless ($isItemDeletionDisabled)
@@ -171,15 +183,15 @@
 
                         @if ((! $loop->last) && (! $isItemCreationDisabled) && (! $isItemMovementDisabled))
                             <div
-                                x-show="isCreateButtonVisible || isCreateButtonDropdownOpen"
+                                x-show="isCreateButtonVisible"
                                 x-transition
                                 class="absolute inset-x-0 bottom-0 z-10 flex items-center justify-center h-12 -mb-12"
                             >
-                                <div class="relative flex justify-center">
+                                <div x-data class="relative flex justify-center">
                                     <x-forms::icon-button
                                         :label="$getCreateItemBetweenButtonLabel()"
                                         icon="heroicon-o-plus"
-                                        x-on:click="isCreateButtonDropdownOpen = true"
+                                        x-on:click="$refs.panel.toggle"
                                         type="button"
                                     />
 
@@ -187,6 +199,7 @@
                                         :blocks="$getBlocks()"
                                         :create-after-item="$uuid"
                                         :state-path="$getStatePath()"
+                                        class="py-2"
                                     />
                                 </div>
                             </div>
@@ -197,10 +210,10 @@
         @endif
 
         @if (! $isItemCreationDisabled)
-            <div x-data="{ isCreateButtonDropdownOpen: false }" class="relative flex justify-center">
+            <div x-data class="relative flex justify-center">
                 <x-forms::button
                     size="sm"
-                    x-on:click="isCreateButtonDropdownOpen = true"
+                    x-on:click="$refs.panel.toggle"
                     type="button"
                 >
                     {{ $getCreateItemButtonLabel() }}

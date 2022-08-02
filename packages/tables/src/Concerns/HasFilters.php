@@ -19,20 +19,26 @@ trait HasFilters
 
     public function cacheTableFilters(): void
     {
-        $this->cachedTableFilters = collect($this->getTableFilters())
-            ->mapWithKeys(function (BaseFilter $filter): array {
-                $filter->table($this->getCachedTable());
+        $this->cachedTableFilters = [];
 
-                return [$filter->getName() => $filter];
-            })
-            ->toArray();
+        foreach ($this->getTableFilters() as $filter) {
+            $filter->table($this->getCachedTable());
+
+            $this->cachedTableFilters[$filter->getName()] = $filter;
+        }
     }
 
     public function getCachedTableFilters(): array
     {
-        return collect($this->cachedTableFilters)
-            ->filter(fn (BaseFilter $filter): bool => ! $filter->isHidden())
-            ->toArray();
+        return array_filter(
+            $this->cachedTableFilters,
+            fn (BaseFilter $filter): bool => ! $filter->isHidden(),
+        );
+    }
+
+    public function getCachedTableFilter(string $name): ?BaseFilter
+    {
+        return $this->getCachedTableFilters()[$name] ?? null;
     }
 
     public function getTableFiltersForm(): Forms\ComponentContainer
@@ -55,6 +61,13 @@ trait HasFilters
 
     public function updatedTableFilters(): void
     {
+        if ($this->shouldPersistTableFiltersInSession()) {
+            session()->put(
+                $this->getTableFiltersSessionKey(),
+                $this->tableFilters,
+            );
+        }
+
         $this->deselectAllTableRecords();
 
         $this->resetPage();
@@ -63,11 +76,13 @@ trait HasFilters
     public function resetTableFiltersForm(): void
     {
         $this->getTableFiltersForm()->fill();
+
+        $this->updatedTableFilters();
     }
 
     protected function applyFiltersToTableQuery(Builder $query): Builder
     {
-        $data = $this->getTableFiltersForm()->getState();
+        $data = $this->getTableFiltersForm()->getRawState();
 
         foreach ($this->getCachedTableFilters() as $filter) {
             $filter->applyToBaseQuery(
@@ -127,5 +142,17 @@ trait HasFilters
     protected function getTableFiltersLayout(): ?string
     {
         return null;
+    }
+
+    public function getTableFiltersSessionKey(): string
+    {
+        $table = class_basename($this::class);
+
+        return "tables.{$table}_filters";
+    }
+
+    protected function shouldPersistTableFiltersInSession(): bool
+    {
+        return false;
     }
 }

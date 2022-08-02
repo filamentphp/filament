@@ -32,7 +32,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'جداکردن انتخاب شده :label',
+            'heading' => 'جداکردن :label انتخاب شده',
 
             'actions' => [
 

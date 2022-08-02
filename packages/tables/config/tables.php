@@ -33,8 +33,8 @@ return [
     | Dark mode
     |--------------------------------------------------------------------------
     |
-    | By enabling this feature, your users are able to select between a light
-    | and dark appearance for tables, via Tailwind's Dark Mode feature.
+    | By enabling this setting, your tables will be ready for Tailwind's Dark
+    | Mode feature.
     |
     | https://tailwindcss.com/docs/dark-mode
     |
@@ -53,6 +53,7 @@ return [
 
     'pagination' => [
         'default_records_per_page' => 10,
+        'records_per_page_select_options' => [5, 10, 25, 50],
     ],
 
     /*

@@ -34,8 +34,8 @@
         'w-3 h-3' => $size === 'sm',
         'w-4 h-4' => $size === 'md',
         'w-5 h-5' => $size === 'lg',
-        'mr-1 -ml-2 rtl:ml-1 rtl:-mr-2' => $iconPosition === 'before',
-        'ml-1 -mr-2 rtl:mr-1 rtl:-ml-2' => $iconPosition === 'after'
+        'mr-1 rtl:ml-1' => $iconPosition === 'before',
+        'ml-1 rtl:mr-1' => $iconPosition === 'after'
     ]);
 @endphp
 
@@ -45,7 +45,7 @@
             x-data="{}"
         @endif
         @if ($keyBindings)
-            x-mousetrap.global.{{ implode('.', $keyBindings) }}
+            x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
@@ -65,7 +65,7 @@
 @elseif ($tag === 'button')
     <button
         @if ($keyBindings)
-            x-mousetrap.global.{{ implode('.', $keyBindings) }}
+            x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"

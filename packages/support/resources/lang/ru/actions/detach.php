@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Отсоединить',
+        'label' => 'Открепить',
 
         'modal' => [
 
-            'heading' => 'Отсоединить :label',
+            'heading' => 'Открепить :label',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Отсоединить',
+                    'label' => 'Открепить',
                 ],
 
             ],
@@ -21,23 +21,23 @@ return [
         ],
 
         'messages' => [
-            'detached' => 'Отсоединено',
+            'detached' => 'Откреплено',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Отсоединить выбранное',
+        'label' => 'Открепить',
 
         'modal' => [
 
-            'heading' => 'Отсоединить выбранные :label',
+            'heading' => 'Открепить отмеченное :label',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Отсоединить выбранное',
+                    'label' => 'Открепить отмеченное',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'detached' => 'Отсоединено',
+            'detached' => 'Откреплено',
         ],
 
     ],

@@ -13,7 +13,9 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 trait InteractsWithTable
 {
+    use CanBeStriped;
     use CanPaginateRecords;
+    use CanReorderRecords;
     use CanSearchRecords;
     use CanSelectRecords;
     use CanSortRecords;
@@ -49,16 +51,31 @@ trait InteractsWithTable
         $this->cacheTableFilters();
         $this->cacheForm('tableFiltersForm', $this->getTableFiltersForm());
 
-        if (! $this->hasMounted) {
-            $this->getTableColumnToggleForm()->fill(session()->get(
-                $this->getTableColumnToggleFormStateSessionKey(),
-                $this->getDefaultTableColumnToggleState()
-            ));
-
-            $this->getTableFiltersForm()->fill($this->tableFilters);
-
-            $this->hasMounted = true;
+        if ($this->hasMounted) {
+            return;
         }
+
+        $this->getTableColumnToggleForm()->fill(session()->get(
+            $this->getTableColumnToggleFormStateSessionKey(),
+            $this->getDefaultTableColumnToggleState()
+        ));
+
+        $filtersSessionKey = $this->getTableFiltersSessionKey();
+
+        if ($this->shouldPersistTableFiltersInSession() && session()->has($filtersSessionKey)) {
+            $this->tableFilters = array_merge(
+                $this->tableFilters ?? [],
+                session()->get($filtersSessionKey) ?? [],
+            );
+        }
+
+        if (! count($this->tableFilters ?? [])) {
+            $this->tableFilters = null;
+        }
+
+        $this->getTableFiltersForm()->fill($this->tableFilters);
+
+        $this->hasMounted = true;
     }
 
     public function mountInteractsWithTable(): void
@@ -94,7 +111,10 @@ trait InteractsWithTable
             ->header($this->getTableHeader())
             ->heading($this->getTableHeading())
             ->model($this->getTableQuery()->getModel()::class)
-            ->recordsPerPageSelectOptions($this->getTableRecordsPerPageSelectOptions());
+            ->recordsPerPageSelectOptions($this->getTableRecordsPerPageSelectOptions())
+            ->reorderColumn($this->getTableReorderColumn())
+            ->reorderable($this->isTableReorderable())
+            ->striped($this->isTableStriped());
     }
 
     protected function getTableQueryStringIdentifier(): ?string
@@ -148,7 +168,7 @@ trait InteractsWithTable
 
         if ($relationship instanceof HasManyThrough) {
             // https://github.com/laravel/framework/issues/4962
-            $query->select($query->getModel()->getTable().'.*');
+            $query->select($query->getModel()->getTable() . '.*');
 
             return $query;
         }
@@ -159,7 +179,7 @@ trait InteractsWithTable
                 $this->selectPivotDataInQuery($query);
             }
 
-            // https://github.com/laravel-filament/filament/issues/2079
+            // https://github.com/filamentphp/filament/issues/2079
             $query->withCasts(
                 app($relationship->getPivotClass())->getCasts(),
             );
@@ -178,8 +198,8 @@ trait InteractsWithTable
         $relationship = $this->getRelationship();
 
         $query->select(
-            $relationship->getTable().'.*',
-            $query->getModel()->getTable().'.*',
+            $relationship->getTable() . '.*',
+            $query->getModel()->getTable() . '.*',
         );
 
         return $query;

@@ -4,9 +4,9 @@ namespace Filament\Pages\Actions;
 
 class ViewAction extends Action
 {
-    public static function make(string $name = 'view'): static
+    public static function getDefaultName(): ?string
     {
-        return parent::make($name);
+        return 'view';
     }
 
     protected function setUp(): void
@@ -16,5 +16,7 @@ class ViewAction extends Action
         $this->label(__('filament-support::actions/view.single.label'));
 
         $this->color('secondary');
+
+        $this->groupedIcon('heroicon-s-eye');
     }
 }

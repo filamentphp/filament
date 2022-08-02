@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Support\Components\ViewComponent;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Contracts\HasTable;
@@ -39,6 +40,8 @@ class Table extends ViewComponent
 
     protected ?string $columnToggleFormWidth = null;
 
+    protected ?string $reorderColumn = null;
+
     protected ?string $recordAction = null;
 
     protected ?Closure $getRecordUrlUsing = null;
@@ -47,7 +50,11 @@ class Table extends ViewComponent
 
     protected string | Closure | null $heading = null;
 
+    protected bool $isReorderable = false;
+
     protected bool $isPaginationEnabled = true;
+
+    protected bool $isStriped = false;
 
     protected array $meta = [];
 
@@ -59,7 +66,7 @@ class Table extends ViewComponent
 
     protected string $viewIdentifier = 'table';
 
-    public const LOADING_TARGETS = ['gotoPage', 'tableFilters', 'resetTableFiltersForm', 'tableSearchQuery', 'tableRecordsPerPage', '$set'];
+    public const LOADING_TARGETS = ['previousPage', 'nextPage', 'gotoPage', 'tableFilters', 'resetTableFiltersForm', 'tableSearchQuery', 'tableRecordsPerPage', '$set'];
 
     final public function __construct(HasTable $livewire)
     {
@@ -183,6 +190,27 @@ class Table extends ViewComponent
         return $this;
     }
 
+    public function reorderColumn(?string $column): static
+    {
+        $this->reorderColumn = $column;
+
+        return $this;
+    }
+
+    public function reorderable(bool $condition = true): static
+    {
+        $this->isReorderable = $condition;
+
+        return $this;
+    }
+
+    public function striped(bool $condition = true): static
+    {
+        $this->isStriped = $condition;
+
+        return $this;
+    }
+
     public function getActions(): array
     {
         return $this->getLivewire()->getCachedTableActions();
@@ -195,14 +223,18 @@ class Table extends ViewComponent
 
     public function getBulkActions(): array
     {
-        return $this->getLivewire()->getCachedTableBulkActions();
+        return array_filter(
+            $this->getLivewire()->getCachedTableBulkActions(),
+            fn (BulkAction $action): bool => ! $action->isHidden(),
+        );
     }
 
     public function getColumns(): array
     {
-        return collect($this->getLivewire()->getCachedTableColumns())
-            ->filter(fn (Column $column): bool => ! $column->isToggledHidden())
-            ->toArray();
+        return array_filter(
+            $this->getLivewire()->getCachedTableColumns(),
+            fn (Column $column): bool => (! $column->isHidden()) && (! $column->isToggledHidden()),
+        );
     }
 
     public function getContent(): ?View
@@ -227,7 +259,10 @@ class Table extends ViewComponent
 
     public function getEmptyStateActions(): array
     {
-        return $this->getLivewire()->getCachedTableEmptyStateActions();
+        return array_filter(
+            $this->getLivewire()->getCachedTableEmptyStateActions(),
+            fn (Action $action): bool => ! $action->isHidden(),
+        );
     }
 
     public function getEmptyStateDescription(): ?string
@@ -282,7 +317,10 @@ class Table extends ViewComponent
 
     public function getHeaderActions(): array
     {
-        return $this->getLivewire()->getCachedTableHeaderActions();
+        return array_filter(
+            $this->getLivewire()->getCachedTableHeaderActions(),
+            fn (Action | ActionGroup $action): bool => ! $action->isHidden(),
+        );
     }
 
     public function getHeading(): ?string
@@ -341,6 +379,21 @@ class Table extends ViewComponent
         return $callback($record);
     }
 
+    public function getReorderColumn(): ?string
+    {
+        return $this->reorderColumn;
+    }
+
+    public function isReorderable(): bool
+    {
+        return $this->isReorderable;
+    }
+
+    public function isReordering(): bool
+    {
+        return $this->getLivewire()->isTableReordering();
+    }
+
     public function getSortColumn(): ?string
     {
         return $this->getLivewire()->getTableSortColumn();
@@ -374,5 +427,15 @@ class Table extends ViewComponent
     public function hasToggleableColumns(): bool
     {
         return $this->getLivewire()->hasToggleableTableColumns();
+    }
+
+    public function getRecordKey(Model $record): string
+    {
+        return $this->getLivewire()->getTableRecordKey($record);
+    }
+
+    public function isStriped(): bool
+    {
+        return $this->isStriped;
     }
 }

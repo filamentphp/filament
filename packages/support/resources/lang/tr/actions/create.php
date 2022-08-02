@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'Oluştur',
+        'label' => ':label Oluştur',
 
         'modal' => [
 
-            'heading' => ':label Oluştur',
+            'heading' => ':label oluştur',
 
             'actions' => [
 
@@ -17,7 +17,7 @@ return [
                 ],
 
                 'create_another' => [
-                    'label' => 'Oluştur ve başka bir tane oluştur',
+                    'label' => 'Oluştur ve başka bir taneye başla',
                 ],
 
             ],

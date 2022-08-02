@@ -1,6 +1,7 @@
 @props([
     'action',
     'component',
+    'icon' => null,
 ])
 
 @php
@@ -19,7 +20,7 @@
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes())"
     :form="$action->getForm()"
     :tag="$action->getUrl() ? 'a' : 'button'"
-    :wire:click="$action->isEnabled() ? $wireClickAction : null"
+    :wire:click="$wireClickAction"
     :href="$action->isEnabled() ? $action->getUrl() : null"
     :target="$action->shouldOpenUrlInNewTab() ? '_blank' : null"
     :type="$action->canSubmitForm() ? 'submit' : 'button'"
@@ -27,9 +28,10 @@
     :key-bindings="$action->getKeybindings()"
     :tooltip="$action->getTooltip()"
     :disabled="$action->isDisabled()"
-    :icon="$action->getIcon()"
+    :icon="$icon ?? $action->getIcon()"
     :size="$action->getSize()"
     :is-label-hidden="$action->isLabelHidden()"
+    dusk="filament.admin.action.{{ $action->getName() }}"
 >
     {{ $slot }}
 </x-dynamic-component>

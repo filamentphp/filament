@@ -59,31 +59,6 @@ return [
 
     ],
 
-
-    'bulk_actions' => [
-
-        'force_delete' => [
-
-            'label' => 'Usuń trwale',
-
-            'messages' => [
-                'deleted' => 'Trwale usunięto',
-            ],
-
-        ],
-
-        'restore' => [
-
-            'label' => 'Przywróć',
-
-            'messages' => [
-                'restored' => 'Przywrócono',
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'Nie znaleziono wyników',
     ],

@@ -1,5 +1,5 @@
 ---
-title: Creating Records
+title: Creating records
 ---
 
 ## Customizing data before saving

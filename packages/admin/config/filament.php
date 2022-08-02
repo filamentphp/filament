@@ -27,19 +27,17 @@ return [
 
     'path' => env('FILAMENT_PATH', 'admin'),
 
-
     /*
     |--------------------------------------------------------------------------
     | Filament Core Path
     |--------------------------------------------------------------------------
     |
-    | This is the path which Filament will use to load it's core routes and assets.
+    | This is the path which Filament will use to load its core routes and assets.
     | You may change it if it conflicts with your other routes.
     |
     */
 
     'core_path' => env('FILAMENT_CORE_PATH', 'filament'),
-
 
     /*
     |--------------------------------------------------------------------------
@@ -186,6 +184,13 @@ return [
     */
 
     'layout' => [
+        'actions' => [
+            'modal' => [
+                'actions' => [
+                    'alignment' => 'left',
+                ],
+            ],
+        ],
         'forms' => [
             'actions' => [
                 'alignment' => 'left',
@@ -198,13 +203,14 @@ return [
         'max_content_width' => null,
         'notifications' => [
             'vertical_alignment' => 'top',
-            'alignment' => 'center',
+            'alignment' => 'right',
         ],
         'sidebar' => [
             'is_collapsible_on_desktop' => false,
             'groups' => [
                 'are_collapsible' => true,
             ],
+            'width' => null,
         ],
     ],
 

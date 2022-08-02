@@ -3,6 +3,7 @@
 namespace Filament\Resources\RelationManagers\Concerns;
 
 use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\BelongsToManyRelationManager;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -72,6 +73,7 @@ trait CanAttachRecords
     {
         return Select::make('recordId')
             ->label(__('filament-support::actions/attach.single.modal.fields.record_id.label'))
+            ->required()
             ->searchable()
             ->getSearchResultsUsing(static function (Select $component, BelongsToManyRelationManager $livewire, string $search): array {
                 /** @var BelongsToMany $relationship */
@@ -214,7 +216,10 @@ trait CanAttachRecords
         }
 
         if (filled($this->getAttachedNotificationMessage())) {
-            $this->notify('success', $this->getAttachedNotificationMessage());
+            Notification::make()
+                ->title($this->getAttachedNotificationMessage())
+                ->success()
+                ->send();
         }
 
         if ($another) {

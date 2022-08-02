@@ -26,9 +26,9 @@ class AttachAction extends Action
 
     protected string | Closure | null $recordTitleAttribute = null;
 
-    public static function make(string $name = 'attach'): static
+    public static function getDefaultName(): ?string
     {
-        return parent::make($name);
+        return 'attach';
     }
 
     protected function setUp(): void
@@ -195,6 +195,7 @@ class AttachAction extends Action
 
         $select = Select::make('recordId')
             ->label(__('filament-support::actions/attach.single.modal.fields.record_id.label'))
+            ->required()
             ->searchable()
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(search: $search, searchColumns: $component->getSearchColumns()))
             ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle($this->getRelationship()->getRelated()->query()->find($value)))

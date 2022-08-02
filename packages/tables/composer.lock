@@ -514,12 +514,12 @@
             "version": "2.x-dev",
             "source": {
                 "type": "git",
-                "url": "https://github.com/laravel-filament/forms.git",
+                "url": "https://github.com/filamentphp/forms.git",
                 "reference": "167b7fe1f716b53b404b340767f1de91363c3ed5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel-filament/forms/zipball/167b7fe1f716b53b404b340767f1de91363c3ed5",
+                "url": "https://api.github.com/repos/filamentphp/forms/zipball/167b7fe1f716b53b404b340767f1de91363c3ed5",
                 "reference": "167b7fe1f716b53b404b340767f1de91363c3ed5",
                 "shasum": ""
             },
@@ -560,10 +560,10 @@
                 "MIT"
             ],
             "description": "Effortlessly build TALL-powered forms.",
-            "homepage": "https://github.com/laravel-filament/filament",
+            "homepage": "https://github.com/filamentphp/filament",
             "support": {
-                "issues": "https://github.com/laravel-filament/filament/issues",
-                "source": "https://github.com/laravel-filament/filament"
+                "issues": "https://github.com/filamentphp/filament/issues",
+                "source": "https://github.com/filamentphp/filament"
             },
             "time": "2022-04-29T20:14:36+00:00"
         },
@@ -572,12 +572,12 @@
             "version": "2.x-dev",
             "source": {
                 "type": "git",
-                "url": "https://github.com/laravel-filament/support.git",
+                "url": "https://github.com/filamentphp/support.git",
                 "reference": "ef67b967dfc4dea4c14f34696df08fc2e0eec326"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel-filament/support/zipball/ef67b967dfc4dea4c14f34696df08fc2e0eec326",
+                "url": "https://api.github.com/repos/filamentphp/support/zipball/ef67b967dfc4dea4c14f34696df08fc2e0eec326",
                 "reference": "ef67b967dfc4dea4c14f34696df08fc2e0eec326",
                 "shasum": ""
             },
@@ -596,10 +596,10 @@
                 "MIT"
             ],
             "description": "Associated helper methods and foundation code for Filament packages.",
-            "homepage": "https://github.com/laravel-filament/filament",
+            "homepage": "https://github.com/filamentphp/filament",
             "support": {
-                "issues": "https://github.com/laravel-filament/filament/issues",
-                "source": "https://github.com/laravel-filament/filament"
+                "issues": "https://github.com/filamentphp/filament/issues",
+                "source": "https://github.com/filamentphp/filament"
             },
             "time": "2022-04-28T10:24:16+00:00"
         },

@@ -12,6 +12,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Illuminate\Contracts\View\View;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 /**
@@ -23,7 +24,9 @@ class Login extends Component implements HasForms
     use WithRateLimiting;
 
     public $email = '';
+
     public $password = '';
+
     public $remember = false;
 
     public function mount(): void
@@ -40,12 +43,12 @@ class Login extends Component implements HasForms
         try {
             $this->rateLimit(5);
         } catch (TooManyRequestsException $exception) {
-            $this->addError('email', __('filament::login.messages.throttled', [
-                'seconds' => $exception->secondsUntilAvailable,
-                'minutes' => ceil($exception->secondsUntilAvailable / 60),
-            ]));
-
-            return null;
+            throw ValidationException::withMessages([
+                'email' => __('filament::login.messages.throttled', [
+                    'seconds' => $exception->secondsUntilAvailable,
+                    'minutes' => ceil($exception->secondsUntilAvailable / 60),
+                ]),
+            ]);
         }
 
         $data = $this->form->getState();
@@ -54,9 +57,9 @@ class Login extends Component implements HasForms
             'email' => $data['email'],
             'password' => $data['password'],
         ], $data['remember'])) {
-            $this->addError('email', __('filament::login.messages.failed'));
-
-            return null;
+            throw ValidationException::withMessages([
+                'email' => __('filament::login.messages.failed'),
+            ]);
         }
 
         return app(LoginResponse::class);

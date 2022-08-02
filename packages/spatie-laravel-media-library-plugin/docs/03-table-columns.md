@@ -1,5 +1,5 @@
 ---
-title: Table Columns
+title: Table columns
 ---
 
 To use the media library image column:

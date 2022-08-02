@@ -2,6 +2,14 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 've :count daha',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -28,7 +36,7 @@ return [
         'buttons' => [
 
             'go_to_page' => [
-                'label' => ':page sayfasına git',
+                'label' => ':page. sayfaya git',
             ],
 
             'next' => [
@@ -68,7 +76,7 @@ return [
         'buttons' => [
 
             'reset' => [
-                'label' => 'Filtrelemeyi sıfırla',
+                'label' => 'Filtrelemeleri sıfırla',
             ],
 
             'close' => [
@@ -85,11 +93,23 @@ return [
             'placeholder' => 'Tümü',
         ],
 
+        'trashed' => [
+
+            'label' => 'Silinen kayıtlar',
+
+            'only_trashed' => 'Sadece silinen kayıtlar',
+
+            'with_trashed' => 'Silinen kayıtlar ile',
+
+            'without_trashed' => 'Silinen kayıtlar olmadan',
+
+        ],
+
     ],
 
     'selection_indicator' => [
 
-        'selected_count' => '{1} 1 kayıt seçildi.|[2,*] :count kayıt seçildi.',
+        'selected_count' => '1 kayıt seçildi.|:count kayıt seçildi.',
 
         'buttons' => [
 

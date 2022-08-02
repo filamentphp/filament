@@ -27,14 +27,18 @@ window.FilePond = FilePond;
 export default (Alpine) => {
     Alpine.data('fileUploadFormComponent', ({
         acceptedFileTypes,
-        canReorder,
+        canDownload,
+        canOpen,
         canPreview,
+        canReorder,
         deleteUploadedFileUsing,
         getUploadedFileUrlsUsing,
         imageCropAspectRatio,
         imagePreviewHeight,
+        imageResizeMode,
         imageResizeTargetHeight,
         imageResizeTargetWidth,
+        isAvatar,
         loadingIndicatorPosition,
         panelAspectRatio,
         panelLayout,
@@ -60,6 +64,8 @@ export default (Alpine) => {
 
             state,
 
+            lastState: null,
+
             uploadedFileUrlIndex: {},
 
             init: async function () {
@@ -77,6 +83,7 @@ export default (Alpine) => {
                     imagePreviewHeight,
                     imageResizeTargetHeight,
                     imageResizeTargetWidth,
+                    imageResizeMode,
                     itemInsertLocation: shouldAppendFiles ? 'after' : 'before',
                     ...(placeholder && {labelIdle: placeholder}),
                     maxFileSize: maxSize,
@@ -136,6 +143,13 @@ export default (Alpine) => {
                         return
                     }
 
+                    // Don't do anything if the state hasn't changed
+                    if (JSON.stringify(this.state) === this.lastState) {
+                        return
+                    }
+
+                    this.lastState = JSON.stringify(this.state)
+
                     this.pond.files = await this.getFiles()
                 })
 
@@ -145,6 +159,30 @@ export default (Alpine) => {
                         .filter(fileKey => fileKey)
 
                     await reorderUploadedFilesUsing(shouldAppendFiles ? orderedFileKeys : orderedFileKeys.reverse())
+                })
+
+                this.pond.on('initfile', async (fileItem) => {
+                    if (! canDownload) {
+                        return
+                    }
+
+                    if (isAvatar) {
+                        return
+                    }
+
+                    this.insertDownloadLink(fileItem)
+                })
+
+                this.pond.on('initfile', async (fileItem) => {
+                    if (! canOpen) {
+                        return
+                    }
+
+                    if (isAvatar) {
+                        return
+                    }
+
+                    this.insertOpenLink(fileItem)
                 })
 
                 this.pond.on('processfilestart', async () => {
@@ -214,6 +252,69 @@ export default (Alpine) => {
                 }
 
                 return shouldAppendFiles ? files : files.reverse()
+            },
+
+            insertDownloadLink: function (file) {
+                if (file.origin !== FilePond.FileOrigin.LOCAL) {
+                    return
+                }
+
+                const anchor = this.getDownloadLink(file)
+
+                if (! anchor) {
+                    return
+                }
+
+                document.getElementById(`filepond--item-${file.id}`)
+                    .querySelector('.filepond--file-info-main')
+                    .prepend(anchor)
+            },
+
+
+            insertOpenLink: function (file) {
+                if (file.origin !== FilePond.FileOrigin.LOCAL) {
+                    return
+                }
+
+                const anchor = this.getOpenLink(file)
+
+                if (! anchor) {
+                    return
+                }
+
+                document.getElementById(`filepond--item-${file.id}`)
+                    .querySelector('.filepond--file-info-main')
+                    .prepend(anchor)
+            },
+
+            getDownloadLink: function (file) {
+                let fileSource = file.source
+
+                if (! fileSource) {
+                    return
+                }
+
+                const anchor = document.createElement('a')
+                anchor.className = 'filepond--download-icon'
+                anchor.href = fileSource
+                anchor.download = file.file.name
+
+                return anchor
+            },
+
+            getOpenLink: function (file) {
+                let fileSource = file.source
+
+                if (! fileSource) {
+                    return
+                }
+
+                const anchor = document.createElement('a')
+                anchor.className = 'filepond--open-icon'
+                anchor.href = fileSource
+                anchor.target = '_blank'
+
+                return anchor
             }
         }
     })

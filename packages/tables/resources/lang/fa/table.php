@@ -59,30 +59,6 @@ return [
 
     ],
 
-    'bulk_actions' => [
-
-        'force_delete' => [
-
-            'label' => 'حذف دائمی',
-
-            'messages' => [
-                'deleted' => 'رکوردها حذف شدند',
-            ],
-
-        ],
-
-        'restore' => [
-
-            'label' => 'بازگردانی',
-
-            'messages' => [
-                'restored' => 'رکوردها بازگردانی شدند',
-            ],
-
-        ],
-
-    ],
-
     'empty' => [
         'heading' => 'هیچ رکوردی یافت نشد',
     ],
@@ -122,6 +98,8 @@ return [
         ],
 
     ],
+
+    'reorder_indicator' => 'برای تغییر ترتیب بکشید و رها کنید.',
 
     'selection_indicator' => [
 

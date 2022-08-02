@@ -37,13 +37,16 @@
         $imageCropAspectRatio = $getImageCropAspectRatio();
         $imageResizeTargetHeight = $getImageResizeTargetHeight();
         $imageResizeTargetWidth = $getImageResizeTargetWidth();
+        $imageResizeMode = $getImageResizeMode();
         $shouldTransformImage = $imageCropAspectRatio || $imageResizeTargetHeight || $imageResizeTargetWidth;
     @endphp
     <div
         x-data="fileUploadFormComponent({
             acceptedFileTypes: {{ json_encode($getAcceptedFileTypes()) }},
-            canReorder: {{ $canReorder() ? 'true' : 'false' }},
+            canDownload: {{ $canDownload() ? 'true' : 'false' }},
+            canOpen: {{ $canOpen() ? 'true' : 'false' }},
             canPreview: {{ $canPreview() ? 'true' : 'false' }},
+            canReorder: {{ $canReorder() ? 'true' : 'false' }},
             deleteUploadedFileUsing: async (fileKey) => {
                 return await $wire.deleteUploadedFile('{{ $getStatePath() }}', fileKey)
             },
@@ -52,8 +55,10 @@
             },
             imageCropAspectRatio: {{ $imageCropAspectRatio ? "'{$imageCropAspectRatio}'" : 'null' }},
             imagePreviewHeight: {{ ($height = $getImagePreviewHeight()) ? "'{$height}'" : 'null' }},
+            imageResizeMode: {{ $imageResizeMode ? "'{$imageResizeMode}'" : 'null' }},
             imageResizeTargetHeight: {{ $imageResizeTargetHeight ? "'{$imageResizeTargetHeight}'" : 'null' }},
             imageResizeTargetWidth: {{ $imageResizeTargetWidth ? "'{$imageResizeTargetWidth}'" : 'null' }},
+            isAvatar: {{ $isAvatar() ? 'true' : 'false' }},
             loadingIndicatorPosition: '{{ $getLoadingIndicatorPosition() }}',
             panelAspectRatio: {{ ($aspectRatio = $getPanelAspectRatio()) ? "'{$aspectRatio}'" : 'null' }},
             panelLayout: {{ ($layout = $getPanelLayout()) ? "'{$layout}'" : 'null' }},

@@ -6,17 +6,11 @@ return [
 
         'label' => 'Verknüpfen',
 
+        'messages' => [
+            'attached' => 'Verknüpft',
+        ],
+
         'modal' => [
-
-            'heading' => ':label verknüpfen',
-
-            'fields' => [
-
-                'record_ids' => [
-                    'label' => 'Einträge',
-                ],
-
-            ],
 
             'actions' => [
 
@@ -30,10 +24,15 @@ return [
 
             ],
 
-        ],
+            'fields' => [
 
-        'messages' => [
-            'attached' => 'Verknüpft',
+                'record_ids' => [
+                    'label' => 'Einträge',
+                ],
+
+            ],
+
+            'heading' => ':label verknüpfen',
         ],
 
     ],

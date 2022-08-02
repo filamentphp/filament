@@ -13,9 +13,9 @@ class CreateAction extends Action
 
     protected bool | Closure $isCreateAnotherDisabled = false;
 
-    public static function make(string $name = 'create'): static
+    public static function getDefaultName(): ?string
     {
-        return parent::make($name);
+        return 'create';
     }
 
     protected function setUp(): void
@@ -38,6 +38,8 @@ class CreateAction extends Action
         $this->successNotificationMessage(__('filament-support::actions/create.single.messages.created'));
 
         $this->button();
+
+        $this->groupedIcon('heroicon-s-plus');
 
         $this->action(function (array $arguments, ComponentContainer $form): void {
             $model = $this->getModel();

@@ -1,5 +1,5 @@
 ---
-title: Plugin Development
+title: Plugin development
 ---
 
 Plugins can be used to extend Filament's default behaviour and create reusable modules for use in multiple applications.

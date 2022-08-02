@@ -4,6 +4,7 @@ namespace Filament\Support\Actions\Concerns;
 
 use Closure;
 use Filament\Support\Actions\Modal\Actions\Action as ModalAction;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 
 trait CanOpenModal
@@ -20,7 +21,7 @@ trait CanOpenModal
 
     protected string | Closure | null $modalButtonLabel = null;
 
-    protected View | Closure | null $modalContent = null;
+    protected View | Htmlable | Closure | null $modalContent = null;
 
     protected string | Closure | null $modalHeading = null;
 
@@ -70,7 +71,7 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalContent(View | Closure | null $content = null): static
+    public function modalContent(View | Htmlable | Closure | null $content = null): static
     {
         $this->modalContent = $content;
 
@@ -168,7 +169,7 @@ trait CanOpenModal
         return __('filament-support::actions/modal.actions.submit.label');
     }
 
-    public function getModalContent(): ?View
+    public function getModalContent(): View | Htmlable | null
     {
         return $this->evaluate($this->modalContent);
     }

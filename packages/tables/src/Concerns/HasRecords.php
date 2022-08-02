@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use function Filament\locale_has_pluralization;
 use function Filament\Support\get_model_label;
 
 use Filament\Tables\Contracts\HasRelationshipTable;
@@ -49,16 +50,19 @@ trait HasRecords
 
         $this->applySortingToTableQuery($query);
 
-        $this->records = $this->isTablePaginationEnabled() ?
-            $this->paginateTableQuery($query) :
-            $query->get();
+        if (
+            (! $this->isTablePaginationEnabled()) ||
+            ($this->isTableReordering() && (! $this->isTablePaginationEnabledWhileReordering()))
+        ) {
+            return $this->records = $query->get();
+        }
 
-        return $this->records;
+        return $this->records = $this->paginateTableQuery($query);
     }
 
     protected function resolveTableRecord(?string $key): ?Model
     {
-        if (! ($this instanceof HasRelationshipTable && $this->getRelationship() instanceof BelongsToMany && $this->allowsDuplicates())) {
+        if (! ($this instanceof HasRelationshipTable && $this->getRelationship() instanceof BelongsToMany)) {
             return $this->getTableQuery()->find($key);
         }
 
@@ -68,9 +72,11 @@ trait HasRecords
         $pivotClass = $relationship->getPivotClass();
         $pivotKeyName = app($pivotClass)->getKeyName();
 
-        $record = $this->selectPivotDataInQuery(
-            $relationship->wherePivot($pivotKeyName, $key),
-        )->first();
+        $query = $this->allowsDuplicates() ?
+            $relationship->wherePivot($pivotKeyName, $key) :
+            $relationship->where($relationship->getQualifiedRelatedKeyName(), $key);
+
+        $record = $this->selectPivotDataInQuery($query)->first();
 
         return $record?->setRawAttributes($record->getRawOriginal());
     }
@@ -78,6 +84,11 @@ trait HasRecords
     public function getTableModel(): string
     {
         return $this->getTableQuery()->getModel()::class;
+    }
+
+    public function getTableRecord(?string $key): ?Model
+    {
+        return $this->resolveTableRecord($key);
     }
 
     public function getTableRecordKey(Model $record): string
@@ -107,6 +118,10 @@ trait HasRecords
 
     public function getTablePluralModelLabel(): string
     {
-        return Str::plural($this->getTableModelLabel());
+        if (locale_has_pluralization()) {
+            return Str::plural($this->getTableModelLabel());
+        }
+
+        return $this->getTableModelLabel();
     }
 }

@@ -9,10 +9,15 @@ use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tests\Admin\Fixtures\Resources\PostResource\Pages;
 use Filament\Tests\Models\Post;
+use Illuminate\Database\Eloquent\Builder;
 
 class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
+
+    protected static ?string $navigationGroup = 'Blog';
+
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static ?string $recordTitleAttribute = 'title';
 
@@ -22,7 +27,7 @@ class PostResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('title')->required(),
                 Forms\Components\MarkdownEditor::make('content'),
-                Forms\Components\BelongsToSelect::make('author_id')
+                Forms\Components\Select::make('author_id')
                     ->relationship('author', 'name')
                     ->required(),
                 Forms\Components\TagsInput::make('tags'),
@@ -36,12 +41,21 @@ class PostResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title'),
-                Tables\Columns\TextColumn::make('author.name'),
+                Tables\Columns\TextColumn::make('title')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('author.name')
+                    ->sortable()
+                    ->searchable(),
+            ])
+            ->filters([
+                Tables\Filters\Filter::make('is_published')
+                    ->query(fn (Builder $query) => $query->where('is_published', true)),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

@@ -12,14 +12,19 @@ Filament has a few requirements to run:
 
 The form builder comes pre-installed inside the [admin panel 2.x](/docs/admin/2.x), but you must still follow the installation instructions below if you're using it in the rest of your app.
 
+First, require the form builder using Composer:
+
+```bash
+composer require filament/forms:"^2.0"
+```
+
 ## New Laravel projects
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/iy1DO8JXRDQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-To get started with the form builder quickly, you can set up [Alpine.js](https://alpinejs.dev), [TailwindCSS](https://tailwindcss.com) and [Livewire](https://laravel-livewire.com) with these commands:
+To get started with the form builder quickly, you can set up [Livewire](https://laravel-livewire.com), [Alpine.js](https://alpinejs.dev) and [Tailwind CSS](https://tailwindcss.com) with these commands:
 
 ```bash
-composer require filament/forms:"^2.0"
 php artisan forms:install
 npm install
 npm run dev
@@ -31,19 +36,20 @@ You're now ready to start [building forms](getting-started)!
 
 ## Existing Laravel projects
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/XslPKxtMR70" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+The package uses the following dependencies:
 
-You may download the form builder using Composer:
+- [Alpine.js](https://alpinejs.dev)
+- [Tailwind CSS](https://tailwindcss.com)
+- [Tailwind CSS Forms plugin](https://github.com/tailwindlabs/tailwindcss-forms)
+- [Tailwind CSS Typography plugin](https://tailwindcss.com/docs/typography-plugin)
 
-```bash
-composer require filament/forms:"^2.0"
-```
-
-The package uses [Alpine.js](https://alpinejs.dev), [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, and the Tailwind Typography plugin. You may install these through NPM:
+You may install these through NPM:
 
 ```bash
 npm install alpinejs tailwindcss @tailwindcss/forms @tailwindcss/typography --save-dev
 ```
+
+### Configuring Tailwind CSS
 
 To finish installing Tailwind, you must create a new `tailwind.config.js` file in the root of your project. The easiest way to do this is by running `npx tailwindcss init`.
 
@@ -62,6 +68,8 @@ module.exports = {
             colors: { // [tl! focus:start]
                 danger: colors.rose,
                 primary: colors.blue,
+                success: colors.green,
+                warning: colors.yellow,
             }, // [tl! focus:end]
         },
     },
@@ -72,9 +80,59 @@ module.exports = {
 }
 ```
 
-Of course, you may specify your own custom `primary` and `danger` colors, which will be used instead.
+Of course, you may specify your own custom `primary`, `success`, `warning` and `danger` colors, which will be used instead.
 
-In your `webpack.mix.js` file, Register Tailwind CSS as a PostCSS plugin :
+### Bundling assets
+
+New Laravel projects use Vite for bundling assets by default. However, your project may still use Laravel Mix. Read the steps below for the bundler used in your project.
+
+#### Vite
+
+If you're using Vite, you should manually install [Autoprefixer](https://github.com/postcss/autoprefixer) through NPM:
+
+```bash
+npm install autoprefixer --save-dev
+```
+
+Create a `postcss.config.js` file in the root of your project, and register Tailwind CSS and Autoprefixer as plugins:
+
+```js
+module.exports = {
+    plugins: {
+        tailwindcss: {},
+        autoprefixer: {},
+    },
+}
+```
+
+You may also want to update your `vite.config.js` file to refresh the page after Livewire components or custom form components have been updated:
+
+```js
+import { defineConfig } from 'vite'
+import laravel, { refreshPaths } from 'laravel-vite-plugin' // [tl! focus]
+
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: [
+                'resources/css/app.css',
+                'resources/js/app.js',
+            ],
+            refresh: [ // [tl! focus:start]
+                ...refreshPaths,
+                'app/Http/Livewire/**',
+                'app/Forms/Components/**',
+            ], // [tl! focus:end]
+        }),
+    ],
+})
+```
+
+#### Laravel Mix
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XslPKxtMR70" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+In your `webpack.mix.js` file, register Tailwind CSS as a PostCSS plugin:
 
 ```js
 const mix = require('laravel-mix')
@@ -85,7 +143,9 @@ mix.js('resources/js/app.js', 'public/js')
     ])
 ```
 
-In `/resources/css/app.css`, import `filament/forms` vendor CSS and [TailwindCSS](https://tailwindcss.com):
+### Configuring styles
+
+In `/resources/css/app.css`, import `filament/forms` vendor CSS and [Tailwind CSS](https://tailwindcss.com):
 
 ```css
 @import '../../vendor/filament/forms/dist/module.esm.css';
@@ -95,20 +155,28 @@ In `/resources/css/app.css`, import `filament/forms` vendor CSS and [TailwindCSS
 @tailwind utilities;
 ```
 
-In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), the `filament/forms` plugin, and register it:
+### Configuring scripts
+
+In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), the `filament/forms` and `filament/notifications` plugins, and register them:
 
 ```js
 import Alpine from 'alpinejs'
 import FormsAlpinePlugin from '../../vendor/filament/forms/dist/module.esm'
+import NotificationsAlpinePlugin from '../../vendor/filament/notifications/dist/module.esm'
 
 Alpine.plugin(FormsAlpinePlugin)
+Alpine.plugin(NotificationsAlpinePlugin)
 
 window.Alpine = Alpine
 
 Alpine.start()
 ```
 
+### Compiling assets
+
 Compile your new CSS and JS assets using `npm run dev`.
+
+### Configuring layout
 
 Finally, create a new `resources/views/layouts/app.blade.php` layout file for Livewire components:
 
@@ -124,26 +192,24 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
 
         <title>{{ config('app.name') }}</title>
 
-        <!-- Styles -->
         <style>[x-cloak] { display: none !important; }</style>
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
-        <link rel="stylesheet" href="{{ mix('css/app.css') }}">
-
-        <!-- Scripts -->
         @livewireScripts
-        <script src="{{ mix('js/app.js') }}" defer></script>
         @stack('scripts')
     </head>
 
     <body class="antialiased">
         {{ $slot }}
+
+        @livewire('notifications')
     </body>
 </html>
 ```
 
 You're now ready to start [building forms](getting-started)!
 
-## Publishing the configuration
+## Publishing configuration
 
 If you wish, you may publish the configuration of the package using:
 
@@ -151,7 +217,7 @@ If you wish, you may publish the configuration of the package using:
 php artisan vendor:publish --tag=forms-config
 ```
 
-## Publishing the translations
+## Publishing translations
 
 If you wish to translate the package, you may publish the language files using:
 
@@ -159,22 +225,20 @@ If you wish to translate the package, you may publish the language files using:
 php artisan vendor:publish --tag=forms-translations
 ```
 
-## Upgrade Guide
+## Upgrading
 
 To upgrade the package to the latest version, you must run:
 
 ```bash
 composer update
-php artisan config:clear
-php artisan view:clear
+php artisan filament:upgrade
 ```
 
-To do this automatically, we recommend adding these commands to your `composer.json`'s `post-update-cmd`:
+We recommend adding the `filament:upgrade` command to your `composer.json`'s `post-update-cmd` to run it automatically:
 
 ```json
 "post-update-cmd": [
     // ...
-    "@php artisan config:clear",
-    "@php artisan view:clear"
+    "@php artisan filament:upgrade"
 ],
 ```

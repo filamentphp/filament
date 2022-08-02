@@ -12,8 +12,9 @@ abstract class Action extends BaseAction
     use Concerns\CanRedirect;
     use Concerns\CanRequireConfirmation;
     use Concerns\HasAction;
+    use Concerns\HasArguments;
+    use Concerns\HasForm;
     use Concerns\HasLifecycleHooks;
-    use Concerns\HasFormSchema;
     use Concerns\HasWizard;
 
     public function call(array $parameters = [])
@@ -43,6 +44,7 @@ abstract class Action extends BaseAction
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [
+            'arguments' => $this->getArguments(),
             'data' => $this->getFormData(),
             'livewire' => $this->getLivewire(),
         ]);

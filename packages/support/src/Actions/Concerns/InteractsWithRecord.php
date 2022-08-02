@@ -4,6 +4,7 @@ namespace Filament\Support\Actions\Concerns;
 
 use Closure;
 
+use function Filament\locale_has_pluralization;
 use function Filament\Support\get_model_label;
 
 use Illuminate\Database\Eloquent\Model;
@@ -132,7 +133,11 @@ trait InteractsWithRecord
             return null;
         }
 
-        return Str::plural($singularLabel);
+        if (locale_has_pluralization()) {
+            return Str::plural($singularLabel);
+        }
+
+        return $singularLabel;
     }
 
     public function getCustomPluralModelLabel(): ?string

@@ -11,6 +11,7 @@ use Filament\Tables\Contracts\RendersFormComponentActionModal;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 class Page extends Component implements Forms\Contracts\HasForms, RendersFormComponentActionModal
@@ -38,6 +39,8 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
 
     protected static string | array $middlewares = [];
 
+    public static ?Closure $reportValidationErrorUsing = null;
+
     protected ?string $maxContentWidth = null;
 
     public static function registerNavigationItems(): void
@@ -52,13 +55,12 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
     public static function getNavigationItems(): array
     {
         return [
-            NavigationItem::make()
+            NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
                 ->icon(static::getNavigationIcon())
                 ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName()))
-                ->label(static::getNavigationLabel())
                 ->sort(static::getNavigationSort())
-                ->badge(static::getNavigationBadge())
+                ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->url(static::getNavigationUrl()),
         ];
     }
@@ -128,6 +130,11 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
     }
 
     protected static function getNavigationBadge(): ?string
+    {
+        return null;
+    }
+
+    protected static function getNavigationBadgeColor(): ?string
     {
         return null;
     }
@@ -202,5 +209,14 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
     protected static function shouldRegisterNavigation(): bool
     {
         return static::$shouldRegisterNavigation;
+    }
+
+    protected function onValidationError(ValidationException $exception): void
+    {
+        if (! static::$reportValidationErrorUsing) {
+            return;
+        }
+
+        (static::$reportValidationErrorUsing)($exception);
     }
 }

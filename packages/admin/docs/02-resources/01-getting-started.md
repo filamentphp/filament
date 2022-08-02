@@ -1,5 +1,5 @@
 ---
-title: Getting Started
+title: Getting started
 ---
 
 Resources are static classes that are used to build CRUD interfaces for your Eloquent models. They describe how administrators should be able to interact with data from your app - using tables and forms.
@@ -206,16 +206,16 @@ Filament has many utilities available for managing resource relationships. Which
 
 #### Select field
 
-Filament includes a dedicated select field that automatically loads options from a `BelongsTo` relationship:
+Filament includes the ability automatically loads options from a `BelongsTo` relationship:
 
 ```php
-use Filament\Forms\Components\BelongsToSelect;
+use Filament\Forms\Components\Select;
 
-BelongsToSelect::make('author_id')
+Select::make('author_id')
     ->relationship('author', 'name')
 ```
 
-More information about `BelongsToSelect` is available in the [Form docs](../../forms/fields#populating-automatically-from-a-belongsto-relationship).
+More information is available in the [Form docs](../../forms/fields#populating-automatically-from-a-relationship).
 
 #### Layout component
 
@@ -272,14 +272,13 @@ For more information on relation managers, see the [full documentation](relation
 
 #### Repeater
 
-Alternatively, if you're looking to edit the relationship from the main form, you could use a [repeater](../../forms/fields#populating-automatically-from-a-hasmany-relationship):
+Alternatively, if you're looking to edit the relationship from the main form, you could use a [repeater](../../forms/fields#populating-automatically-from-a-relationship):
 
 ```php
-use App\Models\App;
-use Filament\Forms\Components\HasManyRepeater;
+use Filament\Forms\Components\Repeater;
  
-HasManyRepeater::make('qualifications')
-    ->relationship('qualifications')
+Repeater::make('qualifications')
+    ->relationship()
     ->schema([
         // ...
     ])
@@ -301,12 +300,12 @@ For more information on relation managers, see the [full documentation](relation
 
 #### Multi-select field
 
-Filament includes a dedicated multi-select field that automatically loads options from a `BelongsToMany` relationship:
+Filament can automatically load `MultiSelect` options from a `BelongsToMany` relationship:
 
 ```php
-use Filament\Forms\Components\BelongsToManyMultiSelect;
+use Filament\Forms\Components\MultiSelect;
 
-BelongsToManyMultiSelect::make('technologies')
+MultiSelect::make('technologies')
     ->relationship('technologies', 'name')
 ```
 
@@ -314,16 +313,16 @@ More information about `BelongsToManyMultiSelect` is available in the [Form docs
 
 #### Checkbox list field
 
-Filament includes a dedicated checkbox list field that automatically loads options from a `BelongsToMany` relationship:
+Filament can automatically load `CheckboxList` options from a `BelongsToMany` relationship:
 
 ```php
-use Filament\Forms\Components\BelongsToManyCheckboxList;
+use Filament\Forms\Components\CheckboxList;
 
-BelongsToManyCheckboxList::make('technologies')
+CheckboxList::make('technologies')
     ->relationship('technologies', 'name')
 ```
 
-More information about `BelongsToManyCheckboxList` is available in the [Form docs](../../forms/fields#populating-automatically-from-a-belongstomany-relationship-1).
+More information about `CheckboxList` is available in the [Form docs](../../forms/fields#populating-automatically-from-a-relationship-1).
 
 #### Relation manager
 
@@ -368,14 +367,12 @@ For more information on relation managers, see the [full documentation](relation
 
 #### Repeater
 
-Alternatively, if you're looking to edit the relationship from the main form, you could use a [repeater](../../forms/fields#populating-automatically-from-a-morphmany-relationship):
+Alternatively, if you're looking to edit the relationship from the main form, you could use a [repeater](../../forms/fields#populating-automatically-from-a-relationship):
 
 ```php
-use App\Models\App;
-use Filament\Forms\Components\MorphManyRepeater;
+use Filament\Forms\Components\Repeater;
  
-MorphManyRepeater::make('qualifications')
-    ->relationship('qualifications')
+Repeater::make('qualifications')
     ->schema([
         // ...
     ])

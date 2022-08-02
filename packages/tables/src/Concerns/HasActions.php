@@ -23,6 +23,7 @@ trait HasActions
     protected array $cachedTableActions;
 
     protected ?Model $cachedMountedTableActionRecord = null;
+
     protected $cachedMountedTableActionRecordKey = null;
 
     public function cacheTableActions(): void
@@ -32,21 +33,23 @@ trait HasActions
             fn (): array => $this->getTableActions(),
         );
 
-        $this->cachedTableActions = collect($actions)
-            ->mapWithKeys(function (Action | ActionGroup $action, int $index): array {
-                if ($action instanceof ActionGroup) {
-                    foreach ($action->getActions() as $groupedAction) {
-                        $groupedAction->table($this->getCachedTable());
-                    }
+        $this->cachedTableActions = [];
 
-                    return [$index => $action];
+        foreach ($actions as $index => $action) {
+            if ($action instanceof ActionGroup) {
+                foreach ($action->getActions() as $groupedAction) {
+                    $groupedAction->table($this->getCachedTable());
                 }
 
-                $action->table($this->getCachedTable());
+                $this->cachedTableActions[$index] = $action;
 
-                return [$action->getName() => $action];
-            })
-            ->toArray();
+                continue;
+            }
+
+            $action->table($this->getCachedTable());
+
+            $this->cachedTableActions[$action->getName()] = $action;
+        }
     }
 
     protected function configureTableAction(Action $action): void
@@ -65,6 +68,8 @@ trait HasActions
             return;
         }
 
+        $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
+
         $form = $this->getMountedTableActionForm();
 
         if ($action->hasForm()) {
@@ -79,7 +84,6 @@ trait HasActions
 
         try {
             $result = $action->call([
-                'arguments' => json_decode($arguments, associative: true) ?? [],
                 'form' => $form,
             ]);
         } catch (Hold $exception) {
@@ -90,7 +94,11 @@ trait HasActions
             return $action->callAfter() ?? $result;
         } finally {
             $this->mountedTableAction = null;
+
+            $action->record(null);
             $this->mountedTableActionRecord(null);
+
+            $action->resetArguments();
             $action->resetFormData();
 
             $this->dispatchBrowserEvent('close-modal', [
@@ -128,10 +136,8 @@ trait HasActions
             $action->callBeforeFormFilled();
         }
 
-        app()->call($action->getMountUsing(), [
-            'action' => $action,
+        $action->mount([
             'form' => $this->getMountedTableActionForm(),
-            'record' => $this->getMountedTableActionRecord(),
         ]);
 
         if ($action->hasForm()) {
@@ -191,10 +197,10 @@ trait HasActions
 
         $this->cachedMountedTableActionRecordKey = $recordKey;
 
-        return $this->cachedMountedTableActionRecord = $this->resolveTableRecord($recordKey);
+        return $this->cachedMountedTableActionRecord = $this->getTableRecord($recordKey);
     }
 
-    protected function getCachedTableAction(string $name): ?Action
+    public function getCachedTableAction(string $name): ?Action
     {
         return $this->findTableAction($name)?->record($this->getMountedTableActionRecord());
     }

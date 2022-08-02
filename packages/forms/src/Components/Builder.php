@@ -31,6 +31,8 @@ class Builder extends Field
 
     protected bool | Closure $hasBlockLabels = true;
 
+    protected bool | Closure $hasBlockNumbers = true;
+
     protected bool | Closure $isInset = false;
 
     protected function setUp(): void
@@ -40,9 +42,11 @@ class Builder extends Field
         $this->default([]);
 
         $this->afterStateHydrated(static function (Builder $component, ?array $state): void {
-            $items = collect($state ?? [])
-                ->mapWithKeys(static fn ($itemData) => [(string) Str::uuid() => $itemData])
-                ->toArray();
+            $items = [];
+
+            foreach ($state as $itemData) {
+                $items[(string) Str::uuid()] = $itemData;
+            }
 
             $component->state($items);
         });
@@ -83,8 +87,6 @@ class Builder extends Field
                     }
 
                     $component->getChildComponentContainers()[$newUuid]->fill();
-
-                    $component->hydrateDefaultItemState($newUuid);
 
                     $component->collapsed(false, shouldMakeComponentCollapsible: false);
                 },
@@ -219,11 +221,6 @@ class Builder extends Field
         return $this;
     }
 
-    public function hydrateDefaultItemState(string $uuid): void
-    {
-        $this->getChildComponentContainers()[$uuid]->hydrateDefaultState();
-    }
-
     /**
      * @deprecated Use `withBlockLabels()` instead.
      */
@@ -237,6 +234,13 @@ class Builder extends Field
     public function withBlockLabels(bool | Closure $condition = true): static
     {
         $this->hasBlockLabels = $condition;
+
+        return $this;
+    }
+
+    public function withBlockNumbers(bool | Closure $condition = true): static
+    {
+        $this->hasBlockNumbers = $condition;
 
         return $this;
     }
@@ -266,7 +270,7 @@ class Builder extends Field
                     ->statePath("{$itemIndex}.data")
                     ->inlineLabel(false),
             )
-            ->toArray();
+            ->all();
     }
 
     public function getCreateItemBetweenButtonLabel(): string
@@ -302,6 +306,11 @@ class Builder extends Field
     public function hasBlockLabels(): bool
     {
         return (bool) $this->evaluate($this->hasBlockLabels);
+    }
+
+    public function hasBlockNumbers(): bool
+    {
+        return (bool) $this->evaluate($this->hasBlockNumbers);
     }
 
     public function isInset(): bool

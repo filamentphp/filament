@@ -41,7 +41,7 @@ class KeyValue extends Field
             return collect($state ?? [])
                 ->filter(static fn (?string $value, ?string $key): bool => filled($key))
                 ->map(static fn (?string $value): ?string => filled($value) ? $value : null)
-                ->toArray();
+                ->all();
         });
 
         $this->addButtonLabel(__('forms::components.key_value.buttons.add.label'));

@@ -5,9 +5,9 @@ namespace Filament\Commands;
 use Filament\Facades\Filament;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
-use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Hash;
 
 class MakeUserCommand extends Command
@@ -27,25 +27,25 @@ class MakeUserCommand extends Command
         ];
     }
 
-    protected function createUser(): User
+    protected function createUser(): Authenticatable
     {
         return static::getUserModel()::create($this->getUserData());
     }
 
-    protected function sendSuccessMessage(User $user): void
+    protected function sendSuccessMessage(Authenticatable $user): void
     {
         $loginUrl = route('filament.auth.login');
         $this->info('Success! ' . ($user->getAttribute('email') ?? $user->getAttribute('username') ?? 'You') . " may now log in at {$loginUrl}.");
 
         if ($this->getUserModel()::count() === 1 && $this->confirm('Would you like to show some love by starring the repo?', true)) {
             if (PHP_OS_FAMILY === 'Darwin') {
-                exec('open https://github.com/laravel-filament/filament');
+                exec('open https://github.com/filamentphp/filament');
             }
             if (PHP_OS_FAMILY === 'Linux') {
-                exec('xdg-open https://github.com/laravel-filament/filament');
+                exec('xdg-open https://github.com/filamentphp/filament');
             }
             if (PHP_OS_FAMILY === 'Windows') {
-                exec('start https://github.com/laravel-filament/filament');
+                exec('start https://github.com/filamentphp/filament');
             }
 
             $this->line('Thank you!');

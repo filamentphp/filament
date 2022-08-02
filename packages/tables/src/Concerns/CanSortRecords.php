@@ -10,16 +10,16 @@ trait CanSortRecords
 
     public $tableSortDirection = null;
 
-    public function sortTable(?string $column = null): void
+    public function sortTable(?string $column = null, ?string $direction = null): void
     {
         if ($column === $this->tableSortColumn) {
-            $direction = match ($this->tableSortDirection) {
+            $direction ??= match ($this->tableSortDirection) {
                 'asc' => 'desc',
                 'desc' => null,
                 default => 'asc',
             };
         } else {
-            $direction = 'asc';
+            $direction ??= 'asc';
         }
 
         $this->tableSortColumn = $direction ? $column : null;
@@ -55,6 +55,10 @@ trait CanSortRecords
 
     protected function applySortingToTableQuery(Builder $query): Builder
     {
+        if ($this->isTableReordering()) {
+            return $query->orderBy($this->getTableReorderColumn());
+        }
+
         $columnName = $this->tableSortColumn;
 
         if (! $columnName) {

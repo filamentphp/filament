@@ -3,16 +3,16 @@
 return [
     'builder' => [
 
-        'collapsed' => 'Inhoud toegeklapt',
+        'collapsed' => 'Inhoud ingeklapt',
 
         'buttons' => [
 
             'create_item' => [
-                'label' => 'Voeg toe aan :label',
+                'label' => 'Toevoegen aan :label',
             ],
 
             'delete_item' => [
-                'label' => 'Verwijder',
+                'label' => 'Verwijderen',
             ],
 
             'move_item_down' => [
@@ -24,19 +24,19 @@ return [
             ],
 
             'collapse_item' => [
-                'label' => 'Klap toe',
+                'label' => 'Inklappen',
             ],
 
             'expand_item' => [
-                'label' => 'Klap open',
+                'label' => 'Uitklappen',
             ],
 
             'collapse_all' => [
-                'label' => 'Klap alles toe',
+                'label' => 'Alles inklappen',
             ],
 
             'expand_all' => [
-                'label' => 'Klap alles open',
+                'label' => 'Alles uitklappen',
             ],
 
         ],
@@ -48,11 +48,11 @@ return [
         'buttons' => [
 
             'add' => [
-                'label' => 'Voeg rij toe',
+                'label' => 'Rij toevoegen',
             ],
 
             'delete' => [
-                'label' => 'Verwijder rij',
+                'label' => 'Rij verwijderen',
             ],
 
         ],
@@ -74,32 +74,36 @@ return [
     'markdown_editor' => [
 
         'toolbar_buttons' => [
-            'attach_files' => 'Voeg bestand toe',
-            'bold' => 'Vetdruk',
-            'bullet_list' => 'Bullets',
+            'attach_files' => 'Bestanden bijvoegen',
+            'bold' => 'Vet',
+            'bullet_list' => 'Ongeordende lijst',
             'code_block' => 'Codeblok',
-            'edit' => 'Editeer',
-            'italic' => 'Schuingedrukt',
+            'edit' => 'Bewerken',
+            'italic' => 'Cursief',
             'link' => 'Link',
-            'ordered_list' => 'Nummers',
-            'preview' => 'Preview',
-            'strike' => 'Doorgehaald',
+            'ordered_list' => 'Genummerde lijst',
+            'preview' => 'Voorvertoning',
+            'strike' => 'Doorhalen',
         ],
 
     ],
 
     'repeater' => [
 
-        'collapsed' => 'Inhoud toegeklapt',
+        'collapsed' => 'Inhoud ingeklapt',
 
         'buttons' => [
 
             'create_item' => [
-                'label' => 'Voeg toe aan :label',
+                'label' => 'Toevoegen aan :label',
             ],
 
             'delete_item' => [
-                'label' => 'Verwijder',
+                'label' => 'Verwijderen',
+            ],
+
+            'clone_item' => [
+                'label' => 'Dupliceren',
             ],
 
             'move_item_down' => [
@@ -111,19 +115,19 @@ return [
             ],
 
             'collapse_item' => [
-                'label' => 'Klap toe',
+                'label' => 'Inklappen',
             ],
 
             'expand_item' => [
-                'label' => 'Klap open',
+                'label' => 'Uitklappen',
             ],
 
             'collapse_all' => [
-                'label' => 'Klap alles toe',
+                'label' => 'Alles inklappen',
             ],
 
             'expand_all' => [
-                'label' => 'Klap alles open',
+                'label' => 'Alles uitklappen',
             ],
 
         ],
@@ -150,19 +154,19 @@ return [
         ],
 
         'toolbar_buttons' => [
-            'attach_files' => 'Voeg bestanden toe',
+            'attach_files' => 'Bestanden bijvoegen',
             'blockquote' => 'Quote',
-            'bold' => 'Vetdruk',
-            'bullet_list' => 'Bullets',
-            'code_block' => 'Codeblock',
+            'bold' => 'Vet',
+            'bullet_list' => 'Ongeordende lijst',
+            'code_block' => 'Codeblok',
             'h1' => 'Titel',
-            'h2' => 'Hoofdtekst',
-            'h3' => 'Sub hoofdtekst',
-            'italic' => 'Schuingedrukt',
+            'h2' => 'Kop',
+            'h3' => 'Tussenkop',
+            'italic' => 'Cursief',
             'link' => 'Link',
-            'ordered_list' => 'Nummers',
-            'redo' => 'Opnieuw doen',
-            'strike' => 'Doorgehaald',
+            'ordered_list' => 'Genummerde lijst',
+            'redo' => 'Opnieuw uitvoeren',
+            'strike' => 'Doorhalen',
             'undo' => 'Ongedaan maken',
         ],
 
@@ -176,12 +180,12 @@ return [
 
                 'modal' => [
 
-                    'heading' => 'Creëer',
+                    'heading' => 'Aanmaken',
 
                     'actions' => [
 
                         'create' => [
-                            'label' => 'Creëer',
+                            'label' => 'Aanmaken',
                         ],
 
                     ],
@@ -197,7 +201,7 @@ return [
             'false' => 'Nee',
         ],
 
-        'loading_message' => 'Even geduld...',
+        'loading_message' => 'Laden...',
 
         'no_search_results_message' => 'Er zijn geen resultaten voor je zoekopdracht.',
 
@@ -214,7 +218,9 @@ return [
     ],
 
     'wizard' => [
+
         'buttons' => [
+
             'previous_step' => [
                 'label' => 'Vorige',
             ],
@@ -222,6 +228,9 @@ return [
             'next_step' => [
                 'label' => 'Volgende',
             ],
+
         ],
+
     ],
+
 ];

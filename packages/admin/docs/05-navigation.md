@@ -12,14 +12,29 @@ protected static ?string $navigationIcon = 'heroicon-o-document-text';
 protected static ?string $navigationLabel = 'Custom Navigation Label';
 
 protected static ?int $navigationSort = 3;
+```
 
+The `$navigationIcon` supports the name of any Blade component, and passes a set of formatting classes to it. By default, the [Blade Heroicons](https://github.com/blade-ui-kit/blade-heroicons) package is installed, so you may use the name of any [Heroicon](https://heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
+
+## Navigation item badges
+
+To add a badge next to the navigation item, you can use the `getNavigationBadge()` method and return the content of the badge:
+
+```php
 protected static function getNavigationBadge(): ?string
 {
     return static::getModel()::count();
 }
 ```
 
-The `$navigationIcon` supports the name of any Blade component, and passes a set of formatting classes to it. By default, the [Blade Heroicons](https://github.com/blade-ui-kit/blade-heroicons) package is installed, so you may use the name of any [Heroicon](https://heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
+If a badge value is returned by `getNavigationBadge()`, it will display using the primary Tailwind color by default. To style the badge contextually, return either `danger`, `warning`, `success` or `secondary` from the `getNavigationBadgeColor()` method:
+
+```php
+protected static function getNavigationBadgeColor(): ?string
+{
+    return static::getModel()::count() > 10 ? 'warning' : 'primary';
+}
+```
 
 ## Grouping navigation items
 
@@ -31,9 +46,9 @@ protected static ?string $navigationGroup = 'Settings';
 
 All items in the same navigation group will be displayed together under the same group label, "Settings" in this case. Ungrouped items will remain at the top of the sidebar.
 
-### Ordering navigation groups
+### Customizing navigation groups
 
-If you wish to enforce a specific order for your navigation groups, you may call `Filament::registerNavigationGroups()` from the `boot()` method of any service provider.
+You may customize navigation groups by calling `Filament::registerNavigationGroups()` from the `boot()` method of any service provider, and passing `NavigationGroup` objects in order:
 
 ```php
 use Filament\Facades\Filament;
@@ -45,38 +60,58 @@ class AppServiceProvider extends ServiceProvider
     {
         Filament::serving(function () {
             Filament::registerNavigationGroups([
-                'Shop',
-                'Blog',
-                'Settings',
+                NavigationGroup::make()
+                     ->label('Shop')
+                     ->icon('heroicon-s-shopping-cart'),
+                NavigationGroup::make()
+                    ->label('Blog')
+                    ->icon('heroicon-s-pencil'),
+                NavigationGroup::make()
+                    ->label('Settings')
+                    ->icon('heroicon-s-cog')
+                    ->collapsed(),
             ]);
         });
     }
 }
 ```
 
-## Registering custom navigation items
+In this example, we pass in a custom `icon()` for the groups, and make one `collapsed()` by default.
 
-Alternatively, you may completely override the static `getNavigationItems()` method on the class and register as many custom navigation items as you require:
+#### Ordering navigation groups
+
+By using `registerNavigationGroups()`, you are defining a new order for the navigation groups in the sidebar. If you just want to reorder the groups and not define an entire `NavigationGroup` object, you may just pass the labels of the groups in the new order:
 
 ```php
-use Filament\Navigation\NavigationItem;
+use Filament\Facades\Filament;
 
-public static function getNavigationItems(): array
-{
-    return [
-        NavigationItem::make()
-            ->group($group)
-            ->icon($icon)
-            ->isActiveWhen($closure)
-            ->label($label)
-            ->badge($badge)
-            ->sort($sort)
-            ->url($url),
-    ];
-}
+Filament::registerNavigationGroups([
+    'Shop',
+    'Blog',
+    'Settings',
+]);
 ```
 
-### Disabling resource or page navigation items
+## Registering custom navigation items
+
+You may register custom navigation items by calling `Filament::registerNavigationItems()` from the `boot()` method of any service provider:
+
+```php
+use Filament\Facades\Filament;
+use Filament\Navigation\NavigationItem;
+
+Filament::serving(function () {
+    Filament::registerNavigationItems([
+        NavigationItem::make('Analytics')
+            ->url('https://filament.pirsch.io', shouldOpenInNewTab: true)
+            ->icon('heroicon-o-presentation-chart-line')
+            ->group('Reports')
+            ->sort(3),
+    ]);
+});
+```
+
+## Disabling resource or page navigation items
 
 To prevent resources or pages from showing up in navigation, you may use:
 
@@ -99,47 +134,46 @@ Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
 
 Once you add this callback function, Filament's default automatic navigation will be disabled and your sidebar will be empty. This is done on purpose, since this API is designed to give you complete control over the navigation.
 
-If you want to register a new group, you can call the `NavigationBuilder::group` method.
+To register navigation items, just call the `items()` method:
 
 ```php
+use App\Filament\Pages\Settings;
+use App\Filament\Resources\UserResource;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationBuilder;
 
 Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
-    return $builder->group('Settings', [
-        // An array of `NavigationItem` objects.
-    ]);
-});
-```
-
-You provide the name of the group and an array of `NavigationItem` objects to be rendered. If you've got a `Resource` or `Page` you'd like to register in this group, you can use the following syntax:
-
-```php
-use Filament\Facades\Filament;
-use Filament\Navigation\NavigationBuilder;
-
-Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
-    return $builder->group('Content', [
-        ...PageResource::getNavigationItems(),
-        ...CategoryResource::getNavigationItems(),
-    ]);
-});
-```
-
-You can also register ungrouped items using the `NavigationBuilder::item()` method:
-
-```php
-use Filament\Facades\Filament;
-use Filament\Navigation\NavigationBuilder;
-
-Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
-    return $builder->item(
-        NavigationItem::make()
-            ->label('Dashboard')
+    return $builder->items([
+        NavigationItem::make('Dashboard')
             ->icon('heroicon-o-home')
             ->isActiveWhen(fn (): bool => request()->routeIs('filament.pages.dashboard'))
             ->url(route('filament.pages.dashboard')),
-    );
+        ...UserResource::getNavigationItems(),
+        ...Settings::getNavigationItems(),
+    ]);
+});
+```
+
+If you want to register groups, you can call the `groups()` method:
+
+```php
+use App\Filament\Pages\HomePageSettings;
+use App\Filament\Resources\CategoryResource;
+use App\Filament\Resources\PageResource;
+use Filament\Facades\Filament;
+use Filament\Navigation\NavigationBuilder;
+use Filament\Navigation\NavigationGroup;
+
+Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
+    return $builder
+        ->group([
+            NavigationGroup::make('Website')
+                ->items([
+                    ...PageResource::getNavigationItems(),
+                    ...CategoryResource::getNavigationItems(),
+                    ...HomePageSettings::getNavigationItems(),
+                ]),
+        ]);
 });
 ```
 

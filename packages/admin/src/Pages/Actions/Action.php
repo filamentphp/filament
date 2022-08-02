@@ -2,14 +2,13 @@
 
 namespace Filament\Pages\Actions;
 
-use Closure;
-use Filament\Facades\Filament;
 use Filament\Pages\Actions\Modal\Actions\Action as ModalAction;
 use Filament\Support\Actions\Action as BaseAction;
 use Filament\Support\Actions\Concerns\CanBeDisabled;
 use Filament\Support\Actions\Concerns\CanBeOutlined;
 use Filament\Support\Actions\Concerns\CanOpenUrl;
 use Filament\Support\Actions\Concerns\CanSubmitForm;
+use Filament\Support\Actions\Concerns\HasGroupedIcon;
 use Filament\Support\Actions\Concerns\HasKeyBindings;
 use Filament\Support\Actions\Concerns\HasTooltip;
 use Filament\Support\Actions\Concerns\InteractsWithRecord;
@@ -24,6 +23,7 @@ class Action extends BaseAction implements Groupable, HasRecord
     use CanOpenUrl;
     use CanSubmitForm;
     use Concerns\BelongsToLivewire;
+    use HasGroupedIcon;
     use HasKeyBindings;
     use HasTooltip;
     use InteractsWithRecord;
@@ -74,11 +74,6 @@ class Action extends BaseAction implements Groupable, HasRecord
         $action = parent::makeModalAction($name);
 
         return $action;
-    }
-
-    public function notify(string | Closure | null $status, string | Closure | null $message): void
-    {
-        Filament::notify($status, $message);
     }
 
     protected function getDefaultEvaluationParameters(): array

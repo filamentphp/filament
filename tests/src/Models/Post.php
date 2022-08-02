@@ -12,6 +12,7 @@ class Post extends Model
     use HasFactory;
 
     protected $casts = [
+        'is_published' => 'boolean',
         'tags' => 'array',
     ];
 

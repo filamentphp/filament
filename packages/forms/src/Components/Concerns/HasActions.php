@@ -9,12 +9,13 @@ trait HasActions
 {
     protected array $actions = [];
 
+    protected Model | string | null $actionFormModel = null;
+
     public function registerActions(array $actions): static
     {
-        $this->actions = array_merge(
-            $this->actions,
-            array_map(fn (Action $action): Action => $action->component($this), $actions),
-        );
+        foreach ($actions as $action) {
+            $this->actions[$action->getName()] = $action->component($this);
+        }
 
         return $this;
     }
@@ -29,9 +30,16 @@ trait HasActions
         return $this->actions;
     }
 
+    public function actionFormModel(Model | string | null $model): static
+    {
+        $this->actionFormModel = $model;
+
+        return $this;
+    }
+
     public function getActionFormModel(): Model | string | null
     {
-        return $this->getRecord() ?? $this->getModel();
+        return $this->actionFormModel ?? $this->getRecord() ?? $this->getModel();
     }
 
     public function hasAction(string $name): bool

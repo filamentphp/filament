@@ -35,6 +35,8 @@ trait HasActions
             return;
         }
 
+        $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
+
         $form = $this->getMountedActionForm();
 
         if ($action->hasForm()) {
@@ -49,7 +51,6 @@ trait HasActions
 
         try {
             $result = $action->call([
-                'arguments' => json_decode($arguments, associative: true) ?? [],
                 'form' => $form,
             ]);
         } catch (Hold $exception) {
@@ -60,6 +61,10 @@ trait HasActions
             return $action->callAfter() ?? $result;
         } finally {
             $this->mountedAction = null;
+
+            $action->record(null);
+
+            $action->resetArguments();
             $action->resetFormData();
 
             $this->dispatchBrowserEvent('close-modal', [
@@ -91,8 +96,7 @@ trait HasActions
             $action->callBeforeFormFilled();
         }
 
-        app()->call($action->getMountUsing(), [
-            'action' => $action,
+        $action->mount([
             'form' => $this->getMountedActionForm(),
         ]);
 
@@ -127,21 +131,23 @@ trait HasActions
             fn (): array => $this->getActions(),
         );
 
-        $this->cachedActions = collect($actions)
-            ->mapWithKeys(function (Action | ActionGroup $action, int $index): array {
-                if ($action instanceof ActionGroup) {
-                    foreach ($action->getActions() as $groupedAction) {
-                        $groupedAction->livewire($this);
-                    }
+        $this->cachedActions = [];
 
-                    return [$index => $action];
+        foreach ($actions as $index => $action) {
+            if ($action instanceof ActionGroup) {
+                foreach ($action->getActions() as $groupedAction) {
+                    $groupedAction->livewire($this);
                 }
 
-                $action->livewire($this);
+                $this->cachedActions[$index] = $action;
 
-                return [$action->getName() => $action];
-            })
-            ->toArray();
+                continue;
+            }
+
+            $action->livewire($this);
+
+            $this->cachedActions[$action->getName()] = $action;
+        }
     }
 
     protected function configureAction(Action $action): void
@@ -197,7 +203,7 @@ trait HasActions
         return null;
     }
 
-    protected function getCachedAction(string $name): ?Action
+    public function getCachedAction(string $name): ?Action
     {
         $actions = $this->getCachedActions();
 

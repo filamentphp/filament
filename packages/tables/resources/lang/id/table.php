@@ -2,6 +2,14 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 'dan :count lainnya',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -45,6 +53,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Selesaikan mengurutkan ulang data',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Mengurutkan ulang data',
+        ],
+
         'filter' => [
             'label' => 'Filter',
         ],
@@ -85,7 +101,21 @@ return [
             'placeholder' => 'Semua',
         ],
 
+        'trashed' => [
+
+            'label' => 'Data yang dihapus',
+
+            'only_trashed' => 'Hanya data yang sudah dihapus',
+
+            'with_trashed' => 'Dengan data yang sudah dihapus',
+
+            'without_trashed' => 'Tanpa data yang sudah dihapus',
+
+        ],
+
     ],
+
+    'reorder_indicator' => 'Seret dan lepaskan data kedalam urutan.',
 
     'selection_indicator' => [
 
@@ -94,7 +124,7 @@ return [
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Pilih semua :count',
+                'label' => 'Pilih semua (:count)',
             ],
 
             'deselect_all' => [

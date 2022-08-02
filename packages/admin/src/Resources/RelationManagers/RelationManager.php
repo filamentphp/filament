@@ -4,6 +4,7 @@ namespace Filament\Resources\RelationManagers;
 
 use Filament\Facades\Filament;
 use Filament\Http\Livewire\Concerns\CanNotify;
+use function Filament\locale_has_pluralization;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Tables;
@@ -22,6 +23,8 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
     use Tables\Concerns\InteractsWithTable;
 
     public Model $ownerRecord;
+
+    public ?string $pageClass = null;
 
     protected static ?string $recordTitleAttribute = null;
 
@@ -278,7 +281,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     public static function getTitle(): string
     {
-        return static::$title ?? Str::title(static::getPluralModelLabel());
+        return static::$title ?? Str::headline(static::getPluralModelLabel());
     }
 
     public static function getTitleForRecord(Model $ownerRecord): string
@@ -293,7 +296,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     public static function getRecordTitle(?Model $record): ?string
     {
-        return $record?->getAttributeValue(static::getRecordTitleAttribute()) ?? $record?->getKey();
+        return $record?->getAttributeValue(static::getRecordTitleAttribute()) ?? static::getModelLabel();
     }
 
     /**
@@ -306,7 +309,10 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     protected static function getModelLabel(): string
     {
-        return static::$modelLabel ?? static::getRecordLabel() ?? Str::singular(static::getPluralModelLabel());
+        return static::$modelLabel ?? static::getRecordLabel() ?? (string) Str::of(static::getRelationshipName())
+            ->kebab()
+            ->replace('-', ' ')
+            ->singular();
     }
 
     /**
@@ -319,9 +325,17 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     protected static function getPluralModelLabel(): string
     {
-        return static::$pluralModelLabel ?? static::getPluralRecordLabel() ?? (string) Str::of(static::getRelationshipName())
-            ->kebab()
-            ->replace('-', ' ');
+        if (filled($label = static::$pluralModelLabel ?? static::getPluralRecordLabel())) {
+            return $label;
+        }
+
+        if (locale_has_pluralization()) {
+            return (string) Str::of(static::getRelationshipName())
+                ->kebab()
+                ->replace('-', ' ');
+        }
+
+        return static::getModelLabel();
     }
 
     protected function getRelatedModel(): string
@@ -394,6 +408,16 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return $this->getResourceTable()->getHeaderActions();
     }
 
+    protected function getTableReorderColumn(): ?string
+    {
+        return $this->getResourceTable()->getReorderColumn();
+    }
+
+    protected function isTableReorderable(): bool
+    {
+        return filled($this->getTableReorderColumn()) && $this->canReorder();
+    }
+
     protected function getTableHeading(): ?string
     {
         return static::getTitle();
@@ -462,6 +486,11 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
     protected function canForceDeleteAny(): bool
     {
         return $this->can('forceDeleteAny');
+    }
+
+    protected function canReorder(): bool
+    {
+        return $this->can('reorder');
     }
 
     protected function canReplicate(Model $record): bool

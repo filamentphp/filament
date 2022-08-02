@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Closure;
 use Filament\Tables\Actions\Action;
 use Illuminate\Contracts\View\View;
 
@@ -11,28 +12,26 @@ trait HasEmptyState
 
     public function cacheTableEmptyStateActions(): void
     {
-        Action::configureUsing(
-            fn (Action $action): Action => $action->button(),
-            function (): void {
-                $this->cachedTableEmptyStateActions = collect($this->getTableEmptyStateActions())
-                    ->mapWithKeys(function (Action $action): array {
-                        $action->table($this->getCachedTable());
-
-                        return [$action->getName() => $action];
-                    })
-                    ->toArray();
-            }
+        $actions = Action::configureUsing(
+            Closure::fromCallable([$this, 'configureTableAction']),
+            fn (): array => $this->getTableEmptyStateActions(),
         );
+
+        $this->cachedTableEmptyStateActions = [];
+
+        foreach ($actions as $action) {
+            $action->table($this->getCachedTable());
+
+            $this->cachedTableEmptyStateActions[$action->getName()] = $action;
+        }
     }
 
     public function getCachedTableEmptyStateActions(): array
     {
-        return collect($this->cachedTableEmptyStateActions)
-            ->filter(fn (Action $action): bool => ! $action->isHidden())
-            ->toArray();
+        return $this->cachedTableEmptyStateActions;
     }
 
-    protected function getCachedTableEmptyStateAction(string $name): ?Action
+    public function getCachedTableEmptyStateAction(string $name): ?Action
     {
         return $this->getCachedTableEmptyStateActions()[$name] ?? null;
     }

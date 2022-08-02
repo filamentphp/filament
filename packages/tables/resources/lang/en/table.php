@@ -2,6 +2,14 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 'and :count more',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -45,6 +53,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Finish reordering records',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Reorder records',
+        ],
+
         'filter' => [
             'label' => 'Filter',
         ],
@@ -55,31 +71,6 @@ return [
 
         'toggle_columns' => [
             'label' => 'Toggle columns',
-        ],
-
-    ],
-
-
-    'bulk_actions' => [
-
-        'force_delete' => [
-
-            'label' => 'Force delete',
-
-            'messages' => [
-                'deleted' => 'Records deleted',
-            ],
-
-        ],
-
-        'restore' => [
-
-            'label' => 'Restore',
-
-            'messages' => [
-                'restored' => 'Records restored',
-            ],
-
         ],
 
     ],
@@ -123,6 +114,8 @@ return [
         ],
 
     ],
+
+    'reorder_indicator' => 'Drag and drop the records into order.',
 
     'selection_indicator' => [
 

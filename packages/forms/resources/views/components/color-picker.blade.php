@@ -38,17 +38,15 @@
                 isDisabled: @js($isDisabled()),
                 state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }}
             })"
-            x-on:click="openPicker()"
-            x-on:click.away="closePicker()"
-            x-on:keydown.escape.stop="closePicker()"
             {{ $getExtraAlpineAttributeBag()->class(['relative flex-1']) }}
         >
             <input
                 x-ref="input"
-                x-on:focus="openPicker()"
                 type="text"
                 dusk="filament.forms.{{ $getStatePath() }}"
                 id="{{ $getId() }}"
+                x-on:click="togglePanelVisibility()"
+                x-on:keydown.enter.stop.prevent="togglePanelVisibility()"
                 autocomplete="off"
                 {!! $isDisabled() ? 'disabled' : null !!}
                 {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
@@ -57,7 +55,7 @@
                 @endif
                 {{ $getExtraInputAttributeBag()->class([
                     'text-gray-900 block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 disabled:opacity-70',
-                    'dark:bg-gray-700 dark:text-white' => config('forms.dark_mode'),
+                    'dark:bg-gray-700 dark:text-white dark:focus:border-primary-600' => config('forms.dark_mode'),
                     'border-gray-300' => ! $errors->has($getStatePath()),
                     'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                     'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
@@ -69,29 +67,27 @@
                 class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none rtl:right-auto rtl:left-0 rtl:pl-2"
             >
                 <span
-                    x-bind:style="{'background-color': state}"
+                    x-bind:style="{ 'background-color': state }"
                     class="relative overflow-hidden rounded-md w-7 h-7 filament-forms-color-picker-component-preview"
                 ></span>
             </span>
 
-            <{{ match($getFormat()) {
-                'hsl' => 'hsl-string',
-                'rgb' => 'rgb-string',
-                'rgba' => 'rgba-string',
-                default => 'hex',
-            } }}-color-picker
+            <div
                 x-cloak
-                x-ref="picker"
-                x-show="isOpen"
-                x-on:blur="isOpen && closePicker()"
-                x-transition:leave="ease-in duration-100"
-                x-transition:leave-start="opacity-100"
-                x-transition:leave-end="opacity-0"
+                x-ref="panel"
+                x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                 @class([
-                    'mt-4 absolute z-10 shadow-lg',
+                    'hidden absolute z-10 shadow-lg',
                     'opacity-70 pointer-events-none' => $isDisabled(),
                 ])
-            />
+            >
+                <{{ match($getFormat()) {
+                    'hsl' => 'hsl-string',
+                    'rgb' => 'rgb-string',
+                    'rgba' => 'rgba-string',
+                    default => 'hex',
+                } }}-color-picker />
+            </div>
         </div>
 
         @if ($label = $getSuffixLabel())
