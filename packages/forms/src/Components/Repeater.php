@@ -57,7 +57,7 @@ class Repeater extends Field
         $this->afterStateHydrated(static function (Repeater $component, ?array $state): void {
             $items = [];
 
-            foreach ($state as $itemData) {
+            foreach ($state ?? [] as $itemData) {
                 $items[(string) Str::uuid()] = $itemData;
             }
 
