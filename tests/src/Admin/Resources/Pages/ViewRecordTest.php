@@ -4,7 +4,6 @@ use Filament\Facades\Filament;
 use Filament\Tests\Admin\Fixtures\Resources\PostResource;
 use Filament\Tests\Admin\Resources\TestCase;
 use Filament\Tests\Models\Post;
-
 use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
