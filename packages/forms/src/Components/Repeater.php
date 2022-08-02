@@ -5,7 +5,6 @@ namespace Filament\Forms\Components;
 use Closure;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
-use Filament\Forms\ComponentContainer;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
