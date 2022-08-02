@@ -11,6 +11,7 @@
     'tag' => 'button',
     'tooltip' => null,
     'type' => 'button',
+    'labelSrOnly' => false,
 ])
 
 @php
@@ -51,12 +52,12 @@
         'w-5 h-5' => $size === 'md',
         'w-4 h-4' => $size === 'sm',
         'w-6 h-6' => $size === 'lg',
-        'mr-1 -ml-2 rtl:ml-1 rtl:-mr-2' => ($iconPosition === 'before') && ($size === 'md'),
-        'mr-2 -ml-3 rtl:ml-2 rtl:-mr-3' => ($iconPosition === 'before') && ($size === 'lg'),
-        'mr-1 -ml-1.5 rtl:ml-1 rtl:-mr-1.5' => ($iconPosition === 'before') && ($size === 'sm'),
-        'ml-1 -mr-2 rtl:mr-1 rtl:-ml-2' => ($iconPosition === 'after') && ($size === 'md'),
-        'ml-2 -mr-3 rtl:mr-2 rtl:-ml-3' => ($iconPosition === 'after') && ($size === 'lg'),
-        'ml-1 -mr-1.5 rtl:mr-1 rtl:-ml-1.5' => ($iconPosition === 'after') && ($size === 'sm'),
+        'mr-1 -ml-2 rtl:ml-1 rtl:-mr-2' => ($iconPosition === 'before') && ($size === 'md') && (! $labelSrOnly),
+        'mr-2 -ml-3 rtl:ml-2 rtl:-mr-3' => ($iconPosition === 'before') && ($size === 'lg') && (! $labelSrOnly),
+        'mr-1 -ml-1.5 rtl:ml-1 rtl:-mr-1.5' => ($iconPosition === 'before') && ($size === 'sm') && (! $labelSrOnly),
+        'ml-1 -mr-2 rtl:mr-1 rtl:-ml-2' => ($iconPosition === 'after') && ($size === 'md') && (! $labelSrOnly),
+        'ml-2 -mr-3 rtl:mr-2 rtl:-ml-3' => ($iconPosition === 'after') && ($size === 'lg') && (! $labelSrOnly),
+        'ml-1 -mr-1.5 rtl:mr-1 rtl:-ml-1.5' => ($iconPosition === 'after') && ($size === 'sm') && (! $labelSrOnly),
     ]);
 
     $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || (($type === 'submit') && filled($form));
@@ -81,7 +82,6 @@
         {!! $disabled ? 'disabled' : '' !!}
         x-data="{
             form: null,
-            label: {{ \Illuminate\Support\Js::from($slot->toHtml()) }},
             isUploadingFile: false,
         }"
         @unless ($disabled)
@@ -124,11 +124,15 @@
                     {{ __('filament-support::components/button.messages.uploading_file') }}
                 </span>
 
-                <span x-show="! isUploadingFile">
+                <span x-show="! isUploadingFile" @class([
+                    'sr-only' => $labelSrOnly,
+                ])>
                     {{ $slot }}
                 </span>
             @else
-                <span>
+                <span @class([
+                    'sr-only' => $labelSrOnly,
+                ])>
                     {{ $slot }}
                 </span>
             @endif
@@ -154,8 +158,10 @@
         @if ($icon && $iconPosition === 'before')
             <x-dynamic-component :component="$icon" :class="$iconClasses" />
         @endif
-
-        <span>
+        
+        <span @class([
+            'sr-only' => $labelSrOnly,
+        ])>
             {{ $slot }}
         </span>
 
