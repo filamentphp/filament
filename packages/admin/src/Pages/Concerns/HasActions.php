@@ -77,12 +77,6 @@ trait HasActions
     {
         $this->mountedAction = $name;
 
-        /**
-         * in cases where page action is used on the same page as a table action,
-         * the modal will still have old mountedTableAction value.
-         **/
-        $this->mountedTableAction = null;
-
         $action = $this->getMountedAction();
 
         if (! $action) {
@@ -201,7 +195,8 @@ trait HasActions
         return $this->makeForm()
             ->schema($action->getFormSchema())
             ->statePath('mountedActionData')
-            ->model($this->getMountedActionFormModel());
+            ->model($this->getMountedActionFormModel())
+            ->context($this->mountedAction);
     }
 
     protected function getMountedActionFormModel(): Model | string | null

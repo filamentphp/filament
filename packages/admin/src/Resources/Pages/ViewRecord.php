@@ -169,6 +169,7 @@ class ViewRecord extends Page
     {
         return [
             'form' => $this->makeForm()
+                ->context('view')
                 ->disabled()
                 ->model($this->getRecord())
                 ->schema($this->getFormSchema())

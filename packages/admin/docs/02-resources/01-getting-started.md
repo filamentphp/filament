@@ -139,11 +139,11 @@ To view a full list of available [layout components](../../forms/layout), see th
 
 You may also build your own completely [custom layout components](../../forms/layout#building-custom-layout-components).
 
-### Hiding components based on the page
+### Hiding components contextually
 
-The `hiddenOn()` method of form components allows you to dynamically hide fields based on the current page.
+The `hiddenOn()` method of form components allows you to dynamically hide fields based on the current page or action.
 
-In this example, we hide the `password` field on the `EditUser` resource page:
+In this example, we hide the `password` field on the `edit` page:
 
 ```php
 use Livewire\Component;
@@ -151,10 +151,10 @@ use Livewire\Component;
 Forms\Components\TextInput::make('password')
     ->password()
     ->required()
-    ->hiddenOn(Pages\EditUser::class),
+    ->hiddenOn('edit'),
 ```
 
-Alternatively, we have a `visibleOn()` shortcut method for only showing a field on one page:
+Alternatively, we have a `visibleOn()` shortcut method for only showing a field on one page or action:
 
 ```php
 use Livewire\Component;
@@ -162,7 +162,7 @@ use Livewire\Component;
 Forms\Components\TextInput::make('password')
     ->password()
     ->required()
-    ->visibleOn(Pages\CreateUser::class),
+    ->visibleOn('create'),
 ```
 
 ## Tables
