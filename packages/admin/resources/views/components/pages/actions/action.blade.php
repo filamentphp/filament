@@ -30,7 +30,7 @@
     :disabled="$action->isDisabled()"
     :icon="$icon ?? $action->getIcon()"
     :size="$action->getSize()"
-    :is-label-hidden="$action->isLabelHidden()"
+    :label-sr-only="$action->isLabelHidden()"
     dusk="filament.admin.action.{{ $action->getName() }}"
 >
     {{ $slot }}
