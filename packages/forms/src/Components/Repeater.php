@@ -244,21 +244,18 @@ class Repeater extends Field
 
         $records = $relationship ? $this->getCachedExistingRecords() : null;
 
-        $state = $this->getState();
+        $containers = [];
 
-        array_walk(
-            $state,
-            function ($itemData, $itemKey) use ($records, $relationship): ComponentContainer {
-                return $this
-                    ->getChildComponentContainer()
-                    ->getClone()
-                    ->statePath($itemKey)
-                    ->model($relationship ? $records[$itemKey] ?? $this->getRelatedModel() : null)
-                    ->inlineLabel(false);
-            },
-        );
+        foreach ($this->getState() as $itemKey => $itemData) {
+            $containers[$itemKey] = $this
+                ->getChildComponentContainer()
+                ->getClone()
+                ->statePath($itemKey)
+                ->model($relationship ? $records[$itemKey] ?? $this->getRelatedModel() : null)
+                ->inlineLabel(false);
+        }
 
-        return $state;
+        return $containers;
     }
 
     public function getCreateItemButtonLabel(): string
