@@ -245,7 +245,7 @@ class Repeater extends Field
 
         $containers = [];
 
-        foreach ($this->getState() as $itemKey => $itemData) {
+        foreach ($this->getState() ?? [] as $itemKey => $itemData) {
             $containers[$itemKey] = $this
                 ->getChildComponentContainer()
                 ->getClone()
