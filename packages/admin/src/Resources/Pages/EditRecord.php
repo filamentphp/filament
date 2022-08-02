@@ -286,6 +286,7 @@ class EditRecord extends Page implements HasFormActions
     {
         return [
             'form' => $this->makeForm()
+                ->context('edit')
                 ->model($this->getRecord())
                 ->schema($this->getFormSchema())
                 ->statePath('data')

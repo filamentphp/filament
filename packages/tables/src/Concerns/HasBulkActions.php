@@ -160,7 +160,8 @@ trait HasBulkActions
         return $this->makeForm()
             ->schema($action->getFormSchema())
             ->model($this->getTableQuery()->getModel()::class)
-            ->statePath('mountedTableBulkActionData');
+            ->statePath('mountedTableBulkActionData')
+            ->context($this->mountedTableBulkAction);
     }
 
     public function getCachedTableBulkAction(string $name): ?BulkAction

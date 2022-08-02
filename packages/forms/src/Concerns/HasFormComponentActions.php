@@ -38,7 +38,8 @@ trait HasFormComponentActions
         return $this->makeForm()
             ->schema($action->getFormSchema())
             ->model($this->getMountedFormComponentActionComponent()->getActionFormModel())
-            ->statePath('mountedFormComponentActionData');
+            ->statePath('mountedFormComponentActionData')
+            ->context($this->mountedFormComponentAction);
     }
 
     public function callMountedFormComponentAction(?string $arguments = null)

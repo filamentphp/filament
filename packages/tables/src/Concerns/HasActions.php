@@ -184,7 +184,8 @@ trait HasActions
         return $this->makeForm()
             ->schema($action->getFormSchema())
             ->model($this->getMountedTableActionRecord() ?? $this->getTableQuery()->getModel()::class)
-            ->statePath('mountedTableActionData');
+            ->statePath('mountedTableActionData')
+            ->context($this->mountedTableAction);
     }
 
     public function getMountedTableActionRecord(): ?Model

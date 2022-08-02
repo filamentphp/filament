@@ -195,7 +195,8 @@ trait HasActions
         return $this->makeForm()
             ->schema($action->getFormSchema())
             ->statePath('mountedActionData')
-            ->model($this->getMountedActionFormModel());
+            ->model($this->getMountedActionFormModel())
+            ->context($this->mountedAction);
     }
 
     protected function getMountedActionFormModel(): Model | string | null

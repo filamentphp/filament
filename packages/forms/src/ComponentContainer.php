@@ -16,6 +16,7 @@ class ComponentContainer extends ViewComponent
     use Concerns\Cloneable;
     use Concerns\HasColumns;
     use Concerns\HasComponents;
+    use Concerns\HasContext;
     use Concerns\HasFieldWrapper;
     use Concerns\HasInlineLabels;
     use Concerns\HasState;

@@ -158,6 +158,7 @@ class CreateRecord extends Page implements HasFormActions
     {
         return [
             'form' => $this->makeForm()
+                ->context('create')
                 ->model($this->getModel())
                 ->schema($this->getFormSchema())
                 ->statePath('data')
