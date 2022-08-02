@@ -45,7 +45,7 @@
                                 dusk="filament.forms.{{ $getStatePath() }}"
                                 {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
                                 {{ $getExtraInputAttributeBag()->class([
-                                    'focus:ring-primary-500 h-4 w-4 text-primary-600',
+                                    'focus:ring-primary-500 h-4 w-4 text-primary-600 disabled:opacity-70',
                                     'dark:bg-gray-700 dark:checked:bg-primary-500' => config('forms.dark_mode'),
                                     'border-gray-300' => ! $errors->has($getStatePath()),
                                     'dark:border-gray-500' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
