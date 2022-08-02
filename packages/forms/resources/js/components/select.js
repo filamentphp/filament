@@ -167,11 +167,15 @@ export default (Alpine) => {
             },
 
             transformOptionsIntoChoices: function (options) {
-                return Object.entries(options)
-                    .map(([value, label]) => ({
-                        label,
-                        value,
-                    }))
+                return Object.values(options)
+                    .map((option) => {
+                        let [value, label] = Object.entries(option)[0]
+
+                        return {
+                            label,
+                            value,
+                        }
+                    });
             },
 
             refreshPlaceholder: function () {
@@ -210,16 +214,17 @@ export default (Alpine) => {
                         return {}
                     }
 
-                    return await getOptionLabelsUsing()
+                    return Object.entries(await getOptionLabelsUsing())
+                        .map(([value, label]) => ({[value]: label}));
                 }
 
                 if (this.state in options) {
                     return options
                 }
 
-                let missingOptions = {}
-                missingOptions[this.state] = await getOptionLabelUsing()
-                return missingOptions
+                return [{
+                    [this.state]: await getOptionLabelUsing()
+                }]
             },
         }
     })

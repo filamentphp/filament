@@ -87,7 +87,7 @@
                         loadingMessage: @js($getLoadingMessage()),
                         maxItems: @js($getMaxItems()),
                         noSearchResultsMessage: @js($getNoSearchResultsMessage()),
-                        options: @js($getOptions()),
+                        options: @js($getOptionsForJs()),
                         placeholder: @js($getPlaceholder()),
                         searchingMessage: @js($getSearchingMessage()),
                         searchPrompt: @js($getSearchPrompt()),

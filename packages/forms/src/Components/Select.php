@@ -395,7 +395,10 @@ class Select extends Field
             $results = $results->toArray();
         }
 
-        return $results;
+        return collect($results)
+            ->map(fn ($option, $key) => [$key => $option])
+            ->values()
+            ->all();
     }
 
     public function isHtmlAllowed(): bool
@@ -445,12 +448,16 @@ class Select extends Field
         $this->getSearchResultsUsing(static function (Select $component, ?string $search) use ($callback): array {
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getRelationshipTitleColumnName());
+            $relationshipQuery = $relationship->getRelated()->query();
 
             if ($callback) {
                 $relationshipQuery = $component->evaluate($callback, [
                     'query' => $relationshipQuery,
                 ]);
+            }
+
+            if (empty($relationshipQuery->getQuery()->orders)) {
+                $relationshipQuery->orderBy($component->getRelationshipTitleColumnName());
             }
 
             $component->applySearchConstraint(
@@ -483,7 +490,7 @@ class Select extends Field
 
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getRelationshipTitleColumnName());
+            $relationshipQuery = $relationship->getRelated()->query(); //->orderBy($component->getRelationshipTitleColumnName());
 
             if ($callback) {
                 $newRelationshipQuery = $component->evaluate($callback, [
