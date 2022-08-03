@@ -233,7 +233,7 @@ trait HasState
         return $state;
     }
 
-    public function getRawState(): array
+    public function getRawState(): array|string
     {
         return data_get($this->getLivewire(), $this->getStatePath()) ?? [];
     }
