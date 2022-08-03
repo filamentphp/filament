@@ -42,7 +42,7 @@ class Builder extends Field
         $this->afterStateHydrated(static function (Builder $component, ?array $state): void {
             $items = [];
 
-            foreach ($state as $itemData) {
+            foreach ($state ?? [] as $itemData) {
                 $items[(string) Str::uuid()] = $itemData;
             }
 
@@ -71,7 +71,7 @@ class Builder extends Field
                     if ($afterUuid) {
                         $newItems = [];
 
-                        foreach ($component->getState() as $uuid => $item) {
+                        foreach ($component->getState() ?? [] as $uuid => $item) {
                             $newItems[$uuid] = $item;
 
                             if ($uuid === $afterUuid) {
