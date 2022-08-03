@@ -1,3 +1,5 @@
+{{ \Filament\Facades\Filament::renderHook('footer.start') }}
+
 @if (config('filament.layout.footer.should_show_logo'))
     <div class="flex items-center justify-center filament-footer">
         <a
@@ -15,3 +17,5 @@
         </a>
     </div>
 @endif
+
+{{ \Filament\Facades\Filament::renderHook('footer.end') }}
