@@ -74,14 +74,14 @@ body:
       id: steps
       attributes:
           label: Steps to reproduce
-          description: Which steps do we need to take to reproduce the problem? Any code examples need to be **as short as possible**, remove any code that is unrelated to the bug.
+          description: Which steps do we need to take to reproduce the problem? Any code examples need to be **as short as possible**, remove any code that is unrelated to the bug.  **This issue will be automatically closed and not reviewed if detailed replication steps are missing.**
       validations:
           required: true
     - type: input
       id: reproduction
       attributes:
           label: Reproduction repository
-          description: The URL of a public Git repository which contains the minimal amount of code to reproduce the problem. This allows us to fix the problem much quicker.
+          description: The URL of a public Git repository which contains the minimal amount of code to reproduce the problem. This allows us to fix the problem much quicker. **This issue will be automatically closed and not reviewed if this is missing. Please make sure to format the URL starting with `https://github.com`.**
       validations:
           required: true
     - type: textarea
