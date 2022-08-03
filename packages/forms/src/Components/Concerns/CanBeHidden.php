@@ -23,7 +23,7 @@ trait CanBeHidden
     {
         $this->hidden(static function (string $context, HasForms $livewire) use ($contexts): bool {
             foreach (Arr::wrap($contexts) as $hiddenContext) {
-                if (in_array($hiddenContext, [$context, $livewire::class])) {
+                if ($hiddenContext === $context || $livewire instanceof $hiddenContext) {
                     return true;
                 }
             }
@@ -86,7 +86,7 @@ trait CanBeHidden
     {
         $this->visible(static function (string $context, HasForms $livewire) use ($contexts): bool {
             foreach (Arr::wrap($contexts) as $visibleContext) {
-                if (in_array($visibleContext, [$context, $livewire::class])) {
+                if ($visibleContext === $context || $livewire instanceof $visibleContext) {
                     return true;
                 }
             }
