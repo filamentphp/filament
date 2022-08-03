@@ -218,6 +218,7 @@ class FilamentServiceProvider extends PluginServiceProvider
     protected function bootLivewireComponents(): void
     {
         Livewire::addPersistentMiddleware([
+            ...config('filament.middleware.auth'),
             DispatchServingFilamentEvent::class,
             MirrorConfigToSubpackages::class,
         ]);
