@@ -56,7 +56,7 @@ class SpatieLaravelTranslatablePluginServiceProvider extends ServiceProvider
 
     protected function mergeConfigFrom($path, $key): void
     {
-        $config = $this->app['config']->get($key, []);
+        $config = $this->app['config']->get($key) ?? [];
 
         $this->app['config']->set($key, $this->mergeConfig(require $path, $config));
     }

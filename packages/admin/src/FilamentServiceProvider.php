@@ -103,9 +103,9 @@ class FilamentServiceProvider extends PluginServiceProvider
 
     protected function registerComponents(): void
     {
-        $this->pages = config('filament.pages.register', []);
-        $this->resources = config('filament.resources.register', []);
-        $this->widgets = config('filament.widgets.register', []);
+        $this->pages = config('filament.pages.register') ?? [];
+        $this->resources = config('filament.resources.register') ?? [];
+        $this->widgets = config('filament.widgets.register') ?? [];
 
         $directory = config('filament.livewire.path');
         $namespace = config('filament.livewire.namespace');
@@ -274,7 +274,7 @@ class FilamentServiceProvider extends PluginServiceProvider
 
     protected function mergeConfigFrom($path, $key): void
     {
-        $config = $this->app['config']->get($key, []);
+        $config = $this->app['config']->get($key) ?? [];
 
         $this->app['config']->set($key, $this->mergeConfig(require $path, $config));
     }
