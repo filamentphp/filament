@@ -5,6 +5,7 @@ namespace Filament;
 use Filament\Facades\Filament;
 use Filament\Http\Livewire\Auth\Login;
 use Filament\Http\Livewire\GlobalSearch;
+use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\MirrorConfigToSubpackages;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse as LoginResponseContract;
@@ -218,6 +219,7 @@ class FilamentServiceProvider extends PluginServiceProvider
     protected function bootLivewireComponents(): void
     {
         Livewire::addPersistentMiddleware([
+            Authenticate::class,
             DispatchServingFilamentEvent::class,
             MirrorConfigToSubpackages::class,
         ]);
