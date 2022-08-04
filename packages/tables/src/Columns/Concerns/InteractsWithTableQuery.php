@@ -109,7 +109,7 @@ trait InteractsWithTableQuery
 
     public function queriesRelationships(): bool
     {
-        return Str::of($this->getName())->contains('.');
+        return Str::of($this->getName())->contains('.') && $this->getRecord()?->isRelation($this->getRelationshipName());
     }
 
     protected function getRelationshipDisplayColumnName(): string
