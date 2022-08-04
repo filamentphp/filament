@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static void getLocaleLabelUsing(?Closure $callback)
- * @method static ?string getLocaleLabel(string $locale)
+ * @method static ?string getLocaleLabel(string $locale, ?string $displayLocale = null)
  *
  * @see SpatieLaravelTranslatablePluginManager
  */

@@ -27,7 +27,7 @@ class LocaleSwitcher extends SelectAction
             $locales = [];
 
             foreach ($livewire->getTranslatableLocales() as $locale) {
-                $locales[$locale] = SpatieLaravelTranslatablePlugin::getLocaleLabel($locale, app()->getLocale());
+                $locales[$locale] = SpatieLaravelTranslatablePlugin::getLocaleLabel($locale);
             }
 
             return $locales;
