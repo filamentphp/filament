@@ -90,7 +90,7 @@
                 x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                 @if (! $getStateBindingModifiers())
                     wire:ignore.self
-                    wire:key="reactiveDateTimeInput-{{ $this->id }}"
+                    wire:key="dateTimePickerPanel-{{ $this->id }}"
                 @endif
                 @class([
                     'absolute hidden z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-md',
