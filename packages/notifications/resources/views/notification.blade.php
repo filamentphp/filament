@@ -17,25 +17,25 @@
     ])"
     x-transition:leave-end="scale-95 opacity-0"
 >
-    @if ($getIcon())
-        <x-notifications::icon :icon="$getIcon()" :color="$getIconColor()" />
+    @if ($icon = $getIcon())
+        <x-notifications::icon :icon="$icon" :color="$getIconColor()" />
     @endif
 
     <div class="grid flex-1">
-        @if ($getTitle())
+        @if ($title = $getTitle())
             <x-notifications::title>
-                {!! \Illuminate\Support\Str::of($getTitle())->markdown()->sanitizeHtml() !!}
+                {{ \Illuminate\Support\Str::of($title)->markdown()->sanitizeHtml()->toHtmlString() }}
             </x-notifications::title>
         @endif
 
-        @if ($getBody())
+        @if ($body = $getBody())
             <x-notifications::body>
-                {!! \Illuminate\Support\Str::of($getBody())->markdown()->sanitizeHtml() !!}
+                {{ \Illuminate\Support\Str::of($body)->markdown()->sanitizeHtml()->toHtmlString() }}
             </x-notifications::body>
         @endif
 
-        @if ($getActions())
-            <x-notifications::actions :actions="$getActions()" />
+        @if ($actions = $getActions())
+            <x-notifications::actions :actions="$actions" />
         @endif
     </div>
 
