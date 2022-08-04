@@ -88,7 +88,7 @@
                 x-ref="panel"
                 x-cloak
                 x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
-                @if (! $getStateBindingModifiers())
+                @unless ($isDeferred())
                     wire:ignore.self
                     wire:key="dateTimePickerPanel-{{ $getStatePath() }}"
                 @endif
