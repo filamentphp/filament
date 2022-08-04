@@ -17,10 +17,12 @@ class SpatieLaravelTranslatablePluginManager
     {
         $displayLocale ??= app()->getLocale();
 
+        $label = null;
+
         if ($callback = $this->getLocaleLabelUsing) {
-            return $callback($locale, $displayLocale);
+            $label = $callback($locale, $displayLocale);
         }
 
-        return locale_get_display_name($locale, $displayLocale) ?: null;
+        return $label ?? (locale_get_display_name($locale, $displayLocale) ?: null);
     }
 }
