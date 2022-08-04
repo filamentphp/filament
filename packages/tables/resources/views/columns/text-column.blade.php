@@ -12,7 +12,7 @@
 >
     @if (filled($description) && $descriptionPosition === 'above')
         <span class="block text-sm text-gray-400">
-            {!! \Illuminate\Support\Str::of($description)->markdown()->sanitizeHtml() !!}
+            {{ $description instanceof \Illuminate\Support\HtmlString ? $description : \Illuminate\Support\Str::of($description)->markdown()->sanitizeHtml()->toHtmlString() }}
         </span>
     @endif
 
@@ -20,7 +20,7 @@
 
     @if (filled($description) && $descriptionPosition === 'below')
         <span class="block text-sm text-gray-400">
-            {!! \Illuminate\Support\Str::of($description)->markdown()->sanitizeHtml() !!}
+            {{ $description instanceof \Illuminate\Support\HtmlString ? $description : \Illuminate\Support\Str::of($description)->markdown()->sanitizeHtml()->toHtmlString() }}
         </span>
     @endif
 </div>

@@ -3,14 +3,15 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Illuminate\Support\HtmlString;
 
 trait HasHint
 {
-    protected string | Closure | null $hint = null;
+    protected string | HtmlString | Closure | null $hint = null;
 
     protected string | Closure | null $hintIcon = null;
 
-    public function hint(string | Closure | null $hint): static
+    public function hint(string | HtmlString | Closure | null $hint): static
     {
         $this->hint = $hint;
 
@@ -24,7 +25,7 @@ trait HasHint
         return $this;
     }
 
-    public function getHint(): ?string
+    public function getHint(): string | HtmlString | null
     {
         return $this->evaluate($this->hint);
     }
