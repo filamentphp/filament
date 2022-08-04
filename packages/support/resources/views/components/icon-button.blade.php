@@ -73,7 +73,7 @@
         @endif
         {{ $attributes->class($buttonClasses) }}
         @if ($label)
-            alt="{{ $label }}"
+            title="{{ $label }}"
         @endif
     >
         @if ($label)
