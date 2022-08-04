@@ -48,6 +48,9 @@
             x-data="{}"
         @endif
         {{ $attributes->class($buttonClasses) }}
+        @if ($label)
+            title="{{ $label }}"
+        @endif
     >
         @if ($label)
             <span class="sr-only">
@@ -69,6 +72,9 @@
             x-tooltip.raw="{{ $tooltip }}"
         @endif
         {{ $attributes->class($buttonClasses) }}
+        @if ($label)
+            alt="{{ $label }}"
+        @endif
     >
         @if ($label)
             <span class="sr-only">
