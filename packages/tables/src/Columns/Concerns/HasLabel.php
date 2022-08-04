@@ -19,7 +19,7 @@ trait HasLabel
     public function getLabel(): string
     {
         return $this->evaluate($this->label) ?? (string) Str::of($this->getName())
-            ->before('.')
+            ->when($this->queriesRelationships(), fn ($label) => $label->before('.'), fn ($label) => $label->after('.'))
             ->kebab()
             ->replace(['-', '_'], ' ')
             ->ucfirst();
