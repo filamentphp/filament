@@ -10,7 +10,7 @@ Filament has a few requirements to run:
 - Laravel v8.0+
 - Livewire v2.0+
 
-This package is compatible with other Filament v2.x products. The [form builder](/docs/forms) and [table builder](/docs/tables) come pre-installed with the package, and no other installation steps are required to use them within the admin panel.
+This package is compatible with other Filament v2.x products. The [form builder](/docs/forms), [table builder](/docs/tables) and [notifications](/docs/notifications) come pre-installed with the package, and no other installation steps are required to use them within the admin panel.
 
 ## Installation
 
@@ -18,6 +18,15 @@ To get started with the admin panel, you can install it using the command:
 
 ```bash
 composer require filament/filament:"^2.0"
+```
+
+Each time you upgrade Filament, you need to run the `filament:upgrade` command. We recommend adding this to your `composer.json`'s `post-update-cmd`:
+
+```json
+"post-update-cmd": [
+    // ...
+    "@php artisan filament:upgrade"
+],
 ```
 
 If you don't have one, you may create a new user account using:
@@ -28,7 +37,7 @@ php artisan make:filament-user
 
 Visit your admin panel at `/admin` to sign in, and you're now ready to start [building resources](resources)!
 
-[<img src="https://user-images.githubusercontent.com/41773797/147615302-daec5d1c-e3ac-428a-98c2-c3fb40d945b5.png">](https://demo.filamentphp.com)
+[![](https://user-images.githubusercontent.com/41773797/147615302-daec5d1c-e3ac-428a-98c2-c3fb40d945b5.png)](https://demo.filamentphp.com)
 
 ## Deploying to production
 
@@ -54,25 +63,16 @@ If you wish to translate the package, you may publish the language files using:
 php artisan vendor:publish --tag=filament-translations
 ```
 
-## Upgrade Guide
+## Upgrading
 
 To upgrade the package to the latest version, you must run:
-
-```bash
-php artisan config:clear
-php artisan livewire:discover
-php artisan route:clear
-php artisan view:clear
-```
-
-Alternatively, you may use the `filament:upgrade` command to do this all at once:
 
 ```bash
 composer update
 php artisan filament:upgrade
 ```
 
-We recommend adding these commands to your `composer.json`'s `post-update-cmd`:
+We recommend adding the `filament:upgrade` command to your `composer.json`'s `post-update-cmd` to run it automatically:
 
 ```json
 "post-update-cmd": [

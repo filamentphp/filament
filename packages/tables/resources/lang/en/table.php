@@ -2,6 +2,14 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 'and :count more',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -45,6 +53,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Finish reordering records',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Reorder records',
+        ],
+
         'filter' => [
             'label' => 'Filter',
         ],
@@ -53,30 +69,8 @@ return [
             'label' => 'Open actions',
         ],
 
-    ],
-
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Are you sure you would like to do this?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Cancel',
-                ],
-
-                'confirm' => [
-                    'label' => 'Confirm',
-                ],
-
-                'submit' => [
-                    'label' => 'Submit',
-                ],
-
-            ],
-
+        'toggle_columns' => [
+            'label' => 'Toggle columns',
         ],
 
     ],
@@ -107,7 +101,21 @@ return [
             'placeholder' => 'All',
         ],
 
+        'trashed' => [
+
+            'label' => 'Deleted records',
+
+            'only_trashed' => 'Only deleted records',
+
+            'with_trashed' => 'With deleted records',
+
+            'without_trashed' => 'Without deleted records',
+
+        ],
+
     ],
+
+    'reorder_indicator' => 'Drag and drop the records into order.',
 
     'selection_indicator' => [
 

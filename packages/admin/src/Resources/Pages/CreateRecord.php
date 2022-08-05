@@ -3,11 +3,10 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Forms\ComponentContainer;
+use Filament\Notifications\Notification;
 use Filament\Pages\Actions\Action;
-use Filament\Pages\Actions\ButtonAction;
 use Filament\Pages\Contracts\HasFormActions;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 /**
  * @property ComponentContainer $form
@@ -66,11 +65,10 @@ class CreateRecord extends Page implements HasFormActions
         $this->callHook('afterCreate');
 
         if (filled($this->getCreatedNotificationMessage())) {
-            $this->notify(
-                'success',
-                $this->getCreatedNotificationMessage(),
-                isAfterRedirect: ! $another,
-            );
+            Notification::make()
+                ->title($this->getCreatedNotificationMessage())
+                ->success()
+                ->send();
         }
 
         if ($another) {
@@ -91,14 +89,14 @@ class CreateRecord extends Page implements HasFormActions
         return __('filament::resources/pages/create-record.messages.created');
     }
 
-    public function createAndCreateAnother(): void
+    public function createAnother(): void
     {
         $this->create(another: true);
     }
 
     protected function handleRecordCreation(array $data): Model
     {
-        return static::getModel()::create($data);
+        return $this->getModel()::create($data);
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array
@@ -110,29 +108,36 @@ class CreateRecord extends Page implements HasFormActions
     {
         return array_merge(
             [$this->getCreateFormAction()],
-            static::canCreateAnother() ? [$this->getCreateAndCreateAnotherFormAction()] : [],
+            static::canCreateAnother() ? [$this->getCreateAnotherFormAction()] : [],
             [$this->getCancelFormAction()],
         );
     }
 
     protected function getCreateFormAction(): Action
     {
-        return ButtonAction::make('create')
+        return Action::make('create')
             ->label(__('filament::resources/pages/create-record.form.actions.create.label'))
-            ->submit('create');
+            ->submit('create')
+            ->keyBindings(['mod+s']);
     }
 
-    protected function getCreateAndCreateAnotherFormAction(): Action
+    protected function getSubmitFormAction(): Action
     {
-        return ButtonAction::make('createAnother')
-            ->label(__('filament::resources/pages/create-record.form.actions.create_and_create_another.label'))
-            ->action('createAndCreateAnother')
+        return $this->getCreateFormAction();
+    }
+
+    protected function getCreateAnotherFormAction(): Action
+    {
+        return Action::make('createAnother')
+            ->label(__('filament::resources/pages/create-record.form.actions.create_another.label'))
+            ->action('createAnother')
+            ->keyBindings(['mod+shift+s'])
             ->color('secondary');
     }
 
     protected function getCancelFormAction(): Action
     {
-        return ButtonAction::make('cancel')
+        return Action::make('cancel')
             ->label(__('filament::resources/pages/create-record.form.actions.cancel.label'))
             ->url(static::getResource()::getUrl())
             ->color('secondary');
@@ -145,7 +150,7 @@ class CreateRecord extends Page implements HasFormActions
         }
 
         return __('filament::resources/pages/create-record.title', [
-            'label' => Str::title(static::getResource()::getLabel()),
+            'label' => static::getResource()::getModelLabel(),
         ]);
     }
 
@@ -153,23 +158,29 @@ class CreateRecord extends Page implements HasFormActions
     {
         return [
             'form' => $this->makeForm()
-                ->model(static::getModel())
-                ->schema($this->getResourceForm(columns: config('filament.layout.forms.have_inline_labels') ? 1 : 2)->getSchema())
+                ->context('create')
+                ->model($this->getModel())
+                ->schema($this->getFormSchema())
                 ->statePath('data')
                 ->inlineLabel(config('filament.layout.forms.have_inline_labels')),
         ];
+    }
+
+    protected function getFormSchema(): array
+    {
+        return $this->getResourceForm(columns: config('filament.layout.forms.have_inline_labels') ? 1 : 2)->getSchema();
     }
 
     protected function getRedirectUrl(): string
     {
         $resource = static::getResource();
 
-        if ($resource::hasPage('edit') && $resource::canEdit($this->record)) {
-            return $resource::getUrl('edit', ['record' => $this->record]);
-        }
-
         if ($resource::hasPage('view') && $resource::canView($this->record)) {
             return $resource::getUrl('view', ['record' => $this->record]);
+        }
+
+        if ($resource::hasPage('edit') && $resource::canEdit($this->record)) {
+            return $resource::getUrl('edit', ['record' => $this->record]);
         }
 
         return $resource::getUrl('index');
@@ -177,7 +188,7 @@ class CreateRecord extends Page implements HasFormActions
 
     protected function getMountedActionFormModel(): string
     {
-        return static::getModel();
+        return $this->getModel();
     }
 
     protected static function canCreateAnother(): bool

@@ -10,15 +10,27 @@ use Illuminate\Support\Str;
 
 trait InteractsWithTableQuery
 {
-    public function applyRelationshipCount(Builder $query): Builder
+    public function applyRelationshipAggregates(Builder $query): Builder
     {
-        $relationship = $this->getRelationshipToCount();
-
-        if (filled($relationship)) {
-            return $query->withCount([$relationship]);
-        }
-
-        return $query;
+        return $query->when(
+            filled([$this->getRelationshipToAvg(), $this->getColumnToAvg()]),
+            fn ($query) => $query->withAvg($this->getRelationshipToAvg(), $this->getColumnToAvg())
+        )->when(
+            filled($this->getRelationshipToCount()),
+            fn ($query) => $query->withCount([$this->getRelationshipToCount()])
+        )->when(
+            filled($this->getRelationshipToExistenceCheck()),
+            fn ($query) => $query->withExists($this->getRelationshipToExistenceCheck())
+        )->when(
+            filled([$this->getRelationshipToMax(), $this->getColumnToMax()]),
+            fn ($query) => $query->withMax($this->getRelationshipToMax(), $this->getColumnToMax())
+        )->when(
+            filled([$this->getRelationshipToMin(), $this->getColumnToMin()]),
+            fn ($query) => $query->withMin($this->getRelationshipToMin(), $this->getColumnToMin())
+        )->when(
+            filled([$this->getRelationshipToSum(), $this->getColumnToSum()]),
+            fn ($query) => $query->withSum($this->getRelationshipToSum(), $this->getColumnToSum())
+        );
     }
 
     public function applyEagerLoading(Builder $query): Builder
@@ -34,13 +46,22 @@ trait InteractsWithTableQuery
         return $query;
     }
 
-    public function applySearchConstraint(Builder $query, string $searchQuery, bool &$isFirst): Builder
+    public function applySearchConstraint(Builder $query, string $search, bool &$isFirst): Builder
     {
         if ($this->isHidden()) {
             return $query;
         }
 
         if (! $this->isSearchable()) {
+            return $query;
+        }
+
+        if ($this->searchQuery) {
+            $this->evaluate($this->searchQuery, [
+                'query' => $query,
+                'search' => $search,
+            ]);
+
             return $query;
         }
 
@@ -52,21 +73,39 @@ trait InteractsWithTableQuery
             default => 'like',
         };
 
+        $model = $query->getModel();
+
         foreach ($this->getSearchColumns() as $searchColumnName) {
             $whereClause = $isFirst ? 'where' : 'orWhere';
 
             $query->when(
-                $this->queriesRelationships(),
-                fn ($query) => $query->{"{$whereClause}Relation"}(
-                    $this->getRelationshipName(),
-                    $searchColumnName,
-                    $searchOperator,
-                    "%{$searchQuery}%",
-                ),
-                fn ($query) => $query->{$whereClause}(
-                    $searchColumnName,
-                    $searchOperator,
-                    "%{$searchQuery}%",
+                method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchColumnName),
+                function (Builder $query) use ($searchColumnName, $searchOperator, $search, $whereClause, $databaseConnection): Builder {
+                    $activeLocale = $this->getLivewire()->getActiveTableLocale() ?: app()->getLocale();
+
+                    $searchColumn = match ($databaseConnection->getDriverName()) {
+                        'pgsql' => "{$searchColumnName}->>'{$activeLocale}'",
+                        default => "json_extract({$searchColumnName}, \"$.{$activeLocale}\")",
+                    };
+
+                    return $query->{"{$whereClause}Raw"}(
+                        "lower({$searchColumn}) {$searchOperator} ?",
+                        "%{$search}%",
+                    );
+                },
+                fn (Builder $query): Builder => $query->when(
+                    $this->queriesRelationships(),
+                    fn (Builder $query): Builder => $query->{"{$whereClause}Relation"}(
+                        $this->getRelationshipName(),
+                        $searchColumnName,
+                        $searchOperator,
+                        "%{$search}%",
+                    ),
+                    fn (Builder $query): Builder => $query->{$whereClause}(
+                        $searchColumnName,
+                        $searchOperator,
+                        "%{$search}%",
+                    ),
                 ),
             );
 
@@ -86,7 +125,16 @@ trait InteractsWithTableQuery
             return $query;
         }
 
-        foreach (array_reverse($this->getSortColumns()) as $sortColumnName) {
+        if ($this->sortQuery) {
+            $this->evaluate($this->sortQuery, [
+                'direction' => $direction,
+                'query' => $query,
+            ]);
+
+            return $query;
+        }
+
+        foreach (array_reverse($this->getSortColumns()) as $sortColumn) {
             $query->when(
                 $this->queriesRelationships(),
                 fn ($query) => $query->orderBy(
@@ -95,12 +143,12 @@ trait InteractsWithTableQuery
                         ->getRelationExistenceQuery(
                             $this->getRelatedModel($query)->query(),
                             $query,
-                            $sortColumnName,
+                            $sortColumn,
                         )
                         ->getQuery(),
                     $direction,
                 ),
-                fn ($query) => $query->orderBy($sortColumnName, $direction),
+                fn ($query) => $query->orderBy($sortColumn, $direction),
             );
         }
 
@@ -112,7 +160,7 @@ trait InteractsWithTableQuery
         return Str::of($this->getName())->contains('.') && $this->getRecord()?->isRelation($this->getRelationshipName());
     }
 
-    protected function getRelationshipDisplayColumnName(): string
+    protected function getRelationshipTitleColumnName(): string
     {
         return (string) Str::of($this->getName())->afterLast('.');
     }

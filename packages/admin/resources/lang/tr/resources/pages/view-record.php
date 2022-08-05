@@ -2,14 +2,8 @@
 
 return [
 
+    'title' => ':label görüntüle',
+
     'breadcrumb' => 'Görüntüle',
-
-    'actions' => [
-
-        'edit' => [
-            'label' => 'Düzenle',
-        ],
-
-    ],
 
 ];

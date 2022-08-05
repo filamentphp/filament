@@ -1,5 +1,5 @@
 ---
-title: Table Columns
+title: Table columns
 ---
 
 To use the media library image column:
@@ -18,7 +18,7 @@ use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 SpatieMediaLibraryImageColumn::make('avatar')->collection('avatars'),
 ```
 
-The [collection](https://spatie.be/docs/laravel-medialibrary/v9/working-with-media-collections/simple-media-collections) you to group files into categories.
+The [collection](https://spatie.be/docs/laravel-medialibrary/working-with-media-collections/simple-media-collections) you to group files into categories.
 
 You may also specify a `conversion()` to use, if present:
 

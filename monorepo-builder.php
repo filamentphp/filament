@@ -12,7 +12,7 @@ use Symplify\MonorepoBuilder\Release\ReleaseWorker\UpdateReplaceReleaseWorker;
 return static function (ContainerConfigurator $containerConfigurator): void {
     $services = $containerConfigurator->services();
 
-    # Release workers - in order to execute
+    // Release workers - in order to execute
     $services->set(UpdateReplaceReleaseWorker::class);
     $services->set(SetCurrentMutualDependenciesReleaseWorker::class);
     $services->set(TagVersionReleaseWorker::class);

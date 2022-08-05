@@ -4,14 +4,12 @@ return [
 
     'builder' => [
 
+        'collapsed' => 'İçerik daraltıldı',
+
         'buttons' => [
 
             'create_item' => [
                 'label' => ':label kaynağına ekle',
-            ],
-
-            'create_item_between' => [
-                'label' => 'Arasına ekle',
             ],
 
             'delete_item' => [
@@ -24,6 +22,22 @@ return [
 
             'move_item_up' => [
                 'label' => 'Yukarı taşı',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Daralt',
+            ],
+
+            'expand_item' => [
+                'label' => 'Genişlet',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Tümünü daralt',
+            ],
+
+            'expand_all' => [
+                'label' => 'Tümünü genişlet',
             ],
 
         ],
@@ -61,27 +75,23 @@ return [
     'markdown_editor' => [
 
         'toolbar_buttons' => [
-            'attach_files' => 'Dosya Ekle',
+            'attach_files' => 'Dosya ekle',
             'bold' => 'Kalın',
             'bullet_list' => 'Liste',
             'code_block' => 'Kod bloğu',
             'edit' => 'Düzenle',
-            'italic' => 'Italik',
+            'italic' => 'Eğik',
             'link' => 'Bağlantı',
-            'ordered_list' => 'Numaralı liste',
+            'ordered_list' => 'Sıralı liste',
             'preview' => 'Önizleme',
             'strike' => 'Üstü çizili',
         ],
 
     ],
 
-    'multi_select' => [
-        'no_search_results_message' => 'Aramanızla eşleşen seçenek yok.',
-        'placeholder' => 'Bir seçenek seçin',
-        'search_prompt' => 'Aramak için yazmaya başlayın...',
-    ],
-
     'repeater' => [
+
+        'collapsed' => 'İçerik daraltıldı',
 
         'buttons' => [
 
@@ -99,6 +109,22 @@ return [
 
             'move_item_up' => [
                 'label' => 'Yukarı taşı',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Daralt',
+            ],
+
+            'expand_item' => [
+                'label' => 'Genişlet',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Tümünü daralt',
+            ],
+
+            'expand_all' => [
+                'label' => 'Tümünü genişlet',
             ],
 
         ],
@@ -133,9 +159,9 @@ return [
             'h1' => 'Ana başlık',
             'h2' => 'Başlık',
             'h3' => 'Alt başlık',
-            'italic' => 'Italik',
+            'italic' => 'Eğik',
             'link' => 'Bağlantı',
-            'ordered_list' => 'Numaralı liste',
+            'ordered_list' => 'Sıralı liste',
             'redo' => 'Yinele',
             'strike' => 'Üstü çizili',
             'undo' => 'Geri al',
@@ -144,13 +170,64 @@ return [
     ],
 
     'select' => [
-        'no_search_results_message' => 'Aramanızla eşleşen seçenek yok.',
+
+        'actions' => [
+
+            'create_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Oluştur',
+
+                    'actions' => [
+
+                        'create' => [
+                            'label' => 'Oluştur',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+        'boolean' => [
+            'true' => 'Evet',
+            'false' => 'Hayır',
+        ],
+
+        'loading_message' => 'Yükleniyor...',
+
+        'no_search_results_message' => 'Aramayla eşleşen bir seçenek yok.',
+
         'placeholder' => 'Bir seçenek seçin',
+
+        'searching_message' => 'Aranıyor...',
+
         'search_prompt' => 'Aramak için yazmaya başlayın...',
+
     ],
 
     'tags_input' => [
         'placeholder' => 'Yeni etiket',
+    ],
+
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => 'Geri',
+            ],
+
+            'next_step' => [
+                'label' => 'İleri',
+            ],
+
+        ],
+
     ],
 
 ];

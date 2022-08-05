@@ -6,7 +6,7 @@ use Closure;
 use Filament\Forms\Components\MultiSelect;
 use Illuminate\Database\Eloquent\Builder;
 
-class MultiSelectFilter extends Filter
+class MultiSelectFilter extends BaseFilter
 {
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
@@ -79,7 +79,8 @@ class MultiSelectFilter extends Filter
                 ->label($this->getLabel())
                 ->options($this->getOptions())
                 ->placeholder($this->getPlaceholder())
-                ->default($this->getDefaultState()),
+                ->default($this->getDefaultState())
+                ->columnSpan($this->getColumnSpan()),
         ];
     }
 }

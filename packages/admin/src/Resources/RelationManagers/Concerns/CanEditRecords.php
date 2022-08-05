@@ -2,21 +2,15 @@
 
 namespace Filament\Resources\RelationManagers\Concerns;
 
+use Filament\Notifications\Notification;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 
 trait CanEditRecords
 {
-    protected function canEdit(Model $record): bool
-    {
-        return $this->can('update', $record);
-    }
-
-    protected function getEditFormSchema(): array
-    {
-        return $this->getResourceForm(columns: 2)->getSchema();
-    }
-
+    /**
+     * @deprecated Use `->mountUsing()` on the action instead.
+     */
     protected function fillEditForm(): void
     {
         $this->callHook('beforeFill');
@@ -32,11 +26,17 @@ trait CanEditRecords
         $this->callHook('afterEditFill');
     }
 
+    /**
+     * @deprecated Use `->mutateRecordDataUsing()` on the action instead.
+     */
     protected function mutateFormDataBeforeFill(array $data): array
     {
         return $data;
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function save(): void
     {
         $this->callHook('beforeValidate');
@@ -56,15 +56,24 @@ trait CanEditRecords
         $this->callHook('afterSave');
 
         if (filled($this->getSavedNotificationMessage())) {
-            $this->notify('success', $this->getSavedNotificationMessage());
+            Notification::make()
+                ->title($this->getSavedNotificationMessage())
+                ->success()
+                ->send();
         }
     }
 
+    /**
+     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     */
     protected function getSavedNotificationMessage(): ?string
     {
-        return __('filament::resources/relation-managers/edit.action.messages.saved');
+        return __('filament-support::actions/edit.single.messages.saved');
     }
 
+    /**
+     * @deprecated Use `->using()` on the action instead.
+     */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         $record->update($data);
@@ -72,21 +81,21 @@ trait CanEditRecords
         return $record;
     }
 
+    /**
+     * @deprecated Use `->mutateFormDataUsing()` on the action instead.
+     */
     protected function mutateFormDataBeforeSave(array $data): array
     {
         return $data;
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getEditAction(): Tables\Actions\Action
     {
-        return config('filament.layout.tables.actions.type')::make('edit')
-            ->label(__('filament::resources/relation-managers/edit.action.label'))
-            ->form($this->getEditFormSchema())
+        return Tables\Actions\EditAction::make()
             ->mountUsing(fn () => $this->fillEditForm())
-            ->modalButton(__('filament::resources/relation-managers/edit.action.modal.actions.save.label'))
-            ->modalHeading(__('filament::resources/relation-managers/edit.action.modal.heading', ['label' => static::getRecordLabel()]))
-            ->action(fn () => $this->save())
-            ->icon('heroicon-o-pencil')
-            ->hidden(fn (Model $record): bool => ! static::canEdit($record));
+            ->action(fn () => $this->save());
     }
 }

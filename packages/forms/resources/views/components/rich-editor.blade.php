@@ -39,7 +39,12 @@
         @unless ($isDisabled())
             <input id="trix-value-{{ $getId() }}" type="hidden" />
 
-            <trix-toolbar id="trix-toolbar-{{ $getId() }}">
+            <trix-toolbar
+                id="trix-toolbar-{{ $getId() }}"
+                @class([
+                    'hidden' => ! count($getToolbarButtons()),
+                ])
+            >
                 <div class="flex justify-between space-x-4 rtl:space-x-reverse overflow-x-auto items-stretch overflow-y-hidden">
                     <div class="flex items-stretch space-x-4 rtl:space-x-reverse focus:outline-none">
                         @if ($hasToolbarButton(['bold', 'italic', 'strike', 'link']))
@@ -289,18 +294,18 @@
                 toolbar="trix-toolbar-{{ $getId() }}"
                 x-ref="trix"
                 dusk="filament.forms.{{ $getStatePath() }}"
-                @class([
-                    'bg-white block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-600 prose max-w-none',
-                    'dark:prose-invert dark:bg-gray-700' => config('forms.dark_mode'),
+                {{ $getExtraInputAttributeBag()->class([
+                    'bg-white block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 prose max-w-none',
+                    'dark:prose-invert dark:bg-gray-700 dark:focus:border-primary-600' => config('forms.dark_mode'),
                     'border-gray-300' => ! $errors->has($getStatePath()),
                     'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                     'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
-                ])
+                ]) }}
             ></trix-editor>
         @else
             <div x-html="state" @class([
-                'p-3 prose border border-gray-300 rounded-lg shadow-sm',
-                'dark:prose-invert' => config('forms.dark_mode'),
+                'prose block w-full max-w-none rounded-lg border border-gray-300 bg-white p-3 opacity-70 shadow-sm',
+                'dark:prose-invert dark:border-gray-600 dark:bg-gray-700' => config('forms.dark_mode'),
             ])></div>
         @endunless
     </div>

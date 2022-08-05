@@ -4,7 +4,8 @@ namespace Filament\Tables\Concerns;
 
 use Filament\Forms;
 use Filament\Forms\ComponentContainer;
-use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\BaseFilter;
+use Filament\Tables\Filters\Layout;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -18,25 +19,39 @@ trait HasFilters
 
     public function cacheTableFilters(): void
     {
-        $this->cachedTableFilters = collect($this->getTableFilters())
-            ->mapWithKeys(function (Filter $filter): array {
-                $filter->table($this->getCachedTable());
+        $this->cachedTableFilters = [];
 
-                return [$filter->getName() => $filter];
-            })
-            ->toArray();
+        foreach ($this->getTableFilters() as $filter) {
+            $filter->table($this->getCachedTable());
+
+            $this->cachedTableFilters[$filter->getName()] = $filter;
+        }
     }
 
     public function getCachedTableFilters(): array
     {
-        return collect($this->cachedTableFilters)
-            ->filter(fn (Filter $filter): bool => ! $filter->isHidden())
-            ->toArray();
+        return array_filter(
+            $this->cachedTableFilters,
+            fn (BaseFilter $filter): bool => ! $filter->isHidden(),
+        );
+    }
+
+    public function getCachedTableFilter(string $name): ?BaseFilter
+    {
+        return $this->getCachedTableFilters()[$name] ?? null;
     }
 
     public function getTableFiltersForm(): Forms\ComponentContainer
     {
-        return $this->tableFiltersForm;
+        if ((! $this->isCachingForms) && $this->hasCachedForm('tableFiltersForm')) {
+            return $this->getCachedForm('tableFiltersForm');
+        }
+
+        return $this->makeForm()
+            ->schema($this->getTableFiltersFormSchema())
+            ->columns($this->getTableFiltersFormColumns())
+            ->statePath('tableFilters')
+            ->reactive();
     }
 
     public function isTableFilterable(): bool
@@ -46,6 +61,13 @@ trait HasFilters
 
     public function updatedTableFilters(): void
     {
+        if ($this->shouldPersistTableFiltersInSession()) {
+            session()->put(
+                $this->getTableFiltersSessionKey(),
+                $this->tableFilters,
+            );
+        }
+
         $this->deselectAllTableRecords();
 
         $this->resetPage();
@@ -54,11 +76,20 @@ trait HasFilters
     public function resetTableFiltersForm(): void
     {
         $this->getTableFiltersForm()->fill();
+
+        $this->updatedTableFilters();
     }
 
     protected function applyFiltersToTableQuery(Builder $query): Builder
     {
-        $data = $this->getTableFiltersForm()->getState();
+        $data = $this->getTableFiltersForm()->getRawState();
+
+        foreach ($this->getCachedTableFilters() as $filter) {
+            $filter->applyToBaseQuery(
+                $query,
+                $data[$filter->getName()] ?? [],
+            );
+        }
 
         return $query->where(function (Builder $query) use ($data) {
             foreach ($this->getCachedTableFilters() as $filter) {
@@ -77,13 +108,21 @@ trait HasFilters
 
     protected function getTableFiltersFormColumns(): int | array
     {
-        return 1;
+        return match ($this->getTableFiltersLayout()) {
+            Layout::AboveContent => [
+                'sm' => 2,
+                'lg' => 3,
+                'xl' => 4,
+                '2xl' => 5,
+            ],
+            default => 1,
+        };
     }
 
     protected function getTableFiltersFormSchema(): array
     {
         return array_map(
-            fn (Filter $filter) => Forms\Components\Group::make()
+            fn (BaseFilter $filter) => Forms\Components\Group::make()
                 ->schema($filter->getFormSchema())
                 ->statePath($filter->getName()),
             $this->getCachedTableFilters(),
@@ -98,5 +137,22 @@ trait HasFilters
             4 => '6xl',
             default => null,
         };
+    }
+
+    protected function getTableFiltersLayout(): ?string
+    {
+        return null;
+    }
+
+    public function getTableFiltersSessionKey(): string
+    {
+        $table = class_basename($this::class);
+
+        return "tables.{$table}_filters";
+    }
+
+    protected function shouldPersistTableFiltersInSession(): bool
+    {
+        return false;
     }
 }

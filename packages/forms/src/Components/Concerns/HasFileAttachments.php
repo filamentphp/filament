@@ -7,6 +7,7 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use Livewire\TemporaryUploadedFile;
+use Throwable;
 
 trait HasFileAttachments
 {
@@ -106,15 +107,19 @@ trait HasFileAttachments
         /** @var FilesystemAdapter $storage */
         $storage = $this->getFileAttachmentsDisk();
 
-        // An ugly mess as we need to support both Flysystem v1 and v3.
-        $storageAdapter = method_exists($storage, 'getAdapter') ? $storage->getAdapter() : (method_exists($storageDriver = $storage->getDriver(), 'getAdapter') ? $storageDriver->getAdapter() : null);
-        $supportsTemporaryUrls = method_exists($storageAdapter, 'temporaryUrl') || method_exists($storageAdapter, 'getTemporaryUrl');
+        if (! $storage->exists($file)) {
+            return null;
+        }
 
-        if ($storage->getVisibility($file) === 'private' && $supportsTemporaryUrls) {
-            return $storage->temporaryUrl(
-                $file,
-                now()->addMinutes(5),
-            );
+        if ($storage->getVisibility($file) === 'private') {
+            try {
+                return $storage->temporaryUrl(
+                    $file,
+                    now()->addMinutes(5),
+                );
+            } catch (Throwable $exception) {
+                // This driver does not support creating temporary URLs.
+            }
         }
 
         return $storage->url($file);

@@ -50,33 +50,11 @@ return [
         ],
 
         'open_actions' => [
-            'label' => 'Otwórz akcję',
+            'label' => 'Otwórz akcje',
         ],
 
-    ],
-
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Czy na pewno chcesz to zrobić?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Anuluj',
-                ],
-
-                'confirm' => [
-                    'label' => 'Potwierdź',
-                ],
-
-                'submit' => [
-                    'label' => 'Zatwierdź',
-                ],
-
-            ],
-
+        'toggle_columns' => [
+            'label' => 'Wybierz kolumny',
         ],
 
     ],
@@ -93,6 +71,10 @@ return [
                 'label' => 'Zresetuj filtry',
             ],
 
+            'close' => [
+                'label' => 'Zamknij',
+            ],
+
         ],
 
         'multi_select' => [
@@ -101,6 +83,18 @@ return [
 
         'select' => [
             'placeholder' => 'Wszystkie',
+        ],
+
+        'trashed' => [
+
+            'label' => 'Usunięte rekordy',
+
+            'only_trashed' => 'Tylko usunięte rekordy',
+
+            'with_trashed' => 'Uwzględnij usunięte rekordy',
+
+            'without_trashed' => 'Bez usuniętych rekordów',
+
         ],
 
     ],

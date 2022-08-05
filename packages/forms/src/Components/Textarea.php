@@ -3,15 +3,16 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
-class Textarea extends Field
+class Textarea extends Field implements Contracts\CanBeLengthConstrained
 {
     use Concerns\CanBeAutocapitalized;
     use Concerns\CanBeAutocompleted;
     use Concerns\CanBeLengthConstrained;
-    use Concerns\HasExtraAlpineAttributes;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;
+    use HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.textarea';
 

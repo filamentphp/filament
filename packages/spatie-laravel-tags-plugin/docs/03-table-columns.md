@@ -1,6 +1,8 @@
 ---
-title: Table Columns
+title: Table columns
 ---
+
+This guide assumes that you've already set up your model attach tags as per [Spatie's documentation](https://spatie.be/docs/laravel-tags/basic-usage/using-tags).
 
 To use the tags column:
 
@@ -18,6 +20,6 @@ use Filament\Tables\Columns\SpatieTagsColumn;
 SpatieTagsColumn::make('tags')->type('categories'),
 ```
 
-The [type](https://spatie.be/docs/laravel-tags/v4/advanced-usage/using-types) allows you to group tags into collections.
+The [type](https://spatie.be/docs/laravel-tags/advanced-usage/using-types) allows you to group tags into collections.
 
 The tags column supports all the customization options of the [original tags column](/docs/tables/columns#tags-column).

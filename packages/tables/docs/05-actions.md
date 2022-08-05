@@ -25,15 +25,6 @@ If you're using them in admin panel resources or relation managers, you must put
 public static function table(Table $table): Table
 {
     return $table
-        // Add the actions before the default action/s (before Edit or View)
-        ->prependActions([
-            // ...
-        ])
-        // Add the actions after the default action/s (after Edit or View)
-        ->pushActions([
-            // ...
-        ])
-        // Override the default action/s (instead of Edit or View)
         ->actions([
             // ...
         ]);
@@ -46,10 +37,11 @@ Actions may be created using the static `make()` method, passing its name. The n
 
 ```php
 use App\Models\Post;
-use Filament\Tables\Actions\LinkAction;
+use Filament\Tables\Actions\Action;
 
-LinkAction::make('edit')
+Action::make('edit')
     ->url(fn (Post $record): string => route('posts.edit', $record))
+    ->openUrlInNewTab()
 ```
 
 ### Bulk actions
@@ -73,15 +65,6 @@ If you're using them in admin panel resources or relation managers, you must put
 public static function table(Table $table): Table
 {
     return $table
-        // Add the actions before the default action (before Delete)
-        ->prependBulkActions([
-            // ...
-        ])
-        // Add the actions after the default action (after Delete)
-        ->pushBulkActions([
-            // ...
-        ])
-        // Override the default action (instead of Delete)
         ->bulkActions([
             // ...
         ]);
@@ -115,9 +98,9 @@ By default, the label of the action is generated from its name. You may customiz
 
 ```php
 use App\Models\Post;
-use Filament\Tables\Actions\LinkAction;
+use Filament\Tables\Actions\Action;
 
-LinkAction::make('edit')
+Action::make('edit')
     ->label('Edit post')
     ->url(fn (Post $record): string => route('posts.edit', $record))
 ```
@@ -142,9 +125,8 @@ Bulk actions and some single actions may also render a Blade icon component to i
 
 ```php
 use App\Models\Post;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Actions\ButtonAction;
-use Filament\Tables\Actions\IconButtonAction;
 use Illuminate\Database\Eloquent\Collection;
 
 BulkAction::make('delete')
@@ -153,15 +135,10 @@ BulkAction::make('delete')
     ->color('danger')
     ->icon('heroicon-o-trash')
 
-ButtonAction::make('edit')
+Action::make('edit')
     ->label('Edit post')
     ->url(fn (Post $record): string => route('posts.edit', $record))
-    ->icon('heroicon-o-pencil')
-
-IconButtonAction::make('edit')
-    ->label('Edit post')
-    ->url(fn (Post $record): string => route('posts.edit', $record))
-    ->icon('heroicon-o-pencil')
+    ->icon('heroicon-s-pencil')
 ```
 
 ## Modals
@@ -211,6 +188,49 @@ BulkAction::make('updateAuthor')
     ])
 ```
 
+#### Wizards
+
+You may easily transform action forms into multistep wizards.
+
+On the action, simply pass in the [wizard steps](../forms/layout#wizard) to the `steps()` method, instead of `form()`:
+
+```php
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Wizard\Step;
+use Filament\Tables\Actions\Action;
+
+Action::make('create')
+    ->steps([
+        Step::make('Name')
+            ->description('Give the category a clear and unique name')
+            ->schema([
+                TextInput::make('name')
+                    ->required()
+                    ->reactive()
+                    ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))),
+                TextInput::make('slug')
+                    ->disabled()
+                    ->required()
+                    ->unique(Category::class, 'slug', fn ($record) => $record),
+            ]),
+        Step::make('Description')
+            ->description('Add some extra details')
+            ->schema([
+                MarkdownEditor::make('description')
+                    ->columnSpan('full'),
+            ]),
+        Step::make('Visibility')
+            ->description('Control who can view it')
+            ->schema([
+                Toggle::make('is_visible')
+                    ->label('Visible to customers.')
+                    ->default(true),
+            ]),
+    ])
+```
+
 ### Setting a modal heading, subheading, and button label
 
 You may customize the heading, subheading and button label of the modal:
@@ -228,48 +248,145 @@ BulkAction::make('delete')
     ->modalButton('Yes, delete them')
 ```
 
+## Custom content
+
+You may define custom content to be rendered inside your modal, which you can specify by passing a Blade view into the `modalContent()` method:
+
+```php
+use Filament\Tables\Actions\BulkAction;
+
+BulkAction::make('advance')
+    ->action(fn () => $this->record->advance())
+    ->modalContent(view('filament.resources.event.actions.advance'))
+```
+
 ## Authorization
 
-You may conditionally hide actions and bulk actions for certain users using the `hidden()` method, passing a closure:
+You may conditionally show or hide actions and bulk actions for certain users using either the `visible()` or `hidden()` methods, passing a closure:
 
 ```php
 use App\Models\Post;
-use Filament\Tables\Actions\LinkAction;
+use Filament\Tables\Actions\Action;
 
-LinkAction::make('edit')
+Action::make('edit')
     ->url(fn (Post $record): string => route('posts.edit', $record))
-    ->hidden(fn (Post $record): bool => auth()->user()->can('update', $record))
+    ->visible(fn (Post $record): bool => auth()->user()->can('update', $record))
 ```
 
 This is useful for authorization of certain actions to only users who have permission.
+
+## Prebuilt actions
+
+### Replicate
+
+This package includes an action to replicate table records. You may use it like so:
+
+```php
+use Filament\Tables\Actions\ReplicateAction;
+
+ReplicateAction::make()
+```
+
+The `excludeAttributes()` method is used to instruct the action which columns to be excluded from replication:
+
+```php
+use Filament\Tables\Actions\ReplicateAction;
+
+ReplicateAction::make()->excludeAttributes(['slug'])
+```
+
+The `beforeReplicaSaved()` method can be used to invoke a Closure before saving the replica:
+
+```php
+use Filament\Tables\Actions\ReplicateAction;
+use Illuminate\Database\Eloquent\Model;
+
+ReplicateAction::make()
+    ->beforeReplicaSaved(function (Model $replica): void {
+        // ...
+    })
+```
+
+The `afterReplicaSaved()` method can be used to invoke a Closure after saving the replica:
+
+```php
+use Filament\Tables\Actions\ReplicateAction;
+use Illuminate\Database\Eloquent\Model;
+
+ReplicateAction::make()
+    ->afterReplicaSaved(function (Model $replica): void {
+        // ...
+    })
+```
+
+#### Retrieving user input
+
+Just like [normal actions](#custom-forms), you can provide a [form schema](/docs/forms/fields) that can be used to modify the replication process:
+
+```php
+use Filament\Tables\Actions\ReplicateAction;
+
+ReplicateAction::make()
+	->excludeAttributes(['title'])
+	->form([
+		TextInput::make('title')->required(),
+	])
+	->beforeReplicaSaved(function (Model $replica, array $data): void {
+		$replica->fill($data);
+	})
+```
+
+## Grouping
+
+You may use an `ActionGroup` object to group multiple table actions together in a dropdown:
+
+```php
+use Filament\Tables;
+
+protected function getTableActions(): array
+{
+    return [
+        Tables\Actions\ActionGroup::make([
+            Tables\Actions\ViewAction::make(),
+            Tables\Actions\EditAction::make(),
+            Tables\Actions\DeleteAction::make(),
+        ]),
+    ];
+}
+```
 
 ## Alignment
 
 By default, the row actions in your table will be aligned to the right in the final cell. To change the default alignment, update the configuration value inside of the package config:
 
 ```
-'action_alignment' => 'right', // `right`, `left` or `center`
+'actions' => [
+    'cell' => [
+        'alignment' => 'right', // `right`, `left` or `center`
+    ],
+]
 ```
 
 ## Tooltips
 
-> If you want to use tooltips outside of the admin panel, make sure you have [`@ryangjchandler/alpine-tooltip` installed](https://github.com/ryangjchandler/alpine-tooltip#installation) in your app, including [`tippy.css`](https://atomiks.github.io/tippyjs/v6/getting-started/#1-package-manager).
+> If you want to use tooltips outside of the admin panel, make sure you have [`@ryangjchandler/alpine-tooltip` installed](https://github.com/ryangjchandler/alpine-tooltip#installation) in your app, including [`tippy.css`](https://atomiks.github.io/tippyjs/v6/getting-started/#1-package-manager). You'll also need to install [`tippy.css`](https://atomiks.github.io/tippyjs/v6/getting-started/#1-package-manager) if you're using a [custom admin theme](/docs/admin/appearance#building-themes).
 
 You may specify a tooltip to display when you hover over an action:
 
 ```php
-use Filament\Tables\Actions\LinkAction;
+use Filament\Tables\Actions\Action;
 
-LinkAction::make('edit')
+Action::make('edit')
     ->tooltip('Edit this blog post')
 ```
 
 This method also accepts a closure that can access the current table record:
 
 ```php
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Database\Eloquent\Model;
 
-LinkAction::make('edit')
+Action::make('edit')
     ->tooltip(fn (Model $record): string => "Edit {$record->title}")
 ```

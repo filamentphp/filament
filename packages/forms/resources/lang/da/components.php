@@ -2,10 +2,8 @@
 
 return [
 
-    'multi_select' => [
-        'no_search_results_message' => 'Ingen resultater der matcher din søgning.',
-        'placeholder' => 'Vælg en indstilling',
-        'search_prompt' => 'Ingen muligheder at vælge imellem.',
+    'file_upload' => [
+        'filepond_locale' => 'da-dk',
     ],
 
     'rich_editor' => [

@@ -2,6 +2,14 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 'и :count еще',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -13,9 +21,9 @@ return [
 
     'pagination' => [
 
-        'label' => 'навигация разбивки на страницы',
+        'label' => 'Пагинация',
 
-        'overview' => 'показ :first до :last из :total результаты',
+        'overview' => 'Показано с :first по :last из :total',
 
         'fields' => [
 
@@ -45,38 +53,24 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Сохранить порядок',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Изменить порядок',
+        ],
+
         'filter' => [
             'label' => 'Фильтр',
         ],
 
         'open_actions' => [
-            'label' => 'Open actions',
+            'label' => 'Открыть действия',
         ],
 
-    ],
-
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Вы уверены, что хотите это сделать?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Отменить',
-                ],
-
-                'confirm' => [
-                    'label' => 'Подтвердить',
-                ],
-
-                'submit' => [
-                    'label' => 'Отправить',
-                ],
-
-            ],
-
+        'toggle_columns' => [
+            'label' => 'Переключить столбцы',
         ],
 
     ],
@@ -93,9 +87,35 @@ return [
                 'label' => 'Сбросить фильтры',
             ],
 
+            'close' => [
+                'label' => 'Закрыть',
+            ],
+
+        ],
+
+        'multi_select' => [
+            'placeholder' => 'Все',
+        ],
+
+        'select' => [
+            'placeholder' => 'Все',
+        ],
+
+        'trashed' => [
+
+            'label' => 'Удаленные записи',
+
+            'only_trashed' => 'Только удаленные записи',
+
+            'with_trashed' => 'С удаленными записями',
+
+            'without_trashed' => 'Без удаленных записей',
+
         ],
 
     ],
+
+    'reorder_indicator' => 'Drag-n-drop порядок записей.',
 
     'selection_indicator' => [
 
@@ -104,7 +124,7 @@ return [
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Выбрать все :count',
+                'label' => 'Выбрать всё :count',
             ],
 
             'deselect_all' => [

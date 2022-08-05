@@ -53,30 +53,8 @@ return [
             'label' => 'Actions ouvertes',
         ],
 
-    ],
-
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Êtes-vous sûr de vouloir faire cela ?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Annuler',
-                ],
-
-                'confirm' => [
-                    'label' => 'Confirmer',
-                ],
-
-                'submit' => [
-                    'label' => 'Envoyer',
-                ],
-
-            ],
-
+        'toggle_columns' => [
+            'label' => 'Basculer les colonnes',
         ],
 
     ],
@@ -93,6 +71,10 @@ return [
                 'label' => 'Réinitialiser',
             ],
 
+            'close' => [
+                'label' => 'Fermer',
+            ],
+
         ],
 
         'multi_select' => [
@@ -104,6 +86,8 @@ return [
         ],
 
     ],
+
+    'reorder_indicator' => 'Faites glisser et déposez les enregistrements dans l\'ordre.',
 
     'selection_indicator' => [
 
@@ -122,4 +106,5 @@ return [
         ],
 
     ],
+
 ];

@@ -69,7 +69,7 @@
                                 <input
                                     type="text"
                                     x-model="row.key"
-                                    x-on:input="updateState"
+                                    x-on:input.debounce.{{ $getDebounce() ?? '500ms' }}="updateState"
                                     {!! ($placeholder = $getKeyPlaceholder()) ? "placeholder=\"{$placeholder}\"" : '' !!}
                                     @if ((! $canEditKeys()) || $isDisabled())
                                         disabled
@@ -82,7 +82,7 @@
                                 <input
                                     type="text"
                                     x-model="row.value"
-                                    x-on:input="updateState"
+                                    x-on:input.debounce.{{ $getDebounce() ?? '500ms' }}="updateState"
                                     {!! ($placeholder = $getValuePlaceholder()) ? "placeholder=\"{$placeholder}\"" : '' !!}
                                     @if ((! $canEditValues()) || $isDisabled())
                                         disabled

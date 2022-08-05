@@ -2,76 +2,87 @@
 
 namespace Filament\Pages\Actions;
 
-use Closure;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Contracts\View\View;
-use Illuminate\Support\Traits\Conditionable;
-use Illuminate\Support\Traits\Macroable;
-use Illuminate\Support\Traits\Tappable;
-use Illuminate\View\Component;
+use Filament\Pages\Actions\Modal\Actions\Action as ModalAction;
+use Filament\Support\Actions\Action as BaseAction;
+use Filament\Support\Actions\Concerns\CanBeDisabled;
+use Filament\Support\Actions\Concerns\CanBeOutlined;
+use Filament\Support\Actions\Concerns\CanOpenUrl;
+use Filament\Support\Actions\Concerns\CanSubmitForm;
+use Filament\Support\Actions\Concerns\HasGroupedIcon;
+use Filament\Support\Actions\Concerns\HasKeyBindings;
+use Filament\Support\Actions\Concerns\HasTooltip;
+use Filament\Support\Actions\Concerns\InteractsWithRecord;
+use Filament\Support\Actions\Contracts\Groupable;
+use Filament\Support\Actions\Contracts\HasRecord;
+use Illuminate\Database\Eloquent\Model;
 
-class Action extends Component implements Htmlable
+class Action extends BaseAction implements Groupable, HasRecord
 {
+    use CanBeDisabled;
+    use CanBeOutlined;
+    use CanOpenUrl;
+    use CanSubmitForm;
     use Concerns\BelongsToLivewire;
-    use Concerns\CanBeDisabled;
-    use Concerns\CanBeHidden;
-    use Concerns\CanBeMounted;
-    use Concerns\CanOpenModal;
-    use Concerns\CanOpenUrl;
-    use Concerns\CanRequireConfirmation;
-    use Concerns\HasAction;
-    use Concerns\HasColor;
-    use Concerns\HasFormSchema;
-    use Concerns\HasLabel;
-    use Concerns\HasName;
-    use Concerns\HasView;
-    use Conditionable;
-    use Macroable;
-    use Tappable;
+    use HasGroupedIcon;
+    use HasKeyBindings;
+    use HasTooltip;
+    use InteractsWithRecord;
 
-    final public function __construct(string $name)
+    protected string $view = 'filament::pages.actions.button-action';
+
+    public function button(): static
     {
-        $this->name($name);
+        $this->view('filament::pages.actions.button-action');
+
+        return $this;
     }
 
-    public static function make(string $name): static
+    public function grouped(): static
     {
-        $static = app(static::class, ['name' => $name]);
-        $static->setUp();
+        $this->view('filament::pages.actions.grouped-action');
 
-        return $static;
+        return $this;
     }
 
-    protected function setUp(): void
+    public function iconButton(): static
     {
+        $this->view('filament::pages.actions.icon-button-action');
+
+        return $this;
     }
 
-    public function call(array $data = [])
+    public function link(): static
     {
-        if ($this->isHidden() || $this->isDisabled()) {
-            return;
-        }
+        $this->view('filament::pages.actions.link-action');
 
-        $action = $this->getAction();
+        return $this;
+    }
 
-        if (is_string($action)) {
-            $action = Closure::fromCallable([$this->getLivewire(), $action]);
-        }
+    protected function getLivewireCallActionName(): string
+    {
+        return 'callMountedAction';
+    }
 
-        return app()->call($action, [
-            'data' => $data,
+    protected static function getModalActionClass(): string
+    {
+        return ModalAction::class;
+    }
+
+    public static function makeModalAction(string $name): ModalAction
+    {
+        /** @var ModalAction $action */
+        $action = parent::makeModalAction($name);
+
+        return $action;
+    }
+
+    protected function getDefaultEvaluationParameters(): array
+    {
+        return array_merge(parent::getDefaultEvaluationParameters(), [
+            'record' => $this->resolveEvaluationParameter(
+                'record',
+                fn (): ?Model => $this->getRecord(),
+            ),
         ]);
-    }
-
-    public function toHtml(): string
-    {
-        return $this->render()->render();
-    }
-
-    public function render(): View
-    {
-        return view($this->getView(), array_merge($this->data(), [
-            'action' => $this,
-        ]));
     }
 }

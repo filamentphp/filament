@@ -28,7 +28,7 @@
                 dusk="filament.forms.{{ $getStatePath() }}"
                 type="button"
                 {{ $attributes->merge($getExtraAttributes())->class([
-                    'relative inline-flex shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500 filament-forms-toggle-component',
+                    'relative inline-flex shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70 disabled:cursor-not-allowed disabled:pointer-events-none filament-forms-toggle-component',
                     'border-gray-300' => ! $errors->has($getStatePath()),
                     'border-danger-300 ring-danger-500' => $errors->has($getStatePath()),
                 ]) }}

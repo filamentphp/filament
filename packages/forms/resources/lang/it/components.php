@@ -1,13 +1,134 @@
 <?php
 
 return [
+    'builder' => [
 
-    'multi_select' => [
-        'no_search_results_message' => 'Nessuna opzione trovata per la ricerca.',
-        'placeholder' => 'Seleziona un\'opzione',
-        'search_prompt' => 'Nessuna opzione disponibile.',
+        'collapsed' => 'Contenuto compresso',
+
+        'buttons' => [
+
+            'create_item' => [
+                'label' => 'Aggiungi a :label',
+            ],
+
+            'delete_item' => [
+                'label' => 'Elimina',
+            ],
+
+            'move_item_down' => [
+                'label' => 'Muovi giù',
+            ],
+
+            'move_item_up' => [
+                'label' => 'Muovi su',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Comprimi',
+            ],
+
+            'expand_item' => [
+                'label' => 'Espandi',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Comprimi tutto',
+            ],
+
+            'expand_all' => [
+                'label' => 'Espandi tutto',
+            ],
+
+        ],
+
     ],
 
+    'key_value' => [
+
+        'buttons' => [
+
+            'add' => [
+                'label' => 'Aggiungi riga',
+            ],
+
+            'delete' => [
+                'label' => 'Elimina Riga',
+            ],
+
+        ],
+
+        'fields' => [
+
+            'key' => [
+                'label' => 'Chiave',
+            ],
+
+            'value' => [
+                'label' => 'Valore',
+            ],
+
+        ],
+
+    ],
+
+    'markdown_editor' => [
+
+        'toolbar_buttons' => [
+            'attach_files' => 'Allega files',
+            'bold' => 'Grassetto',
+            'bullet_list' => 'Elenco puntato',
+            'code_block' => 'Blocco codice',
+            'edit' => 'Modifica',
+            'italic' => 'Italico',
+            'link' => 'Link',
+            'ordered_list' => 'Elenco numerato',
+            'preview' => 'Anteprima',
+            'strike' => 'Barrato',
+        ],
+
+    ],
+
+    'repeater' => [
+
+        'collapsed' => 'Contenuto compresso',
+
+        'buttons' => [
+
+            'create_item' => [
+                'label' => 'Aggiungi a :label',
+            ],
+
+            'delete_item' => [
+                'label' => 'Elimina',
+            ],
+
+            'move_item_down' => [
+                'label' => 'Muovi giù',
+            ],
+
+            'move_item_up' => [
+                'label' => 'Muovi su',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Comprimi',
+            ],
+
+            'expand_item' => [
+                'label' => 'Espandi',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Comprimi tutto',
+            ],
+
+            'expand_all' => [
+                'label' => 'Espandi tutto',
+            ],
+
+        ],
+
+    ],
     'rich_editor' => [
 
         'dialogs' => [
@@ -47,13 +168,56 @@ return [
     ],
 
     'select' => [
+
+        'actions' => [
+
+            'create_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Nuovo',
+
+                    'actions' => [
+
+                        'create' => [
+                            'label' => 'Nuovo',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+        'loading_message' => 'Caricamento...',
+
         'no_search_results_message' => 'Nessuna opzione trovata per la ricerca.',
         'placeholder' => 'Seleziona un\'opzione',
+
+        'searching_message' => 'Ricerca...',
+
         'search_prompt' => 'Digita per cercare...',
     ],
 
     'tags_input' => [
         'placeholder' => 'Nuovo tag',
+    ],
+
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => 'Precedente',
+            ],
+
+            'next_step' => [
+                'label' => 'Prossimo',
+            ],
+
+        ],
     ],
 
 ];

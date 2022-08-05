@@ -1,5 +1,5 @@
 ---
-title: Getting Started
+title: Getting started
 ---
 
 ## Preparing your Livewire component
@@ -108,7 +108,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
     {
         return [ // [tl! collapse:start]
             Tables\Filters\Filter::make('published')
-                ->query(fn (Builder $query): $query => $query->where('is_published', true)),
+                ->query(fn (Builder $query): Builder => $query->where('is_published', true)),
             Tables\Filters\SelectFilter::make('status')
                 ->options([
                     'draft' => 'Draft',
@@ -121,7 +121,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
     protected function getTableActions(): array
     {
         return [ // [tl! collapse:start]
-            Tables\Actions\LinkAction::make('edit')
+            Tables\Actions\Action::make('edit')
                 ->url(fn (Post $record): string => route('posts.edit', $record)),
         ]; // [tl! collapse:end]
     }
@@ -250,7 +250,6 @@ protected function getTableQueryStringIdentifier(): string
 You may use simple pagination by overriding `paginateTableQuery()` method on your Livewire component:
 
 ```php
-
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -269,7 +268,7 @@ First, you must ensure that the table search input is visible:
 ```php
 public function isTableSearchable(): bool
 {
-    return true
+    return true;
 }
 ```
 
@@ -370,10 +369,11 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
     protected function getTableEmptyStateActions(): array
     {
         return [
-            Tables\Actions\ButtonAction::make('create')
+            Tables\Actions\Action::make('create')
                 ->label('Create post')
                 ->url(route('posts.create'))
-                ->icon('heroicon-o-plus'),
+                ->icon('heroicon-o-plus')
+                ->button(),
         ];
     } // [tl! focus:end]
     
@@ -399,6 +399,39 @@ protected $queryString = [
     'tableSortDirection',
     'tableSearchQuery' => ['except' => ''],
 ];
+```
+
+## Reordering records
+
+To allow the user to reorder records using drag and drop in your table, you can use the `getTableReorderColumn()` method:
+
+```php
+protected function getTableReorderColumn(): ?string
+{
+    return 'sort';
+}
+```
+
+When making the table reorderable, a new button will be available on the table to toggle reordering.
+
+The `getTableReorderColumn()` method returns the name of a column to store the record order in. If you use something like [`spatie/eloquent-sortable`](https://github.com/spatie/eloquent-sortable) with an order column such as `order_column`, you may return this instead:
+
+```php
+protected function getTableReorderColumn(): ?string
+{
+    return 'order_column';
+}
+```
+
+### Enabling pagination while reordering
+
+Pagination will be disabled in reorder mode to allow you to move records between pages. It is generally bad UX to re-enable pagination while reordering, but if you are sure then you can use:
+
+```php
+protected function isTablePaginationEnabledWhileReordering(): bool
+{
+    return true;
+}
 ```
 
 ## Using the form builder

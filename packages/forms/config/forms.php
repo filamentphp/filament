@@ -14,8 +14,27 @@ return [
 
     'components' => [
 
+        'actions' => [
+
+            'modal' => [
+
+                'actions' => [
+                    'alignment' => 'left',
+                ],
+
+            ],
+
+        ],
+
         'date_time_picker' => [
             'first_day_of_week' => 1, // 0 to 7 are accepted values, with Monday as 1 and Sunday as 7 or 0.
+            'display_formats' => [
+                'date' => 'M j, Y',
+                'date_time' => 'M j, Y H:i',
+                'date_time_with_seconds' => 'M j, Y H:i:s',
+                'time' => 'H:i',
+                'time_with_seconds' => 'H:i:s',
+            ],
         ],
 
     ],
@@ -37,8 +56,8 @@ return [
     | Dark mode
     |--------------------------------------------------------------------------
     |
-    | By enabling this feature, your users are able to select between a light
-    | and dark appearance for forms, via Tailwind's Dark Mode feature.
+    | By enabling this setting, your forms will be ready for Tailwind's Dark
+    | Mode feature.
     |
     | https://tailwindcss.com/docs/dark-mode
     |

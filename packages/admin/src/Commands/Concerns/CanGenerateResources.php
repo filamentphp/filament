@@ -16,7 +16,7 @@ trait CanGenerateResources
         $table = $this->getModelTable($model);
 
         if (! $table) {
-            return $this->indentString('//');
+            return $this->indentString('//', 4);
         }
 
         $components = [];
@@ -26,9 +26,11 @@ trait CanGenerateResources
                 continue;
             }
 
-            if (Str::of($column->getName())->endsWith([
-                '_at',
-                '_token',
+            if (Str::of($column->getName())->is([
+                'created_at',
+                'deleted_at',
+                'updated_at',
+                '*_token',
             ])) {
                 continue;
             }
@@ -97,7 +99,7 @@ trait CanGenerateResources
             }
         }
 
-        return $this->indentString($output);
+        return $this->indentString($output, 4);
     }
 
     protected function getResourceTableColumns(string $model): string
@@ -105,7 +107,7 @@ trait CanGenerateResources
         $table = $this->getModelTable($model);
 
         if (! $table) {
-            return $this->indentString('//');
+            return $this->indentString('//', 4);
         }
 
         $columns = [];
@@ -176,12 +178,12 @@ trait CanGenerateResources
             }
         }
 
-        return $this->indentString($output);
+        return $this->indentString($output, 4);
     }
 
     protected function getModelTable(string $model): ?Table
     {
-        if (! class_exists($model)) {
+        if ((! class_exists($model)) && (! class_exists($model = "App\\Models\\{$model}"))) {
             return null;
         }
 
@@ -195,16 +197,5 @@ trait CanGenerateResources
         } catch (Throwable $exception) {
             return null;
         }
-    }
-
-    protected function indentString(string $string): string
-    {
-        return implode(
-            PHP_EOL,
-            array_map(
-                fn (string $line) => "                {$line}",
-                explode(PHP_EOL, $string),
-            ),
-        );
     }
 }

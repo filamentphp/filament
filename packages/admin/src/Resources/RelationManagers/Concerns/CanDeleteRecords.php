@@ -2,21 +2,15 @@
 
 namespace Filament\Resources\RelationManagers\Concerns;
 
+use Filament\Notifications\Notification;
 use Filament\Tables;
 use Illuminate\Database\Eloquent\Model;
 
 trait CanDeleteRecords
 {
-    protected function canDelete(Model $record): bool
-    {
-        return $this->can('delete', $record);
-    }
-
-    protected function canDeleteAny(): bool
-    {
-        return $this->can('deleteAny');
-    }
-
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function delete(): void
     {
         $this->callHook('beforeDelete');
@@ -26,15 +20,24 @@ trait CanDeleteRecords
         $this->callHook('afterDelete');
 
         if (filled($this->getDeletedNotificationMessage())) {
-            $this->notify('success', $this->getDeletedNotificationMessage());
+            Notification::make()
+                ->title($this->getDeletedNotificationMessage())
+                ->success()
+                ->send();
         }
     }
 
+    /**
+     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     */
     protected function getDeletedNotificationMessage(): ?string
     {
-        return __('filament::resources/relation-managers/delete.action.messages.deleted');
+        return __('filament-support::actions/delete.single.messages.deleted');
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function bulkDelete(): void
     {
         $this->callHook('beforeBulkDelete');
@@ -44,36 +47,36 @@ trait CanDeleteRecords
         $this->callHook('afterBulkDelete');
 
         if (filled($this->getBulkDeletedNotificationMessage())) {
-            $this->notify('success', $this->getBulkDeletedNotificationMessage());
+            Notification::make()
+                ->title($this->getBulkDeletedNotificationMessage())
+                ->success()
+                ->send();
         }
     }
 
+    /**
+     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     */
     protected function getBulkDeletedNotificationMessage(): ?string
     {
-        return __('filament::resources/relation-managers/delete.bulk_action.messages.deleted');
+        return __('filament-support::actions/delete.multiple.messages.deleted');
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getDeleteAction(): Tables\Actions\Action
     {
-        return config('filament.layout.tables.actions.type')::make('delete')
-            ->label(__('filament::resources/relation-managers/delete.action.label'))
-            ->requiresConfirmation()
-            ->modalHeading(__('filament::resources/relation-managers/delete.action.modal.heading', ['label' => static::getRecordLabel()]))
-            ->action(fn () => $this->delete())
-            ->color('danger')
-            ->icon('heroicon-o-trash')
-            ->hidden(fn (Model $record): bool => ! static::canDelete($record));
+        return Tables\Actions\DeleteAction::make()
+            ->action(fn () => $this->delete());
     }
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function getDeleteBulkAction(): Tables\Actions\BulkAction
     {
-        return Tables\Actions\BulkAction::make('delete')
-            ->label(__('filament::resources/relation-managers/delete.bulk_action.label'))
-            ->action(fn () => $this->bulkDelete())
-            ->requiresConfirmation()
-            ->modalHeading(__('filament::resources/relation-managers/delete.bulk_action.modal.heading', ['label' => static::getPluralRecordLabel()]))
-            ->deselectRecordsAfterCompletion()
-            ->color('danger')
-            ->icon('heroicon-o-trash');
+        return Tables\Actions\DeleteBulkAction::make()
+            ->action(fn () => $this->bulkDelete());
     }
 }

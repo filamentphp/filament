@@ -23,23 +23,22 @@
         x-data="dateTimePickerFormComponent({
             displayFormat: '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
             firstDayOfWeek: {{ $getFirstDayOfWeek() }},
-            format: '{{ convert_date_format($getFormat())->to('day.js') }}',
-            isAutofocused: {{ $isAutofocused() ? 'true' : 'false' }},
-            maxDate: '{{ $getMaxDate() }}',
-            minDate: '{{ $getMinDate() }}',
+            isAutofocused: @js($isAutofocused()),
+            isDisabled: @js($isDisabled()),
+            shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
-        x-on:click.away="closePicker()"
-        x-on:keydown.escape.stop="closePicker()"
-        x-on:blur="closePicker()"
         {{ $attributes->merge($getExtraAttributes())->class(['relative filament-forms-date-time-picker-component']) }}
         {{ $getExtraAlpineAttributeBag() }}
     >
+        <input x-ref="maxDate" type="hidden" value="{{ $getMaxDate() }}" />
+        <input x-ref="minDate" type="hidden" value="{{ $getMinDate() }}" />
+
         <button
             @unless($isDisabled())
                 x-ref="button"
-                x-on:click="togglePickerVisibility()"
-                x-on:keydown.enter.stop.prevent="open ? selectDate() : openPicker()"
+                x-on:click="togglePanelVisibility()"
+                x-on:keydown.enter.stop.prevent="isOpen() ? selectDate() : togglePanelVisibility()"
                 x-on:keydown.arrow-left.stop.prevent="focusPreviousDay()"
                 x-on:keydown.arrow-right.stop.prevent="focusNextDay()"
                 x-on:keydown.arrow-up.stop.prevent="focusPreviousWeek()"
@@ -47,18 +46,19 @@
                 x-on:keydown.backspace.stop.prevent="clearState()"
                 x-on:keydown.clear.stop.prevent="clearState()"
                 x-on:keydown.delete.stop.prevent="clearState()"
-                x-bind:aria-expanded="open"
                 aria-label="{{ $getPlaceholder() }}"
                 dusk="filament.forms.{{ $getStatePath() }}.open"
             @endunless
             type="button"
             {{ $getExtraTriggerAttributeBag()->class([
-                'bg-white relative w-full border py-2 pl-3 pr-10 rtl:pl-10 rtl:pr-3 text-left cursor-default rounded-lg shadow-sm focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-600',
+                'bg-white relative w-full border py-2 pl-3 pr-10 rtl:pl-10 rtl:pr-3 text-left cursor-default rounded-lg shadow-sm',
+                'focus-within:ring-1 focus-within:border-primary-600 focus-within:ring-inset focus-within:ring-primary-600' => ! $isDisabled(),
                 'dark:bg-gray-700' => config('forms.dark_mode'),
                 'border-gray-300' => ! $errors->has($getStatePath()),
                 'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                 'border-danger-600' => $errors->has($getStatePath()),
-                'text-gray-500' => $isDisabled(),
+                'opacity-70' => $isDisabled(),
+                'dark:text-gray-300' => $isDisabled() && config('forms.dark_mode'),
             ]) }}
         >
             <input
@@ -69,6 +69,7 @@
                 @class([
                     'w-full h-full p-0 placeholder-gray-400 bg-transparent border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none',
                     'dark:bg-gray-700 dark:placeholder-gray-400' => config('forms.dark_mode'),
+                    'cursor-default' => $isDisabled(),
                 ])
             />
 
@@ -84,16 +85,13 @@
 
         @unless ($isDisabled())
             <div
-                x-ref="picker"
-                x-on:click.away="closePicker()"
-                x-show.transition="open"
-                aria-modal="true"
-                role="dialog"
+                x-ref="panel"
                 x-cloak
+                x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                 @class([
-                    'absolute z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-sm',
+                    'absolute hidden z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-md',
                     'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
-                    'p-4 w-64' => $hasDate(),
+                    'p-4 min-w-[16rem] w-fit' => $hasDate(),
                 ])
             >
                 <div class="space-y-3">
@@ -154,7 +152,7 @@
                                         'bg-primary-50 @if (config('forms.dark_mode')) dark:bg-primary-100 dark:text-gray-600 @endif': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day && ! dayIsDisabled(day),
                                         'bg-primary-200 @if (config('forms.dark_mode')) dark:text-gray-600 @endif': focusedDate.date() === day && ! dayIsSelected(day),
                                         'bg-primary-500 text-white': dayIsSelected(day),
-                                        'cursor-not-allowed': dayIsDisabled(day),
+                                        'cursor-not-allowed pointer-events-none': dayIsDisabled(day),
                                         'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
                                     }"
                                     x-bind:dusk="'filament.forms.{{ $getStatePath() }}' + '.focusedDate.' + day"

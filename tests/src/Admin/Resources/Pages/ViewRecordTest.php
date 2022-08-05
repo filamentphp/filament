@@ -26,8 +26,10 @@ it('can retrieve data', function () {
     livewire(PostResource\Pages\ViewPost::class, [
         'record' => $post->getKey(),
     ])
-        ->assertSet('data.author_id', $post->author->getKey())
-        ->assertSet('data.content', $post->content)
-        ->assertSet('data.tags', $post->tags)
-        ->assertSet('data.title', $post->title);
+        ->assertFormSet([
+            'author_id' => $post->author->getKey(),
+            'content' => $post->content,
+            'tags' => $post->tags,
+            'title' => $post->title,
+        ]);
 });

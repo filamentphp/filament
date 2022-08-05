@@ -2,27 +2,13 @@
 
 namespace Filament\Forms\Components\Concerns;
 
-use Closure;
-use Illuminate\View\ComponentAttributeBag;
+use Filament\Support\Concerns\HasExtraAlpineAttributes as BaseTrait;
 
+/**
+ * @deprecated Use `\Filament\Support\Concerns\HasExtraAlpineAttributes` instead.
+ * @see BaseTrait
+ */
 trait HasExtraAlpineAttributes
 {
-    protected array | Closure $extraAlpineAttributes = [];
-
-    public function extraAlpineAttributes(array | Closure $attributes): static
-    {
-        $this->extraAlpineAttributes = $attributes;
-
-        return $this;
-    }
-
-    public function getExtraAlpineAttributes(): array
-    {
-        return $this->evaluate($this->extraAlpineAttributes);
-    }
-
-    public function getExtraAlpineAttributeBag(): ComponentAttributeBag
-    {
-        return new ComponentAttributeBag($this->getExtraAlpineAttributes());
-    }
+    use BaseTrait;
 }

@@ -1,0 +1,38 @@
+{
+    "name": "filament/support",
+    "description": "Associated helper methods and foundation code for Filament packages.",
+    "license": "MIT",
+    "homepage": "https://github.com/filamentphp/filament",
+    "support": {
+        "issues": "https://github.com/filamentphp/filament/issues",
+        "source": "https://github.com/filamentphp/filament"
+    },
+    "require": {
+        "php": "^8.0",
+        "illuminate/contracts": "^8.6|^9.0",
+        "illuminate/support": "^8.6|^9.0",
+        "illuminate/view": "^8.6|^9.0",
+        "spatie/laravel-package-tools": "^1.9",
+        "tgalopin/html-sanitizer": "^1.5"
+    },
+    "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
+        "psr-4": {
+            "Filament\\Support\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Filament\\Support\\SupportServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

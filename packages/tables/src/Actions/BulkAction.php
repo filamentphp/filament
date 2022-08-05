@@ -3,63 +3,22 @@
 namespace Filament\Tables\Actions;
 
 use Closure;
-use Illuminate\Support\Traits\Conditionable;
-use Illuminate\Support\Traits\Macroable;
-use Illuminate\Support\Traits\Tappable;
+use Filament\Support\Actions\Action as BaseAction;
+use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
+use Illuminate\Database\Eloquent\Collection;
 
-class BulkAction
+class BulkAction extends BaseAction
 {
     use Concerns\BelongsToTable;
-    use Concerns\CanBeHidden;
-    use Concerns\CanBeMounted;
     use Concerns\CanDeselectRecordsAfterCompletion;
-    use Concerns\CanOpenModal;
-    use Concerns\CanRequireConfirmation;
-    use Concerns\EvaluatesClosures;
-    use Concerns\HasAction;
-    use Concerns\HasColor;
-    use Concerns\HasFormSchema;
-    use Concerns\HasIcon;
-    use Concerns\HasLabel;
-    use Concerns\HasName;
-    use Concerns\HasRecords;
-    use Conditionable;
-    use Macroable;
-    use Tappable;
+    use Concerns\InteractsWithRecords;
 
-    final public function __construct(string $name)
+    protected string $view = 'tables::actions.bulk-action';
+
+    public function call(array $parameters = [])
     {
-        $this->name($name);
-    }
-
-    public static function make(string $name): static
-    {
-        $static = app(static::class, ['name' => $name]);
-        $static->setUp();
-
-        return $static;
-    }
-
-    protected function setUp(): void
-    {
-    }
-
-    public function call(array $data = [])
-    {
-        if ($this->isHidden()) {
-            return;
-        }
-
-        $action = $this->getAction();
-
-        if (! $action) {
-            return;
-        }
-
         try {
-            return $this->evaluate($action, [
-                'data' => $data,
-            ]);
+            return $this->evaluate($this->getAction(), $parameters);
         } finally {
             if ($this->shouldDeselectRecordsAfterCompletion()) {
                 $this->getLivewire()->deselectAllTableRecords();
@@ -78,8 +37,38 @@ class BulkAction
         return $action;
     }
 
-    protected function getLivewireSubmitActionName(): string
+    protected function getLivewireCallActionName(): string
     {
         return 'callMountedTableBulkAction';
+    }
+
+    protected static function getModalActionClass(): string
+    {
+        return ModalAction::class;
+    }
+
+    public static function makeModalAction(string $name): ModalAction
+    {
+        /** @var ModalAction $action */
+        $action = parent::makeModalAction($name);
+
+        return $action;
+    }
+
+    protected function getDefaultEvaluationParameters(): array
+    {
+        return array_merge(parent::getDefaultEvaluationParameters(), [
+            'records' => $this->resolveEvaluationParameter(
+                'records',
+                fn (): ?Collection => $this->getRecords(),
+            ),
+        ]);
+    }
+
+    protected function parseAuthorizationArguments(array $arguments): array
+    {
+        array_unshift($arguments, $this->getLivewire()->getTableModel());
+
+        return $arguments;
     }
 }

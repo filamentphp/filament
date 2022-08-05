@@ -5,10 +5,17 @@ namespace Filament\Resources;
 use Closure;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Wizard;
 
 class Form
 {
     protected array | int | null $columns = null;
+
+    protected bool $isDisabled = false;
+
+    protected bool $isWizard = false;
+
+    protected ?Closure $modifyBaseComponentUsing = null;
 
     protected array | Component | Closure $schema = [];
 
@@ -28,9 +35,30 @@ class Form
         return $this;
     }
 
+    public function disabled(bool $condition = true): static
+    {
+        $this->isDisabled = $condition;
+
+        return $this;
+    }
+
+    public function modifyBaseComponentUsing(?Closure $callback): static
+    {
+        $this->modifyBaseComponentUsing = $callback;
+
+        return $this;
+    }
+
     public function schema(array | Component | Closure $schema): static
     {
         $this->schema = $schema;
+
+        return $this;
+    }
+
+    public function wizard(bool $condition = true): static
+    {
+        $this->isWizard = $condition;
 
         return $this;
     }
@@ -40,16 +68,40 @@ class Form
         return $this->columns;
     }
 
-    public function getSchema(): array
+    public function isDisabled(): bool
     {
-        $schema = $this->schema;
+        return $this->isDisabled;
+    }
 
-        if (is_array($schema) || $schema instanceof Closure) {
-            $schema = Grid::make()
-                ->schema($schema)
-                ->columns($this->getColumns());
+    public function isWizard(): bool
+    {
+        return $this->isWizard;
+    }
+
+    public function modifyBaseComponent(Component $component): void
+    {
+        if (! $this->modifyBaseComponentUsing) {
+            return;
         }
 
-        return [$schema];
+        ($this->modifyBaseComponentUsing)($component);
+    }
+
+    public function getSchema(): array
+    {
+        if ($this->schema instanceof Component) {
+            return [$this->schema];
+        }
+
+        $baseComponent = $this->isWizard() ? Wizard::make() : Grid::make();
+
+        $baseComponent
+            ->schema($this->schema)
+            ->columns($this->getColumns())
+            ->disabled($this->isDisabled());
+
+        $this->modifyBaseComponent($baseComponent);
+
+        return [$baseComponent];
     }
 }

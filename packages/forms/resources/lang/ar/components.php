@@ -4,14 +4,12 @@ return [
 
     'builder' => [
 
+        'collapsed' => 'طيّ المحتوى',
+
         'buttons' => [
 
             'create_item' => [
                 'label' => 'إضافة إلى :label',
-            ],
-
-            'create_item_between' => [
-                'label' => 'إضافة في المنتصف',
             ],
 
             'delete_item' => [
@@ -24,6 +22,22 @@ return [
 
             'move_item_up' => [
                 'label' => 'تحريك لأعلى',
+            ],
+
+            'collapse_item' => [
+                'label' => 'طيّ',
+            ],
+
+            'expand_item' => [
+                'label' => 'توسيع',
+            ],
+
+            'collapse_all' => [
+                'label' => 'طيّ الكل',
+            ],
+
+            'expand_all' => [
+                'label' => 'توسيع الكل',
             ],
 
         ],
@@ -75,18 +89,14 @@ return [
 
     ],
 
-    'multi_select' => [
-        'no_search_results_message' => 'لا توجد عناصر تطابق بحثك.',
-        'placeholder' => 'إختر عنصرا',
-        'search_prompt' => 'أبدأ الكتابة للبحث...',
-    ],
-
     'repeater' => [
+
+        'collapsed' => 'المحتوى مطوي',
 
         'buttons' => [
 
             'create_item' => [
-                'label' => 'اضافة الي :label',
+                'label' => 'إضافة إلى :label',
             ],
 
             'delete_item' => [
@@ -99,6 +109,22 @@ return [
 
             'move_item_up' => [
                 'label' => 'تحريك لأعلى',
+            ],
+
+            'collapse_item' => [
+                'label' => 'طيّ',
+            ],
+
+            'expand_item' => [
+                'label' => 'توسيع',
+            ],
+
+            'collapse_all' => [
+                'label' => 'طيّ الكل',
+            ],
+
+            'expand_all' => [
+                'label' => 'توسيع الكل',
             ],
 
         ],
@@ -144,13 +170,59 @@ return [
     ],
 
     'select' => [
-        'no_search_results_message' => 'لا توجد عناصر تطابق بحثك.',
-        'placeholder' => 'إختر عنصرا',
-        'search_prompt' => 'أبدأ الكتابة للبحث ...',
+
+        'actions' => [
+
+            'create_option' => [
+
+                'modal' => [
+
+                    'heading' => 'إضافة',
+
+                    'actions' => [
+
+                        'create' => [
+                            'label' => 'إضافة',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+        'loading_message' => 'تحميل...',
+
+        'no_search_results_message' => 'لا توجد خيارات تطابق بحثك.',
+
+        'placeholder' => 'اختر',
+
+        'searching_message' => 'جاري البحث...',
+
+        'search_prompt' => 'ابدأ بالكتابة للبحث...',
+
     ],
 
     'tags_input' => [
         'placeholder' => 'كلمة مفتاحية جديدة',
+    ],
+
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => 'الخطوة السابقة',
+            ],
+
+            'next_step' => [
+                'label' => 'الخطوة التالية',
+            ],
+
+        ],
+
     ],
 
 ];

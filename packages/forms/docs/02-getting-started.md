@@ -1,5 +1,5 @@
 ---
-title: Getting Started
+title: Getting started
 ---
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/Kab21689E5A" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -91,7 +91,7 @@ class EditPost extends Component implements Forms\Contracts\HasForms
 
 Visit your Livewire component in the browser, and you should see the form components from `getFormSchema()`.
 
-<img src="https://user-images.githubusercontent.com/41773797/147614478-5b40c645-107e-40ac-ba41-f0feb99dd480.png">
+![](https://user-images.githubusercontent.com/41773797/147614478-5b40c645-107e-40ac-ba41-f0feb99dd480.png)
 
 ## Initializing forms
 
@@ -244,7 +244,7 @@ When `getState()` is run:
 
 You may register a model to a form. The form builder is able to use this model to unlock DX features, such as:
 - Automatically retrieving the database table name when using database validation rules like `exists` and `unique`.
-- Automatically attaching relationships to the model when the form is saved, when using fields such as the `BelongsToManyMultiSelect`, `SpatieMediaLibraryFileUpload`, or `SpatieTagsInput`.
+- Automatically attaching relationships to the model when the form is saved, when using fields such as the `Select`, `Repeater`, `SpatieMediaLibraryFileUpload`, or `SpatieTagsInput`.
 
 Pass a model instance to a form using the `getFormModel()` method:
 
@@ -379,7 +379,7 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
         return [
             Forms\Components\TextInput::make('title')->required(),
             Forms\Components\MarkdownEditor::make('content'),
-            Forms\Components\BelongsToManyMultiSelect::make('categories')->relationship('categories', 'name'),
+            Forms\Components\MultiSelect::make('categories')->relationship('categories', 'name'),
         ];
     }
     
@@ -399,9 +399,9 @@ You may now use [field relationships](#field-relationships).
 
 ## Field relationships
 
-Some fields, such as the `BelongsToSelect`, `BelongsToManyMultiSelect`, `SpatieMediaLibraryFileUpload`, or `SpatieTagsInput` are able to interact with model relationships.
+Some fields, such as the `Select`, `Repeater`, `SpatieMediaLibraryFileUpload`, or `SpatieTagsInput` are able to interact with model relationships.
 
-For example, `BelongsToManyMultiSelect` is a multi-select field that can be used to attach records to a `BelongstoMany` relationship. When [registering a model](#registering-a-model) to the form or component, these relationships will be automatically saved to the pivot table [when `getState()` is called](#getting-data-from-forms):
+For example, `Select` can be used to attach multiple records to a `BelongstoMany` relationship. When [registering a model](#registering-a-model) to the form or component, these relationships will be automatically saved to the pivot table [when `getState()` is called](#getting-data-from-forms):
 
 ```php
 <?php
@@ -436,7 +436,7 @@ class EditPost extends Component implements Forms\Contracts\HasForms
         return [
             Forms\Components\TextInput::make('title')->required(),
             Forms\Components\MarkdownEditor::make('content'),
-            Forms\Components\BelongsToManyMultiSelect::make('categories')->relationship('categories', 'name'),
+            Forms\Components\MultiSelect::make('categories')->relationship('categories', 'name'),
         ];
     }
     

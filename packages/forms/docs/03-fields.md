@@ -139,12 +139,39 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')->disabled()
 ```
 
-Optionally, you may pass a boolean value to control the disabled state:
+Optionally, you may pass a boolean value to control if the field should be disabled or not:
 
 ```php
 use Filament\Forms\Components\Toggle;
 
 Toggle::make('is_admin')->disabled(! auth()->user()->isAdmin())
+```
+
+Please note that disabling a field does not prevent it from being saved, and a skillful user could manipulate the HTML of the page and alter its value.
+
+To prevent a field from being saved, use the `dehydrated(false)` method:
+
+```php
+Toggle::make('is_admin')->dehydrated(false)
+```
+
+Alternatively, you may only want to save a field conditionally, maybe if the user is an admin:
+
+```php
+Toggle::make('is_admin')
+    ->disabled(! auth()->user()->isAdmin())
+    ->dehydrated(auth()->user()->isAdmin())
+```
+
+If you're using the [admin panel](/docs/admin) and only want to save disabled fields on the [Create page of a resource](/docs/admin/resources):
+
+```php
+use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\Page;
+
+TextInput::make('slug')
+    ->disabled()
+    ->dehydrated(fn (Page $livewire) => $livewire instanceof CreateRecord)
 ```
 
 ### Autofocusing
@@ -167,32 +194,25 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')->placeholder('John Doe')
 ```
 
-### Responsive layouts
+### Global settings
 
-If your field is in a grid layout, you may specify the number of columns it spans at any breakpoint:
+If you wish to change the default behaviour of a field globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the component using. For example, if you wish to make all checkboxes [`inline(false)`](#checkbox), you can do it like so:
 
 ```php
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Checkbox;
 
-Grid::make([
-    'default' => 1,
-    'sm' => 3,
-    'xl' => 6,
-    '2xl' => 8,
-])
-    ->schema([
-        TextInput::make('name')
-            ->columnSpan([
-                'sm' => 2,
-                'xl' => 3,
-                '2xl' => 4,
-            ]),
-        // ...
-    ])
+Checkbox::configureUsing(function (Checkbox $checkbox): void {
+    $checkbox->inline(false);
+});
 ```
 
-> More information about grids is available in the [layout documentation](layout#grid).
+Of course, you are still able to overwrite this on each field individually:
+
+```php
+use Filament\Forms\Components\Checkbox;
+
+Checkbox::make('is_admin')->inline()
+```
 
 ## Text input
 
@@ -204,7 +224,7 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147612753-1d4514ea-dba9-4f5c-9efc-08f09608e90d.png">
+![](https://user-images.githubusercontent.com/41773797/147612753-1d4514ea-dba9-4f5c-9efc-08f09608e90d.png)
 
 You may set the type of string using a set of methods. Some, such as `email()`, also provide validation:
 
@@ -227,7 +247,7 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('backgroundColor')->type('color')
 ```
 
-You may place text before and after the input using the `prefix()` and `postfix()` methods:
+You may place text before and after the input using the `prefix()` and `suffix()` methods:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -235,10 +255,21 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('domain')
     ->url()
     ->prefix('https://')
-    ->postfix('.com')
+    ->suffix('.com')
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147612784-5eb58d0f-5111-4db8-8f54-3b5c3e2cc80a.png">
+![](https://user-images.githubusercontent.com/41773797/147612784-5eb58d0f-5111-4db8-8f54-3b5c3e2cc80a.png)
+
+You may place a icon before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('domain')
+    ->url()
+    ->prefixIcon('heroicon-o-external-link')
+    ->suffixIcon('heroicon-o-external-link')
+```
 
 You may limit the length of the input by setting the `minLength()` and `maxLength()` methods. These methods add both frontend and backend validation:
 
@@ -393,7 +424,7 @@ TextInput::make('manufacturer')
     ])
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147612844-f46e113f-82b3-4675-9097-4d64a4315082.png">
+![](https://user-images.githubusercontent.com/41773797/147612844-f46e113f-82b3-4675-9097-4d64a4315082.png)
 
 Datalists provide autocomplete options to users when they use a text input. However, these are purely recommendations, and the user is still able to type any value into the input. If you're looking for strictly predefined options, check out [select fields](#select).
 
@@ -412,7 +443,7 @@ Select::make('status')
     ])
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147612885-888dfd64-6256-482d-b4bc-840191306d2d.png">
+![](https://user-images.githubusercontent.com/41773797/147612885-888dfd64-6256-482d-b4bc-840191306d2d.png)
 
 You may enable a search input to allow easier access to many options, using the `searchable()` method:
 
@@ -426,7 +457,7 @@ Select::make('authorId')
     ->searchable()
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613023-cb7d1907-e4d3-4a33-aa86-1c25d780c861.png">
+![](https://user-images.githubusercontent.com/41773797/147613023-cb7d1907-e4d3-4a33-aa86-1c25d780c861.png)
 
 If you have lots of options and want to populate them based on a database search or other external data source, you can use the `getSearchResultsUsing()` and `getOptionLabelUsing()` methods instead of `options()`.
 
@@ -437,7 +468,7 @@ The `getOptionLabelUsing()` method accepts a callback that transforms the select
 ```php
 Select::make('authorId')
     ->searchable()
-    ->getSearchResultsUsing(fn (string $query) => User::where('name', 'like', "%{$query}%")->limit(50)->pluck('name', 'id'))
+    ->getSearchResultsUsing(fn (string $search) => User::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id'))
     ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name),
 ```
 
@@ -464,14 +495,14 @@ Commonly, you may desire "dependant" select inputs, which populate their options
 
 Some of the techniques described in the [advanced forms](advanced) section are required to create dependant selects. These techniques can be applied across all form components for many dynamic customisation possibilities.
 
-### Populating automatically from a `BelongsTo` relationship
+### Populating automatically from a relationship
 
-You may employ the `relationship()` method of the `BelongsToSelect` to configure a relationship to automatically retrieve and save options from:
+You may employ the `relationship()` method of the `Select` to configure a `BelongsTo` relationship to automatically retrieve and save options from:
 
 ```php
-use Filament\Forms\Components\BelongsToSelect;
+use Filament\Forms\Components\Select;
 
-BelongsToSelect::make('authorId')
+Select::make('authorId')
     ->relationship('author', 'name')
 ```
 
@@ -480,10 +511,10 @@ BelongsToSelect::make('authorId')
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 
 ```php
-use Filament\Forms\Components\BelongsToSelect;
+use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 
-BelongsToSelect::make('authorId')
+Select::make('authorId')
     ->relationship('author', 'name', fn (Builder $query) => $query->withTrashed())
 ```
 
@@ -494,21 +525,56 @@ $table->string('full_name')->virtualAs('concat(first_name, \' \', last_name)');
 ```
 
 ```php
-use Filament\Forms\Components\BelongsToSelect;
+use Filament\Forms\Components\Select;
 
-BelongsToSelect::make('authorId')
+Select::make('authorId')
     ->relationship('author', 'full_name')
 ```
 
-Alternatively, you can use the `getOptionLabelUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
+Alternatively, you can use the `getOptionLabelFromRecordUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
 
 ```php
-use Filament\Forms\Components\BelongsToSelect;
+use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Model;
 
-BelongsToSelect::make('authorId')
+Select::make('authorId')
     ->relationship('author', 'first_name')
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
+```
+
+#### Creating new records
+
+You may define a custom form that can be used to create a new record and attach it to the `BelongsTo` relationship:
+
+```php
+use Filament\Forms\Components\Select;
+use Illuminate\Database\Eloquent\Model;
+
+Select::make('authorId')
+    ->relationship('author', 'name')
+    ->createOptionForm([
+        Forms\Components\TextInput::make('name')
+            ->required(),
+        Forms\Components\TextInput::make('email')
+            ->required()
+            ->email(),
+    ]),
+```
+
+The form opens in a modal, where the user can fill it with data. Upon form submission, the new record is selected by the field.
+
+Since HTML does not support nested `<form>` elements, you must also render the modal outside the `<form>` in the view. If you're using the [admin panel](/docs/admin), this is included already:
+
+```blade
+<form wire:submit.prevent="submit">
+    {{ $this->form }}
+    
+    <button type="submit">
+        Submit
+    </button>
+</form>
+
+{{ $this->modal }}
 ```
 
 ## Multi-select
@@ -517,17 +583,18 @@ The multi-select component allows you to select multiple values from a list of p
 
 ```php
 use Filament\Forms\Components\MultiSelect;
+use Filament\Forms\Components\Select;
 
 MultiSelect::make('technologies')
     ->options([
-        'tailwind' => 'TailwindCSS',
+        'tailwind' => 'Tailwind CSS',
         'alpine' => 'Alpine.js',
         'laravel' => 'Laravel',
         'livewire' => 'Laravel Livewire',
     ])
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613070-cd82703a-fa05-4f29-b0ac-3eb03b542077.png">
+![](https://user-images.githubusercontent.com/41773797/147613070-cd82703a-fa05-4f29-b0ac-3eb03b542077.png)
 
 These options are returned in JSON format. If you're saving them using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
@@ -554,19 +621,19 @@ The `getOptionLabelsUsing()` method accepts a callback that transforms the selec
 use Filament\Forms\Components\MultiSelect;
 
 MultiSelect::make('technologies')
-    ->getSearchResultsUsing(fn (string $query) => Technology::where('name', 'like', "%{$query}%")->limit(50)->pluck('name', 'id'))
+    ->getSearchResultsUsing(fn (string $search) => Technology::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id'))
     ->getOptionLabelsUsing(fn (array $values) => Technology::find($values)->pluck('name')),
 ```
 
 ### Populating automatically from a `BelongsToMany` relationship
 
-You may employ the `relationship()` method of the `BelongsToManyMultiSelect` to configure a relationship to automatically retrieve and save options from:
+You may employ the `relationship()` method of the `MultiSelect` to configure a relationship to automatically retrieve and save options from:
 
 ```php
 use App\Models\App;
-use Filament\Forms\Components\BelongsToManyMultiSelect;
+use Filament\Forms\Components\MultiSelect;
 
-BelongsToManyMultiSelect::make('technologies')
+MultiSelect::make('technologies')
     ->relationship('technologies', 'name')
 ```
 
@@ -575,10 +642,10 @@ BelongsToManyMultiSelect::make('technologies')
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 
 ```php
-use Filament\Forms\Components\BelongsToManyMultiSelect;
+use Filament\Forms\Components\MultiSelect;
 use Illuminate\Database\Eloquent\Builder;
 
-BelongsToManyMultiSelect::make('technologies')
+MultiSelect::make('technologies')
     ->relationship('technologies', 'name', fn (Builder $query) => $query->withTrashed())
 ```
 
@@ -589,19 +656,19 @@ $table->string('full_name')->virtualAs('concat(first_name, \' \', last_name)');
 ```
 
 ```php
-use Filament\Forms\Components\BelongsToManyMultiSelect;
+use Filament\Forms\Components\MultiSelect;
 
-BelongsToManyMultiSelect::make('participants')
+MultiSelect::make('participants')
     ->relationship('participants', 'full_name')
 ```
 
-Alternatively, you can use the `getOptionLabelUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
+Alternatively, you can use the `getOptionLabelFromRecordUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
 
 ```php
-use Filament\Forms\Components\BelongsToManyMultiSelect;
+use Filament\Forms\Components\MultiSelect;
 use Illuminate\Database\Eloquent\Model;
 
-BelongsToManyMultiSelect::make('participants')
+MultiSelect::make('participants')
     ->relationship('participants', 'first_name')
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
@@ -616,7 +683,7 @@ use Filament\Forms\Components\Checkbox;
 Checkbox::make('is_admin')
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613098-db8d3571-1835-4714-b422-619755c0b722.png">
+![](https://user-images.githubusercontent.com/41773797/147613098-db8d3571-1835-4714-b422-619755c0b722.png)
 
 Checkbox fields have two layout modes, inline and stacked. By default, they are inline.
 
@@ -628,7 +695,7 @@ use Filament\Forms\Components\Checkbox;
 Checkbox::make('is_admin')->inline()
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613098-db8d3571-1835-4714-b422-619755c0b722.png">
+![](https://user-images.githubusercontent.com/41773797/147613098-db8d3571-1835-4714-b422-619755c0b722.png)
 
 When the checkbox is stacked, its label is above it:
 
@@ -638,7 +705,7 @@ use Filament\Forms\Components\Checkbox;
 Checkbox::make('is_admin')->inline(false)
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613119-0bc731dd-fcdd-4c1a-9a26-cce2b0f589d2.png">
+![](https://user-images.githubusercontent.com/41773797/147613119-0bc731dd-fcdd-4c1a-9a26-cce2b0f589d2.png)
 
 If you're saving the boolean value using Eloquent, you should be sure to add a `boolean` [cast](https://laravel.com/docs/eloquent-mutators#attribute-casting) to the model property:
 
@@ -665,7 +732,7 @@ use Filament\Forms\Components\Toggle;
 Toggle::make('is_admin')
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613146-f5ebde21-f72d-44dd-b5c0-5d229fcd91ef.png">
+![](https://user-images.githubusercontent.com/41773797/147613146-f5ebde21-f72d-44dd-b5c0-5d229fcd91ef.png)
 
 Toggle fields have two layout modes, inline and stacked. By default, they are inline.
 
@@ -677,7 +744,7 @@ use Filament\Forms\Components\Toggle;
 Toggle::make('is_admin')->inline()
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613146-f5ebde21-f72d-44dd-b5c0-5d229fcd91ef.png">
+![](https://user-images.githubusercontent.com/41773797/147613146-f5ebde21-f72d-44dd-b5c0-5d229fcd91ef.png)
 
 When the toggle is stacked, its label is above it:
 
@@ -687,7 +754,7 @@ use Filament\Forms\Components\Toggle;
 Toggle::make('is_admin')->inline(false)
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613161-43bfa094-0916-4e01-b86d-dbcf8ee63a17.png">
+![](https://user-images.githubusercontent.com/41773797/147613161-43bfa094-0916-4e01-b86d-dbcf8ee63a17.png)
 
 Toggles may also use an "on icon" and an "off icon". These are displayed on its handle and could provide a greater indication to what your field represents. The parameter to each method must contain the name of a Blade icon component:
 
@@ -699,7 +766,7 @@ Toggle::make('is_admin')
     ->offIcon('heroicon-s-user')
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613184-9086c102-ad71-4c4e-9170-9a4201a80c66.png">
+![](https://user-images.githubusercontent.com/41773797/147613184-9086c102-ad71-4c4e-9170-9a4201a80c66.png)
 
 If you're saving the boolean value using Eloquent, you should be sure to add a `boolean` [cast](https://laravel.com/docs/eloquent-mutators#attribute-casting) to the model property:
 
@@ -725,14 +792,14 @@ use Filament\Forms\Components\CheckboxList;
 
 CheckboxList::make('technologies')
     ->options([
-        'tailwind' => 'TailwindCSS',
+        'tailwind' => 'Tailwind CSS',
         'alpine' => 'Alpine.js',
         'laravel' => 'Laravel',
         'livewire' => 'Laravel Livewire',
     ])
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147761423-bd6e99ec-104d-40c2-875a-fed1d638f2c3.png">
+![](https://user-images.githubusercontent.com/41773797/147761423-bd6e99ec-104d-40c2-875a-fed1d638f2c3.png)
 
 These options are returned in JSON format. If you're saving them using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
@@ -756,7 +823,7 @@ use Filament\Forms\Components\CheckboxList;
 
 CheckboxList::make('technologies')
     ->options([
-        'tailwind' => 'TailwindCSS',
+        'tailwind' => 'Tailwind CSS',
         'alpine' => 'Alpine.js',
         'laravel' => 'Laravel',
         'livewire' => 'Laravel Livewire',
@@ -764,19 +831,19 @@ CheckboxList::make('technologies')
     ->columns(2)
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147761438-558a9dcc-b81a-4fbe-a922-a6771407d928.png">
+![](https://user-images.githubusercontent.com/41773797/147761438-558a9dcc-b81a-4fbe-a922-a6771407d928.png)
 
 This method accepts the same options as the `columns()` method of the [grid](layout#grid). This allows you to responsively customize the number of columns at various breakpoints.
 
-### Populating automatically from a `BelongsToMany` relationship
+### Populating automatically from a relationship
 
-You may employ the `relationship()` method of the `BelongsToManyCheckboxList` to configure a relationship to automatically retrieve and save options from:
+You may employ the `relationship()` method to configure a relationship to automatically retrieve and save options from:
 
 ```php
 use App\Models\App;
-use Filament\Forms\Components\BelongsToManyCheckboxList;
+use Filament\Forms\Components\CheckboxList;
 
-BelongsToManyCheckboxList::make('technologies')
+CheckboxList::make('technologies')
     ->relationship('technologies', 'name')
 ```
 
@@ -785,10 +852,10 @@ BelongsToManyCheckboxList::make('technologies')
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 
 ```php
-use Filament\Forms\Components\BelongsToManyCheckboxList;
+use Filament\Forms\Components\CheckboxList;
 use Illuminate\Database\Eloquent\Builder;
 
-BelongsToManyCheckboxList::make('technologies')
+CheckboxList::make('technologies')
     ->relationship('technologies', 'name', fn (Builder $query) => $query->withTrashed())
 ```
 
@@ -799,19 +866,19 @@ $table->string('full_name')->virtualAs('concat(first_name, \' \', last_name)');
 ```
 
 ```php
-use Filament\Forms\Components\BelongsToManyCheckboxList;
+use Filament\Forms\Components\CheckboxList;
 
-BelongsToManyCheckboxList::make('participants')
+CheckboxList::make('participants')
     ->relationship('participants', 'full_name')
 ```
 
-Alternatively, you can use the `getOptionLabelUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
+Alternatively, you can use the `getOptionLabelFromRecordUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
 
 ```php
-use Filament\Forms\Components\BelongsToManyCheckboxList;
+use Filament\Forms\Components\CheckboxList;
 use Illuminate\Database\Eloquent\Model;
 
-BelongsToManyCheckboxList::make('participants')
+CheckboxList::make('participants')
     ->relationship('participants', 'first_name')
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
@@ -831,7 +898,7 @@ Radio::make('status')
     ])
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613206-644bd6a4-4814-4a99-b398-d03625179bfa.png">
+![](https://user-images.githubusercontent.com/41773797/147613206-644bd6a4-4814-4a99-b398-d03625179bfa.png)
 
 You can optionally provide descriptions to each option using the `descriptions()` method:
 
@@ -851,7 +918,7 @@ Radio::make('status')
     ])
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613223-0114ad7e-091c-43cf-b156-67cd0aaf5c0c.png">
+![](https://user-images.githubusercontent.com/41773797/147613223-0114ad7e-091c-43cf-b156-67cd0aaf5c0c.png)
 
 Be sure to use the same `key` in the descriptions array as the `key` in the options array so the right description matches the right option.
 
@@ -863,7 +930,7 @@ Radio::make('feedback')
     ->boolean()
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613274-04745624-3ddd-46bb-b25c-1e756d6f4958.png">
+![](https://user-images.githubusercontent.com/41773797/147613274-04745624-3ddd-46bb-b25c-1e756d6f4958.png)
 
 You may wish to display the options `inline()` with the label:
 
@@ -874,7 +941,7 @@ Radio::make('feedback')
     ->inline()
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147709853-198d54fb-1bb1-4e82-87d0-3034b9152f0e.png">
+![](https://user-images.githubusercontent.com/41773797/147709853-198d54fb-1bb1-4e82-87d0-3034b9152f0e.png)
 
 ## Date-time picker
 
@@ -890,7 +957,7 @@ DatePicker::make('date_of_birth')
 TimePicker::make('alarm_at')
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613326-004b09c8-c224-4676-a70f-cf6b7e3f0306.png">
+![](https://user-images.githubusercontent.com/41773797/147613326-004b09c8-c224-4676-a70f-cf6b7e3f0306.png)
 
 You may restrict the minimum and maximum date that can be selected with the picker. The `minDate()` and `maxDate()` methods accept a `DateTime` instance (e.g. Carbon), or a string:
 
@@ -902,7 +969,7 @@ DatePicker::make('date_of_birth')
     ->maxDate(now())
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613432-41e22381-af01-4f5e-8d0d-0ba535d1e444.png">
+![](https://user-images.githubusercontent.com/41773797/147613432-41e22381-af01-4f5e-8d0d-0ba535d1e444.png)
 
 You may customize the format of the field when it is saved in your database, using the `format()` method. This accepts a string date format, using [PHP date formatting tokens](https://www.php.net/manual/en/datetime.format.php):
 
@@ -920,7 +987,7 @@ use Filament\Forms\Components\DatePicker;
 DatePicker::make('date_of_birth')->displayFormat('d/m/Y')
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613473-51ffe805-2a7f-47e5-af8b-e7871e9c5a85.png">
+![](https://user-images.githubusercontent.com/41773797/147613473-51ffe805-2a7f-47e5-af8b-e7871e9c5a85.png)
 
 When using the time picker, you may disable the seconds input using the `withoutSeconds()` method:
 
@@ -930,7 +997,7 @@ use Filament\Forms\Components\DateTimePicker;
 DateTimePicker::make('published_at')->withoutSeconds()
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613511-30d7b2d8-227a-42ff-a6c7-e080d22305ad.png">
+![](https://user-images.githubusercontent.com/41773797/147613511-30d7b2d8-227a-42ff-a6c7-e080d22305ad.png)
 
 In some countries, the first day of the week is not Monday. To customize the first day of the week in the date picker, use the `forms.components.date_time_picker.first_day_of_week` config option, or the `firstDayOfWeek()` method on the component. 0 to 7 are accepted values, with Monday as 1 and Sunday as 7 or 0:
 
@@ -940,7 +1007,7 @@ use Filament\Forms\Components\DateTimePicker;
 DateTimePicker::make('published_at')->firstDayOfWeek(7)
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613536-6c2bdc63-03f8-4dd9-92eb-9a0aca5e7263.png">
+![](https://user-images.githubusercontent.com/41773797/147613536-6c2bdc63-03f8-4dd9-92eb-9a0aca5e7263.png)
 
 There are additionally convenient helper methods to set the first day of the week more semantically:
 
@@ -950,6 +1017,18 @@ use Filament\Forms\Components\DateTimePicker;
 DateTimePicker::make('published_at')->weekStartsOnMonday()
 DateTimePicker::make('published_at')->weekStartsOnSunday()
 ```
+
+### Timezones
+
+If you'd like users to be able to manage dates in their own timezone, you can use the `timezone()` method:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::make('published_at')->timezone('America/New_York')
+```
+
+While dates will still be stored using the app's configured timezone, the date will now load in the new timezone, and it will be converted back when the form is saved.
 
 ## File upload
 
@@ -961,7 +1040,7 @@ use Filament\Forms\Components\FileUpload;
 FileUpload::make('attachment')
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613556-62c62153-4d21-4801-8a71-040d528d5757.png">
+![](https://user-images.githubusercontent.com/41773797/147613556-62c62153-4d21-4801-8a71-040d528d5757.png)
 
 By default, files will be uploaded publicly to your default storage disk.
 
@@ -1045,7 +1124,7 @@ FileUpload::make('attachment')
     ->uploadProgressIndicatorPosition('left')
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613590-9ee07ce7-a43e-46a0-bb40-7a21a3692aea.png">
+![](https://user-images.githubusercontent.com/41773797/147613590-9ee07ce7-a43e-46a0-bb40-7a21a3692aea.png)
 
 You may also upload multiple files. This stores URLs in JSON:
 
@@ -1081,14 +1160,34 @@ FileUpload::make('attachments')
     ->maxFiles(5)
 ```
 
-You can also enable the re-ordering of uploaded files using the 'enableReordering()' method:
+You can also enable the re-ordering of uploaded files using the `enableReordering()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->multiple()
+    ->enableReordering()
+```
+
+You can add a button to open each file in a new tab with the `enableOpen()` method:
 
 ```php
 use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('attachments')
     ->multipe()
-    ->enableReordering()
+    ->enableOpen()
+```
+
+If you wish to add a download button to each file instead, you can use the `enableDownload()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->multiple()
+    ->enableDownload()
 ```
 
 > Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/docs/spatie-laravel-media-library-plugin) for more information.
@@ -1103,7 +1202,7 @@ use Filament\Forms\Components\RichEditor;
 RichEditor::make('content')
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613608-b1236c72-d5cf-40d5-aa73-70c37a5c7e4d.png">
+![](https://user-images.githubusercontent.com/41773797/147613608-b1236c72-d5cf-40d5-aa73-70c37a5c7e4d.png)
 
 You may enable / disable toolbar buttons using a range of convenient methods:
 
@@ -1162,7 +1261,7 @@ use Filament\Forms\Components\MarkdownEditor;
 MarkdownEditor::make('content')
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613631-0f9254aa-0abb-4a2e-b9d7-bda1a01b8d57.png">
+![](https://user-images.githubusercontent.com/41773797/147613631-0f9254aa-0abb-4a2e-b9d7-bda1a01b8d57.png)
 
 You may enable / disable toolbar buttons using a range of convenient methods:
 
@@ -1243,7 +1342,7 @@ Repeater::make('members')
     ->columns(2)
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613690-9c36779b-f3dc-4710-bdba-dc5c81ddd3cd.png">
+![](https://user-images.githubusercontent.com/41773797/147613690-9c36779b-f3dc-4710-bdba-dc5c81ddd3cd.png)
 
 We recommend that you store repeater data with a `JSON` column in your database. Additionally, if you're using Eloquent, make sure that column has an `array` cast.
 
@@ -1286,7 +1385,7 @@ Repeater::make('members')
     ->createItemButtonLabel('Add member')
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613748-6fdf2eff-de09-4ba0-8d01-68888802b152.png">
+![](https://user-images.githubusercontent.com/41773797/147613748-6fdf2eff-de09-4ba0-8d01-68888802b152.png)
 
 You may also prevent the user from adding items, deleting items, or moving items inside the repeater:
 
@@ -1315,16 +1414,56 @@ Repeater::make('members')
     ->maxItems(10)
 ```
 
-### Populating automatically from a `HasMany` relationship
+### Collapsible
 
-You may employ the `relationship()` method of the `HasManyRepeater` to configure a relationship to automatically retrieve and save repeater items:
+The repeater may be `collapsible()` to optionally hide content in long forms:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('qualifications')
+    ->schema([
+        // ...
+    ])
+    ->collapsible()
+```
+
+You may collapse all items by default:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('qualifications')
+    ->schema([
+        // ...
+    ])
+    ->collapsed()
+```
+
+### Cloning items
+
+You may allow repeater items to be duplicated using the `cloneable()` method:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('qualifications')
+    ->schema([
+        // ...
+    ])
+    ->cloneable()
+```
+
+### Populating automatically from a relationship
+
+You may employ the `relationship()` method of the repeater to configure a relationship to automatically retrieve and save repeater items:
 
 ```php
 use App\Models\App;
-use Filament\Forms\Components\HasManyRepeater;
+use Filament\Forms\Components\Repeater;
 
-HasManyRepeater::make('qualifications')
-    ->relationship('qualifications')
+Repeater::make('qualifications')
+    ->relationship()
     ->schema([
         // ...
     ])
@@ -1332,22 +1471,69 @@ HasManyRepeater::make('qualifications')
 
 > To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
 
-### Populating automatically from a `MorphMany` relationship
+#### Ordering items
 
-You may employ the `relationship()` method of the `MorphManyRepeater` to configure a relationship to automatically retrieve and save repeater items:
+By default, ordering relationship repeater items is disabled. This is because your related model needs an `sort` column to store the order of related records. To enable ordering, you may use the `orderable()` method:
 
 ```php
-use App\Models\App;
-use Filament\Forms\Components\MorphManyRepeater;
+use Filament\Forms\Components\Repeater;
 
-MorphManyRepeater::make('qualifications')
-    ->relationship('qualifications')
+Repeater::make('qualifications')
+    ->relationship()
     ->schema([
         // ...
     ])
+    ->orderable()
 ```
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
+This assumes that your related model has a `sort` column.
+
+If you use something like [`spatie/eloquent-sortable`](https://github.com/spatie/eloquent-sortable) with an order column such as `order_column`, you may pass this in to `orderable()`:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('qualifications')
+    ->relationship()
+    ->schema([
+        // ...
+    ])
+    ->orderable('order_column')
+```
+
+### Grid layout
+
+You may organize repeater items into columns by using the `grid()` method:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->grid(2)
+```
+
+This method accepts the same options as the `columns()` method of the [grid](layout#grid). This allows you to responsively customize the number of grid columns at various breakpoints.
+
+### Item labels
+
+You may add a label for repeater items using the `itemLabel()` method:
+
+```php
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TextInput;
+
+Repeater::make('members')
+    ->schema([
+        TextInput::make('name')
+            ->lazy(),
+    ])
+    ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
+```
+
+Any fields that you use from `$state` should be `reactive()` or `lazy()` if you wish to see the item label update live as you use the form.
 
 ## Builder
 
@@ -1399,7 +1585,7 @@ Builder::make('content')
     ])
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147613850-8693abe9-78c9-4f01-b40e-9cd9a567e168.png">
+![](https://user-images.githubusercontent.com/41773797/147613850-8693abe9-78c9-4f01-b40e-9cd9a567e168.png)
 
 We recommend that you store builder data with a `JSON` column in your database. Additionally, if you're using Eloquent, make sure that column has an `array` cast.
 
@@ -1436,7 +1622,7 @@ use Filament\Forms\Components\Builder;
 Builder\Block::make('heading')->icon('heroicon-o-bookmark')
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147614039-d9aa43dd-acfe-43b6-9cd1-1fc322aa4526.png">
+![](https://user-images.githubusercontent.com/41773797/147614039-d9aa43dd-acfe-43b6-9cd1-1fc322aa4526.png)
 
 You may customise the number of items that may be created, using the `minItems()` and `maxItems()` methods:
 
@@ -1452,6 +1638,32 @@ Builder::make('content')
     ->maxItems(10)
 ```
 
+### Collapsible
+
+The builder may be `collapsible()` to optionally hide content in long forms:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->blocks([
+        // ...
+    ])
+    ->collapsible()
+```
+
+You may collapse all items by default:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->blocks([
+        // ...
+    ])
+    ->collapsed()
+```
+
 ## Tags input
 
 The tags input component allows you to interact with a list of tags.
@@ -1464,7 +1676,7 @@ use Filament\Forms\Components\TagsInput;
 TagsInput::make('tags')
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147614098-14d6eecb-2674-49b6-a5ee-e963c4d88a6e.png">
+![](https://user-images.githubusercontent.com/41773797/147614098-14d6eecb-2674-49b6-a5ee-e963c4d88a6e.png)
 
 If you're saving the JSON tags using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
@@ -1503,7 +1715,7 @@ TagsInput::make('tags')
     ])
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147614115-7570a6cb-dd91-4912-8adf-e54a51f1c567.png">
+![](https://user-images.githubusercontent.com/41773797/147614115-7570a6cb-dd91-4912-8adf-e54a51f1c567.png)
 
 > Filament also supports [`spatie/laravel-tags`](https://github.com/spatie/laravel-tags). See our [plugin documentation](/docs/spatie-laravel-tags-plugin) for more information.
 
@@ -1517,7 +1729,7 @@ use Filament\Forms\Components\Textarea;
 Textarea::make('description')
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147614131-e3db8d23-5045-4e0e-8de4-30823a4af362.png">
+![](https://user-images.githubusercontent.com/41773797/147614131-e3db8d23-5045-4e0e-8de4-30823a4af362.png)
 
 You may change the size of the textarea by defining the `rows()` and `cols()` methods:
 
@@ -1549,7 +1761,7 @@ use Filament\Forms\Components\KeyValue;
 KeyValue::make('meta')
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147614182-52756a59-a9c4-4371-ac61-cd77c977808e.png">
+![](https://user-images.githubusercontent.com/41773797/147614182-52756a59-a9c4-4371-ac61-cd77c977808e.png)
 
 You may customize the labels for the key and value fields using the `keyLabel()` and `valueLabel()` methods:
 
@@ -1561,7 +1773,7 @@ KeyValue::make('meta')
     ->valueLabel('Property value')
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147614196-27341757-b50e-45c2-8b40-728cb985d2cd.png">
+![](https://user-images.githubusercontent.com/41773797/147614196-27341757-b50e-45c2-8b40-728cb985d2cd.png)
 
 You may also prevent the user from adding rows, deleting rows, or editing keys:
 
@@ -1584,7 +1796,31 @@ KeyValue::make('meta')
     ->valuePlaceholder('Property value')
 ```
 
-<img src="https://user-images.githubusercontent.com/41773797/147614208-936fa7ee-f719-466f-b7de-56ecc2558c0a.png">
+![](https://user-images.githubusercontent.com/41773797/147614208-936fa7ee-f719-466f-b7de-56ecc2558c0a.png)
+
+## Color picker
+
+The color picker component allows you to pick a color in a range of formats.
+
+By default, the component uses HEX format:
+
+```php
+use Filament\Forms\Components\ColorPicker;
+
+ColorPicker::make('color')
+```
+
+![](https://user-images.githubusercontent.com/41773797/163201755-8926ce35-0d72-42b0-bd31-8967ba40f089.png)
+
+Alternatively, you can use a different format:
+
+```php
+use Filament\Forms\Components\ColorPicker;
+
+ColorPicker::make('hsl_color')->hsl()
+ColorPicker::make('rgb_color')->rgb()
+ColorPicker::make('rgba_color')->rgba()
+```
 
 ## View
 
@@ -1623,7 +1859,7 @@ You may create your own custom field classes and views, which you can reuse acro
 
 > If you're just creating a simple custom field to use once, you could instead use a [view field](#view) to render any custom Blade file.
 
-To create a custom column class and view, you may use the following command:
+To create a custom field class and view, you may use the following command:
 
 ```bash
 php artisan make:form-field RangeSlider

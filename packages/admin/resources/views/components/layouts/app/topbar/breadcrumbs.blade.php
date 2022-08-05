@@ -12,9 +12,9 @@
                 <a
                     href="{{ is_int($url) ? '#' : $url }}"
                     @class([
-                        'dark:text-gray-300' => (! $loop->last) && config('filament.dark_mode'),
-                        'text-gray-500' => $loop->last,
-                        'dark:text-gray-400' => $loop->last && config('filament.dark_mode'),
+                        'text-gray-500' => $loop->last && (! $loop->first),
+                        'dark:text-gray-300' => ((! $loop->last) || $loop->first) && config('filament.dark_mode'),
+                        'dark:text-gray-400' => $loop->last && (! $loop->first) && config('filament.dark_mode'),
                     ])
                 >
                     {{ $label }}

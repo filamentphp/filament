@@ -6,6 +6,8 @@ use Closure;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\ComponentAttributeBag;
+use Throwable;
 
 class ImageColumn extends Column
 {
@@ -17,10 +19,16 @@ class ImageColumn extends Column
 
     protected bool | Closure $isRounded = false;
 
+    protected string | Closure $visibility = 'public';
+
     protected int | string | Closure | null $width = null;
+
+    protected array | Closure $extraImgAttributes = [];
 
     protected function setUp(): void
     {
+        parent::setUp();
+
         $this->disk(config('tables.default_filesystem_disk'));
     }
 
@@ -53,6 +61,13 @@ class ImageColumn extends Column
         return $this;
     }
 
+    public function visibility(string | Closure $visibility): static
+    {
+        $this->visibility = $visibility;
+
+        return $this;
+    }
+
     public function width(int | string | Closure | null $width): static
     {
         $this->width = $width;
@@ -78,7 +93,7 @@ class ImageColumn extends Column
             return null;
         }
 
-        if (is_integer($height)) {
+        if (is_int($height)) {
             return "{$height}px";
         }
 
@@ -100,18 +115,27 @@ class ImageColumn extends Column
         /** @var FilesystemAdapter $storage */
         $storage = $this->getDisk();
 
-        // An ugly mess as we need to support both Flysystem v1 and v3.
-        $storageAdapter = method_exists($storage, 'getAdapter') ? $storage->getAdapter() : (method_exists($storageDriver = $storage->getDriver(), 'getAdapter') ? $storageDriver->getAdapter() : null);
-        $supportsTemporaryUrls = method_exists($storageAdapter, 'temporaryUrl') || method_exists($storageAdapter, 'getTemporaryUrl');
+        if (! $storage->exists($state)) {
+            return null;
+        }
 
-        if ($storage->getVisibility($state) === 'private' && $supportsTemporaryUrls) {
-            return $storage->temporaryUrl(
-                $state,
-                now()->addMinutes(5),
-            );
+        if ($this->getVisibility() === 'private' || $storage->getVisibility($state) === 'private') {
+            try {
+                return $storage->temporaryUrl(
+                    $state,
+                    now()->addMinutes(5),
+                );
+            } catch (Throwable $exception) {
+                // This driver does not support creating temporary URLs.
+            }
         }
 
         return $storage->url($state);
+    }
+
+    public function getVisibility(): string
+    {
+        return $this->evaluate($this->visibility);
     }
 
     public function getWidth(): ?string
@@ -122,7 +146,7 @@ class ImageColumn extends Column
             return null;
         }
 
-        if (is_integer($width)) {
+        if (is_int($width)) {
             return "{$width}px";
         }
 
@@ -132,5 +156,22 @@ class ImageColumn extends Column
     public function isRounded(): bool
     {
         return $this->evaluate($this->isRounded);
+    }
+
+    public function extraImgAttributes(array | Closure $attributes): static
+    {
+        $this->extraImgAttributes = $attributes;
+
+        return $this;
+    }
+
+    public function getExtraImgAttributes(): array
+    {
+        return $this->evaluate($this->extraImgAttributes);
+    }
+
+    public function getExtraImgAttributeBag(): ComponentAttributeBag
+    {
+        return new ComponentAttributeBag($this->getExtraImgAttributes());
     }
 }

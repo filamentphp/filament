@@ -6,7 +6,7 @@ use Closure;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 
-class SelectFilter extends Filter
+class SelectFilter extends BaseFilter
 {
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
@@ -79,13 +79,19 @@ class SelectFilter extends Filter
     public function getFormSchema(): array
     {
         return $this->formSchema ?? [
-            Select::make('value')
-                ->label($this->getLabel())
-                ->options($this->getOptions())
-                ->placeholder($this->getPlaceholder())
-                ->default($this->getDefaultState())
-                ->searchable($this->isSearchable()),
+            $this->getFormSelectComponent(),
         ];
+    }
+
+    protected function getFormSelectComponent(): Select
+    {
+        return Select::make('value')
+            ->label($this->getLabel())
+            ->options($this->getOptions())
+            ->placeholder($this->getPlaceholder())
+            ->default($this->getDefaultState())
+            ->searchable($this->isSearchable())
+            ->columnSpan($this->getColumnSpan());
     }
 
     public function isSearchable(): bool

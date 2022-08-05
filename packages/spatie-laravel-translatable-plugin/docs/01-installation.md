@@ -38,7 +38,7 @@ If you wish to translate the package, you may publish the language files using:
 php artisan vendor:publish --tag=filament-spatie-laravel-translatable-plugin-translations
 ```
 
-## Upgrade Guide
+## Upgrading
 
 To upgrade the package to the latest version, you must run:
 

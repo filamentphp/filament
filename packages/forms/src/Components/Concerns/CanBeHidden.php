@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Forms\Contracts\HasForms;
 use Illuminate\Support\Arr;
 
 trait CanBeHidden
@@ -18,6 +19,21 @@ trait CanBeHidden
         return $this;
     }
 
+    public function hiddenOn(string | array $contexts): static
+    {
+        $this->hidden(static function (string $context, HasForms $livewire) use ($contexts): bool {
+            foreach (Arr::wrap($contexts) as $hiddenContext) {
+                if ($hiddenContext === $context || $livewire instanceof $hiddenContext) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+
+        return $this;
+    }
+
     public function when(bool | Closure $condition = true): static
     {
         $this->visible($condition);
@@ -29,7 +45,7 @@ trait CanBeHidden
     {
         $paths = Arr::wrap($paths);
 
-        $this->hidden(function (Closure $get) use ($paths): bool {
+        $this->hidden(static function (Closure $get) use ($paths): bool {
             foreach ($paths as $path) {
                 if (! $get($path)) {
                     return true;
@@ -46,9 +62,9 @@ trait CanBeHidden
     {
         $paths = Arr::wrap($paths);
 
-        $this->hidden(function (Closure $get) use ($paths): bool {
+        $this->hidden(static function (Closure $get) use ($paths): bool {
             foreach ($paths as $path) {
-                if (! ! $get($path)) {
+                if ((bool) $get($path)) {
                     return true;
                 }
             }
@@ -62,6 +78,21 @@ trait CanBeHidden
     public function visible(bool | Closure $condition = true): static
     {
         $this->isVisible = $condition;
+
+        return $this;
+    }
+
+    public function visibleOn(string | array $contexts): static
+    {
+        $this->visible(static function (string $context, HasForms $livewire) use ($contexts): bool {
+            foreach (Arr::wrap($contexts) as $visibleContext) {
+                if ($visibleContext === $context || $livewire instanceof $visibleContext) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
 
         return $this;
     }

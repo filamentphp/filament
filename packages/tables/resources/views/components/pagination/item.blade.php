@@ -18,12 +18,12 @@
             'transition' => ((! $active) && (! $disabled) && (! $separator)) || $active,
             'text-primary-600' => ((! $active) && (! $disabled) && $icon && (! $separator)) || $active,
             'focus:underline bg-primary-500/10 ring-2 ring-primary-500' => $active,
-            'cursor-not-allowed opacity-70' => $disabled,
+            'cursor-not-allowed pointer-events-none opacity-70' => $disabled,
             'cursor-default' => $separator,
         ]) }}
     >
         @if ($icon)
-            <x-dynamic-component :component="$icon" class="w-5 h-5 rtl:rotate-180" />
+            <x-dynamic-component :component="$icon" class="w-5 h-5 rtl:scale-x-[-1]" />
         @endif
 
         <span>{{ $label ?? ($separator ? '...' : '') }}</span>

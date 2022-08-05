@@ -13,7 +13,7 @@ return [
 
     'pagination' => [
 
-        'label' => 'Paginatie navigatie',
+        'label' => 'Paginering navigatie',
 
         'overview' => 'Toont :first tot :last van :total resultaten',
 
@@ -45,38 +45,24 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Herordenen van records voltooien',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Records herordenen',
+        ],
+
         'filter' => [
-            'label' => 'Filter',
+            'label' => 'Filteren',
         ],
 
         'open_actions' => [
             'label' => 'Acties openen',
         ],
 
-    ],
-
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Weet u zeker dat u dit wilt doen?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Annuleren',
-                ],
-
-                'confirm' => [
-                    'label' => 'Bevestig',
-                ],
-
-                'submit' => [
-                    'label' => 'Verzenden',
-                ],
-
-            ],
-
+        'toggle_columns' => [
+            'label' => 'Kolommen in-/uitschakelen',
         ],
 
     ],
@@ -90,11 +76,11 @@ return [
         'buttons' => [
 
             'reset' => [
-                'label' => 'Reset filters',
+                'label' => 'Filters resetten',
             ],
 
             'close' => [
-                'label' => 'Sluit',
+                'label' => 'Sluiten',
             ],
 
         ],
@@ -107,12 +93,25 @@ return [
             'placeholder' => 'Alles',
         ],
 
+        'trashed' => [
+
+            'label' => 'Verwijderde records',
+
+            'only_trashed' => 'Alleen verwijderde records',
+
+            'with_trashed' => 'Met verwijderde records records',
+
+            'without_trashed' => 'Zonder verwijderde records',
+
+        ],
+
     ],
+
+    'reorder_indicator' => 'Sleep de records in de juiste volgorde.',
 
     'selection_indicator' => [
 
-        'selected_count' => '1 rij geselecteerd.|:count rijen geselecteerd.',
-
+        'selected_count' => '1 record geselecteerd.|:count records geselecteerd.',
 
         'buttons' => [
 
@@ -121,7 +120,7 @@ return [
             ],
 
             'deselect_all' => [
-                'label' => 'Deselecteer alles',
+                'label' => 'Alles deselecteren',
             ],
 
         ],

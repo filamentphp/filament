@@ -2,6 +2,7 @@
 
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Placeholder;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
@@ -74,6 +75,26 @@ test('state can be hydrated from array', function () {
         ->getData()->toBe([$statePath => $state]);
 });
 
+test('hydrating array state can overwrite existing state', function () {
+    $statePath = Str::random();
+
+    ComponentContainer::make(
+        $livewire = Livewire::make()
+            ->data([
+                $statePath => Str::random(),
+            ]),
+    )
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($statePath),
+        ])
+        ->fill([]);
+
+    expect($livewire)
+        ->getData()->toBe([$statePath => null]);
+});
+
 test('state can be hydrated from defaults', function () {
     ComponentContainer::make($livewire = Livewire::make())
         ->statePath('data')
@@ -86,6 +107,114 @@ test('state can be hydrated from defaults', function () {
 
     expect($livewire)
         ->getData()->toBe([$statePath => $state]);
+});
+
+test('hydrating default state can overwrite existing state', function () {
+    $statePath = Str::random();
+
+    ComponentContainer::make(
+        $livewire = Livewire::make()
+            ->data([
+                $statePath => Str::random(),
+            ]),
+    )
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($statePath),
+        ])
+        ->fill();
+
+    expect($livewire)
+        ->getData()->toBe([$statePath => null]);
+});
+
+test('child component state is not lost by hydrating parent component', function () {
+    ComponentContainer::make($livewire = Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($parentStatePath = Str::random())
+                ->schema([
+                    (new Component())
+                        ->statePath($statePath = Str::random())
+                        ->default($state = Str::random()),
+                ]),
+        ])
+        ->fill();
+
+    expect($livewire)
+        ->getData()->toBe([$parentStatePath => [$statePath => $state]]);
+});
+
+test('child component state is not lost by hydrating parent component defaults', function () {
+    ComponentContainer::make($livewire = Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($parentStatePath = Str::random())
+                ->schema([
+                    (new Component())
+                        ->statePath($statePath = Str::random())
+                        ->default($state = Str::random()),
+                ])
+                ->default([]),
+        ])
+        ->fill();
+
+    expect($livewire)
+        ->getData()->toBe([$parentStatePath => [$statePath => $state]]);
+});
+
+test('child component state can be hydrated by parent component defaults', function () {
+    ComponentContainer::make($livewire = Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($parentStatePath = Str::random())
+                ->schema([
+                    (new Component())
+                        ->statePath($statePath = Str::random()),
+                ])
+                ->default([$statePath => ($state = Str::random())]),
+        ])
+        ->fill();
+
+    expect($livewire)
+        ->getData()->toBe([$parentStatePath => [$statePath => $state]]);
+});
+
+test('missing child component state can be filled with null', function () {
+    ComponentContainer::make($livewire = Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($parentStatePath = Str::random())
+                ->schema([
+                    (new Component())->statePath($statePath = Str::random()),
+                ])
+                ->afterStateHydrated(fn (Component $component) => $component->state([])),
+        ])
+        ->fill();
+
+    expect($livewire)
+        ->getData()->toBe([$parentStatePath => [$statePath => null]]);
+});
+
+test('missing hidden child component state can be filled with null', function () {
+    ComponentContainer::make($livewire = Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->hidden()
+                ->schema([
+                    (new Component())->statePath($statePath = Str::random()),
+                ]),
+        ])
+        ->fill();
+
+    expect($livewire)
+        ->getData()->toBe([$statePath => null]);
 });
 
 test('custom logic can be executed after state is hydrated', function () {
@@ -161,6 +290,8 @@ test('custom logic can be executed before state is dehydrated', function () {
         ])
         ->fill();
 
+    $container->callBeforeStateDehydrated();
+
     expect($container)
         ->dehydrateState()->toBe([
             'data' => [$statePath => strrev($state)],
@@ -193,8 +324,122 @@ test('dehydrated state can be mutated', function () {
         ])
         ->fill();
 
+    $containerState = $container->dehydrateState();
+
     expect($container)
-        ->mutateDehydratedState($container->dehydrateState())->toBe([
+        ->mutateDehydratedState($containerState)->toBe([
             'data' => [$statePath => strrev($state)],
         ]);
+});
+
+test('sibling state can be retrieved relatively from another component', function () {
+    ComponentContainer::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($statePath = Str::random())
+                ->default($state = Str::random()),
+            $placeholder = Placeholder::make(Str::random())
+                ->content(fn (Closure $get): string => $get($statePath)),
+        ])
+        ->fill();
+
+    expect($placeholder)
+        ->getContent()->toBe($state);
+});
+
+test('sibling nested state can be retrieved relatively from another component', function () {
+    ComponentContainer::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($parentStatePath = Str::random())
+                ->schema([
+                    (new Component())
+                        ->statePath($statePath = Str::random())
+                        ->default($state = Str::random()),
+                ]),
+            $placeholder = Placeholder::make(Str::random())
+                ->content(fn (Closure $get): string => $get("{$parentStatePath}.{$statePath}")),
+        ])
+        ->fill();
+
+    expect($placeholder)
+        ->getContent()->toBe($state);
+});
+
+test('parent sibling state can be retrieved relatively from another component', function () {
+    ComponentContainer::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($statePath = Str::random())
+                ->default($state = Str::random()),
+            (new Component())
+                ->statePath(Str::random())
+                ->schema([
+                    $placeholder = Placeholder::make(Str::random())
+                        ->content(fn (Closure $get): string => $get("../{$statePath}")),
+                ]),
+        ])
+        ->fill();
+
+    expect($placeholder)
+        ->getContent()->toBe($state);
+});
+
+test('sibling state can be retrieved absolutely from another component', function () {
+    ComponentContainer::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($statePath = Str::random())
+                ->default($state = Str::random()),
+            $placeholder = Placeholder::make(Str::random())
+                ->content(fn (Closure $get): string => $get("data.{$statePath}", isAbsolute: true)),
+        ])
+        ->fill();
+
+    expect($placeholder)
+        ->getContent()->toBe($state);
+});
+
+test('sibling nested state can be retrieved absolutely from another component', function () {
+    ComponentContainer::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($parentStatePath = Str::random())
+                ->schema([
+                    (new Component())
+                        ->statePath($statePath = Str::random())
+                        ->default($state = Str::random()),
+                ]),
+            $placeholder = Placeholder::make(Str::random())
+                ->content(fn (Closure $get): string => $get("data.{$parentStatePath}.{$statePath}", isAbsolute: true)),
+        ])
+        ->fill();
+
+    expect($placeholder)
+        ->getContent()->toBe($state);
+});
+
+test('parent sibling state can be retrieved absolutely from another component', function () {
+    ComponentContainer::make(Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($statePath = Str::random())
+                ->default($state = Str::random()),
+            (new Component())
+                ->statePath(Str::random())
+                ->schema([
+                    $placeholder = Placeholder::make(Str::random())
+                        ->content(fn (Closure $get): string => $get("data.{$statePath}", isAbsolute: true)),
+                ]),
+        ])
+        ->fill();
+
+    expect($placeholder)
+        ->getContent()->toBe($state);
 });

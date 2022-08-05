@@ -4,6 +4,8 @@ return [
 
     'title' => 'Logowanie',
 
+    'heading' => 'Zaloguj się',
+
     'buttons' => [
 
         'submit' => [
@@ -32,7 +34,5 @@ return [
         'failed' => 'Błędny login lub hasło.',
         'throttled' => 'Za dużo nieudanych prób logowania. Proszę spróbować za :seconds sekund.',
     ],
-
-    'heading' => 'Zaloguj się do swojego konta',
 
 ];

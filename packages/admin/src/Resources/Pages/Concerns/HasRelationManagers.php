@@ -2,6 +2,8 @@
 
 namespace Filament\Resources\Pages\Concerns;
 
+use Filament\Resources\RelationManagers\RelationGroup;
+
 trait HasRelationManagers
 {
     public $activeRelationManager = null;
@@ -10,20 +12,26 @@ trait HasRelationManagers
     {
         $managers = $this->getResource()::getRelations();
 
-        return array_values(array_filter(
+        return array_filter(
             $managers,
-            fn (string $manager): bool => $manager::canViewForRecord($this->record),
-        ));
+            function (string | RelationGroup $manager): bool {
+                if ($manager instanceof RelationGroup) {
+                    return (bool) count($manager->getManagers(ownerRecord: $this->getRecord()));
+                }
+
+                return $manager::canViewForRecord($this->getRecord());
+            },
+        );
     }
 
     public function mountHasRelationManagers(): void
     {
         $managers = $this->getRelationManagers();
 
-        if (in_array($this->activeRelationManager, $managers)) {
+        if (array_key_exists($this->activeRelationManager, $managers)) {
             return;
         }
 
-        $this->activeRelationManager = $this->getRelationManagers()[0] ?? null;
+        $this->activeRelationManager = array_key_first($this->getRelationManagers()) ?? null;
     }
 }

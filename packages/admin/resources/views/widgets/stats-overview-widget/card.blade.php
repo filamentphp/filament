@@ -15,5 +15,6 @@
     :target="$shouldOpenUrlInNewTab() ? '_blank' : null"
     :label="$getLabel()"
     :value="$getValue()"
+    :extra-attributes="$getExtraAttributes()"
     class="filament-stats-overview-widget-card"
 />

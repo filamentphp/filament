@@ -18,8 +18,8 @@ return [
                 'label' => 'ساختن',
             ],
 
-            'create_and_create_another' => [
-                'label' => 'ساختن و ساختن یکی دیگر',
+            'create_another' => [
+                'label' => 'ساختن یکی دیگر',
             ],
 
         ],

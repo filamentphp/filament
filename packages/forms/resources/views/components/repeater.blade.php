@@ -9,96 +9,193 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <div {{ $attributes->merge($getExtraAttributes())->class(['space-y-2 filament-forms-repeater-component']) }}>
-        @if (count($containers = $getChildComponentContainers()))
-            <ul class="space-y-2">
-                @foreach ($containers as $uuid => $item)
-                    <li
-                        wire:key="{{ $item->getStatePath() }}"
-                        @class([
-                            'relative p-6 bg-white shadow-sm rounded-lg border border-gray-300',
-                            'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
-                        ])
-                    >
-                        {{ $item }}
+    @php
+        $containers = $getChildComponentContainers();
 
-                        @unless ($isItemDeletionDisabled() && ($isItemMovementDisabled() && ($loop->count <= 1)))
-                            <div @class([
-                                'absolute top-0 right-0 h-6 flex divide-x rounded-bl-lg rounded-tr-lg border-gray-300 border-b border-l overflow-hidden rtl:border-l-0 rtl:border-r rtl:right-auto rtl:left-0 rtl:rounded-bl-none rtl:rounded-br-lg rtl:rounded-tr-none rtl:rounded-tl-lg',
-                                'dark:border-gray-600 dark:divide-gray-600' => config('forms.dark_mode'),
-                            ])>
-                                @unless ($loop->first || $isItemMovementDisabled())
-                                    <button
-                                        wire:click="dispatchFormEvent('repeater::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
-                                        type="button"
-                                        @class([
-                                            'flex items-center justify-center w-6 text-gray-800 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600',
-                                            'dark:text-gray-200 dark:hover:bg-gray-600' => config('forms.dark_mode'),
-                                        ])
-                                    >
-                                        <span class="sr-only">
-                                            {{ __('forms::components.repeater.buttons.move_item_up.label') }}
-                                        </span>
+        $isCollapsible = $isCollapsible();
+        $isCloneable = $isCloneable();
+        $isItemCreationDisabled = $isItemCreationDisabled();
+        $isItemDeletionDisabled = $isItemDeletionDisabled();
+        $isItemMovementDisabled = $isItemMovementDisabled();
+        $hasItemLabels = $hasItemLabels();
+    @endphp
 
-                                        <x-heroicon-s-chevron-up class="w-4 h-4" />
-                                    </button>
-                                @endunless
+    @if ((count($containers) > 1) && $isCollapsible)
+        <div class="space-x-2 rtl:space-x-reverse" x-data="{}">
+            <x-forms::link
+                x-on:click="$dispatch('repeater-collapse', '{{ $getStatePath() }}')"
+                tag="button"
+                size="sm"
+            >
+                {{ __('forms::components.repeater.buttons.collapse_all.label') }}
+            </x-forms::link>
 
-                                @unless ($loop->last || $isItemMovementDisabled())
-                                    <button
-                                        wire:click="dispatchFormEvent('repeater::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
-                                        type="button"
-                                        @class([
-                                            'flex items-center justify-center w-6 text-gray-800 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600',
-                                            'dark:text-gray-200 dark:hover:bg-gray-600' => config('forms.dark_mode'),
-                                        ])
-                                    >
-                                        <span class="sr-only">
-                                            {{ __('forms::components.repeater.buttons.move_item_down.label') }}
-                                        </span>
+            <x-forms::link
+                x-on:click="$dispatch('repeater-expand', '{{ $getStatePath() }}')"
+                tag="button"
+                size="sm"
+            >
+                {{ __('forms::components.repeater.buttons.expand_all.label') }}
+            </x-forms::link>
+        </div>
+    @endif
 
-                                        <x-heroicon-s-chevron-down class="w-4 h-4" />
-                                    </button>
-                                @endunless
+    <div {{ $attributes->merge($getExtraAttributes())->class([
+        'space-y-6 rounded-xl filament-forms-repeater-component',
+        'bg-gray-50 p-6' => $isInset(),
+        'dark:bg-gray-500/10' => $isInset() && config('forms.dark_mode'),
+    ]) }}>
+        @if (count($containers))
+            <ul>
+                <x-filament-support::grid
+                    :default="$getGridColumns('default')"
+                    :sm="$getGridColumns('sm')"
+                    :md="$getGridColumns('md')"
+                    :lg="$getGridColumns('lg')"
+                    :xl="$getGridColumns('xl')"
+                    :two-xl="$getGridColumns('2xl')"
+                    wire:sortable
+                    wire:end.stop="dispatchFormEvent('repeater::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
+                    class="gap-6"
+                >
+                    @foreach ($containers as $uuid => $item)
+                        <li
+                            x-data="{ isCollapsed: @js($isCollapsed()) }"
+                            x-on:repeater-collapse.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = true)"
+                            x-on:repeater-expand.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = false)"
+                            wire:key="{{ $item->getStatePath() }}"
+                            wire:sortable.item="{{ $uuid }}"
+                            @class([
+                                'bg-white border border-gray-300 shadow-sm rounded-xl relative',
+                                'dark:bg-gray-800 dark:border-gray-600' => config('forms.dark_mode'),
+                            ])
+                        >
+                            @if ((! $isItemMovementDisabled) || (! $isItemDeletionDisabled) || $isCloneable || $isCollapsible || $hasItemLabels)
+                                <header @class([
+                                    'flex items-center h-10 overflow-hidden border-b bg-gray-50 rounded-t-xl',
+                                    'dark:bg-gray-800 dark:border-gray-700' => config('forms.dark_mode'),
+                                ])>
+                                    @unless ($isItemMovementDisabled)
+                                        <button
+                                            wire:sortable.handle
+                                            wire:keydown.prevent.arrow-up="dispatchFormEvent('repeater::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                            wire:keydown.prevent.arrow-down="dispatchFormEvent('repeater::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                            type="button"
+                                            @class([
+                                                'flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-r transition hover:text-gray-300',
+                                                'dark:text-gray-400 dark:border-gray-700 dark:hover:text-gray-500' => config('forms.dark_mode'),
+                                            ])
+                                        >
+                                            <span class="sr-only">
+                                                {{ __('forms::components.repeater.buttons.move_item_down.label') }}
+                                            </span>
 
-                                @unless ($isItemDeletionDisabled())
-                                    <button
-                                        wire:click="dispatchFormEvent('repeater::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
-                                        type="button"
-                                        @class([
-                                            'flex items-center justify-center w-6 text-danger-600 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-white focus:ring-primary-600 focus:text-danger-600 focus:bg-primary-50 focus:border-primary-600',
-                                            'dark:hover:bg-gray-600' => config('forms.dark_mode'),
-                                        ])
-                                    >
-                                        <span class="sr-only">
-                                            {{ __('forms::components.repeater.buttons.delete_item.label') }}
-                                        </span>
+                                            <x-heroicon-s-switch-vertical class="w-4 h-4"/>
+                                        </button>
+                                    @endunless
 
-                                        <x-heroicon-s-trash class="w-4 h-4" />
-                                    </button>
-                                @endunless
+                                    <p @class([
+                                        'flex-none px-4 text-xs font-medium text-gray-600 truncate',
+                                        'dark:text-gray-400' => config('forms.dark_mode'),
+                                    ])>
+                                        {{ $getItemLabel($uuid) }}
+                                    </p>
+
+                                    <div class="flex-1"></div>
+
+                                    <ul @class([
+                                        'flex divide-x rtl:divide-x-reverse',
+                                        'dark:divide-gray-700' => config('forms.dark_mode'),
+                                    ])>
+                                        @if ($isCloneable)
+                                            <li>
+                                                <button
+                                                    wire:click="dispatchFormEvent('repeater::cloneItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                    type="button"
+                                                    @class([
+                                                        'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-300',
+                                                        'dark:text-gray-400 dark:border-gray-700 dark:hover:text-gray-500' => config('forms.dark_mode'),
+                                                    ])
+                                                >
+                                                    <span class="sr-only">
+                                                        {{ __('forms::components.repeater.buttons.clone_item.label') }}
+                                                    </span>
+
+                                                    <x-heroicon-s-duplicate class="w-4 h-4"/>
+                                                </button>
+                                            </li>
+                                        @endunless
+                                        
+                                        @unless ($isItemDeletionDisabled)
+                                            <li>
+                                                <button
+                                                    wire:click="dispatchFormEvent('repeater::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                    type="button"
+                                                    @class([
+                                                        'flex items-center justify-center flex-none w-10 h-10 text-danger-600 transition hover:text-danger-500',
+                                                        'dark:text-danger-500 dark:hover:text-danger-400' => config('forms.dark_mode'),
+                                                    ])
+                                                >
+                                                    <span class="sr-only">
+                                                        {{ __('forms::components.repeater.buttons.delete_item.label') }}
+                                                    </span>
+
+                                                    <x-heroicon-s-trash class="w-4 h-4"/>
+                                                </button>
+                                            </li>
+                                        @endunless
+
+                                        @if ($isCollapsible)
+                                            <li>
+                                                <button
+                                                    x-on:click="isCollapsed = ! isCollapsed"
+                                                    type="button"
+                                                    @class([
+                                                        'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-300',
+                                                        'dark:text-gray-400 dark:hover:text-gray-500' => config('forms.dark_mode'),
+                                                    ])
+                                                >
+                                                    <x-heroicon-s-minus-sm class="w-4 h-4" x-show="! isCollapsed"/>
+
+                                                    <span class="sr-only" x-show="! isCollapsed">
+                                                        {{ __('forms::components.repeater.buttons.collapse_item.label') }}
+                                                    </span>
+
+                                                    <x-heroicon-s-plus-sm class="w-4 h-4" x-show="isCollapsed" x-cloak/>
+
+                                                    <span class="sr-only" x-show="isCollapsed" x-cloak>
+                                                        {{ __('forms::components.repeater.buttons.expand_item.label') }}
+                                                    </span>
+                                                </button>
+                                            </li>
+                                        @endif
+                                    </ul>
+                                </header>
+                            @endif
+
+                            <div class="p-6" x-show="! isCollapsed">
+                                {{ $item }}
                             </div>
-                        @endunless
-                    </li>
-                @endforeach
+
+                            <div class="p-2 text-xs text-center text-gray-400" x-show="isCollapsed" x-cloak>
+                                {{ __('forms::components.repeater.collapsed') }}
+                            </div>
+                        </li>
+                    @endforeach
+                </x-filament-support::grid>
             </ul>
         @endif
 
-        @if ((blank($getMaxItems()) || ($getMaxItems() > $getItemsCount())) && (! $isItemCreationDisabled()))
-            <button
-                wire:click="dispatchFormEvent('repeater::createItem', '{{ $getStatePath() }}')"
-                type="button"
-                @class([
-                    'w-full h-9 px-4 inline-flex space-x-1 rtl:space-x-reverse items-center justify-center font-medium tracking-tight rounded-lg text-gray-800 bg-white border border-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600',
-                    'dark:bg-gray-800 dark:border-gray-600 dark:hover:border-gray-500 dark:text-gray-200 dark:focus:text-primary-400 dark:focus:border-primary-400 dark:focus:bg-gray-800 dark:focus:ring-offset-0' => config('forms.dark_mode'),
-                ])
-            >
-                <x-heroicon-s-plus class="w-5 h-5" />
-
-                <span>
+        @if (! $isItemCreationDisabled)
+            <div class="relative flex justify-center">
+                <x-forms::button
+                    :wire:click="'dispatchFormEvent(\'repeater::createItem\', \'' . $getStatePath() . '\')'"
+                    size="sm"
+                    type="button"
+                >
                     {{ $getCreateItemButtonLabel() }}
-                </span>
-            </button>
+                </x-forms::button>
+            </div>
         @endif
     </div>
 </x-dynamic-component>

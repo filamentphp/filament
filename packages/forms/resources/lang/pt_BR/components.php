@@ -75,12 +75,6 @@ return [
 
     ],
 
-    'multi_select' => [
-        'no_search_results_message' => 'Nenhuma opção corresponde à sua pesquisa.',
-        'placeholder' => 'Selecione uma opção',
-        'search_prompt' => 'Digite para pesquisar...',
-    ],
-
     'repeater' => [
 
         'buttons' => [
@@ -99,6 +93,14 @@ return [
 
             'move_item_up' => [
                 'label' => 'Mover para cima',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Recolher todos',
+            ],
+
+            'expand_all' => [
+                'label' => 'Expandir todos',
             ],
 
         ],

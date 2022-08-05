@@ -3,11 +3,13 @@
 namespace Filament\Resources\RelationManagers;
 
 use Filament\Resources\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
 
+/**
+ * @deprecated Use `RelationManager` instead, defining actions on the `$table`.
+ */
 class BelongsToManyRelationManager extends RelationManager
 {
     use Concerns\CanAttachRecords;
@@ -15,36 +17,35 @@ class BelongsToManyRelationManager extends RelationManager
     use Concerns\CanDeleteRecords;
     use Concerns\CanDetachRecords;
     use Concerns\CanEditRecords;
-
-    protected static string $view = 'filament::resources.relation-managers.belongs-to-many-relation-manager';
+    use Concerns\CanViewRecords;
 
     protected function getResourceTable(): Table
     {
-        if (! $this->resourceTable) {
-            $table = Table::make();
+        $table = Table::make();
 
-            $table->actions([
-                $this->getEditAction(),
-                $this->getDetachAction(),
-                $this->getDeleteAction(),
-            ]);
+        $table->actions([
+            $this->getViewAction(),
+            $this->getEditAction(),
+            $this->getDetachAction(),
+            $this->getDeleteAction(),
+        ]);
 
-            $table->bulkActions(array_merge(
-                ($this->canDeleteAny() ? [$this->getDeleteBulkAction()] : []),
-                ($this->canDetachAny() ? [$this->getDetachBulkAction()] : []),
-            ));
+        $table->bulkActions(array_merge(
+            ($this->canDeleteAny() ? [$this->getDeleteBulkAction()] : []),
+            ($this->canDetachAny() ? [$this->getDetachBulkAction()] : []),
+        ));
 
-            $table->headerActions(array_merge(
-                ($this->canCreate() ? [$this->getCreateAction()] : []),
-                ($this->canAttach() ? [$this->getAttachAction()] : []),
-            ));
+        $table->headerActions(array_merge(
+            ($this->canCreate() ? [$this->getCreateAction()] : []),
+            ($this->canAttach() ? [$this->getAttachAction()] : []),
+        ));
 
-            $this->resourceTable = static::table($table);
-        }
-
-        return $this->resourceTable;
+        return $this->table($table);
     }
 
+    /**
+     * @deprecated Use `->using()` on the action instead.
+     */
     protected function handleRecordCreation(array $data): Model
     {
         /** @var BelongsToMany $relationship */
@@ -61,6 +62,9 @@ class BelongsToManyRelationManager extends RelationManager
         return $record;
     }
 
+    /**
+     * @deprecated Use `->using()` on the action instead.
+     */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         /** @var BelongsToMany $relationship */
@@ -73,26 +77,9 @@ class BelongsToManyRelationManager extends RelationManager
         $record->update($data);
 
         if (count($pivotColumns)) {
-            $relationship->updateExistingPivot($record, $pivotData);
+            $record->{$relationship->getPivotAccessor()}->update($pivotData);
         }
 
         return $record;
-    }
-
-    // https://github.com/laravel/framework/issues/4962
-    protected function getTableQuery(): Builder
-    {
-        $query = parent::getTableQuery();
-
-        /** @var BelongsToMany $relationship */
-        $relationship = $this->getRelationship();
-
-        /** @var Builder $query */
-        $query->select(
-            $relationship->getTable().'.*',
-            $query->getModel()->getTable().'.*',
-        );
-
-        return $query;
     }
 }

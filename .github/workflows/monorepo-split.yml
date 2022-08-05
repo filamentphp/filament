@@ -13,10 +13,12 @@ jobs:
                 package:
                     - admin
                     - forms
+                    - notifications
                     - spatie-laravel-media-library-plugin
                     - spatie-laravel-settings-plugin
                     - spatie-laravel-tags-plugin
                     - spatie-laravel-translatable-plugin
+                    - support
                     - tables
         steps:
             - uses: actions/checkout@v2
@@ -28,7 +30,7 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
               with:
                   package_directory: 'packages/${{ matrix.package }}'
-                  repository_organization: 'laravel-filament'
+                  repository_organization: 'filamentphp'
                   repository_name: '${{ matrix.package }}'
                   branch: 2.x
                   tag: ${{ steps.previous-tag.outputs.tag }}

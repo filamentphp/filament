@@ -15,7 +15,7 @@ return [
 
         'label' => '分页',
 
-        'overview' => '显示 :first 到 :last 的 :total 结果',
+        'overview' => '当前显示第 :first 条到第 :last 条，共 :total 条',
 
         'fields' => [
 
@@ -53,30 +53,8 @@ return [
             'label' => '展开操作项',
         ],
 
-    ],
-
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => '您确定要这样做吗？',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => '取消',
-                ],
-
-                'confirm' => [
-                    'label' => '确认',
-                ],
-
-                'submit' => [
-                    'label' => '提交',
-                ],
-
-            ],
-
+        'toggle_columns' => [
+            'label' => '切换显示列',
         ],
 
     ],
@@ -85,12 +63,54 @@ return [
         'heading' => '没有找到相关记录',
     ],
 
+    'filters' => [
+
+        'buttons' => [
+
+            'reset' => [
+                'label' => '重置筛选条件',
+            ],
+
+            'close' => [
+                'label' => '关闭',
+            ],
+
+        ],
+
+        'multi_select' => [
+            'placeholder' => '全部',
+        ],
+
+        'select' => [
+            'placeholder' => '全部',
+        ],
+
+        'trashed' => [
+
+            'label' => '已删除记录',
+
+            'only_trashed' => '仅显示已删除记录',
+
+            'with_trashed' => '显示全部记录',
+
+            'without_trashed' => '不显示已删除记录',
+
+        ],
+
+    ],
+
     'selection_indicator' => [
+
+        'selected_count' => '已选 :count 条记录',
 
         'buttons' => [
 
             'select_all' => [
                 'label' => '选择全部 :count 条记录',
+            ],
+
+            'deselect_all' => [
+                'label' => '取消全选',
             ],
 
         ],

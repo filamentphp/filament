@@ -21,7 +21,7 @@ return [
     | Default Filesystem Disk
     |--------------------------------------------------------------------------
     |
-    | This is the storage disk Filament will use to put media. You may use any
+    | This is the storage disk Filament will use to find media. You may use any
     | of the disks defined in the `config/filesystems.php`.
     |
     */
@@ -33,8 +33,8 @@ return [
     | Dark mode
     |--------------------------------------------------------------------------
     |
-    | By enabling this feature, your users are able to select between a light
-    | and dark appearance for tables, via Tailwind's Dark Mode feature.
+    | By enabling this setting, your tables will be ready for Tailwind's Dark
+    | Mode feature.
     |
     | https://tailwindcss.com/docs/dark-mode
     |
@@ -44,18 +44,38 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Pagination
+    |--------------------------------------------------------------------------
+    |
+    | This is the configuration for the pagination of tables.
+    |
+    */
+
+    'pagination' => [
+        'default_records_per_page' => 10,
+        'records_per_page_select_options' => [5, 10, 25, 50],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Layout
     |--------------------------------------------------------------------------
     |
     | This is the configuration for the general layout of tables.
     |
-    | The alignment of row actions can be changed, so that they are in the
-    | `right`, `left` or `center` of the last cell.
-    |
     */
 
     'layout' => [
-        'action_alignment' => 'right',
+        'actions' => [
+            'cell' => [
+                'alignment' => 'right',
+            ],
+            'modal' => [
+                'actions' => [
+                    'alignment' => 'left',
+                ],
+            ],
+        ],
     ],
 
 ];

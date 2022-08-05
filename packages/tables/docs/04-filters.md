@@ -49,6 +49,16 @@ use Filament\Tables\Filters\Filter;
 Filter::make('is_featured')->label('Featured')
 ```
 
+### Using a toggle button instead of a checkbox
+
+By default, filters use a checkbox to control the filter. Instead, you may switch to using a toggle button, using the `toggle()` method:
+
+```php
+use Filament\Tables\Filters\Filter;
+
+Filter::make('is_featured')->toggle()
+```
+
 ### Default filters
 
 You may set a filter to be enabled by default, using the `default()` method:
@@ -141,6 +151,52 @@ use Filament\Tables\Filters\MultiSelectFilter;
 MultiSelectFilter::make('author')->relationship('author', 'name')
 ```
 
+### Ternary filters
+
+Ternary filters allow you to quickly create a filter which has three states - usually true, false and blank. To filter a column named `is_admin` to be `true` or `false`, you may use the ternary filter:
+
+```php
+use Filament\Tables\Filters\TernaryFilter;
+
+TernaryFilter::make('is_admin')
+```
+
+Another common pattern is to use a nullable column. For example, when filtering verified and unverified users using the `email_verified_at` column, unverified users have a null timestamp in this column. To apply that logic, you may use the `nullable()` method:
+
+```php
+use Filament\Tables\Filters\TernaryFilter;
+
+TernaryFilter::make('email_verified_at')
+    ->nullable()
+```
+
+The column name used to scope the query is the name of the filter. To customize this, you may use the `column()` method:
+
+```php
+use Filament\Tables\Filters\TernaryFilter;
+
+TernaryFilter::make('verified')
+    ->nullable()
+    ->column('status_id')
+```
+
+You may customise the query used for each state of the ternary filter, using the `queries()` method:
+
+```php
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Filters\TernaryFilter;
+
+TernaryFilter::make('trashed')
+    ->placeholder('Without trashed records')
+    ->trueLabel('With trashed records')
+    ->falseLabel('Only trashed records')
+    ->queries(
+        true: fn (Builder $query) => $query->withTrashed(),
+        false: fn (Builder $query) => $query->onlyTrashed(),
+        blank: fn (Builder $query) => $query->withoutTrashed(),
+    )
+```
+
 ### Custom filter forms
 
 You may use components from the [Form Builder](/docs/forms/fields) to create custom filter forms. The data from the custom filter form is available in the `$data` array of the `query()` callback:
@@ -184,7 +240,7 @@ Filter::make('created_at')
     ])
 ```
 
-## Customizing popover columns
+## Appearance
 
 By default, filters are displayed in a thin popover on the right side of the table, in 1 column.
 
@@ -203,5 +259,29 @@ Adding more columns to the filter form will automatically widen the popover. To 
 protected function getTableFiltersFormWidth(): string
 {
     return '4xl';
+}
+```
+
+## Displaying filters above the table content
+
+To render the filters above the table content instead of in a popover, you may use:
+
+```php
+use Filament\Tables\Filters\Layout;
+
+protected function getTableFiltersLayout(): ?string
+{
+    return Layout::AboveContent;
+}
+```
+
+## Persist filters in session
+
+To persist the table filters in the user's session, use the `shouldPersistTableFiltersInSession()` method:
+
+```php
+protected function shouldPersistTableFiltersInSession(): bool
+{
+    return true;
 }
 ```

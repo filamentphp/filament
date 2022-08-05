@@ -8,6 +8,8 @@ trait HasStateBindingModifiers
 {
     protected $stateBindingModifiers = null;
 
+    protected string | int | null $debounce = null;
+
     public function reactive(): static
     {
         $this->stateBindingModifiers([]);
@@ -22,14 +24,21 @@ trait HasStateBindingModifiers
         return $this;
     }
 
-    public function stateBindingModifiers(array $modifiers): static
+    public function debounce(string | int | null $delay = '500ms'): static
+    {
+        $this->debounce = $delay;
+
+        return $this;
+    }
+
+    public function stateBindingModifiers(?array $modifiers): static
     {
         $this->stateBindingModifiers = $modifiers;
 
         return $this;
     }
 
-    public function applyStateBindingModifiers($expression): string
+    public function applyStateBindingModifiers(string $expression): string
     {
         $modifiers = $this->getStateBindingModifiers();
 
@@ -42,6 +51,10 @@ trait HasStateBindingModifiers
             return $this->stateBindingModifiers;
         }
 
+        if ($this->debounce) {
+            return ['debounce', $this->debounce];
+        }
+
         if ($this instanceof Component) {
             return $this->getContainer()->getStateBindingModifiers();
         }
@@ -51,5 +64,15 @@ trait HasStateBindingModifiers
         }
 
         return ['defer'];
+    }
+
+    public function isLazy(): bool
+    {
+        return in_array('lazy', $this->getStateBindingModifiers(), false);
+    }
+
+    public function getDebounce(): string | int | null
+    {
+        return $this->debounce;
     }
 }

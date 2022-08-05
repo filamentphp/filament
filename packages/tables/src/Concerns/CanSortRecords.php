@@ -10,22 +10,19 @@ trait CanSortRecords
 
     public $tableSortDirection = null;
 
-    public function sortTable(?string $column = null): void
+    public function sortTable(?string $column = null, ?string $direction = null): void
     {
         if ($column === $this->tableSortColumn) {
-            if ($this->tableSortDirection === 'asc') {
-                $direction = 'desc';
-            } elseif ($this->tableSortDirection === 'desc') {
-                $column = null;
-                $direction = null;
-            } else {
-                $direction = 'asc';
-            }
+            $direction ??= match ($this->tableSortDirection) {
+                'asc' => 'desc',
+                'desc' => null,
+                default => 'asc',
+            };
         } else {
-            $direction = 'asc';
+            $direction ??= 'asc';
         }
 
-        $this->tableSortColumn = $column;
+        $this->tableSortColumn = $direction ? $column : null;
         $this->tableSortDirection = $direction;
 
         $this->updatedTableSort();
@@ -58,21 +55,27 @@ trait CanSortRecords
 
     protected function applySortingToTableQuery(Builder $query): Builder
     {
+        if ($this->isTableReordering()) {
+            return $query->orderBy($this->getTableReorderColumn());
+        }
+
         $columnName = $this->tableSortColumn;
 
         if (! $columnName) {
             return $query;
         }
 
-        $direction = $this->tableSortDirection ?? 'asc';
+        $direction = $this->tableSortDirection === 'desc' ? 'desc' : 'asc';
 
-        $column = $this->getCachedTableColumn($columnName);
+        if ($column = $this->getCachedTableColumn($columnName)) {
+            $column->applySort($query, $direction);
 
-        if (! $column) {
-            return $query->orderBy($columnName, $direction);
+            return $query;
         }
 
-        $column->applySort($query, $direction);
+        if ($columnName === $this->getDefaultTableSortColumn()) {
+            return $query->orderBy($columnName, $direction);
+        }
 
         return $query;
     }

@@ -8,6 +8,8 @@ Validation rules may be added to any [field](fields).
 
 Filament includes several [dedicated validation methods](#available-rules), but you can also use any [other Laravel validation rules](#other-rules), including [custom validation rules](#custom-rules).
 
+> Beware that some validations rely on the field name and therefore won't work when passed via `->rule()`/`->rules()`. Use the dedicated validation methods whenever you can.
+
 ## Available rules
 
 ### After (date)
@@ -195,10 +197,10 @@ Sometimes, you may wish to ignore a given model during unique validation. For ex
 Field::make('email')->unique(ignorable: $ignoredUser)
 ```
 
-If you're using the [admin panel](/docs/admin), you can ignore the current record by passing a [closure](advanced#closure-customisation) to the `ignorable` parameter:
+If you're using the [admin panel](/docs/admin), you can easily ignore the current record by using `ignoreRecord` instead:
 
 ```php
-Field::make('email')->unique(ignorable: fn (?Model $record): ?Model => $record)
+Field::make('email')->unique(ignoreRecord: true)
 ```
 
 You can further customize the rule by passing a [closure](advanced#closure-customisation) to the `callback` parameter:

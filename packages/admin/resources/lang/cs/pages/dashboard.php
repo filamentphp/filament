@@ -2,6 +2,6 @@
 
 return [
 
-    'title' => 'Dashboard',
+    'title' => 'Nástěnka',
 
 ];

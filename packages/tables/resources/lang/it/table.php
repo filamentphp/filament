@@ -2,6 +2,14 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 'e altri :count',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -53,30 +61,8 @@ return [
             'label' => 'Azioni aperte',
         ],
 
-    ],
-
-    'actions' => [
-
-        'modal' => [
-
-            'requires_confirmation_subheading' => 'Sei sicuro di volerlo fare?',
-
-            'buttons' => [
-
-                'cancel' => [
-                    'label' => 'Annulla',
-                ],
-
-                'confirm' => [
-                    'label' => 'Conferma',
-                ],
-
-                'submit' => [
-                    'label' => 'Invia',
-                ],
-
-            ],
-
+        'toggle_columns' => [
+            'label' => 'Alterna colonne',
         ],
 
     ],
@@ -85,12 +71,39 @@ return [
         'heading' => 'Nessun valore trovato',
     ],
 
-    'selection_indicator' => [
+    'filters' => [
 
+        'buttons' => [
+
+            'reset' => [
+                'label' => 'Azzera filtri',
+            ],
+
+            'close' => [
+                'label' => 'Chiudi',
+            ],
+
+        ],
+
+        'multi_select' => [
+            'placeholder' => 'Tutti',
+        ],
+
+        'select' => [
+            'placeholder' => 'Tutti',
+        ],
+    ],
+
+    'selection_indicator' => [
+        'selected_count' => '1 record selezionato.|:count records selezionati.',
         'buttons' => [
 
             'select_all' => [
                 'label' => 'Seleziona tutti i :count',
+            ],
+
+            'deselect_all' => [
+                'label' => 'Deseleziona tutti',
             ],
 
         ],

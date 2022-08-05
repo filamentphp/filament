@@ -2,16 +2,18 @@
     "name": "filament/tables",
     "description": "Effortlessly build TALL-powered tables.",
     "license": "MIT",
-    "homepage": "https://github.com/laravel-filament/filament",
+    "homepage": "https://github.com/filamentphp/filament",
     "support": {
-        "issues": "https://github.com/laravel-filament/filament/issues",
-        "source": "https://github.com/laravel-filament/filament"
+        "issues": "https://github.com/filamentphp/filament/issues",
+        "source": "https://github.com/filamentphp/filament"
     },
     "require": {
         "php": "^8.0",
-        "akaunting/laravel-money": "^1.2|^2.0",
+        "akaunting/laravel-money": "^1.2|^2.0|^3.0",
         "blade-ui-kit/blade-heroicons": "^1.2",
         "filament/forms": "self.version",
+        "filament/notifications": "self.version",
+        "filament/support": "self.version",
         "illuminate/console": "^8.6|^9.0",
         "illuminate/contracts": "^8.6|^9.0",
         "illuminate/database": "^8.6|^9.0",

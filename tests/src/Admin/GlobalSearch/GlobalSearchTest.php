@@ -7,20 +7,20 @@ use Filament\GlobalSearch\GlobalSearchResults;
 use Filament\Http\Livewire\GlobalSearch;
 use Filament\Tests\Admin\GlobalSearch\TestCase;
 use Filament\Tests\Models\Post;
-use Livewire\Livewire;
+use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
 
 it('can be mounted', function () {
-    Livewire::test(GlobalSearch::class)
+    livewire(GlobalSearch::class)
         ->assertOk();
 });
 
 it('can retrieve search results', function () {
     $post = Post::factory()->create();
 
-    Livewire::test(GlobalSearch::class)
-        ->set('searchQuery', $post->title)
+    livewire(GlobalSearch::class)
+        ->set('search', $post->title)
         ->assertDispatchedBrowserEvent('open-global-search-results')
         ->assertSee($post->title);
 });
@@ -28,8 +28,8 @@ it('can retrieve search results', function () {
 it('can retrieve results via custom search provider', function () {
     Filament::globalSearchProvider(CustomSearchProvider::class);
 
-    Livewire::test(GlobalSearch::class)
-        ->set('searchQuery', 'foo')
+    livewire(GlobalSearch::class)
+        ->set('search', 'foo')
         ->assertDispatchedBrowserEvent('open-global-search-results')
         ->assertSee(['foo', 'bar', 'baz']);
 });

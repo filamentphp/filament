@@ -12,7 +12,7 @@ class MakePageCommand extends Command
 
     protected $description = 'Creates a Filament page class and view.';
 
-    protected $signature = 'make:filament-page {name?} {--R|resource=} {--F|force}';
+    protected $signature = 'make:filament-page {name?} {--R|resource=} {--T|type=} {--F|force}';
 
     public function handle(): int
     {
@@ -28,6 +28,7 @@ class MakePageCommand extends Command
 
         $resource = null;
         $resourceClass = null;
+        $resourcePage = null;
 
         $resourceInput = $this->option('resource') ?? $this->ask('(Optional) Resource (e.g. `UserResource`)');
 
@@ -45,6 +46,19 @@ class MakePageCommand extends Command
 
             $resourceClass = (string) Str::of($resource)
                 ->afterLast('\\');
+
+            $resourcePage = $this->option('type') ?? $this->choice(
+                'Which type of page would you like to create?',
+                [
+                    'custom' => 'Custom',
+                    'ListRecords' => 'List',
+                    'CreateRecord' => 'Create',
+                    'EditRecord' => 'Edit',
+                    'ViewRecord' => 'View',
+                    'ManageRecords' => 'Manage',
+                ],
+                'custom',
+            );
         }
 
         $view = Str::of($page)
@@ -66,10 +80,12 @@ class MakePageCommand extends Command
                 ->append('.blade.php'),
         );
 
-        if (! $this->option('force') && $this->checkForCollision([
-            $path,
-            $viewPath,
-        ])) {
+        $files = array_merge(
+            [$path],
+            $resourcePage === 'custom' ? [$viewPath] : [],
+        );
+
+        if (! $this->option('force') && $this->checkForCollision($files)) {
             return static::INVALID;
         }
 
@@ -80,9 +96,9 @@ class MakePageCommand extends Command
                 'view' => $view,
             ]);
         } else {
-            $this->copyStubToApp('ResourcePage', $path, [
-                'baseResourcePage' => 'Filament\\Resources\\Pages\\Page',
-                'baseResourcePageClass' => 'Page',
+            $this->copyStubToApp($resourcePage === 'custom' ? 'CustomResourcePage' : 'ResourcePage', $path, [
+                'baseResourcePage' => 'Filament\\Resources\\Pages\\' . ($resourcePage === 'custom' ? 'Page' : $resourcePage),
+                'baseResourcePageClass' => $resourcePage === 'custom' ? 'Page' : $resourcePage,
                 'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
                 'resource' => $resource,
                 'resourceClass' => $resourceClass,
@@ -91,7 +107,9 @@ class MakePageCommand extends Command
             ]);
         }
 
-        $this->copyStubToApp('PageView', $viewPath);
+        if ($resource === null || $resourcePage === 'custom') {
+            $this->copyStubToApp('PageView', $viewPath);
+        }
 
         $this->info("Successfully created {$page}!");
 

@@ -5,9 +5,19 @@ return [
     'direction' => 'ltr',
 
     'buttons' => [
-        'logout' => [
-            'label' => 'Выход',
+
+        'dark_mode' => [
+            'label' => 'Включить темный режим',
         ],
+
+        'light_mode' => [
+            'label' => 'Включить светлый режим',
+        ],
+
+        'logout' => [
+            'label' => 'Выйти',
+        ],
+
     ],
 
 ];

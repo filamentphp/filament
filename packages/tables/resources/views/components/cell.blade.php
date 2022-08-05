@@ -1,6 +1,7 @@
 @props([
     'action' => null,
     'alignment' => null,
+    'isClickDisabled' => false,
     'name',
     'record',
     'recordAction' => null,
@@ -21,17 +22,19 @@
             default => null,
         },
     ]) }}
+    @if ($tooltip)
+        x-data="{}"
+        x-tooltip.raw="{{ $tooltip }}"
+    @endif
 >
-    @if ($action || ((! $url) && $recordAction))
+    @if ($isClickDisabled)
+        {{ $slot }}
+    @elseif ($action || ($recordAction && $url === null))
         <button
-            wire:click="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $record->getKey() }}')"
-            wire:target="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $record->getKey() }}')"
+            wire:click="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $this->getTableRecordKey($record) }}')"
+            wire:target="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $this->getTableRecordKey($record) }}')"
             wire:loading.attr="disabled"
-            wire:loading.class="opacity-70 cursor-wait"
-            @if ($tooltip)
-                x-data="{}"
-                x-tooltip.raw="{{ $tooltip }}"
-            @endif
+            wire:loading.class.delay="opacity-70 cursor-wait"
             type="button"
             class="block text-left"
         >
@@ -39,10 +42,6 @@
         </button>
     @elseif ($url || $recordUrl)
         <a
-            @if ($tooltip)
-                x-data="{}"
-                x-tooltip.raw="{{ $tooltip }}"
-            @endif
             href="{{ $url ?: $recordUrl }}"
             {{ $shouldOpenUrlInNewTab ? 'target="_blank"' : null }}
             class="block"

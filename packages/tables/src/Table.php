@@ -4,23 +4,23 @@ namespace Filament\Tables;
 
 use Closure;
 use Filament\Forms\ComponentContainer;
+use Filament\Support\Components\ViewComponent;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Columns\Column;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\Layout;
 use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Traits\Macroable;
-use Illuminate\Support\Traits\Tappable;
-use Illuminate\View\Component as ViewComponent;
 
-class Table extends ViewComponent implements Htmlable
+class Table extends ViewComponent
 {
     use Concerns\BelongsToLivewire;
-    use Macroable;
-    use Tappable;
+
+    protected ?View $content = null;
 
     protected ?View $contentFooter = null;
 
@@ -36,6 +36,12 @@ class Table extends ViewComponent implements Htmlable
 
     protected ?string $filtersFormWidth = null;
 
+    protected ?string $filtersLayout = null;
+
+    protected ?string $columnToggleFormWidth = null;
+
+    protected ?string $reorderColumn = null;
+
     protected ?string $recordAction = null;
 
     protected ?Closure $getRecordUrlUsing = null;
@@ -44,13 +50,23 @@ class Table extends ViewComponent implements Htmlable
 
     protected string | Closure | null $heading = null;
 
+    protected bool $isReorderable = false;
+
     protected bool $isPaginationEnabled = true;
+
+    protected bool $isStriped = false;
 
     protected array $meta = [];
 
     protected string $model;
 
     protected ?array $recordsPerPageSelectOptions = null;
+
+    protected string $view = 'tables::index';
+
+    protected string $viewIdentifier = 'table';
+
+    public const LOADING_TARGETS = ['previousPage', 'nextPage', 'gotoPage', 'tableFilters', 'resetTableFiltersForm', 'tableSearchQuery', 'tableRecordsPerPage', '$set'];
 
     final public function __construct(HasTable $livewire)
     {
@@ -104,6 +120,13 @@ class Table extends ViewComponent implements Htmlable
         return $this;
     }
 
+    public function content(?View $view): static
+    {
+        $this->content = $view;
+
+        return $this;
+    }
+
     public function contentFooter(?View $view): static
     {
         $this->contentFooter = $view;
@@ -114,6 +137,13 @@ class Table extends ViewComponent implements Htmlable
     public function filtersFormWidth(?string $width): static
     {
         $this->filtersFormWidth = $width;
+
+        return $this;
+    }
+
+    public function filtersLayout(?string $layout): static
+    {
+        $this->filtersLayout = $layout;
 
         return $this;
     }
@@ -160,6 +190,27 @@ class Table extends ViewComponent implements Htmlable
         return $this;
     }
 
+    public function reorderColumn(?string $column): static
+    {
+        $this->reorderColumn = $column;
+
+        return $this;
+    }
+
+    public function reorderable(bool $condition = true): static
+    {
+        $this->isReorderable = $condition;
+
+        return $this;
+    }
+
+    public function striped(bool $condition = true): static
+    {
+        $this->isStriped = $condition;
+
+        return $this;
+    }
+
     public function getActions(): array
     {
         return $this->getLivewire()->getCachedTableActions();
@@ -172,12 +223,23 @@ class Table extends ViewComponent implements Htmlable
 
     public function getBulkActions(): array
     {
-        return $this->getLivewire()->getCachedTableBulkActions();
+        return array_filter(
+            $this->getLivewire()->getCachedTableBulkActions(),
+            fn (BulkAction $action): bool => ! $action->isHidden(),
+        );
     }
 
     public function getColumns(): array
     {
-        return $this->getLivewire()->getCachedTableColumns();
+        return array_filter(
+            $this->getLivewire()->getCachedTableColumns(),
+            fn (Column $column): bool => (! $column->isHidden()) && (! $column->isToggledHidden()),
+        );
+    }
+
+    public function getContent(): ?View
+    {
+        return $this->content;
     }
 
     public function getContentFooter(): ?View
@@ -197,7 +259,10 @@ class Table extends ViewComponent implements Htmlable
 
     public function getEmptyStateActions(): array
     {
-        return $this->getLivewire()->getCachedTableEmptyStateActions();
+        return array_filter(
+            $this->getLivewire()->getCachedTableEmptyStateActions(),
+            fn (Action $action): bool => ! $action->isHidden(),
+        );
     }
 
     public function getEmptyStateDescription(): ?string
@@ -230,6 +295,21 @@ class Table extends ViewComponent implements Htmlable
         return $this->filtersFormWidth;
     }
 
+    public function getFiltersLayout(): string
+    {
+        return $this->filtersLayout ?? Layout::Popover;
+    }
+
+    public function getColumnToggleForm(): ComponentContainer
+    {
+        return $this->getLivewire()->getTableColumnToggleForm();
+    }
+
+    public function getColumnToggleFormWidth(): ?string
+    {
+        return $this->columnToggleFormWidth;
+    }
+
     public function getHeader(): ?View
     {
         return $this->header;
@@ -237,7 +317,10 @@ class Table extends ViewComponent implements Htmlable
 
     public function getHeaderActions(): array
     {
-        return $this->getLivewire()->getCachedTableHeaderActions();
+        return array_filter(
+            $this->getLivewire()->getCachedTableHeaderActions(),
+            fn (Action | ActionGroup $action): bool => ! $action->isHidden(),
+        );
     }
 
     public function getHeading(): ?string
@@ -255,7 +338,7 @@ class Table extends ViewComponent implements Htmlable
         return $this->getLivewire()->getMountedTableAction();
     }
 
-    public function getMountedActionForm(): ComponentContainer
+    public function getMountedActionForm(): ?ComponentContainer
     {
         return $this->getLivewire()->getMountedTableActionForm();
     }
@@ -265,7 +348,7 @@ class Table extends ViewComponent implements Htmlable
         return $this->getLivewire()->getMountedTableBulkAction();
     }
 
-    public function getMountedBulkActionForm(): ComponentContainer
+    public function getMountedBulkActionForm(): ?ComponentContainer
     {
         return $this->getLivewire()->getMountedTableBulkActionForm();
     }
@@ -294,6 +377,21 @@ class Table extends ViewComponent implements Htmlable
         }
 
         return $callback($record);
+    }
+
+    public function getReorderColumn(): ?string
+    {
+        return $this->reorderColumn;
+    }
+
+    public function isReorderable(): bool
+    {
+        return $this->isReorderable;
+    }
+
+    public function isReordering(): bool
+    {
+        return $this->getLivewire()->isTableReordering();
     }
 
     public function getSortColumn(): ?string
@@ -326,15 +424,18 @@ class Table extends ViewComponent implements Htmlable
         return $this->getLivewire()->isTableSearchable();
     }
 
-    public function toHtml(): string
+    public function hasToggleableColumns(): bool
     {
-        return $this->render()->render();
+        return $this->getLivewire()->hasToggleableTableColumns();
     }
 
-    public function render(): View
+    public function getRecordKey(Model $record): string
     {
-        return view('tables::index', array_merge($this->data(), [
-            'table' => $this,
-        ]));
+        return $this->getLivewire()->getTableRecordKey($record);
+    }
+
+    public function isStriped(): bool
+    {
+        return $this->isStriped;
     }
 }

@@ -20,9 +20,25 @@ Install the plugin with Composer:
 composer require filament/spatie-laravel-media-library-plugin:"^2.0"
 ```
 
+If you haven't already done so, you need to publish the migration to create the media table:
+
+```bash
+php artisan vendor:publish --provider="Spatie\MediaLibrary\MediaLibraryServiceProvider" --tag="migrations"
+```
+
+Run the migrations:
+
+```bash
+php artisan migrate
+```
+
+You must also [prepare your Eloquent model](https://spatie.be/docs/laravel-medialibrary/basic-usage/preparing-your-model) for attaching media.
+
+> For more information, check out [Spatie's documentation](https://spatie.be/docs/laravel-medialibrary).
+
 You're now ready to start using the [form components](form-components) and [table columns](table-columns)!
 
-## Upgrade Guide
+## Upgrading
 
 To upgrade the package to the latest version, you must run:
 

@@ -10,6 +10,8 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class {{ resourceClass }} extends Resource
 {
@@ -32,23 +34,20 @@ class {{ resourceClass }} extends Resource
 {{ tableColumns }}
             ])
             ->filters([
-                //
+{{ tableFilters }}
+            ])
+            ->actions([
+{{ tableActions }}
+            ])
+            ->bulkActions([
+{{ tableBulkActions }}
             ]);
     }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
+{{ relations }}
     public static function getPages(): array
     {
         return [
-            'index' => Pages\{{ indexResourcePageClass }}::route('/'),
-            'create' => Pages\{{ createResourcePageClass }}::route('/create'),
-            'edit' => Pages\{{ editResourcePageClass }}::route('/{record}/edit'),
+{{ pages }}
         ];
-    }
+    }{{ eloquentQuery }}
 }

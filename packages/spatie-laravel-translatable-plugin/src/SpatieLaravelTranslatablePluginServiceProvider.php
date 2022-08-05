@@ -9,6 +9,10 @@ class SpatieLaravelTranslatablePluginServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->app->scoped('filament-spatie-laravel-translatable-plugin', function (): SpatieLaravelTranslatablePluginManager {
+            return new SpatieLaravelTranslatablePluginManager();
+        });
+
         $this->mergeConfigFrom(__DIR__ . '/../config/filament-spatie-laravel-translatable-plugin.php', 'filament-spatie-laravel-translatable-plugin');
     }
 
@@ -56,7 +60,7 @@ class SpatieLaravelTranslatablePluginServiceProvider extends ServiceProvider
 
     protected function mergeConfigFrom($path, $key): void
     {
-        $config = $this->app['config']->get($key, []);
+        $config = $this->app['config']->get($key) ?? [];
 
         $this->app['config']->set($key, $this->mergeConfig(require $path, $config));
     }

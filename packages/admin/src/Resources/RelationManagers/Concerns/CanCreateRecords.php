@@ -2,34 +2,36 @@
 
 namespace Filament\Resources\RelationManagers\Concerns;
 
+use Filament\Notifications\Notification;
 use Filament\Tables;
-use Filament\Tables\Actions\Modal\Actions\ButtonAction;
 use Illuminate\Database\Eloquent\Model;
 
 trait CanCreateRecords
 {
+    /**
+     * @deprecated Use `->disableCreateAnother()` on the action instead.
+     */
     protected static bool $canCreateAnother = true;
 
-    protected function canCreate(): bool
-    {
-        return $this->can('create');
-    }
-
+    /**
+     * @deprecated Use `->disableCreateAnother()` on the action instead.
+     */
     protected static function canCreateAnother(): bool
     {
         return static::$canCreateAnother;
     }
 
+    /**
+     * @deprecated Use `->disableCreateAnother()` on the action instead.
+     */
     public static function disableCreateAnother(): void
     {
         static::$canCreateAnother = false;
     }
 
-    protected function getCreateFormSchema(): array
-    {
-        return $this->getResourceForm(columns: 2)->getSchema();
-    }
-
+    /**
+     * @deprecated Use `->mountUsing()` on the action instead.
+     */
     protected function fillCreateForm(): void
     {
         $this->callHook('beforeFill');
@@ -41,6 +43,9 @@ trait CanCreateRecords
         $this->callHook('afterCreateFill');
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function create(bool $another = false): void
     {
         $form = $this->getMountedTableActionForm();
@@ -61,84 +66,69 @@ trait CanCreateRecords
 
         $form->model($record)->saveRelationships();
 
-        $this->mountedTableActionRecord = $record->getKey();
+        $this->mountedTableActionRecord($record->getKey());
 
         $this->callHook('afterCreate');
 
         if ($another) {
             // Ensure that the form record is anonymized so that relationships aren't loaded.
             $form->model($record::class);
-            $this->mountedTableActionRecord = null;
+            $this->mountedTableActionRecord(null);
 
             $form->fill();
         }
 
         if (filled($this->getCreatedNotificationMessage())) {
-            $this->notify('success', $this->getCreatedNotificationMessage());
+            Notification::make()
+                ->title($this->getCreatedNotificationMessage())
+                ->success()
+                ->send();
+        }
+
+        if ($another) {
+            $this->getMountedTableAction()->hold();
         }
     }
 
+    /**
+     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     */
     protected function getCreatedNotificationMessage(): ?string
     {
-        return __('filament::resources/relation-managers/create.action.messages.created');
+        return __('filament-support::actions/create.single.messages.created');
     }
 
-    public function createAndCreateAnother(): void
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
+    public function createAnother(): void
     {
         $this->create(another: true);
     }
 
+    /**
+     * @deprecated Use `->using()` on the action instead.
+     */
     protected function handleRecordCreation(array $data): Model
     {
         return $this->getRelationship()->create($data);
     }
 
+    /**
+     * @deprecated Use `->mutateFormDataUsing()` on the action instead.
+     */
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         return $data;
     }
 
-    protected function getCreateAction(): Tables\Actions\ButtonAction
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
+    protected function getCreateAction(): Tables\Actions\Action
     {
-        return Tables\Actions\ButtonAction::make('create')
-            ->label(__('filament::resources/relation-managers/create.action.label'))
-            ->form($this->getCreateFormSchema())
+        return Tables\Actions\CreateAction::make()
             ->mountUsing(fn () => $this->fillCreateForm())
-            ->modalActions($this->getCreateActionModalActions())
-            ->modalHeading(__('filament::resources/relation-managers/create.action.modal.heading', ['label' => static::getRecordLabel()]))
-            ->action(fn () => $this->create());
-    }
-
-    protected function getCreateActionModalActions(): array
-    {
-        return array_merge(
-            [$this->getCreateActionCreateModalAction()],
-            static::canCreateAnother() ? [$this->getCreateActionCreateAndCreateAnotherModalAction()] : [],
-            [$this->getCreateActionCancelModalAction()],
-        );
-    }
-
-    protected function getCreateActionCreateModalAction(): Tables\Actions\Modal\Actions\Action
-    {
-        return ButtonAction::make('create')
-            ->label(__('filament::resources/relation-managers/create.action.modal.actions.create.label'))
-            ->submit('callMountedTableAction')
-            ->color('primary');
-    }
-
-    protected function getCreateActionCreateAndCreateAnotherModalAction(): Tables\Actions\Modal\Actions\Action
-    {
-        return ButtonAction::make('createAndCreateAnother')
-            ->label(__('filament::resources/relation-managers/create.action.modal.actions.create_and_create_another.label'))
-            ->action('createAndCreateAnother')
-            ->color('secondary');
-    }
-
-    protected function getCreateActionCancelModalAction(): Tables\Actions\Modal\Actions\Action
-    {
-        return ButtonAction::make('cancel')
-            ->label(__('tables::table.actions.modal.buttons.cancel.label'))
-            ->cancel()
-            ->color('secondary');
+            ->action(fn (array $arguments) => $this->create($arguments['another'] ?? false));
     }
 }

@@ -2,8 +2,12 @@
 
 namespace Filament\Forms\Components;
 
-class Fieldset extends Component
+use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
+
+class Fieldset extends Component implements CanEntangleWithSingularRelationships
 {
+    use Concerns\EntanglesStateWithSingularRelationship;
+
     protected string $view = 'forms::components.fieldset';
 
     final public function __construct(string $label)
@@ -14,7 +18,7 @@ class Fieldset extends Component
     public static function make(string $label): static
     {
         $static = app(static::class, ['label' => $label]);
-        $static->setUp();
+        $static->configure();
 
         return $static;
     }

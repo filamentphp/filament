@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Contracts\View\View;
 
 trait HasHeader
@@ -12,25 +13,60 @@ trait HasHeader
 
     public function cacheTableHeaderActions(): void
     {
-        $this->cachedTableHeaderActions = collect($this->getTableHeaderActions())
-            ->mapWithKeys(function (Action $action): array {
-                $action->table($this->getCachedTable());
+        $actions = Action::configureUsing(
+            Closure::fromCallable([$this, 'configureTableAction']),
+            fn (): array => $this->getTableHeaderActions(),
+        );
 
-                return [$action->getName() => $action];
-            })
-            ->toArray();
+        $this->cachedTableHeaderActions = [];
+
+        foreach ($actions as $index => $action) {
+            if ($action instanceof ActionGroup) {
+                foreach ($action->getActions() as $groupedAction) {
+                    $groupedAction->table($this->getCachedTable());
+                }
+
+                $this->cachedTableHeaderActions[$index] = $action;
+
+                continue;
+            }
+
+            $action->table($this->getCachedTable());
+
+            $this->cachedTableHeaderActions[$action->getName()] = $action;
+        }
     }
 
     public function getCachedTableHeaderActions(): array
     {
-        return collect($this->cachedTableHeaderActions)
-            ->filter(fn (Action $action): bool => ! $action->isHidden())
-            ->toArray();
+        return $this->cachedTableHeaderActions;
     }
 
-    protected function getCachedTableHeaderAction(string $name): ?Action
+    public function getCachedTableHeaderAction(string $name): ?Action
     {
-        return $this->getCachedTableHeaderActions()[$name] ?? null;
+        $actions = $this->getCachedTableHeaderActions();
+
+        $action = $actions[$name] ?? null;
+
+        if ($action) {
+            return $action;
+        }
+
+        foreach ($actions as $action) {
+            if (! $action instanceof ActionGroup) {
+                continue;
+            }
+
+            $groupedAction = $action->getActions()[$name] ?? null;
+
+            if (! $groupedAction) {
+                continue;
+            }
+
+            return $groupedAction;
+        }
+
+        return null;
     }
 
     protected function getTableDescription(): ?string

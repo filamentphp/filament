@@ -17,17 +17,17 @@ trait HasAlignment
 
     public function alignLeft(bool | Closure $condition = true): static
     {
-        return $this->alignment(fn (): ?string => $condition ? 'left' : null);
+        return $this->alignment(static fn (): ?string => $condition ? 'left' : null);
     }
 
     public function alignCenter(bool | Closure $condition = true): static
     {
-        return $this->alignment(fn (): ?string => $condition ? 'center' : null);
+        return $this->alignment(static fn (): ?string => $condition ? 'center' : null);
     }
 
     public function alignRight(bool | Closure $condition = true): static
     {
-        return $this->alignment(fn (): ?string => $condition ? 'right' : null);
+        return $this->alignment(static fn (): ?string => $condition ? 'right' : null);
     }
 
     public function getAlignment(): ?string

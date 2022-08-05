@@ -1,6 +1,9 @@
 <?php
 
+use Filament\Tests\Admin\Fixtures\Resources\PostCategoryResource;
 use Filament\Tests\Admin\Fixtures\Resources\PostResource;
+use Filament\Tests\Admin\Fixtures\Resources\Shop\OrderInvoiceResource;
+use Filament\Tests\Admin\Fixtures\Resources\Shop\OrderResource;
 use Filament\Tests\Admin\Resources\TestCase;
 use Filament\Tests\Models\Post;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,14 +21,57 @@ it('can generate a slug based on the model name', function () {
         ->toBe('posts');
 });
 
+it('can generate a slug based on the multi-word model name', function () {
+    expect(PostCategoryResource::getSlug())
+        ->toBe('post-categories');
+});
+
+it('can generate a nested slug based on the model name', function () {
+    expect(OrderResource::getSlug())
+        ->toBe('shop/orders');
+});
+
+it('can generate a nested slug based on the multi-word model name', function () {
+    expect(OrderInvoiceResource::getSlug())
+        ->toBe('shop/order-invoices');
+});
+
 it('can generate a label based on the model name', function () {
-    expect(PostResource::getLabel())
+    expect(PostResource::getModelLabel())
         ->toBe('post');
 });
 
-it('can generate a plural label based on the model name', function () {
-    expect(PostResource::getPluralLabel())
+it('can generate a label based on the multi-word model name', function () {
+    expect(PostCategoryResource::getModelLabel())
+        ->toBe('post category');
+});
+
+it('can generate a plural label based on the model name and locale', function () {
+    $originalLocale = app()->getLocale();
+
+    app()->setLocale('en');
+    expect(PostResource::getPluralModelLabel())
         ->toBe('posts');
+
+    app()->setLocale('id');
+    expect(PostResource::getPluralModelLabel())
+        ->toBe('post');
+
+    app()->setLocale($originalLocale);
+});
+
+it('can generate a plural label based on the multi-word model name and locale', function () {
+    $originalLocale = app()->getLocale();
+
+    app()->setLocale('en');
+    expect(PostCategoryResource::getPluralModelLabel())
+        ->toBe('post categories');
+
+    app()->setLocale('id');
+    expect(PostCategoryResource::getPluralModelLabel())
+        ->toBe('post category');
+
+    app()->setLocale($originalLocale);
 });
 
 it('can retrieve a record\'s title', function () {

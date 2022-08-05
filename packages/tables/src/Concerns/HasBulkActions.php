@@ -2,7 +2,9 @@
 
 namespace Filament\Tables\Concerns;
 
+use Closure;
 use Filament\Forms\ComponentContainer;
+use Filament\Support\Actions\Exceptions\Hold;
 use Filament\Tables\Actions\BulkAction;
 
 /**
@@ -18,16 +20,25 @@ trait HasBulkActions
 
     public function cacheTableBulkActions(): void
     {
-        $this->cachedTableBulkActions = collect($this->getTableBulkActions())
-            ->mapWithKeys(function (BulkAction $action): array {
-                $action->table($this->getCachedTable());
+        $actions = BulkAction::configureUsing(
+            Closure::fromCallable([$this, 'configureTableBulkAction']),
+            fn (): array => $this->getTableBulkActions(),
+        );
 
-                return [$action->getName() => $action];
-            })
-            ->toArray();
+        $this->cachedTableBulkActions = [];
+
+        foreach ($actions as $action) {
+            $action->table($this->getCachedTable());
+
+            $this->cachedTableBulkActions[$action->getName()] = $action;
+        }
     }
 
-    public function callMountedTableBulkAction()
+    protected function configureTableBulkAction(BulkAction $action): void
+    {
+    }
+
+    public function callMountedTableBulkAction(?string $arguments = null)
     {
         $action = $this->getMountedTableBulkAction();
 
@@ -35,19 +46,44 @@ trait HasBulkActions
             return;
         }
 
-        if ($action->isHidden()) {
+        if ($action->isDisabled()) {
             return;
         }
 
-        $data = $this->getMountedTableBulkActionForm()->getState();
+        $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
+
+        $form = $this->getMountedTableBulkActionForm();
+
+        if ($action->hasForm()) {
+            $action->callBeforeFormValidated();
+
+            $action->formData($form->getState());
+
+            $action->callAfterFormValidated();
+        }
+
+        $action->callBefore();
 
         try {
-            return $action->call($data);
+            $result = $action->call([
+                'form' => $form,
+            ]);
+        } catch (Hold $exception) {
+            return;
+        }
+
+        try {
+            return $action->callAfter() ?? $result;
         } finally {
+            $this->mountedTableBulkAction = null;
+
             $this->selectedTableRecords = [];
 
+            $action->resetArguments();
+            $action->resetFormData();
+
             $this->dispatchBrowserEvent('close-modal', [
-                'id' => static::class . '-bulk-action',
+                'id' => static::class . '-table-bulk-action',
             ]);
         }
     }
@@ -63,17 +99,26 @@ trait HasBulkActions
             return;
         }
 
-        if ($action->isHidden()) {
+        if ($action->isDisabled()) {
             return;
         }
 
-        $this->cacheForm('mountedTableBulkActionForm');
+        $this->cacheForm(
+            'mountedTableBulkActionForm',
+            fn () => $this->getMountedTableBulkActionForm(),
+        );
 
-        app()->call($action->getMountUsing(), [
-            'action' => $action,
+        if ($action->hasForm()) {
+            $action->callBeforeFormFilled();
+        }
+
+        $action->mount([
             'form' => $this->getMountedTableBulkActionForm(),
-            'records' => $this->getSelectedTableRecords(),
         ]);
+
+        if ($action->hasForm()) {
+            $action->callAfterFormFilled();
+        }
 
         if (! $action->shouldOpenModal()) {
             return $this->callMountedTableBulkAction();
@@ -82,15 +127,13 @@ trait HasBulkActions
         $this->resetErrorBag();
 
         $this->dispatchBrowserEvent('open-modal', [
-            'id' => static::class . '-bulk-action',
+            'id' => static::class . '-table-bulk-action',
         ]);
     }
 
     public function getCachedTableBulkActions(): array
     {
-        return collect($this->cachedTableBulkActions)
-            ->filter(fn (BulkAction $action): bool => ! $action->isHidden())
-            ->toArray();
+        return $this->cachedTableBulkActions;
     }
 
     public function getMountedTableBulkAction(): ?BulkAction
@@ -102,12 +145,26 @@ trait HasBulkActions
         return $this->getCachedTableBulkAction($this->mountedTableBulkAction);
     }
 
-    public function getMountedTableBulkActionForm(): ComponentContainer
+    public function getMountedTableBulkActionForm(): ?ComponentContainer
     {
-        return $this->mountedTableBulkActionForm;
+        $action = $this->getMountedTableBulkAction();
+
+        if (! $action) {
+            return null;
+        }
+
+        if ((! $this->isCachingForms) && $this->hasCachedForm('mountedTableBulkActionForm')) {
+            return $this->getCachedForm('mountedTableBulkActionForm');
+        }
+
+        return $this->makeForm()
+            ->schema($action->getFormSchema())
+            ->model($this->getTableQuery()->getModel()::class)
+            ->statePath('mountedTableBulkActionData')
+            ->context($this->mountedTableBulkAction);
     }
 
-    protected function getCachedTableBulkAction(string $name): ?BulkAction
+    public function getCachedTableBulkAction(string $name): ?BulkAction
     {
         $action = $this->getCachedTableBulkActions()[$name] ?? null;
         $action?->records($this->getSelectedTableRecords());

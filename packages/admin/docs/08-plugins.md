@@ -1,5 +1,5 @@
 ---
-title: Plugin Development
+title: Plugin development
 ---
 
 Plugins can be used to extend Filament's default behaviour and create reusable modules for use in multiple applications.
@@ -267,3 +267,33 @@ Filament will automatically register your `Page` and ensure that Livewire can di
 ## Commands, views, translations, migrations and more
 
 Since the `PluginServiceProvider` extends the service provider from [Laravel Package Tools](https://github.com/spatie/laravel-package-tools), you can use the [`configurePackage` method](https://github.com/spatie/laravel-package-tools#usage) to register [commands](https://github.com/spatie/laravel-package-tools#registering-commands), [views](https://github.com/spatie/laravel-package-tools#working-with-views), [translations](https://github.com/spatie/laravel-package-tools#working-with-translations), [migrations](https://github.com/spatie/laravel-package-tools#working-with-migrations) and more.
+
+## ServingFilament Event
+
+If you rely on data defined by Filament on `boot()` or through `Filament::serving()`, you can register listeners for the `Filament\Events\ServingFilament` event:
+
+```php
+use Filament\Events\ServingFilament;
+use Filament\PluginServiceProvider;
+use Illuminate\Support\Facades\Event;
+use Spatie\LaravelPackageTools\Package;
+
+class ExampleServiceProvider extends PluginServiceProvider
+{
+    public function configurePackage(Package $package): void
+    {
+        $package->name('your-package-name');
+    }
+    
+    public function packageConfiguring(Package $package): void
+    {
+        Event::listen(ServingFilament::class, [$this, 'registerStuff']);
+    }
+
+    protected function registerStuff(ServingFilament $event): void
+    {
+        // ...
+    }
+}
+
+```

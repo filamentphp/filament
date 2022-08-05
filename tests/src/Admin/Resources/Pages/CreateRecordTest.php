@@ -15,17 +15,22 @@ it('can create', function () {
     $newData = Post::factory()->make();
 
     livewire(PostResource\Pages\CreatePost::class)
-        ->set('data.author_id', $newData->author->getKey())
-        ->set('data.content', $newData->content)
-        ->set('data.tags', $newData->tags)
-        ->set('data.title', $newData->title)
-        ->call('create');
+        ->fillForm([
+            'author_id' => $newData->author->getKey(),
+            'content' => $newData->content,
+            'tags' => $newData->tags,
+            'title' => $newData->title,
+            'rating' => $newData->rating,
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
 
     $this->assertDatabaseHas(Post::class, [
         'author_id' => $newData->author->getKey(),
         'content' => $newData->content,
         'tags' => json_encode($newData->tags),
         'title' => $newData->title,
+        'rating' => $newData->rating,
     ]);
 });
 
@@ -33,7 +38,9 @@ it('can validate input', function () {
     $newData = Post::factory()->make();
 
     livewire(PostResource\Pages\CreatePost::class)
-        ->set('data.title', null)
+        ->fillForm([
+            'title' => null,
+        ])
         ->call('create')
-        ->assertHasErrors(['data.title' => 'required']);
+        ->assertHasFormErrors(['title' => 'required']);
 });

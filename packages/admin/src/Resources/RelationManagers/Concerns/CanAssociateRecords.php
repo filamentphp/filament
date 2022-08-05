@@ -3,12 +3,13 @@
 namespace Filament\Resources\RelationManagers\Concerns;
 
 use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 use Filament\Resources\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
-use Filament\Tables\Actions\Modal\Actions\ButtonAction;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -16,10 +17,24 @@ trait CanAssociateRecords
 {
     protected ?Form $resourceAssociateForm = null;
 
+    /**
+     * @deprecated Use `->disableAssociateAnother()` on the action instead.
+     */
     protected static bool $canAssociateAnother = true;
 
+    /**
+     * @deprecated Use `->preloadRecordSelect()` on the action instead.
+     */
+    protected static bool $shouldPreloadAssociateFormRecordSelectOptions = false;
+
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected static bool $hasAssociateAction = false;
 
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
     protected function hasAssociateAction(): bool
     {
         return static::$hasAssociateAction;
@@ -30,16 +45,25 @@ trait CanAssociateRecords
         return $this->hasAssociateAction() && $this->can('associate');
     }
 
+    /**
+     * @deprecated Use `->disableAssociateAnother()` on the action instead.
+     */
     protected static function canAssociateAnother(): bool
     {
         return static::$canAssociateAnother;
     }
 
+    /**
+     * @deprecated Use `->disableAssociateAnother()` on the action instead.
+     */
     public static function disableAssociateAnother(): void
     {
         static::$canAssociateAnother = false;
     }
 
+    /**
+     * @deprecated Use `->form()` on the action instead.
+     */
     public static function associateForm(Form $form): Form
     {
         return $form->schema([
@@ -47,6 +71,9 @@ trait CanAssociateRecords
         ]);
     }
 
+    /**
+     * @deprecated Use `->form()` on the action instead.
+     */
     protected function getResourceAssociateForm(): Form
     {
         if (! $this->resourceAssociateForm) {
@@ -56,20 +83,25 @@ trait CanAssociateRecords
         return $this->resourceAssociateForm;
     }
 
+    /**
+     * @deprecated Use `->recordSelect()` on the action instead.
+     */
     protected static function getAssociateFormRecordSelect(): Select
     {
         return Select::make('recordId')
-            ->label(__('filament::resources/relation-managers/associate.action.modal.fields.record_id.label'))
+            ->label(__('filament-support::actions/associate.single.modal.fields.record_id.label'))
+            ->required()
             ->searchable()
-            ->getSearchResultsUsing(function (Select $component, RelationManager $livewire, string $query): array {
+            ->getSearchResultsUsing(static function (Select $component, RelationManager $livewire, string $search): array {
+                /** @var HasMany $relationship */
                 $relationship = $livewire->getRelationship();
 
-                $displayColumnName = static::getRecordTitleAttribute();
+                $titleColumnName = static::getRecordTitleAttribute();
 
                 /** @var Builder $relationshipQuery */
-                $relationshipQuery = $relationship->getRelated()->query()->orderBy($displayColumnName);
+                $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleColumnName);
 
-                $query = strtolower($query);
+                $search = strtolower($search);
 
                 /** @var Connection $databaseConnection */
                 $databaseConnection = $relationshipQuery->getConnection();
@@ -79,37 +111,73 @@ trait CanAssociateRecords
                     default => 'like',
                 };
 
-                $searchColumns = $component->getSearchColumns() ?? [$displayColumnName];
+                $searchColumns = $component->getSearchColumns() ?? [$titleColumnName];
                 $isFirst = true;
 
-                foreach ($searchColumns as $searchColumnName) {
-                    $whereClause = $isFirst ? 'where' : 'orWhere';
+                $relationshipQuery->where(function (Builder $query) use ($isFirst, $searchColumns, $searchOperator, $search): Builder {
+                    foreach ($searchColumns as $searchColumnName) {
+                        $whereClause = $isFirst ? 'where' : 'orWhere';
 
-                    $relationshipQuery->{$whereClause}(
-                        $searchColumnName,
-                        $searchOperator,
-                        "%{$query}%",
-                    );
+                        $query->{$whereClause}(
+                            $searchColumnName,
+                            $searchOperator,
+                            "%{$search}%",
+                        );
 
-                    $isFirst = false;
-                }
+                        $isFirst = false;
+                    }
+
+                    return $query;
+                });
+
+                $localKeyName = $relationship->getLocalKeyName();
 
                 return $relationshipQuery
-                    ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): void {
-                        $query->where($livewire->ownerRecord->getQualifiedKeyName(), $livewire->ownerRecord->getKey());
+                    ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): Builder {
+                        return $query->where($livewire->getOwnerRecord()->getQualifiedKeyName(), $livewire->getOwnerRecord()->getKey());
                     })
-                    ->pluck($displayColumnName, $relationship->getRelated()->getKeyName())
+                    ->get()
+                    ->mapWithKeys(static fn (Model $record): array => [$record->{$localKeyName} => static::getRecordTitle($record)])
                     ->toArray();
             })
-            ->getOptionLabelUsing(fn (RelationManager $livewire, $value): ?string => static::getRecordTitle($livewire->getRelationship()->getRelated()->query()->find($value)))
+            ->getOptionLabelUsing(static fn (RelationManager $livewire, $value): ?string => static::getRecordTitle($livewire->getRelationship()->getRelated()->query()->find($value)))
+            ->options(function (RelationManager $livewire): array {
+                if (! static::$shouldPreloadAssociateFormRecordSelectOptions) {
+                    return [];
+                }
+
+                /** @var HasMany $relationship */
+                $relationship = $livewire->getRelationship();
+
+                $titleColumnName = static::getRecordTitleAttribute();
+
+                $localKeyName = $relationship->getLocalKeyName();
+
+                return $relationship
+                    ->getRelated()
+                    ->query()
+                    ->orderBy($titleColumnName)
+                    ->whereDoesntHave($livewire->getInverseRelationshipName(), function (Builder $query) use ($livewire): Builder {
+                        return $query->where($livewire->getOwnerRecord()->getQualifiedKeyName(), $livewire->getOwnerRecord()->getKey());
+                    })
+                    ->get()
+                    ->mapWithKeys(static fn (Model $record): array => [$record->{$localKeyName} => static::getRecordTitle($record)])
+                    ->toArray();
+            })
             ->disableLabel();
     }
 
+    /**
+     * @deprecated Use `->form()` on the action instead.
+     */
     protected function getAssociateFormSchema(): array
     {
         return $this->getResourceAssociateForm()->getSchema();
     }
 
+    /**
+     * @deprecated Use `->mountUsing()` on the action instead.
+     */
     protected function fillAssociateForm(): void
     {
         $this->callHook('beforeFill');
@@ -121,6 +189,9 @@ trait CanAssociateRecords
         $this->callHook('afterAssociateFill');
     }
 
+    /**
+     * @deprecated Use `->action()` on the action instead.
+     */
     public function associate(bool $another = false): void
     {
         $form = $this->getMountedTableActionForm();
@@ -143,7 +214,7 @@ trait CanAssociateRecords
         /** @var BelongsTo $inverseRelationship */
         $inverseRelationship = $this->getInverseRelationshipFor($recordToAssociate);
 
-        $inverseRelationship->associate($this->ownerRecord);
+        $inverseRelationship->associate($this->getOwnerRecord());
         $recordToAssociate->save();
 
         $this->callHook('afterAssociate');
@@ -152,57 +223,24 @@ trait CanAssociateRecords
             $form->fill();
         }
 
-        $this->notify('success', __('filament::resources/relation-managers/associate.action.messages.associated'));
+        Notification::make()
+            ->title(__('filament-support::actions/associate.single.messages.associated'))
+            ->success()
+            ->send();
+
+        if ($another) {
+            $this->getMountedTableAction()->hold();
+        }
     }
 
-    public function associateAndAssociateAnother(): void
+    /**
+     * @deprecated Actions are no longer pre-defined.
+     */
+    protected function getAssociateAction(): Tables\Actions\Action
     {
-        $this->associate(another: true);
-    }
-
-    protected function getAssociateAction(): Tables\Actions\ButtonAction
-    {
-        return Tables\Actions\ButtonAction::make('associate')
-            ->label(__('filament::resources/relation-managers/associate.action.label'))
+        return Tables\Actions\AssociateAction::make()
             ->form($this->getAssociateFormSchema())
             ->mountUsing(fn () => $this->fillAssociateForm())
-            ->modalActions($this->getAssociateActionModalActions())
-            ->modalHeading(__('filament::resources/relation-managers/associate.action.modal.heading', ['label' => static::getRecordLabel()]))
-            ->modalWidth('lg')
-            ->action(fn () => $this->associate())
-            ->color('secondary');
-    }
-
-    protected function getAssociateActionModalActions(): array
-    {
-        return array_merge(
-            [$this->getAssociateActionAssociateModalAction()],
-            static::canAssociateAnother() ? [$this->getAssociateActionAssociateAndAssociateAnotherModalAction()] : [],
-            [$this->getAssociateActionCancelModalAction()],
-        );
-    }
-
-    protected function getAssociateActionAssociateModalAction(): Tables\Actions\Modal\Actions\Action
-    {
-        return ButtonAction::make('associate')
-            ->label(__('filament::resources/relation-managers/associate.action.modal.actions.associate.label'))
-            ->submit('callMountedTableAction')
-            ->color('primary');
-    }
-
-    protected function getAssociateActionAssociateAndAssociateAnotherModalAction(): Tables\Actions\Modal\Actions\Action
-    {
-        return ButtonAction::make('associateAndAssociateAnother')
-            ->label(__('filament::resources/relation-managers/associate.action.modal.actions.associate_and_associate_another.label'))
-            ->action('associateAndAssociateAnother')
-            ->color('secondary');
-    }
-
-    protected function getAssociateActionCancelModalAction(): Tables\Actions\Modal\Actions\Action
-    {
-        return ButtonAction::make('cancel')
-            ->label(__('tables::table.actions.modal.buttons.cancel.label'))
-            ->cancel()
-            ->color('secondary');
+            ->action(fn (array $arguments) => $this->associate($arguments['another'] ?? false));
     }
 }

@@ -2,25 +2,16 @@
 
 namespace Filament\Tables\Actions;
 
-use Closure;
-
+/**
+ * @deprecated Use `\Filament\Tables\Actions\Action` instead, with the `button()` method.
+ * @see Action
+ */
 class ButtonAction extends Action
 {
-    use Concerns\CanBeOutlined;
-
-    protected string $view = 'tables::actions.button-action';
-
-    protected string | Closure | null $iconPosition = null;
-
-    public function iconPosition(string | Closure | null $position): static
+    protected function setUp(): void
     {
-        $this->iconPosition = $position;
+        parent::setUp();
 
-        return $this;
-    }
-
-    public function getIconPosition(): ?string
-    {
-        return $this->evaluate($this->iconPosition);
+        $this->button();
     }
 }

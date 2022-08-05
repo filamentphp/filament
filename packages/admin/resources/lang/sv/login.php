@@ -2,6 +2,10 @@
 
 return [
 
+    'title' => 'Logga in',
+
+    'heading' => 'Logga in på ditt konto',
+
     'buttons' => [
 
         'submit' => [
@@ -21,16 +25,14 @@ return [
         ],
 
         'remember' => [
-            'label' => 'Kom ihåg',
+            'label' => 'Kom ihåg mig',
         ],
 
     ],
 
     'messages' => [
-        'failed' => 'inloggningen matchade inte våra uppgifter.',
+        'failed' => 'Inloggningen matchar inte våra uppgifter.',
         'throttled' => 'För många inloggningsförsök. Vänligen försök igen om :seconds sekunder.',
     ],
-
-    'heading' => 'Inloggning',
 
 ];

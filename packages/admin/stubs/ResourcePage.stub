@@ -3,11 +3,10 @@
 namespace {{ namespace }};
 
 use App\Filament\Resources\{{ resource }};
+use Filament\Pages\Actions;
 use {{ baseResourcePage }};
 
 class {{ resourcePageClass }} extends {{ baseResourcePageClass }}
 {
     protected static string $resource = {{ resourceClass }}::class;
-
-    protected static string $view = '{{ view }}';
 }

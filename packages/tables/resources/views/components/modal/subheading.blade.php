@@ -1,6 +1,6 @@
-<h3 {{ $attributes->class([
-    'text-gray-500 filament-tables-modal-subheading',
-    'dark:text-gray-400' => config('tables.dark_mode'),
-]) }}>
+<x-filament-support::modal.subheading
+    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)"
+    :dark-mode="config('tables.dark_mode')"
+>
     {{ $slot }}
-</h3>
+</x-filament-support::modal.subheading>

@@ -2,9 +2,12 @@
 
 namespace Filament\Pages\Concerns;
 
+use Closure;
 use Filament\Forms;
 use Filament\Pages\Actions\Action;
+use Filament\Pages\Actions\ActionGroup;
 use Filament\Pages\Contracts;
+use Filament\Support\Actions\Exceptions\Hold;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -20,17 +23,7 @@ trait HasActions
 
     protected ?array $cachedActions = null;
 
-    protected function getHasActionsForms(): array
-    {
-        return [
-            'mountedActionForm' => $this->makeForm()
-                ->schema(($action = $this->getMountedAction()) ? $action->getFormSchema() : [])
-                ->statePath('mountedActionData')
-                ->model($this->getMountedActionFormModel()),
-        ];
-    }
-
-    public function callMountedAction()
+    public function callMountedAction(?string $arguments = null)
     {
         $action = $this->getMountedAction();
 
@@ -38,15 +31,42 @@ trait HasActions
             return;
         }
 
-        if ($action->isHidden()) {
+        if ($action->isDisabled()) {
             return;
         }
 
-        $data = $this->getMountedActionForm()->getState();
+        $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
+
+        $form = $this->getMountedActionForm();
+
+        if ($action->hasForm()) {
+            $action->callBeforeFormValidated();
+
+            $action->formData($form->getState());
+
+            $action->callAfterFormValidated();
+        }
+
+        $action->callBefore();
 
         try {
-            return $action->call($data);
+            $result = $action->call([
+                'form' => $form,
+            ]);
+        } catch (Hold $exception) {
+            return;
+        }
+
+        try {
+            return $action->callAfter() ?? $result;
         } finally {
+            $this->mountedAction = null;
+
+            $action->record(null);
+
+            $action->resetArguments();
+            $action->resetFormData();
+
             $this->dispatchBrowserEvent('close-modal', [
                 'id' => 'page-action',
             ]);
@@ -63,16 +83,26 @@ trait HasActions
             return;
         }
 
-        if ($action->isHidden()) {
+        if ($action->isDisabled()) {
             return;
         }
 
-        $this->cacheForm('mountedActionForm');
+        $this->cacheForm(
+            'mountedActionForm',
+            fn () => $this->getMountedActionForm(),
+        );
 
-        app()->call($action->getMountUsing(), [
-            'action' => $action,
+        if ($action->hasForm()) {
+            $action->callBeforeFormFilled();
+        }
+
+        $action->mount([
             'form' => $this->getMountedActionForm(),
         ]);
+
+        if ($action->hasForm()) {
+            $action->callAfterFormFilled();
+        }
 
         if (! $action->shouldOpenModal()) {
             return $this->callMountedAction();
@@ -96,13 +126,32 @@ trait HasActions
 
     protected function cacheActions(): void
     {
-        $this->cachedActions = collect($this->getActions())
-            ->mapWithKeys(function (Action $action): array {
-                $action->livewire($this);
+        $actions = Action::configureUsing(
+            Closure::fromCallable([$this, 'configureAction']),
+            fn (): array => $this->getActions(),
+        );
 
-                return [$action->getName() => $action];
-            })
-            ->toArray();
+        $this->cachedActions = [];
+
+        foreach ($actions as $index => $action) {
+            if ($action instanceof ActionGroup) {
+                foreach ($action->getActions() as $groupedAction) {
+                    $groupedAction->livewire($this);
+                }
+
+                $this->cachedActions[$index] = $action;
+
+                continue;
+            }
+
+            $action->livewire($this);
+
+            $this->cachedActions[$action->getName()] = $action;
+        }
+    }
+
+    protected function configureAction(Action $action): void
+    {
     }
 
     public function getMountedAction(): ?Action
@@ -124,9 +173,30 @@ trait HasActions
         return $this->getCachedFormAction($this->mountedAction);
     }
 
-    public function getMountedActionForm(): Forms\ComponentContainer
+    protected function getHasActionsForms(): array
     {
-        return $this->mountedActionForm;
+        return [
+            'mountedActionForm' => $this->getMountedActionForm(),
+        ];
+    }
+
+    public function getMountedActionForm(): ?Forms\ComponentContainer
+    {
+        $action = $this->getMountedAction();
+
+        if (! $action) {
+            return null;
+        }
+
+        if ((! $this->isCachingForms) && $this->hasCachedForm('mountedActionForm')) {
+            return $this->getCachedForm('mountedActionForm');
+        }
+
+        return $this->makeForm()
+            ->schema($action->getFormSchema())
+            ->statePath('mountedActionData')
+            ->model($this->getMountedActionFormModel())
+            ->context($this->mountedAction);
     }
 
     protected function getMountedActionFormModel(): Model | string | null
@@ -134,9 +204,31 @@ trait HasActions
         return null;
     }
 
-    protected function getCachedAction(string $name): ?Action
+    public function getCachedAction(string $name): ?Action
     {
-        return $this->getCachedActions()[$name] ?? null;
+        $actions = $this->getCachedActions();
+
+        $action = $actions[$name] ?? null;
+
+        if ($action) {
+            return $action;
+        }
+
+        foreach ($actions as $action) {
+            if (! $action instanceof ActionGroup) {
+                continue;
+            }
+
+            $groupedAction = $action->getActions()[$name] ?? null;
+
+            if (! $groupedAction) {
+                continue;
+            }
+
+            return $groupedAction;
+        }
+
+        return null;
     }
 
     protected function getActions(): array

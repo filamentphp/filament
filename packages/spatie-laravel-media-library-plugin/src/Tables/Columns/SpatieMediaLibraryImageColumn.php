@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Illuminate\Database\Eloquent\Builder;
+use Throwable;
 
 class SpatieMediaLibraryImageColumn extends ImageColumn
 {
@@ -43,6 +44,18 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
         }
 
         $record = $this->getRecord();
+
+        if ($this->getVisibility() === 'private' && method_exists($record, 'getFirstTemporaryUrl')) {
+            try {
+                return $record->getFirstTemporaryUrl(
+                    now()->addMinutes(5),
+                    $this->getCollection(),
+                    $this->getConversion(),
+                );
+            } catch (Throwable $exception) {
+                // This driver does not support creating temporary URLs.
+            }
+        }
 
         if (! method_exists($record, 'getFirstMediaUrl')) {
             return $state;

@@ -2,39 +2,9 @@
 
 return [
 
-    'title' => 'Düzenle: :label',
+    'title' => ':label düzenle',
 
     'breadcrumb' => 'Düzenle',
-
-    'actions' => [
-
-        'delete' => [
-
-            'label' => 'Sil',
-
-            'modal' => [
-
-                'heading' => ':label Sil',
-
-                'subheading' => 'Bunu yapmak istediğinizden emin misiniz?',
-
-                'buttons' => [
-
-                    'delete' => [
-                        'label' => 'Sil',
-                    ],
-
-                ],
-
-            ],
-
-        ],
-
-        'view' => [
-            'label' => 'Görüntüle',
-        ],
-
-    ],
 
     'form' => [
 

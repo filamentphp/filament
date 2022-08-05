@@ -12,33 +12,35 @@ trait CanBeValidated
 {
     protected bool | Closure $isRequired = false;
 
+    protected string | Closure | null $regexPattern = null;
+
     protected array $rules = [];
 
     protected string | Closure | null $validationAttribute = null;
 
     public function exists(string | Closure | null $table = null, string | Closure | null $column = null, ?Closure $callback = null): static
     {
-        $this->rule(function (Field $component, ?string $model) use ($callback, $column, $table) {
+        $this->rule(static function (Field $component, ?string $model) use ($callback, $column, $table) {
             $table = $component->evaluate($table) ?? $model;
             $column = $component->evaluate($column) ?? $component->getName();
 
             $rule = Rule::exists($table, $column);
 
             if ($callback) {
-                $rule = $this->evaluate($callback, [
+                $rule = $component->evaluate($callback, [
                     'rule' => $rule,
                 ]);
             }
 
             return $rule;
-        }, fn (Field $component, ?string $model): bool => (bool) ($component->evaluate($table) ?? $model));
+        }, static fn (Field $component, ?string $model): bool => (bool) ($component->evaluate($table) ?? $model));
 
         return $this;
     }
 
     public function nullable(bool | Closure $condition = true): static
     {
-        $this->required(function (Field $component) use ($condition): bool {
+        $this->required(static function (Field $component) use ($condition): bool {
             return ! $component->evaluate($condition);
         });
 
@@ -48,6 +50,13 @@ trait CanBeValidated
     public function required(bool | Closure $condition = true): static
     {
         $this->isRequired = $condition;
+
+        return $this;
+    }
+
+    public function regex(string | Closure | null $pattern): static
+    {
+        $this->regexPattern = $pattern;
 
         return $this;
     }
@@ -70,7 +79,7 @@ trait CanBeValidated
 
         $this->rules = array_merge(
             $this->rules,
-            array_map(fn (string | object $rule) => [$rule, $condition], $rules),
+            array_map(static fn (string | object $rule) => [$rule, $condition], $rules),
         );
 
         return $this;
@@ -126,24 +135,26 @@ trait CanBeValidated
         return $this->fieldComparisonRule('same', $statePath, $isStatePathAbsolute);
     }
 
-    public function unique(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure $ignorable = null, ?Closure $callback = null): static
+    public function unique(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure $ignorable = null, ?Closure $callback = null, bool $ignoreRecord = false): static
     {
-        $this->rule(function (Field $component, ?string $model) use ($callback, $column, $ignorable, $table) {
+        $this->rule(static function (Field $component, ?string $model) use ($callback, $column, $ignorable, $table, $ignoreRecord) {
             $table = $component->evaluate($table) ?? $model;
             $column = $component->evaluate($column) ?? $component->getName();
-            $ignorable = $component->evaluate($ignorable);
+            $ignorable = ($ignoreRecord && ! $ignorable) ?
+                $component->getRecord() :
+                $component->evaluate($ignorable);
 
             $rule = Rule::unique($table, $column)
                 ->when(
                     $ignorable,
                     fn (Unique $rule) => $rule->ignore(
                         $ignorable->getOriginal($ignorable->getKeyName()),
-                        $ignorable->getKeyName(),
+                        $ignorable->getQualifiedKeyName(),
                     ),
                 );
 
             if ($callback) {
-                $rule = $this->evaluate($callback, [
+                $rule = $component->evaluate($callback, [
                     'rule' => $rule,
                 ]);
             }
@@ -161,6 +172,11 @@ trait CanBeValidated
         return $this;
     }
 
+    public function getRegexPattern(): ?string
+    {
+        return $this->evaluate($this->regexPattern);
+    }
+
     public function getRequiredValidationRule(): string
     {
         return $this->isRequired() ? 'required' : 'nullable';
@@ -176,6 +192,10 @@ trait CanBeValidated
         $rules = [
             $this->getRequiredValidationRule(),
         ];
+
+        if (filled($regexPattern = $this->getRegexPattern())) {
+            $rules[] = "regex:{$regexPattern}";
+        }
 
         foreach ($this->rules as [$rule, $condition]) {
             if (is_numeric($rule)) {
@@ -195,7 +215,7 @@ trait CanBeValidated
 
     protected function dateComparisonRule(string $rule, string | Closure $date, bool $isStatePathAbsolute = false): static
     {
-        $this->rule(function (Field $component) use ($date, $isStatePathAbsolute, $rule): string {
+        $this->rule(static function (Field $component) use ($date, $isStatePathAbsolute, $rule): string {
             $date = $component->evaluate($date);
 
             if (! (strtotime($date) && $isStatePathAbsolute)) {
@@ -214,7 +234,7 @@ trait CanBeValidated
 
     protected function fieldComparisonRule(string $rule, string | Closure $statePath, bool $isStatePathAbsolute = false): static
     {
-        $this->rule(function (Field $component) use ($isStatePathAbsolute, $rule, $statePath): string {
+        $this->rule(static function (Field $component) use ($isStatePathAbsolute, $rule, $statePath): string {
             $statePath = $component->evaluate($statePath);
 
             if (! $isStatePathAbsolute) {

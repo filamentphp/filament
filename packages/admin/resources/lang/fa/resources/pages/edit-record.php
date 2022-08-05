@@ -6,36 +6,6 @@ return [
 
     'breadcrumb' => 'اصلاح',
 
-    'actions' => [
-
-        'delete' => [
-
-            'label' => 'حذف',
-
-            'modal' => [
-
-                'heading' => 'حذف :label',
-
-                'subheading' => 'آیا برای انجام اینکار مطمئن هستید؟',
-
-                'buttons' => [
-
-                    'delete' => [
-                        'label' => 'حذف',
-                    ],
-
-                ],
-
-            ],
-
-        ],
-
-        'view' => [
-            'label' => 'مشاهده',
-        ],
-
-    ],
-
     'form' => [
 
         'actions' => [

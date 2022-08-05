@@ -3,19 +3,19 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 
-class Section extends Component implements Contracts\CanConcealComponents
+class Section extends Component implements Contracts\CanConcealComponents, Contracts\CanEntangleWithSingularRelationships
 {
-    use Concerns\HasExtraAlpineAttributes;
+    use Concerns\CanBeCollapsed;
+    use Concerns\EntanglesStateWithSingularRelationship;
+    use HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.section';
 
-    protected bool | Closure $isCollapsed = false;
-
-    protected bool | Closure $isCollapsible = false;
-
-    protected string | Closure | null $description = null;
+    protected string | Htmlable | Closure | null $description = null;
 
     protected string | Closure $heading;
 
@@ -27,7 +27,7 @@ class Section extends Component implements Contracts\CanConcealComponents
     public static function make(string | Closure $heading): static
     {
         $static = app(static::class, ['heading' => $heading]);
-        $static->setUp();
+        $static->configure();
 
         return $static;
     }
@@ -39,22 +39,7 @@ class Section extends Component implements Contracts\CanConcealComponents
         $this->columnSpan('full');
     }
 
-    public function collapsed(bool | Closure $condition = true): static
-    {
-        $this->isCollapsed = $condition;
-        $this->collapsible(true);
-
-        return $this;
-    }
-
-    public function collapsible(bool | Closure $condition = true): static
-    {
-        $this->isCollapsible = $condition;
-
-        return $this;
-    }
-
-    public function description(string | Closure | null $description = null): static
+    public function description(string | Htmlable | Closure | null $description = null): static
     {
         $this->description = $description;
 
@@ -68,7 +53,7 @@ class Section extends Component implements Contracts\CanConcealComponents
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getDescription(): string | Htmlable | null
     {
         return $this->evaluate($this->description);
     }
@@ -93,13 +78,8 @@ class Section extends Component implements Contracts\CanConcealComponents
         return $id;
     }
 
-    public function isCollapsed(): bool
+    public function canConcealComponents(): bool
     {
-        return (bool) $this->evaluate($this->isCollapsed);
-    }
-
-    public function isCollapsible(): bool
-    {
-        return (bool) $this->evaluate($this->isCollapsible);
+        return $this->isCollapsible();
     }
 }
