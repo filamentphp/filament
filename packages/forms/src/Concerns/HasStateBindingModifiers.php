@@ -66,18 +66,13 @@ trait HasStateBindingModifiers
         return ['defer'];
     }
 
-    public function getDebounce(): string | int | null
-    {
-        return $this->debounce;
-    }
-
     public function isLazy(): bool
     {
         return in_array('lazy', $this->getStateBindingModifiers());
     }
 
-    public function isDeferred(): bool
+    public function getDebounce(): string | int | null
     {
-        return in_array('defer', $this->getStateBindingModifiers());
+        return $this->debounce;
     }
 }
