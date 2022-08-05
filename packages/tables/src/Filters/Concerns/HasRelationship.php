@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Filters\Concerns;
 
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -11,9 +12,13 @@ use Illuminate\Support\Str;
 
 trait HasRelationship
 {
-    public function relationship(string $relationshipName, string $titleColumnName = null): static
+    protected ?Closure $relationshipQueryCallback = null;
+
+    public function relationship(string $relationshipName, string $titleColumnName = null, Closure $callback = null): static
     {
         $this->column("{$relationshipName}.{$titleColumnName}");
+
+        $this->relationshipQueryCallback = $callback;
 
         return $this;
     }
@@ -41,6 +46,12 @@ trait HasRelationship
         $titleColumnName = $this->getRelationshipTitleColumnName();
 
         $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleColumnName);
+
+        if ($this->relationshipQueryCallback) {
+            $relationshipQuery = $this->evaluate($this->relationshipQueryCallback, [
+                'query' => $relationshipQuery,
+            ]);
+        }
 
         return $relationshipQuery
             ->pluck($titleColumnName, $this->getRelationshipKey())
