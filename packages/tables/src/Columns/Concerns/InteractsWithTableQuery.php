@@ -169,9 +169,7 @@ trait InteractsWithTableQuery
 
         $relationship = null;
 
-        $mestedRelationshipNames = explode('.', $this->getRelationshipName());
-
-        foreach ($mestedRelationshipNames as $nestedRelationshipName) {
+        foreach (explode('.', $this->getRelationshipName()) as $nestedRelationshipName) {
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 
