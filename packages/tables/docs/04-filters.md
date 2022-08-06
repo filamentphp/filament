@@ -112,6 +112,16 @@ use Filament\Tables\Filters\SelectFilter;
 SelectFilter::make('author')->relationship('author', 'name')
 ```
 
+You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
+
+```php
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
+
+SelectFilter::make('author')
+    ->relationship('author', 'name', fn (Builder $query) => $query->withTrashed())
+```
+
 ### Multi-select filters
 
 Multi-select filters allow you to quickly create a filter that allows the user to select multiple options to apply the filter to their table. For example, a status filter may present the user with a few status options to pick from and filter the table using:
