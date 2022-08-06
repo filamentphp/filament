@@ -22083,6 +22083,7 @@ var key_value_default = (Alpine) => {
       if (this.rows.length <= 0) {
         this.addRow();
       }
+      this.shouldUpdateRows = true;
       this.$watch("state", () => {
         if (!this.shouldUpdateRows) {
           this.shouldUpdateRows = true;
