@@ -39,6 +39,9 @@
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
+        @if ($label)
+            title="{{ $label }}"
+        @endif
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
         @endif
@@ -48,9 +51,6 @@
             x-data="{}"
         @endif
         {{ $attributes->class($buttonClasses) }}
-        @if ($label)
-            title="{{ $label }}"
-        @endif
     >
         @if ($label)
             <span class="sr-only">
