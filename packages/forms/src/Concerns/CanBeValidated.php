@@ -60,6 +60,13 @@ trait CanBeValidated
                 $rules[$component->getStatePath()] = $componentRules;
             }
 
+            if (
+                $component instanceof Components\BaseFileUpload &&
+                ($componentFileNamesStatePath = $component->getFileNamesStatePath())
+            ) {
+                $rules[$componentFileNamesStatePath] = ['nullable'];
+            }
+
             foreach ($component->getChildComponentContainers() as $container) {
                 if ($container->isHidden()) {
                     continue;

@@ -1076,6 +1076,18 @@ FileUpload::make('attachment')
     })
 ```
 
+You can keep the randomly generated file names, while still storing the original file name, using the `storeFileNamesIn()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->multiple()
+    ->storeFileNamesIn('attachment_file_names')
+```
+
+`attachment_file_names` will now store the original file name/s of your uploaded files.
+
 You may restrict the types of files that may be uploaded using the `acceptedFileTypes()` method, and passing an array of MIME types. You may also use the `image()` method as shorthand to allow all image MIME types.
 
 ```php

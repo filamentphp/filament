@@ -41,7 +41,7 @@ class BaseFileUpload extends Field
 
     protected bool | Closure $shouldPreserveFilenames = false;
 
-    protected string | Closure | null $fileNamesColumn = null;
+    protected string | Closure | null $fileNamesStatePath = null;
 
     protected string | Closure $visibility = 'public';
 
@@ -205,9 +205,9 @@ class BaseFileUpload extends Field
         return $this;
     }
 
-    public function fileNamesColumn(string | Closure | null $column): static
+    public function storeFileNamesIn(string | Closure | null $statePath): static
     {
-        $this->fileNamesColumn = $column;
+        $this->fileNamesStatePath = $statePath;
 
         return $this;
     }
@@ -367,9 +367,9 @@ class BaseFileUpload extends Field
         return $this->evaluate($this->shouldPreserveFilenames);
     }
 
-    public function getFileNamesColumn(): ?string
+    public function getFileNamesStatePath(): ?string
     {
-        return $this->evaluate($this->fileNamesColumn);
+        return $this->evaluate($this->fileNamesStatePath);
     }
 
     public function getValidationRules(): array
@@ -453,26 +453,26 @@ class BaseFileUpload extends Field
 
     public function removeStoredFileName(string $file): void
     {
-        $column = $this->getFileNamesColumn();
+        $statePath = $this->getFileNamesStatePath();
 
-        if (blank($column)) {
+        if (blank($statePath)) {
             return;
         }
 
-        $this->evaluate(function (BaseFileUpload $component, Closure $get, Closure $set) use ($column, $file) {
+        $this->evaluate(function (BaseFileUpload $component, Closure $get, Closure $set) use ($file, $statePath) {
             if (! $component->isMultiple()) {
-                $set($column, null);
+                $set($statePath, null);
 
                 return;
             }
 
-            $fileNames = $get($column) ?? [];
+            $fileNames = $get($statePath) ?? [];
 
             if (array_key_exists($file, $fileNames)) {
                 unset($fileNames[$file]);
             }
 
-            $set($column, $fileNames);
+            $set($statePath, $fileNames);
         });
     }
 
@@ -559,23 +559,23 @@ class BaseFileUpload extends Field
 
     public function storeFileName(string $file, string $fileName): void
     {
-        $column = $this->getFileNamesColumn();
+        $statePath = $this->getFileNamesStatePath();
 
-        if (blank($column)) {
+        if (blank($statePath)) {
             return;
         }
 
-        $this->evaluate(function (BaseFileUpload $component, Closure $get, Closure $set) use ($column, $file, $fileName) {
+        $this->evaluate(function (BaseFileUpload $component, Closure $get, Closure $set) use ($file, $fileName, $statePath) {
             if (! $component->isMultiple()) {
-                $set($column, $fileName);
+                $set($statePath, $fileName);
 
                 return;
             }
 
-            $fileNames = $get($column) ?? [];
+            $fileNames = $get($statePath) ?? [];
             $fileNames[$file] = $fileName;
 
-            $set($column, $fileNames);
+            $set($statePath, $fileNames);
         });
     }
 
