@@ -88,6 +88,8 @@
                 x-ref="panel"
                 x-cloak
                 x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
+                wire:ignore.self
+                wire:key="{{ $this->id }}.{{ $getStatePath() }}.panel"
                 @class([
                     'absolute hidden z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-md',
                     'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
