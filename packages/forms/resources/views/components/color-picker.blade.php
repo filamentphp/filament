@@ -77,6 +77,8 @@
                 x-cloak
                 x-ref="panel"
                 x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
+                wire:ignore.self
+                wire:key="{{ $this->id }}.{{ $getStatePath() }}.panel"
                 @class([
                     'hidden absolute z-10 shadow-lg',
                     'opacity-70 pointer-events-none' => $isDisabled(),
