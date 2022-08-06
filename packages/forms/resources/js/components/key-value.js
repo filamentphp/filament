@@ -15,6 +15,8 @@ export default (Alpine) => {
                 this.addRow()
             }
 
+            this.shouldUpdateRows = true
+
             this.$watch('state', () => {
                 if (! this.shouldUpdateRows) {
                     this.shouldUpdateRows = true
