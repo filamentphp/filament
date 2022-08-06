@@ -143,6 +143,10 @@ class FilamentServiceProvider extends PluginServiceProvider
                 ->append('\\', $file->getRelativePathname())
                 ->replace(['/', '.php'], ['\\', '']);
 
+            if (! class_exists($fileClass)) {
+                continue;
+            }
+
             if ((new ReflectionClass($fileClass))->isAbstract()) {
                 continue;
             }
