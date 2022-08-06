@@ -45,6 +45,7 @@
                 type="text"
                 dusk="filament.forms.{{ $getStatePath() }}"
                 id="{{ $getId() }}"
+                x-model="state"
                 x-on:click="togglePanelVisibility()"
                 x-on:keydown.enter.stop.prevent="togglePanelVisibility()"
                 autocomplete="off"
@@ -76,6 +77,8 @@
                 x-cloak
                 x-ref="panel"
                 x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
+                wire:ignore.self
+                wire:key="{{ $this->id }}.{{ $getStatePath() }}.panel"
                 @class([
                     'hidden absolute z-10 shadow-lg',
                     'opacity-70 pointer-events-none' => $isDisabled(),
