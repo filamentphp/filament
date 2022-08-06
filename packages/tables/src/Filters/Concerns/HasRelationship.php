@@ -12,13 +12,13 @@ use Illuminate\Support\Str;
 
 trait HasRelationship
 {
-    protected ?Closure $relationshipQueryCallback = null;
+    protected ?Closure $modifyRelationshipQueryUsing = null;
 
     public function relationship(string $relationshipName, string $titleColumnName = null, Closure $callback = null): static
     {
         $this->column("{$relationshipName}.{$titleColumnName}");
 
-        $this->relationshipQueryCallback = $callback;
+        $this->modifyRelationshipQueryUsing = $callback;
 
         return $this;
     }
@@ -47,10 +47,10 @@ trait HasRelationship
 
         $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleColumnName);
 
-        if ($this->relationshipQueryCallback) {
-            $relationshipQuery = $this->evaluate($this->relationshipQueryCallback, [
+        if ($this->modifyRelationshipQueryUsing) {
+            $relationshipQuery = $this->evaluate($this->modifyRelationshipQueryUsing, [
                 'query' => $relationshipQuery,
-            ]);
+            ]) ?? $relationshipQuery;
         }
 
         return $relationshipQuery

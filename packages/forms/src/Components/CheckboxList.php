@@ -47,7 +47,7 @@ class CheckboxList extends Field
             if ($callback) {
                 $relationshipQuery = $component->evaluate($callback, [
                     'query' => $relationshipQuery,
-                ]);
+                ]) ?? $relationshipQuery;
             }
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {

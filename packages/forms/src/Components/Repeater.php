@@ -461,9 +461,9 @@ class Repeater extends Field
         $relationshipQuery = $relationship->getQuery();
 
         if ($this->modifyRelationshipQueryUsing) {
-            $this->evaluate($this->modifyRelationshipQueryUsing, [
+            $relationshipQuery = $this->evaluate($this->modifyRelationshipQueryUsing, [
                 'query' => $relationshipQuery,
-            ]);
+            ]) ?? $relationshipQuery;
         }
 
         if ($orderColumn = $this->getOrderColumn()) {

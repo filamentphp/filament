@@ -463,7 +463,7 @@ class Select extends Field
             if ($callback) {
                 $relationshipQuery = $component->evaluate($callback, [
                     'query' => $relationshipQuery,
-                ]);
+                ]) ?? $relationshipQuery;
             }
 
             $component->applySearchConstraint(
@@ -505,12 +505,9 @@ class Select extends Field
             $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getRelationshipTitleColumnName());
 
             if ($callback) {
-                $newRelationshipQuery = $component->evaluate($callback, [
+                $relationshipQuery = $component->evaluate($callback, [
                     'query' => $relationshipQuery,
-                ]);
-
-                // If a new query object is returned, use it instead.
-                $relationshipQuery = $newRelationshipQuery ?? $relationshipQuery;
+                ]) ?? $relationshipQuery;
             }
 
             $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
