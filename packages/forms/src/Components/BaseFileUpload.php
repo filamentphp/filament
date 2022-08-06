@@ -41,6 +41,8 @@ class BaseFileUpload extends Field
 
     protected bool | Closure $shouldPreserveFilenames = false;
 
+    protected string | Closure | null $fileNamesColumn = null;
+
     protected string | Closure $visibility = 'public';
 
     protected ?Closure $deleteUploadedFileUsing = null;
@@ -203,6 +205,13 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function fileNamesColumn(string | Closure | null $column): static
+    {
+        $this->fileNamesColumn = $column;
+
+        return $this;
+    }
+
     public function preserveFilenames(bool | Closure $condition = true): static
     {
         $this->shouldPreserveFilenames = $condition;
@@ -358,6 +367,11 @@ class BaseFileUpload extends Field
         return $this->evaluate($this->shouldPreserveFilenames);
     }
 
+    public function getFileNamesColumn(): ?string
+    {
+        return $this->evaluate($this->fileNamesColumn);
+    }
+
     public function getValidationRules(): array
     {
         $rules = [
@@ -424,7 +438,9 @@ class BaseFileUpload extends Field
             return null;
         }
 
-        if ($file instanceof TemporaryUploadedFile) {
+        if (is_string($file)) {
+            $this->removeStoredFileName($file);
+        } elseif ($file instanceof TemporaryUploadedFile) {
             $file->delete();
         }
 
@@ -433,6 +449,31 @@ class BaseFileUpload extends Field
         $this->state($files);
 
         return $file;
+    }
+
+    public function removeStoredFileName(string $file): void
+    {
+        $column = $this->getFileNamesColumn();
+
+        if (blank($column)) {
+            return;
+        }
+
+        $this->evaluate(function (BaseFileUpload $component, Closure $get, Closure $set) use ($column, $file) {
+            if (! $component->isMultiple()) {
+                $set($column, null);
+
+                return;
+            }
+
+            $fileNames = $get($column) ?? [];
+
+            if (array_key_exists($file, $fileNames)) {
+                unset($fileNames[$file]);
+            }
+
+            $set($column, $fileNames);
+        });
     }
 
     public function reorderUploadedFiles(array $fileKeys): void
@@ -483,10 +524,6 @@ class BaseFileUpload extends Field
             return;
         }
 
-        if (! is_array($this->getState())) {
-            $this->state([$this->getState()]);
-        }
-
         $state = array_map(function (TemporaryUploadedFile | string $file) {
             if (! $file instanceof TemporaryUploadedFile) {
                 return $file;
@@ -504,10 +541,12 @@ class BaseFileUpload extends Field
                 'file' => $file,
             ]);
 
+            $this->storeFileName($storedFile, $file->getClientOriginalName());
+
             $file->delete();
 
             return $storedFile;
-        }, $this->getState());
+        }, Arr::wrap($this->getState()));
 
         if ($this->canReorder && ($callback = $this->reorderUploadedFilesUsing)) {
             $state = $this->evaluate($callback, [
@@ -516,6 +555,28 @@ class BaseFileUpload extends Field
         }
 
         $this->state($state);
+    }
+
+    public function storeFileName(string $file, string $fileName): void
+    {
+        $column = $this->getFileNamesColumn();
+
+        if (blank($column)) {
+            return;
+        }
+
+        $this->evaluate(function (BaseFileUpload $component, Closure $get, Closure $set) use ($column, $file, $fileName) {
+            if (! $component->isMultiple()) {
+                $set($column, $fileName);
+
+                return;
+            }
+
+            $fileNames = $get($column) ?? [];
+            $fileNames[$file] = $fileName;
+
+            $set($column, $fileNames);
+        });
     }
 
     public function isMultiple(): bool
