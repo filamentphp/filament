@@ -39,13 +39,13 @@ trait HasComponents
         return collect($this->getComponents($withHidden))
             ->map(static function (Component $component) use ($withHidden) {
                 if ($component->hasChildComponentContainer($withHidden)) {
-                    return array_merge(
-                        [$component],
-                        array_merge(array_map(
+                    return [
+                        $component,
+                        array_map(
                             fn (ComponentContainer $container): array => $container->getFlatComponents($withHidden),
                             $component->getChildComponentContainers(),
-                        )),
-                    );
+                        ),
+                    ];
                 }
 
                 return $component;
