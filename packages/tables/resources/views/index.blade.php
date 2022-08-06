@@ -387,8 +387,7 @@
 
                             <x-tables::row
                                 :record-url="$recordUrl"
-                                wire:key="table.records.{{ $recordKey }}"
-                                :wire:key="'table.records.' . $recordKey"
+                                :wire:key="$this->id . '.table.records.' . $recordKey"
                                 :wire:sortable.item="$isReordering ? $recordKey : null"
                                 :wire:sortable.handle="$isReordering"
                                 :striped="$isStriped"

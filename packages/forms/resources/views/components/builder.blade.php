@@ -66,7 +66,7 @@
                         x-on:mouseenter="isCreateButtonVisible = true"
                         x-on:click.away="isCreateButtonVisible = false"
                         x-on:mouseleave="isCreateButtonVisible = false"
-                        wire:key="{{ $item->getStatePath() }}"
+                        wire:key="{{ $this->id }}.{{ $item->getStatePath() }}.item"
                         wire:sortable.item="{{ $uuid }}"
                         @class([
                             'bg-white border border-gray-300 shadow-sm rounded-xl relative',

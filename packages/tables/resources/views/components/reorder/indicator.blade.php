@@ -3,7 +3,7 @@
 ])
 
 <tr
-    wire:key="reorderIndicator"
+    wire:key="{{ $this->id }}.table.reorder.indicator"
     x-cloak
     {{ $attributes->class(['bg-primary-500/10 filament-tables-selection-indicator']) }}
 >

@@ -120,7 +120,7 @@
                                             :label="$page"
                                             :aria-label="__('tables::table.pagination.buttons.go_to_page.label', ['page' => $page])"
                                             :active="$page === $paginator->currentPage()"
-                                            :wire:key="'pagination-' . $paginator->getPageName() . '-page' . $page"
+                                            :wire:key="$this->id . '.table.pagination.' . $paginator->getPageName() . '.' . $page"
                                         />
                                     @endforeach
                                 @endif
