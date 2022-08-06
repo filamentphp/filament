@@ -23,6 +23,9 @@
         @endphp
 
         <div
+            @if ($formComponent instanceof \Filament\Forms\Components\Field)
+                wire:key="{{ $this->id }}.{{ $formComponent->getStatePath() }}.{{ $formComponent::class }}"
+            @endif
             @if ($isVisible)
                 @class([
                     ($maxWidth = $formComponent->getMaxWidth()) ? match ($maxWidth) {
