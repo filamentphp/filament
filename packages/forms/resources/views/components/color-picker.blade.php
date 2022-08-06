@@ -45,6 +45,7 @@
                 type="text"
                 dusk="filament.forms.{{ $getStatePath() }}"
                 id="{{ $getId() }}"
+                {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
                 x-on:click="togglePanelVisibility()"
                 x-on:keydown.enter.stop.prevent="togglePanelVisibility()"
                 autocomplete="off"
