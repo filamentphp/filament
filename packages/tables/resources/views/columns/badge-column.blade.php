@@ -2,17 +2,65 @@
     $state = $getFormattedState();
 
     $stateColor = match ($getStateColor()) {
-        'danger' => \Illuminate\Support\Arr::toCssClasses(['text-danger-700 bg-danger-500/10', 'dark:text-danger-500' => config('tables.dark_mode')]),
-        'primary' => \Illuminate\Support\Arr::toCssClasses(['text-primary-700 bg-primary-500/10', 'dark:text-primary-500' => config('tables.dark_mode')]),
-        'success' => \Illuminate\Support\Arr::toCssClasses(['text-success-700 bg-success-500/10', 'dark:text-success-500' => config('tables.dark_mode')]),
-        'warning' => \Illuminate\Support\Arr::toCssClasses(['text-warning-700 bg-warning-500/10', 'dark:text-warning-500' => config('tables.dark_mode')]),
-        null => \Illuminate\Support\Arr::toCssClasses(['text-gray-700 bg-gray-500/10', 'dark:text-gray-300 dark:bg-gray-500/20' => config('tables.dark_mode')]),
-        default => $getStateColor(),
+        'primary' => \Illuminate\Support\Arr::toCssClasses([
+            'bg-primary-600 text-white' => $getInverseColor(),
+            'text-primary-600 bg-primary-500/10' => !$getInverseColor(),
+            'dark:text-primary-500 dark:bg-primary-500/10' => !$getInverseColor() && config('tables.dark_mode'),
+        ]),
+        'success' => \Illuminate\Support\Arr::toCssClasses([
+            'bg-success-600 text-white' => $getInverseColor(),
+            'text-success-600 bg-success-500/10' => !$getInverseColor(),
+            'dark:text-success-500 dark:bg-success-500/10' => !$getInverseColor() && config('tables.dark_mode'),
+        ]),
+        'warning' => \Illuminate\Support\Arr::toCssClasses([
+            'bg-warning-600 text-white' => $getInverseColor(),
+            'text-warning-600 bg-warning-500/10' => !$getInverseColor(),
+            'dark:text-warning-500 dark:bg-warning-500/10' => !$getInverseColor() && config('tables.dark_mode'),
+        ]),
+        'danger' => \Illuminate\Support\Arr::toCssClasses([
+            'bg-danger-600 text-white' => $getInverseColor(),
+            'text-danger-600 bg-danger-500/10' => !$getInverseColor(),
+            'dark:text-danger-500 dark:bg-danger-500/10' => !$getInverseColor() && config('tables.dark_mode'),
+        ]),
+        null => \Illuminate\Support\Arr::toCssClasses([
+            'text-gray-600 bg-gray-500/10',
+            'dark:text-gray-300 dark:bg-gray-500/20' => config('tables.dark_mode')
+        ]),
+        default => $getStateColor()
     };
 
+    $iconColor = match ($getStateColor()) {
+        'primary' => \Illuminate\Support\Arr::toCssClasses([
+            'text-white bg-primary-600 ' => !$getInverseColor(),
+            'text-primary-600 bg-white' => $getInverseColor(),
+            'dark:text-gray-100' => !$getInverseColor() && config('tables.dark_mode'),
+        ]),
+        'success' => \Illuminate\Support\Arr::toCssClasses([
+            'text-white bg-success-600' => !$getInverseColor(),
+            'text-success-600 bg-white' => $getInverseColor(),
+            'dark:text-gray-100' => !$getInverseColor() && config('tables.dark_mode'),
+        ]),
+        'warning' => \Illuminate\Support\Arr::toCssClasses([
+            'text-white bg-warning-600 ' => !$getInverseColor(),
+            'text-warning-600 bg-white' => $getInverseColor(),
+            'dark:text-gray-100' => !$getInverseColor() && config('tables.dark_mode'),
+        ]),
+        'danger' => \Illuminate\Support\Arr::toCssClasses([
+            'text-white bg-danger-600' => !$getInverseColor(),
+            'text-danger-600 bg-white' => $getInverseColor(),
+            'dark:text-gray-100' => !$getInverseColor() && config('tables.dark_mode'),
+        ]),
+        null => \Illuminate\Support\Arr::toCssClasses([
+            'text-white bg-gray-600',
+            'dark:text-gray-100 dark:bg-gray-800' => config('tables.dark_mode')
+        ]),
+        default => $getStateColor()
+    };
+
+    $inset = $getInset();
     $stateIcon = $getStateIcon();
     $iconPosition = $getIconPosition();
-    $iconClasses = 'w-4 h-4';
+    $iconClasses = 'h-4 w-4';
 @endphp
 
 <div {{ $attributes->merge($getExtraAttributes())->class([
@@ -26,20 +74,27 @@
 ]) }}>
     @if (filled($state))
         <div @class([
-            'inline-flex items-center justify-center space-x-1 rtl:space-x-reverse min-h-6 px-2 py-0.5 text-sm font-medium tracking-tight rounded-xl whitespace-normal',
-            $stateColor => $stateColor,
+            'inline-flex justify-center items-center px-[10px] text-sm rounded-full font-medium tracking-tight',
+            $stateColor => $stateColor
         ])>
-            @if ($stateIcon && $iconPosition === 'before')
-                <x-dynamic-component :component="$stateIcon" :class="$iconClasses" />
-            @endif
+            <div @class([
+                'flex justify-between items-center min-h-6 min-w-6',
+                'flex-row-reverse' => $stateIcon && $iconPosition === 'before'
+            ])>
 
-            <span>
-                {{ $state }}
-            </span>
+                <span>{{ $state }}</span>
 
-            @if ($stateIcon && $iconPosition === 'after')
-                <x-dynamic-component :component="$stateIcon" :class="$iconClasses" />
-            @endif
+                @if ($stateIcon)
+                    <div @class([
+                        'flex justify-center items-center whitespace-nowrap text-center rounded-full h-5 w-5 my-0.5',
+                        '-translate-x-2 rtl:translate-x-2' => $iconPosition === 'before',
+                        'translate-x-2 rtl:-translate-x-2' => $iconPosition === 'after',
+                        $iconColor => $inset,
+                    ])>
+                        <x-dynamic-component :component="$stateIcon" :class="$iconClasses" />
+                    </div>
+                @endif
+            </div>
         </div>
     @endif
 </div>
