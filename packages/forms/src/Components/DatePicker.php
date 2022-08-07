@@ -8,4 +8,8 @@ class DatePicker extends DateTimePicker
     {
         return false;
     }
+    
+    public function timezone( Closure|string|null $timezone ): static {
+        return $this;
+    }
 }
