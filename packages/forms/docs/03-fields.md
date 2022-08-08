@@ -1535,6 +1535,30 @@ Repeater::make('members')
 
 Any fields that you use from `$state` should be `reactive()` or `lazy()` if you wish to see the item label update live as you use the form.
 
+### Access parent field value inside
+
+You may get access to the parent field value inside the repeater by using `$get` callback with `../../` followed by your field name.
+
+Example:
+
+consider your form data as the following array structure
+
+```php
+client_id: 1,
+repeater: [
+    item1: [
+        service_id
+    ]
+]
+```
+
+To access the client_id, you have to use `$get('../../client_id')`
+
+#### Explanation
+
+`$get()` is relative to the current repeater item, so `$get('client_id')` is looking for `$get('repeater.item1.client_id')`, and you can use `../` to go up a level.
+so `$get('../client_id')` is $get('repeater.client_id') and `$get('../../client_id')` is `$get('client_id')`.
+
 ## Builder
 
 Similar to a [repeater](#repeater), the builder component allows you to output a JSON array of repeated form components. Unlike the repeater, which only defines one form schema to repeat, the builder allows you to define different schema "blocks", which you can repeat in any order. This makes it useful for building more advanced array structures.
