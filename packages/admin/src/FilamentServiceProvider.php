@@ -79,7 +79,9 @@ class FilamentServiceProvider extends PluginServiceProvider
     {
         parent::packageRegistered();
 
-        $this->registerComponents();
+        $this->app->booting(function () {
+            $this->registerComponents();
+        });
 
         $this->app->scoped('filament', function (): FilamentManager {
             return new FilamentManager();
