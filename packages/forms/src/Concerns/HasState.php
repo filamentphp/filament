@@ -79,6 +79,13 @@ trait HasState
                     data_set($state, $componentStatePath, $component->dehydrateState());
                 }
 
+                if (
+                    $component instanceof BaseFileUpload &&
+                    ($componentFileNamesStatePath = $component->getFileNamesStatePath())
+                ) {
+                    data_set($state, $componentFileNamesStatePath, $component->dehydrateStoredFileNames());
+                }
+
                 foreach ($component->getChildComponentContainers() as $container) {
                     if ($container->isHidden()) {
                         continue;

@@ -236,7 +236,7 @@ trait HasState
 
             return data_get(
                 $livewire,
-                $this->generateStatePathForCallback($path, $isAbsolute)
+                $this->generateRelativeStatePath($path, $isAbsolute)
             );
         };
     }
@@ -248,7 +248,7 @@ trait HasState
 
             data_set(
                 $livewire,
-                $this->generateStatePathForCallback($path, $isAbsolute),
+                $this->generateRelativeStatePath($path, $isAbsolute),
                 $this->evaluate($state),
             );
 
@@ -256,7 +256,7 @@ trait HasState
         };
     }
 
-    protected function generateStatePathForCallback(string | Component $path, bool $isAbsolute = false): string
+    protected function generateRelativeStatePath(string | Component $path, bool $isAbsolute = false): string
     {
         if ($path instanceof Component) {
             return $path->getStatePath();

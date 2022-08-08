@@ -369,7 +369,11 @@ class BaseFileUpload extends Field
 
     public function getFileNamesStatePath(): ?string
     {
-        return $this->evaluate($this->fileNamesStatePath);
+        if (! $this->fileNamesStatePath) {
+            return null;
+        }
+
+        return $this->generateRelativeStatePath($this->fileNamesStatePath);
     }
 
     public function getValidationRules(): array
@@ -453,7 +457,7 @@ class BaseFileUpload extends Field
 
     public function removeStoredFileName(string $file): void
     {
-        $statePath = $this->getFileNamesStatePath();
+        $statePath = $this->fileNamesStatePath;
 
         if (blank($statePath)) {
             return;
@@ -559,7 +563,7 @@ class BaseFileUpload extends Field
 
     public function storeFileName(string $file, string $fileName): void
     {
-        $statePath = $this->getFileNamesStatePath();
+        $statePath = $this->fileNamesStatePath;
 
         if (blank($statePath)) {
             return;
@@ -577,6 +581,22 @@ class BaseFileUpload extends Field
 
             $set($statePath, $fileNames);
         });
+    }
+
+    public function dehydrateStoredFileNames(): string | array | null
+    {
+        $state = null;
+        $statePath = $this->fileNamesStatePath;
+
+        if (filled($statePath)) {
+            $state = $this->evaluate(fn (Closure $get) => $get($statePath));
+        }
+
+        if (blank($state) && $this->isMultiple()) {
+            return [];
+        }
+
+        return $state;
     }
 
     public function isMultiple(): bool
