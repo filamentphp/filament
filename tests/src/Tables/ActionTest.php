@@ -1,7 +1,6 @@
 <?php
 
 use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Tables\Fixtures\PostsTable;
 use Filament\Tests\Tables\TestCase;
@@ -19,35 +18,32 @@ it('can call action', function () {
     $this->assertModelMissing($post);
 });
 
-it('can call bulk action', function () {
-    $posts = Post::factory()->count(10)->create();
-
-    livewire(PostsTable::class)
-        ->callTableBulkAction(DeleteBulkAction::class, $posts);
-
-    foreach ($posts as $post) {
-        $this->assertModelMissing($post);
-    }
-});
-
 it('can call an action with data', function () {
     livewire(PostsTable::class)
-        ->callTableAction('form', data: [
+        ->callTableAction('data', data: [
             'payload' => $payload = Str::random(),
         ])
         ->assertHasNoTableActionErrors()
-        ->assertEmitted('form-called', [
+        ->assertEmitted('data-called', [
             'payload' => $payload,
         ]);
 });
 
 it('can validate an action\'s data', function () {
     livewire(PostsTable::class)
-        ->callTableAction('form', data: [
+        ->callTableAction('data', data: [
             'payload' => null,
         ])
         ->assertHasTableActionErrors(['payload' => ['required']])
-        ->assertNotEmitted('form-called');
+        ->assertNotEmitted('data-called');
+});
+
+it('can set default action data when mounted', function () {
+    livewire(PostsTable::class)
+        ->mountTableAction('data')
+        ->assertTableActionDataSet([
+            'foo' => 'bar',
+        ]);
 });
 
 it('can call an action with arguments', function () {
@@ -71,10 +67,4 @@ it('can hide an action', function () {
     livewire(PostsTable::class)
         ->assertTableActionVisible('visible')
         ->assertTableActionHidden('hidden');
-});
-
-it('can hide a bulk action', function () {
-    livewire(PostsTable::class)
-        ->assertTableBulkActionVisible('visible')
-        ->assertTableBulkActionHidden('hidden');
 });
