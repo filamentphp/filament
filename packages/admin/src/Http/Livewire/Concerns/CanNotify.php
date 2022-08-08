@@ -9,6 +9,13 @@ use Filament\Facades\Filament;
  */
 trait CanNotify
 {
+    protected function getListeners()
+    {
+        return array_merge($this->listeners, [
+            'notify' => 'notify',
+        ]);
+    }
+    
     public function notify(string $status, string $message, bool $isAfterRedirect = false): void
     {
         Filament::notify($status, $message);
