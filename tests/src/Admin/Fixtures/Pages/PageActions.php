@@ -2,6 +2,7 @@
 
 namespace Filament\Tests\Admin\Fixtures\Pages;
 
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Page;
@@ -17,12 +18,13 @@ class PageActions extends Page
                 ->action(function () {
                     $this->emit('simple-called');
                 }),
-            Action::make('form')
+            Action::make('data')
+                ->mountUsing(fn (ComponentContainer $form) => $form->fill(['foo' => 'bar']))
                 ->form([
                     TextInput::make('payload')->required(),
                 ])
                 ->action(function (array $data) {
-                    $this->emit('form-called', $data);
+                    $this->emit('data-called', $data);
                 }),
             Action::make('arguments')
                 ->requiresConfirmation()

@@ -15,22 +15,30 @@ it('can call an action', function () {
 
 it('can call an action with data', function () {
     livewire(PageActions::class)
-        ->callPageAction('form', data: [
+        ->callPageAction('data', data: [
             'payload' => $payload = Str::random(),
         ])
         ->assertHasNoPageActionErrors()
-        ->assertEmitted('form-called', [
+        ->assertEmitted('data-called', [
             'payload' => $payload,
         ]);
 });
 
 it('can validate an action\'s data', function () {
     livewire(PageActions::class)
-        ->callPageAction('form', data: [
+        ->callPageAction('data', data: [
             'payload' => null,
         ])
         ->assertHasPageActionErrors(['payload' => ['required']])
-        ->assertNotEmitted('form-called');
+        ->assertNotEmitted('data-called');
+});
+
+it('can set default action data when mounted', function () {
+    livewire(PageActions::class)
+        ->mountPageAction('data')
+        ->assertPageActionDataSet([
+            'foo' => 'bar',
+        ]);
 });
 
 it('can call an action with arguments', function () {

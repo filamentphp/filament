@@ -11,7 +11,15 @@ namespace Livewire\Testing {
 
         public function assertHasNoFormErrors(array $keys = []): static {}
 
+        public function mountPageAction(string $name): static {}
+
+        public function setPageActionData(array $data): static {}
+
+        public function assertPageActionDataSet(array $data): static {}
+
         public function callPageAction(string $name, array $data = [], array $arguments = []): static {}
+
+        public function callMountedPageAction(array $arguments = []): static {}
 
         public function assertPageActionExists(string $name): static {}
 

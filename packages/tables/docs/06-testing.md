@@ -232,6 +232,30 @@ it('can validate edited post data', function () {
 
 For bulk actions, this method is called `assertHasTableBulkActionErrors()`.
 
+To check if an action or bulk action is pre-filled with data, you can use the `assertTableActionDataSet()` or `assertTableBulkActionDataSet()` method:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can load existing post data for editing', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->mountTableAction(EditAction::class, $post)
+        ->assertTableActionDataSet([[
+            'title' => $post->title,
+        ])
+        ->setTableActionData([[
+            'title' => $title = fake()->words(asText: true),
+        ])
+        ->callMountedTableAction()
+        ->assertHasNoTableActionErrors();
+
+    expect($post->refresh())
+        ->title->toBe($title);
+});
+```
+
 To ensure that an action or bulk action is hidden for a user, you can use the `assertTableActionHidden()` or `assertTableBulkActionHidden()` method:
 
 ```php

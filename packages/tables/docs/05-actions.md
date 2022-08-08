@@ -188,6 +188,32 @@ BulkAction::make('updateAuthor')
     ])
 ```
 
+#### Filling default data
+
+You may fill the form with default data, using the `mountUsing()` method:
+
+```php
+use App\Models\User;
+use Filament\Forms;
+use Filament\Tables\Actions\Action;
+use Illuminate\Database\Eloquent\Collection;
+
+Action::make('updateAuthor')
+    ->mountUsing(fn (Forms\ComponentContainer $form, User $record) => $form->fill([
+        'authorId' => $record->author->id,
+    ]))
+    ->action(function (User $record, array $data): void {
+        $record->author()->associate($data['authorId']);
+        $record->save();
+    })
+    ->form([
+        Forms\Components\Select::make('authorId')
+            ->label('Author')
+            ->options(User::query()->pluck('name', 'id'))
+            ->required(),
+    ])
+```
+
 #### Wizards
 
 You may easily transform action forms into multistep wizards.
@@ -248,7 +274,7 @@ BulkAction::make('delete')
     ->modalButton('Yes, delete them')
 ```
 
-## Custom content
+### Custom content
 
 You may define custom content to be rendered inside your modal, which you can specify by passing a Blade view into the `modalContent()` method:
 
