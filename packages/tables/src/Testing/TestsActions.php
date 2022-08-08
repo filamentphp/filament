@@ -81,6 +81,10 @@ class TestsActions
             /** @phpstan-ignore-next-line */
             $this->mountTableAction($name, $record);
 
+            if (! $this->instance()->getMountedTableAction()) {
+                return $this;
+            }
+
             /** @phpstan-ignore-next-line */
             $this->setTableActionData($data);
 

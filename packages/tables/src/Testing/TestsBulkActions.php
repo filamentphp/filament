@@ -90,6 +90,10 @@ class TestsBulkActions
             /** @phpstan-ignore-next-line */
             $this->mountTableBulkAction($name, $records);
 
+            if (! $this->instance()->getMountedTableBulkAction()) {
+                return $this;
+            }
+
             /** @phpstan-ignore-next-line */
             $this->setTableBulkActionData($data);
 

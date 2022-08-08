@@ -73,6 +73,10 @@ class TestsPageActions
             /** @phpstan-ignore-next-line */
             $this->mountPageAction($name);
 
+            if (! $this->instance()->getMountedAction()) {
+                return $this;
+            }
+
             /** @phpstan-ignore-next-line */
             $this->setPageActionData($data);
 
