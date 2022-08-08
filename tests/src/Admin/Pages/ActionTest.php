@@ -2,7 +2,6 @@
 
 use Filament\Tests\Admin\Fixtures\Pages\PageActions;
 use Filament\Tests\Admin\Pages\TestCase;
-use Filament\Tests\Tables\Fixtures\PostsTable;
 use Illuminate\Support\Str;
 use function Pest\Livewire\livewire;
 
