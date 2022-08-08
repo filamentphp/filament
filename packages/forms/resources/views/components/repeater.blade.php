@@ -63,7 +63,7 @@
                             x-data="{ isCollapsed: @js($isCollapsed()) }"
                             x-on:repeater-collapse.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = true)"
                             x-on:repeater-expand.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = false)"
-                            wire:key="{{ $item->getStatePath() }}"
+                            wire:key="{{ $this->id }}.{{ $item->getStatePath() }}.item"
                             wire:sortable.item="{{ $uuid }}"
                             @class([
                                 'bg-white border border-gray-300 shadow-sm rounded-xl relative',
@@ -125,7 +125,7 @@
                                                 </button>
                                             </li>
                                         @endunless
-                                        
+
                                         @unless ($isItemDeletionDisabled)
                                             <li>
                                                 <button

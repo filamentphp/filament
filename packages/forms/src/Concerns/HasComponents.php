@@ -3,6 +3,7 @@
 namespace Filament\Forms\Concerns;
 
 use Closure;
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
 
@@ -38,7 +39,13 @@ trait HasComponents
         return collect($this->getComponents($withHidden))
             ->map(static function (Component $component) use ($withHidden) {
                 if ($component->hasChildComponentContainer($withHidden)) {
-                    return array_merge([$component], $component->getChildComponentContainer()->getFlatComponents($withHidden));
+                    return [
+                        $component,
+                        array_map(
+                            fn (ComponentContainer $container): array => $container->getFlatComponents($withHidden),
+                            $component->getChildComponentContainers(),
+                        ),
+                    ];
                 }
 
                 return $component;

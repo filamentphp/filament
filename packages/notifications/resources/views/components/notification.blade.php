@@ -14,7 +14,7 @@
         [$el.getAttribute('x-transition:leave-start')]: phase === 'leave-start',
         [$el.getAttribute('x-transition:leave-end')]: phase === 'leave-end',
     }"
-    wire:key="notification-{{ $notification->getId() }}"
+    wire:key="{{ $this->id }}.notifications.{{ $notification->getId() }}"
     dusk="filament.notifications.notification"
 >
     {{ $slot }}

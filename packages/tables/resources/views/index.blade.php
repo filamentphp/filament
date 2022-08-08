@@ -387,8 +387,7 @@
 
                             <x-tables::row
                                 :record-url="$recordUrl"
-                                wire:key="table.records.{{ $recordKey }}"
-                                :wire:key="'table.records.' . $recordKey"
+                                :wire:key="$this->id . '.table.records.' . $recordKey"
                                 :wire:sortable.item="$isReordering ? $recordKey : null"
                                 :wire:sortable.handle="$isReordering"
                                 :striped="$isStriped"
@@ -498,7 +497,13 @@
             $action = $getMountedAction();
         @endphp
 
-        <x-tables::modal :id="\Illuminate\Support\Str::of(static::class)->replace('\\', '\\\\') . '-table-action'" :visible="filled($action)" :width="$action?->getModalWidth()" display-classes="block">
+        <x-tables::modal
+            :id="\Illuminate\Support\Str::of(static::class)->replace('\\', '\\\\') . '-table-action'"
+            :wire:key="$action ? $this->id . '.table' . ($getMountedActionRecordKey() ? '.records.' . $getMountedActionRecordKey() : null) . '.actions.' . $action->getName() . '.modal' : null"
+            :visible="filled($action)"
+            :width="$action?->getModalWidth()"
+            display-classes="block"
+        >
             @if ($action)
                 @if ($action->isModalCentered())
                     <x-slot name="heading">
@@ -542,7 +547,13 @@
             $action = $getMountedBulkAction();
         @endphp
 
-        <x-tables::modal :id="\Illuminate\Support\Str::of(static::class)->replace('\\', '\\\\') . '-table-bulk-action'" :visible="filled($action)" :width="$action?->getModalWidth()" display-classes="block">
+        <x-tables::modal
+            :id="\Illuminate\Support\Str::of(static::class)->replace('\\', '\\\\') . '-table-bulk-action'"
+            :wire:key="$action ? $this->id . '.table.bulk-actions.' . $action->getName() . '.modal' : null"
+            :visible="filled($action)"
+            :width="$action?->getModalWidth()"
+            display-classes="block"
+        >
             @if ($action)
                 @if ($action->isModalCentered())
                     <x-slot name="heading">
