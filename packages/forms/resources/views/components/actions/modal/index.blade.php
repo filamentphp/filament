@@ -3,7 +3,13 @@
 @endphp
 
 <form wire:submit.prevent="callMountedFormComponentAction">
-    <x-forms::modal :id="\Illuminate\Support\Str::of(static::class)->replace('\\', '\\\\') . '-form-component-action'" :visible="filled($action)" :width="$action?->getModalWidth()" display-classes="block">
+    <x-forms::modal
+        :id="\Illuminate\Support\Str::of(static::class)->replace('\\', '\\\\') . '-form-component-action'"
+        :wire:key="$action ? $this->id . '.' . $action->getComponent()->getStatePath() . '.actions.' . $action->getName() . '.modal' : null"
+        :visible="filled($action)"
+        :width="$action?->getModalWidth()"
+        display-classes="block"
+    >
         @if ($action)
             @if ($action->isModalCentered())
                 <x-slot name="heading">

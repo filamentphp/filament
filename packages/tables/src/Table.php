@@ -338,6 +338,11 @@ class Table extends ViewComponent
         return $this->getLivewire()->getMountedTableAction();
     }
 
+    public function getMountedActionRecordKey()
+    {
+        return $this->getLivewire()->getMountedTableActionRecordKey();
+    }
+
     public function getMountedActionForm(): ?ComponentContainer
     {
         return $this->getLivewire()->getMountedTableActionForm();
