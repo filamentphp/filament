@@ -254,7 +254,7 @@ class Select extends Field
         if ($this->modifyCreateOptionActionUsing) {
             $action = $this->evaluate($this->modifyCreateOptionActionUsing, [
                 'action' => $action,
-            ]);
+            ]) ?? $action;
         }
 
         return $action;
