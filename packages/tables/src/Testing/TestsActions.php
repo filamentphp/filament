@@ -20,9 +20,9 @@ use Livewire\Testing\TestableLivewire;
  */
 class TestsActions
 {
-    public function callTableAction(): Closure
+    public function mountTableAction(): Closure
     {
-        return function (string $name, $record = null, array $data = [], array $arguments = []): static {
+        return function (string $name, $record = null): static {
             $name = $this->parseActionName($name);
 
             $livewire = $this->instance();
@@ -42,8 +42,6 @@ class TestsActions
             if (! $action->shouldOpenModal()) {
                 $this->assertNotDispatchedBrowserEvent('open-modal');
 
-                $this->assertNotSet('mountedTableAction', $name);
-
                 return $this;
             }
 
@@ -53,11 +51,63 @@ class TestsActions
                 'id' => "{$livewireClass}-table-action",
             ]);
 
+            return $this;
+        };
+    }
+
+    public function setTableActionData(): Closure
+    {
+        return function (array $data): static {
             $this->set('mountedTableActionData', $data);
+
+            return $this;
+        };
+    }
+
+    public function assertTableActionData(): Closure
+    {
+        return function (array $data): static {
+            foreach ($data as $key => $value) {
+                $this->assertSet("mountedTableActionData.{$key}", $value);
+            }
+
+            return $this;
+        };
+    }
+
+    public function callTableAction(): Closure
+    {
+        return function (string $name, $record = null, array $data = [], array $arguments = []): static {
+            /** @phpstan-ignore-next-line */
+            $this->mountTableAction($name, $record);
+
+            /** @phpstan-ignore-next-line */
+            $this->callMountedTableAction($data, $arguments);
+
+            return $this;
+        };
+    }
+
+    public function callMountedTableAction(): Closure
+    {
+        return function (array $data = [], array $arguments = []): static {
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getMountedTableAction();
+
+            if (! $action->shouldOpenModal()) {
+                $this->assertNotSet('mountedTableAction', $action->getName());
+
+                return $this;
+            }
+
+            /** @phpstan-ignore-next-line */
+            $this->setTableActionData($data);
 
             $this->call('callMountedTableAction', json_encode($arguments));
 
-            if ($this->get('mountedTableAction') !== $name) {
+            if ($this->get('mountedTableAction') !== $action->getName()) {
                 $this->assertDispatchedBrowserEvent('close-modal', [
                     'id' => "{$livewireClass}-table-action",
                 ]);
@@ -191,9 +241,9 @@ class TestsActions
         };
     }
 
-    public function callTableBulkAction(): Closure
+    public function mountTableBulkAction(): Closure
     {
-        return function (string $name, array | Collection $records, array $data = [], array $arguments = []): static {
+        return function (string $name, array | Collection $records): static {
             $name = $this->parseActionName($name);
 
             /** @phpstan-ignore-next-line */
@@ -220,8 +270,6 @@ class TestsActions
             if (! $action->shouldOpenModal()) {
                 $this->assertNotDispatchedBrowserEvent('open-modal');
 
-                $this->assertNotSet('mountedTableBulkAction', $name);
-
                 return $this;
             }
 
@@ -231,11 +279,63 @@ class TestsActions
                 'id' => "{$livewireClass}-table-bulk-action",
             ]);
 
+            return $this;
+        };
+    }
+
+    public function setTableBulkActionData(): Closure
+    {
+        return function (array $data): static {
             $this->set('mountedTableBulkActionData', $data);
+
+            return $this;
+        };
+    }
+
+    public function assertTableBulkActionData(): Closure
+    {
+        return function (array $data): static {
+            foreach ($data as $key => $value) {
+                $this->assertSet("mountedTableBulkActionData.{$key}", $value);
+            }
+
+            return $this;
+        };
+    }
+
+    public function callTableBulkAction(): Closure
+    {
+        return function (string $name, array | Collection $records, array $data = [], array $arguments = []): static {
+            /** @phpstan-ignore-next-line */
+            $this->mountTableBulkAction($name, $records);
+
+            /** @phpstan-ignore-next-line */
+            $this->callMountedTableBulkAction($data);
+
+            return $this;
+        };
+    }
+
+    public function callMountedTableBulkAction(): Closure
+    {
+        return function (array $data = [], array $arguments = []): static {
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getMountedTableBulkAction();
+
+            if (! $action->shouldOpenModal()) {
+                $this->assertNotSet('mountedTableBulkAction', $action->getName());
+
+                return $this;
+            }
+
+            /** @phpstan-ignore-next-line */
+            $this->setTableBulkActionData($data);
 
             $this->call('callMountedTableBulkAction', json_encode($arguments));
 
-            if ($this->get('mountedTableBulkAction') !== $name) {
+            if ($this->get('mountedTableBulkAction') !== $action->getName()) {
                 $this->assertDispatchedBrowserEvent('close-modal', [
                     'id' => "{$livewireClass}-table-bulk-action",
                 ]);
