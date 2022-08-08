@@ -188,9 +188,14 @@ trait HasActions
             ->context($this->mountedTableAction);
     }
 
+    public function getMountedTableActionRecordKey()
+    {
+        return $this->mountedTableActionRecord;
+    }
+
     public function getMountedTableActionRecord(): ?Model
     {
-        $recordKey = $this->mountedTableActionRecord;
+        $recordKey = $this->getMountedTableActionRecordKey();
 
         if ($this->cachedMountedTableActionRecord && ($this->cachedMountedTableActionRecordKey === $recordKey)) {
             return $this->cachedMountedTableActionRecord;
