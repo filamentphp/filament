@@ -21,6 +21,10 @@ namespace Livewire\Testing {
 
         public function assertTableActionHidden(string $name, $record = null): static {}
 
+        public function assertTableActionDisabled(string $name, $record = null): static {}
+
+        public function assertTableActionNotDisabled(string $name, $record = null): static {}
+
         public function assertTableActionHeld(string $name): static {}
 
         public function assertHasTableActionErrors(array $keys = []): static {}
