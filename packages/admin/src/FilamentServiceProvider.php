@@ -65,7 +65,7 @@ class FilamentServiceProvider extends PluginServiceProvider
         foreach ($commands as $command) {
             $class = 'Filament\\Commands\\Aliases\\' . class_basename($command);
 
-            if (! class_exists($class)) {
+            if (!class_exists($class)) {
                 continue;
             }
 
@@ -79,7 +79,9 @@ class FilamentServiceProvider extends PluginServiceProvider
     {
         parent::packageRegistered();
 
-        $this->registerComponents();
+        $this->app->booting(function () {
+            $this->registerComponents();
+        });
 
         $this->app->scoped('filament', function (): FilamentManager {
             return new FilamentManager();
@@ -134,7 +136,7 @@ class FilamentServiceProvider extends PluginServiceProvider
 
         $filesystem = app(Filesystem::class);
 
-        if (! $filesystem->isDirectory($directory)) {
+        if (!$filesystem->isDirectory($directory)) {
             return;
         }
 
@@ -143,7 +145,7 @@ class FilamentServiceProvider extends PluginServiceProvider
                 ->append('\\', $file->getRelativePathname())
                 ->replace(['/', '.php'], ['\\', '']);
 
-            if (! class_exists($fileClass)) {
+            if (!class_exists($fileClass)) {
                 continue;
             }
 
@@ -175,7 +177,7 @@ class FilamentServiceProvider extends PluginServiceProvider
                 continue;
             }
 
-            if (! is_subclass_of($fileClass, Component::class)) {
+            if (!is_subclass_of($fileClass, Component::class)) {
                 continue;
             }
 
@@ -203,7 +205,7 @@ class FilamentServiceProvider extends PluginServiceProvider
 
         $filesystem = app(Filesystem::class);
 
-        if (! $filesystem->exists($directory)) {
+        if (!$filesystem->exists($directory)) {
             return;
         }
 
@@ -215,7 +217,7 @@ class FilamentServiceProvider extends PluginServiceProvider
                         ->append('\\', $file->getRelativePathname())
                         ->replace(['/', '.php'], ['\\', '']);
                 })
-                ->filter(fn (string $class): bool => is_subclass_of($class, $baseClass) && (! (new ReflectionClass($class))->isAbstract()))
+                ->filter(fn (string $class): bool => is_subclass_of($class, $baseClass) && (!(new ReflectionClass($class))->isAbstract()))
                 ->all(),
         );
     }
@@ -256,11 +258,11 @@ class FilamentServiceProvider extends PluginServiceProvider
         $array = array_merge($original, $merging);
 
         foreach ($original as $key => $value) {
-            if (! is_array($value)) {
+            if (!is_array($value)) {
                 continue;
             }
 
-            if (! Arr::exists($merging, $key)) {
+            if (!Arr::exists($merging, $key)) {
                 continue;
             }
 
