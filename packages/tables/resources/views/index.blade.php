@@ -479,7 +479,10 @@
             @endif
         </div>
 
-        @if ($records instanceof \Illuminate\Contracts\Pagination\Paginator)
+        @if (
+            $records instanceof \Illuminate\Contracts\Pagination\Paginator &&
+            ((! $records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) || $records->total())
+        )
             <div @class([
                 'p-2 border-t',
                 'dark:border-gray-700' => config('tables.dark_mode'),
