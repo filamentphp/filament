@@ -49,7 +49,7 @@ class ViewRecord extends Page
     {
         $this->callHook('beforeFill');
 
-        $data = $this->getRecord()->toArray();
+        $data = $this->getRecord()->attributesToArray();
 
         $data = $this->mutateFormDataBeforeFill($data);
 
