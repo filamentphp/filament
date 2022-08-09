@@ -104,22 +104,24 @@ trait HasState
 
     public function dehydrateState(array &$state): void
     {
-        if ($this->isDehydrated()) {
-            if ($this->getStatePath(isAbsolute: false)) {
-                foreach ($this->getStateToDehydrate() as $key => $value) {
-                    Arr::set($state, $key, $value);
-                }
-            }
-
-            foreach ($this->getChildComponentContainers() as $container) {
-                if ($container->isHidden()) {
-                    continue;
-                }
-
-                $container->dehydrateState($state);
-            }
-        } else {
+        if (! $this->isDehydrated()) {
             Arr::forget($state, $this->getStatePath());
+
+            return;
+        }
+
+        if ($this->getStatePath(isAbsolute: false)) {
+            foreach ($this->getStateToDehydrate() as $key => $value) {
+                Arr::set($state, $key, $value);
+            }
+        }
+
+        foreach ($this->getChildComponentContainers() as $container) {
+            if ($container->isHidden()) {
+                continue;
+            }
+
+            $container->dehydrateState($state);
         }
     }
 
