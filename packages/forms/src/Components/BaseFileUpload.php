@@ -583,7 +583,7 @@ class BaseFileUpload extends Field
         });
     }
 
-    public function dehydrateStoredFileNames(): string | array | null
+    public function getStoredFileNames(): string | array | null
     {
         $state = null;
         $statePath = $this->fileNamesStatePath;
@@ -616,5 +616,27 @@ class BaseFileUpload extends Field
         return $this->evaluate($this->getUploadedFileNameForStorageUsing, [
             'file' => $file,
         ]);
+    }
+
+    public function getStateToDehydrate(): array
+    {
+        $state = parent::getStateToDehydrate();
+
+        if ($fileNamesStatePath = $this->getFileNamesStatePath()) {
+            $state = array_merge($state, [
+                $fileNamesStatePath => $this->getStoredFileNames(),
+            ]);
+        }
+
+        return $state;
+    }
+
+    public function dehydrateValidationRules(array &$rules): void
+    {
+        parent::dehydrateValidationRules($rules);
+
+        if ($fileNamesStatePath = $this->getFileNamesStatePath()) {
+            $rules[$fileNamesStatePath] = ['nullable'];
+        }
     }
 }

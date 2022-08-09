@@ -72,30 +72,7 @@ trait HasState
                 continue;
             }
 
-            $componentStatePath = $component->getStatePath();
-
-            if ($component->isDehydrated()) {
-                if ($component->getStatePath(isAbsolute: false)) {
-                    data_set($state, $componentStatePath, $component->dehydrateState());
-                }
-
-                if (
-                    $component instanceof BaseFileUpload &&
-                    ($componentFileNamesStatePath = $component->getFileNamesStatePath())
-                ) {
-                    data_set($state, $componentFileNamesStatePath, $component->dehydrateStoredFileNames());
-                }
-
-                foreach ($component->getChildComponentContainers() as $container) {
-                    if ($container->isHidden()) {
-                        continue;
-                    }
-
-                    $container->dehydrateState($state);
-                }
-            } else {
-                Arr::forget($state, $componentStatePath);
-            }
+            $component->dehydrateState($state);
         }
 
         return $state;

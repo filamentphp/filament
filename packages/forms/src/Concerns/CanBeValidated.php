@@ -33,7 +33,7 @@ trait CanBeValidated
 
         foreach ($this->getComponents() as $component) {
             if ($component instanceof Components\Contracts\HasValidationRules) {
-                $attributes[$component->getStatePath()] = $component->getValidationAttribute();
+                $component->dehydrateValidationAttributes($attributes);
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
@@ -53,18 +53,8 @@ trait CanBeValidated
         $rules = [];
 
         foreach ($this->getComponents() as $component) {
-            if (
-                $component instanceof Components\Contracts\HasValidationRules &&
-                count($componentRules = $component->getValidationRules())
-            ) {
-                $rules[$component->getStatePath()] = $componentRules;
-            }
-
-            if (
-                $component instanceof Components\BaseFileUpload &&
-                ($componentFileNamesStatePath = $component->getFileNamesStatePath())
-            ) {
-                $rules[$componentFileNamesStatePath] = ['nullable'];
+            if ($component instanceof Components\Contracts\HasValidationRules) {
+                $component->dehydrateValidationRules($rules);
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
