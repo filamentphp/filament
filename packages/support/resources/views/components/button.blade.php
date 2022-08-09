@@ -49,8 +49,8 @@
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-button-icon',
-        'w-5 h-5' => $size === 'md',
         'w-4 h-4' => $size === 'sm',
+        'w-5 h-5' => $size === 'md',
         'w-6 h-6' => $size === 'lg',
         'mr-1 -ml-2 rtl:ml-1 rtl:-mr-2' => ($iconPosition === 'before') && ($size === 'md') && (! $labelSrOnly),
         'mr-2 -ml-3 rtl:ml-2 rtl:-mr-3' => ($iconPosition === 'before') && ($size === 'lg') && (! $labelSrOnly),
@@ -158,7 +158,7 @@
         @if ($icon && $iconPosition === 'before')
             <x-dynamic-component :component="$icon" :class="$iconClasses" />
         @endif
-        
+
         <span @class([
             'sr-only' => $labelSrOnly,
         ])>
