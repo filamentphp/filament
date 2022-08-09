@@ -41,7 +41,7 @@ class PageActions extends Page
                 ->hidden(),
             Action::make('enabled'),
             Action::make('disabled')
-                ->disabled()
+                ->disabled(),
         ];
     }
 }

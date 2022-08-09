@@ -70,7 +70,7 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
                 ->hidden(),
             Tables\Actions\Action::make('enabled'),
             Tables\Actions\Action::make('disabled')
-                ->disabled()
+                ->disabled(),
         ];
     }
 
