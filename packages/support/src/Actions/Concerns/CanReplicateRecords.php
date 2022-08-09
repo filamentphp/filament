@@ -42,7 +42,7 @@ trait CanReplicateRecords
                 return;
             }
 
-            $form->fill($record->toArray());
+            $form->fill($record->attributesToArray());
         });
 
         $this->action(function () {

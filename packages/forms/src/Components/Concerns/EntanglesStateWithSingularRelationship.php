@@ -83,7 +83,7 @@ trait EntanglesStateWithSingularRelationship
 
     protected function getStateFromRelatedRecord(Model $record): array
     {
-        $state = $record->toArray();
+        $state = $record->attributesToArray();
 
         if (
             ($activeLocale = $this->getLivewire()->getActiveFormLocale()) &&

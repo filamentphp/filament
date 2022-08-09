@@ -406,7 +406,7 @@ class Repeater extends Field
 
         return $records
             ->map(function (Model $record) use ($activeLocale): array {
-                $state = $record->toArray();
+                $state = $record->attributesToArray();
 
                 if ($activeLocale && method_exists($record, 'getTranslatableAttributes') && method_exists($record, 'getTranslation')) {
                     foreach ($record->getTranslatableAttributes() as $attribute) {
