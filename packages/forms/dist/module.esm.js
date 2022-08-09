@@ -29492,6 +29492,7 @@ var text_input_default = (Alpine) => {
     state: state2
   }) => {
     return {
+      isStateBeingUpdated: false,
       mask: null,
       state: state2,
       init: function() {
@@ -29502,9 +29503,14 @@ var text_input_default = (Alpine) => {
           this.$el.value = this.state?.valueOf();
         }
         this.mask = IMask(this.$el, getMaskOptionsUsing(IMask)).on("accept", () => {
+          this.isStateBeingUpdated = true;
           this.state = this.mask.unmaskedValue;
+          this.isStateBeingUpdated = false;
         });
         this.$watch("state", () => {
+          if (this.isStateBeingUpdated) {
+            return;
+          }
           this.mask.unmaskedValue = this.state?.valueOf() ?? "";
         });
       }

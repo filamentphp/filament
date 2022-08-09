@@ -6,6 +6,8 @@ export default (Alpine) => {
         state,
     }) => {
         return {
+            isStateBeingUpdated: false,
+
             mask: null,
 
             state,
@@ -20,10 +22,18 @@ export default (Alpine) => {
                 }
 
                 this.mask = IMask(this.$el, getMaskOptionsUsing(IMask)).on('accept', () => {
+                    this.isStateBeingUpdated = true
+
                     this.state = this.mask.unmaskedValue
+
+                    this.isStateBeingUpdated = false
                 })
 
                 this.$watch('state', () => {
+                    if (this.isStateBeingUpdated) {
+                        return
+                    }
+
                     this.mask.unmaskedValue = this.state?.valueOf() ?? ''
                 })
             }
