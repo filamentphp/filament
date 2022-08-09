@@ -173,6 +173,46 @@ class TestsPages
         };
     }
 
+    public function assertPageActionEnabled(): Closure
+    {
+        return function (string $name): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertPageActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedAction($name);
+
+            Assert::assertTrue(
+                $action->isEnabled(),
+                message: "Failed asserting that an action with name [{$name}] is enabled on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertPageActionDisabled(): Closure
+    {
+        return function (string $name): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertPageActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedAction($name);
+
+            Assert::assertTrue(
+                $action->isDisabled(),
+                message: "Failed asserting that an action with name [{$name}] is disabled on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
     public function assertPageActionHeld(): Closure
     {
         return function (string $name): static {

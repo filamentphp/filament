@@ -55,3 +55,9 @@ it('can hide an action', function () {
         ->assertPageActionVisible('visible')
         ->assertPageActionHidden('hidden');
 });
+
+it('can disable an action', function() {
+    livewire(PageActions::class)
+        ->assertPageActionEnabled('enabled')
+        ->assertPageActionDisabled('disabled');
+});

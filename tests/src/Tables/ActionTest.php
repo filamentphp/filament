@@ -78,3 +78,9 @@ it('can hide a bulk action', function () {
         ->assertTableBulkActionVisible('visible')
         ->assertTableBulkActionHidden('hidden');
 });
+
+it('can disable an action', function() {
+    livewire(PostsTable::class)
+        ->assertTableActionEnabled('enabled')
+        ->assertTableActionDisabled('disabled');
+});
