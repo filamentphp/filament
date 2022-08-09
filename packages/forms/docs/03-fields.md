@@ -568,7 +568,7 @@ Since HTML does not support nested `<form>` elements, you must also render the m
 ```blade
 <form wire:submit.prevent="submit">
     {{ $this->form }}
-    
+
     <button type="submit">
         Submit
     </button>
@@ -1547,7 +1547,7 @@ Repeater::make('members')
 
 Any fields that you use from `$state` should be `reactive()` or `lazy()` if you wish to see the item label update live as you use the form.
 
-### Using `$get()` to cccess parent field values
+### Using `$get()` to access parent field values
 
 All form components are able to [use `$get()` and `$set()`](advanced) to access another field's value. However, you might experience unexpected behaviour when using this inside the repeater's schema.
 
@@ -1560,7 +1560,7 @@ Consider your form has this data structure:
 ```php
 [
     'client_id' => 1,
-    
+
     'repeater' => [
         'item1' => [
             'service_id' => 2,
