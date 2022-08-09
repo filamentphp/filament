@@ -1535,29 +1535,33 @@ Repeater::make('members')
 
 Any fields that you use from `$state` should be `reactive()` or `lazy()` if you wish to see the item label update live as you use the form.
 
-### Access parent field value inside
+### Using `$get()` to cccess parent field values
 
-You may get access to the parent field value inside the repeater by using `$get` callback with `../../` followed by your field name.
+All form components are able to [use `$get()` and `$set()`](advanced) to access another field's value. However, you might experience unexpected behaviour when using this inside the repeater's schema.
 
-Example:
+This is because `$get()` and `$set()`, by default, are scoped to the current repeater item. This means that you are able to interact with another field inside that repeater item easily without knowing which repeater item the current form component belongs to.
 
-consider your form data as the following array structure
+The consequence of this, is that you may be confused when you are unable to interact with a field outside the repeater. We use `../` syntax to solve this problem - `$get('../../parent_field_name')`.
+
+Consider your form has this data structure:
 
 ```php
-client_id: 1,
-repeater: [
-    item1: [
-        service_id
-    ]
+[
+    'client_id' => 1,
+    
+    'repeater' => [
+        'item1' => [
+            'service_id' => 2,
+        ],
+    ],
 ]
 ```
 
-To access the client_id, you have to use `$get('../../client_id')`
+You are trying to retrieve the value of `client_id` from inside the repeater item.
 
-#### Explanation
+`$get()` is relative to the current repeater item, so `$get('client_id')` is looking for `$get('repeater.item1.client_id')`.
 
-`$get()` is relative to the current repeater item, so `$get('client_id')` is looking for `$get('repeater.item1.client_id')`, and you can use `../` to go up a level.
-so `$get('../client_id')` is $get('repeater.client_id') and `$get('../../client_id')` is `$get('client_id')`.
+You can use `../` to go up a level in the data structure, so `$get('../client_id')` is $get('repeater.client_id') and `$get('../../client_id')` is `$get('client_id')`.
 
 ## Builder
 
