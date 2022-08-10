@@ -44,7 +44,15 @@ trait BelongsToModel
         if ($andHydrate) {
             $this->callAfterStateHydrated();
 
+            foreach ($this->getChildComponentContainers() as $container) {
+                $container->callAfterStateHydrated();
+            }
+
             $this->fillStateWithNull(shouldOverwrite: false);
+
+            foreach ($this->getChildComponentContainers() as $container) {
+                $container->fillComponentStateWithNull(shouldOverwrite: false);
+            }
         }
     }
 
