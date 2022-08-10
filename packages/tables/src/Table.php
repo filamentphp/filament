@@ -8,6 +8,7 @@ use Filament\Support\Components\ViewComponent;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Actions\Position;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Layout;
@@ -37,6 +38,8 @@ class Table extends ViewComponent
     protected ?string $filtersFormWidth = null;
 
     protected ?string $filtersLayout = null;
+
+    protected ?string $actionsPosition = null;
 
     protected ?string $columnToggleFormWidth = null;
 
@@ -155,6 +158,13 @@ class Table extends ViewComponent
         return $this;
     }
 
+    public function actionsPosition(?string $position): static
+    {
+        $this->actionsPosition = $position;
+
+        return $this;
+    }
+
     public function getRecordUrlUsing(?Closure $callback): static
     {
         $this->getRecordUrlUsing = $callback;
@@ -214,6 +224,11 @@ class Table extends ViewComponent
     public function getActions(): array
     {
         return $this->getLivewire()->getCachedTableActions();
+    }
+
+    public function getActionsPosition(): string
+    {
+        return $this->actionsPosition ?? Position::AfterCells;
     }
 
     public function getAllRecordsCount(): int

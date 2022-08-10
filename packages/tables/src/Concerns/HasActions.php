@@ -242,4 +242,9 @@ trait HasActions
     {
         return [];
     }
+
+    protected function getTableActionsPosition(): ?string
+    {
+        return null;
+    }
 }
