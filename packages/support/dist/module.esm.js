@@ -1,64 +1,4 @@
-// packages/notifications/resources/js/components/notification.js
-var notification_default = (Alpine) => {
-  Alpine.data("notificationComponent", ({$wire, notification}) => ({
-    phase: "enter-start",
-    computedStyle: null,
-    hasTransitionLeaveAttribute: false,
-    init: function() {
-      this.computedStyle = window.getComputedStyle(this.$el);
-      this.hasTransitionLeaveAttribute = this.$el.hasAttribute("x-transition:leave") || this.$el.hasAttribute("x-transition:leave-start") || this.$el.hasAttribute("x-transition:leave-end");
-      this.configureAnimations();
-      if (notification.duration !== null) {
-        setTimeout(() => this.close(), notification.duration);
-      }
-      this.$nextTick(() => this.phase = "enter-end");
-    },
-    configureAnimations: function() {
-      let animation;
-      Livewire.hook("message.received", (_, component) => {
-        if (component.fingerprint.name !== "notifications") {
-          return;
-        }
-        const oldTop = this.getTop();
-        animation = () => {
-          const newTop = this.getTop();
-          this.$el.animate([
-            {transform: `translateY(${oldTop - newTop}px)`},
-            {transform: "translateY(0px)"}
-          ], {
-            duration: this.getTransitionDuration(),
-            easing: this.computedStyle.transitionTimingFunction
-          });
-        };
-        this.$el.getAnimations().forEach((animation2) => animation2.finish());
-      });
-      Livewire.hook("message.processed", (_, component) => {
-        if (component.fingerprint.name !== "notifications") {
-          return;
-        }
-        if (this.phase.startsWith("leave-")) {
-          return;
-        }
-        animation();
-      });
-    },
-    close: function() {
-      this.phase = "leave-start";
-      this.$nextTick(() => {
-        setTimeout(() => $wire.close(notification.id), this.hasTransitionLeaveAttribute ? this.getTransitionDuration() : 0);
-        this.phase = "leave-end";
-      });
-    },
-    getTop: function() {
-      return this.$el.getBoundingClientRect().top;
-    },
-    getTransitionDuration: function() {
-      return parseFloat(this.computedStyle.transitionDuration) * 1e3;
-    }
-  }));
-};
-
-// packages/support/dist/module.esm.js
+// node_modules/@awcodes/alpine-floating-ui/dist/module.esm.js
 function getSide(placement) {
   return placement.split("-")[0];
 }
@@ -1752,17 +1692,12 @@ function src_default(Alpine) {
   });
 }
 var module_default = src_default;
+
+// packages/support/resources/js/index.js
 var js_default = (Alpine) => {
   Alpine.plugin(module_default);
 };
-
-// packages/notifications/resources/js/index.js
-var js_default2 = (Alpine) => {
-  Alpine.plugin(notification_default);
-  Alpine.plugin(js_default);
-};
 export {
-  notification_default as NotificationComponentAlpinePlugin,
-  js_default as SupportAlpinePlugin,
-  js_default2 as default
+  module_default as AlpineFloatingUI,
+  js_default as default
 };

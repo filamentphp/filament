@@ -1,3 +1,4 @@
+import './sortable'
 import ColorPickerFormComponentAlpinePlugin from './components/color-picker'
 import DateTimePickerFormComponentAlpinePlugin from './components/date-time-picker'
 import FileUploadFormComponentAlpinePlugin from './components/file-upload'
@@ -5,11 +6,10 @@ import KeyValueFormComponentAlpinePlugin from './components/key-value'
 import MarkdownEditorFormComponentAlpinePlugin from './components/markdown-editor'
 import RichEditorFormComponentAlpinePlugin from './components/rich-editor'
 import SelectFormComponentAlpinePlugin from './components/select'
+import SupportAlpinePlugin from '../../../support/dist/module.esm'
 import TagsInputFormComponentAlpinePlugin from './components/tags-input'
-import TextInputFormComponentAlpinePlugin from './components/text-input'
 import TextareaFormComponentAlpinePlugin from './components/textarea'
-import AlpineFloatingUI from '@awcodes/alpine-floating-ui'
-import './sortable'
+import TextInputFormComponentAlpinePlugin from './components/text-input'
 
 export default (Alpine) => {
     Alpine.plugin(ColorPickerFormComponentAlpinePlugin)
@@ -19,10 +19,10 @@ export default (Alpine) => {
     Alpine.plugin(MarkdownEditorFormComponentAlpinePlugin)
     Alpine.plugin(RichEditorFormComponentAlpinePlugin)
     Alpine.plugin(SelectFormComponentAlpinePlugin)
+    Alpine.plugin(SupportAlpinePlugin)
     Alpine.plugin(TagsInputFormComponentAlpinePlugin)
-    Alpine.plugin(TextInputFormComponentAlpinePlugin)
     Alpine.plugin(TextareaFormComponentAlpinePlugin)
-    Alpine.plugin(AlpineFloatingUI)
+    Alpine.plugin(TextInputFormComponentAlpinePlugin)
 }
 
 export {
@@ -33,8 +33,8 @@ export {
     MarkdownEditorFormComponentAlpinePlugin,
     RichEditorFormComponentAlpinePlugin,
     SelectFormComponentAlpinePlugin,
+    SupportAlpinePlugin,
     TagsInputFormComponentAlpinePlugin,
-    TextInputFormComponentAlpinePlugin,
     TextareaFormComponentAlpinePlugin,
-    AlpineFloatingUI,
+    TextInputFormComponentAlpinePlugin,
 }
