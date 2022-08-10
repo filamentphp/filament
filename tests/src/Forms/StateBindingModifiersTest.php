@@ -33,13 +33,13 @@ test('component state binding can be lazy', function () {
         ->getStateBindingModifiers()->toBe(['lazy']);
 });
 
-test('component state binding can be debounce', function () {
+test('component state binding can be debounced', function () {
     $component = (new Component())
         ->container(ComponentContainer::make(Livewire::make()))
         ->debounce('750ms');
 
     expect($component)
-        ->getStateBindingModifiers()->toBe(array('debounce', '750ms'));
+        ->getStateBindingModifiers()->toBe(['debounce', '750ms']);
 });
 
 test('components inherit their state binding modifiers', function () {
