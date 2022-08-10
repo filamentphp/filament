@@ -24,7 +24,6 @@ class TestsActions
             $name = $this->parseActionName($name);
 
             $livewire = $this->instance();
-            $livewireClass = $livewire::class;
 
             if ($record instanceof Model) {
                 $record = $livewire->getTableRecordKey($record);
@@ -48,7 +47,7 @@ class TestsActions
             $this->assertSet('mountedTableAction', $name);
 
             $this->assertDispatchedBrowserEvent('open-modal', [
-                'id' => "{$livewireClass}-table-action",
+                'id' => "{$livewire->id}-table-action",
             ]);
 
             return $this;
@@ -99,7 +98,6 @@ class TestsActions
     {
         return function (array $arguments = []): static {
             $livewire = $this->instance();
-            $livewireClass = $livewire::class;
 
             $action = $livewire->getMountedTableAction();
 
@@ -111,7 +109,7 @@ class TestsActions
 
             if ($this->get('mountedTableAction') !== $action->getName()) {
                 $this->assertDispatchedBrowserEvent('close-modal', [
-                    'id' => "{$livewireClass}-table-action",
+                    'id' => "{$livewire->id}-table-action",
                 ]);
             }
 

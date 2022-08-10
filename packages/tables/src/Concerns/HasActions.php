@@ -102,7 +102,7 @@ trait HasActions
             $action->resetFormData();
 
             $this->dispatchBrowserEvent('close-modal', [
-                'id' => static::class . '-table-action',
+                'id' => "{$this->id}-table-action",
             ]);
         }
     }
@@ -151,7 +151,7 @@ trait HasActions
         $this->resetErrorBag();
 
         $this->dispatchBrowserEvent('open-modal', [
-            'id' => static::class . '-table-action',
+            'id' => "{$this->id}-table-action",
         ]);
     }
 

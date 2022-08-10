@@ -85,7 +85,7 @@ trait HasFormComponentActions
             $action->resetFormData();
 
             $this->dispatchBrowserEvent('close-modal', [
-                'id' => static::class . '-form-component-action',
+                'id' => "{$this->id}-form-component-action",
             ]);
         }
     }
@@ -138,7 +138,7 @@ trait HasFormComponentActions
         $this->resetErrorBag();
 
         $this->dispatchBrowserEvent('open-modal', [
-            'id' => static::class . '-form-component-action',
+            'id' => "{$this->id}-form-component-action",
         ]);
     }
 

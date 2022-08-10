@@ -4,7 +4,7 @@
 
 <form wire:submit.prevent="callMountedFormComponentAction">
     <x-forms::modal
-        :id="\Illuminate\Support\Str::of(static::class)->replace('\\', '\\\\') . '-form-component-action'"
+        :id="$this->id . '-form-component-action'"
         :wire:key="$action ? $this->id . '.' . $action->getComponent()->getStatePath() . '.actions.' . $action->getName() . '.modal' : null"
         :visible="filled($action)"
         :width="$action?->getModalWidth()"

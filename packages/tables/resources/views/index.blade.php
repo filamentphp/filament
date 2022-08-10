@@ -501,7 +501,7 @@
         @endphp
 
         <x-tables::modal
-            :id="\Illuminate\Support\Str::of(static::class)->replace('\\', '\\\\') . '-table-action'"
+            :id="$this->id . '-table-action'"
             :wire:key="$action ? $this->id . '.table' . ($getMountedActionRecordKey() ? '.records.' . $getMountedActionRecordKey() : null) . '.actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
@@ -551,7 +551,7 @@
         @endphp
 
         <x-tables::modal
-            :id="\Illuminate\Support\Str::of(static::class)->replace('\\', '\\\\') . '-table-bulk-action'"
+            :id="$this->id . '-table-bulk-action'"
             :wire:key="$action ? $this->id . '.table.bulk-actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
