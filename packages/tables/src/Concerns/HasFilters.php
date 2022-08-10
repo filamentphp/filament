@@ -91,14 +91,14 @@ trait HasFilters
             );
         }
 
-        return $query->where(function (Builder $query) use ($data) {
-            foreach ($this->getCachedTableFilters() as $filter) {
-                $filter->apply(
-                    $query,
-                    $data[$filter->getName()] ?? [],
-                );
-            }
-        });
+        foreach ($this->getCachedTableFilters() as $filter) {
+            $filter->apply(
+                $query,
+                $data[$filter->getName()] ?? [],
+            );
+        }
+
+        return $query;
     }
 
     protected function getTableFilters(): array
