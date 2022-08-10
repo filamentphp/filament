@@ -36,7 +36,7 @@ trait BelongsToModel
         }
     }
 
-    public function loadStateFromRelationships(): void
+    public function loadStateFromRelationships(bool $andHydrate = false): void
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
             if ($component->isHidden()) {
@@ -44,7 +44,7 @@ trait BelongsToModel
             }
 
             if ($component->getRecord()?->exists) {
-                $component->loadStateFromRelationships();
+                $component->loadStateFromRelationships($andHydrate);
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
@@ -52,7 +52,7 @@ trait BelongsToModel
                     continue;
                 }
 
-                $container->loadStateFromRelationships();
+                $container->loadStateFromRelationships($andHydrate);
             }
         }
     }

@@ -204,7 +204,7 @@ trait HasState
         if ($shouldCallHooksBefore) {
             $this->callBeforeStateDehydrated();
             $this->saveRelationships();
-            $this->loadStateFromRelationships();
+            $this->loadStateFromRelationships(andHydrate: true);
         }
 
         $this->dehydrateState($state);
