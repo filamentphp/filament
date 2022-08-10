@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Concerns;
 
-use Filament\Forms\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 
 trait BelongsToModel
