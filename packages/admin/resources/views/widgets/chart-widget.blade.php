@@ -49,7 +49,7 @@
                         return this.chart = new Chart($el, {
                             type: '{{ $this->getType() }}',
                             data: this.applyColorToData(data),
-                            options: {{ str_replace('"!!', '', str_replace('!!"', '', str_replace('rn', '', str_replace('\\', '', json_encode($this->getOptions()))))) }} ?? {},
+                            options: {{ str_replace('"!!', '', str_replace('!!"', '', str_replace("\\r\\n", '', json_encode($this->getOptions())))) }} ?? {},
                         })
                     },
 
