@@ -28,7 +28,6 @@ class TestsBulkActions
             $this->assertTableBulkActionVisible($name);
 
             $livewire = $this->instance();
-            $livewireClass = $livewire::class;
 
             $records = array_map(
                 function ($record) use ($livewire) {
@@ -56,7 +55,7 @@ class TestsBulkActions
             $this->assertSet('mountedTableBulkAction', $name);
 
             $this->assertDispatchedBrowserEvent('open-modal', [
-                'id' => "{$livewireClass}-table-bulk-action",
+                'id' => "{$livewire->id}-table-bulk-action",
             ]);
 
             return $this;
@@ -107,7 +106,6 @@ class TestsBulkActions
     {
         return function (array $arguments = []): static {
             $livewire = $this->instance();
-            $livewireClass = $livewire::class;
 
             $action = $livewire->getMountedTableBulkAction();
 
@@ -119,7 +117,7 @@ class TestsBulkActions
 
             if ($this->get('mountedTableBulkAction') !== $action->getName()) {
                 $this->assertDispatchedBrowserEvent('close-modal', [
-                    'id' => "{$livewireClass}-table-bulk-action",
+                    'id' => "{$livewire->id}-table-bulk-action",
                 ]);
             }
 
