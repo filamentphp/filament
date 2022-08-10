@@ -61,7 +61,7 @@ return [
         'fields' => [
 
             'key' => [
-                'label' => 'Key',
+                'label' => 'Khóa',
             ],
 
             'value' => [
@@ -79,7 +79,7 @@ return [
             'bold' => 'In đậm',
             'bullet_list' => 'Danh sách dùng dấu chấm',
             'code_block' => 'Code block',
-            'edit' => 'Xóa',
+            'edit' => 'Sửa',
             'italic' => 'In nghiêng',
             'link' => 'Liên kết',
             'ordered_list' => 'Danh sách đánh số',
@@ -151,7 +151,7 @@ return [
         ],
 
         'toolbar_buttons' => [
-            'attach_files' => 'Đính kèm file',
+            'attach_files' => 'Đính kèm tệp',
             'blockquote' => 'Trích dẫn',
             'bold' => 'In đậm',
             'bullet_list' => 'Danh sách dùng dấu chấm',
@@ -162,8 +162,8 @@ return [
             'italic' => 'In nghiêng',
             'link' => 'Liên kết',
             'ordered_list' => 'Danh sách đánh số',
-            'redo' => 'Redo',
-            'strike' => 'Strikethrough',
+            'redo' => 'Làm lại',
+            'strike' => 'Gạch ngang',
             'undo' => 'Hoàn tác',
         ],
 
