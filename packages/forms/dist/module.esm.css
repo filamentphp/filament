@@ -1607,7 +1607,7 @@ trix-editor .attachment__metadata .attachment__size {
 
 /* packages/forms/resources/css/components/select.css */
 .choices {
-  @apply relative overflow-hidden;
+  @apply relative;
 }
 .choices:focus {
   @apply outline-none;
@@ -1791,7 +1791,7 @@ trix-editor .attachment__metadata .attachment__size {
   border-color: rgb(75 85 99) !important;
 }
 .choices__input {
-  @apply inline-block border-0 max-w-full;
+  @apply inline-block max-w-full border-none;
   border-color: transparent !important;
   background-color: transparent !important;
   padding: 0 !important;

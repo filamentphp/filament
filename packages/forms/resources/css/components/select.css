@@ -1,5 +1,5 @@
 .choices {
-    @apply relative overflow-hidden;
+    @apply relative;
 }
 
 .choices:focus {
@@ -228,7 +228,7 @@
 }
 
 .choices__input {
-    @apply inline-block border-0 max-w-full;
+    @apply inline-block max-w-full border-none;
     border-color: transparent !important;
     background-color: transparent !important;
     padding: 0 !important;
