@@ -29505,7 +29505,7 @@ var text_input_default = (Alpine) => {
         this.mask = IMask(this.$el, getMaskOptionsUsing(IMask)).on("accept", () => {
           this.isStateBeingUpdated = true;
           this.state = this.mask.unmaskedValue;
-          this.isStateBeingUpdated = false;
+          this.$nextTick(() => this.isStateBeingUpdated = false);
         });
         this.$watch("state", () => {
           if (this.isStateBeingUpdated) {

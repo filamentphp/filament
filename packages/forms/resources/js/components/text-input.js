@@ -26,7 +26,7 @@ export default (Alpine) => {
 
                     this.state = this.mask.unmaskedValue
 
-                    this.isStateBeingUpdated = false
+                    this.$nextTick(() => this.isStateBeingUpdated = false)
                 })
 
                 this.$watch('state', () => {
