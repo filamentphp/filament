@@ -58,7 +58,7 @@ When creating your resource, you may now use `--generate`:
 php artisan make:filament-resource Customer --generate
 ```
 
-> Note: If your table contains Enum column, `doctrine/dbal` is unable to reverse-engineered it into a Type will crash. Hence Filament unable to generate the schema for your resource. Read more about this issue [#3819](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808)
+> Note: If your table contains Enum columns, `doctrine/dbal` is unable to scan your table and will crash. So, Filament unable to generate the schema for your resource if it contains Enum columns. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
 
 ### Handling soft deletes
 
