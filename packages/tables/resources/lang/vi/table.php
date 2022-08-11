@@ -21,7 +21,7 @@ return [
 
     'pagination' => [
 
-        'label' => 'Pagination Navigation',
+        'label' => 'Điều hướng phân trang',
 
         'overview' => 'Hiển thị từ :first đến :last trong số :total kết quả',
 
@@ -66,7 +66,7 @@ return [
         ],
 
         'open_actions' => [
-            'label' => 'Xem hành động',
+            'label' => 'Xem thao tác',
         ],
 
         'toggle_columns' => [
@@ -105,11 +105,11 @@ return [
 
             'label' => 'Các bản ghi đã xoá',
 
-            'only_trashed' => 'Chỉ bản ghi đã xoá',
+            'only_trashed' => 'Chỉ các bản ghi đã xoá',
 
-            'with_trashed' => 'Với bản ghi đã xoá',
+            'with_trashed' => 'Bao gồm các bản ghi đã xóa',
 
-            'without_trashed' => 'Không có bản ghi bị xóa',
+            'without_trashed' => 'Không bao gồm các bản ghi bị xóa',
 
         ],
 
@@ -119,7 +119,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => 'đã chọn 1 bản ghi.|:count bản ghi đã chọn.',
+        'selected_count' => 'đã chọn 1 bản ghi.|đã chọn :count bản ghi.',
 
         'buttons' => [
 

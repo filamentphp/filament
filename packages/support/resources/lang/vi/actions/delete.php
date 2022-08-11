@@ -32,12 +32,12 @@ return [
 
         'modal' => [
 
-            'heading' => 'Đã xóa :label được chọn',
+            'heading' => 'Xóa các mục :label đã chọn',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Đã xóa những mục đã chọn',
+                    'label' => 'Xóa',
                 ],
 
             ],
