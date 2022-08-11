@@ -189,33 +189,6 @@ class TestsActions
         };
     }
 
-    public function assertTableActionDisabled(): Closure
-    {
-        return function (string $name, $record = null): static {
-            /** @phpstan-ignore-next-line */
-            $this->assertTableActionExists($name);
-
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
-
-            if (! $record instanceof Model) {
-                $record = $livewire->getTableRecord($record);
-            }
-
-            $action = $livewire->getCachedTableAction($name) ?? $livewire->getCachedTableEmptyStateAction($name) ?? $livewire->getCachedTableHeaderAction($name);
-            $action->record($record);
-
-            Assert::assertFalse(
-                $action->isEnabled(),
-                message: filled($record) ?
-                    "Failed asserting that a table action with name [{$name}] is disabled on the [{$livewireClass}] component for record [{$record}]." :
-                    "Failed asserting that a table action with name [{$name}] is disabled on the [{$livewireClass}] component.",
-            );
-
-            return $this;
-        };
-    }
-
     public function assertTableActionEnabled(): Closure
     {
         return function (string $name, $record = null): static {
@@ -234,6 +207,33 @@ class TestsActions
 
             Assert::assertFalse(
                 $action->isDisabled(),
+                message: filled($record) ?
+                    "Failed asserting that a table action with name [{$name}] is enabled on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$name}] is enabled on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableActionDisabled(): Closure
+    {
+        return function (string $name, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            if (! $record instanceof Model) {
+                $record = $livewire->getTableRecord($record);
+            }
+
+            $action = $livewire->getCachedTableAction($name) ?? $livewire->getCachedTableEmptyStateAction($name) ?? $livewire->getCachedTableHeaderAction($name);
+            $action->record($record);
+
+            Assert::assertFalse(
+                $action->isEnabled(),
                 message: filled($record) ?
                     "Failed asserting that a table action with name [{$name}] is disabled on the [{$livewireClass}] component for record [{$record}]." :
                     "Failed asserting that a table action with name [{$name}] is disabled on the [{$livewireClass}] component.",

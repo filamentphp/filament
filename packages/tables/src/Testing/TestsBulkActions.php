@@ -183,6 +183,46 @@ class TestsBulkActions
         };
     }
 
+    public function assertTableBulkActionEnabled(): Closure
+    {
+        return function (string $name): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableBulkActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedTableBulkAction($name);
+
+            Assert::assertFalse(
+                $action->isDisabled(),
+                message: "Failed asserting that a table bulk action with name [{$name}] is enabled on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableBulkActionDisabled(): Closure
+    {
+        return function (string $name): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableBulkActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedTableBulkAction($name);
+
+            Assert::assertTrue(
+                $action->isDisabled(),
+                message: "Failed asserting that a table bulk action with name [{$name}] is disabled on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
     public function assertTableBulkActionHeld(): Closure
     {
         return function (string $name): static {

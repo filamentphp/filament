@@ -21,9 +21,9 @@ namespace Livewire\Testing {
 
         public function assertTableActionHidden(string $name, $record = null): static {}
 
-        public function assertTableActionDisabled(string $name, $record = null): static {}
+        public function assertTableActionEnabled(string $name, $record = null): static {}
 
-        public function assertTableActionNotDisabled(string $name, $record = null): static {}
+        public function assertTableActionDisabled(string $name, $record = null): static {}
 
         public function assertTableActionHeld(string $name): static {}
 
@@ -46,6 +46,10 @@ namespace Livewire\Testing {
         public function assertTableBulkActionVisible(string $name): static {}
 
         public function assertTableBulkActionHidden(string $name): static {}
+
+        public function assertTableBulkActionEnabled(string $name): static {}
+
+        public function assertTableBulkActionDisabled(string $name): static {}
 
         public function assertTableBulkActionHeld(string $name): static {}
 

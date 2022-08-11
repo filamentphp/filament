@@ -107,6 +107,9 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
             Tables\Actions\BulkAction::make('visible'),
             Tables\Actions\BulkAction::make('hidden')
                 ->hidden(),
+            Tables\Actions\BulkAction::make('enabled'),
+            Tables\Actions\BulkAction::make('disabled')
+                ->disabled(),
         ];
     }
 
