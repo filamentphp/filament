@@ -6,6 +6,8 @@
         'text-gray-400' => ! $errors->has($getStatePath()),
         'text-danger-400' => $errors->has($getStatePath()),
     ];
+
+    $hasLazyLoadingIndicator = $isLazy() && config('forms.components.text_input.lazy.loading_indicator');
 @endphp
 
 <x-dynamic-component
@@ -34,8 +36,15 @@
             </span>
         @endif
 
-        <div class="flex-1">
+        <div
+            @if ($hasLazyLoadingIndicator) x-data="{ showValidity: false }" @endif
+            @class([
+                'flex-1',
+                'relative' => $hasLazyLoadingIndicator,
+            ])
+        >
             <input
+                @if ($hasLazyLoadingIndicator) x-on:change="showValidity = true" @endif
                 @unless ($hasMask())
                     {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
                     type="{{ $getType() }}"
@@ -76,8 +85,56 @@
                     'border-gray-300' => ! $errors->has($getStatePath()),
                     'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                     'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
+                    'pr-10' => $hasLazyLoadingIndicator,
                 ]) }}
             />
+
+            @if ($hasLazyLoadingIndicator)
+                <div
+                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"
+                    x-cloak
+                    x-show="showValidity"
+                >
+                    @if ($errors->has($getStatePath()))
+                        <x-heroicon-s-exclamation-circle
+                            class="text-danger-500 h-5 w-5"
+                            wire:loading.remove
+                            wire:target="{{ $getStatePath() }}"
+                        />
+                    @endif
+
+                    @if (!$errors->has($getStatePath()))
+                        <x-heroicon-s-check-circle
+                            class="text-success-500 h-5 w-5"
+                            wire:loading.remove
+                            wire:target="{{ $getStatePath() }}"
+                        />
+                    @endif
+
+                    <svg
+                        class="text-primary-500 h-5 w-5 animate-spin"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        wire:loading
+                        wire:target="{{ $getStatePath() }}"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <circle
+                            class="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke-width="4"
+                            stroke="currentColor"
+                        ></circle>
+                        <path
+                            class="opacity-75"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            fill="currentColor"
+                        ></path>
+                    </svg>
+                </div>
+            @endif
         </div>
 
         @if ($label = $getSuffixLabel())

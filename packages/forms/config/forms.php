@@ -14,6 +14,14 @@ return [
 
     'components' => [
 
+        'text_input' => [
+
+            'lazy' => [
+                'loading_indicator' => false,
+            ],
+
+        ],
+
         'actions' => [
 
             'modal' => [
