@@ -6,8 +6,6 @@
         'text-gray-400' => ! $errors->has($getStatePath()),
         'text-danger-400' => $errors->has($getStatePath()),
     ];
-
-    $hasLazyLoadingIndicator = $isLazy() && config('forms.components.text_input.lazy.loading_indicator');
 @endphp
 
 <x-dynamic-component
@@ -37,14 +35,14 @@
         @endif
 
         <div
-            @if ($hasLazyLoadingIndicator) x-data="{ showValidity: false }" @endif
+            @if ($hasLoadingIndicator()) x-data="{ showValidity: false }" @endif
             @class([
                 'flex-1',
-                'relative' => $hasLazyLoadingIndicator,
+                'relative' => $hasLoadingIndicator(),
             ])
         >
             <input
-                @if ($hasLazyLoadingIndicator) x-on:change="showValidity = true" @endif
+                @if ($hasLoadingIndicator()) x-on:change="showValidity = true" @endif
                 @unless ($hasMask())
                     {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
                     type="{{ $getType() }}"
@@ -59,7 +57,7 @@
                     })"
                     type="text"
                     wire:ignore
-                    @if ($isLazy()) x-on:blur="$wire.$refresh" @endif
+                    @if ($isLazy()) x-on:blur="$wire.$refresh;" @endif
                     {{ $getExtraAlpineAttributeBag() }}
                 @endunless
                 dusk="filament.forms.{{ $getStatePath() }}"
@@ -85,11 +83,11 @@
                     'border-gray-300' => ! $errors->has($getStatePath()),
                     'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                     'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
-                    'pr-10' => $hasLazyLoadingIndicator,
+                    'pr-10' => $hasLoadingIndicator(),
                 ]) }}
             />
 
-            @if ($hasLazyLoadingIndicator)
+            @if ($hasLoadingIndicator())
                 <div
                     class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"
                     x-cloak
