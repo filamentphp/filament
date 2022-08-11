@@ -58,6 +58,8 @@ When creating your resource, you may now use `--generate`:
 php artisan make:filament-resource Customer --generate
 ```
 
+> Note: If your table contains Enum column, `doctrine/dbal` is unable to reverse-engineered it into a Type will crash. Hence Filament unable to generate the schema for your resource. Read more about this issue [#3819](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808)
+
 ### Handling soft deletes
 
 By default, you will not be able to interact with deleted records in the admin panel. If you'd like to add functionality to restore, force delete and filter trashed records in your resource, use the `--soft-deletes` flag when generating the resource:
