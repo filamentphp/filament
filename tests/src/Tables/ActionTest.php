@@ -68,3 +68,9 @@ it('can hide an action', function () {
         ->assertTableActionVisible('visible')
         ->assertTableActionHidden('hidden');
 });
+
+it('can disable an action', function () {
+    livewire(PostsTable::class)
+        ->assertTableActionEnabled('enabled')
+        ->assertTableActionDisabled('disabled');
+});
