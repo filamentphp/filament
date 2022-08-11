@@ -1,13 +1,3 @@
-@once
-    @push('scripts')
-        @php
-            $locale = strtolower(str_replace('_', '-', app()->getLocale()));
-        @endphp
-
-        <script defer src="//unpkg.com/dayjs@1.10.4/locale/{{ $locale }}.js" onload="dayjs.updateLocale('{{ $locale }}')"></script>
-    @endpush
-@endonce
-
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :id="$getId()"
@@ -25,6 +15,7 @@
             firstDayOfWeek: {{ $getFirstDayOfWeek() }},
             isAutofocused: @js($isAutofocused()),
             isDisabled: @js($isDisabled()),
+            locale: @js(app()->getLocale()),
             shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"

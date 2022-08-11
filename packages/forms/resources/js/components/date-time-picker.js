@@ -8,20 +8,6 @@ dayjs.extend(customParseFormat)
 dayjs.extend(localeData)
 dayjs.extend(timezone)
 dayjs.extend(utc)
-dayjs.extend((option, Dayjs, dayjs) => {
-    const listeners = []
-
-    dayjs.addLocaleListeners = (listener) => listeners.push(listener)
-    dayjs.onLocaleUpdated = () => {
-        listeners.forEach((listener) => listener())
-    }
-    dayjs.updateLocale = (locale) => {
-        dayjs.locale(locale)
-
-        // Emit the `localeUpdated` event that we can bind to later
-        dayjs.onLocaleUpdated()
-    }
-})
 
 window.dayjs = dayjs
 
@@ -33,6 +19,7 @@ export default (Alpine) => {
             firstDayOfWeek,
             isAutofocused,
             isDisabled,
+            locale,
             shouldCloseOnDateSelection,
             state,
         }) => {
@@ -66,6 +53,8 @@ export default (Alpine) => {
                 months: [],
 
                 init: function () {
+                    dayjs.locale(locales[locale] ?? locales['en'])
+
                     this.focusedDate = dayjs().tz(timezone)
 
                     let date =
@@ -97,12 +86,6 @@ export default (Alpine) => {
                             this.togglePanelVisibility(this.$refs.button)
                         )
                     }
-
-                    dayjs.addLocaleListeners(() => {
-                        this.setDisplayText()
-                        this.setMonths()
-                        this.setDayLabels()
-                    })
 
                     this.$watch('focusedMonth', () => {
                         this.focusedMonth = +this.focusedMonth
@@ -476,4 +459,39 @@ export default (Alpine) => {
             }
         }
     )
+}
+
+const locales = {
+    ar: require('dayjs/locale/ar'),
+    bs: require('dayjs/locale/bs'),
+    ca: require('dayjs/locale/ca'),
+    cs: require('dayjs/locale/cs'),
+    da: require('dayjs/locale/da'),
+    de: require('dayjs/locale/de'),
+    en: require('dayjs/locale/en'),
+    es: require('dayjs/locale/es'),
+    fa: require('dayjs/locale/fa'),
+    fr: require('dayjs/locale/fr'),
+    hi: require('dayjs/locale/hi'),
+    hu: require('dayjs/locale/hu'),
+    hy: require('dayjs/locale/hy-am'),
+    id: require('dayjs/locale/id'),
+    it: require('dayjs/locale/it'),
+    js: require('dayjs/locale/ja'),
+    ka: require('dayjs/locale/ka'),
+    ku: require('dayjs/locale/ku'),
+    ms: require('dayjs/locale/ms'),
+    my: require('dayjs/locale/my'),
+    nl: require('dayjs/locale/nl'),
+    pl: require('dayjs/locale/pl'),
+    'pt_BR': require('dayjs/locale/pt-br'),
+    'pt_PT': require('dayjs/locale/pt'),
+    ro: require('dayjs/locale/ro'),
+    ru: require('dayjs/locale/ru'),
+    sv: require('dayjs/locale/sv'),
+    tr: require('dayjs/locale/tr'),
+    uk: require('dayjs/locale/uk'),
+    vi: require('dayjs/locale/vi'),
+    'zh_CN': require('dayjs/locale/zh-cn'),
+    'zh_TW': require('dayjs/locale/zh-tw'),
 }

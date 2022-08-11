@@ -40,6 +40,7 @@ export default (Alpine) => {
         imageResizeTargetWidth,
         isAvatar,
         loadingIndicatorPosition,
+        locale,
         panelAspectRatio,
         panelLayout,
         placeholder,
@@ -69,6 +70,8 @@ export default (Alpine) => {
             uploadedFileUrlIndex: {},
 
             init: async function () {
+                FilePond.setOptions(locales[locale] ?? locales['en'])
+
                 this.pond = FilePond.create(this.$refs.input, {
                     acceptedFileTypes,
                     allowPaste: false,
@@ -319,3 +322,54 @@ export default (Alpine) => {
         }
     })
 }
+
+import ar from 'filepond/locale/ar-ar'
+import cs from 'filepond/locale/cs-cz'
+import da from 'filepond/locale/da-dk'
+import de from 'filepond/locale/de-de'
+import en from 'filepond/locale/en-en'
+import es from 'filepond/locale/es-es'
+import fa from 'filepond/locale/fa_ir'
+import fr from 'filepond/locale/fr-fr'
+import hu from 'filepond/locale/hu-hu'
+import id from 'filepond/locale/id-id'
+import it from 'filepond/locale/it-it'
+import nl from 'filepond/locale/nl-nl'
+import pl from 'filepond/locale/pl-pl'
+import pt_BR from 'filepond/locale/pt-br'
+import pt_PT from 'filepond/locale/pt-br'
+import ro from 'filepond/locale/ro-ro'
+import ru from 'filepond/locale/ru-ru'
+import sv from 'filepond/locale/sv_se'
+import tr from 'filepond/locale/tr-tr'
+import uk from 'filepond/locale/uk-ua'
+import vi from 'filepond/locale/vi-vi'
+import zh_CN from 'filepond/locale/zh-cn'
+import zh_TW from 'filepond/locale/zh-tw'
+
+const locales = {
+    ar,
+    cs,
+    da,
+    de,
+    en,
+    es,
+    fa,
+    fr,
+    hu,
+    id,
+    it,
+    nl,
+    pl,
+    pt_BR,
+    pt_PT,
+    ro,
+    ru,
+    sv,
+    tr,
+    uk,
+    vi,
+    zh_CN,
+    zh_TW,
+}
+
