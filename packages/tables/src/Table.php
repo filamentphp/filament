@@ -15,6 +15,7 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class Table extends ViewComponent
 {
@@ -382,7 +383,7 @@ class Table extends ViewComponent
         return $this->recordAction;
     }
 
-    public function getRecordClasses(Model $record): null|string|array
+    public function getRecordClasses(Model $record): ?array
     {
         $callback = $this->getRecordClassesUsing;
 
@@ -390,7 +391,7 @@ class Table extends ViewComponent
             return null;
         }
 
-        return $callback($record);
+        return Arr::wrap($callback($record));
     }
 
     public function getRecordUrl(Model $record): ?string

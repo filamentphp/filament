@@ -315,37 +315,26 @@ You may want to conditionally style rows based on the record data. This can be a
 The `getTableRecordClassesUsing()` method may return a string or an array of classes that need to be applied to the row.
 
 ```php
-<?php
+use Closure;
+use Illuminate\Database\Eloquent\Model;
 
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Tables;
-use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Livewire\Component;
-
-class ListPosts extends Component implements Tables\Contracts\HasTable
+protected function getTableRecordClassesUsing(): ?Closure
 {
-    protected function getTableRecordClassesUsing(): ?Closure
-    {
-        return function (Post $record) {
-            return match ($record->status) {
-                'draft' => 'opacity-30',
-                'reviewing' => [
-                    'border-l-solid',
-                    'border-l-2',
-                    'border-l-orange-600',
-                    'dark:border-l-orange-300' => config('filament.dark_mode'),
-                    'opacity-30',
-                ],
-                'published' => 'border-0 border-l-solid border-l-2 border-l-orange-400',
-                default => null,
-            } 
-            return null;
-        };
-    }
+    return function (Model $record) {
+        return match ($record->status) {
+            'draft' => 'opacity-30',
+            'reviewing' => [
+                'border-l-solid',
+                'border-l-2',
+                'border-l-orange-600',
+                'dark:border-l-orange-300' => config('filament.dark_mode'),
+                'opacity-30',
+            ],
+            'published' => 'border-0 border-l-solid border-l-2 border-l-orange-400',
+            default => null,
+        } 
+        return null;
+    };
 }
 ```
 
