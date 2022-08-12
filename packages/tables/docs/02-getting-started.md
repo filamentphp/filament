@@ -308,6 +308,77 @@ In this example, clicking on each post will take you to the `posts.edit` route.
 
 If you'd like to [override the URL](columns#opening-urls) for a specific column, or instead [run a Livewire action](columns#running-actions) when a column is clicked, see the [columns documentation](columns#opening-urls).
 
+## Row appearance
+
+To change the appearance of rows conditionally on the record data, you may add the `getTableRecordClassesUsing()` method.
+
+The `getTableRecordClassesUsing()` method may return a string or an array of classes that need to be applied to the row.
+
+```php
+<?php
+
+namespace App\Http\Livewire;
+
+use App\Models\Post;
+use Filament\Tables;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Livewire\Component;
+
+class ListPosts extends Component implements Tables\Contracts\HasTable
+{
+    protected function getTableRecordClassesUsing(): ?Closure
+    {
+        return function (Post $record) {
+            return match ($record->status) {
+                'draft' => 'opacity-30',
+                'reviewing' => [
+                    'border-l-solid',
+                    'border-l-2',
+                    'border-l-orange-600',
+                    'dark:border-l-orange-300' => config('filament.dark_mode'),
+                    'opacity-30',
+                ],
+                'published' => 'border-0 border-l-solid border-l-2 border-l-orange-400',
+                default => null,
+            } 
+            return null;
+        };
+    }
+}
+```
+
+These classes are not automatically discovered by tailwind.
+In order to use tailwind classes that are not already used in blade files, you may want to update your `tailwind.config.js` to include your php files:
+
+
+```js
+const colors = require('tailwindcss/colors')
+
+module.exports = {
+    content: [
+    './app/Filament/Resources/**/*.php',
+    ],
+}
+```
+
+Or add the custom classes to the safelist:
+
+```js
+const colors = require('tailwindcss/colors')
+
+module.exports = {
+    safelist: [
+        'border-l-solid',
+        'border-l-2',
+        'border-l-orange-600',
+        'dark:border-l-orange-300',
+        'opacity-30',
+    ],
+}
+```
+
 ## Empty state
 
 By default, an "empty state" card will be rendered when the table is empty. To customize this, you may define methods on your Livewire component:
@@ -495,76 +566,5 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
     {
         return view('list-posts');
     }
-}
-```
-
-## Row appearance
-
-To change the appearance of rows conditionally on the record data, you may add the `getTableRecordClassesUsing()` method.
-
-The `getTableRecordClassesUsing()` method may return a string or an array of classes that need to be applied to the row.
-
-```php
-<?php
-
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Tables;
-use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Livewire\Component;
-
-class ListPosts extends Component implements Tables\Contracts\HasTable
-{
-    protected function getTableRecordClassesUsing(): ?Closure
-    {
-        return function (Post $record) {
-            return match ($record->status) {
-                'draft' => 'opacity-30',
-                'reviewing' => [
-                    'border-l-solid',
-                    'border-l-2',
-                    'border-l-orange-600',
-                    'dark:border-l-orange-300' => config('filament.dark_mode'),
-                    'opacity-30',
-                ],
-                'published' => 'border-0 border-l-solid border-l-2 border-l-orange-400',
-                default => null,
-            } 
-            return null;
-        };
-    }
-}
-```
-
-These classes are not automatically discovered by tailwind.
-In order to use tailwind classes that are not already used in blade files, you may want to update your `tailwind.config.js` to include your php files:
-
-
-```js
-const colors = require('tailwindcss/colors')
-
-module.exports = {
-    content: [
-    './app/Filament/Resources/**/*.php',
-    ],
-}
-```
-
-Or add the custom classes to the safelist:
-
-```js
-const colors = require('tailwindcss/colors')
-
-module.exports = {
-    safelist: [
-        'border-l-solid',
-        'border-l-2',
-        'border-l-orange-600',
-        'dark:border-l-orange-300',
-        'opacity-30',
-    ],
 }
 ```
