@@ -87,11 +87,11 @@
 
             <div>
                 @if (config('filament.dark_mode'))
-                    <x-filament::dropdown.item icon="heroicon-s-moon" x-show="theme === 'dark'" x-on:click="mode = 'manual'; theme = 'light'">
+                    <x-filament::dropdown.item icon="heroicon-s-moon" x-show="theme === 'dark'" x-on:click="mode = 'manual'; theme = 'light'; $refs.panel.toggle">
                         {{ __('filament::layout.buttons.light_mode.label') }}
                     </x-filament::dropdown.item>
 
-                    <x-filament::dropdown.item icon="heroicon-s-sun" x-show="theme === 'light'" x-on:click="mode = 'manual'; theme = 'dark'">
+                    <x-filament::dropdown.item icon="heroicon-s-sun" x-show="theme === 'light'" x-on:click="mode = 'manual'; theme = 'dark'; $refs.panel.toggle">
                         {{ __('filament::layout.buttons.dark_mode.label') }}
                     </x-filament::dropdown.item>
                 @endif
