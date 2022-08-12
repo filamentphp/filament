@@ -382,12 +382,12 @@
                         @foreach ($records as $record)
                             @php
                                 $recordKey = $getRecordKey($record);
-                                $recordClass = $getRecordClass($record);
+                                $recordClasses = $getRecordClasses($record);
                                 $recordUrl = $getRecordUrl($record);
                             @endphp
 
                             <x-tables::row
-                                :record-class="$recordClass"
+                                :record-classes="$recordClasses"
                                 :record-url="$recordUrl"
                                 :wire:key="$this->id . '.table.records.' . $recordKey"
                                 :wire:sortable.item="$isReordering ? $recordKey : null"

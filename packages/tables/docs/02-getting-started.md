@@ -500,9 +500,9 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
 
 ## Row appearance
 
-To change the appearance of rows conditionally on the record data, you may add the `getTableRecordClassUsing()` method.
+To change the appearance of rows conditionally on the record data, you may add the `getTableRecordClassesUsing()` method.
 
-The `getTableRecordClassUsing()` method may return a string or an array of classes that need to be applied to the row.
+The `getTableRecordClassesUsing()` method may return a string or an array of classes that need to be applied to the row.
 
 ```php
 <?php
@@ -518,7 +518,7 @@ use Livewire\Component;
 
 class ListPosts extends Component implements Tables\Contracts\HasTable
 {
-    protected function getTableRecordClassUsing(): ?Closure
+    protected function getTableRecordClassesUsing(): ?Closure
     {
         return function (Post $record) {
             return match ($record->status) {

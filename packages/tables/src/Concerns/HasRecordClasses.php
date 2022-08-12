@@ -4,9 +4,9 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 
-trait HasRecordClass
+trait HasRecordClasses
 {
-    protected function getTableRecordClassUsing(): ?Closure
+    protected function getTableRecordClassesUsing(): ?Closure
     {
         return null;
     }
