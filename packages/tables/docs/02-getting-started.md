@@ -310,9 +310,7 @@ If you'd like to [override the URL](columns#opening-urls) for a specific column,
 
 ## Record classes
 
-You may want to conditionally style rows based on the record data. This can be achieved by specifying CSS classes to be applied to the row using the `getTableRecordClassesUsing()` method:
-
-The `getTableRecordClassesUsing()` method may return a string or an array of classes that need to be applied to the row.
+You may want to conditionally style rows based on the record data. This can be achieved by specifying a string or array of CSS classes to be applied to the row using the `getTableRecordClassesUsing()` method:
 
 ```php
 use Closure;
@@ -320,49 +318,37 @@ use Illuminate\Database\Eloquent\Model;
 
 protected function getTableRecordClassesUsing(): ?Closure
 {
-    return function (Model $record) {
-        return match ($record->status) {
-            'draft' => 'opacity-30',
-            'reviewing' => [
-                'border-l-solid',
-                'border-l-2',
-                'border-l-orange-600',
-                'dark:border-l-orange-300' => config('filament.dark_mode'),
-                'opacity-30',
-            ],
-            'published' => 'border-0 border-l-solid border-l-2 border-l-orange-400',
-            default => null,
-        } 
-        return null;
+    return fn (Model $record) => match ($record->status) {
+        'draft' => 'opacity-30',
+        'reviewing' => [
+            'border-l-2 border-orange-600',
+            'dark:border-orange-300' => config('tables.dark_mode'),
+        ],
+        'published' => 'border-l-2 border-green-600',
+        default => null,
     };
 }
 ```
 
-These classes are not automatically discovered by tailwind.
-In order to use tailwind classes that are not already used in blade files, you may want to update your `tailwind.config.js` to include your php files:
-
+These classes are not automatically compiled by Tailwind CSS. If you want to apply Tailwind CSS classes that are not already used in Blade files, you should update your `content` configuration in `tailwind.config.js` to also scan for classes in your desired PHP files:
 
 ```js
-const colors = require('tailwindcss/colors')
-
 module.exports = {
     content: [
-    './app/Filament/Resources/**/*.php',
+        './app/Filament/Resources/**/*.php',
     ],
 }
 ```
 
-Or add the custom classes to the safelist:
+Alternatively, you may add the classes to your [safelist](https://tailwindcss.com/docs/content-configuration#safelisting-classes):
 
 ```js
-const colors = require('tailwindcss/colors')
-
 module.exports = {
     safelist: [
-        'border-l-solid',
+        'border-green-600',
         'border-l-2',
-        'border-l-orange-600',
-        'dark:border-l-orange-300',
+        'border-orange-600',
+        'dark:border-orange-300',
         'opacity-30',
     ],
 }
