@@ -96,6 +96,7 @@ trait InteractsWithTable
     protected function getTable(): Table
     {
         return $this->makeTable()
+            ->actionsPosition($this->getTableActionsPosition())
             ->content($this->getTableContent())
             ->contentFooter($this->getTableContentFooter())
             ->description($this->getTableDescription())
@@ -106,7 +107,6 @@ trait InteractsWithTable
             ->enablePagination($this->isTablePaginationEnabled())
             ->filtersFormWidth($this->getTableFiltersFormWidth())
             ->filtersLayout($this->getTableFiltersLayout())
-            ->actionsPosition($this->getTableActionsPosition())
             ->recordAction($this->getTableRecordAction())
             ->getRecordUrlUsing($this->getTableRecordUrlUsing())
             ->header($this->getTableHeader())

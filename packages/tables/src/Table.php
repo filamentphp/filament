@@ -21,6 +21,8 @@ class Table extends ViewComponent
 {
     use Concerns\BelongsToLivewire;
 
+    protected ?string $actionsPosition = null;
+
     protected ?View $content = null;
 
     protected ?View $contentFooter = null;
@@ -38,8 +40,6 @@ class Table extends ViewComponent
     protected ?string $filtersFormWidth = null;
 
     protected ?string $filtersLayout = null;
-
-    protected ?string $actionsPosition = null;
 
     protected ?string $columnToggleFormWidth = null;
 
@@ -79,6 +79,13 @@ class Table extends ViewComponent
     public static function make(HasTable $livewire): static
     {
         return app(static::class, ['livewire' => $livewire]);
+    }
+
+    public function actionsPosition(?string $position): static
+    {
+        $this->actionsPosition = $position;
+
+        return $this;
     }
 
     public function description(?string $description): static
@@ -154,13 +161,6 @@ class Table extends ViewComponent
     public function recordAction(?string $action): static
     {
         $this->recordAction = $action;
-
-        return $this;
-    }
-
-    public function actionsPosition(?string $position): static
-    {
-        $this->actionsPosition = $position;
 
         return $this;
     }
