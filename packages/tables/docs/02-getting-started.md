@@ -308,7 +308,7 @@ In this example, clicking on each post will take you to the `posts.edit` route.
 
 If you'd like to [override the URL](columns#opening-urls) for a specific column, or instead [run a Livewire action](columns#running-actions) when a column is clicked, see the [columns documentation](columns#opening-urls).
 
-## Row appearance
+## Record classes
 
 You may want to conditionally style rows based on the record data. This can be achieved by specifying CSS classes to be applied to the row using the `getTableRecordClassesUsing()` method:
 
