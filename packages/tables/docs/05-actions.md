@@ -394,7 +394,7 @@ By default, the row actions in your table will be aligned to the right in the fi
 ```
 
 
-## Position of row actions
+## Position
 
 By default, the row actions are rendered in the final cell. To change the default position, you may use:
 
