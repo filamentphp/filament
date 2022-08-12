@@ -329,7 +329,7 @@
                             @if ($isReordering)
                                 <th></th>
                             @else
-                                @if (count($actions) && (! $isReordering) && $actionsPosition === Position::BeforeCells)
+                                @if (count($actions) && $actionsPosition === Position::BeforeCells)
                                     <th class="w-5"></th>
                                 @endif
 
@@ -353,7 +353,7 @@
                                     </x-tables::checkbox-cell>
                                 @endif
 
-                                @if (count($actions) && (! $isReordering) && $actionsPosition === Position::BeforeColumns)
+                                @if (count($actions) && $actionsPosition === Position::BeforeColumns)
                                     <th class="w-5"></th>
                                 @endif
                             @endif
@@ -413,7 +413,7 @@
                                 @if ($isReordering)
                                     <x-tables::reorder.cell />
                                 @else
-                                    @if (count($actions) && (! $isReordering) && $actionsPosition === Position::BeforeCells)
+                                    @if (count($actions) && $actionsPosition === Position::BeforeCells)
                                         <x-tables::actions-cell
                                             :actions="$actions"
                                             :record="$record"
@@ -433,7 +433,7 @@
                                         </x-tables::checkbox-cell>
                                     @endif
 
-                                    @if (count($actions) && (! $isReordering) && $actionsPosition === Position::BeforeColumns)
+                                    @if (count($actions) && $actionsPosition === Position::BeforeColumns)
                                         <x-tables::actions-cell
                                             :actions="$actions"
                                             :record="$record"
