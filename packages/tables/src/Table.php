@@ -383,12 +383,12 @@ class Table extends ViewComponent
         return $this->recordAction;
     }
 
-    public function getRecordClasses(Model $record): ?array
+    public function getRecordClasses(Model $record): array
     {
         $callback = $this->getRecordClassesUsing;
 
         if (! $callback) {
-            return null;
+            return [];
         }
 
         return Arr::wrap($callback($record));
