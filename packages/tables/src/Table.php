@@ -44,6 +44,8 @@ class Table extends ViewComponent
 
     protected ?string $recordAction = null;
 
+    protected ?Closure $getRecordClassUsing = null;
+
     protected ?Closure $getRecordUrlUsing = null;
 
     protected ?View $header = null;
@@ -151,6 +153,13 @@ class Table extends ViewComponent
     public function recordAction(?string $action): static
     {
         $this->recordAction = $action;
+
+        return $this;
+    }
+
+    public function getRecordClassUsing(?Closure $callback): static
+    {
+        $this->getRecordClassUsing = $callback;
 
         return $this;
     }
@@ -371,6 +380,17 @@ class Table extends ViewComponent
     public function getRecordAction(): ?string
     {
         return $this->recordAction;
+    }
+
+    public function getRecordClass(Model $record): null|string|array
+    {
+        $callback = $this->getRecordClassUsing;
+
+        if (! $callback) {
+            return null;
+        }
+
+        return $callback($record);
     }
 
     public function getRecordUrl(Model $record): ?string
