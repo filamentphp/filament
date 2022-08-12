@@ -381,22 +381,9 @@ protected function getTableActions(): array
 }
 ```
 
-## Alignment
-
-By default, the row actions in your table will be aligned to the right in the final cell. To change the default alignment, update the configuration value inside of the package config:
-
-```
-'actions' => [
-    'cell' => [
-        'alignment' => 'right', // `right`, `left` or `center`
-    ],
-]
-```
-
-
 ## Position
 
-By default, the row actions are rendered in the final cell. To change the default position, you may use:
+By default, the row actions in your table are rendered in the final cell. You may change the position by overriding the `getTableActionsPosition()` method:
 
 ```php
 use Filament\Tables\Actions\Position;
@@ -405,6 +392,18 @@ protected function getTableActionsPosition(): ?string
 {
     return Position::BeforeCells;
 }
+```
+
+## Alignment
+
+Row actions are aligned to the right in their cell by default. To change the alignment, update the configuration value inside of the package config:
+
+```
+'actions' => [
+    'cell' => [
+        'alignment' => 'right', // `right`, `left` or `center`
+    ],
+]
 ```
 
 ## Tooltips
