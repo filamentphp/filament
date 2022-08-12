@@ -310,7 +310,7 @@ If you'd like to [override the URL](columns#opening-urls) for a specific column,
 
 ## Row appearance
 
-To change the appearance of rows conditionally on the record data, you may add the `getTableRecordClassesUsing()` method.
+You may want to conditionally style rows based on the record data. This can be achieved by specifying CSS classes to be applied to the row using the `getTableRecordClassesUsing()` method:
 
 The `getTableRecordClassesUsing()` method may return a string or an array of classes that need to be applied to the row.
 
