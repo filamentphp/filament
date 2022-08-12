@@ -396,7 +396,7 @@ By default, the row actions in your table will be aligned to the right in the fi
 
 ## Position of row actions
 
-By default, the row actions are rendered after all cells. To change the default postition, you may use:
+By default, the row actions are rendered in the final cell. To change the default position, you may use:
 
 ```php
 use Filament\Tables\Actions\Position;
