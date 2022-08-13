@@ -335,7 +335,7 @@ These classes are not automatically compiled by Tailwind CSS. If you want to app
 ```js
 module.exports = {
     content: [
-        './app/Filament/Resources/**/*.php',
+        './app/Filament/**/*.php',
     ],
 }
 ```
