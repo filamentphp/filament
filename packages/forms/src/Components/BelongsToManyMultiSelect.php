@@ -3,7 +3,7 @@
 namespace Filament\Forms\Components;
 
 /**
- * @deprecated Use MultiSelect with the `relationship()` method instead.
+ * @deprecated Use Select with the `multiple()` and `relationship()` methods instead.
  */
 class BelongsToManyMultiSelect extends MultiSelect
 {
