@@ -117,6 +117,8 @@ return [
         'overview' => ':first bis :last von :total Ergebnissen',
 
     ],
+    
+    'reorder_indicator' => 'Zum Sortieren die Datensätze per Drag & Drop in die richtige Reihenfolge ziehen.',
 
     'selection_indicator' => [
 
