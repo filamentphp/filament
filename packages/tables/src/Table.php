@@ -15,6 +15,7 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class Table extends ViewComponent
 {
@@ -43,6 +44,8 @@ class Table extends ViewComponent
     protected ?string $reorderColumn = null;
 
     protected ?string $recordAction = null;
+
+    protected ?Closure $getRecordClassesUsing = null;
 
     protected ?Closure $getRecordUrlUsing = null;
 
@@ -151,6 +154,13 @@ class Table extends ViewComponent
     public function recordAction(?string $action): static
     {
         $this->recordAction = $action;
+
+        return $this;
+    }
+
+    public function getRecordClassesUsing(?Closure $callback): static
+    {
+        $this->getRecordClassesUsing = $callback;
 
         return $this;
     }
@@ -371,6 +381,17 @@ class Table extends ViewComponent
     public function getRecordAction(): ?string
     {
         return $this->recordAction;
+    }
+
+    public function getRecordClasses(Model $record): array
+    {
+        $callback = $this->getRecordClassesUsing;
+
+        if (! $callback) {
+            return [];
+        }
+
+        return Arr::wrap($callback($record));
     }
 
     public function getRecordUrl(Model $record): ?string

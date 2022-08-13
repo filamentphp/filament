@@ -29,6 +29,7 @@ trait InteractsWithTable
     use HasHeader;
     use HasRecords;
     use HasRecordAction;
+    use HasRecordClasses;
     use HasRecordUrl;
     use Forms\Concerns\InteractsWithForms;
 
@@ -107,6 +108,7 @@ trait InteractsWithTable
             ->filtersFormWidth($this->getTableFiltersFormWidth())
             ->filtersLayout($this->getTableFiltersLayout())
             ->recordAction($this->getTableRecordAction())
+            ->getRecordClassesUsing($this->getTableRecordClassesUsing())
             ->getRecordUrlUsing($this->getTableRecordUrlUsing())
             ->header($this->getTableHeader())
             ->heading($this->getTableHeading())
