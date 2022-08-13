@@ -417,8 +417,6 @@
                                         <x-tables::actions-cell
                                             :actions="$actions"
                                             :record="$record"
-                                            wire:loading.remove.delay
-                                            wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
                                         />
                                     @endif
 
@@ -437,8 +435,6 @@
                                         <x-tables::actions-cell
                                             :actions="$actions"
                                             :record="$record"
-                                            wire:loading.remove.delay
-                                            wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
                                         />
                                     @endif
                                 @endif
@@ -471,8 +467,6 @@
                                     <x-tables::actions-cell
                                         :actions="$actions"
                                         :record="$record"
-                                        wire:loading.remove.delay
-                                        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
                                     />
                                 @endif
 
