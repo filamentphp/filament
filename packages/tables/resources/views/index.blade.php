@@ -387,7 +387,6 @@
                             @endphp
 
                             <x-tables::row
-                                :record-classes="$recordClasses"
                                 :record-url="$recordUrl"
                                 :wire:key="$this->id . '.table.records.' . $recordKey"
                                 :wire:sortable.item="$isReordering ? $recordKey : null"
