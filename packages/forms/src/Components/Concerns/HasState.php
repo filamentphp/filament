@@ -134,27 +134,40 @@ trait HasState
 
     public function hydrateState(?array &$hydratedDefaultState): void
     {
-        $statePath = $this->getStatePath();
-
-        if ($hydratedDefaultState === null) {
-            $this->loadStateFromRelationships();
-        } elseif (! Arr::has($hydratedDefaultState, $statePath)) {
-            if ($this->hasDefaultState()) {
-                $defaultState = $this->getDefaultState();
-
-                $this->state($this->getDefaultState());
-
-                Arr::set($hydratedDefaultState, $statePath, $defaultState);
-            } else {
-                $this->state(null);
-            }
-        }
+        $this->hydrateDefaultState($hydratedDefaultState);
 
         foreach ($this->getChildComponentContainers(withHidden: true) as $container) {
             $container->hydrateState($hydratedDefaultState);
         }
 
         $this->callAfterStateHydrated();
+    }
+
+    public function hydrateDefaultState(?array &$hydratedDefaultState): void
+    {
+        if ($hydratedDefaultState === null) {
+            $this->loadStateFromRelationships();
+
+            return;
+        }
+
+        $statePath = $this->getStatePath();
+
+        if (Arr::has($hydratedDefaultState, $statePath)) {
+            return;
+        }
+
+        if (! $this->hasDefaultState()) {
+            $this->state(null);
+
+            return;
+        }
+
+        $defaultState = $this->getDefaultState();
+
+        $this->state($this->getDefaultState());
+
+        Arr::set($hydratedDefaultState, $statePath, $defaultState);
     }
 
     public function fillStateWithNull(): void
