@@ -120,75 +120,41 @@ trait HasState
 
     public function fill(?array $state = null): static
     {
+        $hydratedDefaultState = null;
+
         if ($state === null) {
-            return $this->fillWithDefaults();
-        }
-
-        $livewire = $this->getLivewire();
-
-        if ($statePath = $this->getStatePath()) {
-            data_set($livewire, $statePath, $state);
+            $hydratedDefaultState = [];
         } else {
-            $this->fillComponentStateWithNull();
-
-            foreach ($state as $key => $value) {
-                data_set($livewire, $key, $value);
-            }
-        }
-
-        $this->loadStateFromRelationships();
-
-        $this->callAfterStateHydrated();
-
-        $this->fillComponentStateWithNull(shouldOverwrite: false);
-
-        return $this;
-    }
-
-    protected function fillWithDefaults(): static
-    {
-        if ($statePath = $this->getStatePath()) {
             $livewire = $this->getLivewire();
 
-            data_set($livewire, $statePath, []);
-        } else {
-            $this->fillComponentStateWithNull();
-        }
-
-        $this->hydrateDefaultState();
-
-        $this->fillComponentStateWithNull(shouldOverwrite: false);
-
-        return $this;
-    }
-
-    public function hydrateDefaultState(): static
-    {
-        foreach ($this->getComponents(withHidden: true) as $component) {
-            $component->hydrateDefaultState();
-            $component->callAfterStateHydrated();
-
-            foreach ($component->getChildComponentContainers(withHidden: true) as $container) {
-                $container->hydrateDefaultState();
-            }
-        }
-
-        return $this;
-    }
-
-    public function fillComponentStateWithNull(bool $shouldOverwrite = true): static
-    {
-        foreach ($this->getComponents(withHidden: true) as $component) {
-            if ($component->hasChildComponentContainer(withHidden: true)) {
-                foreach ($component->getChildComponentContainers(withHidden: true) as $container) {
-                    $container->fillComponentStateWithNull($shouldOverwrite);
-                }
+            if ($statePath = $this->getStatePath()) {
+                data_set($livewire, $statePath, $state);
             } else {
-                $component->fillStateWithNull($shouldOverwrite);
+                foreach ($state as $key => $value) {
+                    data_set($livewire, $key, $value);
+                }
             }
         }
 
+        $this->hydrateState($hydratedDefaultState);
+
+        $this->fillStateWithNull();
+
         return $this;
+    }
+
+    public function hydrateState(?array &$hydratedDefaultState): void
+    {
+        foreach ($this->getComponents(withHidden: true) as $component) {
+            $component->hydrateState($hydratedDefaultState);
+        }
+    }
+
+    public function fillStateWithNull(): void
+    {
+        foreach ($this->getComponents(withHidden: true) as $component) {
+            $component->fillStateWithNull();
+        }
     }
 
     public function statePath(?string $path): static

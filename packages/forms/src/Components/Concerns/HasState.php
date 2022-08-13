@@ -132,29 +132,40 @@ trait HasState
         return $this;
     }
 
-    public function hydrateDefaultState(): static
+    public function hydrateState(?array &$hydratedDefaultState): void
     {
-        if (! $this->hasDefaultState()) {
-            return $this;
+        $statePath = $this->getStatePath();
+
+        if ($hydratedDefaultState === null) {
+            $this->loadStateFromRelationships();
+        } elseif (! Arr::has($hydratedDefaultState, $statePath)) {
+            if ($this->hasDefaultState()) {
+                $defaultState = $this->getDefaultState();
+
+                $this->state($this->getDefaultState());
+
+                Arr::set($hydratedDefaultState, $statePath, $defaultState);
+            } else {
+                $this->state(null);
+            }
         }
 
-        $this->state($this->getDefaultState());
+        foreach ($this->getChildComponentContainers(withHidden: true) as $container) {
+            $container->hydrateState($hydratedDefaultState);
+        }
 
-        return $this;
+        $this->callAfterStateHydrated();
     }
 
-    public function fillStateWithNull(bool $shouldOverwrite = true): static
+    public function fillStateWithNull(): void
     {
-        $livewire = $this->getLivewire();
+        if (! Arr::has((array) $this->getLivewire(), $this->getStatePath())) {
+            $this->state(null);
+        }
 
-        data_set(
-            $livewire,
-            $this->getStatePath(),
-            null,
-            $shouldOverwrite,
-        );
-
-        return $this;
+        foreach ($this->getChildComponentContainers(withHidden: true) as $container) {
+            $container->fillStateWithNull();
+        }
     }
 
     public function mutateDehydratedState($state)
