@@ -577,15 +577,15 @@ Since HTML does not support nested `<form>` elements, you must also render the m
 {{ $this->modal }}
 ```
 
-## Multi-select
+### Multi-select
 
-The multi-select component allows you to select multiple values from a list of predefined options:
+Using `->multiple()` on the select component allows you to select multiple values from a list of predefined options:
 
 ```php
-use Filament\Forms\Components\MultiSelect;
 use Filament\Forms\Components\Select;
 
-MultiSelect::make('technologies')
+Select::make('technologies')
+    ->multiple()
     ->options([
         'tailwind' => 'Tailwind CSS',
         'alpine' => 'Alpine.js',
@@ -618,22 +618,24 @@ The `getSearchResultsUsing()` method accepts a callback that returns search resu
 The `getOptionLabelsUsing()` method accepts a callback that transforms the selected options' `$value`s into labels.
 
 ```php
-use Filament\Forms\Components\MultiSelect;
+use Filament\Forms\Components\Select;
 
-MultiSelect::make('technologies')
+Select::make('technologies')
+    ->multiple()
     ->getSearchResultsUsing(fn (string $search) => Technology::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id'))
     ->getOptionLabelsUsing(fn (array $values) => Technology::find($values)->pluck('name')),
 ```
 
 ### Populating automatically from a `BelongsToMany` relationship
 
-You may employ the `relationship()` method of the `MultiSelect` to configure a relationship to automatically retrieve and save options from:
+Along with `->multiple()`, you may employ the `relationship()` method of the `Select` to configure a relationship to automatically retrieve and save options from:
 
 ```php
 use App\Models\App;
-use Filament\Forms\Components\MultiSelect;
+use Filament\Forms\Components\Select;
 
-MultiSelect::make('technologies')
+Select::make('technologies')
+    ->multiple()
     ->relationship('technologies', 'name')
 ```
 
@@ -642,35 +644,12 @@ MultiSelect::make('technologies')
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 
 ```php
-use Filament\Forms\Components\MultiSelect;
+use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 
-MultiSelect::make('technologies')
+Select::make('technologies')
+    ->multiple()
     ->relationship('technologies', 'name', fn (Builder $query) => $query->withTrashed())
-```
-
-If you'd like to customize the label of each option, maybe to be more descriptive, or to concatenate a first and last name, you should use a virtual column in your database migration:
-
-```php
-$table->string('full_name')->virtualAs('concat(first_name, \' \', last_name)');
-```
-
-```php
-use Filament\Forms\Components\MultiSelect;
-
-MultiSelect::make('participants')
-    ->relationship('participants', 'full_name')
-```
-
-Alternatively, you can use the `getOptionLabelFromRecordUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
-
-```php
-use Filament\Forms\Components\MultiSelect;
-use Illuminate\Database\Eloquent\Model;
-
-MultiSelect::make('participants')
-    ->relationship('participants', 'first_name')
-    ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
 
 ## Checkbox

@@ -300,18 +300,19 @@ For more information on relation managers, see the [full documentation](relation
 
 ### `BelongsToMany`
 
-#### Multi-select field
+#### Multi-select
 
-Filament can automatically load `MultiSelect` options from a `BelongsToMany` relationship:
+Filament can automatically load `Select` options from a `BelongsToMany` relationship:
 
 ```php
-use Filament\Forms\Components\MultiSelect;
+use Filament\Forms\Components\Select;
 
-MultiSelect::make('technologies')
+Select::make('technologies')
+    ->multiple()
     ->relationship('technologies', 'name')
 ```
 
-More information about `BelongsToManyMultiSelect` is available in the [Form docs](../../forms/fields#populating-automatically-from-a-belongstomany-relationship).
+More information about `BelongsToMany` Select is available in the [Form docs](../../forms/fields#populating-automatically-from-a-belongstomany-relationship).
 
 #### Checkbox list field
 

@@ -379,7 +379,7 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
         return [
             Forms\Components\TextInput::make('title')->required(),
             Forms\Components\MarkdownEditor::make('content'),
-            Forms\Components\MultiSelect::make('categories')->relationship('categories', 'name'),
+            Forms\Components\Select::make('categories')->multiple()->relationship('categories', 'name'),
         ];
     }
     
@@ -436,7 +436,7 @@ class EditPost extends Component implements Forms\Contracts\HasForms
         return [
             Forms\Components\TextInput::make('title')->required(),
             Forms\Components\MarkdownEditor::make('content'),
-            Forms\Components\MultiSelect::make('categories')->relationship('categories', 'name'),
+            Forms\Components\Select::make('categories')->multiple()->relationship('categories', 'name'),
         ];
     }
     
