@@ -117,7 +117,6 @@ We have many fields available for your forms, including:
 
 - [Text input](../../forms/fields#text-input)
 - [Select](../../forms/fields#select)
-- [Multi-select](../../forms/fields#multi-select)
 - [Checkbox](../../forms/fields#checkbox)
 - [Date-time picker](../../forms/fields#date-time-picker)
 - [File upload](../../forms/fields#file-upload)
