@@ -382,7 +382,6 @@
                         @foreach ($records as $record)
                             @php
                                 $recordKey = $getRecordKey($record);
-                                $recordClasses = $getRecordClasses($record);
                                 $recordUrl = $getRecordUrl($record);
                             @endphp
 
@@ -399,7 +398,7 @@
                                     [
                                         'group cursor-move' => $isReordering,
                                     ],
-                                    \Illuminate\Support\Arr::wrap($recordClasses),
+                                    $getRecordClasses($record),
                                 ))"
                             >
                                 @if ($isReordering)
