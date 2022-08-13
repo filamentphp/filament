@@ -395,9 +395,12 @@
                                 x-bind:class="{
                                     'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $recordKey }}'),
                                 }"
-                                :class="\Illuminate\Support\Arr::toCssClasses(array_merge([
-                                    'group cursor-move' => $isReordering,
-                                ], $recordClasses))"
+                                :class="\Illuminate\Support\Arr::toCssClasses(array_merge(
+                                    [
+                                        'group cursor-move' => $isReordering,
+                                    ],
+                                    \Illuminate\Support\Arr::wrap($recordClasses),
+                                ))"
                             >
                                 @if ($isReordering)
                                     <x-tables::reorder.cell />
