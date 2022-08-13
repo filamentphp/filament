@@ -8,6 +8,7 @@ use Filament\Support\Components\ViewComponent;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Actions\Position;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Layout;
@@ -20,6 +21,8 @@ use Illuminate\Support\Arr;
 class Table extends ViewComponent
 {
     use Concerns\BelongsToLivewire;
+
+    protected ?string $actionsPosition = null;
 
     protected ?View $content = null;
 
@@ -79,6 +82,13 @@ class Table extends ViewComponent
     public static function make(HasTable $livewire): static
     {
         return app(static::class, ['livewire' => $livewire]);
+    }
+
+    public function actionsPosition(?string $position): static
+    {
+        $this->actionsPosition = $position;
+
+        return $this;
     }
 
     public function description(?string $description): static
@@ -224,6 +234,11 @@ class Table extends ViewComponent
     public function getActions(): array
     {
         return $this->getLivewire()->getCachedTableActions();
+    }
+
+    public function getActionsPosition(): string
+    {
+        return $this->actionsPosition ?? Position::AfterCells;
     }
 
     public function getAllRecordsCount(): int

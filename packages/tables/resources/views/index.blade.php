@@ -1,7 +1,9 @@
 @php
+    use Filament\Tables\Actions\Position;
     use Filament\Tables\Filters\Layout;
 
     $actions = $getActions();
+    $actionsPosition = $getActionsPosition();
     $columns = $getColumns();
     $content = $getContent();
     $contentFooter = $getContentFooter();
@@ -326,24 +328,34 @@
                         <x-slot name="header">
                             @if ($isReordering)
                                 <th></th>
-                            @elseif ($isSelectionEnabled)
-                                <x-tables::checkbox-cell>
-                                    <x-slot
-                                        name="checkbox"
-                                        x-on:click="toggleSelectRecordsOnPage"
-                                        x-bind:checked="
-                                            if (areRecordsSelected(getRecordsOnPage())) {
-                                                $el.checked = true
+                            @else
+                                @if (count($actions) && $actionsPosition === Position::BeforeCells)
+                                    <th class="w-5"></th>
+                                @endif
 
-                                                return 'checked'
-                                            }
+                                @if ($isSelectionEnabled)
+                                    <x-tables::checkbox-cell>
+                                        <x-slot
+                                            name="checkbox"
+                                            x-on:click="toggleSelectRecordsOnPage"
+                                            x-bind:checked="
+                                                if (areRecordsSelected(getRecordsOnPage())) {
+                                                    $el.checked = true
 
-                                            $el.checked = false
+                                                    return 'checked'
+                                                }
 
-                                            return null
-                                        "
-                                    ></x-slot>
-                                </x-tables::checkbox-cell>
+                                                $el.checked = false
+
+                                                return null
+                                            "
+                                        ></x-slot>
+                                    </x-tables::checkbox-cell>
+                                @endif
+
+                                @if (count($actions) && $actionsPosition === Position::BeforeColumns)
+                                    <th class="w-5"></th>
+                                @endif
                             @endif
 
                             @foreach ($columns as $column)
@@ -360,7 +372,7 @@
                                 </x-tables::header-cell>
                             @endforeach
 
-                            @if (count($actions) && (! $isReordering))
+                            @if (count($actions) && (! $isReordering) && $actionsPosition === Position::AfterCells)
                                 <th class="w-5"></th>
                             @endif
                         </x-slot>
@@ -403,15 +415,31 @@
                             >
                                 @if ($isReordering)
                                     <x-tables::reorder.cell />
-                                @elseif ($isSelectionEnabled)
-                                    <x-tables::checkbox-cell>
-                                        <x-slot
-                                            name="checkbox"
-                                            x-model="selectedRecords"
-                                            :value="$recordKey"
-                                            class="table-row-checkbox"
-                                        ></x-slot>
-                                    </x-tables::checkbox-cell>
+                                @else
+                                    @if (count($actions) && $actionsPosition === Position::BeforeCells)
+                                        <x-tables::actions-cell
+                                            :actions="$actions"
+                                            :record="$record"
+                                        />
+                                    @endif
+
+                                    @if ($isSelectionEnabled)
+                                        <x-tables::checkbox-cell>
+                                            <x-slot
+                                                name="checkbox"
+                                                x-model="selectedRecords"
+                                                :value="$recordKey"
+                                                class="table-row-checkbox"
+                                            ></x-slot>
+                                        </x-tables::checkbox-cell>
+                                    @endif
+
+                                    @if (count($actions) && $actionsPosition === Position::BeforeColumns)
+                                        <x-tables::actions-cell
+                                            :actions="$actions"
+                                            :record="$record"
+                                        />
+                                    @endif
                                 @endif
 
                                 @foreach ($columns as $column)
@@ -438,12 +466,10 @@
                                     </x-tables::cell>
                                 @endforeach
 
-                                @if (count($actions) && (! $isReordering))
+                                @if (count($actions) && (! $isReordering) && $actionsPosition === Position::AfterCells)
                                     <x-tables::actions-cell
                                         :actions="$actions"
                                         :record="$record"
-                                        wire:loading.remove.delay
-                                        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
                                     />
                                 @endif
 
