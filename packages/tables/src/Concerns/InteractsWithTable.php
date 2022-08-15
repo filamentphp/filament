@@ -108,7 +108,7 @@ trait InteractsWithTable
             ->enablePagination($this->isTablePaginationEnabled())
             ->filtersFormWidth($this->getTableFiltersFormWidth())
             ->filtersLayout($this->getTableFiltersLayout())
-            ->recordAction($this->getTableRecordAction())
+            ->getRecordActionUsing($this->getTableRecordActionUsing())
             ->getRecordClassesUsing($this->getTableRecordClassesUsing())
             ->getRecordUrlUsing($this->getTableRecordUrlUsing())
             ->header($this->getTableHeader())

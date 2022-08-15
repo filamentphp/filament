@@ -46,7 +46,7 @@ class Table extends ViewComponent
 
     protected ?string $reorderColumn = null;
 
-    protected ?string $recordAction = null;
+    protected ?Closure $getRecordActionUsing = null;
 
     protected ?Closure $getRecordClassesUsing = null;
 
@@ -161,9 +161,9 @@ class Table extends ViewComponent
         return $this;
     }
 
-    public function recordAction(?string $action): static
+    public function getRecordActionUsing(?Closure $callback): static
     {
-        $this->recordAction = $action;
+        $this->getRecordActionUsing = $callback;
 
         return $this;
     }
@@ -393,9 +393,15 @@ class Table extends ViewComponent
         return $this->recordsPerPageSelectOptions;
     }
 
-    public function getRecordAction(): ?string
+    public function getRecordAction(Model $record): ?string
     {
-        return $this->recordAction;
+        $callback = $this->getRecordActionUsing;
+
+        if (! $callback) {
+            return null;
+        }
+
+        return $callback($record);
     }
 
     public function getRecordClasses(Model $record): array
