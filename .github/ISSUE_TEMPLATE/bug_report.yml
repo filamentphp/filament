@@ -19,6 +19,7 @@ body:
               - filament/filament
               - filament/forms
               - filament/tables
+              - filament/notifications
               - filament/spatie-laravel-media-library-plugin
               - filament/spatie-laravel-settings-plugin
               - filament/spatie-laravel-tags-plugin
