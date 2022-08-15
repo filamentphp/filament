@@ -207,7 +207,7 @@ class FilamentServiceProvider extends PluginServiceProvider
 
         $filesystem = app(Filesystem::class);
 
-        if (! $filesystem->exists($directory)) {
+        if (! $filesystem->exists($directory) && str_contains($directory, '*') === false) {
             return;
         }
 
@@ -215,9 +215,21 @@ class FilamentServiceProvider extends PluginServiceProvider
             $register,
             collect($filesystem->allFiles($directory))
                 ->map(function (SplFileInfo $file) use ($namespace): string {
-                    return (string) Str::of($namespace)
-                        ->append('\\', $file->getRelativePathname())
-                        ->replace(['/', '.php'], ['\\', '']);
+                    $namespaceStringable = Str::of($namespace);
+                    if ($namespaceStringable->contains('*')) {
+                        $subPath = str_ireplace(['\\' . $namespaceStringable->before('*'), $namespaceStringable->after('*')], ['', ''], Str::of($file->getPath())
+                            ->after(base_path())
+                            ->replace(['/'], ['\\']));
+
+                        return (string) $namespaceStringable
+                            ->append('\\', $file->getRelativePathname())
+                            ->replace('*', $subPath)
+                            ->replace(['/', '.php'], ['\\', '']);
+                    } else {
+                        return (string) $namespaceStringable
+                            ->append('\\', $file->getRelativePathname())
+                            ->replace(['/', '.php'], ['\\', '']);
+                    }
                 })
                 ->filter(fn (string $class): bool => is_subclass_of($class, $baseClass) && (! (new ReflectionClass($class))->isAbstract()))
                 ->all(),
