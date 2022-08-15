@@ -48,11 +48,7 @@ trait BelongsToModel
                 $container->callAfterStateHydrated();
             }
 
-            $this->fillStateWithNull(shouldOverwrite: false);
-
-            foreach ($this->getChildComponentContainers() as $container) {
-                $container->fillComponentStateWithNull(shouldOverwrite: false);
-            }
+            $this->fillStateWithNull();
         }
     }
 
