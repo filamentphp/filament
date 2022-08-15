@@ -74,3 +74,21 @@ it('can disable an action', function () {
         ->assertTableActionEnabled('enabled')
         ->assertTableActionDisabled('disabled');
 });
+
+it('can have an icon', function() {
+    livewire(PostsTable::class)
+        ->assertTableActionHasIcon('has-icon', 'heroicon-s-pencil')
+        ->assertTableActionDoesNotHaveIcon('has-icon', 'heroicon-o-trash');
+});
+
+it('can have a label', function() {
+    livewire(PostsTable::class)
+        ->assertTableActionHasLabel('has-label', 'My Action')
+        ->assertTableActionDoesNotHaveLabel('has-label', 'My Other Action');
+});
+
+it('can have a color', function() {
+    livewire(PostsTable::class)
+        ->assertTableActionHasColor('has-color', 'primary')
+        ->assertTableActionDoesNotHaveColor('has-color', 'secondary');
+});
