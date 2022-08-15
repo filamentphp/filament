@@ -393,11 +393,13 @@
 
                         @foreach ($records as $record)
                             @php
+                                $recordAction = $getRecordAction($record);
                                 $recordKey = $getRecordKey($record);
                                 $recordUrl = $getRecordUrl($record);
                             @endphp
 
                             <x-tables::row
+                                :record-action="$recordAction"
                                 :record-url="$recordUrl"
                                 :wire:key="$this->id . '.table.records.' . $recordKey"
                                 :wire:sortable.item="$isReordering ? $recordKey : null"
@@ -453,7 +455,7 @@
                                         :alignment="$column->getAlignment()"
                                         :record="$record"
                                         :tooltip="$column->getTooltip()"
-                                        :record-action="$getRecordAction()"
+                                        :record-action="$recordAction"
                                         :record-url="$recordUrl"
                                         :should-open-url-in-new-tab="$column->shouldOpenUrlInNewTab()"
                                         :url="$column->getUrl()"

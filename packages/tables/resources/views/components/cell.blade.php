@@ -29,18 +29,7 @@
 >
     @if ($isClickDisabled)
         {{ $slot }}
-    @elseif ($action || ($recordAction && $url === null))
-        <button
-            wire:click="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $this->getTableRecordKey($record) }}')"
-            wire:target="{{ $action ? "callTableColumnAction('{$name}', " : "{$recordAction}(" }}'{{ $this->getTableRecordKey($record) }}')"
-            wire:loading.attr="disabled"
-            wire:loading.class.delay="opacity-70 cursor-wait"
-            type="button"
-            class="block text-left"
-        >
-            {{ $slot }}
-        </button>
-    @elseif ($url || $recordUrl)
+    @elseif ($url || ($recordUrl && $action === null))
         <a
             href="{{ $url ?: $recordUrl }}"
             {{ $shouldOpenUrlInNewTab ? 'target="_blank"' : null }}
@@ -48,6 +37,31 @@
         >
             {{ $slot }}
         </a>
+    @elseif ($action || $recordAction)
+        @php
+            if ($action) {
+                $wireClickAction = "callTableColumnAction('{$name}', '%s')";
+            } else {
+                if ($this->getCachedTableAction($recordAction)) {
+                    $wireClickAction = "mountTableAction('{$recordAction}', '%s')";
+                } else {
+                    $wireClickAction = "{$recordAction}('%s')";
+                }
+            }
+
+            $wireClickAction = sprintf($wireClickAction, $this->getTableRecordKey($record));
+        @endphp
+
+        <button
+            wire:click="{{ $wireClickAction }}"
+            wire:target="{{ $wireClickAction }}"
+            wire:loading.attr="disabled"
+            wire:loading.class="opacity-70 cursor-wait"
+            type="button"
+            class="block text-left w-full"
+        >
+            {{ $slot }}
+        </button>
     @else
         {{ $slot }}
     @endif
