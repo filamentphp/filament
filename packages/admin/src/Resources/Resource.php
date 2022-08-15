@@ -199,6 +199,11 @@ class Resource
         return [$titleAttribute];
     }
 
+    public static function getGlobalSearchResultActions(Model $record): array
+    {
+        return [];
+    }
+
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [];
@@ -250,6 +255,7 @@ class Resource
                     title: static::getGlobalSearchResultTitle($record),
                     url: $url,
                     details: static::getGlobalSearchResultDetails($record),
+                    actions: static::getGlobalSearchResultActions($record),
                 );
             })
             ->filter();

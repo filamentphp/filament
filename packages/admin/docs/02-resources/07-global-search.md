@@ -67,3 +67,23 @@ public static function getGlobalSearchResultUrl(Model $record): string
     return route('users.edit', ['user' => $record]);
 }
 ```
+
+## Actions
+
+Global search support actions that render a button or link which may open a URL or emit a Livewire event. Actions will render as link by default, but you may configure it to render a button using the `button()` or `iconButton()` methods. 
+
+Actions can be defined as follows:
+
+```php
+use Filament\GlobalSearch\Actions\Action;
+
+public static function getGlobalSearchResultActions(Model $record): array
+{
+    return [
+        Action::make('edit')
+            ->iconButton()
+            ->icon('heroicon-s-pencil')
+            ->url(self::getUrl('edit', ['record' => $record->id])),
+    ];
+}
+```

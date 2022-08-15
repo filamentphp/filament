@@ -23,6 +23,7 @@
 
     @foreach ($results as $result)
         <x-filament::global-search.result
+            :actions="$result->actions"
             :details="$result->details"
             :title="$result->title"
             :url="$result->url"
