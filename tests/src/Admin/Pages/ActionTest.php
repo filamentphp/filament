@@ -70,19 +70,19 @@ it('can disable an action', function () {
         ->assertPageActionDisabled('disabled');
 });
 
-it('can have an icon', function() {
+it('can have an icon', function () {
     livewire(PageActions::class)
         ->assertPageActionHasIcon('has-icon', 'heroicon-s-pencil')
         ->assertPageActionDoesNotHaveIcon('has-icon', 'heroicon-o-trash');
 });
 
-it('can have a label', function() {
+it('can have a label', function () {
     livewire(PageActions::class)
         ->assertPageActionHasLabel('has-label', 'My Action')
         ->assertPageActionDoesNotHaveLabel('has-label', 'My Other Action');
 });
 
-it('can have a color', function() {
+it('can have a color', function () {
     livewire(PageActions::class)
         ->assertPageActionHasColor('has-color', 'primary')
         ->assertPageActionDoesNotHaveColor('has-color', 'secondary');

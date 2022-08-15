@@ -74,7 +74,7 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
             Tables\Actions\Action::make('has-label')
                 ->label('My Action'),
             Tables\Actions\Action::make('has-color')
-                ->color('primary')
+                ->color('primary'),
         ];
     }
 

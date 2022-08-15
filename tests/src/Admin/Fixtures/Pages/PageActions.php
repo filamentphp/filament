@@ -49,7 +49,7 @@ class PageActions extends Page
             Action::make('has-label')
                 ->label('My Action'),
             Action::make('has-color')
-                ->color('primary')
+                ->color('primary'),
         ];
     }
 }
