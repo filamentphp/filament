@@ -12,6 +12,11 @@
         },
 
     }"
+    x-init="
+        if($data.isOpen !== undefined) {
+            $watch('isOpen', open => open && init())
+        }
+    "
     x-on:expand-concealing-component.window="
         if (getTabs().includes($event.detail.id)) {
             tab = $event.detail.id
