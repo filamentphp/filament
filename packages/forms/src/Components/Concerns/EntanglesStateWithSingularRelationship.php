@@ -55,6 +55,7 @@ trait EntanglesStateWithSingularRelationship
 
             if ($relationship instanceof BelongsTo) {
                 $relationship->associate($record->create($state));
+                $relationship->getParent()->save();
             } else {
                 $record->fill($state);
                 $relationship->save($record);
