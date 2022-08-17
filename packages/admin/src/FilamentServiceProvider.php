@@ -207,29 +207,32 @@ class FilamentServiceProvider extends PluginServiceProvider
 
         $filesystem = app(Filesystem::class);
 
-        if (! $filesystem->exists($directory) && str_contains($directory, '*') === false) {
+        if ((! $filesystem->exists($directory)) && (! Str::of($directory)->contains('*'))) {
             return;
         }
+        
+        $namespace = Str::of($namespace);
 
         $register = array_merge(
             $register,
             collect($filesystem->allFiles($directory))
                 ->map(function (SplFileInfo $file) use ($namespace): string {
-                    $namespaceStringable = Str::of($namespace);
-                    if ($namespaceStringable->contains('*')) {
-                        $subPath = str_ireplace(['\\' . $namespaceStringable->before('*'), $namespaceStringable->after('*')], ['', ''], Str::of($file->getPath())
-                            ->after(base_path())
-                            ->replace(['/'], ['\\']));
-
-                        return (string) $namespaceStringable
-                            ->append('\\', $file->getRelativePathname())
-                            ->replace('*', $subPath)
-                            ->replace(['/', '.php'], ['\\', '']);
-                    } else {
-                        return (string) $namespaceStringable
-                            ->append('\\', $file->getRelativePathname())
-                            ->replace(['/', '.php'], ['\\', '']);
+                    $subPath = null;
+                    
+                    if ($namespace->contains('*')) {
+                        $subPath = str_ireplace(
+                            ['\\' . $namespace->before('*'), $namespace->after('*')],
+                            ['', ''],
+                            Str::of($file->getPath())
+                                ->after(base_path())
+                                ->replace(['/'], ['\\']),
+                        );
                     }
+                    
+                    return (string) $namespace
+                        ->append('\\', $file->getRelativePathname())
+                        ->replace('*', $subPath)
+                        ->replace(['/', '.php'], ['\\', '']);
                 })
                 ->filter(fn (string $class): bool => is_subclass_of($class, $baseClass) && (! (new ReflectionClass($class))->isAbstract()))
                 ->all(),
