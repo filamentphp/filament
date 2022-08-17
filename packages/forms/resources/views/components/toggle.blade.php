@@ -19,20 +19,20 @@
                 x-bind:aria-checked="state.toString()"
                 x-on:click="state = ! state"
                 x-bind:class="{
-                    '{{match ($getOnColor()) {
+                    '{{ match ($getOnColor()) {
                         'danger' => 'bg-danger-500',
                         'primary' => 'bg-primary-500',
                         'success' => 'bg-success-500',
                         'warning' => 'bg-warning-500',
                         default => 'bg-primary-600',
-                    }}}': state,
-                    '{{match ($getOffColor()) {
+                    } }}': state,
+                    '{{ match ($getOffColor()) {
                         'danger' => 'bg-danger-500',
                         'primary' => 'bg-primary-500',
                         'success' => 'bg-success-500',
                         'warning' => 'bg-warning-500',
                         default => 'bg-gray-200',
-                    }}} @if (config('forms.dark_mode')) dark:bg-white/10 @endif': ! state,
+                    } }} @if (config('forms.dark_mode')) dark:bg-white/10 @endif': ! state,
                 }"
                 {!! $isAutofocused() ? 'autofocus' : null !!}
                 {!! $isDisabled() ? 'disabled' : null !!}
