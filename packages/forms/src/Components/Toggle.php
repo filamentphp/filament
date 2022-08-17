@@ -48,7 +48,6 @@ class Toggle extends Field
         return $this;
     }
 
-
     public function onIcon(string | Closure | null $icon): static
     {
         $this->onIcon = $icon;
