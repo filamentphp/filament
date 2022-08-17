@@ -766,6 +766,16 @@ Toggle::make('is_admin')
     ->offIcon('heroicon-s-user')
 ```
 
+You may also customize the color representing each state. These may be either `primary`, `secondary`, `success`, `warning` or `danger`:
+
+```php
+use Filament\Forms\Components\Toggle;
+
+Toggle::make('is_admin')
+    ->onColor('success')
+    ->offColor('danger')
+```
+
 ![](https://user-images.githubusercontent.com/41773797/147613184-9086c102-ad71-4c4e-9170-9a4201a80c66.png)
 
 If you're saving the boolean value using Eloquent, you should be sure to add a `boolean` [cast](https://laravel.com/docs/eloquent-mutators#attribute-casting) to the model property:
