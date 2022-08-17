@@ -21,7 +21,7 @@
                 x-bind:class="{
                     '{{ match ($getOnColor()) {
                         'danger' => 'bg-danger-500',
-                        'primary' => 'bg-primary-500',
+                        'secondary' => 'bg-gray-500',
                         'success' => 'bg-success-500',
                         'warning' => 'bg-warning-500',
                         default => 'bg-primary-600',
