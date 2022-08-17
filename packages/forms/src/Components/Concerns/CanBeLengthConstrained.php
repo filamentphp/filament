@@ -5,7 +5,6 @@ namespace Filament\Forms\Components\Concerns;
 use Closure;
 use Filament\Forms\Components\Contracts;
 use Filament\Forms\Components\Contracts\CanHaveNumericState;
-use Filament\Forms\Components\TextInput;
 
 trait CanBeLengthConstrained
 {
