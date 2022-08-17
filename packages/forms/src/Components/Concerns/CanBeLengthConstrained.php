@@ -5,6 +5,7 @@ namespace Filament\Forms\Components\Concerns;
 use Closure;
 use Filament\Forms\Components\Contracts;
 use Filament\Forms\Components\Contracts\CanHaveNumericState;
+use Filament\Forms\Components\TextInput;
 
 trait CanBeLengthConstrained
 {
@@ -28,7 +29,7 @@ trait CanBeLengthConstrained
             }
 
             return "size:{$length}";
-        });
+        }, static fn (Contracts\CanBeLengthConstrained $component): bool => filled($component->getLength()));
 
         return $this;
     }
@@ -41,7 +42,7 @@ trait CanBeLengthConstrained
             $length = $component->getMaxLength();
 
             return "max:{$length}";
-        });
+        }, static fn (Contracts\CanBeLengthConstrained $component): bool => filled($component->getMaxLength()));
 
         return $this;
     }
@@ -54,7 +55,7 @@ trait CanBeLengthConstrained
             $length = $component->getMinLength();
 
             return "min:{$length}";
-        });
+        }, static fn (Contracts\CanBeLengthConstrained $component): bool => filled($component->getMinLength()));
 
         return $this;
     }
