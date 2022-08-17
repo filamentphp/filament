@@ -58,7 +58,7 @@
             wire:loading.attr="disabled"
             wire:loading.class="opacity-70 cursor-wait"
             type="button"
-            class="block text-left w-full"
+            class="block text-left rtl:text-right w-full"
         >
             {{ $slot }}
         </button>
