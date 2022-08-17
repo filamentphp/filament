@@ -260,7 +260,7 @@ class TestsActions
             $action->record($record);
 
             Assert::assertTrue(
-                $action->getIcon() == $icon,
+                $action->getIcon() === $icon,
                 message: filled($record) ?
                     "Failed asserting that a table action with name [{$name}] has icon [{$icon}] on the [{$livewireClass}] component for record [{$record}]." :
                     "Failed asserting that a table action with name [{$name}] has icon [{$icon}] on the [{$livewireClass}] component.",
@@ -287,7 +287,7 @@ class TestsActions
             $action->record($record);
 
             Assert::assertFalse(
-                $action->getIcon() == $icon,
+                $action->getIcon() === $icon,
                 message: filled($record) ?
                     "Failed asserting that a table action with name [{$name}] does not have icon [{$icon}] on the [{$livewireClass}] component for record [{$record}]." :
                     "Failed asserting that a table action with name [{$name}] does not have icon [{$icon}] on the [{$livewireClass}] component.",
@@ -314,7 +314,7 @@ class TestsActions
             $action->record($record);
 
             Assert::assertTrue(
-                $action->getLabel() == $label,
+                $action->getLabel() === $label,
                 message: filled($record) ?
                     "Failed asserting that a table action with name [{$name}] has label [{$label}] on the [{$livewireClass}] component for record [{$record}]." :
                     "Failed asserting that a table action with name [{$name}] has label [{$label}] on the [{$livewireClass}] component.",
@@ -341,7 +341,7 @@ class TestsActions
             $action->record($record);
 
             Assert::assertFalse(
-                $action->getLabel() == $label,
+                $action->getLabel() === $label,
                 message: filled($record) ?
                     "Failed asserting that a table action with name [{$name}] does not have label [{$label}] on the [{$livewireClass}] component for record [{$record}]." :
                     "Failed asserting that a table action with name [{$name}] does not have label [{$label}] on the [{$livewireClass}] component.",
@@ -368,7 +368,7 @@ class TestsActions
             $action->record($record);
 
             Assert::assertTrue(
-                $action->getColor() == $color,
+                $action->getColor() === $color,
                 message: filled($record) ?
                     "Failed asserting that a table action with name [{$name}] has color [{$color}] on the [{$livewireClass}] component for record [{$record}]." :
                     "Failed asserting that a table action with name [{$name}] has color [{$color}] on the [{$livewireClass}] component.",
@@ -395,7 +395,7 @@ class TestsActions
             $action->record($record);
 
             Assert::assertFalse(
-                $action->getColor() == $color,
+                $action->getColor() === $color,
                 message: filled($record) ?
                     "Failed asserting that a table action with name [{$name}] does not have color [{$color}] on the [{$livewireClass}] component for record [{$record}]." :
                     "Failed asserting that a table action with name [{$name}] does not have color [{$color}] on the [{$livewireClass}] component.",

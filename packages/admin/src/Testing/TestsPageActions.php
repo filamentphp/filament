@@ -218,7 +218,7 @@ class TestsPageActions
             $action = $livewire->getCachedAction($name);
 
             Assert::assertTrue(
-                $action->getIcon() == $icon,
+                $action->getIcon() === $icon,
                 message: "Failed asserting that an action with name [{$name}] has icon [{$icon}] on the [{$livewireClass}] component.",
             );
 
@@ -238,7 +238,7 @@ class TestsPageActions
             $action = $livewire->getCachedAction($name);
 
             Assert::assertFalse(
-                $action->getIcon() == $icon,
+                $action->getIcon() === $icon,
                 message: "Failed asserting that an action with name [{$name}] does not have icon [{$icon}] on the [{$livewireClass}] component.",
             );
 
@@ -258,7 +258,7 @@ class TestsPageActions
             $action = $livewire->getCachedAction($name);
 
             Assert::assertTrue(
-                $action->getLabel() == $label,
+                $action->getLabel() === $label,
                 message: "Failed asserting that an action with name [{$name}] has label [{$label}] on the [{$livewireClass}] component.",
             );
 
@@ -278,7 +278,7 @@ class TestsPageActions
             $action = $livewire->getCachedAction($name);
 
             Assert::assertFalse(
-                $action->getLabel() == $label,
+                $action->getLabel() === $label,
                 message: "Failed asserting that an action with name [{$name}] does not have label [{$label}] on the [{$livewireClass}] component.",
             );
 
@@ -298,7 +298,7 @@ class TestsPageActions
             $action = $livewire->getCachedAction($name);
 
             Assert::assertTrue(
-                $action->getColor() == $color,
+                $action->getColor() === $color,
                 message: "Failed asserting that an action with name [{$name}] has color [{$color}] on the [{$livewireClass}] component.",
             );
 
@@ -318,7 +318,7 @@ class TestsPageActions
             $action = $livewire->getCachedAction($name);
 
             Assert::assertFalse(
-                $action->getColor() == $color,
+                $action->getColor() === $color,
                 message: "Failed asserting that an action with name [{$name}] does not have color [{$color}] on the [{$livewireClass}] component.",
             );
 
