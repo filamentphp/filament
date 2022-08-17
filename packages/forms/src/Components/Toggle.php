@@ -88,18 +88,8 @@ class Toggle extends Field
         return (bool) $this->getOffIcon();
     }
 
-    public function hasOffColor(): bool
-    {
-        return (bool) $this->getOffColor();
-    }
-
     public function hasOnIcon(): bool
     {
         return (bool) $this->getOnIcon();
-    }
-
-    public function hasOnColor(): bool
-    {
-        return (bool) $this->getOnColor();
     }
 }
