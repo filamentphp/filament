@@ -31,6 +31,18 @@ namespace Livewire\Testing {
 
         public function assertPageActionDisabled(string $name): static {}
 
+        public function assertPageActionHasIcon(string $name, string $icon): static {}
+
+        public function assertPageActionDoesNotHaveIcon(string $name, string $icon): static {}
+
+        public function assertPageActionHasLabel(string $name, string $label): static {}
+
+        public function assertPageActionHasColor(string $name, string $color): static {}
+
+        public function assertPageActionDoesNotHaveColor(string $name, string $color): static {}
+
+        public function assertPageActionDoesNotHaveLabel(string $name, string $label): static {}
+
         public function assertPageActionHeld(string $name): static {}
 
         public function assertHasPageActionErrors(array $keys = []): static {}

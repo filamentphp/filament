@@ -206,6 +206,126 @@ class TestsPageActions
         };
     }
 
+    public function assertPageActionHasIcon(): Closure
+    {
+        return function (string $name, string $icon, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertPageActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedAction($name);
+
+            Assert::assertTrue(
+                $action->getIcon() === $icon,
+                message: "Failed asserting that an action with name [{$name}] has icon [{$icon}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertPageActionDoesNotHaveIcon(): Closure
+    {
+        return function (string $name, string $icon, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertPageActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedAction($name);
+
+            Assert::assertFalse(
+                $action->getIcon() === $icon,
+                message: "Failed asserting that an action with name [{$name}] does not have icon [{$icon}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertPageActionHasLabel(): Closure
+    {
+        return function (string $name, string $label, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertPageActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedAction($name);
+
+            Assert::assertTrue(
+                $action->getLabel() === $label,
+                message: "Failed asserting that an action with name [{$name}] has label [{$label}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertPageActionDoesNotHaveLabel(): Closure
+    {
+        return function (string $name, string $label, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertPageActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedAction($name);
+
+            Assert::assertFalse(
+                $action->getLabel() === $label,
+                message: "Failed asserting that an action with name [{$name}] does not have label [{$label}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertPageActionHasColor(): Closure
+    {
+        return function (string $name, string $color, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertPageActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedAction($name);
+
+            Assert::assertTrue(
+                $action->getColor() === $color,
+                message: "Failed asserting that an action with name [{$name}] has color [{$color}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertPageActionDoesNotHaveColor(): Closure
+    {
+        return function (string $name, string $color, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertPageActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedAction($name);
+
+            Assert::assertFalse(
+                $action->getColor() === $color,
+                message: "Failed asserting that an action with name [{$name}] does not have color [{$color}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
     public function assertPageActionHeld(): Closure
     {
         return function (string $name): static {
