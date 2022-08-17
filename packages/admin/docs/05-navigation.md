@@ -166,7 +166,7 @@ use Filament\Navigation\NavigationGroup;
 
 Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
     return $builder
-        ->group([
+        ->groups([
             NavigationGroup::make('Website')
                 ->items([
                     ...PageResource::getNavigationItems(),
