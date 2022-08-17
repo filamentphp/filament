@@ -58,11 +58,6 @@
         },
 
     }"
-    x-init="
-        if($data.isOpen !== undefined) {
-            $watch('isOpen', open => open && init())
-        }
-    "
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $getStatePath() }}') nextStep()"
     x-cloak
     {!! $getId() ? "id=\"{$getId()}\"" : null !!}
