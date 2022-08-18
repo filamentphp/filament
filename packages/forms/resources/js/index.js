@@ -6,7 +6,6 @@ import KeyValueFormComponentAlpinePlugin from './components/key-value'
 import MarkdownEditorFormComponentAlpinePlugin from './components/markdown-editor'
 import RichEditorFormComponentAlpinePlugin from './components/rich-editor'
 import SelectFormComponentAlpinePlugin from './components/select'
-import SupportAlpinePlugin from '../../../support/dist/module.esm'
 import TagsInputFormComponentAlpinePlugin from './components/tags-input'
 import TextareaFormComponentAlpinePlugin from './components/textarea'
 import TextInputFormComponentAlpinePlugin from './components/text-input'
@@ -19,7 +18,6 @@ export default (Alpine) => {
     Alpine.plugin(MarkdownEditorFormComponentAlpinePlugin)
     Alpine.plugin(RichEditorFormComponentAlpinePlugin)
     Alpine.plugin(SelectFormComponentAlpinePlugin)
-    Alpine.plugin(SupportAlpinePlugin)
     Alpine.plugin(TagsInputFormComponentAlpinePlugin)
     Alpine.plugin(TextareaFormComponentAlpinePlugin)
     Alpine.plugin(TextInputFormComponentAlpinePlugin)
@@ -33,7 +31,6 @@ export {
     MarkdownEditorFormComponentAlpinePlugin,
     RichEditorFormComponentAlpinePlugin,
     SelectFormComponentAlpinePlugin,
-    SupportAlpinePlugin,
     TagsInputFormComponentAlpinePlugin,
     TextareaFormComponentAlpinePlugin,
     TextInputFormComponentAlpinePlugin,

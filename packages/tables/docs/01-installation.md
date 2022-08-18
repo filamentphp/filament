@@ -37,6 +37,8 @@ You're now ready to start [building tables](getting-started)!
 The package uses the following dependencies:
 
 - [Alpine.js](https://alpinejs.dev)
+- [Alpine.js Focus Plugin](https://alpinejs.dev/plugins/focus)
+- [Alpine Floating UI](https://github.com/awcodes/alpine-floating-ui)
 - [Tailwind CSS](https://tailwindcss.com)
 - [Tailwind CSS Forms plugin](https://github.com/tailwindlabs/tailwindcss-forms)
 - [Tailwind CSS Typography plugin](https://tailwindcss.com/docs/typography-plugin)
@@ -44,7 +46,7 @@ The package uses the following dependencies:
 You may install these through NPM:
 
 ```bash
-npm install alpinejs @alpinejs/focus tailwindcss @tailwindcss/forms @tailwindcss/typography --save-dev
+npm install alpinejs @alpinejs/focus @awcodes/alpine-floating-ui tailwindcss @tailwindcss/forms @tailwindcss/typography --save-dev
 ```
 
 ### Configuring Tailwind CSS
@@ -155,14 +157,16 @@ In `/resources/css/app.css`, import `filament/forms` vendor CSS and [Tailwind CS
 
 ### Configuring scripts
 
-In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), the `filament/forms`, `filament/notifications` and `@alpinejs/focus` plugins, and register them:
+In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), `@alpinejs/focus`, Alpine Floating UI, the `filament/forms` and `filament/notifications` plugins, and register them:
 
 ```js
 import Alpine from 'alpinejs'
+import AlpineFloatingUI from '@awcodes/alpine-floating-ui'
 import Focus from '@alpinejs/focus'
 import FormsAlpinePlugin from '../../vendor/filament/forms/dist/module.esm'
 import NotificationsAlpinePlugin from '../../vendor/filament/notifications/dist/module.esm'
 
+Alpine.plugin(AlpineFloatingUI)
 Alpine.plugin(Focus)
 Alpine.plugin(FormsAlpinePlugin)
 Alpine.plugin(NotificationsAlpinePlugin)

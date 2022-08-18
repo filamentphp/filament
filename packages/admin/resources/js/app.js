@@ -1,6 +1,7 @@
 //import '../css/app.css'
 
 import Alpine from 'alpinejs'
+import AlpineFloatingUI from '@awcodes/alpine-floating-ui'
 import Chart from 'chart.js/auto'
 import Collapse from '@alpinejs/collapse'
 import Focus from '@alpinejs/focus'
@@ -8,18 +9,15 @@ import FormsAlpinePlugin from '../../../forms/dist/module.esm'
 import Mousetrap from '@danharrin/alpine-mousetrap'
 import NotificationsAlpinePlugin from '../../../notifications/dist/module.esm'
 import Persist from '@alpinejs/persist'
-import SupportAlpinePlugin from '../../../support/dist/module.esm'
-import TablesAlpinePlugin from '../../../tables/dist/module.esm'
 import Tooltip from '@ryangjchandler/alpine-tooltip'
 
+Alpine.plugin(AlpineFloatingUI)
 Alpine.plugin(Collapse)
 Alpine.plugin(Focus)
 Alpine.plugin(FormsAlpinePlugin)
 Alpine.plugin(Mousetrap)
 Alpine.plugin(NotificationsAlpinePlugin)
 Alpine.plugin(Persist)
-Alpine.plugin(SupportAlpinePlugin)
-Alpine.plugin(TablesAlpinePlugin)
 Alpine.plugin(Tooltip)
 
 Alpine.store('sidebar', {
