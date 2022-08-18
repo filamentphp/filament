@@ -46,7 +46,11 @@ class RestoreAction extends Action
             $this->success();
         });
 
-        $this->visible(static function (Model $record): bool {
+        $this->visible(static function (?Model $record): bool {
+            if (! $record) {
+                return false;
+            }
+
             if (! method_exists($record, 'trashed')) {
                 return false;
             }
