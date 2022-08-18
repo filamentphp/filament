@@ -2,7 +2,7 @@
 
 namespace Filament\Tables\Columns;
 
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Throwable;
 
 class SpatieMediaLibraryImageColumn extends ImageColumn
@@ -39,11 +39,14 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
     {
         $state = $this->getState();
 
-        if ($state) {
+        if ($state && ! $state instanceof Model) {
             return $state;
         }
-
-        $record = $this->getRecord();
+        if ($state instanceof Model) {
+            $record = $state;
+        }else{
+            $record = $this->getRecord();
+        }
 
         if ($this->getVisibility() === 'private' && method_exists($record, 'getFirstTemporaryUrl')) {
             try {
@@ -64,12 +67,4 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
         return $record->getFirstMediaUrl($this->getCollection(), $this->getConversion());
     }
 
-    public function applyEagerLoading(Builder $query): Builder
-    {
-        if ($this->isHidden()) {
-            return $query;
-        }
-
-        return $query->with(['media']);
-    }
 }
