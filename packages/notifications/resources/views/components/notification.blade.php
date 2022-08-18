@@ -4,10 +4,7 @@
 
 <div
     {{ $attributes->class('filament-notifications-notification pointer-events-auto') }}
-    x-data="notificationComponent({
-        $wire: $wire,
-        notification: @js($notification),
-    })"
+    x-data="notificationComponent({ notification: @js($notification) })"
     wire:key="{{ $this->id }}.notifications.{{ $notification->getId() }}"
     dusk="filament.notifications.notification"
 >

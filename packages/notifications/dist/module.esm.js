@@ -145,7 +145,7 @@ function once(callback, fallback = () => {
 
 // packages/notifications/resources/js/components/notification.js
 var notification_default = (Alpine) => {
-  Alpine.data("notificationComponent", ({$wire, notification}) => ({
+  Alpine.data("notificationComponent", ({notification}) => ({
     isShown: false,
     computedStyle: null,
     init: function() {
@@ -190,9 +190,7 @@ var notification_default = (Alpine) => {
     },
     close: function() {
       this.isShown = false;
-      this.$nextTick(() => {
-        setTimeout(() => $wire.close(notification.id), this.getTransitionDuration());
-      });
+      setTimeout(() => Livewire.emit("notificationClosed", notification.id), this.getTransitionDuration());
     },
     getTop: function() {
       return this.$el.getBoundingClientRect().top;

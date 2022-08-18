@@ -2,7 +2,7 @@ import { mutateDom } from 'alpinejs/src/mutation'
 import { once } from 'alpinejs/src/utils/once'
 
 export default (Alpine) => {
-    Alpine.data('notificationComponent', ({ $wire, notification }) => ({
+    Alpine.data('notificationComponent', ({ notification }) => ({
         isShown: false,
 
         computedStyle: null,
@@ -69,12 +69,10 @@ export default (Alpine) => {
         close: function () {
             this.isShown = false
 
-            this.$nextTick(() => {
-                setTimeout(
-                    () => $wire.close(notification.id),
-                    this.getTransitionDuration()
-                )
-            })
+            setTimeout(
+                () => Livewire.emit('notificationClosed', notification.id),
+                this.getTransitionDuration()
+            )
         },
 
         getTop: function () {

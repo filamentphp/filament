@@ -13,6 +13,7 @@ class Notifications extends Component
 
     protected $listeners = [
         'notificationsSent' => 'pullNotificationsFromSession',
+        'notificationClosed' => 'removeNotification',
     ];
 
     public function mount(): void
@@ -33,7 +34,7 @@ class Notifications extends Component
         }
     }
 
-    public function close(string $id): void
+    public function removeNotification(string $id): void
     {
         $this->notifications->forget($id);
     }
