@@ -8,7 +8,7 @@
     {{ $attributes->class(['relative inline-block filament-tables-filters']) }}
 >
     <x-tables::filters.trigger
-        :indicator="config('tables.filters.indicator') ? collect($form->getState())->filter(fn($item) => $item['value'] !== null)->count() : null"
+        :indicator="config('tables.filters.indicator') ? collect($form->getState())->filter(fn($item) => isset($item['value']) && $item['value'] !== null)->count() : null"
     />
     <div
         x-ref="popoverPanel"
