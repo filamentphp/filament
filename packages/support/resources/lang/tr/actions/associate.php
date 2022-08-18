@@ -12,8 +12,8 @@ return [
 
             'fields' => [
 
-                'record_ids' => [
-                    'label' => 'Kayıtlar',
+                'record_id' => [
+                    'label' => 'Kayıt',
                 ],
 
             ],
