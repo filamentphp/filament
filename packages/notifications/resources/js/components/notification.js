@@ -1,18 +1,16 @@
+import { mutateDom } from 'alpinejs/src/mutation'
+import { once } from 'alpinejs/src/utils/once'
+
 export default (Alpine) => {
     Alpine.data('notificationComponent', ({ $wire, notification }) => ({
-        phase: 'enter-start',
+        isShown: false,
 
         computedStyle: null,
-
-        hasTransitionLeaveAttribute: false,
 
         init: function () {
             this.computedStyle = window.getComputedStyle(this.$el)
 
-            this.hasTransitionLeaveAttribute =
-                this.$el.hasAttribute('x-transition:leave') ||
-                this.$el.hasAttribute('x-transition:leave-start') ||
-                this.$el.hasAttribute('x-transition:leave-end')
+            this.setUpSelf()
 
             this.configureAnimations()
 
@@ -20,7 +18,9 @@ export default (Alpine) => {
                 setTimeout(() => this.close(), notification.duration)
             }
 
-            this.$nextTick(() => (this.phase = 'enter-end'))
+            this.$nextTick(() => {
+                this.isShown = true
+            })
         },
 
         configureAnimations: function () {
@@ -43,7 +43,7 @@ export default (Alpine) => {
                         ],
                         {
                             duration: this.getTransitionDuration(),
-                            easing: this.computedStyle.transitionTimingFunction,
+                            easing: this.getTransitionTiming(),
                         }
                     )
                 }
@@ -58,7 +58,7 @@ export default (Alpine) => {
                     return
                 }
 
-                if (this.phase.startsWith('leave-')) {
+                if (this.$el._x_transitioning) {
                     return
                 }
 
@@ -67,17 +67,13 @@ export default (Alpine) => {
         },
 
         close: function () {
-            this.phase = 'leave-start'
+            this.isShown = false
 
             this.$nextTick(() => {
                 setTimeout(
                     () => $wire.close(notification.id),
-                    this.hasTransitionLeaveAttribute
-                        ? this.getTransitionDuration()
-                        : 0
+                    this.getTransitionDuration()
                 )
-
-                this.phase = 'leave-end'
             })
         },
 
@@ -86,7 +82,85 @@ export default (Alpine) => {
         },
 
         getTransitionDuration: function () {
-            return parseFloat(this.computedStyle.transitionDuration) * 1000
+            return this.computedStyle.transitionDuration.length !== 0
+                ? parseFloat(this.computedStyle.transitionDuration) * 1000
+                : 0
+        },
+
+        getTransitionTiming: function () {
+            return this.computedStyle.transitionTimingFunction.length !== 0
+                ? this.computedStyle.transitionTimingFunction
+                : 'ease'
+        },
+
+        setUpSelf: function () {
+            this.$el._x_isShown = false
+
+            if (!this.$el._x_doHide)
+                this.$el._x_doHide = () => {
+                    mutateDom(() => {
+                        if (this.$el._x_isShown) {
+                            this.$el.style.setProperty(
+                                'visibility',
+                                'hidden',
+                                undefined
+                            )
+                        } else {
+                            this.$el.style.setProperty(
+                                'display',
+                                'none',
+                                undefined
+                            )
+                        }
+                    })
+                }
+
+            if (!this.$el._x_doShow)
+                this.$el._x_doShow = () => {
+                    mutateDom(() => {
+                        this.$el.style.setProperty('display', 'flex', undefined)
+                    })
+                }
+
+            let hide = () => {
+                this.$el._x_doHide()
+                this.$el._x_isShown = false
+            }
+
+            let show = () => {
+                this.$el._x_doShow()
+                this.$el._x_isShown = true
+            }
+
+            let clickAwayCompatibleShow = () => setTimeout(show)
+
+            let toggle = once(
+                (value) => (value ? show() : hide()),
+                (value) => {
+                    if (
+                        typeof this.$el._x_toggleAndCascadeWithTransitions ===
+                        'function'
+                    ) {
+                        this.$el._x_toggleAndCascadeWithTransitions(
+                            this.$el,
+                            value,
+                            show,
+                            hide
+                        )
+                    } else {
+                        value ? clickAwayCompatibleShow() : hide()
+                    }
+                }
+            )
+
+            let oldValue
+            let firstTime = true
+
+            Alpine.effect(() => {
+                toggle(this.isShown)
+                oldValue = this.isShown
+                firstTime = false
+            })
         },
     }))
 }
