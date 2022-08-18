@@ -1,18 +1,28 @@
 @props([
     'darkMode' => false,
-    'placement' => 'bottom-end',
+    'placement' => null,
     'teleport' => false,
     'trigger' => null,
     'width' => 'sm',
 ])
 
 <div
-    x-data
-    {{ $attributes->class('filament-dropdown') }}
+    {{ $attributes->class(['filament-dropdown']) }}
+    x-data="{
+        toggle: function (event) {
+            $refs.panel.toggle(event)
+        },
+        open: function (event) {
+            $refs.panel.open(event)
+        },
+        close: function (event) {
+            $refs.panel.close(event)
+        },
+    }"
 >
     <div
         class="filament-dropdown-trigger"
-        x-on:click="$refs.panel.toggle"
+        x-on:click="toggle"
     >
         {{ $trigger }}
     </div>
@@ -22,7 +32,11 @@
         x-cloak
         x-transition:enter-start="opacity-0 scale-95"
         x-transition:leave-end="opacity-0 scale-95"
-        x-float.placement.{{ $placement }}.flip.offset{{ $teleport ? '.teleport' : '' }}="{ offset: 8 }"
+        x-float{{ $placement ? ".placement.$placement" : '' }}.flip.offset{{ $teleport ? '.teleport' : '' }}="{ offset: 8 }"
+        @if ($attributes->has('wire:key'))
+            wire:ignore.self
+            wire:key="{{ $attributes->get('wire:key') }}.panel"
+        @endif
         @class([
             'filament-dropdown-panel absolute z-10 w-max overflow-hidden rounded-xl border border-gray-200 bg-white shadow-md transition',
             'dark:border-gray-700 dark:bg-gray-800' => $darkMode,

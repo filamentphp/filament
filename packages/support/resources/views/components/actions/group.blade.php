@@ -9,6 +9,8 @@
 
 <x-filament-support::dropdown
     :dark-mode="$darkMode"
+    placement="bottom-end"
+    teleport
     {{ $attributes }}
 >
     <x-slot name="trigger">
