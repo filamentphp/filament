@@ -534,6 +534,15 @@
         <x-tables::modal
             :id="$this->id . '-table-action'"
             :wire:key="$action ? $this->id . '.table' . ($getMountedActionRecordKey() ? '.records.' . $getMountedActionRecordKey() : null) . '.actions.' . $action->getName() . '.modal' : null"
+            x-init="
+                $watch('isOpen', () => {
+                    if (isOpen) {
+                        return
+                    }
+
+                    $wire.mountedTableAction = null
+                })
+            "
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
             display-classes="block"
@@ -584,6 +593,15 @@
         <x-tables::modal
             :id="$this->id . '-table-bulk-action'"
             :wire:key="$action ? $this->id . '.table.bulk-actions.' . $action->getName() . '.modal' : null"
+            x-init="
+                $watch('isOpen', () => {
+                    if (isOpen) {
+                        return
+                    }
+
+                    $wire.mountedTableBulkAction = null
+                })
+            "
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
             display-classes="block"
