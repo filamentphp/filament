@@ -15,7 +15,7 @@
             },
         },
     ])"
-    x-transition:leave-end="scale-95 opacity-0 "
+    x-transition:leave-end="scale-95 opacity-0"
 >
     @if ($icon = $getIcon())
         <x-notifications::icon :icon="$icon" :color="$getIconColor()" />
