@@ -44,7 +44,7 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
         }
         if ($state instanceof Model) {
             $record = $state;
-        }else{
+        } else {
             $record = $this->getRecord();
         }
 
@@ -66,5 +66,4 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
 
         return $record->getFirstMediaUrl($this->getCollection(), $this->getConversion());
     }
-
 }
