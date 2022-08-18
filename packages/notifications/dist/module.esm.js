@@ -129,20 +129,6 @@ function onMutate(mutations) {
   removedAttributes = null;
 }
 
-// node_modules/alpinejs/src/utils/once.js
-function once(callback, fallback = () => {
-}) {
-  let called = false;
-  return function() {
-    if (!called) {
-      called = true;
-      callback.apply(this, arguments);
-    } else {
-      fallback.apply(this, arguments);
-    }
-  };
-}
-
 // packages/notifications/resources/js/components/notification.js
 var notification_default = (Alpine) => {
   Alpine.data("notificationComponent", ({notification}) => ({
@@ -150,14 +136,28 @@ var notification_default = (Alpine) => {
     computedStyle: null,
     init: function() {
       this.computedStyle = window.getComputedStyle(this.$el);
-      this.setUpSelf();
+      this.configureTransitions();
       this.configureAnimations();
       if (notification.duration !== null) {
         setTimeout(() => this.close(), notification.duration);
       }
-      this.$nextTick(() => {
-        this.isShown = true;
-      });
+      this.isShown = true;
+    },
+    configureTransitions: function() {
+      const display = this.computedStyle.display;
+      const show = () => {
+        mutateDom(() => this.$el.style.setProperty("display", display));
+        this.$el._x_isShown = true;
+      };
+      const hide = () => {
+        mutateDom(() => {
+          this.$el._x_isShown ? this.$el.style.setProperty("visibility", "hidden") : this.$el.style.setProperty("display", "none");
+        });
+      };
+      const toggle = (value) => {
+        this.$el._x_toggleAndCascadeWithTransitions(this.$el, value, show, hide);
+      };
+      Alpine.effect(() => toggle(this.isShown));
     },
     configureAnimations: function() {
       let animation;
@@ -165,15 +165,15 @@ var notification_default = (Alpine) => {
         if (component.fingerprint.name !== "notifications") {
           return;
         }
-        const oldTop = this.getTop();
+        const getTop = () => this.$el.getBoundingClientRect().top;
+        const oldTop = getTop();
         animation = () => {
-          const newTop = this.getTop();
           this.$el.animate([
-            {transform: `translateY(${oldTop - newTop}px)`},
+            {transform: `translateY(${oldTop - getTop()}px)`},
             {transform: "translateY(0px)"}
           ], {
             duration: this.getTransitionDuration(),
-            easing: this.getTransitionTiming()
+            easing: this.computedStyle.transitionTimingFunction
           });
         };
         this.$el.getAnimations().forEach((animation2) => animation2.finish());
@@ -182,7 +182,7 @@ var notification_default = (Alpine) => {
         if (component.fingerprint.name !== "notifications") {
           return;
         }
-        if (this.$el._x_transitioning) {
+        if (!this.isShown) {
           return;
         }
         animation();
@@ -192,56 +192,8 @@ var notification_default = (Alpine) => {
       this.isShown = false;
       setTimeout(() => Livewire.emit("notificationClosed", notification.id), this.getTransitionDuration());
     },
-    getTop: function() {
-      return this.$el.getBoundingClientRect().top;
-    },
     getTransitionDuration: function() {
-      return this.computedStyle.transitionDuration.length !== 0 ? parseFloat(this.computedStyle.transitionDuration) * 1e3 : 0;
-    },
-    getTransitionTiming: function() {
-      return this.computedStyle.transitionTimingFunction.length !== 0 ? this.computedStyle.transitionTimingFunction : "ease";
-    },
-    setUpSelf: function() {
-      this.$el._x_isShown = false;
-      if (!this.$el._x_doHide)
-        this.$el._x_doHide = () => {
-          mutateDom(() => {
-            if (this.$el._x_isShown) {
-              this.$el.style.setProperty("visibility", "hidden", void 0);
-            } else {
-              this.$el.style.setProperty("display", "none", void 0);
-            }
-          });
-        };
-      if (!this.$el._x_doShow)
-        this.$el._x_doShow = () => {
-          mutateDom(() => {
-            this.$el.style.setProperty("display", "flex", void 0);
-          });
-        };
-      let hide = () => {
-        this.$el._x_doHide();
-        this.$el._x_isShown = false;
-      };
-      let show = () => {
-        this.$el._x_doShow();
-        this.$el._x_isShown = true;
-      };
-      let clickAwayCompatibleShow = () => setTimeout(show);
-      let toggle = once((value) => value ? show() : hide(), (value) => {
-        if (typeof this.$el._x_toggleAndCascadeWithTransitions === "function") {
-          this.$el._x_toggleAndCascadeWithTransitions(this.$el, value, show, hide);
-        } else {
-          value ? clickAwayCompatibleShow() : hide();
-        }
-      });
-      let oldValue;
-      let firstTime = true;
-      Alpine.effect(() => {
-        toggle(this.isShown);
-        oldValue = this.isShown;
-        firstTime = false;
-      });
+      return parseFloat(this.computedStyle.transitionDuration) * 1e3;
     }
   }));
 };
