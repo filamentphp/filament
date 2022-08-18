@@ -5,7 +5,7 @@
         'dark:border-gray-700 dark:bg-gray-800' => config('notifications.dark_mode'),
     ])"
     :x-transition:enter-start="\Illuminate\Support\Arr::toCssClasses([
-        'opacity-0 ',
+        'opacity-0',
         match (config('notifications.layout.alignment.horizontal')) {
             'left' => '-translate-x-12',
             'right' => 'translate-x-12',
@@ -15,9 +15,7 @@
             },
         },
     ])"
-    x-transition:enter-end="opacity-100 translate-x-0 translate-y-0"
-    x-transition:leave-start="opacity-100 translate-x-0 translate-y-0"
-    x-transition:leave-end="opacity-0 scale-95"
+    x-transition:leave-end="scale-95 opacity-0 "
 >
     @if ($icon = $getIcon())
         <x-notifications::icon :icon="$icon" :color="$getIconColor()" />
