@@ -2,7 +2,7 @@
     $user = \Filament\Facades\Filament::auth()->user();
 @endphp
 
-<x-filament::dropdown>
+<x-filament::dropdown placement="bottom-end">
     <x-slot name="trigger">
         <x-filament::user-avatar :user="$user" />
     </x-slot>
