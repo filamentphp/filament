@@ -1,10 +1,7 @@
 import IMask from 'imask'
 
 export default (Alpine) => {
-    Alpine.data('textInputFormComponent', ({
-        getMaskOptionsUsing,
-        state,
-    }) => {
+    Alpine.data('textInputFormComponent', ({ getMaskOptionsUsing, state }) => {
         return {
             isStateBeingUpdated: false,
 
@@ -13,7 +10,7 @@ export default (Alpine) => {
             state,
 
             init: function () {
-                if (! getMaskOptionsUsing) {
+                if (!getMaskOptionsUsing) {
                     return
                 }
 
@@ -21,13 +18,16 @@ export default (Alpine) => {
                     this.$el.value = this.state?.valueOf()
                 }
 
-                this.mask = IMask(this.$el, getMaskOptionsUsing(IMask)).on('accept', () => {
-                    this.isStateBeingUpdated = true
+                this.mask = IMask(this.$el, getMaskOptionsUsing(IMask)).on(
+                    'accept',
+                    () => {
+                        this.isStateBeingUpdated = true
 
-                    this.state = this.mask.unmaskedValue
+                        this.state = this.mask.unmaskedValue
 
-                    this.$nextTick(() => this.isStateBeingUpdated = false)
-                })
+                        this.$nextTick(() => (this.isStateBeingUpdated = false))
+                    },
+                )
 
                 this.$watch('state', () => {
                     if (this.isStateBeingUpdated) {
@@ -36,7 +36,7 @@ export default (Alpine) => {
 
                     this.mask.unmaskedValue = this.state?.valueOf() ?? ''
                 })
-            }
+            },
         }
     })
 }

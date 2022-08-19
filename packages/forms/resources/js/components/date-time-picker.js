@@ -83,7 +83,7 @@ export default (Alpine) => {
 
                     if (isAutofocused) {
                         this.$nextTick(() =>
-                            this.togglePanelVisibility(this.$refs.button)
+                            this.togglePanelVisibility(this.$refs.button),
                         )
                     }
 
@@ -95,7 +95,7 @@ export default (Alpine) => {
                         }
 
                         this.focusedDate = this.focusedDate.month(
-                            this.focusedMonth
+                            this.focusedMonth,
                         )
                     })
 
@@ -415,14 +415,14 @@ export default (Alpine) => {
                                 .date(8 - firstDayOfWeek)
                                 .day(),
                         },
-                        (_, i) => i + 1
+                        (_, i) => i + 1,
                     )
 
                     this.daysInFocusedMonth = Array.from(
                         {
                             length: this.focusedDate.daysInMonth(),
                         },
-                        (_, i) => i + 1
+                        (_, i) => i + 1,
                     )
                 },
 
@@ -457,7 +457,7 @@ export default (Alpine) => {
                     return this.$refs.panel.style.display === 'block'
                 },
             }
-        }
+        },
     )
 }
 
@@ -484,14 +484,14 @@ const locales = {
     my: require('dayjs/locale/my'),
     nl: require('dayjs/locale/nl'),
     pl: require('dayjs/locale/pl'),
-    'pt_BR': require('dayjs/locale/pt-br'),
-    'pt_PT': require('dayjs/locale/pt'),
+    pt_BR: require('dayjs/locale/pt-br'),
+    pt_PT: require('dayjs/locale/pt'),
     ro: require('dayjs/locale/ro'),
     ru: require('dayjs/locale/ru'),
     sv: require('dayjs/locale/sv'),
     tr: require('dayjs/locale/tr'),
     uk: require('dayjs/locale/uk'),
     vi: require('dayjs/locale/vi'),
-    'zh_CN': require('dayjs/locale/zh-cn'),
-    'zh_TW': require('dayjs/locale/zh-tw'),
+    zh_CN: require('dayjs/locale/zh-cn'),
+    zh_TW: require('dayjs/locale/zh-tw'),
 }
