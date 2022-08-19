@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Ասոցացնել',
+        'label' => 'Kaitkan',
 
         'modal' => [
 
-            'heading' => 'Ասոցացնել :label',
+            'heading' => 'Kaitkan :label',
 
             'fields' => [
 
                 'record_id' => [
-                    'label' => 'Գրառումներ',
+                    'label' => 'Rekod',
                 ],
 
             ],
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'associate' => [
-                    'label' => 'Ասոցացնել',
+                    'label' => 'Kaitkan',
                 ],
 
                 'associate_another' => [
-                    'label' => 'Ասոցացնել և ասոցացնել մեկ այլ',
+                    'label' => 'Kaitkan & kaitan yang lain',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'associated' => 'Ասոցացվել է',
+            'associated' => 'Berkaitan',
         ],
 
     ],
