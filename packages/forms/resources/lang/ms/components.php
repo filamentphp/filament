@@ -217,21 +217,21 @@ return [
     'tags_input' => [
         'placeholder' => 'Tag baru',
     ],
-    
-        'wizard' => [
 
-            'buttons' => [
-    
-                'previous_step' => [
-                    'label' => 'Sebelum',
-                ],
-    
-                'next_step' => [
-                    'label' => 'Seterus',
-                ],
-    
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => 'Sebelum',
             ],
-        
+
+            'next_step' => [
+                'label' => 'Seterus',
+            ],
+
         ],
+
+    ],
 
 ];
