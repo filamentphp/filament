@@ -1,0 +1,23 @@
+name: prettier
+
+on: push
+
+jobs:
+  prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Setup Node
+        uses: actions/setup-node@v2
+      - name: Install dependencies
+        run: npm ci
+      - name: Run Prettier
+        run: npm run prettier
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: >
+            chore: styling
