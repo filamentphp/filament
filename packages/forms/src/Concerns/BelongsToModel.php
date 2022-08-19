@@ -17,16 +17,8 @@ trait BelongsToModel
 
     public function saveRelationships(): void
     {
-        foreach ($this->getComponents(withHidden: true) as $component) {
-            if ($component->isHidden()) {
-                continue;
-            }
-
+        foreach ($this->getComponents() as $component) {
             foreach ($component->getChildComponentContainers() as $container) {
-                if ($container->isHidden()) {
-                    continue;
-                }
-
                 $container->saveRelationships();
             }
 
@@ -39,19 +31,11 @@ trait BelongsToModel
     public function loadStateFromRelationships(bool $andHydrate = false): void
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
-            if ($component->isHidden()) {
-                continue;
-            }
-
             if ($component->getRecord()?->exists) {
                 $component->loadStateFromRelationships($andHydrate);
             }
 
-            foreach ($component->getChildComponentContainers() as $container) {
-                if ($container->isHidden()) {
-                    continue;
-                }
-
+            foreach ($component->getChildComponentContainers(withHidden: true) as $container) {
                 $container->loadStateFromRelationships($andHydrate);
             }
         }
