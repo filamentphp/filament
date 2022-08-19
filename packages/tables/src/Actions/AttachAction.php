@@ -114,6 +114,12 @@ class AttachAction extends Action
         return $this;
     }
 
+    public function labelName(string $name): static
+    {
+        $this->labelName = $name;
+        return $this;
+    }
+
     public function isAttachAnotherDisabled(): bool
     {
         return $this->evaluate($this->isAttachAnotherDisabled);
@@ -194,7 +200,7 @@ class AttachAction extends Action
         };
 
         $select = Select::make('recordId')
-            ->label(__('filament-support::actions/attach.single.modal.fields.record_id.label'))
+            ->label(fn() => $this->labelName ?? __('filament-support::actions/attach.single.modal.fields.record_id.label'))
             ->required()
             ->searchable()
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(search: $search, searchColumns: $component->getSearchColumns()))
