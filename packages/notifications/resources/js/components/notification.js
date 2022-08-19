@@ -29,9 +29,9 @@ export default (Alpine) => {
 
             const hide = () => {
                 mutateDom(() => {
-                    this.$el._x_isShown
-                        ? this.$el.style.setProperty('visibility', 'hidden')
-                        : this.$el.style.setProperty('display', 'none')
+                    this.$el._x_isShown ?
+                        this.$el.style.setProperty('visibility', 'hidden') :
+                        this.$el.style.setProperty('display', 'none')
                 })
             }
 
@@ -40,7 +40,7 @@ export default (Alpine) => {
                     this.$el,
                     value,
                     show,
-                    hide
+                    hide,
                 )
             }
 
@@ -67,7 +67,7 @@ export default (Alpine) => {
                         {
                             duration: this.getTransitionDuration(),
                             easing: this.computedStyle.transitionTimingFunction,
-                        }
+                        },
                     )
                 }
 
@@ -81,7 +81,7 @@ export default (Alpine) => {
                     return
                 }
 
-                if (!this.isShown) {
+                if (! this.isShown) {
                     return
                 }
 
@@ -94,7 +94,7 @@ export default (Alpine) => {
 
             setTimeout(
                 () => Livewire.emit('notificationClosed', notification.id),
-                this.getTransitionDuration()
+                this.getTransitionDuration(),
             )
         },
 
