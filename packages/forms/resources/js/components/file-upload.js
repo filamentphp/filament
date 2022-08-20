@@ -10,7 +10,7 @@ import FilePondPluginMediaPreview from 'filepond-plugin-media-preview'
 
 import 'filepond/dist/filepond.min.css'
 import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
-import 'filepond-plugin-media-preview/dist/filepond-plugin-media-preview.css';
+import 'filepond-plugin-media-preview/dist/filepond-plugin-media-preview.css'
 import '../../css/components/file-upload.css'
 
 FilePond.registerPlugin(FilePondPluginFileValidateSize)
@@ -22,305 +22,356 @@ FilePond.registerPlugin(FilePondPluginImageResize)
 FilePond.registerPlugin(FilePondPluginImageTransform)
 FilePond.registerPlugin(FilePondPluginMediaPreview)
 
-window.FilePond = FilePond;
+window.FilePond = FilePond
 
 export default (Alpine) => {
-    Alpine.data('fileUploadFormComponent', ({
-        acceptedFileTypes,
-        canDownload,
-        canOpen,
-        canPreview,
-        canReorder,
-        deleteUploadedFileUsing,
-        getUploadedFileUrlsUsing,
-        imageCropAspectRatio,
-        imagePreviewHeight,
-        imageResizeMode,
-        imageResizeTargetHeight,
-        imageResizeTargetWidth,
-        isAvatar,
-        loadingIndicatorPosition,
-        locale,
-        panelAspectRatio,
-        panelLayout,
-        placeholder,
-        maxSize,
-        minSize,
-        removeUploadedFileButtonPosition,
-        removeUploadedFileUsing,
-        reorderUploadedFilesUsing,
-        shouldAppendFiles,
-        shouldTransformImage,
-        state,
-        uploadButtonPosition,
-        uploadProgressIndicatorPosition,
-        uploadUsing,
-    }) => {
-        return {
-            fileKeyIndex: {},
-
-            pond: null,
-
-            shouldUpdateState: true,
-
+    Alpine.data(
+        'fileUploadFormComponent',
+        ({
+            acceptedFileTypes,
+            canDownload,
+            canOpen,
+            canPreview,
+            canReorder,
+            deleteUploadedFileUsing,
+            getUploadedFileUrlsUsing,
+            imageCropAspectRatio,
+            imagePreviewHeight,
+            imageResizeMode,
+            imageResizeTargetHeight,
+            imageResizeTargetWidth,
+            isAvatar,
+            loadingIndicatorPosition,
+            locale,
+            panelAspectRatio,
+            panelLayout,
+            placeholder,
+            maxSize,
+            minSize,
+            removeUploadedFileButtonPosition,
+            removeUploadedFileUsing,
+            reorderUploadedFilesUsing,
+            shouldAppendFiles,
+            shouldTransformImage,
             state,
+            uploadButtonPosition,
+            uploadProgressIndicatorPosition,
+            uploadUsing,
+        }) => {
+            return {
+                fileKeyIndex: {},
 
-            lastState: null,
+                pond: null,
 
-            uploadedFileUrlIndex: {},
+                shouldUpdateState: true,
 
-            init: async function () {
-                FilePond.setOptions(locales[locale] ?? locales['en'])
+                state,
 
-                this.pond = FilePond.create(this.$refs.input, {
-                    acceptedFileTypes,
-                    allowPaste: false,
-                    allowReorder: canReorder,
-                    allowImagePreview: canPreview,
-                    allowVideoPreview: canPreview,
-                    allowAudioPreview: canPreview,
-                    allowImageTransform: shouldTransformImage,
-                    credits: false,
-                    files: await this.getFiles(),
-                    imageCropAspectRatio,
-                    imagePreviewHeight,
-                    imageResizeTargetHeight,
-                    imageResizeTargetWidth,
-                    imageResizeMode,
-                    itemInsertLocation: shouldAppendFiles ? 'after' : 'before',
-                    ...(placeholder && {labelIdle: placeholder}),
-                    maxFileSize: maxSize,
-                    minFileSize: minSize,
-                    styleButtonProcessItemPosition: uploadButtonPosition,
-                    styleButtonRemoveItemPosition: removeUploadedFileButtonPosition,
-                    styleLoadIndicatorPosition: loadingIndicatorPosition,
-                    stylePanelAspectRatio: panelAspectRatio,
-                    stylePanelLayout: panelLayout,
-                    styleProgressIndicatorPosition: uploadProgressIndicatorPosition,
-                    server: {
-                        load: async (source, load) => {
-                            let response = await fetch(source)
-                            let blob = await response.blob()
+                lastState: null,
 
-                            load(blob)
-                        },
-                        process: (fieldName, file, metadata, load, error, progress) => {
-                            this.shouldUpdateState = false
+                uploadedFileUrlIndex: {},
 
-                            let fileKey = ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
-                                (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-                            )
+                init: async function () {
+                    FilePond.setOptions(locales[locale] ?? locales['en'])
 
-                            uploadUsing(fileKey, file, (fileKey) => {
-                                this.shouldUpdateState = true
+                    this.pond = FilePond.create(this.$refs.input, {
+                        acceptedFileTypes,
+                        allowPaste: false,
+                        allowReorder: canReorder,
+                        allowImagePreview: canPreview,
+                        allowVideoPreview: canPreview,
+                        allowAudioPreview: canPreview,
+                        allowImageTransform: shouldTransformImage,
+                        credits: false,
+                        files: await this.getFiles(),
+                        imageCropAspectRatio,
+                        imagePreviewHeight,
+                        imageResizeTargetHeight,
+                        imageResizeTargetWidth,
+                        imageResizeMode,
+                        itemInsertLocation: shouldAppendFiles
+                            ? 'after'
+                            : 'before',
+                        ...(placeholder && { labelIdle: placeholder }),
+                        maxFileSize: maxSize,
+                        minFileSize: minSize,
+                        styleButtonProcessItemPosition: uploadButtonPosition,
+                        styleButtonRemoveItemPosition:
+                            removeUploadedFileButtonPosition,
+                        styleLoadIndicatorPosition: loadingIndicatorPosition,
+                        stylePanelAspectRatio: panelAspectRatio,
+                        stylePanelLayout: panelLayout,
+                        styleProgressIndicatorPosition:
+                            uploadProgressIndicatorPosition,
+                        server: {
+                            load: async (source, load) => {
+                                let response = await fetch(source)
+                                let blob = await response.blob()
 
-                                load(fileKey)
-                            }, error, progress)
-                        },
-                        remove: async (source, load) => {
-                            let fileKey = this.uploadedFileUrlIndex[source] ?? null
+                                load(blob)
+                            },
+                            process: (
+                                fieldName,
+                                file,
+                                metadata,
+                                load,
+                                error,
+                                progress,
+                            ) => {
+                                this.shouldUpdateState = false
 
-                            if (! fileKey) {
-                                return
-                            }
+                                let fileKey = (
+                                    [1e7] +
+                                    -1e3 +
+                                    -4e3 +
+                                    -8e3 +
+                                    -1e11
+                                ).replace(/[018]/g, (c) =>
+                                    (
+                                        c ^
+                                        (crypto.getRandomValues(
+                                            new Uint8Array(1),
+                                        )[0] &
+                                            (15 >> (c / 4)))
+                                    ).toString(16),
+                                )
 
-                            await deleteUploadedFileUsing(fileKey)
+                                uploadUsing(
+                                    fileKey,
+                                    file,
+                                    (fileKey) => {
+                                        this.shouldUpdateState = true
 
-                            load()
-                        },
-                        revert: async (uniqueFileId, load) => {
-                            await removeUploadedFileUsing(uniqueFileId)
+                                        load(fileKey)
+                                    },
+                                    error,
+                                    progress,
+                                )
+                            },
+                            remove: async (source, load) => {
+                                let fileKey =
+                                    this.uploadedFileUrlIndex[source] ?? null
 
-                            load()
-                        },
-                    },
-                })
+                                if (!fileKey) {
+                                    return
+                                }
 
-                this.$watch('state', async () => {
-                    if (! this.shouldUpdateState) {
-                        return;
-                    }
+                                await deleteUploadedFileUsing(fileKey)
 
-                    // We don't want to overwrite the files that are already in the input, if they haven't been saved yet.
-                    if (Object.values(this.state).filter((file) => file.startsWith('livewire-file:')).length) {
-                        return
-                    }
+                                load()
+                            },
+                            revert: async (uniqueFileId, load) => {
+                                await removeUploadedFileUsing(uniqueFileId)
 
-                    // Don't do anything if the state hasn't changed
-                    if (JSON.stringify(this.state) === this.lastState) {
-                        return
-                    }
-
-                    this.lastState = JSON.stringify(this.state)
-
-                    this.pond.files = await this.getFiles()
-                })
-
-                this.pond.on('reorderfiles', async (files) => {
-                    const orderedFileKeys = files
-                        .map(file => file.source instanceof File ? file.serverId : this.uploadedFileUrlIndex[file.source] ?? null) // file.serverId is null for a file that is not yet uploaded
-                        .filter(fileKey => fileKey)
-
-                    await reorderUploadedFilesUsing(shouldAppendFiles ? orderedFileKeys : orderedFileKeys.reverse())
-                })
-
-                this.pond.on('initfile', async (fileItem) => {
-                    if (! canDownload) {
-                        return
-                    }
-
-                    if (isAvatar) {
-                        return
-                    }
-
-                    this.insertDownloadLink(fileItem)
-                })
-
-                this.pond.on('initfile', async (fileItem) => {
-                    if (! canOpen) {
-                        return
-                    }
-
-                    if (isAvatar) {
-                        return
-                    }
-
-                    this.insertOpenLink(fileItem)
-                })
-
-                this.pond.on('processfilestart', async () => {
-                    this.dispatchFormEvent('file-upload-started')
-                })
-
-                this.pond.on('processfileprogress', async () => {
-                    this.dispatchFormEvent('file-upload-started')
-                })
-
-                this.pond.on('processfile', async () => {
-                    this.dispatchFormEvent('file-upload-finished')
-                })
-
-                this.pond.on('processfiles', async () => {
-                    this.dispatchFormEvent('file-upload-finished')
-                })
-
-                this.pond.on('processfileabort', async () => {
-                    this.dispatchFormEvent('file-upload-finished')
-                })
-
-                this.pond.on('processfilerevert', async () => {
-                    this.dispatchFormEvent('file-upload-finished')
-                })
-            },
-
-            dispatchFormEvent: function (name) {
-                this.$el.closest('form')?.dispatchEvent(
-                    new CustomEvent(name, {
-                        composed: true,
-                        cancelable: true,
-                    })
-                )
-            },
-
-            getUploadedFileUrls: async function () {
-                const uploadedFileUrls = await getUploadedFileUrlsUsing()
-
-                this.fileKeyIndex = uploadedFileUrls ?? {}
-
-                this.uploadedFileUrlIndex = Object.entries(this.fileKeyIndex)
-                    .filter(value => value)
-                    .reduce((obj, [key, value]) => {
-                        obj[value] = key
-
-                        return obj
-                    }, {})
-            },
-
-            getFiles: async function () {
-                await this.getUploadedFileUrls()
-
-                let files = []
-
-                for (const uploadedFileUrl of Object.values(this.fileKeyIndex)) {
-                    if (! uploadedFileUrl) {
-                        continue
-                    }
-
-                    files.push({
-                        source: uploadedFileUrl,
-                        options: {
-                            type: 'local',
+                                load()
+                            },
                         },
                     })
-                }
 
-                return shouldAppendFiles ? files : files.reverse()
-            },
+                    this.$watch('state', async () => {
+                        if (!this.shouldUpdateState) {
+                            return
+                        }
 
-            insertDownloadLink: function (file) {
-                if (file.origin !== FilePond.FileOrigin.LOCAL) {
-                    return
-                }
+                        // We don't want to overwrite the files that are already in the input, if they haven't been saved yet.
+                        if (
+                            Object.values(this.state).filter((file) =>
+                                file.startsWith('livewire-file:'),
+                            ).length
+                        ) {
+                            return
+                        }
 
-                const anchor = this.getDownloadLink(file)
+                        // Don't do anything if the state hasn't changed
+                        if (JSON.stringify(this.state) === this.lastState) {
+                            return
+                        }
 
-                if (! anchor) {
-                    return
-                }
+                        this.lastState = JSON.stringify(this.state)
 
-                document.getElementById(`filepond--item-${file.id}`)
-                    .querySelector('.filepond--file-info-main')
-                    .prepend(anchor)
-            },
+                        this.pond.files = await this.getFiles()
+                    })
 
+                    this.pond.on('reorderfiles', async (files) => {
+                        const orderedFileKeys = files
+                            .map((file) =>
+                                file.source instanceof File
+                                    ? file.serverId
+                                    : this.uploadedFileUrlIndex[file.source] ??
+                                      null,
+                            ) // file.serverId is null for a file that is not yet uploaded
+                            .filter((fileKey) => fileKey)
 
-            insertOpenLink: function (file) {
-                if (file.origin !== FilePond.FileOrigin.LOCAL) {
-                    return
-                }
+                        await reorderUploadedFilesUsing(
+                            shouldAppendFiles
+                                ? orderedFileKeys
+                                : orderedFileKeys.reverse(),
+                        )
+                    })
 
-                const anchor = this.getOpenLink(file)
+                    this.pond.on('initfile', async (fileItem) => {
+                        if (!canDownload) {
+                            return
+                        }
 
-                if (! anchor) {
-                    return
-                }
+                        if (isAvatar) {
+                            return
+                        }
 
-                document.getElementById(`filepond--item-${file.id}`)
-                    .querySelector('.filepond--file-info-main')
-                    .prepend(anchor)
-            },
+                        this.insertDownloadLink(fileItem)
+                    })
 
-            getDownloadLink: function (file) {
-                let fileSource = file.source
+                    this.pond.on('initfile', async (fileItem) => {
+                        if (!canOpen) {
+                            return
+                        }
 
-                if (! fileSource) {
-                    return
-                }
+                        if (isAvatar) {
+                            return
+                        }
 
-                const anchor = document.createElement('a')
-                anchor.className = 'filepond--download-icon'
-                anchor.href = fileSource
-                anchor.download = file.file.name
+                        this.insertOpenLink(fileItem)
+                    })
 
-                return anchor
-            },
+                    this.pond.on('processfilestart', async () => {
+                        this.dispatchFormEvent('file-upload-started')
+                    })
 
-            getOpenLink: function (file) {
-                let fileSource = file.source
+                    this.pond.on('processfileprogress', async () => {
+                        this.dispatchFormEvent('file-upload-started')
+                    })
 
-                if (! fileSource) {
-                    return
-                }
+                    this.pond.on('processfile', async () => {
+                        this.dispatchFormEvent('file-upload-finished')
+                    })
 
-                const anchor = document.createElement('a')
-                anchor.className = 'filepond--open-icon'
-                anchor.href = fileSource
-                anchor.target = '_blank'
+                    this.pond.on('processfiles', async () => {
+                        this.dispatchFormEvent('file-upload-finished')
+                    })
 
-                return anchor
+                    this.pond.on('processfileabort', async () => {
+                        this.dispatchFormEvent('file-upload-finished')
+                    })
+
+                    this.pond.on('processfilerevert', async () => {
+                        this.dispatchFormEvent('file-upload-finished')
+                    })
+                },
+
+                dispatchFormEvent: function (name) {
+                    this.$el.closest('form')?.dispatchEvent(
+                        new CustomEvent(name, {
+                            composed: true,
+                            cancelable: true,
+                        }),
+                    )
+                },
+
+                getUploadedFileUrls: async function () {
+                    const uploadedFileUrls = await getUploadedFileUrlsUsing()
+
+                    this.fileKeyIndex = uploadedFileUrls ?? {}
+
+                    this.uploadedFileUrlIndex = Object.entries(
+                        this.fileKeyIndex,
+                    )
+                        .filter((value) => value)
+                        .reduce((obj, [key, value]) => {
+                            obj[value] = key
+
+                            return obj
+                        }, {})
+                },
+
+                getFiles: async function () {
+                    await this.getUploadedFileUrls()
+
+                    let files = []
+
+                    for (const uploadedFileUrl of Object.values(
+                        this.fileKeyIndex,
+                    )) {
+                        if (!uploadedFileUrl) {
+                            continue
+                        }
+
+                        files.push({
+                            source: uploadedFileUrl,
+                            options: {
+                                type: 'local',
+                            },
+                        })
+                    }
+
+                    return shouldAppendFiles ? files : files.reverse()
+                },
+
+                insertDownloadLink: function (file) {
+                    if (file.origin !== FilePond.FileOrigin.LOCAL) {
+                        return
+                    }
+
+                    const anchor = this.getDownloadLink(file)
+
+                    if (!anchor) {
+                        return
+                    }
+
+                    document
+                        .getElementById(`filepond--item-${file.id}`)
+                        .querySelector('.filepond--file-info-main')
+                        .prepend(anchor)
+                },
+
+                insertOpenLink: function (file) {
+                    if (file.origin !== FilePond.FileOrigin.LOCAL) {
+                        return
+                    }
+
+                    const anchor = this.getOpenLink(file)
+
+                    if (!anchor) {
+                        return
+                    }
+
+                    document
+                        .getElementById(`filepond--item-${file.id}`)
+                        .querySelector('.filepond--file-info-main')
+                        .prepend(anchor)
+                },
+
+                getDownloadLink: function (file) {
+                    let fileSource = file.source
+
+                    if (!fileSource) {
+                        return
+                    }
+
+                    const anchor = document.createElement('a')
+                    anchor.className = 'filepond--download-icon'
+                    anchor.href = fileSource
+                    anchor.download = file.file.name
+
+                    return anchor
+                },
+
+                getOpenLink: function (file) {
+                    let fileSource = file.source
+
+                    if (!fileSource) {
+                        return
+                    }
+
+                    const anchor = document.createElement('a')
+                    anchor.className = 'filepond--open-icon'
+                    anchor.href = fileSource
+                    anchor.target = '_blank'
+
+                    return anchor
+                },
             }
-        }
-    })
+        },
+    )
 }
 
 import ar from 'filepond/locale/ar-ar'
@@ -372,4 +423,3 @@ const locales = {
     zh_CN,
     zh_TW,
 }
-

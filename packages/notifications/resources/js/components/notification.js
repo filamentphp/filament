@@ -29,9 +29,9 @@ export default (Alpine) => {
 
             const hide = () => {
                 mutateDom(() => {
-                    this.$el._x_isShown ?
-                        this.$el.style.setProperty('visibility', 'hidden') :
-                        this.$el.style.setProperty('display', 'none')
+                    this.$el._x_isShown
+                        ? this.$el.style.setProperty('visibility', 'hidden')
+                        : this.$el.style.setProperty('display', 'none')
                 })
             }
 
@@ -81,7 +81,7 @@ export default (Alpine) => {
                     return
                 }
 
-                if (! this.isShown) {
+                if (!this.isShown) {
                     return
                 }
 
