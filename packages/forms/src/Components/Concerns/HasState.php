@@ -151,6 +151,8 @@ trait HasState
 
             $state = $this->getState();
 
+            // Hydrate all arrayable state objects as arrays by converting
+            // them to collections, then using `toArray()`.
             if (is_array($state) || $state instanceof Arrayable) {
                 $this->state(collect($state)->toArray());
             }
