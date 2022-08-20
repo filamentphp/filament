@@ -276,7 +276,7 @@ class TestsBulkActions
 
             Assert::assertTrue(
                 $action->getLabel() === $label,
-                "Failed asserting that a table action with name [{$name}] has label [{$label}] on the [{$livewireClass}] component for record [{$record}]."
+                "Failed asserting that a table bulk action with name [{$name}] has label [{$label}] on the [{$livewireClass}] component for record [{$record}]."
             );
 
             return $this;
@@ -296,7 +296,7 @@ class TestsBulkActions
 
             Assert::assertFalse(
                 $action->getLabel() === $label,
-                "Failed asserting that a table action with name [{$name}] does not have label [{$label}] on the [{$livewireClass}] component for record [{$record}]."
+                "Failed asserting that a table bulk action with name [{$name}] does not have label [{$label}] on the [{$livewireClass}] component for record [{$record}]."
             );
 
             return $this;
@@ -316,7 +316,7 @@ class TestsBulkActions
 
             Assert::assertTrue(
                 $action->getColor() === $color,
-                "Failed asserting that a table action with name [{$name}] has color [{$color}] on the [{$livewireClass}] component for record [{$record}]."
+                "Failed asserting that a table bulk action with name [{$name}] has color [{$color}] on the [{$livewireClass}] component for record [{$record}]."
             );
 
             return $this;
@@ -336,7 +336,7 @@ class TestsBulkActions
 
             Assert::assertFalse(
                 $action->getColor() === $color,
-                "Failed asserting that a table action with name [{$name}] does not have color [{$color}] on the [{$livewireClass}] component for record [{$record}]."
+                "Failed asserting that a table bulk action with name [{$name}] does not have color [{$color}] on the [{$livewireClass}] component for record [{$record}]."
             );
 
             return $this;
