@@ -104,4 +104,3 @@ it('can have a color', function () {
         ->assertTableBulkActionHasColor('has-color', 'primary')
         ->assertTableBulkActionDoesNotHaveColor('has-color', 'secondary');
 });
-
