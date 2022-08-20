@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Filament\Forms\Components\Component;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
@@ -147,6 +148,12 @@ trait HasState
     {
         if ($hydratedDefaultState === null) {
             $this->loadStateFromRelationships();
+
+            $state = $this->getState();
+
+            if (is_array($state) || $state instanceof Arrayable) {
+                $this->state(collect($state)->toArray());
+            }
 
             return;
         }
