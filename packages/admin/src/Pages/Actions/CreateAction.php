@@ -66,6 +66,8 @@ class CreateAction extends Action
             }
 
             $this->success();
+
+            $this->record(null);
         });
     }
 
