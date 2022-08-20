@@ -61,6 +61,10 @@ trait HasRecords
 
     protected function resolveTableRecord(?string $key): ?Model
     {
+        if ($key === null) {
+            return null;
+        }
+
         if (! ($this instanceof HasRelationshipTable && $this->getRelationship() instanceof BelongsToMany)) {
             return $this->getTableQuery()->find($key);
         }
