@@ -41,10 +41,13 @@
                         x-on:keydown.,.stop.prevent="createTag()"
                         x-on:blur="createTag()"
                         x-on:paste="$nextTick(() => {
-                            newTag.split(',').forEach(tag => {
-                                newTag = tag;
-                                createTag();
-                            });
+                            if (newTag.includes(',')) {
+                                newTag.split(',').forEach((tag) => {
+                                    newTag = tag
+                                    
+                                    createTag()
+                                })
+                            }
                         })"
                         x-model="newTag"
                         {{ $getExtraInputAttributeBag()->class([
