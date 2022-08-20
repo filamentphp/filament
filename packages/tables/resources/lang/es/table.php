@@ -59,7 +59,7 @@ return [
 
         'enable_reordering' => [
             'label' => 'Reordenar registros',
-        ],        
+        ],
 
         'filter' => [
             'label' => 'Filtrar',
