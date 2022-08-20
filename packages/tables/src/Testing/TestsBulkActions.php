@@ -223,6 +223,126 @@ class TestsBulkActions
         };
     }
 
+    public function assertTableBulkActionHasIcon(): Closure
+    {
+        return function (string $name, string $icon, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableBulkActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedTableBulkAction($name);
+
+            Assert::assertTrue(
+                $action->getIcon() === $icon,
+                "Failed asserting that a table bulk action with name [{$name}] has icon [{$icon}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableBulkActionDoesNotHaveIcon(): Closure
+    {
+        return function (string $name, string $icon, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableBulkActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedTableBulkAction($name);
+
+            Assert::assertFalse(
+                $action->getIcon() === $icon,
+                "Failed asserting that a table bulk action with name [{$name}] does not have icon [{$icon}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableBulkActionHasLabel(): Closure
+    {
+        return function (string $name, string $label, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableBulkActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedTableBulkAction($name);
+
+            Assert::assertTrue(
+                $action->getLabel() === $label,
+                "Failed asserting that a table action with name [{$name}] has label [{$label}] on the [{$livewireClass}] component for record [{$record}]."
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableBulkActionDoesNotHaveLabel(): Closure
+    {
+        return function (string $name, string $label, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableBulkActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedTableBulkAction($name);
+
+            Assert::assertFalse(
+                $action->getLabel() === $label,
+                "Failed asserting that a table action with name [{$name}] does not have label [{$label}] on the [{$livewireClass}] component for record [{$record}]."
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableBulkActionHasColor(): Closure
+    {
+        return function (string $name, string $color, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableBulkActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedTableBulkAction($name);
+
+            Assert::assertTrue(
+                $action->getColor() === $color,
+                "Failed asserting that a table action with name [{$name}] has color [{$color}] on the [{$livewireClass}] component for record [{$record}]."
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableBulkActionDoesNotHaveColor(): Closure
+    {
+        return function (string $name, string $color, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableBulkActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedTableBulkAction($name);
+
+            Assert::assertFalse(
+                $action->getColor() === $color,
+                "Failed asserting that a table action with name [{$name}] does not have color [{$color}] on the [{$livewireClass}] component for record [{$record}]."
+            );
+
+            return $this;
+        };
+    }
+
     public function assertTableBulkActionHeld(): Closure
     {
         return function (string $name): static {
