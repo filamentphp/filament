@@ -23865,9 +23865,7 @@ var locales2 = {
 
 // packages/forms/resources/js/components/key-value.js
 var key_value_default = (Alpine) => {
-  Alpine.data("keyValueFormComponent", ({
-    state: state2
-  }) => ({
+  Alpine.data("keyValueFormComponent", ({state: state2}) => ({
     state: state2,
     rows: [],
     shouldUpdateRows: true,
@@ -27723,10 +27721,7 @@ function a(e2, n2 = s) {
 
 // packages/forms/resources/js/components/markdown-editor.js
 var markdown_editor_default = (Alpine) => {
-  Alpine.data("markdownEditorFormComponent", ({
-    state: state2,
-    tab
-  }) => {
+  Alpine.data("markdownEditorFormComponent", ({state: state2, tab}) => {
     return {
       attachment: null,
       overlay: null,
@@ -27817,9 +27812,7 @@ import_trix.default.LineBreakInsertion.prototype.shouldInsertBlockBreak = functi
   }
 };
 var rich_editor_default = (Alpine) => {
-  Alpine.data("richEditorFormComponent", ({
-    state: state2
-  }) => {
+  Alpine.data("richEditorFormComponent", ({state: state2}) => {
     return {
       state: state2,
       init: function() {
@@ -27900,7 +27893,13 @@ var select_default = (Alpine) => {
         if (hasDynamicOptions) {
           this.$refs.input.addEventListener("showDropdown", async () => {
             this.select.clearChoices();
-            await this.select.setChoices([{value: "", label: loadingMessage, disabled: true}]);
+            await this.select.setChoices([
+              {
+                value: "",
+                label: loadingMessage,
+                disabled: true
+              }
+            ]);
             await this.refreshChoices();
           });
         }
@@ -27912,7 +27911,13 @@ var select_default = (Alpine) => {
             }
             this.isSearching = true;
             this.select.clearChoices();
-            await this.select.setChoices([{value: "", label: searchingMessage, disabled: true}]);
+            await this.select.setChoices([
+              {
+                value: "",
+                label: searchingMessage,
+                disabled: true
+              }
+            ]);
           });
           this.$refs.input.addEventListener("search", Alpine.debounce(async (event) => {
             await this.refreshChoices({
@@ -28006,9 +28011,7 @@ var select_default = (Alpine) => {
 
 // packages/forms/resources/js/components/tags-input.js
 var tags_input_default = (Alpine) => {
-  Alpine.data("tagsInputFormComponent", ({
-    state: state2
-  }) => {
+  Alpine.data("tagsInputFormComponent", ({state: state2}) => {
     return {
       newTag: "",
       state: state2,
@@ -31280,10 +31283,7 @@ try {
 
 // packages/forms/resources/js/components/text-input.js
 var text_input_default = (Alpine) => {
-  Alpine.data("textInputFormComponent", ({
-    getMaskOptionsUsing,
-    state: state2
-  }) => {
+  Alpine.data("textInputFormComponent", ({getMaskOptionsUsing, state: state2}) => {
     return {
       isStateBeingUpdated: false,
       mask: null,
