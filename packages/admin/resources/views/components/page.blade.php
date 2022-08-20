@@ -67,6 +67,12 @@
                         <x-filament::modal.heading>
                             {{ $action->getModalHeading() }}
                         </x-filament::modal.heading>
+
+                        @if ($subheading = $action->getModalSubheading())
+                            <x-filament::modal.subheading>
+                                {{ $subheading }}
+                            </x-filament::modal.subheading>
+                        @endif
                     </x-slot>
                 @endif
 
