@@ -24,7 +24,7 @@ class MultiSelectFilter extends BaseFilter
         $this->placeholder(__('tables::table.filters.multi_select.placeholder'));
 
         $this->indicateUsing(function (array $state): array {
-            if (! $state['values'] ?? false) {
+            if (! ($state['values'] ?? false)) {
                 return [];
             }
 

@@ -25,7 +25,7 @@ class SelectFilter extends BaseFilter
         $this->placeholder(__('tables::table.filters.select.placeholder'));
 
         $this->indicateUsing(function (array $state): array {
-            if (! $state['value'] ?? false) {
+            if (! ($state['value'] ?? false)) {
                 return [];
             }
 
