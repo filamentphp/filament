@@ -20,6 +20,7 @@
 
 <div
     x-data="{ isOpen: false }"
+    x-trap.noscroll="isOpen"
     @if ($id)
         x-on:{{ $closeEventName }}.window="if ($event.detail.id === '{{ $id }}') isOpen = false"
         x-on:{{ $openEventName }}.window="if ($event.detail.id === '{{ $id }}') isOpen = true"
@@ -63,7 +64,6 @@
 
         <div
             x-show="isOpen"
-            x-trap.noscroll="isOpen"
             @if (filled($id))
                 x-on:keydown.window.escape="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
             @else
