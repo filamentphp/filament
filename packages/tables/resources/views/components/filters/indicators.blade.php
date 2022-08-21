@@ -23,6 +23,9 @@
 
                         <button
                             wire:click="resetTableFilterForm('{{ $filter }}'{{ $field ? ' , \'' . $field . '\'' : null }})"
+                            wire:loading.attr="disabled"
+                            wire:loading.class="cursor-wait"
+                            wire:target="resetTableFilterForm"
                             type="button"
                             class="ml-1 -mr-2 p-1 -my-1 hover:bg-gray-500/10 rounded-full"
                         >
@@ -42,18 +45,20 @@
                     'dark:text-gray-400 dark:hover:text-gray-300 dark:hover:bg-gray-500/20' => config('tables.dark_mode'),
                 ])
             >
-                <x-heroicon-s-x
-                    :x-tooltip.raw="__('tables::table.filters.buttons.reset.label')"
-                    wire:loading.remove
-                    wire:target="resetTableFiltersForm"
-                    class="w-5 h-5"
-                />
+                <div class="w-5 h-5 flex items-center justify-center">
+                    <x-heroicon-s-x
+                        :x-tooltip.raw="__('tables::table.filters.buttons.reset.label')"
+                        wire:loading.remove.delay
+                        wire:target="resetTableFiltersForm,resetTableFilterForm"
+                        class="w-5 h-5"
+                    />
 
-                <x-filament-support::loading-indicator
-                    wire:loading
-                    wire:target="resetTableFiltersForm"
-                    class="animate-spin w-5 h-5"
-                />
+                    <x-filament-support::loading-indicator
+                        wire:loading.delay
+                        wire:target="resetTableFiltersForm,resetTableFilterForm"
+                        class="animate-spin w-5 h-5"
+                    />
+                </div>
 
                 <span class="sr-only">
                     {{ __('tables::table.filters.buttons.reset.label') }}

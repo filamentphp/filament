@@ -28,13 +28,13 @@ class MultiSelectFilter extends BaseFilter
                 return [];
             }
 
-            $labels = Arr::only($this->getOptions(), $state['value']);
+            $labels = Arr::only($this->getOptions(), $state['values']);
 
             if (! count($labels)) {
                 return [];
             }
 
-            $labels = Arr::join($labels, ', ', '& ');
+            $labels = Arr::join($labels, ', ', ' & ');
 
             return ["{$this->getIndicator()}: {$labels}"];
         });
