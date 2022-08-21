@@ -1836,6 +1836,15 @@ KeyValue::make('meta')
     ->disableEditingKeys()
 ```
 
+You can allow the user to reorder rows within the table:
+
+```php
+use Filament\Forms\Components\KeyValue;
+
+KeyValue::make('meta')
+    ->reorderable()
+```
+
 You may also add placeholders for the key and value fields using the `keyPlaceholder()` and `valuePlaceholder()` methods:
 
 ```php

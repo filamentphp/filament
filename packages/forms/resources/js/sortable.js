@@ -9,3 +9,13 @@ window.Livewire.directive('sortable', (el) => {
         dataIdAttr: 'wire:sortable.item',
     })
 })
+
+export default (Alpine) => {
+    Alpine.directive('sortable', (el) => {
+        el.sortable = Sortable.create(el, {
+            draggable: '[x-sortable-item]',
+            handle: '[x-sortable-handle]',
+            dataIdAttr: 'x-sortable-item',
+        })
+    })
+}

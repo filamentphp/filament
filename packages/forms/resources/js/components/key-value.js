@@ -44,6 +44,17 @@ export default (Alpine) => {
             this.shouldUpdateRows = true
         },
 
+        reorderRows: function (event) {
+            const rows = Alpine.raw(this.rows)
+
+            const reorderedRow = rows.splice(event.oldIndex, 1)[0]
+            rows.splice(event.newIndex, 0, reorderedRow)
+
+            this.rows = rows
+
+            this.updateState()
+        },
+
         updateRows: function () {
             let rows = []
 
