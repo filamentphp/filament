@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Filters;
 
-use Closure;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Toggle;
 
