@@ -10,7 +10,17 @@ class SpatieTagsColumn extends TagsColumn
 
     public function getTags(): array
     {
+        $state = $this->getState();
+
+        if ($state && (! $state instanceof Collection)) {
+            return $state;
+        }
+
         $record = $this->getRecord();
+
+        if ($this->queriesRelationships($record)) {
+            $record = $record->getRelationValue($this->getRelationshipName());
+        }
 
         if (! method_exists($record, 'tagsWithType')) {
             return [];
@@ -38,6 +48,10 @@ class SpatieTagsColumn extends TagsColumn
     {
         if ($this->isHidden()) {
             return $query;
+        }
+
+        if ($this->queriesRelationships($query->getModel())) {
+            return $query->with(["{$this->getRelationshipName()}.media"]);
         }
 
         return $query->with(['tags']);
