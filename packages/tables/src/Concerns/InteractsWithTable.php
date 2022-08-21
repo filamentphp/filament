@@ -15,6 +15,7 @@ trait InteractsWithTable
 {
     use CanBeStriped;
     use CanPaginateRecords;
+    use CanPollRecords;
     use CanReorderRecords;
     use CanSearchRecords;
     use CanSelectRecords;
@@ -114,6 +115,7 @@ trait InteractsWithTable
             ->header($this->getTableHeader())
             ->heading($this->getTableHeading())
             ->model($this->getTableQuery()->getModel()::class)
+            ->pollingInterval($this->getTablePollingInterval())
             ->recordsPerPageSelectOptions($this->getTableRecordsPerPageSelectOptions())
             ->reorderColumn($this->getTableReorderColumn())
             ->reorderable($this->isTableReorderable())

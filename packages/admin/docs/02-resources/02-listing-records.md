@@ -403,6 +403,21 @@ public static function table(Table $table): Table
 }
 ```
 
+## Polling content
+
+You may poll table content so that it refreshes at a set interval, using the `poll()` method:
+
+```php
+use Filament\Resources\Table;
+
+public static function table(Table $table): Table
+{
+    return $table
+        // ...
+        ->poll('10s');
+}
+```
+
 ## Authorization
 
 For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app.
