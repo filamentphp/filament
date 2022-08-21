@@ -86,3 +86,21 @@ it('can disable a bulk action', function () {
         ->assertTableBulkActionEnabled('enabled')
         ->assertTableBulkActionDisabled('disabled');
 });
+
+it('can have an icon', function () {
+    livewire(PostsTable::class)
+        ->assertTableBulkActionHasIcon('has-icon', 'heroicon-s-pencil')
+        ->assertTableBulkActionDoesNotHaveIcon('has-icon', 'heroicon-o-trash');
+});
+
+it('can have a label', function () {
+    livewire(PostsTable::class)
+        ->assertTableBulkActionHasLabel('has-label', 'My Action')
+        ->assertTableBulkActionDoesNotHaveLabel('has-label', 'My Other Action');
+});
+
+it('can have a color', function () {
+    livewire(PostsTable::class)
+        ->assertTableBulkActionHasColor('has-color', 'primary')
+        ->assertTableBulkActionDoesNotHaveColor('has-color', 'secondary');
+});

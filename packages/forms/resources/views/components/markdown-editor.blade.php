@@ -238,7 +238,7 @@
             </div>
 
             <div @class([
-                'prose max-w-none block w-full h-full min-h-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm focus:border-primary-300',
+                'prose max-w-none block w-full h-full min-h-full px-3 py-2 bg-white border border-gray-300 rounded-lg shadow-sm break-words focus:border-primary-300',
                 'dark:prose-invert dark:border-gray-600 dark:bg-gray-700' => config('forms.dark_mode'),
             ]) x-show="tab === 'preview'" x-html="preview" x-cloak style="min-height: 150px;"></div>
         </div>

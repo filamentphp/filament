@@ -12,8 +12,8 @@ return [
 
             'fields' => [
 
-                'record_ids' => [
-                    'label' => 'رکوردها',
+                'record_id' => [
+                    'label' => 'رکورد',
                 ],
 
             ],

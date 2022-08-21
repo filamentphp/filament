@@ -563,6 +563,12 @@
                         <x-tables::modal.heading>
                             {{ $action->getModalHeading() }}
                         </x-tables::modal.heading>
+
+                        @if ($subheading = $action->getModalSubheading())
+                            <x-tables::modal.subheading>
+                                {{ $subheading }}
+                            </x-tables::modal.subheading>
+                        @endif
                     </x-slot>
                 @endif
 
@@ -622,6 +628,12 @@
                         <x-tables::modal.heading>
                             {{ $action->getModalHeading() }}
                         </x-tables::modal.heading>
+
+                        @if ($subheading = $action->getModalSubheading())
+                            <x-tables::modal.subheading>
+                                {{ $subheading }}
+                            </x-tables::modal.subheading>
+                        @endif
                     </x-slot>
                 @endif
 

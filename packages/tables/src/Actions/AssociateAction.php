@@ -20,6 +20,8 @@ class AssociateAction extends Action
 
     protected ?Closure $modifyRecordSelectUsing = null;
 
+    protected ?Closure $modifyRecordSelectOptionsQueryUsing = null;
+
     protected bool | Closure $isAssociateAnotherDisabled = false;
 
     protected bool | Closure $isRecordSelectPreloaded = false;
@@ -94,6 +96,13 @@ class AssociateAction extends Action
         return $this;
     }
 
+    public function recordSelectOptionsQuery(?Closure $callback): static
+    {
+        $this->modifyRecordSelectOptionsQueryUsing = $callback;
+
+        return $this;
+    }
+
     public function recordTitleAttribute(string | Closure | null $attribute): static
     {
         $this->recordTitleAttribute = $attribute;
@@ -145,6 +154,12 @@ class AssociateAction extends Action
             $titleColumnName = $this->getRecordTitleAttribute();
 
             $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleColumnName);
+
+            if ($this->modifyRecordSelectOptionsQueryUsing) {
+                $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
+                    'query' => $relationshipQuery,
+                ]) ?? $relationshipQuery;
+            }
 
             if (filled($search)) {
                 $search = strtolower($search);

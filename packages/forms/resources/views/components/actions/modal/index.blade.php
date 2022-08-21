@@ -35,6 +35,12 @@
                     <x-forms::modal.heading>
                         {{ $action->getModalHeading() }}
                     </x-forms::modal.heading>
+
+                    @if ($subheading = $action->getModalSubheading())
+                        <x-forms::modal.subheading>
+                            {{ $subheading }}
+                        </x-forms::modal.subheading>
+                    @endif
                 </x-slot>
             @endif
 
