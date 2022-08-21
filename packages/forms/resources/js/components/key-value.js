@@ -16,7 +16,7 @@ export default (Alpine) => {
             this.shouldUpdateRows = true
 
             this.$watch('state', () => {
-                if (! this.shouldUpdateRows) {
+                if (!this.shouldUpdateRows) {
                     this.shouldUpdateRows = true
 
                     return
