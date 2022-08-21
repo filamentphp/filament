@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 class SpatieTagsColumn extends TagsColumn
 {
