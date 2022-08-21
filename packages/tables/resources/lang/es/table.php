@@ -2,6 +2,14 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 'y :count más',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -45,8 +53,16 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Terminar de reordenar registros',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Reordenar registros',
+        ],
+
         'filter' => [
-            'label' => 'Filtro',
+            'label' => 'Filtrar',
         ],
 
         'open_actions' => [
@@ -55,30 +71,6 @@ return [
 
         'toggle_columns' => [
             'label' => 'Alternar columnas',
-        ],
-
-    ],
-
-    'bulk_actions' => [
-
-        'force_delete' => [
-
-            'label' => 'Forzar eliminación',
-
-            'messages' => [
-                'deleted' => 'Registros eliminados',
-            ],
-
-        ],
-
-        'restore' => [
-
-            'label' => 'Restaurar',
-
-            'messages' => [
-                'restored' => 'Registros restaurados',
-            ],
-
         ],
 
     ],
@@ -122,6 +114,8 @@ return [
         ],
 
     ],
+
+    'reorder_indicator' => 'Arrastrar los registros en el orden.',
 
     'selection_indicator' => [
 
