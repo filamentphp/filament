@@ -9,7 +9,7 @@
 ]) }}>
     @if ($header)
         <thead>
-            <tr class="bg-gray-500/10">
+            <tr class="bg-gray-500/5">
                 {{ $header }}
             </tr>
         </thead>
