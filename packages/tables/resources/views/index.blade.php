@@ -324,7 +324,7 @@
                 @if ($content)
                     {{ $content->with(['records' => $records]) }}
                 @else
-                    <x-tables::table>
+                    <x-tables::table :poll="$getPollingInterval()">
                         <x-slot name="header">
                             @if ($isReordering)
                                 <th></th>

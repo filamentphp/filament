@@ -384,6 +384,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return filled($this->getTableReorderColumn()) && static::getResource()::canReorder();
     }
 
+    protected function getTablePollingInterval(): ?string
+    {
+        return $this->getResourceTable()->getPollingInterval();
+    }
+
     protected function getTableRecordUrlUsing(): ?Closure
     {
         return function (Model $record): ?string {

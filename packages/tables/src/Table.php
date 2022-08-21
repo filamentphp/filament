@@ -66,6 +66,8 @@ class Table extends ViewComponent
 
     protected string $model;
 
+    protected ?string $pollingInterval = null;
+
     protected ?array $recordsPerPageSelectOptions = null;
 
     protected string $view = 'tables::index';
@@ -227,6 +229,13 @@ class Table extends ViewComponent
     public function striped(bool $condition = true): static
     {
         $this->isStriped = $condition;
+
+        return $this;
+    }
+
+    public function pollingInterval(?string $interval): static
+    {
+        $this->pollingInterval = $interval;
 
         return $this;
     }
@@ -479,6 +488,11 @@ class Table extends ViewComponent
     public function getRecordKey(Model $record): string
     {
         return $this->getLivewire()->getTableRecordKey($record);
+    }
+
+    public function getPollingInterval(): ?string
+    {
+        return $this->pollingInterval;
     }
 
     public function isStriped(): bool
