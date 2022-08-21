@@ -59,7 +59,8 @@
 
                 <div @class([
                     'flex-1 w-full px-4 mx-auto md:px-6 lg:px-8 filament-main-content',
-                    match ($maxContentWidth ?? config('filament.layout.max_content_width')) {
+                    match ($maxContentWidth ??= config('filament.layout.max_content_width')) {
+                        null, '7xl', '' => 'max-w-7xl',
                         'xl' => 'max-w-xl',
                         '2xl' => 'max-w-2xl',
                         '3xl' => 'max-w-3xl',
@@ -67,7 +68,7 @@
                         '5xl' => 'max-w-5xl',
                         '6xl' => 'max-w-6xl',
                         'full' => 'max-w-full',
-                        default => 'max-w-7xl',
+                        default => $maxContentWidth,
                     },
                 ])>
                     {{ \Filament\Facades\Filament::renderHook('content.start') }}
