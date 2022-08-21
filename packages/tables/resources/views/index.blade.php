@@ -308,8 +308,36 @@
             </div>
         </div>
 
+        @if ($isReordering)
+            <x-tables::reorder.indicator
+                :colspan="$columnsCount"
+                :class="\Illuminate\Support\Arr::toCssClasses([
+                    'border-t',
+                    'dark:border-gray-700' => config('tables.dark_mode'),
+                ])"
+            />
+        @elseif ($isSelectionEnabled)
+            <x-tables::selection-indicator
+                :all-records-count="$getAllRecordsCount()"
+                :colspan="$columnsCount"
+                x-show="selectedRecords.length"
+                :class="\Illuminate\Support\Arr::toCssClasses([
+                    'border-t',
+                    'dark:border-gray-700' => config('tables.dark_mode'),
+                ])"
+            >
+                <x-slot name="selectedRecordsCount">
+                    <span x-text="selectedRecords.length"></span>
+                </x-slot>
+            </x-tables::selection-indicator>
+        @endif
+
         <x-tables::filters.indicators
             :indicators="collect($getFilters())->mapWithKeys(fn (\Filament\Tables\Filters\BaseFilter $filter): array => [$filter->getName() => $filter->getIndicators()])->filter(fn (array $indicators): bool => count($indicators))->all()"
+            :class="\Illuminate\Support\Arr::toCssClasses([
+                'border-t',
+                'dark:border-gray-700' => config('tables.dark_mode'),
+            ])"
         />
 
         <div
@@ -380,20 +408,6 @@
                                 <th class="w-5"></th>
                             @endif
                         </x-slot>
-
-                        @if ($isReordering)
-                            <x-tables::reorder.indicator :colspan="$columnsCount" />
-                        @elseif ($isSelectionEnabled)
-                            <x-tables::selection-indicator
-                                :all-records-count="$getAllRecordsCount()"
-                                :colspan="$columnsCount"
-                                x-show="selectedRecords.length"
-                            >
-                                <x-slot name="selectedRecordsCount">
-                                    <span x-text="selectedRecords.length"></span>
-                                </x-slot>
-                            </x-tables::selection-indicator>
-                        @endif
 
                         @foreach ($records as $record)
                             @php

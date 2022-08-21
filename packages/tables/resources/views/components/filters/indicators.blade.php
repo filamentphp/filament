@@ -3,8 +3,8 @@
 ])
 
 @if (count($indicators))
-    <div class="bg-gray-500/10 gap-x-4 px-4 py-2 text-sm flex">
-        <div class="flex flex-1 items-center flex-wrap gap-y-2 gap-x-4">
+    <div {{ $attributes->class(['bg-gray-500/5 gap-x-4 px-4 py-1 text-sm flex filament-tables-filter-indicators']) }}>
+        <div class="flex flex-1 items-center flex-wrap gap-y-1 gap-x-2">
             <span class="font-medium">
                 {{ __('tables::table.filters.indicator') }}
             </span>
@@ -16,8 +16,8 @@
                     @endphp
 
                     <span @class([
-                        'inline-flex items-center justify-center min-h-6 mt-0.5 px-2 py-0.5 text-xs font-medium tracking-tight rounded-xl text-gray-700 bg-gray-500/10 whitespace-normal',
-                        'dark:text-gray-500' => config('tables.dark_mode'),
+                        'inline-flex items-center justify-center min-h-6 px-2 py-0.5 text-xs font-medium tracking-tight rounded-xl text-gray-700 bg-gray-500/10 whitespace-normal filament-tables-filter-indicator',
+                        'dark:text-gray-300 dark:bg-gray-500/20' => config('tables.dark_mode'),
                     ])>
                         {{ $indicator }}
 
@@ -37,7 +37,10 @@
             <button
                 wire:click="resetTableFiltersForm"
                 type="button"
-                class="mt-1 text-gray-600 hover:text-gray-700"
+                @class([
+                    '-mb-1.5 -mt-0.5 -mr-2 p-1.5 text-gray-600 hover:bg-gray-500/10 rounded-full hover:text-gray-700',
+                    'dark:text-gray-400 dark:hover:text-gray-300 dark:hover:bg-gray-500/20' => config('tables.dark_mode'),
+                ])
             >
                 <x-heroicon-s-x
                     :x-tooltip.raw="__('tables::table.filters.buttons.reset.label')"
