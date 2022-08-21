@@ -308,6 +308,10 @@
             </div>
         </div>
 
+        <x-tables::filters.indicators
+            :indicators="collect($getFilters())->mapWithKeys(fn (\Filament\Tables\Filters\BaseFilter $filter): array => [$filter->getName() => $filter->getIndicators()])->filter(fn (array $indicators): bool => count($indicators))->all()"
+        />
+
         <div
             @class([
                 'overflow-y-auto relative',

@@ -5,6 +5,7 @@ namespace Filament\Tables\Filters;
 use Closure;
 use Filament\Forms\Components\MultiSelect;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 
 class MultiSelectFilter extends BaseFilter
 {
@@ -21,6 +22,22 @@ class MultiSelectFilter extends BaseFilter
         parent::setUp();
 
         $this->placeholder(__('tables::table.filters.multi_select.placeholder'));
+
+        $this->indicateUsing(function (array $state): array {
+            if (! $state['values'] ?? false) {
+                return [];
+            }
+
+            $labels = Arr::only($this->getOptions(), $state['value']);
+
+            if (! count($labels)) {
+                return [];
+            }
+
+            $labels = Arr::join($labels, ', ', '& ');
+
+            return ["{$this->getIndicator()}: {$labels}"];
+        });
     }
 
     public function apply(Builder $query, array $data = []): Builder

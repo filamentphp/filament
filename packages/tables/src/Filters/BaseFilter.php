@@ -13,6 +13,7 @@ class BaseFilter extends Component
     use Concerns\CanSpanColumns;
     use Concerns\HasDefaultState;
     use Concerns\HasFormSchema;
+    use Concerns\HasIndicators;
     use Concerns\HasLabel;
     use Concerns\HasName;
     use Concerns\InteractsWithTableQuery;
