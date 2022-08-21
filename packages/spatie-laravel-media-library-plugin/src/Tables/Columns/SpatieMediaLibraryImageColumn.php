@@ -3,9 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection;
 use Throwable;
 
 class SpatieMediaLibraryImageColumn extends ImageColumn
