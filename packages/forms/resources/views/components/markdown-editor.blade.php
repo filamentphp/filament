@@ -216,7 +216,7 @@
                         @if (! $isConcealed())
                             {!! $isRequired() ? 'required' : null !!}
                         @endif
-                        class="tracking-normal whitespace-pre-wrap overflow-y-hidden font-mono block absolute bg-transparent top-0 text-sm left-0 block z-1 w-full h-full min-h-full resize-none transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 caret-black"
+                        class="tracking-normal overflow-y-hidden font-mono block absolute bg-transparent top-0 text-sm left-0 block z-1 w-full h-full min-h-full resize-none transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 caret-black"
                         x-bind:class="{
                             'dark:caret-white dark:focus:border-primary-600': @js(config('forms.dark_mode')),
                             'border-gray-300': ! (@js($getStatePath()) in $store.errors.entries),
