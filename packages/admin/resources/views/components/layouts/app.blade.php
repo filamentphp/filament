@@ -33,17 +33,7 @@
                     'dark:bg-gray-800 dark:border-gray-700' => config('filament.dark_mode'),
                 ])>
                     <div @class([
-                        'flex items-center w-full px-2 mx-auto sm:px-4 md:px-6 lg:px-8',
-                        match ($maxContentWidth ?? config('filament.layout.max_content_width')) {
-                            'xl' => 'max-w-xl',
-                            '2xl' => 'max-w-2xl',
-                            '3xl' => 'max-w-3xl',
-                            '4xl' => 'max-w-4xl',
-                            '5xl' => 'max-w-5xl',
-                            '6xl' => 'max-w-6xl',
-                            'full' => 'max-w-full',
-                            default => 'max-w-7xl',
-                        },
+                        'flex items-center w-full px-2 sm:px-4 md:px-6 lg:px-8',
                     ])>
                         <button
                             x-data="{}"
@@ -69,7 +59,8 @@
 
                 <div @class([
                     'flex-1 w-full px-4 mx-auto md:px-6 lg:px-8 filament-main-content',
-                    match ($maxContentWidth ?? config('filament.layout.max_content_width')) {
+                    match ($maxContentWidth ??= config('filament.layout.max_content_width')) {
+                        null, '7xl', '' => 'max-w-7xl',
                         'xl' => 'max-w-xl',
                         '2xl' => 'max-w-2xl',
                         '3xl' => 'max-w-3xl',
@@ -77,7 +68,7 @@
                         '5xl' => 'max-w-5xl',
                         '6xl' => 'max-w-6xl',
                         'full' => 'max-w-full',
-                        default => 'max-w-7xl',
+                        default => $maxContentWidth,
                     },
                 ])>
                     {{ \Filament\Facades\Filament::renderHook('content.start') }}
