@@ -20,6 +20,7 @@ use Illuminate\Validation\Rules\Exists;
 class Select extends Field
 {
     use Concerns\HasAffixes {
+        getActions as getBaseActions;
         getSuffixAction as getBaseSuffixAction;
     }
     use Concerns\HasExtraInputAttributes;
@@ -170,7 +171,7 @@ class Select extends Field
 
     public function getActions(): array
     {
-        $actions = parent::getActions();
+        $actions = $this->getBaseActions();
 
         $createOptionActionName = $this->getCreateOptionActionName();
 
@@ -254,7 +255,7 @@ class Select extends Field
         if ($this->modifyCreateOptionActionUsing) {
             $action = $this->evaluate($this->modifyCreateOptionActionUsing, [
                 'action' => $action,
-            ]);
+            ]) ?? $action;
         }
 
         return $action;

@@ -4,6 +4,8 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Filament\Forms\Components\Component;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
 
@@ -92,13 +94,36 @@ trait HasState
         return $this;
     }
 
-    public function dehydrateState()
+    public function getStateToDehydrate(): array
     {
         if ($callback = $this->dehydrateStateUsing) {
-            return $this->evaluate($callback);
+            return [$this->getStatePath() => $this->evaluate($callback)];
         }
 
-        return $this->getState();
+        return [$this->getStatePath() => $this->getState()];
+    }
+
+    public function dehydrateState(array &$state): void
+    {
+        if (! $this->isDehydrated()) {
+            Arr::forget($state, $this->getStatePath());
+
+            return;
+        }
+
+        if ($this->getStatePath(isAbsolute: false)) {
+            foreach ($this->getStateToDehydrate() as $key => $value) {
+                Arr::set($state, $key, $value);
+            }
+        }
+
+        foreach ($this->getChildComponentContainers() as $container) {
+            if ($container->isHidden()) {
+                continue;
+            }
+
+            $container->dehydrateState($state);
+        }
     }
 
     public function dehydrateStateUsing(?Closure $callback): static
@@ -108,29 +133,68 @@ trait HasState
         return $this;
     }
 
-    public function hydrateDefaultState(): static
+    public function hydrateState(?array &$hydratedDefaultState): void
     {
-        if (! $this->hasDefaultState()) {
-            return $this;
+        $this->hydrateDefaultState($hydratedDefaultState);
+
+        foreach ($this->getChildComponentContainers(withHidden: true) as $container) {
+            $container->hydrateState($hydratedDefaultState);
         }
+
+        $this->callAfterStateHydrated();
+    }
+
+    public function fill(): void
+    {
+        $defaults = [];
+
+        $this->hydrateDefaultState($defaults);
+    }
+
+    public function hydrateDefaultState(?array &$hydratedDefaultState): void
+    {
+        if ($hydratedDefaultState === null) {
+            $this->loadStateFromRelationships();
+
+            $state = $this->getState();
+
+            // Hydrate all arrayable state objects as arrays by converting
+            // them to collections, then using `toArray()`.
+            if (is_array($state) || $state instanceof Arrayable) {
+                $this->state(collect($state)->toArray());
+            }
+
+            return;
+        }
+
+        $statePath = $this->getStatePath();
+
+        if (Arr::has($hydratedDefaultState, $statePath)) {
+            return;
+        }
+
+        if (! $this->hasDefaultState()) {
+            $this->state(null);
+
+            return;
+        }
+
+        $defaultState = $this->getDefaultState();
 
         $this->state($this->getDefaultState());
 
-        return $this;
+        Arr::set($hydratedDefaultState, $statePath, $defaultState);
     }
 
-    public function fillStateWithNull(bool $shouldOverwrite = true): static
+    public function fillStateWithNull(): void
     {
-        $livewire = $this->getLivewire();
+        if (! Arr::has((array) $this->getLivewire(), $this->getStatePath())) {
+            $this->state(null);
+        }
 
-        data_set(
-            $livewire,
-            $this->getStatePath(),
-            null,
-            $shouldOverwrite,
-        );
-
-        return $this;
+        foreach ($this->getChildComponentContainers(withHidden: true) as $container) {
+            $container->fillStateWithNull();
+        }
     }
 
     public function mutateDehydratedState($state)
@@ -236,7 +300,7 @@ trait HasState
 
             return data_get(
                 $livewire,
-                $this->generateStatePathForCallback($path, $isAbsolute)
+                $this->generateRelativeStatePath($path, $isAbsolute)
             );
         };
     }
@@ -248,7 +312,7 @@ trait HasState
 
             data_set(
                 $livewire,
-                $this->generateStatePathForCallback($path, $isAbsolute),
+                $this->generateRelativeStatePath($path, $isAbsolute),
                 $this->evaluate($state),
             );
 
@@ -256,7 +320,7 @@ trait HasState
         };
     }
 
-    protected function generateStatePathForCallback(string | Component $path, bool $isAbsolute = false): string
+    protected function generateRelativeStatePath(string | Component $path, bool $isAbsolute = false): string
     {
         if ($path instanceof Component) {
             return $path->getStatePath();

@@ -30,7 +30,7 @@ export default (Alpine) => {
                         'color-changed',
                         (event) => {
                             this.setState(event.detail.value)
-                        }
+                        },
                     )
                 },
 
@@ -49,6 +49,6 @@ export default (Alpine) => {
                     this.$refs.panel.color = value
                 },
             }
-        }
+        },
     )
 }

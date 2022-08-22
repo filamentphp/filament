@@ -5,10 +5,7 @@ import { marked } from 'marked'
 import { highlight } from 'mdhl'
 
 export default (Alpine) => {
-    Alpine.data('markdownEditorFormComponent', ({
-        state,
-        tab,
-    }) => {
+    Alpine.data('markdownEditorFormComponent', ({ state, tab }) => {
         return {
             attachment: null,
 
@@ -35,7 +32,8 @@ export default (Alpine) => {
             render: function () {
                 if (this.$refs.textarea.scrollHeight > 0) {
                     this.$refs.overlay.style.height = '150px'
-                    this.$refs.overlay.style.height = this.$refs.textarea.scrollHeight + 'px'
+                    this.$refs.overlay.style.height =
+                        this.$refs.textarea.scrollHeight + 'px'
                 }
 
                 this.overlay = null
@@ -46,15 +44,15 @@ export default (Alpine) => {
             },
 
             checkForAutoInsertion($event) {
-                const lines = this.$refs.textarea.value.split("\n")
+                const lines = this.$refs.textarea.value.split('\n')
 
-                const currentLine = this.$refs.textarea.value.substring(
-                    0, this.$refs.textarea.value.selectionStart
-                ).split("\n").length
+                const currentLine = this.$refs.textarea.value
+                    .substring(0, this.$refs.textarea.value.selectionStart)
+                    .split('\n').length
                 const previousLine = lines[currentLine - 2]
 
-                if (! previousLine.match(/^(\*\s|-\s)|^(\d)+\./)) {
-                    return;
+                if (!previousLine.match(/^(\*\s|-\s)|^(\d)+\./)) {
+                    return
                 }
 
                 if (previousLine.match(/^(\*\s)/)) {
@@ -73,14 +71,14 @@ export default (Alpine) => {
                     const matches = previousLine.match(/^(\d)+/)
                     const number = matches[0]
 
-                    if (previousLine.trim().length > (number.length + 2)) {
+                    if (previousLine.trim().length > number.length + 2) {
                         lines[currentLine - 1] = `${parseInt(number) + 1}. `
                     } else {
                         delete lines[currentLine - 2]
                     }
                 }
 
-                this.state = lines.join("\n")
+                this.state = lines.join('\n')
 
                 this.render()
             },

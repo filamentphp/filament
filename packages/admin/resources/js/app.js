@@ -40,7 +40,7 @@ Alpine.store('sidebar', {
     toggleCollapsedGroup: function (group) {
         this.collapsedGroups = this.collapsedGroups.includes(group)
             ? this.collapsedGroups.filter(
-                  (collapsedGroup) => collapsedGroup !== group
+                  (collapsedGroup) => collapsedGroup !== group,
               )
             : this.collapsedGroups.concat(group)
     },
@@ -56,7 +56,9 @@ Alpine.store('sidebar', {
 
 Alpine.store(
     'theme',
-    window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light',
 )
 
 window.addEventListener('dark-mode-toggled', (event) => {

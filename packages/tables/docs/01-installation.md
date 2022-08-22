@@ -229,6 +229,13 @@ If you wish to translate the package, you may publish the language files using:
 php artisan vendor:publish --tag=tables-translations
 ```
 
+Since this package depends on other Filament packages, you may wish to translate those as well:
+
+```bash
+php artisan vendor:publish --tag=filament-forms-translations
+php artisan vendor:publish --tag=filament-support-translations
+```
+
 ## Upgrading
 
 To upgrade the package to the latest version, you must run:

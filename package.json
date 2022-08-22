@@ -2,7 +2,8 @@
     "name": "filament",
     "scripts": {
         "build": "node bin/build && mix --production",
-        "watch": "node bin/build && mix watch"
+        "watch": "node bin/build && mix watch",
+        "prettier": "npx prettier --write '**/*.{css,js,yml}' '!**/dist' '!**/vendor'"
     },
     "devDependencies": {
         "@alpinejs/collapse": "^3.8.1",
@@ -37,6 +38,7 @@
         "marked": "^4.0.10",
         "mdhl": "^0.0.6",
         "postcss": "^8.4.4",
+        "prettier": "^2.7.1",
         "sortablejs": "^1.15.0",
         "tailwindcss": "^3.0.0",
         "tippy.js": "^6.3.7",

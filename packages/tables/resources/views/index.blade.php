@@ -1,7 +1,9 @@
 @php
+    use Filament\Tables\Actions\Position;
     use Filament\Tables\Filters\Layout;
 
     $actions = $getActions();
+    $actionsPosition = $getActionsPosition();
     $columns = $getColumns();
     $content = $getContent();
     $contentFooter = $getContentFooter();
@@ -306,6 +308,38 @@
             </div>
         </div>
 
+        @if ($isReordering)
+            <x-tables::reorder.indicator
+                :colspan="$columnsCount"
+                :class="\Illuminate\Support\Arr::toCssClasses([
+                    'border-t',
+                    'dark:border-gray-700' => config('tables.dark_mode'),
+                ])"
+            />
+        @elseif ($isSelectionEnabled)
+            <x-tables::selection-indicator
+                :all-records-count="$getAllRecordsCount()"
+                :colspan="$columnsCount"
+                x-show="selectedRecords.length"
+                :class="\Illuminate\Support\Arr::toCssClasses([
+                    'border-t',
+                    'dark:border-gray-700' => config('tables.dark_mode'),
+                ])"
+            >
+                <x-slot name="selectedRecordsCount">
+                    <span x-text="selectedRecords.length"></span>
+                </x-slot>
+            </x-tables::selection-indicator>
+        @endif
+
+        <x-tables::filters.indicators
+            :indicators="collect($getFilters())->mapWithKeys(fn (\Filament\Tables\Filters\BaseFilter $filter): array => [$filter->getName() => $filter->getIndicators()])->filter(fn (array $indicators): bool => count($indicators))->all()"
+            :class="\Illuminate\Support\Arr::toCssClasses([
+                'border-t',
+                'dark:border-gray-700' => config('tables.dark_mode'),
+            ])"
+        />
+
         <div
             @class([
                 'overflow-y-auto relative',
@@ -322,28 +356,38 @@
                 @if ($content)
                     {{ $content->with(['records' => $records]) }}
                 @else
-                    <x-tables::table>
+                    <x-tables::table :poll="$getPollingInterval()">
                         <x-slot name="header">
                             @if ($isReordering)
                                 <th></th>
-                            @elseif ($isSelectionEnabled)
-                                <x-tables::checkbox-cell>
-                                    <x-slot
-                                        name="checkbox"
-                                        x-on:click="toggleSelectRecordsOnPage"
-                                        x-bind:checked="
-                                            if (areRecordsSelected(getRecordsOnPage())) {
-                                                $el.checked = true
+                            @else
+                                @if (count($actions) && $actionsPosition === Position::BeforeCells)
+                                    <th class="w-5"></th>
+                                @endif
 
-                                                return 'checked'
-                                            }
+                                @if ($isSelectionEnabled)
+                                    <x-tables::checkbox-cell>
+                                        <x-slot
+                                            name="checkbox"
+                                            x-on:click="toggleSelectRecordsOnPage"
+                                            x-bind:checked="
+                                                if (areRecordsSelected(getRecordsOnPage())) {
+                                                    $el.checked = true
 
-                                            $el.checked = false
+                                                    return 'checked'
+                                                }
 
-                                            return null
-                                        "
-                                    ></x-slot>
-                                </x-tables::checkbox-cell>
+                                                $el.checked = false
+
+                                                return null
+                                            "
+                                        ></x-slot>
+                                    </x-tables::checkbox-cell>
+                                @endif
+
+                                @if (count($actions) && $actionsPosition === Position::BeforeColumns)
+                                    <th class="w-5"></th>
+                                @endif
                             @endif
 
                             @foreach ($columns as $column)
@@ -360,32 +404,20 @@
                                 </x-tables::header-cell>
                             @endforeach
 
-                            @if (count($actions) && (! $isReordering))
+                            @if (count($actions) && (! $isReordering) && $actionsPosition === Position::AfterCells)
                                 <th class="w-5"></th>
                             @endif
                         </x-slot>
 
-                        @if ($isReordering)
-                            <x-tables::reorder.indicator :colspan="$columnsCount" />
-                        @elseif ($isSelectionEnabled)
-                            <x-tables::selection-indicator
-                                :all-records-count="$getAllRecordsCount()"
-                                :colspan="$columnsCount"
-                                x-show="selectedRecords.length"
-                            >
-                                <x-slot name="selectedRecordsCount">
-                                    <span x-text="selectedRecords.length"></span>
-                                </x-slot>
-                            </x-tables::selection-indicator>
-                        @endif
-
                         @foreach ($records as $record)
                             @php
+                                $recordAction = $getRecordAction($record);
                                 $recordKey = $getRecordKey($record);
                                 $recordUrl = $getRecordUrl($record);
                             @endphp
 
                             <x-tables::row
+                                :record-action="$recordAction"
                                 :record-url="$recordUrl"
                                 :wire:key="$this->id . '.table.records.' . $recordKey"
                                 :wire:sortable.item="$isReordering ? $recordKey : null"
@@ -394,21 +426,40 @@
                                 x-bind:class="{
                                     'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $recordKey }}'),
                                 }"
-                                :class="\Illuminate\Support\Arr::toCssClasses([
-                                    'group cursor-move' => $isReordering,
-                                ])"
+                                :class="\Illuminate\Support\Arr::toCssClasses(array_merge(
+                                    [
+                                        'group cursor-move' => $isReordering,
+                                    ],
+                                    $getRecordClasses($record),
+                                ))"
                             >
                                 @if ($isReordering)
                                     <x-tables::reorder.cell />
-                                @elseif ($isSelectionEnabled)
-                                    <x-tables::checkbox-cell>
-                                        <x-slot
-                                            name="checkbox"
-                                            x-model="selectedRecords"
-                                            :value="$recordKey"
-                                            class="table-row-checkbox"
-                                        ></x-slot>
-                                    </x-tables::checkbox-cell>
+                                @else
+                                    @if (count($actions) && $actionsPosition === Position::BeforeCells)
+                                        <x-tables::actions-cell
+                                            :actions="$actions"
+                                            :record="$record"
+                                        />
+                                    @endif
+
+                                    @if ($isSelectionEnabled)
+                                        <x-tables::checkbox-cell>
+                                            <x-slot
+                                                name="checkbox"
+                                                x-model="selectedRecords"
+                                                :value="$recordKey"
+                                                class="table-row-checkbox"
+                                            ></x-slot>
+                                        </x-tables::checkbox-cell>
+                                    @endif
+
+                                    @if (count($actions) && $actionsPosition === Position::BeforeColumns)
+                                        <x-tables::actions-cell
+                                            :actions="$actions"
+                                            :record="$record"
+                                        />
+                                    @endif
                                 @endif
 
                                 @foreach ($columns as $column)
@@ -422,7 +473,7 @@
                                         :alignment="$column->getAlignment()"
                                         :record="$record"
                                         :tooltip="$column->getTooltip()"
-                                        :record-action="$getRecordAction()"
+                                        :record-action="$recordAction"
                                         :record-url="$recordUrl"
                                         :should-open-url-in-new-tab="$column->shouldOpenUrlInNewTab()"
                                         :url="$column->getUrl()"
@@ -435,12 +486,10 @@
                                     </x-tables::cell>
                                 @endforeach
 
-                                @if (count($actions) && (! $isReordering))
+                                @if (count($actions) && (! $isReordering) && $actionsPosition === Position::AfterCells)
                                     <x-tables::actions-cell
                                         :actions="$actions"
                                         :record="$record"
-                                        wire:loading.remove.delay
-                                        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
                                     />
                                 @endif
 
@@ -479,7 +528,10 @@
             @endif
         </div>
 
-        @if ($records instanceof \Illuminate\Contracts\Pagination\Paginator)
+        @if (
+            $records instanceof \Illuminate\Contracts\Pagination\Paginator &&
+            ((! $records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) || $records->total())
+        )
             <div @class([
                 'p-2 border-t',
                 'dark:border-gray-700' => config('tables.dark_mode'),
@@ -497,7 +549,22 @@
             $action = $getMountedAction();
         @endphp
 
-        <x-tables::modal :id="\Illuminate\Support\Str::of(static::class)->replace('\\', '\\\\') . '-table-action'" :visible="filled($action)" :width="$action?->getModalWidth()" display-classes="block">
+        <x-tables::modal
+            :id="$this->id . '-table-action'"
+            :wire:key="$action ? $this->id . '.table' . ($getMountedActionRecordKey() ? '.records.' . $getMountedActionRecordKey() : null) . '.actions.' . $action->getName() . '.modal' : null"
+            x-init="
+                $watch('isOpen', () => {
+                    if (isOpen) {
+                        return
+                    }
+
+                    $wire.mountedTableAction = null
+                })
+            "
+            :visible="filled($action)"
+            :width="$action?->getModalWidth()"
+            display-classes="block"
+        >
             @if ($action)
                 @if ($action->isModalCentered())
                     <x-slot name="heading">
@@ -514,6 +581,12 @@
                         <x-tables::modal.heading>
                             {{ $action->getModalHeading() }}
                         </x-tables::modal.heading>
+
+                        @if ($subheading = $action->getModalSubheading())
+                            <x-tables::modal.subheading>
+                                {{ $subheading }}
+                            </x-tables::modal.subheading>
+                        @endif
                     </x-slot>
                 @endif
 
@@ -541,7 +614,22 @@
             $action = $getMountedBulkAction();
         @endphp
 
-        <x-tables::modal :id="\Illuminate\Support\Str::of(static::class)->replace('\\', '\\\\') . '-table-bulk-action'" :visible="filled($action)" :width="$action?->getModalWidth()" display-classes="block">
+        <x-tables::modal
+            :id="$this->id . '-table-bulk-action'"
+            :wire:key="$action ? $this->id . '.table.bulk-actions.' . $action->getName() . '.modal' : null"
+            x-init="
+                $watch('isOpen', () => {
+                    if (isOpen) {
+                        return
+                    }
+
+                    $wire.mountedTableBulkAction = null
+                })
+            "
+            :visible="filled($action)"
+            :width="$action?->getModalWidth()"
+            display-classes="block"
+        >
             @if ($action)
                 @if ($action->isModalCentered())
                     <x-slot name="heading">
@@ -558,6 +646,12 @@
                         <x-tables::modal.heading>
                             {{ $action->getModalHeading() }}
                         </x-tables::modal.heading>
+
+                        @if ($subheading = $action->getModalSubheading())
+                            <x-tables::modal.subheading>
+                                {{ $subheading }}
+                            </x-tables::modal.subheading>
+                        @endif
                     </x-slot>
                 @endif
 

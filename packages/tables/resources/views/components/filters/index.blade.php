@@ -1,5 +1,5 @@
 @props([
-    'form'
+    'form',
 ])
 
 <div

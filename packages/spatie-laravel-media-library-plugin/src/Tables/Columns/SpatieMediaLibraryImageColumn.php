@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Throwable;
 
 class SpatieMediaLibraryImageColumn extends ImageColumn
@@ -39,11 +40,15 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
     {
         $state = $this->getState();
 
-        if ($state) {
+        if ($state && (! $state instanceof Collection)) {
             return $state;
         }
 
         $record = $this->getRecord();
+
+        if ($this->queriesRelationships($record)) {
+            $record = $record->getRelationValue($this->getRelationshipName());
+        }
 
         if ($this->getVisibility() === 'private' && method_exists($record, 'getFirstTemporaryUrl')) {
             try {
@@ -68,6 +73,10 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
     {
         if ($this->isHidden()) {
             return $query;
+        }
+
+        if ($this->queriesRelationships($query->getModel())) {
+            return $query->with(["{$this->getRelationshipName()}.media"]);
         }
 
         return $query->with(['media']);

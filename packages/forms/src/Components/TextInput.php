@@ -98,7 +98,7 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
             $value = $component->getMaxValue();
 
             return "max:{$value}";
-        });
+        }, static fn (TextInput $component): bool => filled($component->getMaxValue()));
 
         return $this;
     }
@@ -111,7 +111,7 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
             $value = $component->getMinValue();
 
             return "min:{$value}";
-        });
+        }, static fn (TextInput $component): bool => filled($component->getMinValue()));
 
         return $this;
     }

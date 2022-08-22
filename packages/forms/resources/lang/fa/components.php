@@ -2,10 +2,6 @@
 
 return [
 
-    'file_upload' => [
-        'filepond_locale' => 'fa_ir',
-    ],
-
     'builder' => [
 
         'collapsed' => 'محتوا جمع شد',

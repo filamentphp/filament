@@ -102,7 +102,7 @@ trait HasActions
             $action->resetFormData();
 
             $this->dispatchBrowserEvent('close-modal', [
-                'id' => static::class . '-table-action',
+                'id' => "{$this->id}-table-action",
             ]);
         }
     }
@@ -151,7 +151,7 @@ trait HasActions
         $this->resetErrorBag();
 
         $this->dispatchBrowserEvent('open-modal', [
-            'id' => static::class . '-table-action',
+            'id' => "{$this->id}-table-action",
         ]);
     }
 
@@ -188,9 +188,14 @@ trait HasActions
             ->context($this->mountedTableAction);
     }
 
+    public function getMountedTableActionRecordKey()
+    {
+        return $this->mountedTableActionRecord;
+    }
+
     public function getMountedTableActionRecord(): ?Model
     {
-        $recordKey = $this->mountedTableActionRecord;
+        $recordKey = $this->getMountedTableActionRecordKey();
 
         if ($this->cachedMountedTableActionRecord && ($this->cachedMountedTableActionRecordKey === $recordKey)) {
             return $this->cachedMountedTableActionRecord;
@@ -236,5 +241,10 @@ trait HasActions
     protected function getTableActions(): array
     {
         return [];
+    }
+
+    protected function getTableActionsPosition(): ?string
+    {
+        return null;
     }
 }

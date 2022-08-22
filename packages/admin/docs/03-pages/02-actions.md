@@ -138,6 +138,31 @@ Action::make('updateAuthor')
     ])
 ```
 
+#### Filling default data
+
+You may fill the form with default data, using the `mountUsing()` method:
+
+```php
+use App\Models\User;
+use Filament\Forms;
+use Filament\Pages\Actions\Action;
+
+Action::make('updateAuthor')
+    ->mountUsing(fn (Forms\ComponentContainer $form) => $form->fill([
+        'authorId' => $this->record->author->id,
+    ]))
+    ->action(function (array $data): void {
+        $this->record->author()->associate($data['authorId']);
+        $this->record->save();
+    })
+    ->form([
+        Forms\Components\Select::make('authorId')
+            ->label('Author')
+            ->options(User::query()->pluck('name', 'id'))
+            ->required(),
+    ])
+```
+
 ### Setting a modal heading, subheading, and button label
 
 You may customize the heading, subheading and button label of the modal:
@@ -153,7 +178,7 @@ Action::make('delete')
     ->modalButton('Yes, delete them')
 ```
 
-## Custom content
+### Custom content
 
 You may define custom content to be rendered inside your modal, which you can specify by passing a Blade view into the `modalContent()` method:
 

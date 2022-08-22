@@ -23,6 +23,8 @@ class Table
 
     protected array $headerActions = [];
 
+    protected ?string $pollingInterval = null;
+
     protected ?string $reorderColumn = null;
 
     final public function __construct()
@@ -127,6 +129,13 @@ class Table
         return $this;
     }
 
+    public function poll(?string $interval = '10s'): static
+    {
+        $this->pollingInterval = $interval;
+
+        return $this;
+    }
+
     /**
      * @deprecated Use `appendActions()` instead.
      */
@@ -207,5 +216,10 @@ class Table
     public function getReorderColumn(): ?string
     {
         return $this->reorderColumn;
+    }
+
+    public function getPollingInterval(): ?string
+    {
+        return $this->pollingInterval;
     }
 }

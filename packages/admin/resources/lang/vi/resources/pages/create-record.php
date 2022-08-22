@@ -2,16 +2,16 @@
 
 return [
 
-    'title' => 'Tạo :label',
+    'title' => 'Tạo :label mới',
 
-    'breadcrumb' => 'Tạo',
+    'breadcrumb' => 'Tạo mới',
 
     'form' => [
 
         'actions' => [
 
             'cancel' => [
-                'label' => 'Hủy',
+                'label' => 'Quay lại',
             ],
 
             'create' => [

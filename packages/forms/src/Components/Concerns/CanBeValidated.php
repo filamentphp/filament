@@ -208,6 +208,18 @@ trait CanBeValidated
         return $rules;
     }
 
+    public function dehydrateValidationRules(array &$rules): void
+    {
+        if (count($componentRules = $this->getValidationRules())) {
+            $rules[$this->getStatePath()] = $componentRules;
+        }
+    }
+
+    public function dehydrateValidationAttributes(array &$attributes): void
+    {
+        $attributes[$this->getStatePath()] = $this->getValidationAttribute();
+    }
+
     public function isRequired(): bool
     {
         return (bool) $this->evaluate($this->isRequired);
