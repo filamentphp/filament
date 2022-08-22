@@ -41,6 +41,10 @@ trait HasStateBindingModifiers
     public function applyStateBindingModifiers(string $expression): string
     {
         $modifiers = $this->getStateBindingModifiers();
+        
+        if(str_starts_with($expression, 'entangle') && (in_array('lazy', $modifiers) || in_array('debounce', $modifiers))) {
+            $modifiers = ['defer'];
+        }
 
         return implode('.', array_merge([$expression], $modifiers));
     }
