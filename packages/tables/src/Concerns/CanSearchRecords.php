@@ -6,12 +6,26 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait CanSearchRecords
 {
+    public $tableColumnSearchQueries = [];
     public $tableSearchQuery = '';
 
     public function isTableSearchable(): bool
     {
         foreach ($this->getCachedTableColumns() as $column) {
-            if (! $column->isSearchable()) {
+            if (! $column->isGloballySearchable()) {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isTableSearchableByColumn(): bool
+    {
+        foreach ($this->getCachedTableColumns() as $column) {
+            if (! $column->isIndividuallySearchable()) {
                 continue;
             }
 
@@ -30,18 +44,60 @@ trait CanSearchRecords
 
     protected function applySearchToTableQuery(Builder $query): Builder
     {
-        $searchQuery = $this->getTableSearchQuery();
+        $this->applyColumnSearchToTableQuery($query);
+        $this->applyGlobalSearchToTableQuery($query);
 
-        if ($searchQuery === '') {
+        return $query;
+    }
+
+    protected function applyColumnSearchToTableQuery(Builder $query): Builder
+    {
+        foreach ($this->getTableColumnSearchQueries() as $column => $search) {
+            if ($search === '') {
+                continue;
+            }
+
+            $column = $this->getCachedTableColumn($column);
+
+            if (! $column) {
+                continue;
+            }
+
+            foreach (explode(' ', $search) as $searchWord) {
+                $query->where(function (Builder $query) use ($column, $searchWord) {
+                    $isFirst = true;
+
+                    $column->applySearchConstraint(
+                        $query,
+                        $searchWord,
+                        $isFirst,
+                        isIndividual: true,
+                    );
+                });
+            }
+        }
+
+        return $query;
+    }
+
+    protected function applyGlobalSearchToTableQuery(Builder $query): Builder
+    {
+        $search = $this->getTableSearchQuery();
+
+        if ($search === '') {
             return $query;
         }
 
-        foreach (explode(' ', $searchQuery) as $searchQueryWord) {
-            $query->where(function (Builder $query) use ($searchQueryWord) {
+        foreach (explode(' ', $search) as $searchWord) {
+            $query->where(function (Builder $query) use ($searchWord) {
                 $isFirst = true;
 
                 foreach ($this->getCachedTableColumns() as $column) {
-                    $column->applySearchConstraint($query, $searchQueryWord, $isFirst);
+                    $column->applySearchConstraint(
+                        $query,
+                        $searchWord,
+                        $isFirst,
+                    );
                 }
             });
         }
@@ -52,5 +108,13 @@ trait CanSearchRecords
     protected function getTableSearchQuery(): string
     {
         return trim(strtolower($this->tableSearchQuery));
+    }
+
+    protected function getTableColumnSearchQueries(): array
+    {
+        return array_map(
+            fn (string $search): string => trim(strtolower($search)),
+            $this->tableColumnSearchQueries,
+        );
     }
 }

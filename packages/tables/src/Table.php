@@ -480,6 +480,11 @@ class Table extends ViewComponent
         return $this->getLivewire()->isTableSearchable();
     }
 
+    public function isSearchableByColumn(): bool
+    {
+        return $this->getLivewire()->isTableSearchableByColumn();
+    }
+
     public function hasToggleableColumns(): bool
     {
         return $this->getLivewire()->hasToggleableTableColumns();
