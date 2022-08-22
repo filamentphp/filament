@@ -21,6 +21,7 @@
         "illuminate/support": "^8.6|^9.0",
         "illuminate/view": "^8.6|^9.0",
         "livewire/livewire": "^2.6",
+        "spatie/invade": "^1.0",
         "spatie/laravel-package-tools": "^1.9"
     },
     "autoload": {

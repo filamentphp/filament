@@ -73,6 +73,18 @@ trait HasFilters
         $this->resetPage();
     }
 
+    public function resetTableFilterForm(string $filter, ?string $field = null): void
+    {
+        $filterGroup = $this->getTableFiltersForm()->getComponents()[$filter];
+        $filterGroupComponentContainer = $filterGroup->getChildComponentContainer();
+
+        $field = $filterGroupComponentContainer?->getFlatFields()[$field] ?? null;
+
+        $field ? $field->fill() : $filterGroupComponentContainer?->fill();
+
+        $this->updatedTableFilters();
+    }
+
     public function resetTableFiltersForm(): void
     {
         $this->getTableFiltersForm()->fill();
@@ -121,12 +133,15 @@ trait HasFilters
 
     protected function getTableFiltersFormSchema(): array
     {
-        return array_map(
-            fn (BaseFilter $filter) => Forms\Components\Group::make()
+        $schema = [];
+
+        foreach ($this->getCachedTableFilters() as $filter) {
+            $schema[$filter->getName()] = Forms\Components\Group::make()
                 ->schema($filter->getFormSchema())
-                ->statePath($filter->getName()),
-            $this->getCachedTableFilters(),
-        );
+                ->statePath($filter->getName());
+        }
+
+        return $schema;
     }
 
     protected function getTableFiltersFormWidth(): ?string
