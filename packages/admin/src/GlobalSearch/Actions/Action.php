@@ -15,8 +15,6 @@ class Action extends BaseAction
 
     protected string $view = 'filament::global-search.actions.link-action';
 
-    protected string $viewIdentifier = 'action';
-
     public function button(): static
     {
         $this->view('filament::global-search.actions.button-action');
