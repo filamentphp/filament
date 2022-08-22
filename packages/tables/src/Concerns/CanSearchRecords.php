@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 trait CanSearchRecords
 {
     public $tableColumnSearchQueries = [];
+
     public $tableSearchQuery = '';
 
     public function isTableSearchable(): bool
