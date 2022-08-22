@@ -33,8 +33,6 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     protected static ?string $inverseRelationship = null;
 
-    protected Table $resourceTable;
-
     protected static string $view = 'filament::resources.relation-manager';
 
     /**
@@ -358,11 +356,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     protected function getResourceTable(): Table
     {
-        if (isset($this->resourceTable)) {
-            return $this->resourceTable;
-        }
-
-        return $this->resourceTable = $this->table(Table::make());
+        return $this->table(Table::make());
     }
 
     protected function getDefaultTableSortColumn(): ?string
