@@ -1,6 +1,6 @@
 @props([
-'action',
-'component',
+    'action',
+    'component',
 ])
 
 @php

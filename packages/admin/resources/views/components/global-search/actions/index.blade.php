@@ -1,5 +1,5 @@
 @props([
-'actions',
+    'actions',
 ])
 
 <div {{ $attributes->class('filament-global-search-actions mt-4 flex gap-3 justify-end') }}>
