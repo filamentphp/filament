@@ -225,7 +225,7 @@ If you wish to translate the package, you may publish the language files using:
 php artisan vendor:publish --tag=forms-translations
 ```
 
-Since this package depends on other Filament packages, you may wish to translate those ones as well:
+Since this package depends on other Filament packages, you may wish to translate those as well:
 
 ```bash
 php artisan vendor:publish --tag=filament-support-translations
