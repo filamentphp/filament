@@ -2,7 +2,6 @@
 
 namespace Filament\Tables;
 
-use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Support\Components\ViewComponent;
 use Filament\Tables\Actions\Action;

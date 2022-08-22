@@ -3,7 +3,6 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\TableComponent;
 
 trait BelongsToLivewire
 {
