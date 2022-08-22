@@ -1,4 +1,4 @@
-<td {{ $attributes->class(['w-4 px-4 whitespace-nowrap filament-tables-checkbox-cell']) }}>
+<td {{ $attributes->class(['filament-tables-checkbox-cell w-4 px-4 whitespace-nowrap']) }}>
     <input
         {{ $checkbox->attributes->class([
             'block border-gray-300 rounded shadow-sm text-primary-600 focus:border-primary-600 focus:ring focus:ring-primary-200 focus:ring-opacity-50',

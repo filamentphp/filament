@@ -9,9 +9,7 @@
     x-transition
     x-cloak
     x-float.placement.bottom.flip.offset="{ offset: 8 }"
-    {{ $attributes->class([
-        'absolute hidden z-20 w-52 filament-forms-builder-component-block-picker',
-    ]) }}
+    {{ $attributes->class(['filament-forms-builder-component-block-picker absolute hidden z-20 w-52']) }}
 >
     <ul @class([
         'py-1 space-y-1 bg-white shadow rounded-xl shadow-xl ring-1 ring-gray-900/10 overflow-hidden rounded-xl',

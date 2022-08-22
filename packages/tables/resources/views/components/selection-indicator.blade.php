@@ -7,7 +7,7 @@
 <tr
     wire:key="{{ $this->id }}.table.selection.indicator"
     x-cloak
-    {{ $attributes->class(['bg-primary-500/10 filament-tables-selection-indicator']) }}
+    {{ $attributes->class(['filament-tables-selection-indicator bg-primary-500/10']) }}
 >
     <td class="px-4 py-2 whitespace-nowrap text-sm" colspan="{{ $colspan }}">
         <div>

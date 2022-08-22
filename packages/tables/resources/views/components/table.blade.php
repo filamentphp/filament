@@ -5,7 +5,7 @@
 ])
 
 <table {{ $attributes->class([
-    'w-full text-left rtl:text-right divide-y table-auto filament-tables-table',
+    'filament-tables-table w-full text-left rtl:text-right divide-y table-auto',
     'dark:divide-gray-700' => config('tables.dark_mode'),
 ]) }}>
     @if ($header)

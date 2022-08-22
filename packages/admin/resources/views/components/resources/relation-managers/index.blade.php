@@ -5,7 +5,7 @@
     'pageClass',
 ])
 
-<div class="space-y-2 filament-resources-relation-managers-container">
+<div class="filament-resources-relation-managers-container space-y-2">
     @if (count($managers) > 1)
         <div class="flex justify-center">
             <x-filament::tabs>

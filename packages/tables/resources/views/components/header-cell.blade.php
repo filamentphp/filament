@@ -7,7 +7,7 @@
     'alignment' => null,
 ])
 
-<th {{ $attributes->merge($extraAttributes)->class(['p-0 filament-tables-header-cell']) }}>
+<th {{ $attributes->merge($extraAttributes)->class(['filament-tables-header-cell p-0']) }}>
     <button
         @if ($sortable)
             wire:click="sortTable('{{ $name }}')"

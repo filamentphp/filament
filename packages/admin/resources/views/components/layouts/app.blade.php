@@ -3,14 +3,14 @@
 ])
 
 <x-filament::layouts.base :title="$title">
-    <div class="flex w-full min-h-screen overflow-x-hidden filament-app-layout">
+    <div class="filament-app-layout flex w-full min-h-screen overflow-x-hidden">
         <div
             x-data="{}"
             x-cloak
             x-show="$store.sidebar.isOpen"
             x-transition.opacity.500ms
             x-on:click="$store.sidebar.close()"
-            class="fixed inset-0 z-20 w-full h-full bg-gray-900/50 lg:hidden filament-sidebar-close-overlay"
+            class="filament-sidebar-close-overlay fixed inset-0 z-20 w-full h-full bg-gray-900/50 lg:hidden"
         ></div>
 
         <x-filament::layouts.app.sidebar />
@@ -18,7 +18,7 @@
         @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
             <div
                 x-data="{}"
-                class="flex-col flex-1 hidden w-screen h-full gap-y-6 transition-all filament-main rtl:lg:pl-0"
+                class="filament-main flex-col flex-1 hidden w-screen h-full gap-y-6 transition-all rtl:lg:pl-0"
                 x-bind:class="{
                     'lg:pl-[5.4rem] rtl:lg:pr-[5.4rem]': ! $store.sidebar.isOpen,
                     'lg:pl-[var(--sidebar-width)] rtl:lg:pr-[var(--sidebar-width)]': $store.sidebar.isOpen,
@@ -26,10 +26,10 @@
                 x-bind:style="'display: flex'" {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
             >
         @else
-            <div class="flex flex-col flex-1 w-screen gap-y-6 lg:pl-[var(--sidebar-width)] rtl:lg:pl-0 rtl:lg:pr-[var(--sidebar-width)] filament-main">
+            <div class="filament-main flex flex-col flex-1 w-screen gap-y-6 lg:pl-[var(--sidebar-width)] rtl:lg:pl-0 rtl:lg:pr-[var(--sidebar-width)]">
         @endif
                 <header @class([
-                    'h-[4rem] shrink-0 w-full border-b flex items-center filament-main-topbar',
+                    'filament-main-topbar h-[4rem] shrink-0 w-full border-b flex items-center',
                     'dark:bg-gray-800 dark:border-gray-700' => config('filament.dark_mode'),
                 ])>
                     <div @class([
@@ -39,7 +39,7 @@
                             x-data="{}"
                             x-on:click="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                             @class([
-                                'shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 rounded-full filament-sidebar-open-button hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none',
+                                'filament-sidebar-open-button shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none',
                                 'lg:hidden' => ! config('filament.layout.sidebar.is_collapsible_on_desktop'),
                                 'lg:mr-4 rtl:lg:mr-0 rtl:lg:ml-4' => config('filament.layout.sidebar.is_collapsible_on_desktop'),
                             ])
@@ -58,7 +58,7 @@
                 </header>
 
                 <div @class([
-                    'flex-1 w-full px-4 mx-auto md:px-6 lg:px-8 filament-main-content',
+                    'filament-main-content flex-1 w-full px-4 mx-auto md:px-6 lg:px-8',
                     match ($maxContentWidth ??= config('filament.layout.max_content_width')) {
                         null, '7xl', '' => 'max-w-7xl',
                         'xl' => 'max-w-xl',
@@ -78,7 +78,7 @@
                     {{ \Filament\Facades\Filament::renderHook('content.end') }}
                 </div>
 
-                <div class="py-4 shrink-0 filament-main-footer">
+                <div class="filament-main-footer py-4 shrink-0">
                     <x-filament::footer />
                 </div>
 

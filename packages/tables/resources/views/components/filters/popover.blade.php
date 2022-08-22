@@ -5,7 +5,7 @@
 
 <div
     x-data="{}"
-    {{ $attributes->class(['relative inline-block filament-tables-filters']) }}
+    {{ $attributes->class(['filament-tables-filters relative inline-block']) }}
 >
     <x-tables::filters.trigger />
 

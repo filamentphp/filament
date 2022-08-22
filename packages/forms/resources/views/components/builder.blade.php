@@ -39,7 +39,7 @@
     @endif
 
     <div {{ $attributes->merge($getExtraAttributes())->class([
-        'space-y-6 rounded-xl filament-forms-builder-component',
+        'filament-forms-builder-component space-y-6 rounded-xl',
         'bg-gray-50 p-6' => $isInset(),
         'dark:bg-gray-500/10' => $isInset() && config('forms.dark_mode'),
     ]) }}>

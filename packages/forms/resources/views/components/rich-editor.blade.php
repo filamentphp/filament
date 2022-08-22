@@ -33,7 +33,7 @@
 
             $event.preventDefault()
         "
-        {{ $attributes->merge($getExtraAttributes())->class(['space-y-2 filament-forms-rich-editor-component']) }}
+        {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-rich-editor-component space-y-2']) }}
         {{ $getExtraAlpineAttributeBag() }}
     >
         @unless ($isDisabled())
