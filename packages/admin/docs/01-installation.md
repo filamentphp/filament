@@ -61,6 +61,8 @@ If you wish to translate the package, you may publish the language files using:
 
 ```bash
 php artisan vendor:publish --tag=filament-translations
+php artisan vendor:publish --tag=filament-tables-translations
+php artisan vendor:publish --tag=filament-forms-translations
 php artisan vendor:publish --tag=filament-support-translations
 ```
 
