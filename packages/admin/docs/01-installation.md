@@ -64,6 +64,7 @@ php artisan vendor:publish --tag=filament-translations
 ```
 
 Since this package depends on the `filament/support` package, you may wish to translate that one as well:
+
 ```bash
 php artisan vendor:publish --tag=filament-support-translations
 ```
