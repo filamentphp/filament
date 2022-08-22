@@ -3,6 +3,7 @@
 namespace Filament\Forms\Concerns;
 
 use Filament\Forms\Components\Component;
+use Illuminate\Support\Str;
 
 trait HasStateBindingModifiers
 {
@@ -42,6 +43,10 @@ trait HasStateBindingModifiers
     {
         $modifiers = $this->getStateBindingModifiers();
 
+        if (Str::of($expression)->contains('entangle') && ($this->isLazy() || $this->getDebounce())) {
+            $modifiers = [];
+        }
+
         return implode('.', array_merge([$expression], $modifiers));
     }
 
@@ -51,8 +56,8 @@ trait HasStateBindingModifiers
             return $this->stateBindingModifiers;
         }
 
-        if ($this->debounce) {
-            return ['debounce', $this->debounce];
+        if ($debounce = $this->getDebounce()) {
+            return ['debounce', $debounce];
         }
 
         if ($this instanceof Component) {
