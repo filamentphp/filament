@@ -87,10 +87,6 @@ return [
                 'label' => 'Reset filters',
             ],
 
-            'close' => [
-                'label' => 'Close',
-            ],
-
         ],
 
         'multi_select' => [

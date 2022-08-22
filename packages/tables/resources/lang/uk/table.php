@@ -87,10 +87,6 @@ return [
                 'label' => 'Скинути фільтри',
             ],
 
-            'close' => [
-                'label' => 'Закрити',
-            ],
-
         ],
 
         'multi_select' => [

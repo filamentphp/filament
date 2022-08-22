@@ -59,10 +59,6 @@ return [
 
         'buttons' => [
 
-            'close' => [
-                'label' => 'Schließen',
-            ],
-
             'reset' => [
                 'label' => 'Filter zurücksetzen',
             ],

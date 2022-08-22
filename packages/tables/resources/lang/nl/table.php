@@ -79,10 +79,6 @@ return [
                 'label' => 'Filters resetten',
             ],
 
-            'close' => [
-                'label' => 'Sluiten',
-            ],
-
         ],
 
         'multi_select' => [

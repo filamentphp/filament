@@ -79,10 +79,6 @@ return [
                 'label' => 'Azzera filtri',
             ],
 
-            'close' => [
-                'label' => 'Chiudi',
-            ],
-
         ],
 
         'multi_select' => [

@@ -87,10 +87,6 @@ return [
                 'label' => 'Đặt lại bộ lọc',
             ],
 
-            'close' => [
-                'label' => 'Đóng',
-            ],
-
         ],
 
         'multi_select' => [

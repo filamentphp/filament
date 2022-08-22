@@ -71,10 +71,6 @@ return [
                 'label' => 'Réinitialiser',
             ],
 
-            'close' => [
-                'label' => 'Fermer',
-            ],
-
         ],
 
         'multi_select' => [

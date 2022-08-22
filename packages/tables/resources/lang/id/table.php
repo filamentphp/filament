@@ -87,10 +87,6 @@ return [
                 'label' => 'Atur ulang filter',
             ],
 
-            'close' => [
-                'label' => 'Tutup',
-            ],
-
         ],
 
         'multi_select' => [
