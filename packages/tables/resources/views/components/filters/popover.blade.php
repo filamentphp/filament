@@ -6,6 +6,7 @@
 <x-tables::dropdown
     {{ $attributes->class(['filament-tables-filters']) }}
     placement="bottom-end"
+    width="xs"
     wire:key="{{ $this->id }}.table.filters"
 >
     <x-slot name="trigger">

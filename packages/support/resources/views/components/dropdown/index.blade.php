@@ -3,7 +3,7 @@
     'placement' => null,
     'teleport' => false,
     'trigger' => null,
-    'width' => 'sm',
+    'width' => null,
 ])
 
 <div
@@ -38,21 +38,22 @@
             wire:key="{{ $attributes->get('wire:key') }}.panel"
         @endif
         @class([
-            'filament-dropdown-panel absolute z-10 w-full max-w-[14rem] overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5 transition',
+            'filament-dropdown-panel absolute z-10 w-full rounded-lg bg-white shadow-lg ring-1 ring-black/5 transition',
             'dark:bg-gray-800 dark:ring-white/10' => $darkMode,
-            // match ($width) {
-            //     'xs' => 'max-w-xs',
-            //     'md' => 'max-w-md',
-            //     'lg' => 'max-w-lg',
-            //     'xl' => 'max-w-xl',
-            //     '2xl' => 'max-w-2xl',
-            //     '3xl' => 'max-w-3xl',
-            //     '4xl' => 'max-w-4xl',
-            //     '5xl' => 'max-w-5xl',
-            //     '6xl' => 'max-w-6xl',
-            //     '7xl' => 'max-w-7xl',
-            //     default => 'max-w-sm',
-            // },
+            match ($width) {
+                'xs' => 'max-w-xs',
+                'sm' => 'max-w-sm',
+                'md' => 'max-w-md',
+                'lg' => 'max-w-lg',
+                'xl' => 'max-w-xl',
+                '2xl' => 'max-w-2xl',
+                '3xl' => 'max-w-3xl',
+                '4xl' => 'max-w-4xl',
+                '5xl' => 'max-w-5xl',
+                '6xl' => 'max-w-6xl',
+                '7xl' => 'max-w-7xl',
+                default => 'max-w-[14rem]',
+            },
         ])
     >
         {{ $slot }}
