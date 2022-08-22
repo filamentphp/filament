@@ -40,6 +40,7 @@
                             x-on:click="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                             @class([
                                 'shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 rounded-full filament-sidebar-open-button hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none',
+                                'dark:bg-gray-800 dark:text-gray-200' => config('filament.dark_mode'),
                                 'lg:hidden' => ! config('filament.layout.sidebar.is_collapsible_on_desktop'),
                                 'lg:mr-4 rtl:lg:mr-0 rtl:lg:ml-4' => config('filament.layout.sidebar.is_collapsible_on_desktop'),
                             ])
