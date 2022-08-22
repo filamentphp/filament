@@ -85,6 +85,7 @@ return [
 
             'reset' => [
                 'label' => 'Reset filters',
+                'tooltip' => 'Reset filters',
             ],
 
             'close' => [
@@ -92,6 +93,8 @@ return [
             ],
 
         ],
+
+        'indicator' => 'Active filters',
 
         'multi_select' => [
             'placeholder' => 'All',

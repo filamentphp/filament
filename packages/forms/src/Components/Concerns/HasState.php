@@ -144,6 +144,13 @@ trait HasState
         $this->callAfterStateHydrated();
     }
 
+    public function fill(): void
+    {
+        $defaults = [];
+
+        $this->hydrateDefaultState($defaults);
+    }
+
     public function hydrateDefaultState(?array &$hydratedDefaultState): void
     {
         if ($hydratedDefaultState === null) {

@@ -9,6 +9,19 @@ class Filter extends BaseFilter
 {
     public string $formComponent = Checkbox::class;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->indicateUsing(function (array $state): array {
+            if (! ($state['isActive'] ?? false)) {
+                return [];
+            }
+
+            return [$this->getIndicator()];
+        });
+    }
+
     public function toggle(): static
     {
         $this->formComponent(Toggle::class);
