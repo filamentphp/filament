@@ -4,6 +4,7 @@
 
     $actions = $getActions();
     $actionsPosition = $getActionsPosition();
+    $actionsColumnLabel = $getActionsColumnLabel();
     $columns = $getColumns();
     $content = $getContent();
     $contentFooter = $getContentFooter();
