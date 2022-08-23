@@ -6,11 +6,7 @@
         'filament-resources-record-' . $record->getKey(),
     ])"
 >
-    @php
-        $relationManagers = $this->getRelationManagers();
-    @endphp
-
-    @if ((! $this->hasCombinedRelationManagersWithForm()) || (! count($relationManagers)))
+    @capture($form)
         <x-filament::form wire:submit.prevent="save">
             {{ $this->form }}
 
@@ -19,6 +15,14 @@
                 :full-width="$this->hasFullWidthFormActions()"
             />
         </x-filament::form>
+    @endcapture
+
+    @php
+        $relationManagers = $this->getRelationManagers();
+    @endphp
+
+    @if ((! $this->hasCombinedRelationManagersWithForm()) || (! count($relationManagers)))
+        {{ $form }}
     @endif
 
     @if (count($relationManagers))
@@ -35,14 +39,7 @@
         >
             @if ($this->hasCombinedRelationManagersWithForm())
                 <x-slot name="form">
-                    <x-filament::form wire:submit.prevent="save">
-                        {{ $this->form }}
-
-                        <x-filament::form.actions
-                            :actions="$this->getCachedFormActions()"
-                            :full-width="$this->hasFullWidthFormActions()"
-                        />
-                    </x-filament::form>
+                    {{ $form }}
                 </x-slot>
             @endif
         </x-filament::resources.relation-managers>
