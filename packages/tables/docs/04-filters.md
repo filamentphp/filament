@@ -277,7 +277,7 @@ use Filament\Tables\Filters\Filter;
 Filter::make('created_at')
     ->form([DatePicker::make('date')])
     // ...
-    ->indicateUsing(function (array $data): array {
+    ->indicateUsing(function (array $data): ?string {
         if (! $data['date']) {
             return null;
         }
