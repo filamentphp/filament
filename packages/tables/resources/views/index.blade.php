@@ -406,7 +406,15 @@
                             @endforeach
 
                             @if (count($actions) && (! $isReordering) && $actionsPosition === Position::AfterCells)
-                                <th class="w-5">{{ $actionsColumnLabel }}</th>
+                                @if($actionsColumnLabel)
+                                    <x-tables::header-cell
+                                        alignment="right"
+                                    >
+                                        {{ $actionsColumnLabel }}
+                                    </x-tables::header-cell>
+                                @else
+                                    <th class="w-5"></th>
+                                @endif
                             @endif
                         </x-slot>
 
