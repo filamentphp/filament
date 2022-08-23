@@ -7100,16 +7100,16 @@
         },
         {
             "name": "ryangjchandler/blade-capture-directive",
-            "version": "v0.2.0",
+            "version": "v0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ryangjchandler/blade-capture-directive.git",
-                "reference": "ad2b0de77a09cf9c4c775f7ebf3b323f83ec53b5"
+                "reference": "80addaf4a498b7c0217ad1eba8195bd31e606962"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ryangjchandler/blade-capture-directive/zipball/ad2b0de77a09cf9c4c775f7ebf3b323f83ec53b5",
-                "reference": "ad2b0de77a09cf9c4c775f7ebf3b323f83ec53b5",
+                "url": "https://api.github.com/repos/ryangjchandler/blade-capture-directive/zipball/80addaf4a498b7c0217ad1eba8195bd31e606962",
+                "reference": "80addaf4a498b7c0217ad1eba8195bd31e606962",
                 "shasum": ""
             },
             "require": {
@@ -7166,7 +7166,7 @@
             ],
             "support": {
                 "issues": "https://github.com/ryangjchandler/blade-capture-directive/issues",
-                "source": "https://github.com/ryangjchandler/blade-capture-directive/tree/v0.2.0"
+                "source": "https://github.com/ryangjchandler/blade-capture-directive/tree/v0.2.1"
             },
             "funding": [
                 {
@@ -7174,7 +7174,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-03-11T01:14:12+00:00"
+            "time": "2022-08-23T09:44:35+00:00"
         },
         {
             "name": "sebastian/cli-parser",
