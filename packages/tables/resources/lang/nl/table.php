@@ -2,6 +2,14 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 'en nog :count',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -77,6 +85,7 @@ return [
 
             'reset' => [
                 'label' => 'Filters resetten',
+                'tooltip' => 'Filters resetten',
             ],
 
             'close' => [
@@ -84,6 +93,8 @@ return [
             ],
 
         ],
+
+        'indicator' => 'Actieve filters',
 
         'multi_select' => [
             'placeholder' => 'Alles',
