@@ -50,6 +50,14 @@ class Table extends ViewComponent
         return invade($livewire)->getTableActionsPosition() ?? Position::AfterCells;
     }
 
+    public function getActionsColumnLabel(): ?string
+    {
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->getTableActionsColumnLabel();
+    }
+
     public function getAllRecordsCount(): int
     {
         return $this->getLivewire()->getAllTableRecordsCount();
