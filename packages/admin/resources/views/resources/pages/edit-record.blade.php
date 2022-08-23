@@ -6,18 +6,45 @@
         'filament-resources-record-' . $record->getKey(),
     ])"
 >
-    <x-filament::form wire:submit.prevent="save">
-        {{ $this->form }}
+    @php
+        $relationManagers = $this->getRelationManagers();
+    @endphp
 
-        <x-filament::form.actions
-            :actions="$this->getCachedFormActions()"
-            :full-width="$this->hasFullWidthFormActions()"
-        />
-    </x-filament::form>
+    @if ((! $this->hasCombinedRelationManagersWithForm()) || (! count($relationManagers)))
+        <x-filament::form wire:submit.prevent="save">
+            {{ $this->form }}
 
-    @if (count($relationManagers = $this->getRelationManagers()))
-        <x-filament::hr />
+            <x-filament::form.actions
+                :actions="$this->getCachedFormActions()"
+                :full-width="$this->hasFullWidthFormActions()"
+            />
+        </x-filament::form>
+    @endif
 
-        <x-filament::resources.relation-managers :active-manager="$activeRelationManager" :managers="$relationManagers" :owner-record="$record" :page-class="static::class" />
+    @if (count($relationManagers))
+        @if (! $this->hasCombinedRelationManagersWithForm())
+            <x-filament::hr />
+        @endif
+
+        <x-filament::resources.relation-managers
+            :active-manager="$activeRelationManager"
+            :form-tab-label="$this->getFormTabLabel()"
+            :managers="$relationManagers"
+            :owner-record="$record"
+            :page-class="static::class"
+        >
+            @if ($this->hasCombinedRelationManagersWithForm())
+                <x-slot name="form">
+                    <x-filament::form wire:submit.prevent="save">
+                        {{ $this->form }}
+
+                        <x-filament::form.actions
+                            :actions="$this->getCachedFormActions()"
+                            :full-width="$this->hasFullWidthFormActions()"
+                        />
+                    </x-filament::form>
+                </x-slot>
+            @endif
+        </x-filament::resources.relation-managers>
     @endif
 </x-filament::page>
