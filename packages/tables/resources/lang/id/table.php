@@ -93,7 +93,7 @@ return [
             ],
 
         ],
-        
+
         'indicator' => 'Filter aktif',
 
         'multi_select' => [
