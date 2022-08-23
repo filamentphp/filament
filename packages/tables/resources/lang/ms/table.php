@@ -85,6 +85,7 @@ return [
 
             'reset' => [
                 'label' => 'Tetapkan semula penapis',
+                'tooltip' => 'Tetapkan semula penapis',
             ],
 
             'close' => [
@@ -92,6 +93,8 @@ return [
             ],
 
         ],
+
+        'indicator' => 'Penapis aktif',
 
         'multi_select' => [
             'placeholder' => 'Semua',
