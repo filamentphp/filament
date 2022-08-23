@@ -406,7 +406,7 @@
                             @endforeach
 
                             @if (count($actions) && (! $isReordering) && $actionsPosition === Position::AfterCells)
-                                <th class="w-5"></th>
+                                <th class="w-5">{{ $actionsColumnLabel }}</th>
                             @endif
                         </x-slot>
 
