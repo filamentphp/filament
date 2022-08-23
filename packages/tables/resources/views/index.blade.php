@@ -407,9 +407,7 @@
 
                             @if (count($actions) && (! $isReordering) && $actionsPosition === Position::AfterCells)
                                 @if($actionsColumnLabel)
-                                    <x-tables::header-cell
-                                        alignment="right"
-                                    >
+                                    <x-tables::header-cell alignment="right">
                                         {{ $actionsColumnLabel }}
                                     </x-tables::header-cell>
                                 @else
