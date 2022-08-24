@@ -363,7 +363,13 @@
                                 <th></th>
                             @else
                                 @if (count($actions) && $actionsPosition === Position::BeforeCells)
-                                    <th class="w-5"></th>
+                                    @if($actionsColumnLabel)
+                                        <x-tables::header-cell alignment="right">
+                                            {{ $actionsColumnLabel }}
+                                        </x-tables::header-cell>
+                                    @else
+                                        <th class="w-5"></th>
+                                    @endif
                                 @endif
 
                                 @if ($isSelectionEnabled)
@@ -387,7 +393,13 @@
                                 @endif
 
                                 @if (count($actions) && $actionsPosition === Position::BeforeColumns)
-                                    <th class="w-5"></th>
+                                    @if($actionsColumnLabel)
+                                        <x-tables::header-cell alignment="right">
+                                            {{ $actionsColumnLabel }}
+                                        </x-tables::header-cell>
+                                    @else
+                                        <th class="w-5"></th>
+                                    @endif
                                 @endif
                             @endif
 
