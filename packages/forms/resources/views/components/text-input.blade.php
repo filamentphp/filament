@@ -71,9 +71,9 @@
                     'dark:bg-gray-700 dark:text-white dark:focus:border-primary-600' => config('forms.dark_mode'),
                 ]) }}
                 x-bind:class="{
-                    'border-gray-300': ! (@js($getStatePath()) in validationErrors),
-                    'dark:border-gray-600': ! (@js($getStatePath()) in validationErrors) && @js(config('forms.dark_mode')),
-                    'border-danger-600 ring-danger-600': (@js($getStatePath()) in validationErrors),
+                    'border-gray-300': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
+                    'dark:border-gray-600': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors) && @js(config('forms.dark_mode')),
+                    'border-danger-600 ring-danger-600': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
                 }"
             />
         </div>
