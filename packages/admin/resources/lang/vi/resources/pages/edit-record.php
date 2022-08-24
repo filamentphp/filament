@@ -15,7 +15,7 @@ return [
             ],
 
             'save' => [
-                'label' => 'Lưu lại',
+                'label' => 'Lưu thay đổi',
             ],
 
         ],
