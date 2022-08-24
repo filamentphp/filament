@@ -65,6 +65,14 @@
                             x-on:repeater-expand.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = false)"
                             wire:key="{{ $this->id }}.{{ $item->getStatePath() }}.item"
                             wire:sortable.item="{{ $uuid }}"
+                            x-on:expand-concealing-component.window="
+                                if ($event.detail.id === $el.id) {
+                                    isCollapsed = false
+
+                                    setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
+                                } else if ($el.querySelector('[data-validation-error]') ? true : false) {
+                                    isCollapsed = false
+                                }"
                             @class([
                                 'bg-white border border-gray-300 shadow-sm rounded-xl relative',
                                 'dark:bg-gray-800 dark:border-gray-600' => config('forms.dark_mode'),
