@@ -9,7 +9,7 @@ return [
         'buttons' => [
 
             'create_item' => [
-                'label' => 'Thêm vào :label',
+                'label' => 'Thêm :label mới',
             ],
 
             'delete_item' => [
@@ -49,11 +49,11 @@ return [
         'buttons' => [
 
             'add' => [
-                'label' => 'Thêm Dòng',
+                'label' => 'Thêm dòng',
             ],
 
             'delete' => [
-                'label' => 'Xóa Dòng',
+                'label' => 'Xóa dòng',
             ],
 
         ],
@@ -75,9 +75,9 @@ return [
     'markdown_editor' => [
 
         'toolbar_buttons' => [
-            'attach_files' => 'Đính kèm file',
+            'attach_files' => 'Đính kèm tệp',
             'bold' => 'In đậm',
-            'bullet_list' => 'Danh sách dùng dấu chấm',
+            'bullet_list' => 'Danh sách đánh dấu',
             'code_block' => 'Code block',
             'edit' => 'Sửa',
             'italic' => 'In nghiêng',
@@ -96,7 +96,7 @@ return [
         'buttons' => [
 
             'create_item' => [
-                'label' => 'Thêm vào :label',
+                'label' => 'Thêm :label mới',
             ],
 
             'delete_item' => [
@@ -154,7 +154,7 @@ return [
             'attach_files' => 'Đính kèm tệp',
             'blockquote' => 'Trích dẫn',
             'bold' => 'In đậm',
-            'bullet_list' => 'Danh sách dùng dấu chấm',
+            'bullet_list' => 'Danh sách đánh dấu',
             'code_block' => 'Code block',
             'h1' => 'Tiêu đề chính',
             'h2' => 'Tiêu đề',
