@@ -383,7 +383,7 @@ Wizard::make([
 ])->submitAction(new HtmlString('<button type="submit">Submit</button>'))
 ```
 
-You may use the `startOnStep()` to load a specific step in the wizard.
+You may use the `startOnStep()` method to load a specific step in the wizard:
 
 ```php
 use Filament\Forms\Components\Wizard;
