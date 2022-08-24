@@ -1,14 +1,37 @@
 <div
     @if ($isCollapsible())
-        x-data="{ isCollapsed: {{ $isCollapsed() ? 'true' : 'false' }} }"
+        x-data="{
+            isCollapsed: @js($isCollapsed()),
+            get containsErrors() {
+                return $el.getElementsByClassName('filament-forms-field-wrapper-error-message')[0] ? true : false
+            },
+            toggle() {
+                if(this.containsErrors && ! this.isCollapsed) {
+                    return
+                }
+
+                this.isCollapsed = ! this.isCollapsed
+
+                if (this.isCollapsed) {
+                    return
+                }
+
+                setTimeout(
+                    () => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }),
+                    100,
+                )
+            }
+         }"
         x-on:open-form-section.window="if ($event.detail.id == $el.id) isCollapsed = false"
         x-on:collapse-form-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
         x-on:toggle-form-section.window="if ($event.detail.id == $el.id) isCollapsed = ! isCollapsed"
         x-on:expand-concealing-component.window="
             if ($event.detail.id === $el.id) {
                 isCollapsed = false
-                
+
                 setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 100)
+            } else {
+               isCollapsed = !containsErrors ?? isCollapsed
             }
         "
     @endif
@@ -26,18 +49,7 @@
         ])
         @if ($isCollapsible())
             x-bind:class="{ 'rounded-b-xl': isCollapsed }"
-            x-on:click="
-                isCollapsed = ! isCollapsed
-                
-                if (isCollapsed) {
-                    return
-                }
-                
-                setTimeout(
-                    () => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }),
-                    100,
-                )
-            "
+            x-on:click="toggle()"
         @endif
     >
         <div
@@ -58,7 +70,7 @@
         </div>
 
         @if ($isCollapsible())
-            <button x-on:click.stop="isCollapsed = ! isCollapsed"
+            <button x-on:click.stop="toggle()"
                 x-bind:class="{
                     '-rotate-180': !isCollapsed,
                 }" type="button"
