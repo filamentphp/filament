@@ -383,6 +383,16 @@ Wizard::make([
 ])->submitAction(new HtmlString('<button type="submit">Submit</button>'))
 ```
 
+You may use the `startOnStep()` to load a specific step in the wizard.
+
+```php
+use Filament\Forms\Components\Wizard;
+
+Wizard::make([
+    // ...
+])->startOnStep(2)
+```
+
 ## Section
 
 You may want to separate your fields into sections, each with a heading and description. To do this, you can use a section component:
