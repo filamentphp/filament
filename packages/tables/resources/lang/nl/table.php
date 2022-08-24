@@ -110,7 +110,7 @@ return [
 
             'only_trashed' => 'Alleen verwijderde records',
 
-            'with_trashed' => 'Met verwijderde records records',
+            'with_trashed' => 'Met verwijderde records',
 
             'without_trashed' => 'Zonder verwijderde records',
 
