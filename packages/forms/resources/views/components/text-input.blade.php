@@ -34,7 +34,11 @@
             </span>
         @endif
 
-        <div class="flex-1">
+        <div class="flex-1" x-data="{
+            get validationError() {
+                return @js($getStatePath()) in $wire.__instance.serverMemo.errors
+            }
+        }">
             <input
                 @unless ($hasMask())
                     {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
@@ -71,9 +75,9 @@
                     'dark:bg-gray-700 dark:text-white dark:focus:border-primary-600' => config('forms.dark_mode'),
                 ]) }}
                 x-bind:class="{
-                    'border-gray-300': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
-                    'dark:border-gray-600': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors) && @js(config('forms.dark_mode')),
-                    'border-danger-600 ring-danger-600': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
+                    'border-gray-300': ! validationError,
+                    'dark:border-gray-600': ! validationError && @js(config('forms.dark_mode')),
+                    'border-danger-600 ring-danger-600': validationError,
                 }"
             />
         </div>
