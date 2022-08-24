@@ -300,6 +300,7 @@
                             <x-tables::filters.popover
                                 :form="$getFiltersForm()"
                                 :width="$getFiltersFormWidth()"
+                                :getFilters="$getFilters()"
                                 class="shrink-0"
                             />
                         @endif

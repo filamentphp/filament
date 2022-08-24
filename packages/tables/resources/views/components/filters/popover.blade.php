@@ -1,13 +1,14 @@
 @props([
     'form',
     'width' => 'sm',
+    'getFilters',
 ])
 
 <div
     x-data="{}"
     {{ $attributes->class(['relative inline-block filament-tables-filters']) }}
 >
-    <x-tables::filters.trigger />
+    <x-tables::filters.trigger :getFilters="$getFilters"/>
 
     <div
         x-ref="popoverPanel"
