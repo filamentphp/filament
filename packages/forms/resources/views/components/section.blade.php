@@ -7,7 +7,7 @@
         x-on:expand-concealing-component.window="
             if ($event.detail.id === $el.id) {
                 isCollapsed = false
-                
+
                 setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 100)
             }
         "
@@ -28,11 +28,11 @@
             x-bind:class="{ 'rounded-b-xl': isCollapsed }"
             x-on:click="
                 isCollapsed = ! isCollapsed
-                
+
                 if (isCollapsed) {
                     return
                 }
-                
+
                 setTimeout(
                     () => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }),
                     100,
