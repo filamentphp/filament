@@ -60,7 +60,28 @@
                 >
                     @foreach ($containers as $uuid => $item)
                         <li
-                            x-data="{ isCollapsed: @js($isCollapsed()) }"
+                            x-data="{
+                                isCollapsed: @js($isCollapsed()),
+                                get containsErrors() {
+                                    return $el.querySelector('[data-validation-error]') ? true : false
+                                },
+                                toggle() {
+                                    if(this.containsErrors && ! this.isCollapsed) {
+                                        return
+                                    }
+
+                                    this.isCollapsed = ! this.isCollapsed
+
+                                    if (this.isCollapsed) {
+                                        return
+                                    }
+
+                                    setTimeout(
+                                        () => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }),
+                                        100,
+                                    )
+                                }
+                            }"
                             x-on:repeater-collapse.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = true)"
                             x-on:repeater-expand.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = false)"
                             wire:key="{{ $this->id }}.{{ $item->getStatePath() }}.item"
@@ -70,8 +91,8 @@
                                     isCollapsed = false
 
                                     setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
-                                } else if ($el.querySelector('[data-validation-error]') ? true : false) {
-                                    isCollapsed = false
+                                } else {
+                                   isCollapsed = !containsErrors ?? isCollapsed
                                 }"
                             @class([
                                 'bg-white border border-gray-300 shadow-sm rounded-xl relative',
@@ -80,7 +101,7 @@
                         >
                             @if ((! $isItemMovementDisabled) || (! $isItemDeletionDisabled) || $isCloneable || $isCollapsible || $hasItemLabels)
                                 <header
-                                    @if ($isCollapsible) x-on:click.stop="isCollapsed = ! isCollapsed" @endif
+                                    @if ($isCollapsible) x-on:click.stop="toggle()" @endif
                                     @class([
                                         'flex items-center h-10 overflow-hidden border-b bg-gray-50 rounded-t-xl',
                                         'dark:bg-gray-800 dark:border-gray-700' => config('forms.dark_mode'),
@@ -161,7 +182,7 @@
                                         @if ($isCollapsible)
                                             <li>
                                                 <button
-                                                    x-on:click.stop="isCollapsed = ! isCollapsed"
+                                                    x-on:click.stop="toggle()"
                                                     type="button"
                                                     @class([
                                                         'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-300',
