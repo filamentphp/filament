@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 trait HasLabel
 {
     protected string | Closure | null $label = null;
+
     protected bool $shouldTranslateLabel = false;
 
     public function label(string | Closure | null $label): static
