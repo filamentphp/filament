@@ -102,7 +102,7 @@ it('can return a flat array of components including hidden components', function
     $container = ComponentContainer::make(Livewire::make())
         ->components([
             $fieldset = Fieldset::make(Str::random())
-                ->hidden(true)
+                ->hidden()
                 ->schema([
                     $field = TextInput::make(Str::random()),
                 ]),
@@ -110,7 +110,7 @@ it('can return a flat array of components including hidden components', function
         ]);
 
     expect($container)
-        ->getFlatComponents(true)
+        ->getFlatComponents(withHidden: true)
         ->toHaveCount(3)
         ->toMatchArray([
             $fieldset,
@@ -141,7 +141,7 @@ it('can return a flat array of fields including hidden fields', function () {
     $container = ComponentContainer::make(Livewire::make())
         ->components([
             Fieldset::make(Str::random())
-                ->hidden(true)
+                ->hidden()
                 ->schema([
                     $field = TextInput::make($name = Str::random()),
                 ]),
@@ -149,7 +149,7 @@ it('can return a flat array of fields including hidden fields', function () {
         ]);
 
     expect($container)
-        ->getFlatFields(true)
+        ->getFlatFields(withHidden: true)
         ->toHaveCount(1)
         ->toMatchArray([
             $name => $field,
