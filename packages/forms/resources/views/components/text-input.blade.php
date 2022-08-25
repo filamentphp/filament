@@ -37,6 +37,7 @@
         <div class="flex-1">
             <input
                 @unless ($hasMask())
+                    x-data="{}"
                     {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
                     type="{{ $getType() }}"
                 @else
