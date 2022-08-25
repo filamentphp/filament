@@ -54,10 +54,7 @@ Optionally, you can have the label automatically translated by using the `transl
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')->translateLabel()
-
-// This is equivalent to
-// TextColumn::make('title')->label(__('title'))
+TextColumn::make('title')->translateLabel() // Equivalent to `label(__('Title'))`
 ```
 
 ### Sorting
