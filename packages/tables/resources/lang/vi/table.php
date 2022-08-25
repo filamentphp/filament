@@ -85,6 +85,7 @@ return [
 
             'reset' => [
                 'label' => 'Đặt lại bộ lọc',
+                'tooltip' => 'Đặt lại bộ lọc',
             ],
 
             'close' => [
@@ -92,6 +93,8 @@ return [
             ],
 
         ],
+
+        'indicator' => 'Bộ lọc đang kích hoạt',
 
         'multi_select' => [
             'placeholder' => 'Tất cả',

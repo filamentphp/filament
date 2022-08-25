@@ -37,16 +37,13 @@
         <div class="flex-1">
             <input
                 @unless ($hasMask())
+                    x-data="{}"
                     {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
                     type="{{ $getType() }}"
                 @else
                     x-data="textInputFormComponent({
                         {{ $hasMask() ? "getMaskOptionsUsing: (IMask) => ({$getJsonMaskConfiguration()})," : null }}
-                        state: $wire.{{
-                            $isLazy() ?
-                                'entangle(\'' . $getStatePath() . '\').defer' :
-                                $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')')
-                        }},
+                        state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
                     })"
                     type="text"
                     wire:ignore
@@ -73,10 +70,12 @@
                 {{ $getExtraInputAttributeBag()->class([
                     'block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 disabled:opacity-70',
                     'dark:bg-gray-700 dark:text-white dark:focus:border-primary-600' => config('forms.dark_mode'),
-                    'border-gray-300' => ! $errors->has($getStatePath()),
-                    'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
-                    'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
                 ]) }}
+                x-bind:class="{
+                    'border-gray-300': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
+                    'dark:border-gray-600': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors) && @js(config('forms.dark_mode')),
+                    'border-danger-600 ring-danger-600': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
+                }"
             />
         </div>
 

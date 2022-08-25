@@ -47,20 +47,16 @@
                 {{ $getExtraAlpineAttributeBag() }}
             >
                 <span
-                    @class([
-                        'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 ease-in-out transition duration-200',
-                    ])
-                    :class="{
+                    class="pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 ease-in-out transition duration-200"
+                    x-bind:class="{
                         'translate-x-5 rtl:-translate-x-5': state,
                         'translate-x-0': ! state,
                     }"
                 >
                     <span
-                        @class([
-                            'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity',
-                        ])
+                        class="absolute inset-0 h-full w-full flex items-center justify-center transition-opacity"
                         aria-hidden="true"
-                        :class="{
+                        x-bind:class="{
                             'opacity-0 ease-out duration-100': state,
                             'opacity-100 ease-in duration-200': ! state,
                         }"
@@ -73,7 +69,7 @@
                     <span
                         class="absolute inset-0 h-full w-full flex items-center justify-center transition-opacity"
                         aria-hidden="true"
-                        :class="{
+                        x-bind:class="{
                             'opacity-100 ease-in duration-200': state,
                             'opacity-0 ease-out duration-100': ! state,
                         }"

@@ -49,6 +49,15 @@ use Filament\Tables\Filters\Filter;
 Filter::make('is_featured')->label('Featured')
 ```
 
+
+Optionally, you can have the label automatically translated by using the `translateLabel()` method:
+
+```php
+use Filament\Tables\Filters\Filter;
+
+Filter::make('is_featured')->translateLabel() // Equivalent to `label(__('Is featured'))`
+```
+
 ### Using a toggle button instead of a checkbox
 
 By default, filters use a checkbox to control the filter. Instead, you may switch to using a toggle button, using the `toggle()` method:
@@ -248,6 +257,69 @@ Filter::make('created_at')
         Forms\Components\DatePicker::make('created_from'),
         Forms\Components\DatePicker::make('created_until')->default(now()),
     ])
+```
+
+## Active indicators
+
+When a filter is active, an indicator is displayed above the table content to signal that the table query has been scoped.
+
+By default, the label of the filter is used as the indicator. You can override this:
+
+```php
+use Filament\Tables\Filters\TernaryFilter;
+
+TernaryFilter::make('is_admin')
+    ->label('Administrators only?')
+    ->indicator('Administrators')
+```
+
+### Custom indicators
+
+Not all indicators are simple, so you may need to use `indicateUsing()` to customize which indicators should be shown at any time.
+
+For example, if you have a custom date filter, you may create a custom indicator that formats the selected date:
+
+```php
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\Filter;
+
+Filter::make('created_at')
+    ->form([DatePicker::make('date')])
+    // ...
+    ->indicateUsing(function (array $data): ?string {
+        if (! $data['date']) {
+            return null;
+        }
+
+        return 'Created at ' . Carbon::parse($data['date'])->toFormattedDateString();
+    })
+```
+
+You may even render multiple indicators at once, by returning an array. If you have different fields associated with different indicators, you should use the field's name as the array key, to ensure that the correct field is reset when the filter is removed:
+
+```php
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\Filter;
+
+Filter::make('created_at')
+    ->form([
+        DatePicker::make('from'),
+        DatePicker::make('until'),
+    ])
+    // ...
+    ->indicateUsing(function (array $data): array {
+        $indicators = [];
+
+        if ($data['from'] ?? null) {
+            $indicators['from'] = 'Created from ' . Carbon::parse($data['from'])->toFormattedDateString();
+        }
+
+        if ($data['until'] ?? null) {
+            $indicators['until'] = 'Created until ' . Carbon::parse($data['until'])->toFormattedDateString();
+        }
+
+        return $indicators;
+    })
 ```
 
 ## Appearance

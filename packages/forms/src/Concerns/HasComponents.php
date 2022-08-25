@@ -43,7 +43,7 @@ trait HasComponents
                         $component,
                         array_map(
                             fn (ComponentContainer $container): array => $container->getFlatComponents($withHidden),
-                            $component->getChildComponentContainers(),
+                            $component->getChildComponentContainers($withHidden),
                         ),
                     ];
                 }

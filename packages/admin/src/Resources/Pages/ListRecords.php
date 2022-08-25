@@ -20,8 +20,6 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     use Tables\Concerns\InteractsWithTable;
     use UsesResourceForm;
 
-    protected Table $resourceTable;
-
     protected static string $view = 'filament::resources.pages.list-records';
 
     protected $queryString = [
@@ -44,10 +42,6 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function getResourceTable(): Table
     {
-        if (isset($this->resourceTable)) {
-            return $this->resourceTable;
-        }
-
         $table = Table::make();
 
         $resource = static::getResource();
@@ -62,7 +56,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             $table->bulkActions([$this->getDeleteBulkAction()]);
         }
 
-        return $this->resourceTable = $this->table($table);
+        return $this->table($table);
     }
 
     /**
@@ -418,6 +412,20 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                 }
 
                 return $url;
+            }
+
+            $resource = static::getResource();
+
+            foreach (['view', 'edit'] as $action) {
+                if (! $resource::hasPage($action)) {
+                    continue;
+                }
+
+                if (! $resource::can($action, $record)) {
+                    continue;
+                }
+
+                return $resource::getUrl($action, ['record' => $record]);
             }
 
             return null;

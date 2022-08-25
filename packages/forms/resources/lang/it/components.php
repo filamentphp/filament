@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     'builder' => [
 
         'collapsed' => 'Contenuto compresso',
@@ -102,6 +103,10 @@ return [
                 'label' => 'Elimina',
             ],
 
+            'clone_item' => [
+                'label' => 'Clona',
+            ],
+
             'move_item_down' => [
                 'label' => 'Muovi giù',
             ],
@@ -129,6 +134,7 @@ return [
         ],
 
     ],
+
     'rich_editor' => [
 
         'dialogs' => [
@@ -191,14 +197,21 @@ return [
 
         ],
 
+        'boolean' => [
+            'true' => 'Si',
+            'false' => 'No',
+        ],
+
         'loading_message' => 'Caricamento...',
 
         'no_search_results_message' => 'Nessuna opzione trovata per la ricerca.',
+
         'placeholder' => 'Seleziona un\'opzione',
 
         'searching_message' => 'Ricerca...',
 
         'search_prompt' => 'Digita per cercare...',
+
     ],
 
     'tags_input' => [
@@ -218,6 +231,7 @@ return [
             ],
 
         ],
+
     ],
 
 ];

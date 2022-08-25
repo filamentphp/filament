@@ -83,6 +83,15 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Buang penapis',
+            ],
+
+            'remove_all' => [
+                'label' => 'Buang semua penapis',
+                'tooltip' => 'Buang semua penapis',
+            ],
+
             'reset' => [
                 'label' => 'Tetapkan semula penapis',
             ],
@@ -92,6 +101,8 @@ return [
             ],
 
         ],
+
+        'indicator' => 'Penapis aktif',
 
         'multi_select' => [
             'placeholder' => 'Semua',

@@ -2,6 +2,14 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => ':count de plus',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -45,6 +53,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Fin du classement des enregistrements',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Classer les enregistrements',
+        ],
+
         'filter' => [
             'label' => 'Filtre',
         ],
@@ -69,6 +85,7 @@ return [
 
             'reset' => [
                 'label' => 'Réinitialiser',
+                'tooltip' => 'Réinitialiser',
             ],
 
             'close' => [
@@ -77,12 +94,26 @@ return [
 
         ],
 
+        'indicator' => 'Filtres actifs',
+
         'multi_select' => [
             'placeholder' => 'Tout',
         ],
 
         'select' => [
             'placeholder' => 'Tout',
+        ],
+
+        'trashed' => [
+
+            'label' => 'Enregistrements supprimés',
+
+            'only_trashed' => 'Enregistrements supprimés uniquement',
+
+            'with_trashed' => 'Avec les enregistrements supprimés',
+
+            'without_trashed' => 'Sans les enregistrements supprimés',
+
         ],
 
     ],

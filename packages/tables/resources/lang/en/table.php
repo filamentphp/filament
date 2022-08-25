@@ -83,6 +83,15 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Remove filter',
+            ],
+
+            'remove_all' => [
+                'label' => 'Remove all filters',
+                'tooltip' => 'Remove all filters',
+            ],
+
             'reset' => [
                 'label' => 'Reset filters',
             ],
@@ -92,6 +101,8 @@ return [
             ],
 
         ],
+
+        'indicator' => 'Active filters',
 
         'multi_select' => [
             'placeholder' => 'All',

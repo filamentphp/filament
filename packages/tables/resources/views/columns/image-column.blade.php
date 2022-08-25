@@ -18,8 +18,9 @@
                     {!! $height !== null ? "height: {$height};" : null !!}
                     {!! $width !== null ? "width: {$width};" : null !!}
                 "
-                @class(['object-cover object-center' => $isRounded()])
-                {{ $getExtraImgAttributeBag() }}
+                {{ $getExtraImgAttributeBag()->class([
+                    'object-cover object-center' => $isRounded(),
+                ]) }}
             >
        @endif
     </div>
