@@ -31,6 +31,7 @@ trait InteractsWithTable
     use HasRecordAction;
     use HasRecordClasses;
     use HasRecordUrl;
+    use HasPerPageAllOption;
     use Forms\Concerns\InteractsWithForms;
 
     protected bool $hasMounted = false;
