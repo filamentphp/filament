@@ -22,14 +22,18 @@
                         {{ $indicator }}
 
                         <button
-                            wire:click="resetTableFilterForm('{{ $filter }}'{{ $field ? ' , \'' . $field . '\'' : null }})"
+                            wire:click="removeTableFilter('{{ $filter }}'{{ $field ? ' , \'' . $field . '\'' : null }})"
                             wire:loading.attr="disabled"
                             wire:loading.class="cursor-wait"
-                            wire:target="resetTableFilterForm"
+                            wire:target="removeTableFilter"
                             type="button"
                             class="ml-1 -mr-2 rtl:mr-1 rtl:-ml-2 p-1 -my-1 hover:bg-gray-500/10 rounded-full"
                         >
                             <x-heroicon-s-x class="w-3 h-3" />
+
+                            <span class="sr-only">
+                                {{ __('tables::table.filters.buttons.remove.label') }}
+                            </span>
                         </button>
                     </span>
                 @endforeach
@@ -38,7 +42,7 @@
 
         <div class="flex-shrink-0">
             <button
-                wire:click="resetTableFiltersForm"
+                wire:click="removeTableFilters"
                 type="button"
                 @class([
                     '-mb-1.5 -mt-0.5 -mr-2 p-1.5 text-gray-600 hover:bg-gray-500/10 rounded-full hover:text-gray-700',
@@ -47,21 +51,21 @@
             >
                 <div class="w-5 h-5 flex items-center justify-center">
                     <x-heroicon-s-x
-                        :x-tooltip.raw="__('tables::table.filters.buttons.reset.label')"
+                        :x-tooltip.raw="__('tables::table.filters.buttons.remove_all.tooltip')"
                         wire:loading.remove.delay
-                        wire:target="resetTableFiltersForm,resetTableFilterForm"
+                        wire:target="removeTableFilters,removeTableFilter"
                         class="w-5 h-5"
                     />
 
                     <x-filament-support::loading-indicator
                         wire:loading.delay
-                        wire:target="resetTableFiltersForm,resetTableFilterForm"
+                        wire:target="removeTableFilters,removeTableFilter"
                         class="animate-spin w-5 h-5"
                     />
                 </div>
 
                 <span class="sr-only">
-                    {{ __('tables::table.filters.buttons.reset.label') }}
+                    {{ __('tables::table.filters.buttons.remove_all.label') }}
                 </span>
             </button>
         </div>
