@@ -7,7 +7,6 @@ use Filament\Forms\ComponentContainer;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Filters\Layout;
 use Illuminate\Database\Eloquent\Builder;
-use function Filament\Support\array_clear;
 
 /**
  * @property ComponentContainer $tableFiltersForm
