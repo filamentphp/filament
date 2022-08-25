@@ -1,26 +1,50 @@
+import { mutateDom } from 'alpinejs/src/mutation'
+
 export default (Alpine) => {
-    Alpine.data('notificationComponent', ({ $wire, notification }) => ({
-        phase: 'enter-start',
+    Alpine.data('notificationComponent', ({ notification }) => ({
+        isShown: false,
 
         computedStyle: null,
-
-        hasTransitionLeaveAttribute: false,
 
         init: function () {
             this.computedStyle = window.getComputedStyle(this.$el)
 
-            this.hasTransitionLeaveAttribute =
-                this.$el.hasAttribute('x-transition:leave') ||
-                this.$el.hasAttribute('x-transition:leave-start') ||
-                this.$el.hasAttribute('x-transition:leave-end')
-
+            this.configureTransitions()
             this.configureAnimations()
 
             if (notification.duration !== null) {
                 setTimeout(() => this.close(), notification.duration)
             }
 
-            this.$nextTick(() => (this.phase = 'enter-end'))
+            this.isShown = true
+        },
+
+        configureTransitions: function () {
+            const display = this.computedStyle.display
+
+            const show = () => {
+                mutateDom(() => this.$el.style.setProperty('display', display))
+                this.$el._x_isShown = true
+            }
+
+            const hide = () => {
+                mutateDom(() => {
+                    this.$el._x_isShown
+                        ? this.$el.style.setProperty('visibility', 'hidden')
+                        : this.$el.style.setProperty('display', 'none')
+                })
+            }
+
+            const toggle = (value) => {
+                this.$el._x_toggleAndCascadeWithTransitions(
+                    this.$el,
+                    value,
+                    show,
+                    hide,
+                )
+            }
+
+            Alpine.effect(() => toggle(this.isShown))
         },
 
         configureAnimations: function () {
@@ -31,20 +55,19 @@ export default (Alpine) => {
                     return
                 }
 
-                const oldTop = this.getTop()
+                const getTop = () => this.$el.getBoundingClientRect().top
+                const oldTop = getTop()
 
                 animation = () => {
-                    const newTop = this.getTop()
-
                     this.$el.animate(
                         [
-                            { transform: `translateY(${oldTop - newTop}px)` },
+                            { transform: `translateY(${oldTop - getTop()}px)` },
                             { transform: 'translateY(0px)' },
                         ],
                         {
                             duration: this.getTransitionDuration(),
                             easing: this.computedStyle.transitionTimingFunction,
-                        }
+                        },
                     )
                 }
 
@@ -58,7 +81,7 @@ export default (Alpine) => {
                     return
                 }
 
-                if (this.phase.startsWith('leave-')) {
+                if (!this.isShown) {
                     return
                 }
 
@@ -67,22 +90,12 @@ export default (Alpine) => {
         },
 
         close: function () {
-            this.phase = 'leave-start'
+            this.isShown = false
 
-            this.$nextTick(() => {
-                setTimeout(
-                    () => $wire.close(notification.id),
-                    this.hasTransitionLeaveAttribute
-                        ? this.getTransitionDuration()
-                        : 0
-                )
-
-                this.phase = 'leave-end'
-            })
-        },
-
-        getTop: function () {
-            return this.$el.getBoundingClientRect().top
+            setTimeout(
+                () => Livewire.emit('notificationClosed', notification.id),
+                this.getTransitionDuration(),
+            )
         },
 
         getTransitionDuration: function () {

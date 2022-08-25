@@ -384,6 +384,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return filled($this->getTableReorderColumn()) && static::getResource()::canReorder();
     }
 
+    protected function getTablePollingInterval(): ?string
+    {
+        return $this->getResourceTable()->getPollingInterval();
+    }
+
     protected function getTableRecordUrlUsing(): ?Closure
     {
         return function (Model $record): ?string {
@@ -407,6 +412,20 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                 }
 
                 return $url;
+            }
+
+            $resource = static::getResource();
+
+            foreach (['view', 'edit'] as $action) {
+                if (! $resource::hasPage($action)) {
+                    continue;
+                }
+
+                if (! $resource::can($action, $record)) {
+                    continue;
+                }
+
+                return $resource::getUrl($action, ['record' => $record]);
             }
 
             return null;

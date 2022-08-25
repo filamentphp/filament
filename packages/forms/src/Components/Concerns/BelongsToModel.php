@@ -39,6 +39,10 @@ trait BelongsToModel
             return;
         }
 
+        if (! $this->getRecord()?->exists) {
+            return;
+        }
+
         $this->evaluate($callback);
 
         if ($andHydrate) {

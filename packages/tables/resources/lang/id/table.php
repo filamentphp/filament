@@ -85,6 +85,7 @@ return [
 
             'reset' => [
                 'label' => 'Atur ulang filter',
+                'tooltip' => 'Atur ulang filter',
             ],
 
             'close' => [
@@ -92,6 +93,8 @@ return [
             ],
 
         ],
+
+        'indicator' => 'Filter aktif',
 
         'multi_select' => [
             'placeholder' => 'Semua',

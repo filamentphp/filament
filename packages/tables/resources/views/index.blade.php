@@ -308,6 +308,38 @@
             </div>
         </div>
 
+        @if ($isReordering)
+            <x-tables::reorder.indicator
+                :colspan="$columnsCount"
+                :class="\Illuminate\Support\Arr::toCssClasses([
+                    'border-t',
+                    'dark:border-gray-700' => config('tables.dark_mode'),
+                ])"
+            />
+        @elseif ($isSelectionEnabled)
+            <x-tables::selection-indicator
+                :all-records-count="$getAllRecordsCount()"
+                :colspan="$columnsCount"
+                x-show="selectedRecords.length"
+                :class="\Illuminate\Support\Arr::toCssClasses([
+                    'border-t',
+                    'dark:border-gray-700' => config('tables.dark_mode'),
+                ])"
+            >
+                <x-slot name="selectedRecordsCount">
+                    <span x-text="selectedRecords.length"></span>
+                </x-slot>
+            </x-tables::selection-indicator>
+        @endif
+
+        <x-tables::filters.indicators
+            :indicators="collect($getFilters())->mapWithKeys(fn (\Filament\Tables\Filters\BaseFilter $filter): array => [$filter->getName() => $filter->getIndicators()])->filter(fn (array $indicators): bool => count($indicators))->all()"
+            :class="\Illuminate\Support\Arr::toCssClasses([
+                'border-t',
+                'dark:border-gray-700' => config('tables.dark_mode'),
+            ])"
+        />
+
         <div
             @class([
                 'overflow-y-auto relative',
@@ -324,7 +356,7 @@
                 @if ($content)
                     {{ $content->with(['records' => $records]) }}
                 @else
-                    <x-tables::table>
+                    <x-tables::table :poll="$getPollingInterval()">
                         <x-slot name="header">
                             @if ($isReordering)
                                 <th></th>
@@ -376,20 +408,6 @@
                                 <th class="w-5"></th>
                             @endif
                         </x-slot>
-
-                        @if ($isReordering)
-                            <x-tables::reorder.indicator :colspan="$columnsCount" />
-                        @elseif ($isSelectionEnabled)
-                            <x-tables::selection-indicator
-                                :all-records-count="$getAllRecordsCount()"
-                                :colspan="$columnsCount"
-                                x-show="selectedRecords.length"
-                            >
-                                <x-slot name="selectedRecordsCount">
-                                    <span x-text="selectedRecords.length"></span>
-                                </x-slot>
-                            </x-tables::selection-indicator>
-                        @endif
 
                         @foreach ($records as $record)
                             @php
@@ -534,6 +552,15 @@
         <x-tables::modal
             :id="$this->id . '-table-action'"
             :wire:key="$action ? $this->id . '.table' . ($getMountedActionRecordKey() ? '.records.' . $getMountedActionRecordKey() : null) . '.actions.' . $action->getName() . '.modal' : null"
+            x-init="
+                $watch('isOpen', () => {
+                    if (isOpen) {
+                        return
+                    }
+
+                    $wire.mountedTableAction = null
+                })
+            "
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
             display-classes="block"
@@ -554,6 +581,12 @@
                         <x-tables::modal.heading>
                             {{ $action->getModalHeading() }}
                         </x-tables::modal.heading>
+
+                        @if ($subheading = $action->getModalSubheading())
+                            <x-tables::modal.subheading>
+                                {{ $subheading }}
+                            </x-tables::modal.subheading>
+                        @endif
                     </x-slot>
                 @endif
 
@@ -584,6 +617,15 @@
         <x-tables::modal
             :id="$this->id . '-table-bulk-action'"
             :wire:key="$action ? $this->id . '.table.bulk-actions.' . $action->getName() . '.modal' : null"
+            x-init="
+                $watch('isOpen', () => {
+                    if (isOpen) {
+                        return
+                    }
+
+                    $wire.mountedTableBulkAction = null
+                })
+            "
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
             display-classes="block"
@@ -604,6 +646,12 @@
                         <x-tables::modal.heading>
                             {{ $action->getModalHeading() }}
                         </x-tables::modal.heading>
+
+                        @if ($subheading = $action->getModalSubheading())
+                            <x-tables::modal.subheading>
+                                {{ $subheading }}
+                            </x-tables::modal.subheading>
+                        @endif
                     </x-slot>
                 @endif
 

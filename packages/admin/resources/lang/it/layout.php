@@ -13,6 +13,7 @@ return [
         'light_mode' => [
             'label' => 'Attiva modalità chiara',
         ],
+
         'logout' => [
             'label' => 'Disconnetti',
         ],

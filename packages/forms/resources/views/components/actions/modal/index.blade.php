@@ -6,6 +6,15 @@
     <x-forms::modal
         :id="$this->id . '-form-component-action'"
         :wire:key="$action ? $this->id . '.' . $action->getComponent()->getStatePath() . '.actions.' . $action->getName() . '.modal' : null"
+        x-init="
+            $watch('isOpen', () => {
+                if (isOpen) {
+                    return
+                }
+
+                $wire.mountedFormComponentAction = null
+            })
+        "
         :visible="filled($action)"
         :width="$action?->getModalWidth()"
         display-classes="block"
@@ -26,6 +35,12 @@
                     <x-forms::modal.heading>
                         {{ $action->getModalHeading() }}
                     </x-forms::modal.heading>
+
+                    @if ($subheading = $action->getModalSubheading())
+                        <x-forms::modal.subheading>
+                            {{ $subheading }}
+                        </x-forms::modal.subheading>
+                    @endif
                 </x-slot>
             @endif
 

@@ -2,6 +2,14 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 'dan :count lagi',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -45,12 +53,24 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Selesai menyusun semula rekod',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Menyusun semula rekod',
+        ],
+
         'filter' => [
             'label' => 'Penapis',
         ],
 
         'open_actions' => [
             'label' => 'Tindakan terbuka',
+        ],
+
+        'toggle_columns' => [
+            'label' => 'Togol lajur',
         ],
 
     ],
@@ -65,9 +85,16 @@ return [
 
             'reset' => [
                 'label' => 'Tetapkan semula penapis',
+                'tooltip' => 'Tetapkan semula penapis',
+            ],
+
+            'close' => [
+                'label' => 'Tutup',
             ],
 
         ],
+
+        'indicator' => 'Penapis aktif',
 
         'multi_select' => [
             'placeholder' => 'Semua',
@@ -77,7 +104,21 @@ return [
             'placeholder' => 'Semua',
         ],
 
+        'trashed' => [
+
+            'label' => 'Rekod telah dipadamkan',
+
+            'only_trashed' => 'Hanya rekod yang dipadamkan',
+
+            'with_trashed' => 'Dengan rekod yang dipadam',
+
+            'without_trashed' => 'Tanpa rekod yang dipadam',
+
+        ],
+
     ],
+
+    'reorder_indicator' => 'Seret dan lepaskan rekod mengikut susunan.',
 
     'selection_indicator' => [
 

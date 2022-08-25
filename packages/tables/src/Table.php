@@ -2,7 +2,6 @@
 
 namespace Filament\Tables;
 
-use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Support\Components\ViewComponent;
 use Filament\Tables\Actions\Action;
@@ -22,52 +21,6 @@ class Table extends ViewComponent
 {
     use Concerns\BelongsToLivewire;
 
-    protected ?string $actionsPosition = null;
-
-    protected ?View $content = null;
-
-    protected ?View $contentFooter = null;
-
-    protected ?string $description = null;
-
-    protected ?View $emptyState = null;
-
-    protected ?string $emptyStateDescription = null;
-
-    protected ?string $emptyStateHeading = null;
-
-    protected ?string $emptyStateIcon = null;
-
-    protected ?string $filtersFormWidth = null;
-
-    protected ?string $filtersLayout = null;
-
-    protected ?string $columnToggleFormWidth = null;
-
-    protected ?string $reorderColumn = null;
-
-    protected ?Closure $getRecordActionUsing = null;
-
-    protected ?Closure $getRecordClassesUsing = null;
-
-    protected ?Closure $getRecordUrlUsing = null;
-
-    protected ?View $header = null;
-
-    protected string | Closure | null $heading = null;
-
-    protected bool $isReorderable = false;
-
-    protected bool $isPaginationEnabled = true;
-
-    protected bool $isStriped = false;
-
-    protected array $meta = [];
-
-    protected string $model;
-
-    protected ?array $recordsPerPageSelectOptions = null;
-
     protected string $view = 'tables::index';
 
     protected string $viewIdentifier = 'table';
@@ -84,153 +37,6 @@ class Table extends ViewComponent
         return app(static::class, ['livewire' => $livewire]);
     }
 
-    public function actionsPosition(?string $position): static
-    {
-        $this->actionsPosition = $position;
-
-        return $this;
-    }
-
-    public function description(?string $description): static
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    public function emptyState(?View $view): static
-    {
-        $this->emptyState = $view;
-
-        return $this;
-    }
-
-    public function emptyStateDescription(?string $description): static
-    {
-        $this->emptyStateDescription = $description;
-
-        return $this;
-    }
-
-    public function emptyStateHeading(?string $heading): static
-    {
-        $this->emptyStateHeading = $heading;
-
-        return $this;
-    }
-
-    public function emptyStateIcon(?string $icon): static
-    {
-        $this->emptyStateIcon = $icon;
-
-        return $this;
-    }
-
-    public function enablePagination(bool $condition = true): static
-    {
-        $this->isPaginationEnabled = $condition;
-
-        return $this;
-    }
-
-    public function content(?View $view): static
-    {
-        $this->content = $view;
-
-        return $this;
-    }
-
-    public function contentFooter(?View $view): static
-    {
-        $this->contentFooter = $view;
-
-        return $this;
-    }
-
-    public function filtersFormWidth(?string $width): static
-    {
-        $this->filtersFormWidth = $width;
-
-        return $this;
-    }
-
-    public function filtersLayout(?string $layout): static
-    {
-        $this->filtersLayout = $layout;
-
-        return $this;
-    }
-
-    public function getRecordActionUsing(?Closure $callback): static
-    {
-        $this->getRecordActionUsing = $callback;
-
-        return $this;
-    }
-
-    public function getRecordClassesUsing(?Closure $callback): static
-    {
-        $this->getRecordClassesUsing = $callback;
-
-        return $this;
-    }
-
-    public function getRecordUrlUsing(?Closure $callback): static
-    {
-        $this->getRecordUrlUsing = $callback;
-
-        return $this;
-    }
-
-    public function header(?View $view): static
-    {
-        $this->header = $view;
-
-        return $this;
-    }
-
-    public function heading(string | Closure | null $heading): static
-    {
-        $this->heading = $heading;
-
-        return $this;
-    }
-
-    public function model(string $model): static
-    {
-        $this->model = $model;
-
-        return $this;
-    }
-
-    public function recordsPerPageSelectOptions(array $options): static
-    {
-        $this->recordsPerPageSelectOptions = $options;
-
-        return $this;
-    }
-
-    public function reorderColumn(?string $column): static
-    {
-        $this->reorderColumn = $column;
-
-        return $this;
-    }
-
-    public function reorderable(bool $condition = true): static
-    {
-        $this->isReorderable = $condition;
-
-        return $this;
-    }
-
-    public function striped(bool $condition = true): static
-    {
-        $this->isStriped = $condition;
-
-        return $this;
-    }
-
     public function getActions(): array
     {
         return $this->getLivewire()->getCachedTableActions();
@@ -238,7 +44,10 @@ class Table extends ViewComponent
 
     public function getActionsPosition(): string
     {
-        return $this->actionsPosition ?? Position::AfterCells;
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->getTableActionsPosition() ?? Position::AfterCells;
     }
 
     public function getAllRecordsCount(): int
@@ -264,22 +73,34 @@ class Table extends ViewComponent
 
     public function getContent(): ?View
     {
-        return $this->content;
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->getTableContent();
     }
 
     public function getContentFooter(): ?View
     {
-        return $this->contentFooter;
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->getTableContentFooter();
     }
 
     public function getDescription(): ?string
     {
-        return $this->description;
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->getTableDescription();
     }
 
     public function getEmptyState(): ?View
     {
-        return $this->emptyState;
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->getTableEmptyState();
     }
 
     public function getEmptyStateActions(): array
@@ -292,17 +113,26 @@ class Table extends ViewComponent
 
     public function getEmptyStateDescription(): ?string
     {
-        return $this->emptyStateDescription;
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->getTableEmptyStateDescription();
     }
 
     public function getEmptyStateHeading(): string
     {
-        return $this->emptyStateHeading ?? __('tables::table.empty.heading');
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->getTableEmptyStateHeading() ?? __('tables::table.empty.heading');
     }
 
     public function getEmptyStateIcon(): string
     {
-        return $this->emptyStateIcon ?? 'heroicon-o-x';
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->getTableEmptyStateIcon() ?? 'heroicon-o-x';
     }
 
     public function getFilters(): array
@@ -317,12 +147,18 @@ class Table extends ViewComponent
 
     public function getFiltersFormWidth(): ?string
     {
-        return $this->filtersFormWidth;
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->getTableFiltersFormWidth();
     }
 
     public function getFiltersLayout(): string
     {
-        return $this->filtersLayout ?? Layout::Popover;
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->getTableFiltersLayout() ?? Layout::Popover;
     }
 
     public function getColumnToggleForm(): ComponentContainer
@@ -332,12 +168,18 @@ class Table extends ViewComponent
 
     public function getColumnToggleFormWidth(): ?string
     {
-        return $this->columnToggleFormWidth;
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->getTableColumnToggleFormWidth();
     }
 
     public function getHeader(): ?View
     {
-        return $this->header;
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->getTableHeader();
     }
 
     public function getHeaderActions(): array
@@ -350,12 +192,18 @@ class Table extends ViewComponent
 
     public function getHeading(): ?string
     {
-        return value($this->heading);
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return value(invade($livewire)->getTableHeading());
     }
 
     public function getModel(): string
     {
-        return $this->model;
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->getTableQuery()->getModel()::class;
     }
 
     public function getMountedAction(): ?Action
@@ -390,12 +238,18 @@ class Table extends ViewComponent
 
     public function getRecordsPerPageSelectOptions(): array
     {
-        return $this->recordsPerPageSelectOptions;
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->getTableRecordsPerPageSelectOptions();
     }
 
     public function getRecordAction(Model $record): ?string
     {
-        $callback = $this->getRecordActionUsing;
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        $callback = invade($livewire)->getTableRecordActionUsing();
 
         if (! $callback) {
             return null;
@@ -406,7 +260,10 @@ class Table extends ViewComponent
 
     public function getRecordClasses(Model $record): array
     {
-        $callback = $this->getRecordClassesUsing;
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        $callback = invade($livewire)->getTableRecordClassesUsing();
 
         if (! $callback) {
             return [];
@@ -417,7 +274,10 @@ class Table extends ViewComponent
 
     public function getRecordUrl(Model $record): ?string
     {
-        $callback = $this->getRecordUrlUsing;
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        $callback = invade($livewire)->getTableRecordUrlUsing();
 
         if (! $callback) {
             return null;
@@ -428,12 +288,18 @@ class Table extends ViewComponent
 
     public function getReorderColumn(): ?string
     {
-        return $this->reorderColumn;
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->getTableReorderColumn();
     }
 
     public function isReorderable(): bool
     {
-        return $this->isReorderable;
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->isTableReorderable();
     }
 
     public function isReordering(): bool
@@ -458,7 +324,10 @@ class Table extends ViewComponent
 
     public function isPaginationEnabled(): bool
     {
-        return $this->isPaginationEnabled;
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->isTablePaginationEnabled();
     }
 
     public function isSelectionEnabled(): bool
@@ -481,8 +350,19 @@ class Table extends ViewComponent
         return $this->getLivewire()->getTableRecordKey($record);
     }
 
+    public function getPollingInterval(): ?string
+    {
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->getTablePollingInterval();
+    }
+
     public function isStriped(): bool
     {
-        return $this->isStriped;
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->isTableStriped();
     }
 }
