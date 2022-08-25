@@ -55,10 +55,7 @@ Optionally, you can have the label automatically translated by using the `transl
 ```php
 use Filament\Tables\Filters\Filter;
 
-Filter::make('is_featured')->translateLabel()
-
-// This is equivalent to
-// Filter::make('is_featured')->label(_('is_featured'))
+Filter::make('is_featured')->translateLabel() // Equivalent to `label(__('Is featured'))`
 ```
 
 ### Using a toggle button instead of a checkbox
