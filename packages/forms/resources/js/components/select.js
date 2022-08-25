@@ -169,7 +169,7 @@ export default (Alpine) => {
             transformOptionsIntoChoices: function (options) {
                 return Object.values(options)
                     .map((option) => {
-                        let [value, label] = Object.entries(option)[0]
+                        const [value, label] = Object.entries(option)[0]
 
                         return {
                             label,
