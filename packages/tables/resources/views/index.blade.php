@@ -363,7 +363,7 @@
                                 <th></th>
                             @else
                                 @if (count($actions) && $actionsPosition === Position::BeforeCells)
-                                    @if( $actionsColumnLabel)
+                                    @if ($actionsColumnLabel)
                                         <x-tables::header-cell alignment="right">
                                             {{ $actionsColumnLabel }}
                                         </x-tables::header-cell>
