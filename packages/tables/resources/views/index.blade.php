@@ -363,7 +363,7 @@
                                 <th></th>
                             @else
                                 @if (count($actions) && $actionsPosition === Position::BeforeCells)
-                                    @if($actionsColumnLabel)
+                                    @if( $actionsColumnLabel)
                                         <x-tables::header-cell alignment="right">
                                             {{ $actionsColumnLabel }}
                                         </x-tables::header-cell>
@@ -393,7 +393,7 @@
                                 @endif
 
                                 @if (count($actions) && $actionsPosition === Position::BeforeColumns)
-                                    @if($actionsColumnLabel)
+                                    @if ($actionsColumnLabel)
                                         <x-tables::header-cell alignment="right">
                                             {{ $actionsColumnLabel }}
                                         </x-tables::header-cell>
@@ -418,7 +418,7 @@
                             @endforeach
 
                             @if (count($actions) && (! $isReordering) && $actionsPosition === Position::AfterCells)
-                                @if($actionsColumnLabel)
+                                @if ($actionsColumnLabel)
                                     <x-tables::header-cell alignment="right">
                                         {{ $actionsColumnLabel }}
                                     </x-tables::header-cell>
