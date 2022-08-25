@@ -58,12 +58,12 @@ $deleteRows = $canDeleteRows()
         ])>
             <table @class([
                 'w-full text-left rtl:text-right divide-y table-auto',
-                'dark:divide-gray-700' => config('forms.dark_mode'),
+                'dark:divide-gray-600' => config('forms.dark_mode'),
             ])>
                 <thead>
                     <tr @class([
                         'bg-gray-50 divide-x',
-                        'dark:bg-gray-800/60' => config('forms.dark_mode'),
+                        'dark:divide-gray-600 dark:bg-gray-800/60' => config('forms.dark_mode'),
                     ])>
                         <template x-for="i in columns">
                             <th @class([
