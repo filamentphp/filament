@@ -33,8 +33,6 @@ trait HasLabel
             ->replace(['-', '_'], ' ')
             ->ucfirst();
 
-        return $this->shouldTranslateLabel
-            ? __($label)
-            : $label;
+        return $this->shouldTranslateLabel ? __($label) : $label;
     }
 }
