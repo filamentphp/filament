@@ -24,9 +24,9 @@ export default (Alpine) => {
 
             const show = () => {
                 mutateDom(() => {
-                    this.$el.style.setProperty('display', display);
-                    this.$el.style.setProperty('visibility','visible');
-                });
+                    this.$el.style.setProperty('display', display)
+                    this.$el.style.setProperty('visibility', 'visible')
+                })
                 this.$el._x_isShown = true
             }
 
