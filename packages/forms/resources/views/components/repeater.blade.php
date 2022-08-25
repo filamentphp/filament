@@ -20,25 +20,27 @@
         $hasItemLabels = $hasItemLabels();
     @endphp
 
-    @if ((count($containers) > 1) && $isCollapsible)
-        <div class="space-x-2 rtl:space-x-reverse" x-data="{}">
-            <x-forms::link
-                x-on:click="$dispatch('repeater-collapse', '{{ $getStatePath() }}')"
-                tag="button"
-                size="sm"
-            >
-                {{ __('forms::components.repeater.buttons.collapse_all.label') }}
-            </x-forms::link>
+    <div>
+        @if ((count($containers) > 1) && $isCollapsible)
+            <div class="space-x-2 rtl:space-x-reverse" x-data="{}">
+                <x-forms::link
+                    x-on:click="$dispatch('repeater-collapse', '{{ $getStatePath() }}')"
+                    tag="button"
+                    size="sm"
+                >
+                    {{ __('forms::components.repeater.buttons.collapse_all.label') }}
+                </x-forms::link>
 
-            <x-forms::link
-                x-on:click="$dispatch('repeater-expand', '{{ $getStatePath() }}')"
-                tag="button"
-                size="sm"
-            >
-                {{ __('forms::components.repeater.buttons.expand_all.label') }}
-            </x-forms::link>
-        </div>
-    @endif
+                <x-forms::link
+                    x-on:click="$dispatch('repeater-expand', '{{ $getStatePath() }}')"
+                    tag="button"
+                    size="sm"
+                >
+                    {{ __('forms::components.repeater.buttons.expand_all.label') }}
+                </x-forms::link>
+            </div>
+        @endif
+    </div>
 
     <div {{ $attributes->merge($getExtraAttributes())->class([
         'space-y-6 rounded-xl filament-forms-repeater-component',
@@ -71,12 +73,17 @@
                             ])
                         >
                             @if ((! $isItemMovementDisabled) || (! $isItemDeletionDisabled) || $isCloneable || $isCollapsible || $hasItemLabels)
-                                <header @class([
-                                    'flex items-center h-10 overflow-hidden border-b bg-gray-50 rounded-t-xl',
-                                    'dark:bg-gray-800 dark:border-gray-700' => config('forms.dark_mode'),
-                                ])>
+                                <header
+                                    @if ($isCollapsible) x-on:click.stop="isCollapsed = ! isCollapsed" @endif
+                                    @class([
+                                        'flex items-center h-10 overflow-hidden border-b bg-gray-50 rounded-t-xl',
+                                        'dark:bg-gray-800 dark:border-gray-700' => config('forms.dark_mode'),
+                                        'cursor-pointer' => $isCollapsible,
+                                    ])
+                                >
                                     @unless ($isItemMovementDisabled)
                                         <button
+                                            x-on:click.stop
                                             wire:sortable.handle
                                             wire:keydown.prevent.arrow-up="dispatchFormEvent('repeater::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                             wire:keydown.prevent.arrow-down="dispatchFormEvent('repeater::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
@@ -129,7 +136,7 @@
                                         @unless ($isItemDeletionDisabled)
                                             <li>
                                                 <button
-                                                    wire:click="dispatchFormEvent('repeater::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                    wire:click.stop="dispatchFormEvent('repeater::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                     type="button"
                                                     @class([
                                                         'flex items-center justify-center flex-none w-10 h-10 text-danger-600 transition hover:text-danger-500',
@@ -148,7 +155,7 @@
                                         @if ($isCollapsible)
                                             <li>
                                                 <button
-                                                    x-on:click="isCollapsed = ! isCollapsed"
+                                                    x-on:click.stop="isCollapsed = ! isCollapsed"
                                                     type="button"
                                                     @class([
                                                         'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-300',

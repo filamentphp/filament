@@ -84,10 +84,13 @@ return [
         'buttons' => [
 
             'reset' => [
-                'label' => 'إعادة ضبط الفلترة',
+                'label' => 'إعادة ضبط المصفيات',
+                'tooltip' => 'إعادة ضبط المصفيات',
             ],
 
         ],
+
+        'indicator' => 'المصفيات النشطة',
 
         'multi_select' => [
             'placeholder' => 'الكل',

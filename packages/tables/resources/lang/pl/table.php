@@ -2,6 +2,14 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 'i :count więcej',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -45,6 +53,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Zakończ zmienianie kolejności',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Zmień kolejność',
+        ],
+
         'filter' => [
             'label' => 'Filtr',
         ],
@@ -69,9 +85,12 @@ return [
 
             'reset' => [
                 'label' => 'Zresetuj filtry',
+                'tooltip' => 'Zresetuj filtry',
             ],
 
         ],
+
+        'indicator' => 'Aktywne filtry',
 
         'multi_select' => [
             'placeholder' => 'Wszystkie',
@@ -94,6 +113,8 @@ return [
         ],
 
     ],
+
+    'reorder_indicator' => 'Zmień kolejność przeciągając.',
 
     'selection_indicator' => [
 
