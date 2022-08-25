@@ -54,10 +54,7 @@ Optionally, you can have the label automatically translated by using the `transl
 ```php
 use Filament\Forms\Components\TextInput;
 
-TextInput::make('name')->translateLabel()
-
-// This is equivalent to
-// TextInput::make('name')->label(__('name'))
+TextInput::make('name')->translateLabel() // Equivalent to `label(__('Name'))`
 ```
 
 ### Setting an ID
