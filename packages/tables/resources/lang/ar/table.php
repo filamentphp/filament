@@ -25,6 +25,8 @@ return [
 
         'overview' => 'عرض :first إلى :last من :total النتائج',
 
+        'all' => 'الكل',
+
         'fields' => [
 
             'records_per_page' => [
