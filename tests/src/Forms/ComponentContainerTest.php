@@ -98,6 +98,27 @@ it('can return a flat array of components', function () {
         ]);
 });
 
+it('can return a flat array of components including hidden components', function () {
+    $container = ComponentContainer::make(Livewire::make())
+        ->components([
+            $fieldset = Fieldset::make(Str::random())
+                ->hidden(true)
+                ->schema([
+                    $field = TextInput::make(Str::random()),
+                ]),
+            $section = Section::make(Str::random()),
+        ]);
+
+    expect($container)
+        ->getFlatComponents(true)
+        ->toHaveCount(3)
+        ->toMatchArray([
+            $fieldset,
+            $field,
+            $section,
+        ]);
+});
+
 it('can return a flat array of fields', function () {
     $container = ComponentContainer::make(Livewire::make())
         ->components([
@@ -110,6 +131,25 @@ it('can return a flat array of fields', function () {
 
     expect($container)
         ->getFlatFields()
+        ->toHaveCount(1)
+        ->toMatchArray([
+            $name => $field,
+        ]);
+});
+
+it('can return a flat array of fields including hidden fields', function () {
+    $container = ComponentContainer::make(Livewire::make())
+        ->components([
+            Fieldset::make(Str::random())
+                ->hidden(true)
+                ->schema([
+                    $field = TextInput::make($name = Str::random()),
+                ]),
+            $section = Section::make(Str::random()),
+        ]);
+
+    expect($container)
+        ->getFlatFields(true)
         ->toHaveCount(1)
         ->toMatchArray([
             $name => $field,
