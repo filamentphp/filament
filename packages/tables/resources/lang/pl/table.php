@@ -118,7 +118,7 @@ return [
 
     ],
 
-    'reorder_indicator' => 'Sortuj rekordy przeciągając.',
+    'reorder_indicator' => 'Zmień kolejność przeciągając.',
 
     'selection_indicator' => [
 
