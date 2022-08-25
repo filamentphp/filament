@@ -11,6 +11,8 @@ trait HasLabel
 
     protected string | Htmlable | Closure | null $label = null;
 
+    protected bool $shouldTranslateLabel = false;
+
     public function disableLabel(bool | Closure $condition = true): static
     {
         $this->isLabelHidden = $condition;
@@ -25,9 +27,20 @@ trait HasLabel
         return $this;
     }
 
+    public function translateLabel(bool $shouldTranslateLabel = true): static
+    {
+        $this->shouldTranslateLabel = $shouldTranslateLabel;
+
+        return $this;
+    }
+
     public function getLabel(): string | Htmlable | null
     {
-        return $this->evaluate($this->label);
+        $label = $this->evaluate($this->label);
+
+        return is_string($label) && $this->shouldTranslateLabel
+            ? __($label)
+            : $label;
     }
 
     public function isLabelHidden(): bool

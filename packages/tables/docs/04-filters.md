@@ -49,6 +49,15 @@ use Filament\Tables\Filters\Filter;
 Filter::make('is_featured')->label('Featured')
 ```
 
+
+Optionally, you can have the label automatically translated by using the `translateLabel()` method:
+
+```php
+use Filament\Tables\Filters\Filter;
+
+Filter::make('is_featured')->translateLabel() // Equivalent to `label(__('Is featured'))`
+```
+
 ### Using a toggle button instead of a checkbox
 
 By default, filters use a checkbox to control the filter. Instead, you may switch to using a toggle button, using the `toggle()` method:
