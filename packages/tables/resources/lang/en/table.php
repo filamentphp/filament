@@ -25,6 +25,8 @@ return [
 
         'overview' => 'Showing :first to :last of :total results',
 
+        'all' => 'All',
+
         'fields' => [
 
             'records_per_page' => [
