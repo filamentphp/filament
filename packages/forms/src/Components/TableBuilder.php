@@ -12,6 +12,10 @@ class TableBuilder extends Field
 
     protected string $view = 'forms::components.table-builder';
 
+    protected string | Closure $addColumnButtonLabel;
+
+    protected string | Closure $addRowButtonLabel;
+
     protected bool | Closure $shouldDisableAddingRows = false;
 
     protected bool | Closure $shouldDisableDeletingRows = false;
@@ -24,7 +28,8 @@ class TableBuilder extends Field
     {
         parent::setUp();
 
-        $this->default([[null, null, null]]);
+        $this->addRowButtonLabel(__('forms::components.table_builder.buttons.add_row.label'));
+        $this->addColumnButtonLabel(__('forms::components.table_builder.buttons.add_column.label'));
     }
 
     public function disableAddingRows(bool | Closure $condition = true): static
@@ -73,5 +78,29 @@ class TableBuilder extends Field
     public function canDeleteColumns(): bool
     {
         return ! $this->evaluate($this->shouldDisableDeletingColumns);
+    }
+
+    public function addRowButtonLabel(string | Closure $label): static
+    {
+        $this->addRowButtonLabel = $label;
+
+        return $this;
+    }
+
+    public function addColumnButtonLabel(string | Closure $label): static
+    {
+        $this->addColumnButtonLabel = $label;
+
+        return $this;
+    }
+
+    public function getAddRowButtonLabel(): string
+    {
+        return $this->evaluate($this->addRowButtonLabel);
+    }
+
+    public function getAddColumnButtonLabel(): string
+    {
+        return $this->evaluate($this->addColumnButtonLabel);
     }
 }

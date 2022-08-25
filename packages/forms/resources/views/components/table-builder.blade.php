@@ -140,13 +140,13 @@ $deleteRows = $canDeleteRows()
             <div class="mt-4 space-x-4">
                 @if($canAddRows())
                     <x-forms::button x-on:click="addRow" color="secondary" size="sm">
-                        {{ __('forms::components.table_builder.buttons.add_row.label') }}
+                        {{ $getAddRowButtonLabel() }}
                     </x-forms::button>
                 @endif
 
                 @if($canAddColumns())
                     <x-forms::button x-on:click="addColumn" color="secondary" size="sm">
-                        {{ __('forms::components.table_builder.buttons.add_column.label') }}
+                        {{ $getAddColumnButtonLabel() }}
                     </x-forms::button>
                 @endif
             </div>
