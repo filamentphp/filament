@@ -112,7 +112,7 @@ use App\Models\Post;
 use Filament\Tables\Actions\Action;
 
 Action::make('edit')
-    ->translateLabel() // equivalent to ->label(__('edit'))
+    ->translateLabel() // equivalent to ->label(__('Edit'))
     ->url(fn (Post $record): string => route('posts.edit', $record))
 ```
 
