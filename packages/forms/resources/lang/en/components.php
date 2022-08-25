@@ -214,6 +214,22 @@ return [
 
     ],
 
+    'table_builder' => [
+
+        'buttons' => [
+
+            'add_row' => [
+                'label' => 'Add Row',
+            ],
+
+            'add_column' => [
+                'label' => 'Add Column',
+            ],
+
+        ],
+
+    ],
+
     'tags_input' => [
         'placeholder' => 'New tag',
     ],
