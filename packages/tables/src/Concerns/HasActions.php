@@ -247,4 +247,9 @@ trait HasActions
     {
         return null;
     }
+
+    protected function getTableActionsColumnLabel(): ?string
+    {
+        return null;
+    }
 }
