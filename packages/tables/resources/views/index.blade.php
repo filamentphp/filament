@@ -4,6 +4,7 @@
 
     $actions = $getActions();
     $actionsPosition = $getActionsPosition();
+    $actionsColumnLabel = $getActionsColumnLabel();
     $columns = $getColumns();
     $content = $getContent();
     $contentFooter = $getContentFooter();
@@ -290,18 +291,18 @@
                             </div>
                         @endif
 
-                        @if ($isColumnToggleFormVisible)
-                            <x-tables::toggleable
-                                :form="$getColumnToggleForm()"
-                                :width="$getColumnToggleFormWidth()"
-                                class="shrink-0"
-                            />
-                        @endif
-
                         @if ($hasFiltersPopover)
                             <x-tables::filters.popover
                                 :form="$getFiltersForm()"
                                 :width="$getFiltersFormWidth()"
+                                class="shrink-0"
+                            />
+                        @endif
+
+                        @if ($isColumnToggleFormVisible)
+                            <x-tables::toggleable
+                                :form="$getColumnToggleForm()"
+                                :width="$getColumnToggleFormWidth()"
                                 class="shrink-0"
                             />
                         @endif
@@ -363,7 +364,13 @@
                             <th></th>
                         @else
                             @if (count($actions) && $actionsPosition === Position::BeforeCells)
-                                <th class="w-5"></th>
+                                @if ($actionsColumnLabel)
+                                    <x-tables::header-cell alignment="right">
+                                        {{ $actionsColumnLabel }}
+                                    </x-tables::header-cell>
+                                @else
+                                    <th class="w-5"></th>
+                                @endif
                             @endif
 
                             @if ($isSelectionEnabled)
@@ -389,7 +396,13 @@
                             @endif
 
                             @if (count($actions) && $actionsPosition === Position::BeforeColumns)
-                                <th class="w-5"></th>
+                                @if ($actionsColumnLabel)
+                                    <x-tables::header-cell alignment="right">
+                                        {{ $actionsColumnLabel }}
+                                    </x-tables::header-cell>
+                                @else
+                                    <th class="w-5"></th>
+                                @endif
                             @endif
                         @endif
 
@@ -408,7 +421,13 @@
                         @endforeach
 
                         @if (count($actions) && (! $isReordering) && $actionsPosition === Position::AfterCells)
-                            <th class="w-5"></th>
+                            @if ($actionsColumnLabel)
+                                <x-tables::header-cell alignment="right">
+                                    {{ $actionsColumnLabel }}
+                                </x-tables::header-cell>
+                            @else
+                                <th class="w-5"></th>
+                            @endif
                         @endif
                     </x-slot>
 

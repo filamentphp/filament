@@ -34,7 +34,7 @@ class MultiSelectFilter extends BaseFilter
                 return [];
             }
 
-            $labels = Arr::join($labels, ', ', ' & ');
+            $labels = collect($labels)->join(', ', ' & ');
 
             return ["{$this->getIndicator()}: {$labels}"];
         });

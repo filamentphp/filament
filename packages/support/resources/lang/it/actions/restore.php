@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Khôi phục',
+        'label' => 'Ripristina',
 
         'modal' => [
 
-            'heading' => 'Khôi phục :label',
+            'heading' => 'Ripristina :label',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'Khôi phục',
+                    'label' => 'Ripristina',
                 ],
 
             ],
@@ -21,23 +21,23 @@ return [
         ],
 
         'messages' => [
-            'restored' => 'Đã khôi phục',
+            'restored' => 'Ripristinato',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Khôi phục các mục đã chọn',
+        'label' => 'Ripristina selezionati',
 
         'modal' => [
 
-            'heading' => 'Khôi phục :label đã chọn',
+            'heading' => 'Ripristina selezionati :label',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'Khôi phục',
+                    'label' => 'Ripristina',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'restored' => 'Đã khôi phục',
+            'restored' => 'Ripristinati',
         ],
 
     ],

@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Xóa',
+        'label' => 'Forza eliminazione',
 
         'modal' => [
 
-            'heading' => 'Xóa :label',
+            'heading' => 'Forza eliminazione :label',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Xóa',
+                    'label' => 'Elimina',
                 ],
 
             ],
@@ -21,23 +21,23 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Đã xóa',
+            'deleted' => 'Eliminato',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Đã xóa các mục đã chọn',
+        'label' => 'Elimina forzatamente selezionati',
 
         'modal' => [
 
-            'heading' => 'Xóa các mục :label đã chọn',
+            'heading' => 'Elimina forzatamente selezionati :label',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Xóa',
+                    'label' => 'Elimina',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Đã xóa',
+            'deleted' => 'Eliminati',
         ],
 
     ],

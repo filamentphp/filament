@@ -83,9 +83,17 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Remove filter',
+            ],
+
+            'remove_all' => [
+                'label' => 'Remove all filters',
+                'tooltip' => 'Remove all filters',
+            ],
+
             'reset' => [
                 'label' => 'Reset filters',
-                'tooltip' => 'Reset filters',
             ],
 
             'close' => [

@@ -53,6 +53,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Termina riordino records',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Riordina records',
+        ],
+
         'filter' => [
             'label' => 'Filtra',
         ],
@@ -77,6 +85,7 @@ return [
 
             'reset' => [
                 'label' => 'Azzera filtri',
+                'tooltip' => 'Resetta filtri',
             ],
 
             'close' => [
@@ -85,6 +94,8 @@ return [
 
         ],
 
+        'indicator' => 'Filtri attivi',
+
         'multi_select' => [
             'placeholder' => 'Tutti',
         ],
@@ -92,10 +103,27 @@ return [
         'select' => [
             'placeholder' => 'Tutti',
         ],
+
+        'trashed' => [
+
+            'label' => 'Records eliminati',
+
+            'only_trashed' => 'Solo records eliminati',
+
+            'with_trashed' => 'Con records eliminati',
+
+            'without_trashed' => 'Senza records eliminati',
+
+        ],
+
     ],
 
+    'reorder_indicator' => 'Prendi e trascina i record in ordine.',
+
     'selection_indicator' => [
+
         'selected_count' => '1 record selezionato.|:count records selezionati.',
+
         'buttons' => [
 
             'select_all' => [
