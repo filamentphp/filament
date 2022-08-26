@@ -262,4 +262,31 @@ trait CanBeValidated
 
         return $this;
     }
+
+    public function multiFieldComparisonRule(string $rule, array | string | Closure $statePaths, bool $isStatePathAbsolute = false): static
+    {
+        $this->rule(static function (Field $component) use ($isStatePathAbsolute, $rule, $statePaths): string {
+            $statePaths = $component->evaluate($statePaths);
+
+            if (! $isStatePathAbsolute) {
+                if (is_string($statePaths)) {
+                    $statePaths = explode(",", $statePaths);
+                }
+
+                $containerStatePath = $component->getContainer()->getStatePath();
+
+                if ($containerStatePath) {
+                    $statePaths = array_map(fn ($statePath) => "{$containerStatePath}.{$statePath}", $statePaths);
+                }
+            }
+
+            if (is_array($statePaths)) {
+                $statePaths = join(",", $statePaths);
+            }
+
+            return "{$rule}:{$statePaths}";
+        }, fn (Field $component): bool => (bool) $component->evaluate($statePaths));
+
+        return $this;
+    }
 }
