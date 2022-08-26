@@ -129,6 +129,20 @@ function onMutate(mutations) {
   removedAttributes = null;
 }
 
+// node_modules/alpinejs/src/utils/once.js
+function once(callback, fallback = () => {
+}) {
+  let called = false;
+  return function() {
+    if (!called) {
+      called = true;
+      callback.apply(this, arguments);
+    } else {
+      fallback.apply(this, arguments);
+    }
+  };
+}
+
 // packages/notifications/resources/js/components/notification.js
 var notification_default = (Alpine) => {
   Alpine.data("notificationComponent", ({notification}) => ({
@@ -157,9 +171,9 @@ var notification_default = (Alpine) => {
           this.$el._x_isShown ? this.$el.style.setProperty("visibility", "hidden") : this.$el.style.setProperty("display", "none");
         });
       };
-      const toggle = (value) => {
+      const toggle = once((value) => value ? show() : hide(), (value) => {
         this.$el._x_toggleAndCascadeWithTransitions(this.$el, value, show, hide);
-      };
+      });
       Alpine.effect(() => toggle(this.isShown));
     },
     configureAnimations: function() {
