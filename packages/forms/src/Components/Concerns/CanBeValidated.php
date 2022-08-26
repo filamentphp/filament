@@ -298,6 +298,7 @@ trait CanBeValidated
                 if ($containerStatePath) {
                     $statePaths = array_map(function ($statePath) use ($containerStatePath) {
                         $statePath = trim($statePath);
+
                         return "{$containerStatePath}.{$statePath}";
                     }, $statePaths);
                 }
