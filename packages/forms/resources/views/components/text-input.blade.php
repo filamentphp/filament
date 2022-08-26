@@ -47,7 +47,8 @@
                     })"
                     type="text"
                     wire:ignore
-                    @if ($isLazy() || $getDebounce()) x-on:blur="$wire.$refresh" @endif
+                    {!! $isLazy() ? "x-on:blur=\"\$wire.\$refresh\"" : null !!}
+                    {!! $isDebounced() ? "x-on:input.debounce.{$getDebounce()}=\"\$wire.\$refresh\"" : null !!}
                     {{ $getExtraAlpineAttributeBag() }}
                 @endunless
                 dusk="filament.forms.{{ $getStatePath() }}"

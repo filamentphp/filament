@@ -76,6 +76,11 @@ trait HasStateBindingModifiers
         return in_array('lazy', $this->getStateBindingModifiers());
     }
 
+    public function isDebounced(): bool
+    {
+        return in_array('debounce', $this->getStateBindingModifiers());
+    }
+
     public function getDebounce(): string | int | null
     {
         return $this->debounce;
