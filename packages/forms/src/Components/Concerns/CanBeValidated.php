@@ -59,6 +59,11 @@ trait CanBeValidated
         return $this->multiFieldComparisonRule('required_with', $statePaths, $isStatePathAbsolute);
     }
 
+    public function requiredWithAll(string | array | Closure $statePaths, bool $isStatePathAbsolute = false): static
+    {
+        return $this->multiFieldComparisonRule('required_with_all', $statePaths, $isStatePathAbsolute);
+    }
+
     public function requiredWithout(string | array | Closure $statePaths, bool $isStatePathAbsolute = false): static
     {
         return $this->multiFieldComparisonRule('required_without', $statePaths, $isStatePathAbsolute);
