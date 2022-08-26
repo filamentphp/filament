@@ -8,11 +8,7 @@
         'dark:text-white dark:bg-gray-700 dark:border-gray-600 dark:focus:border-primary-600' => config('tables.dark_mode'),
     ])>
         @foreach ($options as $option)
-            @if ($option === -1)
-                <option value="{{ $option }}">{{ __('tables::table.pagination.all') }}</option>
-            @else
-                <option value="{{ $option }}">{{ $option }}</option>
-            @endif
+            <option value="{{ $option }}">{{ $option ?? __('tables::table.pagination.all') }}</option>
         @endforeach
     </select>
 
