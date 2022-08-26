@@ -290,7 +290,7 @@ trait CanBeValidated
 
             if (! $isStatePathAbsolute) {
                 if (is_string($statePaths)) {
-                    $statePaths = explode(",", $statePaths);
+                    $statePaths = explode(',', $statePaths);
                 }
 
                 $containerStatePath = $component->getContainer()->getStatePath();
@@ -301,7 +301,7 @@ trait CanBeValidated
             }
 
             if (is_array($statePaths)) {
-                $statePaths = join(",", $statePaths);
+                $statePaths = implode(',', $statePaths);
             }
 
             return "{$rule}:{$statePaths}";
