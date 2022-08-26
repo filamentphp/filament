@@ -59,7 +59,7 @@ trait HasComponents
         return collect($this->getFlatComponents($withHidden))
             ->whereInstanceOf(Field::class)
             ->mapWithKeys(static fn (Field $field) => [
-                $field->getName() => $field,
+                $field->getState() => $field,
             ])
             ->all();
     }
