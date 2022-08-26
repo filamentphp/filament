@@ -20,7 +20,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'per pagina',
+
+                'options' => [
+                    'all' => 'Alles',
+                ],
+
             ],
 
         ],
