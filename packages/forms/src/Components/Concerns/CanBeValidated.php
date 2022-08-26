@@ -225,7 +225,7 @@ trait CanBeValidated
         return (bool) $this->evaluate($this->isRequired);
     }
 
-    protected function dateComparisonRule(string $rule, string | Closure $date, bool $isStatePathAbsolute = false): static
+    public function dateComparisonRule(string $rule, string | Closure $date, bool $isStatePathAbsolute = false): static
     {
         $this->rule(static function (Field $component) use ($date, $isStatePathAbsolute, $rule): string {
             $date = $component->evaluate($date);
@@ -244,7 +244,7 @@ trait CanBeValidated
         return $this;
     }
 
-    protected function fieldComparisonRule(string $rule, string | Closure $statePath, bool $isStatePathAbsolute = false): static
+    public function fieldComparisonRule(string $rule, string | Closure $statePath, bool $isStatePathAbsolute = false): static
     {
         $this->rule(static function (Field $component) use ($isStatePathAbsolute, $rule, $statePath): string {
             $statePath = $component->evaluate($statePath);
