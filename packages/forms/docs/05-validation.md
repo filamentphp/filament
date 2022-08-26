@@ -163,7 +163,7 @@ Field::make('name')->required()
 
 ### Required With
 
-The field value must not be empty _only if_ any of the other specified fields are not empty. [See the Laravel documentation](https://laravel.com/docs/9.x/validation#rule-required-with)
+The field value must not be empty _only if_ any of the other specified fields are not empty. [See the Laravel documentation](https://laravel.com/docs/validation#rule-required-with)
 
 ```php
 Field::make('name')->requiredWith('field,another_field')
@@ -171,7 +171,7 @@ Field::make('name')->requiredWith('field,another_field')
 
 ### Required With All
 
-The field value must not be empty _only if_ all of the other specified fields are not empty. [See the Laravel documentation](https://laravel.com/docs/9.x/validation#rule-required-with-all)
+The field value must not be empty _only if_ all of the other specified fields are not empty. [See the Laravel documentation](https://laravel.com/docs/validation#rule-required-with-all)
 
 ```php
 Field::make('name')->requiredWithAll('field,another_field')
@@ -179,7 +179,7 @@ Field::make('name')->requiredWithAll('field,another_field')
 
 ### Required Without
 
-The field value must not be empty _only when_ any of the other specified fields are empty. [See the Laravel documentation](https://laravel.com/docs/9.x/validation#rule-required-without)
+The field value must not be empty _only when_ any of the other specified fields are empty. [See the Laravel documentation](https://laravel.com/docs/validation#rule-required-without)
 
 ```php
 Field::make('name')->requiredWithout('field,another_field')
@@ -187,7 +187,7 @@ Field::make('name')->requiredWithout('field,another_field')
 
 ### Required Without All
 
-The field value must not be empty _only when_ all of the other specified fields are empty. [See the Laravel documentation](https://laravel.com/docs/9.x/validation#rule-required-without-all)
+The field value must not be empty _only when_ all of the other specified fields are empty. [See the Laravel documentation](https://laravel.com/docs/validation#rule-required-without-all)
 
 ```php
 Field::make('name')->requiredWithoutAll('field,another_field')
