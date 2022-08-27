@@ -144,6 +144,12 @@ trait HasFilters
                 'xl' => 4,
                 '2xl' => 5,
             ],
+            Layout::BelowContent => [
+                'sm' => 2,
+                'lg' => 3,
+                'xl' => 4,
+                '2xl' => 5,
+            ],
             default => 1,
         };
     }
