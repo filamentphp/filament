@@ -1,6 +1,9 @@
 <?php
 
 return [
+
+    'direction' => 'ltr',
+
     'buttons' => [
 
         'dark_mode' => [
@@ -17,5 +20,4 @@ return [
 
     ],
 
-    'direction' => 'ltr',
 ];

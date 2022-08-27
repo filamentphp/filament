@@ -1,3 +1,7 @@
+@props([
+    'wireModel' => 'tableSearchQuery',
+])
+
 <div {{ $attributes->class(['filament-tables-search-input']) }}>
     <label for="tableSearchInput" class="sr-only">
         {{ __('tables::table.fields.search_query.label') }}
@@ -9,7 +13,7 @@
         </span>
 
         <input
-            wire:model.debounce.500ms="tableSearchQuery"
+            wire:model.debounce.500ms="{{ $wireModel }}"
             id="tableSearchInput"
             placeholder="{{ __('tables::table.fields.search_query.placeholder') }}"
             type="search"

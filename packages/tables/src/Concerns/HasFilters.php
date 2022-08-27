@@ -93,7 +93,7 @@ trait HasFilters
 
     public function removeTableFilters(): void
     {
-        foreach ($this->getTableFiltersForm()->getFlatFields() as $field) {
+        foreach ($this->getTableFiltersForm()->getFlatFields(withAbsolutePathKeys: true) as $field) {
             $field->state(
                 is_array($field->getState()) ? [] : null,
             );

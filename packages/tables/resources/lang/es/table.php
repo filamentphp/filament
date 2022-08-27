@@ -93,6 +93,8 @@ return [
 
         ],
 
+        'indicator' => 'Filtros activos',
+
         'multi_select' => [
             'placeholder' => 'Todos',
         ],
