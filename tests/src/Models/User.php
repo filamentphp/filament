@@ -2,7 +2,7 @@
 
 namespace Filament\Tests\Models;
 
-use Filament\Models\Contracts\FilamentUser;
+use Filament\Contracts\User\FilamentUser;
 use Filament\Tests\Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;

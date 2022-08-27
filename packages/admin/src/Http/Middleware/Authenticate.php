@@ -2,7 +2,7 @@
 
 namespace Filament\Http\Middleware;
 
-use Filament\Models\Contracts\FilamentUser;
+use Filament\Contracts\User\FilamentUser;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
 class Authenticate extends Middleware
