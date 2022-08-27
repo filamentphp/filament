@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -54,6 +55,11 @@ trait CanSelectRecords
 
     public function isTableSelectionEnabled(): bool
     {
-        return (bool) count($this->getCachedTableBulkActions());
+        return (bool) count(
+            array_filter(
+                $this->getCachedTableBulkActions(),
+                fn(BulkAction $action): bool => !$action->isHidden(),
+            )
+        );
     }
 }
