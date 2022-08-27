@@ -2,12 +2,16 @@
 
 namespace Filament\AvatarProviders;
 
+use Filament\Contracts\User\AvatarProvider;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class UiAvatarsProvider implements Contracts\AvatarProvider
+class UiAvatarsProvider implements AvatarProvider
 {
+    /**
+     * @inheritDoc
+     */
     public function get(Model $user): string
     {
         $name = Str::of(Filament::getUserName($user))
