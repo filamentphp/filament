@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Filament\Contracts\Form;
+namespace Filament\Contracts\Page;
 
 use Filament\Pages\Actions\Action;
 

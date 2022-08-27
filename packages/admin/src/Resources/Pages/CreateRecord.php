@@ -2,10 +2,10 @@
 
 namespace Filament\Resources\Pages;
 
+use Filament\Contracts\Page\HasFormActions;
 use Filament\Forms\ComponentContainer;
 use Filament\Notifications\Notification;
 use Filament\Pages\Actions\Action;
-use Filament\Pages\Contracts\HasFormActions;
 use Illuminate\Database\Eloquent\Model;
 
 /**
