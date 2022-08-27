@@ -13,7 +13,7 @@ To set up your `App\Models\User` to access Filament in non-local environments, y
 
 namespace App\Models;
 
-use Filament\Models\Contracts\FilamentUser;
+use Filament\Contracts\User\FilamentUser;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements FilamentUser
@@ -38,8 +38,8 @@ Out of the box, Filament uses [ui-avatars.com](https://ui-avatars.com) to genera
 
 namespace App\Models;
 
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Models\Contracts\HasAvatar;
+use Filament\Contracts\User\FilamentUser;
+use Filament\Contracts\User\HasAvatar;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar
@@ -64,8 +64,8 @@ By default, Filament will use the `name` attribute of the user to display their 
 
 namespace App\Models;
 
-use Filament\Models\Contracts\FilamentUser;
-use Filament\Models\Contracts\HasName;
+use Filament\Contracts\User\FilamentUser;
+use Filament\Contracts\User\HasName;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements FilamentUser, HasName

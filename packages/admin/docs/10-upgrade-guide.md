@@ -363,10 +363,11 @@ class CreateFilamentPasswordResetsTable extends Migration
 
 namespace App\Models;
 
-use Filament\Models\Contracts;
+use Filament\Contracts\User\FilamentUser;
+use Filament\Contracts\User\HasAvatar;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class FilamentUser extends Authenticatable implements Contracts\FilamentUser, Contracts\HasAvatar
+class FilamentUser extends Authenticatable implements FilamentUser, HasAvatar
 {
     protected $guarded = [];
 
