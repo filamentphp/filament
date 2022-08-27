@@ -13,13 +13,11 @@ use Illuminate\Support\Str;
 
 trait CanFormatState
 {
+    use HasAffixes;
+
     protected ?Closure $formatStateUsing = null;
 
     protected ?int $limit = null;
-
-    protected string | Closure | null $prefix = null;
-
-    protected string | Closure | null $suffix = null;
 
     protected string | Closure | null $timezone = null;
 
@@ -88,20 +86,6 @@ trait CanFormatState
         return $this;
     }
 
-    public function prefix(string | Closure $prefix): static
-    {
-        $this->prefix = $prefix;
-
-        return $this;
-    }
-
-    public function suffix(string | Closure $suffix): static
-    {
-        $this->suffix = $suffix;
-
-        return $this;
-    }
-
     public function html(): static
     {
         return $this->formatStateUsing(static fn ($state): HtmlString => $state instanceof HtmlString ? $state : Str::of($state)->sanitizeHtml()->toHtmlString());
@@ -141,12 +125,12 @@ trait CanFormatState
             ]);
         }
 
-        if ($this->prefix) {
-            $state = $this->evaluate($this->prefix) . $state;
+        if ($prefix = $this->getPrefix()) {
+            $state = $prefix . $state;
         }
 
-        if ($this->suffix) {
-            $state = $state . $this->evaluate($this->suffix);
+        if ($suffix = $this->getSuffix()) {
+            $state = $state . $suffix;
         }
 
         return $state;
