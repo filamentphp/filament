@@ -98,7 +98,7 @@ it('can return a flat array of components', function () {
         ]);
 });
 
-it('can return a flat array of components including hidden components', function () {
+it('can return a flat array of components with hidden components', function () {
     $container = ComponentContainer::make(Livewire::make())
         ->components([
             $fieldset = Fieldset::make(Str::random())
@@ -126,8 +126,9 @@ it('can return a flat array of fields', function () {
                 ->schema([
                     $field = TextInput::make($name = Str::random()),
                 ]),
-            $section = Section::make(Str::random()),
-        ]);
+            Section::make(Str::random()),
+        ])
+        ->statePath(Str::random());
 
     expect($container)
         ->getFlatFields()
@@ -137,7 +138,7 @@ it('can return a flat array of fields', function () {
         ]);
 });
 
-it('can return a flat array of fields including hidden fields', function () {
+it('can return a flat array of fields with hidden fields', function () {
     $container = ComponentContainer::make(Livewire::make())
         ->components([
             Fieldset::make(Str::random())
@@ -145,13 +146,53 @@ it('can return a flat array of fields including hidden fields', function () {
                 ->schema([
                     $field = TextInput::make($name = Str::random()),
                 ]),
-            $section = Section::make(Str::random()),
-        ]);
+            Section::make(Str::random()),
+        ])
+        ->statePath(Str::random());
 
     expect($container)
         ->getFlatFields(withHidden: true)
         ->toHaveCount(1)
         ->toMatchArray([
             $name => $field,
+        ]);
+});
+
+it('can return a flat array of fields with nested path keys', function () {
+    $container = ComponentContainer::make(Livewire::make())
+        ->components([
+            Fieldset::make(Str::random())
+                ->schema([
+                    $field = TextInput::make($name = Str::random()),
+                ])
+                ->statePath($fieldsetStatePath = Str::random()),
+            Section::make(Str::random()),
+        ])
+        ->statePath(Str::random());
+
+    expect($container)
+        ->getFlatFields()
+        ->toHaveCount(1)
+        ->toMatchArray([
+            "{$fieldsetStatePath}.{$name}" => $field,
+        ]);
+});
+
+it('can return a flat array of fields with absolute path keys', function () {
+    $container = ComponentContainer::make(Livewire::make())
+        ->components([
+            Fieldset::make(Str::random())
+                ->schema([
+                    $field = TextInput::make($name = Str::random()),
+                ]),
+            Section::make(Str::random()),
+        ])
+        ->statePath($containerStatePath = Str::random());
+
+    expect($container)
+        ->getFlatFields(withAbsolutePathKeys: true)
+        ->toHaveCount(1)
+        ->toMatchArray([
+            "{$containerStatePath}.{$name}" => $field,
         ]);
 });

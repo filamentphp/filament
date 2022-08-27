@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
+use Illuminate\Support\Str;
 
 trait HasComponents
 {
@@ -54,13 +55,21 @@ trait HasComponents
             ->all();
     }
 
-    public function getFlatFields(bool $withHidden = false): array
+    public function getFlatFields(bool $withHidden = false, bool $withAbsolutePathKeys = false): array
     {
+        $statePath = $this->getStatePath();
+
         return collect($this->getFlatComponents($withHidden))
             ->whereInstanceOf(Field::class)
-            ->mapWithKeys(static fn (Field $field) => [
-                $field->getName() => $field,
-            ])
+            ->mapWithKeys(static function (Field $field) use ($statePath, $withAbsolutePathKeys): array {
+                $fieldStatePath = $field->getStatePath();
+
+                if ((! $withAbsolutePathKeys) && filled($statePath)) {
+                    $fieldStatePath = (string) Str::of($fieldStatePath)->after("{$statePath}.");
+                }
+
+                return [$fieldStatePath => $field];
+            })
             ->all();
     }
 

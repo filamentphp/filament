@@ -28,7 +28,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'لكل صفحة',
+
+                'options' => [
+                    'all' => 'الكل',
+                ],
+
             ],
 
         ],

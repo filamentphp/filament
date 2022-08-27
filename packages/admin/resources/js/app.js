@@ -1,5 +1,3 @@
-//import '../css/app.css'
-
 import Alpine from 'alpinejs'
 import AlpineFloatingUI from '@awcodes/alpine-floating-ui'
 import Chart from 'chart.js/auto'
