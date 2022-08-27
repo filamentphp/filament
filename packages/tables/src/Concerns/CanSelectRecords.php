@@ -58,7 +58,7 @@ trait CanSelectRecords
         return (bool) count(
             array_filter(
                 $this->getCachedTableBulkActions(),
-                fn(BulkAction $action): bool => !$action->isHidden(),
+                fn (BulkAction $action): bool => ! $action->isHidden(),
             )
         );
     }
