@@ -4,7 +4,7 @@ namespace Filament\Facades;
 
 use Closure;
 use Filament\FilamentManager;
-use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
+use Filament\Contracts\Search\GlobalSearchProvider;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Contracts\Support\Htmlable;

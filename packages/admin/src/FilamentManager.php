@@ -5,7 +5,7 @@ namespace Filament;
 use Closure;
 use Exception;
 use Filament\Events\ServingFilament;
-use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
+use Filament\Contracts\Search\GlobalSearchProvider;
 use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;

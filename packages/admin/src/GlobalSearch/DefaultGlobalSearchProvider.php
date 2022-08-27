@@ -2,9 +2,10 @@
 
 namespace Filament\GlobalSearch;
 
+use Filament\Contracts\Search\GlobalSearchProvider;
 use Filament\Facades\Filament;
 
-class DefaultGlobalSearchProvider implements Contracts\GlobalSearchProvider
+class DefaultGlobalSearchProvider implements GlobalSearchProvider
 {
     public function getResults(string $query): ?GlobalSearchResults
     {
