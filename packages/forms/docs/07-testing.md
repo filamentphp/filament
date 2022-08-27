@@ -56,7 +56,7 @@ use function Pest\Livewire\livewire;
 
 test('title is hidden', function () {
     livewire(CreatePost::class)
-        ->assertFormFieldIsVisible('title');
+        ->assertFormFieldIsHidden('title');
 });
 ```
 
