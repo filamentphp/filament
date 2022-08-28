@@ -27,6 +27,7 @@
                 x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100"
             @endif
+            data-turbo="false"
         >
             <x-filament::brand />
         </a>
@@ -39,6 +40,7 @@
                 x-transition:enter="lg:transition delay-100"
                 x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100"
+                data-turbo="false"
             >
                 <x-filament::brand-icon />
             </a>
