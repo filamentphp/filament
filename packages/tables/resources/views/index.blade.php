@@ -597,7 +597,7 @@
 
         @if ($hasFiltersBelowContent)
             <div class="px-2 pb-2">
-                <x-tables::hr :x-show="\Illuminate\Support\Js::from($isReorderable || $isGlobalSearchVisible || $isColumnToggleFormVisible) . ' || selectedRecords.length'" />
+                <x-tables::hr />
 
                 <div class="p-4 mt-2">
                     <x-tables::filters :form="$getFiltersForm()" />
