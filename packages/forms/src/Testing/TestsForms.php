@@ -151,7 +151,7 @@ class TestsForms
             Assert::assertArrayHasKey(
                 $fieldName,
                 $fields,
-                "Failed asserting that a field with the name [{$fieldName}] is hidden on the form named [{$formName}] on the [{$livewireClass}] component."
+                "Failed asserting that a field with the name [{$fieldName}] is visible on the form named [{$formName}] on the [{$livewireClass}] component."
             );
 
             return $this;
