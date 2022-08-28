@@ -32,12 +32,12 @@ return [
 
         'modal' => [
 
-            'heading' => '外す:labelが選択されました',
+            'heading' => '選択した:labelを外す',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => '選択したものを外します',
+                    'label' => '選択を外す',
                 ],
 
             ],
