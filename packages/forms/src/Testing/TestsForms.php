@@ -48,7 +48,7 @@ class TestsForms
             $form = $livewire->$formName;
 
             /** @var ?Field $field */
-            $field = data_get($form->getFlatFields(true), $fieldName, null);
+            $field = data_get($form->getFlatFields(withHidden: true), $fieldName, null);
 
             Assert::assertInstanceOf(
                 Field::class,
@@ -73,7 +73,7 @@ class TestsForms
             $form = $livewire->$formName;
 
             /** @var Field $field */
-            $field = $form->getFlatFields(true)[$fieldName];
+            $field = $form->getFlatFields(withHidden: true)[$fieldName];
 
             Assert::assertTrue(
                 $field->isDisabled(),
@@ -97,7 +97,7 @@ class TestsForms
             $form = $livewire->$formName;
 
             /** @var Field $field */
-            $field = $form->getFlatFields(true)[$fieldName];
+            $field = $form->getFlatFields(withHidden: true)[$fieldName];
 
             Assert::assertFalse(
                 $field->isDisabled(),
@@ -120,7 +120,7 @@ class TestsForms
             /** @var ComponentContainer $form */
             $form = $livewire->$formName;
 
-            $fields = $form->getFlatFields();
+            $fields = $form->getFlatFields(withHidden: false);
 
             Assert::assertArrayNotHasKey(
                 $fieldName,
@@ -144,9 +144,7 @@ class TestsForms
             /** @var ComponentContainer $form */
             $form = $livewire->$formName;
 
-            $fields = $form->getFlatFields(true);
-
-            $fields = $form->getFlatFields();
+            $fields = $form->getFlatFields(withHidden: false);
 
             Assert::assertArrayHasKey(
                 $fieldName,
