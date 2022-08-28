@@ -138,13 +138,7 @@ trait HasFilters
     protected function getTableFiltersFormColumns(): int | array
     {
         return match ($this->getTableFiltersLayout()) {
-            Layout::AboveContent => [
-                'sm' => 2,
-                'lg' => 3,
-                'xl' => 4,
-                '2xl' => 5,
-            ],
-            Layout::BelowContent => [
+            Layout::AboveContent, Layout::BelowContent => [
                 'sm' => 2,
                 'lg' => 3,
                 'xl' => 4,
