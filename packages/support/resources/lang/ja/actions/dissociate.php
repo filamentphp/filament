@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Dissociate',
+        'label' => '解除',
 
         'modal' => [
 
-            'heading' => 'Dissociate :label',
+            'heading' => ':labelの解除',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Dissociate',
+                    'label' => '解除',
                 ],
 
             ],
@@ -21,23 +21,23 @@ return [
         ],
 
         'messages' => [
-            'dissociated' => 'Dissociated',
+            'dissociated' => '解除しました',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Dissociate selected',
+        'label' => '解除対象の選択',
 
         'modal' => [
 
-            'heading' => 'Dissociate selected :label',
+            'heading' => '選択した:labelを解除',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Dissociate selected',
+                    'label' => '選択先の解除',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'dissociated' => 'Dissociated',
+            'dissociated' => '解除されました',
         ],
 
     ],
