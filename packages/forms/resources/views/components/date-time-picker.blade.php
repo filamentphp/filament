@@ -19,7 +19,7 @@
             shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
-        {{ $attributes->merge($getExtraAttributes())->class(['relative filament-forms-date-time-picker-component']) }}
+        {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-date-time-picker-component relative']) }}
         {{ $getExtraAlpineAttributeBag() }}
     >
         <input x-ref="maxDate" type="hidden" value="{{ $getMaxDate() }}" />

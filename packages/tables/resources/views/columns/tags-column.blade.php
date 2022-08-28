@@ -3,7 +3,7 @@
 @endphp
 
 <div {{ $attributes->merge($getExtraAttributes())->class([
-    'px-4 py-3 flex flex-wrap items-center gap-1 filament-tables-tags-column',
+    'filament-tables-tags-column px-4 py-3 flex flex-wrap items-center gap-1',
     match ($getAlignment()) {
         'left' => 'justify-start',
         'center' => 'justify-center',

@@ -1,4 +1,4 @@
-<div {{ $attributes->merge($getExtraAttributes())->class(['px-4 py-3 filament-tables-image-column']) }}>
+<div {{ $attributes->merge($getExtraAttributes())->class(['filament-tables-image-column px-4 py-3']) }}>
     @php
         $height = $getHeight();
         $width = $getWidth() ?? ($isRounded() ? $height : null);

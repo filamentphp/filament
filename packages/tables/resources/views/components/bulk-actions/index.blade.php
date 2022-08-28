@@ -5,7 +5,7 @@
 <div
     x-data="{}"
     x-cloak
-    {{ $attributes->class(['relative filament-tables-bulk-actions']) }}
+    {{ $attributes->class(['filament-tables-bulk-actions relative']) }}
 >
     <x-tables::bulk-actions.trigger />
 

@@ -1,6 +1,6 @@
 {{ \Filament\Facades\Filament::renderHook('footer.before') }}
 
-<div class="flex items-center justify-center filament-footer">
+<div class="filament-footer flex items-center justify-center">
     {{ \Filament\Facades\Filament::renderHook('footer.start') }}
 
     @if (config('filament.layout.footer.should_show_logo'))
