@@ -11,10 +11,6 @@
         'warning' => 'text-warning-500',
         default => 'text-gray-700',
     };
-
-    $affixLabelClasses = [
-        'whitespace-nowrap group-focus-within:text-primary-500',
-    ];
 @endphp
 
 <div
