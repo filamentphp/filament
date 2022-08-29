@@ -23,14 +23,14 @@
 
     @if ($icon = $getStateIcon())
         <x-dynamic-component
-            :component="$getStateIcon()"
+            :component="$icon"
             :class="'w-6 h-6 ' . $stateColor"
         />
     @endif
 
     @if ($suffix = $getSuffix())
         <span class="whitespace-nowrap group-focus-within:text-primary-500">
-        {{ $suffix }}
+            {{ $suffix }}
         </span>
     @endif
 </div>
