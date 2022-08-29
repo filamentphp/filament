@@ -3,11 +3,10 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
-use Filament\Tables\Columns\Concerns\HasAffixes;
 
 class BooleanColumn extends Column
 {
-    use HasAffixes;
+    use Concerns\HasAffixes;
 
     protected string $view = 'tables::columns.boolean-column';
 
