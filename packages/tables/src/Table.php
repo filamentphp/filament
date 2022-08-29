@@ -67,7 +67,7 @@ class Table extends ViewComponent
     {
         return array_filter(
             $this->getLivewire()->getCachedTableBulkActions(),
-            fn (BulkAction $action): bool => !$action->isHidden(),
+            fn (BulkAction $action): bool => ! $action->isHidden(),
         );
     }
 
@@ -75,7 +75,7 @@ class Table extends ViewComponent
     {
         return array_filter(
             $this->getLivewire()->getCachedTableColumns(),
-            fn (Column $column): bool => (!$column->isHidden()) && (!$column->isToggledHidden()),
+            fn (Column $column): bool => (! $column->isHidden()) && (! $column->isToggledHidden()),
         );
     }
 
@@ -115,7 +115,7 @@ class Table extends ViewComponent
     {
         return array_filter(
             $this->getLivewire()->getCachedTableEmptyStateActions(),
-            fn (Action $action): bool => !$action->isHidden(),
+            fn (Action $action): bool => ! $action->isHidden(),
         );
     }
 
@@ -194,7 +194,7 @@ class Table extends ViewComponent
     {
         return array_filter(
             $this->getLivewire()->getCachedTableHeaderActions(),
-            fn (Action | ActionGroup $action): bool => !$action->isHidden(),
+            fn (Action | ActionGroup $action): bool => ! $action->isHidden(),
         );
     }
 
@@ -259,7 +259,7 @@ class Table extends ViewComponent
 
         $callback = invade($livewire)->getTableRecordActionUsing();
 
-        if (!$callback) {
+        if (! $callback) {
             return null;
         }
 
@@ -273,7 +273,7 @@ class Table extends ViewComponent
 
         $callback = invade($livewire)->getTableRecordClassesUsing();
 
-        if (!$callback) {
+        if (! $callback) {
             return [];
         }
 
@@ -287,7 +287,7 @@ class Table extends ViewComponent
 
         $callback = invade($livewire)->getTableRecordUrlUsing();
 
-        if (!$callback) {
+        if (! $callback) {
             return null;
         }
 
