@@ -30,11 +30,16 @@ class CreateRecord extends Page implements HasFormActions
 
     public function mount(): void
     {
+        $this->authorizeAccess();
+
+        $this->fillForm();
+    }
+
+    protected function authorizeAccess()
+    {
         static::authorizeResourceAccess();
 
         abort_unless(static::getResource()::canCreate(), 403);
-
-        $this->fillForm();
     }
 
     protected function fillForm(): void
@@ -48,6 +53,8 @@ class CreateRecord extends Page implements HasFormActions
 
     public function create(bool $another = false): void
     {
+        $this->authorizeAccess();
+
         $this->callHook('beforeValidate');
 
         $data = $this->form->getState();
