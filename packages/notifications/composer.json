@@ -14,7 +14,7 @@
         "illuminate/contracts": "^8.6|^9.0",
         "illuminate/filesystem": "^8.6|^9.0",
         "illuminate/support": "^8.6|^9.0",
-        "livewire/livewire": "^2.6",
+        "livewire/livewire": "^2.10.7",
         "spatie/laravel-package-tools": "^1.9"
     },
     "autoload": {

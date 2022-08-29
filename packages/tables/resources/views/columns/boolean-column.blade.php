@@ -13,7 +13,7 @@
     };
 @endphp
 
-<div {{ $attributes->merge($getExtraAttributes())->class(['px-4 py-3 filament-tables-boolean-column']) }}>
+<div {{ $attributes->merge($getExtraAttributes())->class(['filament-tables-boolean-column px-4 py-3']) }}>
     @if ($state !== null)
         <x-dynamic-component
             :component="$stateIcon"

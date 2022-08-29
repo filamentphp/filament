@@ -2,7 +2,7 @@
     'actions',
 ])
 
-<div {{ $attributes->class(['flex flex-wrap items-center gap-4 filament-tables-actions-container']) }}>
+<div {{ $attributes->class(['filament-tables-actions-container flex flex-wrap items-center gap-4']) }}>
     @foreach ($actions as $action)
         {{ $action }}
     @endforeach

@@ -3,7 +3,7 @@
 ])
 
 <div
-    {{ $attributes->class(['space-y-6 filament-tables-filters-form']) }}
+    {{ $attributes->class(['filament-tables-filters-form space-y-6']) }}
     x-data
 >
     {{ $form }}

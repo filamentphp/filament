@@ -1,5 +1,5 @@
 <div {{ $attributes->class([
-    'text-sm text-gray-600 filament-forms-field-wrapper-helper-text',
+    'filament-forms-field-wrapper-helper-text text-sm text-gray-600',
     'dark:text-gray-300' => config('forms.dark_mode'),
 ]) }}>
     {{ $slot }}

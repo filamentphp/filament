@@ -20,6 +20,7 @@
     $hasFilters = $isFilterable();
     $hasFiltersPopover = $hasFilters && ($getFiltersLayout() === Layout::Popover);
     $hasFiltersAboveContent = $hasFilters && ($getFiltersLayout() === Layout::AboveContent);
+    $hasFiltersBelowContent = $hasFilters && ($getFiltersLayout() === Layout::BelowContent);
     $isColumnToggleFormVisible = $hasToggleableColumns();
     $records = $getRecords();
 
@@ -591,6 +592,16 @@
                     :paginator="$records"
                     :records-per-page-select-options="$getRecordsPerPageSelectOptions()"
                 />
+            </div>
+        @endif
+
+        @if ($hasFiltersBelowContent)
+            <div class="px-2 pb-2">
+                <x-tables::hr />
+
+                <div class="p-4 mt-2">
+                    <x-tables::filters :form="$getFiltersForm()" />
+                </div>
             </div>
         @endif
     </x-tables::container>
