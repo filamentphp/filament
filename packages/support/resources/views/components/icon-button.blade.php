@@ -61,7 +61,7 @@
 
         <x-dynamic-component :component="$icon" :class="$iconClasses" />
         @if($indicator)
-            <span class="bg-{{ $color }}-500 rounded-full text-xs text-white inline-block w-4 h-4 mt-3">{{ $indicator }}</span>
+            <span class="bg-{{ $color }}-500 rounded-full text-xs text-white inline-block w-4 h-4 absolute top-0 right-0">{{ $indicator }}</span>
         @endif
     </button>
 @elseif ($tag === 'a')
