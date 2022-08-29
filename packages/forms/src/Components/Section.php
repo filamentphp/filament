@@ -16,6 +16,7 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
     protected string $view = 'forms::components.section';
 
     public const REGULAR = 'forms::components.section';
+
     public const SMALL = 'forms::components.section-small';
 
     protected string | Htmlable | Closure | null $description = null;
