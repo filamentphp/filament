@@ -38,7 +38,7 @@ trait CanPaginateRecords
         return $records->onEachSide(1);
     }
 
-    protected function getTableRecordsPerPage(): int | string | null
+    protected function getTableRecordsPerPage(): int | string
     {
         return is_int($this->tableRecordsPerPage) ? intval($this->tableRecordsPerPage) : $this->tableRecordsPerPage;
     }
