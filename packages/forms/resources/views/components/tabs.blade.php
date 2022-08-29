@@ -54,7 +54,7 @@
                 x-on:click="tab = '{{ $tab->getId() }}'"
                 role="tab"
                 x-bind:tabindex="tab === '{{ $tab->getId() }}' ? 0 : -1"
-                class="flex items-center gap-2 shrink-0 p-3 text-sm font-medium"
+                class="filament-forms-tabs-component-button flex items-center gap-2 shrink-0 p-3 text-sm font-medium"
                 x-bind:class="{
                     'text-gray-500 @if (config('forms.dark_mode')) dark:text-gray-400 @endif': tab !== '{{ $tab->getId() }}',
                     'bg-white text-primary-600 @if (config('forms.dark_mode')) dark:bg-gray-800 @endif': tab === '{{ $tab->getId() }}',
