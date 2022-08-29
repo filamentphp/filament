@@ -60,6 +60,8 @@ interface HasTable extends HasForms
 
     public function isTableSearchable(): bool;
 
+    public function isTableSearchableByColumn(): bool;
+
     public function isTableSelectionEnabled(): bool;
 
     public function hasToggleableTableColumns(): bool;

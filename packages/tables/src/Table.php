@@ -25,7 +25,7 @@ class Table extends ViewComponent
 
     protected string $viewIdentifier = 'table';
 
-    public const LOADING_TARGETS = ['previousPage', 'nextPage', 'gotoPage', 'tableFilters', 'resetTableFiltersForm', 'tableSearchQuery', 'tableRecordsPerPage', '$set'];
+    public const LOADING_TARGETS = ['previousPage', 'nextPage', 'gotoPage', 'sortTable', 'tableFilters', 'resetTableFiltersForm', 'tableSearchQuery', 'tableRecordsPerPage', '$set'];
 
     final public function __construct(HasTable $livewire)
     {
@@ -48,6 +48,14 @@ class Table extends ViewComponent
         $livewire = $this->getLivewire();
 
         return invade($livewire)->getTableActionsPosition() ?? Position::AfterCells;
+    }
+
+    public function getActionsColumnLabel(): ?string
+    {
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->getTableActionsColumnLabel();
     }
 
     public function getAllRecordsCount(): int
@@ -338,6 +346,11 @@ class Table extends ViewComponent
     public function isSearchable(): bool
     {
         return $this->getLivewire()->isTableSearchable();
+    }
+
+    public function isSearchableByColumn(): bool
+    {
+        return $this->getLivewire()->isTableSearchableByColumn();
     }
 
     public function hasToggleableColumns(): bool

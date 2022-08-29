@@ -42,6 +42,8 @@
             <link href="{{ $fontsUrl }}" rel="stylesheet" />
         @endif
 
+        {{ \Filament\Facades\Filament::getThemeLink() }}
+
         @foreach (\Filament\Facades\Filament::getStyles() as $name => $path)
             @if (\Illuminate\Support\Str::of($path)->startsWith(['http://', 'https://']))
                 <link rel="stylesheet" href="{{ $path }}" />
@@ -53,8 +55,6 @@
                 ]) }}" />
             @endif
         @endforeach
-
-        {{ \Filament\Facades\Filament::getThemeLink() }}
 
         {{ \Filament\Facades\Filament::renderHook('styles.end') }}
 
@@ -72,7 +72,7 @@
     </head>
 
     <body @class([
-        'bg-gray-100 text-gray-900 filament-body',
+        'filament-body bg-gray-100 text-gray-900',
         'dark:text-gray-100 dark:bg-gray-900' => config('filament.dark_mode'),
     ])>
         {{ \Filament\Facades\Filament::renderHook('body.start') }}

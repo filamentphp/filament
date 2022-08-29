@@ -5,7 +5,7 @@
 
 <div
     x-data
-    {{ $attributes->class(['relative inline-block filament-tables-column-toggling']) }}
+    {{ $attributes->class(['filament-tables-column-toggling relative inline-block']) }}
 >
     <x-tables::toggleable.trigger />
 

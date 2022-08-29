@@ -2,6 +2,8 @@
 
 return [
 
+    'confirmation' => 'Sind Sie sicher, dass Sie dies tun möchten?',
+
     'actions' => [
 
         'cancel' => [
@@ -17,7 +19,5 @@ return [
         ],
 
     ],
-
-    'confirmation' => 'Sind Sie sicher, dass Sie dies tun möchten?',
 
 ];

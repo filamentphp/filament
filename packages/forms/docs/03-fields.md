@@ -49,6 +49,14 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')->label(__('fields.name'))
 ```
 
+Optionally, you can have the label automatically translated by using the `translateLabel()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')->translateLabel() // Equivalent to `label(__('Name'))`
+```
+
 ### Setting an ID
 
 In the same way as labels, field IDs are also automatically determined based on their names. To override a field ID, use the `id()` method:

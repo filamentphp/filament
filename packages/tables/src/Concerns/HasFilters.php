@@ -73,14 +73,31 @@ trait HasFilters
         $this->resetPage();
     }
 
-    public function resetTableFilterForm(string $filter, ?string $field = null): void
+    public function removeTableFilter(string $filter, ?string $field = null): void
     {
         $filterGroup = $this->getTableFiltersForm()->getComponents()[$filter];
-        $filterGroupComponentContainer = $filterGroup->getChildComponentContainer();
+        $fields = $filterGroup?->getChildComponentContainer()->getFlatFields() ?? [];
 
-        $field = $filterGroupComponentContainer?->getFlatFields()[$field] ?? null;
+        if (filled($field) && array_key_exists($field, $fields)) {
+            $fields = [$fields[$field]];
+        }
 
-        $field ? $field->fill() : $filterGroupComponentContainer?->fill();
+        foreach ($fields as $field) {
+            $field->state(
+                is_array($field->getState()) ? [] : null,
+            );
+        }
+
+        $this->updatedTableFilters();
+    }
+
+    public function removeTableFilters(): void
+    {
+        foreach ($this->getTableFiltersForm()->getFlatFields(withAbsolutePathKeys: true) as $field) {
+            $field->state(
+                is_array($field->getState()) ? [] : null,
+            );
+        }
 
         $this->updatedTableFilters();
     }
@@ -121,7 +138,7 @@ trait HasFilters
     protected function getTableFiltersFormColumns(): int | array
     {
         return match ($this->getTableFiltersLayout()) {
-            Layout::AboveContent => [
+            Layout::AboveContent, Layout::BelowContent => [
                 'sm' => 2,
                 'lg' => 3,
                 'xl' => 4,

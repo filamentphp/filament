@@ -1,17 +1,12 @@
 <?php
 
 return [
+
     'builder' => [
 
+        'collapsed' => 'Inhalt eingeklappt',
+
         'buttons' => [
-
-            'collapse_all' => [
-                'label' => 'Alle einklappen',
-            ],
-
-            'collapse_item' => [
-                'label' => 'Einklappen',
-            ],
 
             'create_item' => [
                 'label' => 'Zu :label hinzufügen',
@@ -19,14 +14,6 @@ return [
 
             'delete_item' => [
                 'label' => 'Löschen',
-            ],
-
-            'expand_all' => [
-                'label' => 'Alle ausklappen',
-            ],
-
-            'expand_item' => [
-                'label' => 'Ausklappen',
             ],
 
             'move_item_down' => [
@@ -37,9 +24,24 @@ return [
                 'label' => 'Hoch verschieben',
             ],
 
+            'collapse_item' => [
+                'label' => 'Einklappen',
+            ],
+
+            'expand_item' => [
+                'label' => 'Ausklappen',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Alle einklappen',
+            ],
+
+            'expand_all' => [
+                'label' => 'Alle ausklappen',
+            ],
+
         ],
 
-        'collapsed' => 'Inhalt eingeklappt',
     ],
 
     'key_value' => [
@@ -89,15 +91,9 @@ return [
 
     'repeater' => [
 
+        'collapsed' => 'Inhalt eingeklappt',
+
         'buttons' => [
-
-            'collapse_all' => [
-                'label' => 'Alle einklappen',
-            ],
-
-            'collapse_item' => [
-                'label' => 'Einklappen',
-            ],
 
             'create_item' => [
                 'label' => 'Zu :label hinzufügen',
@@ -107,12 +103,8 @@ return [
                 'label' => 'Löschen',
             ],
 
-            'expand_all' => [
-                'label' => 'Alle ausklappen',
-            ],
-
-            'expand_item' => [
-                'label' => 'Ausklappen',
+            'clone_item' => [
+                'label' => 'Klonen',
             ],
 
             'move_item_down' => [
@@ -123,9 +115,24 @@ return [
                 'label' => 'Hoch verschieben',
             ],
 
+            'collapse_item' => [
+                'label' => 'Einklappen',
+            ],
+
+            'expand_item' => [
+                'label' => 'Ausklappen',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Alle einklappen',
+            ],
+
+            'expand_all' => [
+                'label' => 'Alle ausklappen',
+            ],
+
         ],
 
-        'collapsed' => 'Inhalt eingeklappt',
     ],
 
     'rich_editor' => [
@@ -142,7 +149,9 @@ return [
                 'label' => 'URL',
 
                 'placeholder' => 'URL eingeben',
+
             ],
+
         ],
 
         'toolbar_buttons' => [
@@ -150,17 +159,18 @@ return [
             'blockquote' => 'Zitat',
             'bold' => 'Fett',
             'bullet_list' => 'Aufzählung',
-            'code_block' => 'codeBlock',
+            'code_block' => 'Code Block',
             'h1' => 'Titel',
             'h2' => 'Überschrift',
             'h3' => 'Unterüberschrift',
-            'italic' => 'kursiv',
+            'italic' => 'Kursiv',
             'link' => 'Link',
             'ordered_list' => 'Nummerierte Aufzählung',
             'redo' => 'Wiederholen',
             'strike' => 'Durchgestrichen',
             'undo' => 'Rückgängig',
         ],
+
     ],
 
     'select' => [
@@ -171,6 +181,8 @@ return [
 
                 'modal' => [
 
+                    'heading' => 'Erstellen',
+
                     'actions' => [
 
                         'create' => [
@@ -179,22 +191,27 @@ return [
 
                     ],
 
-                    'heading' => 'Erstellen',
                 ],
 
             ],
+
         ],
 
         'boolean' => [
-            'false' => 'Nein',
             'true' => 'Ja',
+            'false' => 'Nein',
         ],
 
         'loading_message' => 'Lädt...',
+
         'no_search_results_message' => 'Keine Optionen passen zu Ihrer Suche.',
+
         'placeholder' => 'Wählen Sie eine Option',
-        'search_prompt' => 'Beginnen Sie mit der Eingabe, um zu suchen...',
+
         'searching_message' => 'Sucht...',
+
+        'search_prompt' => 'Beginnen Sie mit der Eingabe, um zu suchen...',
+
     ],
 
     'tags_input' => [
@@ -205,12 +222,12 @@ return [
 
         'buttons' => [
 
-            'next_step' => [
-                'label' => 'Weiter',
-            ],
-
             'previous_step' => [
                 'label' => 'Zurück',
+            ],
+
+            'next_step' => [
+                'label' => 'Weiter',
             ],
 
         ],
