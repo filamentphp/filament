@@ -103,6 +103,10 @@ return [
                 'label' => 'Usuń',
             ],
 
+            'clone_item' => [
+                'label' => 'Klonuj',
+            ],
+
             'move_item_down' => [
                 'label' => 'Przesuń w dół',
             ],

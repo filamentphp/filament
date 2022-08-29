@@ -21,7 +21,7 @@
     x-cloak
     {!! $getId() ? "id=\"{$getId()}\"" : null !!}
     {{ $attributes->merge($getExtraAttributes())->class([
-        'rounded-xl shadow-sm border border-gray-300 bg-white filament-forms-tabs-component',
+        'filament-forms-tabs-component rounded-xl shadow-sm border border-gray-300 bg-white',
         'dark:bg-gray-800 dark:border-gray-700' => config('forms.dark_mode'),
     ]) }}
     {{ $getExtraAlpineAttributeBag() }}

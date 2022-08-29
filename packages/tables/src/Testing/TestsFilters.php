@@ -47,7 +47,7 @@ class TestsFilters
                 )];
             } elseif ($filter instanceof SelectFilter) {
                 $data = ['value' => $data instanceof Model ? $data->getKey() : $data];
-            } else {
+            } elseif (! is_array($data)) {
                 $data = ['isActive' => $data === true || $data === null];
             }
 

@@ -49,6 +49,14 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('title')->label('Post title')
 ```
 
+Optionally, you can have the label automatically translated by using the `translateLabel()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('title')->translateLabel() // Equivalent to `label(__('Title'))`
+```
+
 ### Sorting
 
 Columns may be sortable, by clicking on the column label. To make a column sortable, you must use the `sortable()` method:
@@ -125,6 +133,26 @@ TextColumn::make('full_name')
             ->where('first_name', 'like', "%{$search}%")
             ->where('last_name', 'like', "%{$search}%");
     })
+```
+
+#### Searching individually
+
+You can choose to enable a per-column search input using the `isIndividual` parameter:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('title')->searchable(isIndividual: true)
+```
+
+If you use the `isIndividual` parameter, you may still search that column using the main "global" search input for the entire table.
+
+To disable that functionality while still preserving the individual search functionality, you need the `isGlobal` parameter:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('title')->searchable(isIndividual: true, isGlobal: false)
 ```
 
 ### Cell actions and URLs

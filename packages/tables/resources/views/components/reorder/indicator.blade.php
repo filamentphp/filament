@@ -5,7 +5,7 @@
 <div
     wire:key="{{ $this->id }}.table.reorder.indicator"
     x-cloak
-    {{ $attributes->class(['bg-primary-500/10 px-4 py-2 whitespace-nowrap text-sm filament-tables-reorder-indicator']) }}
+    {{ $attributes->class(['filament-tables-reorder-indicator bg-primary-500/10 px-4 py-2 whitespace-nowrap text-sm']) }}
 >
     <x-filament-support::loading-indicator
         wire:loading.delay

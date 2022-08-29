@@ -39,12 +39,12 @@ trait HasStateBindingModifiers
         return $this;
     }
 
-    public function applyStateBindingModifiers(string $expression): string
+    public function applyStateBindingModifiers(string $expression, array $lazilyEntangledModifiers = []): string
     {
         $modifiers = $this->getStateBindingModifiers();
 
         if (Str::of($expression)->contains('entangle') && ($this->isLazy() || $this->getDebounce())) {
-            $modifiers = [];
+            $modifiers = $lazilyEntangledModifiers;
         }
 
         return implode('.', array_merge([$expression], $modifiers));
@@ -74,6 +74,11 @@ trait HasStateBindingModifiers
     public function isLazy(): bool
     {
         return in_array('lazy', $this->getStateBindingModifiers());
+    }
+
+    public function isDebounced(): bool
+    {
+        return in_array('debounce', $this->getStateBindingModifiers());
     }
 
     public function getDebounce(): string | int | null

@@ -6,11 +6,9 @@ return [
 
         'label' => 'Erstellen',
 
-        'messages' => [
-            'created' => 'Erstellt',
-        ],
-
         'modal' => [
+
+            'heading' => ':label erstellen',
 
             'actions' => [
 
@@ -24,7 +22,10 @@ return [
 
             ],
 
-            'heading' => ':label erstellen',
+        ],
+
+        'messages' => [
+            'created' => 'Erstellt',
         ],
 
     ],

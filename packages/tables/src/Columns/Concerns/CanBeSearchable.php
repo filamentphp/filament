@@ -7,14 +7,22 @@ use Illuminate\Support\Str;
 
 trait CanBeSearchable
 {
+    protected bool $isGloballySearchable = true;
+
+    protected bool $isIndividuallySearchable = false;
+
     protected bool $isSearchable = false;
 
     protected ?array $searchColumns = null;
 
     protected ?Closure $searchQuery = null;
 
-    public function searchable(bool | array $condition = true, ?Closure $query = null): static
-    {
+    public function searchable(
+        bool | array $condition = true,
+        ?Closure $query = null,
+        bool $isIndividual = false,
+        bool $isGlobal = true,
+    ): static {
         if (is_array($condition)) {
             $this->isSearchable = true;
             $this->searchColumns = $condition;
@@ -23,6 +31,8 @@ trait CanBeSearchable
             $this->searchColumns = null;
         }
 
+        $this->isGloballySearchable = $isGlobal;
+        $this->isIndividuallySearchable = $isIndividual;
         $this->searchQuery = $query;
 
         return $this;
@@ -36,6 +46,16 @@ trait CanBeSearchable
     public function isSearchable(): bool
     {
         return $this->isSearchable;
+    }
+
+    public function isGloballySearchable(): bool
+    {
+        return $this->isGloballySearchable;
+    }
+
+    public function isIndividuallySearchable(): bool
+    {
+        return $this->isIndividuallySearchable;
     }
 
     protected function getDefaultSearchColumns(): array

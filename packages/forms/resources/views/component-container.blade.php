@@ -5,7 +5,7 @@
     :lg="$getColumns('lg')"
     :xl="$getColumns('xl')"
     :two-xl="$getColumns('2xl')"
-    class="gap-6 filament-forms-component-container"
+    class="filament-forms-component-container gap-6"
 >
     @foreach ($getComponents(withHidden: true) as $formComponent)
         @php

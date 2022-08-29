@@ -28,7 +28,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'per page',
+
+                'options' => [
+                    'all' => 'All',
+                ],
+
             ],
 
         ],
@@ -83,9 +89,17 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Remove filter',
+            ],
+
+            'remove_all' => [
+                'label' => 'Remove all filters',
+                'tooltip' => 'Remove all filters',
+            ],
+
             'reset' => [
                 'label' => 'Reset filters',
-                'tooltip' => 'Reset filters',
             ],
 
             'close' => [
