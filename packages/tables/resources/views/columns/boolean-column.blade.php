@@ -25,7 +25,7 @@
 >
     @if ($prefix = $getPrefix())
         <span class="whitespace-nowrap group-focus-within:text-primary-500">
-                {{ $prefix }}
+            {{ $prefix }}
         </span>
     @endif
 
