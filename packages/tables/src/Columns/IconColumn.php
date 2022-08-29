@@ -8,6 +8,7 @@ use Illuminate\Contracts\Support\Arrayable;
 class IconColumn extends Column
 {
     use Concerns\HasColors;
+    use Concerns\HasAffixes;
 
     protected string $view = 'tables::columns.icon-column';
 

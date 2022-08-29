@@ -9,11 +9,28 @@
     };
 @endphp
 
-<div {{ $attributes->merge($getExtraAttributes())->class(['px-4 py-3 filament-tables-icon-column']) }}>
-    @if ($getStateIcon())
+<div
+    {{ $attributes->merge($getExtraAttributes())->class([
+        'px-4 py-3 filament-tables-icon-column',
+        'flex flex-row gap-x-2'
+    ]) }}
+>
+    @if($prefix = $getPrefix())
+        <span class="whitespace-nowrap group-focus-within:text-primary-500">
+            {{ $prefix }}
+        </span>
+    @endif
+
+    @if ($icon = $getStateIcon())
         <x-dynamic-component
             :component="$getStateIcon()"
             :class="'w-6 h-6 ' . $stateColor"
         />
+    @endif
+
+    @if ($suffix = $getSuffix())
+        <span class="whitespace-nowrap group-focus-within:text-primary-500">
+        {{ $suffix }}
+        </span>
     @endif
 </div>
