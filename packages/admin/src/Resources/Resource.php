@@ -395,22 +395,38 @@ class Resource
             default => 'like',
         };
 
+        $model = $query->getModel();
+
         foreach ($searchAttributes as $searchAttribute) {
             $whereClause = $isFirst ? 'where' : 'orWhere';
 
             $query->when(
-                Str::of($searchAttribute)->contains('.'),
-                fn ($query) => $query->{"{$whereClause}Relation"}(
-                    (string) Str::of($searchAttribute)->beforeLast('.'),
-                    (string) Str::of($searchAttribute)->afterLast('.'),
-                    $searchOperator,
-                    "%{$searchQuery}%",
-                ),
-                fn ($query) => $query->{$whereClause}(
-                    $searchAttribute,
-                    $searchOperator,
-                    "%{$searchQuery}%",
-                ),
+                method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchAttribute),
+                function (Builder $query) use ($searchAttribute, $searchOperator, $searchQuery, $whereClause, $databaseConnection): Builder {
+                    $activeLocale = app()->getLocale();
+                    $searchColumn = match ($databaseConnection->getDriverName()) {
+                        'pgsql' => "{$searchAttribute}->>'{$activeLocale}'",
+                        default => "json_extract({$searchAttribute}, \"$.{$activeLocale}\")",
+                    };
+                    return $query->{"{$whereClause}Raw"}(
+                        "lower({$searchColumn}) {$searchOperator} ?",
+                        "%{$searchQuery}%",
+                    );
+                },
+                fn (Builder $query): Builder => $query->when(
+                    Str::of($searchAttribute)->contains('.'),
+                    fn ($query) => $query->{"{$whereClause}Relation"}(
+                        (string) Str::of($searchAttribute)->beforeLast('.'),
+                        (string) Str::of($searchAttribute)->afterLast('.'),
+                        $searchOperator,
+                        "%{$searchQuery}%",
+                    ),
+                    fn ($query) => $query->{$whereClause}(
+                        $searchAttribute,
+                        $searchOperator,
+                        "%{$searchQuery}%",
+                    ),
+                )
             );
 
             $isFirst = false;
