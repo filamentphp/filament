@@ -43,7 +43,7 @@ class EditRecord extends Page implements HasFormActions
         $this->fillForm();
     }
 
-    protected function authorizeAccess($record)
+    protected function authorizeAccess($record): void
     {
         static::authorizeResourceAccess();
 

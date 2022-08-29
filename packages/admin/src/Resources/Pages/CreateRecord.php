@@ -35,7 +35,7 @@ class CreateRecord extends Page implements HasFormActions
         $this->fillForm();
     }
 
-    protected function authorizeAccess()
+    protected function authorizeAccess(): void
     {
         static::authorizeResourceAccess();
 
