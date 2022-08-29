@@ -1,6 +1,6 @@
 @props(['getFilters'])
 <x-tables::icon-button
-    :icon="heroicon-o-filter"
+    icon="heroicon-o-filter"
     :indicator= "collect($getFilters)
     ->mapWithKeys(
         fn(\Filament\Tables\Filters\BaseFilter $filter): array => [$filter->getName() => $filter->getIndicators()],
