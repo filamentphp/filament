@@ -15,17 +15,17 @@
     id="{{ $getId() }}"
     {{ $attributes->merge($getExtraAttributes())->class([
         'filament-forms-section-component rounded-xl border border-gray-300',
-        'bg-white' => false == $isCompact(),
+        'bg-white' => ! $isCompact(),
         'dark:border-gray-600' => config('forms.dark_mode'),
-        'dark:bg-gray-800' => config('forms.dark_mode')&&false == $isCompact(),
+        'dark:bg-gray-800' => config('forms.dark_mode') && (! $isCompact()),
     ]) }}
     {{ $getExtraAlpineAttributeBag() }}
 >
     <div
         @class([
             'filament-forms-section-header-wrapper flex items-center bg-gray-100 rtl:space-x-reverse overflow-hidden rounded-t-xl min-h-[40px]',
-            'px-4 py-2 min-h-[56px]' => false == $isCompact(),
-            'px-2' => true == $isCompact(),
+            'px-4 py-2 min-h-[56px]' => ! $isCompact(),
+            'px-2' => $isCompact(),
             'dark:bg-gray-900' => config('forms.dark_mode'),
         ])
         @if ($isCollapsible())
@@ -44,18 +44,14 @@
             "
         @endif
     >
-        <div
-            @class([
-                'filament-forms-section-header flex-1',
-                'cursor-pointer' => $isCollapsible(),
-            ])
-        >
+        <div @class([
+            'filament-forms-section-header flex-1',
+            'cursor-pointer' => $isCollapsible(),
+        ])>
             <h3 @class([
-                "font-bold tracking-tight pointer-events-none",
-                'text-xl'=> false == $isCompact(),
-                'text-m'=> true == $isCompact(),
-                ])
-            >
+                'font-bold tracking-tight pointer-events-none',
+                'text-xl'=> ! $isCompact(),
+            ])>
                 {{ $getHeading() }}
             </h3>
 
@@ -73,13 +69,12 @@
                 }" type="button"
                 @class([
                     'flex items-center justify-center transform rounded-full text-primary-500 hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none',
-                    'w-10 h-10' => false == $isCompact(),
-                    'w-5 h-5' => true == $isCompact(),
+                    'w-10 h-10' => ! $isCompact(),
+                    'w-5 h-5' => $isCompact(),
                     '-rotate-180' => ! $isCollapsed(),
                 ])
             >
-                <svg class="h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
+                <svg class="h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
             </button>
@@ -96,9 +91,9 @@
     >
         <div
             @class([
-                "filament-forms-section-content",
-                "p-6" => false == $isCompact(),
-                "p-3" => true == $isCompact(),
+                'filament-forms-section-content',
+                'p-6' => ! $isCompact(),
+                'p-3' => $isCompact(),
             ])
         >
             {{ $getChildComponentContainer() }}
