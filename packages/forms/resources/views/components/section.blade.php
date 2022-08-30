@@ -89,13 +89,11 @@
         @endif
         class="filament-forms-section-content-wrapper"
     >
-        <div
-            @class([
-                'filament-forms-section-content',
-                'p-6' => ! $isCompact(),
-                'p-3' => $isCompact(),
-            ])
-        >
+        <div @class([
+            'filament-forms-section-content',
+            'p-6' => ! $isCompact(),
+            'p-3' => $isCompact(),
+        ])>
             {{ $getChildComponentContainer() }}
         </div>
     </div>
