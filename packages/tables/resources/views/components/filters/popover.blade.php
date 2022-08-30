@@ -8,7 +8,7 @@
     x-data="{}"
     {{ $attributes->class(['filament-tables-filters relative inline-block']) }}
 >
-    <x-tables::filters.trigger :indicators-count="$indicatorsCount"/>
+    <x-tables::filters.trigger :indicators-count="$indicatorsCount" />
 
     <div
         x-ref="popoverPanel"
