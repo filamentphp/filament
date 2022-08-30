@@ -443,7 +443,7 @@ Section::make('Heading')
     ->collapsed()
 ```
 
-When nesting sections you can use a more subtle styling
+When nesting sections, you can use a more compact styling:
 
 ```php
 use Filament\Forms\Components\Section;
@@ -452,7 +452,7 @@ Section::make('Heading')
     ->schema([
         // ...
     ])
-    ->view(Section::SMALL)
+    ->compact()
 ```
 
 ## Placeholder
