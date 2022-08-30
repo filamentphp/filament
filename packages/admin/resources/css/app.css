@@ -54,16 +54,16 @@
     .filament-sidebar-nav::-webkit-scrollbar {
         width: 0.2rem;
     }
-    
+
     .filament-sidebar-nav::-webkit-scrollbar-thumb {
         background-color: transparent;
         border-radius: 1rem;
     }
-    
+
     .filament-sidebar-nav:hover::-webkit-scrollbar-thumb {
         background-color: theme('colors.gray.300');
     }
-    
+
     .filament-sidebar-nav::-webkit-scrollbar-track {
         background: transparent;
         border-radius: 0;
