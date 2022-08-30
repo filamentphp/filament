@@ -3,16 +3,40 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
+use Filament\Tables\Columns\Column;
+use Illuminate\Database\Eloquent\Model;
 
 trait HasIcons
 {
-    protected array | Closure $icons = [];
+    protected string | Closure | null $icon = null;
 
     protected string | Closure | null $iconPosition = null;
 
+    public function icon(string | Closure | null $icon): static
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
     public function icons(array | Closure $icons): static
     {
-        $this->icons = $icons;
+        $this->icon(function (Column $column, Model $record, $state) use ($icons) {
+            $icons = $column->evaluate($icons);
+            $stateIcon = null;
+
+            foreach ($icons as $icon => $condition) {
+                if (is_numeric($icon)) {
+                    $stateIcon = $condition;
+                } elseif ($condition instanceof Closure && $condition($state, $record)) {
+                    $stateIcon = $icon;
+                } elseif ($condition === $state) {
+                    $stateIcon = $icon;
+                }
+            }
+
+            return $stateIcon;
+        });
 
         return $this;
     }
@@ -26,25 +50,9 @@ trait HasIcons
 
     public function getStateIcon(): ?string
     {
-        $state = $this->getState();
-        $stateIcon = null;
-
-        foreach ($this->getIcons() as $icon => $condition) {
-            if (is_numeric($icon)) {
-                $stateIcon = $condition;
-            } elseif ($condition instanceof Closure && $condition($state, $this->getRecord())) {
-                $stateIcon = $icon;
-            } elseif ($condition === $state) {
-                $stateIcon = $icon;
-            }
-        }
-
-        return $stateIcon;
-    }
-
-    public function getIcons(): array
-    {
-        return $this->evaluate($this->icons);
+        return $this->evaluate($this->icon, [
+            'state' => $this->getState(),
+        ]);
     }
 
     public function getIconPosition(): string
