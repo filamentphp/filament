@@ -8,7 +8,6 @@ trait CanBeCompacted
 {
     protected bool | Closure $isCompact = false;
 
-
     public function compact(bool | Closure $condition = true): static
     {
         $this->isCompact = $condition;
@@ -20,5 +19,4 @@ trait CanBeCompacted
     {
         return (bool) $this->evaluate($this->isCompact);
     }
-
 }
