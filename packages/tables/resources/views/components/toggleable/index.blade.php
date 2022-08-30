@@ -6,6 +6,7 @@
 <x-tables::dropdown
     {{ $attributes->class(['filament-tables-column-toggling']) }}
     placement="bottom-end"
+    shift
     wire:key="{{ $this->id }}.table.toggle"
 >
     <x-slot name="trigger">

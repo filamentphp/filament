@@ -1,6 +1,7 @@
 @props([
     'darkMode' => false,
     'placement' => null,
+    'shift' => false,
     'teleport' => false,
     'trigger' => null,
     'width' => null,
@@ -29,7 +30,7 @@
 
     <div
         x-ref="panel"
-        x-float{{ $placement ? ".placement.$placement" : '' }}.flip.offset{{ $teleport ? '.teleport' : '' }}="{ offset: 8 }"
+        x-float{{ $placement ? ".placement.{$placement}" : '' }}.flip.offset{{ $shift ? '.shift' : '' }}{{ $teleport ? '.teleport' : '' }}="{ offset: 8 }"
         x-cloak
         x-transition:enter-start="opacity-0 scale-95"
         x-transition:leave-end="opacity-0 scale-95"
