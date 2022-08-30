@@ -88,10 +88,6 @@ return [
                 'tooltip' => 'Đặt lại bộ lọc',
             ],
 
-            'close' => [
-                'label' => 'Đóng',
-            ],
-
         ],
 
         'indicator' => 'Bộ lọc đang kích hoạt',
