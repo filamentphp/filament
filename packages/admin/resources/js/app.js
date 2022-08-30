@@ -1,5 +1,4 @@
 import Alpine from 'alpinejs'
-import AlpineFloatingUI from '@awcodes/alpine-floating-ui'
 import Chart from 'chart.js/auto'
 import Collapse from '@alpinejs/collapse'
 import Focus from '@alpinejs/focus'
@@ -9,7 +8,6 @@ import NotificationsAlpinePlugin from '../../../notifications/dist/module.esm'
 import Persist from '@alpinejs/persist'
 import Tooltip from '@ryangjchandler/alpine-tooltip'
 
-Alpine.plugin(AlpineFloatingUI)
 Alpine.plugin(Collapse)
 Alpine.plugin(Focus)
 Alpine.plugin(FormsAlpinePlugin)
