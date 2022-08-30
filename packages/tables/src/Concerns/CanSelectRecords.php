@@ -21,7 +21,10 @@ trait CanSelectRecords
     {
         $query = $this->getFilteredTableQuery();
 
-        return $query->pluck($query->getModel()->getQualifiedKeyName())->toArray();
+        return $query
+            ->pluck($query->getModel()->getQualifiedKeyName())
+            ->transform(fn ($key) => (string) $key)
+            ->toArray();
     }
 
     public function getAllTableRecordsCount(): int
