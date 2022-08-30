@@ -4,12 +4,12 @@
     'disabled' => false,
     'icon' => null,
     'keyBindings' => null,
+    'indicator' => null,
     'label' => null,
     'size' => 'md',
     'tag' => 'button',
     'tooltip' => null,
     'type' => 'button',
-    'indicator' => null,
 ])
 
 @php
@@ -32,6 +32,15 @@
         'w-5 h-5' => $size === 'md',
         'w-4 h-4' => $size === 'sm',
         'w-6 h-6' => $size === 'lg',
+    ]);
+
+    $indicatorClasses = \Illuminate\Support\Arr::toCssClasses([
+        'absolute rounded-full text-xs inline-block w-4 h-4 -top-0.5 -right-0.5 filament-icon-button-indicator',
+        'bg-primary-500/10' => $color === 'primary',
+        'bg-danger-500/10' => $color === 'danger',
+        'bg-gray-500/10' => $color === 'secondary',
+        'bg-success-500/10' => $color === 'success',
+        'bg-warning-500/10' => $color === 'warning',
     ]);
 @endphp
 
@@ -60,8 +69,11 @@
         @endif
 
         <x-dynamic-component :component="$icon" :class="$iconClasses" />
-        @if($indicator)
-            <span class="bg-{{ $color }}-500 rounded-full text-xs text-white inline-block w-4 h-4 absolute top-0 right-0">{{ $indicator }}</span>
+
+        @if ($indicator)
+            <span class="{{ $indicatorClasses }}">
+                {{ $indicator }}
+            </span>
         @endif
     </button>
 @elseif ($tag === 'a')
@@ -87,5 +99,11 @@
         @endif
 
         <x-dynamic-component :component="$icon" :class="$iconClasses" />
+
+        @if ($indicator)
+            <span class="{{ $indicatorClasses }}">
+                {{ $indicator }}
+            </span>
+        @endif
     </a>
 @endif

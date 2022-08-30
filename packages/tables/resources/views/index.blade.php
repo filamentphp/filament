@@ -8,6 +8,10 @@
     $columns = $getColumns();
     $content = $getContent();
     $contentFooter = $getContentFooter();
+    $filterIndicators = collect($getFilters())
+        ->mapWithKeys(fn (\Filament\Tables\Filters\BaseFilter $filter): array => [$filter->getName() => $filter->getIndicators()])
+        ->filter(fn (array $indicators): bool => count($indicators))
+        ->all();
     $header = $getHeader();
     $headerActions = $getHeaderActions();
     $heading = $getHeading();
@@ -296,7 +300,7 @@
                             <x-tables::filters.popover
                                 :form="$getFiltersForm()"
                                 :width="$getFiltersFormWidth()"
-                                :getFilters="$getFilters()"
+                                :indicators-count="count(\Illuminate\Support\Arr::flatten($filterIndicators))"
                                 class="shrink-0"
                             />
                         @endif
@@ -338,7 +342,7 @@
         @endif
 
         <x-tables::filters.indicators
-            :indicators="collect($getFilters())->mapWithKeys(fn (\Filament\Tables\Filters\BaseFilter $filter): array => [$filter->getName() => $filter->getIndicators()])->filter(fn (array $indicators): bool => count($indicators))->all()"
+            :indicators="$filterIndicators"
             :class="\Illuminate\Support\Arr::toCssClasses([
                 'border-t',
                 'dark:border-gray-700' => config('tables.dark_mode'),
