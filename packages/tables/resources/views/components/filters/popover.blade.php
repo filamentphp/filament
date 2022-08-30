@@ -1,6 +1,7 @@
 @props([
     'form',
     'width' => 'sm',
+    'indicatorsCount' => null,
 ])
 
 <x-tables::dropdown
@@ -10,7 +11,7 @@
     wire:key="{{ $this->id }}.table.filters"
 >
     <x-slot name="trigger">
-        <x-tables::filters.trigger />
+        <x-tables::filters.trigger :indicators-count="$indicatorsCount" />
     </x-slot>
 
     <x-tables::filters

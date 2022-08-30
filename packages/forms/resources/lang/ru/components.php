@@ -103,6 +103,10 @@ return [
                 'label' => 'Удалить',
             ],
 
+            'clone_item' => [
+                'label' => 'Клонировать',
+            ],
+
             'move_item_down' => [
                 'label' => 'Переместить вниз',
             ],
@@ -192,6 +196,12 @@ return [
             ],
 
         ],
+
+        'boolean' => [
+            'true' => 'Да',
+            'false' => 'Нет',
+        ],
+
         'loading_message' => 'Загрузка...',
 
         'no_search_results_message' => 'Нет вариантов, соответствующих вашему запросу.',
