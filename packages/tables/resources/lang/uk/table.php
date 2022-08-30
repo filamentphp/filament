@@ -28,12 +28,15 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'на сторінку',
+
                 'options' => [
                     'all' => 'Всі',
                 ],
 
-
+            ],
+        
         ],
 
         'buttons' => [
@@ -94,6 +97,7 @@ return [
                 'label' => 'Очистити фільтри',
                 'tooltip' => 'Очистити фільтри',
             ],
+
           'reset' => [
                 'label' => 'Скинути фільтри',
             ],
@@ -103,7 +107,9 @@ return [
             ],
 
         ],
+
         'indicator' => 'Активні фільтри',
+
         'multi_select' => [
             'placeholder' => 'Всі',
         ],
