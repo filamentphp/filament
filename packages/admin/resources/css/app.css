@@ -51,10 +51,9 @@
 }
 
 @layer utilities {
-
     /* Scroll thumb styles */
     .filament-sidebar-nav::-webkit-scrollbar {
-        width: .2rem;
+        width: 0.2rem;
     }
     .filament-sidebar-nav::-webkit-scrollbar-thumb {
         background-color: transparent;
