@@ -28,7 +28,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'на сторінку',
+
+                'options' => [
+                    'all' => 'Всі',
+                ],
+
             ],
 
         ],
@@ -76,12 +82,21 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'Не знайдено записів',
+        'heading' => 'не знайдено записів',
     ],
 
     'filters' => [
 
         'buttons' => [
+
+            'remove' => [
+                'label' => 'Видалити фільтр',
+            ],
+
+            'remove_all' => [
+                'label' => 'Очистити фільтри',
+                'tooltip' => 'Очистити фільтри',
+            ],
 
             'reset' => [
                 'label' => 'Скинути фільтри',
@@ -93,6 +108,8 @@ return [
 
         ],
 
+        'indicator' => 'Активні фільтри',
+
         'multi_select' => [
             'placeholder' => 'Всі',
         ],
@@ -103,13 +120,13 @@ return [
 
         'trashed' => [
 
-            'label' => 'Видалені записи',
+            'label' => 'Віддалені записи',
 
             'only_trashed' => 'Тільки видалені записи',
 
-            'with_trashed' => 'З видаленими записами',
+            'with_trashed' => 'З віддаленими записами',
 
-            'without_trashed' => 'Без видалених записів',
+            'without_trashed' => 'Без віддалених записів',
 
         ],
 

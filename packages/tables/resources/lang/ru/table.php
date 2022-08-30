@@ -28,7 +28,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'на страницу',
+
+                'options' => [
+                    'all' => 'Все',
+                ],
+
             ],
 
         ],
@@ -83,6 +89,15 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Удалить фильтр',
+            ],
+
+            'remove_all' => [
+                'label' => 'Отчистить фильтры',
+                'tooltip' => 'Отчистить фильтры',
+            ],
+
             'reset' => [
                 'label' => 'Сбросить фильтры',
             ],
@@ -92,6 +107,8 @@ return [
             ],
 
         ],
+
+        'indicator' => 'Активные фильтры',
 
         'multi_select' => [
             'placeholder' => 'Все',
