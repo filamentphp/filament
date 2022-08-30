@@ -18,6 +18,7 @@ use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\ButtonAction;
 use Filament\Tables\Actions\IconButtonAction;
+use Filament\Testing\TestsPageActions;
 use Filament\Testing\TestsPages;
 use Filament\Widgets\Widget;
 use Illuminate\Filesystem\Filesystem;
@@ -79,7 +80,9 @@ class FilamentServiceProvider extends PluginServiceProvider
     {
         parent::packageRegistered();
 
-        $this->registerComponents();
+        $this->app->booting(function () {
+            $this->registerComponents();
+        });
 
         $this->app->scoped('filament', function (): FilamentManager {
             return new FilamentManager();
@@ -99,6 +102,7 @@ class FilamentServiceProvider extends PluginServiceProvider
 
         $this->bootTableActionConfiguration();
 
+        TestableLivewire::mixin(new TestsPageActions());
         TestableLivewire::mixin(new TestsPages());
     }
 

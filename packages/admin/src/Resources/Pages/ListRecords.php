@@ -384,17 +384,75 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return filled($this->getTableReorderColumn()) && static::getResource()::canReorder();
     }
 
+    protected function getTablePollingInterval(): ?string
+    {
+        return $this->getResourceTable()->getPollingInterval();
+    }
+
     protected function getTableRecordUrlUsing(): ?Closure
     {
         return function (Model $record): ?string {
-            $resource = static::getResource();
+            foreach (['view', 'edit'] as $action) {
+                $action = $this->getCachedTableAction($action);
 
-            if ($resource::hasPage('view') && $resource::canView($record)) {
-                return $resource::getUrl('view', ['record' => $record]);
+                if (! $action) {
+                    continue;
+                }
+
+                $action->record($record);
+
+                if ($action->isHidden()) {
+                    continue;
+                }
+
+                $url = $action->getUrl();
+
+                if (! $url) {
+                    continue;
+                }
+
+                return $url;
             }
 
-            if ($resource::hasPage('edit') && $resource::canEdit($record)) {
-                return $resource::getUrl('edit', ['record' => $record]);
+            $resource = static::getResource();
+
+            foreach (['view', 'edit'] as $action) {
+                if (! $resource::hasPage($action)) {
+                    continue;
+                }
+
+                if (! $resource::can($action, $record)) {
+                    continue;
+                }
+
+                return $resource::getUrl($action, ['record' => $record]);
+            }
+
+            return null;
+        };
+    }
+
+    protected function getTableRecordActionUsing(): ?Closure
+    {
+        return function (Model $record): ?string {
+            foreach (['view', 'edit'] as $action) {
+                $action = $this->getCachedTableAction($action);
+
+                if (! $action) {
+                    continue;
+                }
+
+                $action->record($record);
+
+                if ($action->isHidden()) {
+                    continue;
+                }
+
+                if ($action->getUrl()) {
+                    continue;
+                }
+
+                return $action->getName();
             }
 
             return null;

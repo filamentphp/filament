@@ -54,6 +54,26 @@ trait CanBeValidated
         return $this;
     }
 
+    public function requiredWith(string | array | Closure $statePaths, bool $isStatePathAbsolute = false): static
+    {
+        return $this->multiFieldComparisonRule('required_with', $statePaths, $isStatePathAbsolute);
+    }
+
+    public function requiredWithAll(string | array | Closure $statePaths, bool $isStatePathAbsolute = false): static
+    {
+        return $this->multiFieldComparisonRule('required_with_all', $statePaths, $isStatePathAbsolute);
+    }
+
+    public function requiredWithout(string | array | Closure $statePaths, bool $isStatePathAbsolute = false): static
+    {
+        return $this->multiFieldComparisonRule('required_without', $statePaths, $isStatePathAbsolute);
+    }
+
+    public function requiredWithoutAll(string | array | Closure $statePaths, bool $isStatePathAbsolute = false): static
+    {
+        return $this->multiFieldComparisonRule('required_without_all', $statePaths, $isStatePathAbsolute);
+    }
+
     public function regex(string | Closure | null $pattern): static
     {
         $this->regexPattern = $pattern;
@@ -208,12 +228,24 @@ trait CanBeValidated
         return $rules;
     }
 
+    public function dehydrateValidationRules(array &$rules): void
+    {
+        if (count($componentRules = $this->getValidationRules())) {
+            $rules[$this->getStatePath()] = $componentRules;
+        }
+    }
+
+    public function dehydrateValidationAttributes(array &$attributes): void
+    {
+        $attributes[$this->getStatePath()] = $this->getValidationAttribute();
+    }
+
     public function isRequired(): bool
     {
         return (bool) $this->evaluate($this->isRequired);
     }
 
-    protected function dateComparisonRule(string $rule, string | Closure $date, bool $isStatePathAbsolute = false): static
+    public function dateComparisonRule(string $rule, string | Closure $date, bool $isStatePathAbsolute = false): static
     {
         $this->rule(static function (Field $component) use ($date, $isStatePathAbsolute, $rule): string {
             $date = $component->evaluate($date);
@@ -232,7 +264,7 @@ trait CanBeValidated
         return $this;
     }
 
-    protected function fieldComparisonRule(string $rule, string | Closure $statePath, bool $isStatePathAbsolute = false): static
+    public function fieldComparisonRule(string $rule, string | Closure $statePath, bool $isStatePathAbsolute = false): static
     {
         $this->rule(static function (Field $component) use ($isStatePathAbsolute, $rule, $statePath): string {
             $statePath = $component->evaluate($statePath);
@@ -247,6 +279,37 @@ trait CanBeValidated
 
             return "{$rule}:{$statePath}";
         }, fn (Field $component): bool => (bool) $component->evaluate($statePath));
+
+        return $this;
+    }
+
+    public function multiFieldComparisonRule(string $rule, array | string | Closure $statePaths, bool $isStatePathAbsolute = false): static
+    {
+        $this->rule(static function (Field $component) use ($isStatePathAbsolute, $rule, $statePaths): string {
+            $statePaths = $component->evaluate($statePaths);
+
+            if (! $isStatePathAbsolute) {
+                if (is_string($statePaths)) {
+                    $statePaths = explode(',', $statePaths);
+                }
+
+                $containerStatePath = $component->getContainer()->getStatePath();
+
+                if ($containerStatePath) {
+                    $statePaths = array_map(function ($statePath) use ($containerStatePath) {
+                        $statePath = trim($statePath);
+
+                        return "{$containerStatePath}.{$statePath}";
+                    }, $statePaths);
+                }
+            }
+
+            if (is_array($statePaths)) {
+                $statePaths = implode(',', $statePaths);
+            }
+
+            return "{$rule}:{$statePaths}";
+        }, fn (Field $component): bool => (bool) $component->evaluate($statePaths));
 
         return $this;
     }

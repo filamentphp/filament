@@ -85,13 +85,12 @@ return [
 
             'reset' => [
                 'label' => 'Atur ulang filter',
-            ],
-
-            'close' => [
-                'label' => 'Tutup',
+                'tooltip' => 'Atur ulang filter',
             ],
 
         ],
+
+        'indicator' => 'Filter aktif',
 
         'multi_select' => [
             'placeholder' => 'Semua',

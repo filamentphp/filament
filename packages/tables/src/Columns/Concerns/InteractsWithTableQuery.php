@@ -46,13 +46,21 @@ trait InteractsWithTableQuery
         return $query;
     }
 
-    public function applySearchConstraint(Builder $query, string $search, bool &$isFirst): Builder
+    public function applySearchConstraint(Builder $query, string $search, bool &$isFirst, bool $isIndividual = false): Builder
     {
         if ($this->isHidden()) {
             return $query;
         }
 
         if (! $this->isSearchable()) {
+            return $query;
+        }
+
+        if ($isIndividual && (! $this->isIndividuallySearchable())) {
+            return $query;
+        }
+
+        if ((! $isIndividual) && (! $this->isGloballySearchable())) {
             return $query;
         }
 

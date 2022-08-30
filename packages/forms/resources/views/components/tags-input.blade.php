@@ -40,6 +40,15 @@
                         x-on:keydown.enter.stop.prevent="createTag()"
                         x-on:keydown.,.stop.prevent="createTag()"
                         x-on:blur="createTag()"
+                        x-on:paste="$nextTick(() => {
+                            if (newTag.includes(',')) {
+                                newTag.split(',').forEach((tag) => {
+                                    newTag = tag
+                                    
+                                    createTag()
+                                })
+                            }
+                        })"
                         x-model="newTag"
                         {{ $getExtraInputAttributeBag()->class([
                             'webkit-calendar-picker-indicator:opacity-0 block w-full border-0',

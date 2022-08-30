@@ -1,18 +1,16 @@
 @props([
     'footer' => null,
     'header' => null,
+    'poll',
 ])
 
 <table {{ $attributes->class([
-    'w-full text-left rtl:text-right divide-y table-auto filament-tables-table',
+    'filament-tables-table w-full text-left rtl:text-right divide-y table-auto',
     'dark:divide-gray-700' => config('tables.dark_mode'),
 ]) }}>
     @if ($header)
         <thead>
-            <tr @class([
-                'bg-gray-50',
-                'dark:bg-gray-500/10' => config('tables.dark_mode'),
-            ])>
+            <tr class="bg-gray-500/5">
                 {{ $header }}
             </tr>
         </thead>
@@ -22,6 +20,9 @@
         wire:sortable
         wire:end.stop="reorderTable($event.target.sortable.toArray())"
         wire:sortable.options="{ animation: 100 }"
+        @if ($poll)
+            wire:poll.{{ $poll }}
+        @endif
         @class([
             'divide-y whitespace-nowrap',
             'dark:divide-gray-700' => config('tables.dark_mode'),

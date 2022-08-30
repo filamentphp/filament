@@ -15,7 +15,11 @@ class Toggle extends Field
 
     protected string | Closure | null $offIcon = null;
 
+    protected string | Closure | null $offColor = null;
+
     protected string | Closure | null $onIcon = null;
+
+    protected string | Closure | null $onColor = null;
 
     protected function setUp(): void
     {
@@ -37,9 +41,23 @@ class Toggle extends Field
         return $this;
     }
 
+    public function offColor(string | Closure | null $color): static
+    {
+        $this->offColor = $color;
+
+        return $this;
+    }
+
     public function onIcon(string | Closure | null $icon): static
     {
         $this->onIcon = $icon;
+
+        return $this;
+    }
+
+    public function onColor(string | Closure | null $color): static
+    {
+        $this->onColor = $color;
 
         return $this;
     }
@@ -49,9 +67,19 @@ class Toggle extends Field
         return $this->evaluate($this->offIcon);
     }
 
+    public function getOffColor(): ?string
+    {
+        return $this->evaluate($this->offColor);
+    }
+
     public function getOnIcon(): ?string
     {
         return $this->evaluate($this->onIcon);
+    }
+
+    public function getOnColor(): ?string
+    {
+        return $this->evaluate($this->onColor);
     }
 
     public function hasOffIcon(): bool

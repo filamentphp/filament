@@ -17,7 +17,7 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <div {{ $attributes->merge($getExtraAttributes())->class(['flex items-center space-x-1 rtl:space-x-reverse group filament-forms-color-picker-component']) }}>
+    <div {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-color-picker-component flex items-center space-x-1 rtl:space-x-reverse group']) }}>
         @if (($prefixAction = $getPrefixAction()) && (! $prefixAction->isHidden()))
             {{ $prefixAction }}
         @endif
@@ -69,7 +69,7 @@
             >
                 <span
                     x-bind:style="{ 'background-color': state }"
-                    class="relative overflow-hidden rounded-md w-7 h-7 filament-forms-color-picker-component-preview"
+                    class="filament-forms-color-picker-component-preview relative overflow-hidden rounded-md w-7 h-7"
                 ></span>
             </span>
 

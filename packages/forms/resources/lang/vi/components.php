@@ -9,7 +9,7 @@ return [
         'buttons' => [
 
             'create_item' => [
-                'label' => 'Thêm vào :label',
+                'label' => 'Thêm :label mới',
             ],
 
             'delete_item' => [
@@ -49,11 +49,11 @@ return [
         'buttons' => [
 
             'add' => [
-                'label' => 'Thêm Dòng',
+                'label' => 'Thêm dòng',
             ],
 
             'delete' => [
-                'label' => 'Xóa Dòng',
+                'label' => 'Xóa dòng',
             ],
 
         ],
@@ -61,7 +61,7 @@ return [
         'fields' => [
 
             'key' => [
-                'label' => 'Key',
+                'label' => 'Khóa',
             ],
 
             'value' => [
@@ -75,11 +75,11 @@ return [
     'markdown_editor' => [
 
         'toolbar_buttons' => [
-            'attach_files' => 'Đính kèm file',
+            'attach_files' => 'Đính kèm tệp',
             'bold' => 'In đậm',
-            'bullet_list' => 'Danh sách dùng dấu chấm',
+            'bullet_list' => 'Danh sách đánh dấu',
             'code_block' => 'Code block',
-            'edit' => 'Xóa',
+            'edit' => 'Sửa',
             'italic' => 'In nghiêng',
             'link' => 'Liên kết',
             'ordered_list' => 'Danh sách đánh số',
@@ -96,7 +96,7 @@ return [
         'buttons' => [
 
             'create_item' => [
-                'label' => 'Thêm vào :label',
+                'label' => 'Thêm :label mới',
             ],
 
             'delete_item' => [
@@ -151,10 +151,10 @@ return [
         ],
 
         'toolbar_buttons' => [
-            'attach_files' => 'Đính kèm file',
+            'attach_files' => 'Đính kèm tệp',
             'blockquote' => 'Trích dẫn',
             'bold' => 'In đậm',
-            'bullet_list' => 'Danh sách dùng dấu chấm',
+            'bullet_list' => 'Danh sách đánh dấu',
             'code_block' => 'Code block',
             'h1' => 'Tiêu đề chính',
             'h2' => 'Tiêu đề',
@@ -162,8 +162,8 @@ return [
             'italic' => 'In nghiêng',
             'link' => 'Liên kết',
             'ordered_list' => 'Danh sách đánh số',
-            'redo' => 'Redo',
-            'strike' => 'Strikethrough',
+            'redo' => 'Làm lại',
+            'strike' => 'Gạch ngang',
             'undo' => 'Hoàn tác',
         ],
 

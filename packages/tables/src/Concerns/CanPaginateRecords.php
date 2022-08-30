@@ -30,7 +30,7 @@ trait CanPaginateRecords
     {
         /** @var LengthAwarePaginator $records */
         $records = $query->paginate(
-            $this->getTableRecordsPerPage(),
+            $this->getTableRecordsPerPage() ?? $query->count(),
             ['*'],
             $this->getTablePaginationPageName(),
         );
@@ -38,17 +38,17 @@ trait CanPaginateRecords
         return $records->onEachSide(1);
     }
 
-    protected function getTableRecordsPerPage(): int
+    protected function getTableRecordsPerPage(): ?int
     {
-        return intval($this->tableRecordsPerPage);
+        return filled($this->tableRecordsPerPage) ? intval($this->tableRecordsPerPage) : null;
     }
 
     protected function getTableRecordsPerPageSelectOptions(): array
     {
-        return config('tables.pagination.records_per_page_select_options', [5, 10, 25, 50]);
+        return config('tables.pagination.records_per_page_select_options') ?? [5, 10, 25, 50, null];
     }
 
-    protected function getDefaultTableRecordsPerPageSelectOption(): int
+    protected function getDefaultTableRecordsPerPageSelectOption(): ?int
     {
         $perPage = session()->get(
             $this->getTablePerPageSessionKey(),

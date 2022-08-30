@@ -23,6 +23,20 @@ class SelectFilter extends BaseFilter
         parent::setUp();
 
         $this->placeholder(__('tables::table.filters.select.placeholder'));
+
+        $this->indicateUsing(function (array $state): array {
+            if (blank($state['value'] ?? null)) {
+                return [];
+            }
+
+            $label = $this->getOptions()[$state['value']] ?? null;
+
+            if (blank($label)) {
+                return [];
+            }
+
+            return ["{$this->getIndicator()}: {$label}"];
+        });
     }
 
     public function apply(Builder $query, array $data = []): Builder

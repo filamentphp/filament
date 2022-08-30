@@ -15,6 +15,7 @@ trait InteractsWithTable
 {
     use CanBeStriped;
     use CanPaginateRecords;
+    use CanPollRecords;
     use CanReorderRecords;
     use CanSearchRecords;
     use CanSelectRecords;
@@ -29,6 +30,7 @@ trait InteractsWithTable
     use HasHeader;
     use HasRecords;
     use HasRecordAction;
+    use HasRecordClasses;
     use HasRecordUrl;
     use Forms\Concerns\InteractsWithForms;
 
@@ -95,26 +97,7 @@ trait InteractsWithTable
 
     protected function getTable(): Table
     {
-        return $this->makeTable()
-            ->content($this->getTableContent())
-            ->contentFooter($this->getTableContentFooter())
-            ->description($this->getTableDescription())
-            ->emptyState($this->getTableEmptyState())
-            ->emptyStateDescription($this->getTableEmptyStateDescription())
-            ->emptyStateHeading($this->getTableEmptyStateHeading())
-            ->emptyStateIcon($this->getTableEmptyStateIcon())
-            ->enablePagination($this->isTablePaginationEnabled())
-            ->filtersFormWidth($this->getTableFiltersFormWidth())
-            ->filtersLayout($this->getTableFiltersLayout())
-            ->recordAction($this->getTableRecordAction())
-            ->getRecordUrlUsing($this->getTableRecordUrlUsing())
-            ->header($this->getTableHeader())
-            ->heading($this->getTableHeading())
-            ->model($this->getTableQuery()->getModel()::class)
-            ->recordsPerPageSelectOptions($this->getTableRecordsPerPageSelectOptions())
-            ->reorderColumn($this->getTableReorderColumn())
-            ->reorderable($this->isTableReorderable())
-            ->striped($this->isTableStriped());
+        return Table::make($this);
     }
 
     protected function getTableQueryStringIdentifier(): ?string
@@ -147,11 +130,6 @@ trait InteractsWithTable
             'mountedTableActionForm' => $this->getMountedTableActionForm(),
             'mountedTableBulkActionForm' => $this->getMountedTableBulkActionForm(),
         ];
-    }
-
-    protected function makeTable(): Table
-    {
-        return Table::make($this);
     }
 
     protected function getTableQuery(): Builder | Relation

@@ -53,7 +53,7 @@ return [
 
     'pagination' => [
         'default_records_per_page' => 10,
-        'records_per_page_select_options' => [5, 10, 25, 50],
+        'records_per_page_select_options' => [5, 10, 25, 50, null],
     ],
 
     /*

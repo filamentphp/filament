@@ -73,6 +73,35 @@ trait HasFilters
         $this->resetPage();
     }
 
+    public function removeTableFilter(string $filter, ?string $field = null): void
+    {
+        $filterGroup = $this->getTableFiltersForm()->getComponents()[$filter];
+        $fields = $filterGroup?->getChildComponentContainer()->getFlatFields() ?? [];
+
+        if (filled($field) && array_key_exists($field, $fields)) {
+            $fields = [$fields[$field]];
+        }
+
+        foreach ($fields as $field) {
+            $field->state(
+                is_array($field->getState()) ? [] : null,
+            );
+        }
+
+        $this->updatedTableFilters();
+    }
+
+    public function removeTableFilters(): void
+    {
+        foreach ($this->getTableFiltersForm()->getFlatFields(withAbsolutePathKeys: true) as $field) {
+            $field->state(
+                is_array($field->getState()) ? [] : null,
+            );
+        }
+
+        $this->updatedTableFilters();
+    }
+
     public function resetTableFiltersForm(): void
     {
         $this->getTableFiltersForm()->fill();
@@ -109,7 +138,7 @@ trait HasFilters
     protected function getTableFiltersFormColumns(): int | array
     {
         return match ($this->getTableFiltersLayout()) {
-            Layout::AboveContent => [
+            Layout::AboveContent, Layout::BelowContent => [
                 'sm' => 2,
                 'lg' => 3,
                 'xl' => 4,
@@ -121,12 +150,15 @@ trait HasFilters
 
     protected function getTableFiltersFormSchema(): array
     {
-        return array_map(
-            fn (BaseFilter $filter) => Forms\Components\Group::make()
+        $schema = [];
+
+        foreach ($this->getCachedTableFilters() as $filter) {
+            $schema[$filter->getName()] = Forms\Components\Group::make()
                 ->schema($filter->getFormSchema())
-                ->statePath($filter->getName()),
-            $this->getCachedTableFilters(),
-        );
+                ->statePath($filter->getName());
+        }
+
+        return $schema;
     }
 
     protected function getTableFiltersFormWidth(): ?string

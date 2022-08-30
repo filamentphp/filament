@@ -7,32 +7,32 @@
         x-on:expand-concealing-component.window="
             if ($event.detail.id === $el.id) {
                 isCollapsed = false
-                
+
                 setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 100)
             }
         "
     @endif
     id="{{ $getId() }}"
     {{ $attributes->merge($getExtraAttributes())->class([
-        'bg-white rounded-xl border border-gray-300 filament-forms-section-component',
+        'filament-forms-section-component bg-white rounded-xl border border-gray-300',
         'dark:border-gray-600 dark:bg-gray-800' => config('forms.dark_mode'),
     ]) }}
     {{ $getExtraAlpineAttributeBag() }}
 >
     <div
         @class([
-            'flex items-center px-4 py-2 bg-gray-100 rtl:space-x-reverse overflow-hidden rounded-t-xl min-h-[56px] filament-forms-section-header-wrapper',
+            'filament-forms-section-header-wrapper flex items-center px-4 py-2 bg-gray-100 rtl:space-x-reverse overflow-hidden rounded-t-xl min-h-[56px]',
             'dark:bg-gray-900' => config('forms.dark_mode'),
         ])
         @if ($isCollapsible())
             x-bind:class="{ 'rounded-b-xl': isCollapsed }"
             x-on:click="
                 isCollapsed = ! isCollapsed
-                
+
                 if (isCollapsed) {
                     return
                 }
-                
+
                 setTimeout(
                     () => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }),
                     100,
@@ -42,7 +42,7 @@
     >
         <div
             @class([
-                'flex-1 filament-forms-section-header',
+                'filament-forms-section-header flex-1',
                 'cursor-pointer' => $isCollapsible(),
             ])
         >
@@ -83,7 +83,7 @@
         @endif
         class="filament-forms-section-content-wrapper"
     >
-        <div class="p-6 filament-forms-section-content">
+        <div class="filament-forms-section-content p-6">
             {{ $getChildComponentContainer() }}
         </div>
     </div>

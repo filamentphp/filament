@@ -379,6 +379,31 @@ it('can validate invoice recipient email', function () {
 });
 ```
 
+To check if a page action is pre-filled with data, you can use the `assertPageActionDataSet()` method:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can send invoices to the primary contact by default', function () {
+    $invoice = Invoice::factory()->create();
+    $recipientEmail = $invoice->company->primaryContact->email;
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->mountPageAction('send')
+        ->assertPageActionDataSet([
+            'email' => $recipientEmail,
+        ])
+        ->callMountedPageAction()
+        ->assertHasNoPageActionErrors();
+        
+    expect($invoice->refresh())
+        ->isSent()->toBeTrue()
+        ->recipient_email->toBe($recipientEmail);
+});
+```
+
 To check if a page action is hidden to a user, you can use the `assertPageActionHidden()` method:
 
 ```php

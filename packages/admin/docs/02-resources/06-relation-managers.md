@@ -512,6 +512,6 @@ use Illuminate\Database\Eloquent\Model;
 
 public static function canViewForRecord(Model $ownerRecord): bool
 {
-    return $ownerRecord->status === Status::Draft
+    return $ownerRecord->status === Status::Draft;
 }
 ```

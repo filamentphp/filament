@@ -9,6 +9,7 @@
         <x-forms::dropdown.item
             :wire:click="'dispatchFormEvent(\'builder::createItem\', \'' . $statePath . '\', \'' . $block->getName() . '\'' . ($createAfterItem ? ', \'' . $createAfterItem . '\'' : '') . ')'"
             :icon="$block->getIcon()"
+            x-on:click="close"
         >
             {{ $block->getLabel() }}
         </x-forms::dropdown.item>

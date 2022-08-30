@@ -38,20 +38,25 @@ class EditRecord extends Page implements HasFormActions
 
     public function mount($record): void
     {
+        $this->authorizeAccess($record);
+
+        $this->fillForm();
+    }
+
+    protected function authorizeAccess($record): void
+    {
         static::authorizeResourceAccess();
 
         $this->record = $this->resolveRecord($record);
 
         abort_unless(static::getResource()::canEdit($this->getRecord()), 403);
-
-        $this->fillForm();
     }
 
     protected function fillForm(): void
     {
         $this->callHook('beforeFill');
 
-        $data = $this->getRecord()->toArray();
+        $data = $this->getRecord()->attributesToArray();
 
         $data = $this->mutateFormDataBeforeFill($data);
 
@@ -67,6 +72,8 @@ class EditRecord extends Page implements HasFormActions
 
     public function save(bool $shouldRedirect = true): void
     {
+        $this->authorizeAccess($this->getRecord()->getKey());
+
         $this->callHook('beforeValidate');
 
         $data = $this->form->getState();

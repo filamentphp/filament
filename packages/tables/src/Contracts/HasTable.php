@@ -40,6 +40,8 @@ interface HasTable extends HasForms
 
     public function getMountedTableActionForm(): ?ComponentContainer;
 
+    public function getMountedTableActionRecordKey();
+
     public function getMountedTableBulkAction(): ?BulkAction;
 
     public function getMountedTableBulkActionForm(): ?ComponentContainer;
@@ -57,6 +59,8 @@ interface HasTable extends HasForms
     public function isTableFilterable(): bool;
 
     public function isTableSearchable(): bool;
+
+    public function isTableSearchableByColumn(): bool;
 
     public function isTableSelectionEnabled(): bool;
 

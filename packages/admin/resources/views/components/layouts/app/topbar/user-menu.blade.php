@@ -2,7 +2,7 @@
     $user = \Filament\Facades\Filament::auth()->user();
 @endphp
 
-<x-filament::dropdown>
+<x-filament::dropdown placement="bottom-end">
     <x-slot name="trigger">
         <x-filament::user-avatar :user="$user" />
     </x-slot>
@@ -69,11 +69,11 @@
 
         <div>
             @if (config('filament.dark_mode'))
-                <x-filament::dropdown.item icon="heroicon-s-moon" x-show="theme === 'dark'" x-on:click="mode = 'manual'; theme = 'light'">
+                <x-filament::dropdown.item icon="heroicon-s-moon" x-show="theme === 'dark'" x-on:click="close(); mode = 'manual'; theme = 'light'">
                     {{ __('filament::layout.buttons.light_mode.label') }}
                 </x-filament::dropdown.item>
 
-                <x-filament::dropdown.item icon="heroicon-s-sun" x-show="theme === 'light'" x-on:click="mode = 'manual'; theme = 'dark'">
+                <x-filament::dropdown.item icon="heroicon-s-sun" x-show="theme === 'light'" x-on:click="close(); mode = 'manual'; theme = 'dark'">
                     {{ __('filament::layout.buttons.dark_mode.label') }}
                 </x-filament::dropdown.item>
             @endif
