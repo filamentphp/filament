@@ -369,7 +369,7 @@ class FilamentManager
         return $firstItem->getUrl();
     }
 
-    public function getUserAvatarUrl(Authenticatable $user): string
+    public function getUserAvatarUrl(Model|Authenticatable $user): string
     {
         $avatar = null;
 
@@ -386,7 +386,7 @@ class FilamentManager
         return app($provider)->get($user);
     }
 
-    public function getUserName(Authenticatable $user): string
+    public function getUserName(Model|Authenticatable $user): string
     {
         if ($user instanceof HasName) {
             return $user->getFilamentName();
