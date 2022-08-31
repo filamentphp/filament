@@ -45,7 +45,7 @@ The package uses the following dependencies:
 You may install these through NPM:
 
 ```bash
-npm install alpinejs tailwindcss --save-dev
+npm install alpinejs @awcodes/alpine-floating-ui tailwindcss --save-dev
 ```
 
 ### Configuring Tailwind CSS
