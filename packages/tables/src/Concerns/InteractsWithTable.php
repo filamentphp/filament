@@ -175,10 +175,13 @@ trait InteractsWithTable
         /** @var BelongsToMany $relationship */
         $relationship = $this->getRelationship();
 
-        $query->select(
-            $relationship->getTable() . '.*',
-            $query->getModel()->getTable() . '.*',
-        );
+        $query->select(array_merge(
+            invade($relationship)->aliasedPivotColumns(),
+            [
+                $relationship->getTable() . '.*',
+                $query->getModel()->getTable() . '.*',
+            ]
+        ));
 
         return $query;
     }
