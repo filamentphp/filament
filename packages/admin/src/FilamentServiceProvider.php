@@ -210,7 +210,7 @@ class FilamentServiceProvider extends PluginServiceProvider
         if ((! $filesystem->exists($directory)) && (! Str::of($directory)->contains('*'))) {
             return;
         }
-        
+
         $namespace = Str::of($namespace);
 
         $register = array_merge(
@@ -224,7 +224,7 @@ class FilamentServiceProvider extends PluginServiceProvider
                             ->after(base_path())
                             ->replace(['/'], ['\\']),
                     ) : null;
-                    
+
                     return (string) $namespace
                         ->append('\\', $file->getRelativePathname())
                         ->replace('*', $variableNamespace)
