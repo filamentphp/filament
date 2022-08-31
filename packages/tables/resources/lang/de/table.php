@@ -102,10 +102,6 @@ return [
                 'label' => 'Filter zurücksetzen',
             ],
 
-            'close' => [
-                'label' => 'Schließen',
-            ],
-
         ],
 
         'indicator' => 'Aktive Filter',
