@@ -43,7 +43,7 @@
             'dark:bg-gray-800 dark:border-gray-700' => config('tables.dark_mode'),
         ]) wire:ignore.self>
             <x-tables::icon-button
-                icon="heroicon-o-x"
+                icon="heroicon-o-x-mark"
                 x-on:click="$refs.popoverPanel.close"
                 :label=" __('tables::table.filters.buttons.close.label')"
                 color="secondary"

@@ -97,7 +97,7 @@
                                                 {{ __('forms::components.repeater.buttons.move_item_down.label') }}
                                             </span>
 
-                                            <x-heroicon-s-switch-vertical class="w-4 h-4"/>
+                                            <x-heroicon-s-arrows-up-down class="w-4 h-4"/>
                                         </button>
                                     @endunless
 
@@ -128,7 +128,7 @@
                                                         {{ __('forms::components.repeater.buttons.clone_item.label') }}
                                                     </span>
 
-                                                    <x-heroicon-s-duplicate class="w-4 h-4"/>
+                                                    <x-heroicon-s-square-2-stack class="w-4 h-4"/>
                                                 </button>
                                             </li>
                                         @endunless
@@ -162,7 +162,7 @@
                                                         'dark:text-gray-400 dark:hover:text-gray-500' => config('forms.dark_mode'),
                                                     ])
                                                 >
-                                                    <x-heroicon-s-minus-sm class="w-4 h-4" x-show="! isCollapsed"/>
+                                                    <x-heroicon-s-minus-small class="w-4 h-4" x-show="! isCollapsed"/>
 
                                                     <span class="sr-only" x-show="! isCollapsed">
                                                         {{ __('forms::components.repeater.buttons.collapse_item.label') }}

@@ -111,7 +111,7 @@
                                                 type="button"
                                                 class="text-gray-600 hover:text-gray-700"
                                             >
-                                                <x-heroicon-o-switch-vertical class="w-4 h-4" />
+                                                <x-heroicon-o-arrows-up-down class="w-4 h-4" />
 
                                                 <span class="sr-only">
                                                     {{ $getDeleteButtonLabel() }}

@@ -484,7 +484,7 @@ You may customize the icon representing each state. Icons are the name of a Blad
 use Filament\Tables\Columns\BooleanColumn;
 
 BooleanColumn::make('is_featured')
-    ->trueIcon('heroicon-o-badge-check')
+    ->trueIcon('heroicon-o-check-badge')
     ->falseIcon('heroicon-o-x-circle')
 ```
 
@@ -653,9 +653,9 @@ use Filament\Tables\Columns\BadgeColumn;
 
 BadgeColumn::make('status')
     ->icons([
-        'heroicon-o-x',
+        'heroicon-o-x-mark',
         'heroicon-o-document' => 'draft',
-        'heroicon-o-refresh' => 'reviewing',
+        'heroicon-o-arrow-path' => 'reviewing',
         'heroicon-o-truck' => 'published',
     ])
 ```
@@ -667,9 +667,9 @@ use Filament\Tables\Columns\BadgeColumn;
 
 BadgeColumn::make('status')
     ->icons([
-        'heroicon-o-x',
+        'heroicon-o-x-mark',
         'heroicon-o-document' => fn ($state): bool => $state === 'draft',
-        'heroicon-o-refresh' => fn ($state): bool => $state === 'reviewing',
+        'heroicon-o-arrow-path' => fn ($state): bool => $state === 'reviewing',
         'heroicon-o-truck' => fn ($state): bool => $state === 'published',
     ])
 ```
@@ -681,9 +681,9 @@ use Filament\Tables\Columns\BadgeColumn;
 
 BadgeColumn::make('status')
     ->icons([
-        'heroicon-o-x',
+        'heroicon-o-x-mark',
         'heroicon-o-document' => 'draft',
-        'heroicon-o-refresh' => 'reviewing',
+        'heroicon-o-arrow-path' => 'reviewing',
         'heroicon-o-truck' => 'published',
     ])
     ->iconPosition('after') // `before` or `after`

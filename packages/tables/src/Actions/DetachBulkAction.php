@@ -32,7 +32,7 @@ class DetachBulkAction extends BulkAction
 
         $this->color('danger');
 
-        $this->icon('heroicon-s-x');
+        $this->icon('heroicon-s-x-mark');
 
         $this->requiresConfirmation();
 

@@ -114,7 +114,7 @@ use Filament\Forms\Components\RichEditor;
 
 RichEditor::make('content')
     ->hint('Translatable')
-    ->hintIcon('heroicon-s-translate')
+    ->hintIcon('heroicon-s-language')
 ```
 
 ### Custom attributes
@@ -275,8 +275,8 @@ use Filament\Forms\Components\TextInput;
 
 TextInput::make('domain')
     ->url()
-    ->prefixIcon('heroicon-o-external-link')
-    ->suffixIcon('heroicon-o-external-link')
+    ->prefixIcon('heroicon-o-arrow-top-right-on-square')
+    ->suffixIcon('heroicon-o-arrow-top-right-on-square')
 ```
 
 You may limit the length of the input by setting the `minLength()` and `maxLength()` methods. These methods add both frontend and backend validation:
@@ -766,7 +766,7 @@ Toggles may also use an "on icon" and an "off icon". These are displayed on its 
 use Filament\Forms\Components\Toggle;
 
 Toggle::make('is_admin')
-    ->onIcon('heroicon-s-lightning-bolt')
+    ->onIcon('heroicon-s-bolt')
     ->offIcon('heroicon-s-user')
 ```
 

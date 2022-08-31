@@ -44,7 +44,7 @@
                             if (newTag.includes(',')) {
                                 newTag.split(',').forEach((tag) => {
                                     newTag = tag
-                                    
+
                                     createTag()
                                 })
                             }
@@ -88,7 +88,7 @@
                             <span class="text-left" x-text="tag"></span>
 
                             @unless ($isDisabled())
-                                <x-heroicon-s-x class="w-3 h-3 shrink-0" />
+                                <x-heroicon-s-x-mark class="w-3 h-3 shrink-0" />
                             @endunless
                         </button>
                     </template>

@@ -46,7 +46,7 @@
                             'lg:mr-4 rtl:lg:mr-0 rtl:lg:ml-4' => config('filament.layout.sidebar.is_collapsible_on_desktop'),
                         ])
                     >
-                        <x-heroicon-o-menu class="w-6 h-6"/>
+                        <x-heroicon-o-bars-3 class="w-6 h-6"/>
                     </button>
 
                     <div class="flex items-center justify-between flex-1 gap-4">
