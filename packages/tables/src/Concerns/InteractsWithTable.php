@@ -2,6 +2,8 @@
 
 namespace Filament\Tables\Concerns;
 
+use function Livewire\invade;
+
 use Exception;
 use Filament\Forms;
 use Filament\Tables\Contracts\HasRelationshipTable;
