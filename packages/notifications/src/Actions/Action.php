@@ -77,13 +77,6 @@ class Action extends BaseAction implements Arrayable
         return $this;
     }
 
-    public function grouped(): static
-    {
-        $this->view('notifications::actions.grouped-action');
-
-        return $this;
-    }
-
     public function link(): static
     {
         $this->view('notifications::actions.link-action');
