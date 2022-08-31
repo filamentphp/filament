@@ -88,10 +88,6 @@ return [
                 'tooltip' => 'Atur ulang filter',
             ],
 
-            'close' => [
-                'label' => 'Tutup',
-            ],
-
         ],
 
         'indicator' => 'Filter aktif',

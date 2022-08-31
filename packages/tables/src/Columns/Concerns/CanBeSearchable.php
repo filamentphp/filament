@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 
 trait CanBeSearchable
 {
-    protected bool $isGloballySearchable = true;
+    protected bool $isGloballySearchable = false;
 
     protected bool $isIndividuallySearchable = false;
 
@@ -50,12 +50,12 @@ trait CanBeSearchable
 
     public function isGloballySearchable(): bool
     {
-        return $this->isGloballySearchable;
+        return $this->isSearchable() && $this->isGloballySearchable;
     }
 
     public function isIndividuallySearchable(): bool
     {
-        return $this->isIndividuallySearchable;
+        return $this->isSearchable() && $this->isIndividuallySearchable;
     }
 
     protected function getDefaultSearchColumns(): array

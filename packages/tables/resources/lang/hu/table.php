@@ -71,10 +71,6 @@ return [
                 'label' => 'Alapértelmezés',
             ],
 
-            'close' => [
-                'label' => 'Bezárás',
-            ],
-
         ],
 
         'multi_select' => [

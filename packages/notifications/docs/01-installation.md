@@ -39,12 +39,13 @@ You're now ready to start [sending notifications](sending-notifications)!
 The package uses the following dependencies:
 
 - [Alpine.js](https://alpinejs.dev)
+- [Alpine Floating UI](https://github.com/awcodes/alpine-floating-ui)
 - [Tailwind CSS](https://tailwindcss.com)
 
 You may install these through NPM:
 
 ```bash
-npm install alpinejs tailwindcss --save-dev
+npm install alpinejs @awcodes/alpine-floating-ui tailwindcss --save-dev
 ```
 
 ### Configuring Tailwind CSS
@@ -146,12 +147,14 @@ In `/resources/css/app.css`, import [Tailwind CSS](https://tailwindcss.com):
 
 ### Configuring scripts
 
-In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev) and the `filament/notifications` plugin, and register it:
+In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), Alpine Floating UI and the `filament/notifications` plugin, and register them:
 
 ```js
 import Alpine from 'alpinejs'
+import AlpineFloatingUI from '@awcodes/alpine-floating-ui'
 import NotificationsAlpinePlugin from '../../vendor/filament/notifications/dist/module.esm'
 
+Alpine.plugin(AlpineFloatingUI)
 Alpine.plugin(NotificationsAlpinePlugin)
 
 window.Alpine = Alpine

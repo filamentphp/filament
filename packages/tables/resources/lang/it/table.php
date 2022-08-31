@@ -88,10 +88,6 @@ return [
                 'tooltip' => 'Resetta filtri',
             ],
 
-            'close' => [
-                'label' => 'Chiudi',
-            ],
-
         ],
 
         'indicator' => 'Filtri attivi',

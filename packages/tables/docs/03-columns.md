@@ -484,7 +484,7 @@ You may customize the icon representing each state. Icons are the name of a Blad
 use Filament\Tables\Columns\BooleanColumn;
 
 BooleanColumn::make('is_featured')
-    ->trueIcon('heroicon-o-check-badge')
+    ->trueIcon('heroicon-o-badge-check')
     ->falseIcon('heroicon-o-x-circle')
 ```
 
@@ -640,10 +640,25 @@ use Filament\Tables\Columns\BadgeColumn;
 BadgeColumn::make('status')
     ->colors([
         'primary',
-        'danger' => fn ($state): bool => $state === 'draft',
-        'warning' => fn ($state): bool => $state === 'reviewing',
-        'success' => fn ($state): bool => $state === 'published',
+        'danger' => static fn ($state): bool => $state === 'draft',
+        'warning' => static fn ($state): bool => $state === 'reviewing',
+        'success' => static fn ($state): bool => $state === 'published',
     ])
+```
+
+Or dynamically calculate the color based on the `$record` and / or `$state`:
+
+```php
+use Filament\Tables\Columns\BadgeColumn;
+
+BadgeColumn::make('status')
+    ->icon(static function ($state): string {
+        if ($state === 'published') {
+            return 'success';
+        }
+        
+        return 'secondary';
+    })
 ```
 
 Badges may also have an icon:
@@ -653,9 +668,9 @@ use Filament\Tables\Columns\BadgeColumn;
 
 BadgeColumn::make('status')
     ->icons([
-        'heroicon-o-x-mark',
+        'heroicon-o-x',
         'heroicon-o-document' => 'draft',
-        'heroicon-o-arrow-path' => 'reviewing',
+        'heroicon-o-refresh' => 'reviewing',
         'heroicon-o-truck' => 'published',
     ])
 ```
@@ -667,11 +682,26 @@ use Filament\Tables\Columns\BadgeColumn;
 
 BadgeColumn::make('status')
     ->icons([
-        'heroicon-o-x-mark',
-        'heroicon-o-document' => fn ($state): bool => $state === 'draft',
-        'heroicon-o-arrow-path' => fn ($state): bool => $state === 'reviewing',
-        'heroicon-o-truck' => fn ($state): bool => $state === 'published',
+        'heroicon-o-x',
+        'heroicon-o-document' => static fn ($state): bool => $state === 'draft',
+        'heroicon-o-refresh' => static fn ($state): bool => $state === 'reviewing',
+        'heroicon-o-truck' => static fn ($state): bool => $state === 'published',
     ])
+```
+
+Or dynamically calculate the icon based on the `$record` and / or `$state`:
+
+```php
+use Filament\Tables\Columns\BadgeColumn;
+
+BadgeColumn::make('status')
+    ->icon(static function ($state): string {
+        if ($state === 'published') {
+            return 'heroicon-o-truck';
+        }
+        
+        return 'heroicon-o-x';
+    })
 ```
 
 You may set the position of an icon using `iconPosition()`:
@@ -681,9 +711,9 @@ use Filament\Tables\Columns\BadgeColumn;
 
 BadgeColumn::make('status')
     ->icons([
-        'heroicon-o-x-mark',
+        'heroicon-o-x',
         'heroicon-o-document' => 'draft',
-        'heroicon-o-arrow-path' => 'reviewing',
+        'heroicon-o-refresh' => 'reviewing',
         'heroicon-o-truck' => 'published',
     ])
     ->iconPosition('after') // `before` or `after`
@@ -704,7 +734,7 @@ Be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#arra
 ```php
 use Illuminate\Database\Eloquent\Model;
 
-class BlogPost extends Model
+class Post extends Model
 {
     protected $casts = [
         'tags' => 'array',

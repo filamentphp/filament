@@ -28,7 +28,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'por página',
+
+                'options' => [
+                    'all' => 'Todos',
+                ],
+
             ],
 
         ],
@@ -83,12 +89,17 @@ return [
 
         'buttons' => [
 
-            'reset' => [
-                'label' => 'Resetea los filtros',
+            'remove' => [
+                'label' => 'Quitar filtro',
             ],
 
-            'close' => [
-                'label' => 'Cerrar',
+            'remove_all' => [
+                'label' => 'Quitar todos los filtros',
+                'tooltip' => 'Quitar todos los filtros',
+            ],
+
+            'reset' => [
+                'label' => 'Resetea los filtros',
             ],
 
         ],
@@ -109,7 +120,7 @@ return [
 
             'only_trashed' => 'Solo registros eliminados',
 
-            'with_trashed' => 'Con resgistros eliminados',
+            'with_trashed' => 'Con registros eliminados',
 
             'without_trashed' => 'Sin registros eliminados',
 
@@ -126,7 +137,7 @@ return [
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Selecciona los :count',
+                'label' => 'Selecciona todos :count',
             ],
 
             'deselect_all' => [
