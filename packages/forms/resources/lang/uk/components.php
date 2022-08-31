@@ -4,7 +4,7 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Вміст згорнутий',
+        'collapsed' => 'Вміст згорнуто',
 
         'buttons' => [
 
@@ -77,21 +77,21 @@ return [
         'toolbar_buttons' => [
             'attach_files' => 'Прикріпити файли',
             'bold' => 'Жирний',
-            'bullet_list' => 'Маркувальний список',
-            'code_block' => 'Код',
-            'edit' => 'Редагувати',
-            'italic' => 'Курсів',
+            'bullet_list' => 'Пунктовий список',
+            'code_block' => 'Блок коду',
+            'edit' => 'Змінити',
+            'italic' => 'Курсив',
             'link' => 'Посилання',
             'ordered_list' => 'Нумерований список',
-            'preview' => 'Перегляд',
-            'strike' => 'Закреслений',
+            'preview' => 'Попередній перегляд',
+            'strike' => 'Закреслення',
         ],
 
     ],
 
     'repeater' => [
 
-        'collapsed' => 'Вміст згорнутий',
+        'collapsed' => 'Вміст згорнуто',
 
         'buttons' => [
 
@@ -101,10 +101,6 @@ return [
 
             'delete_item' => [
                 'label' => 'Видалити',
-            ],
-
-            'clone_item' => [
-                'label' => 'Клонувати',
             ],
 
             'move_item_down' => [
@@ -142,13 +138,13 @@ return [
             'link' => [
 
                 'buttons' => [
-                    'link' => 'Посилання',
-                    'unlink' => 'Прибрати посилання',
+                    'link' => 'Додати посилання',
+                    'unlink' => 'Видалити посилання',
                 ],
 
                 'label' => 'URL',
 
-                'placeholder' => 'Введіть URL',
+                'placeholder' => 'Введіть URL-адресу',
 
             ],
 
@@ -156,19 +152,19 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'Прикріпити файли',
-            'blockquote' => 'Цитата',
+            'blockquote' => 'Блок-цитата',
             'bold' => 'Жирний',
-            'bullet_list' => 'Маркувальний список',
-            'code_block' => 'Код',
-            'h1' => 'H1',
-            'h2' => 'H2',
-            'h3' => 'H3',
-            'italic' => 'Курсів',
+            'bullet_list' => 'Пунктовий список',
+            'code_block' => 'Блок коду',
+            'h1' => 'Тайтл',
+            'h2' => 'Заголовок',
+            'h3' => 'Підзаголовок',
+            'italic' => 'Курсив',
             'link' => 'Посилання',
             'ordered_list' => 'Нумерований список',
             'redo' => 'Повторити',
-            'strike' => 'Закреслений',
-            'undo' => 'Скасувати',
+            'strike' => 'Закреслення',
+            'undo' => 'Відмінити',
         ],
 
     ],
@@ -197,20 +193,16 @@ return [
 
         ],
 
-        'boolean' => [
-            'true' => 'Так',
-            'false' => 'Ні',
-        ],
-
         'loading_message' => 'Завантаження...',
 
-        'no_search_results_message' => 'Немає варіантів, які відповідають вашому запиту.',
+        'no_search_results_message' => 'Жоден варіант не відповідає вашому пошуку.',
 
         'placeholder' => 'Виберіть варіант',
 
         'searching_message' => 'Пошук...',
 
-        'search_prompt' => 'Введіть текст для пошуку...',
+        'search_prompt' => 'Почніть вводити для пошуку...',
+
     ],
 
     'tags_input' => [

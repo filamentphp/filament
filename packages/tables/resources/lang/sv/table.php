@@ -71,6 +71,10 @@ return [
                 'label' => 'Återställ filter',
             ],
 
+            'close' => [
+                'label' => 'Stäng',
+            ],
+
         ],
 
         'multi_select' => [

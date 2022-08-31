@@ -75,12 +75,6 @@ trait CanBeValidated
             return [];
         }
 
-        $rules = $this->getValidationRules();
-
-        if (! count($rules)) {
-            return [];
-        }
-
-        return $this->getLivewire()->validate($rules, [], $this->getValidationAttributes());
+        return $this->getLivewire()->validate($this->getValidationRules(), [], $this->getValidationAttributes());
     }
 }

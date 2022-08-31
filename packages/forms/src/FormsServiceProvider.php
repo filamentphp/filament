@@ -2,8 +2,6 @@
 
 namespace Filament\Forms;
 
-use Filament\Forms\Testing\TestsForms;
-use Livewire\Testing\TestableLivewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -40,10 +38,5 @@ class FormsServiceProvider extends PackageServiceProvider
         }
 
         return array_merge($commands, $aliases);
-    }
-
-    public function packageBooted(): void
-    {
-        TestableLivewire::mixin(new TestsForms());
     }
 }

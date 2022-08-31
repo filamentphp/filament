@@ -79,6 +79,10 @@ return [
                 'label' => 'Filtrelemeleri sıfırla',
             ],
 
+            'close' => [
+                'label' => 'Kapat',
+            ],
+
         ],
 
         'multi_select' => [

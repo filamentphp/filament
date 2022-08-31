@@ -159,12 +159,6 @@ class ExampleServiceProvider extends PluginServiceProvider
 }
 ```
 
-#### Tailwind CSS
-
-If you are using Tailwind classes, that are not used in Filament core, you need to compile your own Tailwind CSS file and bundle it with your plugin. Follow the Tailwind instructions for setup, but omit `@tailwind base` as this would overwrite the base styles if users customize their Filament theme.
-
-After compilation, your Tailwind stylesheet may contain classes that are already used in Filament core. You should purge those classes with [awcodes/filament-plugin-purge](https://github.com/awcodes/filament-plugin-purge) to keep the stylesheets size low.
-
 ### Scripts
 
 To include a custom script, add it to the `$scripts` property in your service provider. You should use a unique name as the key and the URL to the script as the value. These scripts will be added after the core Filament script.

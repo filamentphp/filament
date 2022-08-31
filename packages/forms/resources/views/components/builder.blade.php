@@ -189,20 +189,21 @@
                                 x-transition
                                 class="absolute inset-x-0 bottom-0 z-10 flex items-center justify-center h-12 -mb-12"
                             >
-                                <x-forms::dropdown>
-                                    <x-slot name="trigger">
-                                        <x-forms::icon-button
-                                            :label="$getCreateItemBetweenButtonLabel()"
-                                            icon="heroicon-o-plus"
-                                        />
-                                    </x-slot>
+                                <div x-data class="relative flex justify-center">
+                                    <x-forms::icon-button
+                                        :label="$getCreateItemBetweenButtonLabel()"
+                                        icon="heroicon-o-plus"
+                                        x-on:click="$refs.panel.toggle"
+                                        type="button"
+                                    />
 
                                     <x-forms::builder.block-picker
                                         :blocks="$getBlocks()"
                                         :create-after-item="$uuid"
                                         :state-path="$getStatePath()"
+                                        class="py-2"
                                     />
-                                </x-forms::dropdown>
+                                </div>
                             </div>
                         @endif
                     </li>
@@ -211,18 +212,20 @@
         @endif
 
         @if (! $isItemCreationDisabled)
-            <x-forms::dropdown class="flex justify-center">
-                <x-slot name="trigger">
-                    <x-forms::button size="sm">
-                        {{ $getCreateItemButtonLabel() }}
-                    </x-forms::button>
-                </x-slot>
+            <div x-data class="relative flex justify-center">
+                <x-forms::button
+                    size="sm"
+                    x-on:click="$refs.panel.toggle"
+                    type="button"
+                >
+                    {{ $getCreateItemButtonLabel() }}
+                </x-forms::button>
 
                 <x-forms::builder.block-picker
                     :blocks="$getBlocks()"
                     :state-path="$getStatePath()"
                 />
-            </x-forms::dropdown>
+            </div>
         @endif
     </div>
 </x-dynamic-component>

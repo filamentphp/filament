@@ -88,6 +88,10 @@ return [
                 'tooltip' => 'Réinitialiser',
             ],
 
+            'close' => [
+                'label' => 'Fermer',
+            ],
+
         ],
 
         'indicator' => 'Filtres actifs',

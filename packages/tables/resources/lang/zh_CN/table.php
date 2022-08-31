@@ -71,6 +71,10 @@ return [
                 'label' => '重置筛选条件',
             ],
 
+            'close' => [
+                'label' => '关闭',
+            ],
+
         ],
 
         'multi_select' => [

@@ -71,6 +71,10 @@ return [
                 'label' => '重設篩選',
             ],
 
+            'close' => [
+                'label' => '關閉',
+            ],
+
         ],
 
         'multi_select' => [

@@ -12,7 +12,6 @@ use Filament\Models\Contracts\HasName;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\UserMenuItem;
 use Filament\Notifications\Notification;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -369,7 +368,7 @@ class FilamentManager
         return $firstItem->getUrl();
     }
 
-    public function getUserAvatarUrl(Model | Authenticatable $user): string
+    public function getUserAvatarUrl(Model $user): string
     {
         $avatar = null;
 
@@ -386,7 +385,7 @@ class FilamentManager
         return app($provider)->get($user);
     }
 
-    public function getUserName(Model | Authenticatable $user): string
+    public function getUserName(Model $user): string
     {
         if ($user instanceof HasName) {
             return $user->getFilamentName();

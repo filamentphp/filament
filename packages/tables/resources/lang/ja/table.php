@@ -71,6 +71,10 @@ return [
                 'label' => 'リセット',
             ],
 
+            'close' => [
+                'label' => '閉じる',
+            ],
+
         ],
 
         'multi_select' => [

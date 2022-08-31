@@ -41,7 +41,7 @@
     ]);
 @endphp
 
-<div {{ $attributes->only(['class']) }}>
+<li {{ $attributes->only(['class']) }}>
     @if ($tag === 'button')
         <button
             type="{{ $type }}"
@@ -101,4 +101,4 @@
             </button>
         </form>
     @endif
-</div>
+</li>

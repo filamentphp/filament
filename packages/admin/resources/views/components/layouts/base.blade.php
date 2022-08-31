@@ -42,6 +42,8 @@
             <link href="{{ $fontsUrl }}" rel="stylesheet" />
         @endif
 
+        {{ \Filament\Facades\Filament::getThemeLink() }}
+
         @foreach (\Filament\Facades\Filament::getStyles() as $name => $path)
             @if (\Illuminate\Support\Str::of($path)->startsWith(['http://', 'https://']))
                 <link rel="stylesheet" href="{{ $path }}" />
@@ -53,8 +55,6 @@
                 ]) }}" />
             @endif
         @endforeach
-
-        {{ \Filament\Facades\Filament::getThemeLink() }}
 
         {{ \Filament\Facades\Filament::renderHook('styles.end') }}
 

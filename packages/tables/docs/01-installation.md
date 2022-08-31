@@ -37,7 +37,6 @@ You're now ready to start [building tables](getting-started)!
 The package uses the following dependencies:
 
 - [Alpine.js](https://alpinejs.dev)
-- [Alpine.js Focus Plugin](https://alpinejs.dev/plugins/focus)
 - [Tailwind CSS](https://tailwindcss.com)
 - [Tailwind CSS Forms plugin](https://github.com/tailwindlabs/tailwindcss-forms)
 - [Tailwind CSS Typography plugin](https://tailwindcss.com/docs/typography-plugin)
@@ -156,7 +155,7 @@ In `/resources/css/app.css`, import `filament/forms` vendor CSS and [Tailwind CS
 
 ### Configuring scripts
 
-In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), `@alpinejs/focus`, the `filament/forms` and `filament/notifications` plugins, and register them:
+In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), the `filament/forms`, `filament/notifications` and `@alpinejs/focus` plugins, and register them:
 
 ```js
 import Alpine from 'alpinejs'

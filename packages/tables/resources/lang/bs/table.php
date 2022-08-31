@@ -71,6 +71,10 @@ return [
                 'label' => 'Resetujte filtere',
             ],
 
+            'close' => [
+                'label' => 'Zatvori',
+            ],
+
         ],
 
         'multi_select' => [
