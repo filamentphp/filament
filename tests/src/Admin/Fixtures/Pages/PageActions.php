@@ -11,6 +11,9 @@ class PageActions extends Page
 {
     protected static string $view = 'admin.fixtures.pages.actions';
 
+    /**
+     * @throws \Exception
+     */
     protected function getActions(): array
     {
         return [
