@@ -94,10 +94,6 @@ return [
                 'tooltip' => 'Filters resetten',
             ],
 
-            'close' => [
-                'label' => 'Sluiten',
-            ],
-
         ],
 
         'indicator' => 'Actieve filters',

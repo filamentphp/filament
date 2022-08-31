@@ -71,10 +71,6 @@ return [
                 'label' => 'Resetare filtre',
             ],
 
-            'close' => [
-                'label' => 'Închidere',
-            ],
-
         ],
 
         'multi_select' => [
