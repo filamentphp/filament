@@ -41,7 +41,7 @@ trait HasRecords
 
     protected function hydratePivotRelation(Collection | Paginator $records): Collection | Paginator
     {
-        if (($this instanceof HasRelationshipTable && $this->getRelationship() instanceof BelongsToMany) && ! $this->allowsDuplicates()) {
+        if ($this instanceof HasRelationshipTable && $this->getRelationship() instanceof BelongsToMany && ! $this->allowsDuplicates()) {
             invade($this->getRelationship())->hydratePivotRelation($records->all());
         }
 
