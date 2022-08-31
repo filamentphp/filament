@@ -48,7 +48,7 @@ trait CanPaginateRecords
         return config('tables.pagination.records_per_page_select_options') ?? [5, 10, 25, 50, -1];
     }
 
-    protected function getDefaultTableRecordsPerPageSelectOption(): ?int
+    protected function getDefaultTableRecordsPerPageSelectOption(): int
     {
         $perPage = session()->get(
             $this->getTablePerPageSessionKey(),
