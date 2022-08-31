@@ -102,10 +102,6 @@ return [
                 'label' => 'Resetea los filtros',
             ],
 
-            'close' => [
-                'label' => 'Cerrar',
-            ],
-
         ],
 
         'indicator' => 'Filtros activos',

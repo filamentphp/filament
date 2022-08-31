@@ -7,39 +7,28 @@
     'tooltip' => null,
 ])
 
-<div x-data {{ $attributes->class(['relative']) }}>
-    <x-filament-support::icon-button
-        x-on:click="$refs.panel.toggle"
-        :color="$color"
-        :dark-mode="$darkMode"
-        :icon="$icon"
-        :tooltip="$tooltip"
-        class="-my-2"
-    >
-        <x-slot name="label">
-            {{ $label }}
-        </x-slot>
-    </x-filament-support::icon-button>
+<x-filament-support::dropdown
+    :dark-mode="$darkMode"
+    placement="bottom-end"
+    teleport
+    {{ $attributes }}
+>
+    <x-slot name="trigger">
+        <x-filament-support::icon-button
+            :color="$color"
+            :dark-mode="$darkMode"
+            :icon="$icon"
+            :tooltip="$tooltip"
+        >
+            <x-slot name="label">
+                {{ $label }}
+            </x-slot>
+        </x-filament-support::icon-button>
+    </x-slot>
 
-    <div
-        x-ref="panel"
-        x-transition
-        x-cloak
-        x-float.placement.bottom-end.flip.offset.shift.teleport="{ offset: 8 }"
-        @class([
-            'filament-action-group-dropdown absolute hidden z-20 shadow-xl ring-1 ring-gray-900/10 overflow-hidden rounded-xl w-52',
-            'dark:ring-white/20' => $darkMode,
-        ])
-    >
-        <ul @class([
-            'py-1 space-y-1 bg-white shadow rounded-xl',
-            'dark:bg-gray-700 dark:divide-gray-600' => $darkMode,
-        ])>
-            @foreach ($actions as $action)
-                @if (! $action->isHidden())
-                    {{ $action }}
-                @endif
-            @endforeach
-        </ul>
-    </div>
-</div>
+    @foreach ($actions as $action)
+        @if (! $action->isHidden())
+            {{ $action }}
+        @endif
+    @endforeach
+</x-filament-support::dropdown>

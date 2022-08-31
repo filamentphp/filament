@@ -52,10 +52,6 @@ trait InteractsWithTableQuery
             return $query;
         }
 
-        if (! $this->isSearchable()) {
-            return $query;
-        }
-
         if ($isIndividual && (! $this->isIndividuallySearchable())) {
             return $query;
         }

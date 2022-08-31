@@ -71,10 +71,6 @@ return [
                 'label' => 'حذف فیلترها',
             ],
 
-            'close' => [
-                'label' => 'بستن',
-            ],
-
         ],
 
         'multi_select' => [
