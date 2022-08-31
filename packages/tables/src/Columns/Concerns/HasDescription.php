@@ -11,8 +11,6 @@ trait HasDescription
 
     protected string | HtmlString | Closure | null $descriptionBelow = null;
 
-    protected string | Closure | null $descriptionPosition = null;
-
     public function description(string | HtmlString | Closure | null $description, string | Closure | null $position = 'below'): static
     {
         if ($position == 'above') {
