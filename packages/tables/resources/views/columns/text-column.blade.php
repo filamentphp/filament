@@ -1,5 +1,6 @@
 @php
-    $description = $getDescription();
+    $descriptionAbove = $getDescriptionAbove();
+    $descriptionBelow = $getDescriptionBelow();
     $descriptionPosition = $getDescriptionPosition();
 @endphp
 
@@ -10,17 +11,17 @@
         'whitespace-normal' => $canWrap(),
     ]) }}
 >
-    @if (filled($description) && $descriptionPosition === 'above')
+    @if (filled($descriptionAbove) && (filled($descriptionPosition) ? $descriptionPosition === 'above' : true))
         <span class="block text-sm text-gray-400">
-            {{ $description instanceof \Illuminate\Support\HtmlString ? $description : \Illuminate\Support\Str::of($description)->markdown()->sanitizeHtml()->toHtmlString() }}
+            {{ $descriptionAbove instanceof \Illuminate\Support\HtmlString ? $descriptionAbove : \Illuminate\Support\Str::of($descriptionAbove)->markdown()->sanitizeHtml()->toHtmlString() }}
         </span>
     @endif
 
     {{ $getFormattedState() }}
 
-    @if (filled($description) && $descriptionPosition === 'below')
+    @if (filled($descriptionBelow) && (filled($descriptionPosition) ? $descriptionPosition === 'below' : true))
         <span class="block text-sm text-gray-400">
-            {{ $description instanceof \Illuminate\Support\HtmlString ? $description : \Illuminate\Support\Str::of($description)->markdown()->sanitizeHtml()->toHtmlString() }}
+            {{ $descriptionBelow instanceof \Illuminate\Support\HtmlString ? $descriptionBelow : \Illuminate\Support\Str::of($descriptionBelow)->markdown()->sanitizeHtml()->toHtmlString() }}
         </span>
     @endif
 </div>
