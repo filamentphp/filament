@@ -1,7 +1,6 @@
 @php
     $descriptionAbove = $getDescriptionAbove();
     $descriptionBelow = $getDescriptionBelow();
-    $descriptionPosition = $getDescriptionPosition();
 @endphp
 
 <div
@@ -11,7 +10,7 @@
         'whitespace-normal' => $canWrap(),
     ]) }}
 >
-    @if (filled($descriptionAbove) && (filled($descriptionPosition) ? $descriptionPosition === 'above' : true))
+    @if (filled($descriptionAbove))
         <span class="block text-sm text-gray-400">
             {{ $descriptionAbove instanceof \Illuminate\Support\HtmlString ? $descriptionAbove : \Illuminate\Support\Str::of($descriptionAbove)->markdown()->sanitizeHtml()->toHtmlString() }}
         </span>
@@ -19,7 +18,7 @@
 
     {{ $getFormattedState() }}
 
-    @if (filled($descriptionBelow) && (filled($descriptionPosition) ? $descriptionPosition === 'below' : true))
+    @if (filled($descriptionBelow))
         <span class="block text-sm text-gray-400">
             {{ $descriptionBelow instanceof \Illuminate\Support\HtmlString ? $descriptionBelow : \Illuminate\Support\Str::of($descriptionBelow)->markdown()->sanitizeHtml()->toHtmlString() }}
         </span>
