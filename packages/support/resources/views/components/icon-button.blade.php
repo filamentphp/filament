@@ -14,7 +14,7 @@
 
 @php
     $buttonClasses = [
-        'filament-icon-button flex items-center justify-center rounded-full hover:bg-gray-500/5 focus:outline-none',
+        'filament-icon-button flex items-center justify-center rounded-full relative hover:bg-gray-500/5 focus:outline-none',
         'text-primary-500 focus:bg-primary-500/10' => $color === 'primary',
         'text-danger-500 focus:bg-danger-500/10' => $color === 'danger',
         'text-gray-500 focus:bg-gray-500/10' => $color === 'secondary',
