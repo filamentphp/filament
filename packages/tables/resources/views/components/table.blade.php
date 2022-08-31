@@ -1,7 +1,7 @@
 @props([
     'footer' => null,
     'header' => null,
-    'poll',
+    'poll' => null,
 ])
 
 <table {{ $attributes->class([
