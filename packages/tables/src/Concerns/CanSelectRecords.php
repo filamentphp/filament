@@ -23,7 +23,7 @@ trait CanSelectRecords
 
         return $query
             ->pluck($query->getModel()->getQualifiedKeyName())
-            ->transform(fn ($key) => (string) $key)
+            ->map(fn ($key): string => (string) $key)
             ->toArray();
     }
 
