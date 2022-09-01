@@ -23,7 +23,6 @@
             <div class="space-x-2 rtl:space-x-reverse" x-data="{}">
                 <x-forms::link
                     x-on:click="$dispatch('builder-collapse', '{{ $getStatePath() }}')"
-                    tag="button"
                     size="sm"
                 >
                     {{ __('forms::components.builder.buttons.collapse_all.label') }}
@@ -31,7 +30,6 @@
 
                 <x-forms::link
                     x-on:click="$dispatch('builder-expand', '{{ $getStatePath() }}')"
-                    tag="button"
                     size="sm"
                 >
                     {{ __('forms::components.builder.buttons.expand_all.label') }}

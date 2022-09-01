@@ -8,7 +8,7 @@
     'keyBindings' => null,
     'outlined' => false,
     'size' => 'md',
-    'tag' => 'button',
+    'tag' => $attributes->get('href') ? 'a' : 'button',
     'tooltip' => null,
     'type' => 'button',
     'labelSrOnly' => false,

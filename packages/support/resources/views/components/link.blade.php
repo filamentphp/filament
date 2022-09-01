@@ -6,7 +6,7 @@
     'iconPosition' => 'before',
     'keyBindings' => null,
     'size' => 'md',
-    'tag' => 'a',
+    'tag' => $attributes->get('href') ? 'a' : 'button',
     'tooltip' => null,
     'type' => 'button',
 ])

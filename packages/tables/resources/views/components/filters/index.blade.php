@@ -12,7 +12,6 @@
         <x-tables::link
             wire:click="resetTableFiltersForm"
             color="danger"
-            tag="button"
             size="sm"
         >
             {{ __('tables::table.filters.buttons.reset.label') }}
