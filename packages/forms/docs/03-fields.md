@@ -1912,13 +1912,13 @@ Using [Livewire's entangle](https://laravel-livewire.com/docs/2.x/alpine-js#shar
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}') }">
+    <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}').defer }">
         <!-- Interact with the `state` property in Alpine.js -->
     </div>
 </x-forms::field-wrapper>
 ```
 
-You may bind the value to a Livewire property using [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding):
+Or, you may bind the value to a Livewire property using [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding):
 
 ```
 <x-forms::field-wrapper
@@ -1931,7 +1931,7 @@ You may bind the value to a Livewire property using [`wire:model`](https://larav
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <input wire:model="{{ $getStatePath() }}" />
+    <input wire:model.defer="{{ $getStatePath() }}" />
 </x-forms::field-wrapper>
 ```
 
@@ -1973,7 +1973,7 @@ The `$getStatePath()` closure may be used by the view to retrieve the Livewire p
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}') }">
+    <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}').defer }">
         <!-- Interact with the `state` property in Alpine.js -->
     </div>
 </x-forms::field-wrapper>
