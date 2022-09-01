@@ -72,7 +72,7 @@ class EditRecord extends Page implements HasFormActions
 
     public function save(bool $shouldRedirect = true): void
     {
-        $this->authorizeAccess($this->getRecord()->getKey());
+        $this->authorizeAccess($this->getRecord()->{$this->getRecord()->getRouteKeyName()});
 
         $this->callHook('beforeValidate');
 
