@@ -2,8 +2,6 @@
 
 namespace Filament\Tables\Concerns;
 
-use function Livewire\invade;
-
 use Exception;
 use Filament\Forms;
 use Filament\Tables\Contracts\HasRelationshipTable;
@@ -12,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use function Livewire\invade;
 
 trait InteractsWithTable
 {

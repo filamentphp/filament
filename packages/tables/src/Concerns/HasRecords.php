@@ -4,8 +4,6 @@ namespace Filament\Tables\Concerns;
 
 use function Filament\locale_has_pluralization;
 use function Filament\Support\get_model_label;
-use function Livewire\invade;
-
 use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,6 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
+use function Livewire\invade;
 
 trait HasRecords
 {
