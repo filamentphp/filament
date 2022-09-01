@@ -134,7 +134,7 @@
         selectAllRecords: async function () {
             this.isLoading = true
 
-            this.selectedRecords = await $wire.getAllTableRecordKeys()
+            this.selectedRecords = (await $wire.getAllTableRecordKeys()).map((key) => key.toString())
 
             this.isLoading = false
         },
