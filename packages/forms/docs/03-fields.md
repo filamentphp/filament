@@ -1918,7 +1918,7 @@ Using [Livewire's entangle](https://laravel-livewire.com/docs/2.x/alpine-js#shar
 </x-forms::field-wrapper>
 ```
 
-You can also bind with [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) :
+You may bind the value to a Livewire property using [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding):
 
 ```
 <x-forms::field-wrapper
