@@ -4,8 +4,6 @@ namespace Filament\Tables\Filters;
 
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Field;
-use Filament\Forms\Components\MultiSelect;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 
 class Filter extends BaseFilter
