@@ -22,6 +22,18 @@ trait HasDescription
         return $this;
     }
 
+    /**
+     * @deprecated Use `description(position: 'above')` instead.
+     */
+    public function descriptionPosition(string $position = 'below'): static
+    {
+        if ($position === 'above') {
+            $this->descriptionAbove = $this->descriptionBelow;
+        }
+
+        return $this;
+    }
+
     public function getDescriptionAbove(): string | HtmlString | null
     {
         return $this->evaluate($this->descriptionAbove);
