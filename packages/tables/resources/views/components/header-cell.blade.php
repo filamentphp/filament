@@ -33,7 +33,7 @@
             <x-dynamic-component
                 :component="$isSortColumn && $sortDirection === 'asc' ? 'heroicon-s-chevron-up' : 'heroicon-s-chevron-down'"
                 @class([
-                    'filament-tables-sort-icon h-3 w-3',
+                    'filament-tables-header-cell-sort-icon h-3 w-3',
                     'dark:text-gray-300' => config('tables.dark_mode'),
                     'opacity-25' => ! $isSortColumn,
                 ])
