@@ -3,6 +3,9 @@
 namespace Filament\Tables\Filters;
 
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Field;
+use Filament\Forms\Components\MultiSelect;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 
 class Filter extends BaseFilter
@@ -12,8 +15,6 @@ class Filter extends BaseFilter
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->checkbox();
 
         $this->indicateUsing(function (array $state): array {
             if (! ($state['isActive'] ?? false)) {
@@ -28,16 +29,12 @@ class Filter extends BaseFilter
     {
         $this->formComponent(Toggle::class);
 
-        $this->default(state: false);
-
         return $this;
     }
 
     public function checkbox(): static
     {
         $this->formComponent(Checkbox::class);
-
-        $this->default(state: false);
 
         return $this;
     }
@@ -46,18 +43,19 @@ class Filter extends BaseFilter
     {
         $this->formComponent = $component;
 
-        $this->default(state: null);
-
         return $this;
     }
 
-    public function getFormSchema(): array
+    protected function getFormField(): Field
     {
-        return $this->evaluate($this->formSchema) ?? [
-            $this->formComponent::make('isActive')
-                ->label($this->getLabel())
-                ->default($this->getDefaultState())
-                ->columnSpan($this->getColumnSpan()),
-        ];
+        $field = $this->formComponent::make('isActive')
+            ->label($this->getLabel())
+            ->columnSpan($this->getColumnSpan());
+
+        if (filled($defaultState = $this->getDefaultState())) {
+            $field->default($defaultState);
+        }
+
+        return $field;
     }
 }
