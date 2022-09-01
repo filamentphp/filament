@@ -28,10 +28,9 @@ class TestsNotifications
             Assert::assertIsArray($expectedNotification);
 
             if ($notification instanceof Notification) {
-                Assert::assertSame($notification->toArray());
+                Assert::assertSame($expectedNotification, $notification->toArray());
             } elseif (filled($notification)) {
-                /** @phpstan-ignore-next-line */
-                Assert::assertSame($notification, $expectedNotification['title']);
+                Assert::assertSame($expectedNotification['title'], $notification);
             }
 
             return $this;
