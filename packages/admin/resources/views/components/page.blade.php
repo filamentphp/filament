@@ -39,12 +39,16 @@
             id="page-action"
             :wire:key="$action ? $this->id . '.actions.' . $action->getName() . '.modal' : null"
             x-init="
+                // https://github.com/filamentphp/filament/issues/3665
+                this.wire = $wire.__instance
+
                 $watch('isOpen', () => {
                     if (isOpen) {
                         return
                     }
 
-                    $wire.mountedAction = null
+                    // https://github.com/filamentphp/filament/pull/3525
+                    this.wire.set('mountedAction', null)
                 })
             "
             :visible="filled($action)"
