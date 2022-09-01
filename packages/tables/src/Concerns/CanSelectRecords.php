@@ -51,7 +51,7 @@ trait CanSelectRecords
         $pivotClass = $relationship->getPivotClass();
         $pivotKeyName = app($pivotClass)->getKeyName();
 
-        return $this->hydratePivotRelation($this->selectPivotDataInQuery(
+        return $this->hydratePivotRelationForTableRecords($this->selectPivotDataInQuery(
             $relationship->wherePivotIn($pivotKeyName, $this->selectedTableRecords),
         )->get());
     }

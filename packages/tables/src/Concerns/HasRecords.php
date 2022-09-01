@@ -41,7 +41,7 @@ trait HasRecords
         return $query;
     }
 
-    protected function hydratePivotRelation(Collection | Paginator $records): Collection | Paginator
+    protected function hydratePivotRelationForTableRecords(Collection | Paginator $records): Collection | Paginator
     {
         if ($this instanceof HasRelationshipTable && $this->getRelationship() instanceof BelongsToMany && ! $this->allowsDuplicates()) {
             invade($this->getRelationship())->hydratePivotRelation($records->all());
@@ -64,10 +64,10 @@ trait HasRecords
             (! $this->isTablePaginationEnabled()) ||
             ($this->isTableReordering() && (! $this->isTablePaginationEnabledWhileReordering()))
         ) {
-            return $this->records = $this->hydratePivotRelation($query->get());
+            return $this->records = $this->hydratePivotRelationForTableRecords($query->get());
         }
 
-        return $this->records = $this->hydratePivotRelation($this->paginateTableQuery($query));
+        return $this->records = $this->hydratePivotRelationForTableRecords($this->paginateTableQuery($query));
     }
 
     protected function resolveTableRecord(?string $key): ?Model
