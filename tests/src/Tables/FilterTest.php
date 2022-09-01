@@ -62,7 +62,7 @@ it('can persist filters in the user\'s session', function () {
         ->assertCanSeeTableRecords($unpublishedPosts);
 });
 
-it('can remove a filter', function() {
+it('can remove a filter', function () {
     $posts = Post::factory()->count(10)->create();
 
     $unpublishedPosts = $posts->where('is_published', false);
@@ -75,7 +75,7 @@ it('can remove a filter', function() {
         ->assertCanSeeTableRecords($posts);
 });
 
-it('can remove all table filters', function() {
+it('can remove all table filters', function () {
     $posts = Post::factory()->count(10)->create();
 
     $unpublishedPosts = $posts->where('is_published', false);
