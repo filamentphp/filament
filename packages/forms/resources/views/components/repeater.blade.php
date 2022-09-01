@@ -198,7 +198,6 @@
                 <x-forms::button
                     :wire:click="'dispatchFormEvent(\'repeater::createItem\', \'' . $getStatePath() . '\')'"
                     size="sm"
-                    type="button"
                 >
                     {{ $getCreateItemButtonLabel() }}
                 </x-forms::button>
