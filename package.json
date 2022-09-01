@@ -5,7 +5,7 @@
         "dev:styles": "mix watch",
         "build:scripts": "node bin/build",
         "build:styles": "mix --production",
-        "watch": "npm-run-all --parallel dev:*",
+        "dev": "npm-run-all --parallel dev:*",
         "build": "npm-run-all build:*",
         "prettier": "npx prettier --write '**/*.{css,js,yml}' '!**/dist' '!**/vendor'"
     },
