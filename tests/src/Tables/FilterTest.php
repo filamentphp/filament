@@ -61,3 +61,29 @@ it('can persist filters in the user\'s session', function () {
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($unpublishedPosts);
 });
+
+it('can remove a filter', function() {
+    $posts = Post::factory()->count(10)->create();
+
+    $unpublishedPosts = $posts->where('is_published', false);
+
+    livewire(PostsTable::class)
+        ->assertCanSeeTableRecords($posts)
+        ->filterTable('is_published')
+        ->assertCanNotSeeTableRecords($unpublishedPosts)
+        ->removeTableFilter(filter: 'is_published')
+        ->assertCanSeeTableRecords($posts);
+});
+
+it('can remove all table filters', function() {
+    $posts = Post::factory()->count(10)->create();
+
+    $unpublishedPosts = $posts->where('is_published', false);
+
+    livewire(PostsTable::class)
+        ->assertCanSeeTableRecords($posts)
+        ->filterTable('is_published')
+        ->assertCanNotSeeTableRecords($unpublishedPosts)
+        ->removeTableFilters()
+        ->assertCanSeeTableRecords($posts);
+});

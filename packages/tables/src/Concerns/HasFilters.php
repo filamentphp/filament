@@ -84,7 +84,7 @@ trait HasFilters
 
         foreach ($fields as $field) {
             $field->state(
-                is_array($field->getState()) ? [] : null,
+                is_array($field->getState()) ? [] : $field->getDefaultState(),
             );
         }
 
@@ -95,7 +95,7 @@ trait HasFilters
     {
         foreach ($this->getTableFiltersForm()->getFlatFields(withAbsolutePathKeys: true) as $field) {
             $field->state(
-                is_array($field->getState()) ? [] : null,
+                is_array($field->getState()) ? [] : $field->getDefaultState(),
             );
         }
 

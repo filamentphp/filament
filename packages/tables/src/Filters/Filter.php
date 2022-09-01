@@ -13,6 +13,8 @@ class Filter extends BaseFilter
     {
         parent::setUp();
 
+        $this->checkbox();
+
         $this->indicateUsing(function (array $state): array {
             if (! ($state['isActive'] ?? false)) {
                 return [];
@@ -26,6 +28,8 @@ class Filter extends BaseFilter
     {
         $this->formComponent(Toggle::class);
 
+        $this->default(state: false);
+
         return $this;
     }
 
@@ -33,12 +37,16 @@ class Filter extends BaseFilter
     {
         $this->formComponent(Checkbox::class);
 
+        $this->default(state:false);
+
         return $this;
     }
 
     public function formComponent(string $component): static
     {
         $this->formComponent = $component;
+
+        $this->default(null);
 
         return $this;
     }

@@ -66,6 +66,24 @@ class TestsFilters
         };
     }
 
+    public function removeTableFilter(): Closure
+    {
+        return function (string $filter, ?string $field = null): static {
+            $this->call('removeTableFilter', $filter, $field);
+
+            return $this;
+        };
+    }
+
+    public function removeTableFilters(): Closure
+    {
+        return function (): static {
+            $this->call('removeTableFilters');
+
+            return $this;
+        };
+    }
+
     public function assertTableFilterExists(): Closure
     {
         return function (string $name): static {
