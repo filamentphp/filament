@@ -29,6 +29,7 @@ trait HasDescription
     {
         if ($position === 'above') {
             $this->descriptionAbove = $this->descriptionBelow;
+            $this->descriptionBelow = null;
         }
 
         return $this;
