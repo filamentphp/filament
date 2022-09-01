@@ -29,18 +29,6 @@ it('can filter records by relationship', function () {
         ->assertCanNotSeeTableRecords($posts->where('author_id', '!=', $author->getKey()));
 });
 
-it('can reset filters', function () {
-    $posts = Post::factory()->count(10)->create();
-
-    $unpublishedPosts = $posts->where('is_published', false);
-
-    livewire(PostsTable::class)
-        ->filterTable('is_published')
-        ->assertCanNotSeeTableRecords($unpublishedPosts)
-        ->resetTableFilters()
-        ->assertCanSeeTableRecords($unpublishedPosts);
-});
-
 it('can persist filters in the user\'s session', function () {
     $posts = Post::factory()->count(10)->create();
 
@@ -62,6 +50,18 @@ it('can persist filters in the user\'s session', function () {
         ->assertCanSeeTableRecords($unpublishedPosts);
 });
 
+it('can reset filters', function () {
+    $posts = Post::factory()->count(10)->create();
+
+    $unpublishedPosts = $posts->where('is_published', false);
+
+    livewire(PostsTable::class)
+        ->filterTable('is_published')
+        ->assertCanNotSeeTableRecords($unpublishedPosts)
+        ->resetTableFilters()
+        ->assertCanSeeTableRecords($unpublishedPosts);
+});
+
 it('can remove a filter', function () {
     $posts = Post::factory()->count(10)->create();
 
@@ -71,7 +71,7 @@ it('can remove a filter', function () {
         ->assertCanSeeTableRecords($posts)
         ->filterTable('is_published')
         ->assertCanNotSeeTableRecords($unpublishedPosts)
-        ->removeTableFilter(filter: 'is_published')
+        ->removeTableFilter('is_published')
         ->assertCanSeeTableRecords($posts);
 });
 
