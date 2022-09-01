@@ -28,7 +28,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'per halaman',
+
+                'options' => [
+                    'all' => 'Semua',
+                ],
+
             ],
 
         ],
@@ -54,11 +60,11 @@ return [
     'buttons' => [
 
         'disable_reordering' => [
-            'label' => 'Selesaikan mengurutkan ulang data',
+            'label' => 'Selesaikan pengurutan ulang data',
         ],
 
         'enable_reordering' => [
-            'label' => 'Mengurutkan ulang data',
+            'label' => 'Urutkan ulang data',
         ],
 
         'filter' => [
@@ -66,7 +72,7 @@ return [
         ],
 
         'open_actions' => [
-            'label' => 'Aksi',
+            'label' => 'Tindakan',
         ],
 
         'toggle_columns' => [
@@ -83,9 +89,17 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Hapus filter',
+            ],
+
+            'remove_all' => [
+                'label' => 'Hapus semua filter',
+                'tooltip' => 'Hapus semua filter',
+            ],
+
             'reset' => [
                 'label' => 'Atur ulang filter',
-                'tooltip' => 'Atur ulang filter',
             ],
 
         ],
@@ -104,21 +118,21 @@ return [
 
             'label' => 'Data yang dihapus',
 
-            'only_trashed' => 'Hanya data yang sudah dihapus',
+            'only_trashed' => 'Hanya data yang dihapus',
 
-            'with_trashed' => 'Dengan data yang sudah dihapus',
+            'with_trashed' => 'Dengan data yang dihapus',
 
-            'without_trashed' => 'Tanpa data yang sudah dihapus',
+            'without_trashed' => 'Tanpa data yang dihapus',
 
         ],
 
     ],
 
-    'reorder_indicator' => 'Seret dan lepaskan data kedalam urutan.',
+    'reorder_indicator' => 'Seret dan lepaskan data ke dalam urutan.',
 
     'selection_indicator' => [
 
-        'selected_count' => ':count dipilih.',
+        'selected_count' => ':count data dipilih.',
 
         'buttons' => [
 

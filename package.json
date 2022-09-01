@@ -1,8 +1,12 @@
 {
     "name": "filament",
     "scripts": {
-        "build": "node bin/build && mix --production",
-        "watch": "node bin/build && mix watch",
+        "dev:scripts": "node bin/build --watch",
+        "dev:styles": "mix watch",
+        "dev": "npm-run-all --parallel dev:*",
+        "build:scripts": "node bin/build",
+        "build:styles": "mix --production",
+        "build": "npm-run-all build:*",
         "prettier": "npx prettier --write '**/*.{css,js,yml}' '!**/dist' '!**/vendor'"
     },
     "devDependencies": {
@@ -37,6 +41,7 @@
         "laravel-mix": "^6.0.37",
         "marked": "^4.0.10",
         "mdhl": "^0.0.6",
+        "npm-run-all": "^4.1.5",
         "postcss": "^8.4.4",
         "prettier": "^2.7.1",
         "sortablejs": "^1.15.0",
