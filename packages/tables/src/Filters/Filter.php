@@ -37,7 +37,7 @@ class Filter extends BaseFilter
     {
         $this->formComponent(Checkbox::class);
 
-        $this->default(state:false);
+        $this->default(state: false);
 
         return $this;
     }
@@ -46,7 +46,7 @@ class Filter extends BaseFilter
     {
         $this->formComponent = $component;
 
-        $this->default(null);
+        $this->default(state: null);
 
         return $this;
     }
