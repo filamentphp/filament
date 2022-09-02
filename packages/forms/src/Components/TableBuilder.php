@@ -16,6 +16,10 @@ class TableBuilder extends Field
 
     protected string | Closure $addRowButtonLabel;
 
+    protected int | Closure $defaultRows = 1;
+
+    protected int | Closure $defaultColumns = 1;
+
     protected bool | Closure $shouldDisableAddingRows = false;
 
     protected bool | Closure $shouldDisableDeletingRows = false;
@@ -30,6 +34,32 @@ class TableBuilder extends Field
 
         $this->addRowButtonLabel(__('forms::components.table_builder.buttons.add_row.label'));
         $this->addColumnButtonLabel(__('forms::components.table_builder.buttons.add_column.label'));
+
+        $this->default(function (TableBuilder $component) {
+            $state = [];
+            $defaultRows = $component->getDefaultRows();
+            $defaultColumns = $component->getDefaultColumns();
+
+            for ($row = 0; $row < $defaultRows; $row++) {
+                $state[] = array_fill(0, $defaultColumns, null);
+            }
+
+            return $state;
+        });
+    }
+
+    public function defaultRows(int | Closure $rows): static
+    {
+        $this->defaultRows = $rows;
+
+        return $this;
+    }
+
+    public function defaultColumns(int | Closure $columns): static
+    {
+        $this->defaultColumns = $columns;
+
+        return $this;
     }
 
     public function disableAddingRows(bool | Closure $condition = true): static
@@ -44,6 +74,16 @@ class TableBuilder extends Field
         $this->shouldDisableDeletingRows = $condition;
 
         return $this;
+    }
+
+    public function getDefaultRows(): int
+    {
+        return $this->evaluate($this->defaultRows);
+    }
+
+    public function getDefaultColumns(): int
+    {
+        return $this->evaluate($this->defaultColumns);
     }
 
     public function canAddRows(): bool
