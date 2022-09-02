@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e3b6b8f1948592220043348b7301770d",
+    "content-hash": "0b699ce8680f471f7a73332546cb8a86",
     "packages": [],
     "packages-dev": [
         {
@@ -2117,7 +2117,7 @@
         },
         {
             "name": "filament/support",
-            "version": "dev-features/combined-relation-manager-and-form",
+            "version": "2.x-dev",
             "dist": {
                 "type": "path",
                 "url": "packages/support",
@@ -7056,7 +7056,7 @@
         },
         {
             "name": "ryangjchandler/blade-capture-directive",
-            "version": "dev-main",
+            "version": "v0.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ryangjchandler/blade-capture-directive.git",
@@ -7085,7 +7085,6 @@
                 "phpunit/phpunit": "^9.5",
                 "spatie/laravel-ray": "^1.26"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "laravel": {
@@ -7123,7 +7122,7 @@
             ],
             "support": {
                 "issues": "https://github.com/ryangjchandler/blade-capture-directive/issues",
-                "source": "https://github.com/ryangjchandler/blade-capture-directive/tree/main"
+                "source": "https://github.com/ryangjchandler/blade-capture-directive/tree/v0.2.2"
             },
             "funding": [
                 {
@@ -13055,9 +13054,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "ryangjchandler/blade-capture-directive": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
