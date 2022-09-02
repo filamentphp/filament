@@ -57,7 +57,9 @@ trait CanGenerateResources
                 if (Str::of($column->getName())->contains(['phone', 'tel'])) {
                     $componentData['tel'] = [];
                 }
+            }
 
+            if (in_array($type, [Forms\Components\TextInput::class, Forms\Components\Textarea::class])) {
                 if ($length = $column->getLength()) {
                     $componentData['maxLength'] = [$length];
                 }
