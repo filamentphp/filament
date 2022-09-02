@@ -19,13 +19,15 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <div {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-text-input-component flex items-center space-x-2 rtl:space-x-reverse group']) }}>
+    <div {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-text-input-component relative']) }}>
         @if (($prefixAction = $getPrefixAction()) && (! $prefixAction->isHidden()))
             {{ $prefixAction }}
         @endif
 
         @if ($icon = $getPrefixIcon())
-            <x-dynamic-component :component="$icon" class="w-5 h-5" />
+            <div class="flex absolute inset-y-0 left-0 items-center pl-2 pointer-events-none">
+                 <x-dynamic-component :component="$icon" class="w-5 h-5" />
+            </div>
         @endif
 
         @if ($label = $getPrefixLabel())
@@ -71,6 +73,7 @@
                 {{ $getExtraInputAttributeBag()->class([
                     'block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 disabled:opacity-70',
                     'dark:bg-gray-700 dark:text-white dark:focus:border-primary-600' => config('forms.dark_mode'),
+                    $getPrefixIcon ? 'pl-10' : '',
                 ]) }}
                 x-bind:class="{
                     'border-gray-300': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
@@ -87,7 +90,9 @@
         @endif
 
         @if ($icon = $getSuffixIcon())
-            <x-dynamic-component :component="$icon" class="w-5 h-5" />
+            <div class="flex absolute inset-y-0 right-0 items-center pr-2 pointer-events-none">
+                <x-dynamic-component :component="$icon" class="w-5 h-5" />
+            </div>
         @endif
 
         @if (($suffixAction = $getSuffixAction()) && (! $suffixAction->isHidden()))
