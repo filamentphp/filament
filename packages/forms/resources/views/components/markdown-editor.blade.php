@@ -216,9 +216,9 @@
                         @if (! $isConcealed())
                             {!! $isRequired() ? 'required' : null !!}
                         @endif
-                        class="tracking-normal overflow-y-hidden font-mono block absolute bg-transparent top-0 text-sm left-0 block z-1 w-full h-full min-h-full resize-none transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 caret-black"
+                        class="tracking-normal overflow-y-hidden font-mono block absolute bg-transparent top-0 text-sm left-0 z-1 w-full h-full min-h-full resize-none transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 caret-black"
                         x-bind:class="{
-                            'dark:caret-white dark:focus:border-primary-600': @js(config('forms.dark_mode')),
+                            'dark:caret-white dark:focus:border-primary-500': @js(config('forms.dark_mode')),
                             'border-gray-300': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
                             'dark:border-gray-600': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors) && @js(config('forms.dark_mode')),
                             'border-danger-600 ring-danger-600': @js($getStatePath()) in $wire.__instance.serverMemo.errors,
