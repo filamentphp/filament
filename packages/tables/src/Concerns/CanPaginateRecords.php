@@ -40,7 +40,7 @@ trait CanPaginateRecords
 
     protected function getTableRecordsPerPage(): int
     {
-        return intval($this->tableRecordsPerPage);
+        return (int) $this->tableRecordsPerPage;
     }
 
     protected function getTableRecordsPerPageSelectOptions(): array
