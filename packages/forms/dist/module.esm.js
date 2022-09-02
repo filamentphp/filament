@@ -28029,6 +28029,42 @@ var select_default = (Alpine) => {
   });
 };
 
+// packages/forms/resources/js/components/table-builder.js
+var table_builder_default = (Alpine) => {
+  Alpine.data("tableBuilderFormComponent", ({state: state2}) => ({
+    state: state2,
+    columns: 1,
+    init() {
+      this.columns = this.state.reduce((maxLength, currentItem) => {
+        return currentItem.length > maxLength ? currentItem.length : maxLength;
+      }, 1);
+    },
+    addRow() {
+      this.state.push(Array(this.columns).fill(null));
+    },
+    addColumn() {
+      this.columns++;
+      for (let column = 0; column < this.columns; column++) {
+        for (const i in this.state) {
+          if (this.state[i][column] !== void 0) {
+            continue;
+          }
+          this.state[i][column] = null;
+        }
+      }
+    },
+    removeRow(row) {
+      this.state = this.state.filter((_, i) => i !== row);
+    },
+    removeColumn(column) {
+      this.columns--;
+      this.state = this.state.map((row) => {
+        return row.filter((_, i) => i !== column - 1);
+      });
+    }
+  }));
+};
+
 // packages/forms/resources/js/components/tags-input.js
 var tags_input_default = (Alpine) => {
   Alpine.data("tagsInputFormComponent", ({state: state2}) => {
@@ -35256,6 +35292,7 @@ var js_default = (Alpine) => {
   Alpine.plugin(markdown_editor_default);
   Alpine.plugin(rich_editor_default);
   Alpine.plugin(select_default);
+  Alpine.plugin(table_builder_default);
   Alpine.plugin(tags_input_default);
   Alpine.plugin(text_input_default);
   Alpine.plugin(textarea_default);
