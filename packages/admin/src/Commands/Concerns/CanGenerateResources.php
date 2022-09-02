@@ -57,14 +57,14 @@ trait CanGenerateResources
                 if (Str::of($column->getName())->contains(['phone', 'tel'])) {
                     $componentData['tel'] = [];
                 }
+
+                if ($length = $column->getLength()) {
+                    $componentData['maxLength'] = [$length];
+                }
             }
 
             if ($column->getNotnull()) {
                 $componentData['required'] = [];
-            }
-
-            if ($length = $column->getLength()) {
-                $componentData['maxLength'] = [$length];
             }
 
             $components[$column->getName()] = $componentData;
