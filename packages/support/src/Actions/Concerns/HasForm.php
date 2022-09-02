@@ -37,6 +37,7 @@ trait HasForm
         if ($this->isWizard()) {
             return [
                 Wizard::make($schema)
+                    ->startOnStep($this->getWizardStartStep())
                     ->cancelAction($this->getModalCancelAction())
                     ->submitAction($this->getModalSubmitAction())
                     ->disabled($this->isFormDisabled()),
