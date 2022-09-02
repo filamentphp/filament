@@ -19,6 +19,34 @@ trait CanBeValidated
 
     protected string | Closure | null $validationAttribute = null;
 
+    public function activeUrl(bool | Closure $condition = true): static
+    {
+        $this->rule('active_url', $condition);
+
+        return $this;
+    }
+
+    public function alpha(bool | Closure $condition = true): static
+    {
+        $this->rule('alpha', $condition);
+
+        return $this;
+    }
+
+    public function alphaDash(bool | Closure $condition = true): static
+    {
+        $this->rule('alpha_dash', $condition);
+
+        return $this;
+    }
+
+    public function alphaNum(bool | Closure $condition = true): static
+    {
+        $this->rule('alpha_num', $condition);
+
+        return $this;
+    }
+
     public function exists(string | Closure | null $table = null, string | Closure | null $column = null, ?Closure $callback = null): static
     {
         $this->rule(static function (Field $component, ?string $model) use ($callback, $column, $table) {
