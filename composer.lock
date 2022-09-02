@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a284e2ec9c8434238eaae5ae20c044ec",
+    "content-hash": "0b699ce8680f471f7a73332546cb8a86",
     "packages": [],
     "packages-dev": [
         {
@@ -4377,16 +4377,16 @@
         },
         {
             "name": "nesbot/carbon",
-            "version": "2.62.0",
+            "version": "2.62.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/briannesbitt/Carbon.git",
-                "reference": "7507aec3d626797ce2123cf6c6556683be22b5f8"
+                "reference": "01bc4cdefe98ef58d1f9cb31bdbbddddf2a88f7a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/7507aec3d626797ce2123cf6c6556683be22b5f8",
-                "reference": "7507aec3d626797ce2123cf6c6556683be22b5f8",
+                "url": "https://api.github.com/repos/briannesbitt/Carbon/zipball/01bc4cdefe98ef58d1f9cb31bdbbddddf2a88f7a",
+                "reference": "01bc4cdefe98ef58d1f9cb31bdbbddddf2a88f7a",
                 "shasum": ""
             },
             "require": {
@@ -4475,7 +4475,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-08-28T19:48:05+00:00"
+            "time": "2022-09-02T07:48:13+00:00"
         },
         {
             "name": "nette/schema",
@@ -7053,6 +7053,84 @@
                 }
             ],
             "time": "2022-02-11T10:27:51+00:00"
+        },
+        {
+            "name": "ryangjchandler/blade-capture-directive",
+            "version": "v0.2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ryangjchandler/blade-capture-directive.git",
+                "reference": "be41afbd86057989d84f1aaea8d00f3b1e5c50e1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ryangjchandler/blade-capture-directive/zipball/be41afbd86057989d84f1aaea8d00f3b1e5c50e1",
+                "reference": "be41afbd86057989d84f1aaea8d00f3b1e5c50e1",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^8.0|^9.0",
+                "php": "^8.0",
+                "spatie/laravel-package-tools": "^1.9.2"
+            },
+            "require-dev": {
+                "nunomaduro/collision": "^5.0|^6.0",
+                "nunomaduro/larastan": "^1.0",
+                "orchestra/testbench": "^6.23|^7.0",
+                "pestphp/pest": "^1.21",
+                "pestphp/pest-plugin-laravel": "^1.1",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan-deprecation-rules": "^1.0",
+                "phpstan/phpstan-phpunit": "^1.0",
+                "phpunit/phpunit": "^9.5",
+                "spatie/laravel-ray": "^1.26"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "RyanChandler\\BladeCaptureDirective\\BladeCaptureDirectiveServiceProvider"
+                    ],
+                    "aliases": {
+                        "BladeCaptureDirective": "RyanChandler\\BladeCaptureDirective\\Facades\\BladeCaptureDirective"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "RyanChandler\\BladeCaptureDirective\\": "src",
+                    "RyanChandler\\BladeCaptureDirective\\Database\\Factories\\": "database/factories"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ryan Chandler",
+                    "email": "support@ryangjchandler.co.uk",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Create inline partials in your Blade templates with ease.",
+            "homepage": "https://github.com/ryangjchandler/blade-capture-directive",
+            "keywords": [
+                "blade-capture-directive",
+                "laravel",
+                "ryangjchandler"
+            ],
+            "support": {
+                "issues": "https://github.com/ryangjchandler/blade-capture-directive/issues",
+                "source": "https://github.com/ryangjchandler/blade-capture-directive/tree/v0.2.2"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/ryangjchandler",
+                    "type": "github"
+                }
+            ],
+            "time": "2022-09-02T11:04:28+00:00"
         },
         {
             "name": "sebastian/cli-parser",

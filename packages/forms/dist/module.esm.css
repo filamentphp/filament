@@ -1654,7 +1654,7 @@ trix-editor .attachment__metadata .attachment__size {
 }
 .is-focused .choices__inner,
 .is-open .choices__inner {
-  @apply border-primary-600 ring-1 ring-inset ring-primary-600;
+  @apply border-primary-500 ring-1 ring-inset ring-primary-500;
 }
 .choices__list {
   @apply m-0 pl-0 list-none;
