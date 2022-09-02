@@ -59,10 +59,8 @@ trait CanGenerateResources
                 }
             }
 
-            if (in_array($type, [Forms\Components\TextInput::class, Forms\Components\Textarea::class])) {
-                if ($length = $column->getLength()) {
-                    $componentData['maxLength'] = [$length];
-                }
+            if (in_array($type, [Forms\Components\TextInput::class, Forms\Components\Textarea::class]) && ($length = $column->getLength())) {
+                $componentData['maxLength'] = [$length];
             }
 
             if ($column->getNotnull()) {
