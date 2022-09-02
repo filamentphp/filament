@@ -10,12 +10,12 @@
         $relationManagers = $this->getRelationManagers();
     @endphp
 
-    @if ((! $this->hasCombinedRelationManagersWithForm()) || (! count($relationManagers)))
+    @if ((! $this->hasCombinedRelationManagerTabsWithForm()) || (! count($relationManagers)))
         {{ $this->form }}
     @endif
 
     @if (count($relationManagers))
-        @if (! $this->hasCombinedRelationManagersWithForm())
+        @if (! $this->hasCombinedRelationManagerTabsWithForm())
             <x-filament::hr />
         @endif
 
@@ -26,7 +26,7 @@
             :owner-record="$record"
             :page-class="static::class"
         >
-            @if ($this->hasCombinedRelationManagersWithForm())
+            @if ($this->hasCombinedRelationManagerTabsWithForm())
                 <x-slot name="form">
                     {{ $this->form }}
                 </x-slot>

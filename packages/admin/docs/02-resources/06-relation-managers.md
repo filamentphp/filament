@@ -515,3 +515,14 @@ public static function canViewForRecord(Model $ownerRecord): bool
     return $ownerRecord->status === Status::Draft;
 }
 ```
+
+## Moving the resource form to tabs
+
+On the Edit or View page class, override the `hasCombinedRelationManagerTabsWithForm()` method:
+
+```php
+public function hasCombinedRelationManagerTabsWithForm(): bool
+{
+    return true;
+}
+```

@@ -28,14 +28,14 @@ trait HasRelationManagers
     {
         $managers = $this->getRelationManagers();
 
-        if (array_key_exists($this->activeRelationManager, $managers) || $this->hasCombinedRelationManagersWithForm()) {
+        if (array_key_exists($this->activeRelationManager, $managers) || $this->hasCombinedRelationManagerTabsWithForm()) {
             return;
         }
 
         $this->activeRelationManager = array_key_first($this->getRelationManagers()) ?? null;
     }
 
-    public function hasCombinedRelationManagersWithForm(): bool
+    public function hasCombinedRelationManagerTabsWithForm(): bool
     {
         return false;
     }
