@@ -15,7 +15,7 @@
                     $tabs = $managers;
 
                     if ($form) {
-                        $tabs = array_replace[null => null], $tabs);
+                        $tabs = array_replace([null => null], $tabs);
                     }
                 @endphp
 
