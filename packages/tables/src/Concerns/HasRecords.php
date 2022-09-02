@@ -91,7 +91,9 @@ trait HasRecords
 
         $record = $this->selectPivotDataInQuery($query)->first();
 
-        invade($relationship)->hydratePivotRelation([$record]);
+        if(! $this->allowsDuplicates()) {
+            invade($relationship)->hydratePivotRelation([$record]);
+        }
 
         return $record?->setRawAttributes($record->getRawOriginal());
     }

@@ -176,13 +176,16 @@ trait InteractsWithTable
         /** @var BelongsToMany $relationship */
         $relationship = $this->getRelationship();
 
-        $query->select(array_merge(
-            invade($relationship)->aliasedPivotColumns(),
-            [
-                $relationship->getTable() . '.*',
-                $query->getModel()->getTable() . '.*',
-            ]
-        ));
+        $columns = [
+            $relationship->getTable() . '.*',
+            $query->getModel()->getTable() . '.*',
+        ];
+
+        if(! $this->allowsDuplicates()) {
+            $columns = array_merge(invade($relationship)->aliasedPivotColumns(), $columns);
+        }
+
+        $query->select($columns);
 
         return $query;
     }
