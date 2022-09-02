@@ -1,6 +1,6 @@
 @props([
     'form',
-    'width' => 'sm',
+    'width' => 'xs',
     'indicatorsCount' => null,
 ])
 
@@ -8,7 +8,7 @@
     {{ $attributes->class(['filament-tables-filters']) }}
     placement="bottom-end"
     shift
-    width="xs"
+    :width="$width"
     wire:key="{{ $this->id }}.table.filters"
 >
     <x-slot name="trigger">
