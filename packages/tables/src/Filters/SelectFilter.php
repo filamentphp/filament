@@ -91,7 +91,7 @@ class SelectFilter extends BaseFilter
         return $this->evaluate($this->column) ?? $this->getName();
     }
 
-    protected function getFormField(): Field
+    protected function getFormField(): Select
     {
         return $this->getFormSelectComponent();
     }

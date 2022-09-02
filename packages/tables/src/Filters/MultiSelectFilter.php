@@ -5,6 +5,7 @@ namespace Filament\Tables\Filters;
 use Closure;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\MultiSelect;
+use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
@@ -90,7 +91,7 @@ class MultiSelectFilter extends BaseFilter
         return $this->evaluate($this->column) ?? $this->getName();
     }
 
-    protected function getFormField(): Field
+    protected function getFormField(): Select
     {
         $field = MultiSelect::make('values')
             ->label($this->getLabel())
