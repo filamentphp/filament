@@ -6,6 +6,19 @@
     <x-forms::modal
         :id="$this->id . '-form-component-action'"
         :wire:key="$action ? $this->id . '.' . $action->getComponent()->getStatePath() . '.actions.' . $action->getName() . '.modal' : null"
+        x-init="
+            // https://github.com/filamentphp/filament/issues/3665
+            this.wire = $wire.__instance
+
+            $watch('isOpen', () => {
+                if (isOpen) {
+                    return
+                }
+
+                // https://github.com/filamentphp/filament/pull/3525
+                this.wire.set('mountedFormComponentAction', null)
+            })
+        "
         :visible="filled($action)"
         :width="$action?->getModalWidth()"
         display-classes="block"
