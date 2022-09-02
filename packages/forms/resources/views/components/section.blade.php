@@ -21,7 +21,8 @@
 >
     <div
         @class([
-            'filament-forms-section-header-wrapper flex items-center px-4 py-2 bg-gray-100 rtl:space-x-reverse overflow-hidden rounded-t-xl min-h-[56px]',
+            'filament-forms-section-header-wrapper flex items-center px-4 py-2 bg-gray-100 rtl:space-x-reverse overflow-hidden rounded-t-xl min-h-[40px]',
+            'min-h-[56px]' => ! $isCompact(),
             'dark:bg-gray-900' => config('forms.dark_mode'),
         ])
         @if ($isCollapsible())
@@ -40,13 +41,14 @@
             "
         @endif
     >
-        <div
-            @class([
-                'filament-forms-section-header flex-1',
-                'cursor-pointer' => $isCollapsible(),
-            ])
-        >
-            <h3 class="text-xl font-bold tracking-tight pointer-events-none">
+        <div @class([
+            'filament-forms-section-header flex-1',
+            'cursor-pointer' => $isCollapsible(),
+        ])>
+            <h3 @class([
+                'font-bold tracking-tight pointer-events-none',
+                'text-xl font-bold'=> ! $isCompact(),
+            ])>
                 {{ $getHeading() }}
             </h3>
 
@@ -63,12 +65,16 @@
                     '-rotate-180': !isCollapsed,
                 }" type="button"
                 @class([
-                    'flex items-center justify-center w-10 h-10 transform rounded-full text-primary-500 hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none',
+                    'flex items-center justify-center transform rounded-full text-primary-500 hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none',
+                    'w-10 h-10' => ! $isCompact(),
+                    'w-8 h-8 -my-1' => $isCompact(),
                     '-rotate-180' => ! $isCollapsed(),
                 ])
             >
-                <svg class="h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
+                <svg @class([
+                    'w-7 h-7' => ! $isCompact(),
+                    'w-5 h-5' => $isCompact(),
+                ]) xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
             </button>
@@ -83,7 +89,11 @@
         @endif
         class="filament-forms-section-content-wrapper"
     >
-        <div class="filament-forms-section-content p-6">
+        <div @class([
+            'filament-forms-section-content',
+            'p-6' => ! $isCompact(),
+            'p-4' => $isCompact(),
+        ])>
             {{ $getChildComponentContainer() }}
         </div>
     </div>

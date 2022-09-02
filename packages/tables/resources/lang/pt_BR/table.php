@@ -2,6 +2,14 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 'e :count mais',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -20,7 +28,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'por página',
+
+                'options' => [
+                    'all' => 'Todas',
+                ],
+
             ],
 
         ],
@@ -45,12 +59,24 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Concluir a reordenação de registros',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Reordenar registros',
+        ],
+
         'filter' => [
             'label' => 'Filtrar',
         ],
 
         'open_actions' => [
             'label' => 'Ações abertas',
+        ],
+
+        'toggle_columns' => [
+            'label' => 'Alternar colunas',
         ],
 
     ],
@@ -63,11 +89,26 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Remover filtro',
+            ],
+
+            'remove_all' => [
+                'label' => 'Remover todos os filtros',
+                'tooltip' => 'Remover todos os filtros',
+            ],
+
             'reset' => [
                 'label' => 'Limpar filtros',
             ],
 
+            'close' => [
+                'label' => 'Fechar',
+            ],
+
         ],
+
+        'indicator' => 'Filtros ativos',
 
         'multi_select' => [
             'placeholder' => 'Todos',
@@ -77,7 +118,21 @@ return [
             'placeholder' => 'Todos',
         ],
 
+        'trashed' => [
+
+            'label' => 'Registros excluídos',
+
+            'only_trashed' => 'Somente registros excluídos',
+
+            'with_trashed' => 'Exibir registros excluídos',
+
+            'without_trashed' => 'Não exibir registros excluídos',
+
+        ],
+
     ],
+
+    'reorder_indicator' => 'Arraste e solte os registros na ordem.',
 
     'selection_indicator' => [
 

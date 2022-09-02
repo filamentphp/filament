@@ -318,7 +318,7 @@ Tabs::make('Heading')
         // ...
     ])
 ```
-  
+
 ## Wizard
 
 Similar to [tabs](#tabs), you may want to use a multistep form wizard to reduce the number of components that are visible at once. These are especially useful if your form has a definite chronological order, in which you want each step to be validated as the user progresses.
@@ -443,6 +443,18 @@ Section::make('Heading')
     ->collapsed()
 ```
 
+When nesting sections, you can use a more compact styling:
+
+```php
+use Filament\Forms\Components\Section;
+
+Section::make('Heading')
+    ->schema([
+        // ...
+    ])
+    ->compact()
+```
+
 ## Placeholder
 
 Placeholders can be used to render text-only "fields" within your forms. Each placeholder has `content()`, which cannot be changed by the user.
@@ -527,7 +539,7 @@ use Filament\Forms\Components\Component;
 class Wizard extends Component
 {
     protected string $view = 'filament.forms.components.wizard';
-    
+
     public static function make(): static
     {
         return new static();

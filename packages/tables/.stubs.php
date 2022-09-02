@@ -97,6 +97,10 @@ namespace Livewire\Testing {
 
         public function resetTableFilters(): static {}
 
+        public function removeTableFilter(string $filter, ?string $field = null): static {}
+
+        public function removeTableFilters(): static {}
+
         public function assertCanSeeTableRecords(array | Collection $records, bool $inOrder = false): static {}
 
         public function assertCanNotSeeTableRecords(array | Collection $records): static {}

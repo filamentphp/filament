@@ -21,7 +21,10 @@ trait CanSelectRecords
     {
         $query = $this->getFilteredTableQuery();
 
-        return $query->pluck($query->getModel()->getQualifiedKeyName())->toArray();
+        return $query
+            ->pluck($query->getModel()->getQualifiedKeyName())
+            ->map(fn ($key): string => (string) $key)
+            ->all();
     }
 
     public function getAllTableRecordsCount(): int
@@ -48,9 +51,9 @@ trait CanSelectRecords
         $pivotClass = $relationship->getPivotClass();
         $pivotKeyName = app($pivotClass)->getKeyName();
 
-        return $this->selectPivotDataInQuery(
+        return $this->hydratePivotRelationForTableRecords($this->selectPivotDataInQuery(
             $relationship->wherePivotIn($pivotKeyName, $this->selectedTableRecords),
-        )->get();
+        )->get());
     }
 
     public function isTableSelectionEnabled(): bool

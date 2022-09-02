@@ -83,9 +83,13 @@ trait HasFilters
         }
 
         foreach ($fields as $field) {
-            $field->state(
-                is_array($field->getState()) ? [] : null,
-            );
+            $state = $field->getState();
+
+            $field->state(match (true) {
+                is_array($state) => [],
+                $state === true => false,
+                default => null,
+            });
         }
 
         $this->updatedTableFilters();
@@ -94,9 +98,13 @@ trait HasFilters
     public function removeTableFilters(): void
     {
         foreach ($this->getTableFiltersForm()->getFlatFields(withAbsolutePathKeys: true) as $field) {
-            $field->state(
-                is_array($field->getState()) ? [] : null,
-            );
+            $state = $field->getState();
+
+            $field->state(match (true) {
+                is_array($state) => [],
+                $state === true => false,
+                default => null,
+            });
         }
 
         $this->updatedTableFilters();
@@ -138,7 +146,7 @@ trait HasFilters
     protected function getTableFiltersFormColumns(): int | array
     {
         return match ($this->getTableFiltersLayout()) {
-            Layout::AboveContent => [
+            Layout::AboveContent, Layout::BelowContent => [
                 'sm' => 2,
                 'lg' => 3,
                 'xl' => 4,

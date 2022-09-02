@@ -24772,7 +24772,7 @@ function applyStyle(button, stylesToApply) {
 }
 
 // node_modules/dompurify/dist/purify.es.js
-/*! @license DOMPurify 2.3.10 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.3.10/LICENSE */
+/*! @license DOMPurify 2.4.0 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.4.0/LICENSE */
 function _typeof(obj) {
   "@babel/helpers - typeof";
   return _typeof = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? function(obj2) {
@@ -25011,7 +25011,7 @@ function createDOMPurify() {
   var DOMPurify = function DOMPurify2(root2) {
     return createDOMPurify(root2);
   };
-  DOMPurify.version = "2.3.10";
+  DOMPurify.version = "2.4.0";
   DOMPurify.removed = [];
   if (!window2 || !window2.document || window2.document.nodeType !== 9) {
     DOMPurify.isSupported = false;
@@ -25081,6 +25081,8 @@ function createDOMPurify() {
   var RETURN_DOM_FRAGMENT = false;
   var RETURN_TRUSTED_TYPE = false;
   var SANITIZE_DOM = true;
+  var SANITIZE_NAMED_PROPS = false;
+  var SANITIZE_NAMED_PROPS_PREFIX = "user-content-";
   var KEEP_CONTENT = true;
   var IN_PLACE = false;
   var USE_PROFILES = {};
@@ -25134,6 +25136,7 @@ function createDOMPurify() {
     RETURN_TRUSTED_TYPE = cfg.RETURN_TRUSTED_TYPE || false;
     FORCE_BODY = cfg.FORCE_BODY || false;
     SANITIZE_DOM = cfg.SANITIZE_DOM !== false;
+    SANITIZE_NAMED_PROPS = cfg.SANITIZE_NAMED_PROPS || false;
     KEEP_CONTENT = cfg.KEEP_CONTENT !== false;
     IN_PLACE = cfg.IN_PLACE || false;
     IS_ALLOWED_URI$1 = cfg.ALLOWED_URI_REGEXP || IS_ALLOWED_URI$1;
@@ -25497,6 +25500,10 @@ function createDOMPurify() {
       if (!_isValidAttribute(lcTag, lcName, value)) {
         continue;
       }
+      if (SANITIZE_NAMED_PROPS && (lcName === "id" || lcName === "name")) {
+        _removeAttribute(name2, currentNode);
+        value = SANITIZE_NAMED_PROPS_PREFIX + value;
+      }
       if (trustedTypesPolicy && _typeof(trustedTypes) === "object" && typeof trustedTypes.getAttributeType === "function") {
         if (namespaceURI)
           ;
@@ -25539,7 +25546,8 @@ function createDOMPurify() {
     }
     _executeHook("afterSanitizeShadowDOM", fragment, null);
   };
-  DOMPurify.sanitize = function(dirty, cfg) {
+  DOMPurify.sanitize = function(dirty) {
+    var cfg = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
     var body;
     var importedNode;
     var currentNode;
@@ -25691,6 +25699,7 @@ var purify = createDOMPurify();
 // node_modules/marked/lib/marked.esm.js
 function getDefaults() {
   return {
+    async: false,
     baseUrl: null,
     breaks: false,
     extensions: null,
@@ -25933,7 +25942,7 @@ function outputLink(cap, link, raw, lexer2) {
       href,
       title,
       text: text3,
-      tokens: lexer2.inlineTokens(text3, [])
+      tokens: lexer2.inlineTokens(text3)
     };
     lexer2.state.inLink = false;
     return token;
@@ -26014,15 +26023,13 @@ var Tokenizer = class {
           text3 = trimmed.trim();
         }
       }
-      const token = {
+      return {
         type: "heading",
         raw: cap[0],
         depth: cap[1].length,
         text: text3,
-        tokens: []
+        tokens: this.lexer.inline(text3)
       };
-      this.lexer.inline(token.text, token.tokens);
-      return token;
     }
   }
   hr(src) {
@@ -26192,10 +26199,10 @@ var Tokenizer = class {
         text: cap[0]
       };
       if (this.options.sanitize) {
+        const text3 = this.options.sanitizer ? this.options.sanitizer(cap[0]) : escape(cap[0]);
         token.type = "paragraph";
-        token.text = this.options.sanitizer ? this.options.sanitizer(cap[0]) : escape(cap[0]);
-        token.tokens = [];
-        this.lexer.inline(token.text, token.tokens);
+        token.text = text3;
+        token.tokens = this.lexer.inline(text3);
       }
       return token;
     }
@@ -26249,15 +26256,13 @@ var Tokenizer = class {
         }
         l = item2.header.length;
         for (j = 0; j < l; j++) {
-          item2.header[j].tokens = [];
-          this.lexer.inline(item2.header[j].text, item2.header[j].tokens);
+          item2.header[j].tokens = this.lexer.inline(item2.header[j].text);
         }
         l = item2.rows.length;
         for (j = 0; j < l; j++) {
           row = item2.rows[j];
           for (k = 0; k < row.length; k++) {
-            row[k].tokens = [];
-            this.lexer.inline(row[k].text, row[k].tokens);
+            row[k].tokens = this.lexer.inline(row[k].text);
           }
         }
         return item2;
@@ -26267,41 +26272,36 @@ var Tokenizer = class {
   lheading(src) {
     const cap = this.rules.block.lheading.exec(src);
     if (cap) {
-      const token = {
+      return {
         type: "heading",
         raw: cap[0],
         depth: cap[2].charAt(0) === "=" ? 1 : 2,
         text: cap[1],
-        tokens: []
+        tokens: this.lexer.inline(cap[1])
       };
-      this.lexer.inline(token.text, token.tokens);
-      return token;
     }
   }
   paragraph(src) {
     const cap = this.rules.block.paragraph.exec(src);
     if (cap) {
-      const token = {
+      const text3 = cap[1].charAt(cap[1].length - 1) === "\n" ? cap[1].slice(0, -1) : cap[1];
+      return {
         type: "paragraph",
         raw: cap[0],
-        text: cap[1].charAt(cap[1].length - 1) === "\n" ? cap[1].slice(0, -1) : cap[1],
-        tokens: []
+        text: text3,
+        tokens: this.lexer.inline(text3)
       };
-      this.lexer.inline(token.text, token.tokens);
-      return token;
     }
   }
   text(src) {
     const cap = this.rules.block.text.exec(src);
     if (cap) {
-      const token = {
+      return {
         type: "text",
         raw: cap[0],
         text: cap[0],
-        tokens: []
+        tokens: this.lexer.inline(cap[0])
       };
-      this.lexer.inline(token.text, token.tokens);
-      return token;
     }
   }
   escape(src) {
@@ -26436,7 +26436,7 @@ var Tokenizer = class {
             type: "em",
             raw: src.slice(0, lLength + match.index + rLength + 1),
             text: text4,
-            tokens: this.lexer.inlineTokens(text4, [])
+            tokens: this.lexer.inlineTokens(text4)
           };
         }
         const text3 = src.slice(2, lLength + match.index + rLength - 1);
@@ -26444,7 +26444,7 @@ var Tokenizer = class {
           type: "strong",
           raw: src.slice(0, lLength + match.index + rLength + 1),
           text: text3,
-          tokens: this.lexer.inlineTokens(text3, [])
+          tokens: this.lexer.inlineTokens(text3)
         };
       }
     }
@@ -26482,7 +26482,7 @@ var Tokenizer = class {
         type: "del",
         raw: cap[0],
         text: cap[2],
-        tokens: this.lexer.inlineTokens(cap[2], [])
+        tokens: this.lexer.inlineTokens(cap[2])
       };
     }
   }
@@ -27483,18 +27483,26 @@ function marked(src, opt, callback) {
     }
     return;
   }
-  try {
-    const tokens = Lexer.lex(src, opt);
-    if (opt.walkTokens) {
-      marked.walkTokens(tokens, opt.walkTokens);
-    }
-    return Parser.parse(tokens, opt);
-  } catch (e2) {
+  function onError(e2) {
     e2.message += "\nPlease report this to https://github.com/markedjs/marked.";
     if (opt.silent) {
       return "<p>An error occurred:</p><pre>" + escape(e2.message + "", true) + "</pre>";
     }
     throw e2;
+  }
+  try {
+    const tokens = Lexer.lex(src, opt);
+    if (opt.walkTokens) {
+      if (opt.async) {
+        return Promise.all(marked.walkTokens(tokens, opt.walkTokens)).then(() => {
+          return Parser.parse(tokens, opt);
+        }).catch(onError);
+      }
+      marked.walkTokens(tokens, opt.walkTokens);
+    }
+    return Parser.parse(tokens, opt);
+  } catch (e2) {
+    onError(e2);
   }
 }
 marked.options = marked.setOptions = function(opt) {
@@ -27590,10 +27598,12 @@ marked.use = function(...args) {
     if (pack.walkTokens) {
       const walkTokens2 = marked.defaults.walkTokens;
       opts.walkTokens = function(token) {
-        pack.walkTokens.call(this, token);
+        let values = [];
+        values.push(pack.walkTokens.call(this, token));
         if (walkTokens2) {
-          walkTokens2.call(this, token);
+          values = values.concat(walkTokens2.call(this, token));
         }
+        return values;
       };
     }
     if (hasExtensions) {
@@ -27603,35 +27613,37 @@ marked.use = function(...args) {
   });
 };
 marked.walkTokens = function(tokens, callback) {
+  let values = [];
   for (const token of tokens) {
-    callback.call(marked, token);
+    values = values.concat(callback.call(marked, token));
     switch (token.type) {
       case "table": {
         for (const cell of token.header) {
-          marked.walkTokens(cell.tokens, callback);
+          values = values.concat(marked.walkTokens(cell.tokens, callback));
         }
         for (const row of token.rows) {
           for (const cell of row) {
-            marked.walkTokens(cell.tokens, callback);
+            values = values.concat(marked.walkTokens(cell.tokens, callback));
           }
         }
         break;
       }
       case "list": {
-        marked.walkTokens(token.items, callback);
+        values = values.concat(marked.walkTokens(token.items, callback));
         break;
       }
       default: {
         if (marked.defaults.extensions && marked.defaults.extensions.childTokens && marked.defaults.extensions.childTokens[token.type]) {
           marked.defaults.extensions.childTokens[token.type].forEach(function(childTokens) {
-            marked.walkTokens(token[childTokens], callback);
+            values = values.concat(marked.walkTokens(token[childTokens], callback));
           });
         } else if (token.tokens) {
-          marked.walkTokens(token.tokens, callback);
+          values = values.concat(marked.walkTokens(token.tokens, callback));
         }
       }
     }
   }
+  return values;
 };
 marked.parseInline = function(src, opt) {
   if (typeof src === "undefined" || src === null) {

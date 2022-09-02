@@ -8,6 +8,10 @@
     $columns = $getColumns();
     $content = $getContent();
     $contentFooter = $getContentFooter();
+    $filterIndicators = collect($getFilters())
+        ->mapWithKeys(fn (\Filament\Tables\Filters\BaseFilter $filter): array => [$filter->getName() => $filter->getIndicators()])
+        ->filter(fn (array $indicators): bool => count($indicators))
+        ->all();
     $header = $getHeader();
     $headerActions = $getHeaderActions();
     $heading = $getHeading();
@@ -20,6 +24,7 @@
     $hasFilters = $isFilterable();
     $hasFiltersPopover = $hasFilters && ($getFiltersLayout() === Layout::Popover);
     $hasFiltersAboveContent = $hasFilters && ($getFiltersLayout() === Layout::AboveContent);
+    $hasFiltersBelowContent = $hasFilters && ($getFiltersLayout() === Layout::BelowContent);
     $isColumnToggleFormVisible = $hasToggleableColumns();
     $records = $getRecords();
 
@@ -129,7 +134,7 @@
         selectAllRecords: async function () {
             this.isLoading = true
 
-            this.selectedRecords = (await $wire.getAllTableRecordKeys()).map((key) => key.toString())
+            this.selectedRecords = await $wire.getAllTableRecordKeys()
 
             this.isLoading = false
         },
@@ -286,7 +291,7 @@
                 @if ($isGlobalSearchVisible || $hasFiltersPopover || $isColumnToggleFormVisible)
                     <div class="w-full flex items-center justify-end gap-2 md:max-w-md">
                         @if ($isGlobalSearchVisible)
-                            <div class="flex-1">
+                            <div class="flex-1 flex items-center justify-end">
                                 <x-tables::search-input />
                             </div>
                         @endif
@@ -295,6 +300,7 @@
                             <x-tables::filters.popover
                                 :form="$getFiltersForm()"
                                 :width="$getFiltersFormWidth()"
+                                :indicators-count="count(\Illuminate\Support\Arr::flatten($filterIndicators))"
                                 class="shrink-0"
                             />
                         @endif
@@ -336,7 +342,7 @@
         @endif
 
         <x-tables::filters.indicators
-            :indicators="collect($getFilters())->mapWithKeys(fn (\Filament\Tables\Filters\BaseFilter $filter): array => [$filter->getName() => $filter->getIndicators()])->filter(fn (array $indicators): bool => count($indicators))->all()"
+            :indicators="$filterIndicators"
             :class="\Illuminate\Support\Arr::toCssClasses([
                 'border-t',
                 'dark:border-gray-700' => config('tables.dark_mode'),
@@ -593,6 +599,16 @@
                 />
             </div>
         @endif
+
+        @if ($hasFiltersBelowContent)
+            <div class="px-2 pb-2">
+                <x-tables::hr />
+
+                <div class="p-4 mt-2">
+                    <x-tables::filters :form="$getFiltersForm()" />
+                </div>
+            </div>
+        @endif
     </x-tables::container>
 
     <form wire:submit.prevent="callMountedTableAction">
@@ -603,15 +619,6 @@
         <x-tables::modal
             :id="$this->id . '-table-action'"
             :wire:key="$action ? $this->id . '.table' . ($getMountedActionRecordKey() ? '.records.' . $getMountedActionRecordKey() : null) . '.actions.' . $action->getName() . '.modal' : null"
-            x-init="
-                $watch('isOpen', () => {
-                    if (isOpen) {
-                        return
-                    }
-
-                    $wire.mountedTableAction = null
-                })
-            "
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
             display-classes="block"
@@ -668,15 +675,6 @@
         <x-tables::modal
             :id="$this->id . '-table-bulk-action'"
             :wire:key="$action ? $this->id . '.table.bulk-actions.' . $action->getName() . '.modal' : null"
-            x-init="
-                $watch('isOpen', () => {
-                    if (isOpen) {
-                        return
-                    }
-
-                    $wire.mountedTableBulkAction = null
-                })
-            "
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
             display-classes="block"

@@ -4,6 +4,7 @@ namespace Filament\Tables\Filters;
 
 use Closure;
 use Filament\Forms\Components\MultiSelect;
+use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
@@ -24,7 +25,7 @@ class MultiSelectFilter extends BaseFilter
         $this->placeholder(__('tables::table.filters.multi_select.placeholder'));
 
         $this->indicateUsing(function (array $state): array {
-            if (blank($state['value'] ?? null)) {
+            if (blank($state['values'] ?? null)) {
                 return [];
             }
 
@@ -89,15 +90,19 @@ class MultiSelectFilter extends BaseFilter
         return $this->evaluate($this->column) ?? $this->getName();
     }
 
-    public function getFormSchema(): array
+    protected function getFormField(): Select
     {
-        return $this->formSchema ?? [
-            MultiSelect::make('values')
-                ->label($this->getLabel())
-                ->options($this->getOptions())
-                ->placeholder($this->getPlaceholder())
-                ->default($this->getDefaultState())
-                ->columnSpan($this->getColumnSpan()),
-        ];
+        $field = MultiSelect::make('values')
+            ->label($this->getLabel())
+            ->options($this->getOptions())
+            ->placeholder($this->getPlaceholder())
+            ->default($this->getDefaultState())
+            ->columnSpan($this->getColumnSpan());
+
+        if (filled($defaultState = $this->getDefaultState())) {
+            $field->default($defaultState);
+        }
+
+        return $field;
     }
 }

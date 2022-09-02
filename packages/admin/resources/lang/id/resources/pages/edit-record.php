@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => 'Edit :label',
+    'title' => 'Ubah :label',
 
-    'breadcrumb' => 'Edit',
+    'breadcrumb' => 'Ubah',
 
     'form' => [
 

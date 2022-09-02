@@ -27,7 +27,7 @@
         />
     </div>
 
-    <div class="max-w-xs space-y-1">
+    <div class="max-w-md space-y-1">
         <x-tables::empty-state.heading>
             {{ $heading }}
         </x-tables::empty-state.heading>

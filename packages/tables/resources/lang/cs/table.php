@@ -71,10 +71,6 @@ return [
                 'label' => 'Resetovat filtry',
             ],
 
-            'close' => [
-                'label' => 'Zavřít',
-            ],
-
         ],
 
         'multi_select' => [
