@@ -14,7 +14,9 @@ trait HasRecordAction
         };
     }
 
-    /** @deprecated Use `getTableRecordActionUsing()` instead. */
+    /**
+     * @deprecated Use `getTableRecordActionUsing()` instead.
+     */
     protected function getTableRecordAction(): ?string
     {
         return null;
