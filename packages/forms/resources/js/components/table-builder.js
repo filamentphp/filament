@@ -6,7 +6,9 @@ export default (Alpine) => {
 
         init() {
             this.columns = this.state.reduce((maxLength, currentItem) => {
-                return currentItem.length > maxLength ? currentItem.length : maxLength;
+                return currentItem.length > maxLength
+                    ? currentItem.length
+                    : maxLength
             }, 1)
         },
 
@@ -33,12 +35,11 @@ export default (Alpine) => {
         },
 
         removeColumn(column) {
-            this.columns--;
+            this.columns--
 
-            this.state = this.state.map(row => {
-                return row.filter((_, i) => i !== (column - 1))
+            this.state = this.state.map((row) => {
+                return row.filter((_, i) => i !== column - 1)
             })
-        }
-
+        },
     }))
 }
