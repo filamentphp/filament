@@ -3,7 +3,7 @@
 ])
 
 <div {{ $attributes->class([
-    'flex space-x-2 rtl:space-x-reverse text-gray-500 filament-forms-field-wrapper-hint',
+    'filament-forms-field-wrapper-hint flex space-x-2 rtl:space-x-reverse text-gray-500',
     'dark:text-gray-300' => config('forms.dark_mode'),
 ]) }}>
     @if ($slot->isNotEmpty())

@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'Buộc xoá',
+        'label' => 'Xóa vĩnh viễn',
 
         'modal' => [
 
-            'heading' => 'Buộc xoá :label',
+            'heading' => 'Xóa vĩnh viễn :label',
 
             'actions' => [
 
@@ -28,11 +28,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'Buộc xoá mục đã chọn',
+        'label' => 'Xóa vĩnh viễn các mục đã chọn',
 
         'modal' => [
 
-            'heading' => 'Buộc xoá :label đã chọn',
+            'heading' => 'Xóa vĩnh viễn :label đã chọn',
 
             'actions' => [
 

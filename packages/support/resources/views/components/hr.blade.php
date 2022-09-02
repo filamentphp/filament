@@ -3,6 +3,6 @@
 ])
 
 <div aria-hidden="true" {{ $attributes->class([
-    'border-t filament-hr',
+    'filament-hr border-t',
     'dark:border-gray-700' => $darkMode,
 ]) }}></div>

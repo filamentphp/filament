@@ -318,7 +318,7 @@ Tabs::make('Heading')
         // ...
     ])
 ```
-  
+
 ## Wizard
 
 Similar to [tabs](#tabs), you may want to use a multistep form wizard to reduce the number of components that are visible at once. These are especially useful if your form has a definite chronological order, in which you want each step to be validated as the user progresses.
@@ -383,6 +383,16 @@ Wizard::make([
 ])->submitAction(new HtmlString('<button type="submit">Submit</button>'))
 ```
 
+You may use the `startOnStep()` method to load a specific step in the wizard:
+
+```php
+use Filament\Forms\Components\Wizard;
+
+Wizard::make([
+    // ...
+])->startOnStep(2)
+```
+
 ## Section
 
 You may want to separate your fields into sections, each with a heading and description. To do this, you can use a section component:
@@ -431,6 +441,18 @@ Section::make('Heading')
         // ...
     ])
     ->collapsed()
+```
+
+When nesting sections, you can use a more compact styling:
+
+```php
+use Filament\Forms\Components\Section;
+
+Section::make('Heading')
+    ->schema([
+        // ...
+    ])
+    ->compact()
 ```
 
 ## Placeholder
@@ -517,7 +539,7 @@ use Filament\Forms\Components\Component;
 class Wizard extends Component
 {
     protected string $view = 'filament.forms.components.wizard';
-    
+
     public static function make(): static
     {
         return new static();

@@ -7,7 +7,7 @@
     'alignment' => null,
 ])
 
-<th {{ $attributes->merge($extraAttributes)->class(['p-0 filament-tables-header-cell']) }}>
+<th {{ $attributes->merge($extraAttributes)->class(['filament-tables-header-cell p-0']) }}>
     <button
         @if ($sortable)
             wire:click="sortTable('{{ $name }}')"
@@ -30,16 +30,14 @@
         </span>
 
         @if ($sortable)
-            <span @class([
-                'relative flex items-center',
-                'dark:text-gray-300' => config('tables.dark_mode'),
-            ])>
-                @if ($isSortColumn && $sortDirection === 'asc')
-                    <x-heroicon-s-chevron-up class="w-3 h-3" />
-                @else
-                    <x-heroicon-s-chevron-down :class="\Illuminate\Support\Arr::toCssClasses(['w-3 h-3', 'opacity-25' => ! $isSortColumn])" />
-                @endif
-            </span>
+            <x-dynamic-component
+                :component="$isSortColumn && $sortDirection === 'asc' ? 'heroicon-s-chevron-up' : 'heroicon-s-chevron-down'"
+                @class([
+                    'filament-tables-header-cell-sort-icon h-3 w-3',
+                    'dark:text-gray-300' => config('tables.dark_mode'),
+                    'opacity-25' => ! $isSortColumn,
+                ])
+            />
         @endif
     </button>
 </th>

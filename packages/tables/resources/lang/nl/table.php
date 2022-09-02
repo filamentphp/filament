@@ -28,7 +28,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'per pagina',
+
+                'options' => [
+                    'all' => 'Alles',
+                ],
+
             ],
 
         ],
@@ -88,10 +94,6 @@ return [
                 'tooltip' => 'Filters resetten',
             ],
 
-            'close' => [
-                'label' => 'Sluiten',
-            ],
-
         ],
 
         'indicator' => 'Actieve filters',
@@ -110,7 +112,7 @@ return [
 
             'only_trashed' => 'Alleen verwijderde records',
 
-            'with_trashed' => 'Met verwijderde records records',
+            'with_trashed' => 'Met verwijderde records',
 
             'without_trashed' => 'Zonder verwijderde records',
 
