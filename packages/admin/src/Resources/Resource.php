@@ -428,7 +428,7 @@ class Resource
                         $searchOperator,
                         "%{$searchQuery}%",
                     ),
-                )
+                ),
             );
 
             $isFirst = false;
