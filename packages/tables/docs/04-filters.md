@@ -82,6 +82,31 @@ Filter::make('is_featured')->label('Featured')->default()
 
 By default, filters have two states: enabled and disabled. When the filter is enabled, it is applied to the query. When it is disabled it is not. This is controlled through a checkbox. However, some filters may require extra data input to narrow down the results further. You may use a custom filter form to collect this data.
 
+### Date filters
+
+Date filters allow you to quickly create a filter that allows the user to select a date.
+
+```php
+Filters\DateFilter::make('created_at')
+    ->label(__('Created At'))
+    ->minDate(Carbon::today()->subMonth(1))
+    ->maxDate(Carbon::today()->addMonth(1))
+    ->timeZone('America/New_York')
+```
+
+Another common use case is to filter by a date range. You can do this with `range()` method:
+
+```php
+Filters\DateFilter::make('created_at')
+    ->label(__('Created At'))
+    ->minDate(Carbon::today()->subMonth(1))
+    ->maxDate(Carbon::today()->addMonth(1))
+    ->timeZone('America/New_York')
+    ->range()
+    ->fromLabel(__('From'))
+    ->untilLabel(__('Until'))
+```
+
 ### Select filters
 
 Select filters allow you to quickly create a filter that allows the user to select an option to apply the filter to their table. For example, a status filter may present the user with a few status options to pick from and filter the table using:
