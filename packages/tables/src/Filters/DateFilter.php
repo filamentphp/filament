@@ -38,21 +38,22 @@ class DateFilter extends BaseFilter
             ->useColumn($this->getName())
             ->indicateUsing(function (array $state): array {
                 $state = Arr::only($state, $this->range ? ['from', 'until'] : ['value']);
-                if (!array_filter($state)) {
+                if (! array_filter($state)) {
                     return [];
                 }
 
                 $displayFormat = config('tables.date_format', 'M j, Y');
 
-                if (!$this->range) {
+                if (! $this->range) {
                     $label = Carbon::parse($state['value'])->format($displayFormat);
+
                     return ["{$this->getIndicator()}: {$label}"];
                 }
 
-                $format = fn(string $field) => $state[$field]
+                $format = fn (string $field) => $state[$field]
                     ? [
                         $this->labels[$field],
-                        Carbon::parse($state[$field])->format($displayFormat)
+                        Carbon::parse($state[$field])->format($displayFormat),
                     ] : [];
 
                 $label = implode(' ', array_filter([
@@ -66,33 +67,34 @@ class DateFilter extends BaseFilter
 
     public function apply(Builder $query, array $data = []): Builder
     {
-        if (!$this->range) {
+        if (! $this->range) {
             $date = $data['value'];
+
             return $query
                 ->when(
                     $date && $this->operator === '=',
-                    fn(Builder $query): Builder => $query
+                    fn (Builder $query): Builder => $query
                         ->where($this->column, '>=', Carbon::parse($date)->startOfDay())
                         ->where($this->column, '<=', Carbon::parse($date)->endOfDay()),
                 )
                 ->when(
                     $date && $this->operator !== '=',
-                    fn(Builder $query): Builder => $query->where($this->column, $this->operator, $date),
+                    fn (Builder $query): Builder => $query->where($this->column, $this->operator, $date),
                 );
         }
 
         return $query
             ->when(
                 $data['from'] && empty($data['until']),
-                fn(Builder $query, $date): Builder => $query->where($this->column, '>=', $data['from']),
+                fn (Builder $query, $date): Builder => $query->where($this->column, '>=', $data['from']),
             )
             ->when(
                 empty($data['from']) && $data['until'],
-                fn(Builder $query, $date): Builder => $query->where($this->column, '<=', $data['until']),
+                fn (Builder $query, $date): Builder => $query->where($this->column, '<=', $data['until']),
             )
             ->when(
                 $data['from'] && $data['until'],
-                fn(Builder $query, $date): Builder => $query->whereBetween($this->column, [
+                fn (Builder $query, $date): Builder => $query->whereBetween($this->column, [
                     Carbon::parse($data['from'])->startOfDay(),
                     Carbon::parse($data['until'])->endOfDay(),
                 ]),
@@ -205,7 +207,7 @@ class DateFilter extends BaseFilter
             return $schema;
         }
 
-        if (!$this->range) {
+        if (! $this->range) {
             return [
                 Forms\Components\DatePicker::make('value')
                     ->closeOnDateSelection()
@@ -213,7 +215,7 @@ class DateFilter extends BaseFilter
                     ->maxDate($this->maxDate)
                     ->minDate($this->minDate)
                     ->timezone($this->timezone)
-                    ->columnSpan($this->getColumnSpan())
+                    ->columnSpan($this->getColumnSpan()),
             ];
         }
 
@@ -228,15 +230,15 @@ class DateFilter extends BaseFilter
                         ->label($this->labels['from'])
                         ->timezone($this->timezone)
                         ->minDate($this->minDate)
-                        ->maxDate(fn($get) => $get('until') ?? $this->maxDate),
+                        ->maxDate(fn ($get) => $get('until') ?? $this->maxDate),
 
                     Forms\Components\DatePicker::make('until')
                         ->closeOnDateSelection()
                         ->label($this->labels['until'])
                         ->timezone($this->timezone)
-                        ->minDate(fn($get) => $get('from') ?? $this->minDate)
+                        ->minDate(fn ($get) => $get('from') ?? $this->minDate)
                         ->maxDate($this->maxDate),
-                ])
+                ]),
         ];
     }
 }
