@@ -181,7 +181,7 @@ trait InteractsWithTable
             $query->getModel()->getTable() . '.*',
         ];
 
-        if(! $this->allowsDuplicates()) {
+        if (! $this->allowsDuplicates()) {
             $columns = array_merge(invade($relationship)->aliasedPivotColumns(), $columns);
         }
 
