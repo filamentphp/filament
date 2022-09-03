@@ -404,12 +404,12 @@ class Resource
                 method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchAttribute),
                 function (Builder $query) use ($databaseConnection, $searchAttribute, $searchOperator, $searchQuery, $whereClause): Builder {
                     $activeLocale = app()->getLocale();
-                    
+
                     $searchColumn = match ($databaseConnection->getDriverName()) {
                         'pgsql' => "{$searchAttribute}->>'{$activeLocale}'",
                         default => "json_extract({$searchAttribute}, \"$.{$activeLocale}\")",
                     };
-                    
+
                     return $query->{"{$whereClause}Raw"}(
                         "lower({$searchColumn}) {$searchOperator} ?",
                         "%{$searchQuery}%",
