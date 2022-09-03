@@ -1,11 +1,11 @@
 {
     "name": "filament",
     "scripts": {
-        "dev:scripts": "node bin/build --watch",
-        "dev:styles": "mix watch",
+        "dev:components": "node bin/build --watch",
+        "dev:admin": "mix watch",
         "dev": "npm-run-all --parallel dev:*",
-        "build:scripts": "node bin/build",
-        "build:styles": "mix --production",
+        "build:components": "node bin/build",
+        "build:admin": "mix --production",
         "build": "npm-run-all build:*",
         "prettier": "npx prettier --write '**/*.{css,js,yml}' '!**/dist' '!**/vendor'"
     },

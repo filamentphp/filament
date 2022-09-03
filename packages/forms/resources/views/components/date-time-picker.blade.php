@@ -43,7 +43,7 @@
             type="button"
             {{ $getExtraTriggerAttributeBag()->class([
                 'bg-white relative w-full border py-2 pl-3 pr-10 rtl:pl-10 rtl:pr-3 text-left cursor-default rounded-lg shadow-sm',
-                'focus-within:ring-1 focus-within:border-primary-600 focus-within:ring-inset focus-within:ring-primary-600' => ! $isDisabled(),
+                'focus-within:ring-1 focus-within:border-primary-500 focus-within:ring-inset focus-within:ring-primary-500' => ! $isDisabled(),
                 'dark:bg-gray-700' => config('forms.dark_mode'),
                 'border-gray-300' => ! $errors->has($getStatePath()),
                 'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
