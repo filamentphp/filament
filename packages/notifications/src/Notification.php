@@ -4,6 +4,7 @@ namespace Filament\Notifications;
 
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Actions\ActionGroup;
+use Filament\Notifications\Concerns\CanBeInline;
 use Filament\Notifications\Concerns\HasActions;
 use Filament\Notifications\Concerns\HasBody;
 use Filament\Notifications\Concerns\HasDuration;
@@ -12,10 +13,12 @@ use Filament\Notifications\Concerns\HasId;
 use Filament\Notifications\Concerns\HasTitle;
 use Filament\Support\Components\ViewComponent;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Str;
 
 class Notification extends ViewComponent implements Arrayable
 {
+    use CanBeInline;
     use HasActions;
     use HasBody;
     use HasDuration;
@@ -55,21 +58,21 @@ class Notification extends ViewComponent implements Arrayable
 
     public static function fromArray(array $data): static
     {
-        $static = static::make($data['id']);
+        $static = static::make($data['id'] ?? Str::random());
         $static->actions(
             array_map(
                 fn (array $action): Action | ActionGroup => match (array_key_exists('actions', $action)) {
                     true => ActionGroup::fromArray($action),
                     false => Action::fromArray($action),
                 },
-                $data['actions'],
+                $data['actions'] ?? [],
             ),
         );
-        $static->body($data['body']);
-        $static->duration($data['duration']);
-        $static->icon($data['icon']);
-        $static->iconColor($data['iconColor']);
-        $static->title($data['title']);
+        $static->body($data['body'] ?? null);
+        $static->duration($data['duration'] ?? null);
+        $static->icon($data['icon'] ?? null);
+        $static->iconColor($data['iconColor'] ?? null);
+        $static->title($data['title'] ?? null);
 
         return $static;
     }
@@ -116,5 +119,29 @@ class Notification extends ViewComponent implements Arrayable
         $this->iconColor('danger');
 
         return $this;
+    }
+
+    public function toDatabase(): array
+    {
+        $data = $this->toArray();
+        unset($data['duration']);
+        unset($data['id']);
+
+        return $data;
+    }
+
+    public static function fromDatabase(DatabaseNotification $notification): static
+    {
+        $static = static::fromArray($notification->data);
+        $static->id($notification->getKey());
+
+        return $static;
+    }
+
+    public function __get(string $name)
+    {
+        if ($name === 'data') {
+            return $this->toDatabase();
+        }
     }
 }

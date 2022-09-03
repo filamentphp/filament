@@ -34,9 +34,31 @@ class Notifications extends Component
         }
     }
 
+    public function clear(): void
+    {
+        auth()->user()->notifications()->delete();
+    }
+
+    public function markAllAsRead(): void
+    {
+        auth()->user()->notifications()->update(['read_at' => now()]);
+    }
+
     public function removeNotification(string $id): void
     {
-        $this->notifications->forget($id);
+        if ($this->notifications->has($id)) {
+            $this->notifications->forget($id);
+
+            return;
+        }
+
+        $notification = auth()->user()->notifications()->find($id);
+
+        if (! $notification) {
+            return;
+        }
+
+        $notification->delete();
     }
 
     public function render(): View

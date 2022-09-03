@@ -173,6 +173,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Database notifications
+    |--------------------------------------------------------------------------
+    |
+    | By enabling this feature, your users are able to open a slide-over within
+    | the admin panel to view their database notifications.
+    |
+    */
+
+    'database_notifications' => false,
+
+    /*
+    |--------------------------------------------------------------------------
     | Layout
     |--------------------------------------------------------------------------
     |
