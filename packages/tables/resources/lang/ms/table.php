@@ -28,7 +28,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'setiap halaman',
+
+                'options' => [
+                    'all' => 'Semua',
+                ],
+
             ],
 
         ],
@@ -94,10 +100,6 @@ return [
 
             'reset' => [
                 'label' => 'Tetapkan semula penapis',
-            ],
-
-            'close' => [
-                'label' => 'Tutup',
             ],
 
         ],
