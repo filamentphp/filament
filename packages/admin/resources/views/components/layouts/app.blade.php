@@ -37,7 +37,7 @@
                 <div @class([
                     'flex items-center w-full px-2 sm:px-4 md:px-6 lg:px-8',
                 ])>
-                    <x-filament::layouts.app.topbar.nav-menu-button />
+                    <x-filament::layouts.app.topbar.collapse-sidebar-button />
 
                     <div class="flex items-center justify-between flex-1 gap-4">
                         <x-filament::layouts.app.topbar.breadcrumbs :breadcrumbs="$breadcrumbs"/>
