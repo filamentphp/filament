@@ -3,6 +3,7 @@
 namespace Filament\Notifications;
 
 use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Actions\ActionGroup;
 use Filament\Notifications\Concerns\HasActions;
 use Filament\Notifications\Concerns\HasBody;
 use Filament\Notifications\Concerns\HasDuration;
@@ -43,7 +44,7 @@ class Notification extends ViewComponent implements Arrayable
     {
         return [
             'id' => $this->getId(),
-            'actions' => collect($this->getActions())->toArray(),
+            'actions' => array_map(fn (Action | ActionGroup $action): array => $action->toArray(), $this->getActions()),
             'body' => $this->getBody(),
             'duration' => $this->getDuration(),
             'icon' => $this->getIcon(),
@@ -55,7 +56,15 @@ class Notification extends ViewComponent implements Arrayable
     public static function fromArray(array $data): static
     {
         $static = static::make($data['id']);
-        $static->actions(array_map(fn (array $action): Action => Action::fromArray($action), $data['actions']));
+        $static->actions(
+            array_map(
+                fn (array $action): Action | ActionGroup => match (array_key_exists('actions', $action)) {
+                    true => ActionGroup::fromArray($action),
+                    false => Action::fromArray($action),
+                },
+                $data['actions'],
+            ),
+        );
         $static->body($data['body']);
         $static->duration($data['duration']);
         $static->icon($data['icon']);

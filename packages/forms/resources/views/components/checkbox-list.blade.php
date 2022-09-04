@@ -16,7 +16,7 @@
         :lg="$getColumns('lg')"
         :xl="$getColumns('xl')"
         :two-xl="$getColumns('2xl')"
-        :attributes="$attributes->class(['gap-1 filament-forms-checkbox-list-component'])"
+        :attributes="$attributes->class(['filament-forms-checkbox-list-component gap-1'])"
     >
         @php
             $isDisabled = $isDisabled();

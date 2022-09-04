@@ -82,6 +82,16 @@ trait CanToggleColumns
         return 1;
     }
 
+    protected function getTableColumnToggleFormWidth(): ?string
+    {
+        return match ($this->getTableColumnToggleFormColumns()) {
+            2 => '2xl',
+            3 => '4xl',
+            4 => '6xl',
+            default => null,
+        };
+    }
+
     public function isTableColumnToggledHidden(string $name): bool
     {
         return Arr::has($this->toggledTableColumns, $name) && ! data_get($this->toggledTableColumns, $name);

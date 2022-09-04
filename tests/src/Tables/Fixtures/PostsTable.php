@@ -117,7 +117,14 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
             Tables\Actions\BulkAction::make('enabled'),
             Tables\Actions\BulkAction::make('disabled')
                 ->disabled(),
-            Tables\Actions\BulkAction::make('exists'),
+            Tables\Actions\BulkAction::make('has-icon')
+                ->icon('heroicon-s-pencil'),
+            Tables\Actions\BulkAction::make('has-label')
+                ->label('My Action'),
+            Tables\Actions\BulkAction::make('has-color')
+                ->color('primary'),
+            Tables\Actions\BulkAction::make('exists')
+
         ];
     }
 

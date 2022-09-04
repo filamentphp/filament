@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 class Section extends Component implements Contracts\CanConcealComponents, Contracts\CanEntangleWithSingularRelationships
 {
     use Concerns\CanBeCollapsed;
+    use Concerns\CanBeCompacted;
     use Concerns\EntanglesStateWithSingularRelationship;
     use HasExtraAlpineAttributes;
 

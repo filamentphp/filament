@@ -480,6 +480,17 @@ protected function isTablePaginationEnabledWhileReordering(): bool
 }
 ```
 
+## Polling content
+
+You may poll table content so that it refreshes at a set interval, using the `getTablePollingInterval()` method:
+
+```php
+protected function getTablePollingInterval(): ?string
+{
+    return '10s';
+}
+```
+
 ## Using the form builder
 
 Internally, the table builder uses the [form builder](/docs/forms) to implement filtering, actions, and bulk actions. Because of this, the form builder is already set up on your Livewire component and ready to use with your own custom forms.

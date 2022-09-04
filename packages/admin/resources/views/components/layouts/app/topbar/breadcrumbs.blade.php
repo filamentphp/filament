@@ -2,7 +2,7 @@
     'breadcrumbs' => [],
 ])
 
-<div {{ $attributes->class(['flex-1 filament-breadcrumbs']) }}>
+<div {{ $attributes->class(['filament-breadcrumbs flex-1']) }}>
     <ul @class([
         'hidden gap-4 items-center font-medium text-sm lg:flex',
         'dark:text-white' => config('filament.dark_mode'),

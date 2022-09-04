@@ -1,4 +1,5 @@
 import { mutateDom } from 'alpinejs/src/mutation'
+import { once } from 'alpinejs/src/utils/once'
 
 export default (Alpine) => {
     Alpine.data('notificationComponent', ({ notification }) => ({
@@ -23,26 +24,32 @@ export default (Alpine) => {
             const display = this.computedStyle.display
 
             const show = () => {
-                mutateDom(() => this.$el.style.setProperty('display', display))
+                mutateDom(() => {
+                    this.$el.style.setProperty('display', display)
+                    this.$el.style.setProperty('visibility', 'visible')
+                })
                 this.$el._x_isShown = true
             }
 
             const hide = () => {
                 mutateDom(() => {
-                    this.$el._x_isShown ?
-                        this.$el.style.setProperty('visibility', 'hidden') :
-                        this.$el.style.setProperty('display', 'none')
+                    this.$el._x_isShown
+                        ? this.$el.style.setProperty('visibility', 'hidden')
+                        : this.$el.style.setProperty('display', 'none')
                 })
             }
 
-            const toggle = (value) => {
-                this.$el._x_toggleAndCascadeWithTransitions(
-                    this.$el,
-                    value,
-                    show,
-                    hide,
-                )
-            }
+            const toggle = once(
+                (value) => (value ? show() : hide()),
+                (value) => {
+                    this.$el._x_toggleAndCascadeWithTransitions(
+                        this.$el,
+                        value,
+                        show,
+                        hide,
+                    )
+                },
+            )
 
             Alpine.effect(() => toggle(this.isShown))
         },
@@ -81,7 +88,7 @@ export default (Alpine) => {
                     return
                 }
 
-                if (! this.isShown) {
+                if (!this.isShown) {
                     return
                 }
 

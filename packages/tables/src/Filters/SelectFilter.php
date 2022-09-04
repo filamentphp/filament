@@ -23,6 +23,20 @@ class SelectFilter extends BaseFilter
         parent::setUp();
 
         $this->placeholder(__('tables::table.filters.select.placeholder'));
+
+        $this->indicateUsing(function (array $state): array {
+            if (blank($state['value'] ?? null)) {
+                return [];
+            }
+
+            $label = $this->getOptions()[$state['value']] ?? null;
+
+            if (blank($label)) {
+                return [];
+            }
+
+            return ["{$this->getIndicator()}: {$label}"];
+        });
     }
 
     public function apply(Builder $query, array $data = []): Builder
@@ -76,22 +90,28 @@ class SelectFilter extends BaseFilter
         return $this->evaluate($this->column) ?? $this->getName();
     }
 
-    public function getFormSchema(): array
+    protected function getFormField(): Select
     {
-        return $this->formSchema ?? [
-            $this->getFormSelectComponent(),
-        ];
+        return $this->getFormSelectComponent();
     }
 
+    /**
+     * @deprecated Overwrite `getFormField()` instead.
+     */
     protected function getFormSelectComponent(): Select
     {
-        return Select::make('value')
+        $field = Select::make('value')
             ->label($this->getLabel())
             ->options($this->getOptions())
             ->placeholder($this->getPlaceholder())
-            ->default($this->getDefaultState())
             ->searchable($this->isSearchable())
             ->columnSpan($this->getColumnSpan());
+
+        if (filled($defaultState = $this->getDefaultState())) {
+            $field->default($defaultState);
+        }
+
+        return $field;
     }
 
     public function isSearchable(): bool

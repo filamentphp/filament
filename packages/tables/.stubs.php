@@ -67,6 +67,18 @@ namespace Livewire\Testing {
 
         public function assertTableActionDoesNotHaveLabel(string $name, string $label): static {}
 
+        public function assertTableBulkActionHasIcon(string $name, string $icon): static {}
+
+        public function assertTableBulkActionDoesNotHaveIcon(string $name, string $icon): static {}
+
+        public function assertTableBulkActionHasLabel(string $name, string $label): static {}
+
+        public function assertTableBulkActionDoesNotHaveLabel(string $name, string $label): static {}
+
+        public function assertTableBulkActionHasColor(string $name, string $color): static {}
+
+        public function assertTableBulkActionDoesNotHaveColor(string $name, string $color): static {}
+
         public function assertTableBulkActionHeld(string $name): static {}
 
         public function assertHasTableBulkActionErrors(array $keys = []): static {}
@@ -88,6 +100,10 @@ namespace Livewire\Testing {
         public function filterTable(string $name, $data = null): static {}
 
         public function resetTableFilters(): static {}
+
+        public function removeTableFilter(string $filter, ?string $field = null): static {}
+
+        public function removeTableFilters(): static {}
 
         public function assertCanSeeTableRecords(array | Collection $records, bool $inOrder = false): static {}
 

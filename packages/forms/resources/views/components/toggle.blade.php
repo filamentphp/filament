@@ -40,27 +40,23 @@
                 dusk="filament.forms.{{ $getStatePath() }}"
                 type="button"
                 {{ $attributes->merge($getExtraAttributes())->class([
-                    'relative inline-flex shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70 disabled:cursor-not-allowed disabled:pointer-events-none filament-forms-toggle-component',
+                    'filament-forms-toggle-component relative inline-flex shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70 disabled:cursor-not-allowed disabled:pointer-events-none',
                     'border-gray-300' => ! $errors->has($getStatePath()),
                     'border-danger-300 ring-danger-500' => $errors->has($getStatePath()),
                 ]) }}
                 {{ $getExtraAlpineAttributeBag() }}
             >
                 <span
-                    @class([
-                        'pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 ease-in-out transition duration-200',
-                    ])
-                    :class="{
+                    class="pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 ease-in-out transition duration-200"
+                    x-bind:class="{
                         'translate-x-5 rtl:-translate-x-5': state,
                         'translate-x-0': ! state,
                     }"
                 >
                     <span
-                        @class([
-                            'absolute inset-0 h-full w-full flex items-center justify-center transition-opacity',
-                        ])
+                        class="absolute inset-0 h-full w-full flex items-center justify-center transition-opacity"
                         aria-hidden="true"
-                        :class="{
+                        x-bind:class="{
                             'opacity-0 ease-out duration-100': state,
                             'opacity-100 ease-in duration-200': ! state,
                         }"
@@ -73,7 +69,7 @@
                     <span
                         class="absolute inset-0 h-full w-full flex items-center justify-center transition-opacity"
                         aria-hidden="true"
-                        :class="{
+                        x-bind:class="{
                             'opacity-100 ease-in duration-200': state,
                             'opacity-0 ease-out duration-100': ! state,
                         }"

@@ -28,7 +28,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'setiap halaman',
+
+                'options' => [
+                    'all' => 'Semua',
+                ],
+
             ],
 
         ],
@@ -83,15 +89,22 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Buang penapis',
+            ],
+
+            'remove_all' => [
+                'label' => 'Buang semua penapis',
+                'tooltip' => 'Buang semua penapis',
+            ],
+
             'reset' => [
                 'label' => 'Tetapkan semula penapis',
             ],
 
-            'close' => [
-                'label' => 'Tutup',
-            ],
-
         ],
+
+        'indicator' => 'Penapis aktif',
 
         'multi_select' => [
             'placeholder' => 'Semua',

@@ -16,7 +16,7 @@
 
 @php
     $buttonClasses = array_merge([
-        'inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset filament-button',
+        'filament-button inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset',
         'dark:focus:ring-offset-0' => $darkMode,
         'opacity-70 cursor-not-allowed pointer-events-none' => $disabled,
         'min-h-[2.25rem] px-4 text-sm' => $size === 'md',
@@ -49,8 +49,8 @@
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-button-icon',
-        'w-5 h-5' => $size === 'md',
         'w-4 h-4' => $size === 'sm',
+        'w-5 h-5' => $size === 'md',
         'w-6 h-6' => $size === 'lg',
         'mr-1 -ml-2 rtl:ml-1 rtl:-mr-2' => ($iconPosition === 'before') && ($size === 'md') && (! $labelSrOnly),
         'mr-2 -ml-3 rtl:ml-2 rtl:-mr-3' => ($iconPosition === 'before') && ($size === 'lg') && (! $labelSrOnly),

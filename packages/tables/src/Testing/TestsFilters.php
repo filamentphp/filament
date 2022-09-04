@@ -47,7 +47,7 @@ class TestsFilters
                 )];
             } elseif ($filter instanceof SelectFilter) {
                 $data = ['value' => $data instanceof Model ? $data->getKey() : $data];
-            } else {
+            } elseif (! is_array($data)) {
                 $data = ['isActive' => $data === true || $data === null];
             }
 
@@ -61,6 +61,24 @@ class TestsFilters
     {
         return function (): static {
             $this->call('resetTableFiltersForm');
+
+            return $this;
+        };
+    }
+
+    public function removeTableFilter(): Closure
+    {
+        return function (string $filter, ?string $field = null): static {
+            $this->call('removeTableFilter', $filter, $field);
+
+            return $this;
+        };
+    }
+
+    public function removeTableFilters(): Closure
+    {
+        return function (): static {
+            $this->call('removeTableFilters');
 
             return $this;
         };

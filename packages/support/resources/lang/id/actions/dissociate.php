@@ -21,7 +21,7 @@ return [
         ],
 
         'messages' => [
-            'dissociated' => 'Pisahkan',
+            'dissociated' => 'Data berhasil dipisahkan',
         ],
 
     ],

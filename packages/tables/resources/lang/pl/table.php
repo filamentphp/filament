@@ -2,6 +2,14 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 'i :count więcej',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -20,7 +28,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'na stronę',
+
+                'options' => [
+                    'all' => 'Wszystkie',
+                ],
+
             ],
 
         ],
@@ -45,6 +59,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Zakończ zmienianie kolejności',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Zmień kolejność',
+        ],
+
         'filter' => [
             'label' => 'Filtr',
         ],
@@ -67,15 +89,22 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Usuń filtr',
+            ],
+
+            'remove_all' => [
+                'label' => 'Usuń wszystkie filtry',
+                'tooltip' => 'Usuń wszystkie filtry',
+            ],
+
             'reset' => [
                 'label' => 'Zresetuj filtry',
             ],
 
-            'close' => [
-                'label' => 'Zamknij',
-            ],
-
         ],
+
+        'indicator' => 'Aktywne filtry',
 
         'multi_select' => [
             'placeholder' => 'Wszystkie',
@@ -98,6 +127,8 @@ return [
         ],
 
     ],
+
+    'reorder_indicator' => 'Zmień kolejność przeciągając.',
 
     'selection_indicator' => [
 

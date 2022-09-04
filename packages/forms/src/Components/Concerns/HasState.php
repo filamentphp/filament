@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Filament\Forms\Components\Component;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
@@ -143,10 +144,25 @@ trait HasState
         $this->callAfterStateHydrated();
     }
 
+    public function fill(): void
+    {
+        $defaults = [];
+
+        $this->hydrateDefaultState($defaults);
+    }
+
     public function hydrateDefaultState(?array &$hydratedDefaultState): void
     {
         if ($hydratedDefaultState === null) {
             $this->loadStateFromRelationships();
+
+            $state = $this->getState();
+
+            // Hydrate all arrayable state objects as arrays by converting
+            // them to collections, then using `toArray()`.
+            if (is_array($state) || $state instanceof Arrayable) {
+                $this->state(collect($state)->toArray());
+            }
 
             return;
         }
