@@ -12,6 +12,13 @@ class MakeResourceCommand extends Command
     use Concerns\CanManipulateFiles;
     use Concerns\CanValidateInput;
 
+    public string $editResourcePageClass;
+    public string $manageResourcePageClass;
+    public string $createResourcePageClass;
+    public string $listResourcePageClass;
+    public string $viewResourcePageClass;
+    
+    
     protected $description = 'Creates a Filament resource class and default page classes.';
 
     protected $signature = 'make:filament-resource {name?} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--F|force}';
