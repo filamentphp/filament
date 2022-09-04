@@ -3,14 +3,14 @@
 ])
 
 <x-filament::layouts.base :title="$title">
-    <div class="flex w-full min-h-screen overflow-x-hidden filament-app-layout">
+    <div class="filament-app-layout flex w-full min-h-screen overflow-x-hidden">
         <div
             x-data="{}"
             x-cloak
             x-show="$store.sidebar.isOpen"
             x-transition.opacity.500ms
             x-on:click="$store.sidebar.close()"
-            class="fixed inset-0 z-20 w-full h-full filament-sidebar-close-overlay bg-gray-900/50 lg:hidden"
+            class="filament-sidebar-close-overlay fixed inset-0 z-20 w-full h-full bg-gray-900/50 lg:hidden"
         ></div>
 
         <x-filament::layouts.app.sidebar/>
@@ -70,7 +70,7 @@
                 {{ \Filament\Facades\Filament::renderHook('content.end') }}
             </div>
 
-            <div class="py-4 filament-main-footer shrink-0">
+            <div class="filament-main-footer py-4 shrink-0">
                 <x-filament::footer/>
             </div>
 
