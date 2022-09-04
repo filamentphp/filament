@@ -13,12 +13,15 @@ class MakeResourceCommand extends Command
     use Concerns\CanValidateInput;
 
     public string $editResourcePageClass;
+
     public string $manageResourcePageClass;
+
     public string $createResourcePageClass;
+
     public string $listResourcePageClass;
+
     public string $viewResourcePageClass;
-    
-    
+
     protected $description = 'Creates a Filament resource class and default page classes.';
 
     protected $signature = 'make:filament-resource {name?} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--F|force}';
@@ -54,13 +57,13 @@ class MakeResourceCommand extends Command
         $viewResourcePagePath = "{$resourcePagesDirectory}/{$this->viewResourcePageClass}.php";
 
         if (! $this->option('force') && $this->checkForCollision([
-                $resourcePath,
-                $listResourcePagePath,
-                $manageResourcePagePath,
-                $createResourcePagePath,
-                $editResourcePagePath,
-                $viewResourcePagePath,
-            ])) {
+            $resourcePath,
+            $listResourcePagePath,
+            $manageResourcePagePath,
+            $createResourcePagePath,
+            $editResourcePagePath,
+            $viewResourcePagePath,
+        ])) {
             return static::INVALID;
         }
 
@@ -73,7 +76,6 @@ class MakeResourceCommand extends Command
         $tableBulkActions = $this->tableBulkActionsCode();
 
         $eloquentQuery = $this->eloquentQueryCode();
-
 
         $this->copyStubToApp('Resource', $resourcePath, [
             'eloquentQuery' => $this->indentString($eloquentQuery, 1),
@@ -169,8 +171,7 @@ class MakeResourceCommand extends Command
             ->studly()
             ->replace('/', '\\');
 
-
-        return !blank($model) ? $model : 'Resource';
+        return ! blank($model) ? $model : 'Resource';
     }
 
     public function getModelNamespace($model)
@@ -191,7 +192,7 @@ class MakeResourceCommand extends Command
 
     public function pagesCode()
     {
-        $pages  = '';
+        $pages = '';
         $pages .= '\'index\' => Pages\\' . ($this->option('simple') ? $this->manageResourcePageClass : $this->listResourcePageClass) . '::route(\'/\'),';
 
         if (! $this->option('simple')) {
@@ -203,6 +204,7 @@ class MakeResourceCommand extends Command
 
             $pages .= PHP_EOL . "'edit' => Pages\\{$this->editResourcePageClass}::route('/{record}/edit'),";
         }
+
         return $pages;
     }
 
@@ -224,6 +226,7 @@ class MakeResourceCommand extends Command
                 $tableActions[] = 'Tables\Actions\RestoreAction::make(),';
             }
         }
+
         return implode(PHP_EOL, $tableActions);
     }
 
@@ -237,6 +240,7 @@ class MakeResourceCommand extends Command
             $tableBulkActions[] = 'Tables\Actions\RestoreBulkAction::make(),';
             $tableBulkActions[] = 'Tables\Actions\ForceDeleteBulkAction::make(),';
         }
+
         return implode(PHP_EOL, $tableBulkActions);
     }
 
@@ -244,7 +248,7 @@ class MakeResourceCommand extends Command
     {
         $relations = '';
 
-        if (!$this->option('simple')) {
+        if (! $this->option('simple')) {
             $relations .= PHP_EOL . 'public static function getRelations(): array';
             $relations .= PHP_EOL . '{';
             $relations .= PHP_EOL . '    return [';
@@ -252,6 +256,7 @@ class MakeResourceCommand extends Command
             $relations .= PHP_EOL . '    ];';
             $relations .= PHP_EOL . '}' . PHP_EOL;
         }
+
         return $relations;
     }
 
@@ -267,6 +272,7 @@ class MakeResourceCommand extends Command
             $eloquentQuery .= PHP_EOL . '        ]);';
             $eloquentQuery .= PHP_EOL . '}';
         }
+
         return $eloquentQuery;
     }
 }
