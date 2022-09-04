@@ -5,6 +5,7 @@
         'whitespace-nowrap group-focus-within:text-primary-500',
         'text-gray-400' => ! $errors->has($getStatePath()),
         'text-danger-400' => $errors->has($getStatePath()),
+        'inline-flex items-center border border-gray-300 bg-gray-50 px-3 text-gray-500',
     ];
 @endphp
 
@@ -31,7 +32,7 @@
         @endif
 
         @if ($label = $getPrefixLabel())
-            <span @class(array_merge($affixLabelClasses , ['inline-flex items-center rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500']))>
+            <span @class(array_merge($affixLabelClasses , ['rounded-l-lg border-r-0']))>
                 {{ $label }}
             </span>
         @endif
@@ -88,7 +89,7 @@
         </div>
 
         @if ($label = $getSuffixLabel())
-            <span @class(array_merge($affixLabelClasses, ['inline-flex items-center rounded-r-lg border border-l-0 border-gray-300 bg-gray-50 px-3 text-gray-500']))>
+            <span @class(array_merge($affixLabelClasses, ['rounded-r-lg border-l-0']))>
                 {{ $label }}
             </span>
         @endif
