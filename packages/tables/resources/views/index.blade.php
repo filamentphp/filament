@@ -489,9 +489,12 @@
                                 $getRecordClasses($record),
                             ))"
                         >
-                            @if ($isReordering)
-                                <x-tables::reorder.cell />
-                            @else
+                            <x-tables::reorder.cell
+                                x-cloak
+                                :x-bind:class="json_encode(['hidden' => !$isReordering])"
+                            />
+
+                            @if (! $isReordering)
                                 @if (count($actions) && $actionsPosition === Position::BeforeCells)
                                     <x-tables::actions-cell
                                         :actions="$actions"
