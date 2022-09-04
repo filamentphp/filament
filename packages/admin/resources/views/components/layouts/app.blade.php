@@ -3,14 +3,14 @@
 ])
 
 <x-filament::layouts.base :title="$title">
-    <div class="filament-app-layout flex w-full min-h-screen overflow-x-hidden">
+    <div class="flex w-full min-h-screen overflow-x-hidden filament-app-layout">
         <div
             x-data="{}"
             x-cloak
             x-show="$store.sidebar.isOpen"
             x-transition.opacity.500ms
             x-on:click="$store.sidebar.close()"
-            class="filament-sidebar-close-overlay fixed inset-0 z-20 w-full h-full bg-gray-900/50 lg:hidden"
+            class="fixed inset-0 z-20 w-full h-full filament-sidebar-close-overlay bg-gray-900/50 lg:hidden"
         ></div>
 
         <x-filament::layouts.app.sidebar/>
@@ -20,7 +20,7 @@
                 x-data="{}"
                 x-bind:class="{
                     'lg:pl-[5.4rem] rtl:lg:pr-[5.4rem]': ! $store.sidebar.isOpen,
-                    'lg:pl-[var(--sidebar-width)] rtl:lg:pr-[var(--sidebar-width)]': $store.sidebar.isOpen,
+                    'lg:pl-[var(--sidebar-width)] rtl:lg:pr-[var(--sidebar-width)] sidebar-open': $store.sidebar.isOpen,
                 }"
                 x-bind:style="'display: flex'" {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
             @endif
@@ -70,7 +70,7 @@
                 {{ \Filament\Facades\Filament::renderHook('content.end') }}
             </div>
 
-            <div class="filament-main-footer py-4 shrink-0">
+            <div class="py-4 filament-main-footer shrink-0">
                 <x-filament::footer/>
             </div>
 
