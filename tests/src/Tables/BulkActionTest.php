@@ -109,3 +109,4 @@ it('can state whether a bulk action exists', function () {
     livewire(PostsTable::class)
         ->assertTableBulkActionExists('exists')
         ->assertTableBulkActionDoesNotExist('does_not_exist');
+});
