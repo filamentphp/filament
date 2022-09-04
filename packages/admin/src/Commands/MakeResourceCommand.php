@@ -18,119 +18,55 @@ class MakeResourceCommand extends Command
 
     public function handle(): int
     {
-        $model = (string) Str::of($this->argument('name') ?? $this->askRequired('Model (e.g. `BlogPost`)', 'name'))
-            ->studly()
-            ->beforeLast('Resource')
-            ->trim('/')
-            ->trim('\\')
-            ->trim(' ')
-            ->studly()
-            ->replace('/', '\\');
-
-        if (blank($model)) {
-            $model = 'Resource';
-        }
+        $model = $this->getModel();
 
         $modelClass = (string) Str::of($model)->afterLast('\\');
-        $modelNamespace = Str::of($model)->contains('\\') ?
-            (string) Str::of($model)->beforeLast('\\') :
-            '';
+
+        $modelNamespace = $this->getModelNamespace($model);
+
         $pluralModelClass = (string) Str::of($modelClass)->pluralStudly();
 
         $resource = "{$model}Resource";
         $resourceClass = "{$modelClass}Resource";
         $resourceNamespace = $modelNamespace;
-        $listResourcePageClass = "List{$pluralModelClass}";
-        $manageResourcePageClass = "Manage{$pluralModelClass}";
-        $createResourcePageClass = "Create{$modelClass}";
-        $editResourcePageClass = "Edit{$modelClass}";
-        $viewResourcePageClass = "View{$modelClass}";
 
-        $baseResourcePath = app_path(
-            (string) Str::of($resource)
-                ->prepend('Filament\\Resources\\')
-                ->replace('\\', '/'),
-        );
+        $this->listResourcePageClass = "List{$pluralModelClass}";
+        $this->manageResourcePageClass = "Manage{$pluralModelClass}";
+        $this->createResourcePageClass = "Create{$modelClass}";
+        $this->editResourcePageClass = "Edit{$modelClass}";
+        $this->viewResourcePageClass = "View{$modelClass}";
+
+        $baseResourcePath = $this->getBaseResourcePath($resource);
+
         $resourcePath = "{$baseResourcePath}.php";
         $resourcePagesDirectory = "{$baseResourcePath}/Pages";
-        $listResourcePagePath = "{$resourcePagesDirectory}/{$listResourcePageClass}.php";
-        $manageResourcePagePath = "{$resourcePagesDirectory}/{$manageResourcePageClass}.php";
-        $createResourcePagePath = "{$resourcePagesDirectory}/{$createResourcePageClass}.php";
-        $editResourcePagePath = "{$resourcePagesDirectory}/{$editResourcePageClass}.php";
-        $viewResourcePagePath = "{$resourcePagesDirectory}/{$viewResourcePageClass}.php";
+        $listResourcePagePath = "{$resourcePagesDirectory}/{$this->listResourcePageClass}.php";
+        $manageResourcePagePath = "{$resourcePagesDirectory}/{$this->manageResourcePageClass}.php";
+        $createResourcePagePath = "{$resourcePagesDirectory}/{$this->createResourcePageClass}.php";
+        $editResourcePagePath = "{$resourcePagesDirectory}/{$this->editResourcePageClass}.php";
+        $viewResourcePagePath = "{$resourcePagesDirectory}/{$this->viewResourcePageClass}.php";
 
         if (! $this->option('force') && $this->checkForCollision([
-            $resourcePath,
-            $listResourcePagePath,
-            $manageResourcePagePath,
-            $createResourcePagePath,
-            $editResourcePagePath,
-            $viewResourcePagePath,
-        ])) {
+                $resourcePath,
+                $listResourcePagePath,
+                $manageResourcePagePath,
+                $createResourcePagePath,
+                $editResourcePagePath,
+                $viewResourcePagePath,
+            ])) {
             return static::INVALID;
         }
 
-        $pages = '';
-        $pages .= '\'index\' => Pages\\' . ($this->option('simple') ? $manageResourcePageClass : $listResourcePageClass) . '::route(\'/\'),';
+        $pages = $this->pagesCode();
 
-        if (! $this->option('simple')) {
-            $pages .= PHP_EOL . "'create' => Pages\\{$createResourcePageClass}::route('/create'),";
+        $tableActions = $this->tableActionsCode();
 
-            if ($this->option('view')) {
-                $pages .= PHP_EOL . "'view' => Pages\\{$viewResourcePageClass}::route('/{record}'),";
-            }
+        $relations = $this->relationsCode();
 
-            $pages .= PHP_EOL . "'edit' => Pages\\{$editResourcePageClass}::route('/{record}/edit'),";
-        }
+        $tableBulkActions = $this->tableBulkActionsCode();
 
-        $tableActions = [];
+        $eloquentQuery = $this->eloquentQueryCode();
 
-        if ($this->option('view')) {
-            $tableActions[] = 'Tables\Actions\ViewAction::make(),';
-        }
-
-        $tableActions[] = 'Tables\Actions\EditAction::make(),';
-
-        $relations = '';
-
-        if ($this->option('simple')) {
-            $tableActions[] = 'Tables\Actions\DeleteAction::make(),';
-
-            if ($this->option('soft-deletes')) {
-                $tableActions[] = 'Tables\Actions\ForceDeleteAction::make(),';
-                $tableActions[] = 'Tables\Actions\RestoreAction::make(),';
-            }
-        } else {
-            $relations .= PHP_EOL . 'public static function getRelations(): array';
-            $relations .= PHP_EOL . '{';
-            $relations .= PHP_EOL . '    return [';
-            $relations .= PHP_EOL . '        //';
-            $relations .= PHP_EOL . '    ];';
-            $relations .= PHP_EOL . '}' . PHP_EOL;
-        }
-
-        $tableActions = implode(PHP_EOL, $tableActions);
-
-        $tableBulkActions = [];
-
-        $tableBulkActions[] = 'Tables\Actions\DeleteBulkAction::make(),';
-
-        $eloquentQuery = '';
-
-        if ($this->option('soft-deletes')) {
-            $tableBulkActions[] = 'Tables\Actions\RestoreBulkAction::make(),';
-            $tableBulkActions[] = 'Tables\Actions\ForceDeleteBulkAction::make(),';
-
-            $eloquentQuery .= PHP_EOL . PHP_EOL . 'public static function getEloquentQuery(): Builder';
-            $eloquentQuery .= PHP_EOL . '{';
-            $eloquentQuery .= PHP_EOL . '    return parent::getEloquentQuery()';
-            $eloquentQuery .= PHP_EOL . '        ->withoutGlobalScopes([';
-            $eloquentQuery .= PHP_EOL . '            SoftDeletingScope::class,';
-            $eloquentQuery .= PHP_EOL . '        ]);';
-            $eloquentQuery .= PHP_EOL . '}';
-        }
-
-        $tableBulkActions = implode(PHP_EOL, $tableBulkActions);
 
         $this->copyStubToApp('Resource', $resourcePath, [
             'eloquentQuery' => $this->indentString($eloquentQuery, 1),
@@ -160,14 +96,14 @@ class MakeResourceCommand extends Command
                 'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
                 'resource' => $resource,
                 'resourceClass' => $resourceClass,
-                'resourcePageClass' => $manageResourcePageClass,
+                'resourcePageClass' => $this->manageResourcePageClass,
             ]);
         } else {
             $this->copyStubToApp('ResourceListPage', $listResourcePagePath, [
                 'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
                 'resource' => $resource,
                 'resourceClass' => $resourceClass,
-                'resourcePageClass' => $listResourcePageClass,
+                'resourcePageClass' => $this->listResourcePageClass,
             ]);
 
             $this->copyStubToApp('ResourcePage', $createResourcePagePath, [
@@ -176,7 +112,7 @@ class MakeResourceCommand extends Command
                 'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
                 'resource' => $resource,
                 'resourceClass' => $resourceClass,
-                'resourcePageClass' => $createResourcePageClass,
+                'resourcePageClass' => $this->createResourcePageClass,
             ]);
 
             $editPageActions = [];
@@ -186,7 +122,7 @@ class MakeResourceCommand extends Command
                     'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
                     'resource' => $resource,
                     'resourceClass' => $resourceClass,
-                    'resourcePageClass' => $viewResourcePageClass,
+                    'resourcePageClass' => $this->viewResourcePageClass,
                 ]);
 
                 $editPageActions[] = 'Actions\ViewAction::make(),';
@@ -206,12 +142,124 @@ class MakeResourceCommand extends Command
                 'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
                 'resource' => $resource,
                 'resourceClass' => $resourceClass,
-                'resourcePageClass' => $editResourcePageClass,
+                'resourcePageClass' => $this->editResourcePageClass,
             ]);
         }
 
         $this->info("Successfully created {$resource}!");
 
         return static::SUCCESS;
+    }
+
+    public function getModel()
+    {
+        $model = (string) Str::of($this->argument('name') ?? $this->askRequired('Model (e.g. `BlogPost`)', 'name'))
+            ->studly()
+            ->beforeLast('Resource')
+            ->trim('/')
+            ->trim('\\')
+            ->trim(' ')
+            ->studly()
+            ->replace('/', '\\');
+
+
+        return !blank($model) ? $model : 'Resource';
+    }
+
+    public function getModelNamespace($model)
+    {
+        return Str::of($model)->contains('\\') ?
+            (string) Str::of($model)->beforeLast('\\') :
+            '';
+    }
+
+    public function getBaseResourcePath($resource)
+    {
+        return app_path(
+            (string) Str::of($resource)
+                ->prepend('Filament\\Resources\\')
+                ->replace('\\', '/'),
+        );
+    }
+
+    public function pagesCode()
+    {
+        $pages  = '';
+        $pages .= '\'index\' => Pages\\' . ($this->option('simple') ? $this->manageResourcePageClass : $this->listResourcePageClass) . '::route(\'/\'),';
+
+        if (! $this->option('simple')) {
+            $pages .= PHP_EOL . "'create' => Pages\\{$this->createResourcePageClass}::route('/create'),";
+
+            if ($this->option('view')) {
+                $pages .= PHP_EOL . "'view' => Pages\\{$this->viewResourcePageClass}::route('/{record}'),";
+            }
+
+            $pages .= PHP_EOL . "'edit' => Pages\\{$this->editResourcePageClass}::route('/{record}/edit'),";
+        }
+        return $pages;
+    }
+
+    public function tableActionsCode()
+    {
+        $tableActions = [];
+
+        if ($this->option('view')) {
+            $tableActions[] = 'Tables\Actions\ViewAction::make(),';
+        }
+
+        $tableActions[] = 'Tables\Actions\EditAction::make(),';
+
+        if ($this->option('simple')) {
+            $tableActions[] = 'Tables\Actions\DeleteAction::make(),';
+
+            if ($this->option('soft-deletes')) {
+                $tableActions[] = 'Tables\Actions\ForceDeleteAction::make(),';
+                $tableActions[] = 'Tables\Actions\RestoreAction::make(),';
+            }
+        }
+        return implode(PHP_EOL, $tableActions);
+    }
+
+    public function tableBulkActionsCode()
+    {
+        $tableBulkActions = [];
+
+        $tableBulkActions[] = 'Tables\Actions\DeleteBulkAction::make(),';
+
+        if ($this->option('soft-deletes')) {
+            $tableBulkActions[] = 'Tables\Actions\RestoreBulkAction::make(),';
+            $tableBulkActions[] = 'Tables\Actions\ForceDeleteBulkAction::make(),';
+        }
+        return implode(PHP_EOL, $tableBulkActions);
+    }
+
+    public function relationsCode()
+    {
+        $relations = '';
+
+        if (!$this->option('simple')) {
+            $relations .= PHP_EOL . 'public static function getRelations(): array';
+            $relations .= PHP_EOL . '{';
+            $relations .= PHP_EOL . '    return [';
+            $relations .= PHP_EOL . '        //';
+            $relations .= PHP_EOL . '    ];';
+            $relations .= PHP_EOL . '}' . PHP_EOL;
+        }
+        return $relations;
+    }
+
+    public function eloquentQueryCode()
+    {
+        $eloquentQuery = '';
+        if ($this->option('soft-deletes')) {
+            $eloquentQuery .= PHP_EOL . PHP_EOL . 'public static function getEloquentQuery(): Builder';
+            $eloquentQuery .= PHP_EOL . '{';
+            $eloquentQuery .= PHP_EOL . '    return parent::getEloquentQuery()';
+            $eloquentQuery .= PHP_EOL . '        ->withoutGlobalScopes([';
+            $eloquentQuery .= PHP_EOL . '            SoftDeletingScope::class,';
+            $eloquentQuery .= PHP_EOL . '        ]);';
+            $eloquentQuery .= PHP_EOL . '}';
+        }
+        return $eloquentQuery;
     }
 }
