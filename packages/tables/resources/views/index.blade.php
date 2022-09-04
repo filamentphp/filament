@@ -489,33 +489,37 @@
                                 $getRecordClasses($record),
                             ))"
                         >
-                            @if ($isReordering)
-                                <x-tables::reorder.cell />
-                            @else
-                                @if (count($actions) && $actionsPosition === Position::BeforeCells)
-                                    <x-tables::actions-cell
-                                        :actions="$actions"
-                                        :record="$record"
-                                    />
-                                @endif
+                            <x-tables::reorder.cell
+                                :class="Arr::toCssClasses(['hidden' => ! $isReordering])"
+                            />
 
-                                @if ($isSelectionEnabled)
-                                    <x-tables::checkbox-cell>
-                                        <x-slot
-                                            name="checkbox"
-                                            x-model="selectedRecords"
-                                            :value="$recordKey"
-                                            class="table-row-checkbox"
-                                        ></x-slot>
-                                    </x-tables::checkbox-cell>
-                                @endif
+                            @if (count($actions) && $actionsPosition === Position::BeforeCells)
+                                <x-tables::actions-cell
+                                    :actions="$actions"
+                                    :record="$record"
+                                    :class="Arr::toCssClasses(['hidden' => $isReordering])"
+                                />
+                            @endif
 
-                                @if (count($actions) && $actionsPosition === Position::BeforeColumns)
-                                    <x-tables::actions-cell
-                                        :actions="$actions"
-                                        :record="$record"
-                                    />
-                                @endif
+                            @if ($isSelectionEnabled)
+                                <x-tables::checkbox-cell
+                                    :class="Arr::toCssClasses(['hidden' => $isReordering])"
+                                >
+                                    <x-slot
+                                        name="checkbox"
+                                        x-model="selectedRecords"
+                                        :value="$recordKey"
+                                        class="table-row-checkbox"
+                                    ></x-slot>
+                                </x-tables::checkbox-cell>
+                            @endif
+
+                            @if (count($actions) && $actionsPosition === Position::BeforeColumns)
+                                <x-tables::actions-cell
+                                    :actions="$actions"
+                                    :record="$record"
+                                    :class="Arr::toCssClasses(['hidden' => $isReordering])"
+                                />
                             @endif
 
                             @foreach ($columns as $column)
