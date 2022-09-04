@@ -7,8 +7,7 @@
         <x-filament::user-avatar :user="$user" />
     </x-slot>
 
-    <ul
-        class="py-1 space-y-1"
+    <x-filament::dropdown.group
         x-data="{
             mode: null,
 
@@ -101,5 +100,5 @@
         >
             {{ $logoutItem?->getLabel() ?? __('filament::layout.buttons.logout.label') }}
         </x-filament::dropdown.item>
-    </ul>
+    </x-filament::dropdown.group>
 </x-filament::dropdown>

@@ -10,7 +10,9 @@
         <x-tables::bulk-actions.trigger />
     </x-slot>
 
-    @foreach ($actions as $action)
-        {{ $action }}
-    @endforeach
+    <x-tables::dropdown.group>
+        @foreach ($actions as $action)
+            {{ $action }}
+        @endforeach
+    </x-tables::dropdown.group>
 </x-tables::dropdown>
