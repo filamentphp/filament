@@ -75,6 +75,7 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
                 ->label('My Action'),
             Tables\Actions\Action::make('has-color')
                 ->color('primary'),
+            Tables\Actions\Action::make('exists')
         ];
     }
 
@@ -116,6 +117,7 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
             Tables\Actions\BulkAction::make('enabled'),
             Tables\Actions\BulkAction::make('disabled')
                 ->disabled(),
+            Tables\Actions\BulkAction::make('exists')
         ];
     }
 

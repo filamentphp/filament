@@ -86,3 +86,9 @@ it('can disable a bulk action', function () {
         ->assertTableBulkActionEnabled('enabled')
         ->assertTableBulkActionDisabled('disabled');
 });
+
+it('can state whether a bulk action exists', function() {
+    livewire(PostsTable::class)
+        ->assertTableBulkActionExists('exists')
+        ->assertTableBulkActionDoesNotExist('does_not_exist');
+});

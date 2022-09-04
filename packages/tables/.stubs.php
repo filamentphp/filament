@@ -17,6 +17,8 @@ namespace Livewire\Testing {
 
         public function assertTableActionExists(string $name): static {}
 
+        public function assertTableActionDoesNotExist(string $name): static {}
+
         public function assertTableActionVisible(string $name, $record = null): static {}
 
         public function assertTableActionHidden(string $name, $record = null): static {}
@@ -42,6 +44,8 @@ namespace Livewire\Testing {
         public function callMountedTableBulkAction(array $arguments = []): static {}
 
         public function assertTableBulkActionExists(string $name): static {}
+
+        public function assertTableBulkActionDoesNotExist(string $name): static {}
 
         public function assertTableBulkActionVisible(string $name): static {}
 

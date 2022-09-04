@@ -143,6 +143,23 @@ class TestsBulkActions
         };
     }
 
+    public function assertTableBulkActionDoesNotExist(): Closure
+    {
+        return function (string $name): static {
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedTableBulkAction($name);
+
+            Assert::assertNull(
+                $action,
+                message: "Failed asserting that a table bulk action with name [{$name}] does not exist on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
     public function assertTableBulkActionVisible(): Closure
     {
         return function (string $name): static {
