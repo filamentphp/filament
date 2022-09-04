@@ -19,7 +19,7 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <div {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-text-input-component relative']) }}>
+    <div {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-text-input-component flex relative group']) }}>
         @if (($prefixAction = $getPrefixAction()) && (! $prefixAction->isHidden()))
             {{ $prefixAction }}
         @endif
@@ -31,7 +31,7 @@
         @endif
 
         @if ($label = $getPrefixLabel())
-            <span @class($affixLabelClasses)>
+            <span @class(array_merge($affixLabelClasses , ['inline-flex items-center rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500']))>
                 {{ $label }}
             </span>
         @endif
@@ -73,7 +73,11 @@
                 {{ $getExtraInputAttributeBag()->class([
                     'block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-600 disabled:opacity-70',
                     'dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('forms.dark_mode'),
-                    $getPrefixIcon ? 'pl-10' : '',
+                    $getPrefixIcon() ? 'ltr:pl-10 rtl:pr-10' : '',
+                    $getSuffixIcon() ? 'ltr:pr-10 rtl:pl-10' : '',
+                    $getPrefixLabel() && !$getSuffixLabel() ? 'rounded-r-lg' : '',
+                    $getSuffixLabel() && !$getPrefixLabel() ? 'rounded-l-lg' : '',
+                    !$getPrefixLabel() && !$getSuffixLabel() ? 'rounded-lg' : '',
                 ]) }}
                 x-bind:class="{
                     'border-gray-300': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
@@ -84,7 +88,7 @@
         </div>
 
         @if ($label = $getSuffixLabel())
-            <span @class($affixLabelClasses)>
+            <span @class(array_merge($affixLabelClasses, ['inline-flex items-center rounded-r-lg border border-l-0 border-gray-300 bg-gray-50 px-3 text-gray-500']))>
                 {{ $label }}
             </span>
         @endif
