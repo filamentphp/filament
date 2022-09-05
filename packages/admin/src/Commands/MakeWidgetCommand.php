@@ -2,13 +2,15 @@
 
 namespace Filament\Commands;
 
+use Filament\Support\Commands\Concerns\CanManipulateFiles;
+use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
 class MakeWidgetCommand extends Command
 {
-    use Concerns\CanManipulateFiles;
-    use Concerns\CanValidateInput;
+    use CanManipulateFiles;
+    use CanValidateInput;
 
     protected $description = 'Creates a Filament widget class.';
 

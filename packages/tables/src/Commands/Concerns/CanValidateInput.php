@@ -2,31 +2,13 @@
 
 namespace Filament\Tables\Commands\Concerns;
 
-use Closure;
-use Illuminate\Support\Facades\Validator;
+use Filament\Support\Commands\Concerns\CanValidateInput as BaseTrait;
 
+/**
+ * @deprecated Use `\Filament\Support\Commands\Concerns\CanValidateInput` instead.
+ * @see \Filament\Support\Commands\Concerns\CanValidateInput
+ */
 trait CanValidateInput
 {
-    protected function askRequired(string $question, string $field): string
-    {
-        return $this->validateInput(fn () => $this->ask($question), $field, ['required']);
-    }
-
-    protected function validateInput(Closure $callback, string $field, array $rules): string
-    {
-        $input = $callback();
-
-        $validator = Validator::make(
-            [$field => $input],
-            [$field => $rules],
-        );
-
-        if ($validator->fails()) {
-            $this->error($validator->errors()->first());
-
-            $input = $this->validateInput($callback, $field, $rules);
-        }
-
-        return $input;
-    }
+    use BaseTrait;
 }
