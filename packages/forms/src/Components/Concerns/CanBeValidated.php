@@ -7,6 +7,7 @@ use Filament\Forms\Components\Field;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\Unique;
 
 trait CanBeValidated
@@ -43,6 +44,24 @@ trait CanBeValidated
     public function alphaNum(bool | Closure $condition = true): static
     {
         $this->rule('alpha_num', $condition);
+
+        return $this;
+    }
+
+    public function confirmed(bool | Closure $condition = true): static
+    {
+        $this->rule('confirmed', $condition);
+
+        return $this;
+    }
+
+    public function enum(string | Closure $enum, bool | Closure $condition = true): static
+    {
+        $this->rule(static function (Field $component) use ($enum) {
+            $enum = $component->evaluate($enum);
+
+            return new Enum($enum);
+        });
 
         return $this;
     }
