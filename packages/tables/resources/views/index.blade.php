@@ -240,9 +240,10 @@
             @if ($header)
                 {{ $header }}
             @elseif ($heading || $headerActions)
-                <div class="px-2 pt-2" x-bind:class="{
-                    'hidden': @js($isReordering)
-                }">
+                <div @class([
+                    'px-2 pt-2',
+                    'hidden' => $isReordering,
+                ])>
                     <x-tables::header :actions="$isReordering ? [] : $headerActions" class="mb-2">
                         <x-slot name="heading">
                             {{ $heading }}
