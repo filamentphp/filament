@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use function Livewire\invade;
 
 trait InteractsWithTable
 {
@@ -175,10 +176,16 @@ trait InteractsWithTable
         /** @var BelongsToMany $relationship */
         $relationship = $this->getRelationship();
 
-        $query->select(
+        $columns = [
             $relationship->getTable() . '.*',
             $query->getModel()->getTable() . '.*',
-        );
+        ];
+
+        if (! $this->allowsDuplicates()) {
+            $columns = array_merge(invade($relationship)->aliasedPivotColumns(), $columns);
+        }
+
+        $query->select($columns);
 
         return $query;
     }

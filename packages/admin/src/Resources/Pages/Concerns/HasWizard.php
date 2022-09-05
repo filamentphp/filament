@@ -16,9 +16,15 @@ trait HasWizard
             ->wizard()
             ->modifyBaseComponentUsing(function (Wizard $component) {
                 $component
+                    ->startOnStep($this->getStartStep())
                     ->cancelAction($this->getCancelFormAction())
                     ->submitAction($this->getSubmitFormAction());
             });
+    }
+
+    protected function getStartStep(): int
+    {
+        return 1;
     }
 
     protected function form(Form $form): Form
