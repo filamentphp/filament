@@ -124,7 +124,6 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
             Tables\Actions\BulkAction::make('has-color')
                 ->color('primary'),
             Tables\Actions\BulkAction::make('exists'),
-
         ];
     }
 
