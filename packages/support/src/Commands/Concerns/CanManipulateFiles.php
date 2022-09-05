@@ -4,6 +4,7 @@ namespace Filament\Support\Commands\Concerns;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
+use ReflectionClass;
 
 trait CanManipulateFiles
 {
@@ -25,7 +26,7 @@ trait CanManipulateFiles
         $filesystem = app(Filesystem::class);
 
         if (! $this->fileExists($stubPath = base_path("stubs/filament/{$stub}.stub"))) {
-            $stubPath = __DIR__ . "/../../../stubs/{$stub}.stub";
+            $stubPath = $this->getDefaultStubPath() . "/{$stub}.stub";
         }
 
         $stub = Str::of($filesystem->get($stubPath));
@@ -56,5 +57,11 @@ trait CanManipulateFiles
         );
 
         $filesystem->put($path, $contents);
+    }
+
+    protected function getDefaultStubPath(): string
+    {
+        $reflectionClass = new ReflectionClass($this);
+        return Str::of($reflectionClass->getFileName())->beforeLast('/')->beforeLast('\\')->append('/../..');
     }
 }
