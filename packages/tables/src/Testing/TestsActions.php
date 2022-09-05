@@ -135,6 +135,23 @@ class TestsActions
         };
     }
 
+    public function assertTableActionDoesNotExist(): Closure
+    {
+        return function (string $name): static {
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedTableAction($name) ?? $livewire->getCachedTableEmptyStateAction($name) ?? $livewire->getCachedTableHeaderAction($name);
+
+            Assert::assertNull(
+                $action,
+                message: "Failed asserting that a table action with name [{$name}] does not exist on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
     public function assertTableActionVisible(): Closure
     {
         return function (string $name, $record = null): static {

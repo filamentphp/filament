@@ -126,6 +126,23 @@ class TestsPageActions
         };
     }
 
+    public function assertPageActionDoesNotExist(): Closure
+    {
+        return function (string $name): static {
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedAction($name);
+
+            Assert::assertNull(
+                $action,
+                message: "Failed asserting that an action with name [{$name}] does not exist on the [{$livewireClass}] page.",
+            );
+
+            return $this;
+        };
+    }
+
     public function assertPageActionVisible(): Closure
     {
         return function (string $name): static {

@@ -50,6 +50,7 @@ class PageActions extends Page
                 ->label('My Action'),
             Action::make('has-color')
                 ->color('primary'),
+            Action::make('exists'),
         ];
     }
 }

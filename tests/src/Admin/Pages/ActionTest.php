@@ -87,3 +87,9 @@ it('can have a color', function () {
         ->assertPageActionHasColor('has-color', 'primary')
         ->assertPageActionDoesNotHaveColor('has-color', 'secondary');
 });
+
+it('can state whether a page action exists', function () {
+    livewire(PageActions::class)
+        ->assertPageActionExists('exists')
+        ->assertPageActionDoesNotExist('does_not_exist');
+});
