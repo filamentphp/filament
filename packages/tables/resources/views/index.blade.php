@@ -490,20 +490,26 @@
                             ))"
                         >
                             <x-tables::reorder.cell
-                                :class="Arr::toCssClasses(['hidden' => ! $isReordering])"
+                                @class([
+                                    'hidden' => ! $isReordering,
+                                ])
                             />
 
                             @if (count($actions) && $actionsPosition === Position::BeforeCells)
                                 <x-tables::actions-cell
+                                    @class([
+                                        'hidden' => $isReordering,
+                                    ])
                                     :actions="$actions"
                                     :record="$record"
-                                    :class="Arr::toCssClasses(['hidden' => $isReordering])"
                                 />
                             @endif
 
                             @if ($isSelectionEnabled)
                                 <x-tables::checkbox-cell
-                                    :class="Arr::toCssClasses(['hidden' => $isReordering])"
+                                    @class([
+                                        'hidden' => $isReordering,
+                                    ])
                                 >
                                     <x-slot
                                         name="checkbox"
@@ -516,9 +522,11 @@
 
                             @if (count($actions) && $actionsPosition === Position::BeforeColumns)
                                 <x-tables::actions-cell
+                                    @class([
+                                        'hidden' => $isReordering,
+                                    ])
                                     :actions="$actions"
                                     :record="$record"
-                                    :class="Arr::toCssClasses(['hidden' => $isReordering])"
                                 />
                             @endif
 
