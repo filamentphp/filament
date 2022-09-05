@@ -62,6 +62,7 @@ trait CanManipulateFiles
     protected function getDefaultStubPath(): string
     {
         $reflectionClass = new ReflectionClass($this);
+
         return Str::of($reflectionClass->getFileName())->beforeLast('/')->beforeLast('\\')->append('/../..');
     }
 }
