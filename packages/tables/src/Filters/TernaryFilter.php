@@ -16,6 +16,8 @@ class TernaryFilter extends SelectFilter
     {
         parent::setUp();
 
+        $this->trueLabel(__('forms::components.select.boolean.true'));
+        $this->falseLabel(__('forms::components.select.boolean.false'));
         $this->placeholder('-');
 
         $this->boolean();
