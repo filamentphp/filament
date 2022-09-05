@@ -51,7 +51,7 @@
 
     .filament-main-topbar::before {
         @apply opacity-0;
-        content: "";
+        content: '';
         z-index: 5;
     }
 
@@ -69,13 +69,13 @@
 
     [stuck] .filament-header {
         margin-inline: -1rem;
-        padding-inline: theme("spacing.4");
-        padding-block: theme("spacing.3");
+        padding-inline: theme('spacing.4');
+        padding-block: theme('spacing.3');
         z-index: 20;
         min-height: 4rem;
         align-items: center;
         background-color: theme(colors.white / 75%);
-        border-color: theme("colors.gray.200");
+        border-color: theme('colors.gray.200');
         border-bottom: solid 1px;
         backdrop-filter: blur(12px);
     }
