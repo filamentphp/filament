@@ -70,6 +70,29 @@ window
 Chart.defaults.font.family = `'DM Sans', sans-serif`
 Chart.defaults.color = '#6b7280'
 
+const stickyTrigger = document.querySelector('.filament-sticky-trigger')
+const stickyParent = document.querySelector('.filament-main')
+
+if (stickyTrigger) {
+    window.addEventListener('load', function () {
+        const observer = new IntersectionObserver(
+            ([e]) => {
+                if (e.isIntersecting) {
+                    stickyParent.classList.remove('is-sticky')
+                    return
+                }
+
+                stickyParent.classList.add('is-sticky')
+            },
+            {
+                threshold: [0],
+            },
+        )
+
+        observer.observe(stickyTrigger)
+    })
+}
+
 window.Alpine = Alpine
 window.Chart = Chart
 

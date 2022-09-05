@@ -3,7 +3,7 @@
 ])
 
 <x-filament::layouts.base :title="$title">
-    <div class="filament-app-layout flex w-full min-h-screen overflow-x-hidden">
+    <div class="filament-app-layout flex w-full min-h-screen overflow-x-clip">
         <div
             x-data="{}"
             x-cloak
@@ -19,7 +19,7 @@
             @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
                 x-data="{}"
                 x-bind:class="{
-                    'lg:pl-[5.4rem] rtl:lg:pr-[5.4rem]': ! $store.sidebar.isOpen,
+                    'lg:pl-[5.4em] rtl:lg:pr-[5.4em]': ! $store.sidebar.isOpen,
                     'filament-main-sidebar-open lg:pl-[var(--sidebar-width)] rtl:lg:pr-[var(--sidebar-width)]': $store.sidebar.isOpen,
                 }"
                 x-bind:style="'display: flex'" {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
@@ -31,7 +31,7 @@
             ])
         >
             <header @class([
-                'filament-main-topbar h-[4rem] shrink-0 w-full border-b flex items-center',
+                'filament-main-topbar h-[4rem] shrink-0 w-full border-b flex items-center sticky top-0 z-10',
                 'dark:bg-gray-800 dark:border-gray-700' => config('filament.dark_mode'),
             ])>
                 <div @class([
@@ -63,6 +63,7 @@
                     default => $maxContentWidth,
                 },
             ])>
+                <div class="filament-sticky-trigger"></div>
                 {{ \Filament\Facades\Filament::renderHook('content.start') }}
 
                 {{ $slot }}

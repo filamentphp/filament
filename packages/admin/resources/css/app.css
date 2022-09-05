@@ -48,4 +48,35 @@
         z-index: 1;
         top: -1px;
     }
+
+    .filament-main-topbar::before {
+        @apply opacity-0;
+        content: "";
+        z-index: 5;
+    }
+
+    .is-sticky .filament-main-topbar::before {
+        @apply opacity-100 h-16 block absolute inset-0 backdrop-blur-md transition-all bg-white/75 border-b border-gray-200 dark:bg-gray-900/75 dark:border-gray-700;
+    }
+
+    .is-sticky .filament-header {
+        @apply transition-all z-10 min-h-[4rem] py-0 flex items-center space-y-0;
+    }
+
+    .is-sticky .filament-header .filament-header-heading {
+        @apply text-xl overflow-ellipsis whitespace-nowrap;
+    }
+
+    [stuck] .filament-header {
+        margin-inline: -1rem;
+        padding-inline: theme("spacing.4");
+        padding-block: theme("spacing.3");
+        z-index: 20;
+        min-height: 4rem;
+        align-items: center;
+        background-color: theme(colors.white / 75%);
+        border-color: theme("colors.gray.200");
+        border-bottom: solid 1px;
+        backdrop-filter: blur(12px);
+    }
 }
