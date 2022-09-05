@@ -132,6 +132,7 @@ class Notification extends ViewComponent implements Arrayable
 
     public static function fromDatabase(DatabaseNotification $notification): static
     {
+        /** @phpstan-ignore-next-line */
         $static = static::fromArray($notification->data);
         $static->id($notification->getKey());
 
