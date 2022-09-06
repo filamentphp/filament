@@ -31,7 +31,7 @@
             ])
         >
             <header @class([
-                'filament-main-topbar h-[4rem] shrink-0 w-full border-b flex items-center sticky top-0 z-10',
+                'filament-main-topbar sticky top-0 z-10 flex h-16 w-full shrink-0 items-center border-b bg-white',
                 'dark:bg-gray-800 dark:border-gray-700' => config('filament.dark_mode'),
             ])>
                 <div @class([
