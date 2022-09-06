@@ -84,7 +84,7 @@ class CheckMissingTranslationsCommand extends Command
                     if ($missingCount === 0 && $deprecatedCount === 0) {
                         $this->banner('success', 'Lang %s has no missing or deprecated translation keys!', $lang);
                     } else {
-                        $this->banner('warning', 'Lang %s has %d misssing translation keys and %d deprecated translation keys.', $lang, $missingCount, $deprecatedCount);
+                        $this->banner('warning', 'Lang %s has %d missing translation keys and %d deprecated translation keys.', $lang, $missingCount, $deprecatedCount);
                     }
                 })
                 ->filter(static fn ($keys) => count($keys['missing']) || count($keys['deprecated']))
