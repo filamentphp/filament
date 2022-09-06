@@ -3,7 +3,7 @@
 ])
 
 <x-filament::layouts.base :title="$title">
-    <div class="filament-app-layout flex w-full min-h-screen overflow-x-hidden">
+    <div class="filament-app-layout flex w-full min-h-screen overflow-x-clip">
         <div
             x-data="{}"
             x-cloak
@@ -31,7 +31,7 @@
             ])
         >
             <header @class([
-                'filament-main-topbar h-[4rem] shrink-0 w-full border-b flex items-center',
+                'filament-main-topbar h-[4rem] shrink-0 w-full border-b flex items-center sticky top-0 z-10',
                 'dark:bg-gray-800 dark:border-gray-700' => config('filament.dark_mode'),
             ])>
                 <div @class([
