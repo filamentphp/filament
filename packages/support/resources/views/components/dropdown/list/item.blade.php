@@ -12,7 +12,7 @@
     $hasHoverAndFocusState = ($tag !== 'a' || filled($attributes->get('href')));
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-item group flex w-full items-center whitespace-nowrap rounded-md p-2 text-sm',
+        'filament-dropdown-list-item group flex w-full items-center whitespace-nowrap rounded-md p-2 text-sm',
         'focus:outline-none hover:text-white focus:text-white' => $hasHoverAndFocusState,
         'hover:bg-primary-600 focus:bg-primary-700' => ($color === 'primary' || $color === 'secondary') && $hasHoverAndFocusState,
         'hover:bg-danger-600 focus:bg-danger-700' => $color === 'danger' && $hasHoverAndFocusState,
@@ -21,17 +21,17 @@
     ]);
 
     $detailClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-item-detail ml-auto text-xs text-gray-500',
+        'filament-dropdown-list-item-detail ml-auto text-xs text-gray-500',
         'group-hover:text-primary-100 group-focus:text-primary-100' => ($color === 'primary' || $color === 'secondary') && $hasHoverAndFocusState,
         'group-hover:text-danger-100 group-focus:text-danger-100' => $color === 'danger' && $hasHoverAndFocusState,
         'group-hover:text-success-100 group-focus:text-success-100' => $color === 'success' && $hasHoverAndFocusState,
         'group-hover:text-warning-100 group-focus:text-warning-100' => $color === 'warning' && $hasHoverAndFocusState,
     ]);
 
-    $labelClasses = 'filament-dropdown-item-label truncate';
+    $labelClasses = 'filament-dropdown-list-item-label truncate';
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-item-icon mr-2 h-5  w-5 flex-shrink-0 rtl:ml-2 rtl:mr-0',
+        'filament-dropdown-list-item-icon mr-2 h-5 w-5 rtl:ml-2 rtl:mr-0',
         'group-hover:text-white group-focus:text-white' => $hasHoverAndFocusState,
         'text-primary-500' => $color === 'primary',
         'text-danger-500' => $color === 'danger',
