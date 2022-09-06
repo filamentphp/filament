@@ -2,6 +2,14 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 'és további :count',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -20,7 +28,12 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'oldalanként',
+
+                'options' => [
+                    'all' => 'Összes',
+                ],
             ],
 
         ],
@@ -45,6 +58,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Sorrendezés befejezése',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Sorrendezés',
+        ],
+
         'filter' => [
             'label' => 'Szűrés',
         ],
@@ -67,11 +88,22 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Szűrés megszűntetése',
+            ],
+
+            'remove_all' => [
+                'label' => 'Összes szűrés megszűntetése',
+                'tooltip' => 'Összes szűrés megszűntetése',
+            ],
+
             'reset' => [
                 'label' => 'Alapértelmezés',
             ],
 
         ],
+
+        'indicator' => 'Aktív szűrők',
 
         'multi_select' => [
             'placeholder' => 'Mind',
@@ -94,6 +126,8 @@ return [
         ],
 
     ],
+
+    'reorder_indicator' => 'Fogd meg és mozgasd a sorrendezéshez.',
 
     'selection_indicator' => [
 
