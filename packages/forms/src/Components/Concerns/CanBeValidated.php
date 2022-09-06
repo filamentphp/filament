@@ -55,13 +55,28 @@ trait CanBeValidated
         return $this;
     }
 
+    public function endsWith(string | array | Closure $values, bool | Closure $condition = true): static
+    {
+        $this->rule(static function (Field $component) use ($values) {
+            $values = $component->evaluate($values);
+
+            if (is_array($values)) {
+                $values = implode(',', $values);
+            }
+
+            return 'ends_with:' . $values;
+        }, $condition);
+
+        return $this;
+    }
+
     public function enum(string | Closure $enum, bool | Closure $condition = true): static
     {
         $this->rule(static function (Field $component) use ($enum) {
             $enum = $component->evaluate($enum);
 
             return new Enum($enum);
-        });
+        }, $condition);
 
         return $this;
     }
@@ -82,6 +97,64 @@ trait CanBeValidated
 
             return $rule;
         }, static fn (Field $component, ?string $model): bool => (bool) ($component->evaluate($table) ?? $model));
+
+        return $this;
+    }
+
+    public function in(string | array | Closure $values, bool | Closure $condition = true): static
+    {
+        $this->rule(static function (Field $component) use ($values) {
+            $values = $component->evaluate($values);
+
+            if (is_string($values)) {
+                $values = array_map('trim', explode(',', $values));
+            }
+
+            return Rule::in($values);
+        }, $condition);
+
+        return $this;
+    }
+
+    public function ip(bool | Closure $condition = true): static
+    {
+        $this->rule('ip', $condition);
+
+        return $this;
+    }
+
+    public function ipv4(bool | Closure $condition = true): static
+    {
+        $this->rule('ipv4', $condition);
+
+        return $this;
+    }
+
+    public function ipv6(bool | Closure $condition = true): static
+    {
+        $this->rule('ipv6', $condition);
+
+        return $this;
+    }
+
+    public function macAddress(bool | Closure $condition = true): static
+    {
+        $this->rule('mac_address', $condition);
+
+        return $this;
+    }
+
+    public function notIn(string | array | Closure $values, bool | Closure $condition = true): static
+    {
+        $this->rule(static function (Field $component) use ($values) {
+            $values = $component->evaluate($values);
+
+            if (is_string($values)) {
+                $values = array_map('trim', explode(',', $values));
+            }
+
+            return Rule::notIn($values);
+        }, $condition);
 
         return $this;
     }
@@ -125,6 +198,28 @@ trait CanBeValidated
     public function regex(string | Closure | null $pattern): static
     {
         $this->regexPattern = $pattern;
+
+        return $this;
+    }
+
+    public function startsWith(string | array | Closure $values, bool | Closure $condition = true): static
+    {
+        $this->rule(static function (Field $component) use ($values) {
+            $values = $component->evaluate($values);
+
+            if (is_array($values)) {
+                $values = implode(',', $values);
+            }
+
+            return 'starts_with:' . $values;
+        }, $condition);
+
+        return $this;
+    }
+
+    public function uuid(bool | Closure $condition = true): static
+    {
+        $this->rule('uuid', $condition);
 
         return $this;
     }
