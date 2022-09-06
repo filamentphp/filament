@@ -31,7 +31,7 @@
             [x-cloak=""], [x-cloak="x-cloak"], [x-cloak="1"] { display: none !important; }
             @media (max-width: 1023px) { [x-cloak="-lg"] { display: none !important; } }
             @media (min-width: 1024px) { [x-cloak="lg"] { display: none !important; } }
-            :root { --sidebar-width: {{ config('filament.layout.sidebar.width') ?? '20rem' }}; }
+            :root { --sidebar-width: {{ config('filament.layout.sidebar.width', '20rem') }}; --collapsed-sidebar-width: {{ config('filament.layout.sidebar.collapsed_width', '5.4em') }}; }
         </style>
 
         @livewireStyles

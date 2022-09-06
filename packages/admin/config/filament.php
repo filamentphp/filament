@@ -207,10 +207,12 @@ return [
         ],
         'sidebar' => [
             'is_collapsible_on_desktop' => false,
+            'hamburger_icon_on_desktop' => false,
             'groups' => [
                 'are_collapsible' => true,
             ],
-            'width' => null,
+            'width' => '20rem',
+            'collapsed_width' => '5.4em',
         ],
     ],
 
