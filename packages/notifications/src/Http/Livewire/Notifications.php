@@ -41,7 +41,7 @@ class Notifications extends Component
 
     public function markAllAsRead(): void
     {
-        auth()->user()->notifications()->update(['read_at' => now()]);
+        auth()->user()->unreadNotifications()->update(['read_at' => now()]);
     }
 
     public function removeNotification(string $id): void
