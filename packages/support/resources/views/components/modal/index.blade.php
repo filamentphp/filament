@@ -116,7 +116,7 @@
                 @if ($closeButton)
                     <div class="absolute top-2 right-2">
                         <x-heroicon-s-x
-                            class="filament-notifications-close-button h-4 w-4 cursor-pointer text-gray-400"
+                            class="filament-modal-close-button h-4 w-4 cursor-pointer text-gray-400"
                             title="Close"
                             x-on:click="isOpen = false"
                             tabindex="-1"
