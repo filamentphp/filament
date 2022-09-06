@@ -14,10 +14,10 @@
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-dropdown-list-item group flex w-full items-center whitespace-nowrap rounded-md p-2 text-sm',
         'focus:outline-none hover:text-white focus:text-white' => $hasHoverAndFocusState,
-        'hover:bg-primary-600 focus:bg-primary-700' => ($color === 'primary' || $color === 'secondary') && $hasHoverAndFocusState,
-        'hover:bg-danger-600 focus:bg-danger-700' => $color === 'danger' && $hasHoverAndFocusState,
-        'hover:bg-success-600 focus:bg-success-700' => $color === 'success' && $hasHoverAndFocusState,
-        'hover:bg-warning-600 focus:bg-warning-700' => $color === 'warning' && $hasHoverAndFocusState,
+        'hover:bg-primary-500 focus:bg-primary-500' => ($color === 'primary' || $color === 'secondary') && $hasHoverAndFocusState,
+        'hover:bg-danger-500 focus:bg-danger-500' => $color === 'danger' && $hasHoverAndFocusState,
+        'hover:bg-success-500 focus:bg-success-500' => $color === 'success' && $hasHoverAndFocusState,
+        'hover:bg-warning-500 focus:bg-warning-500' => $color === 'warning' && $hasHoverAndFocusState,
     ]);
 
     $detailClasses = \Illuminate\Support\Arr::toCssClasses([
