@@ -59,11 +59,11 @@ return [
     'buttons' => [
 
         'disable_reordering' => [
-            'label' => 'Sorrendezés befejezése',
+            'label' => 'Sorba rendezés befejezése',
         ],
 
         'enable_reordering' => [
-            'label' => 'Sorrendezés',
+            'label' => 'Sorba rendezés',
         ],
 
         'filter' => [
