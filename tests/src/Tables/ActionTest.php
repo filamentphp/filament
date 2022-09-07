@@ -92,3 +92,9 @@ it('can have a color', function () {
         ->assertTableActionHasColor('has-color', 'primary')
         ->assertTableActionDoesNotHaveColor('has-color', 'secondary');
 });
+
+it('can state whether a table action exists', function () {
+    livewire(PostsTable::class)
+        ->assertTableActionExists('exists')
+        ->assertTableActionDoesNotExist('does_not_exist');
+});
