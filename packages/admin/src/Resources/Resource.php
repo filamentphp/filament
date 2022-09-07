@@ -368,11 +368,11 @@ class Resource
             ->implode('/');
     }
 
-    public static function getUrl($name = 'index', $params = []): string
+    public static function getUrl($name = 'index', $params = [], $isAbsolute = true): string
     {
         $routeBaseName = static::getRouteBaseName();
 
-        return route("{$routeBaseName}.{$name}", $params);
+        return route("{$routeBaseName}.{$name}", $params, $isAbsolute);
     }
 
     public static function hasPage($page): bool
