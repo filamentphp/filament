@@ -1,4 +1,4 @@
-@if(config('filament.layout.sidebar.hamburger_icon_on_desktop', true))
+@if(config('filament.layout.sidebar.has_hamburger_icon_on_desktop', true))
     <button
         x-data="{}"
         x-on:click="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
