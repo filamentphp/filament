@@ -7,6 +7,7 @@ use Filament\Forms\Components\Field;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Unique;
+use Illuminate\Support\Str;
 
 trait CanBeValidated
 {
@@ -204,7 +205,7 @@ trait CanBeValidated
 
     public function getValidationAttribute(): string
     {
-        return $this->evaluate($this->validationAttribute) ?? lcfirst($this->getLabel());
+        return $this->evaluate($this->validationAttribute) ?? Str::lcfirst($this->getLabel());
     }
 
     public function getValidationRules(): array
