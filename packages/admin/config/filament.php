@@ -211,8 +211,8 @@ return [
             'groups' => [
                 'are_collapsible' => true,
             ],
-            'width' => '20rem',
-            'collapsed_width' => '5.4em',
+            'width' => null,
+            'collapsed_width' => null,
         ],
     ],
 
