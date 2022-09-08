@@ -1,7 +1,7 @@
 @props([
     'actions' => null,
     'ariaLabelledby' => null,
-    'closeButton' => false,
+    'closeButton' => true,
     'closeEventName' => 'close-modal',
     'darkMode' => false,
     'displayClasses' => 'inline-block',

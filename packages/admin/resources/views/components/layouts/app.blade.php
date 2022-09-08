@@ -39,14 +39,12 @@
                 ])>
                     <x-filament::layouts.app.topbar.collapse-sidebar-button />
 
-                    <div class="flex items-center justify-between flex-1 gap-4">
+                    <div class="flex items-center justify-between flex-1">
                         <x-filament::layouts.app.topbar.breadcrumbs :breadcrumbs="$breadcrumbs" />
 
                         @livewire('filament.core.global-search')
 
-                        @if (config('filament.database_notifications'))
-                            <x-filament::layouts.app.topbar.database-notifications-button />
-                        @endif
+                        @livewire('filament.core.notifications')
 
                         <x-filament::layouts.app.topbar.user-menu />
                     </div>
@@ -77,8 +75,6 @@
             <div class="filament-main-footer py-4 shrink-0">
                 <x-filament::footer/>
             </div>
-
-            @livewire('notifications')
         </div>
     </div>
 </x-filament::layouts.base>

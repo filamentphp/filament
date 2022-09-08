@@ -14,6 +14,7 @@ use Filament\Notifications\Concerns\HasTitle;
 use Filament\Support\Components\ViewComponent;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Support\Str;
 
 class Notification extends ViewComponent implements Arrayable
@@ -85,6 +86,11 @@ class Notification extends ViewComponent implements Arrayable
         );
 
         return $this;
+    }
+
+    public function broadcast(): BroadcastMessage
+    {
+        return new BroadcastMessage($this->toArray());
     }
 
     public function status(string $status): static
