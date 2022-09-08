@@ -160,12 +160,7 @@ export default (Alpine) => {
                 },
 
                 setChoices: function (choices) {
-                    this.select.setChoices(
-                        choices,
-                        'value',
-                        'label',
-                        true,
-                    )
+                    this.select.setChoices(choices, 'value', 'label', true)
                 },
 
                 getChoices: async function (config = {}) {
@@ -173,7 +168,7 @@ export default (Alpine) => {
 
                     return this.transformOptionsIntoChoices({
                         ...options,
-                        ...await this.getMissingOptions(options),
+                        ...(await this.getMissingOptions(options)),
                     })
                 },
 
@@ -182,7 +177,11 @@ export default (Alpine) => {
                         return options
                     }
 
-                    if ((search !== '') && (search !== null) && (search !== undefined)) {
+                    if (
+                        search !== '' &&
+                        search !== null &&
+                        search !== undefined
+                    ) {
                         return await getSearchResultsUsing(search)
                     }
 
@@ -190,15 +189,14 @@ export default (Alpine) => {
                 },
 
                 transformOptionsIntoChoices: function (options) {
-                    return Object.values(options)
-                        .map((option) => {
-                            const [value, label] = Object.entries(option)[0]
+                    return Object.values(options).map((option) => {
+                        const [value, label] = Object.entries(option)[0]
 
-                            return {
-                                label,
-                                value,
-                            }
-                        })
+                        return {
+                            label,
+                            value,
+                        }
+                    })
                 },
 
                 refreshPlaceholder: function () {
@@ -230,7 +228,7 @@ export default (Alpine) => {
                         return {}
                     }
 
-                    if (! options.length) {
+                    if (!options.length) {
                         options = {}
                     }
 
@@ -246,9 +244,11 @@ export default (Alpine) => {
                         return options
                     }
 
-                    return [{
-                        [this.state]: await getOptionLabelUsing()
-                    }]
+                    return [
+                        {
+                            [this.state]: await getOptionLabelUsing(),
+                        },
+                    ]
                 },
             }
         },
