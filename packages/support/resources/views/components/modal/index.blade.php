@@ -18,6 +18,10 @@
     'width' => 'sm',
 ])
 
+@php
+$isFullscreen = $width === 'screen';
+@endphp
+
 <div
     x-data="{ isOpen: false }"
     x-trap.noscroll="isOpen"
@@ -70,18 +74,23 @@
                 x-on:keydown.window.escape="isOpen = false"
             @endif
             x-transition:enter="ease duration-300"
+            @if (! $isFullscreen)
             x-transition:enter-start="translate-y-8"
             x-transition:enter-end="translate-y-0"
+            @endif
             x-transition:leave="ease duration-300"
+            @if (! $isFullscreen)
             x-transition:leave-start="translate-y-0"
             x-transition:leave-end="translate-y-8"
+            @endif
             x-cloak
             {{ $attributes->class(['relative w-full my-auto cursor-pointer pointer-events-none']) }}
         >
             <div
                 @class([
-                    'filament-modal-window w-full mx-auto p-2 space-y-2 bg-white rounded-xl cursor-default pointer-events-auto',
+                    'filament-modal-window mx-auto p-2 space-y-2 bg-white rounded-xl cursor-default pointer-events-auto',
                     'dark:bg-gray-800' => $darkMode,
+                    'w-full' => ! $isFullscreen,
                     'hidden' => ! $visible,
                     'max-w-xs' => $width === 'xs',
                     'max-w-sm' => $width === 'sm',
@@ -94,11 +103,23 @@
                     'max-w-5xl' => $width === '5xl',
                     'max-w-6xl' => $width === '6xl',
                     'max-w-7xl' => $width === '7xl',
+                    'fixed inset-4 w-auto' => $isFullscreen,
                 ])
             >
                 @if ($header)
-                    <div class="filament-modal-header px-4 py-2">
-                        {{ $header }}
+                    <div class="filament-modal-header px-4 py-2 flex items-center justify-between">
+                        <div>
+                            {{ $header }}
+                        </div>
+
+                        @if ($isFullscreen)
+                            <x-filament-support::icon-button
+                                icon="heroicon-s-x"
+                                x-on:click="{{ filled($id) ? '$dispatch(\'' . $closeEventName . '\', { id: \'' . $id . '\' })' : 'isOpen = false' }}"
+                            >
+                                close
+                            </x-filament-support::icon-button>
+                        @endif
                     </div>
                 @endif
 
