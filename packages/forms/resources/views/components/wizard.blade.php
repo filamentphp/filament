@@ -94,7 +94,7 @@
                         'cursor-not-allowed pointer-events-none': getStepIndex(step) <= {{ $loop->index }},
                     }"
                     role="step"
-                    class="flex items-center h-full text-left w-full"
+                    class="flex items-center h-full text-left rtl:text-right w-full"
                 >
                     <div
                         x-bind:class="{
