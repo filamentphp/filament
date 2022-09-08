@@ -38,11 +38,13 @@
                     'flex items-center w-full px-2 sm:px-4 md:px-6 lg:px-8',
                 ])>
                     <button
+                        x-cloak
                         x-data="{}"
                         x-on:click="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                         @class([
-                            'filament-sidebar-open-button lg:hidden shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none',
+                            'filament-sidebar-open-button shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none',
                             'lg:mr-4 rtl:lg:mr-0 rtl:lg:ml-4' => config('filament.layout.sidebar.is_collapsible_on_desktop'),
+                            'lg:hidden' => !config('filament.layout.sidebar.is_collapsible_on_desktop') || (config('filament.layout.sidebar.is_collapsible_on_desktop') && ! config('filament.layout.sidebar.is_closable_on_desktop')),
                         ])>
                         <x-heroicon-o-menu class="w-6 h-6"/>
                     </button>

@@ -207,11 +207,11 @@ return [
         ],
         'sidebar' => [
             'is_collapsible_on_desktop' => false,
+            'is_closable_on_desktop' => false,
             'groups' => [
                 'are_collapsible' => true,
             ],
             'width' => null,
-            'collapsed_width' => null,
         ],
     ],
 

@@ -1,6 +1,6 @@
 <aside
     x-data="{
-        lgCollapsible: {{ json_encode(config('filament.layout.sidebar.is_collapsible_on_desktop')) }}
+        lgCollapsible: {{ json_encode(config('filament.layout.sidebar.is_collapsible_on_desktop')) }},
     }"
     @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
         x-cloak
