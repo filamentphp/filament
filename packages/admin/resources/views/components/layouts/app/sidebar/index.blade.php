@@ -69,7 +69,6 @@
                 data-turbo="false"
             >
                 <x-heroicon-o-menu class="w-6 h-6"/>
-{{--                <x-filament::brand-icon />--}}
             </button>
         @endif
     </header>
