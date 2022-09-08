@@ -12,7 +12,7 @@ trait CanManipulateFiles
     {
         foreach ($paths as $path) {
             if ($this->fileExists($path)) {
-                $this->error("$path already exists, aborting.");
+                $this->error("{$path} already exists, aborting.");
 
                 return true;
             }
@@ -63,6 +63,9 @@ trait CanManipulateFiles
     {
         $reflectionClass = new ReflectionClass($this);
 
-        return Str::of($reflectionClass->getFileName())->beforeLast('/')->beforeLast('\\')->append('/../../stubs');
+        return (string) Str::of($reflectionClass->getFileName())
+            ->beforeLast('/')
+            ->beforeLast('\\')
+            ->append('/../../stubs');
     }
 }

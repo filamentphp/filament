@@ -102,6 +102,14 @@ class FilamentServiceProvider extends PluginServiceProvider
 
         $this->bootTableActionConfiguration();
 
+        if ($this->app->runningInConsole()) {
+            foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
+                $this->publishes([
+                    $file->getRealPath() => base_path("stubs/filament/{$file->getFilename()}"),
+                ], 'filament-stubs');
+            }
+        }
+
         TestableLivewire::mixin(new TestsPageActions());
         TestableLivewire::mixin(new TestsPages());
     }
