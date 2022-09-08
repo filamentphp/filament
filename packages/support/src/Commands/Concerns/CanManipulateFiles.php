@@ -64,7 +64,7 @@ trait CanManipulateFiles
         $reflectionClass = new ReflectionClass($this);
 
         return (string) Str::of($reflectionClass->getFileName())
-            ->beforeLast('/Commands')
-            ->append('/../stubs');
+            ->beforeLast('Commands')
+            ->append('../stubs');
     }
 }
