@@ -19,7 +19,7 @@
 ])
 
 @php
-$isFullscreen = $width === 'screen';
+    $isFullscreen = $width === 'screen';
 @endphp
 
 <div
@@ -74,14 +74,12 @@ $isFullscreen = $width === 'screen';
                 x-on:keydown.window.escape="isOpen = false"
             @endif
             x-transition:enter="ease duration-300"
-            @if (! $isFullscreen)
-            x-transition:enter-start="translate-y-8"
-            x-transition:enter-end="translate-y-0"
-            @endif
             x-transition:leave="ease duration-300"
             @if (! $isFullscreen)
-            x-transition:leave-start="translate-y-0"
-            x-transition:leave-end="translate-y-8"
+                x-transition:enter-start="translate-y-8"
+                x-transition:enter-end="translate-y-0"
+                x-transition:leave-start="translate-y-0"
+                x-transition:leave-end="translate-y-8"
             @endif
             x-cloak
             {{ $attributes->class(['relative w-full my-auto cursor-pointer pointer-events-none']) }}
@@ -103,7 +101,7 @@ $isFullscreen = $width === 'screen';
                     'max-w-5xl' => $width === '5xl',
                     'max-w-6xl' => $width === '6xl',
                     'max-w-7xl' => $width === '7xl',
-                    'fixed inset-4 w-auto' => $isFullscreen,
+                    'fixed inset-4' => $isFullscreen,
                 ])
             >
                 @if ($header)
@@ -112,14 +110,12 @@ $isFullscreen = $width === 'screen';
                             {{ $header }}
                         </div>
 
-                        @if ($isFullscreen)
-                            <x-filament-support::icon-button
-                                icon="heroicon-s-x"
-                                x-on:click="{{ filled($id) ? '$dispatch(\'' . $closeEventName . '\', { id: \'' . $id . '\' })' : 'isOpen = false' }}"
-                            >
-                                close
-                            </x-filament-support::icon-button>
-                        @endif
+                        <x-filament-support::icon-button
+                            icon="heroicon-s-x"
+                            x-on:click="{{ filled($id) ? '$dispatch(\'' . $closeEventName . '\', { id: \'' . $id . '\' })' : 'isOpen = false' }}"
+                        >
+                            close
+                        </x-filament-support::icon-button>
                     </div>
                 @endif
 
