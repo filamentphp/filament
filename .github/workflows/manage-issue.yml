@@ -1,0 +1,197 @@
+name: manage-issue
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  check-repro:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v3
+        with:
+          script: |
+            const URL_REGEXP = /### Reproduction repository[\r\n]+([^#]+)###/m
+            const REPRO_STEPS_REGEXP = /### Steps to reproduce[\r\n]+([^#]+)###/m
+            const LABEL_NEEDS_MORE_INFORMATION = 'needs more info'
+            const LABEL_UNCONFIRMED = 'unconfirmed'
+
+            function debug(...args) {
+                core.info(args.map(JSON.stringify).join(' '))
+            }
+
+            if (context.payload.comment) {
+                debug('Ignoring comment update.')
+
+                return
+            }
+
+            const user = context.payload.sender.login
+            const issue = context.payload.issue
+            const body = issue.body
+            const urlMatch = body.match(URL_REGEXP)
+            const reproStepsMatch = body.match(REPRO_STEPS_REGEXP)
+            const url = urlMatch !== null ? urlMatch[1].trim() : null
+            const reproSteps = reproStepsMatch !== null ? reproStepsMatch[1].trim() : null
+
+            debug(`Found URL '${url}'`)
+            debug(`Found repro steps '${reproSteps}'`)
+
+            async function createComment(comment) {
+                comment = comment
+                    .split('\n')
+                    .map((line) => line.trim())
+                    .join('\n')
+                    .trim()
+
+                await github.issues.createComment({
+                    issue_number: context.issue.number,
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    body: comment,
+                })
+            }
+
+            async function getGitHubActionComments() {
+                debug(`Loading existing comments...`)
+
+                const comments = await github.issues.listComments({
+                    issue_number: context.issue.number,
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                })
+
+                return comments.data.filter(comment => {
+                    debug(`comment by user: '${comment.user.login}'`)
+                    return comment.user.login === 'github-actions[bot]'
+                })
+            }
+
+            async function getIssueLabels() {
+                const issues = await github.issues.listLabelsOnIssue({
+                    issue_number: context.issue.number,
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                })
+
+                return issues.data
+            }
+
+            async function updateIssue(state, state_reason = null) {
+                await github.issues.update({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: context.issue.number,
+                    state,
+                    state_reason,
+                })
+            }
+
+            async function closeWithComment(comment) {
+                if (issue.state !== 'open') {
+                    debug(`Issue is not open`)
+
+                    return
+                }
+
+                const comments = await getGitHubActionComments()
+
+                if (comments.length > 0) {
+                    debug(`Already commented on issue won't comment again`)
+
+                    return
+                }
+
+                debug(`Missing required information`)
+
+                await github.issues.addLabels({
+                    issue_number: context.issue.number,
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    labels: [LABEL_NEEDS_MORE_INFORMATION],
+                })
+
+                await createComment(comment)
+
+                await updateIssue('closed', 'not_planned')
+            }
+
+            async function openWithComment(comment) {
+                if (issue.state !== 'closed') {
+                    debug(`Issue is already open`)
+
+                    return
+                }
+
+                const labels = await getIssueLabels()
+                const label = labels.find(label => label.name === LABEL_NEEDS_MORE_INFORMATION)
+
+                if (! label) {
+                    debug(`Issue was not tagged as needs information`)
+
+                    return
+                }
+
+                const comments = await getGitHubActionComments()
+
+                if (comments.length === 0) {
+                    debug(`Issue was closed by someone else, won't reopen`)
+
+                    return
+                }
+
+                debug(`Reopening closed issue`)
+
+                await github.issues.removeLabel({
+                    issue_number: context.issue.number,
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    name: LABEL_NEEDS_MORE_INFORMATION,
+                })
+
+                await createComment(comment)
+
+                await updateIssue('open')
+            }
+
+            const COMMENT_HEADER = `
+                Hey @${user}! We're sorry to hear that you've hit this issue. 💛
+            `.trim()
+
+            const NO_REPRO_URL = (! url.includes('https://github.com/')) || url.includes('https://github.com/filamentphp/') || url === 'https://github.com/filamentphp'
+            const NO_REPRO_STEPS = reproSteps.length < 25
+
+            if (NO_REPRO_URL || NO_REPRO_STEPS) {
+                let comment = `
+                    ${COMMENT_HEADER}
+
+                `
+
+                if (NO_REPRO_URL) {
+                    comment += `
+                        However, it looks like you forgot to fill in the reproduction repository URL. Can you edit your original post and then we'll look at your issue?
+
+                        We need a public Git repository which contains a Laravel app with the minimal amount of Filament code to reproduce the problem. That would allow us to download it and review your bug much easier, so it can be fixed quicker. Please make sure to include a database seeder with everything we need to set the app up quickly.
+                    `
+                }
+
+                if (NO_REPRO_URL && NO_REPRO_STEPS) {
+                    comment += `
+
+                        Also, `
+                } else if (NO_REPRO_STEPS) {
+                    comment += `
+
+                        However, `
+                }
+
+                if (NO_REPRO_STEPS) {
+                    comment += `it doesn't look like you've provided much information on how to replicate the issue. Please edit your original post with clear steps we need to take.`
+                }
+
+                closeWithComment(comment)
+            } else {
+                openWithComment(`
+                    Thank you for providing reproduction steps! Reopening the issue now.
+                `)
+            }

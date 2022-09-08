@@ -17,13 +17,13 @@ trait HasEmptyState
             fn (): array => $this->getTableEmptyStateActions(),
         );
 
-        $this->cachedTableEmptyStateActions = collect($actions)
-            ->mapWithKeys(function (Action $action): array {
-                $action->table($this->getCachedTable());
+        $this->cachedTableEmptyStateActions = [];
 
-                return [$action->getName() => $action];
-            })
-            ->toArray();
+        foreach ($actions as $action) {
+            $action->table($this->getCachedTable());
+
+            $this->cachedTableEmptyStateActions[$action->getName()] = $action;
+        }
     }
 
     public function getCachedTableEmptyStateActions(): array

@@ -99,6 +99,14 @@ abstract class PluginServiceProvider extends PackageServiceProvider
             }
 
             foreach ($resource::getRelations() as $relation) {
+                if ($relation instanceof RelationGroup) {
+                    foreach ($relation->getManagers() as $groupedRelation) {
+                        Livewire::component($groupedRelation::getName(), $groupedRelation);
+                    }
+
+                    continue;
+                }
+
                 Livewire::component($relation::getName(), $relation);
             }
 

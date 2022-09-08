@@ -25,13 +25,13 @@ trait HasBulkActions
             fn (): array => $this->getTableBulkActions(),
         );
 
-        $this->cachedTableBulkActions = collect($actions)
-            ->mapWithKeys(function (BulkAction $action): array {
-                $action->table($this->getCachedTable());
+        $this->cachedTableBulkActions = [];
 
-                return [$action->getName() => $action];
-            })
-            ->toArray();
+        foreach ($actions as $action) {
+            $action->table($this->getCachedTable());
+
+            $this->cachedTableBulkActions[$action->getName()] = $action;
+        }
     }
 
     protected function configureTableBulkAction(BulkAction $action): void
@@ -83,7 +83,7 @@ trait HasBulkActions
             $action->resetFormData();
 
             $this->dispatchBrowserEvent('close-modal', [
-                'id' => static::class . '-table-bulk-action',
+                'id' => "{$this->id}-table-bulk-action",
             ]);
         }
     }
@@ -127,15 +127,13 @@ trait HasBulkActions
         $this->resetErrorBag();
 
         $this->dispatchBrowserEvent('open-modal', [
-            'id' => static::class . '-table-bulk-action',
+            'id' => "{$this->id}-table-bulk-action",
         ]);
     }
 
     public function getCachedTableBulkActions(): array
     {
-        return collect($this->cachedTableBulkActions)
-            ->filter(fn (BulkAction $action): bool => ! $action->isHidden())
-            ->toArray();
+        return $this->cachedTableBulkActions;
     }
 
     public function getMountedTableBulkAction(): ?BulkAction
@@ -162,7 +160,8 @@ trait HasBulkActions
         return $this->makeForm()
             ->schema($action->getFormSchema())
             ->model($this->getTableQuery()->getModel()::class)
-            ->statePath('mountedTableBulkActionData');
+            ->statePath('mountedTableBulkActionData')
+            ->context($this->mountedTableBulkAction);
     }
 
     public function getCachedTableBulkAction(string $name): ?BulkAction

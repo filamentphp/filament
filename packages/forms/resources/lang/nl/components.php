@@ -102,6 +102,10 @@ return [
                 'label' => 'Verwijderen',
             ],
 
+            'clone_item' => [
+                'label' => 'Dupliceren',
+            ],
+
             'move_item_down' => [
                 'label' => 'Naar beneden',
             ],

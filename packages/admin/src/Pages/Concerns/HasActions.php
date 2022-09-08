@@ -129,21 +129,23 @@ trait HasActions
             fn (): array => $this->getActions(),
         );
 
-        $this->cachedActions = collect($actions)
-            ->mapWithKeys(function (Action | ActionGroup $action, int $index): array {
-                if ($action instanceof ActionGroup) {
-                    foreach ($action->getActions() as $groupedAction) {
-                        $groupedAction->livewire($this);
-                    }
+        $this->cachedActions = [];
 
-                    return [$index => $action];
+        foreach ($actions as $index => $action) {
+            if ($action instanceof ActionGroup) {
+                foreach ($action->getActions() as $groupedAction) {
+                    $groupedAction->livewire($this);
                 }
 
-                $action->livewire($this);
+                $this->cachedActions[$index] = $action;
 
-                return [$action->getName() => $action];
-            })
-            ->toArray();
+                continue;
+            }
+
+            $action->livewire($this);
+
+            $this->cachedActions[$action->getName()] = $action;
+        }
     }
 
     protected function configureAction(Action $action): void
@@ -191,7 +193,8 @@ trait HasActions
         return $this->makeForm()
             ->schema($action->getFormSchema())
             ->statePath('mountedActionData')
-            ->model($this->getMountedActionFormModel());
+            ->model($this->getMountedActionFormModel())
+            ->context($this->mountedAction);
     }
 
     protected function getMountedActionFormModel(): Model | string | null

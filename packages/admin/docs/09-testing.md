@@ -221,6 +221,24 @@ it('can delete', function () {
 });
 ```
 
+You can ensure that a particular user is not able to see a `DeleteAction` using `assertPageActionHidden()`:
+
+```php
+use Filament\Pages\Actions\DeleteAction;
+use function Pest\Livewire\livewire;
+
+it('can not delete', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostResource\Pages\EditPost::class, [
+        'record' => $post->getKey(),
+    ])
+        ->assertPageActionHidden(DeleteAction::class);
+
+    $this->assertModelMissing($post);
+});
+```
+
 #### View
 
 ##### Routing & render
@@ -312,7 +330,7 @@ it('can send invoices', function () {
     livewire(EditInvoice::class, [
         'invoice' => $invoice,
     ])
-        ->callPageAction('send', $post);
+        ->callPageAction('send');
 
     expect($invoice->refresh())
         ->isSent()->toBeTrue();
@@ -330,7 +348,7 @@ it('can send invoices', function () {
     livewire(EditInvoice::class, [
         'invoice' => $invoice,
     ])
-        ->callPageAction('send', $post, data: [
+        ->callPageAction('send', data: [
             'email' => $email = fake()->email(),
         ])
         ->assertHasNoPageActionErrors();
@@ -354,9 +372,49 @@ it('can validate invoice recipient email', function () {
     livewire(EditInvoice::class, [
         'invoice' => $invoice,
     ])
-        ->callPageAction('send', $post, data: [
+        ->callPageAction('send', data: [
             'email' => Str::random(),
         ])
         ->assertHasPageActionErrors(['email' => ['email']]);
+});
+```
+
+To check if a page action is pre-filled with data, you can use the `assertPageActionDataSet()` method:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can send invoices to the primary contact by default', function () {
+    $invoice = Invoice::factory()->create();
+    $recipientEmail = $invoice->company->primaryContact->email;
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->mountPageAction('send')
+        ->assertPageActionDataSet([
+            'email' => $recipientEmail,
+        ])
+        ->callMountedPageAction()
+        ->assertHasNoPageActionErrors();
+        
+    expect($invoice->refresh())
+        ->isSent()->toBeTrue()
+        ->recipient_email->toBe($recipientEmail);
+});
+```
+
+To check if a page action is hidden to a user, you can use the `assertPageActionHidden()` method:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can not send invoices', function () {
+    $invoice = Invoice::factory()->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->assertPageActionHidden('send');
 });
 ```

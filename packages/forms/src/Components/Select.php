@@ -20,6 +20,7 @@ use Illuminate\Validation\Rules\Exists;
 class Select extends Field
 {
     use Concerns\HasAffixes {
+        getActions as getBaseActions;
         getSuffixAction as getBaseSuffixAction;
     }
     use Concerns\HasExtraInputAttributes;
@@ -70,6 +71,8 @@ class Select extends Field
 
     protected string | Closure | null $relationship = null;
 
+    protected int | Closure $optionsLimit = 50;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -99,9 +102,13 @@ class Select extends Field
         $this->getOptionLabelsUsing(static function (Select $component, array $values): array {
             $options = $component->getOptions();
 
-            return collect($values)
-                ->mapWithKeys(fn ($value) => [$value => $options[$value] ?? $value])
-                ->toArray();
+            $labels = [];
+
+            foreach ($values as $value) {
+                $labels[$value] = $options[$value] ?? $value;
+            }
+
+            return $labels;
         });
 
         $this->loadingMessage(__('forms::components.select.loading_message'));
@@ -164,7 +171,7 @@ class Select extends Field
 
     public function getActions(): array
     {
-        $actions = parent::getActions();
+        $actions = $this->getBaseActions();
 
         $createOptionActionName = $this->getCreateOptionActionName();
 
@@ -248,7 +255,7 @@ class Select extends Field
         if ($this->modifyCreateOptionActionUsing) {
             $action = $this->evaluate($this->modifyCreateOptionActionUsing, [
                 'action' => $action,
-            ]);
+            ]) ?? $action;
         }
 
         return $action;
@@ -324,6 +331,13 @@ class Select extends Field
     public function searchPrompt(string | Htmlable | Closure | null $message): static
     {
         $this->searchPrompt = $message;
+
+        return $this;
+    }
+
+    public function optionsLimit(int | Closure $limit): static
+    {
+        $this->optionsLimit = $limit;
 
         return $this;
     }
@@ -453,7 +467,7 @@ class Select extends Field
             if ($callback) {
                 $relationshipQuery = $component->evaluate($callback, [
                     'query' => $relationshipQuery,
-                ]);
+                ]) ?? $relationshipQuery;
             }
 
             if (empty($relationshipQuery->getQuery()->orders)) {
@@ -465,7 +479,13 @@ class Select extends Field
                 strtolower($search),
             );
 
-            $relationshipQuery->limit(50);
+            $baseRelationshipQuery = $relationshipQuery->getQuery();
+
+            if (isset($baseRelationshipQuery->limit)) {
+                $component->optionsLimit($baseRelationshipQuery->limit);
+            } else {
+                $relationshipQuery->limit($component->getOptionsLimit());
+            }
 
             $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
 
@@ -493,12 +513,9 @@ class Select extends Field
             $relationshipQuery = $relationship->getRelated()->query();
 
             if ($callback) {
-                $newRelationshipQuery = $component->evaluate($callback, [
+                $relationshipQuery = $component->evaluate($callback, [
                     'query' => $relationshipQuery,
-                ]);
-
-                // If a new query object is returned, use it instead.
-                $relationshipQuery = $newRelationshipQuery ?? $relationshipQuery;
+                ]) ?? $relationshipQuery;
             }
 
             if (empty($relationshipQuery->getQuery()->orders)) {
@@ -745,5 +762,10 @@ class Select extends Field
         }
 
         return parent::getActionFormModel();
+    }
+
+    public function getOptionsLimit(): int
+    {
+        return $this->evaluate($this->optionsLimit);
     }
 }

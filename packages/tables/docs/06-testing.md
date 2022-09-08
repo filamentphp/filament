@@ -91,6 +91,19 @@ it('can search posts by title', function () {
 });
 ```
 
+### Authorization
+
+To ensure that a particular user cannot see a column, you can use the `assertTableColumnHidden()` method:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can hide the author column', function () {
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableColumnHidden(`author`);
+});
+```
+
 ## Filters
 
 To filter the table records, you can use the `filterTable()` method, along with `assertCanSeeTableRecords()` and `assertCanNotSeeTableRecords()`:
@@ -218,3 +231,41 @@ it('can validate edited post data', function () {
 ```
 
 For bulk actions, this method is called `assertHasTableBulkActionErrors()`.
+
+To check if an action or bulk action is pre-filled with data, you can use the `assertTableActionDataSet()` or `assertTableBulkActionDataSet()` method:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can load existing post data for editing', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->mountTableAction(EditAction::class, $post)
+        ->assertTableActionDataSet([[
+            'title' => $post->title,
+        ])
+        ->setTableActionData([[
+            'title' => $title = fake()->words(asText: true),
+        ])
+        ->callMountedTableAction()
+        ->assertHasNoTableActionErrors();
+
+    expect($post->refresh())
+        ->title->toBe($title);
+});
+```
+
+To ensure that an action or bulk action is hidden for a user, you can use the `assertTableActionHidden()` or `assertTableBulkActionHidden()` method:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can not publish posts', function () {
+    $post = Post::factory()->create();
+    
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableActionHidden('publish', $post)
+        ->assertTableBulkActionHidden('publish');
+});
+```

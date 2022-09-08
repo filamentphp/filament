@@ -255,7 +255,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 protected function paginateTableQuery(Builder $query): Paginator
 {
-    return $query->simplePaginate($this->getTableRecordsPerPage());
+    return $query->simplePaginate($this->getTableRecordsPerPage() == -1 ? $query->count() : $this->getTableRecordsPerPage());
 }
 ```
 
@@ -307,6 +307,52 @@ protected function getTableRecordUrlUsing(): Closure
 In this example, clicking on each post will take you to the `posts.edit` route.
 
 If you'd like to [override the URL](columns#opening-urls) for a specific column, or instead [run a Livewire action](columns#running-actions) when a column is clicked, see the [columns documentation](columns#opening-urls).
+
+## Record classes
+
+You may want to conditionally style rows based on the record data. This can be achieved by specifying a string or array of CSS classes to be applied to the row using the `getTableRecordClassesUsing()` method:
+
+```php
+use Closure;
+use Illuminate\Database\Eloquent\Model;
+
+protected function getTableRecordClassesUsing(): ?Closure
+{
+    return fn (Model $record) => match ($record->status) {
+        'draft' => 'opacity-30',
+        'reviewing' => [
+            'border-l-2 border-orange-600',
+            'dark:border-orange-300' => config('tables.dark_mode'),
+        ],
+        'published' => 'border-l-2 border-green-600',
+        default => null,
+    };
+}
+```
+
+These classes are not automatically compiled by Tailwind CSS. If you want to apply Tailwind CSS classes that are not already used in Blade files, you should update your `content` configuration in `tailwind.config.js` to also scan for classes in your desired PHP files:
+
+```js
+module.exports = {
+    content: [
+        './app/Filament/**/*.php',
+    ],
+}
+```
+
+Alternatively, you may add the classes to your [safelist](https://tailwindcss.com/docs/content-configuration#safelisting-classes):
+
+```js
+module.exports = {
+    safelist: [
+        'border-green-600',
+        'border-l-2',
+        'border-orange-600',
+        'dark:border-orange-300',
+        'opacity-30',
+    ],
+}
+```
 
 ## Empty state
 
@@ -431,6 +477,17 @@ Pagination will be disabled in reorder mode to allow you to move records between
 protected function isTablePaginationEnabledWhileReordering(): bool
 {
     return true;
+}
+```
+
+## Polling content
+
+You may poll table content so that it refreshes at a set interval, using the `getTablePollingInterval()` method:
+
+```php
+protected function getTablePollingInterval(): ?string
+{
+    return '10s';
 }
 ```
 

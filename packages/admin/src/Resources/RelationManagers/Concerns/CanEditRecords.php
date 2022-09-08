@@ -16,7 +16,7 @@ trait CanEditRecords
         $this->callHook('beforeFill');
         $this->callHook('beforeEditFill');
 
-        $data = $this->getMountedTableActionRecord()->toArray();
+        $data = $this->getMountedTableActionRecord()->attributesToArray();
 
         $data = $this->mutateFormDataBeforeFill($data);
 

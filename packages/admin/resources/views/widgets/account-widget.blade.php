@@ -5,10 +5,7 @@
         @endphp
 
         <div class="h-12 flex items-center space-x-4 rtl:space-x-reverse">
-            <div
-                class="w-10 h-10 rounded-full bg-gray-200 bg-cover bg-center"
-                style="background-image: url('{{ \Filament\Facades\Filament::getUserAvatarUrl($user) }}')"
-            ></div>
+            <x-filament::user-avatar :user="$user" />
 
             <div>
                 <h2 class="text-lg sm:text-xl font-bold tracking-tight">

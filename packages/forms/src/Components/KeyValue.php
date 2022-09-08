@@ -31,6 +31,8 @@ class KeyValue extends Field
 
     protected string | Closure | null $valuePlaceholder = null;
 
+    protected bool | Closure $isReorderable = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -41,7 +43,7 @@ class KeyValue extends Field
             return collect($state ?? [])
                 ->filter(static fn (?string $value, ?string $key): bool => filled($key))
                 ->map(static fn (?string $value): ?string => filled($value) ? $value : null)
-                ->toArray();
+                ->all();
         });
 
         $this->addButtonLabel(__('forms::components.key_value.buttons.add.label'));
@@ -123,6 +125,13 @@ class KeyValue extends Field
         return $this;
     }
 
+    public function reorderable(bool | Closure $condition = true): static
+    {
+        $this->isReorderable = $condition;
+
+        return $this;
+    }
+
     public function canAddRows(): bool
     {
         return ! $this->evaluate($this->shouldDisableAddingRows);
@@ -171,5 +180,10 @@ class KeyValue extends Field
     public function getValuePlaceholder(): ?string
     {
         return $this->evaluate($this->valuePlaceholder);
+    }
+
+    public function isReorderable(): bool
+    {
+        return $this->evaluate($this->isReorderable);
     }
 }

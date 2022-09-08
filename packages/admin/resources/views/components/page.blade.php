@@ -35,7 +35,13 @@
             $action = $this->getMountedAction();
         @endphp
 
-        <x-filament::modal id="page-action" :visible="filled($action)" :width="$action?->getModalWidth()" display-classes="block">
+        <x-filament::modal
+            id="page-action"
+            :wire:key="$action ? $this->id . '.actions.' . $action->getName() . '.modal' : null"
+            :visible="filled($action)"
+            :width="$action?->getModalWidth()"
+            display-classes="block"
+        >
             @if ($action)
                 @if ($action->isModalCentered())
                     <x-slot name="heading">
@@ -52,6 +58,12 @@
                         <x-filament::modal.heading>
                             {{ $action->getModalHeading() }}
                         </x-filament::modal.heading>
+
+                        @if ($subheading = $action->getModalSubheading())
+                            <x-filament::modal.subheading>
+                                {{ $subheading }}
+                            </x-filament::modal.subheading>
+                        @endif
                     </x-slot>
                 @endif
 

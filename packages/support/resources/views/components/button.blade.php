@@ -11,11 +11,12 @@
     'tag' => 'button',
     'tooltip' => null,
     'type' => 'button',
+    'labelSrOnly' => false,
 ])
 
 @php
     $buttonClasses = array_merge([
-        'inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset filament-button',
+        'filament-button inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset',
         'dark:focus:ring-offset-0' => $darkMode,
         'opacity-70 cursor-not-allowed pointer-events-none' => $disabled,
         'min-h-[2.25rem] px-4 text-sm' => $size === 'md',
@@ -34,7 +35,7 @@
         'dark:text-danger-500 dark:border-danger-500 dark:hover:bg-danger-500/20 dark:focus:bg-danger-600/20 dark:focus:ring-offset-danger-600' => $color === 'danger' && $darkMode,
         'dark:text-warning-500 dark:border-warning-500 dark:hover:bg-warning-500/20 dark:focus:bg-warning-600/20 dark:focus:ring-offset-warning-600' => $color === 'warning' && $darkMode,
         'dark:text-gray-400 dark:border-gray-400 dark:hover:bg-gray-400/20 dark:focus:bg-gray-600/20 dark:focus:ring-offset-gray-600' => $color === 'gray' && $darkMode,
-        'dark:border-gray-600 dark:hover:border-gray-500 dark:hover:hover:bg-gray-500/20 dark:text-gray-200 dark:focus:text-primary-400 dark:focus:border-primary-400 dark:focus:bg-gray-800/20' => $color === 'secondary' && $darkMode,
+        'dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-500/20 dark:text-gray-200 dark:focus:text-primary-400 dark:focus:border-primary-400 dark:focus:bg-gray-800/20' => $color === 'secondary' && $darkMode,
     ] : [
         'text-white shadow focus:ring-white border-transparent' => $color !== 'secondary',
         'bg-primary-600 hover:bg-primary-500 focus:bg-primary-700 focus:ring-offset-primary-700' => $color === 'primary',
@@ -43,20 +44,20 @@
         'bg-warning-600 hover:bg-warning-500 focus:bg-warning-700 focus:ring-offset-warning-700' => $color === 'warning',
         'bg-gray-600 hover:bg-gray-500 focus:bg-gray-700 focus:ring-offset-gray-700' => $color === 'gray',
         'text-gray-800 bg-white border-gray-300 hover:bg-gray-50 focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600' => $color === 'secondary',
-        'dark:bg-gray-800 dark:border-gray-600 dark:hover:border-gray-500 dark:text-gray-200 dark:focus:text-primary-400 dark:focus:border-primary-400 dark:focus:bg-gray-800' => $color === 'secondary' && $darkMode,
+        'dark:bg-gray-800 dark:hover:bg-gray-700 dark:border-gray-600 dark:hover:border-gray-500 dark:text-gray-200 dark:focus:text-primary-400 dark:focus:border-primary-400 dark:focus:bg-gray-800' => $color === 'secondary' && $darkMode,
     ]);
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-button-icon',
-        'w-5 h-5' => $size === 'md',
         'w-4 h-4' => $size === 'sm',
+        'w-5 h-5' => $size === 'md',
         'w-6 h-6' => $size === 'lg',
-        'mr-1 -ml-2 rtl:ml-1 rtl:-mr-2' => ($iconPosition === 'before') && ($size === 'md'),
-        'mr-2 -ml-3 rtl:ml-2 rtl:-mr-3' => ($iconPosition === 'before') && ($size === 'lg'),
-        'mr-1 -ml-1.5 rtl:ml-1 rtl:-mr-1.5' => ($iconPosition === 'before') && ($size === 'sm'),
-        'ml-1 -mr-2 rtl:mr-1 rtl:-ml-2' => ($iconPosition === 'after') && ($size === 'md'),
-        'ml-2 -mr-3 rtl:mr-2 rtl:-ml-3' => ($iconPosition === 'after') && ($size === 'lg'),
-        'ml-1 -mr-1.5 rtl:mr-1 rtl:-ml-1.5' => ($iconPosition === 'after') && ($size === 'sm'),
+        'mr-1 -ml-2 rtl:ml-1 rtl:-mr-2' => ($iconPosition === 'before') && ($size === 'md') && (! $labelSrOnly),
+        'mr-2 -ml-3 rtl:ml-2 rtl:-mr-3' => ($iconPosition === 'before') && ($size === 'lg') && (! $labelSrOnly),
+        'mr-1 -ml-1.5 rtl:ml-1 rtl:-mr-1.5' => ($iconPosition === 'before') && ($size === 'sm') && (! $labelSrOnly),
+        'ml-1 -mr-2 rtl:mr-1 rtl:-ml-2' => ($iconPosition === 'after') && ($size === 'md') && (! $labelSrOnly),
+        'ml-2 -mr-3 rtl:mr-2 rtl:-ml-3' => ($iconPosition === 'after') && ($size === 'lg') && (! $labelSrOnly),
+        'ml-1 -mr-1.5 rtl:mr-1 rtl:-ml-1.5' => ($iconPosition === 'after') && ($size === 'sm') && (! $labelSrOnly),
     ]);
 
     $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || (($type === 'submit') && filled($form));
@@ -81,7 +82,6 @@
         {!! $disabled ? 'disabled' : '' !!}
         x-data="{
             form: null,
-            label: {{ \Illuminate\Support\Js::from($slot->toHtml()) }},
             isUploadingFile: false,
         }"
         @unless ($disabled)
@@ -124,11 +124,15 @@
                     {{ __('filament-support::components/button.messages.uploading_file') }}
                 </span>
 
-                <span x-show="! isUploadingFile">
+                <span x-show="! isUploadingFile" @class([
+                    'sr-only' => $labelSrOnly,
+                ])>
                     {{ $slot }}
                 </span>
             @else
-                <span>
+                <span @class([
+                    'sr-only' => $labelSrOnly,
+                ])>
                     {{ $slot }}
                 </span>
             @endif
@@ -155,7 +159,9 @@
             <x-dynamic-component :component="$icon" :class="$iconClasses" />
         @endif
 
-        <span>
+        <span @class([
+            'sr-only' => $labelSrOnly,
+        ])>
             {{ $slot }}
         </span>
 

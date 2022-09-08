@@ -13,7 +13,7 @@
 
 @php
     $linkClasses = [
-        'inline-flex items-center justify-center gap-0.5 font-medium hover:underline focus:outline-none focus:underline filament-link',
+        'filament-link inline-flex items-center justify-center gap-0.5 font-medium hover:underline focus:outline-none focus:underline',
         'opacity-70 cursor-not-allowed pointer-events-none' => $disabled,
         'text-sm' => $size === 'sm',
         'text-lg' => $size === 'lg',
@@ -30,10 +30,10 @@
     ];
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-button-icon',
-        'w-3 h-3' => $size === 'sm',
-        'w-4 h-4' => $size === 'md',
-        'w-5 h-5' => $size === 'lg',
+        'filament-link-icon',
+        'w-4 h-4' => $size === 'sm',
+        'w-5 h-5' => $size === 'md',
+        'w-6 h-6' => $size === 'lg',
         'mr-1 rtl:ml-1' => $iconPosition === 'before',
         'ml-1 rtl:mr-1' => $iconPosition === 'after'
     ]);

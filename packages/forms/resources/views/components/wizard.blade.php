@@ -61,7 +61,7 @@
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $getStatePath() }}') nextStep()"
     x-cloak
     {!! $getId() ? "id=\"{$getId()}\"" : null !!}
-    {{ $attributes->merge($getExtraAttributes())->class(['grid gap-y-6 filament-forms-wizard-component']) }}
+    {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-wizard-component grid gap-y-6']) }}
     {{ $getExtraAlpineAttributeBag() }}
 >
     <input
@@ -94,7 +94,7 @@
                         'cursor-not-allowed pointer-events-none': getStepIndex(step) <= {{ $loop->index }},
                     }"
                     role="step"
-                    class="flex items-center h-full text-left w-full"
+                    class="flex items-center h-full text-left rtl:text-right w-full"
                 >
                     <div
                         x-bind:class="{
@@ -111,7 +111,7 @@
                                 x-bind:class="{
                                     'bg-primary-600': getStepIndex(step) > {{ $loop->index }},
                                     'border-2': getStepIndex(step) <= {{ $loop->index }},
-                                    'border-primary-600': getStepIndex(step) === {{ $loop->index }},
+                                    'border-primary-500': getStepIndex(step) === {{ $loop->index }},
                                     'border-gray-300 @if (config('forms.dark_mode')) dark:border-gray-500 @endif': getStepIndex(step) < {{ $loop->index }},
                                 }"
                                 class="w-10 h-10 flex items-center justify-center rounded-full"
@@ -129,7 +129,7 @@
                                         x-cloak
                                         x-bind:class="{
                                             'text-gray-500 @if (config('forms.dark_mode')) dark:text-gray-400 @endif': getStepIndex(step) !== {{ $loop->index }},
-                                            'text-primary-600': getStepIndex(step) === {{ $loop->index }},
+                                            'text-primary-500': getStepIndex(step) === {{ $loop->index }},
                                         }"
                                         class="w-5 h-5"
                                     />
@@ -138,7 +138,7 @@
                                         x-show="getStepIndex(step) <= {{ $loop->index }}"
                                         x-bind:class="{
                                             'text-gray-500 @if (config('forms.dark_mode')) dark:text-gray-400 @endif': getStepIndex(step) !== {{ $loop->index }},
-                                            'text-primary-600': getStepIndex(step) === {{ $loop->index }},
+                                            'text-primary-500': getStepIndex(step) === {{ $loop->index }},
                                         }"
                                     >
                                         {{ str_pad($loop->index + 1, 2, '0', STR_PAD_LEFT) }}

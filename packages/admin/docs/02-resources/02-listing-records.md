@@ -41,7 +41,7 @@ public static function table(Table $table): Table
 
 [Filters](../../tables/filters) are predefined scopes that administrators can use to filter records in your table. The `$table->filters()` method is used to register these.
 
-### Displaying filters above the table content
+### Displaying filters above or below the table content
 
 To render the filters above the table content instead of in a popover, you may use:
 
@@ -60,6 +60,27 @@ public static function table(Table $table): Table
                 // ...
             ],
             layout: Layout::AboveContent,
+        );
+}
+```
+
+To render the filters below the table content instead of in a popover, you may use:
+
+```php
+use Filament\Tables\Filters\Layout;
+use Filament\Resources\Table;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->filters(
+            [
+                // ...
+            ],
+            layout: Layout::BelowContent,
         );
 }
 ```
@@ -158,7 +179,7 @@ use Filament\Tables\Actions\CreateAction;
 CreateAction::make()
     ->mutateFormDataUsing(function (array $data): array {
         $data['user_id'] = auth()->id();
-    
+
         return $data;
     })
 ```
@@ -243,7 +264,7 @@ use Filament\Tables\Actions\EditAction;
 EditAction::make()
     ->mutateRecordDataUsing(function (array $data): array {
         $data['user_id'] = auth()->id();
-    
+
         return $data;
     })
 ```
@@ -258,7 +279,7 @@ use Filament\Tables\Actions\EditAction;
 EditAction::make()
     ->mutateFormDataUsing(function (array $data): array {
         $data['last_edited_by_id'] = auth()->id();
-    
+
         return $data;
     })
 ```
@@ -400,6 +421,21 @@ public static function table(Table $table): Table
     return $table
         // ...
         ->reorderable('order_column');
+}
+```
+
+## Polling content
+
+You may poll table content so that it refreshes at a set interval, using the `poll()` method:
+
+```php
+use Filament\Resources\Table;
+
+public static function table(Table $table): Table
+{
+    return $table
+        // ...
+        ->poll('10s');
 }
 ```
 

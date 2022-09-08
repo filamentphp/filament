@@ -2,6 +2,8 @@
 
 namespace Filament\Pages\Actions;
 
+use Filament\Facades\SpatieLaravelTranslatablePlugin;
+
 class LocaleSwitcher extends SelectAction
 {
     public static function getDefaultName(): ?string
@@ -22,11 +24,13 @@ class LocaleSwitcher extends SelectAction
                 return [];
             }
 
-            return collect($livewire->getTranslatableLocales())
-                ->mapWithKeys(function (string $locale): array {
-                    return [$locale => locale_get_display_name($locale, app()->getLocale())];
-                })
-                ->toArray();
+            $locales = [];
+
+            foreach ($livewire->getTranslatableLocales() as $locale) {
+                $locales[$locale] = SpatieLaravelTranslatablePlugin::getLocaleLabel($locale) ?? $locale;
+            }
+
+            return $locales;
         });
     }
 }

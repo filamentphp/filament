@@ -105,6 +105,17 @@ Action::make('edit')
     ->url(fn (Post $record): string => route('posts.edit', $record))
 ```
 
+Optionally, you can have the label automatically translated by using the `translateLabel()` method:
+
+```php
+use App\Models\Post;
+use Filament\Tables\Actions\Action;
+
+Action::make('edit')
+    ->translateLabel() // Equivalent to `label(__('Edit'))`
+    ->url(fn (Post $record): string => route('posts.edit', $record))
+```
+
 ## Setting a color
 
 Actions may have a color to indicate their significance. It may be either `primary`, `secondary`, `success`, `warning` or `danger`:
@@ -188,6 +199,32 @@ BulkAction::make('updateAuthor')
     ])
 ```
 
+#### Filling default data
+
+You may fill the form with default data, using the `mountUsing()` method:
+
+```php
+use App\Models\User;
+use Filament\Forms;
+use Filament\Tables\Actions\Action;
+use Illuminate\Database\Eloquent\Collection;
+
+Action::make('updateAuthor')
+    ->mountUsing(fn (Forms\ComponentContainer $form, User $record) => $form->fill([
+        'authorId' => $record->author->id,
+    ]))
+    ->action(function (User $record, array $data): void {
+        $record->author()->associate($data['authorId']);
+        $record->save();
+    })
+    ->form([
+        Forms\Components\Select::make('authorId')
+            ->label('Author')
+            ->options(User::query()->pluck('name', 'id'))
+            ->required(),
+    ])
+```
+
 #### Wizards
 
 You may easily transform action forms into multistep wizards.
@@ -248,7 +285,7 @@ BulkAction::make('delete')
     ->modalButton('Yes, delete them')
 ```
 
-## Custom content
+### Custom content
 
 You may define custom content to be rendered inside your modal, which you can specify by passing a Blade view into the `modalContent()` method:
 
@@ -355,9 +392,22 @@ protected function getTableActions(): array
 }
 ```
 
+## Position
+
+By default, the row actions in your table are rendered in the final cell. You may change the position by overriding the `getTableActionsPosition()` method:
+
+```php
+use Filament\Tables\Actions\Position;
+
+protected function getTableActionsPosition(): ?string
+{
+    return Position::BeforeCells;
+}
+```
+
 ## Alignment
 
-By default, the row actions in your table will be aligned to the right in the final cell. To change the default alignment, update the configuration value inside of the package config:
+Row actions are aligned to the right in their cell by default. To change the alignment, update the configuration value inside of the package config:
 
 ```
 'actions' => [

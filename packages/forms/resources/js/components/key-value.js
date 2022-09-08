@@ -1,7 +1,5 @@
 export default (Alpine) => {
-    Alpine.data('keyValueFormComponent', ({
-        state,
-    }) => ({
+    Alpine.data('keyValueFormComponent', ({ state }) => ({
         state,
 
         rows: [],
@@ -15,8 +13,10 @@ export default (Alpine) => {
                 this.addRow()
             }
 
+            this.shouldUpdateRows = true
+
             this.$watch('state', () => {
-                if (! this.shouldUpdateRows) {
+                if (!this.shouldUpdateRows) {
                     this.shouldUpdateRows = true
 
                     return
@@ -42,6 +42,17 @@ export default (Alpine) => {
             this.updateState()
 
             this.shouldUpdateRows = true
+        },
+
+        reorderRows: function (event) {
+            const rows = Alpine.raw(this.rows)
+
+            const reorderedRow = rows.splice(event.oldIndex, 1)[0]
+            rows.splice(event.newIndex, 0, reorderedRow)
+
+            this.rows = rows
+
+            this.updateState()
         },
 
         updateRows: function () {

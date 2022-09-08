@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Attach',
+        'label' => '追加',
 
         'modal' => [
 
-            'heading' => 'Attach :label',
+            'heading' => ':labelの追加',
 
             'fields' => [
 
-                'record_ids' => [
-                    'label' => 'Records',
+                'record_id' => [
+                    'label' => 'レコード',
                 ],
 
             ],
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'attach' => [
-                    'label' => 'Attach',
+                    'label' => '追加',
                 ],
 
                 'attach_another' => [
-                    'label' => 'Attach & attach another',
+                    'label' => '追加して、続けて追加',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'attached' => 'Attached',
+            'attached' => '追加しました',
         ],
 
     ],

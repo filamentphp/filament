@@ -273,10 +273,49 @@ Tabs::make('Heading')
                 // ...
             ]),
         Tabs\Tab::make('Label 3')
-            ->icon('heroicon-o-eye') // Optional icon
             ->schema([
                 // ...
             ]),
+    ])
+```
+
+The first tab will be open by default. You can change the default open tab using the `activeTab()` method:
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Heading')
+    ->tabs([
+        Tabs\Tab::make('Label 1')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Label 2')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Label 3')
+            ->schema([
+                // ...
+            ]),
+    ])
+    ->activeTab(2)
+```
+
+Tabs may have an icon and badge, which you can set using the `icon()` and `badge()` methods:
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Heading')
+    ->tabs([
+        Tabs\Tab::make('Notifications')
+            ->icon('heroicon-o-bell') // [tl! focus:start]
+            ->badge('39') // [tl! focus:end]
+            ->schema([
+                // ...
+            ]),
+        // ...
     ])
 ```
 
@@ -344,6 +383,16 @@ Wizard::make([
 ])->submitAction(new HtmlString('<button type="submit">Submit</button>'))
 ```
 
+You may use the `startOnStep()` method to load a specific step in the wizard:
+
+```php
+use Filament\Forms\Components\Wizard;
+
+Wizard::make([
+    // ...
+])->startOnStep(2)
+```
+
 ## Section
 
 You may want to separate your fields into sections, each with a heading and description. To do this, you can use a section component:
@@ -392,6 +441,18 @@ Section::make('Heading')
         // ...
     ])
     ->collapsed()
+```
+
+When nesting sections, you can use a more compact styling:
+
+```php
+use Filament\Forms\Components\Section;
+
+Section::make('Heading')
+    ->schema([
+        // ...
+    ])
+    ->compact()
 ```
 
 ## Placeholder
@@ -478,7 +539,7 @@ use Filament\Forms\Components\Component;
 class Wizard extends Component
 {
     protected string $view = 'filament.forms.components.wizard';
-    
+
     public static function make(): static
     {
         return new static();

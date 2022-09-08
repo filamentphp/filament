@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -20,7 +21,10 @@ trait CanSelectRecords
     {
         $query = $this->getFilteredTableQuery();
 
-        return $query->pluck($query->getModel()->getQualifiedKeyName())->toArray();
+        return $query
+            ->pluck($query->getModel()->getQualifiedKeyName())
+            ->map(fn ($key): string => (string) $key)
+            ->all();
     }
 
     public function getAllTableRecordsCount(): int
@@ -47,13 +51,16 @@ trait CanSelectRecords
         $pivotClass = $relationship->getPivotClass();
         $pivotKeyName = app($pivotClass)->getKeyName();
 
-        return $this->selectPivotDataInQuery(
+        return $this->hydratePivotRelationForTableRecords($this->selectPivotDataInQuery(
             $relationship->wherePivotIn($pivotKeyName, $this->selectedTableRecords),
-        )->get();
+        )->get());
     }
 
     public function isTableSelectionEnabled(): bool
     {
-        return (bool) count($this->getCachedTableBulkActions());
+        return (bool) count(array_filter(
+            $this->getCachedTableBulkActions(),
+            fn (BulkAction $action): bool => ! $action->isHidden(),
+        ));
     }
 }

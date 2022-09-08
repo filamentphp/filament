@@ -36,22 +36,32 @@ class EditRecord extends Page implements HasFormActions
         return static::$breadcrumb ?? __('filament::resources/pages/edit-record.breadcrumb');
     }
 
+    public function getFormTabLabel(): ?string
+    {
+        return __('filament::resources/pages/edit-record.form.tab.label');
+    }
+
     public function mount($record): void
+    {
+        $this->record = $this->resolveRecord($record);
+
+        $this->authorizeAccess();
+
+        $this->fillForm();
+    }
+
+    protected function authorizeAccess(): void
     {
         static::authorizeResourceAccess();
 
-        $this->record = $this->resolveRecord($record);
-
         abort_unless(static::getResource()::canEdit($this->getRecord()), 403);
-
-        $this->fillForm();
     }
 
     protected function fillForm(): void
     {
         $this->callHook('beforeFill');
 
-        $data = $this->getRecord()->toArray();
+        $data = $this->getRecord()->attributesToArray();
 
         $data = $this->mutateFormDataBeforeFill($data);
 
@@ -67,6 +77,8 @@ class EditRecord extends Page implements HasFormActions
 
     public function save(bool $shouldRedirect = true): void
     {
+        $this->authorizeAccess();
+
         $this->callHook('beforeValidate');
 
         $data = $this->form->getState();
@@ -286,6 +298,7 @@ class EditRecord extends Page implements HasFormActions
     {
         return [
             'form' => $this->makeForm()
+                ->context('edit')
                 ->model($this->getRecord())
                 ->schema($this->getFormSchema())
                 ->statePath('data')

@@ -55,6 +55,7 @@ trait EntanglesStateWithSingularRelationship
 
             if ($relationship instanceof BelongsTo) {
                 $relationship->associate($record->create($state));
+                $relationship->getParent()->save();
             } else {
                 $record->fill($state);
                 $relationship->save($record);
@@ -83,7 +84,7 @@ trait EntanglesStateWithSingularRelationship
 
     protected function getStateFromRelatedRecord(Model $record): array
     {
-        $state = $record->toArray();
+        $state = $record->attributesToArray();
 
         if (
             ($activeLocale = $this->getLivewire()->getActiveFormLocale()) &&

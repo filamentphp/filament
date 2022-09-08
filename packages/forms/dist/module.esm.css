@@ -1571,8 +1571,9 @@ trix-editor .attachment__metadata .attachment__size {
 }
 .filepond--root[data-style-panel-layout=grid] .filepond--item {
   width: calc(50% - 0.5em);
+  display: inline;
 }
-@media (min-width: 50em) {
+@media screen(lg) {
   .filepond--root[data-style-panel-layout=grid] .filepond--item {
     width: calc(33.33% - 0.5em);
   }
@@ -1606,7 +1607,7 @@ trix-editor .attachment__metadata .attachment__size {
 
 /* packages/forms/resources/css/components/select.css */
 .choices {
-  @apply relative overflow-hidden;
+  @apply relative;
 }
 .choices:focus {
   @apply outline-none;
@@ -1642,18 +1643,18 @@ trix-editor .attachment__metadata .attachment__size {
 .choices__inner {
   @apply py-2 px-3 inline-block align-top w-full bg-white bg-no-repeat border border-gray-300 transition duration-75 rounded-lg shadow-sm;
   background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
-  background-position: right .5rem center;
+  background-position: right 0.5rem center;
   background-size: 1.5em 1.5em;
 }
 .dark .choices__inner {
   @apply border-gray-600 bg-gray-700 text-white;
 }
 [dir=rtl] .choices__inner {
-  background-position: left .5rem center;
+  background-position: left 0.5rem center;
 }
 .is-focused .choices__inner,
 .is-open .choices__inner {
-  @apply border-primary-600 ring-1 ring-inset ring-primary-600;
+  @apply border-primary-500 ring-1 ring-inset ring-primary-500;
 }
 .choices__list {
   @apply m-0 pl-0 list-none;
@@ -1790,7 +1791,7 @@ trix-editor .attachment__metadata .attachment__size {
   border-color: rgb(75 85 99) !important;
 }
 .choices__input {
-  @apply inline-block border-0 max-w-full;
+  @apply inline-block max-w-full border-none;
   border-color: transparent !important;
   background-color: transparent !important;
   padding: 0 !important;

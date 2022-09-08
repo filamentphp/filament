@@ -20,6 +20,7 @@
 
 <div
     x-data="{ isOpen: false }"
+    x-trap.noscroll="isOpen"
     @if ($id)
         x-on:{{ $closeEventName }}.window="if ($event.detail.id === '{{ $id }}') isOpen = false"
         x-on:{{ $openEventName }}.window="if ($event.detail.id === '{{ $id }}') isOpen = true"
@@ -31,7 +32,7 @@
     @endif
     role="dialog"
     aria-modal="true"
-    class="{{ $displayClasses }} filament-modal"
+    class="filament-modal {{ $displayClasses }}"
 >
     {{ $trigger }}
 
@@ -56,14 +57,13 @@
             @endif
             aria-hidden="true"
             @class([
-                'fixed inset-0 w-full h-full bg-black/50 filament-modal-close-overlay',
+                'filament-modal-close-overlay fixed inset-0 w-full h-full bg-black/50',
                 'cursor-pointer' => config('filament-support.modal.is_closed_by_clicking_away', true)
             ])
         ></div>
 
         <div
             x-show="isOpen"
-            x-trap.noscroll="isOpen"
             @if (filled($id))
                 x-on:keydown.window.escape="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
             @else
@@ -80,7 +80,7 @@
         >
             <div
                 @class([
-                    'w-full mx-auto p-2 space-y-2 bg-white rounded-xl cursor-default pointer-events-auto filament-modal-window',
+                    'filament-modal-window w-full mx-auto p-2 space-y-2 bg-white rounded-xl cursor-default pointer-events-auto',
                     'dark:bg-gray-800' => $darkMode,
                     'hidden' => ! $visible,
                     'max-w-xs' => $width === 'xs',
@@ -97,7 +97,7 @@
                 ])
             >
                 @if ($header)
-                    <div class="px-4 py-2 filament-modal-header">
+                    <div class="filament-modal-header px-4 py-2">
                         {{ $header }}
                     </div>
                 @endif
@@ -106,7 +106,7 @@
                     <x-dynamic-component :component="$hrComponent" />
                 @endif
 
-                <div class="space-y-2 filament-modal-content">
+                <div class="filament-modal-content space-y-2">
                     @if ($heading || $subheading)
                         <div @class([
                             'p-4 space-y-2 text-center',
@@ -143,7 +143,7 @@
                 @endif
 
                 @if ($footer)
-                    <div class="px-4 py-2 filament-modal-footer">
+                    <div class="filament-modal-footer px-4 py-2">
                         {{ $footer }}
                     </div>
                 @endif

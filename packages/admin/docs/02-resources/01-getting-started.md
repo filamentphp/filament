@@ -58,6 +58,8 @@ When creating your resource, you may now use `--generate`:
 php artisan make:filament-resource Customer --generate
 ```
 
+> Note: If your table contains ENUM columns, `doctrine/dbal` is unable to scan your table and will crash. Hence Filament is unable to generate the schema for your resource if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
+
 ### Handling soft deletes
 
 By default, you will not be able to interact with deleted records in the admin panel. If you'd like to add functionality to restore, force delete and filter trashed records in your resource, use the `--soft-deletes` flag when generating the resource:
@@ -139,11 +141,11 @@ To view a full list of available [layout components](../../forms/layout), see th
 
 You may also build your own completely [custom layout components](../../forms/layout#building-custom-layout-components).
 
-### Hiding components based on the page
+### Hiding components contextually
 
-The `hiddenOn()` method of form components allows you to dynamically hide fields based on the current page.
+The `hiddenOn()` method of form components allows you to dynamically hide fields based on the current page or action.
 
-In this example, we hide the `password` field on the `EditUser` resource page:
+In this example, we hide the `password` field on the `edit` page:
 
 ```php
 use Livewire\Component;
@@ -151,10 +153,10 @@ use Livewire\Component;
 Forms\Components\TextInput::make('password')
     ->password()
     ->required()
-    ->hiddenOn(Pages\EditUser::class),
+    ->hiddenOn('edit'),
 ```
 
-Alternatively, we have a `visibleOn()` shortcut method for only showing a field on one page:
+Alternatively, we have a `visibleOn()` shortcut method for only showing a field on one page or action:
 
 ```php
 use Livewire\Component;
@@ -162,7 +164,7 @@ use Livewire\Component;
 Forms\Components\TextInput::make('password')
     ->password()
     ->required()
-    ->visibleOn(Pages\CreateUser::class),
+    ->visibleOn('create'),
 ```
 
 ## Tables

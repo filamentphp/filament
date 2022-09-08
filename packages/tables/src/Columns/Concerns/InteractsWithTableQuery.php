@@ -39,20 +39,24 @@ trait InteractsWithTableQuery
             return $query;
         }
 
-        if ($this->queriesRelationships()) {
+        if ($this->queriesRelationships($query->getModel())) {
             $query->with([$this->getRelationshipName()]);
         }
 
         return $query;
     }
 
-    public function applySearchConstraint(Builder $query, string $search, bool &$isFirst): Builder
+    public function applySearchConstraint(Builder $query, string $search, bool &$isFirst, bool $isIndividual = false): Builder
     {
         if ($this->isHidden()) {
             return $query;
         }
 
-        if (! $this->isSearchable()) {
+        if ($isIndividual && (! $this->isIndividuallySearchable())) {
+            return $query;
+        }
+
+        if ((! $isIndividual) && (! $this->isGloballySearchable())) {
             return $query;
         }
 
@@ -94,7 +98,7 @@ trait InteractsWithTableQuery
                     );
                 },
                 fn (Builder $query): Builder => $query->when(
-                    $this->queriesRelationships(),
+                    $this->queriesRelationships($query->getModel()),
                     fn (Builder $query): Builder => $query->{"{$whereClause}Relation"}(
                         $this->getRelationshipName(),
                         $searchColumnName,
@@ -135,13 +139,14 @@ trait InteractsWithTableQuery
         }
 
         foreach (array_reverse($this->getSortColumns()) as $sortColumn) {
+            $relationship = $this->getRelationship($query->getModel());
+
             $query->when(
-                $this->queriesRelationships(),
+                $relationship,
                 fn ($query) => $query->orderBy(
-                    $this
-                        ->getRelationship($query)
+                    $relationship
                         ->getRelationExistenceQuery(
-                            $this->getRelatedModel($query)->query(),
+                            $relationship->getRelated()::query(),
                             $query,
                             $sortColumn,
                         )
@@ -155,9 +160,31 @@ trait InteractsWithTableQuery
         return $query;
     }
 
-    public function queriesRelationships(): bool
+    public function queriesRelationships(Model $record): bool
     {
-        return Str::of($this->getName())->contains('.');
+        return $this->getRelationship($record) !== null;
+    }
+
+    public function getRelationship(Model $record): ?Relation
+    {
+        if (! Str::of($this->getName())->contains('.')) {
+            return null;
+        }
+
+        $relationship = null;
+
+        foreach (explode('.', $this->getRelationshipName()) as $nestedRelationshipName) {
+            if (! $record->isRelation($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
+            $relationship = $record->{$nestedRelationshipName}();
+            $record = $relationship->getRelated();
+        }
+
+        return $relationship;
     }
 
     protected function getRelationshipTitleColumnName(): string
@@ -165,23 +192,8 @@ trait InteractsWithTableQuery
         return (string) Str::of($this->getName())->afterLast('.');
     }
 
-    protected function getRelatedModel(Builder $query): Model
-    {
-        return $this->getRelationship($query)->getModel();
-    }
-
-    protected function getRelationship(Builder $query): Relation | Builder
-    {
-        return $this->getQueryModel($query)->{$this->getRelationshipName()}();
-    }
-
     protected function getRelationshipName(): string
     {
         return (string) Str::of($this->getName())->beforeLast('.');
-    }
-
-    protected function getQueryModel(Builder $query): Model
-    {
-        return $query->getModel();
     }
 }

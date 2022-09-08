@@ -13,7 +13,7 @@
 <nav
     role="navigation"
     aria-label="{{ __('tables::table.pagination.label') }}"
-    class="flex items-center justify-between filament-tables-pagination"
+    class="filament-tables-pagination flex items-center justify-between"
 >
     <div class="flex justify-between items-center flex-1 lg:hidden">
         <div class="w-10">
@@ -120,7 +120,7 @@
                                             :label="$page"
                                             :aria-label="__('tables::table.pagination.buttons.go_to_page.label', ['page' => $page])"
                                             :active="$page === $paginator->currentPage()"
-                                            :wire:key="'pagination-' . $paginator->getPageName() . '-page' . $page"
+                                            :wire:key="$this->id . '.table.pagination.' . $paginator->getPageName() . '.' . $page"
                                         />
                                     @endforeach
                                 @endif

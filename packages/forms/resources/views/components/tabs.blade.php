@@ -4,7 +4,7 @@
         tab: null,
 
         init: function () {
-            this.tab = this.getTabs()[0]
+            this.tab = this.getTabs()[@js($getActiveTab()) - 1]
         },
 
         getTabs: function () {
@@ -21,7 +21,7 @@
     x-cloak
     {!! $getId() ? "id=\"{$getId()}\"" : null !!}
     {{ $attributes->merge($getExtraAttributes())->class([
-        'rounded-xl shadow-sm border border-gray-300 bg-white filament-forms-tabs-component',
+        'filament-forms-tabs-component rounded-xl shadow-sm border border-gray-300 bg-white',
         'dark:bg-gray-800 dark:border-gray-700' => config('forms.dark_mode'),
     ]) }}
     {{ $getExtraAlpineAttributeBag() }}
@@ -42,7 +42,7 @@
         {!! $getLabel() ? 'aria-label="' . $getLabel() . '"' : null !!}
         role="tablist"
         @class([
-            'rounded-t-xl flex overflow-y-auto bg-gray-100',
+            'filament-forms-tabs-component-header rounded-t-xl flex overflow-y-auto bg-gray-100',
             'dark:bg-gray-700' => config('forms.dark_mode'),
         ])
     >
@@ -54,20 +54,32 @@
                 x-on:click="tab = '{{ $tab->getId() }}'"
                 role="tab"
                 x-bind:tabindex="tab === '{{ $tab->getId() }}' ? 0 : -1"
-                class="flex items-center gap-2 shrink-0 p-3 text-sm font-medium"
-                x-bind:class="{ 'bg-white @if (config('forms.dark_mode')) dark:bg-gray-800 @endif': tab === '{{ $tab->getId() }}' }"
+                class="filament-forms-tabs-component-button flex items-center gap-2 shrink-0 p-3 text-sm font-medium"
+                x-bind:class="{
+                    'text-gray-500 @if (config('forms.dark_mode')) dark:text-gray-400 @endif': tab !== '{{ $tab->getId() }}',
+                    'filament-forms-tabs-component-button-active bg-white text-primary-600 @if (config('forms.dark_mode')) dark:bg-gray-800 @endif': tab === '{{ $tab->getId() }}',
+                }"
             >
                 @if ($icon = $tab->getIcon())
                     <x-dynamic-component
                         :component="$icon"
-                        :class="\Illuminate\Support\Arr::toCssClasses([
-                            'h-4 w-4 text-gray-500',
-                            'dark:text-gray-400' => config('forms.dark_mode'),
-                        ])"
+                        class="h-5 w-5"
                     />
                 @endif
 
-                {{ $tab->getLabel() }}
+                <span>{{ $tab->getLabel() }}</span>
+
+                @if ($badge = $tab->getBadge())
+                    <span
+                        class="inline-flex items-center justify-center ml-auto rtl:ml-0 rtl:mr-auto min-h-4 px-2 py-0.5 text-xs font-medium tracking-tight rounded-xl whitespace-normal"
+                        x-bind:class="{
+                            'bg-gray-200 @if (config('forms.dark_mode')) dark:bg-gray-600 @endif': tab !== '{{ $tab->getId() }}',
+                            'bg-primary-500/10 font-medium': tab === '{{ $tab->getId() }}',
+                        }"
+                    >
+                        {{ $badge }}
+                    </span>
+                @endif
             </button>
         @endforeach
     </div>

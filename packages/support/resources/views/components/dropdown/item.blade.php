@@ -12,7 +12,7 @@
     $hasHoverAndFocusState = ($tag !== 'a' || filled($attributes->get('href')));
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'flex items-center w-full h-8 px-3 text-sm font-medium group whitespace-nowrap filament-dropdown-item',
+        'filament-dropdown-item flex items-center w-full h-8 px-3 text-sm font-medium group whitespace-nowrap',
         'focus:outline-none hover:text-white focus:text-white' => $hasHoverAndFocusState,
         'hover:bg-primary-600 focus:bg-primary-700' => ($color === 'primary' || $color === 'secondary') && $hasHoverAndFocusState,
         'hover:bg-danger-600 focus:bg-danger-700' => $color === 'danger' && $hasHoverAndFocusState,
@@ -31,7 +31,7 @@
     $labelClasses = 'truncate';
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'mr-2 -ml-1 w-6 h-6 flex-shrink-0 rtl:ml-2 rtl:-mr-1',
+        'mr-2 -ml-1 w-5 h-5 flex-shrink-0 rtl:ml-2 rtl:-mr-1',
         'group-hover:text-white group-focus:text-white' => $hasHoverAndFocusState,
         'text-primary-500' => $color === 'primary',
         'text-danger-500' => $color === 'danger',
@@ -41,7 +41,7 @@
     ]);
 @endphp
 
-<li {{ $attributes->only(['class']) }}>
+<div {{ $attributes->only(['class']) }}>
     @if ($tag === 'button')
         <button
             type="{{ $type }}"
@@ -101,4 +101,4 @@
             </button>
         </form>
     @endif
-</li>
+</div>

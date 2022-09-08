@@ -33,7 +33,7 @@ trait CanBeValidated
 
         foreach ($this->getComponents() as $component) {
             if ($component instanceof Components\Contracts\HasValidationRules) {
-                $attributes[$component->getStatePath()] = $component->getValidationAttribute();
+                $component->dehydrateValidationAttributes($attributes);
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
@@ -53,11 +53,8 @@ trait CanBeValidated
         $rules = [];
 
         foreach ($this->getComponents() as $component) {
-            if (
-                $component instanceof Components\Contracts\HasValidationRules &&
-                count($componentRules = $component->getValidationRules())
-            ) {
-                $rules[$component->getStatePath()] = $componentRules;
+            if ($component instanceof Components\Contracts\HasValidationRules) {
+                $component->dehydrateValidationRules($rules);
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
@@ -78,6 +75,12 @@ trait CanBeValidated
             return [];
         }
 
-        return $this->getLivewire()->validate($this->getValidationRules(), [], $this->getValidationAttributes());
+        $rules = $this->getValidationRules();
+
+        if (! count($rules)) {
+            return [];
+        }
+
+        return $this->getLivewire()->validate($rules, [], $this->getValidationAttributes());
     }
 }

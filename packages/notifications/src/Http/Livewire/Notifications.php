@@ -13,6 +13,7 @@ class Notifications extends Component
 
     protected $listeners = [
         'notificationsSent' => 'pullNotificationsFromSession',
+        'notificationClosed' => 'removeNotification',
     ];
 
     public function mount(): void
@@ -23,7 +24,7 @@ class Notifications extends Component
 
     public function pullNotificationsFromSession(): void
     {
-        foreach (session()->pull('filament.notifications', []) as $notification) {
+        foreach (session()->pull('filament.notifications') ?? [] as $notification) {
             $notification = Notification::fromArray($notification);
 
             $this->notifications->put(
@@ -33,7 +34,7 @@ class Notifications extends Component
         }
     }
 
-    public function close(string $id): void
+    public function removeNotification(string $id): void
     {
         $this->notifications->forget($id);
     }

@@ -18,28 +18,30 @@
         $isItemMovementDisabled = $isItemMovementDisabled();
     @endphp
 
-    @if ((count($containers) > 1) && $isCollapsible)
-        <div class="space-x-2 rtl:space-x-reverse" x-data="{}">
-            <x-forms::link
-                x-on:click="$dispatch('builder-collapse', '{{ $getStatePath() }}')"
-                tag="button"
-                size="sm"
-            >
-                {{ __('forms::components.builder.buttons.collapse_all.label') }}
-            </x-forms::link>
+    <div>
+        @if ((count($containers) > 1) && $isCollapsible)
+            <div class="space-x-2 rtl:space-x-reverse" x-data="{}">
+                <x-forms::link
+                    x-on:click="$dispatch('builder-collapse', '{{ $getStatePath() }}')"
+                    tag="button"
+                    size="sm"
+                >
+                    {{ __('forms::components.builder.buttons.collapse_all.label') }}
+                </x-forms::link>
 
-            <x-forms::link
-                x-on:click="$dispatch('builder-expand', '{{ $getStatePath() }}')"
-                tag="button"
-                size="sm"
-            >
-                {{ __('forms::components.builder.buttons.expand_all.label') }}
-            </x-forms::link>
-        </div>
-    @endif
+                <x-forms::link
+                    x-on:click="$dispatch('builder-expand', '{{ $getStatePath() }}')"
+                    tag="button"
+                    size="sm"
+                >
+                    {{ __('forms::components.builder.buttons.expand_all.label') }}
+                </x-forms::link>
+            </div>
+        @endif
+    </div>
 
     <div {{ $attributes->merge($getExtraAttributes())->class([
-        'space-y-6 rounded-xl filament-forms-builder-component',
+        'filament-forms-builder-component space-y-6 rounded-xl',
         'bg-gray-50 p-6' => $isInset(),
         'dark:bg-gray-500/10' => $isInset() && config('forms.dark_mode'),
     ]) }}>
@@ -66,7 +68,7 @@
                         x-on:mouseenter="isCreateButtonVisible = true"
                         x-on:click.away="isCreateButtonVisible = false"
                         x-on:mouseleave="isCreateButtonVisible = false"
-                        wire:key="{{ $item->getStatePath() }}"
+                        wire:key="{{ $this->id }}.{{ $item->getStatePath() }}.item"
                         wire:sortable.item="{{ $uuid }}"
                         @class([
                             'bg-white border border-gray-300 shadow-sm rounded-xl relative',
@@ -187,21 +189,20 @@
                                 x-transition
                                 class="absolute inset-x-0 bottom-0 z-10 flex items-center justify-center h-12 -mb-12"
                             >
-                                <div x-data class="relative flex justify-center">
-                                    <x-forms::icon-button
-                                        :label="$getCreateItemBetweenButtonLabel()"
-                                        icon="heroicon-o-plus"
-                                        x-on:click="$refs.panel.toggle"
-                                        type="button"
-                                    />
+                                <x-forms::dropdown>
+                                    <x-slot name="trigger">
+                                        <x-forms::icon-button
+                                            :label="$getCreateItemBetweenButtonLabel()"
+                                            icon="heroicon-o-plus"
+                                        />
+                                    </x-slot>
 
                                     <x-forms::builder.block-picker
                                         :blocks="$getBlocks()"
                                         :create-after-item="$uuid"
                                         :state-path="$getStatePath()"
-                                        class="py-2"
                                     />
-                                </div>
+                                </x-forms::dropdown>
                             </div>
                         @endif
                     </li>
@@ -210,20 +211,18 @@
         @endif
 
         @if (! $isItemCreationDisabled)
-            <div x-data class="relative flex justify-center">
-                <x-forms::button
-                    size="sm"
-                    x-on:click="$refs.panel.toggle"
-                    type="button"
-                >
-                    {{ $getCreateItemButtonLabel() }}
-                </x-forms::button>
+            <x-forms::dropdown class="flex justify-center">
+                <x-slot name="trigger">
+                    <x-forms::button size="sm">
+                        {{ $getCreateItemButtonLabel() }}
+                    </x-forms::button>
+                </x-slot>
 
                 <x-forms::builder.block-picker
                     :blocks="$getBlocks()"
                     :state-path="$getStatePath()"
                 />
-            </div>
+            </x-forms::dropdown>
         @endif
     </div>
 </x-dynamic-component>

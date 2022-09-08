@@ -1,27 +1,3 @@
-@once
-    @push('scripts')
-        @php
-            if (\Illuminate\Support\Facades\Lang::has($localeString = 'forms::components.file_upload.filepond_locale')) {
-                $locale = __($localeString);
-            } else {
-                $locale = strtolower(str_replace('_', '-', app()->getLocale()));
-
-                if (! str_contains($locale, '-')) {
-                    $locale .= '-' . $locale;
-                }
-            }
-
-            $defaultLocaleData = ($placeholder = $getPlaceholder()) ? "{ labelIdle: '{$placeholder}' }" : '{}';
-        @endphp
-
-        <script type="module">
-            import localeData from 'https://cdn.skypack.dev/filepond/locale/{{$locale}}.js'
-
-            window.FilePond && window.FilePond.setOptions({ ...localeData, ...{!! $defaultLocaleData !!} })
-        </script>
-    @endpush
-@endonce
-
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :id="$getId()"
@@ -60,9 +36,10 @@
             imageResizeTargetWidth: {{ $imageResizeTargetWidth ? "'{$imageResizeTargetWidth}'" : 'null' }},
             isAvatar: {{ $isAvatar() ? 'true' : 'false' }},
             loadingIndicatorPosition: '{{ $getLoadingIndicatorPosition() }}',
+            locale: @js(app()->getLocale()),
             panelAspectRatio: {{ ($aspectRatio = $getPanelAspectRatio()) ? "'{$aspectRatio}'" : 'null' }},
             panelLayout: {{ ($layout = $getPanelLayout()) ? "'{$layout}'" : 'null' }},
-            placeholder: {{ ($placeholder = $getPlaceholder()) ? "'{$placeholder}'" : 'null' }},
+            placeholder: @js($getPlaceholder()),
             maxSize: {{ ($size = $getMaxSize()) ? "'{$size} KB'" : 'null' }},
             minSize: {{ ($size = $getMinSize()) ? "'{$size} KB'" : 'null' }},
             removeUploadedFileUsing: async (fileKey) => {

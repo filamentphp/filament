@@ -2,20 +2,20 @@
 
 return [
 
-    'title' => 'Sửa :label',
+    'title' => 'Chỉnh sửa :label',
 
-    'breadcrumb' => 'Sửa',
+    'breadcrumb' => 'Chỉnh sửa',
 
     'form' => [
 
         'actions' => [
 
             'cancel' => [
-                'label' => 'Hủy',
+                'label' => 'Quay lại',
             ],
 
             'save' => [
-                'label' => 'Lưu',
+                'label' => 'Lưu thay đổi',
             ],
 
         ],

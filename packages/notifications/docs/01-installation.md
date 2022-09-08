@@ -39,12 +39,13 @@ You're now ready to start [sending notifications](sending-notifications)!
 The package uses the following dependencies:
 
 - [Alpine.js](https://alpinejs.dev)
+- [Alpine Floating UI](https://github.com/awcodes/alpine-floating-ui)
 - [Tailwind CSS](https://tailwindcss.com)
 
 You may install these through NPM:
 
 ```bash
-npm install alpinejs tailwindcss --save-dev
+npm install alpinejs @awcodes/alpine-floating-ui tailwindcss --save-dev
 ```
 
 ### Configuring Tailwind CSS
@@ -123,7 +124,7 @@ export default defineConfig({
 
 #### Laravel Mix
 
-In your `webpack.mix.js` file, register Tailwind CSS as a PostCSS plugin :
+In your `webpack.mix.js` file, register Tailwind CSS as a PostCSS plugin:
 
 ```js
 const mix = require('laravel-mix')
@@ -146,12 +147,14 @@ In `/resources/css/app.css`, import [Tailwind CSS](https://tailwindcss.com):
 
 ### Configuring scripts
 
-In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev) and the `filament/notifications` plugin, and register it:
+In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), Alpine Floating UI and the `filament/notifications` plugin, and register them:
 
 ```js
 import Alpine from 'alpinejs'
+import AlpineFloatingUI from '@awcodes/alpine-floating-ui'
 import NotificationsAlpinePlugin from '../../vendor/filament/notifications/dist/module.esm'
 
+Alpine.plugin(AlpineFloatingUI)
 Alpine.plugin(NotificationsAlpinePlugin)
 
 window.Alpine = Alpine
@@ -210,16 +213,14 @@ To upgrade the package to the latest version, you must run:
 
 ```bash
 composer update
-php artisan config:clear
-php artisan view:clear
+php artisan filament:upgrade
 ```
 
-To do this automatically, we recommend adding these commands to your `composer.json`'s `post-update-cmd`:
+We recommend adding the `filament:upgrade` command to your `composer.json`'s `post-update-cmd` to run it automatically:
 
 ```json
 "post-update-cmd": [
     // ...
-    "@php artisan config:clear",
-    "@php artisan view:clear"
+    "@php artisan filament:upgrade"
 ],
 ```

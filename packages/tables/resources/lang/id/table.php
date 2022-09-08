@@ -2,6 +2,14 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 'dan :count lainnya',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -20,7 +28,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'per halaman',
+
+                'options' => [
+                    'all' => 'Semua',
+                ],
+
             ],
 
         ],
@@ -45,12 +59,20 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Selesaikan pengurutan ulang data',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Urutkan ulang data',
+        ],
+
         'filter' => [
             'label' => 'Filter',
         ],
 
         'open_actions' => [
-            'label' => 'Aksi',
+            'label' => 'Tindakan',
         ],
 
         'toggle_columns' => [
@@ -67,15 +89,22 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Hapus filter',
+            ],
+
+            'remove_all' => [
+                'label' => 'Hapus semua filter',
+                'tooltip' => 'Hapus semua filter',
+            ],
+
             'reset' => [
                 'label' => 'Atur ulang filter',
             ],
 
-            'close' => [
-                'label' => 'Tutup',
-            ],
-
         ],
+
+        'indicator' => 'Filter aktif',
 
         'multi_select' => [
             'placeholder' => 'Semua',
@@ -89,19 +118,21 @@ return [
 
             'label' => 'Data yang dihapus',
 
-            'only_trashed' => 'Hanya data yang sudah dihapus',
+            'only_trashed' => 'Hanya data yang dihapus',
 
-            'with_trashed' => 'Dengan data yang sudah dihapus',
+            'with_trashed' => 'Dengan data yang dihapus',
 
-            'without_trashed' => 'Tanpa data yang sudah dihapus',
+            'without_trashed' => 'Tanpa data yang dihapus',
 
         ],
 
     ],
 
+    'reorder_indicator' => 'Seret dan lepaskan data ke dalam urutan.',
+
     'selection_indicator' => [
 
-        'selected_count' => ':count dipilih.',
+        'selected_count' => ':count data dipilih.',
 
         'buttons' => [
 

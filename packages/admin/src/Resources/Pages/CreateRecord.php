@@ -7,6 +7,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Contracts\HasFormActions;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 /**
  * @property ComponentContainer $form
@@ -30,11 +31,16 @@ class CreateRecord extends Page implements HasFormActions
 
     public function mount(): void
     {
+        $this->authorizeAccess();
+
+        $this->fillForm();
+    }
+
+    protected function authorizeAccess(): void
+    {
         static::authorizeResourceAccess();
 
         abort_unless(static::getResource()::canCreate(), 403);
-
-        $this->fillForm();
     }
 
     protected function fillForm(): void
@@ -48,6 +54,8 @@ class CreateRecord extends Page implements HasFormActions
 
     public function create(bool $another = false): void
     {
+        $this->authorizeAccess();
+
         $this->callHook('beforeValidate');
 
         $data = $this->form->getState();
@@ -150,7 +158,7 @@ class CreateRecord extends Page implements HasFormActions
         }
 
         return __('filament::resources/pages/create-record.title', [
-            'label' => static::getResource()::getModelLabel(),
+            'label' => Str::headline(static::getResource()::getModelLabel()),
         ]);
     }
 
@@ -158,6 +166,7 @@ class CreateRecord extends Page implements HasFormActions
     {
         return [
             'form' => $this->makeForm()
+                ->context('create')
                 ->model($this->getModel())
                 ->schema($this->getFormSchema())
                 ->statePath('data')

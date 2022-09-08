@@ -295,6 +295,10 @@ The available hooks are as follows:
 - `head.end` - before `</head>`
 - `content.start` - before page content
 - `content.end` - after page content
+- `footer.before` - before footer
+- `footer.start` - start of footer content (centered)
+- `footer.end` - end of footer content (centered)
+- `footer.after` - after footer
 - `sidebar.start` - before [sidebar](navigation) content
 - `sidebar.end` - after [sidebar](navigation) content
 - `scripts.start` - before scripts are defined

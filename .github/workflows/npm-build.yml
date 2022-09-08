@@ -1,33 +1,33 @@
 name: npm-build
 
 on:
-    pull_request:
-        branches:
-            - 2.x
-        types: [closed]
+  pull_request:
+    branches:
+      - 2.x
+    types: [closed]
 
 jobs:
-    npm-build:
-        runs-on: ubuntu-latest
-        if: github.event.pull_request.merged == true
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v2
-              with:
-                  ref: 2.x
+  npm-build:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: 2.x
 
-            - name: Setup Node
-              uses: actions/setup-node@v2
+      - name: Setup Node
+        uses: actions/setup-node@v2
 
-            - name: Install dependencies
-              run: npm ci
+      - name: Install dependencies
+        run: npm ci
 
-            - name: Build assets
-              run: npm run build
+      - name: Build assets
+        run: npm run build
 
-            - name: Commit changes
-              uses: stefanzweifel/git-auto-commit-action@v4
-              with:
-                  branch: 2.x
-                  commit_message: >
-                      chore: build assets
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          branch: 2.x
+          commit_message: >
+            chore: build assets

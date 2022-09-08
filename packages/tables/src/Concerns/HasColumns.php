@@ -10,18 +10,18 @@ trait HasColumns
 
     public function cacheTableColumns(): void
     {
-        $this->cachedTableColumns = collect($this->getTableColumns())
-            ->mapWithKeys(function (Column $column): array {
-                $column->table($this->getCachedTable());
+        $this->cachedTableColumns = [];
 
-                return [$column->getName() => $column];
-            })
-            ->toArray();
+        foreach ($this->getTableColumns() as $column) {
+            $column->table($this->getCachedTable());
+
+            $this->cachedTableColumns[$column->getName()] = $column;
+        }
     }
 
     public function callTableColumnAction(string $name, string $recordKey)
     {
-        $record = $this->resolveTableRecord($recordKey);
+        $record = $this->getTableRecord($recordKey);
 
         if (! $record) {
             return;
@@ -42,9 +42,7 @@ trait HasColumns
 
     public function getCachedTableColumns(): array
     {
-        return collect($this->cachedTableColumns)
-            ->filter(fn (Column $column): bool => ! $column->isHidden())
-            ->toArray();
+        return $this->cachedTableColumns;
     }
 
     public function getCachedTableColumn(string $name): ?Column

@@ -31,7 +31,7 @@ trait BelongsToModel
         $this->evaluate($callback);
     }
 
-    public function loadStateFromRelationships(): void
+    public function loadStateFromRelationships(bool $andHydrate = false): void
     {
         $callback = $this->loadStateFromRelationshipsUsing;
 
@@ -39,7 +39,21 @@ trait BelongsToModel
             return;
         }
 
+        if (! $this->getRecord()?->exists) {
+            return;
+        }
+
         $this->evaluate($callback);
+
+        if ($andHydrate) {
+            $this->callAfterStateHydrated();
+
+            foreach ($this->getChildComponentContainers() as $container) {
+                $container->callAfterStateHydrated();
+            }
+
+            $this->fillStateWithNull();
+        }
     }
 
     public function saveRelationshipsUsing(?Closure $callback): static

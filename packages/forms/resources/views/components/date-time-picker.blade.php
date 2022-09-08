@@ -1,13 +1,3 @@
-@once
-    @push('scripts')
-        @php
-            $locale = strtolower(str_replace('_', '-', app()->getLocale()));
-        @endphp
-
-        <script defer src="//unpkg.com/dayjs@1.10.4/locale/{{ $locale }}.js" onload="dayjs.updateLocale('{{ $locale }}')"></script>
-    @endpush
-@endonce
-
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :id="$getId()"
@@ -25,10 +15,11 @@
             firstDayOfWeek: {{ $getFirstDayOfWeek() }},
             isAutofocused: @js($isAutofocused()),
             isDisabled: @js($isDisabled()),
+            locale: @js(app()->getLocale()),
             shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
-        {{ $attributes->merge($getExtraAttributes())->class(['relative filament-forms-date-time-picker-component']) }}
+        {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-date-time-picker-component relative']) }}
         {{ $getExtraAlpineAttributeBag() }}
     >
         <input x-ref="maxDate" type="hidden" value="{{ $getMaxDate() }}" />
@@ -52,7 +43,7 @@
             type="button"
             {{ $getExtraTriggerAttributeBag()->class([
                 'bg-white relative w-full border py-2 pl-3 pr-10 rtl:pl-10 rtl:pr-3 text-left cursor-default rounded-lg shadow-sm',
-                'focus-within:ring-1 focus-within:border-primary-600 focus-within:ring-inset focus-within:ring-primary-600' => ! $isDisabled(),
+                'focus-within:ring-1 focus-within:border-primary-500 focus-within:ring-inset focus-within:ring-primary-500' => ! $isDisabled(),
                 'dark:bg-gray-700' => config('forms.dark_mode'),
                 'border-gray-300' => ! $errors->has($getStatePath()),
                 'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
@@ -88,6 +79,8 @@
                 x-ref="panel"
                 x-cloak
                 x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
+                wire:ignore.self
+                wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.panel"
                 @class([
                     'absolute hidden z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-md',
                     'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
