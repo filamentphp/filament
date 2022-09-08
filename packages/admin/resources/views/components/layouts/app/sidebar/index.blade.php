@@ -1,5 +1,7 @@
 <aside
-    x-data="{}"
+    x-data="{
+        lgCollapsible: {{ json_encode(config('filament.layout.sidebar.is_collapsible_on_desktop')) }}
+    }"
     @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
         x-cloak
         x-bind:class="$store.sidebar.isOpen ? 'filament-sidebar-open translate-x-0 max-w-[20em] lg:max-w-[var(--sidebar-width)]' : '-translate-x-full lg:translate-x-0 lg:max-w-[var(--collapsed-sidebar-width)] rtl:lg:-translate-x-0 rtl:translate-x-full'"
@@ -15,35 +17,60 @@
     ])
 >
     <header @class([
-        'filament-sidebar-header border-b h-[4rem] shrink-0 px-6 flex items-center',
+        'filament-sidebar-header border-b h-[4rem] shrink-0 flex items-center justify-center',
         'dark:border-gray-700' => config('filament.dark_mode'),
     ])>
-        <a
-            href="{{ config('filament.home_url') }}"
-            class="block w-full"
-            @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
-                x-show="$store.sidebar.isOpen"
+        <div
+            x-cloak
+            @class([
+                'flex items-center jusify-center w-full',
+                'px-4' => config('filament.layout.sidebar.is_collapsible_on_desktop'),
+                'px-4 lg:px-6' => !config('filament.layout.sidebar.is_collapsible_on_desktop'),
+            ])
+            x-show="$store.sidebar.isOpen || !lgCollapsible"
+        >
+            <button
+                class="filament-sidebar-collapsed-open-button flex items-center justify-center shrink-0 w-10 h-10 text-primary-500 hover:text-gray-700 focus:outline-none"
+                x-on:click.stop="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
+                x-bind:class="{ 'lg:hidden': !lgCollapsible }"
+                type="button"
+            >
+                {{-- src https://github.com/codeat3/blade-google-material-design-icons/blob/main/resources/svg/menu-open-r.svg --}}
+                <svg class="h-6 w-6 shrink-0" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M0,0h24v24H0V0z" fill="none"/>
+                    <path d="M4,18h11c0.55,0,1-0.45,1-1v0c0-0.55-0.45-1-1-1H4c-0.55,0-1,0.45-1,1v0C3,17.55,3.45,18,4,18z M4,13h8c0.55,0,1-0.45,1-1v0 c0-0.55-0.45-1-1-1H4c-0.55,0-1,0.45-1,1v0C3,12.55,3.45,13,4,13z M3,7L3,7c0,0.55,0.45,1,1,1h11c0.55,0,1-0.45,1-1v0 c0-0.55-0.45-1-1-1H4C3.45,6,3,6.45,3,7z M20.3,14.88L17.42,12l2.88-2.88c0.39-0.39,0.39-1.02,0-1.41l0,0 c-0.39-0.39-1.02-0.39-1.41,0l-3.59,3.59c-0.39,0.39-0.39,1.02,0,1.41l3.59,3.59c0.39,0.39,1.02,0.39,1.41,0l0,0 C20.68,15.91,20.69,15.27,20.3,14.88z"/>
+                    <path d="M0,0h24v24H0V0z" fill="none"/>
+                </svg>
+            </button>
+            <a
+                href="{{ config('filament.home_url') }}"
+                class="block w-full"
+                @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
                 x-transition:enter="lg:transition delay-100"
                 x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100"
-            @endif
-            data-turbo="false"
-        >
-            <x-filament::brand />
-        </a>
+                @endif
+                data-turbo="false"
+            >
+                <x-filament::brand />
+            </a>
+
+        </div>
 
         @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
-            <a
-                class="block w-full text-center"
-                href="{{ config('filament.home_url') }}"
+            <button
+                type="button"
+                class="filament-sidebar-close-button shrink-0 flex items-center justify-center w-12 h-12 text-primary-500 rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none"
+                x-on:click.stop="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                 x-show="! $store.sidebar.isOpen"
                 x-transition:enter="lg:transition delay-100"
                 x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100"
                 data-turbo="false"
             >
-                <x-filament::brand-icon />
-            </a>
+                <x-heroicon-o-menu class="w-6 h-6"/>
+{{--                <x-filament::brand-icon />--}}
+            </button>
         @endif
     </header>
 
