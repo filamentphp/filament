@@ -11,7 +11,7 @@ return [
         ],
 
         'database_notifications' => [
-            'label' => 'Open database notifications',
+            'label' => 'Open notifications',
         ],
 
         'light_mode' => [
