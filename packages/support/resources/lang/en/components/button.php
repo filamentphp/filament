@@ -7,7 +7,7 @@ return [
     ],
 
     'labels' => [
-        'close' => 'Close modal'
+        'close' => 'Close modal',
     ],
 
 ];
