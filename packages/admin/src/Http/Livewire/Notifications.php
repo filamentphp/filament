@@ -25,8 +25,8 @@ class Notifications extends BaseComponent
         return config('filament.database_notifications.polling_interval');
     }
 
-    public function getDatabaseNotificationsButton(): View
+    public function getDatabaseNotificationsTrigger(): View
     {
-        return view('filament::components.layouts.app.topbar.database-notifications-button');
+        return view('filament::components.layouts.app.topbar.database-notifications-trigger');
     }
 }

@@ -116,9 +116,15 @@ class Notifications extends Component
         return config('notifications.database.polling_interval');
     }
 
-    public function getDatabaseNotificationsButton(): ?View
+    public function getDatabaseNotificationsTrigger(): ?View
     {
-        return null;
+        $viewPath = config('notifications.database.trigger');
+
+        if (blank($viewPath)) {
+            return null;
+        }
+
+        return view($viewPath);
     }
 
     public function getUser(): Model | Authenticatable | null
