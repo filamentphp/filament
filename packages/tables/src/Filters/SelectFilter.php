@@ -107,7 +107,7 @@ class SelectFilter extends BaseFilter
             ->options($this->getOptions())
             ->placeholder($this->getPlaceholder())
             ->searchable($this->isSearchable())
-            ->optionsLimit($this->optionsLimit)
+            ->optionsLimit($this->getOptionsLimit())
             ->columnSpan($this->getColumnSpan());
 
         if (filled($defaultState = $this->getDefaultState())) {
@@ -127,5 +127,10 @@ class SelectFilter extends BaseFilter
         $this->optionsLimit = $limit;
 
         return $this;
+    }
+
+    public function getOptionsLimit(): int
+    {
+        return $this->evaluate($this->optionsLimit);
     }
 }
