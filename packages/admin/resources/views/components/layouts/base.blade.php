@@ -120,6 +120,16 @@
 
         @stack('scripts')
 
+        @if (config('filament.broadcasting.echo'))
+            <script>
+                window.addEventListener('DOMContentLoaded', () => {
+                    window.Echo = new window.EchoFactory(@js(config('filament.broadcasting.echo')))
+
+                    window.dispatchEvent(new CustomEvent('EchoLoaded'))
+                })
+            </script>
+        @endif
+
         {{ \Filament\Facades\Filament::renderHook('scripts.end') }}
 
         {{ \Filament\Facades\Filament::renderHook('body.end') }}
