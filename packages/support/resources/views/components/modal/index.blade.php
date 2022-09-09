@@ -86,9 +86,9 @@
         >
             <div
                 @class([
-                    'filament-modal-window mx-auto p-2 space-y-2 bg-white rounded-xl cursor-default pointer-events-auto',
+                    'filament-modal-window mx-auto p-2 space-y-2 bg-white cursor-default pointer-events-auto',
                     'dark:bg-gray-800' => $darkMode,
-                    'w-full' => ! $isFullscreen,
+                    'w-full rounded-xl' => ! $isFullscreen,
                     'hidden' => ! $visible,
                     'max-w-xs' => $width === 'xs',
                     'max-w-sm' => $width === 'sm',
@@ -101,7 +101,7 @@
                     'max-w-5xl' => $width === '5xl',
                     'max-w-6xl' => $width === '6xl',
                     'max-w-7xl' => $width === '7xl',
-                    'fixed inset-4' => $isFullscreen,
+                    'fixed inset-0' => $isFullscreen,
                 ])
             >
                 @if ($header)
@@ -113,9 +113,8 @@
                         <x-filament-support::icon-button
                             icon="heroicon-s-x"
                             x-on:click="{{ filled($id) ? '$dispatch(\'' . $closeEventName . '\', { id: \'' . $id . '\' })' : 'isOpen = false' }}"
-                        >
-                            close
-                        </x-filament-support::icon-button>
+                            label="{{ __('filament-support::components/button.labels.close') }}"
+                        />
                     </div>
                 @endif
 
