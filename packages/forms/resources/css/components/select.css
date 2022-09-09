@@ -156,7 +156,7 @@
 }
 
 .choices__placeholder {
-    @apply opacity-70;
+    @apply opacity-70 text-base sm:text-sm;
 }
 
 .choices__button {
