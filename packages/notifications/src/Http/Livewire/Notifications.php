@@ -41,6 +41,10 @@ class Notifications extends Component
             $this->notifications->forget($id);
         }
 
+        if (! $this->hasDatabaseNotifications()) {
+            return;
+        }
+
         $this->getDatabaseNotificationsQuery()
             ->where('id', $id)
             ->delete();
@@ -58,22 +62,25 @@ class Notifications extends Component
 
     public function getDatabaseNotifications(): DatabaseNotificationCollection
     {
+        /** @phpstan-ignore-next-line */
         return $this->getUser()->notifications;
-    }
-
-    public function getUnreadDatabaseNotificationsCount(): int
-    {
-        return $this->getUnreadDatabaseNotificationsQuery()->count();
     }
 
     public function getDatabaseNotificationsQuery(): Builder
     {
+        /** @phpstan-ignore-next-line */
         return $this->getUser()->notifications();
     }
 
     public function getUnreadDatabaseNotificationsQuery(): Builder
     {
+        /** @phpstan-ignore-next-line */
         return $this->getUser()->unreadNotifications();
+    }
+
+    public function getUnreadDatabaseNotificationsCount(): int
+    {
+        return $this->getUnreadDatabaseNotificationsQuery()->count();
     }
 
     public function handleBroadcastNotification($notification): void
@@ -99,7 +106,7 @@ class Notifications extends Component
 
     public function hasDatabaseNotifications(): bool
     {
-        return config('notifications.database.enabled');
+        return $this->getUser() && config('notifications.database.enabled');
     }
 
     public function getPollingInterval(): ?string
@@ -112,14 +119,18 @@ class Notifications extends Component
         return null;
     }
 
-    public function getUser(): Model | Authenticatable
+    public function getUser(): Model | Authenticatable | null
     {
         return auth()->user();
     }
 
-    public function getBroadcastChannel(): string
+    public function getBroadcastChannel(): ?string
     {
         $user = $this->getUser();
+
+        if (! $user) {
+            return null;
+        }
 
         if (method_exists($user, 'receivesBroadcastNotificationsOn')) {
             return $user->receivesBroadcastNotificationsOn();

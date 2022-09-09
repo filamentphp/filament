@@ -10,6 +10,10 @@ return [
             'label' => 'Toggle dark mode',
         ],
 
+        'database_notifications' => [
+            'label' => 'Open database notifications',
+        ],
+
         'light_mode' => [
             'label' => 'Toggle light mode',
         ],

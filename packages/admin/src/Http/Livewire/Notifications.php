@@ -10,14 +10,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Notifications extends BaseComponent
 {
-    public function getUser(): Model | Authenticatable
+    public function getUser(): Model | Authenticatable | null
     {
         return Filament::auth()->user();
     }
 
     public function hasDatabaseNotifications(): bool
     {
-        return config('filament.database_notifications.enabled');
+        return $this->getUser() && config('filament.database_notifications.enabled');
     }
 
     public function getPollingInterval(): ?string
