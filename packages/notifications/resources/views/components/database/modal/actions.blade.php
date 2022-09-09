@@ -19,7 +19,9 @@
                     {{ __('notifications::database.modal.buttons.mark_all_as_read.label') }}
                 </x-notifications::link>
 
-                &bull;
+                <span>
+                    &bull;
+                </span>
             @endif
 
             <x-notifications::link

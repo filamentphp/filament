@@ -21,14 +21,20 @@
             />
         </x-slot>
 
-        <div class="-mt-4">
+        <div class="mt-[calc(-1rem-1px)]">
             @foreach ($notifications as $notification)
-                <div class="-mx-4 border-b">
+                <div @class([
+                    '-mx-4 border-b',
+                    'border-t' => $notification->unread(),
+                    'dark:border-gray-700' => (! $notification->unread()) && config('notifications.dark_mode'),
+                    'dark:border-gray-800' => $notification->unread() && config('notifications.dark_mode'),
+                ])>
                     <div @class([
-                        'p-4 -mx-2',
-                        'bg-gray-50' => $notification->unread(),
+                        'py-2 pl-4 pr-2 -mx-2',
+                        'bg-gray-50 -mb-px' => $notification->unread(),
+                        'dark:bg-gray-700' => $notification->unread() && config('notifications.dark_mode'),
                     ])>
-                        {{ \Filament\Notifications\Notification::fromDatabase($notification)->inline() }}
+                        {{ $this->getNotificationFromDatabaseRecord($notification)->inline() }}
                     </div>
                 </div>
             @endforeach

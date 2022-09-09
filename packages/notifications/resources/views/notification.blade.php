@@ -2,8 +2,8 @@
     :notification="$notification"
     :class="\Illuminate\Support\Arr::toCssClasses([
         'flex gap-3 w-full transition duration-300',
-        'dark:border-gray-700 dark:bg-gray-800' => config('notifications.dark_mode'),
         'shadow-lg max-w-sm bg-white rounded-xl p-4 border border-gray-200' => ! $isInline(),
+        'dark:border-gray-700 dark:bg-gray-800' => (! $isInline()) && config('notifications.dark_mode'),
     ])"
     :x-transition:enter-start="\Illuminate\Support\Arr::toCssClasses([
         'opacity-0',
@@ -27,6 +27,12 @@
             <x-notifications::title>
                 {{ \Illuminate\Support\Str::of($title)->markdown()->sanitizeHtml()->toHtmlString() }}
             </x-notifications::title>
+        @endif
+
+        @if ($date = $getDate())
+            <x-notifications::date>
+                {{ $date }}
+            </x-notifications::date>
         @endif
 
         @if ($body = $getBody())

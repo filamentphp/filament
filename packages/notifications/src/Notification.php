@@ -7,6 +7,7 @@ use Filament\Notifications\Actions\ActionGroup;
 use Filament\Notifications\Concerns\CanBeInline;
 use Filament\Notifications\Concerns\HasActions;
 use Filament\Notifications\Concerns\HasBody;
+use Filament\Notifications\Concerns\HasDate;
 use Filament\Notifications\Concerns\HasDuration;
 use Filament\Notifications\Concerns\HasIcon;
 use Filament\Notifications\Concerns\HasId;
@@ -22,6 +23,7 @@ class Notification extends ViewComponent implements Arrayable
     use CanBeInline;
     use HasActions;
     use HasBody;
+    use HasDate;
     use HasDuration;
     use HasIcon;
     use HasId;

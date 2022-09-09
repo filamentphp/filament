@@ -2,12 +2,14 @@
 
 namespace Filament\Notifications\Http\Livewire;
 
+use Carbon\CarbonInterface;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Livewire\Component;
 
@@ -139,6 +141,17 @@ class Notifications extends Component
         $userClass = str_replace('\\', '.', $user::class);
 
         return "{$userClass}.{$user->getKey()}";
+    }
+
+    public function getNotificationFromDatabaseRecord(DatabaseNotification $notification): Notification
+    {
+        return Notification::fromDatabase($notification)
+            ->date($this->formatNotificationDate($notification->created_at));
+    }
+
+    protected function formatNotificationDate(CarbonInterface $date): string
+    {
+        return $date->diffForHumans();
     }
 
     public function render(): View
