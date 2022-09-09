@@ -5,8 +5,8 @@
 
 <div
     {{ $attributes->merge($getExtraAttributes())->class([
-        'filament-tables-text-column px-4 py-3',
-        'text-primary-600 transition hover:underline hover:text-primary-500 focus:underline focus:text-primary-500' => $getAction() || $getUrl(),
+        'filament-tables-text-column px-4 py-3 text-sm',
+        'text-primary-600 hover:text-primary-500 focus:text-primary-500 transition hover:underline focus:underline' => $getAction() || $getUrl(),
         'whitespace-normal' => $canWrap(),
     ]) }}
 >
