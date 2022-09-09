@@ -65,6 +65,18 @@ In `config/filament.php`, set the `layouts.sidebar.is_collapsible_on_desktop` to
 ],
 ```
 
+## Non-sticky topbar
+
+By default, the topbar sticks to the top of the page.
+
+You may make the topbar scroll out of view instead by [registering the following styles](#including-frontend-assets):
+
+```css
+.filament-main-topbar {
+    position: relative;
+}
+```
+
 ## Building themes
 
 Filament allows you to change the fonts and color scheme used in the UI, by compiling a custom stylesheet to replace the default one. This custom stylesheet is called a "theme".
