@@ -18,7 +18,6 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\DatabaseNotification as DatabaseNotificationModel;
 use Illuminate\Notifications\Messages\BroadcastMessage;
-use Illuminate\Notifications\RoutesNotifications;
 use Illuminate\Support\Str;
 
 class Notification extends ViewComponent implements Arrayable
