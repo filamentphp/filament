@@ -5,6 +5,7 @@
     'closeEventName' => 'close-modal',
     'darkMode' => false,
     'displayClasses' => 'inline-block',
+    'fullScreen' => false,
     'footer' => null,
     'header' => null,
     'heading' => null,
@@ -19,10 +20,6 @@
     'visible' => true,
     'width' => 'sm',
 ])
-
-@php
-    $isFullscreen = $width === 'screen';
-@endphp
 
 <div
     x-data="{ isOpen: false }"
@@ -80,7 +77,12 @@
             @endif
             x-transition:enter="ease duration-300"
             x-transition:leave="ease duration-300"
-            @if (! $isFullscreen)
+            @if ($slideOver)
+                x-transition:enter-start="translate-x-full"
+                x-transition:enter-end="translate-x-0"
+                x-transition:leave-start="translate-x-0"
+                x-transition:leave-end="translate-x-full"
+            @elseif (! $fullScreen)
                 x-transition:enter-start="translate-y-8"
                 x-transition:enter-end="translate-y-0"
                 x-transition:leave-start="translate-y-0"
@@ -96,9 +98,10 @@
                 @class([
                     'filament-modal-window w-full p-2 bg-white cursor-default pointer-events-auto',
                     'dark:bg-gray-800' => $darkMode,
-                    'relative' => ! $isFullscreen,
-                    'rounded-xl mx-auto' => ! ($slideOver || $isFullscreen),
+                    'relative' => ! $fullScreen,
+                    'fixed inset-0' => $fullScreen,
                     'h-screen overflow-y-auto ml-auto' => $slideOver,
+                    'rounded-xl mx-auto' => ! ($slideOver || $fullScreen),
                     'hidden' => ! $visible,
                     'max-w-xs' => $width === 'xs',
                     'max-w-sm' => $width === 'sm',
@@ -111,7 +114,6 @@
                     'max-w-5xl' => $width === '5xl',
                     'max-w-6xl' => $width === '6xl',
                     'max-w-7xl' => $width === '7xl',
-                    'fixed inset-0' => $isFullscreen,
                 ])
             >
                 @if ($closeButton)
@@ -128,7 +130,7 @@
                 <div
                     @class([
                         'space-y-2',
-                        'flex flex-col h-full' => $isFullscreen,
+                        'flex flex-col h-full' => $fullScreen,
                     ])
                 >
                     @if ($header)
@@ -144,7 +146,7 @@
                     <div
                         @class([
                             'filament-modal-content space-y-2',
-                            'flex-1 overflow-y-auto' => $isFullscreen,
+                            'flex-1 overflow-y-auto' => $fullScreen,
                         ])
                     >
                         @if ($heading || $subheading)
