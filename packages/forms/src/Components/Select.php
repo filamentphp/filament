@@ -453,14 +453,14 @@ class Select extends Field
         return $this;
     }
 
-    public function excludeSelf(bool | Closure $excludeSelf = true) : static
+    public function excludeSelf(bool | Closure $excludeSelf = true): static
     {
         $this->excludeSelf = $excludeSelf;
 
         return $this;
     }
 
-    public function getExcludeSelf() : bool
+    public function getExcludeSelf(): bool
     {
         return $this->evaluate($this->excludeSelf);
     }
@@ -482,7 +482,8 @@ class Select extends Field
                         $this->getExcludeSelf(),
                     function ($query) use ($component) {
                         $query->whereKeyNot($component->getModelInstance()->getKey());
-                });
+                    }
+                );
 
             if ($callback) {
                 $relationshipQuery = $component->evaluate($callback, [
@@ -535,7 +536,8 @@ class Select extends Field
                         $this->getExcludeSelf(),
                     function ($query) use ($component) {
                         $query->whereKeyNot($component->getModelInstance()->getKey());
-                    });
+                    }
+                );
 
             if ($callback) {
                 $relationshipQuery = $component->evaluate($callback, [
