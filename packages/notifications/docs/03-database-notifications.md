@@ -10,7 +10,7 @@ Before we start, make sure that the [Laravel notifications table](https://larave
 php artisan notifications:table
 ```
 
-> If you're using PostgreSQL, make sure that the `data` column in the migration is using `jsonb()` instead of `text()`: `$table->jsonb('data')`
+> If you're using PostgreSQL, make sure that the `data` column in the migration is using `json()` instead of `text()`: `$table->json('data')`.
 
 First, you must [publish the configuration file](installation#publishing-configuration) for the package.
 
