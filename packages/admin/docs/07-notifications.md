@@ -2,9 +2,9 @@
 title: Notifications
 ---
 
-The admin panel uses the [Notifications](../notifications) package to send messages to users.
+The admin panel uses the [Notifications](../notifications/sending-notifications) package to send messages to users.
 
-Please read the [documentation](../notifications) to discover how to send notifications easily.
+Please read the [documentation](../notifications/sending-notifications) to discover how to send notifications easily.
 
 However, there are a few differences in configuration when using the admin panel.
 
@@ -12,7 +12,9 @@ However, there are a few differences in configuration when using the admin panel
 
 Instead of enabling database notifications inside the notifications package, you must enable it for the admin panel specifically.
 
-First, you must [publish the configuration file](installation#publishing-configuration) for the package.
+First, you must [publish the configuration file](installation#publishing-configuration) for the admin panel.
+
+Now, enable database notifications:
 
 ```php
 'database_notifications' => [
