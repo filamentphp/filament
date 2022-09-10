@@ -3,6 +3,8 @@
 namespace Filament\Tables\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
+use RecursiveArrayIterator;
+use RecursiveIteratorIterator;
 
 trait CanSearchRecords
 {
@@ -113,9 +115,43 @@ trait CanSearchRecords
 
     protected function getTableColumnSearchQueries(): array
     {
-        return array_map(
-            fn (string $search): string => trim(strtolower($search)),
-            $this->tableColumnSearchQueries,
+        // Example input of `$this->tableColumnSearchQueries`:
+        // [
+        //     'number' => '12345 ',
+        //     'customer' => [
+        //         'name' => ' john Smith',
+        //     ],
+        // ]
+
+        // The `$this->tableColumnSearchQueries` array is potentially nested.
+        // So, we iterate through it deeply:
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveArrayIterator($this->tableColumnSearchQueries),
+            RecursiveIteratorIterator::SELF_FIRST
         );
+
+        $searchQueries = [];
+        $path = [];
+
+        foreach ($iterator as $key => $value) {
+            $path[$iterator->getDepth()] = $key;
+
+            if (is_array($value)) {
+                continue;
+            }
+
+            // Nested array keys are flattened into `dot.syntax`.
+            $searchQueries[
+                implode('.', array_slice($path, 0, $iterator->getDepth() + 1))
+            ] = trim(strtolower($value));
+        }
+
+        return $searchQueries;
+
+        // Example output:
+        // [
+        //     'number' => '12345',
+        //     'customer.name' => 'john smith',
+        // ]
     }
 }
