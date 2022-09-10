@@ -492,28 +492,24 @@
                                 $getRecordClasses($record),
                             ))"
                         >
-                            <x-tables::reorder.cell
-                                @class([
-                                    'hidden' => ! $isReordering,
-                                ])
-                            />
+                            <x-tables::reorder.cell :class="\Illuminate\Support\Arr::toCssClasses([
+                                'hidden' => ! $isReordering,
+                            ])" />
 
                             @if (count($actions) && $actionsPosition === Position::BeforeCells)
                                 <x-tables::actions-cell
-                                    @class([
-                                        'hidden' => $isReordering,
-                                    ])
                                     :actions="$actions"
                                     :record="$record"
+                                    :class="\Illuminate\Support\Arr::toCssClasses([
+                                        'hidden' => $isReordering,
+                                    ])"
                                 />
                             @endif
 
                             @if ($isSelectionEnabled)
-                                <x-tables::checkbox-cell
-                                    @class([
-                                        'hidden' => $isReordering,
-                                    ])
-                                >
+                                <x-tables::checkbox-cell :class="\Illuminate\Support\Arr::toCssClasses([
+                                    'hidden' => $isReordering,
+                                ])">
                                     <x-slot
                                         name="checkbox"
                                         x-model="selectedRecords"
@@ -525,11 +521,11 @@
 
                             @if (count($actions) && $actionsPosition === Position::BeforeColumns)
                                 <x-tables::actions-cell
-                                    @class([
-                                        'hidden' => $isReordering,
-                                    ])
                                     :actions="$actions"
                                     :record="$record"
+                                    :class="\Illuminate\Support\Arr::toCssClasses([
+                                        'hidden' => $isReordering,
+                                    ])"
                                 />
                             @endif
 
@@ -561,6 +557,9 @@
                                 <x-tables::actions-cell
                                     :actions="$actions"
                                     :record="$record"
+                                    :class="\Illuminate\Support\Arr::toCssClasses([
+                                        'hidden' => $isReordering,
+                                    ])"
                                 />
                             @endif
 
