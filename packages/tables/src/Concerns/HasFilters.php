@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Concerns;
 
-use Closure;
 use Filament\Forms;
 use Filament\Forms\ComponentContainer;
 use Filament\Tables\Filters\BaseFilter;
