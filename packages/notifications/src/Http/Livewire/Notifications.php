@@ -47,7 +47,9 @@ class Notifications extends Component
             return;
         }
 
-        $this->getDatabaseNotificationsQuery()->delete($id);
+        $this->getDatabaseNotificationsQuery()
+            ->where('id', $id)
+            ->delete();
     }
 
     public function clearDatabaseNotifications(): void
