@@ -7,9 +7,9 @@
         wire:poll.{{ $pollingInterval }}
     @endif
 >
-    @if ($databaseNotificationsButton = $this->getDatabaseNotificationsButton())
+    @if ($databaseNotificationsTrigger = $this->getDatabaseNotificationsTrigger())
         <x-notifications::database.trigger>
-            {{ $databaseNotificationsButton->with(['unreadNotificationsCount' => $unreadNotificationsCount]) }}
+            {{ $databaseNotificationsTrigger->with(['unreadNotificationsCount' => $unreadNotificationsCount]) }}
         </x-notifications::database.trigger>
     @endif
 

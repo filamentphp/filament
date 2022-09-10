@@ -13,8 +13,10 @@ use Filament\Notifications\Concerns\HasIcon;
 use Filament\Notifications\Concerns\HasId;
 use Filament\Notifications\Concerns\HasTitle;
 use Filament\Support\Components\ViewComponent;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Notifications\DatabaseNotification as DatabaseNotificationModel;
 use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Support\Str;
 
@@ -90,9 +92,44 @@ class Notification extends ViewComponent implements Arrayable
         return $this;
     }
 
-    public function broadcast(): BroadcastMessage
+    public function broadcast(Model | Authenticatable $user): static
+    {
+        /** @phpstan-ignore-next-line */
+        $user->notify($this->toBroadcast());
+
+        return $this;
+    }
+
+    public function sendToDatabase(Model | Authenticatable $user): static
+    {
+        /** @phpstan-ignore-next-line */
+        $user->notify($this->toDatabase());
+
+        return $this;
+    }
+
+    public function toBroadcast(): BroadcastNotification
+    {
+        return new BroadcastNotification($this->toArray());
+    }
+
+    public function toDatabase(): DatabaseNotification
+    {
+        return new DatabaseNotification($this->getDatabaseMessage());
+    }
+
+    public function getBroadcastMessage(): BroadcastMessage
     {
         return new BroadcastMessage($this->toArray());
+    }
+
+    public function getDatabaseMessage(): array
+    {
+        $data = $this->toArray();
+        unset($data['duration']);
+        unset($data['id']);
+
+        return $data;
     }
 
     public function status(string $status): static
@@ -129,28 +166,12 @@ class Notification extends ViewComponent implements Arrayable
         return $this;
     }
 
-    public function toDatabase(): array
-    {
-        $data = $this->toArray();
-        unset($data['duration']);
-        unset($data['id']);
-
-        return $data;
-    }
-
-    public static function fromDatabase(DatabaseNotification $notification): static
+    public static function fromDatabase(DatabaseNotificationModel $notification): static
     {
         /** @phpstan-ignore-next-line */
         $static = static::fromArray($notification->data);
         $static->id($notification->getKey());
 
         return $static;
-    }
-
-    public function __get(string $name)
-    {
-        if ($name === 'data') {
-            return $this->toDatabase();
-        }
     }
 }

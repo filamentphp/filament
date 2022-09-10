@@ -28,6 +28,7 @@ return [
 
     'database' => [
         'enabled' => false,
+        'trigger' => null,
         'polling_interval' => '30s',
     ],
 
