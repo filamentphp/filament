@@ -69,7 +69,7 @@ In `config/filament.php`, set the `layouts.sidebar.is_collapsible_on_desktop` to
 
 By default, the topbar sticks to the top of the page.
 
-You may make the topbar scroll out of view instead by [registering the following styles](#including-frontend-assets):
+You may make the topbar scroll out of view instead by adding the following styles to your [theme](#building-theme) or by [registering a new stylesheet](#including-frontend-assets):
 
 ```css
 .filament-main-topbar {
