@@ -5,7 +5,6 @@
     'closeEventName' => 'close-modal',
     'darkMode' => false,
     'displayClasses' => 'inline-block',
-    'fullScreen' => false,
     'footer' => null,
     'header' => null,
     'heading' => null,
@@ -82,7 +81,7 @@
                 x-transition:enter-end="translate-x-0"
                 x-transition:leave-start="translate-x-0"
                 x-transition:leave-end="translate-x-full"
-            @elseif (! $fullScreen)
+            @elseif ($width !== 'screen')
                 x-transition:enter-start="translate-y-8"
                 x-transition:enter-end="translate-y-0"
                 x-transition:leave-start="translate-y-0"
@@ -98,10 +97,10 @@
                 @class([
                     'filament-modal-window w-full p-2 bg-white cursor-default pointer-events-auto',
                     'dark:bg-gray-800' => $darkMode,
-                    'relative' => ! $fullScreen,
-                    'fixed inset-0' => $fullScreen,
+                    'relative' => $width !== 'screen',
+                    'fixed inset-0' => $width === 'screen',
                     'h-screen overflow-y-auto ml-auto' => $slideOver,
-                    'rounded-xl mx-auto' => ! ($slideOver || $fullScreen),
+                    'rounded-xl mx-auto' => ! ($slideOver || ($width === 'screen')),
                     'hidden' => ! $visible,
                     'max-w-xs' => $width === 'xs',
                     'max-w-sm' => $width === 'sm',
@@ -117,20 +116,28 @@
                 ])
             >
                 @if ($closeButton)
-                    <div class="absolute top-2 right-2">
+                    <button
+                        tabindex="-1"
+                        type="button"
+                        class="absolute top-2 right-2"
+                    >
                         <x-heroicon-s-x
                             class="filament-modal-close-button h-4 w-4 cursor-pointer text-gray-400"
-                            title="Close"
+                            title="__('filament-support::components/modal.actions.close.label')"
                             x-on:click="isOpen = false"
                             tabindex="-1"
                         />
-                    </div>
+
+                        <span class="sr-only">
+                            {{ __('filament-support::components/modal.actions.close.label') }}
+                        </span>
+                    </button>
                 @endif
 
                 <div
                     @class([
                         'space-y-2',
-                        'flex flex-col h-full' => $fullScreen,
+                        'flex flex-col h-full' => $width === 'screen',
                     ])
                 >
                     @if ($header)
@@ -146,7 +153,7 @@
                     <div
                         @class([
                             'filament-modal-content space-y-2',
-                            'flex-1 overflow-y-auto' => $fullScreen,
+                            'flex-1 overflow-y-auto' => $width === 'screen',
                         ])
                     >
                         @if ($heading || $subheading)
