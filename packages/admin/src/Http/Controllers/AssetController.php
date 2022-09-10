@@ -18,6 +18,10 @@ class AssetController
                 return $this->pretendResponseIsFile(__DIR__ . '/../../../dist/app.js', 'application/javascript; charset=utf-8');
             case 'app.js.map':
                 return $this->pretendResponseIsFile(__DIR__ . '/../../../dist/app.js.map', 'application/json; charset=utf-8');
+            case 'echo.js':
+                return $this->pretendResponseIsFile(__DIR__ . '/../../../dist/echo.js', 'application/javascript; charset=utf-8');
+            case 'echo.js.map':
+                return $this->pretendResponseIsFile(__DIR__ . '/../../../dist/echo.js.map', 'application/json; charset=utf-8');
         }
 
         if (Str::endsWith($file, '.js')) {

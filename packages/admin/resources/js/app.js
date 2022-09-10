@@ -1,13 +1,11 @@
 import Alpine from 'alpinejs'
 import Chart from 'chart.js/auto'
 import Collapse from '@alpinejs/collapse'
-import Echo from 'laravel-echo'
 import Focus from '@alpinejs/focus'
 import FormsAlpinePlugin from '../../../forms/dist/module.esm'
 import Mousetrap from '@danharrin/alpine-mousetrap'
 import NotificationsAlpinePlugin from '../../../notifications/dist/module.esm'
 import Persist from '@alpinejs/persist'
-import Pusher from 'pusher-js'
 import Tooltip from '@ryangjchandler/alpine-tooltip'
 
 Alpine.plugin(Collapse)
@@ -74,7 +72,5 @@ Chart.defaults.color = '#6b7280'
 
 window.Alpine = Alpine
 window.Chart = Chart
-window.EchoFactory = Echo
-window.Pusher = Pusher
 
 Alpine.start()
