@@ -35,12 +35,13 @@
     ]);
 
     $indicatorClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-icon-button-indicator absolute rounded-full text-xs inline-block w-4 h-4 -top-0.5 -right-0.5',
+        'filament-icon-button-indicator absolute rounded-full text-xs inline-block text-primary-700 w-4 h-4 -top-0.5 -right-0.5',
         'bg-primary-500/10' => $color === 'primary',
         'bg-danger-500/10' => $color === 'danger',
         'bg-gray-500/10' => $color === 'secondary',
         'bg-success-500/10' => $color === 'success',
         'bg-warning-500/10' => $color === 'warning',
+        'dark:text-primary-500' => $darkMode,
     ]);
 @endphp
 
