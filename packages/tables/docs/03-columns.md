@@ -174,6 +174,28 @@ TextColumn::make('title')
     })
 ```
 
+##### Action modals
+
+You may open [action modals](actions#modals) by passing in an `Action` object to the `action()` method:
+
+```php
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('title')
+    ->action(
+        Action::make('select')
+            ->requiresConfirmation()
+            ->action(function (Post $record): void {
+                $this->dispatchBrowserEvent('select-post', [
+                    'post' => $record->getKey(),
+                ]);
+            })
+    )
+```
+
+Action objects passed into the `action()` method must have a unique name to distinguish it from other actions within the table.
+
 #### Opening URLs
 
 To open a URL, you may use the `url()` method, passing a callback or static URL to open. Callbacks accept a `$record` parameter which you may use to customize the URL:

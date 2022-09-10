@@ -2,6 +2,8 @@
 
 namespace Filament\Tables\Concerns;
 
+use Closure;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\Column;
 
 trait HasColumns
@@ -37,7 +39,13 @@ trait HasColumns
             return;
         }
 
-        return $column->record($record)->callAction();
+        $action = $column->getAction();
+
+        if (! ($action instanceof Closure)) {
+            return;
+        }
+
+        return $column->record($record)->evaluate($action);
     }
 
     public function getCachedTableColumns(): array
