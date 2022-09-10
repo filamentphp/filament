@@ -152,7 +152,7 @@ class Notifications extends Component
     public function getNotificationFromDatabaseRecord(DatabaseNotification $notification): Notification
     {
         return Notification::fromDatabase($notification)
-            ->date($this->formatNotificationDate($notification->created_at));
+            ->date($this->formatNotificationDate($notification->getAttributeValue('created_at')));
     }
 
     protected function formatNotificationDate(CarbonInterface $date): string
