@@ -2,7 +2,15 @@
 title: Database notifications
 ---
 
-> To start, make sure the package is [installed](installation) - `@livewire('notifications')` should be in your Blade layout somewhere. You must also add the [Laravel notifications table](https://laravel.com/docs/notifications#database-prerequisites) to your database.
+> To start, make sure the package is [installed](installation) - `@livewire('notifications')` should be in your Blade layout somewhere.
+
+Before we start, make sure that the [Laravel notifications table](https://laravel.com/docs/notifications#database-prerequisites) to your database:
+
+```bash
+php artisan notifications:table
+```
+
+> If you're using PostgreSQL, make sure that the `data` column in the migration is using `jsonb()` instead of `text()`: `$table->jsonb('data')`
 
 First, you must [publish the configuration file](installation#publishing-configuration) for the package.
 
