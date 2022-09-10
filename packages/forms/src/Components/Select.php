@@ -73,6 +73,8 @@ class Select extends Field
 
     protected int | Closure $optionsLimit = 50;
 
+    protected bool | Closure $excludeSelf = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -451,6 +453,18 @@ class Select extends Field
         return $this;
     }
 
+    public function excludeSelf(bool | Closure $excludeSelf = true) : static
+    {
+        $this->excludeSelf = $excludeSelf;
+
+        return $this;
+    }
+
+    public function getExcludeSelf() : bool
+    {
+        return $this->evaluate($this->excludeSelf);
+    }
+
     public function relationship(string | Closure $relationshipName, string | Closure $titleColumnName, ?Closure $callback = null): static
     {
         $this->relationship = $relationshipName;
@@ -460,6 +474,15 @@ class Select extends Field
             $relationship = $component->getRelationship();
 
             $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getRelationshipTitleColumnName());
+
+            $relationshipQuery
+                ->when(
+                    $component->getModelInstance() &&
+                        get_class($relationship->getRelated()) == get_class($component->getModelInstance()) &&
+                        $this->getExcludeSelf(),
+                    function ($query) use ($component) {
+                        $query->whereKeyNot($component->getModelInstance()->getKey());
+                });
 
             if ($callback) {
                 $relationshipQuery = $component->evaluate($callback, [
@@ -504,6 +527,15 @@ class Select extends Field
             $relationship = $component->getRelationship();
 
             $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getRelationshipTitleColumnName());
+
+            $relationshipQuery
+                ->when(
+                    $component->getModelInstance() &&
+                        get_class($relationship->getRelated()) == get_class($component->getModelInstance()) &&
+                        $this->getExcludeSelf(),
+                    function ($query) use ($component) {
+                        $query->whereKeyNot($component->getModelInstance()->getKey());
+                    });
 
             if ($callback) {
                 $relationshipQuery = $component->evaluate($callback, [
