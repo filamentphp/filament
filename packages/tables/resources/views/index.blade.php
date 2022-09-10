@@ -240,10 +240,7 @@
             @if ($header)
                 {{ $header }}
             @elseif ($heading || $headerActions)
-                <div @class([
-                    'px-2 pt-2',
-                    'hidden' => $isReordering,
-                ])>
+                <div class="px-2 pt-2">
                     <x-tables::header :actions="$isReordering ? [] : $headerActions" class="mb-2">
                         <x-slot name="heading">
                             {{ $heading }}
@@ -553,7 +550,7 @@
                                 </x-tables::cell>
                             @endforeach
 
-                            @if (count($actions) && (! $isReordering) && $actionsPosition === Position::AfterCells)
+                            @if (count($actions) && $actionsPosition === Position::AfterCells)
                                 <x-tables::actions-cell
                                     :actions="$actions"
                                     :record="$record"
