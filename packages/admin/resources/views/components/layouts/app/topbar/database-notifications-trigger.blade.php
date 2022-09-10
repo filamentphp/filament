@@ -1,5 +1,5 @@
 <x-filament::icon-button
-    :label="__('filament::layout.database_notifications')"
+    :label="__('filament::layout.buttons.database_notifications.label')"
     icon="heroicon-o-bell"
     :color="$unreadNotificationsCount ? 'primary' : 'secondary'"
     :indicator="$unreadNotificationsCount"
