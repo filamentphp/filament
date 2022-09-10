@@ -479,7 +479,7 @@ class Select extends Field
                 ->when(
                     $component->getModelInstance() &&
                         get_class($relationship->getRelated()) == get_class($component->getModelInstance()) &&
-                        $this->getExcludeSelf(),
+                        $component->getExcludeSelf(),
                     function ($query) use ($component) {
                         $query->whereKeyNot($component->getModelInstance()->getKey());
                     }
@@ -533,7 +533,7 @@ class Select extends Field
                 ->when(
                     $component->getModelInstance() &&
                         get_class($relationship->getRelated()) == get_class($component->getModelInstance()) &&
-                        $this->getExcludeSelf(),
+                        $component->getExcludeSelf(),
                     function ($query) use ($component) {
                         $query->whereKeyNot($component->getModelInstance()->getKey());
                     }
