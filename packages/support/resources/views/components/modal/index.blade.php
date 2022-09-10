@@ -98,7 +98,6 @@
                     'filament-modal-window w-full p-2 bg-white cursor-default pointer-events-auto',
                     'dark:bg-gray-800' => $darkMode,
                     'relative' => $width !== 'screen',
-                    'fixed inset-0' => $width === 'screen',
                     'h-screen overflow-y-auto ml-auto' => $slideOver,
                     'rounded-xl mx-auto' => ! ($slideOver || ($width === 'screen')),
                     'hidden' => ! $visible,
@@ -113,6 +112,7 @@
                     'max-w-5xl' => $width === '5xl',
                     'max-w-6xl' => $width === '6xl',
                     'max-w-7xl' => $width === '7xl',
+                    'fixed inset-0' => $width === 'screen',
                 ])
             >
                 @if ($closeButton)
