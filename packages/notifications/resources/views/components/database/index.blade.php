@@ -2,7 +2,7 @@
     $unreadNotificationsCount = $this->getUnreadDatabaseNotificationsCount();
 @endphp
 
-<div
+<div class="flex items-center"
     @if ($pollingInterval = $this->getPollingInterval())
         wire:poll.{{ $pollingInterval }}
     @endif
