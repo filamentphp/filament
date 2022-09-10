@@ -65,19 +65,19 @@ class Notifications extends Component
     public function getDatabaseNotifications(): DatabaseNotificationCollection
     {
         /** @phpstan-ignore-next-line */
-        return $this->getUser()->notifications;
+        return $this->getDatabaseNotificationsQuery()->get();
     }
 
     public function getDatabaseNotificationsQuery(): Builder
     {
         /** @phpstan-ignore-next-line */
-        return $this->getUser()->notifications();
+        return $this->getUser()->notifications()->where('data->format', 'filament');
     }
 
     public function getUnreadDatabaseNotificationsQuery(): Builder
     {
         /** @phpstan-ignore-next-line */
-        return $this->getUser()->unreadNotifications();
+        return $this->getDatabaseNotificationsQuery()->unread();
     }
 
     public function getUnreadDatabaseNotificationsCount(): int
@@ -91,7 +91,7 @@ class Notifications extends Component
             return;
         }
 
-        if (! ($notification['id'] ?? null)) {
+        if (($notification['format'] ?? null) !== 'filament') {
             return;
         }
 
