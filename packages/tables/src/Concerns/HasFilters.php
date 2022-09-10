@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Closure;
 use Filament\Forms;
 use Filament\Forms\ComponentContainer;
 use Filament\Tables\Filters\BaseFilter;
@@ -141,6 +142,24 @@ trait HasFilters
     protected function getTableFilters(): array
     {
         return [];
+    }
+
+    public function getTableFilterState(string $name): ?array
+    {
+        return $this->getTableFiltersForm()->getRawState()[$this->parseFilterName($name)] ?? null;
+    }
+
+    public function parseFilterName(string $name): string
+    {
+        if (! class_exists($name)) {
+            return $name;
+        }
+
+        if (! is_subclass_of($name, BaseFilter::class)) {
+            return $name;
+        }
+
+        return $name::getDefaultName();
     }
 
     protected function getTableFiltersFormColumns(): int | array

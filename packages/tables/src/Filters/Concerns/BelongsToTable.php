@@ -28,6 +28,6 @@ trait BelongsToTable
 
     public function getState(): array
     {
-        return $this->getLivewire()->getTableFiltersForm()->getRawState()[$this->getName()] ?? [];
+        return $this->getLivewire()->getTableFilterState($this->getName()) ?? [];
     }
 }
