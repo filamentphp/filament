@@ -15,6 +15,7 @@
     $header = $getHeader();
     $headerActions = $getHeaderActions();
     $heading = $getHeading();
+    $description = $getDescription();
     $isReorderable = $isReorderable();
     $isReordering = $isReordering();
     $isColumnSearchVisible = $isSearchableByColumn();
@@ -239,15 +240,18 @@
         >
             @if ($header)
                 {{ $header }}
-            @elseif ($heading || $headerActions)
-                <div class="px-2 pt-2">
+            @elseif ($heading || $description || $headerActions)
+                <div @class([
+                    'px-2 pt-2',
+                    'hidden' => ! $heading && ! $description && $isReordering,
+                ])>
                     <x-tables::header :actions="$isReordering ? [] : $headerActions" class="mb-2">
                         <x-slot name="heading">
                             {{ $heading }}
                         </x-slot>
 
                         <x-slot name="description">
-                            {{ $getDescription() }}
+                            {{ $description }}
                         </x-slot>
                     </x-tables::header>
 
