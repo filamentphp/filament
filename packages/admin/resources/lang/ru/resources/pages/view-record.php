@@ -5,7 +5,7 @@ return [
     'title' => 'Просмотр :label',
 
     'breadcrumb' => 'Просмотр',
-    
+
     'form' => [
 
         'tab' => [
