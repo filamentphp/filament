@@ -1,6 +1,7 @@
 @props([
     'actions' => null,
     'ariaLabelledby' => null,
+    'closeButton' => true,
     'closeEventName' => 'close-modal',
     'darkMode' => false,
     'displayClasses' => 'inline-block',
@@ -11,6 +12,7 @@
     'hrComponent' => 'filament-support::hr',
     'id' => null,
     'openEventName' => 'open-modal',
+    'slideOver' => false,
     'subheading' => null,
     'subheadingComponent' => 'filament-support::modal.subheading',
     'trigger' => null,
@@ -45,7 +47,10 @@
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         x-cloak
-        class="fixed inset-0 z-40 flex items-center min-h-screen p-4 overflow-y-auto transition"
+        @class([
+            'fixed inset-0 z-40 flex items-center min-h-screen overflow-y-auto transition',
+            'p-4' => ! $slideOver,
+        ])
     >
         <div
             @if (config('filament-support.modal.is_closed_by_clicking_away', true))
@@ -70,18 +75,31 @@
                 x-on:keydown.window.escape="isOpen = false"
             @endif
             x-transition:enter="ease duration-300"
-            x-transition:enter-start="translate-y-8"
-            x-transition:enter-end="translate-y-0"
             x-transition:leave="ease duration-300"
-            x-transition:leave-start="translate-y-0"
-            x-transition:leave-end="translate-y-8"
+            @if ($slideOver)
+                x-transition:enter-start="translate-x-full"
+                x-transition:enter-end="translate-x-0"
+                x-transition:leave-start="translate-x-0"
+                x-transition:leave-end="translate-x-full"
+            @elseif ($width !== 'screen')
+                x-transition:enter-start="translate-y-8"
+                x-transition:enter-end="translate-y-0"
+                x-transition:leave-start="translate-y-0"
+                x-transition:leave-end="translate-y-8"
+            @endif
             x-cloak
-            {{ $attributes->class(['relative w-full my-auto cursor-pointer pointer-events-none']) }}
+            {{ $attributes->class([
+                'relative w-full cursor-pointer pointer-events-none',
+                'my-auto' => ! $slideOver,
+            ]) }}
         >
             <div
                 @class([
-                    'filament-modal-window w-full mx-auto p-2 space-y-2 bg-white rounded-xl cursor-default pointer-events-auto',
+                    'filament-modal-window w-full p-2 bg-white cursor-default pointer-events-auto',
                     'dark:bg-gray-800' => $darkMode,
+                    'relative' => $width !== 'screen',
+                    'h-screen overflow-y-auto ml-auto' => $slideOver,
+                    'rounded-xl mx-auto' => ! ($slideOver || ($width === 'screen')),
                     'hidden' => ! $visible,
                     'max-w-xs' => $width === 'xs',
                     'max-w-sm' => $width === 'sm',
@@ -94,59 +112,92 @@
                     'max-w-5xl' => $width === '5xl',
                     'max-w-6xl' => $width === '6xl',
                     'max-w-7xl' => $width === '7xl',
+                    'fixed inset-0' => $width === 'screen',
                 ])
             >
-                @if ($header)
-                    <div class="filament-modal-header px-4 py-2">
-                        {{ $header }}
+                @if ($closeButton)
+                    <button
+                        tabindex="-1"
+                        type="button"
+                        class="absolute top-2 right-2"
+                    >
+                        <x-heroicon-s-x
+                            class="filament-modal-close-button h-4 w-4 cursor-pointer text-gray-400"
+                            title="__('filament-support::components/modal.actions.close.label')"
+                            x-on:click="isOpen = false"
+                            tabindex="-1"
+                        />
+
+                        <span class="sr-only">
+                            {{ __('filament-support::components/modal.actions.close.label') }}
+                        </span>
+                    </button>
+                @endif
+
+                <div
+                    @class([
+                        'space-y-2',
+                        'flex flex-col h-full' => $width === 'screen',
+                    ])
+                >
+                    @if ($header)
+                        <div class="filament-modal-header px-4 py-2">
+                            {{ $header }}
+                        </div>
+                    @endif
+
+                    @if ($header && ($actions || $heading || $slot->isNotEmpty() || $subheading))
+                        <x-dynamic-component :component="$hrComponent" />
+                    @endif
+
+                    <div
+                        @class([
+                            'filament-modal-content space-y-2',
+                            'flex-1 overflow-y-auto' => $width === 'screen',
+                        ])
+                    >
+                        @if ($heading || $subheading)
+                            <div @class([
+                                'p-4 space-y-2',
+                                'text-center' => ! $slideOver,
+                                'dark:text-white' => $darkMode,
+                            ])>
+                                @if ($heading)
+                                    <x-dynamic-component
+                                        :component="$headingComponent"
+                                        :id="$id . '.heading'"
+                                    >
+                                        {{ $heading }}
+                                    </x-dynamic-component>
+                                @endif
+
+                                @if ($subheading)
+                                    <x-dynamic-component :component="$subheadingComponent">
+                                        {{ $subheading }}
+                                    </x-dynamic-component>
+                                @endif
+                            </div>
+                        @endif
+
+                        @if ($slot->isNotEmpty())
+                            <div class="px-4 py-2 space-y-4">
+                                {{ $slot }}
+                            </div>
+                        @endif
+
+                        {{ $actions }}
                     </div>
-                @endif
 
-                @if ($header && ($actions || $heading || $slot->isNotEmpty() || $subheading))
-                    <x-dynamic-component :component="$hrComponent" />
-                @endif
-
-                <div class="filament-modal-content space-y-2">
-                    @if ($heading || $subheading)
-                        <div @class([
-                            'p-4 space-y-2 text-center',
-                            'dark:text-white' => $darkMode,
-                        ])>
-                            @if ($heading)
-                                <x-dynamic-component
-                                    :component="$headingComponent"
-                                    :id="$id . '.heading'"
-                                >
-                                    {{ $heading }}
-                                </x-dynamic-component>
-                            @endif
-
-                            @if ($subheading)
-                                <x-dynamic-component :component="$subheadingComponent">
-                                    {{ $subheading }}
-                                </x-dynamic-component>
-                            @endif
-                        </div>
+                    @if ($footer && ($actions || $heading || $slot->isNotEmpty() || $subheading))
+                        <x-dynamic-component :component="$hrComponent" />
                     @endif
 
-                    @if ($slot->isNotEmpty())
-                        <div class="px-4 py-2 space-y-4">
-                            {{ $slot }}
+                    @if ($footer)
+                        <div class="filament-modal-footer px-4 py-2">
+                            {{ $footer }}
                         </div>
                     @endif
-
-                    {{ $actions }}
                 </div>
-
-                @if ($footer && ($actions || $heading || $slot->isNotEmpty() || $subheading))
-                    <x-dynamic-component :component="$hrComponent" />
-                @endif
-
-                @if ($footer)
-                    <div class="filament-modal-footer px-4 py-2">
-                        {{ $footer }}
-                    </div>
-                @endif
             </div>
         </div>
     </div>

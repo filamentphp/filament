@@ -5,6 +5,7 @@ namespace Filament;
 use Filament\Facades\Filament;
 use Filament\Http\Livewire\Auth\Login;
 use Filament\Http\Livewire\GlobalSearch;
+use Filament\Http\Livewire\Notifications;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\MirrorConfigToSubpackages;
@@ -254,6 +255,7 @@ class FilamentServiceProvider extends PluginServiceProvider
         foreach (array_merge($this->livewireComponents, [
             'filament.core.auth.login' => Login::class,
             'filament.core.global-search' => GlobalSearch::class,
+            'filament.core.notifications' => Notifications::class,
         ]) as $alias => $class) {
             Livewire::component($alias, $class);
         }
