@@ -190,7 +190,7 @@ TextColumn::make('title')
                 $this->dispatchBrowserEvent('select-post', [
                     'post' => $record->getKey(),
                 ]);
-            })
+            }),
     )
 ```
 

@@ -5,6 +5,7 @@ namespace Filament\Tables\Testing;
 use Closure;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Testing\Assert;
 use Livewire\Testing\TestableLivewire;
 
@@ -91,6 +92,22 @@ class TestsColumns
                 $column->isHidden(),
                 message: "Failed asserting that a table column with name [{$name}] is hidden on the [{$livewireClass}] component.",
             );
+
+            return $this;
+        };
+    }
+
+    public function callTableColumnAction(): Closure
+    {
+        return function (string $name, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableColumnExists($name);
+
+            if ($record instanceof Model) {
+                $record = $this->instance()->getTableRecordKey($record);
+            }
+
+            $this->call('callTableColumnAction', $name, $record);
 
             return $this;
         };

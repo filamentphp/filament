@@ -13,6 +13,8 @@ namespace Livewire\Testing {
 
         public function callTableAction(string $name, $record = null, array $data = [], array $arguments = []): static {}
 
+        public function callTableColumnAction(string $name, $record = null): static {}
+
         public function callMountedTableAction(array $arguments = []): static {}
 
         public function assertTableActionExists(string $name): static {}
