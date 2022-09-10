@@ -22,8 +22,8 @@
     }"
 >
     <div
-        class="filament-dropdown-trigger cursor-pointer"
         x-on:click="toggle"
+        {{ $trigger->attributes->class(['filament-dropdown-trigger cursor-pointer']) }}
     >
         {{ $trigger }}
     </div>
