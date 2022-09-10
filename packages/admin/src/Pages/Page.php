@@ -9,6 +9,8 @@ use Filament\Http\Livewire\Concerns\CanNotify;
 use Filament\Navigation\NavigationItem;
 use Filament\Tables\Contracts\RendersFormComponentActionModal;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -45,6 +47,12 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
 
     public static function registerNavigationItems(): void
     {
+        $menuOverrideItem = self::getNavigationOverrideConfig();
+        $doDisplay = $menuOverrideItem['display'] ?? true;
+        if (!$doDisplay) {
+            return;
+        }
+
         if (! static::shouldRegisterNavigation()) {
             return;
         }
@@ -113,11 +121,23 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
 
     protected static function getNavigationGroup(): ?string
     {
+        $menuOverrideItem = self::getNavigationOverrideConfig();
+        $group = $menuOverrideItem['group'] ?? null;
+        if ($group) {
+            return $group;
+        }
+
         return static::$navigationGroup;
     }
 
     protected static function getNavigationIcon(): string
     {
+        $menuOverrideItem = self::getNavigationOverrideConfig();
+        $icon = $menuOverrideItem['icon'] ?? null;
+        if ($icon) {
+            return $icon;
+        }
+
         return static::$navigationIcon ?? 'heroicon-o-document-text';
     }
 
@@ -127,6 +147,13 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
             ->kebab()
             ->replace('-', ' ')
             ->title();
+    }
+
+    private static function getNavigationOverrideConfig(): array
+    {
+        $menuLabel = static::getNavigationLabel();
+
+        return (array)Config::get("filament.layout.menuItemsOverride.$menuLabel");
     }
 
     protected static function getNavigationBadge(): ?string

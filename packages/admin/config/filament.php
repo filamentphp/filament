@@ -201,6 +201,21 @@ return [
             'should_show_logo' => true,
         ],
         'max_content_width' => null,
+        /*
+         * Through these settings, you can override the following (empty string values have no effect)
+         * 1) The menu group the item is placed under
+         * 2) The icon used for the menu item
+         * 3) Hide the menu item by setting "display" to false
+         * NOTE: for a multilingual site, you will need multiple entries per menu item as
+         * array key is the label of the menu item (which will change for different locales)
+         */
+        'menuItemsOverride' => [
+            'Profile' => [
+                'group'   => '',
+                'icon'    => '',
+                'display' => true,
+            ]
+        ],
         'notifications' => [
             'vertical_alignment' => 'top',
             'alignment' => 'right',
