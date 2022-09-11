@@ -110,7 +110,10 @@ class Notification extends ViewComponent implements Arrayable
 
     public function toBroadcast(): BroadcastNotification
     {
-        return new BroadcastNotification($this->toArray());
+        $data = $this->toArray();
+        $data['format'] = 'filament';
+
+        return new BroadcastNotification($data);
     }
 
     public function toDatabase(): DatabaseNotification
