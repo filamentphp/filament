@@ -93,3 +93,15 @@ it('can state whether a page action exists', function () {
         ->assertPageActionExists('exists')
         ->assertPageActionDoesNotExist('does_not_exist');
 });
+
+it('can state whether a page action has a url', function() {
+    livewire(PageActions::class)
+        ->assertPageActionHasUrl('url', 'https://filamentphp.com')
+        ->assertPageActionDoesNotHaveUrl('url', 'https://google.com');
+});
+
+it('can state whether a page action should open a url in a new tab', function() {
+    livewire(PageActions::class)
+        ->assertPageActionShouldOpenUrlInNewTab('url_in_new_tab')
+        ->assertPageActionShouldNotOpenUrlInNewTab('url_not_in_new_tab');
+});

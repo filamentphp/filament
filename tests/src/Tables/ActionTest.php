@@ -98,3 +98,15 @@ it('can state whether a table action exists', function () {
         ->assertTableActionExists('exists')
         ->assertTableActionDoesNotExist('does_not_exist');
 });
+
+it('can state whether a table action has a url', function() {
+    livewire(PostsTable::class)
+        ->assertTableActionHasUrl('url', 'https://filamentphp.com')
+        ->assertTableActionDoesNotHaveUrl('url', 'https://google.com');
+});
+
+it('can state whether a table action should open a url in a new tab', function() {
+    livewire(PostsTable::class)
+        ->assertTableActionShouldOpenUrlInNewTab('url_in_new_tab')
+        ->assertTableActionShouldNotOpenUrlInNewTab('url_not_in_new_tab');
+});
