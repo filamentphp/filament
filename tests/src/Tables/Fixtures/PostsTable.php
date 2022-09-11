@@ -86,7 +86,7 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
             Tables\Actions\Action::make('url_in_new_tab')
                 ->url('https://filamentphp.com', true),
             Tables\Actions\Action::make('url_not_in_new_tab')
-                ->url('https://filamentphp.com')
+                ->url('https://filamentphp.com'),
         ];
     }
 
