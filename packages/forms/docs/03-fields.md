@@ -411,6 +411,15 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask->money('$', ',', 2))
 ```
 
+You can also control whether the number is signed or not. While the default is to allow both negative and positive numbers, the following code would only allow positive numbers:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask->money('$', ',', 2, false))
+```
+
+
 ### Datalists
 
 You may specify [datalist](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist) options for a text input using the `datalist()` method:
