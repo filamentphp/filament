@@ -16,7 +16,7 @@
         })
 
         if (window.Echo) {
-            new CustomEvent('EchoLoaded')
+            window.dispatchEvent(new CustomEvent('EchoLoaded'))
         }
     "
     {{ $attributes }}
