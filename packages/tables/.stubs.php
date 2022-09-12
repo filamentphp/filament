@@ -81,6 +81,14 @@ namespace Livewire\Testing {
 
         public function assertTableBulkActionDoesNotHaveColor(string $name, string $color): static {}
 
+        public function assertTableActionHasUrl(string $name, string $url): static {}
+
+        public function assertTableActionDoesNotHaveUrl(string $name, string $url): static {}
+
+        public function assertTableActionShouldOpenUrlInNewTab(string $name): static {}
+
+        public function assertTableActionShouldNotOpenUrlInNewTab(string $name): static {}
+
         public function assertTableBulkActionHeld(string $name): static {}
 
         public function assertHasTableBulkActionErrors(array $keys = []): static {}
