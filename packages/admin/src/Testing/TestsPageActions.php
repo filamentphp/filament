@@ -356,7 +356,7 @@ class TestsPageActions
 
             Assert::assertTrue(
                 $action->getUrl() === $url,
-                message: "Failed asserting that an action with name [{$name}] has url [{$url}] on the [{$livewireClass}] component.",
+                message: "Failed asserting that an action with name [{$name}] has URL [{$url}] on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -376,7 +376,7 @@ class TestsPageActions
 
             Assert::assertFalse(
                 $action->getUrl() === $url,
-                message: "Failed asserting that an action with name [{$name}] does not have url [{$url}] on the [{$livewireClass}] component.",
+                message: "Failed asserting that an action with name [{$name}] does not have URL [{$url}] on the [{$livewireClass}] component.",
             );
 
             return $this;

@@ -441,8 +441,8 @@ class TestsActions
             Assert::assertTrue(
                 $action->getUrl() === $url,
                 message: filled($record) ?
-                    "Failed asserting that a table action with name [{$name}] has url [{$url}] on the [{$livewireClass}] component for record [{$record}]." :
-                    "Failed asserting that a table action with name [{$name}] has url [{$url}] on the [{$livewireClass}] component.",
+                    "Failed asserting that a table action with name [{$name}] has URL [{$url}] on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$name}] has URL [{$url}] on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -468,8 +468,8 @@ class TestsActions
             Assert::assertFalse(
                 $action->getUrl() === $url,
                 message: filled($record) ?
-                    "Failed asserting that a table action with name [{$name}] does not have url [{$url}] on the [{$livewireClass}] component for record [{$record}]." :
-                    "Failed asserting that a table action with name [{$name}] does not have url [{$url}] on the [{$livewireClass}] component.",
+                    "Failed asserting that a table action with name [{$name}] does not have URL [{$url}] on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$name}] does not have URL [{$url}] on the [{$livewireClass}] component.",
             );
 
             return $this;
