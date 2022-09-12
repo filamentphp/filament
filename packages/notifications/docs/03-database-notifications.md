@@ -12,7 +12,7 @@ php artisan notifications:table
 
 > If you're using PostgreSQL, make sure that the `data` column in the migration is using `json()` instead of `text()`: `$table->json('data')`.
 
->If you're using UUIDs for your User model, make sure that your `'notifiable'` column is using `uuidMorphs` : `$table->uuidMorphs('notifiable');`.
+>If you're using UUIDs for your `User` model, make sure that your `'notifiable'` column is using `uuidMorphs` : `$table->uuidMorphs('notifiable');`.
 
 First, you must [publish the configuration file](installation#publishing-configuration) for the package.
 
