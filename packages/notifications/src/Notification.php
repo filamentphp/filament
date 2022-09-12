@@ -18,6 +18,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\DatabaseNotification as DatabaseNotificationModel;
 use Illuminate\Notifications\Messages\BroadcastMessage;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class Notification extends ViewComponent implements Arrayable
@@ -92,18 +93,36 @@ class Notification extends ViewComponent implements Arrayable
         return $this;
     }
 
-    public function broadcast(Model | Authenticatable $user): static
+    public function broadcast(Model | Authenticatable | Collection | array $users): static
     {
-        /** @phpstan-ignore-next-line */
-        $user->notify($this->toBroadcast());
+        if (
+            $users instanceof Model ||
+            $users instanceof Authenticatable
+        ) {
+            $users = collect([$users]);
+        }
+
+        foreach ($users as $user) {
+            /** @phpstan-ignore-next-line */
+            $user->notify($this->toBroadcast());
+        }
 
         return $this;
     }
 
-    public function sendToDatabase(Model | Authenticatable $user): static
+    public function sendToDatabase(Model | Authenticatable | Collection | array $users): static
     {
-        /** @phpstan-ignore-next-line */
-        $user->notify($this->toDatabase());
+        if (
+            $users instanceof Model ||
+            $users instanceof Authenticatable
+        ) {
+            $users = collect([$users]);
+        }
+
+        foreach ($users as $user) {
+            /** @phpstan-ignore-next-line */
+            $user->notify($this->toDatabase());
+        }
 
         return $this;
     }
