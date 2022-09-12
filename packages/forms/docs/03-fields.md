@@ -442,7 +442,7 @@ use Filament\Forms\Components\Select;
 Select::make('status')
     ->options([
         'draft' => 'Draft',
-        'review' => 'In review',
+        'reviewing' => 'Reviewing',
         'published' => 'Published',
     ])
 ```
@@ -484,7 +484,7 @@ use Filament\Forms\Components\Select;
 Select::make('status')
     ->options([
         'draft' => 'Draft',
-        'review' => 'In review',
+        'reviewing' => 'Reviewing',
         'published' => 'Published',
     ])
     ->default('draft')
