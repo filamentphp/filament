@@ -240,10 +240,10 @@
         >
             @if ($header)
                 {{ $header }}
-            @elseif ($heading || $description || $headerActions)
+            @elseif ($heading || $headerActions)
                 <div @class([
                     'px-2 pt-2',
-                    'hidden' => ! $heading && ! $description && $isReordering,
+                    'hidden' => ! $heading && $isReordering,
                 ])>
                     <x-tables::header :actions="$isReordering ? [] : $headerActions" class="mb-2">
                         <x-slot name="heading">
