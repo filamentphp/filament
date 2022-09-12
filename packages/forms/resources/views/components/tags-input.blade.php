@@ -51,7 +51,7 @@
                         })"
                         x-model="newTag"
                         {{ $getExtraInputAttributeBag()->class([
-                            'webkit-calendar-picker-indicator:opacity-0 block w-full border-0',
+                            'webkit-calendar-picker-indicator:opacity-0 block w-full border-0 px-3 py-2 sm:py-2.5 sm:text-sm',
                             'dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400' => config('forms.dark_mode'),
                         ]) }}
                     />
