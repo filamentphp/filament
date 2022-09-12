@@ -142,7 +142,7 @@ Instead of rendering the trigger button as described above, you can always open 
 
 ```blade
 <button
-    x-data
+    x-data="{}"
     x-on:click="$dispatch('open-modal', { id: 'database-notifications' })"
     type="button"
 >
