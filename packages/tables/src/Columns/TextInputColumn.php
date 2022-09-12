@@ -5,13 +5,9 @@ namespace Filament\Tables\Columns;
 use Closure;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Concerns\HasInputMode;
-use Filament\Forms\Components\Concerns\HasOptions;
 use Filament\Forms\Components\Concerns\HasPlaceholder;
 use Filament\Forms\Components\Concerns\HasStep;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\TextInput\Mask;
 use Filament\Tables\Columns\Contracts\Editable;
-use Illuminate\Contracts\Support\Arrayable;
 
 class TextInputColumn extends Column implements Editable
 {

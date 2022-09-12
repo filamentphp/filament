@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Columns;
 
-use Closure;
 use Filament\Forms\Components\Concerns\CanDisableOptions;
 use Filament\Forms\Components\Concerns\CanDisablePlaceholderSelection;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;

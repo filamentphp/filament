@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Columns\Contracts;
 
-interface Editable {
+interface Editable
+{
     public function validate($input): void;
 }

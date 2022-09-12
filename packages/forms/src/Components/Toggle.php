@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Components;
 
-use Closure;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
 class Toggle extends Field

@@ -2,12 +2,6 @@
 
 namespace Filament\Tables\Columns;
 
-use Closure;
-use Filament\Forms\Components\Concerns\CanDisableOptions;
-use Filament\Forms\Components\Concerns\CanDisablePlaceholderSelection;
-use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
-use Filament\Forms\Components\Concerns\HasOptions;
-use Filament\Forms\Components\Concerns\HasPlaceholder;
 use Filament\Forms\Components\Concerns\HasToggleColors;
 use Filament\Forms\Components\Concerns\HasToggleIcons;
 use Filament\Tables\Columns\Contracts\Editable;
