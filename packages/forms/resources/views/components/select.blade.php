@@ -48,7 +48,7 @@
                         'dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('forms.dark_mode'),
                         'border-gray-300' => ! $errors->has($getStatePath()),
                         'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
-                        'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
+                        'border-danger-600 ring-1 ring-inset ring-danger-600' => $errors->has($getStatePath()),
                     ]) }}
                 >
                     @unless ($isPlaceholderSelectionDisabled())

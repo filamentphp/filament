@@ -19,6 +19,8 @@ use Illuminate\Validation\Rules\Exists;
 
 class Select extends Field
 {
+    use Concerns\CanDisableOptions;
+    use Concerns\CanDisablePlaceholderSelection;
     use Concerns\HasAffixes {
         getActions as getBaseActions;
         getSuffixAction as getBaseSuffixAction;
@@ -46,10 +48,6 @@ class Select extends Field
     protected ?Closure $getSearchResultsUsing = null;
 
     protected bool | Closure $isHtmlAllowed = false;
-
-    protected bool | Closure | null $isOptionDisabled = null;
-
-    protected bool | Closure | null $isPlaceholderSelectionDisabled = false;
 
     protected bool | Closure $isSearchable = false;
 
@@ -191,20 +189,6 @@ class Select extends Field
     public function createOptionUsing(Closure $callback): static
     {
         $this->createOptionUsing = $callback;
-
-        return $this;
-    }
-
-    public function disableOptionWhen(bool | Closure $callback): static
-    {
-        $this->isOptionDisabled = $callback;
-
-        return $this;
-    }
-
-    public function disablePlaceholderSelection(bool | Closure $condition = true): static
-    {
-        $this->isPlaceholderSelectionDisabled = $condition;
 
         return $this;
     }
@@ -420,23 +404,6 @@ class Select extends Field
     public function isMultiple(): bool
     {
         return $this->evaluate($this->isMultiple);
-    }
-
-    public function isOptionDisabled($value, string $label): bool
-    {
-        if ($this->isOptionDisabled === null) {
-            return false;
-        }
-
-        return (bool) $this->evaluate($this->isOptionDisabled, [
-            'label' => $label,
-            'value' => $value,
-        ]);
-    }
-
-    public function isPlaceholderSelectionDisabled(): bool
-    {
-        return (bool) $this->evaluate($this->isPlaceholderSelectionDisabled);
     }
 
     public function isSearchable(): bool
