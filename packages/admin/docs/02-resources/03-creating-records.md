@@ -192,6 +192,30 @@ protected function getSteps(): array
 
 Now, visit the Create page to see your wizard in action! The Edit page will still use the form defined within the resource class.
 
+If you'd like to use the wizard on edit page you can optionally allow navigation between steps:
+```php
+use App\Filament\Resources\CategoryResource;
+use Filament\Resources\Pages\EditRecord;
+
+class EditCategory extends EditRecord
+{
+    use EditRecord\Concerns\HasWizard;
+    
+    protected static string $resource = CategoryResource::class;
+
+    protected function getSteps(): array
+    {
+        return CreateCategory::getSteps();
+    }
+    
+    public function canSkipSteps(): bool
+    {
+        return true;
+    }
+}
+```
+> Be careful when you allow navigation between steps, if you have errors in any of the steps that is not active, this step will not be focused to show the validation errors.
+
 ### Sharing fields between the resource form and wizards
 
 If you'd like to reduce the amount of repetition between the resource form and wizard steps, it's a good idea to extract public static resource functions for your fields, where you can easily retrieve an instance of a field from the resource or the wizard:

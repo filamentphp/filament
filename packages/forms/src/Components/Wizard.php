@@ -14,6 +14,8 @@ class Wizard extends Component
 
     protected string | Htmlable | null $cancelAction = null;
 
+    protected bool | Closure $canSkipSteps = false;
+
     protected string | Htmlable | null $submitAction = null;
 
     public int | Closure $startStep = 1;
@@ -101,5 +103,17 @@ class Wizard extends Component
     public function getStartStep(): int
     {
         return $this->evaluate($this->startStep);
+    }
+
+    public function canSkipSteps(bool | Closure $condition = false): static
+    {
+        $this->canSkipSteps = $condition;
+
+        return $this;
+    }
+
+    public function getCanSkipSteps(): bool
+    {
+        return $this->evaluate($this->canSkipSteps);
     }
 }

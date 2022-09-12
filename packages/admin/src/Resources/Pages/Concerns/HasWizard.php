@@ -18,7 +18,8 @@ trait HasWizard
                 $component
                     ->startOnStep($this->getStartStep())
                     ->cancelAction($this->getCancelFormAction())
-                    ->submitAction($this->getSubmitFormAction());
+                    ->submitAction($this->getSubmitFormAction())
+                    ->canSkipSteps($this->canSkipSteps());
             });
     }
 
@@ -40,5 +41,10 @@ trait HasWizard
     protected function getSteps(): array
     {
         return [];
+    }
+
+    protected function canSkipSteps(): bool
+    {
+        return false;
     }
 }

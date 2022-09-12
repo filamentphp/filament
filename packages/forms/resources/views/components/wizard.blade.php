@@ -9,6 +9,8 @@
 
         step: null,
 
+        canSkipSteps: @js($getCanSkipSteps()),
+
         init: function () {
             this.step = this.getSteps()[{{ $getStartStep() }} - 1]
         },
@@ -57,6 +59,10 @@
             return (this.getStepIndex(this.step) + 1) >= this.getSteps().length
         },
 
+        isStepClickable: function(step, index) {
+            return this.canSkipSteps || this.getStepIndex(step) <= index
+        },
+
     }"
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $getStatePath() }}') nextStep()"
     x-cloak
@@ -88,10 +94,10 @@
             <li class="group relative overflow-hidden md:flex-1">
                 <button
                     type="button"
-                    x-on:click="if (getStepIndex(step) > {{ $loop->index }}) step = '{{ $step->getId() }}'"
+                    x-on:click="if (isStepClickable(step, {{ $loop->index }})) step = '{{ $step->getId() }}'"
                     x-bind:aria-current="getStepIndex(step) === {{ $loop->index }} ? 'step' : null"
                     x-bind:class="{
-                        'cursor-not-allowed pointer-events-none': getStepIndex(step) <= {{ $loop->index }},
+                        'cursor-not-allowed pointer-events-none': ! isStepClickable(step, {{ $loop->index }}),
                     }"
                     role="step"
                     class="flex items-center h-full text-left rtl:text-right w-full"
