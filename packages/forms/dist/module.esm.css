@@ -1728,7 +1728,7 @@ trix-editor .attachment__metadata .attachment__size {
   @apply cursor-not-allowed pointer-events-none select-none opacity-70;
 }
 .choices__placeholder {
-  @apply opacity-70;
+  @apply opacity-70 text-base sm:text-sm;
 }
 .choices__button {
   @apply appearance-none border-0 bg-transparent bg-no-repeat bg-center cursor-pointer;
