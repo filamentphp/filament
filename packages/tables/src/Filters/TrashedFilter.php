@@ -29,6 +29,18 @@ class TrashedFilter extends TernaryFilter
             false: fn ($query) => $query->onlyTrashed(),
             blank: fn ($query) => $query->withoutTrashed(),
         );
+
+        $this->indicateUsing(function (array $state): array {
+            if ($state['value'] ?? null) {
+                return [$this->getTrueLabel()];
+            }
+
+            if (blank($state['value'] ?? null)) {
+                return [];
+            }
+
+            return [$this->getFalseLabel()];
+        });
     }
 
     public function applyToBaseQuery(Builder $query, array $data = []): Builder

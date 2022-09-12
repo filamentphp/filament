@@ -143,6 +143,24 @@ trait HasFilters
         return [];
     }
 
+    public function getTableFilterState(string $name): ?array
+    {
+        return $this->getTableFiltersForm()->getRawState()[$this->parseFilterName($name)] ?? null;
+    }
+
+    public function parseFilterName(string $name): string
+    {
+        if (! class_exists($name)) {
+            return $name;
+        }
+
+        if (! is_subclass_of($name, BaseFilter::class)) {
+            return $name;
+        }
+
+        return $name::getDefaultName();
+    }
+
     protected function getTableFiltersFormColumns(): int | array
     {
         return match ($this->getTableFiltersLayout()) {

@@ -68,3 +68,19 @@ it('can hide a column', function () {
         ->assertTableColumnVisible('visible')
         ->assertTableColumnHidden('hidden');
 });
+
+it('can call a column action', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->callTableColumnAction('title', $post)
+        ->assertEmitted('title-action-called');
+});
+
+it('can call a column action object', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->callTableAction('column-action-object', $post)
+        ->assertEmitted('column-action-object-called');
+});

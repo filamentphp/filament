@@ -174,6 +174,28 @@ TextColumn::make('title')
     })
 ```
 
+##### Action modals
+
+You may open [action modals](actions#modals) by passing in an `Action` object to the `action()` method:
+
+```php
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('title')
+    ->action(
+        Action::make('select')
+            ->requiresConfirmation()
+            ->action(function (Post $record): void {
+                $this->dispatchBrowserEvent('select-post', [
+                    'post' => $record->getKey(),
+                ]);
+            }),
+    )
+```
+
+Action objects passed into the `action()` method must have a unique name to distinguish it from other actions within the table.
+
 #### Opening URLs
 
 To open a URL, you may use the `url()` method, passing a callback or static URL to open. Callbacks accept a `$record` parameter which you may use to customize the URL:
@@ -346,7 +368,7 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('users_exists')->exists('users')
 ```
 
-In this example, `users` is the name of the relationship to check for existence. The name of the column must be `users_exists`, as this is the convention that [Laravel uses](https://laravel.com/docs/9.x/eloquent-relationships#other-aggregate-functions) for storing the result.
+In this example, `users` is the name of the relationship to check for existence. The name of the column must be `users_exists`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#other-aggregate-functions) for storing the result.
 
 ### Aggregating relationships
 
@@ -358,7 +380,7 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('users_avg_age')->avg('users', 'age')
 ```
 
-In this example, `users` is the name of the relationship, while `age` is the field that is being averaged. The name of the column must be `users_avg_age`, as this is the convention that [Laravel uses](https://laravel.com/docs/9.x/eloquent-relationships#other-aggregate-functions) for storing the result.
+In this example, `users` is the name of the relationship, while `age` is the field that is being averaged. The name of the column must be `users_avg_age`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#other-aggregate-functions) for storing the result.
 
 ## Text column
 
