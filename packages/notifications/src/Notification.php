@@ -95,11 +95,8 @@ class Notification extends ViewComponent implements Arrayable
 
     public function broadcast(Model | Authenticatable | Collection | array $users): static
     {
-        if (
-            $users instanceof Model ||
-            $users instanceof Authenticatable
-        ) {
-            $users = collect([$users]);
+        if (! is_iterable($users)) {
+            $users = [$users];
         }
 
         foreach ($users as $user) {
@@ -111,11 +108,8 @@ class Notification extends ViewComponent implements Arrayable
 
     public function sendToDatabase(Model | Authenticatable | Collection | array $users): static
     {
-        if (
-            $users instanceof Model ||
-            $users instanceof Authenticatable
-        ) {
-            $users = collect([$users]);
+        if (! is_iterable($users)) {
+            $users = [$users];
         }
 
         foreach ($users as $user) {
