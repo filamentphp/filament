@@ -29,7 +29,7 @@ trait HasWizard
 
     public function skippableSteps(bool | Closure $condition = true): static
     {
-        $this->skippableSteps = $condition;
+        $this->isWizardSkippable = $condition;
 
         return $this;
     }

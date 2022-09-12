@@ -40,7 +40,7 @@ trait HasForm
                     ->startOnStep($this->getWizardStartStep())
                     ->cancelAction($this->getModalCancelAction())
                     ->submitAction($this->getModalSubmitAction())
-                    ->startOnStep($this->isWizardSkippable())
+                    ->skippable($this->isWizardSkippable())
                     ->disabled($this->isFormDisabled()),
             ];
         } elseif ($this->isFormDisabled()) {
