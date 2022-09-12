@@ -774,6 +774,98 @@ use Filament\Tables\Columns\TagsColumn;
 TagsColumn::make('tags')->separator(',')
 ```
 
+## Select column
+
+The select column allows you to render a select field inside the table, which can be used to update that database record without needing to open a new page or a modal.
+
+You must pass options to the column:
+
+```php
+use Filament\Tables\Columns\SelectColumn;
+
+SelectColumn::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+```
+
+You can validate the input by passing any [Laravel validation rules](https://laravel.com/docs/validation#available-validation-rules) in an array:
+
+```php
+use Filament\Tables\Columns\SelectColumn;
+
+SelectColumn::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+    ->rules(['required'])
+```
+
+You can prevent the placeholder from being selected using the `disablePlaceholderSelection()` method:
+
+```php
+use Filament\Tables\Columns\SelectColumn;
+
+SelectColumn::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+    ->disablePlaceholderSelection()
+```
+
+## Toggle column
+
+The toggle column allows you to render a toggle button inside the table, which can be used to update that database record without needing to open a new page or a modal:
+
+```php
+use Filament\Tables\Columns\ToggleColumn;
+
+ToggleColumn::make('is_admin')
+```
+
+## Text input column
+
+The text input column allows you to render a text input inside the table, which can be used to update that database record without needing to open a new page or a modal:
+
+```php
+use Filament\Tables\Columns\TextInputColumn;
+
+TextInputColumn::make('name')
+```
+
+You can validate the input by passing any [Laravel validation rules](https://laravel.com/docs/validation#available-validation-rules) in an array:
+
+```php
+use Filament\Tables\Columns\TextInputColumn;
+
+TextInputColumn::make('name')
+    ->rules(['required', 'max:255'])
+```
+
+You may use the `type()` method to pass a custom [HTML input type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#input_types):
+
+```php
+use Filament\Tables\Columns\TextInputColumn;
+
+TextInputColumn::make('background_color')->type('color')
+```
+
+## Checkbox column
+
+The checkbox column allows you to render a checkbox inside the table, which can be used to update that database record without needing to open a new page or a modal:
+
+```php
+use Filament\Tables\Columns\CheckboxColumn;
+
+CheckboxColumn::make('is_admin')
+```
+
 ## View column
 
 You may render a custom view for a cell using the `view()` method:

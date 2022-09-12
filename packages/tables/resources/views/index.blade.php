@@ -546,7 +546,7 @@
                                     wire:loading.remove.delay
                                     wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
                                 >
-                                    {{ $column }}
+                                    {{ $column->viewData(['recordKey' => $recordKey]) }}
                                 </x-tables::cell>
                             @endforeach
 
