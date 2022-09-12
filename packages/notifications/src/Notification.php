@@ -103,7 +103,6 @@ class Notification extends ViewComponent implements Arrayable
         }
 
         foreach ($users as $user) {
-            /** @phpstan-ignore-next-line */
             $user->notify($this->toBroadcast());
         }
 
@@ -120,7 +119,6 @@ class Notification extends ViewComponent implements Arrayable
         }
 
         foreach ($users as $user) {
-            /** @phpstan-ignore-next-line */
             $user->notify($this->toDatabase());
         }
 
