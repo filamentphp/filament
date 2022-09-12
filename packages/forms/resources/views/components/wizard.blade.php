@@ -9,8 +9,6 @@
 
         step: null,
 
-        canSkipSteps: @js($getCanSkipSteps()),
-
         init: function () {
             this.step = this.getSteps()[{{ $getStartStep() }} - 1]
         },
@@ -60,7 +58,7 @@
         },
 
         isStepClickable: function(step, index) {
-            return this.canSkipSteps || this.getStepIndex(step) <= index
+            return @js($isSkippable()) || this.getStepIndex(step) <= index
         },
 
     }"

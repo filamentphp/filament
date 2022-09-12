@@ -14,7 +14,7 @@ class Wizard extends Component
 
     protected string | Htmlable | null $cancelAction = null;
 
-    protected bool | Closure $canSkipSteps = false;
+    protected bool | Closure $skippable = false;
 
     protected string | Htmlable | null $submitAction = null;
 
@@ -90,6 +90,13 @@ class Wizard extends Component
         return $this;
     }
 
+    public function skippable(bool | Closure $condition = false): static
+    {
+        $this->skippable = $condition;
+
+        return $this;
+    }
+
     public function getCancelAction(): string | Htmlable | null
     {
         return $this->cancelAction;
@@ -105,15 +112,8 @@ class Wizard extends Component
         return $this->evaluate($this->startStep);
     }
 
-    public function canSkipSteps(bool | Closure $condition = false): static
+    public function isSkippable(): bool
     {
-        $this->canSkipSteps = $condition;
-
-        return $this;
-    }
-
-    public function getCanSkipSteps(): bool
-    {
-        return $this->evaluate($this->canSkipSteps);
+        return $this->evaluate($this->skippable);
     }
 }

@@ -19,7 +19,7 @@ trait HasWizard
                     ->startOnStep($this->getStartStep())
                     ->cancelAction($this->getCancelFormAction())
                     ->submitAction($this->getSubmitFormAction())
-                    ->canSkipSteps($this->canSkipSteps());
+                    ->skippable($this->hasSkippableSteps());
             });
     }
 
@@ -43,7 +43,7 @@ trait HasWizard
         return [];
     }
 
-    protected function canSkipSteps(): bool
+    protected function hasSkippableSteps(): bool
     {
         return false;
     }
