@@ -295,19 +295,19 @@
                 x-ref="trix"
                 dusk="filament.forms.{{ $getStatePath() }}"
                 {{ $getExtraInputAttributeBag()->class([
-                    'bg-white block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 prose max-w-none break-words',
-                    'dark:prose-invert dark:bg-gray-700 dark:focus:border-primary-500' => config('forms.dark_mode'),
+                    'prose block w-full max-w-none break-words rounded-lg border-none bg-white px-3 py-2 shadow-sm ring-1 ring-inset transition duration-75 focus:ring-2 focus:ring-inset focus:ring-primary-500 focus:ring-primary-500 sm:py-2.5 sm:text-sm',
+                    'dark:prose-invert dark:bg-gray-700 dark:focus:ring-primary-500' => config('forms.dark_mode'),
                 ]) }}
                 x-bind:class="{
-                    'border-gray-300': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
-                    'dark:border-gray-600': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors) && @js(config('forms.dark_mode')),
-                    'border-danger-600 ring-1 ring-inset ring-danger-600': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
+                    'ring-gray-300': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
+                    'dark:ring-gray-600': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors) && @js(config('forms.dark_mode')),
+                    'ring-danger-500': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
                 }"
             ></trix-editor>
         @else
             <div x-html="state" @class([
-                'prose block w-full max-w-none rounded-lg border border-gray-300 bg-white p-3 opacity-70 shadow-sm',
-                'dark:prose-invert dark:border-gray-600 dark:bg-gray-700' => config('forms.dark_mode'),
+                'prose block w-full max-w-none rounded-lg bg-white px-3 py-1.5 opacity-70 shadow-sm ring-1 ring-gray-300 sm:py-2.5 sm:text-sm',
+                'dark:prose-invert dark:bg-gray-700 dark:ring-gray-600' => config('forms.dark_mode'),
             ])></div>
         @endunless
     </div>

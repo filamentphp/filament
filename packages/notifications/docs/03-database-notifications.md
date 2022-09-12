@@ -4,7 +4,7 @@ title: Database notifications
 
 > To start, make sure the package is [installed](installation) - `@livewire('notifications')` should be in your Blade layout somewhere.
 
-Before we start, make sure that the [Laravel notifications table](https://laravel.com/docs/notifications#database-prerequisites) to your database:
+Before we start, make sure that the [Laravel notifications table](https://laravel.com/docs/notifications#database-prerequisites) is added to your database:
 
 ```bash
 php artisan notifications:table
@@ -72,7 +72,7 @@ $recipient->notify(
     Notification::make()
         ->title('Saved successfully')
         ->toDatabase(),
-)
+);
 ```
 
 Alternatively, use a traditional [Laravel notification class](https://laravel.com/docs/notifications#generating-notifications) by returning the notification from the `toDatabase()` method:
@@ -119,7 +119,7 @@ You may completely disable polling if you wish:
 
 ### Echo
 
-Alternatively, we have a native integration with [Laravel Echo](https://laravel.com/docs/broadcasting#client-side-installation). Make sure Echo is installed, as well as a [server-side websockets integration](https://laravel.com/docs/broadcasting#server-side-installation) like Pusher.
+Alternatively, the package has a native integration with [Laravel Echo](https://laravel.com/docs/broadcasting#client-side-installation). Make sure Echo is installed, as well as a [server-side websockets integration](https://laravel.com/docs/broadcasting#server-side-installation) like Pusher.
 
 Once websockets are set up, after sending a database notification you may emit a `DatabaseNotificationsSent` event, which will immediately fetch new notifications for that user:
 

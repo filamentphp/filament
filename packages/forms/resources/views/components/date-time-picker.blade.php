@@ -42,12 +42,12 @@
             @endunless
             type="button"
             {{ $getExtraTriggerAttributeBag()->class([
-                'bg-white relative w-full border py-2 pl-3 pr-10 rtl:pl-10 rtl:pr-3 text-left cursor-default rounded-lg shadow-sm',
-                'focus-within:ring-1 focus-within:border-primary-500 focus-within:ring-inset focus-within:ring-primary-500' => ! $isDisabled(),
+                'relative w-full cursor-default rounded-lg border-none bg-white py-2 pl-3 pr-10 text-left shadow-sm ring-1 ring-inset transition duration-75 rtl:pl-10 rtl:pr-3 sm:py-2.5 sm:text-sm',
+                'focus-within:ring-2 focus-within:ring-inset focus-within:ring-primary-500' => ! $isDisabled(),
                 'dark:bg-gray-700' => config('forms.dark_mode'),
-                'border-gray-300' => ! $errors->has($getStatePath()),
-                'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
-                'border-danger-600' => $errors->has($getStatePath()),
+                'ring-gray-300' => ! $errors->has($getStatePath()),
+                'dark:ring-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
+                'ring-danger-500' => $errors->has($getStatePath()),
                 'opacity-70' => $isDisabled(),
                 'dark:text-gray-300' => $isDisabled() && config('forms.dark_mode'),
             ]) }}
@@ -58,7 +58,7 @@
                 x-model="displayText"
                 {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
                 @class([
-                    'w-full h-full p-0 placeholder-gray-400 bg-transparent border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none',
+                    'h-full w-full border-0 bg-transparent p-0 placeholder-gray-400 focus:placeholder-gray-500 focus:outline-none focus:ring-0 sm:text-sm',
                     'dark:bg-gray-700 dark:placeholder-gray-400' => config('forms.dark_mode'),
                     'cursor-default' => $isDisabled(),
                 ])
