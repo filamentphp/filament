@@ -8,6 +8,8 @@ trait HasWizard
 {
     protected bool $isWizard = false;
 
+    protected bool | Closure $isWizardSkippable = false;
+
     public int | Closure $wizardStartStep = 1;
 
     public function steps(array | Closure $steps): static
@@ -25,9 +27,21 @@ trait HasWizard
         return $this;
     }
 
+    public function skippableSteps(bool | Closure $condition = true): static
+    {
+        $this->skippableSteps = $condition;
+
+        return $this;
+    }
+
     public function isWizard(): bool
     {
         return $this->isWizard;
+    }
+
+    public function isWizardSkippable(): bool
+    {
+        return $this->evaluate($this->isWizardSkippable);
     }
 
     public function getWizardStartStep(): int
