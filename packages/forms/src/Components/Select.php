@@ -532,10 +532,18 @@ class Select extends Field
             );
         });
 
-        $this->getOptionLabelUsing(static function (Select $component, $value) {
+        $this->getOptionLabelUsing(static function (Select $component, $value) use ($callback) {
             $relationship = $component->getRelationship();
 
-            $record = $relationship->getRelated()->query()->where($relationship->getOwnerKeyName(), $value)->first();
+            $relationshipQuery = $relationship->getRelated()->query()->where($relationship->getOwnerKeyName(), $value);
+
+            if ($callback) {
+                $relationshipQuery = $component->evaluate($callback, [
+                    'query' => $relationshipQuery,
+                ]) ?? $relationshipQuery;
+            }
+
+            $record = $relationshipQuery->first();
 
             if (! $record) {
                 return null;
