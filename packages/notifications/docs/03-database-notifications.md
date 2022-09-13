@@ -123,7 +123,20 @@ You may completely disable polling if you wish:
 
 Alternatively, the package has a native integration with [Laravel Echo](https://laravel.com/docs/broadcasting#client-side-installation). Make sure Echo is installed, as well as a [server-side websockets integration](https://laravel.com/docs/broadcasting#server-side-installation) like Pusher.
 
-Once websockets are set up, after sending a database notification you may emit a `DatabaseNotificationsSent` event, which will immediately fetch new notifications for that user:
+Once websockets are set up uncomment the following code in the [Filament config file](../installation#publishing-configuration), and enter your credentials.
+
+```text
+'broadcasting' => [
+        'echo' => [
+            'broadcaster' => 'pusher',
+            'key' => env('VITE_PUSHER_APP_KEY'),
+            'cluster' => env('VITE_PUSHER_APP_CLUSTER'),
+            'forceTLS' => true,
+        ],
+    ],
+```
+
+After sending a database notification you may emit a `DatabaseNotificationsSent` event, which will immediately fetch new notifications for that user::
 
 ```php
 use Filament\Notifications\Events\DatabaseNotificationsSent;
