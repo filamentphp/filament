@@ -136,7 +136,7 @@ Once websockets are set up uncomment the following code in the [Filament config 
     ],
 ```
 
-After sending a database notification you may emit a `DatabaseNotificationsSent` event, which will immediately fetch new notifications for that user::
+After sending a database notification you may emit a `DatabaseNotificationsSent` event, which will immediately fetch new notifications for that user:
 
 ```php
 use Filament\Notifications\Events\DatabaseNotificationsSent;
