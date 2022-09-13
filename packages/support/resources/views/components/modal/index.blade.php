@@ -48,7 +48,7 @@
         x-transition:leave-end="opacity-0"
         x-cloak
         @class([
-            'fixed inset-0 z-40 flex items-center min-h-screen overflow-y-auto transition',
+            'fixed inset-0 z-40 flex items-center min-h-screen overflow-y-auto overflow-x-hidden transition',
             'p-4' => ! $slideOver,
         ])
     >
