@@ -556,12 +556,18 @@ class Select extends Field
             return $record->getAttributeValue($component->getRelationshipTitleColumnName());
         });
 
-        $this->getOptionLabelsUsing(static function (Select $component, array $values): array {
+        $this->getOptionLabelsUsing(static function (Select $component, array $values) use ($callback): array {
             $relationship = $component->getRelationship();
             $relatedKeyName = $relationship->getRelatedKeyName();
 
             $relationshipQuery = $relationship->getRelated()->query()
                 ->whereIn($relatedKeyName, $values);
+
+            if ($callback) {
+                $relationshipQuery = $component->evaluate($callback, [
+                    'query' => $relationshipQuery,
+                ]) ?? $relationshipQuery;
+            }
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
