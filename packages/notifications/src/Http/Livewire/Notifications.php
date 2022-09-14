@@ -6,9 +6,10 @@ use Carbon\CarbonInterface;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Livewire\Component;
@@ -68,13 +69,13 @@ class Notifications extends Component
         return $this->getDatabaseNotificationsQuery()->get();
     }
 
-    public function getDatabaseNotificationsQuery(): Builder
+    public function getDatabaseNotificationsQuery(): Builder | Relation
     {
         /** @phpstan-ignore-next-line */
         return $this->getUser()->notifications()->where('data->format', 'filament');
     }
 
-    public function getUnreadDatabaseNotificationsQuery(): Builder
+    public function getUnreadDatabaseNotificationsQuery(): Builder | Relation
     {
         /** @phpstan-ignore-next-line */
         return $this->getDatabaseNotificationsQuery()->unread();
