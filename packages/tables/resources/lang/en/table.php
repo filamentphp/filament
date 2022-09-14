@@ -10,7 +10,7 @@ return [
 
         'color' => [
             'copied' => 'Copied',
-        ]
+        ],
     ],
 
     'fields' => [
