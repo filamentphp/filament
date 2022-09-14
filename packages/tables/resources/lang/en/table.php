@@ -8,6 +8,9 @@ return [
             'more' => 'and :count more',
         ],
 
+        'color' => [
+            'copied' => 'Copied',
+        ]
     ],
 
     'fields' => [

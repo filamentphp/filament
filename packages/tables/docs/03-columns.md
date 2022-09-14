@@ -829,6 +829,27 @@ use Filament\Tables\Columns\ToggleColumn;
 ToggleColumn::make('is_admin')
 ```
 
+## Color column
+
+The color column allows you to render a color swatch from a CSS color definition, typically entered using the ColorPicker form field, in one of the supported formats (hex, hsl, rgb, rgba).
+
+```php
+use Filament\Tables\Columns\ColorColumn
+
+ColorColumn::make('color')
+```
+
+You may make the swatch copyable, such that clicking it inserts the CSS value into the OS's copy buffer, and optionally specify the copy confirmation message (default is 'Copied') and popup message timeout in MS (default 2000).
+
+```php
+use Filament\Tables\Columns\ColorColumn
+
+ColorColumn::make('color')
+    ->copyable()
+    ->copyMessage('Color code copied')
+    ->copyMessageShowTimeMs(1500)
+```
+
 ## Text input column
 
 The text input column allows you to render a text input inside the table, which can be used to update that database record without needing to open a new page or a modal:
