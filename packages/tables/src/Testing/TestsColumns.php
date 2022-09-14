@@ -97,6 +97,50 @@ class TestsColumns
         };
     }
 
+    public function assertTableColumnDataSet() : Closure
+    {
+        return function ($record, $name, $value) : static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableColumnExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $column = $livewire->getCachedTableColumn($name);
+
+            $column->record($record);
+
+            Assert::assertTrue(
+                $column->getState() == $value,
+                message: "Failed asserting that a table column with name [{$name}] has value of [{$value}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableColumnDataNotSet() : Closure
+    {
+        return function ($record, $name, $value) : static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableColumnExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $column = $livewire->getCachedTableColumn($name);
+
+            $column->record($record);
+
+            Assert::assertFalse(
+                $column->getState() == $value,
+                message: "Failed asserting that a table column with name [{$name}] does not have a value of [{$value}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
     public function callTableColumnAction(): Closure
     {
         return function (string $name, $record = null): static {
