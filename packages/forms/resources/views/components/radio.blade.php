@@ -20,6 +20,7 @@
                 :xl="$getColumns('xl')"
                 :two-xl="$getColumns('2xl')"
                 :is-grid="! $isInline()"
+                direction="column"
                 :attributes="$attributes->merge($getExtraAttributes())->class([
                     'filament-forms-radio-component',
                     'flex flex-wrap gap-3' => $isInline(),
@@ -49,7 +50,7 @@
                                     'dark:bg-gray-700 dark:checked:bg-primary-500' => config('forms.dark_mode'),
                                     'border-gray-300' => ! $errors->has($getStatePath()),
                                     'dark:border-gray-500' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
-                                    'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
+                                    'border-danger-600 ring-1 ring-inset ring-danger-600' => $errors->has($getStatePath()),
                                 ]) }}
                                 {!! ($isDisabled || $isOptionDisabled($value, $label)) ? 'disabled' : null !!}
                             />

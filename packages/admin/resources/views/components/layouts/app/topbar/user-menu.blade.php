@@ -7,7 +7,7 @@
 @endphp
 
 <x-filament::dropdown placement="bottom-end">
-    <x-slot name="trigger">
+    <x-slot name="trigger" class="ml-4">
         <x-filament::user-avatar :user="$user" />
     </x-slot>
 

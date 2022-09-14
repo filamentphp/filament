@@ -16,21 +16,11 @@ class TernaryFilter extends SelectFilter
     {
         parent::setUp();
 
+        $this->trueLabel(__('forms::components.select.boolean.true'));
+        $this->falseLabel(__('forms::components.select.boolean.false'));
         $this->placeholder('-');
 
         $this->boolean();
-
-        $this->indicateUsing(function (array $state): array {
-            if ($state['value'] ?? null) {
-                return [$this->getTrueLabel()];
-            }
-
-            if (blank($state['value'] ?? null)) {
-                return [];
-            }
-
-            return [$this->getFalseLabel()];
-        });
     }
 
     public function trueLabel(string | Closure | null $trueLabel): static

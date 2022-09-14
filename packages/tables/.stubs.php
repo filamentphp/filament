@@ -13,9 +13,13 @@ namespace Livewire\Testing {
 
         public function callTableAction(string $name, $record = null, array $data = [], array $arguments = []): static {}
 
+        public function callTableColumnAction(string $name, $record = null): static {}
+
         public function callMountedTableAction(array $arguments = []): static {}
 
         public function assertTableActionExists(string $name): static {}
+
+        public function assertTableActionDoesNotExist(string $name): static {}
 
         public function assertTableActionVisible(string $name, $record = null): static {}
 
@@ -42,6 +46,8 @@ namespace Livewire\Testing {
         public function callMountedTableBulkAction(array $arguments = []): static {}
 
         public function assertTableBulkActionExists(string $name): static {}
+
+        public function assertTableBulkActionDoesNotExist(string $name): static {}
 
         public function assertTableBulkActionVisible(string $name): static {}
 
@@ -74,6 +80,14 @@ namespace Livewire\Testing {
         public function assertTableBulkActionHasColor(string $name, string $color): static {}
 
         public function assertTableBulkActionDoesNotHaveColor(string $name, string $color): static {}
+
+        public function assertTableActionHasUrl(string $name, string $url): static {}
+
+        public function assertTableActionDoesNotHaveUrl(string $name, string $url): static {}
+
+        public function assertTableActionShouldOpenUrlInNewTab(string $name): static {}
+
+        public function assertTableActionShouldNotOpenUrlInNewTab(string $name): static {}
 
         public function assertTableBulkActionHeld(string $name): static {}
 

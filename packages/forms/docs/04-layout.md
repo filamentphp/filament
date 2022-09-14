@@ -393,6 +393,16 @@ Wizard::make([
 ])->startOnStep(2)
 ```
 
+If you'd like to allow free navigation, so all steps are skippable, use the `skippable()` method:
+
+```php
+use Filament\Forms\Components\Wizard;
+
+Wizard::make([
+    // ...
+])->skippable()
+```
+
 ## Section
 
 You may want to separate your fields into sections, each with a heading and description. To do this, you can use a section component:
