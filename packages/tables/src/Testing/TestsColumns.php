@@ -97,9 +97,9 @@ class TestsColumns
         };
     }
 
-    public function assertTableColumnDataSet() : Closure
+    public function assertTableColumnDataSet(): Closure
     {
-        return function ($record, $name, $value) : static {
+        return function ($record, $name, $value): static {
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
@@ -119,9 +119,9 @@ class TestsColumns
         };
     }
 
-    public function assertTableColumnDataNotSet() : Closure
+    public function assertTableColumnDataNotSet(): Closure
     {
-        return function ($record, $name, $value) : static {
+        return function ($record, $name, $value): static {
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 

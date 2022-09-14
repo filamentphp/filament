@@ -33,7 +33,7 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
             Tables\Columns\TextColumn::make('hidden')
                 ->hidden(),
             Tables\Columns\TextColumn::make('with_value')
-                ->getStateUsing(fn() => 'correct value')
+                ->getStateUsing(fn () => 'correct value'),
         ];
     }
 
