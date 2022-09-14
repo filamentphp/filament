@@ -78,6 +78,13 @@ class MultiSelectFilter extends BaseFilter
         return $this;
     }
 
+    public function field(string | Closure | null $name): static
+    {
+        $this->column($name);
+
+        return $this;
+    }
+
     public function static(bool | Closure $condition = true): static
     {
         $this->isStatic = $condition;
