@@ -42,6 +42,12 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
                 ->query(fn (Builder $query) => $query->where('is_published', true)),
             Tables\Filters\SelectFilter::make('author')
                 ->relationship('author', 'name'),
+            Tables\Filters\SelectFilter::make('is_published_select')
+                ->options([
+                    true => 'Published',
+                    false => 'Not Published'
+                ])
+                ->attribute('is_published')
         ];
     }
 

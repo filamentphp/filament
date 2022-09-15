@@ -87,3 +87,19 @@ it('can remove all table filters', function () {
         ->removeTableFilters()
         ->assertCanSeeTableRecords($posts);
 });
+
+it('can filter records using an attribute', function() {
+
+    $posts = Post::factory()->count(10)->create();
+
+    $unpublishedPosts = $posts->where('is_published', false);
+
+    livewire(PostsTable::class)
+        ->assertCanSeeTableRecords($posts)
+        ->filterTable('is_published_select', false)
+        ->assertCanSeeTableRecords($unpublishedPosts)
+        ->filterTable('is_published_select', true)
+        ->assertCanNotSeeTableRecords($unpublishedPosts);
+
+
+});

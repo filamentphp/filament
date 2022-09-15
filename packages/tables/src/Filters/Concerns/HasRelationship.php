@@ -16,7 +16,7 @@ trait HasRelationship
 
     public function relationship(string $relationshipName, string $titleColumnName = null, Closure $callback = null): static
     {
-        $this->column("{$relationshipName}.{$titleColumnName}");
+        $this->attribute("{$relationshipName}.{$titleColumnName}");
 
         $this->modifyRelationshipQueryUsing = $callback;
 
@@ -60,7 +60,7 @@ trait HasRelationship
 
     public function queriesRelationships(): bool
     {
-        return Str::of($this->getColumn())->contains('.');
+        return Str::of($this->getAttribute())->contains('.');
     }
 
     protected function getRelationship(): Relation | Builder
@@ -72,11 +72,11 @@ trait HasRelationship
 
     protected function getRelationshipName(): string
     {
-        return (string) Str::of($this->getColumn())->beforeLast('.');
+        return (string) Str::of($this->getAttribute())->beforeLast('.');
     }
 
     protected function getRelationshipTitleColumnName(): string
     {
-        return (string) Str::of($this->getColumn())->afterLast('.');
+        return (string) Str::of($this->getAttribute())->afterLast('.');
     }
 }

@@ -97,7 +97,7 @@ SelectFilter::make('status')
     ])
 ```
 
-Select filters do not require a custom `query()` method. The column name used to scope the query is the name of the filter. To customize this, you may use the `field()` method:
+Select filters do not require a custom `query()` method. The column name used to scope the query is the name of the filter. To customize this, you may use the `attribute()` method:
 
 ```php
 use Filament\Tables\Filters\SelectFilter;
@@ -108,7 +108,7 @@ SelectFilter::make('status')
         'reviewing' => 'Reviewing',
         'published' => 'Published',
     ])
-    ->field('status_id')
+    ->attribute('status_id')
 ```
 
 #### Relationship select filters
@@ -146,7 +146,7 @@ MultiSelectFilter::make('status')
     ])
 ```
 
-Multi-select filters do not require a custom `query()` method. The column name used to scope the query is the name of the filter. To customize this, you may use the `field()` method:
+Multi-select filters do not require a custom `query()` method. The column name used to scope the query is the name of the filter. To customize this, you may use the `attribute()` method:
 
 ```php
 use Filament\Tables\Filters\MultiSelectFilter;
@@ -157,7 +157,7 @@ MultiSelectFilter::make('status')
         'reviewing' => 'Reviewing',
         'published' => 'Published',
     ])
-    ->field('status_id')
+    ->attribute('status_id')
 ```
 
 #### Relationship multi-select filters
@@ -189,14 +189,14 @@ TernaryFilter::make('email_verified_at')
     ->nullable()
 ```
 
-The column name used to scope the query is the name of the filter. To customize this, you may use the `field()` method:
+The column name used to scope the query is the name of the filter. To customize this, you may use the `attribute()` method:
 
 ```php
 use Filament\Tables\Filters\TernaryFilter;
 
 TernaryFilter::make('verified')
     ->nullable()
-    ->field('status_id')
+    ->attribute('status_id')
 ```
 
 You may customise the query used for each state of the ternary filter, using the `queries()` method:

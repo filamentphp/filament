@@ -12,7 +12,7 @@ class SelectFilter extends BaseFilter
     use Concerns\HasPlaceholder;
     use Concerns\HasRelationship;
 
-    protected string | Closure | null $column = null;
+    protected string | Closure | null $attribute = null;
 
     protected bool | Closure $isStatic = false;
 
@@ -63,19 +63,20 @@ class SelectFilter extends BaseFilter
             );
         }
 
-        return $query->where($this->getColumn(), $data['value']);
+        return $query->where($this->getAttribute(), $data['value']);
     }
 
+    /** @deprecated use `->attribute()` on the filter instead */
     public function column(string | Closure | null $name): static
     {
-        $this->column = $name;
+        $this->attribute($name);
 
         return $this;
     }
 
-    public function field(string | Closure | null $name): static
+    public function attribute(string | Closure | null $name): static
     {
-        $this->column($name);
+        $this->attribute = $name;
 
         return $this;
     }
@@ -94,9 +95,15 @@ class SelectFilter extends BaseFilter
         return $this;
     }
 
+    /** @deprecated use `->getAttribute()` instead */
     public function getColumn(): string
     {
-        return $this->evaluate($this->column) ?? $this->getName();
+        return $this->getAttribute();
+    }
+
+    public function getAttribute(): string
+    {
+        return $this->evaluate($this->attribute) ?? $this->getName();
     }
 
     protected function getFormField(): Select
