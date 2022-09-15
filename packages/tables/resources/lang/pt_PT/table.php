@@ -28,13 +28,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
-                
+
                 'label' => 'por página',
 
                 'options' => [
                     'all' => 'Todas',
                 ],
-                
+
             ],
 
         ],
@@ -58,7 +58,7 @@ return [
     ],
 
     'buttons' => [
-        
+
         'disable_reordering' => [
             'label' => 'Concluir a reordenação de registos',
         ],
@@ -66,7 +66,7 @@ return [
         'enable_reordering' => [
             'label' => 'Reordenar registos',
         ],
-        
+
         'filter' => [
             'label' => 'Filtrar',
         ],
@@ -78,7 +78,7 @@ return [
         'toggle_columns' => [
             'label' => 'Alternar colunas',
         ],
-        
+
     ],
 
     'empty' => [
