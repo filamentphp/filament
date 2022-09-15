@@ -22,8 +22,8 @@
         >
             @endif
             <span
-                class="relative flex"
-                style="background-color: {{ $getState() }}; width: 1.5rem; height: 1.5rem; margin-left: 1rem; border-radius: 6px;"
+                class="relative flex w-6 h-6 ml-4 rounded-md"
+                style="background-color: {{ $getState() }};"
                 title="{{ $getState() }}"
             >
             </span>
@@ -32,8 +32,7 @@
                     x-cloak
                     x-transition
                     x-show="showCopied"
-                    class="z-20 bg-gray-300 pointer-events-none top-0"
-                    style="left: 2rem"
+                    class="z-20 bg-gray-300 pointer-events-none top-0 left-8"
                 >
                 {{ $getCopyMessage() }}
             </span>
