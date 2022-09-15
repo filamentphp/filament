@@ -2,6 +2,14 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 'e :count mais',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -20,7 +28,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+                
                 'label' => 'por página',
+
+                'options' => [
+                    'all' => 'Todas',
+                ],
+                
             ],
 
         ],
@@ -44,7 +58,15 @@ return [
     ],
 
     'buttons' => [
+        
+        'disable_reordering' => [
+            'label' => 'Concluir a reordenação de registos',
+        ],
 
+        'enable_reordering' => [
+            'label' => 'Reordenar registos',
+        ],
+        
         'filter' => [
             'label' => 'Filtrar',
         ],
@@ -53,6 +75,10 @@ return [
             'label' => 'Ações abertas',
         ],
 
+        'toggle_columns' => [
+            'label' => 'Alternar colunas',
+        ],
+        
     ],
 
     'empty' => [
@@ -63,11 +89,26 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Remover filtro',
+            ],
+
+            'remove_all' => [
+                'label' => 'Remover todos os filtros',
+                'tooltip' => 'Remover todos os filtros',
+            ],
+
             'reset' => [
                 'label' => 'Limpar filtros',
             ],
 
+            'close' => [
+                'label' => 'Fechar',
+            ],
+
         ],
+
+        'indicator' => 'Filtros ativos',
 
         'multi_select' => [
             'placeholder' => 'Todos',
@@ -77,7 +118,21 @@ return [
             'placeholder' => 'Todos',
         ],
 
+        'trashed' => [
+
+            'label' => 'Registos excluídos',
+
+            'only_trashed' => 'Somente registos excluídos',
+
+            'with_trashed' => 'Mostrar registos excluídos',
+
+            'without_trashed' => 'Não mostrar registos excluídos',
+
+        ],
+
     ],
+
+    'reorder_indicator' => 'Arraste e solte os registos na ordem.',
 
     'selection_indicator' => [
 
