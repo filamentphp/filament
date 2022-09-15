@@ -51,7 +51,7 @@ trait CanSearchRecords
 
         $this->resetPage();
     }
-    
+
     protected function applySearchToTableQuery(Builder $query): Builder
     {
         $this->applyColumnSearchToTableQuery($query);
