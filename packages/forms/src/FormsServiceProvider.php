@@ -3,6 +3,7 @@
 namespace Filament\Forms;
 
 use Filament\Forms\Testing\TestsForms;
+use Illuminate\Filesystem\Filesystem;
 use Livewire\Testing\TestableLivewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -44,6 +45,14 @@ class FormsServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        if ($this->app->runningInConsole()) {
+            foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
+                $this->publishes([
+                    $file->getRealPath() => base_path("stubs/filament/{$file->getFilename()}"),
+                ], 'forms-stubs');
+            }
+        }
+
         TestableLivewire::mixin(new TestsForms());
     }
 }

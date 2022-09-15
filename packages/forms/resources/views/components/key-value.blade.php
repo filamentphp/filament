@@ -85,7 +85,7 @@
                                     @if ((! $canEditKeys()) || $isDisabled())
                                         disabled
                                     @endif
-                                    class="w-full px-4 py-3 font-mono text-sm bg-transparent border-0 focus:ring-0"
+                                    class="w-full px-4 py-3 font-mono bg-transparent border-0 focus:ring-0 sm:text-sm"
                                 >
                             </td>
 
@@ -98,7 +98,7 @@
                                     @if ((! $canEditValues()) || $isDisabled())
                                         disabled
                                     @endif
-                                    class="w-full px-4 py-3 font-mono text-sm bg-transparent border-0 focus:ring-0"
+                                    class="w-full px-4 py-3 font-mono bg-transparent border-0 focus:ring-0 sm:text-sm"
                                 >
                             </td>
 

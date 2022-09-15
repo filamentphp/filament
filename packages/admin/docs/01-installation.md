@@ -47,7 +47,7 @@ Please see the [Users page](users#authorizing-access-to-the-admin-panel).
 
 If you don't complete these steps, there will be a 403 error when you try to access the admin panel in production.
 
-## Publishing the configuration
+## Publishing configuration
 
 If you wish, you may publish the configuration of the package using:
 
@@ -55,7 +55,7 @@ If you wish, you may publish the configuration of the package using:
 php artisan vendor:publish --tag=filament-config
 ```
 
-## Publishing the translations
+## Publishing translations
 
 If you wish to translate the package, you may publish the language files using:
 

@@ -20,11 +20,20 @@ abstract class ViewComponent extends BaseComponent implements Htmlable
 
     protected string $view;
 
+    protected array $viewData = [];
+
     protected string $viewIdentifier;
 
     public function view(string $view): static
     {
         $this->view = $view;
+
+        return $this;
+    }
+
+    public function viewData(array $data): static
+    {
+        $this->viewData = array_merge($this->viewData, $data);
 
         return $this;
     }
@@ -50,6 +59,7 @@ abstract class ViewComponent extends BaseComponent implements Htmlable
             array_merge(
                 $this->data(),
                 isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : [],
+                $this->viewData,
             ),
         );
     }

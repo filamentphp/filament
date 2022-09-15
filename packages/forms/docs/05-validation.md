@@ -88,7 +88,7 @@ The field value must exist in the database. [See the Laravel documentation](http
 Field::make('invitation')->exists()
 ```
 
-By default, the form's model will be searched, [if it is registered](#registering-a-model). You may specify a custom table name or model to search:
+By default, the form's model will be searched, [if it is registered](getting-started#registering-a-model). You may specify a custom table name or model to search:
 
 ```php
 use App\Models\Invitation;

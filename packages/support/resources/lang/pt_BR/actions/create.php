@@ -4,7 +4,7 @@ return [
 
     'single' => [
 
-        'label' => 'Criar',
+        'label' => 'Criar :label',
 
         'modal' => [
 

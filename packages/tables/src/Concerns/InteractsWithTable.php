@@ -49,6 +49,7 @@ trait InteractsWithTable
         $this->cacheTableHeaderActions();
 
         $this->cacheTableColumns();
+        $this->cacheTableColumnActions();
         $this->cacheForm('toggleTableColumnForm', $this->getTableColumnToggleForm());
 
         $this->cacheTableFilters();

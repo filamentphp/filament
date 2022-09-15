@@ -16,6 +16,7 @@
         :lg="$getColumns('lg')"
         :xl="$getColumns('xl')"
         :two-xl="$getColumns('2xl')"
+        direction="column"
         :attributes="$attributes->class(['filament-forms-checkbox-list-component gap-1'])"
     >
         @php

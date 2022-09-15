@@ -10,6 +10,10 @@ return [
             'label' => 'Activer le mode sombre',
         ],
 
+        'database_notifications' => [
+            'label' => 'Ouvrir les notifications',
+        ],
+
         'light_mode' => [
             'label' => 'Désactiver le mode sombre',
         ],

@@ -15,7 +15,9 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     use Concerns\CanBeLengthConstrained;
     use Concerns\HasAffixes;
     use Concerns\HasExtraInputAttributes;
+    use Concerns\HasInputMode;
     use Concerns\HasPlaceholder;
+    use Concerns\HasStep;
     use HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.text-input';
@@ -23,8 +25,6 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     protected ?Closure $configureMaskUsing = null;
 
     protected array | Arrayable | Closure | null $datalistOptions = null;
-
-    protected string | Closure | null $inputMode = null;
 
     protected bool | Closure $isEmail = false;
 
@@ -39,8 +39,6 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     protected $maxValue = null;
 
     protected $minValue = null;
-
-    protected int | float | string | Closure | null $step = null;
 
     protected string | Closure | null $type = null;
 
@@ -63,13 +61,6 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
         $this->isEmail = $condition;
 
         $this->rule('email', $condition);
-
-        return $this;
-    }
-
-    public function inputMode(string | Closure | null $mode): static
-    {
-        $this->inputMode = $mode;
 
         return $this;
     }
@@ -134,13 +125,6 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
         return $this;
     }
 
-    public function step(int | float | string | Closure | null $interval): static
-    {
-        $this->step = $interval;
-
-        return $this;
-    }
-
     public function tel(bool | Closure $condition = true): static
     {
         $this->isTel = $condition;
@@ -177,11 +161,6 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
         return $options;
     }
 
-    public function getInputMode(): ?string
-    {
-        return $this->evaluate($this->inputMode);
-    }
-
     public function getMask(): ?Mask
     {
         if (! $this->hasMask()) {
@@ -206,11 +185,6 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     public function getMinValue()
     {
         return $this->evaluate($this->minValue);
-    }
-
-    public function getStep(): int | float | string | null
-    {
-        return $this->evaluate($this->step);
     }
 
     public function getType(): string

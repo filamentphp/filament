@@ -1,4 +1,4 @@
-<div class="filament-global-search flex items-center">
+<div class="filament-global-search flex items-center ml-4">
     <x-filament::global-search.start />
     {{ \Filament\Facades\Filament::renderHook('global-search.start') }}
 
