@@ -45,9 +45,9 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
             Tables\Filters\SelectFilter::make('is_published_select')
                 ->options([
                     true => 'Published',
-                    false => 'Not Published'
+                    false => 'Not Published',
                 ])
-                ->attribute('is_published')
+                ->attribute('is_published'),
         ];
     }
 
