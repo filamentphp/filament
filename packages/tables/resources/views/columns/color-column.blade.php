@@ -8,34 +8,20 @@
                     window
                         .navigator
                         .clipboard
-                        .writeText('{{ $getState() }}')
-                        .then(() => {
-                            this.showCopied = true;
-                            window.clearTimeout(this.copiedMessageTimeout);
-                            this.copiedMessageTimeout = window.setTimeout(() => {
-                                this.showCopied = false;
-                            }, {{ $getCopyMessageShowTimeMs() }});
-                        });
+                        .writeText('{{ $getState() }}');
                 },
             }"
+            @click="$tooltip('{{ $getCopyMessage() }}', { timeout: {{ $getCopyMessageShowTimeMs() }} })"
             @click.prevent.stop="copy"
         >
-            @endif
+    @endif
             <span
                 class="relative flex w-6 h-6 ml-4 rounded-md"
                 style="background-color: {{ $getState() }};"
                 title="{{ $getState() }}"
             >
             </span>
-            @if ($isCopyable())
-                <span
-                    x-cloak
-                    x-transition
-                    x-show="showCopied"
-                    class="z-20 bg-gray-300 pointer-events-none top-0 left-8"
-                >
-                {{ $getCopyMessage() }}
-            </span>
+    @if ($isCopyable())
         </button>
     @endif
 @else
