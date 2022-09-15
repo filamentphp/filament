@@ -2,7 +2,7 @@
 
 namespace {{ namespace }};
 
-use App\Filament\Resources\{{ resource }};
+use {{ namespace }}\{{ resource }};
 use Filament\Pages\Actions;
 use {{ baseResourcePage }};
 
