@@ -19,7 +19,6 @@
                 {{ $attributes->merge($getExtraAttributes())->class([
 	                'filament-tables-color-column relative flex w-6 h-6 ml-4 rounded-md'
 	            ]) }}
-                class="relative flex w-6 h-6 ml-4 rounded-md"
                 style="background-color: {{ $getState() }};"
                 title="{{ $getState() }}"
             >
