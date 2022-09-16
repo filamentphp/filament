@@ -44,14 +44,14 @@
 }
 
 .choices__inner {
-    @apply py-2 px-3 inline-block align-top w-full bg-white bg-no-repeat ring-1 ring-inset ring-gray-300 transition duration-75 rounded-lg shadow-sm;
+    @apply py-2 px-3 inline-block align-top w-full bg-white bg-no-repeat border border-gray-300 transition duration-75 rounded-lg shadow-sm;
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
     background-position: right 0.5rem center;
     background-size: 1.5em 1.5em;
 }
 
 .dark .choices__inner {
-    @apply ring-gray-600 bg-gray-700 text-white;
+    @apply border-gray-600 bg-gray-700 text-white;
 }
 
 [dir='rtl'] .choices__inner {
@@ -60,7 +60,7 @@
 
 .is-focused .choices__inner,
 .is-open .choices__inner {
-    @apply ring-primary-500 ring-2 ring-inset;
+    @apply border-primary-500 ring-1 ring-inset ring-primary-500;
 }
 
 .choices__list {
@@ -92,7 +92,7 @@
 }
 
 .choices__list--multiple .choices__item {
-    @apply inline-flex gap-2 items-center justify-between cursor-pointer break-all box-border px-2 py-0.5 font-medium tracking-tight text-primary-700 rounded-lg bg-primary-500/10 space-x-1;
+    @apply inline-flex gap-2 items-center justify-between cursor-pointer break-all box-border px-2 py-0.5 text-sm font-medium tracking-tight text-primary-700 rounded-lg bg-primary-500/10 space-x-1;
 }
 
 .dark .choices__list--multiple .choices__item {
@@ -144,7 +144,7 @@
 }
 
 .choices__item {
-    @apply cursor-default text-sm;
+    @apply cursor-default;
 }
 
 .choices__item--selectable {
@@ -156,7 +156,7 @@
 }
 
 .choices__placeholder {
-    @apply opacity-70 text-base sm:text-sm;
+    @apply opacity-70;
 }
 
 .choices__button {
@@ -224,7 +224,6 @@
 /* !important is used to override default Tailwind input styling */
 
 .choices__list--dropdown .choices__input {
-    @apply sm:text-sm;
     padding: 0.5rem 0.75rem !important;
     border-top-width: 0 !important;
     border-left-width: 0 !important;
@@ -240,6 +239,7 @@
 
 .choices__input {
     @apply inline-block max-w-full border-none;
+    border-color: transparent !important;
     background-color: transparent !important;
     padding: 0 !important;
 }
