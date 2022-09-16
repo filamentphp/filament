@@ -2,14 +2,15 @@
 
 namespace Filament\Commands;
 
+use Filament\Support\Commands\Concerns\CanManipulateFiles;
+use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 
 class MakeSettingsPageCommand extends Command
 {
-    use Concerns\CanManipulateFiles;
-    use Concerns\CanValidateInput;
+    use CanManipulateFiles;
+    use CanValidateInput;
 
     protected $description = 'Creates a Filament settings page class.';
 
@@ -52,24 +53,5 @@ class MakeSettingsPageCommand extends Command
         $this->info("Successfully created {$page}!");
 
         return static::SUCCESS;
-    }
-
-    protected function copyStubToApp(string $stub, string $targetPath, array $replacements = []): void
-    {
-        $filesystem = app(Filesystem::class);
-
-        if (! $this->fileExists($stubPath = base_path("stubs/filament/{$stub}.stub"))) {
-            $stubPath = __DIR__ . "/../../stubs/{$stub}.stub";
-        }
-
-        $stub = Str::of($filesystem->get($stubPath));
-
-        foreach ($replacements as $key => $replacement) {
-            $stub = $stub->replace("{{ {$key} }}", $replacement);
-        }
-
-        $stub = (string) $stub;
-
-        $this->writeFile($targetPath, $stub);
     }
 }

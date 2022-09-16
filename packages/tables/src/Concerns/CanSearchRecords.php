@@ -3,6 +3,8 @@
 namespace Filament\Tables\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
+use RecursiveArrayIterator;
+use RecursiveIteratorIterator;
 
 trait CanSearchRecords
 {
@@ -38,6 +40,31 @@ trait CanSearchRecords
 
     public function updatedTableSearchQuery(): void
     {
+        if ($this->shouldPersistTableSearchInSession()) {
+            session()->put(
+                $this->getTableSearchSessionKey(),
+                $this->tableSearchQuery,
+            );
+        }
+
+        $this->deselectAllTableRecords();
+
+        $this->resetPage();
+    }
+
+    public function updatedTableColumnSearchQueries($value, $key): void
+    {
+        if (blank($value)) {
+            unset($this->tableColumnSearchQueries[$key]);
+        }
+
+        if ($this->shouldPersistTableColumnSearchInSession()) {
+            session()->put(
+                $this->getTableColumnSearchSessionKey(),
+                $this->tableColumnSearchQueries,
+            );
+        }
+
         $this->deselectAllTableRecords();
 
         $this->resetPage();
@@ -113,9 +140,67 @@ trait CanSearchRecords
 
     protected function getTableColumnSearchQueries(): array
     {
-        return array_map(
-            fn (string $search): string => trim(strtolower($search)),
-            $this->tableColumnSearchQueries,
+        // Example input of `$this->tableColumnSearchQueries`:
+        // [
+        //     'number' => '12345 ',
+        //     'customer' => [
+        //         'name' => ' john Smith',
+        //     ],
+        // ]
+
+        // The `$this->tableColumnSearchQueries` array is potentially nested.
+        // So, we iterate through it deeply:
+        $iterator = new RecursiveIteratorIterator(
+            new RecursiveArrayIterator($this->tableColumnSearchQueries),
+            RecursiveIteratorIterator::SELF_FIRST
         );
+
+        $searchQueries = [];
+        $path = [];
+
+        foreach ($iterator as $key => $value) {
+            $path[$iterator->getDepth()] = $key;
+
+            if (is_array($value)) {
+                continue;
+            }
+
+            // Nested array keys are flattened into `dot.syntax`.
+            $searchQueries[
+                implode('.', array_slice($path, 0, $iterator->getDepth() + 1))
+            ] = trim(strtolower($value));
+        }
+
+        return $searchQueries;
+
+        // Example output:
+        // [
+        //     'number' => '12345',
+        //     'customer.name' => 'john smith',
+        // ]
+    }
+
+    public function getTableSearchSessionKey(): string
+    {
+        $table = class_basename($this::class);
+
+        return "tables.{$table}_search";
+    }
+
+    protected function shouldPersistTableSearchInSession(): bool
+    {
+        return false;
+    }
+
+    public function getTableColumnSearchSessionKey(): string
+    {
+        $table = class_basename($this::class);
+
+        return "tables.{$table}_column_search";
+    }
+
+    protected function shouldPersistTableColumnSearchInSession(): bool
+    {
+        return false;
     }
 }

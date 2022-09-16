@@ -2,15 +2,18 @@
 
 namespace Filament\Commands;
 
+use Filament\Support\Commands\Concerns\CanIndentStrings;
+use Filament\Support\Commands\Concerns\CanManipulateFiles;
+use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
 class MakeResourceCommand extends Command
 {
     use Concerns\CanGenerateResources;
-    use Concerns\CanIndentStrings;
-    use Concerns\CanManipulateFiles;
-    use Concerns\CanValidateInput;
+    use CanIndentStrings;
+    use CanManipulateFiles;
+    use CanValidateInput;
 
     protected $description = 'Creates a Filament resource class and default page classes.';
 

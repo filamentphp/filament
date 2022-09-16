@@ -45,6 +45,15 @@ class SupportServiceProvider extends PackageServiceProvider
             return "<?php \$slotContents = get_defined_vars(); \$slots = collect({$expression})->mapWithKeys(fn (string \$slot): array => [\$slot => \$slotContents[\$slot] ?? null])->all(); unset(\$slotContents) ?>";
         });
 
+        Str::macro('lcfirst', function (string $string): string {
+            return Str::lower(Str::substr($string, 0, 1)) . Str::substr($string, 1);
+        });
+
+        Stringable::macro('lcfirst', function (): Stringable {
+            /** @phpstan-ignore-next-line */
+            return new Stringable(Str::lcfirst($this->value));
+        });
+
         Str::macro('sanitizeHtml', function (string $html): string {
             return app(SanitizerInterface::class)->sanitize($html);
         });
