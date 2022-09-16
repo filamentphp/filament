@@ -83,11 +83,11 @@ class CheckMissingTranslationsCommand extends Command
                     $removedCount = $files->sum(fn ($file) => count($file['removed']));
 
                     if ($missingCount == 0 && $removedCount == 0) {
-                        $this->info("[✓] Package filament/{$package} has no misssing or deprecated translation keys for lang {$lang}!\n");
+                        $this->info("[✓] Package filament/{$package} has no missing or deprecated translation keys for lang {$lang}!\n");
                     } elseif ($missingCount > 0 && $removedCount > 0) {
-                        $this->warn("[!] Package filament/{$package} has {$missingCount} misssing translation keys and {$removedCount} removed translation keys for lang {$lang}.\n");
+                        $this->warn("[!] Package filament/{$package} has {$missingCount} missing translation keys and {$removedCount} removed translation keys for lang {$lang}.\n");
                     } elseif ($missingCount > 0) {
-                        $this->warn("[!] Package filament/{$package} has {$missingCount} misssing translation keys for lang {$lang}.\n");
+                        $this->warn("[!] Package filament/{$package} has {$missingCount} missing translation keys for lang {$lang}.\n");
                     } elseif ($removedCount > 0) {
                         $this->warn("[!] Package filament/{$package} has {$removedCount} removed translation keys for lang {$lang}.\n");
                     }
