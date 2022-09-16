@@ -393,10 +393,7 @@ class Select extends Field
             $results = $results->toArray();
         }
 
-        return collect($results)
-            ->map(fn ($option, $key) => [$key => $option])
-            ->values()
-            ->all();
+        return $results;
     }
 
     public function isHtmlAllowed(): bool

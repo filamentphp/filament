@@ -166,10 +166,10 @@ export default (Alpine) => {
                 getChoices: async function (config = {}) {
                     const options = await this.getOptions(config)
 
-                    return this.transformOptionsIntoChoices({
+                    return {
                         ...options,
                         ...(await this.getMissingOptions(options)),
-                    })
+                    }
                 },
 
                 getOptions: async function ({ search, withInitialOptions }) {
@@ -186,17 +186,6 @@ export default (Alpine) => {
                     }
 
                     return await getOptionsUsing()
-                },
-
-                transformOptionsIntoChoices: function (options) {
-                    return Object.values(options).map((option) => {
-                        const [value, label] = Object.entries(option)[0]
-
-                        return {
-                            label,
-                            value,
-                        }
-                    })
                 },
 
                 refreshPlaceholder: function () {

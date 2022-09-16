@@ -34,7 +34,7 @@ trait HasOptions
     public function getOptionsForJs(): array
     {
         return collect($this->getOptions())
-            ->map(fn ($option, $key) => [$key => $option])
+            ->map(fn ($label, $value): array => ['label' => $label, 'value' => $value])
             ->values()
             ->all();
     }

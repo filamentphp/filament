@@ -52,7 +52,9 @@ trait SupportsSelectFields
     {
         foreach ($this->getComponents() as $component) {
             if ($component instanceof Select && $component->getStatePath() === $statePath) {
-                return $component->getOptions();
+                return $this->transformOptionsForJs(
+                    $component->getOptions(),
+                );
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
@@ -73,7 +75,9 @@ trait SupportsSelectFields
     {
         foreach ($this->getComponents() as $component) {
             if ($component instanceof Select && $component->getStatePath() === $statePath) {
-                return $component->getSearchResults($search);
+                return $this->transformOptionsForJs(
+                    $component->getSearchResults($search),
+                );
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
@@ -88,5 +92,13 @@ trait SupportsSelectFields
         }
 
         return [];
+    }
+
+    protected function transformOptionsForJs(array $options): array
+    {
+        return collect($options)
+            ->map(fn ($label, $value): array => ['label' => $label, 'value' => $value])
+            ->values()
+            ->all();
     }
 }
