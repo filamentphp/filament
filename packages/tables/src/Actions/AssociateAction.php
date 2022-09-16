@@ -28,6 +28,8 @@ class AssociateAction extends Action
 
     protected string | Closure | null $recordTitleAttribute = null;
 
+    protected array | Closure | null $recordSelectSearchColumns = null;
+
     public static function getDefaultName(): ?string
     {
         return 'associate';
@@ -145,6 +147,18 @@ class AssociateAction extends Action
         return $attribute;
     }
 
+    public function recordSelectSearchColumns(array | Closure | null $columns): static
+    {
+        $this->recordSelectSearchColumns = $columns;
+
+        return $this;
+    }
+
+    public function getRecordSelectSearchColumns(): ?array
+    {
+        return $this->evaluate($this->recordSelectSearchColumns);
+    }
+
     public function getRecordSelect(): Select
     {
         $getOptions = function (?string $search = null, ?array $searchColumns = []): array {
@@ -206,7 +220,7 @@ class AssociateAction extends Action
         $select = Select::make('recordId')
             ->label(__('filament-support::actions/associate.single.modal.fields.record_id.label'))
             ->required()
-            ->searchable()
+            ->searchable($this->getRecordSelectSearchColumns() ?? true)
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(search: $search, searchColumns: $component->getSearchColumns()))
             ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle($this->getRelationship()->getRelated()->query()->find($value)))
             ->options(fn (): array => $this->isRecordSelectPreloaded() ? $getOptions() : [])
