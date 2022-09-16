@@ -40,6 +40,13 @@ trait CanSearchRecords
 
     public function updatedTableSearchQuery(): void
     {
+        if ($this->shouldPersistTableSearchInSession()) {
+            session()->put(
+                $this->getTableSearchSessionKey(),
+                $this->tableSearchQuery,
+            );
+        }
+
         $this->deselectAllTableRecords();
 
         $this->resetPage();
@@ -47,6 +54,13 @@ trait CanSearchRecords
 
     public function updatedTableColumnSearchQueries(): void
     {
+        if ($this->shouldPersistTableColumnSearchInSession()) {
+            session()->put(
+                $this->getTableColumnSearchSessionKey(),
+                $this->tableColumnSearchQueries,
+            );
+        }
+
         $this->deselectAllTableRecords();
 
         $this->resetPage();
@@ -117,16 +131,7 @@ trait CanSearchRecords
 
     protected function getTableSearchQuery(): string
     {
-        $search = trim(strtolower($this->tableSearchQuery));
-
-        if ($this->shouldPersistTableSearchInSession()) {
-            session()->put(
-                $this->getTableSearchSessionKey(),
-                $search,
-            );
-        }
-
-        return $search;
+        return trim(strtolower($this->tableSearchQuery));
     }
 
     protected function getTableColumnSearchQueries(): array
@@ -162,13 +167,6 @@ trait CanSearchRecords
             ] = trim(strtolower($value));
         }
 
-        if ($this->shouldPersistColumnSearchInSession()) {
-            session()->put(
-                $this->getColumnSearchSessionKey(),
-                $searchQueries,
-            );
-        }
-
         return $searchQueries;
 
         // Example output:
@@ -190,14 +188,14 @@ trait CanSearchRecords
         return false;
     }
 
-    public function getColumnSearchSessionKey(): string
+    public function getTableColumnSearchSessionKey(): string
     {
         $table = class_basename($this::class);
 
         return "tables.{$table}_column_search";
     }
 
-    protected function shouldPersistColumnSearchInSession(): bool
+    protected function shouldPersistTableColumnSearchInSession(): bool
     {
         return false;
     }
