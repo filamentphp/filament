@@ -21,6 +21,18 @@ class TernaryFilter extends SelectFilter
         $this->placeholder('-');
 
         $this->boolean();
+
+        $this->indicateUsing(function (array $state): array {
+            if (blank($state['value'] ?? null)) {
+                return [];
+            }
+
+            $stateLabel = $state['value'] ?
+                $this->getTrueLabel() :
+                $this->getFalseLabel();
+
+            return ["{$this->getIndicator()}: {$stateLabel}"];
+        });
     }
 
     public function trueLabel(string | Closure | null $trueLabel): static
