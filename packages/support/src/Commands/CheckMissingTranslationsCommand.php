@@ -54,7 +54,7 @@ class CheckMissingTranslationsCommand extends Command
             ->all();
 
         foreach ($langs as $langDir => $lang) {
-            $files = $filesystem->files($langDir);
+            $files = $filesystem->allFiles($langDir);
 
             collect($files)
                 ->mapWithKeys(function (SplFileInfo $file) use ($langRoot) {
