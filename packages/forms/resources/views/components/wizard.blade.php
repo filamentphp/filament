@@ -58,7 +58,7 @@
         },
 
         isStepClickable: function(step, index) {
-            return @js($isSkippable()) || this.getStepIndex(step) <= index
+            return @js($isSkippable()) || (this.getStepIndex(step) > index)
         },
 
     }"
