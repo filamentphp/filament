@@ -368,7 +368,7 @@ protected function getTableFiltersLayout(): ?string
 }
 ```
 
-## Persist filters in session
+## Persist filters or search in session
 
 To persist the table filters in the user's session, use the `shouldPersistTableFiltersInSession()` method:
 
