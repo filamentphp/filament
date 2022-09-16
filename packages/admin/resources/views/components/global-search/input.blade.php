@@ -20,7 +20,7 @@
             type="search"
             autocomplete="off"
             @class([
-                'block h-10 w-full rounded-lg border-transparent bg-gray-400/10 pl-10 placeholder-gray-500 transition duration-75 focus:border-primary-500 focus:bg-white focus:placeholder-gray-400 focus:ring-1 focus:ring-inset focus:ring-primary-500 sm:text-sm',
+                'block w-full h-10 pl-10 bg-gray-400/10 placeholder-gray-500 border-transparent transition duration-75 rounded-lg focus:bg-white focus:placeholder-gray-400 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500',
                 'dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400' => config('filament.dark_mode'),
             ])
         >
