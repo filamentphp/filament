@@ -44,7 +44,7 @@
 }
 
 .choices__inner {
-    @apply py-2 px-3 inline-block align-top w-full bg-white bg-no-repeat ring-1 ring-inset ring-gray-300 transition duration-75 rounded-lg shadow-sm sm:py-2.5 sm:text-sm;
+    @apply py-2 px-3 inline-block align-top w-full bg-white bg-no-repeat ring-1 ring-inset ring-gray-300 transition duration-75 rounded-lg shadow-sm;
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
     background-position: right 0.5rem center;
     background-size: 1.5em 1.5em;
@@ -125,7 +125,7 @@
 
 .choices__list--dropdown .choices__item,
 .choices__list[aria-expanded] .choices__item {
-    @apply relative px-3 py-2 text-sm;
+    @apply relative px-3 py-2;
 }
 
 [dir='rtl'] .choices__list--dropdown .choices__item,
@@ -144,7 +144,7 @@
 }
 
 .choices__item {
-    @apply cursor-default;
+    @apply cursor-default text-sm;
 }
 
 .choices__item--selectable {
@@ -156,7 +156,7 @@
 }
 
 .choices__placeholder {
-    @apply opacity-70;
+    @apply opacity-70 text-base sm:text-sm;
 }
 
 .choices__button {
@@ -224,6 +224,7 @@
 /* !important is used to override default Tailwind input styling */
 
 .choices__list--dropdown .choices__input {
+    @apply sm:text-sm;
     padding: 0.5rem 0.75rem !important;
     border-top-width: 0 !important;
     border-left-width: 0 !important;
@@ -238,7 +239,7 @@
 }
 
 .choices__input {
-    @apply inline-block max-w-full border-none sm:text-sm !important;
+    @apply inline-block max-w-full border-none;
     background-color: transparent !important;
     padding: 0 !important;
 }
