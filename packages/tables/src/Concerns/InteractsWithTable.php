@@ -79,6 +79,18 @@ trait InteractsWithTable
 
         $this->getTableFiltersForm()->fill($this->tableFilters);
 
+        $searchSessionKey = $this->getTableSearchSessionKey();
+
+        if ($this->shouldPersistTableSearchInSession() && session()->has($searchSessionKey)) {
+            $this->tableSearchQuery = session()->get($searchSessionKey) ?? '';
+        }
+
+        $columnSearchSessionKey = $this->getColumnSearchSessionKey();
+
+        if ($this->shouldPersistColumnSearchInSession() && session()->has($columnSearchSessionKey)) {
+            $this->tableColumnSearchQueries = session()->get($columnSearchSessionKey) ?? '';
+        }
+
         $this->hasMounted = true;
     }
 

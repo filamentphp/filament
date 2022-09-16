@@ -117,7 +117,16 @@ trait CanSearchRecords
 
     protected function getTableSearchQuery(): string
     {
-        return trim(strtolower($this->tableSearchQuery));
+        $search = trim(strtolower($this->tableSearchQuery));
+
+        if ($this->shouldPersistTableSearchInSession()) {
+            session()->put(
+                $this->getTableSearchSessionKey(),
+                $search,
+            );
+        }
+
+        return $search;
     }
 
     protected function getTableColumnSearchQueries(): array
@@ -153,6 +162,13 @@ trait CanSearchRecords
             ] = trim(strtolower($value));
         }
 
+        if ($this->shouldPersistColumnSearchInSession()) {
+            session()->put(
+                $this->getColumnSearchSessionKey(),
+                $searchQueries,
+            );
+        }
+
         return $searchQueries;
 
         // Example output:
@@ -160,5 +176,29 @@ trait CanSearchRecords
         //     'number' => '12345',
         //     'customer.name' => 'john smith',
         // ]
+    }
+
+    public function getTableSearchSessionKey(): string
+    {
+        $table = class_basename($this::class);
+
+        return "tables.{$table}_search";
+    }
+
+    protected function shouldPersistTableSearchInSession(): bool
+    {
+        return false;
+    }
+
+    public function getColumnSearchSessionKey(): string
+    {
+        $table = class_basename($this::class);
+
+        return "tables.{$table}_column_search";
+    }
+
+    protected function shouldPersistColumnSearchInSession(): bool
+    {
+        return false;
     }
 }

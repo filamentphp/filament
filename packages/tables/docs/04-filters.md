@@ -378,3 +378,17 @@ protected function shouldPersistTableFiltersInSession(): bool
     return true;
 }
 ```
+
+To persist the table or column search in the user's session, use either the `shouldPersistTableSearchInSession()` or `shouldPersistColumnSearchInSession()` method:
+
+```php
+protected function shouldPersistTableSearchInSession(): bool
+{
+    return true;
+}
+
+protected function shouldPersistColumnSearchInSession(): bool
+{
+    return true;
+}
+```
