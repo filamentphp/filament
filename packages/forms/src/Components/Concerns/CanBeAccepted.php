@@ -12,4 +12,11 @@ trait CanBeAccepted
 
         return $this;
     }
+
+    public function declined(bool | Closure $condition = true): static
+    {
+        $this->rule('accepted', $condition);
+
+        return $this;
+    }
 }

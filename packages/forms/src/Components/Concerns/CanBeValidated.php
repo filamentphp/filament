@@ -55,6 +55,36 @@ trait CanBeValidated
         return $this;
     }
 
+    public function doesntStartWith(string | array | Closure $values, bool | Closure $condition = true): static
+    {
+        $this->rule(static function (Field $component) use ($values) {
+            $values = $component->evaluate($values);
+
+            if (is_array($values)) {
+                $values = implode(',', $values);
+            }
+
+            return 'doesnt_start_with:' . $values;
+        }, $condition);
+
+        return $this;
+    }
+
+    public function doesntEndWith(string | array | Closure $values, bool | Closure $condition = true): static
+    {
+        $this->rule(static function (Field $component) use ($values) {
+            $values = $component->evaluate($values);
+
+            if (is_array($values)) {
+                $values = implode(',', $values);
+            }
+
+            return 'doesnt_end_with:' . $values;
+        }, $condition);
+
+        return $this;
+    }
+
     public function endsWith(string | array | Closure $values, bool | Closure $condition = true): static
     {
         $this->rule(static function (Field $component) use ($values) {
@@ -101,6 +131,13 @@ trait CanBeValidated
         return $this;
     }
 
+    public function filled(bool | Closure $condition = true): static
+    {
+        $this->rule('filled', $condition);
+
+        return $this;
+    }
+
     public function in(string | array | Closure $values, bool | Closure $condition = true): static
     {
         $this->rule(static function (Field $component) use ($values) {
@@ -137,9 +174,25 @@ trait CanBeValidated
         return $this;
     }
 
+    public function json(bool | Closure $condition = true): static
+    {
+        $this->rule('json', $condition);
+
+        return $this;
+    }
+
     public function macAddress(bool | Closure $condition = true): static
     {
         $this->rule('mac_address', $condition);
+
+        return $this;
+    }
+
+    public function multipleOf(int | Closure $value, bool | Closure $condition = true): static
+    {
+        $this->rule(static function (Field $component) use ($value) {
+            return 'multiple_of:' . $component->evaluate($value);
+        }, $condition);
 
         return $this;
     }
@@ -159,11 +212,27 @@ trait CanBeValidated
         return $this;
     }
 
+    public function notRegex(string | Closure | null $pattern, bool | Closure $condition = true): static
+    {
+        $this->rule(static function (Field $component) use ($pattern) {
+            return 'not_regex:' . $component->evaluate($pattern);
+        }, $condition);
+
+        return $this;
+    }
+
     public function nullable(bool | Closure $condition = true): static
     {
         $this->required(static function (Field $component) use ($condition): bool {
             return ! $component->evaluate($condition);
         });
+
+        return $this;
+    }
+
+    public function present(bool | Closure $condition = true): static
+    {
+        $this->rule('present', $condition);
 
         return $this;
     }
@@ -213,6 +282,13 @@ trait CanBeValidated
 
             return 'starts_with:' . $values;
         }, $condition);
+
+        return $this;
+    }
+
+    public function string(bool | Closure $condition = true): static
+    {
+        $this->rule('string', $condition);
 
         return $this;
     }
