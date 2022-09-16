@@ -84,3 +84,11 @@ it('can call a column action object', function () {
         ->callTableAction('column-action-object', $post)
         ->assertEmitted('column-action-object-called');
 });
+
+it('can state whether a column has the correct value', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->assertTableColumnStateSet('with_state', 'correct state', $post)
+        ->assertTableColumnStateNotSet('with_state', 'incorrect state', $post);
+});

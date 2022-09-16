@@ -52,8 +52,12 @@ trait CanSearchRecords
         $this->resetPage();
     }
 
-    public function updatedTableColumnSearchQueries(): void
+    public function updatedTableColumnSearchQueries($value, $key): void
     {
+        if (blank($value)) {
+            unset($this->tableColumnSearchQueries[$key]);
+        }
+
         if ($this->shouldPersistTableColumnSearchInSession()) {
             session()->put(
                 $this->getTableColumnSearchSessionKey(),
