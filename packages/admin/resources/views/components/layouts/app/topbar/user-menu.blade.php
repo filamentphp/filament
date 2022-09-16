@@ -1,8 +1,10 @@
 @php
     $user = \Filament\Facades\Filament::auth()->user();
     $items = \Filament\Facades\Filament::getUserMenuItems();
+
     $accountItem = $items['account'] ?? null;
     $accountItemUrl = $accountItem?->getUrl();
+
     $logoutItem = $items['logout'] ?? null;
 @endphp
 
