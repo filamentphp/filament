@@ -15,7 +15,7 @@ class CheckMissingTranslationsCommand extends Command
                             {lang*              : The lang to compare against the base translation. Accepts multiple values.}
                             {--D|dir=app        : The directory containing the translations. \'app\' and \'vendor\' are accepted values.}';
 
-    protected $description = 'Scan translation files and compare each of them with the base translation. Outputs missing and deprecated translations.';
+    protected $description = 'Scan translation files and compare each of them with the base translation. Outputs missing and removed translations.';
 
     public function handle()
     {
@@ -83,7 +83,7 @@ class CheckMissingTranslationsCommand extends Command
                     $removedCount = $files->sum(fn ($file) => count($file['removed']));
 
                     if ($missingCount == 0 && $removedCount == 0) {
-                        $this->info("[✓] Package filament/{$package} has no missing or deprecated translation keys for lang {$lang}!\n");
+                        $this->info("[✓] Package filament/{$package} has no missing or removed translation keys for lang {$lang}!\n");
                     } elseif ($missingCount > 0 && $removedCount > 0) {
                         $this->warn("[!] Package filament/{$package} has {$missingCount} missing translation keys and {$removedCount} removed translation keys for lang {$lang}.\n");
                     } elseif ($missingCount > 0) {
