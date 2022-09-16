@@ -28,7 +28,7 @@ class AttachAction extends Action
 
     protected string | Closure | null $recordTitleAttribute = null;
 
-    protected array | Closure | null $searchAttribute = null;
+    protected array | Closure | null $recordSelectSearchColumns = null;
 
     public static function getDefaultName(): ?string
     {
@@ -146,16 +146,16 @@ class AttachAction extends Action
         return $attribute;
     }
 
-    public function searchColumns(array $data): static
+    public function recordSelectSearchColumns(array | Closure | null $columns): static
     {
-        $this->searchAttribute = $data;
+        $this->recordSelectSearchColumns = $columns;
 
         return $this;
     }
 
-    public function getSearchColumns(): ?array
+    public function getRecordSelectSearchColumns(): ?array
     {
-        return $this->searchAttribute;
+        return $this->evaluate($this->recordSelectSearchColumns);
     }
 
     public function getRecordSelect(): Select
@@ -165,8 +165,6 @@ class AttachAction extends Action
             $relationship = $this->getRelationship();
 
             $titleColumnName = $this->getRecordTitleAttribute();
-
-            $searchAttr = $this->getSearchColumns() ?? [];
 
             $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleColumnName);
 
@@ -187,7 +185,7 @@ class AttachAction extends Action
                     default => 'like',
                 };
 
-                $searchColumns ??= [$titleColumnName, ...$searchAttr];
+                $searchColumns ??= [$titleColumnName];
                 $isFirst = true;
 
                 $relationshipQuery->where(function (Builder $query) use ($isFirst, $searchColumns, $searchOperator, $search): Builder {
@@ -211,7 +209,7 @@ class AttachAction extends Action
 
             return $relationshipQuery
                 ->when(
-                    !$this->getLivewire()->allowsDuplicates(),
+                    ! $this->getLivewire()->allowsDuplicates(),
                     fn (Builder $query): Builder => $query->whereDoesntHave(
                         $this->getInverseRelationshipName(),
                         function (Builder $query): Builder {
@@ -227,7 +225,7 @@ class AttachAction extends Action
         $select = Select::make('recordId')
             ->label(__('filament-support::actions/attach.single.modal.fields.record_id.label'))
             ->required()
-            ->searchable()
+            ->searchable($this->getRecordSelectSearchColumns() ?? true)
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(search: $search, searchColumns: $component->getSearchColumns()))
             ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle($this->getRelationship()->getRelated()->query()->find($value)))
             ->options(fn (): array => $this->isRecordSelectPreloaded() ? $getOptions() : [])
