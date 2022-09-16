@@ -36,6 +36,10 @@ interface HasTable extends HasForms
 
     public function getCachedTableHeaderActions(): array;
 
+    public function getTableFilterState(string $name): ?array;
+
+    public function parseFilterName(string $name): string;
+
     public function getMountedTableAction(): ?Action;
 
     public function getMountedTableActionForm(): ?ComponentContainer;

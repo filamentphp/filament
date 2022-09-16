@@ -43,7 +43,7 @@
     }
 
     .filament-login-page form::before {
-        @apply w-2/3 absolute inset-x-0 h-px mx-auto bg-gradient-to-r from-gray-200 via-primary-400 to-gray-200 dark:from-gray-700 dark:via-primary-400 dark:to-gray-700;
+        @apply absolute inset-x-0 mx-auto h-px w-2/3 bg-gradient-to-r from-gray-200 via-primary-400 to-gray-200 dark:from-gray-700 dark:via-primary-400 dark:to-gray-700;
         content: '';
         z-index: 1;
         top: -1px;

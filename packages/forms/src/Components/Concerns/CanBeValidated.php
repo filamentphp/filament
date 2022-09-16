@@ -5,6 +5,7 @@ namespace Filament\Forms\Components\Concerns;
 use Closure;
 use Filament\Forms\Components\Field;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Unique;
 
@@ -204,7 +205,7 @@ trait CanBeValidated
 
     public function getValidationAttribute(): string
     {
-        return $this->evaluate($this->validationAttribute) ?? lcfirst($this->getLabel());
+        return $this->evaluate($this->validationAttribute) ?? Str::lcfirst($this->getLabel());
     }
 
     public function getValidationRules(): array

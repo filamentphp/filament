@@ -15,6 +15,7 @@
     $header = $getHeader();
     $headerActions = $getHeaderActions();
     $heading = $getHeading();
+    $description = $getDescription();
     $isReorderable = $isReorderable();
     $isReordering = $isReordering();
     $isColumnSearchVisible = $isSearchableByColumn();
@@ -234,6 +235,7 @@
 >
     <x-tables::container>
         <div
+            class="filament-tables-header-container"
             x-show="hasHeader = (@js($renderHeader = ($header || $heading || ($headerActions && (! $isReordering)) || $isReorderable || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible)) || selectedRecords.length)"
             {!! ! $renderHeader ? 'x-cloak' : null !!}
         >
@@ -242,7 +244,7 @@
             @elseif ($heading || $headerActions)
                 <div @class([
                     'px-2 pt-2',
-                    'hidden' => $isReordering,
+                    'hidden' => ! $heading && $isReordering,
                 ])>
                     <x-tables::header :actions="$isReordering ? [] : $headerActions" class="mb-2">
                         <x-slot name="heading">
@@ -250,7 +252,7 @@
                         </x-slot>
 
                         <x-slot name="description">
-                            {{ $getDescription() }}
+                            {{ $description }}
                         </x-slot>
                     </x-tables::header>
 
@@ -354,7 +356,7 @@
 
         <div
             @class([
-                'overflow-y-auto relative',
+                'filament-tables-table-container overflow-y-auto relative',
                 'dark:border-gray-700' => config('tables.dark_mode'),
                 'rounded-t-xl' => ! $renderHeader,
                 'border-t' => $renderHeader,
@@ -492,33 +494,41 @@
                                 $getRecordClasses($record),
                             ))"
                         >
-                            @if ($isReordering)
-                                <x-tables::reorder.cell />
-                            @else
-                                @if (count($actions) && $actionsPosition === Position::BeforeCells)
-                                    <x-tables::actions-cell
-                                        :actions="$actions"
-                                        :record="$record"
-                                    />
-                                @endif
+                            <x-tables::reorder.cell :class="\Illuminate\Support\Arr::toCssClasses([
+                                'hidden' => ! $isReordering,
+                            ])" />
 
-                                @if ($isSelectionEnabled)
-                                    <x-tables::checkbox-cell>
-                                        <x-slot
-                                            name="checkbox"
-                                            x-model="selectedRecords"
-                                            :value="$recordKey"
-                                            class="table-row-checkbox"
-                                        ></x-slot>
-                                    </x-tables::checkbox-cell>
-                                @endif
+                            @if (count($actions) && $actionsPosition === Position::BeforeCells)
+                                <x-tables::actions-cell
+                                    :actions="$actions"
+                                    :record="$record"
+                                    :class="\Illuminate\Support\Arr::toCssClasses([
+                                        'hidden' => $isReordering,
+                                    ])"
+                                />
+                            @endif
 
-                                @if (count($actions) && $actionsPosition === Position::BeforeColumns)
-                                    <x-tables::actions-cell
-                                        :actions="$actions"
-                                        :record="$record"
-                                    />
-                                @endif
+                            @if ($isSelectionEnabled)
+                                <x-tables::checkbox-cell :class="\Illuminate\Support\Arr::toCssClasses([
+                                    'hidden' => $isReordering,
+                                ])">
+                                    <x-slot
+                                        name="checkbox"
+                                        x-model="selectedRecords"
+                                        :value="$recordKey"
+                                        class="table-row-checkbox"
+                                    ></x-slot>
+                                </x-tables::checkbox-cell>
+                            @endif
+
+                            @if (count($actions) && $actionsPosition === Position::BeforeColumns)
+                                <x-tables::actions-cell
+                                    :actions="$actions"
+                                    :record="$record"
+                                    :class="\Illuminate\Support\Arr::toCssClasses([
+                                        'hidden' => $isReordering,
+                                    ])"
+                                />
                             @endif
 
                             @foreach ($columns as $column)
@@ -541,14 +551,17 @@
                                     wire:loading.remove.delay
                                     wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
                                 >
-                                    {{ $column }}
+                                    {{ $column->viewData(['recordKey' => $recordKey]) }}
                                 </x-tables::cell>
                             @endforeach
 
-                            @if (count($actions) && (! $isReordering) && $actionsPosition === Position::AfterCells)
+                            @if (count($actions) && $actionsPosition === Position::AfterCells)
                                 <x-tables::actions-cell
                                     :actions="$actions"
                                     :record="$record"
+                                    :class="\Illuminate\Support\Arr::toCssClasses([
+                                        'hidden' => $isReordering,
+                                    ])"
                                 />
                             @endif
 
@@ -593,7 +606,7 @@
             ((! $records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) || $records->total())
         )
             <div @class([
-                'p-2 border-t',
+                'filament-tables-pagination-container p-2 border-t',
                 'dark:border-gray-700' => config('tables.dark_mode'),
             ])>
                 <x-tables::pagination
@@ -624,6 +637,7 @@
             :wire:key="$action ? $this->id . '.table' . ($getMountedActionRecordKey() ? '.records.' . $getMountedActionRecordKey() : null) . '.actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
+            :slide-over="$action?->isModalSlideOver()"
             display-classes="block"
         >
             @if ($action)
@@ -680,6 +694,7 @@
             :wire:key="$action ? $this->id . '.table.bulk-actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
+            :slide-over="$action?->isModalSlideOver()"
             display-classes="block"
         >
             @if ($action)

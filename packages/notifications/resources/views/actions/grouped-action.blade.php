@@ -1,6 +1,6 @@
 <x-notifications::actions.action
     :action="$action"
-    component="notifications::dropdown.item"
+    component="notifications::dropdown.list.item"
     :icon-position="$getIconPosition()"
     class="filament-notifications-grouped-action"
 >

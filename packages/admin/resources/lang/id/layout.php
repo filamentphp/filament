@@ -10,6 +10,10 @@ return [
             'label' => 'Mode Gelap',
         ],
 
+        'database_notifications' => [
+            'label' => 'Buka notifikasi',
+        ],
+
         'light_mode' => [
             'label' => 'Mode Terang',
         ],
