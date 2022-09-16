@@ -70,7 +70,7 @@ window
 Chart.defaults.font.family = `'DM Sans', sans-serif`
 Chart.defaults.color = '#6b7280'
 
-const stickyTrigger = document.querySelector('.filament-sticky-trigger')
+const stickyTrigger = document.querySelector('.filament-sticky-header-trigger')
 const stickyParent = document.querySelector('.filament-main')
 
 if (stickyTrigger) {
@@ -78,11 +78,11 @@ if (stickyTrigger) {
         const observer = new IntersectionObserver(
             ([e]) => {
                 if (e.isIntersecting) {
-                    stickyParent.classList.remove('is-sticky')
+                    stickyParent.classList.remove('filament-main-sticky')
                     return
                 }
 
-                stickyParent.classList.add('is-sticky')
+                stickyParent.classList.add('filament-main-sticky')
             },
             {
                 threshold: [0],
