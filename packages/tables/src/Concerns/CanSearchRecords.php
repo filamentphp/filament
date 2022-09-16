@@ -45,6 +45,13 @@ trait CanSearchRecords
         $this->resetPage();
     }
 
+    public function updatedTableColumnSearchQueries(): void
+    {
+        $this->deselectAllTableRecords();
+
+        $this->resetPage();
+    }
+
     protected function applySearchToTableQuery(Builder $query): Builder
     {
         $this->applyColumnSearchToTableQuery($query);

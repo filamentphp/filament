@@ -235,6 +235,7 @@
 >
     <x-tables::container>
         <div
+            class="filament-tables-header-container"
             x-show="hasHeader = (@js($renderHeader = ($header || $heading || ($headerActions && (! $isReordering)) || $isReorderable || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible)) || selectedRecords.length)"
             {!! ! $renderHeader ? 'x-cloak' : null !!}
         >
@@ -355,7 +356,7 @@
 
         <div
             @class([
-                'overflow-y-auto relative',
+                'filament-tables-table-container overflow-y-auto relative',
                 'dark:border-gray-700' => config('tables.dark_mode'),
                 'rounded-t-xl' => ! $renderHeader,
                 'border-t' => $renderHeader,
@@ -605,7 +606,7 @@
             ((! $records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) || $records->total())
         )
             <div @class([
-                'p-2 border-t',
+                'filament-tables-pagination-container p-2 border-t',
                 'dark:border-gray-700' => config('tables.dark_mode'),
             ])>
                 <x-tables::pagination
@@ -636,6 +637,7 @@
             :wire:key="$action ? $this->id . '.table' . ($getMountedActionRecordKey() ? '.records.' . $getMountedActionRecordKey() : null) . '.actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
+            :slide-over="$action?->isModalSlideOver()"
             display-classes="block"
         >
             @if ($action)
@@ -692,6 +694,7 @@
             :wire:key="$action ? $this->id . '.table.bulk-actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
+            :slide-over="$action?->isModalSlideOver()"
             display-classes="block"
         >
             @if ($action)
