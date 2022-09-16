@@ -90,7 +90,7 @@ class Wizard extends Component
         return $this;
     }
 
-    public function skippable(bool | Closure $condition = false): static
+    public function skippable(bool | Closure $condition = true): static
     {
         $this->skippable = $condition;
 
