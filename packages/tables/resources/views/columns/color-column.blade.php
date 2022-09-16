@@ -13,7 +13,7 @@
         @if ($isCopyable())
             x-on:click="
                 window.navigator.clipboard.writeText(@js($state))
-                $tooltip(@js($getCopyMessage()), { timeout: @js($getCopyMessageShowTimeMs()) })
+                $tooltip(@js($getCopyMessage()), { timeout: @js($getCopyMessageDuration()) })
             "
         @endif
     @endif

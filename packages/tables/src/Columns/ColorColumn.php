@@ -10,7 +10,7 @@ class ColorColumn extends Column
 
     protected ?string $copyMessage = null;
 
-    protected int $copyMessageShowTimeMs = 2000;
+    protected int $copyMessageDuration = 2000;
 
     public function copyable(): self
     {
@@ -31,16 +31,16 @@ class ColorColumn extends Column
         return $this->copyMessage ?? trans('tables::table.columns.color.copied');
     }
 
-    public function copyMessageShowTimeMs(int $timeInMs): self
+    public function copyMessageDuration(int $duration): self
     {
-        $this->copyMessageShowTimeMs = $timeInMs;
+        $this->copyMessageDuration = $duration;
 
         return $this;
     }
 
-    public function getCopyMessageShowTimeMs(): int
+    public function getCopyMessageDuration(): int
     {
-        return $this->copyMessageShowTimeMs;
+        return $this->copyMessageDuration;
     }
 
     public function isCopyable(): bool

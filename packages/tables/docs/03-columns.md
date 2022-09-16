@@ -847,7 +847,7 @@ use Filament\Tables\Columns\ColorColumn
 ColorColumn::make('color')
     ->copyable()
     ->copyMessage('Color code copied')
-    ->copyMessageShowTimeMs(1500)
+    ->copyMessageDuration(1500)
 ```
 
 ## Text input column
