@@ -28,6 +28,8 @@ class AttachAction extends Action
 
     protected string | Closure | null $recordTitleAttribute = null;
 
+    protected array | Closure | null $searchAttribute = null;
+
     public static function getDefaultName(): ?string
     {
         return 'attach';
@@ -144,6 +146,18 @@ class AttachAction extends Action
         return $attribute;
     }
 
+    public function searchColumns(array $data): static
+    {
+        $this->searchAttribute = $data;
+
+        return $this;
+    }
+
+    public function getSearchColumns(): ?array
+    {
+        return $this->searchAttribute;
+    }
+
     public function getRecordSelect(): Select
     {
         $getOptions = function (?string $search = null, ?array $searchColumns = []): array {
@@ -151,6 +165,8 @@ class AttachAction extends Action
             $relationship = $this->getRelationship();
 
             $titleColumnName = $this->getRecordTitleAttribute();
+
+            $searchAttr = $this->getSearchColumns() ?? [];
 
             $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleColumnName);
 
@@ -171,7 +187,7 @@ class AttachAction extends Action
                     default => 'like',
                 };
 
-                $searchColumns ??= [$titleColumnName];
+                $searchColumns ??= [$titleColumnName, ...$searchAttr];
                 $isFirst = true;
 
                 $relationshipQuery->where(function (Builder $query) use ($isFirst, $searchColumns, $searchOperator, $search): Builder {
@@ -195,7 +211,7 @@ class AttachAction extends Action
 
             return $relationshipQuery
                 ->when(
-                    ! $this->getLivewire()->allowsDuplicates(),
+                    !$this->getLivewire()->allowsDuplicates(),
                     fn (Builder $query): Builder => $query->whereDoesntHave(
                         $this->getInverseRelationshipName(),
                         function (Builder $query): Builder {
