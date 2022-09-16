@@ -55,7 +55,7 @@ export default (Alpine) => {
 
                     await this.refreshChoices({ withInitialOptions: true })
 
-                    if (![null, undefined, ''].includes(this.state)) {
+                    if (! [null, undefined, ''].includes(this.state)) {
                         this.select.setChoiceByValue(
                             this.formatState(this.state),
                         )
@@ -86,8 +86,8 @@ export default (Alpine) => {
                                 this.select.clearChoices()
                                 await this.select.setChoices([
                                     {
-                                        value: '',
                                         label: loadingMessage,
+                                        value: '',
                                         disabled: true,
                                     },
                                 ])
@@ -112,8 +112,8 @@ export default (Alpine) => {
                                 this.select.clearChoices()
                                 await this.select.setChoices([
                                     {
-                                        value: '',
                                         label: searchingMessage,
+                                        value: '',
                                         disabled: true,
                                     },
                                 ])
@@ -140,14 +140,14 @@ export default (Alpine) => {
                         }
 
                         const choices = await this.getChoices({
-                            withInitialOptions: !hasDynamicOptions,
+                            withInitialOptions: ! hasDynamicOptions,
                         })
 
                         this.select.clearStore()
 
                         this.setChoices(choices)
 
-                        if (![null, undefined, ''].includes(this.state)) {
+                        if (! [null, undefined, ''].includes(this.state)) {
                             this.select.setChoiceByValue(
                                 this.formatState(this.state),
                             )
@@ -166,10 +166,7 @@ export default (Alpine) => {
                 getChoices: async function (config = {}) {
                     const options = await this.getOptions(config)
 
-                    return {
-                        ...options,
-                        ...(await this.getMissingOptions(options)),
-                    }
+                    return options.concat(await this.getMissingOptions(options))
                 },
 
                 getOptions: async function ({ search, withInitialOptions }) {
@@ -217,7 +214,7 @@ export default (Alpine) => {
                         return {}
                     }
 
-                    if (!options.length) {
+                    if (! options.length) {
                         options = {}
                     }
 
@@ -235,7 +232,8 @@ export default (Alpine) => {
 
                     return [
                         {
-                            [this.state]: await getOptionLabelUsing(),
+                            label: await getOptionLabelUsing(),
+                            value: this.state,
                         },
                     ]
                 },

@@ -396,6 +396,29 @@ class Select extends Field
         return $results;
     }
 
+    public function getSearchResultsForJs(string $search): array
+    {
+        return $this->transformOptionsForJs($this->getSearchResults($search));
+    }
+
+    public function getOptionsForJs(): array
+    {
+        return $this->transformOptionsForJs($this->getOptions());
+    }
+
+    public function getOptionLabelsForJs(): array
+    {
+        return $this->transformOptionsForJs($this->getOptionLabels());
+    }
+
+    protected function transformOptionsForJs(array $options): array
+    {
+        return collect($options)
+            ->map(fn ($label, $value): array => ['label' => $label, 'value' => $value])
+            ->values()
+            ->all();
+    }
+
     public function isHtmlAllowed(): bool
     {
         return $this->evaluate($this->isHtmlAllowed);

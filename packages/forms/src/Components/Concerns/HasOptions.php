@@ -31,14 +31,6 @@ trait HasOptions
         return $options;
     }
 
-    public function getOptionsForJs(): array
-    {
-        return collect($this->getOptions())
-            ->map(fn ($label, $value): array => ['label' => $label, 'value' => $value])
-            ->values()
-            ->all();
-    }
-
     public function hasDynamicOptions(): bool
     {
         return $this->options instanceof Closure;
