@@ -97,9 +97,9 @@ class TestsColumns
         };
     }
 
-    public function assertTableColumnDataSet(): Closure
+    public function assertTableColumnStateSet(): Closure
     {
-        return function ($record, $name, $value): static {
+        return function (string $name, $value, $record): static {
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
@@ -108,20 +108,24 @@ class TestsColumns
 
             $column = $livewire->getCachedTableColumn($name);
 
+            if (! ($record instanceof Model)) {
+                $record = $livewire->getTableRecord($record);
+            }
+
             $column->record($record);
 
             Assert::assertTrue(
                 $column->getState() == $value,
-                message: "Failed asserting that a table column with name [{$name}] has value of [{$value}] on the [{$livewireClass}] component.",
+                message: "Failed asserting that a table column with name [{$name}] has value of [{$value}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
 
             return $this;
         };
     }
 
-    public function assertTableColumnDataNotSet(): Closure
+    public function assertTableColumnStateNotSet(): Closure
     {
-        return function ($record, $name, $value): static {
+        return function (string $name, $value, $record): static {
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
@@ -130,11 +134,15 @@ class TestsColumns
 
             $column = $livewire->getCachedTableColumn($name);
 
+            if (! ($record instanceof Model)) {
+                $record = $livewire->getTableRecord($record);
+            }
+
             $column->record($record);
 
             Assert::assertFalse(
                 $column->getState() == $value,
-                message: "Failed asserting that a table column with name [{$name}] does not have a value of [{$value}] on the [{$livewireClass}] component.",
+                message: "Failed asserting that a table column with name [{$name}] does not have a value of [{$value}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
 
             return $this;

@@ -95,9 +95,9 @@ namespace Livewire\Testing {
 
         public function assertTableColumnHidden(string $name): static {}
 
-        public function assertTableColumnDataSet($record, $name, $value): static {}
+        public function assertTableColumnStateSet(string $name, $value, $record): static {}
 
-        public function assertTableColumnDataNotSet($record, $name, $value): static {}
+        public function assertTableColumnStateNotSet(string $name, $value, $record): static {}
 
         public function sortTable(?string $name = null, ?string $direction = null): static {}
 
