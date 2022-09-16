@@ -414,7 +414,7 @@ class Select extends Field
     protected function transformOptionsForJs(array $options): array
     {
         return collect($options)
-            ->map(fn ($label, $value): array => ['label' => $label, 'value' => $value])
+            ->map(fn ($label, $value): array => ['label' => $label, 'value' => strval($value)])
             ->values()
             ->all();
     }
