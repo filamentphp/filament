@@ -18,6 +18,8 @@ class SelectFilter extends BaseFilter
 
     protected bool | Closure $isSearchable = false;
 
+    protected int | Closure $optionsLimit = 50;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -105,6 +107,7 @@ class SelectFilter extends BaseFilter
             ->options($this->getOptions())
             ->placeholder($this->getPlaceholder())
             ->searchable($this->isSearchable())
+            ->optionsLimit($this->getOptionsLimit())
             ->columnSpan($this->getColumnSpan());
 
         if (filled($defaultState = $this->getDefaultState())) {
@@ -117,5 +120,17 @@ class SelectFilter extends BaseFilter
     public function isSearchable(): bool
     {
         return (bool) $this->evaluate($this->isSearchable);
+    }
+
+    public function optionsLimit(int | Closure $limit): static
+    {
+        $this->optionsLimit = $limit;
+
+        return $this;
+    }
+
+    public function getOptionsLimit(): int
+    {
+        return $this->evaluate($this->optionsLimit);
     }
 }

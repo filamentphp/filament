@@ -19,6 +19,7 @@ class NotificationsServiceProvider extends PackageServiceProvider
             ->name('notifications')
             ->hasCommands(Commands\InstallCommand::class)
             ->hasConfigFile()
+            ->hasTranslations()
             ->hasViews();
     }
 

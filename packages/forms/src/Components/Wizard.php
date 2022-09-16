@@ -14,6 +14,8 @@ class Wizard extends Component
 
     protected string | Htmlable | null $cancelAction = null;
 
+    protected bool | Closure $skippable = false;
+
     protected string | Htmlable | null $submitAction = null;
 
     public int | Closure $startStep = 1;
@@ -88,6 +90,13 @@ class Wizard extends Component
         return $this;
     }
 
+    public function skippable(bool | Closure $condition = false): static
+    {
+        $this->skippable = $condition;
+
+        return $this;
+    }
+
     public function getCancelAction(): string | Htmlable | null
     {
         return $this->cancelAction;
@@ -101,5 +110,10 @@ class Wizard extends Component
     public function getStartStep(): int
     {
         return $this->evaluate($this->startStep);
+    }
+
+    public function isSkippable(): bool
+    {
+        return $this->evaluate($this->skippable);
     }
 }
