@@ -37,7 +37,7 @@ trait CanSearchRecords
 
         return false;
     }
-    
+
     public function updatedTableSearchQuery(): void
     {
         $this->deselectAllTableRecords();
@@ -50,7 +50,7 @@ trait CanSearchRecords
         if (blank($value)) {
             unset($this->tableColumnSearchQueries[$key]);
         }
-        
+
         $this->deselectAllTableRecords();
 
         $this->resetPage();
