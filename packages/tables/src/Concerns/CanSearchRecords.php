@@ -38,6 +38,17 @@ trait CanSearchRecords
         return false;
     }
 
+    public function hasSearchApplied(): bool
+    {
+        if (! empty($this->tableSearchQuery) 
+            || ! empty($this->tableColumnSearchQueries)) 
+        {
+            return true;
+        }
+
+        return false;
+    }
+    
     public function updatedTableSearchQuery(): void
     {
         $this->deselectAllTableRecords();
@@ -45,8 +56,12 @@ trait CanSearchRecords
         $this->resetPage();
     }
 
-    public function updatedTableColumnSearchQueries(): void
+    public function updatedTableColumnSearchQueries($value, $key): void
     {
+        if (empty($value)) {
+            unset($this->tableColumnSearchQueries[$key]);
+        }
+        
         $this->deselectAllTableRecords();
 
         $this->resetPage();
