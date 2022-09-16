@@ -14,4 +14,4 @@
             {{ $block->getLabel() }}
         </x-forms::dropdown.list.item>
     @endforeach
-</div>
+</x-forms::dropdown.list>
