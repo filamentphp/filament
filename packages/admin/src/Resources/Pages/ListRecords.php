@@ -414,6 +414,10 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                 return $url;
             }
 
+            if (count($this->getCachedTableActions()) !== 0) {
+                return null;
+            }
+
             $resource = static::getResource();
 
             foreach (['view', 'edit'] as $action) {
