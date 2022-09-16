@@ -1,31 +1,21 @@
-@if ($getState())
-    @if ($isCopyable())
-        <button
-            x-data="{
-                showCopied: false,
-                copiedMessageTimeout: -1,
-                copy() {
-                    window
-                        .navigator
-                        .clipboard
-                        .writeText('{{ $getState() }}');
-                },
-            }"
-            @click="$tooltip('{{ $getCopyMessage() }}', { timeout: {{ $getCopyMessageShowTimeMs() }} })"
-            @click.prevent.stop="copy"
-        >
+@php
+    $state = $getState();
+@endphp
+
+<div
+    {{
+        $attributes
+            ->merge($getExtraAttributes())
+            ->class(['filament-tables-color-column relative ml-4 flex h-6 w-6 rounded-md'])
+    }}
+    @if ($state)
+        style="background-color: {{ $state }}"
+        @if ($isCopyable())
+            x-on:click="
+                window.navigator.clipboard.writeText(@js($state))
+                $tooltip(@js($getCopyMessage()), { timeout: @js($getCopyMessageShowTimeMs()) })
+            "
+        @endif
     @endif
-            <span
-                {{ $attributes->merge($getExtraAttributes())->class([
-	                'filament-tables-color-column relative flex w-6 h-6 ml-4 rounded-md'
-	            ]) }}
-                style="background-color: {{ $getState() }};"
-                title="{{ $getState() }}"
-            >
-            </span>
-    @if ($isCopyable())
-        </button>
-    @endif
-@else
-    <span>&nbsp;</span>
-@endif
+>
+</div>
