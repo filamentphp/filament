@@ -51,6 +51,7 @@ Field::make('endDate')->afterOrEqual('startDate')
 ```
 
 ### Alpha
+
 The field must be entirely alphabetic characters. [See the Laravel documentation](https://laravel.com/docs/validation#rule-alpha)
 
 ```php
@@ -58,6 +59,7 @@ Field::make('name')->alpha()
 ```
 
 ### Alpha Dash
+
 The field may have alpha-numeric characters, as well as dashes and underscores. [See the Laravel documentation](https://laravel.com/docs/validation#rule-alpha-dash)
 
 ```php
@@ -65,6 +67,7 @@ Field::make('name')->alphaDash()
 ```
 
 ### Alpha Numeric
+
 The field must be entirely alpha-numeric characters. [See the Laravel documentation](https://laravel.com/docs/validation#rule-alpha-num)
 
 ```php
@@ -102,6 +105,7 @@ Field::make('endDate')
 ```
 
 ### Confirmed
+
 The field must have a matching field of `{field}_confirmation`. [See the Laravel documentation](https://laravel.com/docs/validation#rule-confirmed)
 
 ```php
@@ -214,6 +218,7 @@ Field::make('status')->in(['pending', 'completed'])
 ```
 
 ### Ip Address
+
 The field must be an IP address. [See the Laravel documentation](https://laravel.com/docs/validation#rule-ip)
 
 ```php
@@ -223,6 +228,7 @@ Field::make('ip_address')->ipv6()
 ```
 
 ### JSON
+
 The field must be a valid JSON string. [See the Laravel documentation](https://laravel.com/docs/validation#rule-json)
 
 ```php
@@ -262,6 +268,7 @@ Field::make('number')->multipleOf(2)
 ```
 
 ### Not In
+
 The field must not be included in the given list of values. [See the Laravel documentation](https://laravel.com/docs/validation#rule-not-in)
 
 ```php
@@ -269,6 +276,7 @@ Field::make('status')->notIn(['cancelled', 'rejected'])
 ```
 
 ### Not Regex
+
 The field must not match the given regular expression. [See the Laravel documentation](https://laravel.com/docs/validation#rule-not-regex)
 
 ```php
@@ -324,6 +332,7 @@ Field::make('name')->requiredWithoutAll('field,another_field')
 ```
 
 ### Regex
+
 The field must match the given regular expression. [See the Laravel documentation](https://laravel.com/docs/validation#rule-regex)
 
 ```php
@@ -399,6 +408,7 @@ Field::make('email')
 ```
 
 ### UUID
+
 The field must be a valid RFC 4122 (version 1, 3, 4, or 5) universally unique identifier (UUID). [See the Laravel documentation](https://laravel.com/docs/validation#rule-uuid)
 
 ```php

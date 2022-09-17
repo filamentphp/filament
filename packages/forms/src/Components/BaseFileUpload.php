@@ -249,21 +249,6 @@ class BaseFileUpload extends Field
         return $this;
     }
 
-    public function mimes(array | Arrayable | Closure $mimes)
-    {
-        $this->rule(static function (BaseFileUpload $component) use ($mimes) {
-            $mimes = $component->evaluate($mimes);
-
-            if ($mimes instanceof Arrayable) {
-                $mimes = $mimes->toArray();
-            }
-
-            return "mimes:{$mimes}";
-        });
-
-        return $this;
-    }
-
     public function maxFiles(int | Closure | null $count): static
     {
         $this->maxFiles = $count;
