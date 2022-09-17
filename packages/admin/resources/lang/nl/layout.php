@@ -10,6 +10,10 @@ return [
             'label' => 'Donkere weergave inschakelen',
         ],
 
+        'database_notifications' => [
+            'label' => 'Open meldingen',
+        ],
+
         'light_mode' => [
             'label' => 'Lichte weergave inschakelen',
         ],
