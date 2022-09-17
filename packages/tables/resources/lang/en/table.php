@@ -13,7 +13,7 @@ return [
             'messages' => [
                 'copied' => 'Copied',
             ],
-            
+
         ],
     ],
 
