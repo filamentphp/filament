@@ -49,4 +49,9 @@ class ColorColumn extends Column
     {
         return $this->evaluate($this->isCopyable);
     }
+
+    public function isClickDisabled(): bool
+    {
+        return $this->isCopyable();
+    }
 }
