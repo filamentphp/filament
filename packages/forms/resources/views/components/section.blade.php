@@ -1,26 +1,13 @@
 <div
     @if ($isCollapsible())
         x-data="{
+
             isCollapsed: @js($isCollapsed()),
-            get containsErrors() {
-                return $el.querySelector('[data-validation-error]') ? true : false
+
+            get hasValidationErrors() {
+                return $el.querySelector('[data-validation-error]')
             },
-            toggle() {
-                if(this.containsErrors && ! this.isCollapsed) {
-                    return
-                }
 
-                this.isCollapsed = ! this.isCollapsed
-
-                if (this.isCollapsed) {
-                    return
-                }
-
-                setTimeout(
-                    () => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }),
-                    100,
-                )
-            }
         }"
         x-on:open-form-section.window="if ($event.detail.id == $el.id) isCollapsed = false"
         x-on:collapse-form-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
@@ -30,9 +17,15 @@
                 isCollapsed = false
 
                 setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
-            } else {
-               isCollapsed = !containsErrors ?? isCollapsed
+
+                return
             }
+
+            if (! isCollapsed) {
+                return
+            }
+
+            isCollapsed = ! hasValidationErrors
         "
     @endif
     id="{{ $getId() }}"
@@ -49,7 +42,7 @@
         ])
         @if ($isCollapsible())
             x-bind:class="{ 'rounded-b-xl': isCollapsed }"
-            x-on:click="toggle()"
+            x-on:click="isCollapsed = ! isCollapsed"
         @endif
     >
         <div
@@ -71,7 +64,7 @@
 
         @if ($isCollapsible())
             <button
-                x-on:click.stop="toggle()"
+                x-on:click.stop="isCollapsed = ! isCollapsed"
                 x-bind:class="{
                     '-rotate-180': !isCollapsed,
                 }" type="button"
