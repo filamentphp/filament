@@ -2,15 +2,17 @@
 
 namespace Filament\Tables\Columns;
 
+use Closure;
+
 class ColorColumn extends Column
 {
     protected string $view = 'tables::columns.color-column';
 
     protected bool $copyable = false;
 
-    protected ?string $copyMessage = null;
+    protected string | Closure | null $copyMessage = null;
 
-    protected int $copyMessageDuration = 2000;
+    protected int | Closure | null $copyMessageDuration = 2000;
 
     public function copyable(): self
     {
@@ -19,28 +21,30 @@ class ColorColumn extends Column
         return $this;
     }
 
-    public function copyMessage(string $message): self
+    public function copyMessage(string | Closure | null $message): self
     {
         $this->copyMessage = $message;
 
         return $this;
     }
 
-    public function getCopyMessage(): string
+    public function getCopyMessage(): ?string
     {
-        return $this->copyMessage ?? trans('tables::table.columns.color.copied');
+        return $this->evaluate($this->copyMessage ?? __('tables::table.columns.color.copied'));
+
     }
 
-    public function copyMessageDuration(int $duration): self
+    public function copyMessageDuration(int | Closure | null $duration): self
     {
         $this->copyMessageDuration = $duration;
 
         return $this;
     }
 
-    public function getCopyMessageDuration(): int
+    public function getCopyMessageDuration(): ?int
     {
-        return $this->copyMessageDuration;
+        return $this->evaluate($this->copyMessageDuration ?? 0);
+
     }
 
     public function isCopyable(): bool
