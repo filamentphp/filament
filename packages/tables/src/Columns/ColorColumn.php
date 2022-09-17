@@ -52,6 +52,6 @@ class ColorColumn extends Column
 
     public function isClickDisabled(): bool
     {
-        return $this->isCopyable();
+        return parent::isClickDisabled() || $this->isCopyable();
     }
 }
