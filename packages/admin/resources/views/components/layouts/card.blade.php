@@ -46,5 +46,5 @@
         </div>
     </div>
     
-    @livewire('filament.core.notifications')
+    @livewire('notifications')
 </x-filament::layouts.base>
