@@ -88,15 +88,15 @@ it('can remove all table filters', function () {
         ->assertCanSeeTableRecords($posts);
 });
 
-it('can filter records using an attribute', function () {
+it('can use a custom attribute for the `SelectFilter`', function () {
     $posts = Post::factory()->count(10)->create();
 
     $unpublishedPosts = $posts->where('is_published', false);
 
     livewire(PostsTable::class)
         ->assertCanSeeTableRecords($posts)
-        ->filterTable('is_published_select', false)
+        ->filterTable('select_filter_attribute', false)
         ->assertCanSeeTableRecords($unpublishedPosts)
-        ->filterTable('is_published_select', true)
+        ->filterTable('select_filter_attribute', true)
         ->assertCanNotSeeTableRecords($unpublishedPosts);
 });

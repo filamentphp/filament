@@ -71,17 +71,19 @@ class MultiSelectFilter extends BaseFilter
         return $query;
     }
 
-    /** @deprecated use `->attribute()` on the filter instead */
-    public function column(string | Closure | null $name): static
+    public function attribute(string | Closure | null $name): static
     {
-        $this->attribute($name);
+        $this->attribute = $name;
 
         return $this;
     }
 
-    public function attribute(string | Closure | null $name): static
+    /**
+     * @deprecated Use `attribute()` instead.
+     */
+    public function column(string | Closure | null $name): static
     {
-        $this->attribute = $name;
+        $this->attribute($name);
 
         return $this;
     }
@@ -93,15 +95,17 @@ class MultiSelectFilter extends BaseFilter
         return $this;
     }
 
-    /** @deprecated use `->getAttribute()` instead */
-    public function getColumn(): string
-    {
-        return $this->getAttribute();
-    }
-
     public function getAttribute(): string
     {
         return $this->evaluate($this->attribute) ?? $this->getName();
+    }
+
+    /**
+     * @deprecated Use `getAttribute()` instead.
+     */
+    public function getColumn(): string
+    {
+        return $this->getAttribute();
     }
 
     protected function getFormField(): Select
