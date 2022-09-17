@@ -18,7 +18,7 @@
             $el.scrollIntoView({ behavior: 'smooth', block: 'start' })
         }
     "
-    data-tab-wrapper
+    data-tabs-container
     x-cloak
     {!! $getId() ? "id=\"{$getId()}\"" : null !!}
     {{ $attributes->merge($getExtraAttributes())->class([
