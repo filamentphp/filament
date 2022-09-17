@@ -4,7 +4,7 @@ return [
 
     'modal' => [
 
-        'heading' => 'Notificationes',
+        'heading' => 'Notificaciones',
 
         'buttons' => [
 
