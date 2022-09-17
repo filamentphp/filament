@@ -210,7 +210,9 @@ export default (Alpine) => {
                 },
 
                 getMissingOptions: async function (options) {
-                    if ([null, undefined, '', [], {}].includes(this.state)) {
+                    let state = this.formatState(this.state)
+
+                    if ([null, undefined, '', [], {}].includes(state)) {
                         return {}
                     }
 
@@ -219,21 +221,21 @@ export default (Alpine) => {
                     }
 
                     if (isMultiple) {
-                        if (this.state.every((value) => value in options)) {
+                        if (state.every((value) => value in options)) {
                             return {}
                         }
 
                         return await getOptionLabelsUsing()
                     }
 
-                    if (this.state in options) {
+                    if (state in options) {
                         return options
                     }
 
                     return [
                         {
                             label: await getOptionLabelUsing(),
-                            value: this.state,
+                            value: state,
                         },
                     ]
                 },

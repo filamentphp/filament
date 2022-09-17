@@ -27997,25 +27997,26 @@ var select_default = (Alpine) => {
         return state3?.toString();
       },
       getMissingOptions: async function(options3) {
-        if ([null, void 0, "", [], {}].includes(this.state)) {
+        let state3 = this.formatState(this.state);
+        if ([null, void 0, "", [], {}].includes(state3)) {
           return {};
         }
         if (!options3.length) {
           options3 = {};
         }
         if (isMultiple) {
-          if (this.state.every((value) => value in options3)) {
+          if (state3.every((value) => value in options3)) {
             return {};
           }
           return await getOptionLabelsUsing();
         }
-        if (this.state in options3) {
+        if (state3 in options3) {
           return options3;
         }
         return [
           {
             label: await getOptionLabelUsing(),
-            value: this.state
+            value: state3
           }
         ];
       }
