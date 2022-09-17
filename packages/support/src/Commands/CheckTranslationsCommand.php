@@ -83,11 +83,11 @@ class CheckTranslationsCommand extends Command
 
                             $this->newLine();
                         } elseif ($missingKeysCount > 0 && $removedKeysCount > 0) {
-                            $this->warn("[!] Package filament/{$package} has {$missingKeysCount} missing translation " . trans_choice('key|keys', $missingKeysCount) . " and {$removedKeysCount} removed translation " . trans_choice('key|keys', $removedKeysCount) . " for {$locale}.\n");
+                            $this->warn("[!] Package filament/{$package} has {$missingKeysCount} missing translation " . Str::plural('key', $missingKeysCount) . " and {$removedKeysCount} removed translation " . Str::plural('key', $removedKeysCount) . " for {$locale}.\n");
                         } elseif ($missingKeysCount > 0) {
-                            $this->warn("[!] Package filament/{$package} has {$missingKeysCount} missing translation " . trans_choice('key|keys', $missingKeysCount) . " for {$locale}.\n");
+                            $this->warn("[!] Package filament/{$package} has {$missingKeysCount} missing translation " . Str::plural('key', $missingKeysCount) . " for {$locale}.\n");
                         } elseif ($removedKeysCount > 0) {
-                            $this->warn("[!] Package filament/{$package} has {$removedKeysCount} removed translation " . trans_choice('key|keys', $removedKeysCount) . " for {$locale}.\n");
+                            $this->warn("[!] Package filament/{$package} has {$removedKeysCount} removed translation " . Str::plural('key', $removedKeysCount) . " for {$locale}.\n");
                         }
                     })
                     ->filter(static fn ($keys): bool => count($keys['missing']) || count($keys['removed']))
