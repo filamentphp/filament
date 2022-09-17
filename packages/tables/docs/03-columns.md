@@ -855,7 +855,7 @@ use Filament\Tables\Columns\ColorColumn
 ColorColumn::make('color')
 ```
 
-You may make the color copyable, such that clicking on the preview it copies the CSS value to the clipboard, and optionally specify a custom confirmation message and duration in milliseconds.  This feature only works when SSL is enabled for the app.
+You may make the color copyable, such that clicking on the preview it copies the CSS value to the clipboard, and optionally specify a custom confirmation message and duration in milliseconds. This feature only works when SSL is enabled for the app.
 
 ```php
 use Filament\Tables\Columns\ColorColumn
