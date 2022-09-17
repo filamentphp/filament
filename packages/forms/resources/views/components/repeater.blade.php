@@ -100,6 +100,7 @@
                                 >
                                     @unless ($isItemMovementDisabled)
                                         <button
+                                            title="{{ __('forms::components.repeater.buttons.move_item.label') }}"
                                             x-on:click.stop
                                             wire:sortable.handle
                                             wire:keydown.prevent.arrow-up="dispatchFormEvent('repeater::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
@@ -111,7 +112,7 @@
                                             ])
                                         >
                                             <span class="sr-only">
-                                                {{ __('forms::components.repeater.buttons.move_item_down.label') }}
+                                                {{ __('forms::components.repeater.buttons.move_item.label') }}
                                             </span>
 
                                             <x-heroicon-s-switch-vertical class="w-4 h-4"/>
@@ -134,6 +135,7 @@
                                         @if ($isCloneable)
                                             <li>
                                                 <button
+                                                    title="{{ __('forms::components.repeater.buttons.clone_item.label') }}"
                                                     wire:click="dispatchFormEvent('repeater::cloneItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                     type="button"
                                                     @class([
@@ -153,6 +155,7 @@
                                         @unless ($isItemDeletionDisabled)
                                             <li>
                                                 <button
+                                                    title="{{ __('forms::components.repeater.buttons.delete_item.label') }}"
                                                     wire:click.stop="dispatchFormEvent('repeater::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                     type="button"
                                                     @class([
@@ -172,6 +175,7 @@
                                         @if ($isCollapsible)
                                             <li>
                                                 <button
+                                                    x-bind:title="(! isCollapsed) ? '{{ __('forms::components.repeater.buttons.collapse_item.label') }}' : '{{ __('forms::components.repeater.buttons.expand_item.label') }}"
                                                     x-on:click.stop="isCollapsed = ! isCollapsed"
                                                     type="button"
                                                     @class([

@@ -97,6 +97,7 @@
                             ])>
                                 @unless ($isItemMovementDisabled)
                                     <button
+                                        title="{{ __('forms::components.builder.buttons.move_item.label') }}"
                                         wire:sortable.handle
                                         wire:keydown.prevent.arrow-up="dispatchFormEvent('builder::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                         wire:keydown.prevent.arrow-down="dispatchFormEvent('builder::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
@@ -107,7 +108,7 @@
                                         ])
                                     >
                                         <span class="sr-only">
-                                            {{ __('forms::components.builder.buttons.move_item_down.label') }}
+                                            {{ __('forms::components.builder.buttons.move_item.label') }}
                                         </span>
 
                                         <x-heroicon-s-switch-vertical class="w-4 h-4"/>
@@ -146,6 +147,7 @@
                                     @unless ($isItemDeletionDisabled)
                                         <li>
                                             <button
+                                                title="{{ __('forms::components.builder.buttons.delete_item.label') }}"
                                                 wire:click="dispatchFormEvent('builder::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                 type="button"
                                                 @class([
@@ -165,7 +167,8 @@
                                     @if ($isCollapsible)
                                         <li>
                                             <button
-                                                x-on:click="isCollapsed = !isCollapsed"
+                                                x-bind:title="(! isCollapsed) ? '{{ __('forms::components.builder.buttons.collapse_item.label') }}' : '{{ __('forms::components.builder.buttons.expand_item.label') }}"
+                                                x-on:click="isCollapsed = ! isCollapsed"
                                                 type="button"
                                                 @class([
                                                     'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-300',
