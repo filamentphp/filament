@@ -8,15 +8,15 @@ class ColorColumn extends Column
 {
     protected string $view = 'tables::columns.color-column';
 
-    protected bool $copyable = false;
+    protected bool | Closure $isCopyable = false;
 
     protected string | Closure | null $copyMessage = null;
 
     protected int | Closure | null $copyMessageDuration = 2000;
 
-    public function copyable(): self
+    public function copyable(bool | Closure $copyable = true): self
     {
-        $this->copyable = true;
+        $this->isCopyable = $copyable;
 
         return $this;
     }
@@ -47,6 +47,6 @@ class ColorColumn extends Column
 
     public function isCopyable(): bool
     {
-        return $this->copyable;
+        return $this->evaluate($this->isCopyable);
     }
 }

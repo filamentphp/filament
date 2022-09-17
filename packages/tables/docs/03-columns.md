@@ -847,7 +847,7 @@ ToggleColumn::make('is_admin')
 
 ## Color column
 
-The color column allows you to render a color swatch from a CSS color definition, typically entered using the ColorPicker form field, in one of the supported formats (hex, hsl, rgb, rgba).
+The color column allows you to show the color preview from a CSS color definition, typically entered using the ColorPicker form field, in one of the supported formats (hex, hsl, rgb, rgba).
 
 ```php
 use Filament\Tables\Columns\ColorColumn
@@ -855,7 +855,7 @@ use Filament\Tables\Columns\ColorColumn
 ColorColumn::make('color')
 ```
 
-You may make the swatch copyable, such that clicking it inserts the CSS value into the OS's copy buffer, and optionally specify the copy confirmation message (default is 'Copied') and popup message timeout in MS (default 2000).
+You may make the color copyable, such that clicking on the preview it copies the CSS value to the clipboard, and optionally specify the copy confirmation message (default is 'Copied') and popup message timeout in MS (default 2000).  Copying only works on `https://` environments.
 
 ```php
 use Filament\Tables\Columns\ColorColumn
