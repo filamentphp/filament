@@ -105,17 +105,14 @@ return [
 
             'delete_item' => [
                 'label' => 'Delete',
-                'tooltip' => 'Delete',
             ],
 
             'move_item' => [
                 'label' => 'Move',
-                'tooltip' => 'Move',
             ],
 
             'clone_item' => [
                 'label' => 'Clone',
-                'tooltip' => 'Clone',
             ],
 
             'move_item_down' => [
@@ -128,12 +125,10 @@ return [
 
             'collapse_item' => [
                 'label' => 'Collapse',
-                'tooltip' => 'Collapse',
             ],
 
             'expand_item' => [
                 'label' => 'Expand',
-                'tooltip' => 'Expand',
             ],
 
             'collapse_all' => [

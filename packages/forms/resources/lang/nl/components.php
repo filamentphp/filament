@@ -104,17 +104,14 @@ return [
 
             'delete_item' => [
                 'label' => 'Verwijderen',
-                'tooltip' => 'Verwijderen',
             ],
 
             'clone_item' => [
                 'label' => 'Dupliceren',
-                'tooltip' => 'Dupliceren',
             ],
 
             'move_item' => [
                 'label' => 'Verplaatsen',
-                'tooltip' => 'Verplaatsen',
             ],
 
             'move_item_down' => [
@@ -127,12 +124,10 @@ return [
 
             'collapse_item' => [
                 'label' => 'Inklappen',
-                'tooltip' => 'Inklappen',
             ],
 
             'expand_item' => [
                 'label' => 'Uitklappen',
-                'tooltip' => 'Uitklappen',
             ],
 
             'collapse_all' => [
