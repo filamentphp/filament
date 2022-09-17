@@ -249,6 +249,7 @@ return [
                 'are_collapsible' => true,
             ],
             'width' => null,
+            'collapsed_width' => null,
         ],
     ],
 

@@ -8,6 +8,7 @@ class GlobalSearchResult
         public string $title,
         public string $url,
         public array $details = [],
+        public array $actions = [],
     ) {
     }
 }

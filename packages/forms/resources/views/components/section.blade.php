@@ -1,15 +1,25 @@
 <div
     @if ($isCollapsible())
-        x-data="{ isCollapsed: {{ $isCollapsed() ? 'true' : 'false' }} }"
+        x-data="{
+            isCollapsed: @js($isCollapsed()),
+        }"
         x-on:open-form-section.window="if ($event.detail.id == $el.id) isCollapsed = false"
         x-on:collapse-form-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
         x-on:toggle-form-section.window="if ($event.detail.id == $el.id) isCollapsed = ! isCollapsed"
         x-on:expand-concealing-component.window="
-            if ($event.detail.id === $el.id) {
-                isCollapsed = false
+            error = $el.querySelector('[data-validation-error]')
 
-                setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 100)
+            if (! error) {
+                return
             }
+
+            isCollapsed = false
+
+            if (document.body.querySelector('[data-validation-error]') !== error) {
+                return
+            }
+
+            setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
         "
     @endif
     id="{{ $getId() }}"
@@ -27,18 +37,7 @@
         ])
         @if ($isCollapsible())
             x-bind:class="{ 'rounded-b-xl': isCollapsed }"
-            x-on:click="
-                isCollapsed = ! isCollapsed
-
-                if (isCollapsed) {
-                    return
-                }
-
-                setTimeout(
-                    () => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }),
-                    100,
-                )
-            "
+            x-on:click="isCollapsed = ! isCollapsed"
         @endif
     >
         <div @class([
@@ -60,7 +59,8 @@
         </div>
 
         @if ($isCollapsible())
-            <button x-on:click.stop="isCollapsed = ! isCollapsed"
+            <button
+                x-on:click.stop="isCollapsed = ! isCollapsed"
                 x-bind:class="{
                     '-rotate-180': !isCollapsed,
                 }" type="button"
