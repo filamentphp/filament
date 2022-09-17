@@ -396,6 +396,29 @@ class Select extends Field
         return $results;
     }
 
+    public function getSearchResultsForJs(string $search): array
+    {
+        return $this->transformOptionsForJs($this->getSearchResults($search));
+    }
+
+    public function getOptionsForJs(): array
+    {
+        return $this->transformOptionsForJs($this->getOptions());
+    }
+
+    public function getOptionLabelsForJs(): array
+    {
+        return $this->transformOptionsForJs($this->getOptionLabels());
+    }
+
+    protected function transformOptionsForJs(array $options): array
+    {
+        return collect($options)
+            ->map(fn ($label, $value): array => ['label' => $label, 'value' => strval($value)])
+            ->values()
+            ->all();
+    }
+
     public function isHtmlAllowed(): bool
     {
         return $this->evaluate($this->isHtmlAllowed);
@@ -426,12 +449,16 @@ class Select extends Field
         $this->getSearchResultsUsing(static function (Select $component, ?string $search) use ($callback): array {
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getRelationshipTitleColumnName());
+            $relationshipQuery = $relationship->getRelated()->query();
 
             if ($callback) {
                 $relationshipQuery = $component->evaluate($callback, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
+            }
+
+            if (empty($relationshipQuery->getQuery()->orders)) {
+                $relationshipQuery->orderBy($component->getRelationshipTitleColumnName());
             }
 
             $component->applySearchConstraint(
@@ -470,12 +497,16 @@ class Select extends Field
 
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getRelationshipTitleColumnName());
+            $relationshipQuery = $relationship->getRelated()->query();
 
             if ($callback) {
                 $relationshipQuery = $component->evaluate($callback, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
+            }
+
+            if (empty($relationshipQuery->getQuery()->orders)) {
+                $relationshipQuery->orderBy($component->getRelationshipTitleColumnName());
             }
 
             $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
