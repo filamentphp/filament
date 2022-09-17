@@ -50,7 +50,7 @@
                         <x-heroicon-o-menu class="w-6 h-6" />
                     </button>
 
-                    <div class="flex items-center justify-between flex-1 gap-4">
+                    <div class="flex items-center justify-between flex-1">
                         <x-filament::layouts.app.topbar.breadcrumbs :breadcrumbs="$breadcrumbs" />
 
                         @livewire('filament.core.global-search')
