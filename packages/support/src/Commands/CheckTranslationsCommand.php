@@ -71,8 +71,10 @@ class CheckTranslationsCommand extends Command
                         ];
                     })
                     ->tap(function (Collection $files) use ($locale, $package) {
-                        $missingKeysCount = $files->sum(fn (array $file): int => count($file['missing']));
-                        $removedKeysCount = $files->sum(fn (array $file): int => count($file['removed']));
+                        /** @phpstan-ignore-next-line */
+                        $missingKeysCount = $files->sum(fn ($file): int => count($file['missing']));
+                        /** @phpstan-ignore-next-line */
+                        $removedKeysCount = $files->sum(fn ($file): int => count($file['removed']));
 
                         $locale = locale_get_display_name($locale, 'en');
 
@@ -88,8 +90,8 @@ class CheckTranslationsCommand extends Command
                             $this->warn("[!] Package filament/{$package} has {$removedKeysCount} removed translation keys for {$locale}.\n");
                         }
                     })
-                    ->filter(static fn (array $keys): bool => count($keys['missing']) || count($keys['removed']))
-                    ->each(function (array $keys, string $file) {
+                    ->filter(static fn ($keys): bool => count($keys['missing']) || count($keys['removed']))
+                    ->each(function ($keys, string $file) {
                         $this->table(
                             [$file, ''],
                             array_merge(
