@@ -3,6 +3,7 @@
 namespace Filament\Support;
 
 use Composer\InstalledVersions;
+use Filament\Support\Commands\CheckTranslationsCommand;
 use Filament\Support\Commands\UpgradeCommand;
 use Filament\Support\Testing\TestsActions;
 use HtmlSanitizer\Sanitizer;
@@ -21,7 +22,10 @@ class SupportServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('filament-support')
-            ->hasCommand(UpgradeCommand::class)
+            ->hasCommands([
+                CheckTranslationsCommand::class,
+                UpgradeCommand::class,
+            ])
             ->hasConfigFile()
             ->hasTranslations()
             ->hasViews();
