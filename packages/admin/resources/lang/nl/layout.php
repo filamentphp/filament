@@ -11,7 +11,7 @@ return [
         ],
 
         'database_notifications' => [
-            'label' => 'Open meldingen',
+            'label' => 'Meldingen openen',
         ],
 
         'light_mode' => [
