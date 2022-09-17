@@ -48,7 +48,7 @@
         x-transition:leave-end="opacity-0"
         x-cloak
         @class([
-            'fixed inset-0 z-40 flex items-center min-h-screen overflow-y-auto transition',
+            'fixed inset-0 z-40 flex items-center min-h-screen overflow-y-auto overflow-x-hidden transition',
             'p-4' => ! $slideOver,
         ])
     >
@@ -119,7 +119,7 @@
                     <button
                         tabindex="-1"
                         type="button"
-                        class="absolute top-2 right-2"
+                        class="absolute top-2 right-2 rtl:right-0 rtl:left-2"
                     >
                         <x-heroicon-s-x
                             class="filament-modal-close-button h-4 w-4 cursor-pointer text-gray-400"

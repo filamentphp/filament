@@ -155,6 +155,22 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('title')->searchable(isIndividual: true, isGlobal: false)
 ```
 
+#### Persist search in session
+
+To persist the table or individual column search in the user's session, override the `shouldPersistTableSearchInSession()` or `shouldPersistTableColumnSearchInSession()` method on the Livewire component:
+
+```php
+protected function shouldPersistTableSearchInSession(): bool
+{
+    return true;
+}
+
+protected function shouldPersistTableColumnSearchInSession(): bool
+{
+    return true;
+}
+```
+
 ### Cell actions and URLs
 
 When a cell is clicked, you may run an "action", or open a URL.

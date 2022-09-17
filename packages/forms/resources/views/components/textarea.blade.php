@@ -30,10 +30,10 @@
                 ->merge($getExtraAttributes())
                 ->merge($getExtraInputAttributeBag()->getAttributes())
                 ->class([
-                    'filament-forms-textarea-component block w-full rounded-lg border-none px-3 py-2 shadow-sm ring-1 ring-inset transition duration-75 focus:ring-2 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 sm:py-2.5 sm:text-sm',
-                    'dark:bg-gray-700 dark:text-white dark:ring-gray-600 dark:focus:ring-primary-500' => config('forms.dark_mode'),
-                    'ring-gray-300' => ! $errors->has($getStatePath()),
-                    'ring-danger-500' => $errors->has($getStatePath()),
+                    'filament-forms-textarea-component block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70',
+                    'dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:border-primary-500' => config('forms.dark_mode'),
+                    'border-gray-300' => ! $errors->has($getStatePath()),
+                    'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
                 ])
         }}
         @if ($shouldAutosize())
