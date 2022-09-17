@@ -82,7 +82,7 @@ class TernaryFilter extends SelectFilter
                     );
                 }
 
-                return $query->whereNotNull($this->getColumn());
+                return $query->whereNotNull($this->getAttribute());
             },
             false: function (Builder $query): Builder {
                 if ($this->queriesRelationships()) {
@@ -93,7 +93,7 @@ class TernaryFilter extends SelectFilter
                     );
                 }
 
-                return $query->whereNull($this->getColumn());
+                return $query->whereNull($this->getAttribute());
             },
         );
 
@@ -112,7 +112,7 @@ class TernaryFilter extends SelectFilter
                     );
                 }
 
-                return $query->where($this->getColumn(), true);
+                return $query->where($this->getAttribute(), true);
             },
             false: function (Builder $query): Builder {
                 if ($this->queriesRelationships()) {
@@ -123,7 +123,7 @@ class TernaryFilter extends SelectFilter
                     );
                 }
 
-                return $query->where($this->getColumn(), false);
+                return $query->where($this->getAttribute(), false);
             },
         );
 

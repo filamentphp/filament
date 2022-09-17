@@ -14,7 +14,7 @@ class MultiSelectFilter extends BaseFilter
     use Concerns\HasPlaceholder;
     use Concerns\HasRelationship;
 
-    protected string | Closure | null $column = null;
+    protected string | Closure | null $attribute = null;
 
     protected bool | Closure $isStatic = false;
 
@@ -66,14 +66,24 @@ class MultiSelectFilter extends BaseFilter
         }
 
         /** @var Builder $query */
-        $query = $query->whereIn($this->getColumn(), $data['values']);
+        $query = $query->whereIn($this->getAttribute(), $data['values']);
 
         return $query;
     }
 
+    public function attribute(string | Closure | null $name): static
+    {
+        $this->attribute = $name;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `attribute()` instead.
+     */
     public function column(string | Closure | null $name): static
     {
-        $this->column = $name;
+        $this->attribute($name);
 
         return $this;
     }
@@ -85,9 +95,17 @@ class MultiSelectFilter extends BaseFilter
         return $this;
     }
 
+    public function getAttribute(): string
+    {
+        return $this->evaluate($this->attribute) ?? $this->getName();
+    }
+
+    /**
+     * @deprecated Use `getAttribute()` instead.
+     */
     public function getColumn(): string
     {
-        return $this->evaluate($this->column) ?? $this->getName();
+        return $this->getAttribute();
     }
 
     protected function getFormField(): Select
