@@ -2,6 +2,7 @@
     'color' => 'primary',
     'darkMode' => false,
     'disabled' => false,
+    'form' => null,
     'icon' => null,
     'keyBindings' => null,
     'indicator' => null,
@@ -42,6 +43,12 @@
         'bg-success-500/10' => $color === 'success',
         'bg-warning-500/10' => $color === 'warning',
     ]);
+
+    $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || (($type === 'submit') && filled($form));
+
+    if ($hasLoadingIndicator) {
+        $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click', $form)), ENT_QUOTES);
+    }
 @endphp
 
 @if ($tag === 'button')
@@ -68,7 +75,21 @@
             </span>
         @endif
 
-        <x-dynamic-component :component="$icon" :class="$iconClasses" />
+        <x-dynamic-component
+            :component="$icon"
+            :wire:loading.remove.delay="$hasLoadingIndicator"
+            :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+            :class="$iconClasses"
+        />
+
+        @if ($hasLoadingIndicator)
+            <x-filament-support::loading-indicator
+                x-cloak
+                wire:loading.delay
+                :wire:target="$loadingIndicatorTarget"
+                :class="$iconClasses"
+            />
+        @endif
 
         @if ($indicator)
             <span class="{{ $indicatorClasses }}">

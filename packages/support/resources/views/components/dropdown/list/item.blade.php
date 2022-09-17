@@ -39,15 +39,38 @@
         'text-success-500' => $color === 'success',
         'text-warning-500' => $color === 'warning',
     ]);
+
+    $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click'));
+
+    if ($hasLoadingIndicator) {
+        $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click')), ENT_QUOTES);
+    }
 @endphp
 
 @if ($tag === 'button')
     <button
         type="{{ $type }}"
+        wire:loading.attr="disabled"
+        {!! $hasLoadingIndicator ? 'wire:loading.class.delay="opacity-70 cursor-wait"' : '' !!}
+        {!! ($hasLoadingIndicator && $loadingIndicatorTarget) ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
         {{ $attributes->class([$buttonClasses]) }}
     >
         @if ($icon)
-            <x-dynamic-component :component="$icon" :class="$iconClasses" />
+            <x-dynamic-component
+                :component="$icon"
+                :wire:loading.remove.delay="$hasLoadingIndicator"
+                :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+                :class="$iconClasses"
+            />
+        @endif
+
+        @if ($hasLoadingIndicator)
+            <x-filament-support::loading-indicator
+                x-cloak
+                wire:loading.delay
+                :wire:target="$loadingIndicatorTarget"
+                :class="$iconClasses"
+            />
         @endif
 
         <span class="{{ $labelClasses }}">
