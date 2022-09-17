@@ -408,7 +408,15 @@ There is also a `money()` method that is able to define easier formatting for cu
 ```php
 use Filament\Forms\Components\TextInput;
 
-TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask->money('$', ',', 2))
+TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask->money(prefix: '$', thousandsSeparator: ',', decimalPlaces: 2))
+```
+
+You can also control whether the number is signed or not. While the default is to allow both negative and positive numbers, `isSigned: false` allows only positive numbers:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask->money(prefix: '$', thousandsSeparator: ',', decimalPlaces: 2, isSigned: false))
 ```
 
 ### Datalists
@@ -442,7 +450,7 @@ use Filament\Forms\Components\Select;
 Select::make('status')
     ->options([
         'draft' => 'Draft',
-        'review' => 'In review',
+        'reviewing' => 'Reviewing',
         'published' => 'Published',
     ])
 ```
@@ -484,7 +492,7 @@ use Filament\Forms\Components\Select;
 Select::make('status')
     ->options([
         'draft' => 'Draft',
-        'review' => 'In review',
+        'reviewing' => 'Reviewing',
         'published' => 'Published',
     ])
     ->default('draft')
@@ -1899,7 +1907,7 @@ Inside your view, you may interact with the state of the form component using Li
 
 The `$getStatePath()` closure may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js.
 
-Using [Livewire's entangle](https://laravel-livewire.com/docs/2.x/alpine-js#sharing-state) allows sharing state with Alpine.js:
+Using [Livewire's entangle](https://laravel-livewire.com/docs/alpine-js#sharing-state) allows sharing state with Alpine.js:
 
 ```blade
 <x-forms::field-wrapper

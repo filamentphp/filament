@@ -40,6 +40,7 @@
             :wire:key="$action ? $this->id . '.actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
+            :slide-over="$action?->isModalSlideOver()"
             display-classes="block"
         >
             @if ($action)

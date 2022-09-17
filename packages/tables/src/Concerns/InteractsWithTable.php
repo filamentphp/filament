@@ -49,6 +49,7 @@ trait InteractsWithTable
         $this->cacheTableHeaderActions();
 
         $this->cacheTableColumns();
+        $this->cacheTableColumnActions();
         $this->cacheForm('toggleTableColumnForm', $this->getTableColumnToggleForm());
 
         $this->cacheTableFilters();
@@ -77,6 +78,18 @@ trait InteractsWithTable
         }
 
         $this->getTableFiltersForm()->fill($this->tableFilters);
+
+        $searchSessionKey = $this->getTableSearchSessionKey();
+
+        if ($this->shouldPersistTableSearchInSession() && session()->has($searchSessionKey)) {
+            $this->tableSearchQuery = session()->get($searchSessionKey) ?? '';
+        }
+
+        $columnSearchSessionKey = $this->getTableColumnSearchSessionKey();
+
+        if ($this->shouldPersistTableColumnSearchInSession() && session()->has($columnSearchSessionKey)) {
+            $this->tableColumnSearchQueries = session()->get($columnSearchSessionKey) ?? [];
+        }
 
         $this->hasMounted = true;
     }

@@ -5,7 +5,7 @@
 @if (count($indicators))
     <div {{ $attributes->class(['filament-tables-filter-indicators bg-gray-500/5 gap-x-4 px-4 py-1 text-sm flex']) }}>
         <div class="flex flex-1 items-center flex-wrap gap-y-1 gap-x-2">
-            <span class="font-medium">
+            <span class="font-medium dark:text-gray-200">
                 {{ __('tables::table.filters.indicator') }}
             </span>
 

@@ -192,6 +192,15 @@ protected function getSteps(): array
 
 Now, visit the Create page to see your wizard in action! The Edit page will still use the form defined within the resource class.
 
+If you'd like to allow free navigation, so all the steps are skippable, override the `hasSkippableSteps()` method:
+
+```php
+public function hasSkippableSteps(): bool
+{
+    return true;
+}
+```
+
 ### Sharing fields between the resource form and wizards
 
 If you'd like to reduce the amount of repetition between the resource form and wizard steps, it's a good idea to extract public static resource functions for your fields, where you can easily retrieve an instance of a field from the resource or the wizard:

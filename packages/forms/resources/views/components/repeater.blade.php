@@ -62,11 +62,28 @@
                 >
                     @foreach ($containers as $uuid => $item)
                         <li
-                            x-data="{ isCollapsed: @js($isCollapsed()) }"
+                            x-data="{
+                                isCollapsed: @js($isCollapsed()),
+                            }"
                             x-on:repeater-collapse.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = true)"
                             x-on:repeater-expand.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = false)"
                             wire:key="{{ $this->id }}.{{ $item->getStatePath() }}.item"
                             wire:sortable.item="{{ $uuid }}"
+                            x-on:expand-concealing-component.window="
+                                error = $el.querySelector('[data-validation-error]')
+
+                                if (! error) {
+                                    return
+                                }
+
+                                isCollapsed = false
+
+                                if (document.body.querySelector('[data-validation-error]') !== error) {
+                                    return
+                                }
+
+                                setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
+                            "
                             @class([
                                 'bg-white border border-gray-300 shadow-sm rounded-xl relative',
                                 'dark:bg-gray-800 dark:border-gray-600' => config('forms.dark_mode'),

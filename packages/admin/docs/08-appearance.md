@@ -20,7 +20,7 @@ If you enabled the [collapsible sidebar](#collapsible-sidebar), you may also pro
 
 ## Dark mode
 
-By default, Filament only includes a light theme. However, you may allow the user to switch to dark mode if they wish, using the `dark_mode` setting of the [configuration file](installation#publishing-the-configuration):
+By default, Filament only includes a light theme. However, you may allow the user to switch to dark mode if they wish, using the `dark_mode` setting of the [configuration file](installation#publishing-configuration):
 
 ```php
 'dark_mode' => true,
@@ -53,7 +53,7 @@ When the user toggles between dark or light mode, a browser event called **dark-
 
 By default, the sidebar is only collapsible on mobile. You may make it collapsible on desktop as well.
 
-You must [publish the configuration](installation#publishing-the-configuration) in order to access this feature.
+You must [publish the configuration](installation#publishing-configuration) in order to access this feature.
 
 In `config/filament.php`, set the `layouts.sidebar.is_collapsible_on_desktop` to `true`:
 
@@ -63,6 +63,18 @@ In `config/filament.php`, set the `layouts.sidebar.is_collapsible_on_desktop` to
         'is_collapsible_on_desktop' => true,
     ],
 ],
+```
+
+## Non-sticky topbar
+
+By default, the topbar sticks to the top of the page.
+
+You may make the topbar scroll out of view instead by adding the following styles to your [theme](#building-theme) or by [registering a new stylesheet](#including-frontend-assets):
+
+```css
+.filament-main-topbar {
+    position: relative;
+}
 ```
 
 ## Building themes
@@ -176,7 +188,7 @@ Filament::serving(function () {
 
 If you specify a custom font family in your `tailwind.config.js`, you may wish to import it via Google Fonts.
 
-You must [publish the configuration](installation#publishing-the-configuration) in order to access this feature.
+You must [publish the configuration](installation#publishing-configuration) in order to access this feature.
 
 Set the `google_fonts` config option to a new Google Fonts URL to load:
 
@@ -188,7 +200,7 @@ Set the `google_fonts` config option to a new Google Fonts URL to load:
 
 Filament exposes a configuration option that allows you to change the maximum content width of all pages.
 
-You must [publish the configuration](installation#publishing-the-configuration) in order to access this feature.
+You must [publish the configuration](installation#publishing-configuration) in order to access this feature.
 
 In `config/filament.php`, set the `layouts.max_content_width` to any value between `xl` and `7xl`, or `full` for no max width:
 

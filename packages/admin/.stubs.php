@@ -43,6 +43,14 @@ namespace Livewire\Testing {
 
         public function assertPageActionDoesNotHaveColor(string $name, string $color): static {}
 
+        public function assertPageActionHasUrl(string $name, string $url): static {}
+
+        public function assertPageActionDoesNotHaveUrl(string $name, string $url): static {}
+
+        public function assertPageActionShouldOpenUrlInNewTab(string $name): static {}
+
+        public function assertPageActionShouldNotOpenUrlInNewTab(string $name): static {}
+
         public function assertPageActionDoesNotHaveLabel(string $name, string $label): static {}
 
         public function assertPageActionHeld(string $name): static {}

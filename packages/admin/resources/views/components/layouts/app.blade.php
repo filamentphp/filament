@@ -3,7 +3,7 @@
 ])
 
 <x-filament::layouts.base :title="$title">
-    <div class="filament-app-layout flex w-full min-h-screen overflow-x-hidden">
+    <div class="filament-app-layout flex w-full min-h-screen overflow-x-clip">
         <div
             x-data="{}"
             x-cloak
@@ -31,7 +31,7 @@
             ])
         >
             <header @class([
-                'filament-main-topbar h-[4rem] shrink-0 w-full border-b flex items-center',
+                'filament-main-topbar sticky top-0 z-10 flex h-16 w-full shrink-0 items-center border-b bg-white',
                 'dark:bg-gray-800 dark:border-gray-700' => config('filament.dark_mode'),
             ])>
                 <div @class([
@@ -54,6 +54,8 @@
                         <x-filament::layouts.app.topbar.breadcrumbs :breadcrumbs="$breadcrumbs" />
 
                         @livewire('filament.core.global-search')
+
+                        @livewire('filament.core.notifications')
 
                         <x-filament::layouts.app.topbar.user-menu />
                     </div>
@@ -84,8 +86,6 @@
             <div class="filament-main-footer py-4 shrink-0">
                 <x-filament::footer />
             </div>
-
-            @livewire('notifications')
         </div>
     </div>
 </x-filament::layouts.base>

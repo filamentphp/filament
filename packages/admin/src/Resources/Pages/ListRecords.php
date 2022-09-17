@@ -421,7 +421,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
                     continue;
                 }
 
-                if (! $resource::can($action, $record)) {
+                if (! $resource::{'can' . ucfirst($action)}($record)) {
                     continue;
                 }
 

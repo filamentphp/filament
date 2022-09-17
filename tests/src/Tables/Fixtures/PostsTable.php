@@ -19,14 +19,21 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
         return [
             Tables\Columns\TextColumn::make('title')
                 ->sortable()
-                ->searchable(),
+                ->searchable()
+                ->action(fn () => $this->emit('title-action-called')),
             Tables\Columns\TextColumn::make('author.name')
                 ->sortable()
-                ->searchable(),
+                ->searchable()
+                ->action(
+                    Tables\Actions\Action::make('column-action-object')
+                        ->action(fn () => $this->emit('column-action-object-called')),
+                ),
             Tables\Columns\BooleanColumn::make('is_published'),
             Tables\Columns\TextColumn::make('visible'),
             Tables\Columns\TextColumn::make('hidden')
                 ->hidden(),
+            Tables\Columns\TextColumn::make('with_state')
+                ->getStateUsing(fn () => 'correct state'),
         ];
     }
 
@@ -76,6 +83,12 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
             Tables\Actions\Action::make('has-color')
                 ->color('primary'),
             Tables\Actions\Action::make('exists'),
+            Tables\Actions\Action::make('url')
+                ->url('https://filamentphp.com'),
+            Tables\Actions\Action::make('url_in_new_tab')
+                ->url('https://filamentphp.com', true),
+            Tables\Actions\Action::make('url_not_in_new_tab')
+                ->url('https://filamentphp.com'),
         ];
     }
 

@@ -39,7 +39,9 @@
         </a>
     @elseif ($action || $recordAction)
         @php
-            if ($action) {
+            if ($action instanceof \Filament\Tables\Actions\Action) {
+                $wireClickAction = "mountTableAction('{$action->getName()}', '%s')";
+            } elseif ($action) {
                 $wireClickAction = "callTableColumnAction('{$name}', '%s')";
             } else {
                 if ($this->getCachedTableAction($recordAction)) {

@@ -109,6 +109,21 @@
             'file' => 'app.js',
         ]) }}"></script>
 
+        @if (config('filament.broadcasting.echo'))
+            <script defer src="{{ route('filament.asset', [
+                'id' => Filament\get_asset_id('echo.js'),
+                'file' => 'echo.js',
+            ]) }}"></script>
+
+            <script>
+                window.addEventListener('DOMContentLoaded', () => {
+                    window.Echo = new window.EchoFactory(@js(config('filament.broadcasting.echo')))
+
+                    window.dispatchEvent(new CustomEvent('EchoLoaded'))
+                })
+            </script>
+        @endif
+
         @foreach (\Filament\Facades\Filament::getScripts() as $name => $path)
             @if (\Illuminate\Support\Str::of($path)->startsWith(['http://', 'https://']))
                 <script defer src="{{ $path }}"></script>

@@ -26,9 +26,11 @@
         </x-filament-support::icon-button>
     </x-slot>
 
-    @foreach ($actions as $action)
-        @if (! $action->isHidden())
-            {{ $action }}
-        @endif
-    @endforeach
+    <x-filament-support::dropdown.list>
+        @foreach ($actions as $action)
+            @if (! $action->isHidden())
+                {{ $action }}
+            @endif
+        @endforeach
+    </x-filament-support::dropdown.list>
 </x-filament-support::dropdown>
