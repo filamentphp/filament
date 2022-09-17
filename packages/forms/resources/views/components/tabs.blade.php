@@ -12,13 +12,6 @@
         },
 
     }"
-    x-on:expand-concealing-component.window="
-        if (getTabs().includes($event.detail.id)) {
-            tab = $event.detail.id
-            $el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }
-    "
-    data-tabs-container
     x-cloak
     {!! $getId() ? "id=\"{$getId()}\"" : null !!}
     {{ $attributes->merge($getExtraAttributes())->class([

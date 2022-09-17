@@ -1,31 +1,25 @@
 <div
     @if ($isCollapsible())
         x-data="{
-
             isCollapsed: @js($isCollapsed()),
-
-            get hasValidationErrors() {
-                return $el.querySelector('[data-validation-error]')
-            },
-
         }"
         x-on:open-form-section.window="if ($event.detail.id == $el.id) isCollapsed = false"
         x-on:collapse-form-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
         x-on:toggle-form-section.window="if ($event.detail.id == $el.id) isCollapsed = ! isCollapsed"
         x-on:expand-concealing-component.window="
-            if ($event.detail.id === $el.id) {
-                isCollapsed = false
+            error = $el.querySelector('[data-validation-error]')
 
-                setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
-
+            if (! error) {
                 return
             }
 
-            if (! isCollapsed) {
+            isCollapsed = false
+
+            if (document.body.querySelector('[data-validation-error]') !== error) {
                 return
             }
 
-            isCollapsed = ! hasValidationErrors
+            setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
         "
     @endif
     id="{{ $getId() }}"

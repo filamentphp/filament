@@ -59,15 +59,8 @@
                 @foreach ($containers as $uuid => $item)
                     <li
                         x-data="{
-
                             isCreateButtonVisible: false,
-
                             isCollapsed: @js($isCollapsed()),
-
-                            get hasValidationErrors() {
-                                return $el.querySelector('[data-validation-error]')
-                            },
-
                         }"
                         x-on:builder-collapse.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = true)"
                         x-on:builder-expand.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = false)"
@@ -78,19 +71,19 @@
                         wire:key="{{ $this->id }}.{{ $item->getStatePath() }}.item"
                         wire:sortable.item="{{ $uuid }}"
                         x-on:expand-concealing-component.window="
-                            if ($event.detail.id === $el.id) {
-                                isCollapsed = false
+                            error = $el.querySelector('[data-validation-error]')
 
-                                setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
-
+                            if (! error) {
                                 return
                             }
 
-                            if (! isCollapsed) {
+                            isCollapsed = false
+
+                            if (document.body.querySelector('[data-validation-error]') !== error) {
                                 return
                             }
 
-                            isCollapsed = ! hasValidationErrors
+                            setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
                         "
                         @class([
                             'bg-white border border-gray-300 shadow-sm rounded-xl relative',
