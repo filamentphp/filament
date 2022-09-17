@@ -6,14 +6,15 @@ use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Symfony\Component\Console\Exception\InvalidOptionException;
 use Symfony\Component\Finder\SplFileInfo;
 
 class CheckMissingTranslationsCommand extends Command
 {
     protected $signature = 'filament:check-translations
-                            {lang*              : The lang to compare against the base translation. Accepts multiple values.}
-                            {--D|dir=app        : The directory containing the translations. \'app\' and \'vendor\' are accepted values.}';
+                            {locale*         : The locale to compare against the base translation. Accepts multiple values.}
+                            {--source=vendor : The directory containing the translations. \'vendor\' and \'app\' are accepted values.}';
 
     protected $description = 'Scan translation files and compare each of them with the base translation. Outputs missing and removed translations.';
 
@@ -21,88 +22,85 @@ class CheckMissingTranslationsCommand extends Command
     {
         $this->scan('filament');
         $this->scan('forms');
+        $this->scan('notifications');
         $this->scan('support');
         $this->scan('tables');
-        $this->scan('notifications');
 
         return self::SUCCESS;
     }
 
     protected function scan(string $package)
     {
-        $langRoot = match ($dir = $this->option('dir')) {
+        $localeRootDirectory = match ($source = $this->option('source')) {
             'app' => lang_path("vendor/{$package}"),
             'vendor' => base_path("vendor/filament/{$package}/resources/lang"),
-            default => throw new InvalidOptionException("{$dir} is not a valid 'dir' option.")
+            default => throw new InvalidOptionException("{$source} is not a valid translation source. Must be `vendor` or `app`.")
         };
 
         $filesystem = app(Filesystem::class);
 
-        if (! $filesystem->exists($langRoot)) {
+        if (! $filesystem->exists($localeRootDirectory)) {
             return;
         }
 
-        $langs = collect($filesystem->directories($langRoot))
-            ->mapWithKeys(static fn ($directory) => [$directory => (string) str($directory)->afterLast('/')])
+        collect($filesystem->directories($localeRootDirectory))
+            ->mapWithKeys(static fn (string $directory): array => [$directory => (string) Str::of($directory)->afterLast('/')])
             ->when(
-                $langs = $this->argument('lang'),
-                fn (Collection $availableLangs) => $availableLangs
-                    ->filter(
-                        fn ($lang) => in_array($lang, $langs)
-                    )
+                $locales = $this->argument('locale'),
+                fn (Collection $availableLocales): Collection => $availableLocales->filter(fn (string $locale): bool => in_array($locale, $locales))
             )
-            ->all();
+            ->each(function (string $locale, string $localeDir) use ($filesystem, $localeRootDirectory, $package) {
+                $files = $filesystem->allFiles($localeDir);
 
-        foreach ($langs as $langDir => $lang) {
-            $files = $filesystem->allFiles($langDir);
+                collect($files)
+                    ->mapWithKeys(function (SplFileInfo $file) use ($localeDir, $localeRootDirectory) {
+                        $expectedKeys = require implode(DIRECTORY_SEPARATOR, [$localeRootDirectory, 'en', $file->getRelativePathname()]);
+                        $actualKeys = require $file->getPathname();
 
-            collect($files)
-                ->mapWithKeys(function (SplFileInfo $file) use ($langRoot) {
-                    $base = require implode(DIRECTORY_SEPARATOR, [$langRoot, 'en', $file->getRelativePathname()]);
-                    $trans = require $file->getPathname();
+                        return [
+                            (string) Str::of($file->getPathname())->after("{$localeDir}/") => [
+                                'missing' => array_keys(array_diff_key(
+                                    Arr::dot($expectedKeys),
+                                    Arr::dot($actualKeys)
+                                )),
+                                'removed' => array_keys(array_diff_key(
+                                    Arr::dot($actualKeys),
+                                    Arr::dot($expectedKeys)
+                                )),
+                            ],
+                        ];
+                    })
+                    ->tap(function (Collection $files) use ($locale, $package) {
+                        $missingKeysCount = $files->sum(fn (array $file): int => count($file['missing']));
+                        $removedKeysCount = $files->sum(fn (array $file): int => count($file['removed']));
 
-                    $missingKeys = array_diff_key(
-                        Arr::dot($base),
-                        Arr::dot($trans)
-                    );
+                        $locale = locale_get_display_name($locale, 'en');
 
-                    $removedKeys = array_diff_key(
-                        Arr::dot($trans),
-                        Arr::dot($base)
-                    );
+                        if ($missingKeysCount == 0 && $removedKeysCount == 0) {
+                            $this->info("[✓] Package filament/{$package} has no missing or removed translation keys for {$locale}!\n");
 
-                    return [
-                        $file->getPathname() => [
-                            'missing' => array_keys($missingKeys),
-                            'removed' => array_keys($removedKeys),
-                        ],
-                    ];
-                })
-                ->tap(function ($files) use ($lang, $package) {
-                    $missingCount = $files->sum(fn ($file) => count($file['missing']));
-                    $removedCount = $files->sum(fn ($file) => count($file['removed']));
+                            $this->newLine();
+                        } elseif ($missingKeysCount > 0 && $removedKeysCount > 0) {
+                            $this->warn("[!] Package filament/{$package} has {$missingKeysCount} missing translation keys and {$removedKeysCount} removed translation keys for {$locale}.\n");
+                        } elseif ($missingKeysCount > 0) {
+                            $this->warn("[!] Package filament/{$package} has {$missingKeysCount} missing translation keys for {$locale}.\n");
+                        } elseif ($removedKeysCount > 0) {
+                            $this->warn("[!] Package filament/{$package} has {$removedKeysCount} removed translation keys for {$locale}.\n");
+                        }
+                    })
+                    ->filter(static fn (array $keys): bool => count($keys['missing']) || count($keys['removed']))
+                    ->each(function (array $keys, string $file) {
+                        $this->table(
+                            [$file, ''],
+                            array_merge(
+                                array_map(fn (string $key) => [$key, 'Missing'], $keys['missing']),
+                                array_map(fn (string $key) => [$key, 'Removed'], $keys['removed']),
+                            ),
+                            'box',
+                        );
 
-                    if ($missingCount == 0 && $removedCount == 0) {
-                        $this->info("[✓] Package filament/{$package} has no missing or removed translation keys for lang {$lang}!\n");
-                    } elseif ($missingCount > 0 && $removedCount > 0) {
-                        $this->warn("[!] Package filament/{$package} has {$missingCount} missing translation keys and {$removedCount} removed translation keys for lang {$lang}.\n");
-                    } elseif ($missingCount > 0) {
-                        $this->warn("[!] Package filament/{$package} has {$missingCount} missing translation keys for lang {$lang}.\n");
-                    } elseif ($removedCount > 0) {
-                        $this->warn("[!] Package filament/{$package} has {$removedCount} removed translation keys for lang {$lang}.\n");
-                    }
-                })
-                ->filter(static fn ($keys) => count($keys['missing']) || count($keys['removed']))
-                ->each(function ($keys, $file) {
-                    $this->table(
-                        ['File', 'Missing Keys', 'Removed keys'],
-                        [
-                            [$file, implode(', ', $keys['missing']), implode(', ', $keys['removed'])],
-                        ],
-                        'box'
-                    );
-                    $this->newLine();
-                });
-        }
+                        $this->newLine();
+                    });
+            });
     }
 }
