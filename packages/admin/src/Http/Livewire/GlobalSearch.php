@@ -4,6 +4,7 @@ namespace Filament\Http\Livewire;
 
 use Filament\Facades\Filament;
 use Filament\GlobalSearch\GlobalSearchResults;
+use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
 class GlobalSearch extends Component
@@ -40,7 +41,7 @@ class GlobalSearch extends Component
         return false;
     }
 
-    public function render()
+    public function render(): View
     {
         return view('filament::components.global-search.index', [
             'results' => $this->getResults(),

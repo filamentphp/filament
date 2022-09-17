@@ -75,6 +75,10 @@ class BaseFileUpload extends Field
         });
 
         $this->afterStateUpdated(static function (BaseFileUpload $component, $state) {
+            if ($state instanceof TemporaryUploadedFile) {
+                return;
+            }
+
             if (blank($state)) {
                 return;
             }

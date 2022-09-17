@@ -20,11 +20,15 @@ class AttachAction extends Action
 
     protected ?Closure $modifyRecordSelectUsing = null;
 
+    protected ?Closure $modifyRecordSelectOptionsQueryUsing = null;
+
     protected bool | Closure $isAttachAnotherDisabled = false;
 
     protected bool | Closure $isRecordSelectPreloaded = false;
 
     protected string | Closure | null $recordTitleAttribute = null;
+
+    protected array | Closure | null $recordSelectSearchColumns = null;
 
     public static function getDefaultName(): ?string
     {
@@ -93,6 +97,13 @@ class AttachAction extends Action
         return $this;
     }
 
+    public function recordSelectOptionsQuery(?Closure $callback): static
+    {
+        $this->modifyRecordSelectOptionsQueryUsing = $callback;
+
+        return $this;
+    }
+
     public function recordTitleAttribute(string | Closure | null $attribute): static
     {
         $this->recordTitleAttribute = $attribute;
@@ -135,6 +146,18 @@ class AttachAction extends Action
         return $attribute;
     }
 
+    public function recordSelectSearchColumns(array | Closure | null $columns): static
+    {
+        $this->recordSelectSearchColumns = $columns;
+
+        return $this;
+    }
+
+    public function getRecordSelectSearchColumns(): ?array
+    {
+        return $this->evaluate($this->recordSelectSearchColumns);
+    }
+
     public function getRecordSelect(): Select
     {
         $getOptions = function (?string $search = null, ?array $searchColumns = []): array {
@@ -144,6 +167,12 @@ class AttachAction extends Action
             $titleColumnName = $this->getRecordTitleAttribute();
 
             $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleColumnName);
+
+            if ($this->modifyRecordSelectOptionsQueryUsing) {
+                $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
+                    'query' => $relationshipQuery,
+                ]) ?? $relationshipQuery;
+            }
 
             if (filled($search)) {
                 $search = strtolower($search);
@@ -196,7 +225,7 @@ class AttachAction extends Action
         $select = Select::make('recordId')
             ->label(__('filament-support::actions/attach.single.modal.fields.record_id.label'))
             ->required()
-            ->searchable()
+            ->searchable($this->getRecordSelectSearchColumns() ?? true)
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(search: $search, searchColumns: $component->getSearchColumns()))
             ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle($this->getRelationship()->getRelated()->query()->find($value)))
             ->options(fn (): array => $this->isRecordSelectPreloaded() ? $getOptions() : [])

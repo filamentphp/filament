@@ -49,6 +49,14 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')->label(__('fields.name'))
 ```
 
+Optionally, you can have the label automatically translated by using the `translateLabel()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')->translateLabel() // Equivalent to `label(__('Name'))`
+```
+
 ### Setting an ID
 
 In the same way as labels, field IDs are also automatically determined based on their names. To override a field ID, use the `id()` method:
@@ -281,8 +289,6 @@ TextInput::make('name')
     ->maxLength(255)
 ```
 
-> When using `minLength()` or `maxLength()` with `numeric()`, be aware that the validation will apply to the value of the input instead of its length. This is in line with the behaviour of Laravel's `min` and `max` validation rules.
-
 You may also specify the exact length of the input by setting the `length()`. This method adds both frontend and backend validation:
 
 ```php
@@ -290,8 +296,6 @@ use Filament\Forms\Components\TextInput;
 
 TextInput::make('code')->length(8)
 ```
-
-Internally, this uses the `size` rule by default, and the `digits` rule for numeric inputs.
 
 In addition, you may validate the minimum and maximum value of the input by setting the `minValue()` and `maxValue()` methods:
 
@@ -404,7 +408,15 @@ There is also a `money()` method that is able to define easier formatting for cu
 ```php
 use Filament\Forms\Components\TextInput;
 
-TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask->money('$', ',', 2))
+TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask->money(prefix: '$', thousandsSeparator: ',', decimalPlaces: 2))
+```
+
+You can also control whether the number is signed or not. While the default is to allow both negative and positive numbers, `isSigned: false` allows only positive numbers:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask->money(prefix: '$', thousandsSeparator: ',', decimalPlaces: 2, isSigned: false))
 ```
 
 ### Datalists
@@ -438,7 +450,7 @@ use Filament\Forms\Components\Select;
 Select::make('status')
     ->options([
         'draft' => 'Draft',
-        'review' => 'In review',
+        'reviewing' => 'Reviewing',
         'published' => 'Published',
     ])
 ```
@@ -480,7 +492,7 @@ use Filament\Forms\Components\Select;
 Select::make('status')
     ->options([
         'draft' => 'Draft',
-        'review' => 'In review',
+        'reviewing' => 'Reviewing',
         'published' => 'Published',
     ])
     ->default('draft')
@@ -764,6 +776,16 @@ use Filament\Forms\Components\Toggle;
 Toggle::make('is_admin')
     ->onIcon('heroicon-s-lightning-bolt')
     ->offIcon('heroicon-s-user')
+```
+
+You may also customize the color representing each state. These may be either `primary`, `secondary`, `success`, `warning` or `danger`:
+
+```php
+use Filament\Forms\Components\Toggle;
+
+Toggle::make('is_admin')
+    ->onColor('success')
+    ->offColor('danger')
 ```
 
 ![](https://user-images.githubusercontent.com/41773797/147613184-9086c102-ad71-4c4e-9170-9a4201a80c66.png)
@@ -1826,6 +1848,15 @@ KeyValue::make('meta')
     ->disableEditingKeys()
 ```
 
+You can allow the user to reorder rows within the table:
+
+```php
+use Filament\Forms\Components\KeyValue;
+
+KeyValue::make('meta')
+    ->reorderable()
+```
+
 You may also add placeholders for the key and value fields using the `keyPlaceholder()` and `valuePlaceholder()` methods:
 
 ```php
@@ -1874,7 +1905,9 @@ ViewField::make('notifications')->view('filament.forms.components.range-slider')
 
 Inside your view, you may interact with the state of the form component using Livewire and Alpine.js.
 
-The `$getStatePath()` closure may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
+The `$getStatePath()` closure may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js.
+
+Using [Livewire's entangle](https://laravel-livewire.com/docs/alpine-js#sharing-state) allows sharing state with Alpine.js:
 
 ```blade
 <x-forms::field-wrapper
@@ -1887,9 +1920,26 @@ The `$getStatePath()` closure may be used by the view to retrieve the Livewire p
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}') }">
+    <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}').defer }">
         <!-- Interact with the `state` property in Alpine.js -->
     </div>
+</x-forms::field-wrapper>
+```
+
+Or, you may bind the value to a Livewire property using [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding):
+
+```
+<x-forms::field-wrapper
+    :id="$getId()"
+    :label="$getLabel()"
+    :label-sr-only="$isLabelHidden()"
+    :helper-text="$getHelperText()"
+    :hint="$getHint()"
+    :hint-icon="$getHintIcon()"
+    :required="$isRequired()"
+    :state-path="$getStatePath()"
+>
+    <input wire:model.defer="{{ $getStatePath() }}" />
 </x-forms::field-wrapper>
 ```
 
@@ -1931,7 +1981,7 @@ The `$getStatePath()` closure may be used by the view to retrieve the Livewire p
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}') }">
+    <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}').defer }">
         <!-- Interact with the `state` property in Alpine.js -->
     </div>
 </x-forms::field-wrapper>

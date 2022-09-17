@@ -39,7 +39,9 @@
         </a>
     @elseif ($action || $recordAction)
         @php
-            if ($action) {
+            if ($action instanceof \Filament\Tables\Actions\Action) {
+                $wireClickAction = "mountTableAction('{$action->getName()}', '%s')";
+            } elseif ($action) {
                 $wireClickAction = "callTableColumnAction('{$name}', '%s')";
             } else {
                 if ($this->getCachedTableAction($recordAction)) {
@@ -58,7 +60,7 @@
             wire:loading.attr="disabled"
             wire:loading.class="opacity-70 cursor-wait"
             type="button"
-            class="block text-left w-full"
+            class="block text-left rtl:text-right w-full"
         >
             {{ $slot }}
         </button>

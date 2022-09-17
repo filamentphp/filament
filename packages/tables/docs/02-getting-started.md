@@ -255,7 +255,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 protected function paginateTableQuery(Builder $query): Paginator
 {
-    return $query->simplePaginate($this->getTableRecordsPerPage());
+    return $query->simplePaginate($this->getTableRecordsPerPage() == -1 ? $query->count() : $this->getTableRecordsPerPage());
 }
 ```
 
@@ -477,6 +477,17 @@ Pagination will be disabled in reorder mode to allow you to move records between
 protected function isTablePaginationEnabledWhileReordering(): bool
 {
     return true;
+}
+```
+
+## Polling content
+
+You may poll table content so that it refreshes at a set interval, using the `getTablePollingInterval()` method:
+
+```php
+protected function getTablePollingInterval(): ?string
+{
+    return '10s';
 }
 ```
 

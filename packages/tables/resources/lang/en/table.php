@@ -8,6 +8,13 @@ return [
             'more' => 'and :count more',
         ],
 
+        'color' => [
+
+            'messages' => [
+                'copied' => 'Copied',
+            ],
+
+        ],
     ],
 
     'fields' => [
@@ -28,7 +35,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'per page',
+
+                'options' => [
+                    'all' => 'All',
+                ],
+
             ],
 
         ],
@@ -83,15 +96,22 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Remove filter',
+            ],
+
+            'remove_all' => [
+                'label' => 'Remove all filters',
+                'tooltip' => 'Remove all filters',
+            ],
+
             'reset' => [
                 'label' => 'Reset filters',
             ],
 
-            'close' => [
-                'label' => 'Close',
-            ],
-
         ],
+
+        'indicator' => 'Active filters',
 
         'multi_select' => [
             'placeholder' => 'All',

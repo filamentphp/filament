@@ -85,13 +85,12 @@ return [
 
             'reset' => [
                 'label' => 'Đặt lại bộ lọc',
-            ],
-
-            'close' => [
-                'label' => 'Đóng',
+                'tooltip' => 'Đặt lại bộ lọc',
             ],
 
         ],
+
+        'indicator' => 'Bộ lọc đang kích hoạt',
 
         'multi_select' => [
             'placeholder' => 'Tất cả',

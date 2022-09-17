@@ -22,7 +22,7 @@ composer require filament/spatie-laravel-translatable-plugin:"^2.0"
 
 You're now ready to start [translating resources](getting-started)!
 
-## Publishing the configuration
+## Publishing configuration
 
 If you wish, you may publish the configuration of the package using:
 
@@ -30,7 +30,7 @@ If you wish, you may publish the configuration of the package using:
 php artisan vendor:publish --tag=filament-spatie-laravel-translatable-plugin-config
 ```
 
-## Publishing the translations
+## Publishing translations
 
 If you wish to translate the package, you may publish the language files using:
 

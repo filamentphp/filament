@@ -40,6 +40,7 @@
             :wire:key="$action ? $this->id . '.actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
+            :slide-over="$action?->isModalSlideOver()"
             display-classes="block"
         >
             @if ($action)
@@ -58,6 +59,12 @@
                         <x-filament::modal.heading>
                             {{ $action->getModalHeading() }}
                         </x-filament::modal.heading>
+
+                        @if ($subheading = $action->getModalSubheading())
+                            <x-filament::modal.subheading>
+                                {{ $subheading }}
+                            </x-filament::modal.subheading>
+                        @endif
                     </x-slot>
                 @endif
 

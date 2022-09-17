@@ -15,7 +15,7 @@
 
 <{!! $tag !!}
     {{ $attributes->merge($extraAttributes)->class([
-        'relative p-6 rounded-2xl bg-white shadow filament-stats-card',
+        'filament-stats-card relative p-6 rounded-2xl bg-white shadow',
         'dark:bg-gray-800' => config('filament.dark_mode'),
     ]) }}
 >

@@ -8,6 +8,7 @@
         :wire:key="$action ? $this->id . '.' . $action->getComponent()->getStatePath() . '.actions.' . $action->getName() . '.modal' : null"
         :visible="filled($action)"
         :width="$action?->getModalWidth()"
+        :slide-over="$action?->isModalSlideOver()"
         display-classes="block"
     >
         @if ($action)
@@ -26,6 +27,12 @@
                     <x-forms::modal.heading>
                         {{ $action->getModalHeading() }}
                     </x-forms::modal.heading>
+
+                    @if ($subheading = $action->getModalSubheading())
+                        <x-forms::modal.subheading>
+                            {{ $subheading }}
+                        </x-forms::modal.subheading>
+                    @endif
                 </x-slot>
             @endif
 

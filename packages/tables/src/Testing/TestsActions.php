@@ -135,6 +135,23 @@ class TestsActions
         };
     }
 
+    public function assertTableActionDoesNotExist(): Closure
+    {
+        return function (string $name): static {
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $action = $livewire->getCachedTableAction($name) ?? $livewire->getCachedTableEmptyStateAction($name) ?? $livewire->getCachedTableHeaderAction($name);
+
+            Assert::assertNull(
+                $action,
+                message: "Failed asserting that a table action with name [{$name}] does not exist on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
     public function assertTableActionVisible(): Closure
     {
         return function (string $name, $record = null): static {
@@ -237,6 +254,276 @@ class TestsActions
                 message: filled($record) ?
                     "Failed asserting that a table action with name [{$name}] is disabled on the [{$livewireClass}] component for record [{$record}]." :
                     "Failed asserting that a table action with name [{$name}] is disabled on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableActionHasIcon(): Closure
+    {
+        return function (string $name, string $icon, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            if (! $record instanceof Model) {
+                $record = $livewire->getTableRecord($record);
+            }
+
+            $action = $livewire->getCachedTableAction($name) ?? $livewire->getCachedTableEmptyStateAction($name) ?? $livewire->getCachedTableHeaderAction($name);
+            $action->record($record);
+
+            Assert::assertTrue(
+                $action->getIcon() === $icon,
+                message: filled($record) ?
+                    "Failed asserting that a table action with name [{$name}] has icon [{$icon}] on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$name}] has icon [{$icon}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableActionDoesNotHaveIcon(): Closure
+    {
+        return function (string $name, string $icon, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            if (! $record instanceof Model) {
+                $record = $livewire->getTableRecord($record);
+            }
+
+            $action = $livewire->getCachedTableAction($name) ?? $livewire->getCachedTableEmptyStateAction($name) ?? $livewire->getCachedTableHeaderAction($name);
+            $action->record($record);
+
+            Assert::assertFalse(
+                $action->getIcon() === $icon,
+                message: filled($record) ?
+                    "Failed asserting that a table action with name [{$name}] does not have icon [{$icon}] on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$name}] does not have icon [{$icon}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableActionHasLabel(): Closure
+    {
+        return function (string $name, string $label, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            if (! $record instanceof Model) {
+                $record = $livewire->getTableRecord($record);
+            }
+
+            $action = $livewire->getCachedTableAction($name) ?? $livewire->getCachedTableEmptyStateAction($name) ?? $livewire->getCachedTableHeaderAction($name);
+            $action->record($record);
+
+            Assert::assertTrue(
+                $action->getLabel() === $label,
+                message: filled($record) ?
+                    "Failed asserting that a table action with name [{$name}] has label [{$label}] on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$name}] has label [{$label}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableActionDoesNotHaveLabel(): Closure
+    {
+        return function (string $name, string $label, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            if (! $record instanceof Model) {
+                $record = $livewire->getTableRecord($record);
+            }
+
+            $action = $livewire->getCachedTableAction($name) ?? $livewire->getCachedTableEmptyStateAction($name) ?? $livewire->getCachedTableHeaderAction($name);
+            $action->record($record);
+
+            Assert::assertFalse(
+                $action->getLabel() === $label,
+                message: filled($record) ?
+                    "Failed asserting that a table action with name [{$name}] does not have label [{$label}] on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$name}] does not have label [{$label}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableActionHasColor(): Closure
+    {
+        return function (string $name, string $color, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            if (! $record instanceof Model) {
+                $record = $livewire->getTableRecord($record);
+            }
+
+            $action = $livewire->getCachedTableAction($name) ?? $livewire->getCachedTableEmptyStateAction($name) ?? $livewire->getCachedTableHeaderAction($name);
+            $action->record($record);
+
+            Assert::assertTrue(
+                $action->getColor() === $color,
+                message: filled($record) ?
+                    "Failed asserting that a table action with name [{$name}] has color [{$color}] on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$name}] has color [{$color}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableActionDoesNotHaveColor(): Closure
+    {
+        return function (string $name, string $color, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            if (! $record instanceof Model) {
+                $record = $livewire->getTableRecord($record);
+            }
+
+            $action = $livewire->getCachedTableAction($name) ?? $livewire->getCachedTableEmptyStateAction($name) ?? $livewire->getCachedTableHeaderAction($name);
+            $action->record($record);
+
+            Assert::assertFalse(
+                $action->getColor() === $color,
+                message: filled($record) ?
+                    "Failed asserting that a table action with name [{$name}] does not have color [{$color}] on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$name}] does not have color [{$color}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableActionHasUrl(): Closure
+    {
+        return function (string $name, string $url, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            if (! $record instanceof Model) {
+                $record = $livewire->getTableRecord($record);
+            }
+
+            $action = $livewire->getCachedTableAction($name) ?? $livewire->getCachedTableEmptyStateAction($name) ?? $livewire->getCachedTableHeaderAction($name);
+            $action->record($record);
+
+            Assert::assertTrue(
+                $action->getUrl() === $url,
+                message: filled($record) ?
+                    "Failed asserting that a table action with name [{$name}] has URL [{$url}] on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$name}] has URL [{$url}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableActionDoesNotHaveUrl(): Closure
+    {
+        return function (string $name, string $url, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            if (! $record instanceof Model) {
+                $record = $livewire->getTableRecord($record);
+            }
+
+            $action = $livewire->getCachedTableAction($name) ?? $livewire->getCachedTableEmptyStateAction($name) ?? $livewire->getCachedTableHeaderAction($name);
+            $action->record($record);
+
+            Assert::assertFalse(
+                $action->getUrl() === $url,
+                message: filled($record) ?
+                    "Failed asserting that a table action with name [{$name}] does not have URL [{$url}] on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$name}] does not have URL [{$url}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableActionShouldOpenUrlInNewTab(): Closure
+    {
+        return function (string $name, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            if (! $record instanceof Model) {
+                $record = $livewire->getTableRecord($record);
+            }
+
+            $action = $livewire->getCachedTableAction($name) ?? $livewire->getCachedTableEmptyStateAction($name) ?? $livewire->getCachedTableHeaderAction($name);
+            $action->record($record);
+
+            Assert::assertTrue(
+                $action->shouldOpenUrlInNewTab(),
+                message: filled($record) ?
+                    "Failed asserting that a table action with name [{$name}] should open url in new tab on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$name}] should open url in new tab on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableActionShouldNotOpenUrlInNewTab(): Closure
+    {
+        return function (string $name, $record = null): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableActionExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            if (! $record instanceof Model) {
+                $record = $livewire->getTableRecord($record);
+            }
+
+            $action = $livewire->getCachedTableAction($name) ?? $livewire->getCachedTableEmptyStateAction($name) ?? $livewire->getCachedTableHeaderAction($name);
+            $action->record($record);
+
+            Assert::assertFalse(
+                $action->shouldOpenUrlInNewTab(),
+                message: filled($record) ?
+                    "Failed asserting that a table action with name [{$name}] should not open url in new tab on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$name}] should not open url in new tab on the [{$livewireClass}] component.",
             );
 
             return $this;

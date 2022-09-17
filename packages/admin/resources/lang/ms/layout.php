@@ -10,6 +10,10 @@ return [
             'label' => 'Tukar mod gelap',
         ],
 
+        'database_notifications' => [
+            'label' => 'Buka pemberitahuan',
+        ],
+
         'light_mode' => [
             'label' => 'Tukar mod terang',
         ],

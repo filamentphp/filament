@@ -3,224 +3,243 @@ import Choices from 'choices.js'
 import '../../css/components/select.css'
 
 export default (Alpine) => {
-    Alpine.data('selectFormComponent', ({
-        isHtmlAllowed,
-        getOptionLabelUsing,
-        getOptionLabelsUsing,
-        getOptionsUsing,
-        getSearchResultsUsing,
-        isAutofocused,
-        isMultiple,
-        hasDynamicOptions,
-        hasDynamicSearchResults,
-        loadingMessage,
-        maxItems,
-        noSearchResultsMessage,
-        options,
-        optionsLimit,
-        placeholder,
-        searchingMessage,
-        searchPrompt,
-        state,
-    }) => {
-        return {
-            isSearching: false,
-
-            select: null,
-
-            selectedOptions: [],
-
-            isStateBeingUpdated: false,
-
+    Alpine.data(
+        'selectFormComponent',
+        ({
+            isHtmlAllowed,
+            getOptionLabelUsing,
+            getOptionLabelsUsing,
+            getOptionsUsing,
+            getSearchResultsUsing,
+            isAutofocused,
+            isMultiple,
+            hasDynamicOptions,
+            hasDynamicSearchResults,
+            loadingMessage,
+            maxItems,
+            noSearchResultsMessage,
+            options,
+            optionsLimit,
+            placeholder,
+            searchingMessage,
+            searchPrompt,
             state,
+        }) => {
+            return {
+                isSearching: false,
 
-            init: async function () {
-                this.select = new Choices(this.$refs.input, {
-                    allowHTML: isHtmlAllowed,
-                    duplicateItemsAllowed: false,
-                    itemSelectText: '',
-                    loadingText: loadingMessage,
-                    maxItemCount: maxItems ?? -1,
-                    noChoicesText: searchPrompt,
-                    noResultsText: noSearchResultsMessage,
-                    placeholderValue: placeholder,
-                    removeItemButton: true,
-                    renderChoiceLimit: optionsLimit,
-                    searchFields: ['label'],
-                    searchResultLimit: optionsLimit,
-                    shouldSort: false,
-                })
+                select: null,
 
-                await this.refreshChoices({ withInitialOptions: true })
+                selectedOptions: [],
 
-                if (! [null, undefined, ''].includes(this.state)) {
-                    this.select.setChoiceByValue(this.formatState(this.state))
-                }
+                isStateBeingUpdated: false,
 
-                this.refreshPlaceholder()
+                state,
 
-                if (isAutofocused) {
-                    this.select.showDropdown()
-                }
+                init: async function () {
+                    this.select = new Choices(this.$refs.input, {
+                        allowHTML: isHtmlAllowed,
+                        duplicateItemsAllowed: false,
+                        itemSelectText: '',
+                        loadingText: loadingMessage,
+                        maxItemCount: maxItems ?? -1,
+                        noChoicesText: searchPrompt,
+                        noResultsText: noSearchResultsMessage,
+                        placeholderValue: placeholder,
+                        removeItemButton: true,
+                        renderChoiceLimit: optionsLimit,
+                        searchFields: ['label'],
+                        searchResultLimit: optionsLimit,
+                        shouldSort: false,
+                    })
 
-                this.$refs.input.addEventListener('change', () => {
-                    this.refreshPlaceholder()
+                    await this.refreshChoices({ withInitialOptions: true })
 
-                    if (this.isStateBeingUpdated) {
-                        return
+                    if (![null, undefined, ''].includes(this.state)) {
+                        this.select.setChoiceByValue(
+                            this.formatState(this.state),
+                        )
                     }
 
-                    this.isStateBeingUpdated = true
-                    this.state = this.select.getValue(true) ?? null
-                    this.$nextTick(() => this.isStateBeingUpdated = false)
-                })
+                    this.refreshPlaceholder()
 
-                if (hasDynamicOptions) {
-                    this.$refs.input.addEventListener('showDropdown', async () => {
-                        this.select.clearChoices()
-                        await this.select.setChoices(
-                            [{ value: '', label: loadingMessage, disabled: true }],
-                        )
+                    if (isAutofocused) {
+                        this.select.showDropdown()
+                    }
 
-                        await this.refreshChoices()
-                    })
-                }
+                    this.$refs.input.addEventListener('change', () => {
+                        this.refreshPlaceholder()
 
-                if (hasDynamicSearchResults) {
-                    this.$refs.input.addEventListener('search', async (event) => {
-                        let search = event.detail.value?.trim()
-
-                        if ([null, undefined, ''].includes(search)) {
+                        if (this.isStateBeingUpdated) {
                             return
                         }
 
-                        this.isSearching = true
-
-                        this.select.clearChoices()
-                        await this.select.setChoices(
-                            [{ value: '', label: searchingMessage, disabled: true }],
-                        )
+                        this.isStateBeingUpdated = true
+                        this.state = this.select.getValue(true) ?? null
+                        this.$nextTick(() => (this.isStateBeingUpdated = false))
                     })
 
-                    this.$refs.input.addEventListener('search', Alpine.debounce(async (event) => {
-                        await this.refreshChoices({
-                            search: event.detail.value?.trim(),
+                    if (hasDynamicOptions) {
+                        this.$refs.input.addEventListener(
+                            'showDropdown',
+                            async () => {
+                                this.select.clearChoices()
+                                await this.select.setChoices([
+                                    {
+                                        label: loadingMessage,
+                                        value: '',
+                                        disabled: true,
+                                    },
+                                ])
+
+                                await this.refreshChoices()
+                            },
+                        )
+                    }
+
+                    if (hasDynamicSearchResults) {
+                        this.$refs.input.addEventListener(
+                            'search',
+                            async (event) => {
+                                let search = event.detail.value?.trim()
+
+                                if ([null, undefined, ''].includes(search)) {
+                                    return
+                                }
+
+                                this.isSearching = true
+
+                                this.select.clearChoices()
+                                await this.select.setChoices([
+                                    {
+                                        label: searchingMessage,
+                                        value: '',
+                                        disabled: true,
+                                    },
+                                ])
+                            },
+                        )
+
+                        this.$refs.input.addEventListener(
+                            'search',
+                            Alpine.debounce(async (event) => {
+                                await this.refreshChoices({
+                                    search: event.detail.value?.trim(),
+                                })
+
+                                this.isSearching = false
+                            }, 1000),
+                        )
+                    }
+
+                    this.$watch('state', async () => {
+                        this.refreshPlaceholder()
+
+                        if (this.isStateBeingUpdated) {
+                            return
+                        }
+
+                        const choices = await this.getChoices({
+                            withInitialOptions: !hasDynamicOptions,
                         })
 
-                        this.isSearching = false
-                    }, 1000))
-                }
+                        this.select.clearStore()
 
-                this.$watch('state', async () => {
-                    this.refreshPlaceholder()
+                        this.setChoices(choices)
 
-                    if (this.isStateBeingUpdated) {
+                        if (![null, undefined, ''].includes(this.state)) {
+                            this.select.setChoiceByValue(
+                                this.formatState(this.state),
+                            )
+                        }
+                    })
+                },
+
+                refreshChoices: async function (config = {}) {
+                    this.setChoices(await this.getChoices(config))
+                },
+
+                setChoices: function (choices) {
+                    this.select.setChoices(choices, 'value', 'label', true)
+                },
+
+                getChoices: async function (config = {}) {
+                    const options = await this.getOptions(config)
+
+                    return options.concat(await this.getMissingOptions(options))
+                },
+
+                getOptions: async function ({ search, withInitialOptions }) {
+                    if (withInitialOptions) {
+                        return options
+                    }
+
+                    if (
+                        search !== '' &&
+                        search !== null &&
+                        search !== undefined
+                    ) {
+                        return await getSearchResultsUsing(search)
+                    }
+
+                    return await getOptionsUsing()
+                },
+
+                refreshPlaceholder: function () {
+                    if (isMultiple) {
                         return
                     }
 
-                    const choices = await this.getChoices({
-                        withInitialOptions: ! hasDynamicOptions,
-                    })
+                    this.select._renderItems()
 
-                    this.select.clearStore()
-
-                    this.setChoices(choices)
-
-                    if (! [null, undefined, ''].includes(this.state)) {
-                        this.select.setChoiceByValue(this.formatState(this.state))
+                    if (![null, undefined, ''].includes(this.state)) {
+                        return
                     }
-                })
-            },
 
-            refreshChoices: async function (config = {}) {
-                this.setChoices(await this.getChoices(config))
-            },
+                    this.$el.querySelector(
+                        '.choices__list--single',
+                    ).innerHTML = `<div class="choices__placeholder choices__item">${placeholder}</div>`
+                },
 
-            setChoices: function (choices) {
-                this.select.setChoices(
-                    choices,
-                    'value',
-                    'label',
-                    true,
-                )
-            },
+                formatState: function (state) {
+                    if (isMultiple) {
+                        return (state ?? []).map((item) => item?.toString())
+                    }
 
-            getChoices: async function (config = {}) {
-                const options = await this.getOptions(config)
+                    return state?.toString()
+                },
 
-                return this.transformOptionsIntoChoices({
-                    ...options,
-                    ...await this.getMissingOptions(options),
-                })
-            },
+                getMissingOptions: async function (options) {
+                    let state = this.formatState(this.state)
 
-            getOptions: async function ({ search, withInitialOptions }) {
-                if (withInitialOptions) {
-                    return options
-                }
-
-                if ((search !== '') && (search !== null) && (search !== undefined)) {
-                    return await getSearchResultsUsing(search)
-                }
-
-                return await getOptionsUsing()
-            },
-
-            transformOptionsIntoChoices: function (options) {
-                return Object.entries(options)
-                    .map(([value, label]) => ({
-                        label,
-                        value,
-                    }))
-            },
-
-            refreshPlaceholder: function () {
-                if (isMultiple) {
-                    return
-                }
-
-                this.select._renderItems()
-
-                if (! [null, undefined, ''].includes(this.state)) {
-                    return
-                }
-
-                this.$el.querySelector('.choices__list--single').innerHTML = `<div class="choices__placeholder choices__item">${placeholder}</div>`
-            },
-
-            formatState: function (state) {
-                if (isMultiple) {
-                    return (state ?? []).map((item) => item?.toString())
-                }
-
-                return state?.toString()
-            },
-
-            getMissingOptions: async function (options) {
-                if ([null, undefined, '', [], {}].includes(this.state)) {
-                    return {}
-                }
-
-                if (! options.length) {
-                    options = {}
-                }
-
-                if (isMultiple) {
-                    if (this.state.every((value) => value in options)) {
+                    if ([null, undefined, '', [], {}].includes(state)) {
                         return {}
                     }
 
-                    return await getOptionLabelsUsing()
-                }
+                    if (!options.length) {
+                        options = {}
+                    }
 
-                if (this.state in options) {
-                    return options
-                }
+                    if (isMultiple) {
+                        if (state.every((value) => value in options)) {
+                            return {}
+                        }
 
-                let missingOptions = {}
-                missingOptions[this.state] = await getOptionLabelUsing()
-                return missingOptions
-            },
-        }
-    })
+                        return await getOptionLabelsUsing()
+                    }
+
+                    if (state in options) {
+                        return options
+                    }
+
+                    return [
+                        {
+                            label: await getOptionLabelUsing(),
+                            value: state,
+                        },
+                    ]
+                },
+            }
+        },
+    )
 }

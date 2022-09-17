@@ -12,7 +12,7 @@ return [
 
             'fields' => [
 
-                'record_ids' => [
+                'record_id' => [
                     'label' => 'Enregistrements',
                 ],
 

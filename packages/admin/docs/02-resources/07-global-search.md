@@ -64,7 +64,7 @@ Global search results will link to the [Edit page](editing-records) of your reso
 ```php
 public static function getGlobalSearchResultUrl(Model $record): string
 {
-    return route('users.edit', ['user' => $record]);
+    return UserResource::getUrl('edit', ['record' => $record]);
 }
 ```
 

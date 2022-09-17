@@ -13,6 +13,8 @@ trait CanOpenModal
 
     protected bool | Closure | null $isModalCentered = null;
 
+    protected bool | Closure $isModalSlideOver = false;
+
     protected array | Closure | null $modalActions = null;
 
     protected ModalAction | Closure | null $modalCancelAction = null;
@@ -32,6 +34,13 @@ trait CanOpenModal
     public function centerModal(bool | Closure | null $condition = true): static
     {
         $this->isModalCentered = $condition;
+
+        return $this;
+    }
+
+    public function slideOver(bool | Closure $condition = true): static
+    {
+        $this->isModalSlideOver = $condition;
 
         return $this;
     }
@@ -216,6 +225,11 @@ trait CanOpenModal
         }
 
         return $this->isConfirmationRequired();
+    }
+
+    public function isModalSlideOver(): bool
+    {
+        return $this->evaluate($this->isModalSlideOver);
     }
 
     public function shouldOpenModal(): bool

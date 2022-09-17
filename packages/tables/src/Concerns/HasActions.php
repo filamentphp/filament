@@ -28,12 +28,12 @@ trait HasActions
 
     public function cacheTableActions(): void
     {
+        $this->cachedTableActions = [];
+
         $actions = Action::configureUsing(
             Closure::fromCallable([$this, 'configureTableAction']),
             fn (): array => $this->getTableActions(),
         );
-
-        $this->cachedTableActions = [];
 
         foreach ($actions as $index => $action) {
             if ($action instanceof ActionGroup) {
@@ -49,6 +49,27 @@ trait HasActions
             $action->table($this->getCachedTable());
 
             $this->cachedTableActions[$action->getName()] = $action;
+        }
+    }
+
+    public function cacheTableColumnActions(): void
+    {
+        foreach ($this->getCachedTableColumns() as $column) {
+            $action = $column->getAction();
+
+            if (! ($action instanceof Action)) {
+                continue;
+            }
+
+            $actionName = $action->getName();
+
+            if (array_key_exists($actionName, $this->cachedTableActions)) {
+                continue;
+            }
+
+            $action->table($this->getCachedTable());
+
+            $this->cachedTableActions[$actionName] = $action;
         }
     }
 
@@ -244,6 +265,11 @@ trait HasActions
     }
 
     protected function getTableActionsPosition(): ?string
+    {
+        return null;
+    }
+
+    protected function getTableActionsColumnLabel(): ?string
     {
         return null;
     }

@@ -1,18 +1,33 @@
 @props([
     'activeManager',
+    'form' => null,
+    'formTabLabel' => null,
     'managers',
     'ownerRecord',
     'pageClass',
 ])
 
-<div class="space-y-2 filament-resources-relation-managers-container">
-    @if (count($managers) > 1)
+<div class="filament-resources-relation-managers-container space-y-2">
+    @if ((count($managers) > 1) || $form)
         <div class="flex justify-center">
             <x-filament::tabs>
-                @foreach ($managers as $managerKey => $manager)
+                @php
+                    $tabs = $managers;
+
+                    if ($form) {
+                        $tabs = array_replace([null => null], $tabs);
+                    }
+                @endphp
+
+                @foreach ($tabs as $tabKey => $manager)
+                    @php
+                        $activeManager = strval($activeManager);
+                        $tabKey = strval($tabKey);
+                    @endphp
+
                     <button
-                        wire:click="$set('activeRelationManager', '{{ $managerKey }}')"
-                        @if ($activeManager == $managerKey)
+                        wire:click="$set('activeRelationManager', {{ filled($tabKey) ? "'{$tabKey}'" : 'null' }})"
+                        @if ($activeManager === $tabKey)
                             aria-selected
                             tabindex="0"
                         @else
@@ -22,13 +37,17 @@
                         type="button"
                         @class([
                             'flex whitespace-nowrap items-center h-8 px-5 font-medium rounded-lg whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-inset',
-                            'hover:text-gray-800 focus:text-primary-600' => $activeManager != $managerKey,
-                            'dark:text-gray-400 dark:hover:text-gray-300 dark:focus:text-gray-400' => ($activeManager != $managerKey) && config('filament.dark_mode'),
-                            'text-primary-600 shadow bg-white' => $activeManager == $managerKey,
-                            'dark:text-white dark:bg-primary-600' => ($activeManager == $managerKey) && config('filament.dark_mode'),
+                            'hover:text-gray-800 focus:text-primary-600' => $activeManager !== $tabKey,
+                            'dark:text-gray-400 dark:hover:text-gray-300 dark:focus:text-gray-400' => ($activeManager !== $tabKey) && config('filament.dark_mode'),
+                            'text-primary-600 shadow bg-white' => $activeManager === $tabKey,
+                            'dark:text-white dark:bg-primary-600' => ($activeManager === $tabKey) && config('filament.dark_mode'),
                         ])
                     >
-                        {{ $manager instanceof \Filament\Resources\RelationManagers\RelationGroup ? $manager->getLabel() : $manager::getTitleForRecord($ownerRecord) }}
+                        @if (filled($tabKey))
+                            {{ $manager instanceof \Filament\Resources\RelationManagers\RelationGroup ? $manager->getLabel() : $manager::getTitleForRecord($ownerRecord) }}
+                        @elseif ($form)
+                            {{ $formTabLabel }}
+                        @endif
                     </button>
                 @endforeach
             </x-filament::tabs>
@@ -56,5 +75,7 @@
                 @livewire(\Livewire\Livewire::getAlias($manager, $manager::getName()), ['ownerRecord' => $ownerRecord, 'pageClass' => $pageClass], key($manager))
             @endif
         </div>
+    @elseif ($form)
+        {{ $form }}
     @endif
 </div>

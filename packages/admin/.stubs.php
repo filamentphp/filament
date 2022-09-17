@@ -23,6 +23,8 @@ namespace Livewire\Testing {
 
         public function assertPageActionExists(string $name): static {}
 
+        public function assertPageActionDoesNotExist(string $name): static {}
+
         public function assertPageActionVisible(string $name): static {}
 
         public function assertPageActionHidden(string $name): static {}
@@ -30,6 +32,26 @@ namespace Livewire\Testing {
         public function assertPageActionEnabled(string $name): static {}
 
         public function assertPageActionDisabled(string $name): static {}
+
+        public function assertPageActionHasIcon(string $name, string $icon): static {}
+
+        public function assertPageActionDoesNotHaveIcon(string $name, string $icon): static {}
+
+        public function assertPageActionHasLabel(string $name, string $label): static {}
+
+        public function assertPageActionHasColor(string $name, string $color): static {}
+
+        public function assertPageActionDoesNotHaveColor(string $name, string $color): static {}
+
+        public function assertPageActionHasUrl(string $name, string $url): static {}
+
+        public function assertPageActionDoesNotHaveUrl(string $name, string $url): static {}
+
+        public function assertPageActionShouldOpenUrlInNewTab(string $name): static {}
+
+        public function assertPageActionShouldNotOpenUrlInNewTab(string $name): static {}
+
+        public function assertPageActionDoesNotHaveLabel(string $name, string $label): static {}
 
         public function assertPageActionHeld(string $name): static {}
 
