@@ -70,7 +70,7 @@ public static function getGlobalSearchResultUrl(Model $record): string
 
 ## Actions
 
-Global search support actions that render a button or link which may open a URL or emit a Livewire event. Actions will render as link by default, but you may configure it to render a button using the `button()` or `iconButton()` methods. 
+Global search support actions that render a button or link which may open a URL or emit a Livewire event. Actions will render as link by default, but you may configure it to render a button using the `button()` method. 
 
 Actions can be defined as follows:
 
