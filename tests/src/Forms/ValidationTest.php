@@ -72,19 +72,3 @@ test('fields can be conditionally validated', function () {
             ->not->toContain('Required');
     }
 });
-
-test('first invalid field can be focused', function () {
-    $container = ComponentContainer::make(Livewire::make())
-        ->statePath('data')
-        ->components([
-            (new Field(Str::random())),
-            $fieldToFocus = (new Field($firstInvalidFieldName = Str::random())),
-            (new Field($secondInvalidFieldName = Str::random())),
-        ]);
-
-    expect($container)
-        ->getInvalidComponentToFocus([
-            "data.{$firstInvalidFieldName}",
-            "data.{$secondInvalidFieldName}",
-        ])->toBe($fieldToFocus);
-});

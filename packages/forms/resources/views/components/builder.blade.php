@@ -70,6 +70,21 @@
                         x-on:mouseleave="isCreateButtonVisible = false"
                         wire:key="{{ $this->id }}.{{ $item->getStatePath() }}.item"
                         wire:sortable.item="{{ $uuid }}"
+                        x-on:expand-concealing-component.window="
+                            error = $el.querySelector('[data-validation-error]')
+
+                            if (! error) {
+                                return
+                            }
+
+                            isCollapsed = false
+
+                            if (document.body.querySelector('[data-validation-error]') !== error) {
+                                return
+                            }
+
+                            setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
+                        "
                         @class([
                             'bg-white border border-gray-300 shadow-sm rounded-xl relative',
                             'dark:bg-gray-800 dark:border-gray-600' => config('forms.dark_mode'),
