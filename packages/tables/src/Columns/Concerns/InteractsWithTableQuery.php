@@ -46,13 +46,17 @@ trait InteractsWithTableQuery
         return $query;
     }
 
-    public function applySearchConstraint(Builder $query, string $search, bool &$isFirst): Builder
+    public function applySearchConstraint(Builder $query, string $search, bool &$isFirst, bool $isIndividual = false): Builder
     {
         if ($this->isHidden()) {
             return $query;
         }
 
-        if (! $this->isSearchable()) {
+        if ($isIndividual && (! $this->isIndividuallySearchable())) {
+            return $query;
+        }
+
+        if ((! $isIndividual) && (! $this->isGloballySearchable())) {
             return $query;
         }
 
@@ -183,12 +187,12 @@ trait InteractsWithTableQuery
         return $relationship;
     }
 
-    protected function getRelationshipTitleColumnName(): string
+    public function getRelationshipTitleColumnName(): string
     {
         return (string) Str::of($this->getName())->afterLast('.');
     }
 
-    protected function getRelationshipName(): string
+    public function getRelationshipName(): string
     {
         return (string) Str::of($this->getName())->beforeLast('.');
     }

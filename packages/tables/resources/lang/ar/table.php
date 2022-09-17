@@ -28,7 +28,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'لكل صفحة',
+
+                'options' => [
+                    'all' => 'الكل',
+                ],
+
             ],
 
         ],
@@ -86,10 +92,6 @@ return [
             'reset' => [
                 'label' => 'إعادة ضبط المصفيات',
                 'tooltip' => 'إعادة ضبط المصفيات',
-            ],
-
-            'close' => [
-                'label' => 'غلق',
             ],
 
         ],

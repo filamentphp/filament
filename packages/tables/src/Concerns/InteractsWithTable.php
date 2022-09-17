@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use function Livewire\invade;
 
 trait InteractsWithTable
 {
@@ -48,6 +49,7 @@ trait InteractsWithTable
         $this->cacheTableHeaderActions();
 
         $this->cacheTableColumns();
+        $this->cacheTableColumnActions();
         $this->cacheForm('toggleTableColumnForm', $this->getTableColumnToggleForm());
 
         $this->cacheTableFilters();
@@ -76,6 +78,18 @@ trait InteractsWithTable
         }
 
         $this->getTableFiltersForm()->fill($this->tableFilters);
+
+        $searchSessionKey = $this->getTableSearchSessionKey();
+
+        if ($this->shouldPersistTableSearchInSession() && session()->has($searchSessionKey)) {
+            $this->tableSearchQuery = session()->get($searchSessionKey) ?? '';
+        }
+
+        $columnSearchSessionKey = $this->getTableColumnSearchSessionKey();
+
+        if ($this->shouldPersistTableColumnSearchInSession() && session()->has($columnSearchSessionKey)) {
+            $this->tableColumnSearchQueries = session()->get($columnSearchSessionKey) ?? [];
+        }
 
         $this->hasMounted = true;
     }
@@ -175,10 +189,16 @@ trait InteractsWithTable
         /** @var BelongsToMany $relationship */
         $relationship = $this->getRelationship();
 
-        $query->select(
+        $columns = [
             $relationship->getTable() . '.*',
             $query->getModel()->getTable() . '.*',
-        );
+        ];
+
+        if (! $this->allowsDuplicates()) {
+            $columns = array_merge(invade($relationship)->aliasedPivotColumns(), $columns);
+        }
+
+        $query->select($columns);
 
         return $query;
     }

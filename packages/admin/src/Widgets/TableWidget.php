@@ -27,6 +27,6 @@ class TableWidget extends Widget implements Tables\Contracts\HasTable
 
     protected function paginateTableQuery(Builder $query): Paginator
     {
-        return $query->simplePaginate($this->getTableRecordsPerPage());
+        return $query->simplePaginate($this->getTableRecordsPerPage() == -1 ? $query->count() : $this->getTableRecordsPerPage());
     }
 }

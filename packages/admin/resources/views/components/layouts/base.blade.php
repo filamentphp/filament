@@ -72,7 +72,7 @@
     </head>
 
     <body @class([
-        'bg-gray-100 text-gray-900 filament-body',
+        'filament-body bg-gray-100 text-gray-900',
         'dark:text-gray-100 dark:bg-gray-900' => config('filament.dark_mode'),
     ])>
         {{ \Filament\Facades\Filament::renderHook('body.start') }}
@@ -105,6 +105,21 @@
             'id' => Filament\get_asset_id('app.js'),
             'file' => 'app.js',
         ]) }}"></script>
+
+        @if (config('filament.broadcasting.echo'))
+            <script defer src="{{ route('filament.asset', [
+                'id' => Filament\get_asset_id('echo.js'),
+                'file' => 'echo.js',
+            ]) }}"></script>
+
+            <script>
+                window.addEventListener('DOMContentLoaded', () => {
+                    window.Echo = new window.EchoFactory(@js(config('filament.broadcasting.echo')))
+
+                    window.dispatchEvent(new CustomEvent('EchoLoaded'))
+                })
+            </script>
+        @endif
 
         @foreach (\Filament\Facades\Filament::getScripts() as $name => $path)
             @if (\Illuminate\Support\Str::of($path)->startsWith(['http://', 'https://']))

@@ -90,6 +90,24 @@ Install the packages in your app's `composer.json`:
 
 Now, run `composer update`.
 
+### Checking for missing translations
+
+Set up a Laravel app, and install the [admin panel](https://filamentphp.com/docs/admin/installation).
+
+Now, if you want to check for missing Spanish translations, run:
+
+```bash
+php artisan filament:check-translations es
+```
+
+This will let you know which translations are missing for this locale. You can make a PR with the changes to this repository.
+
+If you've published the translations into your app and you'd like to check those instead, try:
+
+```bash
+php artisan filament:check-translations es --source=app
+```
+
 ## Need Help?
 
 🐞 If you spot a bug, please [submit a detailed issue](https://github.com/filamentphp/filament/issues/new?assignees=&labels=bug%2Cunconfirmed&template=bug_report.yml), and wait for assistance.

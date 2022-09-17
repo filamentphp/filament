@@ -4,14 +4,12 @@ return [
 
     'builder' => [
 
+        'collapsed' => 'Conteúdo recolhido',
+
         'buttons' => [
 
             'create_item' => [
                 'label' => 'Adicionar em :label',
-            ],
-
-            'create_item_between' => [
-                'label' => 'Adicionar entre',
             ],
 
             'delete_item' => [
@@ -24,6 +22,22 @@ return [
 
             'move_item_up' => [
                 'label' => 'Mover para cima',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Recolher',
+            ],
+
+            'expand_item' => [
+                'label' => 'Expandir',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Recolher todos',
+            ],
+
+            'expand_all' => [
+                'label' => 'Expandir todos',
             ],
 
         ],
@@ -77,6 +91,8 @@ return [
 
     'repeater' => [
 
+        'collapsed' => 'Conteúdo recolhido',
+
         'buttons' => [
 
             'create_item' => [
@@ -87,12 +103,24 @@ return [
                 'label' => 'Excluír',
             ],
 
+            'clone_item' => [
+                'label' => 'Clonar',
+            ],
+
             'move_item_down' => [
                 'label' => 'Mover para baixo',
             ],
 
             'move_item_up' => [
                 'label' => 'Mover para cima',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Recolher',
+            ],
+
+            'expand_item' => [
+                'label' => 'Expandir',
             ],
 
             'collapse_all' => [
@@ -146,13 +174,63 @@ return [
     ],
 
     'select' => [
+
+        'actions' => [
+
+            'create_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Criar',
+
+                    'actions' => [
+
+                        'create' => [
+                            'label' => 'Criar',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+        'boolean' => [
+            'true' => 'Sim',
+            'false' => 'Não',
+        ],
+
+        'loading_message' => 'Carregando...',
+
         'no_search_results_message' => 'Nenhuma opção corresponde à sua pesquisa.',
+
         'placeholder' => 'Selecione uma opção',
+
+        'searching_message' => 'Buscando...',
+
         'search_prompt' => 'Comece a digitar para pesquisar...',
     ],
 
     'tags_input' => [
         'placeholder' => 'Novo rótulo',
+    ],
+
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => 'Voltar',
+            ],
+
+            'next_step' => [
+                'label' => 'Próximo',
+            ],
+
+        ],
+
     ],
 
 ];

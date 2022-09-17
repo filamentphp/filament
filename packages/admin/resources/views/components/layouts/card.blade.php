@@ -5,7 +5,7 @@
 
 <x-filament::layouts.base :title="$title">
     <div @class([
-        'flex items-center justify-center min-h-screen filament-login-page bg-gray-100 text-gray-900 py-12',
+        'filament-login-page flex items-center justify-center min-h-screen bg-gray-100 text-gray-900 py-12',
         'dark:bg-gray-900 dark:text-white' => config('filament.dark_mode'),
     ])>
         <div @class([
@@ -45,4 +45,6 @@
             </div>
         </div>
     </div>
+    
+    @livewire('notifications')
 </x-filament::layouts.base>

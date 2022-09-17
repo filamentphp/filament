@@ -3,6 +3,8 @@
 namespace Filament\Tables\Actions;
 
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
@@ -40,5 +42,19 @@ class DeleteBulkAction extends BulkAction
         });
 
         $this->deselectRecordsAfterCompletion();
+
+        $this->hidden(function (HasTable $livewire): bool {
+            $trashedFilterState = $livewire->getTableFilterState(TrashedFilter::class) ?? [];
+
+            if (! array_key_exists('value', $trashedFilterState)) {
+                return false;
+            }
+
+            if ($trashedFilterState['value']) {
+                return false;
+            }
+
+            return filled($trashedFilterState['value']);
+        });
     }
 }

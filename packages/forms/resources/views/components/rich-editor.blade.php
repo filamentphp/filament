@@ -33,7 +33,7 @@
 
             $event.preventDefault()
         "
-        {{ $attributes->merge($getExtraAttributes())->class(['space-y-2 filament-forms-rich-editor-component']) }}
+        {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-rich-editor-component space-y-2']) }}
         {{ $getExtraAlpineAttributeBag() }}
     >
         @unless ($isDisabled())
@@ -295,8 +295,8 @@
                 x-ref="trix"
                 dusk="filament.forms.{{ $getStatePath() }}"
                 {{ $getExtraInputAttributeBag()->class([
-                    'bg-white block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 prose max-w-none break-words',
-                    'dark:prose-invert dark:bg-gray-700 dark:focus:border-primary-600' => config('forms.dark_mode'),
+                    'bg-white block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 prose max-w-none break-words',
+                    'dark:prose-invert dark:bg-gray-700 dark:focus:border-primary-500' => config('forms.dark_mode'),
                 ]) }}
                 x-bind:class="{
                     'border-gray-300': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),

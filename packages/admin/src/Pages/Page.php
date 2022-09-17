@@ -95,9 +95,9 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
             ->slug();
     }
 
-    public static function getUrl(array $parameters = [], bool $absolute = true): string
+    public static function getUrl(array $parameters = [], bool $isAbsolute = true): string
     {
-        return route(static::getRouteName(), $parameters, $absolute);
+        return route(static::getRouteName(), $parameters, $isAbsolute);
     }
 
     public function render(): View

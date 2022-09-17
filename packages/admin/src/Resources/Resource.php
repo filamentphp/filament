@@ -199,6 +199,11 @@ class Resource
         return [$titleAttribute];
     }
 
+    public static function getGlobalSearchResultActions(Model $record): array
+    {
+        return [];
+    }
+
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [];
@@ -250,6 +255,7 @@ class Resource
                     title: static::getGlobalSearchResultTitle($record),
                     url: $url,
                     details: static::getGlobalSearchResultDetails($record),
+                    actions: static::getGlobalSearchResultActions($record),
                 );
             })
             ->filter();
@@ -368,11 +374,11 @@ class Resource
             ->implode('/');
     }
 
-    public static function getUrl($name = 'index', $params = []): string
+    public static function getUrl($name = 'index', $params = [], $isAbsolute = true): string
     {
         $routeBaseName = static::getRouteBaseName();
 
-        return route("{$routeBaseName}.{$name}", $params);
+        return route("{$routeBaseName}.{$name}", $params, $isAbsolute);
     }
 
     public static function hasPage($page): bool
@@ -395,21 +401,39 @@ class Resource
             default => 'like',
         };
 
+        $model = $query->getModel();
+
         foreach ($searchAttributes as $searchAttribute) {
             $whereClause = $isFirst ? 'where' : 'orWhere';
 
             $query->when(
-                Str::of($searchAttribute)->contains('.'),
-                fn ($query) => $query->{"{$whereClause}Relation"}(
-                    (string) Str::of($searchAttribute)->beforeLast('.'),
-                    (string) Str::of($searchAttribute)->afterLast('.'),
-                    $searchOperator,
-                    "%{$searchQuery}%",
-                ),
-                fn ($query) => $query->{$whereClause}(
-                    $searchAttribute,
-                    $searchOperator,
-                    "%{$searchQuery}%",
+                method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchAttribute),
+                function (Builder $query) use ($databaseConnection, $searchAttribute, $searchOperator, $searchQuery, $whereClause): Builder {
+                    $activeLocale = app()->getLocale();
+
+                    $searchColumn = match ($databaseConnection->getDriverName()) {
+                        'pgsql' => "{$searchAttribute}->>'{$activeLocale}'",
+                        default => "json_extract({$searchAttribute}, \"$.{$activeLocale}\")",
+                    };
+
+                    return $query->{"{$whereClause}Raw"}(
+                        "lower({$searchColumn}) {$searchOperator} ?",
+                        "%{$searchQuery}%",
+                    );
+                },
+                fn (Builder $query): Builder => $query->when(
+                    Str::of($searchAttribute)->contains('.'),
+                    fn ($query) => $query->{"{$whereClause}Relation"}(
+                        (string) Str::of($searchAttribute)->beforeLast('.'),
+                        (string) Str::of($searchAttribute)->afterLast('.'),
+                        $searchOperator,
+                        "%{$searchQuery}%",
+                    ),
+                    fn ($query) => $query->{$whereClause}(
+                        $searchAttribute,
+                        $searchOperator,
+                        "%{$searchQuery}%",
+                    ),
                 ),
             );
 

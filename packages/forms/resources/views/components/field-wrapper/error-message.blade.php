@@ -1,6 +1,6 @@
 <p
     data-validation-error
-    {{ $attributes->class(['text-sm text-danger-600 filament-forms-field-wrapper-error-message']) }}
+    {{ $attributes->class(['filament-forms-field-wrapper-error-message text-sm text-danger-600']) }}
 >
     {{ $slot }}
 </p>

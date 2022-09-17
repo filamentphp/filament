@@ -3,9 +3,9 @@
 namespace Filament\Notifications\Actions;
 
 use Filament\Notifications\Actions\Concerns\CanCloseNotification;
-use Filament\Notifications\Actions\Concerns\CanEmitEvent;
 use Filament\Support\Actions\BaseAction;
 use Filament\Support\Actions\Concerns\CanBeOutlined;
+use Filament\Support\Actions\Concerns\CanEmitEvent;
 use Filament\Support\Actions\Concerns\CanOpenUrl;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Str;
@@ -73,6 +73,13 @@ class Action extends BaseAction implements Arrayable
     public function button(): static
     {
         $this->view('notifications::actions.button-action');
+
+        return $this;
+    }
+
+    public function grouped(): static
+    {
+        $this->view('notifications::actions.grouped-action');
 
         return $this;
     }

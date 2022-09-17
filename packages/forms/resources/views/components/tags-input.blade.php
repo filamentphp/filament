@@ -20,11 +20,11 @@
         <div
             x-show="state.length || {{ $isDisabled() ? 'false' : 'true' }}"
             @class([
-                'block w-full transition duration-75 divide-y rounded-lg shadow-sm border overflow-hidden focus-within:border-primary-600 focus-within:ring-1 focus-within:ring-primary-600',
+                'block w-full transition duration-75 divide-y rounded-lg shadow-sm border overflow-hidden focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500',
                 'dark:divide-gray-600' => config('forms.dark_mode'),
                 'border-gray-300' => ! $errors->has($getStatePath()),
                 'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
-                'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
+                'border-danger-600 ring-1 ring-inset ring-danger-600' => $errors->has($getStatePath()),
             ])
         >
             @unless ($isDisabled())
@@ -44,7 +44,7 @@
                             if (newTag.includes(',')) {
                                 newTag.split(',').forEach((tag) => {
                                     newTag = tag
-                                    
+
                                     createTag()
                                 })
                             }

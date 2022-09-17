@@ -112,7 +112,7 @@ Filament will automatically register your `Page` and ensure that Livewire can di
 
 ## Widgets
 
-To register a custom widget, add the fully qualified class name to the `$wigdets` property in your service provider:
+To register a custom widget, add the fully qualified class name to the `$widgets` property in your service provider:
 
 ```php
 use Filament\PluginServiceProvider;
@@ -158,6 +158,12 @@ class ExampleServiceProvider extends PluginServiceProvider
     }
 }
 ```
+
+#### Tailwind CSS
+
+If you are using Tailwind classes, that are not used in Filament core, you need to compile your own Tailwind CSS file and bundle it with your plugin. Follow the Tailwind instructions for setup, but omit `@tailwind base` as this would overwrite the base styles if users customize their Filament theme.
+
+After compilation, your Tailwind stylesheet may contain classes that are already used in Filament core. You should purge those classes with [awcodes/filament-plugin-purge](https://github.com/awcodes/filament-plugin-purge) to keep the stylesheets size low.
 
 ### Scripts
 

@@ -34,6 +34,11 @@ class ViewRecord extends Page
         return static::$breadcrumb ?? __('filament::resources/pages/view-record.breadcrumb');
     }
 
+    public function getFormTabLabel(): ?string
+    {
+        return __('filament::resources/pages/view-record.form.tab.label');
+    }
+
     public function mount($record): void
     {
         static::authorizeResourceAccess();

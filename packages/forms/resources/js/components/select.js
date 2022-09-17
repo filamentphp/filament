@@ -86,8 +86,8 @@ export default (Alpine) => {
                                 this.select.clearChoices()
                                 await this.select.setChoices([
                                     {
-                                        value: '',
                                         label: loadingMessage,
+                                        value: '',
                                         disabled: true,
                                     },
                                 ])
@@ -112,8 +112,8 @@ export default (Alpine) => {
                                 this.select.clearChoices()
                                 await this.select.setChoices([
                                     {
-                                        value: '',
                                         label: searchingMessage,
+                                        value: '',
                                         disabled: true,
                                     },
                                 ])
@@ -166,10 +166,7 @@ export default (Alpine) => {
                 getChoices: async function (config = {}) {
                     const options = await this.getOptions(config)
 
-                    return this.transformOptionsIntoChoices({
-                        ...options,
-                        ...(await this.getMissingOptions(options)),
-                    })
+                    return options.concat(await this.getMissingOptions(options))
                 },
 
                 getOptions: async function ({ search, withInitialOptions }) {
@@ -186,13 +183,6 @@ export default (Alpine) => {
                     }
 
                     return await getOptionsUsing()
-                },
-
-                transformOptionsIntoChoices: function (options) {
-                    return Object.entries(options).map(([value, label]) => ({
-                        label,
-                        value,
-                    }))
                 },
 
                 refreshPlaceholder: function () {
@@ -220,7 +210,9 @@ export default (Alpine) => {
                 },
 
                 getMissingOptions: async function (options) {
-                    if ([null, undefined, '', [], {}].includes(this.state)) {
+                    let state = this.formatState(this.state)
+
+                    if ([null, undefined, '', [], {}].includes(state)) {
                         return {}
                     }
 
@@ -229,20 +221,23 @@ export default (Alpine) => {
                     }
 
                     if (isMultiple) {
-                        if (this.state.every((value) => value in options)) {
+                        if (state.every((value) => value in options)) {
                             return {}
                         }
 
                         return await getOptionLabelsUsing()
                     }
 
-                    if (this.state in options) {
+                    if (state in options) {
                         return options
                     }
 
-                    let missingOptions = {}
-                    missingOptions[this.state] = await getOptionLabelUsing()
-                    return missingOptions
+                    return [
+                        {
+                            label: await getOptionLabelUsing(),
+                            value: state,
+                        },
+                    ]
                 },
             }
         },

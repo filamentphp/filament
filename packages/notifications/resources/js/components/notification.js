@@ -1,4 +1,5 @@
 import { mutateDom } from 'alpinejs/src/mutation'
+import { once } from 'alpinejs/src/utils/once'
 
 export default (Alpine) => {
     Alpine.data('notificationComponent', ({ notification }) => ({
@@ -23,7 +24,10 @@ export default (Alpine) => {
             const display = this.computedStyle.display
 
             const show = () => {
-                mutateDom(() => this.$el.style.setProperty('display', display))
+                mutateDom(() => {
+                    this.$el.style.setProperty('display', display)
+                    this.$el.style.setProperty('visibility', 'visible')
+                })
                 this.$el._x_isShown = true
             }
 
@@ -35,14 +39,17 @@ export default (Alpine) => {
                 })
             }
 
-            const toggle = (value) => {
-                this.$el._x_toggleAndCascadeWithTransitions(
-                    this.$el,
-                    value,
-                    show,
-                    hide,
-                )
-            }
+            const toggle = once(
+                (value) => (value ? show() : hide()),
+                (value) => {
+                    this.$el._x_toggleAndCascadeWithTransitions(
+                        this.$el,
+                        value,
+                        show,
+                        hide,
+                    )
+                },
+            )
 
             Alpine.effect(() => toggle(this.isShown))
         },

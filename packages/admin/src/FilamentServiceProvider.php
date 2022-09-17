@@ -5,6 +5,7 @@ namespace Filament;
 use Filament\Facades\Filament;
 use Filament\Http\Livewire\Auth\Login;
 use Filament\Http\Livewire\GlobalSearch;
+use Filament\Http\Livewire\Notifications;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\MirrorConfigToSubpackages;
@@ -101,6 +102,14 @@ class FilamentServiceProvider extends PluginServiceProvider
         $this->bootLivewireComponents();
 
         $this->bootTableActionConfiguration();
+
+        if ($this->app->runningInConsole()) {
+            foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
+                $this->publishes([
+                    $file->getRealPath() => base_path("stubs/filament/{$file->getFilename()}"),
+                ], 'filament-stubs');
+            }
+        }
 
         TestableLivewire::mixin(new TestsPageActions());
         TestableLivewire::mixin(new TestsPages());
@@ -207,16 +216,27 @@ class FilamentServiceProvider extends PluginServiceProvider
 
         $filesystem = app(Filesystem::class);
 
-        if (! $filesystem->exists($directory)) {
+        if ((! $filesystem->exists($directory)) && (! Str::of($directory)->contains('*'))) {
             return;
         }
+
+        $namespace = Str::of($namespace);
 
         $register = array_merge(
             $register,
             collect($filesystem->allFiles($directory))
                 ->map(function (SplFileInfo $file) use ($namespace): string {
-                    return (string) Str::of($namespace)
+                    $variableNamespace = $namespace->contains('*') ? str_ireplace(
+                        ['\\' . $namespace->before('*'), $namespace->after('*')],
+                        ['', ''],
+                        Str::of($file->getPath())
+                            ->after(base_path())
+                            ->replace(['/'], ['\\']),
+                    ) : null;
+
+                    return (string) $namespace
                         ->append('\\', $file->getRelativePathname())
+                        ->replace('*', $variableNamespace)
                         ->replace(['/', '.php'], ['\\', '']);
                 })
                 ->filter(fn (string $class): bool => is_subclass_of($class, $baseClass) && (! (new ReflectionClass($class))->isAbstract()))
@@ -235,6 +255,7 @@ class FilamentServiceProvider extends PluginServiceProvider
         foreach (array_merge($this->livewireComponents, [
             'filament.core.auth.login' => Login::class,
             'filament.core.global-search' => GlobalSearch::class,
+            'filament.core.notifications' => Notifications::class,
         ]) as $alias => $class) {
             Livewire::component($alias, $class);
         }

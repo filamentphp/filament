@@ -79,7 +79,7 @@ return [
             'bold' => 'Жирный',
             'bullet_list' => 'Маркировочный список',
             'code_block' => 'Код',
-            'edit' => 'Редактировать',
+            'edit' => 'Изменить',
             'italic' => 'Курсив',
             'link' => 'Ссылка',
             'ordered_list' => 'Нумерованный список',
@@ -101,6 +101,10 @@ return [
 
             'delete_item' => [
                 'label' => 'Удалить',
+            ],
+
+            'clone_item' => [
+                'label' => 'Клонировать',
             ],
 
             'move_item_down' => [
@@ -192,6 +196,12 @@ return [
             ],
 
         ],
+
+        'boolean' => [
+            'true' => 'Да',
+            'false' => 'Нет',
+        ],
+
         'loading_message' => 'Загрузка...',
 
         'no_search_results_message' => 'Нет вариантов, соответствующих вашему запросу.',

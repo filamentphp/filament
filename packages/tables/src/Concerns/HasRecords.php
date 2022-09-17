@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
+use function Livewire\invade;
 
 trait HasRecords
 {
@@ -39,6 +40,15 @@ trait HasRecords
         return $query;
     }
 
+    protected function hydratePivotRelationForTableRecords(Collection | Paginator $records): Collection | Paginator
+    {
+        if ($this instanceof HasRelationshipTable && $this->getRelationship() instanceof BelongsToMany && ! $this->allowsDuplicates()) {
+            invade($this->getRelationship())->hydratePivotRelation($records->all());
+        }
+
+        return $records;
+    }
+
     public function getTableRecords(): Collection | Paginator
     {
         if ($this->records) {
@@ -53,10 +63,10 @@ trait HasRecords
             (! $this->isTablePaginationEnabled()) ||
             ($this->isTableReordering() && (! $this->isTablePaginationEnabledWhileReordering()))
         ) {
-            return $this->records = $query->get();
+            return $this->records = $this->hydratePivotRelationForTableRecords($query->get());
         }
 
-        return $this->records = $this->paginateTableQuery($query);
+        return $this->records = $this->hydratePivotRelationForTableRecords($this->paginateTableQuery($query));
     }
 
     protected function resolveTableRecord(?string $key): ?Model

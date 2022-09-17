@@ -50,6 +50,13 @@ class PageActions extends Page
                 ->label('My Action'),
             Action::make('has-color')
                 ->color('primary'),
+            Action::make('exists'),
+            Action::make('url')
+                ->url('https://filamentphp.com'),
+            Action::make('url_in_new_tab')
+                ->url('https://filamentphp.com', true),
+            Action::make('url_not_in_new_tab')
+                ->url('https://filamentphp.com', false),
         ];
     }
 }
