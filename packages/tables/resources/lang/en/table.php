@@ -4,10 +4,6 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'and :count more',
-        ],
-
         'color' => [
 
             'messages' => [
@@ -15,6 +11,11 @@ return [
             ],
 
         ],
+
+        'tags' => [
+            'more' => 'and :count more',
+        ],
+
     ],
 
     'fields' => [
