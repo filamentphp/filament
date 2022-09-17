@@ -4,7 +4,7 @@ title: Customizing notifications
 
 Notifications come fully styled out of the box. However, if you want to apply your own styling or use a custom view to render notifications, there's multiple options.
 
-## Styling
+## Styling notifications
 
 Notifications have dedicated CSS classes you can hook into to apply your own styling:
 
@@ -13,10 +13,11 @@ Notifications have dedicated CSS classes you can hook into to apply your own sty
 - `filament-notifications-icon`
 - `filament-notifications-title`
 - `filament-notifications-close-button`
+- `filament-notifications-date`
 - `filament-notifications-body`
 - `filament-notifications-actions`
 
-## Custom view
+## Custom notification view
 
 If your desired customization can't be achieved using the CSS classes above, you can create a custom view to render the notification. To configure the notification view, call the static `configureUsing()` method inside a service provider's `boot()` method and specify the view to use:
 
@@ -50,6 +51,10 @@ Getters for all notification properties will be available in the view. So, a cus
     </h4>
     
     <p>
+        {{ $getDate() }}
+    </p>
+    
+    <p>
         {{ $getBody() }}
     </p>
     
@@ -59,7 +64,7 @@ Getters for all notification properties will be available in the view. So, a cus
 </x-notifications::notification>
 ```
 
-## Custom class
+## Custom notification object
 
 Maybe your notifications require additional functionality that's not defined in the package's `Notification` class. Then you can create your own `Notification` class, which extends the package's `Notification` class. For example, your notification design might need a size property.
 

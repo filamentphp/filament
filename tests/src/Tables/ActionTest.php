@@ -93,6 +93,18 @@ it('can have a color', function () {
         ->assertTableActionDoesNotHaveColor('has-color', 'secondary');
 });
 
+it('can have a URL', function () {
+    livewire(PostsTable::class)
+        ->assertTableActionHasUrl('url', 'https://filamentphp.com')
+        ->assertTableActionDoesNotHaveUrl('url', 'https://google.com');
+});
+
+it('can open a URL in a new tab', function () {
+    livewire(PostsTable::class)
+        ->assertTableActionShouldOpenUrlInNewTab('url_in_new_tab')
+        ->assertTableActionShouldNotOpenUrlInNewTab('url_not_in_new_tab');
+});
+
 it('can state whether a table action exists', function () {
     livewire(PostsTable::class)
         ->assertTableActionExists('exists')

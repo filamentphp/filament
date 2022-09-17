@@ -4,8 +4,11 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Filament\Forms\Components\Field;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\Unique;
 
 trait CanBeValidated
@@ -17,6 +20,133 @@ trait CanBeValidated
     protected array $rules = [];
 
     protected string | Closure | null $validationAttribute = null;
+
+    public function activeUrl(bool | Closure $condition = true): static
+    {
+        $this->rule('active_url', $condition);
+
+        return $this;
+    }
+
+    public function alpha(bool | Closure $condition = true): static
+    {
+        $this->rule('alpha', $condition);
+
+        return $this;
+    }
+
+    public function alphaDash(bool | Closure $condition = true): static
+    {
+        $this->rule('alpha_dash', $condition);
+
+        return $this;
+    }
+
+    public function alphaNum(bool | Closure $condition = true): static
+    {
+        $this->rule('alpha_num', $condition);
+
+        return $this;
+    }
+
+    public function confirmed(bool | Closure $condition = true): static
+    {
+        $this->rule('confirmed', $condition);
+
+        return $this;
+    }
+
+    public function doesntStartWith(array | Arrayable | string | Closure $values): static
+    {
+        $this->rule(static function (Field $component) use ($values) {
+            $values = $component->evaluate($values);
+
+            if ($values instanceof Arrayable) {
+                $values = $values->toArray();
+            }
+
+            if (is_array($values)) {
+                $values = implode(',', $values);
+            }
+
+            return 'doesnt_start_with:' . $values;
+        }, static function (Field $component) use ($values): bool {
+            $values = $component->evaluate($values);
+
+            if ($values instanceof Arrayable) {
+                $values = $values->toArray();
+            }
+
+            return is_array($values) ? count($values) : filled($values);
+        });
+
+        return $this;
+    }
+
+    public function doesntEndWith(array | Arrayable | string | Closure $values): static
+    {
+        $this->rule(static function (Field $component) use ($values) {
+            $values = $component->evaluate($values);
+
+            if ($values instanceof Arrayable) {
+                $values = $values->toArray();
+            }
+
+            if (is_array($values)) {
+                $values = implode(',', $values);
+            }
+
+            return 'doesnt_end_with:' . $values;
+        }, static function (Field $component) use ($values): bool {
+            $values = $component->evaluate($values);
+
+            if ($values instanceof Arrayable) {
+                $values = $values->toArray();
+            }
+
+            return is_array($values) ? count($values) : filled($values);
+        });
+
+        return $this;
+    }
+
+    public function endsWith(array | Arrayable | string | Closure $values): static
+    {
+        $this->rule(static function (Field $component) use ($values) {
+            $values = $component->evaluate($values);
+
+            if ($values instanceof Arrayable) {
+                $values = $values->toArray();
+            }
+
+            if (is_array($values)) {
+                $values = implode(',', $values);
+            }
+
+            return 'ends_with:' . $values;
+        }, static function (Field $component) use ($values): bool {
+            $values = $component->evaluate($values);
+
+            if ($values instanceof Arrayable) {
+                $values = $values->toArray();
+            }
+
+            return is_array($values) ? count($values) : filled($values);
+        });
+
+        return $this;
+    }
+
+    public function enum(string | Closure $enum): static
+    {
+        $this->rule(static function (Field $component) use ($enum) {
+            $enum = $component->evaluate($enum);
+
+            return new Enum($enum);
+        }, static fn (Field $component): bool => filled($component->evaluate($enum)));
+
+        return $this;
+    }
 
     public function exists(string | Closure | null $table = null, string | Closure | null $column = null, ?Closure $callback = null): static
     {
@@ -34,6 +164,120 @@ trait CanBeValidated
 
             return $rule;
         }, static fn (Field $component, ?string $model): bool => (bool) ($component->evaluate($table) ?? $model));
+
+        return $this;
+    }
+
+    public function filled(bool | Closure $condition = true): static
+    {
+        $this->rule('filled', $condition);
+
+        return $this;
+    }
+
+    public function in(array | Arrayable | string | Closure $values): static
+    {
+        $this->rule(static function (Field $component) use ($values) {
+            $values = $component->evaluate($values);
+
+            if ($values instanceof Arrayable) {
+                $values = $values->toArray();
+            }
+
+            if (is_string($values)) {
+                $values = array_map('trim', explode(',', $values));
+            }
+
+            return Rule::in($values);
+        }, static function (Field $component) use ($values): bool {
+            $values = $component->evaluate($values);
+
+            if ($values instanceof Arrayable) {
+                $values = $values->toArray();
+            }
+
+            return is_array($values) ? count($values) : filled($values);
+        });
+
+        return $this;
+    }
+
+    public function ip(bool | Closure $condition = true): static
+    {
+        $this->rule('ip', $condition);
+
+        return $this;
+    }
+
+    public function ipv4(bool | Closure $condition = true): static
+    {
+        $this->rule('ipv4', $condition);
+
+        return $this;
+    }
+
+    public function ipv6(bool | Closure $condition = true): static
+    {
+        $this->rule('ipv6', $condition);
+
+        return $this;
+    }
+
+    public function json(bool | Closure $condition = true): static
+    {
+        $this->rule('json', $condition);
+
+        return $this;
+    }
+
+    public function macAddress(bool | Closure $condition = true): static
+    {
+        $this->rule('mac_address', $condition);
+
+        return $this;
+    }
+
+    public function multipleOf(int | Closure $value): static
+    {
+        $this->rule(static function (Field $component) use ($value) {
+            return 'multiple_of:' . $component->evaluate($value);
+        }, static fn (Field $component): bool => filled($component->evaluate($value)));
+
+        return $this;
+    }
+
+    public function notIn(array | Arrayable | string | Closure $values): static
+    {
+        $this->rule(static function (Field $component) use ($values) {
+            $values = $component->evaluate($values);
+
+            if ($values instanceof Arrayable) {
+                $values = $values->toArray();
+            }
+
+            if (is_string($values)) {
+                $values = array_map('trim', explode(',', $values));
+            }
+
+            return Rule::notIn($values);
+        }, static function (Field $component) use ($values): bool {
+            $values = $component->evaluate($values);
+
+            if ($values instanceof Arrayable) {
+                $values = $values->toArray();
+            }
+
+            return is_array($values) ? count($values) : filled($values);
+        });
+
+        return $this;
+    }
+
+    public function notRegex(string | Closure | null $pattern): static
+    {
+        $this->rule(static function (Field $component) use ($pattern) {
+            return 'not_regex:' . $component->evaluate($pattern);
+        }, static fn (Field $component): bool => filled($component->evaluate($pattern)));
 
         return $this;
     }
@@ -77,6 +321,47 @@ trait CanBeValidated
     public function regex(string | Closure | null $pattern): static
     {
         $this->regexPattern = $pattern;
+
+        return $this;
+    }
+
+    public function startsWith(array | Arrayable | string | Closure $values): static
+    {
+        $this->rule(static function (Field $component) use ($values) {
+            $values = $component->evaluate($values);
+
+            if ($values instanceof Arrayable) {
+                $values = $values->toArray();
+            }
+
+            if (is_array($values)) {
+                $values = implode(',', $values);
+            }
+
+            return 'starts_with:' . $values;
+        }, static function (Field $component) use ($values): bool {
+            $values = $component->evaluate($values);
+
+            if ($values instanceof Arrayable) {
+                $values = $values->toArray();
+            }
+
+            return is_array($values) ? count($values) : filled($values);
+        });
+
+        return $this;
+    }
+
+    public function string(bool | Closure $condition = true): static
+    {
+        $this->rule('string', $condition);
+
+        return $this;
+    }
+
+    public function uuid(bool | Closure $condition = true): static
+    {
+        $this->rule('uuid', $condition);
 
         return $this;
     }
@@ -204,7 +489,7 @@ trait CanBeValidated
 
     public function getValidationAttribute(): string
     {
-        return $this->evaluate($this->validationAttribute) ?? lcfirst($this->getLabel());
+        return $this->evaluate($this->validationAttribute) ?? Str::lcfirst($this->getLabel());
     }
 
     public function getValidationRules(): array

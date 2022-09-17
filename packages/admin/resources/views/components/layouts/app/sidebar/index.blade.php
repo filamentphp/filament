@@ -2,12 +2,11 @@
     x-data="{}"
     @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
         x-cloak
-        x-bind:class="$store.sidebar.isOpen ? 'filament-sidebar-open translate-x-0 max-w-[20em] lg:max-w-[var(--sidebar-width)]' : '-translate-x-full lg:translate-x-0 lg:max-w-[5.4em] rtl:lg:-translate-x-0 rtl:translate-x-full'"
+        x-bind:class="$store.sidebar.isOpen ? 'filament-sidebar-open translate-x-0 max-w-[20em] lg:max-w-[var(--sidebar-width)]' : '-translate-x-full lg:translate-x-0 lg:max-w-[var(--collapsed-sidebar-width)] rtl:lg:-translate-x-0 rtl:translate-x-full'"
     @else
         x-cloak="-lg"
         x-bind:class="$store.sidebar.isOpen ? 'filament-sidebar-open translate-x-0' : '-translate-x-full lg:translate-x-0 rtl:lg:-translate-x-0 rtl:translate-x-full'"
     @endif
-
     @class([
         'filament-sidebar fixed inset-y-0 left-0 rtl:left-auto rtl:right-0 z-20 flex flex-col h-screen overflow-hidden shadow-2xl transition-all bg-white lg:border-r rtl:lg:border-r-0 rtl:lg:border-l w-[var(--sidebar-width)] lg:z-0',
         'lg:translate-x-0' => ! config('filament.layout.sidebar.is_collapsible_on_desktop'),
@@ -15,35 +14,60 @@
     ])
 >
     <header @class([
-        'filament-sidebar-header border-b h-[4rem] shrink-0 px-6 flex items-center',
+        'filament-sidebar-header border-b h-[4rem] shrink-0 flex items-center justify-center',
         'dark:border-gray-700' => config('filament.dark_mode'),
     ])>
-        <a
-            href="{{ config('filament.home_url') }}"
-            class="block w-full"
-            @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
-                x-show="$store.sidebar.isOpen"
-                x-transition:enter="lg:transition delay-100"
-                x-transition:enter-start="opacity-0"
-                x-transition:enter-end="opacity-100"
-            @endif
-            data-turbo="false"
+        <div
+            x-cloak
+            @class([
+                'flex items-center jusify-center px-6 w-full',
+                'lg:px-4' => config('filament.layout.sidebar.is_collapsible_on_desktop') && (config('filament.layout.sidebar.collapsed_width') !== 0),
+            ])
+            x-show="$store.sidebar.isOpen || @js(! config('filament.layout.sidebar.is_collapsible_on_desktop')) || @js(config('filament.layout.sidebar.collapsed_width') === 0)"
         >
-            <x-filament::brand />
-        </a>
+            @if (config('filament.layout.sidebar.is_collapsible_on_desktop') && (config('filament.layout.sidebar.collapsed_width') !== 0))
+                <button
+                    type="button"
+                    class="filament-sidebar-collapse-button shrink-0 hidden lg:flex items-center justify-center w-10 h-10 text-primary-500 rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none"
+                    x-on:click.stop="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
+                    x-transition:enter="lg:transition delay-100"
+                    x-transition:enter-start="opacity-0"
+                    x-transition:enter-end="opacity-100"
+                    data-turbo="false"
+                >
+                    <svg class="h-6 w-6" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20.25 7.5L16 12L20.25 16.5M3.75 12H12M3.75 17.25H16M3.75 6.75H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            @endif
+
+            <a
+                href="{{ config('filament.home_url') }}"
+                data-turbo="false"
+                @class([
+                    'block w-full',
+                    'lg:ml-3' => config('filament.layout.sidebar.is_collapsible_on_desktop') && (config('filament.layout.sidebar.collapsed_width') !== 0),
+                ])
+            >
+                <x-filament::brand />
+            </a>
+        </div>
 
         @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
-            <a
-                class="block w-full text-center"
-                href="{{ config('filament.home_url') }}"
-                x-show="! $store.sidebar.isOpen"
+            <button
+                type="button"
+                class="filament-sidebar-close-button shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none"
+                x-on:click.stop="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
+                x-show="(! $store.sidebar.isOpen) && @js(config('filament.layout.sidebar.collapsed_width') !== 0)"
                 x-transition:enter="lg:transition delay-100"
                 x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100"
                 data-turbo="false"
             >
-                <x-filament::brand-icon />
-            </a>
+                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+            </button>
         @endif
     </header>
 

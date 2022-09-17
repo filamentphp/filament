@@ -27915,8 +27915,8 @@ var select_default = (Alpine) => {
             this.select.clearChoices();
             await this.select.setChoices([
               {
-                value: "",
                 label: loadingMessage,
+                value: "",
                 disabled: true
               }
             ]);
@@ -27933,8 +27933,8 @@ var select_default = (Alpine) => {
             this.select.clearChoices();
             await this.select.setChoices([
               {
-                value: "",
                 label: searchingMessage,
+                value: "",
                 disabled: true
               }
             ]);
@@ -27969,10 +27969,7 @@ var select_default = (Alpine) => {
       },
       getChoices: async function(config = {}) {
         const options3 = await this.getOptions(config);
-        return this.transformOptionsIntoChoices({
-          ...options3,
-          ...await this.getMissingOptions(options3)
-        });
+        return options3.concat(await this.getMissingOptions(options3));
       },
       getOptions: async function({search, withInitialOptions}) {
         if (withInitialOptions) {
@@ -27982,12 +27979,6 @@ var select_default = (Alpine) => {
           return await getSearchResultsUsing(search);
         }
         return await getOptionsUsing();
-      },
-      transformOptionsIntoChoices: function(options3) {
-        return Object.entries(options3).map(([value, label]) => ({
-          label,
-          value
-        }));
       },
       refreshPlaceholder: function() {
         if (isMultiple) {
@@ -28006,24 +27997,28 @@ var select_default = (Alpine) => {
         return state3?.toString();
       },
       getMissingOptions: async function(options3) {
-        if ([null, void 0, "", [], {}].includes(this.state)) {
+        let state3 = this.formatState(this.state);
+        if ([null, void 0, "", [], {}].includes(state3)) {
           return {};
         }
         if (!options3.length) {
           options3 = {};
         }
         if (isMultiple) {
-          if (this.state.every((value) => value in options3)) {
+          if (state3.every((value) => value in options3)) {
             return {};
           }
           return await getOptionLabelsUsing();
         }
-        if (this.state in options3) {
+        if (state3 in options3) {
           return options3;
         }
-        let missingOptions = {};
-        missingOptions[this.state] = await getOptionLabelUsing();
-        return missingOptions;
+        return [
+          {
+            label: await getOptionLabelUsing(),
+            value: state3
+          }
+        ];
       }
     };
   });

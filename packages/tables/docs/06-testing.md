@@ -91,6 +91,23 @@ it('can search posts by title', function () {
 });
 ```
 
+### State
+
+To assert that a certain column has a state for a record:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can get post author names', function () {
+    $posts = Post::factory()->count(10)->create();
+
+    $post = $posts->first();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableColumnStateSet('author.name', $post->author->name, record: $post);
+});
+```
+
 ### Authorization
 
 To ensure that a particular user cannot see a column, you can use the `assertTableColumnHidden()` method:

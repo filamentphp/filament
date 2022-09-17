@@ -199,6 +199,11 @@ class Resource
         return [$titleAttribute];
     }
 
+    public static function getGlobalSearchResultActions(Model $record): array
+    {
+        return [];
+    }
+
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [];
@@ -250,6 +255,7 @@ class Resource
                     title: static::getGlobalSearchResultTitle($record),
                     url: $url,
                     details: static::getGlobalSearchResultDetails($record),
+                    actions: static::getGlobalSearchResultActions($record),
                 );
             })
             ->filter();
@@ -368,11 +374,11 @@ class Resource
             ->implode('/');
     }
 
-    public static function getUrl($name = 'index', $params = []): string
+    public static function getUrl($name = 'index', $params = [], $isAbsolute = true): string
     {
         $routeBaseName = static::getRouteBaseName();
 
-        return route("{$routeBaseName}.{$name}", $params);
+        return route("{$routeBaseName}.{$name}", $params, $isAbsolute);
     }
 
     public static function hasPage($page): bool
