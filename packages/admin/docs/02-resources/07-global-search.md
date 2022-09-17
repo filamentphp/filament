@@ -83,7 +83,7 @@ public static function getGlobalSearchResultActions(Model $record): array
         Action::make('edit')
             ->iconButton()
             ->icon('heroicon-s-pencil')
-            ->url(self::getUrl('edit', ['record' => $record->id])),
+            ->url(static::getUrl('edit', ['record' => $record])),
     ];
 }
 ```
