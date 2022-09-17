@@ -12,37 +12,37 @@ class ColorColumn extends Column
 
     protected string | Closure | null $copyMessage = null;
 
-    protected int | Closure | null $copyMessageDuration = 2000;
+    protected int | Closure | null $copyMessageDuration = null;
 
-    public function copyable(bool | Closure $copyable = true): self
+    public function copyable(bool | Closure $condition = true): static
     {
-        $this->isCopyable = $copyable;
+        $this->isCopyable = $condition;
 
         return $this;
     }
 
-    public function copyMessage(string | Closure | null $message): self
+    public function copyMessage(string | Closure | null $message): static
     {
         $this->copyMessage = $message;
 
         return $this;
     }
 
-    public function getCopyMessage(): ?string
+    public function getCopyMessage(): string
     {
-        return $this->evaluate($this->copyMessage ?? __('tables::table.columns.color.copied'));
+        return $this->evaluate($this->copyMessage) ?? __('tables::table.columns.color.messages.copied');
     }
 
-    public function copyMessageDuration(int | Closure | null $duration): self
+    public function copyMessageDuration(int | Closure | null $duration): static
     {
         $this->copyMessageDuration = $duration;
 
         return $this;
     }
 
-    public function getCopyMessageDuration(): ?int
+    public function getCopyMessageDuration(): int
     {
-        return $this->evaluate($this->copyMessageDuration ?? 0);
+        return $this->evaluate($this->copyMessageDuration) ?? 2000;
     }
 
     public function isCopyable(): bool

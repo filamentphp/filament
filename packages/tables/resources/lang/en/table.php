@@ -9,7 +9,11 @@ return [
         ],
 
         'color' => [
-            'copied' => 'Copied',
+
+            'messages' => [
+                'copied' => 'Copied',
+            ],
+            
         ],
     ],
 
