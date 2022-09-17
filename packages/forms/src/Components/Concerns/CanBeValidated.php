@@ -230,13 +230,6 @@ trait CanBeValidated
         return $this;
     }
 
-    public function present(bool | Closure $condition = true): static
-    {
-        $this->rule('present', $condition);
-
-        return $this;
-    }
-
     public function required(bool | Closure $condition = true): static
     {
         $this->isRequired = $condition;
