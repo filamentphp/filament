@@ -10,13 +10,13 @@ use Illuminate\Support\Str;
 use Symfony\Component\Console\Exception\InvalidOptionException;
 use Symfony\Component\Finder\SplFileInfo;
 
-class CheckMissingTranslationsCommand extends Command
+class CheckTranslationsCommand extends Command
 {
     protected $signature = 'filament:check-translations
-                            {locale*         : The locale to compare against the base translation. Accepts multiple values.}
-                            {--source=vendor : The directory containing the translations. \'vendor\' and \'app\' are accepted values.}';
+                            {locales* : The locales to check.}
+                            {--source=vendor : The directory containing the translations to check - either \'vendor\' or \'app\'.}';
 
-    protected $description = 'Scan translation files and compare each of them with the base translation. Outputs missing and removed translations.';
+    protected $description = 'Checks for missing and removed translations.';
 
     public function handle()
     {
@@ -46,7 +46,7 @@ class CheckMissingTranslationsCommand extends Command
         collect($filesystem->directories($localeRootDirectory))
             ->mapWithKeys(static fn (string $directory): array => [$directory => (string) Str::of($directory)->afterLast('/')])
             ->when(
-                $locales = $this->argument('locale'),
+                $locales = $this->argument('locales'),
                 fn (Collection $availableLocales): Collection => $availableLocales->filter(fn (string $locale): bool => in_array($locale, $locales))
             )
             ->each(function (string $locale, string $localeDir) use ($filesystem, $localeRootDirectory, $package) {
