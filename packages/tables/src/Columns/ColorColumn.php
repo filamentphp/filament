@@ -31,7 +31,6 @@ class ColorColumn extends Column
     public function getCopyMessage(): ?string
     {
         return $this->evaluate($this->copyMessage ?? __('tables::table.columns.color.copied'));
-
     }
 
     public function copyMessageDuration(int | Closure | null $duration): self
@@ -44,7 +43,6 @@ class ColorColumn extends Column
     public function getCopyMessageDuration(): ?int
     {
         return $this->evaluate($this->copyMessageDuration ?? 0);
-
     }
 
     public function isCopyable(): bool
