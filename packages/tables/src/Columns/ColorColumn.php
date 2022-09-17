@@ -28,16 +28,16 @@ class ColorColumn extends Column
         return $this;
     }
 
-    public function getCopyMessage(): string
-    {
-        return $this->evaluate($this->copyMessage) ?? __('tables::table.columns.color.messages.copied');
-    }
-
     public function copyMessageDuration(int | Closure | null $duration): static
     {
         $this->copyMessageDuration = $duration;
 
         return $this;
+    }
+
+    public function getCopyMessage(): string
+    {
+        return $this->evaluate($this->copyMessage) ?? __('tables::table.columns.color.messages.copied');
     }
 
     public function getCopyMessageDuration(): int
