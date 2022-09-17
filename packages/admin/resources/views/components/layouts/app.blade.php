@@ -13,7 +13,7 @@
             class="filament-sidebar-close-overlay fixed inset-0 z-20 w-full h-full bg-gray-900/50 lg:hidden"
         ></div>
 
-        <x-filament::layouts.app.sidebar/>
+        <x-filament::layouts.app.sidebar />
 
         <div
             @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
@@ -47,15 +47,15 @@
                             'lg:hidden' => ! (config('filament.layout.sidebar.is_collapsible_on_desktop') && (config('filament.layout.sidebar.collapsed_width') === 0)),
                         ])
                     >
-                        <x-heroicon-o-menu class="w-6 h-6"/>
+                        <x-heroicon-o-menu class="w-6 h-6" />
                     </button>
 
                     <div class="flex items-center justify-between flex-1 gap-4">
-                        <x-filament::layouts.app.topbar.breadcrumbs :breadcrumbs="$breadcrumbs"/>
+                        <x-filament::layouts.app.topbar.breadcrumbs :breadcrumbs="$breadcrumbs" />
 
                         @livewire('filament.core.global-search')
 
-                        <x-filament::layouts.app.topbar.user-menu/>
+                        <x-filament::layouts.app.topbar.user-menu />
                     </div>
                 </div>
             </header>
@@ -82,7 +82,7 @@
             </div>
 
             <div class="filament-main-footer py-4 shrink-0">
-                <x-filament::footer/>
+                <x-filament::footer />
             </div>
 
             @livewire('notifications')
