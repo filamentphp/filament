@@ -25,8 +25,8 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected $queryString = [
         'isTableReordering' => ['except' => false],
         'tableFilters',
-        'tableSortColumn',
-        'tableSortDirection',
+        'tableSortColumn' => ['except' => ''],
+        'tableSortDirection' => ['except' => ''],
         'tableSearchQuery' => ['except' => ''],
     ];
 

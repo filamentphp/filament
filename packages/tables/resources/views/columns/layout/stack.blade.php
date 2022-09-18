@@ -1,4 +1,4 @@
-<div class="space-y-1">
+<div>
     <x-tables::columns-layout
         :components="$getComponents()"
         :record="$getRecord()"

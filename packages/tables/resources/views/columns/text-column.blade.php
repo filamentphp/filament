@@ -1,6 +1,10 @@
 @php
     $descriptionAbove = $getDescriptionAbove();
     $descriptionBelow = $getDescriptionBelow();
+
+    $icon = $getIcon();
+    $iconPosition = $getIconPosition();
+    $iconClasses = 'w-4 h-4';
 @endphp
 
 <div
@@ -23,16 +27,28 @@
     ]) }}
 >
     @if (filled($descriptionAbove))
-        <span class="block font- text-sm text-gray-500">
+        <p class="block text-sm text-gray-500">
             {{ $descriptionAbove instanceof \Illuminate\Support\HtmlString ? $descriptionAbove : \Illuminate\Support\Str::of($descriptionAbove)->markdown()->sanitizeHtml()->toHtmlString() }}
-        </span>
+        </p>
     @endif
 
-    {{ $getFormattedState() }}
+    <p class="flex items-center space-x-1">
+        @if ($icon && $iconPosition === 'before')
+            <x-dynamic-component :component="$icon" :class="$iconClasses" />
+        @endif
+
+        <span>
+            {{ $getFormattedState() }}
+        </span>
+
+        @if ($icon && $iconPosition === 'after')
+            <x-dynamic-component :component="$icon" :class="$iconClasses" />
+        @endif
+    </p>
 
     @if (filled($descriptionBelow))
-        <span class="block text-sm text-gray-500">
+        <p class="block text-sm text-gray-500">
             {{ $descriptionBelow instanceof \Illuminate\Support\HtmlString ? $descriptionBelow : \Illuminate\Support\Str::of($descriptionBelow)->markdown()->sanitizeHtml()->toHtmlString() }}
-        </span>
+        </p>
     @endif
 </div>

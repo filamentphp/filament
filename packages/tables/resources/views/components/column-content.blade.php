@@ -46,18 +46,16 @@
     @elseif ($action || $recordAction)
         @php
             if ($action instanceof \Filament\Tables\Actions\Action) {
-                $wireClickAction = "mountTableAction('{$action->getName()}', '%s')";
+                $wireClickAction = "mountTableAction('{$action->getName()}', '{$recordKey}')";
             } elseif ($action) {
-                $wireClickAction = "callTableColumnAction('{$name}', '%s')";
+                $wireClickAction = "callTableColumnAction('{$name}', '{$recordKey}')";
             } else {
                 if ($this->getCachedTableAction($recordAction)) {
-                    $wireClickAction = "mountTableAction('{$recordAction}', '%s')";
+                    $wireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
                 } else {
-                    $wireClickAction = "{$recordAction}('%s')";
+                    $wireClickAction = "{$recordAction}('{$recordKey}')";
                 }
             }
-
-            $wireClickAction = sprintf($wireClickAction, $recordKey);
         @endphp
 
         <button

@@ -357,9 +357,8 @@
 
         <div
             @class([
-                'filament-tables-table-container relative',
+                'filament-tables-table-container overflow-x-auto relative',
                 'dark:border-gray-700' => config('tables.dark_mode'),
-                'overflow-x-auto' => $hasColumnsLayout,
                 'rounded-t-xl' => ! $renderHeader,
                 'border-t' => $renderHeader,
             ])
@@ -422,8 +421,69 @@
                         @if ($hasColumnsLayout)
                             <th
                                 colspan="{{ count($columns) }}"
-                                class="px-4 py-2 text-sm"
-                            >&nbsp;</th>
+                                class="sm:px-4 py-2 text-xs sm:text-sm"
+                            >
+                                @php
+                                    $sortableColumns = array_filter(
+                                        $columns,
+                                        fn (\Filament\Tables\Columns\Column $column): bool => $column->isSortable(),
+                                    );
+                                @endphp
+
+                                @if (count($sortableColumns) && (! $isReordering))
+                                    <div
+                                        x-data="{
+                                            column: $wire.entangle('tableSortColumn'),
+                                            direction: $wire.entangle('tableSortDirection'),
+                                        }"
+                                        x-init="
+                                            $watch('column', function (newColumn, oldColumn) {
+                                                if (! newColumn) {
+                                                    direction = null
+
+                                                    return
+                                                }
+
+                                                if (oldColumn) {
+                                                    return
+                                                }
+
+                                                direction = 'asc'
+                                            })
+                                        "
+                                        class="flex flex-wrap items-center gap-1"
+                                    >
+                                        <label>
+                                            <span class="mr-1 font-medium">
+                                                Sort by
+                                            </span>
+
+                                            <select
+                                                x-model="column"
+                                                style="background-position: right 0.2rem center"
+                                                class="text-xs pl-2 pr-6 py-1 font-medium border-0 bg-gray-500/5 rounded-lg focus:ring-0 sm:text-sm"
+                                            >
+                                                <option value="">-</option>
+                                                @foreach ($sortableColumns as $column)
+                                                    <option value="{{ $column->getName() }}">{{ $column->getLabel() }}</option>
+                                                @endforeach
+                                            </select>
+                                        </label>
+
+                                        <select
+                                            x-show="column"
+                                            x-model="direction"
+                                            style="background-position: right 0.2rem center"
+                                            class="text-xs pl-2 pr-6 py-1 font-medium border-0 bg-gray-500/5 rounded-lg focus:ring-0 sm:text-sm"
+                                        >
+                                            <option value="asc">Ascending</option>
+                                            <option value="desc">Descending</option>
+                                        </select>
+                                    </div>
+                                @else
+                                    &nbsp;
+                                @endif
+                            </th>
                         @else
                             @foreach ($columns as $column)
                                 <x-tables::header-cell
@@ -549,7 +609,7 @@
                                     @if ($recordUrl)
                                         <a
                                             href="{{ $recordUrl }}"
-                                            class="block px-4 py-3"
+                                            class="block pr-3 py-3 sm:px-4"
                                         >
                                             <x-tables::columns-layout
                                                 :components="$getColumnsLayout()"
@@ -572,7 +632,7 @@
                                             wire:loading.attr="disabled"
                                             wire:loading.class="opacity-70 cursor-wait"
                                             type="button"
-                                            class="block px-4 py-3"
+                                            class="block pr-4 py-3 sm:px-4"
                                         >
                                             <x-tables::columns-layout
                                                 :components="$getColumnsLayout()"
@@ -581,7 +641,7 @@
                                             />
                                         </button>
                                     @else
-                                        <div class="px-4 py-3">
+                                        <div class="pr-4 py-3 sm:px-4">
                                             <x-tables::columns-layout
                                                 :components="$getColumnsLayout()"
                                                 :record="$record"
