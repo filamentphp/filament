@@ -19,7 +19,7 @@ return [
             ],
 
         ],
-        
+
         'tab' => [
             'label' => 'Editar',
         ],

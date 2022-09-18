@@ -15,7 +15,7 @@ return [
             'delete_item' => [
                 'label' => 'Borrar',
             ],
-            
+
             'move_item' => [
                 'label' => 'Mover',
             ],
@@ -106,7 +106,7 @@ return [
             'delete_item' => [
                 'label' => 'Borrar',
             ],
-            
+
             'move_item' => [
                 'label' => 'Mover',
             ],

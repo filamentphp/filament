@@ -5,7 +5,7 @@ return [
     'title' => 'Ver :label',
 
     'breadcrumb' => 'Ver',
-    
+
     'form' => [
 
         'tab' => [

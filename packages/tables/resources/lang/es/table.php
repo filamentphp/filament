@@ -3,7 +3,7 @@
 return [
 
     'columns' => [
-        
+
         'color' => [
 
             'messages' => [
