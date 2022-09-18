@@ -3,6 +3,14 @@
 return [
 
     'columns' => [
+        
+        'color' => [
+
+            'messages' => [
+                'copied' => 'Copiado',
+            ],
+
+        ],
 
         'tags' => [
             'more' => 'y :count más',
