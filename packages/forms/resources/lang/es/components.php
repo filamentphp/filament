@@ -15,6 +15,10 @@ return [
             'delete_item' => [
                 'label' => 'Borrar',
             ],
+            
+            'move_item' => [
+                'label' => 'Mover',
+            ],
 
             'move_item_down' => [
                 'label' => 'Bajar',
@@ -101,6 +105,10 @@ return [
 
             'delete_item' => [
                 'label' => 'Borrar',
+            ],
+            
+            'move_item' => [
+                'label' => 'Mover',
             ],
 
             'clone_item' => [
