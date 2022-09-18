@@ -102,10 +102,6 @@ return [
                 'label' => 'Limpar filtros',
             ],
 
-            'close' => [
-                'label' => 'Fechar',
-            ],
-
         ],
 
         'indicator' => 'Filtros ativos',
