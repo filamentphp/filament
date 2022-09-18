@@ -10,6 +10,8 @@ class Step extends Component
 {
     protected ?Closure $afterValidated = null;
 
+    protected ?Closure $beforeValidation = null;
+
     protected string | Closure | null $description = null;
 
     protected string | Closure | null $icon = null;
@@ -37,6 +39,13 @@ class Step extends Component
         return $this;
     }
 
+    public function beforeValidation(?Closure $callback): static
+    {
+        $this->beforeValidation = $callback;
+
+        return $this;
+    }
+
     public function description(string | Closure | null $description): static
     {
         $this->description = $description;
@@ -54,6 +63,11 @@ class Step extends Component
     public function callAfterValidated(): void
     {
         $this->evaluate($this->afterValidated);
+    }
+
+    public function callBeforeValidation(): void
+    {
+        $this->evaluate($this->beforeValidation);
     }
 
     public function getDescription(): ?string
