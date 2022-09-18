@@ -79,6 +79,16 @@ class Table extends ViewComponent
         );
     }
 
+    public function getColumnsLayout(): array
+    {
+        return $this->getLivewire()->getCachedTableColumnsLayout();
+    }
+
+    public function hasColumnsLayout(): bool
+    {
+        return $this->getLivewire()->hasTableColumnsLayout();
+    }
+
     public function getContent(): ?View
     {
         /** @var TableComponent $livewire */

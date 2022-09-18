@@ -7,7 +7,10 @@ use Closure;
 class TextColumn extends Column
 {
     use Concerns\CanFormatState;
+    use Concerns\HasColor;
     use Concerns\HasDescription;
+    use Concerns\HasSize;
+    use Concerns\HasWeight;
 
     protected string $view = 'tables::columns.text-column';
 

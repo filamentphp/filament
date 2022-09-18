@@ -12,6 +12,7 @@
         ->mapWithKeys(fn (\Filament\Tables\Filters\BaseFilter $filter): array => [$filter->getName() => $filter->getIndicators()])
         ->filter(fn (array $indicators): bool => count($indicators))
         ->all();
+    $hasColumnsLayout = $hasColumnsLayout();
     $header = $getHeader();
     $headerActions = $getHeaderActions();
     $heading = $getHeading();
@@ -356,8 +357,9 @@
 
         <div
             @class([
-                'filament-tables-table-container overflow-y-auto relative',
+                'filament-tables-table-container relative',
                 'dark:border-gray-700' => config('tables.dark_mode'),
+                'overflow-x-auto' => $hasColumnsLayout,
                 'rounded-t-xl' => ! $renderHeader,
                 'border-t' => $renderHeader,
             ])
@@ -376,7 +378,7 @@
                         @else
                             @if (count($actions) && $actionsPosition === Position::BeforeCells)
                                 @if ($actionsColumnLabel)
-                                    <x-tables::header-cell alignment="right">
+                                    <x-tables::header-cell>
                                         {{ $actionsColumnLabel }}
                                     </x-tables::header-cell>
                                 @else
@@ -408,7 +410,7 @@
 
                             @if (count($actions) && $actionsPosition === Position::BeforeColumns)
                                 @if ($actionsColumnLabel)
-                                    <x-tables::header-cell alignment="right">
+                                    <x-tables::header-cell>
                                         {{ $actionsColumnLabel }}
                                     </x-tables::header-cell>
                                 @else
@@ -417,19 +419,26 @@
                             @endif
                         @endif
 
-                        @foreach ($columns as $column)
-                            <x-tables::header-cell
-                                :extra-attributes="$column->getExtraHeaderAttributes()"
-                                :is-sort-column="$getSortColumn() === $column->getName()"
-                                :name="$column->getName()"
-                                :alignment="$column->getAlignment()"
-                                :sortable="$column->isSortable() && (! $isReordering)"
-                                :sort-direction="$getSortDirection()"
-                                :class="$getHiddenClasses($column)"
-                            >
-                                {{ $column->getLabel() }}
-                            </x-tables::header-cell>
-                        @endforeach
+                        @if ($hasColumnsLayout)
+                            <th
+                                colspan="{{ count($columns) }}"
+                                class="px-4 py-2 text-sm"
+                            >&nbsp;</th>
+                        @else
+                            @foreach ($columns as $column)
+                                <x-tables::header-cell
+                                    :extra-attributes="$column->getExtraHeaderAttributes()"
+                                    :is-sort-column="$getSortColumn() === $column->getName()"
+                                    :name="$column->getName()"
+                                    :alignment="$column->getAlignment()"
+                                    :sortable="$column->isSortable() && (! $isReordering)"
+                                    :sort-direction="$getSortDirection()"
+                                    :class="$getHiddenClasses($column)"
+                                >
+                                    {{ $column->getLabel() }}
+                                </x-tables::header-cell>
+                            @endforeach
+                        @endif
 
                         @if (count($actions) && (! $isReordering) && $actionsPosition === Position::AfterCells)
                             @if ($actionsColumnLabel)
@@ -531,29 +540,76 @@
                                 />
                             @endif
 
-                            @foreach ($columns as $column)
-                                @php
-                                    $column->record($record);
-                                @endphp
-
+                            @if ($hasColumnsLayout)
                                 <x-tables::cell
-                                    :action="$column->getAction()"
-                                    :name="$column->getName()"
-                                    :alignment="$column->getAlignment()"
-                                    :record="$record"
-                                    :tooltip="$column->getTooltip()"
-                                    :record-action="$recordAction"
-                                    :record-url="$recordUrl"
-                                    :should-open-url-in-new-tab="$column->shouldOpenUrlInNewTab()"
-                                    :url="$column->getUrl()"
-                                    :is-click-disabled="$column->isClickDisabled() || $isReordering"
-                                    :class="$getHiddenClasses($column)"
+                                    :colspan="count($columns)"
                                     wire:loading.remove.delay
                                     wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
                                 >
-                                    {{ $column->viewData(['recordKey' => $recordKey]) }}
+                                    @if ($recordUrl)
+                                        <a
+                                            href="{{ $recordUrl }}"
+                                            class="block px-4 py-3"
+                                        >
+                                            <x-tables::columns-layout
+                                                :components="$getColumnsLayout()"
+                                                :record="$record"
+                                                :record-key="$recordKey"
+                                            />
+                                        </a>
+                                    @elseif ($recordAction)
+                                        @php
+                                            if ($this->getCachedTableAction($recordAction)) {
+                                                $recordWireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
+                                            } else {
+                                                $recordWireClickAction = "{$recordAction}('{$recordKey}')";
+                                            }
+                                        @endphp
+
+                                        <button
+                                            wire:click="{{ $recordWireClickAction }}"
+                                            wire:target="{{ $recordWireClickAction }}"
+                                            wire:loading.attr="disabled"
+                                            wire:loading.class="opacity-70 cursor-wait"
+                                            type="button"
+                                            class="block px-4 py-3"
+                                        >
+                                            <x-tables::columns-layout
+                                                :components="$getColumnsLayout()"
+                                                :record="$record"
+                                                :record-key="$recordKey"
+                                            />
+                                        </button>
+                                    @else
+                                        <div class="px-4 py-3">
+                                            <x-tables::columns-layout
+                                                :components="$getColumnsLayout()"
+                                                :record="$record"
+                                                :record-key="$recordKey"
+                                            />
+                                        </div>
+                                    @endif
                                 </x-tables::cell>
-                            @endforeach
+                            @else
+                                @foreach ($columns as $column)
+                                    @php
+                                        $column->record($record);
+                                    @endphp
+
+                                    <x-tables::cell
+                                        :class="$getHiddenClasses($column)"
+                                        wire:loading.remove.delay
+                                        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                    >
+                                        <x-tables::column-content
+                                            :column="$column"
+                                            :record="$record"
+                                            :record-key="$recordKey"
+                                            :is-click-disabled="$column->isClickDisabled() || $isReordering"
+                                        />
+                                    </x-tables::cell>
+                                @endforeach
+                            @endif
 
                             @if (count($actions) && $actionsPosition === Position::AfterCells)
                                 <x-tables::actions-cell
