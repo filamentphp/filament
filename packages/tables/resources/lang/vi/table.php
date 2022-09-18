@@ -4,6 +4,14 @@ return [
 
     'columns' => [
 
+        'color' => [
+
+            'messages' => [
+                'copied' => 'Đã sao chép',
+            ],
+
+        ],
+
         'tags' => [
             'more' => 'và còn :count',
         ],
@@ -28,7 +36,12 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'mỗi trang',
+
+                'options' => [
+                    'all' => 'Tất cả',
+                ],
             ],
 
         ],
@@ -83,9 +96,17 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Xóa bộ lọc',
+            ],
+
+            'remove_all' => [
+                'label' => 'Xóa toàn bộ bộ lọc',
+                'tooltip' => 'Xóa toàn bộ bộ lọc',
+            ],
+
             'reset' => [
                 'label' => 'Đặt lại bộ lọc',
-                'tooltip' => 'Đặt lại bộ lọc',
             ],
 
         ],
