@@ -21,6 +21,12 @@ trait CanSelectRecords
     {
         $query = $this->getFilteredTableQuery();
 
+        if($this->isSelectionCurrentPageOnly()){
+            return $this->getTableRecords()
+                    ->map(fn ($key): string => (string) $key->id)
+                    ->all();
+        }
+
         return $query
             ->pluck($query->getModel()->getQualifiedKeyName())
             ->map(fn ($key): string => (string) $key)
@@ -29,6 +35,10 @@ trait CanSelectRecords
 
     public function getAllTableRecordsCount(): int
     {
+        if($this->isSelectionCurrentPageOnly()){
+            return $this->records->count();
+        }
+
         if ($this->records instanceof LengthAwarePaginator) {
             return $this->records->total();
         }
