@@ -27,8 +27,6 @@ class Table
 
     protected ?string $reorderColumn = null;
 
-    protected bool $selectionCurrentPageOnly = false;
-
     final public function __construct()
     {
     }
@@ -168,12 +166,6 @@ class Table
         return $this;
     }
 
-    public function selectionCurrentPageOnly($selectionCurrentPageOnly = true) : static{
-        $this->selectionCurrentPageOnly = $selectionCurrentPageOnly;
-
-        return $this;
-    }
-
     public function reorderable(?string $column = 'sort'): static
     {
         $this->reorderColumn = $column;
@@ -229,9 +221,5 @@ class Table
     public function getPollingInterval(): ?string
     {
         return $this->pollingInterval;
-    }
-
-    public function isSelectionCurrentPageOnly() : bool{
-        return $this->selectionCurrentPageOnly;
     }
 }

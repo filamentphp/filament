@@ -495,8 +495,4 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     {
         return $this->getPluralModelLabel();
     }
-
-    public function isSelectionCurrentPageOnly() : bool{
-        return static::getResourceTable()->isSelectionCurrentPageOnly();
-    }
 }

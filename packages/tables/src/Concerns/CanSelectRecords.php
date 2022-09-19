@@ -12,6 +12,8 @@ trait CanSelectRecords
 {
     public array $selectedTableRecords = [];
 
+    protected bool $selectionCurrentPageOnly = false;
+
     public function deselectAllTableRecords(): void
     {
         $this->emitSelf('deselectAllTableRecords');
@@ -72,5 +74,9 @@ trait CanSelectRecords
             $this->getCachedTableBulkActions(),
             fn (BulkAction $action): bool => ! $action->isHidden(),
         ));
+    }
+
+    public function isSelectionCurrentPageOnly(){
+        return $this->selectionCurrentPageOnly;
     }
 }
