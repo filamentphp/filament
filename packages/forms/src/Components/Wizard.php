@@ -49,8 +49,9 @@ class Wizard extends Component
                     /** @var Step $currentStep */
                     $currentStep = $component->getChildComponentContainer()->getComponents()[$currentStep];
 
+                    $currentStep->callBeforeValidation();
                     $currentStep->getChildComponentContainer()->validate();
-                    $currentStep->callAfterValidated();
+                    $currentStep->callAfterValidation();
 
                     /** @var LivewireComponent $livewire */
                     $livewire = $component->getLivewire();
