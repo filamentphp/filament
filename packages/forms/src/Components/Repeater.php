@@ -481,6 +481,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     {
         return $this->evaluate($this->itemLabel, [
             'state' => $this->getChildComponentContainer($uuid)->getRawState(),
+            'uuid' => $uuid,
         ]);
     }
 
