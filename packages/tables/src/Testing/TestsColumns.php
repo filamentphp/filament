@@ -39,6 +39,29 @@ class TestsColumns
         };
     }
 
+    public function assertCannotRenderTableColumn(): Closure
+    {
+        return function (string $name): static {
+            /** @phpstan-ignore-next-line  */
+            $this->assertTableColumnVisible($name);
+
+            $livewire = $this->instance();
+
+            $column = $livewire->getCachedTableColumn($name);
+
+            $html = array_map(
+                function ($record) use ($column) {
+                    return $column->record($record)->toHtml();
+                },
+                $livewire->getTableRecords()->all(),
+            );
+
+            $this->assertDontSeeHtml($html);
+
+            return $this;
+        };
+    }
+
     public function assertTableColumnExists(): Closure
     {
         return function (string $name): static {

@@ -97,6 +97,8 @@ namespace Livewire\Testing {
 
         public function assertCanRenderTableColumn(string $name): static {}
 
+        public function assertCannotRenderTableColumn(string $name): static {}
+
         public function assertTableColumnExists(string $name): static {}
 
         public function assertTableColumnVisible(string $name): static {}
