@@ -167,7 +167,7 @@
                                     @if ($isCollapsible)
                                         <li>
                                             <button
-                                                x-bind:title="(! isCollapsed) ? '{{ __('forms::components.builder.buttons.collapse_item.label') }}' : '{{ __('forms::components.builder.buttons.expand_item.label') }}"
+                                                x-bind:title="(! isCollapsed) ? '{{ __('forms::components.builder.buttons.collapse_item.label') }}' : '{{ __('forms::components.builder.buttons.expand_item.label') }}'"
                                                 x-on:click="isCollapsed = ! isCollapsed"
                                                 type="button"
                                                 @class([
