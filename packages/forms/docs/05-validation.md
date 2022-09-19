@@ -446,3 +446,35 @@ TextInput::make('slug')->rules([
     },
 ])
 ```
+
+## Sending Notification for Validation Error
+
+If you want to send a notification on validation error you may do so by using the method `onValidationError` in your livewire component
+
+```php
+use Filament\Notifications\Notification;
+use Illuminate\Validation\ValidationException;
+
+protected function onValidationError(ValidationException $exception): void
+{
+    Notification::make()
+        ->title($exception->getMessage())
+        ->danger()
+        ->send();
+}
+```
+
+Alternatively if you are using admin panel and you want this behaviour on all the pages:
+
+```php
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
+use Illuminate\Validation\ValidationException;
+
+Page::$reportValidationErrorUsing = function (ValidationException $exception) {
+    Notification::make()
+        ->title($exception->getMessage())
+        ->danger()
+        ->send();
+};
+```
