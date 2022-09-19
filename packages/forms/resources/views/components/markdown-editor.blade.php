@@ -231,7 +231,7 @@
                     x-html="overlay"
                     style="min-height: 150px;"
                     @class([
-                        'w-full h-full rounded-lg px-3 py-2 border border-transparent font-mono tracking-normal bg-white text-sm text-gray-900 break-words whitespace-pre-wrap',
+                        'ltr:whitespace-pre-wrap w-full h-full rounded-lg px-3 py-2 border border-transparent font-mono tracking-normal bg-white text-sm text-gray-900 break-words',
                         'dark:bg-gray-700 dark:border-gray-600 dark:text-white' => config('forms.dark_mode'),
                     ])
                 ></div>
