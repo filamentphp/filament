@@ -5,7 +5,6 @@ namespace Filament\Tables\Concerns;
 use Closure;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Contracts\Editable;
-use Filament\Tables\Columns\Layout\Component;
 use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
