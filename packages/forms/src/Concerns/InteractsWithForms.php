@@ -278,10 +278,16 @@ trait InteractsWithForms
     {
         return [
             'form' => $this->makeForm()
+                ->context($this->getContext())
                 ->schema($this->getFormSchema())
                 ->model($this->getFormModel())
                 ->statePath($this->getFormStatePath()),
         ];
+    }
+
+    protected function getContext(): ?string
+    {
+        return null;
     }
 
     protected function getFormStatePath(): ?string

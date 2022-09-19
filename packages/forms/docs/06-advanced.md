@@ -44,6 +44,16 @@ function ($state) {
 }
 ```
 
+If you wish to access the current component context, define a `$context` parameter.
+
+Within the admin panel, this will default to 'edit' or 'create'.  In the standalone forms builder it will default to your component class name, but can be set using the `getContext('foo')` method in your component.
+
+```php
+function ($context) {
+    // ...
+}
+```
+
 If you wish to access the current component instance, define a `$component` parameter:
 
 ```php
