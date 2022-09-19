@@ -51,7 +51,7 @@ class Wizard extends Component
 
                     $currentStep->callBeforeValidation();
                     $currentStep->getChildComponentContainer()->validate();
-                    $currentStep->callAfterValidated();
+                    $currentStep->callAfterValidation();
 
                     /** @var LivewireComponent $livewire */
                     $livewire = $component->getLivewire();
