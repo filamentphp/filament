@@ -12,6 +12,7 @@ class SelectAction extends Action
     protected array | Arrayable | Closure $options = [];
 
     protected ?string $placeholder = null;
+    protected $selected = null;
 
     protected function setUp(): void
     {
@@ -34,6 +35,13 @@ class SelectAction extends Action
         return $this;
     }
 
+    public function selected($selected): static
+    {
+        $this->selected = $selected;
+
+        return $this;
+    }
+
     public function getOptions(): array
     {
         $options = $this->evaluate($this->options);
@@ -48,5 +56,10 @@ class SelectAction extends Action
     public function getPlaceholder(): ?string
     {
         return $this->placeholder;
+    }
+
+    public function getSelected()
+    {
+        return $this->selected;
     }
 }

@@ -16,9 +16,15 @@
         @endif
 
         @foreach ($getOptions() as $value => $label)
-            <option value="{{ $value }}">
-                {{ $label }}
-            </option>
+            @if(($selected = $getSelected()) !== null)
+              @if($selected == $value)
+                <option value="{{ $value }}" selected>{{ $label }}</option>
+              @else
+                <option value="{{ $value }}">{{ $label }}</option>
+              @endif
+            @else
+              <option value="{{ $value }}">{{ $label }}</option>
+            @endif
         @endforeach
     </select>
 </div>
