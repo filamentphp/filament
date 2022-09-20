@@ -33,7 +33,7 @@ trait HasRelationship
             $keyColumn = $relationship->getQualifiedForeignKeyName();
         } elseif ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
             $keyColumn = $relationship->getRelated()->getKeyName();
-        }else {
+        } else {
             /** @var BelongsTo $relationship */
             $keyColumn = $relationship->getQualifiedOwnerKeyName();
         }
