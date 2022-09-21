@@ -47,7 +47,21 @@ class Table extends ViewComponent
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();
 
-        return invade($livewire)->getTableActionsPosition() ?? Position::AfterCells;
+        $position = invade($livewire)->getTableActionsPosition();
+
+        if ($position) {
+            return $position;
+        }
+
+        if ($this->getContentGrid()) {
+            return Position::BelowContent;
+        }
+
+        if ($this->hasColumnsLayout()) {
+            return Position::AfterContent;
+        }
+
+        return Position::AfterCells;
     }
 
     public function getActionsColumnLabel(): ?string

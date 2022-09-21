@@ -9,6 +9,8 @@ class Table
 {
     protected array $actions = [];
 
+    protected ?string $actionsPosition = null;
+
     protected array $bulkActions = [];
 
     protected array $columns = [];
@@ -38,9 +40,17 @@ class Table
         return app(static::class);
     }
 
-    public function actions(array | ActionGroup $actions): static
+    public function actions(array | ActionGroup $actions, ?string $position = null): static
     {
         $this->actions = Arr::wrap($actions);
+        $this->actionsPosition($position);
+
+        return $this;
+    }
+
+    public function actionsPosition(?string $position = null): static
+    {
+        $this->actionsPosition = $position;
 
         return $this;
     }
@@ -185,6 +195,11 @@ class Table
     public function getActions(): array
     {
         return $this->actions;
+    }
+
+    public function getActionsPosition(): ?string
+    {
+        return $this->actionsPosition;
     }
 
     public function getBulkActions(): array
