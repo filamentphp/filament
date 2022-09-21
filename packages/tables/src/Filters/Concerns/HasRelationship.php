@@ -31,6 +31,8 @@ trait HasRelationship
             $keyColumn = $relationship->getQualifiedRelatedKeyName();
         } elseif ($relationship instanceof HasOneThrough) {
             $keyColumn = $relationship->getQualifiedForeignKeyName();
+        } elseif ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
+            $keyColumn = $relationship->getRelated()->getQualifiedKeyName();
         } else {
             /** @var BelongsTo $relationship */
             $keyColumn = $relationship->getQualifiedOwnerKeyName();
