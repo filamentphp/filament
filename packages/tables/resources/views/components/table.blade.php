@@ -1,7 +1,6 @@
 @props([
     'footer' => null,
     'header' => null,
-    'poll' => null,
 ])
 
 <table {{ $attributes->class([
@@ -20,9 +19,6 @@
         wire:sortable
         wire:end.stop="reorderTable($event.target.sortable.toArray())"
         wire:sortable.options="{ animation: 100 }"
-        @if ($poll)
-            wire:poll.{{ $poll }}
-        @endif
         @class([
             'divide-y whitespace-nowrap',
             'dark:divide-gray-700' => config('tables.dark_mode'),

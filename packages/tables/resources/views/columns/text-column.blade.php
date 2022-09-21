@@ -12,6 +12,7 @@
         'filament-tables-text-column',
         'px-4 py-3' => ! $isInline(),
         'text-gray-500' => $getColor() === 'secondary',
+        'dark:text-gray-400' => $getColor() === 'secondary' && config('tables.dark_mode'),
         'text-primary-600 transition hover:underline hover:text-primary-500 focus:underline focus:text-primary-500' => $getAction() || $getUrl(),
         match ($getSize()) {
             'sm' => 'text-sm',

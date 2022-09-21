@@ -97,6 +97,14 @@ class Table extends ViewComponent
         return invade($livewire)->getTableContent();
     }
 
+    public function getContentGrid(): ?array
+    {
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->getTableContentGrid();
+    }
+
     public function getContentFooter(): ?View
     {
         /** @var TableComponent $livewire */

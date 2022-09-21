@@ -3,9 +3,12 @@
 namespace Filament\Tables\Columns\Layout;
 
 use Closure;
+use Filament\Tables\Columns\Concerns\HasAlignment;
 
 class Stack extends Component
 {
+    use HasAlignment;
+
     protected string $view = 'tables::columns.layout.stack';
 
     final public function __construct(array | Closure $schema)

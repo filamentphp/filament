@@ -23,6 +23,8 @@ class Table
 
     protected array $headerActions = [];
 
+    protected ?array $contentGrid = null;
+
     protected ?string $pollingInterval = null;
 
     protected ?string $reorderColumn = null;
@@ -53,6 +55,13 @@ class Table
     public function columns(array $columns): static
     {
         $this->columns = $columns;
+
+        return $this;
+    }
+
+    public function contentGrid(?array $grid): static
+    {
+        $this->contentGrid = $grid;
 
         return $this;
     }
@@ -186,6 +195,11 @@ class Table
     public function getColumns(): array
     {
         return $this->columns;
+    }
+
+    public function getContentGrid(): ?array
+    {
+        return $this->contentGrid;
     }
 
     public function getDefaultSortColumn(): ?string
