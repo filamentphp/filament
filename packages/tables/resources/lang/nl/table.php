@@ -4,8 +4,16 @@ return [
 
     'columns' => [
 
+        'color' => [
+
+            'messages' => [
+                'copied' => 'Gekopieerd',
+            ],
+
+        ],
+
         'tags' => [
-            'more' => 'en nog :count',
+            'more' => 'en :count meer',
         ],
 
     ],
@@ -82,16 +90,24 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'Geen resultaten gevonden',
+        'heading' => 'Geen records gevonden',
     ],
 
     'filters' => [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Filter verwijderen',
+            ],
+
+            'remove_all' => [
+                'label' => 'Alle filters verwijderen',
+                'tooltip' => 'Alle filters verwijderen',
+            ],
+
             'reset' => [
                 'label' => 'Filters resetten',
-                'tooltip' => 'Filters resetten',
             ],
 
         ],

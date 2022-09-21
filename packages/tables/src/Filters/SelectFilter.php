@@ -12,11 +12,13 @@ class SelectFilter extends BaseFilter
     use Concerns\HasPlaceholder;
     use Concerns\HasRelationship;
 
-    protected string | Closure | null $column = null;
+    protected string | Closure | null $attribute = null;
 
     protected bool | Closure $isStatic = false;
 
     protected bool | Closure $isSearchable = false;
+
+    protected int | Closure $optionsLimit = 50;
 
     protected function setUp(): void
     {
@@ -61,12 +63,22 @@ class SelectFilter extends BaseFilter
             );
         }
 
-        return $query->where($this->getColumn(), $data['value']);
+        return $query->where($this->getAttribute(), $data['value']);
     }
 
+    public function attribute(string | Closure | null $name): static
+    {
+        $this->attribute = $name;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `attribute()` instead.
+     */
     public function column(string | Closure | null $name): static
     {
-        $this->column = $name;
+        $this->attribute($name);
 
         return $this;
     }
@@ -85,9 +97,17 @@ class SelectFilter extends BaseFilter
         return $this;
     }
 
+    public function getAttribute(): string
+    {
+        return $this->evaluate($this->attribute) ?? $this->getName();
+    }
+
+    /**
+     * @deprecated Use `getAttribute()` instead.
+     */
     public function getColumn(): string
     {
-        return $this->evaluate($this->column) ?? $this->getName();
+        return $this->getAttribute();
     }
 
     protected function getFormField(): Select
@@ -105,6 +125,7 @@ class SelectFilter extends BaseFilter
             ->options($this->getOptions())
             ->placeholder($this->getPlaceholder())
             ->searchable($this->isSearchable())
+            ->optionsLimit($this->getOptionsLimit())
             ->columnSpan($this->getColumnSpan());
 
         if (filled($defaultState = $this->getDefaultState())) {
@@ -117,5 +138,17 @@ class SelectFilter extends BaseFilter
     public function isSearchable(): bool
     {
         return (bool) $this->evaluate($this->isSearchable);
+    }
+
+    public function optionsLimit(int | Closure $limit): static
+    {
+        $this->optionsLimit = $limit;
+
+        return $this;
+    }
+
+    public function getOptionsLimit(): int
+    {
+        return $this->evaluate($this->optionsLimit);
     }
 }

@@ -16,6 +16,10 @@ return [
                 'label' => 'Xóa',
             ],
 
+            'move_item' => [
+                'label' => 'Di chuyển',
+            ],
+
             'move_item_down' => [
                 'label' => 'Chuyển xuống',
             ],
@@ -101,6 +105,14 @@ return [
 
             'delete_item' => [
                 'label' => 'Xóa',
+            ],
+
+            'move_item' => [
+                'label' => 'Di chuyển',
+            ],
+
+            'clone_item' => [
+                'label' => 'Nhân bản',
             ],
 
             'move_item_down' => [

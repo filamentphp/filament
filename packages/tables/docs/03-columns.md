@@ -155,6 +155,22 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('title')->searchable(isIndividual: true, isGlobal: false)
 ```
 
+#### Persist search in session
+
+To persist the table or individual column search in the user's session, override the `shouldPersistTableSearchInSession()` or `shouldPersistTableColumnSearchInSession()` method on the Livewire component:
+
+```php
+protected function shouldPersistTableSearchInSession(): bool
+{
+    return true;
+}
+
+protected function shouldPersistTableColumnSearchInSession(): bool
+{
+    return true;
+}
+```
+
 ### Cell actions and URLs
 
 When a cell is clicked, you may run an "action", or open a URL.
@@ -173,6 +189,28 @@ TextColumn::make('title')
         ]);
     })
 ```
+
+##### Action modals
+
+You may open [action modals](actions#modals) by passing in an `Action` object to the `action()` method:
+
+```php
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('title')
+    ->action(
+        Action::make('select')
+            ->requiresConfirmation()
+            ->action(function (Post $record): void {
+                $this->dispatchBrowserEvent('select-post', [
+                    'post' => $record->getKey(),
+                ]);
+            }),
+    )
+```
+
+Action objects passed into the `action()` method must have a unique name to distinguish it from other actions within the table.
 
 #### Opening URLs
 
@@ -346,7 +384,7 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('users_exists')->exists('users')
 ```
 
-In this example, `users` is the name of the relationship to check for existence. The name of the column must be `users_exists`, as this is the convention that [Laravel uses](https://laravel.com/docs/9.x/eloquent-relationships#other-aggregate-functions) for storing the result.
+In this example, `users` is the name of the relationship to check for existence. The name of the column must be `users_exists`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#other-aggregate-functions) for storing the result.
 
 ### Aggregating relationships
 
@@ -358,7 +396,7 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('users_avg_age')->avg('users', 'age')
 ```
 
-In this example, `users` is the name of the relationship, while `age` is the field that is being averaged. The name of the column must be `users_avg_age`, as this is the convention that [Laravel uses](https://laravel.com/docs/9.x/eloquent-relationships#other-aggregate-functions) for storing the result.
+In this example, `users` is the name of the relationship, while `age` is the field that is being averaged. The name of the column must be `users_avg_age`, as this is the convention that [Laravel uses](https://laravel.com/docs/eloquent-relationships#other-aggregate-functions) for storing the result.
 
 ## Text column
 
@@ -750,6 +788,119 @@ Instead of using an array, you may use a separated string by passing the separat
 use Filament\Tables\Columns\TagsColumn;
 
 TagsColumn::make('tags')->separator(',')
+```
+
+## Select column
+
+The select column allows you to render a select field inside the table, which can be used to update that database record without needing to open a new page or a modal.
+
+You must pass options to the column:
+
+```php
+use Filament\Tables\Columns\SelectColumn;
+
+SelectColumn::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+```
+
+You can validate the input by passing any [Laravel validation rules](https://laravel.com/docs/validation#available-validation-rules) in an array:
+
+```php
+use Filament\Tables\Columns\SelectColumn;
+
+SelectColumn::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+    ->rules(['required'])
+```
+
+You can prevent the placeholder from being selected using the `disablePlaceholderSelection()` method:
+
+```php
+use Filament\Tables\Columns\SelectColumn;
+
+SelectColumn::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+    ->disablePlaceholderSelection()
+```
+
+## Toggle column
+
+The toggle column allows you to render a toggle button inside the table, which can be used to update that database record without needing to open a new page or a modal:
+
+```php
+use Filament\Tables\Columns\ToggleColumn;
+
+ToggleColumn::make('is_admin')
+```
+
+## Color column
+
+The color column allows you to show the color preview from a CSS color definition, typically entered using the color picker field, in one of the supported formats (HEX, HSL, RGB, RGBA).
+
+```php
+use Filament\Tables\Columns\ColorColumn
+
+ColorColumn::make('color')
+```
+
+You may make the color copyable, such that clicking on the preview it copies the CSS value to the clipboard, and optionally specify a custom confirmation message and duration in milliseconds. This feature only works when SSL is enabled for the app.
+
+```php
+use Filament\Tables\Columns\ColorColumn
+
+ColorColumn::make('color')
+    ->copyable()
+    ->copyMessage('Color code copied')
+    ->copyMessageDuration(1500)
+```
+
+## Text input column
+
+The text input column allows you to render a text input inside the table, which can be used to update that database record without needing to open a new page or a modal:
+
+```php
+use Filament\Tables\Columns\TextInputColumn;
+
+TextInputColumn::make('name')
+```
+
+You can validate the input by passing any [Laravel validation rules](https://laravel.com/docs/validation#available-validation-rules) in an array:
+
+```php
+use Filament\Tables\Columns\TextInputColumn;
+
+TextInputColumn::make('name')
+    ->rules(['required', 'max:255'])
+```
+
+You may use the `type()` method to pass a custom [HTML input type](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#input_types):
+
+```php
+use Filament\Tables\Columns\TextInputColumn;
+
+TextInputColumn::make('background_color')->type('color')
+```
+
+## Checkbox column
+
+The checkbox column allows you to render a checkbox inside the table, which can be used to update that database record without needing to open a new page or a modal:
+
+```php
+use Filament\Tables\Columns\CheckboxColumn;
+
+CheckboxColumn::make('is_admin')
 ```
 
 ## View column

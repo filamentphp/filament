@@ -52,7 +52,7 @@ class SpatieTagsColumn extends TagsColumn
         }
 
         if ($this->queriesRelationships($query->getModel())) {
-            return $query->with(["{$this->getRelationshipName()}.media"]);
+            return $query->with(["{$this->getRelationshipName()}.tags"]);
         }
 
         return $query->with(['tags']);

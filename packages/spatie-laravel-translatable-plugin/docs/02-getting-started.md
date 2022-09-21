@@ -25,7 +25,7 @@ class BlogPostResource extends Resource
 }
 ```
 
-You may [publish the package's configuration file](installation#publishing-the-configuration) to set the `default_locales` for all resources at once.
+You may [publish the package's configuration file](installation#publishing-configuration) to set the `default_locales` for all resources at once.
 
 ## Making resource pages translatable
 

@@ -2,6 +2,7 @@
     'color' => 'primary',
     'darkMode' => false,
     'disabled' => false,
+    'form' => null,
     'icon' => null,
     'iconPosition' => 'before',
     'keyBindings' => null,
@@ -37,6 +38,12 @@
         'mr-1 rtl:ml-1' => $iconPosition === 'before',
         'ml-1 rtl:mr-1' => $iconPosition === 'after'
     ]);
+
+    $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || (($type === 'submit') && filled($form));
+
+    if ($hasLoadingIndicator) {
+        $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click', $form)), ENT_QUOTES);
+    }
 @endphp
 
 @if ($tag === 'a')
@@ -77,14 +84,46 @@
         @endif
         {{ $attributes->class($linkClasses) }}
     >
-        @if ($icon && $iconPosition === 'before')
-            <x-dynamic-component :component="$icon" :class="$iconClasses"/>
+        @if ($iconPosition === 'before')
+            @if ($icon)
+                <x-dynamic-component
+                    :component="$icon"
+                    :wire:loading.remove.delay="$hasLoadingIndicator"
+                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+                    :class="$iconClasses"
+                />
+            @endif
+
+            @if ($hasLoadingIndicator)
+                <x-filament-support::loading-indicator
+                    x-cloak
+                    wire:loading.delay
+                    :wire:target="$loadingIndicatorTarget"
+                    :class="$iconClasses"
+                />
+            @endif
         @endif
 
         {{ $slot }}
 
-        @if ($icon && $iconPosition === 'after')
-            <x-dynamic-component :component="$icon" :class="$iconClasses" />
+        @if ($iconPosition === 'after')
+            @if ($icon)
+                <x-dynamic-component
+                    :component="$icon"
+                    :wire:loading.remove.delay="$hasLoadingIndicator"
+                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+                    :class="$iconClasses"
+                />
+            @endif
+
+            @if ($hasLoadingIndicator)
+                <x-filament-support::loading-indicator
+                    x-cloak
+                    wire:loading.delay
+                    :wire:target="$loadingIndicatorTarget"
+                    :class="$iconClasses"
+                />
+            @endif
         @endif
     </button>
 @endif

@@ -7,6 +7,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Contracts\HasFormActions;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 /**
  * @property ComponentContainer $form
@@ -157,7 +158,7 @@ class CreateRecord extends Page implements HasFormActions
         }
 
         return __('filament::resources/pages/create-record.title', [
-            'label' => static::getResource()::getModelLabel(),
+            'label' => Str::headline(static::getResource()::getModelLabel()),
         ]);
     }
 

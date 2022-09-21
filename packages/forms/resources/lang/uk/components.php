@@ -16,6 +16,10 @@ return [
                 'label' => 'Видалити',
             ],
 
+            'move_item' => [
+                'label' => 'Перемістити',
+            ],
+
             'move_item_down' => [
                 'label' => 'Перемістити вниз',
             ],
@@ -101,6 +105,10 @@ return [
 
             'delete_item' => [
                 'label' => 'Видалити',
+            ],
+
+            'move_item' => [
+                'label' => 'Перемістити',
             ],
 
             'clone_item' => [

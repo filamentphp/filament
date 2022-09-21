@@ -31,7 +31,10 @@
             [x-cloak=""], [x-cloak="x-cloak"], [x-cloak="1"] { display: none !important; }
             @media (max-width: 1023px) { [x-cloak="-lg"] { display: none !important; } }
             @media (min-width: 1024px) { [x-cloak="lg"] { display: none !important; } }
-            :root { --sidebar-width: {{ config('filament.layout.sidebar.width') ?? '20rem' }}; }
+            :root {
+                --sidebar-width: {{ config('filament.layout.sidebar.width') ?? '20rem' }};
+                --collapsed-sidebar-width: {{ config('filament.layout.sidebar.collapsed_width') ?? '5.4rem' }};
+            }
         </style>
 
         @livewireStyles
@@ -105,6 +108,21 @@
             'id' => Filament\get_asset_id('app.js'),
             'file' => 'app.js',
         ]) }}"></script>
+
+        @if (config('filament.broadcasting.echo'))
+            <script defer src="{{ route('filament.asset', [
+                'id' => Filament\get_asset_id('echo.js'),
+                'file' => 'echo.js',
+            ]) }}"></script>
+
+            <script>
+                window.addEventListener('DOMContentLoaded', () => {
+                    window.Echo = new window.EchoFactory(@js(config('filament.broadcasting.echo')))
+
+                    window.dispatchEvent(new CustomEvent('EchoLoaded'))
+                })
+            </script>
+        @endif
 
         @foreach (\Filament\Facades\Filament::getScripts() as $name => $path)
             @if (\Illuminate\Support\Str::of($path)->startsWith(['http://', 'https://']))
