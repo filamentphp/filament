@@ -10,6 +10,10 @@ return [
             'label' => 'A modo oscuro',
         ],
 
+        'database_notifications' => [
+            'label' => 'Abrir notificaciones',
+        ],
+
         'light_mode' => [
             'label' => 'A modo claro',
         ],

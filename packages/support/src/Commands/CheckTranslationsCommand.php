@@ -44,7 +44,7 @@ class CheckTranslationsCommand extends Command
         }
 
         collect($filesystem->directories($localeRootDirectory))
-            ->mapWithKeys(static fn (string $directory): array => [$directory => (string) Str::of($directory)->afterLast('/')])
+            ->mapWithKeys(static fn (string $directory): array => [$directory => (string) Str::of($directory)->afterLast(DIRECTORY_SEPARATOR)])
             ->when(
                 $locales = $this->argument('locales'),
                 fn (Collection $availableLocales): Collection => $availableLocales->filter(fn (string $locale): bool => in_array($locale, $locales))

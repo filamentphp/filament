@@ -33,7 +33,6 @@
                     x-transition:enter="lg:transition delay-100"
                     x-transition:enter-start="opacity-0"
                     x-transition:enter-end="opacity-100"
-                    data-turbo="false"
                 >
                     <svg class="h-6 w-6" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M20.25 7.5L16 12L20.25 16.5M3.75 12H12M3.75 17.25H16M3.75 6.75H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -62,7 +61,6 @@
                 x-transition:enter="lg:transition delay-100"
                 x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100"
-                data-turbo="false"
             >
                 <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />

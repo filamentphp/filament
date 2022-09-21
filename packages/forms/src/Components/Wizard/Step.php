@@ -4,11 +4,14 @@ namespace Filament\Forms\Components\Wizard;
 
 use Closure;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Contracts\CanConcealComponents;
 use Illuminate\Support\Str;
 
-class Step extends Component
+class Step extends Component implements CanConcealComponents
 {
-    protected ?Closure $afterValidated = null;
+    protected ?Closure $afterValidation = null;
+
+    protected ?Closure $beforeValidation = null;
 
     protected string | Closure | null $description = null;
 
@@ -30,9 +33,26 @@ class Step extends Component
         return $static;
     }
 
+    public function afterValidation(?Closure $callback): static
+    {
+        $this->afterValidation = $callback;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `afterValidation()` instead.
+     */
     public function afterValidated(?Closure $callback): static
     {
-        $this->afterValidated = $callback;
+        $this->afterValidation($callback);
+
+        return $this;
+    }
+
+    public function beforeValidation(?Closure $callback): static
+    {
+        $this->beforeValidation = $callback;
 
         return $this;
     }
@@ -51,9 +71,14 @@ class Step extends Component
         return $this;
     }
 
-    public function callAfterValidated(): void
+    public function callAfterValidation(): void
     {
-        $this->evaluate($this->afterValidated);
+        $this->evaluate($this->afterValidation);
+    }
+
+    public function callBeforeValidation(): void
+    {
+        $this->evaluate($this->beforeValidation);
     }
 
     public function getDescription(): ?string
@@ -69,5 +94,10 @@ class Step extends Component
     public function getColumnsConfig(): array
     {
         return $this->columns ?? $this->getContainer()->getColumnsConfig();
+    }
+
+    public function canConcealComponents(): bool
+    {
+        return true;
     }
 }

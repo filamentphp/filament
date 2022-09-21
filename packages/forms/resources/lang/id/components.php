@@ -16,6 +16,10 @@ return [
                 'label' => 'Hapus',
             ],
 
+            'move_item' => [
+                'label' => 'Pindahkan',
+            ],
+
             'move_item_down' => [
                 'label' => 'Turunkan',
             ],
@@ -105,6 +109,10 @@ return [
 
             'clone_item' => [
                 'label' => 'Duplikat',
+            ],
+
+            'move_item' => [
+                'label' => 'Pindahkan',
             ],
 
             'move_item_down' => [

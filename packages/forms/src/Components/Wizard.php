@@ -46,11 +46,14 @@ class Wizard extends Component
                         return;
                     }
 
-                    /** @var Step $currentStep */
-                    $currentStep = $component->getChildComponentContainer()->getComponents()[$currentStep];
+                    if (! $component->isSkippable()) {
+                        /** @var Step $currentStep */
+                        $currentStep = $component->getChildComponentContainer()->getComponents()[$currentStep];
 
-                    $currentStep->getChildComponentContainer()->validate();
-                    $currentStep->callAfterValidated();
+                        $currentStep->callBeforeValidation();
+                        $currentStep->getChildComponentContainer()->validate();
+                        $currentStep->callAfterValidation();
+                    }
 
                     /** @var LivewireComponent $livewire */
                     $livewire = $component->getLivewire();
