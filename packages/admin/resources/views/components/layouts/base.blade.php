@@ -23,7 +23,7 @@
             <link rel="icon" href="{{ $favicon }}">
         @endif
 
-        <title>{{ $title ? "{$title} - " : null }} {{ config('filament.brand') }}</title>
+        <title>{{ $title ? "{$title} - " : null }} {{ __(config('filament.brand')) }}</title>
 
         {{ \Filament\Facades\Filament::renderHook('styles.start') }}
 
