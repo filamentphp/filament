@@ -16,6 +16,10 @@ return [
                 'label' => 'Padam',
             ],
 
+            'move_item' => [
+                'label' => 'Pindah',
+            ],
+
             'move_item_down' => [
                 'label' => 'Pindah ke bawah',
             ],
@@ -101,6 +105,10 @@ return [
 
             'delete_item' => [
                 'label' => 'Padam',
+            ],
+
+            'move_item' => [
+                'label' => 'Pindah',
             ],
 
             'clone_item' => [

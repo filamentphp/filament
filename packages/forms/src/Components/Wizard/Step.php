@@ -4,9 +4,10 @@ namespace Filament\Forms\Components\Wizard;
 
 use Closure;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Contracts\CanConcealComponents;
 use Illuminate\Support\Str;
 
-class Step extends Component
+class Step extends Component implements CanConcealComponents
 {
     protected ?Closure $afterValidation = null;
 
@@ -93,5 +94,10 @@ class Step extends Component
     public function getColumnsConfig(): array
     {
         return $this->columns ?? $this->getContainer()->getColumnsConfig();
+    }
+
+    public function canConcealComponents(): bool
+    {
+        return true;
     }
 }

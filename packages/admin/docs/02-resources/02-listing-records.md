@@ -6,17 +6,17 @@ title: Listing records
 
 The `$table->columns()` method is used to define the [columns](../../tables/columns) in your table. It is an array of column objects, in the order they should appear in your table.
 
-We have many fields available for your forms, including:
+We have many columns available for your tables, including:
 
-- [Text column](../../tables/columns#text-column)
-- [Boolean column](../../tables/columns#boolean-column)
-- [Image column](../../tables/columns#image-column)
-- [Icon column](../../tables/columns#icon-column)
-- [Badge column](../../tables/columns#badge-column)
+- [Text column](../../tables/columns/text)
+- [Boolean column](../../tables/columns/boolean)
+- [Image column](../../tables/columns/image)
+- [Icon column](../../tables/columns/icon)
+- [Badge column](../../tables/columns/badge)
 
 To view a full list of available table [columns](../../tables/columns), see the [Table Builder documentation](../../tables/columns).
 
-You may also build your own completely [custom table columns](../../tables/columns#building-custom-columns).
+You may also build your own completely [custom table columns](../../tables/columns/custom).
 
 ### Sorting a column by default
 

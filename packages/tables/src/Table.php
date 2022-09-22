@@ -9,6 +9,7 @@ use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\Position;
 use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\Layout\Component;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Layout;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -47,7 +48,27 @@ class Table extends ViewComponent
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();
 
-        return invade($livewire)->getTableActionsPosition() ?? Position::AfterCells;
+        $position = invade($livewire)->getTableActionsPosition();
+
+        if ($position) {
+            return $position;
+        }
+
+        if (! ($this->getContentGrid() || $this->hasColumnsLayout())) {
+            return Position::AfterCells;
+        }
+
+        $actions = $this->getActions();
+
+        $firstAction = Arr::first($actions);
+
+        if ($firstAction instanceof ActionGroup) {
+            $firstAction->size('sm md:md');
+
+            return Position::BottomCorner;
+        }
+
+        return Position::AfterContent;
     }
 
     public function getActionsColumnLabel(): ?string
@@ -79,12 +100,35 @@ class Table extends ViewComponent
         );
     }
 
+    public function getColumnsLayout(): array
+    {
+        return $this->getLivewire()->getCachedTableColumnsLayout();
+    }
+
+    public function getCollapsibleColumnsLayout(): ?Component
+    {
+        return $this->getLivewire()->getCachedCollapsibleTableColumnsLayout();
+    }
+
+    public function hasColumnsLayout(): bool
+    {
+        return $this->getLivewire()->hasTableColumnsLayout();
+    }
+
     public function getContent(): ?View
     {
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();
 
         return invade($livewire)->getTableContent();
+    }
+
+    public function getContentGrid(): ?array
+    {
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->getTableContentGrid();
     }
 
     public function getContentFooter(): ?View

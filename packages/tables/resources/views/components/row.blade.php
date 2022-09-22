@@ -6,7 +6,7 @@
 
 <tr
     {{ $attributes->class([
-        'filament-tables-row',
+        'filament-tables-row transition',
         'hover:bg-gray-50' => $recordUrl || $recordAction,
         'dark:hover:bg-gray-500/10' => ($recordUrl || $recordAction) && config('tables.dark_mode'),
         'even:bg-gray-100' => $striped,
