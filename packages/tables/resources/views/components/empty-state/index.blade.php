@@ -43,6 +43,7 @@
         <x-tables::actions
             :actions="$actions"
             alignment="center"
+            wrap
         />
     @endif
 </div>

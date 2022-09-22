@@ -23,6 +23,7 @@
         <x-tables::actions
             :actions="$actions"
             alignment="right"
+            wrap
             class="shrink-0"
         />
     </div>

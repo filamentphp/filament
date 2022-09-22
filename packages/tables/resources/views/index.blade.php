@@ -614,6 +614,7 @@
                                                 :actions="$actions"
                                                 :alignment="$actionsPosition === ActionsPosition::AfterContent ? 'left' : 'left md:right'"
                                                 :record="$record"
+                                                wrap="-md"
                                                 :class="\Illuminate\Support\Arr::toCssClasses([
                                                     'absolute bottom-1 right-1 rtl:right-auto rtl:left-1' => $actionsPosition === ActionsPosition::BottomCorner,
                                                     'md:relative md:bottom-0 md:right-0 rtl:md:left-0' => $actionsPosition === ActionsPosition::BottomCorner && (! $contentGrid),
