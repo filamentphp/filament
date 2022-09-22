@@ -20,7 +20,7 @@
 
 <div
     {{ $attributes->class([
-        'filament-tables-column-content-wrapper',
+        'filament-tables-column-wrapper',
         match ($alignment) {
             'left' => 'text-left',
             'center' => 'text-center',

@@ -513,10 +513,11 @@
                                     }"
                                     @class(array_merge(
                                         [
-                                            'group relative px-4 transition',
+                                            'relative px-4 transition',
                                             'hover:bg-gray-50' => $recordUrl || $recordAction,
                                             'dark:hover:bg-gray-500/10' => ($recordUrl || $recordAction) && config('tables.dark_mode'),
                                             'dark:border-gray-600 dark:bg-gray-700' => (! $contentGrid) && config('tables.dark_mode'),
+                                            'group' => $isReordering,
                                             'rounded-xl shadow-sm border border-gray-200' => $contentGrid,
                                             'dark:border-gray-700' => $contentGrid && config('tables.dark_mode'),
                                         ],
@@ -565,7 +566,7 @@
                                                 href="{{ $recordUrl }}"
                                                 class="flex-1 block py-3"
                                             >
-                                                <x-tables::columns-layout
+                                                <x-tables::columns.layout
                                                     :components="$getColumnsLayout()"
                                                     :record="$record"
                                                     :record-key="$recordKey"
@@ -588,7 +589,7 @@
                                                 type="button"
                                                 class="flex-1 block py-3"
                                             >
-                                                <x-tables::columns-layout
+                                                <x-tables::columns.layout
                                                     :components="$getColumnsLayout()"
                                                     :record="$record"
                                                     :record-key="$recordKey"
@@ -596,7 +597,7 @@
                                             </button>
                                         @else
                                             <div class="flex-1 py-3">
-                                                <x-tables::columns-layout
+                                                <x-tables::columns.layout
                                                     :components="$getColumnsLayout()"
                                                     :record="$record"
                                                     :record-key="$recordKey"
@@ -810,7 +811,7 @@
                                         wire:loading.remove.delay
                                         wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
                                     >
-                                        <x-tables::column-content
+                                        <x-tables::columns.column
                                             :column="$column"
                                             :record="$record"
                                             :record-action="$recordAction"

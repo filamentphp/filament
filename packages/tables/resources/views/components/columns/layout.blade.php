@@ -5,8 +5,8 @@
 ])
 
 @php
-    $getHiddenClasses = function (\Filament\Tables\Columns\Column | \Filament\Tables\Columns\Layout\Component $column): ?string {
-        if ($breakpoint = $column->getHiddenFrom()) {
+    $getHiddenClasses = function (\Filament\Tables\Columns\Column | \Filament\Tables\Columns\Layout\Component $layoutComponent): ?string {
+        if ($breakpoint = $layoutComponent->getHiddenFrom()) {
             return match ($breakpoint) {
                 'sm' => 'sm:hidden',
                 'md' => 'md:hidden',
@@ -16,7 +16,7 @@
             };
         }
 
-        if ($breakpoint = $column->getVisibleFrom()) {
+        if ($breakpoint = $layoutComponent->getVisibleFrom()) {
             return match ($breakpoint) {
                 'sm' => 'hidden sm:block',
                 'md' => 'hidden md:block',
@@ -30,26 +30,26 @@
     };
 @endphp
 
-@foreach ($components as $column)
+@foreach ($components as $layoutComponent)
     @php
-        $column->record($record);
+        $layoutComponent->record($record);
 
-        $isColumn = $column instanceof \Filament\Tables\Columns\Column;
+        $isColumn = $layoutComponent instanceof \Filament\Tables\Columns\Column;
     @endphp
 
-    @if (! $column->isHidden())
+    @if (! $layoutComponent->isHidden())
         <div @class([
-            'flex-1' => $isColumn ? $column->canGrow() : true,
-            $getHiddenClasses($column),
+            'flex-1' => $isColumn ? $layoutComponent->canGrow() : true,
+            $getHiddenClasses($layoutComponent),
         ])>
             @if ($isColumn)
-                <x-tables::column-content
-                    :column="$column->inline()"
+                <x-tables::columns.column
+                    :column="$layoutComponent->inline()"
                     :record="$record"
                     :record-key="$recordKey"
                 />
             @else
-                {{ $column->viewData(['recordKey' => $recordKey]) }}
+                {{ $layoutComponent->viewData(['recordKey' => $recordKey]) }}
             @endif
         </div>
     @endif
