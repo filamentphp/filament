@@ -549,7 +549,7 @@
                                             <div @class([
                                                 'absolute right-1 rtl:right-auto rtl:left-1' => $contentGrid,
                                                 'top-10' => $contentGrid && $isSelectionEnabled,
-                                                'top-3' => $contentGrid && (! $isSelectionEnabled),
+                                                'top-1' => $contentGrid && (! $isSelectionEnabled),
                                                 'hidden' => $isReordering,
                                             ])>
                                                 <x-tables::icon-button
