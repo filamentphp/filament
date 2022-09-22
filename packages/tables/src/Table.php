@@ -9,6 +9,8 @@ use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\Position;
 use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\Layout\Component;
+use Filament\Tables\Columns\Layout\Contracts\Collapsible;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Layout;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -96,6 +98,11 @@ class Table extends ViewComponent
     public function getColumnsLayout(): array
     {
         return $this->getLivewire()->getCachedTableColumnsLayout();
+    }
+
+    public function getCollapsibleColumnsLayout(): ?Component
+    {
+        return $this->getLivewire()->getCachedCollapsibleTableColumnsLayout();
     }
 
     public function hasColumnsLayout(): bool

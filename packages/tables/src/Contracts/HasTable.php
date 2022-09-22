@@ -6,6 +6,9 @@ use Filament\Forms\ComponentContainer;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Columns\Layout\Collapsed;
+use Filament\Tables\Columns\Layout\Component;
+use Filament\Tables\Columns\Layout\Contracts\Collapsible;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -31,6 +34,8 @@ interface HasTable extends HasForms
     public function getCachedTableColumns(): array;
 
     public function getCachedTableColumnsLayout(): array;
+
+    public function getCachedCollapsibleTableColumnsLayout(): ?Component;
 
     public function hasTableColumnsLayout(): bool;
 

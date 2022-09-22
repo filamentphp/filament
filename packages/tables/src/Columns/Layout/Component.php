@@ -29,6 +29,8 @@ class Component extends ViewComponent
 
     protected array | Closure $components = [];
 
+    protected bool $isCollapsible = false;
+
     public function schema(array | Closure $schema): static
     {
         $this->components($schema);
@@ -39,6 +41,13 @@ class Component extends ViewComponent
     public function components(array | Closure $components): static
     {
         $this->components = $components;
+
+        return $this;
+    }
+
+    public function collapsible(bool $condition = true): static
+    {
+        $this->isCollapsible = $condition;
 
         return $this;
     }
@@ -65,6 +74,11 @@ class Component extends ViewComponent
         return array_map(function (Component | Column $component): Component | Column {
             return $component->layout($this);
         }, $this->evaluate($this->components));
+    }
+
+    public function isCollapsible(): bool
+    {
+        return $this->isCollapsible;
     }
 
     protected function getDefaultEvaluationParameters(): array

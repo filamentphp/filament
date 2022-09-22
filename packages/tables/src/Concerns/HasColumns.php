@@ -5,6 +5,9 @@ namespace Filament\Tables\Concerns;
 use Closure;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Contracts\Editable;
+use Filament\Tables\Columns\Layout\Collapsed;
+use Filament\Tables\Columns\Layout\Component;
+use Filament\Tables\Columns\Layout\Contracts\Collapsible;
 use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -17,6 +20,8 @@ trait HasColumns
 
     protected array $cachedTableColumnsLayout;
 
+    protected ?Component $cachedTableCollapsibleColumnsLayout = null;
+
     protected bool $hasTableColumnsLayout = false;
 
     public function cacheTableColumns(): void
@@ -27,7 +32,11 @@ trait HasColumns
         foreach ($this->getTableColumns() as $component) {
             $component->table($this->getCachedTable());
 
-            $this->cachedTableColumnsLayout[] = $component;
+            if ($component instanceof Component && $component->isCollapsible()) {
+                $this->cachedTableCollapsibleColumnsLayout = $component;
+            } else {
+                $this->cachedTableColumnsLayout[] = $component;
+            }
 
             if ($component instanceof Column) {
                 $this->cachedTableColumns[$component->getName()] = $component;
@@ -75,6 +84,11 @@ trait HasColumns
     public function getCachedTableColumnsLayout(): array
     {
         return $this->cachedTableColumnsLayout;
+    }
+
+    public function getCachedCollapsibleTableColumnsLayout(): ?Component
+    {
+        return $this->cachedTableCollapsibleColumnsLayout;
     }
 
     public function hasTableColumnsLayout(): bool

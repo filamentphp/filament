@@ -6,6 +6,7 @@
     $actionsPosition = $getActionsPosition();
     $actionsColumnLabel = $getActionsColumnLabel();
     $columns = $getColumns();
+    $collapsibleColumnsLayout = $getCollapsibleColumnsLayout();
     $content = $getContent();
     $contentGrid = $getContentGrid();
     $contentFooter = $getContentFooter();
@@ -491,106 +492,142 @@
                                 $recordAction = $getRecordAction($record);
                                 $recordKey = $getRecordKey($record);
                                 $recordUrl = $getRecordUrl($record);
+
+                                $collapsibleColumnsLayout?->record($record);
+                                $hasCollapsibleColumnsLayout = $collapsibleColumnsLayout && (! $collapsibleColumnsLayout->isHidden());
                             @endphp
 
                             <div
+                                @if ($hasCollapsibleColumnsLayout)
+                                    x-data="{ isCollapsed: true }"
+                                @endif
                                 wire:key="{{ $this->id }}.table.records.{{ $recordKey }}"
                                 @if ($isReordering)
                                     wire:sortable.item="{{ $recordKey }}"
                                     wire:sortable.handle
                                 @endif
-                                x-bind:class="{
-                                    'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $recordKey }}'),
-                                }"
-                                @class(array_merge(
-                                    [
-                                        'relative px-4 transition',
-                                        'hover:bg-gray-50' => $recordUrl || $recordAction,
-                                        'dark:hover:bg-gray-500/10' => ($recordUrl || $recordAction) && config('tables.dark_mode'),
-                                        'even:bg-gray-100' => $isStriped,
-                                        'dark:even:bg-gray-800' => $isStriped && config('tables.dark_mode'),
-                                        'group cursor-move' => $isReordering,
-                                        'flex items-center gap-4' => (! $contentGrid),
-                                        'dark:border-gray-600 dark:bg-gray-700' => (! $contentGrid) && config('tables.dark_mode'),
-                                        'rounded-xl shadow-sm border border-gray-200' => $contentGrid,
-                                        'dark:border-gray-700' => $contentGrid && config('tables.dark_mode'),
-                                    ],
-                                    $getRecordClasses($record),
-                                ))
                             >
-                                <x-tables::reorder.handle :class="\Illuminate\Support\Arr::toCssClasses([
-                                    'absolute top-3 right-3 rtl:right-auto rtl:left-3' => $contentGrid,
-                                    'hidden' => ! $isReordering,
-                                ])" />
-
-                                @if ($isSelectionEnabled)
-                                    <x-tables::checkbox
-                                        x-model="selectedRecords"
-                                        :value="$recordKey"
-                                        :class="\Illuminate\Support\Arr::toCssClasses([
-                                            'filament-tables-record-checkbox',
+                                <div
+                                    x-bind:class="{
+                                        'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $recordKey }}'),
+                                    }"
+                                    @class(array_merge(
+                                        [
+                                            'group relative px-4 transition',
+                                            'hover:bg-gray-50' => $recordUrl || $recordAction,
+                                            'dark:hover:bg-gray-500/10' => ($recordUrl || $recordAction) && config('tables.dark_mode'),
+                                            'dark:border-gray-600 dark:bg-gray-700' => (! $contentGrid) && config('tables.dark_mode'),
+                                            'rounded-xl shadow-sm border border-gray-200' => $contentGrid,
+                                            'dark:border-gray-700' => $contentGrid && config('tables.dark_mode'),
+                                        ],
+                                        $getRecordClasses($record),
+                                    ))
+                                >
+                                    <div @class([
+                                        'flex items-center gap-4' => (! $contentGrid),
+                                    ])>
+                                        <x-tables::reorder.handle :class="\Illuminate\Support\Arr::toCssClasses([
                                             'absolute top-3 right-3 rtl:right-auto rtl:left-3' => $contentGrid,
-                                            'hidden' => $isReordering,
-                                        ])"
-                                    />
-                                @endif
+                                            'hidden' => ! $isReordering,
+                                        ])" />
 
-                                @if ($recordUrl)
-                                    <a
-                                        href="{{ $recordUrl }}"
-                                        class="flex-1 block py-3"
-                                    >
-                                        <x-tables::columns-layout
-                                            :components="$getColumnsLayout()"
-                                            :record="$record"
-                                            :record-key="$recordKey"
-                                        />
-                                    </a>
-                                @elseif ($recordAction)
-                                    @php
-                                        if ($this->getCachedTableAction($recordAction)) {
-                                            $recordWireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
-                                        } else {
-                                            $recordWireClickAction = "{$recordAction}('{$recordKey}')";
-                                        }
-                                    @endphp
+                                        @if ($isSelectionEnabled)
+                                            <x-tables::checkbox
+                                                x-model="selectedRecords"
+                                                :value="$recordKey"
+                                                :class="\Illuminate\Support\Arr::toCssClasses([
+                                                    'filament-tables-record-checkbox',
+                                                    'absolute top-3 right-3 rtl:right-auto rtl:left-3' => $contentGrid,
+                                                    'hidden' => $isReordering,
+                                                ])"
+                                            />
+                                        @endif
 
-                                    <button
-                                        wire:click="{{ $recordWireClickAction }}"
-                                        wire:target="{{ $recordWireClickAction }}"
-                                        wire:loading.attr="disabled"
-                                        wire:loading.class="opacity-70 cursor-wait"
-                                        type="button"
-                                        class="flex-1 block py-3"
-                                    >
-                                        <x-tables::columns-layout
-                                            :components="$getColumnsLayout()"
-                                            :record="$record"
-                                            :record-key="$recordKey"
-                                        />
-                                    </button>
-                                @else
-                                    <div class="flex-1 py-3">
-                                        <x-tables::columns-layout
-                                            :components="$getColumnsLayout()"
-                                            :record="$record"
-                                            :record-key="$recordKey"
-                                        />
+                                        @if ($hasCollapsibleColumnsLayout)
+                                            <div @class([
+                                                'absolute right-1 rtl:right-auto rtl:left-1' => $contentGrid,
+                                                'top-10' => $contentGrid && $isSelectionEnabled,
+                                                'top-3' => $contentGrid && (! $isSelectionEnabled),
+                                                'hidden' => $isReordering,
+                                            ])>
+                                                <x-tables::icon-button
+                                                    icon="heroicon-s-chevron-down"
+                                                    color="secondary"
+                                                    size="sm"
+                                                    x-on:click="isCollapsed = ! isCollapsed"
+                                                    x-bind:class="isCollapsed || '-rotate-180'"
+                                                />
+                                            </div>
+                                        @endif
+
+                                        @if ($recordUrl)
+                                            <a
+                                                href="{{ $recordUrl }}"
+                                                class="flex-1 block py-3"
+                                            >
+                                                <x-tables::columns-layout
+                                                    :components="$getColumnsLayout()"
+                                                    :record="$record"
+                                                    :record-key="$recordKey"
+                                                />
+                                            </a>
+                                        @elseif ($recordAction)
+                                            @php
+                                                if ($this->getCachedTableAction($recordAction)) {
+                                                    $recordWireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
+                                                } else {
+                                                    $recordWireClickAction = "{$recordAction}('{$recordKey}')";
+                                                }
+                                            @endphp
+
+                                            <button
+                                                wire:click="{{ $recordWireClickAction }}"
+                                                wire:target="{{ $recordWireClickAction }}"
+                                                wire:loading.attr="disabled"
+                                                wire:loading.class="opacity-70 cursor-wait"
+                                                type="button"
+                                                class="flex-1 block py-3"
+                                            >
+                                                <x-tables::columns-layout
+                                                    :components="$getColumnsLayout()"
+                                                    :record="$record"
+                                                    :record-key="$recordKey"
+                                                />
+                                            </button>
+                                        @else
+                                            <div class="flex-1 py-3">
+                                                <x-tables::columns-layout
+                                                    :components="$getColumnsLayout()"
+                                                    :record="$record"
+                                                    :record-key="$recordKey"
+                                                />
+                                            </div>
+                                        @endif
+
+                                        @if (count($actions))
+                                            <x-tables::actions
+                                                :actions="$actions"
+                                                :alignment="$actionsPosition === ActionsPosition::BelowContent ? 'left' : 'right'"
+                                                :record="$record"
+                                                :class="\Illuminate\Support\Arr::toCssClasses([
+                                                    'absolute bottom-1 right-1 rtl:right-auto rtl:left-1' => $actionsPosition === ActionsPosition::BottomCorner,
+                                                    'mb-3' => $actionsPosition === ActionsPosition::BelowContent,
+                                                    'hidden' => $isReordering,
+                                                ])"
+                                            />
+                                        @endif
                                     </div>
-                                @endif
 
-                                @if (count($actions))
-                                    <x-tables::actions
-                                        :actions="$actions"
-                                        :alignment="$actionsPosition === ActionsPosition::BelowContent ? 'left' : 'right'"
-                                        :record="$record"
-                                        :class="\Illuminate\Support\Arr::toCssClasses([
-                                            'absolute bottom-1 right-1 rtl:right-auto rtl:left-1' => $actionsPosition === ActionsPosition::BottomCorner,
-                                            'mb-3' => $actionsPosition === ActionsPosition::BelowContent,
-                                            'hidden' => $isReordering,
-                                        ])"
-                                    />
-                                @endif
+                                    @if ($hasCollapsibleColumnsLayout && (! $isReordering))
+                                        <div
+                                            x-show="! isCollapsed"
+                                            x-collapse
+                                            class="pb-3"
+                                        >
+                                            {{ $collapsibleColumnsLayout->viewData(['recordKey' => $recordKey]) }}
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
                         @endforeach
                     </x-filament-support::grid>
