@@ -96,6 +96,16 @@ function (Closure $set) {
 }
 ```
 
+If you're writing a form for an admin panel resource or relation manager, and you wish to check if a form is `create`, `edit` or `view`, use the `$context` parameter:
+
+```php
+function (string $context) {
+    // ...
+}
+```
+
+> Outside of the admin panel, you can set a form's context by defining a `getFormContext()` method on your Livewire component.
+
 Callbacks are evaluated using Laravel's `app()->call()` under the hood, so you are able to combine multiple parameters in any order:
 
 ```php
