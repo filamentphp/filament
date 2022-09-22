@@ -619,11 +619,16 @@
                                         @endif
                                     </div>
 
-                                    @if ($hasCollapsibleColumnsLayout && (! $isReordering))
+                                    @if ($hasCollapsibleColumnsLayout)
                                         <div
                                             x-show="! isCollapsed"
                                             x-collapse
-                                            class="pb-3"
+                                            @class([
+                                                'pb-3',
+                                                'sm:pl-20' => (! $contentGrid) && $isSelectionEnabled,
+                                                'sm:pl-12' => (! $contentGrid) && (! $isSelectionEnabled),
+                                                'hidden' => $isReordering,
+                                            ])
                                         >
                                             {{ $collapsibleColumnsLayout->viewData(['recordKey' => $recordKey]) }}
                                         </div>
