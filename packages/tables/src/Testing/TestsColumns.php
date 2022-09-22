@@ -39,11 +39,11 @@ class TestsColumns
         };
     }
 
-    public function assertCannotRenderTableColumn(): Closure
+    public function assertCanNotRenderTableColumn(): Closure
     {
         return function (string $name): static {
             /** @phpstan-ignore-next-line  */
-            $this->assertTableColumnVisible($name);
+            $this->assertTableColumnExists($name);
 
             $livewire = $this->instance();
 
