@@ -3,7 +3,6 @@
 namespace Filament\Tables\Columns\Layout;
 
 use Closure;
-use Filament\Tables\Columns\Concerns\HasAlignment;
 
 class Panel extends Component
 {

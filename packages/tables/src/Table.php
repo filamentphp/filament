@@ -10,7 +10,6 @@ use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\Position;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Layout\Component;
-use Filament\Tables\Columns\Layout\Contracts\Collapsible;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Layout;
 use Illuminate\Contracts\Pagination\Paginator;
