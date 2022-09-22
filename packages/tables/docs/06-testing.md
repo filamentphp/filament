@@ -50,7 +50,7 @@ it('can render post titles', function () {
 
 This helper will get the HTML for this column, and check that it is present in the table.
 
-For the opposite, you can either use `assertCannotRenderTableColumn()`:
+For testing that a column is not rendered, you can use `assertCannotRenderTableColumn()`:
 
 ```php
 use function Pest\Livewire\livewire;
