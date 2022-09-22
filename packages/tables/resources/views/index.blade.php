@@ -481,11 +481,11 @@
                         :lg="$contentGrid['lg'] ?? null"
                         :xl="$contentGrid['xl'] ?? null"
                         :two-xl="$contentGrid['2xl'] ?? null"
-                        @class([
+                        :class="\Illuminate\Support\Arr::toCssClasses([
                             'divide-y' => ! $contentGrid,
                             'p-2 gap-2' => $contentGrid,
                             'dark:divide-gray-700' => config('tables.dark_mode'),
-                        ])
+                        ])"
                     >
                         @foreach ($records as $record)
                             @php
