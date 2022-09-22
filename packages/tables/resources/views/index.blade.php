@@ -557,6 +557,7 @@
                                                     size="sm"
                                                     x-on:click="isCollapsed = ! isCollapsed"
                                                     x-bind:class="isCollapsed || '-rotate-180'"
+                                                    class="transition"
                                                 />
                                             </div>
                                         @endif
