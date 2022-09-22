@@ -12,7 +12,5 @@ class Position
 
     public const BeforeColumns = 'before_columns';
 
-    public const BelowContent = 'below_content';
-
     public const BottomCorner = 'bottom_corner';
 }

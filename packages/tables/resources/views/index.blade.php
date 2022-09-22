@@ -28,7 +28,7 @@
     $hasFilters = $isFilterable();
     $hasFiltersPopover = $hasFilters && ($getFiltersLayout() === FiltersLayout::Popover);
     $hasFiltersAboveContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::AboveContent);
-    $hasFiltersBelowContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::BelowContent);
+    $hasFiltersAfterContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::AfterContent);
     $isColumnToggleFormVisible = $hasToggleableColumns();
     $records = $getRecords();
 
@@ -513,7 +513,7 @@
                                     }"
                                     @class(array_merge(
                                         [
-                                            'relative px-4 transition',
+                                            'h-full relative px-4 transition',
                                             'hover:bg-gray-50' => $recordUrl || $recordAction,
                                             'dark:hover:bg-gray-500/10' => ($recordUrl || $recordAction) && config('tables.dark_mode'),
                                             'dark:border-gray-600 dark:bg-gray-700' => (! $contentGrid) && config('tables.dark_mode'),
@@ -525,11 +525,12 @@
                                     ))
                                 >
                                     <div @class([
-                                        'flex items-center gap-4' => (! $contentGrid),
-                                        'mr-6 rtl:mr-0 rtl:ml-6' => $contentGrid && ($isSelectionEnabled || $hasCollapsibleColumnsLayout || $isReordering),
+                                        'items-center gap-4 md:flex md:mr-0 rtl:md:ml-0' => (! $contentGrid),
+                                        'mr-6 rtl:mr-0 rtl:ml-6' => $isSelectionEnabled || $hasCollapsibleColumnsLayout || $isReordering,
                                     ])>
                                         <x-tables::reorder.handle :class="\Illuminate\Support\Arr::toCssClasses([
-                                            'absolute top-3 right-3 rtl:right-auto rtl:left-3' => $contentGrid,
+                                            'absolute top-3 right-3 rtl:right-auto rtl:left-3',
+                                            'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
                                             'hidden' => ! $isReordering,
                                         ])" />
 
@@ -538,8 +539,8 @@
                                                 x-model="selectedRecords"
                                                 :value="$recordKey"
                                                 :class="\Illuminate\Support\Arr::toCssClasses([
-                                                    'filament-tables-record-checkbox',
-                                                    'absolute top-3 right-3 rtl:right-auto rtl:left-3' => $contentGrid,
+                                                    'filament-tables-record-checkbox absolute top-3 right-3 rtl:right-auto rtl:left-3',
+                                                    'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
                                                     'hidden' => $isReordering,
                                                 ])"
                                             />
@@ -547,9 +548,10 @@
 
                                         @if ($hasCollapsibleColumnsLayout)
                                             <div @class([
-                                                'absolute right-1 rtl:right-auto rtl:left-1' => $contentGrid,
-                                                'top-10' => $contentGrid && $isSelectionEnabled,
-                                                'top-1' => $contentGrid && (! $isSelectionEnabled),
+                                                'absolute right-1 rtl:right-auto rtl:left-1',
+                                                'top-10' => $isSelectionEnabled,
+                                                'top-1' => ! $isSelectionEnabled,
+                                                'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
                                                 'hidden' => $isReordering,
                                             ])>
                                                 <x-tables::icon-button
@@ -610,11 +612,13 @@
                                         @if (count($actions))
                                             <x-tables::actions
                                                 :actions="$actions"
-                                                :alignment="$actionsPosition === ActionsPosition::BelowContent ? 'left' : 'right'"
+                                                :alignment="$actionsPosition === ActionsPosition::AfterContent ? 'left' : 'left md:right'"
                                                 :record="$record"
                                                 :class="\Illuminate\Support\Arr::toCssClasses([
                                                     'absolute bottom-1 right-1 rtl:right-auto rtl:left-1' => $actionsPosition === ActionsPosition::BottomCorner,
-                                                    'mb-3' => $actionsPosition === ActionsPosition::BelowContent,
+                                                    'md:relative md:bottom-0 md:right-0 rtl:md:left-0' => $actionsPosition === ActionsPosition::BottomCorner && (! $contentGrid),
+                                                    'mb-3' => $actionsPosition === ActionsPosition::AfterContent,
+                                                    'md:mb-0' => $actionsPosition === ActionsPosition::AfterContent && (! $contentGrid),
                                                     'hidden' => $isReordering,
                                                 ])"
                                             />
@@ -627,8 +631,8 @@
                                             x-collapse
                                             @class([
                                                 'pb-3',
-                                                'sm:pl-20' => (! $contentGrid) && $isSelectionEnabled,
-                                                'sm:pl-12' => (! $contentGrid) && (! $isSelectionEnabled),
+                                                'md:pl-20 rtl:md:pl-0 rtl:md:pr-20' => (! $contentGrid) && $isSelectionEnabled,
+                                                'md:pl-12 rtl:md:pl-0 rtl:md:pr-12' => (! $contentGrid) && (! $isSelectionEnabled),
                                                 'hidden' => $isReordering,
                                             ])
                                         >
@@ -896,7 +900,7 @@
             </div>
         @endif
 
-        @if ($hasFiltersBelowContent)
+        @if ($hasFiltersAfterContent)
             <div class="px-2 pb-2">
                 <x-tables::hr />
 

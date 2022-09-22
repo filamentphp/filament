@@ -9,6 +9,7 @@
     match ($alignment ?? config('tables.layout.action_alignment') ?? config('tables.layout.actions.cell.alignment')) {
         'center' => 'justify-center',
         'left' => 'justify-start',
+        'left md:right' => 'justify-start md:justify-end',
         default => 'justify-end',
     },
 ]) }}>

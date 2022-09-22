@@ -54,15 +54,21 @@ class Table extends ViewComponent
             return $position;
         }
 
-        if ($this->getContentGrid()) {
-            return Position::BelowContent;
+        if (! ($this->getContentGrid() || $this->hasColumnsLayout())) {
+            return Position::AfterCells;
         }
 
-        if ($this->hasColumnsLayout()) {
-            return Position::AfterContent;
+        $actions = $this->getActions();
+
+        $firstAction = Arr::first($actions);
+
+        if ($firstAction instanceof ActionGroup) {
+            $firstAction->size('sm md:md');
+
+            return Position::BottomCorner;
         }
 
-        return Position::AfterCells;
+        return Position::AfterContent;
     }
 
     public function getActionsColumnLabel(): ?string

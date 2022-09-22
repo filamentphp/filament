@@ -6,6 +6,7 @@ use Filament\Support\Actions\Concerns\CanBeHidden;
 use Filament\Support\Actions\Concerns\HasColor;
 use Filament\Support\Actions\Concerns\HasIcon;
 use Filament\Support\Actions\Concerns\HasLabel;
+use Filament\Support\Actions\Concerns\HasSize;
 use Filament\Support\Actions\Concerns\HasTooltip;
 use Filament\Support\Components\ViewComponent;
 
@@ -14,10 +15,11 @@ class ActionGroup extends ViewComponent
     use CanBeHidden {
         isHidden as baseIsHidden;
     }
-    use HasIcon;
-    use HasTooltip;
-    use HasLabel;
     use HasColor;
+    use HasIcon;
+    use HasLabel;
+    use HasSize;
+    use HasTooltip;
 
     protected string $evaluationIdentifier = 'group';
 
