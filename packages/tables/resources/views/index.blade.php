@@ -526,7 +526,7 @@
                                 >
                                     <div @class([
                                         'flex items-center gap-4' => (! $contentGrid),
-                                        'mr-6' => $contentGrid && ($isSelectionEnabled || $hasCollapsibleColumnsLayout || $isReordering),
+                                        'mr-6 rtl:mr-0 rtl:ml-6' => $contentGrid && ($isSelectionEnabled || $hasCollapsibleColumnsLayout || $isReordering),
                                     ])>
                                         <x-tables::reorder.handle :class="\Illuminate\Support\Arr::toCssClasses([
                                             'absolute top-3 right-3 rtl:right-auto rtl:left-3' => $contentGrid,

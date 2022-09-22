@@ -33,7 +33,7 @@
         </p>
     @endif
 
-    <p class="flex items-center space-x-1">
+    <p class="flex items-center space-x-1 rtl:space-x-reverse">
         @if ($icon && $iconPosition === 'before')
             <x-dynamic-component :component="$icon" :class="$iconClasses" />
         @endif
