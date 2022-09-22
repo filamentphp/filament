@@ -482,7 +482,7 @@ test('visible fields can save to relationships', function () {
                     return $fieldVisible;
                 }),
         ])
-        ->model(tap(new User(), fn(User $user) => $user->exists = true));
+        ->model(tap(new User(), fn (User $user) => $user->exists = true));
 
     $componentContainer
         ->saveRelationships();
@@ -523,7 +523,7 @@ test('invisible fields can force save to relationships', function () {
                     return $forceSaveRelationships;
                 }),
         ])
-        ->model(tap(new User(), fn(User $user) => $user->exists = true));
+        ->model(tap(new User(), fn (User $user) => $user->exists = true));
 
     $componentContainer
         ->saveRelationships();
@@ -545,4 +545,3 @@ test('invisible fields can force save to relationships', function () {
     expect($nrOfRelationshipsSaved)
         ->toBe(2);
 });
-
