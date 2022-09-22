@@ -716,7 +716,7 @@ class Select extends Field
         return parent::getLabel();
     }
 
-    public function getRelationship(): BelongsTo | BelongsToMany | null
+    public function getRelationship(): BelongsTo | BelongsToMany | null | \Znck\Eloquent\Relations\BelongsToThrough
     {
         $name = $this->getRelationshipName();
 
