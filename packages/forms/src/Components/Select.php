@@ -477,7 +477,7 @@ class Select extends Field
             if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
                 $keyName = $relationship->getRelated()->getQualifiedKeyName();
             } else {
-                $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
+                $keyName = $component->isMultiple() ? $relationship->getQualifiedRelatedKeyName() : $relationship->getQualifiedOwnerKeyName();
             }
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
