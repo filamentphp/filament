@@ -4,10 +4,12 @@ namespace Filament\Tables\Columns\Layout;
 
 use Closure;
 use Filament\Tables\Columns\Concerns\HasAlignment;
+use Filament\Tables\Columns\Concerns\HasSpace;
 
 class Stack extends Component
 {
     use HasAlignment;
+    use HasSpace;
 
     protected string $view = 'tables::columns.layout.stack';
 

@@ -1,5 +1,5 @@
 <div @class([
-    'p-6 bg-gray-100 rounded-xl',
+    'px-4 py-3 bg-gray-100 rounded-xl',
     'dark:bg-gray-900' => config('forms.dark_mode'),
 ])>
     <x-tables::columns.layout
