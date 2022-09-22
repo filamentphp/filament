@@ -69,7 +69,7 @@
                                         'primary' => 'text-primary-500',
                                         'success' => 'text-success-500',
                                         'warning' => 'text-warning-500',
-                                        default => 'text-gray-400'
+                                        default => 'text-gray-400',
                                     },
                                 ])"
                             />
@@ -95,7 +95,7 @@
                                         'secondary' => 'text-gray-400',
                                         'success' => 'text-success-500',
                                         'warning' => 'text-warning-500',
-                                        default => 'text-primary-500'
+                                        default => 'text-primary-500',
                                     },
                                 ])"
                             />
