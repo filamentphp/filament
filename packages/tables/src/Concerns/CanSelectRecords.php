@@ -12,7 +12,7 @@ trait CanSelectRecords
 {
     public array $selectedTableRecords = [];
 
-    protected bool $selectionCurrentPageOnly = false;
+    protected bool $shouldSelectCurrentPageOnly = false;
 
     public function deselectAllTableRecords(): void
     {
@@ -23,10 +23,10 @@ trait CanSelectRecords
     {
         $query = $this->getFilteredTableQuery();
 
-        if($this->isSelectionCurrentPageOnly()){
+        if ($this->shouldSelectCurrentPageOnly()) {
             return $this->getTableRecords()
-                    ->map(fn ($key): string => (string) $key->id)
-                    ->all();
+                ->map(fn ($key): string => (string) $key->id)
+                ->all();
         }
 
         return $query
@@ -37,7 +37,7 @@ trait CanSelectRecords
 
     public function getAllTableRecordsCount(): int
     {
-        if($this->isSelectionCurrentPageOnly()){
+        if ($this->shouldSelectCurrentPageOnly()) {
             return $this->records->count();
         }
 
@@ -76,7 +76,8 @@ trait CanSelectRecords
         ));
     }
 
-    public function isSelectionCurrentPageOnly(){
-        return $this->selectionCurrentPageOnly;
+    public function shouldSelectCurrentPageOnly(): bool
+    {
+        return $this->shouldSelectCurrentPageOnly;
     }
 }
