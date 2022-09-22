@@ -517,6 +517,26 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
 }
 ```
 
+#### Force saving relationships
+
+By default, relationships will only be saved if the field is visible. For example, if you have a `Repeater` field that is only visible on a certain condition. When the repeater is hidden, the relationships will not be saved.
+
+This might cause unexpected behaviour if you still want to modify the relationship, even when the field is hidden. For example, you might want to delete remaining records.
+
+To force relationships to be saved, you may call the `forceSaveRelationships()` method on the form:
+
+```php
+Repeater::make('products')
+    ->saveRelationshipsUsing(function (array $state, Model $record) {
+        $record->products()->delete();
+        
+        foreach ($state ?? [] as $product) {
+            $record->products()->create($product);
+        }
+    })
+    ->forceSaveRelationships(true);
+```
+
 ## Using multiple forms
 
 By default, the `InteractsWithForms` trait only handles one form per Livewire component. To change this, you can override the `getForms()` method to return more than one form, each with a unique name:

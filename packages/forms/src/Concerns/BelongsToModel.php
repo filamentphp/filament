@@ -17,7 +17,7 @@ trait BelongsToModel
 
     public function saveRelationships(): void
     {
-        foreach ($this->getComponents() as $component) {
+        foreach ($this->getComponents(withHidden: true) as $component) {
             foreach ($component->getChildComponentContainers() as $container) {
                 $container->saveRelationships();
             }
