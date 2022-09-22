@@ -4,6 +4,14 @@ return [
 
     'columns' => [
 
+        'color' => [
+
+            'messages' => [
+                'copied' => 'تم النسخ',
+            ],
+
+        ],
+
         'tags' => [
             'more' => 'و :count أكثر',
         ],
@@ -89,9 +97,17 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'إلغاء المصفيات',
+            ],
+
+            'remove_all' => [
+                'label' => 'إلغاء كافة المصفيات',
+                'tooltip' => 'إلغاء كافة المصفيات',
+            ],
+
             'reset' => [
                 'label' => 'إعادة ضبط المصفيات',
-                'tooltip' => 'إعادة ضبط المصفيات',
             ],
 
         ],
