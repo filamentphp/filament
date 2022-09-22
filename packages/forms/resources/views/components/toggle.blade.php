@@ -62,7 +62,7 @@
                         @if ($hasOffIcon())
                             <x-dynamic-component
                                 :component="$getOffIcon()"
-                                @class([
+                                :class="\Illuminate\Support\Arr::toCssClasses([
                                     'h-3 w-3',
                                     match ($getOffColor()) {
                                         'danger' => 'text-danger-500',
@@ -71,7 +71,7 @@
                                         'warning' => 'text-warning-500',
                                         default => 'text-gray-400'
                                     },
-                                ])
+                                ])"
                             />
                         @endif
                     </span>
@@ -88,7 +88,7 @@
                             <x-dynamic-component
                                 :component="$getOnIcon()"
                                 x-cloak
-                                @class([
+                                :class="\Illuminate\Support\Arr::toCssClasses([
                                     'h-3 w-3',
                                     match ($getOnColor()) {
                                         'danger' => 'text-danger-500',
@@ -97,7 +97,7 @@
                                         'warning' => 'text-warning-500',
                                         default => 'text-primary-500'
                                     },
-                                ])
+                                ])"
                             />
                         @endif
                     </span>
