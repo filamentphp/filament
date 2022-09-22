@@ -64,13 +64,13 @@
                                 :component="$getOffIcon()"
                                 @class([
                                     'h-3 w-3',
-                                    match($getOffColor()) {
+                                    match ($getOffColor()) {
                                         'danger' => 'text-danger-500',
                                         'primary' => 'text-primary-500',
                                         'success' => 'text-success-500',
                                         'warning' => 'text-warning-500',
                                         default => 'text-gray-400'
-                                    }
+                                    },
                                 ])
                             />
                         @endif
@@ -90,13 +90,13 @@
                                 x-cloak
                                 @class([
                                     'h-3 w-3',
-                                    match($getOnColor()) {
+                                    match ($getOnColor()) {
                                         'danger' => 'text-danger-500',
                                         'secondary' => 'text-gray-400',
                                         'success' => 'text-success-500',
                                         'warning' => 'text-warning-500',
                                         default => 'text-primary-500'
-                                    }
+                                    },
                                 ])
                             />
                         @endif
