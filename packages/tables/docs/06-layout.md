@@ -21,6 +21,8 @@ This is fine, but there is still a glaring issue - **on mobile, the user is unab
 
 Thankfully, Filament lets you build responsive table-like interfaces, without touching HTML or CSS. These layouts let you define exactly where content appears in a table row, at each responsive breakpoint.
 
+![Layout demo](https://user-images.githubusercontent.com/41773797/191832816-fe2d6e1b-a9b1-4133-b52a-d315705feb8f.png)
+
 ## Allowing columns to stack on mobile
 
 Let's introduce a component - `Split`:
@@ -35,6 +37,8 @@ Split::make([
     TextColumn::make('email'),
 ])
 ```
+
+![Split layout](https://user-images.githubusercontent.com/41773797/191833019-efa1cede-3483-451a-8ee3-7f5405d5cb38.png)
 
 A `Split` component is used to wrap around columns, and allow them to stack on mobile.
 
@@ -52,7 +56,9 @@ Split::make([
 ])->from('md')
 ```
 
-In this example, the columns will only appear horizontally aside each other from `md` [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) devices onwards.
+In this example, the columns will only appear horizontally aside each other from `md` [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) devices onwards:
+
+![Split layout only on desktop](https://user-images.githubusercontent.com/41773797/191833132-0648cbc8-5d31-45ea-b978-be316ebcf73c.png)
 
 ### Preventing a column from creating whitespace
 
@@ -70,7 +76,9 @@ Split::make([
 ])
 ```
 
-The other columns which are allowed to `grow()` will adjust to consume the newly-freed space.
+The other columns which are allowed to `grow()` will adjust to consume the newly-freed space:
+
+![Image column not growing](https://user-images.githubusercontent.com/41773797/191833422-d34035b9-f99d-4711-9a1c-e073b013e5b4.png)
 
 ### Stacking within a split
 
@@ -92,6 +100,8 @@ Split::make([
 ])
 ```
 
+![Stack within a split](https://user-images.githubusercontent.com/41773797/191833594-3ab5cf7a-e8f3-4662-ab34-1f8ee50c20f4.png)
+
 #### Hiding a stack on mobile
 
 Similar to individual columns, you may choose to hide a stack based on the responsive [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) of the browser. To do this, you may use a `visibleFrom()` method:
@@ -112,6 +122,8 @@ Split::make([
 ])
 ```
 
+![Stack hidden on mobile](https://user-images.githubusercontent.com/41773797/191833730-2b2faa7f-5678-4746-9b80-570ae59ad9f5.png)
+
 #### Aligning stacked content
 
 By default, columns within a stack are aligned to the left. You may choose to align columns within a stack to the `center` or `right`:
@@ -131,6 +143,8 @@ Split::make([
     ])->alignment('right'),
 ])
 ```
+
+![Stacked content aligned to the right](https://user-images.githubusercontent.com/41773797/191833849-4dc5972a-9f3b-466a-9c13-22ac93ec801c.png)
 
 ## Collapsible content
 
@@ -158,6 +172,8 @@ use Filament\Tables\Columns\TextColumn;
     ])->collapsible(),
 ]
 ```
+
+![Collapsible content](https://user-images.githubusercontent.com/41773797/191834045-e423afd4-1ad3-4636-8635-fe9453423555.png)
 
 ### Adding a collapse animation
 
@@ -212,3 +228,5 @@ In this example, the rows will be displayed in a grid:
 - From the `xl` [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) onwards, they will be displayed in 3 columns.
 
 These settings are fully customizable, any [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) from `sm` to `2xl` can contain `1` to `12` columns.
+
+![Records in a grid](https://user-images.githubusercontent.com/41773797/191834232-df5a73bc-392b-4fff-a4ac-8486f4e76aaf.png)

@@ -630,7 +630,7 @@
                                             x-show="! isCollapsed"
                                             x-collapse
                                             @class([
-                                                'pb-3',
+                                                'pb-2 -mx-2',
                                                 'md:pl-20 rtl:md:pl-0 rtl:md:pr-20' => (! $contentGrid) && $isSelectionEnabled,
                                                 'md:pl-12 rtl:md:pl-0 rtl:md:pr-12' => (! $contentGrid) && (! $isSelectionEnabled),
                                                 'hidden' => $isReordering,
