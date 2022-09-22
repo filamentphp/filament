@@ -230,3 +230,72 @@ In this example, the rows will be displayed in a grid:
 These settings are fully customizable, any [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) from `sm` to `2xl` can contain `1` to `12` columns.
 
 ![Records in a grid](https://user-images.githubusercontent.com/41773797/191834232-df5a73bc-392b-4fff-a4ac-8486f4e76aaf.png)
+
+## Custom HTML
+
+You may add custom HTML to your table using a `View` component. It can even be `collapsible()`:
+
+```php
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\View;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+
+[
+    Split::make([
+        ImageColumn::make('avatar'),
+        TextColumn::make('name'),
+    ]),
+    View::make('users.table.collapsible-row-content')
+        ->collapsible(),
+]
+```
+
+Now, create a `/resources/views/users/table/collapsible-row-content.blade.php` file, and add in your HTML. You can access the table record using `$getRecord()`:
+
+```blade
+<p class="px-4 py-3 bg-gray-100 rounded-lg">
+    <span class="font-medium">
+        Email address:
+    </span>
+    
+    <span>
+        {{ $getRecord()->email }}
+    </span>
+</p>
+```
+
+### Embedding other components
+
+You could even pass in columns or other layout components to the `components()` method:
+
+```php
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\View;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+
+[
+    Split::make([
+        ImageColumn::make('avatar'),
+        TextColumn::make('name'),
+    ]),
+    View::make('users.table.collapsible-row-content')
+        ->components([
+            TextColumn::make('email'),
+        ])
+        ->collapsible(),
+]
+```
+
+Now, render the components in the Blade file:
+
+```blade
+<div class="px-4 py-3 bg-gray-100 rounded-lg">
+    <x-tables::columns.layout
+        :components="$getComponents()"
+        :record="$getRecord()"
+        :record-key="$recordKey"
+    />
+</div>
+```
