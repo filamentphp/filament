@@ -538,7 +538,7 @@ Repeater::make('products')
             $record->products()->create($product);
         }
     })
-    ->forceSaveRelationships(true);
+    ->forceSaveRelationships();
 ```
 
 ## Using multiple forms

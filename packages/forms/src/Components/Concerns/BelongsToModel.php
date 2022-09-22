@@ -75,7 +75,7 @@ trait BelongsToModel
         return $this;
     }
 
-    public function forceSaveRelationships(null|bool|Closure $callback): static
+    public function forceSaveRelationships(null|bool|Closure $callback = true): static
     {
         $this->forceSaveRelationships = $callback;
 
