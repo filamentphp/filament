@@ -50,16 +50,16 @@ it('can render post titles', function () {
 
 This helper will get the HTML for this column, and check that it is present in the table.
 
-For testing that a column is not rendered, you can use `assertCannotRenderTableColumn()`:
+For testing that a column is not rendered, you can use `assertCanNotRenderTableColumn()`:
 
 ```php
 use function Pest\Livewire\livewire;
 
-it('cannot render post comments', function () {
+it('can not render post comments', function () {
     Post::factory()->count(10)->create()
    
     livewire(PostResource\Pages\ListPosts::class)
-        ->assertCannotRenderTableColumn('comments');
+        ->assertCanNotRenderTableColumn('comments');
 });
 ```
 
