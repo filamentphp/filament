@@ -12,6 +12,8 @@ trait CanSelectRecords
 {
     public array $selectedTableRecords = [];
 
+    protected bool $shouldSelectCurrentPageOnly = false;
+
     public function deselectAllTableRecords(): void
     {
         $this->emitSelf('deselectAllTableRecords');
@@ -21,6 +23,12 @@ trait CanSelectRecords
     {
         $query = $this->getFilteredTableQuery();
 
+        if ($this->shouldSelectCurrentPageOnly()) {
+            return $this->getTableRecords()
+                ->map(fn ($key): string => (string) $key->id)
+                ->all();
+        }
+
         return $query
             ->pluck($query->getModel()->getQualifiedKeyName())
             ->map(fn ($key): string => (string) $key)
@@ -29,6 +37,10 @@ trait CanSelectRecords
 
     public function getAllTableRecordsCount(): int
     {
+        if ($this->shouldSelectCurrentPageOnly()) {
+            return $this->records->count();
+        }
+
         if ($this->records instanceof LengthAwarePaginator) {
             return $this->records->total();
         }
@@ -62,5 +74,10 @@ trait CanSelectRecords
             $this->getCachedTableBulkActions(),
             fn (BulkAction $action): bool => ! $action->isHidden(),
         ));
+    }
+
+    public function shouldSelectCurrentPageOnly(): bool
+    {
+        return $this->shouldSelectCurrentPageOnly;
     }
 }
