@@ -40,6 +40,9 @@
     </div>
 
     @if ($actions)
-        <x-tables::actions :actions="$actions" class="justify-center" />
+        <x-tables::actions
+            :actions="$actions"
+            alignment="center"
+        />
     @endif
 </div>

@@ -7,9 +7,9 @@ use Filament\Tables\Table;
 
 trait BelongsToTable
 {
-    protected Table $table;
+    protected ?Table $table = null;
 
-    public function table(Table $table): static
+    public function table(?Table $table): static
     {
         $this->table = $table;
 
@@ -18,7 +18,7 @@ trait BelongsToTable
 
     public function getTable(): Table
     {
-        return $this->table;
+        return $this->table ?? $this->getLayout()->getTable();
     }
 
     public function getLivewire(): HasTable

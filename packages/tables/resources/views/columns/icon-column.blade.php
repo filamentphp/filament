@@ -9,7 +9,10 @@
     };
 @endphp
 
-<div {{ $attributes->merge($getExtraAttributes())->class(['filament-tables-icon-column px-4 py-3']) }}>
+<div {{ $attributes->merge($getExtraAttributes())->class([
+    'filament-tables-icon-column',
+    'px-4 py-3' => ! $isInline(),
+]) }}>
     @if ($getStateIcon())
         <x-dynamic-component
             :component="$getStateIcon()"

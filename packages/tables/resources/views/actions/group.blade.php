@@ -4,5 +4,6 @@
     :color="$getColor()"
     :icon="$getIcon()"
     :label="$getLabel()"
+    :size="$getSize()"
     :tooltip="$getTooltip()"
 />

@@ -364,7 +364,7 @@ use Filament\Tables\Filters\Layout;
 
 protected function getTableFiltersLayout(): ?string
 {
-    return Layout::BelowContent;
+    return Layout::AfterContent;
 }
 ```
 

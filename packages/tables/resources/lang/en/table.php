@@ -156,4 +156,27 @@ return [
 
     ],
 
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Sort by',
+            ],
+
+            'direction' => [
+
+                'label' => 'Sort direction',
+
+                'options' => [
+                    'asc' => 'Ascending',
+                    'desc' => 'Descending',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
 ];

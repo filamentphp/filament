@@ -11,6 +11,11 @@ trait HasContent
         return null;
     }
 
+    protected function getTableContentGrid(): ?array
+    {
+        return null;
+    }
+
     protected function getTableContentFooter(): ?View
     {
         return null;

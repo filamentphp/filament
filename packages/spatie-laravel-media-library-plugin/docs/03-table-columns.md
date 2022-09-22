@@ -28,4 +28,4 @@ use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 SpatieMediaLibraryImageColumn::make('avatar')->conversion('thumb'),
 ```
 
-The media library image column supports all the customization options of the [original image column](/docs/tables/columns#image-column).
+The media library image column supports all the customization options of the [original image column](/docs/tables/columns/image).
