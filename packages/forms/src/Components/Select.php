@@ -475,9 +475,9 @@ class Select extends Field
             }
 
             if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
-                $keyName = $relationship->getRelated()->getQualifiedKeyName();
+                $keyName = $relationship->getRelated()->getKeyName();
             } else {
-                $keyName = $component->isMultiple() ? $relationship->getQualifiedRelatedKeyName() : $relationship->getQualifiedOwnerKeyName();
+                $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
             }
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
