@@ -16,6 +16,10 @@ return [
                 'label' => 'حذف',
             ],
 
+            'move_item' => [
+                'label' => 'نقل',
+            ],
+
             'move_item_down' => [
                 'label' => 'تحريك لأسفل',
             ],
@@ -103,6 +107,14 @@ return [
                 'label' => 'حذف',
             ],
 
+            'clone_item' => [
+                'label' => 'نسخ',
+            ],
+
+            'move_item' => [
+                'label' => 'نقل',
+            ],
+
             'move_item_down' => [
                 'label' => 'تحريك لأسفل',
             ],
@@ -144,7 +156,7 @@ return [
 
                 'label' => 'عنوان url',
 
-                'placeholder' => 'إدخل عنوان url',
+                'placeholder' => 'أدخل عنوان url',
 
             ],
 
@@ -191,6 +203,11 @@ return [
 
             ],
 
+        ],
+
+        'boolean' => [
+            'true' => 'نعم',
+            'false' => 'لا',
         ],
 
         'loading_message' => 'تحميل...',
