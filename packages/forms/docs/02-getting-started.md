@@ -527,8 +527,12 @@ To force relationships to be saved, you may call the `forceSaveRelationships()` 
 
 ```php
 Repeater::make('products')
-    ->saveRelationshipsUsing(function (array $state, Model $record) {
+    ->saveRelationshipsUsing(function (array $state, Model $record, Repeater $component) {
         $record->products()->delete();
+        
+        if ($component->isHidden()) {
+            return;
+        }
         
         foreach ($state ?? [] as $product) {
             $record->products()->create($product);
