@@ -278,10 +278,10 @@ trait InteractsWithForms
     {
         return [
             'form' => $this->makeForm()
-                ->context($this->getFormContext())
                 ->schema($this->getFormSchema())
                 ->model($this->getFormModel())
-                ->statePath($this->getFormStatePath()),
+                ->statePath($this->getFormStatePath())
+                ->context($this->getFormContext()),
         ];
     }
 
