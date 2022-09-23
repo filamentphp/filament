@@ -133,5 +133,29 @@ return [
         ],
 
     ],
+    
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Trier par',
+            ],
+
+            'direction' => [
+
+                'label' => 'Ordre',
+
+                'options' => [
+                    'asc' => 'Croissant',
+                    'desc' => 'Décroissant',
+                ],
+
+            ],
+
+        ],
+
+    ],
+    
 
 ];
