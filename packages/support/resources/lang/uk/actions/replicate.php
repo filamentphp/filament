@@ -4,7 +4,7 @@ return [
 
     'single' => [
 
-        'label' => 'копіювати',
+        'label' => 'Копіювати',
 
         'modal' => [
 
