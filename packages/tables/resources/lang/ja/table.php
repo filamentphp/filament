@@ -141,7 +141,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '1レコード選択済み|:countレコード選択済み',
+        'selected_count' => '1件選択済み|:count件選択済み',
 
         'buttons' => [
 

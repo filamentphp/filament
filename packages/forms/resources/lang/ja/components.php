@@ -11,7 +11,7 @@ return [
             ],
 
             'create_item_between' => [
-                'label' => 'Add between',
+                'label' => '間に追加',
             ],
 
             'delete_item' => [
@@ -67,14 +67,14 @@ return [
         'toolbar_buttons' => [
             'attach_files' => 'ファイルを追加',
             'bold' => '太文字',
-            'bullet_list' => 'Bullet list',
+            'bullet_list' => '箇条書き',
             'code_block' => 'コードブロック',
             'edit' => '編集',
-            'italic' => 'Italic',
+            'italic' => 'イタリック体',
             'link' => 'リンク',
-            'ordered_list' => 'Numbered list',
+            'ordered_list' => '番号付きリスト',
             'preview' => 'プレビュー',
-            'strike' => 'Strikethrough',
+            'strike' => '打ち消し線',
         ],
 
     ],
@@ -110,45 +110,45 @@ return [
             'link' => [
 
                 'buttons' => [
-                    'link' => 'Link',
-                    'unlink' => 'Unlink',
+                    'link' => 'リンク追加',
+                    'unlink' => 'リンク解除',
                 ],
 
                 'label' => 'URL',
 
-                'placeholder' => 'Enter a URL',
+                'placeholder' => 'URLを入力',
 
             ],
 
         ],
 
         'toolbar_buttons' => [
-            'attach_files' => 'Attach files',
-            'blockquote' => 'Blockquote',
-            'bold' => 'Bold',
-            'bullet_list' => 'Bullet list',
-            'code_block' => 'Code block',
-            'h1' => 'Title',
-            'h2' => 'Heading',
-            'h3' => 'Subheading',
-            'italic' => 'Italic',
-            'link' => 'Link',
-            'ordered_list' => 'Numbered list',
-            'redo' => 'Redo',
-            'strike' => 'Strikethrough',
-            'undo' => 'Undo',
+            'attach_files' => 'ファイルを添付',
+            'blockquote' => 'ブロック引用要素',
+            'bold' => '太文字',
+            'bullet_list' => '箇条書き',
+            'code_block' => 'コードブロック',
+            'h1' => '見出し1(h1)',
+            'h2' => '見出し2(h2)',
+            'h3' => '見出し3(h3)',
+            'italic' => 'イタリック体',
+            'link' => 'リンク',
+            'ordered_list' => '番号付きリスト',
+            'redo' => 'やり直し',
+            'strike' => '打ち消し戦',
+            'undo' => '元に戻す',
         ],
 
     ],
 
     'select' => [
-        'no_search_results_message' => 'No options match your search.',
-        'placeholder' => 'Select an option',
-        'search_prompt' => 'Start typing to search...',
+        'no_search_results_message' => '検索結果はありませんでした',
+        'placeholder' => 'オプションを選択',
+        'search_prompt' => '検索キーワードを入力して検索',
     ],
 
     'tags_input' => [
-        'placeholder' => 'New tag',
+        'placeholder' => '新規タグ',
     ],
 
 ];
