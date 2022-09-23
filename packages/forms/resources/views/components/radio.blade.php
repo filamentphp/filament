@@ -53,6 +53,7 @@
                                     'border-danger-600 ring-1 ring-inset ring-danger-600' => $errors->has($getStatePath()),
                                 ]) }}
                                 {!! ($isDisabled || $isOptionDisabled($value, $label)) ? 'disabled' : null !!}
+                                wire:loading.attr="disabled"
                             />
                         </div>
 

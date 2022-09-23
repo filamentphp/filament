@@ -36,6 +36,7 @@
                 }"
                 {!! $isAutofocused() ? 'autofocus' : null !!}
                 {!! $isDisabled() ? 'disabled' : null !!}
+                wire:loading.attr="disabled"
                 id="{{ $getId() }}"
                 dusk="filament.forms.{{ $getStatePath() }}"
                 type="button"
