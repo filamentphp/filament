@@ -108,6 +108,24 @@ class Builder extends Field implements Contracts\CanConcealComponents
                     data_set($livewire, $statePath, $items);
                 },
             ],
+            'builder::cloneItem' => [
+                function (Builder $component, string $statePath, string $uuidToDuplicate): void {
+                    if ($statePath !== $component->getStatePath()) {
+                        return;
+                    }
+
+                    $newUuid = (string) Str::uuid();
+
+                    $livewire = $component->getLivewire();
+                    data_set(
+                        $livewire,
+                        "{$statePath}.{$newUuid}",
+                        data_get($livewire, "{$statePath}.{$uuidToDuplicate}"),
+                    );
+
+                    $component->collapsed(false, shouldMakeComponentCollapsible: false);
+                },
+            ],
             'builder::moveItemDown' => [
                 function (Builder $component, string $statePath, string $uuidToMoveDown): void {
                     if ($component->isItemMovementDisabled()) {
