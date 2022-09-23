@@ -85,16 +85,16 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '1 record selected.|:count records selected.',
+        'selected_count' => '1件選択済み|:count件選択済み',
 
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Select all :count',
+                'label' => ':count件全てを選択',
             ],
 
             'deselect_all' => [
-                'label' => 'Deselect all',
+                'label' => '全選択解除',
             ],
 
         ],
