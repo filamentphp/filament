@@ -44,11 +44,10 @@ export default (Alpine) => {
                         itemSelectText: '',
                         loadingText: loadingMessage,
                         maxItemCount: maxItems ?? -1,
-                        maxItemText: (maxItemCount) => window.pluralize(
-                            maxItemsMessage,
-                            maxItemCount,
-                            { count: maxItemCount },
-                        ),
+                        maxItemText: (maxItemCount) =>
+                            window.pluralize(maxItemsMessage, maxItemCount, {
+                                count: maxItemCount,
+                            }),
                         noChoicesText: searchPrompt,
                         noResultsText: noSearchResultsMessage,
                         placeholderValue: placeholder,

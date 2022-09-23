@@ -50,7 +50,10 @@ window.pluralize = function (text, number, variables) {
     }
 
     function ucfirst(string) {
-        return string.toString().charAt(0).toUpperCase() + string.toString().slice(1)
+        return (
+            string.toString().charAt(0).toUpperCase() +
+            string.toString().slice(1)
+        )
     }
 
     function replace(line, replace) {
@@ -62,7 +65,9 @@ window.pluralize = function (text, number, variables) {
 
         for (let [key, value] of Object.entries(replace)) {
             shouldReplace[':' + ucfirst(key ?? '')] = ucfirst(value ?? '')
-            shouldReplace[':' + key.toUpperCase()] = value.toString().toUpperCase()
+            shouldReplace[':' + key.toUpperCase()] = value
+                .toString()
+                .toUpperCase()
             shouldReplace[':' + key] = value
         }
 
@@ -74,7 +79,9 @@ window.pluralize = function (text, number, variables) {
     }
 
     function stripConditions(segments) {
-        return segments.map(part => part.replace(/^[\{\[]([^\[\]\{\}]*)[\}\]]/, ''))
+        return segments.map((part) =>
+            part.replace(/^[\{\[]([^\[\]\{\}]*)[\}\]]/, ''),
+        )
     }
 
     let segments = text.split('|')
@@ -87,7 +94,10 @@ window.pluralize = function (text, number, variables) {
 
     segments = stripConditions(segments)
 
-    return replace(segments.length > 1 && number > 1 ? segments[1] : segments[0], variables)
+    return replace(
+        segments.length > 1 && number > 1 ? segments[1] : segments[0],
+        variables,
+    )
 }
 
 export default (Alpine) => {
