@@ -31,6 +31,11 @@ class Dashboard extends Page
         return Filament::getWidgets();
     }
 
+    protected function getColumns(): int | array
+    {
+        return 2;
+    }
+
     protected function getTitle(): string
     {
         return static::$title ?? __('filament::pages/dashboard.title');

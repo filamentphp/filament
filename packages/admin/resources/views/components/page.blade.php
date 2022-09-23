@@ -16,13 +16,21 @@
         @endif
 
         @if ($headerWidgets = $this->getHeaderWidgets())
-            <x-filament::widgets :widgets="$headerWidgets" :data="$widgetData" />
+            <x-filament::widgets
+                :widgets="$headerWidgets"
+                :columns="$this->getHeaderWidgetsColumns()"
+                :data="$widgetData"
+            />
         @endif
 
         {{ $slot }}
 
         @if ($footerWidgets = $this->getFooterWidgets())
-            <x-filament::widgets :widgets="$footerWidgets" :data="$widgetData" />
+            <x-filament::widgets
+                :widgets="$footerWidgets"
+                :columns="$this->getFooterWidgetsColumns()"
+                :data="$widgetData"
+            />
         @endif
 
         @if ($footer = $this->getFooter())
