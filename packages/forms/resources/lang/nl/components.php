@@ -211,6 +211,8 @@ return [
 
         'loading_message' => 'Laden...',
 
+        'max_items_message' => 'Er kunnen maar 3 geselecteerd worden.',
+
         'no_search_results_message' => 'Er zijn geen resultaten voor je zoekopdracht.',
 
         'placeholder' => 'Selecteer een optie',

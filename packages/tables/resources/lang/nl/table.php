@@ -156,4 +156,27 @@ return [
 
     ],
 
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Sorteren op',
+            ],
+
+            'direction' => [
+
+                'label' => 'Sorteerrichting',
+
+                'options' => [
+                    'asc' => 'Oplopend',
+                    'desc' => 'Aflopend',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
 ];
