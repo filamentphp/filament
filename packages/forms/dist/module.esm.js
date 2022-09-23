@@ -27863,6 +27863,7 @@ var select_default = (Alpine) => {
     hasDynamicSearchResults,
     loadingMessage,
     maxItems,
+    maxItemsMessage,
     noSearchResultsMessage,
     options: options2,
     optionsLimit,
@@ -27884,6 +27885,7 @@ var select_default = (Alpine) => {
           itemSelectText: "",
           loadingText: loadingMessage,
           maxItemCount: maxItems ?? -1,
+          maxItemText: (maxItemCount) => window.pluralize(maxItemsMessage, maxItemCount, {count: maxItemCount}),
           noChoicesText: searchPrompt,
           noResultsText: noSearchResultsMessage,
           placeholderValue: placeholder,
@@ -35243,6 +35245,63 @@ function src_default(Alpine) {
 var module_default = src_default;
 
 // packages/forms/resources/js/index.js
+window.pluralize = function(text3, number, variables) {
+  function extract(segments2, number2) {
+    for (const part of segments2) {
+      const line = extractFromString(part, number2);
+      if (line !== null) {
+        return line;
+      }
+    }
+  }
+  function extractFromString(part, number2) {
+    const matches2 = part.match(/^[\{\[]([^\[\]\{\}]*)[\}\]](.*)/s);
+    if (matches2 === null || matches2.length !== 3) {
+      return null;
+    }
+    const condition = matches2[1];
+    const value2 = matches2[2];
+    if (condition.includes(",")) {
+      const [from, to] = condition.split(",", 2);
+      if (to === "*" && number2 >= from) {
+        return value2;
+      } else if (from === "*" && number2 <= to) {
+        return value2;
+      } else if (number2 >= from && number2 <= to) {
+        return value2;
+      }
+    }
+    return condition == number2 ? value2 : null;
+  }
+  function ucfirst(string) {
+    return string.toString().charAt(0).toUpperCase() + string.toString().slice(1);
+  }
+  function replace(line, replace2) {
+    if (replace2.length === 0) {
+      return line;
+    }
+    const shouldReplace = {};
+    for (let [key, value2] of Object.entries(replace2)) {
+      shouldReplace[":" + ucfirst(key ?? "")] = ucfirst(value2 ?? "");
+      shouldReplace[":" + key.toUpperCase()] = value2.toString().toUpperCase();
+      shouldReplace[":" + key] = value2;
+    }
+    Object.entries(shouldReplace).forEach(([key, value2]) => {
+      line = line.replaceAll(key, value2);
+    });
+    return line;
+  }
+  function stripConditions(segments2) {
+    return segments2.map((part) => part.replace(/^[\{\[]([^\[\]\{\}]*)[\}\]]/, ""));
+  }
+  let segments = text3.split("|");
+  const value = extract(segments, number);
+  if (value !== null && value !== void 0) {
+    return replace(value.trim(), variables);
+  }
+  segments = stripConditions(segments);
+  return replace(segments.length > 1 && number > 1 ? segments[1] : segments[0], variables);
+};
 var js_default = (Alpine) => {
   Alpine.plugin(color_picker_default2);
   Alpine.plugin(date_time_picker_default);

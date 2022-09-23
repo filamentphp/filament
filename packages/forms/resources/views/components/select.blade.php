@@ -86,6 +86,7 @@
                         hasDynamicSearchResults: @js($hasDynamicSearchResults()),
                         loadingMessage: @js($getLoadingMessage()),
                         maxItems: @js($getMaxItems()),
+                        maxItemsMessage: @js($getMaxItemsMessage()),
                         noSearchResultsMessage: @js($getNoSearchResultsMessage()),
                         options: @js($getOptionsForJs()),
                         optionsLimit: @js($getOptionsLimit()),
