@@ -31,7 +31,7 @@
                 ])>
                     <div @class([
                         'py-2 pl-4 pr-2',
-                        'bg-gray-50 -mb-px' => $notification->unread(),
+                        'bg-primary-50 -mb-px' => $notification->unread(),
                         'dark:bg-gray-700' => $notification->unread() && config('notifications.dark_mode'),
                     ])>
                         {{ $this->getNotificationFromDatabaseRecord($notification)->inline() }}
