@@ -642,10 +642,10 @@ class Select extends Field
                 }
 
                 return Rule::exists(
-                $component->getRelationship()->getModel()::class,
+                    $component->getRelationship()->getModel()::class,
                     $column,
                 );
-            } ,
+            },
             static fn (Select $component): bool => ! $component->isMultiple(),
         );
 
