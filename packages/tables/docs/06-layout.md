@@ -4,7 +4,7 @@ title: Layout
 
 ## The problem with traditional table layouts
 
-Traditional tables are notorious for having bad responsibility. On mobile, there is only so much flexibility you have when rending content that is horizontally long:
+Traditional tables are notorious for having bad responsivity. On mobile, there is only so much flexibility you have when rending content that is horizontally long:
 
 - Allow the user to scroll horizontally to see more table content
 - Hide non-important columns on smaller devices
