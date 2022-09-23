@@ -17,6 +17,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     use Concerns\CanBeCollapsed;
     use Concerns\CanLimitItemsLength;
     use Concerns\HasContainerGridLayout;
+    use Concerns\CanBeCloned;
 
     protected string $view = 'forms::components.repeater';
 
@@ -29,8 +30,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     protected bool | Closure $isItemMovementDisabled = false;
 
     protected bool | Closure $isInset = false;
-
-    protected bool | Closure $isCloneable = false;
 
     protected ?Collection $cachedExistingRecords = null;
 
@@ -216,13 +215,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
-    public function cloneable(bool | Closure $condition = true): static
-    {
-        $this->isCloneable = $condition;
-
-        return $this;
-    }
-
     public function disableItemMovement(bool | Closure $condition = true): static
     {
         $this->isItemMovementDisabled = $condition;
@@ -275,11 +267,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     public function isItemDeletionDisabled(): bool
     {
         return $this->evaluate($this->isItemDeletionDisabled) || $this->isDisabled();
-    }
-
-    public function isCloneable(): bool
-    {
-        return $this->evaluate($this->isCloneable) && (! $this->isDisabled());
     }
 
     public function isInset(): bool

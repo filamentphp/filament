@@ -8,6 +8,10 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'Clone',
+            ],
+
             'create_item' => [
                 'label' => 'Add to :label',
             ],
