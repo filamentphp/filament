@@ -144,7 +144,7 @@
                                     'flex divide-x rtl:divide-x-reverse',
                                     'dark:divide-gray-700' => config('forms.dark_mode'),
                                 ])>
-                                    @if ($isCloneable)
+                                    @if ($isCloneable())
                                         <li>
                                             <button
                                                 title="{{ __('forms::components.builder.buttons.clone_item.label') }}"
@@ -162,7 +162,7 @@
                                                 <x-heroicon-s-duplicate class="w-4 h-4"/>
                                             </button>
                                         </li>
-                                    @endunless
+                                    @endif
 
                                     @unless ($isItemDeletionDisabled)
                                         <li>
