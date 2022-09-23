@@ -133,7 +133,7 @@ return [
         ],
 
     ],
-    
+
     'sorting' => [
 
         'fields' => [
@@ -156,6 +156,5 @@ return [
         ],
 
     ],
-    
 
 ];
