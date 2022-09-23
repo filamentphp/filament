@@ -2,6 +2,22 @@
 
 return [
 
+    'columns' => [
+
+        'color' => [
+
+            'messages' => [
+                'copied' => 'コピーしました',
+            ],
+
+        ],
+
+        'tags' => [
+            'more' => 'あと:count個あります',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -20,7 +36,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => '件を表示',
+
+                'options' => [
+                    'all' => '全て',
+                ],
+
             ],
 
         ],
@@ -45,6 +67,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'レコードの並び替えを終了',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'レコードの並び替え',
+        ],
+
         'filter' => [
             'label' => '絞り込み',
         ],
@@ -67,11 +97,22 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => '絞り込みを解除',
+            ],
+
+            'remove_all' => [
+                'label' => '全ての絞り込みを解除',
+                'tooltip' => '全ての絞り込みを解除',
+            ],
+
             'reset' => [
                 'label' => 'リセット',
             ],
 
         ],
+
+        'indicator' => '有効な絞り込み',
 
         'multi_select' => [
             'placeholder' => '全件',
@@ -81,20 +122,58 @@ return [
             'placeholder' => '全件',
         ],
 
+        'trashed' => [
+
+            'label' => '削除済みレコード',
+
+            'only_trashed' => '削除済みレコードのみ',
+
+            'with_trashed' => '削除済みレコード含む',
+
+            'without_trashed' => '削除済みレコードを除く',
+
+        ],
+
     ],
+
+    'reorder_indicator' => 'ドラッグ＆ドロップでレコードを並び替え',
+
 
     'selection_indicator' => [
 
-        'selected_count' => '1 record selected.|:count records selected.',
+        'selected_count' => '1レコード選択済み|:countレコード選択済み',
 
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Select all :count',
+                'label' => ':count件全て選択',
             ],
 
             'deselect_all' => [
-                'label' => 'Deselect all',
+                'label' => '全選択解除',
+            ],
+
+        ],
+
+    ],
+
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => '並び順',
+            ],
+
+            'direction' => [
+
+                'label' => '並び変え方向',
+
+                'options' => [
+                    'asc' => '昇順',
+                    'desc' => '降順',
+                ],
+
             ],
 
         ],
