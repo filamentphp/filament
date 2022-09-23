@@ -144,3 +144,11 @@ Alternatively, you may disable polling altogether:
 ```php
 protected static ?string $pollingInterval = null;
 ```
+
+## Setting a maximum chart height
+
+You may place a maximum height on the chart to ensure that it doesn't get too big, using the `$maxHeight` property:
+
+```php
+protected static ?string $maxHeight = '300px';
+```
