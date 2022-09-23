@@ -144,6 +144,26 @@
                                     'flex divide-x rtl:divide-x-reverse',
                                     'dark:divide-gray-700' => config('forms.dark_mode'),
                                 ])>
+                                    @if ($isCloneable)
+                                        <li>
+                                            <button
+                                                title="{{ __('forms::components.repeater.buttons.clone_item.label') }}"
+                                                wire:click="dispatchFormEvent('builder::cloneItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                type="button"
+                                                @class([
+                                                    'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-300',
+                                                    'dark:text-gray-400 dark:border-gray-700 dark:hover:text-gray-500' => config('forms.dark_mode'),
+                                                ])
+                                            >
+                                                <span class="sr-only">
+                                                    {{ __('forms::components.repeater.buttons.clone_item.label') }}
+                                                </span>
+
+                                                <x-heroicon-s-duplicate class="w-4 h-4"/>
+                                            </button>
+                                        </li>
+                                    @endunless
+
                                     @unless ($isItemDeletionDisabled)
                                         <li>
                                             <button
