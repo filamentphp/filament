@@ -138,7 +138,6 @@ return [
 
     'reorder_indicator' => 'ドラッグ＆ドロップでレコードを並び替え',
 
-
     'selection_indicator' => [
 
         'selected_count' => '1件選択済み|:count件選択済み',
