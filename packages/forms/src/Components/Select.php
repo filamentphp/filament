@@ -634,10 +634,18 @@ class Select extends Field
         });
 
         $this->rule(
-            static fn (Select $component): Exists => Rule::exists(
+            static function (Select $component): Exists {
+                if ($component->getRelationship() instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
+                    $column = $component->getRelationship()->getRelated()->getKeyName();
+                } else {
+                    $column = $component->getRelationship()->getOwnerKeyName();
+                }
+
+                return Rule::exists(
                 $component->getRelationship()->getModel()::class,
-                $component->getRelationship()->getOwnerKeyName(),
-            ),
+                    $column,
+                );
+            } ,
             static fn (Select $component): bool => ! $component->isMultiple(),
         );
 
