@@ -18,9 +18,17 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
     protected string | Closure | null $conversion = null;
 
-    protected array | Closure | null $customProperties = null;
+    protected string | Closure | null $conversionsDisk = null;
+
+    protected bool | Closure $hasResponsiveImages = false;
 
     protected string | Closure | null $mediaName = null;
+
+    protected array | Closure | null $customProperties = null;
+
+    protected array | Closure | null $manipulations = null;
+
+    protected array | Closure | null $properties = null;
 
     protected function setUp(): void
     {
@@ -99,7 +107,11 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             $media = $mediaAdder
                 ->usingFileName($filename)
                 ->usingName($component->getMediaName($file) ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
+                ->storingConversionsOnDisk($component->getConversionsDisk() ?? '')
                 ->withCustomProperties($component->getCustomProperties())
+                ->withManipulations($component->getManipulations())
+                ->withResponsiveImagesIf($component->hasResponsiveImages())
+                ->withProperties($component->getProperties())
                 ->toMediaCollection($component->getCollection(), $component->getDiskName());
 
             return $media->getAttributeValue('uuid');
@@ -139,9 +151,37 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this;
     }
 
+    public function conversionsDisk(string | Closure | null $disk): static
+    {
+        $this->conversionsDisk = $disk;
+
+        return $this;
+    }
+
     public function customProperties(array | Closure | null $properties): static
     {
         $this->customProperties = $properties;
+
+        return $this;
+    }
+
+    public function manipulations(array | Closure | null $manipulations): static
+    {
+        $this->manipulations = $manipulations;
+
+        return $this;
+    }
+
+    public function properties(array | Closure | null $properties): static
+    {
+        $this->properties = $properties;
+
+        return $this;
+    }
+
+    public function responsiveImages(bool | Closure $condition = true): static
+    {
+        $this->hasResponsiveImages = $condition;
 
         return $this;
     }
@@ -156,9 +196,29 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this->evaluate($this->conversion);
     }
 
+    public function getConversionsDisk(): ?string
+    {
+        return $this->evaluate($this->conversionsDisk);
+    }
+
     public function getCustomProperties(): array
     {
         return $this->evaluate($this->customProperties) ?? [];
+    }
+
+    public function getManipulations(): array
+    {
+        return $this->evaluate($this->manipulations) ?? [];
+    }
+
+    public function getProperties(): array
+    {
+        return $this->evaluate($this->properties) ?? [];
+    }
+
+    public function hasResponsiveImages(): bool
+    {
+        return (bool) $this->evaluate($this->hasResponsiveImages);
     }
 
     public function mediaName(string | Closure | null $name): static
