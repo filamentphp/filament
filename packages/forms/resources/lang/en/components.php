@@ -212,6 +212,8 @@ return [
 
         'loading_message' => 'Loading...',
 
+        'max_items_message' => 'Only :count can be selected.',
+
         'no_search_results_message' => 'No options match your search.',
 
         'placeholder' => 'Select an option',

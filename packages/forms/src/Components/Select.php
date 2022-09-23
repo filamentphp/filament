@@ -55,6 +55,8 @@ class Select extends Field
 
     protected string | Closure | null $loadingMessage = null;
 
+    protected string | Closure | null $maxItemsMessage = null;
+
     protected string | Htmlable | Closure | null $noSearchResultsMessage = null;
 
     protected string | Closure | null $searchingMessage = null;
@@ -110,6 +112,7 @@ class Select extends Field
         });
 
         $this->loadingMessage(__('forms::components.select.loading_message'));
+        $this->maxItemsMessage(__('forms::components.select.max_items_message'));
         $this->noSearchResultsMessage(__('forms::components.select.no_search_results_message'));
         $this->searchingMessage(__('forms::components.select.searching_message'));
         $this->searchPrompt(__('forms::components.select.search_prompt'));
@@ -298,6 +301,13 @@ class Select extends Field
         return $this;
     }
 
+    public function maxItemsMessage(string | Closure | null $message): static
+    {
+        $this->maxItemsMessage = $message;
+
+        return $this;
+    }
+
     public function noSearchResultsMessage(string | Htmlable | Closure | null $message): static
     {
         $this->noSearchResultsMessage = $message;
@@ -359,6 +369,11 @@ class Select extends Field
     public function getLoadingMessage(): string
     {
         return $this->evaluate($this->loadingMessage);
+    }
+
+    public function getMaxItemsMessage(): string
+    {
+        return $this->evaluate($this->maxItemsMessage);
     }
 
     public function getSearchingMessage(): string
