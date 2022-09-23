@@ -147,7 +147,7 @@
                                     @if ($isCloneable)
                                         <li>
                                             <button
-                                                title="{{ __('forms::components.repeater.buttons.clone_item.label') }}"
+                                                title="{{ __('forms::components.builder.buttons.clone_item.label') }}"
                                                 wire:click="dispatchFormEvent('builder::cloneItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                 type="button"
                                                 @class([
@@ -156,7 +156,7 @@
                                                 ])
                                             >
                                                 <span class="sr-only">
-                                                    {{ __('forms::components.repeater.buttons.clone_item.label') }}
+                                                    {{ __('forms::components.builder.buttons.clone_item.label') }}
                                                 </span>
 
                                                 <x-heroicon-s-duplicate class="w-4 h-4"/>
