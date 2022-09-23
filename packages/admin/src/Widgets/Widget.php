@@ -2,7 +2,6 @@
 
 namespace Filament\Widgets;
 
-use Closure;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
