@@ -169,9 +169,9 @@ export default (Alpine) => {
                 },
 
                 getChoices: async function (config = {}) {
-                    const options = await this.getOptions(config)
+                    const existingOptions = await this.getOptions(config)
 
-                    return options.concat(await this.getMissingOptions(options))
+                    return existingOptions.concat(await this.getMissingOptions(existingOptions))
                 },
 
                 getOptions: async function ({ search, withInitialOptions }) {
@@ -179,15 +179,29 @@ export default (Alpine) => {
                         return options
                     }
 
+                    let results = []
+
                     if (
                         search !== '' &&
                         search !== null &&
                         search !== undefined
                     ) {
-                        return await getSearchResultsUsing(search)
+                        results = await getSearchResultsUsing(search)
+                    } else {
+                        results = await getOptionsUsing()
                     }
 
-                    return await getOptionsUsing()
+                    const selectOption = (option) => {
+                        option.selected = true
+
+                        return option
+                    }
+
+                    this.select.clearStore()
+
+                    return isMultiple ?
+                        results.map((option) => this.state.includes(option.value) ? selectOption(option) : option) :
+                        results.map((option) => (this.state === option.value) ? selectOption(option) : option)
                 },
 
                 refreshPlaceholder: function () {
@@ -214,27 +228,25 @@ export default (Alpine) => {
                     return state?.toString()
                 },
 
-                getMissingOptions: async function (options) {
+                getMissingOptions: async function (existingOptions) {
                     let state = this.formatState(this.state)
 
                     if ([null, undefined, '', [], {}].includes(state)) {
                         return {}
                     }
 
-                    if (!options.length) {
-                        options = {}
-                    }
+                    const existingOptionValues = new Set(existingOptions.length ? existingOptions.map(option => option.value) : [])
 
                     if (isMultiple) {
-                        if (state.every((value) => value in options)) {
+                        if (state.every((value) => existingOptionValues.has(value))) {
                             return {}
                         }
 
                         return await getOptionLabelsUsing()
                     }
 
-                    if (state in options) {
-                        return options
+                    if (existingOptionValues.has(state)) {
+                        return existingOptionValues
                     }
 
                     return [
