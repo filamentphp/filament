@@ -297,519 +297,518 @@
             }"
         >
             @if (count($records))
-                @if (($content || $hasColumnsLayout) && (! $isReordering))
-                    <div @class([
-                        'bg-gray-500/5 flex items-center gap-4 px-4 border-b',
-                        'dark:border-gray-700' => config('tables.dark_mode'),
-                    ])>
-                        @if ($isSelectionEnabled)
-                            <x-tables::checkbox
-                                x-on:click="toggleSelectRecordsOnPage"
-                                x-bind:checked="
-                                    let recordsOnPage = getRecordsOnPage()
+                    @if (($content || $hasColumnsLayout) && (! $isReordering))
+                        <div @class([
+                            'bg-gray-500/5 flex items-center gap-4 px-4 border-b',
+                            'dark:border-gray-700' => config('tables.dark_mode'),
+                        ])>
+                            @if ($isSelectionEnabled)
+                                <x-tables::checkbox
+                                    x-on:click="toggleSelectRecordsOnPage"
+                                    x-bind:checked="
+                                        let recordsOnPage = getRecordsOnPage()
 
-                                    if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
-                                        $el.checked = true
+                                        if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
+                                            $el.checked = true
 
-                                        return 'checked'
-                                    }
-
-                                    $el.checked = false
-
-                                    return null
-                                "
-                                :class="\Illuminate\Support\Arr::toCssClasses([
-                                    'hidden' => $isReordering,
-                                ])"
-                            />
-                        @endif
-
-                        @php
-                            $sortableColumns = array_filter(
-                                $columns,
-                                fn (\Filament\Tables\Columns\Column $column): bool => $column->isSortable(),
-                            );
-                        @endphp
-
-                        @if (count($sortableColumns))
-                            <div
-                                x-data="{
-                                    column: $wire.entangle('tableSortColumn'),
-                                    direction: $wire.entangle('tableSortDirection'),
-                                }"
-                                x-init="
-                                    $watch('column', function (newColumn, oldColumn) {
-                                        if (! newColumn) {
-                                            direction = null
-
-                                            return
+                                            return 'checked'
                                         }
 
-                                        if (oldColumn) {
-                                            return
-                                        }
+                                        $el.checked = false
 
-                                        direction = 'asc'
-                                    })
-                                "
-                                class="flex flex-wrap items-center gap-1 py-1 text-xs sm:text-sm"
-                            >
-                                <label>
-                                    <span class="mr-1 font-medium">
-                                        {{ __('tables::table.sorting.fields.column.label') }}
-                                    </span>
+                                        return null
+                                    "
+                                    :class="\Illuminate\Support\Arr::toCssClasses([
+                                        'hidden' => $isReordering,
+                                    ])"
+                                />
+                            @endif
 
-                                    <select
-                                        x-model="column"
-                                        style="background-position: right 0.2rem center"
-                                        class="text-xs pl-2 pr-6 py-1 font-medium border-0 bg-gray-500/5 rounded-lg focus:ring-0 sm:text-sm"
-                                    >
-                                        <option value="">-</option>
-                                        @foreach ($sortableColumns as $column)
-                                            <option value="{{ $column->getName() }}">{{ $column->getLabel() }}</option>
-                                        @endforeach
-                                    </select>
-                                </label>
-
-                                <label>
-                                    <span class="sr-only">
-                                        {{ __('tables::table.sorting.fields.direction.label') }}
-                                    </span>
-
-                                    <select
-                                        x-show="column"
-                                        x-model="direction"
-                                        style="background-position: right 0.2rem center"
-                                        class="text-xs pl-2 pr-6 py-1 font-medium border-0 bg-gray-500/5 rounded-lg focus:ring-0 sm:text-sm"
-                                    >
-                                        <option value="asc">{{ __('tables::table.sorting.fields.direction.options.asc') }}</option>
-                                        <option value="desc">{{ __('tables::table.sorting.fields.direction.options.desc') }}</option>
-                                    </select>
-                                </label>
-                            </div>
-                        @endif
-                    </div>
-                @endif
-
-                @if ($content)
-                    {{ $content->with(['records' => $records]) }}
-                @elseif ($hasColumnsLayout)
-                    <x-filament-support::grid
-                        wire:sortable
-                        wire:end.stop="reorderTable($event.target.sortable.toArray())"
-                        wire:sortable.options="{ animation: 100 }"
-                        :default="$contentGrid['default'] ?? 1"
-                        :sm="$contentGrid['sm'] ?? null"
-                        :md="$contentGrid['md'] ?? null"
-                        :lg="$contentGrid['lg'] ?? null"
-                        :xl="$contentGrid['xl'] ?? null"
-                        :two-xl="$contentGrid['2xl'] ?? null"
-                        :class="\Illuminate\Support\Arr::toCssClasses([
-                            'divide-y' => ! $contentGrid,
-                            'p-2 gap-2' => $contentGrid,
-                            'dark:divide-gray-700' => config('tables.dark_mode'),
-                        ])"
-                    >
-                        @foreach ($records as $record)
                             @php
-                                $recordAction = $getRecordAction($record);
-                                $recordKey = $getRecordKey($record);
-                                $recordUrl = $getRecordUrl($record);
-
-                                $collapsibleColumnsLayout?->record($record);
-                                $hasCollapsibleColumnsLayout = $collapsibleColumnsLayout && (! $collapsibleColumnsLayout->isHidden());
+                                $sortableColumns = array_filter(
+                                    $columns,
+                                    fn (\Filament\Tables\Columns\Column $column): bool => $column->isSortable(),
+                                );
                             @endphp
 
-                            <div
-                                @if ($hasCollapsibleColumnsLayout)
-                                    x-data="{ isCollapsed: true }"
-                                @endif
-                                wire:key="{{ $this->id }}.table.records.{{ $recordKey }}"
-                                @if ($isReordering)
-                                    wire:sortable.item="{{ $recordKey }}"
-                                    wire:sortable.handle
-                                @endif
-                            >
+                            @if (count($sortableColumns))
                                 <div
-                                    x-bind:class="{
-                                        'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $recordKey }}'),
+                                    x-data="{
+                                        column: $wire.entangle('tableSortColumn'),
+                                        direction: $wire.entangle('tableSortDirection'),
                                     }"
-                                    @class(array_merge(
-                                        [
-                                            'h-full relative px-4 transition',
-                                            'hover:bg-gray-50' => $recordUrl || $recordAction,
-                                            'dark:hover:bg-gray-500/10' => ($recordUrl || $recordAction) && config('tables.dark_mode'),
-                                            'dark:border-gray-600 dark:bg-gray-700' => (! $contentGrid) && config('tables.dark_mode'),
-                                            'group' => $isReordering,
-                                            'rounded-xl shadow-sm border border-gray-200' => $contentGrid,
-                                            'dark:border-gray-700' => $contentGrid && config('tables.dark_mode'),
-                                        ],
-                                        $getRecordClasses($record),
-                                    ))
-                                >
-                                    <div @class([
-                                        'items-center gap-4 md:flex md:mr-0 rtl:md:ml-0' => (! $contentGrid),
-                                        'mr-6 rtl:mr-0 rtl:ml-6' => $isSelectionEnabled || $hasCollapsibleColumnsLayout || $isReordering,
-                                    ])>
-                                        <x-tables::reorder.handle :class="\Illuminate\Support\Arr::toCssClasses([
-                                            'absolute top-3 right-3 rtl:right-auto rtl:left-3',
-                                            'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
-                                            'hidden' => ! $isReordering,
-                                        ])" />
+                                    x-init="
+                                        $watch('column', function (newColumn, oldColumn) {
+                                            if (! newColumn) {
+                                                direction = null
 
-                                        @if ($isSelectionEnabled)
-                                            <x-tables::checkbox
-                                                x-model="selectedRecords"
-                                                :value="$recordKey"
-                                                :class="\Illuminate\Support\Arr::toCssClasses([
-                                                    'filament-tables-record-checkbox absolute top-3 right-3 rtl:right-auto rtl:left-3',
+                                                return
+                                            }
+
+                                            if (oldColumn) {
+                                                return
+                                            }
+
+                                            direction = 'asc'
+                                        })
+                                    "
+                                    class="flex flex-wrap items-center gap-1 py-1 text-xs sm:text-sm"
+                                >
+                                    <label>
+                                        <span class="mr-1 font-medium">
+                                            {{ __('tables::table.sorting.fields.column.label') }}
+                                        </span>
+
+                                        <select
+                                            x-model="column"
+                                            style="background-position: right 0.2rem center"
+                                            class="text-xs pl-2 pr-6 py-1 font-medium border-0 bg-gray-500/5 rounded-lg focus:ring-0 sm:text-sm"
+                                        >
+                                            <option value="">-</option>
+                                            @foreach ($sortableColumns as $column)
+                                                <option value="{{ $column->getName() }}">{{ $column->getLabel() }}</option>
+                                            @endforeach
+                                        </select>
+                                    </label>
+
+                                    <label>
+                                        <span class="sr-only">
+                                            {{ __('tables::table.sorting.fields.direction.label') }}
+                                        </span>
+
+                                        <select
+                                            x-show="column"
+                                            x-model="direction"
+                                            style="background-position: right 0.2rem center"
+                                            class="text-xs pl-2 pr-6 py-1 font-medium border-0 bg-gray-500/5 rounded-lg focus:ring-0 sm:text-sm"
+                                        >
+                                            <option value="asc">{{ __('tables::table.sorting.fields.direction.options.asc') }}</option>
+                                            <option value="desc">{{ __('tables::table.sorting.fields.direction.options.desc') }}</option>
+                                        </select>
+                                    </label>
+                                </div>
+                            @endif
+                        </div>
+                    @endif
+
+                    @if ($content)
+                        {{ $content->with(['records' => $records]) }}
+                    @elseif ($hasColumnsLayout)
+                        <x-filament-support::grid
+                            wire:sortable
+                            wire:end.stop="reorderTable($event.target.sortable.toArray())"
+                            wire:sortable.options="{ animation: 100 }"
+                            :default="$contentGrid['default'] ?? 1"
+                            :sm="$contentGrid['sm'] ?? null"
+                            :md="$contentGrid['md'] ?? null"
+                            :lg="$contentGrid['lg'] ?? null"
+                            :xl="$contentGrid['xl'] ?? null"
+                            :two-xl="$contentGrid['2xl'] ?? null"
+                            :class="\Illuminate\Support\Arr::toCssClasses([
+                                'divide-y' => ! $contentGrid,
+                                'p-2 gap-2' => $contentGrid,
+                                'dark:divide-gray-700' => config('tables.dark_mode'),
+                            ])"
+                        >
+                            @foreach ($records as $record)
+                                @php
+                                    $recordAction = $getRecordAction($record);
+                                    $recordKey = $getRecordKey($record);
+                                    $recordUrl = $getRecordUrl($record);
+
+                                    $collapsibleColumnsLayout?->record($record);
+                                    $hasCollapsibleColumnsLayout = $collapsibleColumnsLayout && (! $collapsibleColumnsLayout->isHidden());
+                                @endphp
+
+                                <div
+                                    @if ($hasCollapsibleColumnsLayout)
+                                        x-data="{ isCollapsed: true }"
+                                    @endif
+                                    wire:key="{{ $this->id }}.table.records.{{ $recordKey }}"
+                                    @if ($isReordering)
+                                        wire:sortable.item="{{ $recordKey }}"
+                                        wire:sortable.handle
+                                    @endif
+                                >
+                                    <div
+                                        x-bind:class="{
+                                            'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $recordKey }}'),
+                                        }"
+                                        @class(array_merge(
+                                            [
+                                                'h-full relative px-4 transition',
+                                                'hover:bg-gray-50' => $recordUrl || $recordAction,
+                                                'dark:hover:bg-gray-500/10' => ($recordUrl || $recordAction) && config('tables.dark_mode'),
+                                                'dark:border-gray-600 dark:bg-gray-700' => (! $contentGrid) && config('tables.dark_mode'),
+                                                'group' => $isReordering,
+                                                'rounded-xl shadow-sm border border-gray-200' => $contentGrid,
+                                                'dark:border-gray-700' => $contentGrid && config('tables.dark_mode'),
+                                            ],
+                                            $getRecordClasses($record),
+                                        ))
+                                    >
+                                        <div @class([
+                                            'items-center gap-4 md:flex md:mr-0 rtl:md:ml-0' => (! $contentGrid),
+                                            'mr-6 rtl:mr-0 rtl:ml-6' => $isSelectionEnabled || $hasCollapsibleColumnsLayout || $isReordering,
+                                        ])>
+                                            <x-tables::reorder.handle :class="\Illuminate\Support\Arr::toCssClasses([
+                                                'absolute top-3 right-3 rtl:right-auto rtl:left-3',
+                                                'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
+                                                'hidden' => ! $isReordering,
+                                            ])" />
+
+                                            @if ($isSelectionEnabled)
+                                                <x-tables::checkbox
+                                                    x-model="selectedRecords"
+                                                    :value="$recordKey"
+                                                    :class="\Illuminate\Support\Arr::toCssClasses([
+                                                        'filament-tables-record-checkbox absolute top-3 right-3 rtl:right-auto rtl:left-3',
+                                                        'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
+                                                        'hidden' => $isReordering,
+                                                    ])"
+                                                />
+                                            @endif
+
+                                            @if ($hasCollapsibleColumnsLayout)
+                                                <div @class([
+                                                    'absolute right-1 rtl:right-auto rtl:left-1',
+                                                    'top-10' => $isSelectionEnabled,
+                                                    'top-1' => ! $isSelectionEnabled,
                                                     'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
                                                     'hidden' => $isReordering,
-                                                ])"
-                                            />
-                                        @endif
+                                                ])>
+                                                    <x-tables::icon-button
+                                                        icon="heroicon-s-chevron-down"
+                                                        color="secondary"
+                                                        size="sm"
+                                                        x-on:click="isCollapsed = ! isCollapsed"
+                                                        x-bind:class="isCollapsed || '-rotate-180'"
+                                                        class="transition"
+                                                    />
+                                                </div>
+                                            @endif
+
+                                            @if ($recordUrl)
+                                                <a
+                                                    href="{{ $recordUrl }}"
+                                                    class="flex-1 block py-3"
+                                                >
+                                                    <x-tables::columns.layout
+                                                        :components="$getColumnsLayout()"
+                                                        :record="$record"
+                                                        :record-key="$recordKey"
+                                                    />
+                                                </a>
+                                            @elseif ($recordAction)
+                                                @php
+                                                    if ($this->getCachedTableAction($recordAction)) {
+                                                        $recordWireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
+                                                    } else {
+                                                        $recordWireClickAction = "{$recordAction}('{$recordKey}')";
+                                                    }
+                                                @endphp
+
+                                                <button
+                                                    wire:click="{{ $recordWireClickAction }}"
+                                                    wire:target="{{ $recordWireClickAction }}"
+                                                    wire:loading.attr="disabled"
+                                                    wire:loading.class="opacity-70 cursor-wait"
+                                                    type="button"
+                                                    class="flex-1 block py-3"
+                                                >
+                                                    <x-tables::columns.layout
+                                                        :components="$getColumnsLayout()"
+                                                        :record="$record"
+                                                        :record-key="$recordKey"
+                                                    />
+                                                </button>
+                                            @else
+                                                <div class="flex-1 py-3">
+                                                    <x-tables::columns.layout
+                                                        :components="$getColumnsLayout()"
+                                                        :record="$record"
+                                                        :record-key="$recordKey"
+                                                    />
+                                                </div>
+                                            @endif
+
+                                            @if (count($actions))
+                                                <x-tables::actions
+                                                    :actions="$actions"
+                                                    :alignment="$actionsPosition === ActionsPosition::AfterContent ? 'left' : 'left md:right'"
+                                                    :record="$record"
+                                                    wrap="-md"
+                                                    :class="\Illuminate\Support\Arr::toCssClasses([
+                                                        'absolute bottom-1 right-1 rtl:right-auto rtl:left-1' => $actionsPosition === ActionsPosition::BottomCorner,
+                                                        'md:relative md:bottom-0 md:right-0 rtl:md:left-0' => $actionsPosition === ActionsPosition::BottomCorner && (! $contentGrid),
+                                                        'mb-3' => $actionsPosition === ActionsPosition::AfterContent,
+                                                        'md:mb-0' => $actionsPosition === ActionsPosition::AfterContent && (! $contentGrid),
+                                                        'hidden' => $isReordering,
+                                                    ])"
+                                                />
+                                            @endif
+                                        </div>
 
                                         @if ($hasCollapsibleColumnsLayout)
-                                            <div @class([
-                                                'absolute right-1 rtl:right-auto rtl:left-1',
-                                                'top-10' => $isSelectionEnabled,
-                                                'top-1' => ! $isSelectionEnabled,
-                                                'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
-                                                'hidden' => $isReordering,
-                                            ])>
-                                                <x-tables::icon-button
-                                                    icon="heroicon-s-chevron-down"
-                                                    color="secondary"
-                                                    size="sm"
-                                                    x-on:click="isCollapsed = ! isCollapsed"
-                                                    x-bind:class="isCollapsed || '-rotate-180'"
-                                                    class="transition"
-                                                />
-                                            </div>
-                                        @endif
-
-                                        @if ($recordUrl)
-                                            <a
-                                                href="{{ $recordUrl }}"
-                                                class="flex-1 block py-3"
-                                            >
-                                                <x-tables::columns.layout
-                                                    :components="$getColumnsLayout()"
-                                                    :record="$record"
-                                                    :record-key="$recordKey"
-                                                />
-                                            </a>
-                                        @elseif ($recordAction)
-                                            @php
-                                                if ($this->getCachedTableAction($recordAction)) {
-                                                    $recordWireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
-                                                } else {
-                                                    $recordWireClickAction = "{$recordAction}('{$recordKey}')";
-                                                }
-                                            @endphp
-
-                                            <button
-                                                wire:click="{{ $recordWireClickAction }}"
-                                                wire:target="{{ $recordWireClickAction }}"
-                                                wire:loading.attr="disabled"
-                                                wire:loading.class="opacity-70 cursor-wait"
-                                                type="button"
-                                                class="flex-1 block py-3"
-                                            >
-                                                <x-tables::columns.layout
-                                                    :components="$getColumnsLayout()"
-                                                    :record="$record"
-                                                    :record-key="$recordKey"
-                                                />
-                                            </button>
-                                        @else
-                                            <div class="flex-1 py-3">
-                                                <x-tables::columns.layout
-                                                    :components="$getColumnsLayout()"
-                                                    :record="$record"
-                                                    :record-key="$recordKey"
-                                                />
-                                            </div>
-                                        @endif
-
-                                        @if (count($actions))
-                                            <x-tables::actions
-                                                :actions="$actions"
-                                                :alignment="$actionsPosition === ActionsPosition::AfterContent ? 'left' : 'left md:right'"
-                                                :record="$record"
-                                                wrap="-md"
-                                                :class="\Illuminate\Support\Arr::toCssClasses([
-                                                    'absolute bottom-1 right-1 rtl:right-auto rtl:left-1' => $actionsPosition === ActionsPosition::BottomCorner,
-                                                    'md:relative md:bottom-0 md:right-0 rtl:md:left-0' => $actionsPosition === ActionsPosition::BottomCorner && (! $contentGrid),
-                                                    'mb-3' => $actionsPosition === ActionsPosition::AfterContent,
-                                                    'md:mb-0' => $actionsPosition === ActionsPosition::AfterContent && (! $contentGrid),
+                                            <div
+                                                x-show="! isCollapsed"
+                                                x-collapse
+                                                @class([
+                                                    'pb-2 -mx-2',
+                                                    'md:pl-20 rtl:md:pl-0 rtl:md:pr-20' => (! $contentGrid) && $isSelectionEnabled,
+                                                    'md:pl-12 rtl:md:pl-0 rtl:md:pr-12' => (! $contentGrid) && (! $isSelectionEnabled),
                                                     'hidden' => $isReordering,
-                                                ])"
-                                            />
+                                                ])
+                                            >
+                                                {{ $collapsibleColumnsLayout->viewData(['recordKey' => $recordKey]) }}
+                                            </div>
                                         @endif
                                     </div>
-
-                                    @if ($hasCollapsibleColumnsLayout)
-                                        <div
-                                            x-show="! isCollapsed"
-                                            x-collapse
-                                            @class([
-                                                'pb-2 -mx-2',
-                                                'md:pl-20 rtl:md:pl-0 rtl:md:pr-20' => (! $contentGrid) && $isSelectionEnabled,
-                                                'md:pl-12 rtl:md:pl-0 rtl:md:pr-12' => (! $contentGrid) && (! $isSelectionEnabled),
-                                                'hidden' => $isReordering,
-                                            ])
-                                        >
-                                            {{ $collapsibleColumnsLayout->viewData(['recordKey' => $recordKey]) }}
-                                        </div>
-                                    @endif
                                 </div>
-                            </div>
-                        @endforeach
-                    </x-filament-support::grid>
-                @else
-                    <x-tables::table>
-                        <x-slot name="header">
-                            @if ($isReordering)
-                                <th></th>
-                            @else
-                                @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)
-                                    @if ($actionsColumnLabel)
-                                        <x-tables::header-cell>
-                                            {{ $actionsColumnLabel }}
-                                        </x-tables::header-cell>
-                                    @else
-                                        <th class="w-5"></th>
-                                    @endif
-                                @endif
-
-                                @if ($isSelectionEnabled)
-                                    <x-tables::checkbox.cell>
-                                        <x-tables::checkbox
-                                            x-on:click="toggleSelectRecordsOnPage"
-                                            x-bind:checked="
-                                                let recordsOnPage = getRecordsOnPage()
-
-                                                if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
-                                                    $el.checked = true
-
-                                                    return 'checked'
-                                                }
-
-                                                $el.checked = false
-
-                                                return null
-                                            "
-                                        />
-                                    </x-tables::checkbox.cell>
-                                @endif
-
-                                @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
-                                    @if ($actionsColumnLabel)
-                                        <x-tables::header-cell>
-                                            {{ $actionsColumnLabel }}
-                                        </x-tables::header-cell>
-                                    @else
-                                        <th class="w-5"></th>
-                                    @endif
-                                @endif
-                            @endif
-
-                            @foreach ($columns as $column)
-                                <x-tables::header-cell
-                                    :extra-attributes="$column->getExtraHeaderAttributes()"
-                                    :is-sort-column="$getSortColumn() === $column->getName()"
-                                    :name="$column->getName()"
-                                    :alignment="$column->getAlignment()"
-                                    :sortable="$column->isSortable() && (! $isReordering)"
-                                    :sort-direction="$getSortDirection()"
-                                    :class="$getHiddenClasses($column)"
-                                >
-                                    {{ $column->getLabel() }}
-                                </x-tables::header-cell>
                             @endforeach
-
-                            @if (count($actions) && (! $isReordering) && $actionsPosition === ActionsPosition::AfterCells)
-                                @if ($actionsColumnLabel)
-                                    <x-tables::header-cell alignment="right">
-                                        {{ $actionsColumnLabel }}
-                                    </x-tables::header-cell>
-                                @else
-                                    <th class="w-5"></th>
-                                @endif
-                            @endif
-                        </x-slot>
-
-                        @if ($isColumnSearchVisible)
-                            <x-tables::row>
+                        </x-filament-support::grid>
+                    @else
+                        <x-tables::table>
+                            <x-slot name="header">
                                 @if ($isReordering)
-                                    <td></td>
+                                    <th></th>
                                 @else
-                                    @if (count($actions) && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
-                                        <td></td>
+                                    @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)
+                                        @if ($actionsColumnLabel)
+                                            <x-tables::header-cell>
+                                                {{ $actionsColumnLabel }}
+                                            </x-tables::header-cell>
+                                        @else
+                                            <th class="w-5"></th>
+                                        @endif
                                     @endif
 
                                     @if ($isSelectionEnabled)
-                                        <td></td>
+                                        <x-tables::checkbox.cell>
+                                            <x-tables::checkbox
+                                                x-on:click="toggleSelectRecordsOnPage"
+                                                x-bind:checked="
+                                                    let recordsOnPage = getRecordsOnPage()
+
+                                                    if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
+                                                        $el.checked = true
+
+                                                        return 'checked'
+                                                    }
+
+                                                    $el.checked = false
+
+                                                    return null
+                                                "
+                                            />
+                                        </x-tables::checkbox.cell>
+                                    @endif
+
+                                    @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
+                                        @if ($actionsColumnLabel)
+                                            <x-tables::header-cell>
+                                                {{ $actionsColumnLabel }}
+                                            </x-tables::header-cell>
+                                        @else
+                                            <th class="w-5"></th>
+                                        @endif
                                     @endif
                                 @endif
 
                                 @foreach ($columns as $column)
-                                    <x-tables::cell class="px-4 py-1">
-                                        @if ($column->isIndividuallySearchable())
-                                            <x-tables::search-input wire-model="tableColumnSearchQueries.{{ $column->getName() }}" />
-                                        @endif
-                                    </x-tables::cell>
+                                    <x-tables::header-cell
+                                        :extra-attributes="$column->getExtraHeaderAttributes()"
+                                        :is-sort-column="$getSortColumn() === $column->getName()"
+                                        :name="$column->getName()"
+                                        :alignment="$column->getAlignment()"
+                                        :sortable="$column->isSortable() && (! $isReordering)"
+                                        :sort-direction="$getSortDirection()"
+                                        :class="$getHiddenClasses($column)"
+                                    >
+                                        {{ $column->getLabel() }}
+                                    </x-tables::header-cell>
                                 @endforeach
 
                                 @if (count($actions) && (! $isReordering) && $actionsPosition === ActionsPosition::AfterCells)
-                                    <td></td>
+                                    @if ($actionsColumnLabel)
+                                        <x-tables::header-cell alignment="right">
+                                            {{ $actionsColumnLabel }}
+                                        </x-tables::header-cell>
+                                    @else
+                                        <th class="w-5"></th>
+                                    @endif
                                 @endif
-                            </x-tables::row>
-                        @endif
-
-                        @foreach ($records as $record)
-                            @php
-                                $recordAction = $getRecordAction($record);
-                                $recordKey = $getRecordKey($record);
-                                $recordUrl = $getRecordUrl($record);
-                            @endphp
-
-                            <x-tables::row
-                                :record-action="$recordAction"
-                                :record-url="$recordUrl"
-                                :wire:key="$this->id . '.table.records.' . $recordKey"
-                                :wire:sortable.item="$isReordering ? $recordKey : null"
-                                :wire:sortable.handle="$isReordering"
-                                :striped="$isStriped"
-                                x-bind:class="{
-                                    'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $recordKey }}'),
-                                }"
-                                :class="\Illuminate\Support\Arr::toCssClasses(array_merge(
-                                    [
-                                        'group cursor-move' => $isReordering,
-                                    ],
-                                    $getRecordClasses($record),
-                                ))"
-                            >
-                                <x-tables::reorder.cell :class="\Illuminate\Support\Arr::toCssClasses([
-                                    'hidden' => ! $isReordering,
-                                ])">
-                                    <x-tables::reorder.handle />
-                                </x-tables::reorder.cell>
-
-                                @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)
-                                    <x-tables::actions.cell
-                                        :class="\Illuminate\Support\Arr::toCssClasses([
-                                            'hidden' => $isReordering,
-                                        ])"
-                                    >
-                                        <x-tables::actions
-                                            :actions="$actions"
-                                            :record="$record"
-                                        />
-                                    </x-tables::actions.cell>
-                                @endif
-
-                                @if ($isSelectionEnabled)
-                                    <x-tables::checkbox.cell :class="\Illuminate\Support\Arr::toCssClasses([
-                                        'hidden' => $isReordering,
-                                    ])">
-                                        <x-tables::checkbox
-                                            x-model="selectedRecords"
-                                            :value="$recordKey"
-                                            class="filament-tables-record-checkbox"
-                                        />
-                                    </x-tables::checkbox.cell>
-                                @endif
-
-                                @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
-                                    <x-tables::actions.cell
-                                        :class="\Illuminate\Support\Arr::toCssClasses([
-                                            'hidden' => $isReordering,
-                                        ])"
-                                    >
-                                        <x-tables::actions
-                                            :actions="$actions"
-                                            :record="$record"
-                                        />
-                                    </x-tables::actions.cell>
-                                @endif
-
-                                @foreach ($columns as $column)
-                                    @php
-                                        $column->record($record);
-                                    @endphp
-
-                                    <x-tables::cell
-                                        :class="$getHiddenClasses($column)"
-                                        wire:loading.remove.delay
-                                        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
-                                    >
-                                        <x-tables::columns.column
-                                            :column="$column"
-                                            :record="$record"
-                                            :record-action="$recordAction"
-                                            :record-key="$recordKey"
-                                            :record-url="$recordUrl"
-                                            :is-click-disabled="$column->isClickDisabled() || $isReordering"
-                                        />
-                                    </x-tables::cell>
-                                @endforeach
-
-                                @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
-                                    <x-tables::actions.cell
-                                        :class="\Illuminate\Support\Arr::toCssClasses([
-                                            'hidden' => $isReordering,
-                                        ])"
-                                    >
-                                        <x-tables::actions
-                                            :actions="$actions"
-                                            :record="$record"
-                                        />
-                                    </x-tables::actions.cell>
-                                @endif
-
-                                <x-tables::loading-cell
-                                    :colspan="$columnsCount"
-                                    wire:loading.class.remove.delay="hidden"
-                                    class="hidden"
-                                    :wire:key="$this->id . '.table.records.' . $recordKey . '.loading-cell'"
-                                    wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
-                                />
-                            </x-tables::row>
-                        @endforeach
-
-                        @if ($contentFooter)
-                            <x-slot name="footer">
-                                {{ $contentFooter->with(['columns' => $columns, 'records' => $records]) }}
                             </x-slot>
-                        @endif
-                    </x-tables::table>
-                @endif
 
-                @if (($content || $hasColumnsLayout) && $contentFooter)
-                    {{ $contentFooter->with(['columns' => $columns, 'records' => $records]) }}
-                @endif
-            </div>
-        @else
-            @if ($emptyState = $getEmptyState())
-                {{ $emptyState }}
+                            @if ($isColumnSearchVisible)
+                                <x-tables::row>
+                                    @if ($isReordering)
+                                        <td></td>
+                                    @else
+                                        @if (count($actions) && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
+                                            <td></td>
+                                        @endif
+
+                                        @if ($isSelectionEnabled)
+                                            <td></td>
+                                        @endif
+                                    @endif
+
+                                    @foreach ($columns as $column)
+                                        <x-tables::cell class="px-4 py-1">
+                                            @if ($column->isIndividuallySearchable())
+                                                <x-tables::search-input wire-model="tableColumnSearchQueries.{{ $column->getName() }}" />
+                                            @endif
+                                        </x-tables::cell>
+                                    @endforeach
+
+                                    @if (count($actions) && (! $isReordering) && $actionsPosition === ActionsPosition::AfterCells)
+                                        <td></td>
+                                    @endif
+                                </x-tables::row>
+                            @endif
+
+                            @foreach ($records as $record)
+                                @php
+                                    $recordAction = $getRecordAction($record);
+                                    $recordKey = $getRecordKey($record);
+                                    $recordUrl = $getRecordUrl($record);
+                                @endphp
+
+                                <x-tables::row
+                                    :record-action="$recordAction"
+                                    :record-url="$recordUrl"
+                                    :wire:key="$this->id . '.table.records.' . $recordKey"
+                                    :wire:sortable.item="$isReordering ? $recordKey : null"
+                                    :wire:sortable.handle="$isReordering"
+                                    :striped="$isStriped"
+                                    x-bind:class="{
+                                        'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $recordKey }}'),
+                                    }"
+                                    :class="\Illuminate\Support\Arr::toCssClasses(array_merge(
+                                        [
+                                            'group cursor-move' => $isReordering,
+                                        ],
+                                        $getRecordClasses($record),
+                                    ))"
+                                >
+                                    <x-tables::reorder.cell :class="\Illuminate\Support\Arr::toCssClasses([
+                                        'hidden' => ! $isReordering,
+                                    ])">
+                                        <x-tables::reorder.handle />
+                                    </x-tables::reorder.cell>
+
+                                    @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)
+                                        <x-tables::actions.cell
+                                            :class="\Illuminate\Support\Arr::toCssClasses([
+                                                'hidden' => $isReordering,
+                                            ])"
+                                        >
+                                            <x-tables::actions
+                                                :actions="$actions"
+                                                :record="$record"
+                                            />
+                                        </x-tables::actions.cell>
+                                    @endif
+
+                                    @if ($isSelectionEnabled)
+                                        <x-tables::checkbox.cell :class="\Illuminate\Support\Arr::toCssClasses([
+                                            'hidden' => $isReordering,
+                                        ])">
+                                            <x-tables::checkbox
+                                                x-model="selectedRecords"
+                                                :value="$recordKey"
+                                                class="filament-tables-record-checkbox"
+                                            />
+                                        </x-tables::checkbox.cell>
+                                    @endif
+
+                                    @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
+                                        <x-tables::actions.cell
+                                            :class="\Illuminate\Support\Arr::toCssClasses([
+                                                'hidden' => $isReordering,
+                                            ])"
+                                        >
+                                            <x-tables::actions
+                                                :actions="$actions"
+                                                :record="$record"
+                                            />
+                                        </x-tables::actions.cell>
+                                    @endif
+
+                                    @foreach ($columns as $column)
+                                        @php
+                                            $column->record($record);
+                                        @endphp
+
+                                        <x-tables::cell
+                                            :class="$getHiddenClasses($column)"
+                                            wire:loading.remove.delay
+                                            wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                        >
+                                            <x-tables::columns.column
+                                                :column="$column"
+                                                :record="$record"
+                                                :record-action="$recordAction"
+                                                :record-key="$recordKey"
+                                                :record-url="$recordUrl"
+                                                :is-click-disabled="$column->isClickDisabled() || $isReordering"
+                                            />
+                                        </x-tables::cell>
+                                    @endforeach
+
+                                    @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
+                                        <x-tables::actions.cell
+                                            :class="\Illuminate\Support\Arr::toCssClasses([
+                                                'hidden' => $isReordering,
+                                            ])"
+                                        >
+                                            <x-tables::actions
+                                                :actions="$actions"
+                                                :record="$record"
+                                            />
+                                        </x-tables::actions.cell>
+                                    @endif
+
+                                    <x-tables::loading-cell
+                                        :colspan="$columnsCount"
+                                        wire:loading.class.remove.delay="hidden"
+                                        class="hidden"
+                                        :wire:key="$this->id . '.table.records.' . $recordKey . '.loading-cell'"
+                                        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                    />
+                                </x-tables::row>
+                            @endforeach
+
+                            @if ($contentFooter)
+                                <x-slot name="footer">
+                                    {{ $contentFooter->with(['columns' => $columns, 'records' => $records]) }}
+                                </x-slot>
+                            @endif
+                        </x-tables::table>
+                    @endif
+
+                    @if (($content || $hasColumnsLayout) && $contentFooter)
+                        {{ $contentFooter->with(['columns' => $columns, 'records' => $records]) }}
+                    @endif
             @else
-                <div class="flex items-center justify-center p-4">
-                    <x-tables::empty-state :icon="$getEmptyStateIcon()" :actions="$getEmptyStateActions()">
-                        <x-slot name="heading">
-                            {{ $getEmptyStateHeading() }}
-                        </x-slot>
+                @if ($emptyState = $getEmptyState())
+                    {{ $emptyState }}
+                @else
+                    <div class="flex items-center justify-center p-4">
+                        <x-tables::empty-state :icon="$getEmptyStateIcon()" :actions="$getEmptyStateActions()">
+                            <x-slot name="heading">
+                                {{ $getEmptyStateHeading() }}
+                            </x-slot>
 
-                        <x-slot name="description">
-                            {{ $getEmptyStateDescription() }}
-                        </x-slot>
-                    </x-tables::empty-state>
-                </div>
+                            <x-slot name="description">
+                                {{ $getEmptyStateDescription() }}
+                            </x-slot>
+                        </x-tables::empty-state>
+                    </div>
+                @endif
             @endif
-        @endif
-
+        </div>
         @if (
             $records instanceof \Illuminate\Contracts\Pagination\Paginator &&
             ((! $records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) || $records->total())
