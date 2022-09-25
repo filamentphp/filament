@@ -8,6 +8,10 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'Duplikat',
+            ],
+
             'create_item' => [
                 'label' => 'Tambahkan :label',
             ],
@@ -212,7 +216,9 @@ return [
 
         'loading_message' => 'Memuat...',
 
-        'no_search_results_message' => 'Tidak ada data yang sesuai dengan pencarian anda.',
+        'max_items_message' => 'Hanya :count yang dapat dipilih.',
+
+        'no_search_results_message' => 'Tidak ada hasil yang sesuai dengan pencarian Anda.',
 
         'placeholder' => 'Pilih salah satu opsi',
 

@@ -156,4 +156,27 @@ return [
 
     ],
 
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Urutkan menurut',
+            ],
+
+            'direction' => [
+
+                'label' => 'Arah urutan',
+
+                'options' => [
+                    'asc' => 'Naik',
+                    'desc' => 'Turun',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
 ];
