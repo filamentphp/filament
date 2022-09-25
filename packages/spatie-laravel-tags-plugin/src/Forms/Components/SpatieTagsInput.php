@@ -56,9 +56,11 @@ class SpatieTagsInput extends TagsInput
             return parent::getSuggestions();
         }
 
+        $model = $this->getModel();
+        $tagClass = $model ? $model::getTagClassName() : config('tags.tag_model', Tag::class);
         $type = $this->getType();
 
-        return Tag::query()
+        return $tagClass::query()
             ->when(
                 filled($type),
                 fn (Builder $query) => $query->where('type', $type),
