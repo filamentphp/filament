@@ -28,4 +28,11 @@ class Action extends BaseAction
 
         return $this;
     }
+
+    public function iconButton(): static
+    {
+        $this->view('filament::global-search.actions.icon-button-action');
+
+        return $this;
+    }
 }
