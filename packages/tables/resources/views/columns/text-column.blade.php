@@ -38,12 +38,12 @@
     ]) }}
 >
     @if (filled($descriptionAbove))
-        <p class="block text-sm text-gray-500">
+        <div class="text-sm text-gray-500">
             {{ $descriptionAbove instanceof \Illuminate\Support\HtmlString ? $descriptionAbove : \Illuminate\Support\Str::of($descriptionAbove)->markdown()->sanitizeHtml()->toHtmlString() }}
-        </p>
+        </div>
     @endif
 
-    <p class="flex items-center space-x-1 rtl:space-x-reverse">
+    <div class="flex items-center space-x-1 rtl:space-x-reverse">
         @if ($icon && $iconPosition === 'before')
             <x-dynamic-component :component="$icon" :class="$iconClasses" />
         @endif
@@ -55,11 +55,11 @@
         @if ($icon && $iconPosition === 'after')
             <x-dynamic-component :component="$icon" :class="$iconClasses" />
         @endif
-    </p>
+    </div>
 
     @if (filled($descriptionBelow))
-        <p class="block text-sm text-gray-500">
+        <div class="text-sm text-gray-500">
             {{ $descriptionBelow instanceof \Illuminate\Support\HtmlString ? $descriptionBelow : \Illuminate\Support\Str::of($descriptionBelow)->markdown()->sanitizeHtml()->toHtmlString() }}
-        </p>
+        </div>
     @endif
 </div>
