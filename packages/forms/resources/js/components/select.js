@@ -171,7 +171,9 @@ export default (Alpine) => {
                 getChoices: async function (config = {}) {
                     const existingOptions = await this.getOptions(config)
 
-                    return existingOptions.concat(await this.getMissingOptions(existingOptions))
+                    return existingOptions.concat(
+                        await this.getMissingOptions(existingOptions),
+                    )
                 },
 
                 getOptions: async function ({ search, withInitialOptions }) {
@@ -199,9 +201,17 @@ export default (Alpine) => {
 
                     this.select.clearStore()
 
-                    return isMultiple ?
-                        results.map((option) => this.state.includes(option.value) ? selectOption(option) : option) :
-                        results.map((option) => (this.state === option.value) ? selectOption(option) : option)
+                    return isMultiple
+                        ? results.map((option) =>
+                              this.state.includes(option.value)
+                                  ? selectOption(option)
+                                  : option,
+                          )
+                        : results.map((option) =>
+                              this.state === option.value
+                                  ? selectOption(option)
+                                  : option,
+                          )
                 },
 
                 refreshPlaceholder: function () {
@@ -235,10 +245,18 @@ export default (Alpine) => {
                         return {}
                     }
 
-                    const existingOptionValues = new Set(existingOptions.length ? existingOptions.map(option => option.value) : [])
+                    const existingOptionValues = new Set(
+                        existingOptions.length
+                            ? existingOptions.map((option) => option.value)
+                            : [],
+                    )
 
                     if (isMultiple) {
-                        if (state.every((value) => existingOptionValues.has(value))) {
+                        if (
+                            state.every((value) =>
+                                existingOptionValues.has(value),
+                            )
+                        ) {
                             return {}
                         }
 
