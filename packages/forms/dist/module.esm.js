@@ -12824,6 +12824,10 @@ var date_time_picker_default = (Alpine) => {
             return;
           }
           let date2 = this.getSelectedDate();
+          if (date2 === null) {
+            this.clearState();
+            return;
+          }
           if (this.getMaxDate() !== null && date2?.isAfter(this.getMaxDate())) {
             date2 = null;
           }
@@ -12912,6 +12916,9 @@ var date_time_picker_default = (Alpine) => {
       },
       getSelectedDate: function() {
         if (this.state === void 0) {
+          return null;
+        }
+        if (this.state === null) {
           return null;
         }
         let date = esm_default(this.state);
