@@ -8,6 +8,10 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'نسخ',
+            ],
+
             'create_item' => [
                 'label' => 'إضافة إلى :label',
             ],
@@ -211,6 +215,8 @@ return [
         ],
 
         'loading_message' => 'تحميل...',
+
+        'max_items_message' => 'يمكنك اختيار :count فقط.',
 
         'no_search_results_message' => 'لا توجد خيارات تطابق بحثك.',
 
