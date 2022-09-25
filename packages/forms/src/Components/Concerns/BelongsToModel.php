@@ -13,7 +13,7 @@ trait BelongsToModel
 
     protected ?Closure $saveRelationshipsUsing = null;
 
-    protected bool|Closure|null $forceSaveRelationships = null;
+    protected bool | Closure $shouldSaveRelationshipsWhenHidden = false;
 
     public function model(Model | string | Closure | null $model = null): static
     {
@@ -30,13 +30,7 @@ trait BelongsToModel
             return;
         }
 
-        if ($this->shouldForceSaveRelationships()) {
-            $this->evaluate($callback);
-
-            return;
-        }
-
-        if ($this->isHidden()) {
+        if ((! $this->shouldSaveRelationshipsWhenHidden()) && $this->isHidden()) {
             return;
         }
 
@@ -75,16 +69,16 @@ trait BelongsToModel
         return $this;
     }
 
-    public function forceSaveRelationships(null|bool|Closure $callback = true): static
+    public function saveRelationshipsWhenHidden(bool | Closure $condition = true): static
     {
-        $this->forceSaveRelationships = $callback;
+        $this->shouldSaveRelationshipsWhenHidden = $condition;
 
         return $this;
     }
 
-    public function shouldForceSaveRelationships(): bool
+    public function shouldSaveRelationshipsWhenHidden(): bool
     {
-        return $this->evaluate($this->forceSaveRelationships) ?? false;
+        return (bool) $this->evaluate($this->shouldSaveRelationshipsWhenHidden);
     }
 
     public function loadStateFromRelationshipsUsing(?Closure $callback): static

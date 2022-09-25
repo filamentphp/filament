@@ -519,7 +519,7 @@ test('invisible fields can force save to relationships', function () {
             ( new Field(Str::random()) )
                 ->saveRelationshipsUsing($saveRelationshipsUsing)
                 ->visible(false)
-                ->forceSaveRelationships(function () use (&$forceSaveRelationships) {
+                ->saveRelationshipsWhenHidden(function () use (&$forceSaveRelationships) {
                     return $forceSaveRelationships;
                 }),
         ])

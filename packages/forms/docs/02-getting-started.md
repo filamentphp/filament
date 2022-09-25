@@ -517,28 +517,18 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
 }
 ```
 
-#### Force saving relationships
+### Saving relationships when the field is hidden
 
-By default, relationships will only be saved if the field is visible. For example, if you have a `Repeater` field that is only visible on a certain condition. When the repeater is hidden, the relationships will not be saved.
+By default, relationships will only be saved if the field is visible. For example, if you have a `Repeater` field that is only visible on a certain condition, the relationships will not be saved when it is hidden.
 
-This might cause unexpected behaviour if you still want to modify the relationship, even when the field is hidden. For example, you might want to delete remaining records.
-
-To force relationships to be saved, you may call the `forceSaveRelationships()` method on the form:
+This might cause unexpected behaviour if you still want to save the relationship, even when the field is hidden. To force relationships to be saved, you may call the `saveRelationshipsWhenHidden()` method on the form component:
 
 ```php
-Repeater::make('products')
-    ->saveRelationshipsUsing(function (array $state, Model $record, Repeater $component) {
-        $record->products()->delete();
-        
-        if ($component->isHidden()) {
-            return;
-        }
-        
-        foreach ($state ?? [] as $product) {
-            $record->products()->create($product);
-        }
-    })
-    ->forceSaveRelationships();
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+
+SpatieMediaLibraryFileUpload::make('attachments')
+    ->visible(fn (Closure $get): bool => $get('has_attachments'))
+    ->saveRelationshipsWhenHidden();
 ```
 
 ## Using multiple forms
