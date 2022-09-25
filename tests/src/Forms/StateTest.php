@@ -2,10 +2,8 @@
 
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Field;
 use Filament\Forms\Components\Placeholder;
 use Filament\Tests\Forms\Fixtures\Livewire;
-use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
 
@@ -463,85 +461,4 @@ test('parent sibling state can be retrieved absolutely from another component', 
 
     expect($placeholder)
         ->getContent()->toBe($state);
-});
-
-test('visible fields can save to relationships', function () {
-    $nrOfRelationshipsSaved = 0;
-    $fieldVisible = true;
-
-    $saveRelationshipsUsing = function () use (&$nrOfRelationshipsSaved) {
-        $nrOfRelationshipsSaved++;
-    };
-
-    $componentContainer = ComponentContainer::make(Livewire::make())
-        ->statePath('data')
-        ->components([
-            ( new Field(Str::random()) )
-                ->saveRelationshipsUsing($saveRelationshipsUsing)
-                ->visible(function () use (&$fieldVisible) {
-                    return $fieldVisible;
-                }),
-        ])
-        ->model(tap(new User(), fn (User $user) => $user->exists = true));
-
-    $componentContainer
-        ->saveRelationships();
-
-    expect($nrOfRelationshipsSaved)
-        ->toBe(1);
-
-    $componentContainer
-        ->saveRelationships();
-
-    expect($nrOfRelationshipsSaved)
-        ->toBe(2);
-
-    $fieldVisible = false;
-
-    $componentContainer
-        ->saveRelationships();
-
-    expect($nrOfRelationshipsSaved)
-        ->toBe(2);
-});
-
-test('invisible fields can force save to relationships', function () {
-    $nrOfRelationshipsSaved = 0;
-    $forceSaveRelationships = true;
-
-    $saveRelationshipsUsing = function () use (&$nrOfRelationshipsSaved) {
-        $nrOfRelationshipsSaved++;
-    };
-
-    $componentContainer = ComponentContainer::make(Livewire::make())
-        ->statePath('data')
-        ->components([
-            ( new Field(Str::random()) )
-                ->saveRelationshipsUsing($saveRelationshipsUsing)
-                ->visible(false)
-                ->saveRelationshipsWhenHidden(function () use (&$forceSaveRelationships) {
-                    return $forceSaveRelationships;
-                }),
-        ])
-        ->model(tap(new User(), fn (User $user) => $user->exists = true));
-
-    $componentContainer
-        ->saveRelationships();
-
-    expect($nrOfRelationshipsSaved)
-        ->toBe(1);
-
-    $componentContainer
-        ->saveRelationships();
-
-    expect($nrOfRelationshipsSaved)
-        ->toBe(2);
-
-    $forceSaveRelationships = false;
-
-    $componentContainer
-        ->saveRelationships();
-
-    expect($nrOfRelationshipsSaved)
-        ->toBe(2);
 });
