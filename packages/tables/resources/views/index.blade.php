@@ -774,6 +774,7 @@
                                     :colspan="$columnsCount"
                                     wire:loading.class.remove.delay="hidden"
                                     class="hidden"
+                                    :wire:key="$this->id . '.table.records.' . $recordKey . '.loading-cell'"
                                     wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
                                 />
                             </x-tables::row>
