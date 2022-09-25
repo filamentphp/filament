@@ -146,6 +146,20 @@ Split::make([
 
 ![Stacked content aligned to the right](https://user-images.githubusercontent.com/41773797/191833849-4dc5972a-9f3b-466a-9c13-22ac93ec801c.png)
 
+#### Spacing stacked content
+
+By default, stacked content has no vertical padding between columns. To add some, you may use the `space()` method, which accepts either `1`, `2`, or `3`, corresponding to [Tailwind's spacing scale](https://tailwindcss.com/docs/space):
+
+```php
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\TextColumn;
+
+Stack::make([
+    TextColumn::make('email'),
+    TextColumn::make('phone'),
+])->space(1)
+```
+
 ## Collapsible content
 
 When you're using a column layout like split or stack, then you can also add collapsible content. This is very useful for when you don't want to display all data in the table at once, but still want it to be accessible to the user if they need to access it, without navigating away.

@@ -91,7 +91,7 @@ trait HasColumns
 
     public function hasTableColumnsLayout(): bool
     {
-        return $this->hasTableColumnsLayout;
+        return $this->hasTableColumnsLayout || $this->getTableContentGrid();
     }
 
     public function getCachedTableColumn(string $name): ?Column
