@@ -791,24 +791,24 @@
                 @if (($content || $hasColumnsLayout) && $contentFooter)
                     {{ $contentFooter->with(['columns' => $columns, 'records' => $records]) }}
                 @endif
-            </div>
-        @else
-            @if ($emptyState = $getEmptyState())
-                {{ $emptyState }}
             @else
-                <div class="flex items-center justify-center p-4">
-                    <x-tables::empty-state :icon="$getEmptyStateIcon()" :actions="$getEmptyStateActions()">
-                        <x-slot name="heading">
-                            {{ $getEmptyStateHeading() }}
-                        </x-slot>
+                @if ($emptyState = $getEmptyState())
+                    {{ $emptyState }}
+                @else
+                    <div class="flex items-center justify-center p-4">
+                        <x-tables::empty-state :icon="$getEmptyStateIcon()" :actions="$getEmptyStateActions()">
+                            <x-slot name="heading">
+                                {{ $getEmptyStateHeading() }}
+                            </x-slot>
 
-                        <x-slot name="description">
-                            {{ $getEmptyStateDescription() }}
-                        </x-slot>
-                    </x-tables::empty-state>
-                </div>
+                            <x-slot name="description">
+                                {{ $getEmptyStateDescription() }}
+                            </x-slot>
+                        </x-tables::empty-state>
+                    </div>
+                @endif
             @endif
-        @endif
+        </div>
 
         @if (
             $records instanceof \Illuminate\Contracts\Pagination\Paginator &&
