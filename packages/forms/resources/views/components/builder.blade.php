@@ -104,8 +104,8 @@
                                         wire:keydown.prevent.arrow-down="dispatchFormEvent('builder::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                         type="button"
                                         @class([
-                                            'flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-r rtl:border-l rtl:border-r-0 transition hover:text-gray-300',
-                                            'dark:text-gray-400 dark:border-gray-700 dark:hover:text-gray-500' => config('forms.dark_mode'),
+                                            'flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-r rtl:border-l rtl:border-r-0 transition hover:text-gray-500',
+                                            'dark:border-gray-700' => config('forms.dark_mode'),
                                         ])
                                     >
                                         <span class="sr-only">
@@ -152,8 +152,8 @@
                                                 wire:click="dispatchFormEvent('builder::cloneItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                 type="button"
                                                 @class([
-                                                    'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-300',
-                                                    'dark:text-gray-400 dark:border-gray-700 dark:hover:text-gray-500' => config('forms.dark_mode'),
+                                                    'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500',
+                                                    'dark:border-gray-700' => config('forms.dark_mode'),
                                                 ])
                                             >
                                                 <span class="sr-only">
@@ -191,10 +191,7 @@
                                                 x-bind:title="(! isCollapsed) ? '{{ __('forms::components.builder.buttons.collapse_item.label') }}' : '{{ __('forms::components.builder.buttons.expand_item.label') }}'"
                                                 x-on:click="isCollapsed = ! isCollapsed"
                                                 type="button"
-                                                @class([
-                                                    'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-300',
-                                                    'dark:text-gray-400 dark:hover:text-gray-500' => config('forms.dark_mode'),
-                                                ])
+                                                class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500"
                                             >
                                                 <x-heroicon-s-minus-sm class="w-4 h-4" x-show="! isCollapsed"/>
 
