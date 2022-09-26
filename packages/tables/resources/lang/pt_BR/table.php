@@ -4,6 +4,14 @@ return [
 
     'columns' => [
 
+        'color' => [
+
+            'messages' => [
+                'copied' => 'Copiado',
+            ],
+
+        ],
+
         'tags' => [
             'more' => 'e :count mais',
         ],
@@ -142,6 +150,29 @@ return [
 
             'deselect_all' => [
                 'label' => 'Desselecionar todos',
+            ],
+
+        ],
+
+    ],
+
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Ordenar por',
+            ],
+
+            'direction' => [
+
+                'label' => 'Direção de ordenação',
+
+                'options' => [
+                    'asc' => 'Ascendente',
+                    'desc' => 'Descendente',
+                ],
+
             ],
 
         ],
