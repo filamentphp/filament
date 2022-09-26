@@ -26,7 +26,7 @@ trait HasIcon
 
     public function getIcon(): ?string
     {
-        return $this->icon;
+        return $this->evaluate($this->icon);
     }
 
     public function getIconPosition(): string
