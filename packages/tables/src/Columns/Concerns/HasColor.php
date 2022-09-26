@@ -17,6 +17,6 @@ trait HasColor
 
     public function getColor(): ?string
     {
-        return $this->color;
+        return $this->evaluate($this->color);
     }
 }

@@ -17,6 +17,6 @@ trait HasWeight
 
     public function getWeight(): ?string
     {
-        return $this->weight;
+        return $this->evaluate($this->weight);
     }
 }
