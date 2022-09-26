@@ -10,6 +10,10 @@ return [
             'label' => 'Tryb ciemny',
         ],
 
+        'database_notifications' => [
+            'label' => 'Otwórz powiadomienia',
+        ],
+
         'light_mode' => [
             'label' => 'Tryb jasny',
         ],
