@@ -3,15 +3,16 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Forms\Components\Actions\Action;
 use Illuminate\Support\HtmlString;
 
 trait HasHint
 {
-    protected string | HtmlString | Closure | null $hint = null;
+    protected string | HtmlString | Closure | Action | null $hint = null;
 
     protected string | Closure | null $hintIcon = null;
 
-    public function hint(string | HtmlString | Closure | null $hint): static
+    public function hint(string | HtmlString | Closure | Action | null $hint): static
     {
         $this->hint = $hint;
 
@@ -25,13 +26,23 @@ trait HasHint
         return $this;
     }
 
-    public function getHint(): string | HtmlString | null
+    public function getHint(): string | HtmlString | Action | null
     {
-        return $this->evaluate($this->hint);
+        return $this->hint instanceof Action ? $this->evaluate($this->hint)?->component($this) : $this->evaluate($this->hint);
     }
 
     public function getHintIcon(): ?string
     {
         return $this->evaluate($this->hintIcon);
+    }
+
+    public function getActions(): array
+    {
+        $hintAction = $this->getHint();
+
+        return array_merge(
+            parent::getActions(),
+            $hintAction instanceof Action ? [$hintAction->getName() => $hintAction->component($this)] : [],
+        );
     }
 }

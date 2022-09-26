@@ -39,7 +39,16 @@
 
                 @if ($hint || $hintIcon)
                     <x-forms::field-wrapper.hint :icon="$hintIcon">
-                        {{ filled($hint) ? ($hint instanceof \Illuminate\Support\HtmlString ? $hint : \Illuminate\Support\Str::of($hint)->markdown()->sanitizeHtml()->toHtmlString()) : null }}
+                        @switch($hint)
+                            @case($hint instanceof \Filament\Forms\Components\Actions\Action)
+                            {{ $hint }}
+                            @break
+                            @case($hint instanceof \Illuminate\Support\HtmlString)
+                            {{ $hint }}
+                            @break
+                            @default
+                            {{ \Illuminate\Support\Str::of($hint)->markdown()->sanitizeHtml()->toHtmlString() }}
+                        @endswitch
                     </x-forms::field-wrapper.hint>
                 @endif
             </div>
