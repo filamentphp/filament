@@ -3,7 +3,7 @@
 return [
 
     'builder' => [
-	
+
         'collapsed' => '折り畳まれたコンテンツ',
 
         'buttons' => [
