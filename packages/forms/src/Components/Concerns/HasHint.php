@@ -12,7 +12,7 @@ trait HasHint
 
     protected string | Closure | null $hintIcon = null;
 
-    public function hint(string | HtmlString | Closure | Action | null $hint): static
+    public function hint(string | HtmlString | Action | Closure | null $hint): static
     {
         $this->hint = $hint;
 
