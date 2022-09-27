@@ -880,10 +880,17 @@
                     {{ $getMountedActionForm() }}
                 @endif
 
-                @if (count($action->getModalActions()))
+                @php
+                    $modalActions = array_filter(
+                        $action->getModalActions(),
+                        fn (\Filament\Support\Actions\Modal\Actions\Action $action): bool => ! $action->isHidden(),
+                    );
+                @endphp
+
+                @if (count($modalActions))
                     <x-slot name="footer">
                         <x-tables::modal.actions :full-width="$action->isModalCentered()">
-                            @foreach ($action->getModalActions() as $modalAction)
+                            @foreach ($modalActions as $modalAction)
                                 {{ $modalAction }}
                             @endforeach
                         </x-tables::modal.actions>
