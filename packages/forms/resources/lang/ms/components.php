@@ -8,6 +8,10 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'Klon',
+            ],
+
             'create_item' => [
                 'label' => 'Tambah ke :label',
             ],
@@ -211,6 +215,8 @@ return [
         ],
 
         'loading_message' => 'Memuatkan...',
+
+        'max_items_message' => 'Hanya :count boleh dipilih.',
 
         'no_search_results_message' => 'Tiada pilihan yang sepadan dengan carian anda.',
 
