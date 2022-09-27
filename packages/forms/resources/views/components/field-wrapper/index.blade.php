@@ -40,10 +40,9 @@
                 @if ($hint || $hintIcon)
                     <x-forms::field-wrapper.hint :icon="$hintIcon">
                         @switch($hint)
-                            @case($hint instanceof \Filament\Forms\Components\Actions\Action)
-                            {{ $hint }}
+                            @case(null)
                             @break
-                            @case($hint instanceof \Illuminate\Support\HtmlString)
+                            @case($hint instanceof \Filament\Forms\Components\Actions\Action || $hint instanceof \Illuminate\Support\HtmlString)
                             {{ $hint }}
                             @break
                             @default
