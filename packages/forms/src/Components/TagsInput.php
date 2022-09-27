@@ -35,7 +35,7 @@ class TagsInput extends Field
                 return;
             }
 
-            $state = explode($separator, $state);
+            $state = explode($separator, $state ?? '');
 
             if (count($state) === 1 && blank($state[0])) {
                 $state = [];
