@@ -40,11 +40,11 @@ trait HasHint
 
     public function getActions(): array
     {
-        $hintAction = $this->getHint();
+        $hint = $this->getHint();
 
         return array_merge(
             parent::getActions(),
-            $hintAction instanceof Action ? [$hintAction->getName() => $hintAction->component($this)] : [],
+            $hint instanceof Action ? [$hint->getName() => $hint->component($this)] : [],
         );
     }
 }
