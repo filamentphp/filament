@@ -8,7 +8,7 @@ use Illuminate\Support\HtmlString;
 
 trait HasHint
 {
-    protected string | HtmlString | Closure | Action | null $hint = null;
+    protected string | HtmlString | Action | Closure | null $hint = null;
 
     protected string | Closure | null $hintIcon = null;
 
