@@ -3,15 +3,17 @@
 return [
 
     'builder' => [
+	
+        'collapsed' => '折り畳まれたコンテンツ',
 
         'buttons' => [
 
-            'create_item' => [
-                'label' => ':labelを追加',
+            'clone_item' => [
+                'label' => '複製',
             ],
 
-            'create_item_between' => [
-                'label' => '間に追加',
+            'create_item' => [
+                'label' => ':labelを追加',
             ],
 
             'delete_item' => [
@@ -28,6 +30,22 @@ return [
 
             'move_item_up' => [
                 'label' => '上に移動',
+            ],
+
+            'collapse_item' => [
+                'label' => '折り畳む',
+            ],
+
+            'expand_item' => [
+                'label' => '展開',
+            ],
+
+            'collapse_all' => [
+                'label' => '全て折り畳む',
+            ],
+
+            'expand_all' => [
+                'label' => '全て展開',
             ],
 
         ],
@@ -55,7 +73,7 @@ return [
             ],
 
             'value' => [
-                'label' => 'バリュー',
+                'label' => '値',
             ],
 
         ],
@@ -91,12 +109,36 @@ return [
                 'label' => '削除',
             ],
 
+            'clone_item' => [
+                'label' => '複製',
+            ],
+
+            'move_item' => [
+                'label' => '移動',
+            ],
+
             'move_item_down' => [
                 'label' => '下に移動',
             ],
 
             'move_item_up' => [
                 'label' => '上に移動',
+            ],
+
+            'collapse_item' => [
+                'label' => '折り畳む',
+            ],
+
+            'expand_item' => [
+                'label' => '展開',
+            ],
+
+            'collapse_all' => [
+                'label' => '全て折り畳む',
+            ],
+
+            'expand_all' => [
+                'label' => '全て展開',
             ],
 
         ],
@@ -142,13 +184,66 @@ return [
     ],
 
     'select' => [
+
+        'actions' => [
+
+            'create_option' => [
+
+                'modal' => [
+
+                    'heading' => '作成',
+
+                    'actions' => [
+
+                        'create' => [
+                            'label' => '作成',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+        'boolean' => [
+            'true' => 'はい',
+            'false' => 'いいえ',
+        ],
+
+        'loading_message' => '読み込み中...',
+
+        'max_items_message' => ':count個のみ選択されてます',
+
         'no_search_results_message' => '検索結果はありませんでした',
+
         'placeholder' => 'オプションを選択',
-        'search_prompt' => '検索キーワードを入力して検索',
+
+        'searching_message' => '検索中...',
+
+        'search_prompt' => '検索キーワードを入力...',
+
     ],
 
     'tags_input' => [
         'placeholder' => '新規タグ',
+    ],
+
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => '前へ',
+            ],
+
+            'next_step' => [
+                'label' => '次へ',
+            ],
+
+        ],
+
     ],
 
 ];
