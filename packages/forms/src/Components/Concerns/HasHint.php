@@ -29,6 +29,7 @@ trait HasHint
     public function getHint(): string | HtmlString | Action | null
     {
         $value = $this->evaluate($this->hint);
+
         return $value instanceof Action ? $value->component($this) : $value;
     }
 
