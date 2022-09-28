@@ -158,6 +158,16 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function enableAutoDeleteFile(): static
+    {
+        $this->deleteUploadedFileUsing(function (BaseFileUpload $component,string $file) {
+            /** @var FilesystemAdapter $storage */
+            $storage = $component->getDisk();
+            $storage->delete($file);
+        });
+
+        return $this;
+    }
     public function acceptedFileTypes(array | Arrayable | Closure $types): static
     {
         $this->acceptedFileTypes = $types;
