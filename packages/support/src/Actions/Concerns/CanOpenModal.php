@@ -181,7 +181,6 @@ trait CanOpenModal
 
     public function getModalContent(): View | Htmlable | null
     {
-
         return $this->evaluate($this->modalContent);
     }
 
@@ -192,7 +191,6 @@ trait CanOpenModal
 
     public function getModalSubheading(): string|View | Htmlable | null
     {
-
         if (filled($this->modalSubheading)) {
             return $this->evaluate($this->modalSubheading);
         }
