@@ -130,8 +130,12 @@ class BaseFileUpload extends Field
             return $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : $file->getFilename();
         });
 
-        $this->saveUploadedFileUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file): string {
+        $this->saveUploadedFileUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file): ?string {
             $storeMethod = $component->getVisibility() === 'public' ? 'storePubliclyAs' : 'storeAs';
+
+            if (! $file->exists()) {
+                return null;
+            }
 
             return $file->{$storeMethod}(
                 $component->getDirectory(),
@@ -532,7 +536,7 @@ class BaseFileUpload extends Field
             return;
         }
 
-        $state = array_map(function (TemporaryUploadedFile | string $file) {
+        $state = array_filter(array_map(function (TemporaryUploadedFile | string $file) {
             if (! $file instanceof TemporaryUploadedFile) {
                 return $file;
             }
@@ -549,12 +553,16 @@ class BaseFileUpload extends Field
                 'file' => $file,
             ]);
 
+            if ($storedFile === null) {
+                return null;
+            }
+
             $this->storeFileName($storedFile, $file->getClientOriginalName());
 
             $file->delete();
 
             return $storedFile;
-        }, Arr::wrap($this->getState()));
+        }, Arr::wrap($this->getState())));
 
         if ($this->canReorder && ($callback = $this->reorderUploadedFilesUsing)) {
             $state = $this->evaluate($callback, [

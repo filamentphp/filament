@@ -20,6 +20,10 @@ return [
 
         ],
 
+        'tab' => [
+            'label' => '編集',
+        ],
+
     ],
 
     'messages' => [

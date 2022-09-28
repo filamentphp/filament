@@ -25,8 +25,8 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected $queryString = [
         'isTableReordering' => ['except' => false],
         'tableFilters',
-        'tableSortColumn',
-        'tableSortDirection',
+        'tableSortColumn' => ['except' => ''],
+        'tableSortDirection' => ['except' => ''],
         'tableSearchQuery' => ['except' => ''],
     ];
 
@@ -349,6 +349,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return $this->getResourceTable()->getActions();
     }
 
+    protected function getTableActionsPosition(): ?string
+    {
+        return $this->getResourceTable()->getActionsPosition();
+    }
+
     protected function getTableBulkActions(): array
     {
         return $this->getResourceTable()->getBulkActions();
@@ -357,6 +362,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function getTableColumns(): array
     {
         return $this->getResourceTable()->getColumns();
+    }
+
+    protected function getTableContentGrid(): ?array
+    {
+        return $this->getResourceTable()->getContentGrid();
     }
 
     protected function getTableFilters(): array

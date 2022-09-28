@@ -27,6 +27,7 @@
             <label class="flex items-center space-x-3 rtl:space-x-reverse">
                 <input
                     {!! $isDisabled ? 'disabled' : null !!}
+                    wire:loading.attr="disabled"
                     type="checkbox"
                     value="{{ $optionValue }}"
                     dusk="filament.forms.{{ $getStatePath() }}"

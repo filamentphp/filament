@@ -20,6 +20,11 @@
             @endif
         </div>
 
-        <x-tables::actions :actions="$actions" class="shrink-0" />
+        <x-tables::actions
+            :actions="$actions"
+            alignment="right"
+            wrap
+            class="shrink-0"
+        />
     </div>
 </div>

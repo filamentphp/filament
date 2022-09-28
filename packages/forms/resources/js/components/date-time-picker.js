@@ -214,6 +214,12 @@ export default (Alpine) => {
 
                         let date = this.getSelectedDate()
 
+                        if (date === null) {
+                            this.clearState()
+
+                            return
+                        }
+
                         if (
                             this.getMaxDate() !== null &&
                             date?.isAfter(this.getMaxDate())
@@ -349,6 +355,10 @@ export default (Alpine) => {
 
                 getSelectedDate: function () {
                     if (this.state === undefined) {
+                        return null
+                    }
+
+                    if (this.state === null) {
                         return null
                     }
 

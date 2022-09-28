@@ -16,7 +16,8 @@
 @endphp
 
 <div {{ $attributes->merge($getExtraAttributes())->class([
-    'filament-tables-badge-column px-4 py-3 flex',
+    'filament-tables-badge-column flex',
+    'px-4 py-3' => ! $isInline(),
     match ($getAlignment()) {
         'left' => 'justify-start',
         'center' => 'justify-center',

@@ -9,6 +9,8 @@ class Table
 {
     protected array $actions = [];
 
+    protected ?string $actionsPosition = null;
+
     protected array $bulkActions = [];
 
     protected array $columns = [];
@@ -23,6 +25,8 @@ class Table
 
     protected array $headerActions = [];
 
+    protected ?array $contentGrid = null;
+
     protected ?string $pollingInterval = null;
 
     protected ?string $reorderColumn = null;
@@ -36,9 +40,17 @@ class Table
         return app(static::class);
     }
 
-    public function actions(array | ActionGroup $actions): static
+    public function actions(array | ActionGroup $actions, ?string $position = null): static
     {
         $this->actions = Arr::wrap($actions);
+        $this->actionsPosition($position);
+
+        return $this;
+    }
+
+    public function actionsPosition(?string $position = null): static
+    {
+        $this->actionsPosition = $position;
 
         return $this;
     }
@@ -53,6 +65,13 @@ class Table
     public function columns(array $columns): static
     {
         $this->columns = $columns;
+
+        return $this;
+    }
+
+    public function contentGrid(?array $grid): static
+    {
+        $this->contentGrid = $grid;
 
         return $this;
     }
@@ -178,6 +197,11 @@ class Table
         return $this->actions;
     }
 
+    public function getActionsPosition(): ?string
+    {
+        return $this->actionsPosition;
+    }
+
     public function getBulkActions(): array
     {
         return $this->bulkActions;
@@ -186,6 +210,11 @@ class Table
     public function getColumns(): array
     {
         return $this->columns;
+    }
+
+    public function getContentGrid(): ?array
+    {
+        return $this->contentGrid;
     }
 
     public function getDefaultSortColumn(): ?string

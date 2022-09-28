@@ -10,7 +10,7 @@
         "prettier": "npx prettier --write '**/*.{css,js,yml}' '!**/dist' '!**/vendor'"
     },
     "devDependencies": {
-        "@alpinejs/collapse": "^3.8.1",
+        "@alpinejs/collapse": "^3.10.3",
         "@alpinejs/focus": "^3.8.1",
         "@alpinejs/persist": "^3.8.1",
         "@awcodes/alpine-floating-ui": "^3.4.0",

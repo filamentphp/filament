@@ -25,6 +25,7 @@
         'opacity-70 cursor-not-allowed pointer-events-none' => $disabled,
         'w-10 h-10' => $size === 'md',
         'w-8 h-8' => $size === 'sm',
+        'w-8 h-8 md:w-10 md:h-10' => $size === 'sm md:md',
         'w-12 h-12' => $size === 'lg',
     ];
 
@@ -32,6 +33,7 @@
         'filament-icon-button-icon',
         'w-5 h-5' => $size === 'md',
         'w-4 h-4' => $size === 'sm',
+        'w-4 h-4 md:w-5 md:h-5' => $size === 'sm md:md',
         'w-6 h-6' => $size === 'lg',
     ]);
 

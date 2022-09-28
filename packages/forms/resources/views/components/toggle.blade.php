@@ -36,6 +36,7 @@
                 }"
                 {!! $isAutofocused() ? 'autofocus' : null !!}
                 {!! $isDisabled() ? 'disabled' : null !!}
+                wire:loading.attr="disabled"
                 id="{{ $getId() }}"
                 dusk="filament.forms.{{ $getStatePath() }}"
                 type="button"
@@ -60,7 +61,19 @@
                         }"
                     >
                         @if ($hasOffIcon())
-                            <x-dynamic-component :component="$getOffIcon()" class="h-3 w-3 text-gray-400" />
+                            <x-dynamic-component
+                                :component="$getOffIcon()"
+                                :class="\Illuminate\Support\Arr::toCssClasses([
+                                    'h-3 w-3',
+                                    match ($getOffColor()) {
+                                        'danger' => 'text-danger-500',
+                                        'primary' => 'text-primary-500',
+                                        'success' => 'text-success-500',
+                                        'warning' => 'text-warning-500',
+                                        default => 'text-gray-400',
+                                    },
+                                ])"
+                            />
                         @endif
                     </span>
 
@@ -73,7 +86,20 @@
                         }"
                     >
                         @if ($hasOnIcon())
-                            <x-dynamic-component :component="$getOnIcon()" x-cloak class="h-3 w-3 text-primary-600" />
+                            <x-dynamic-component
+                                :component="$getOnIcon()"
+                                x-cloak
+                                :class="\Illuminate\Support\Arr::toCssClasses([
+                                    'h-3 w-3',
+                                    match ($getOnColor()) {
+                                        'danger' => 'text-danger-500',
+                                        'secondary' => 'text-gray-400',
+                                        'success' => 'text-success-500',
+                                        'warning' => 'text-warning-500',
+                                        default => 'text-primary-500',
+                                    },
+                                ])"
+                            />
                         @endif
                     </span>
                 </span>

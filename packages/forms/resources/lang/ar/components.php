@@ -8,12 +8,20 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'نسخ',
+            ],
+
             'create_item' => [
                 'label' => 'إضافة إلى :label',
             ],
 
             'delete_item' => [
                 'label' => 'حذف',
+            ],
+
+            'move_item' => [
+                'label' => 'نقل',
             ],
 
             'move_item_down' => [
@@ -103,6 +111,14 @@ return [
                 'label' => 'حذف',
             ],
 
+            'clone_item' => [
+                'label' => 'نسخ',
+            ],
+
+            'move_item' => [
+                'label' => 'نقل',
+            ],
+
             'move_item_down' => [
                 'label' => 'تحريك لأسفل',
             ],
@@ -144,7 +160,7 @@ return [
 
                 'label' => 'عنوان url',
 
-                'placeholder' => 'إدخل عنوان url',
+                'placeholder' => 'أدخل عنوان url',
 
             ],
 
@@ -193,7 +209,14 @@ return [
 
         ],
 
+        'boolean' => [
+            'true' => 'نعم',
+            'false' => 'لا',
+        ],
+
         'loading_message' => 'تحميل...',
+
+        'max_items_message' => 'يمكنك اختيار :count فقط.',
 
         'no_search_results_message' => 'لا توجد خيارات تطابق بحثك.',
 

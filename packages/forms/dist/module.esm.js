@@ -12824,6 +12824,10 @@ var date_time_picker_default = (Alpine) => {
             return;
           }
           let date2 = this.getSelectedDate();
+          if (date2 === null) {
+            this.clearState();
+            return;
+          }
           if (this.getMaxDate() !== null && date2?.isAfter(this.getMaxDate())) {
             date2 = null;
           }
@@ -12912,6 +12916,9 @@ var date_time_picker_default = (Alpine) => {
       },
       getSelectedDate: function() {
         if (this.state === void 0) {
+          return null;
+        }
+        if (this.state === null) {
           return null;
         }
         let date = esm_default(this.state);
@@ -27863,6 +27870,7 @@ var select_default = (Alpine) => {
     hasDynamicSearchResults,
     loadingMessage,
     maxItems,
+    maxItemsMessage,
     noSearchResultsMessage,
     options: options2,
     optionsLimit,
@@ -27884,6 +27892,9 @@ var select_default = (Alpine) => {
           itemSelectText: "",
           loadingText: loadingMessage,
           maxItemCount: maxItems ?? -1,
+          maxItemText: (maxItemCount) => window.pluralize(maxItemsMessage, maxItemCount, {
+            count: maxItemCount
+          }),
           noChoicesText: searchPrompt,
           noResultsText: noSearchResultsMessage,
           placeholderValue: placeholder,
@@ -27968,17 +27979,25 @@ var select_default = (Alpine) => {
         this.select.setChoices(choices, "value", "label", true);
       },
       getChoices: async function(config = {}) {
-        const options3 = await this.getOptions(config);
-        return options3.concat(await this.getMissingOptions(options3));
+        const existingOptions = await this.getOptions(config);
+        return existingOptions.concat(await this.getMissingOptions(existingOptions));
       },
       getOptions: async function({search, withInitialOptions}) {
         if (withInitialOptions) {
           return options2;
         }
+        let results = [];
         if (search !== "" && search !== null && search !== void 0) {
-          return await getSearchResultsUsing(search);
+          results = await getSearchResultsUsing(search);
+        } else {
+          results = await getOptionsUsing();
         }
-        return await getOptionsUsing();
+        const selectOption = (option3) => {
+          option3.selected = true;
+          return option3;
+        };
+        this.select.clearStore();
+        return isMultiple ? results.map((option3) => this.state.includes(option3.value) ? selectOption(option3) : option3) : results.map((option3) => this.state === option3.value ? selectOption(option3) : option3);
       },
       refreshPlaceholder: function() {
         if (isMultiple) {
@@ -27996,22 +28015,20 @@ var select_default = (Alpine) => {
         }
         return state3?.toString();
       },
-      getMissingOptions: async function(options3) {
+      getMissingOptions: async function(existingOptions) {
         let state3 = this.formatState(this.state);
         if ([null, void 0, "", [], {}].includes(state3)) {
           return {};
         }
-        if (!options3.length) {
-          options3 = {};
-        }
+        const existingOptionValues = new Set(existingOptions.length ? existingOptions.map((option3) => option3.value) : []);
         if (isMultiple) {
-          if (state3.every((value) => value in options3)) {
+          if (state3.every((value) => existingOptionValues.has(value))) {
             return {};
           }
           return await getOptionLabelsUsing();
         }
-        if (state3 in options3) {
-          return options3;
+        if (existingOptionValues.has(state3)) {
+          return existingOptionValues;
         }
         return [
           {
@@ -35243,6 +35260,63 @@ function src_default(Alpine) {
 var module_default = src_default;
 
 // packages/forms/resources/js/index.js
+window.pluralize = function(text3, number, variables) {
+  function extract(segments2, number2) {
+    for (const part of segments2) {
+      const line = extractFromString(part, number2);
+      if (line !== null) {
+        return line;
+      }
+    }
+  }
+  function extractFromString(part, number2) {
+    const matches2 = part.match(/^[\{\[]([^\[\]\{\}]*)[\}\]](.*)/s);
+    if (matches2 === null || matches2.length !== 3) {
+      return null;
+    }
+    const condition = matches2[1];
+    const value2 = matches2[2];
+    if (condition.includes(",")) {
+      const [from, to] = condition.split(",", 2);
+      if (to === "*" && number2 >= from) {
+        return value2;
+      } else if (from === "*" && number2 <= to) {
+        return value2;
+      } else if (number2 >= from && number2 <= to) {
+        return value2;
+      }
+    }
+    return condition == number2 ? value2 : null;
+  }
+  function ucfirst(string) {
+    return string.toString().charAt(0).toUpperCase() + string.toString().slice(1);
+  }
+  function replace(line, replace2) {
+    if (replace2.length === 0) {
+      return line;
+    }
+    const shouldReplace = {};
+    for (let [key, value2] of Object.entries(replace2)) {
+      shouldReplace[":" + ucfirst(key ?? "")] = ucfirst(value2 ?? "");
+      shouldReplace[":" + key.toUpperCase()] = value2.toString().toUpperCase();
+      shouldReplace[":" + key] = value2;
+    }
+    Object.entries(shouldReplace).forEach(([key, value2]) => {
+      line = line.replaceAll(key, value2);
+    });
+    return line;
+  }
+  function stripConditions(segments2) {
+    return segments2.map((part) => part.replace(/^[\{\[]([^\[\]\{\}]*)[\}\]]/, ""));
+  }
+  let segments = text3.split("|");
+  const value = extract(segments, number);
+  if (value !== null && value !== void 0) {
+    return replace(value.trim(), variables);
+  }
+  segments = stripConditions(segments);
+  return replace(segments.length > 1 && number > 1 ? segments[1] : segments[0], variables);
+};
 var js_default = (Alpine) => {
   Alpine.plugin(color_picker_default2);
   Alpine.plugin(date_time_picker_default);

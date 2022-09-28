@@ -68,6 +68,9 @@
                     },
                 }"
                 wire:ignore
+                @if ($maxHeight = $this->getMaxHeight())
+                    style="max-height: {{ $maxHeight }}"
+                @endif
             >
                 <span
                     x-ref="backgroundColorElement"

@@ -169,9 +169,19 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
         return [];
     }
 
+    protected function getHeaderWidgetsColumns(): int | array
+    {
+        return 2;
+    }
+
     protected function getFooterWidgets(): array
     {
         return [];
+    }
+
+    protected function getFooterWidgetsColumns(): int | array
+    {
+        return 2;
     }
 
     protected function getHeading(): string

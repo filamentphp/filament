@@ -50,6 +50,21 @@ it('can render post titles', function () {
 
 This helper will get the HTML for this column, and check that it is present in the table.
 
+For testing that a column is not rendered, you can use `assertCanNotRenderTableColumn()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can not render post comments', function () {
+    Post::factory()->count(10)->create()
+   
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertCanNotRenderTableColumn('comments');
+});
+```
+
+This helper will assert that the HTML for this column, is not shown by default in the present table.
+
 ### Sorting
 
 To sort table records, you can call `sortTable()`, passing the name of the column to sort by. You can use `'desc'` in the second parameter of `sortTable()` to reverse the sorting direction.

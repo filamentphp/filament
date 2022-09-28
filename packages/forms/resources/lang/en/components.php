@@ -8,6 +8,10 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'Clone',
+            ],
+
             'create_item' => [
                 'label' => 'Add to :label',
             ],
@@ -211,6 +215,8 @@ return [
         ],
 
         'loading_message' => 'Loading...',
+
+        'max_items_message' => 'Only :count can be selected.',
 
         'no_search_results_message' => 'No options match your search.',
 

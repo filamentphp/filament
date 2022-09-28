@@ -22,4 +22,4 @@ SpatieTagsColumn::make('tags')->type('categories'),
 
 The [type](https://spatie.be/docs/laravel-tags/advanced-usage/using-types) allows you to group tags into collections.
 
-The tags column supports all the customization options of the [original tags column](/docs/tables/columns#tags-column).
+The tags column supports all the customization options of the [original tags column](/docs/tables/columns/tags).

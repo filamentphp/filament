@@ -4,6 +4,7 @@
     'darkMode' => false,
     'icon' => 'heroicon-o-dots-vertical',
     'label' => __('filament-support::actions/group.trigger.label'),
+    'size' => null,
     'tooltip' => null,
 ])
 
@@ -18,6 +19,7 @@
             :color="$color"
             :dark-mode="$darkMode"
             :icon="$icon"
+            :size="$size"
             :tooltip="$tooltip"
         >
             <x-slot name="label">

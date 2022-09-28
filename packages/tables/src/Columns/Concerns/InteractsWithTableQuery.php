@@ -150,6 +150,7 @@ trait InteractsWithTableQuery
                             $query,
                             $sortColumn,
                         )
+                        ->applyScopes()
                         ->getQuery(),
                     $direction,
                 ),
