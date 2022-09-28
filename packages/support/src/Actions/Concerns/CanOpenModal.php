@@ -185,7 +185,7 @@ trait CanOpenModal
         return $this->evaluate($this->modalContent);
     }
 
-    public function getModalHeading(): string
+    public function getModalHeading(): string|View | Htmlable | null
     {
         return $this->evaluate($this->modalHeading) ?? $this->getLabel();
     }
