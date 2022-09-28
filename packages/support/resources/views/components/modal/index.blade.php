@@ -116,7 +116,7 @@
                     <button
                         tabindex="-1"
                         type="button"
-                        class="absolute top-2 right-2 rtl:right-0 rtl:left-2"
+                        class="absolute top-2 right-2 rtl:right-auto rtl:left-2"
                     >
                         <x-heroicon-s-x
                             class="filament-modal-close-button h-4 w-4 cursor-pointer text-gray-400"
