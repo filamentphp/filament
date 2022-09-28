@@ -6,6 +6,7 @@ use Closure;
 use Filament\Support\Actions\Modal\Actions\Action as ModalAction;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\HtmlString;
 
 trait CanOpenModal
 {
@@ -25,9 +26,9 @@ trait CanOpenModal
 
     protected View | Htmlable | Closure | null $modalContent = null;
 
-    protected string| View | Htmlable  | Closure | null $modalHeading = null;
+    protected string| HtmlString | Closure | null $modalHeading = null;
 
-    protected string| View | Htmlable  | Closure | null $modalSubheading = null;
+    protected string| HtmlString | Closure | null $modalSubheading = null;
 
     protected string | Closure | null $modalWidth = null;
 
@@ -87,14 +88,14 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalHeading(string | Closure | null $heading = null): static
+    public function modalHeading(string | HtmlString | null $heading = null): static
     {
         $this->modalHeading = $heading;
 
         return $this;
     }
 
-    public function modalSubheading(string | View | Htmlable | Closure | null $subheading = null): static
+    public function modalSubheading(string | HtmlString | Closure | null $subheading = null): static
     {
 
         $this->modalSubheading = $subheading;
@@ -181,16 +182,18 @@ trait CanOpenModal
 
     public function getModalContent(): View | Htmlable | null
     {
+
         return $this->evaluate($this->modalContent);
     }
 
-    public function getModalHeading(): string|View | Htmlable | null
+    public function getModalHeading(): string | HtmlString | null
     {
         return $this->evaluate($this->modalHeading) ?? $this->getLabel();
     }
 
-    public function getModalSubheading(): string|View | Htmlable | null
+    public function getModalSubheading(): string | HtmlString | null
     {
+
         if (filled($this->modalSubheading)) {
             return $this->evaluate($this->modalSubheading);
         }
