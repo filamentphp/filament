@@ -88,7 +88,7 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalHeading(string | HtmlString | null $heading = null): static
+    public function modalHeading(string | HtmlString | Closure | null $heading = null): static
     {
         $this->modalHeading = $heading;
 
