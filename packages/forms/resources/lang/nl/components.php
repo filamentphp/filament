@@ -1,6 +1,7 @@
 <?php
 
 return [
+
     'builder' => [
 
         'collapsed' => 'Inhoud ingeklapt',
