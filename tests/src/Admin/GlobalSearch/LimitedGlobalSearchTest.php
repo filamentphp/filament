@@ -1,9 +1,5 @@
 <?php
 
-use Filament\Facades\Filament;
-use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
-use Filament\GlobalSearch\GlobalSearchResult;
-use Filament\GlobalSearch\GlobalSearchResults;
 use Filament\Http\Livewire\GlobalSearch;
 use Filament\Tests\Admin\GlobalSearch\LimitedTestCase;
 use Filament\Tests\Models\Post;
