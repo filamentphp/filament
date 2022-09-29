@@ -218,7 +218,7 @@ class Select extends Field
         $action = Action::make($this->getCreateOptionActionName())
             ->component($this)
             ->form($actionFormSchema)
-            ->action(static function (Select $component, $data, ComponentContainer $form) {
+            ->action(static function (Select $component, array $data, ComponentContainer $form) {
                 if (! $component->getCreateOptionUsing()) {
                     throw new Exception("Select field [{$component->getStatePath()}] must have a [createOptionUsing()] closure set.");
                 }
