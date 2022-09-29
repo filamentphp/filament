@@ -120,7 +120,7 @@ trait CanFormatState
             if (blank($state)) {
                 return null;
             }
-            
+
             if (blank($currency)) {
                 $currency = config('money.default_currency') ?? 'usd';
             }
