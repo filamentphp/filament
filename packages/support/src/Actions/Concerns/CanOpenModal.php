@@ -117,7 +117,9 @@ trait CanOpenModal
         }
 
         if ($this->modalActions !== null) {
-            return $this->evaluate($this->modalActions);
+            return $this->filterHiddenModalActions(
+                $this->evaluate($this->modalActions),
+            );
         }
 
         $actions = array_merge(
@@ -130,7 +132,15 @@ trait CanOpenModal
             $actions = array_reverse($actions);
         }
 
-        return $actions;
+        return $this->filterHiddenModalActions($actions);
+    }
+
+    protected function filterHiddenModalActions(array $actions): array
+    {
+        return array_filter(
+            $actions,
+            fn (ModalAction $action): bool => ! $action->isHidden(),
+        );
     }
 
     public function getModalSubmitAction(): ModalAction
