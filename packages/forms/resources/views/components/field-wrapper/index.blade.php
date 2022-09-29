@@ -39,10 +39,12 @@
 
                 @if ($hint || $hintIcon)
                     <x-forms::field-wrapper.hint :icon="$hintIcon">
-                        @if ($hint instanceof \Illuminate\Support\HtmlString || $hint instanceof \Filament\Forms\Components\Actions\Action)
-                            {{ $hint }}
-                        @else
-                            {{ \Illuminate\Support\Str::of($hint)->markdown()->sanitizeHtml()->toHtmlString() }}
+                        @if(filled($hint))
+                            @if ($hint instanceof \Illuminate\Support\HtmlString || $hint instanceof \Filament\Forms\Components\Actions\Action)
+                                {{ $hint }}
+                            @else
+                                {{ \Illuminate\Support\Str::of($hint)->markdown()->sanitizeHtml()->toHtmlString() }}
+                            @endif
                         @endif
                     </x-forms::field-wrapper.hint>
                 @endif
