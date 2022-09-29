@@ -13,7 +13,7 @@ return [
             ],
 
             'delete_item' => [
-                'label' => 'Excluír',
+                'label' => 'Excluir',
             ],
 
             'move_item_down' => [
@@ -53,7 +53,7 @@ return [
             ],
 
             'delete' => [
-                'label' => 'Excluír linha',
+                'label' => 'Excluir linha',
             ],
 
         ],
@@ -100,7 +100,7 @@ return [
             ],
 
             'delete_item' => [
-                'label' => 'Excluír',
+                'label' => 'Excluir',
             ],
 
             'clone_item' => [
