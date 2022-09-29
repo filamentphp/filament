@@ -114,11 +114,15 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string | Closure $currency = 'usd', bool $shouldConvert = false): static
+    public function money(string | Closure | null $currency = null, bool $shouldConvert = false): static
     {
         $this->formatStateUsing(static function (Column $column, $state) use ($currency, $shouldConvert): ?string {
             if (blank($state)) {
                 return null;
+            }
+            
+            if (blank($currency)) {
+                $currency = config('money.default_currency') ?? 'usd';
             }
 
             return (new Money\Money(
