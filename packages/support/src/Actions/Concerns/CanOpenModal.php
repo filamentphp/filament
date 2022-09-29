@@ -96,7 +96,6 @@ trait CanOpenModal
 
     public function modalSubheading(string | Htmlable | Closure | null $subheading = null): static
     {
-
         $this->modalSubheading = $subheading;
 
         return $this;
@@ -181,11 +180,10 @@ trait CanOpenModal
 
     public function getModalContent(): View | Htmlable | null
     {
-
         return $this->evaluate($this->modalContent);
     }
 
-    public function getModalHeading(): string | Htmlable | null
+    public function getModalHeading(): string | Htmlable
     {
         return $this->evaluate($this->modalHeading) ?? $this->getLabel();
     }
