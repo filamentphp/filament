@@ -7,6 +7,10 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'Klonen',
+            ],
+
             'create_item' => [
                 'label' => 'Toevoegen aan :label',
             ],
