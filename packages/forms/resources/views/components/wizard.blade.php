@@ -83,10 +83,17 @@
     <ol
         {!! $getLabel() ? 'aria-label="' . $getLabel() . '"' : null !!}
         role="list"
-        @class([
-            'border border-gray-300 shadow-sm bg-white rounded-xl overflow-hidden divide-y divide-gray-300 md:flex md:divide-y-0',
+        @if (count($getChildComponentContainer()->getComponents()) >= 4)
+            @class([
+            'border border-gray-300 shadow-sm bg-white rounded-xl overflow-hidden divide-y divide-gray-300 grid md:grid-cols-2 md:divide-y-0',
             'dark:bg-gray-800 dark:border-gray-700 dark:divide-gray-700' => config('forms.dark_mode'),
-        ])
+            ])
+        @else
+            @class([
+                'border border-gray-300 shadow-sm bg-white rounded-xl overflow-hidden divide-y divide-gray-300 md:flex md:divide-y-0',
+                'dark:bg-gray-800 dark:border-gray-700 dark:divide-gray-700' => config('forms.dark_mode'),
+            ])
+        @endif
     >
         @foreach ($getChildComponentContainer()->getComponents() as $step)
             <li class="group relative overflow-hidden md:flex-1">
