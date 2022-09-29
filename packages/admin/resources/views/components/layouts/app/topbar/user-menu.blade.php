@@ -8,6 +8,8 @@
     $logoutItem = $items['logout'] ?? null;
 @endphp
 
+{{ \Filament\Facades\Filament::renderHook('user-menu.start') }}
+
 <x-filament::dropdown placement="bottom-end">
     <x-slot name="trigger" class="ml-4">
         <x-filament::user-avatar :user="$user" />
@@ -102,3 +104,5 @@
         </x-filament::dropdown.list.item>
     </x-filament::dropdown.list>
 </x-filament::dropdown>
+
+{{ \Filament\Facades\Filament::renderHook('user-menu.end') }}
