@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Exception;
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Arrayable;
@@ -217,13 +218,14 @@ class Select extends Field
         $action = Action::make($this->getCreateOptionActionName())
             ->component($this)
             ->form($actionFormSchema)
-            ->action(static function (Select $component, $data) {
+            ->action(static function (Select $component, $data, ComponentContainer $form) {
                 if (! $component->getCreateOptionUsing()) {
                     throw new Exception("Select field [{$component->getStatePath()}] must have a [createOptionUsing()] closure set.");
                 }
 
                 $createdOptionKey = $component->evaluate($component->getCreateOptionUsing(), [
                     'data' => $data,
+                    'form' => $form,
                 ]);
 
                 $state = $component->isMultiple() ?
@@ -660,10 +662,12 @@ class Select extends Field
             $record->save();
         });
 
-        $this->createOptionUsing(static function (Select $component, array $data) {
+        $this->createOptionUsing(static function (Select $component, array $data, ComponentContainer $form) {
             $record = $component->getRelationship()->getRelated();
             $record->fill($data);
             $record->save();
+
+            $form->model($record)->saveRelationships();
 
             return $record->getKey();
         });
