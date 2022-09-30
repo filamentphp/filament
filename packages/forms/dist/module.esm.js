@@ -27986,18 +27986,10 @@ var select_default = (Alpine) => {
         if (withInitialOptions) {
           return options2;
         }
-        let results = [];
         if (search !== "" && search !== null && search !== void 0) {
-          results = await getSearchResultsUsing(search);
-        } else {
-          results = await getOptionsUsing();
+          return await getSearchResultsUsing(search);
         }
-        const selectOption = (option3) => {
-          option3.selected = true;
-          return option3;
-        };
-        this.select.clearStore();
-        return isMultiple ? results.map((option3) => this.state.includes(option3.value) ? selectOption(option3) : option3) : results.map((option3) => this.state === option3.value ? selectOption(option3) : option3);
+        return await getOptionsUsing();
       },
       refreshPlaceholder: function() {
         if (isMultiple) {
