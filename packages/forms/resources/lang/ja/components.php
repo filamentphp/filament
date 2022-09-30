@@ -98,7 +98,7 @@ return [
     ],
 
     'repeater' => [
-        
+
         'collapsed' => '折り畳まれたコンテンツ',
 
         'buttons' => [
