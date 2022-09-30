@@ -313,3 +313,5 @@ The available hooks are as follows:
 - `styles.end` - after styles are defined
 - `global-search.start` - before [global search](resources/global-search) input
 - `global-search.end` - after [global search](resources/global-search) input
+- `user-menu.start` - before [user menu](navigation) input
+- `user-menu.end` - after [user menu](navigation) input
