@@ -22,6 +22,7 @@ export default (Alpine) => {
             options,
             optionsLimit,
             placeholder,
+            searchDebounce,
             searchingMessage,
             searchPrompt,
             state,
@@ -133,7 +134,7 @@ export default (Alpine) => {
                                 })
 
                                 this.isSearching = false
-                            }, 1000),
+                            }, searchDebounce),
                         )
                     }
 
