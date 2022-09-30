@@ -12852,6 +12852,9 @@ var date_time_picker_default = (Alpine) => {
       clearState: function() {
         this.isClearingState = true;
         this.setState(null);
+        this.hour = 0;
+        this.minute = 0;
+        this.second = 0;
         this.$nextTick(() => this.isClearingState = false);
       },
       dateIsDisabled: function(date) {
