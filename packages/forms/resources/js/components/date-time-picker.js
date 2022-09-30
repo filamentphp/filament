@@ -257,6 +257,10 @@ export default (Alpine) => {
 
                     this.setState(null)
 
+                    this.hour = 0
+                    this.minute = 0
+                    this.second = 0
+
                     this.$nextTick(() => (this.isClearingState = false))
                 },
 

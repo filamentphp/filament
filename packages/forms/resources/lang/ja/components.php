@@ -99,6 +99,8 @@ return [
 
     'repeater' => [
 
+        'collapsed' => '折り畳まれたコンテンツ',
+
         'buttons' => [
 
             'create_item' => [
