@@ -91,6 +91,7 @@
                         options: @js($getOptionsForJs()),
                         optionsLimit: @js($getOptionsLimit()),
                         placeholder: @js($getPlaceholder()),
+                        searchDebounce: @js($getSearchDebounce()),
                         searchingMessage: @js($getSearchingMessage()),
                         searchPrompt: @js($getSearchPrompt()),
                         state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},

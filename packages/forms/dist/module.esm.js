@@ -12852,6 +12852,9 @@ var date_time_picker_default = (Alpine) => {
       clearState: function() {
         this.isClearingState = true;
         this.setState(null);
+        this.hour = 0;
+        this.minute = 0;
+        this.second = 0;
         this.$nextTick(() => this.isClearingState = false);
       },
       dateIsDisabled: function(date) {
@@ -27875,6 +27878,7 @@ var select_default = (Alpine) => {
     options: options2,
     optionsLimit,
     placeholder,
+    searchDebounce,
     searchingMessage,
     searchPrompt,
     state: state2
@@ -27955,7 +27959,7 @@ var select_default = (Alpine) => {
               search: event.detail.value?.trim()
             });
             this.isSearching = false;
-          }, 1e3));
+          }, searchDebounce));
         }
         this.$watch("state", async () => {
           this.refreshPlaceholder();
@@ -27986,18 +27990,10 @@ var select_default = (Alpine) => {
         if (withInitialOptions) {
           return options2;
         }
-        let results = [];
         if (search !== "" && search !== null && search !== void 0) {
-          results = await getSearchResultsUsing(search);
-        } else {
-          results = await getOptionsUsing();
+          return await getSearchResultsUsing(search);
         }
-        const selectOption = (option3) => {
-          option3.selected = true;
-          return option3;
-        };
-        this.select.clearStore();
-        return isMultiple ? results.map((option3) => this.state.includes(option3.value) ? selectOption(option3) : option3) : results.map((option3) => this.state === option3.value ? selectOption(option3) : option3);
+        return await getOptionsUsing();
       },
       refreshPlaceholder: function() {
         if (isMultiple) {

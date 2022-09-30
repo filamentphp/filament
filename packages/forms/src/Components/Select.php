@@ -60,6 +60,8 @@ class Select extends Field
 
     protected string | Htmlable | Closure | null $noSearchResultsMessage = null;
 
+    protected int | Closure $searchDebounce = 1000;
+
     protected string | Closure | null $searchingMessage = null;
 
     protected string | Htmlable | Closure | null $searchPrompt = null;
@@ -317,6 +319,13 @@ class Select extends Field
         return $this;
     }
 
+    public function searchDebounce(int | Closure $debounce): static
+    {
+        $this->searchDebounce = $debounce;
+
+        return $this;
+    }
+
     public function searchingMessage(string | Closure | null $message): static
     {
         $this->searchingMessage = $message;
@@ -376,6 +385,11 @@ class Select extends Field
     public function getMaxItemsMessage(): string
     {
         return $this->evaluate($this->maxItemsMessage);
+    }
+
+    public function getSearchDebounce(): int
+    {
+        return $this->evaluate($this->searchDebounce);
     }
 
     public function getSearchingMessage(): string
