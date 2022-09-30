@@ -27878,6 +27878,7 @@ var select_default = (Alpine) => {
     options: options2,
     optionsLimit,
     placeholder,
+    searchDebounce,
     searchingMessage,
     searchPrompt,
     state: state2
@@ -27958,7 +27959,7 @@ var select_default = (Alpine) => {
               search: event.detail.value?.trim()
             });
             this.isSearching = false;
-          }, 1e3));
+          }, searchDebounce));
         }
         this.$watch("state", async () => {
           this.refreshPlaceholder();
