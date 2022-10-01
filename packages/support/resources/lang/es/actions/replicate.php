@@ -4,7 +4,21 @@ return [
 
     'single' => [
 
-        'label' => 'Repetir',
+        'label' => 'Replicar',
+
+        'modal' => [
+
+            'heading' => 'Replicar :label',
+
+            'actions' => [
+
+                'replicate' => [
+                    'label' => 'Replicar',
+                ],
+
+            ],
+
+        ],
 
         'messages' => [
             'replicated' => 'Registro replicado',
