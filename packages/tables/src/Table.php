@@ -13,6 +13,7 @@ use Filament\Tables\Columns\Layout\Component;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Layout;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -226,7 +227,7 @@ class Table extends ViewComponent
         return invade($livewire)->getTableColumnToggleFormWidth();
     }
 
-    public function getHeader(): ?View
+    public function getHeader(): View | Htmlable | string | null
     {
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();

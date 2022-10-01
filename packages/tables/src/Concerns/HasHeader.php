@@ -4,8 +4,9 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Contracts\View\View;
+use Filament\Tables\Actions\ActionGroup;
+use Illuminate\Contracts\Support\Htmlable;
 
 trait HasHeader
 {
@@ -74,7 +75,7 @@ trait HasHeader
         return null;
     }
 
-    protected function getTableHeader(): ?View
+    protected function getTableHeader(): View | Htmlable | string | null
     {
         return null;
     }
