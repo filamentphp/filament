@@ -6,7 +6,6 @@ return [
 
         'collapsed' => 'Contenido contraido',
 
-
         'buttons' => [
 
             'clone_item' => [
