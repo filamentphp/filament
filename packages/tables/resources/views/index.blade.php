@@ -166,7 +166,7 @@
             {!! ! $renderHeader ? 'x-cloak' : null !!}
         >
             @if ($header)
-                @if (gettype($header) == 'object' && get_class($header) == 'Illuminate\Support\HtmlString')
+                @if (gettype($header) == 'object' && $header instanceof \Illuminate\Support\HtmlString)
                     <div class="flex flex-row justify-between">
                         {{ $header }}
                         @if ($headerActions)
