@@ -21,7 +21,7 @@ Badges may have a color. It may be either `primary`, `secondary`, `success`, `wa
 
 ```php
 use Filament\Tables\Columns\BadgeColumn;
- 
+
 BadgeColumn::make('status')
     ->colors([
         'primary',
@@ -40,9 +40,10 @@ use Filament\Tables\Columns\BadgeColumn;
 BadgeColumn::make('status')
     ->colors([
         'primary',
-        'danger' => static fn ($state): bool => $state === 'draft',
+        'secondary' => static fn ($state): bool => $state === 'draft',
         'warning' => static fn ($state): bool => $state === 'reviewing',
         'success' => static fn ($state): bool => $state === 'published',
+        'danger' => static fn ($state): bool => $state === 'rejected',
     ])
 ```
 
