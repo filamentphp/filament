@@ -17,7 +17,7 @@ BadgeColumn::make('status')
 
 ## Customizing the color
 
-Badges may have a color. It may be either `primary`, `success`, `warning` or `danger`:
+Badges may have a color. It may be either `primary`, `secondary`, `success`, `warning` or `danger`:
 
 ```php
 use Filament\Tables\Columns\BadgeColumn;
