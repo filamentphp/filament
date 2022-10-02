@@ -38,7 +38,7 @@ class DateTimePicker extends Field
 
     protected string | Closure | null $timezone = null;
 
-    protected array $disabledDates = [];
+    protected Closure | array $disabledDates = [];
 
 
     protected function setUp(): void
@@ -138,7 +138,7 @@ class DateTimePicker extends Field
         return $this;
     }
 
-    public function disabledDates(array $dates): static
+    public function disabledDates(Closure | array $dates): static
     {
         $this->disabledDates = $dates;
 
