@@ -38,6 +38,9 @@ class DateTimePicker extends Field
 
     protected string | Closure | null $timezone = null;
 
+    protected array $disabledDates = [];
+
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -134,6 +137,14 @@ class DateTimePicker extends Field
 
         return $this;
     }
+
+    public function disabledDates(array $dates): static
+    {
+        $this->disabledDates = $dates;
+
+        return $this;
+    }
+
 
     public function resetFirstDayOfWeek(): static
     {
@@ -260,6 +271,11 @@ class DateTimePicker extends Field
     public function getMinDate(): ?string
     {
         return $this->evaluate($this->minDate);
+    }
+
+    public function getDisabledDates(): ?array
+    {
+        return $this->evaluate($this->disabledDates);
     }
 
     public function getTimezone(): string

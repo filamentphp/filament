@@ -995,7 +995,7 @@ To disable specific dates:
 ```php
 use Filament\Forms\Components\DateTimePicker;
 
-DatePicker::make('date')
+DateTimePicker::make('date')
     ->label('Appointment date')
     ->minDate(now())
     ->maxDate(Carbon::now()->addDays(30))
