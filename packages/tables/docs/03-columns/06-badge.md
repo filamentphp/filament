@@ -21,13 +21,14 @@ Badges may have a color. It may be either `primary`, `secondary`, `success`, `wa
 
 ```php
 use Filament\Tables\Columns\BadgeColumn;
-
+ 
 BadgeColumn::make('status')
     ->colors([
         'primary',
-        'danger' => 'draft',
+        'secondary' => 'draft',
         'warning' => 'reviewing',
         'success' => 'published',
+        'danger' => 'rejected',
     ])
 ```
 
