@@ -26,7 +26,7 @@ trait HasColors
             foreach ($colors as $color => $condition) {
                 if (is_numeric($color)) {
                     $stateColor = $condition;
-                } elseif ($condition instanceof Closure && $condition($state, $record)) {
+                } elseif ($condition instanceof Closure && app()->call($condition,['state' => $state,'record'=>$record])) {
                     $stateColor = $color;
                 } elseif ($condition === $state) {
                     $stateColor = $color;
