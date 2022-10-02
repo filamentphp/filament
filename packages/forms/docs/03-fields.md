@@ -990,6 +990,18 @@ DateTimePicker::make('published_at')->weekStartsOnMonday()
 DateTimePicker::make('published_at')->weekStartsOnSunday()
 ```
 
+To disable specific dates:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DatePicker::make('date')
+    ->label('Appointment date')
+    ->minDate(now())
+    ->maxDate(Carbon::now()->addDays(30))
+    ->disabledDates(['2022-10-02', '2022-10-05', '2022-10-15'])
+```
+
 ### Timezones
 
 If you'd like users to be able to manage dates in their own timezone, you can use the `timezone()` method:

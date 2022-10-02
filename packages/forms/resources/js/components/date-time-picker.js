@@ -265,6 +265,12 @@ export default (Alpine) => {
                 },
 
                 dateIsDisabled: function (date) {
+                    const disabled = this.getDisabledDates().filter((d) => {
+                        return d.isSame(date, 'day')
+                    })
+                    if (disabled.length > 0) {
+                        return true
+                    }
                     if (this.getMaxDate() && date.isAfter(this.getMaxDate())) {
                         return true
                     }
@@ -355,6 +361,18 @@ export default (Alpine) => {
                     let date = dayjs(this.$refs.minDate?.value)
 
                     return date.isValid() ? date : null
+                },
+
+                getDisabledDates: function () {
+                    let dates = JSON.parse(
+                        this.$refs.disabledDates?.value ?? [],
+                    )
+                    let newDates = dates.map((d) => {
+                        let date = dayjs(d)
+                        return date.isValid() ? date : null
+                    })
+
+                    return newDates
                 },
 
                 getSelectedDate: function () {

@@ -24,6 +24,7 @@
     >
         <input x-ref="maxDate" type="hidden" value="{{ $getMaxDate() }}" />
         <input x-ref="minDate" type="hidden" value="{{ $getMinDate() }}" />
+        <input x-ref="disabledDates" type="hidden" value="{{ json_encode($getDisabledDates()) }}" />
 
         <button
             @unless($isDisabled())
