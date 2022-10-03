@@ -14,6 +14,8 @@
     <x-slot name="trigger" class="ml-4">
         <x-filament::user-avatar :user="$user" />
     </x-slot>
+    
+    {{ \Filament\Facades\Filament::renderHook('user-menu.account.before') }}
 
     <x-filament::dropdown.header
         :color="$accountItem?->getColor() ?? 'secondary'"
@@ -23,6 +25,8 @@
     >
         {{ $accountItem?->getLabel() ?? \Filament\Facades\Filament::getUserName($user) }}
     </x-filament::dropdown.header>
+    
+    {{ \Filament\Facades\Filament::renderHook('user-menu.account.after') }}
 
     <x-filament::dropdown.list
         x-data="{
