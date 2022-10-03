@@ -315,3 +315,5 @@ The available hooks are as follows:
 - `global-search.end` - after [global search](resources/global-search) input
 - `user-menu.start` - before [user menu](navigation#customizing-the-user-menu) input
 - `user-menu.end` - after [user menu](navigation#customizing-the-user-menu) input
+- `user-menu.account.before` - before the user account name, in the user menu
+- `user-menu.account.after` - after the user account name, in the user menu
