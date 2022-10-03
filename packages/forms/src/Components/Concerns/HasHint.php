@@ -8,11 +8,13 @@ use Illuminate\Support\HtmlString;
 
 trait HasHint
 {
-    protected string | HtmlString | Action | Closure | null $hint = null;
+    protected string | HtmlString | Closure | null $hint = null;
 
     protected string | Closure | null $hintIcon = null;
 
-    public function hint(string | HtmlString | Action | Closure | null $hint): static
+    protected Action | Closure | null $hintAction = null;
+
+    public function hint(string | HtmlString | Closure | null $hint): static
     {
         $this->hint = $hint;
 
@@ -26,11 +28,9 @@ trait HasHint
         return $this;
     }
 
-    public function getHint(): string | HtmlString | Action | null
+    public function getHint(): string | HtmlString | null
     {
-        $value = $this->evaluate($this->hint);
-
-        return $value instanceof Action ? $value->component($this) : $value;
+        return $this->evaluate($this->hint);
     }
 
     public function getHintIcon(): ?string
@@ -38,13 +38,18 @@ trait HasHint
         return $this->evaluate($this->hintIcon);
     }
 
+    public function getHintAction(): ?Action
+    {
+        return $this->evaluate($this->hintAction)?->component($this);
+    }
+
     public function getActions(): array
     {
-        $hint = $this->getHint();
+        $hintAction = $this->getHintAction();
 
         return array_merge(
             parent::getActions(),
-            $hint instanceof Action ? [$hint->getName() => $hint->component($this)] : [],
+            $hintAction ? [$hintAction->getName() => $hintAction->component($this)] : [],
         );
     }
 }
