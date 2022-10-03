@@ -74,6 +74,15 @@ trait CanSortRecords
         }
 
         if ($columnName === $this->getDefaultTableSortColumn()) {
+            if(\Str::contains($columnName, ',')) {
+                $columnNames = explode(',', $columnName);
+                foreach($columnNames as $columnName) {
+                    $direction = \Str::after($columnName, '-');
+                    $columnName = \Str::before($columnName, '-');
+                    $query->orderBy($columnName, $direction);
+                }
+                return $query;
+            }
             return $query->orderBy($columnName, $direction);
         }
 
