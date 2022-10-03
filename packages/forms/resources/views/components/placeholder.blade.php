@@ -6,6 +6,7 @@
     :helper-text="$getHelperText()"
     :hint="$getHint()"
     :hint-icon="$getHintIcon()"
+    :hint-action="$getHintAction()"
     :state-path="$getStatePath()"
 >
     <div {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-placeholder-component']) }}>

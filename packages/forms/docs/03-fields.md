@@ -1917,6 +1917,7 @@ Using [Livewire's entangle](https://laravel-livewire.com/docs/alpine-js#sharing-
     :helper-text="$getHelperText()"
     :hint="$getHint()"
     :hint-icon="$getHintIcon()"
+    :hint-action="$getHintAction()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
@@ -1936,6 +1937,7 @@ Or, you may bind the value to a Livewire property using [`wire:model`](https://l
     :helper-text="$getHelperText()"
     :hint="$getHint()"
     :hint-icon="$getHintIcon()"
+    :hint-action="$getHintAction()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
@@ -1978,6 +1980,7 @@ The `$getStatePath()` closure may be used by the view to retrieve the Livewire p
     :helper-text="$getHelperText()"
     :hint="$getHint()"
     :hint-icon="$getHintIcon()"
+    :hint-action="$getHintAction()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >

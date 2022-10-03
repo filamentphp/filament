@@ -28,6 +28,13 @@ trait HasHint
         return $this;
     }
 
+    public function hintAction(Action | Closure | null $action): static
+    {
+        $this->hintAction = $action;
+
+        return $this;
+    }
+
     public function getHint(): string | HtmlString | null
     {
         return $this->evaluate($this->hint);
