@@ -45,15 +45,20 @@ BadgeColumn::make('status')
     ])
 ```
 
-Or dynamically calculate the color based on the `$record` and / or `$state`:
+
+Or dynamically calculate the color based on the `$state` and / or `$record` as second parameter:
 
 ```php
 use Filament\Tables\Columns\BadgeColumn;
 
 BadgeColumn::make('status')
-    ->icon(static function ($state): string {
-        if ($state === 'published') {
+    ->icon(static function ($state,$record): string {
+        if ($record->status === 'published') {
             return 'success';
+        }
+
+        if ($state === 'reviewing') {
+            return 'warning';
         }
         
         return 'secondary';
