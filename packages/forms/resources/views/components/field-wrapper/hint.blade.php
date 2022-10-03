@@ -18,6 +18,6 @@
     @endif
 
     @if ($hintAction && ! $hintAction->isHidden())
-        <div class="filament-forms-field-wrapper-hint-action contents">{{ $hintAction }}</div>
+        <div class="filament-forms-field-wrapper-hint-action">{{ $hintAction }}</div>
     @endif
 </div>
