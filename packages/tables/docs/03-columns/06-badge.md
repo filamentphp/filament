@@ -45,7 +45,6 @@ BadgeColumn::make('status')
     ])
 ```
 
-
 Or dynamically calculate the color based on the `$state` and / or `$record` as second parameter:
 
 ```php
