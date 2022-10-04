@@ -10,6 +10,7 @@ use Filament\Pages\Actions\ForceDeleteAction;
 use Filament\Pages\Actions\ReplicateAction;
 use Filament\Pages\Actions\RestoreAction;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 /**
  * @property ComponentContainer $form
@@ -61,6 +62,14 @@ class ViewRecord extends Page
         $this->form->fill($data);
 
         $this->callHook('afterFill');
+    }
+
+    protected function refreshFormData(array $attributes): void
+    {
+        $this->data = array_merge(
+            $this->data,
+            $this->getRecord()->only($attributes),
+        );
     }
 
     protected function mutateFormDataBeforeFill(array $data): array
