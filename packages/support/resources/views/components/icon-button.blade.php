@@ -23,18 +23,22 @@
         'text-warning-500 focus:bg-warning-500/10' => $color === 'warning',
         'dark:hover:bg-gray-300/5' => $darkMode,
         'opacity-70 cursor-not-allowed pointer-events-none' => $disabled,
-        'w-10 h-10' => $size === 'md',
+        'w-6 h-6' => $size === 'xs',
         'w-8 h-8' => $size === 'sm',
         'w-8 h-8 md:w-10 md:h-10' => $size === 'sm md:md',
+        'w-10 h-10' => $size === 'md',
         'w-12 h-12' => $size === 'lg',
+        'w-14 h-14' => $size === 'xl',
     ];
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-icon-button-icon',
-        'w-5 h-5' => $size === 'md',
+        'w-3 h-3' => $size === 'xs',
         'w-4 h-4' => $size === 'sm',
         'w-4 h-4 md:w-5 md:h-5' => $size === 'sm md:md',
+        'w-5 h-5' => $size === 'md',
         'w-6 h-6' => $size === 'lg',
+        'w-7 h-7' => $size === 'xl',
     ]);
 
     $indicatorClasses = \Illuminate\Support\Arr::toCssClasses([

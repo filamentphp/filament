@@ -19,9 +19,11 @@
         'filament-button inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset',
         'dark:focus:ring-offset-0' => $darkMode,
         'opacity-70 cursor-not-allowed pointer-events-none' => $disabled,
-        'min-h-[2.25rem] px-4 text-sm' => $size === 'md',
+        'min-h-[1.75rem] px-2 text-sm' => $size === 'xs',
         'min-h-[2rem] px-3 text-sm' => $size === 'sm',
+        'min-h-[2.25rem] px-4 text-sm' => $size === 'md',
         'min-h-[2.75rem] px-6 text-lg' => $size === 'lg',
+        'min-h-[3.25rem] px-8 text-lg' => $size === 'xl',
     ], $outlined ? [
         'shadow focus:ring-white' => $color !== 'secondary',
         'text-primary-600 border-primary-600 hover:bg-primary-600/20 focus:bg-primary-700/20 focus:ring-offset-primary-700' => $color === 'primary',
@@ -49,15 +51,21 @@
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-button-icon',
+        'w-3 h-3' => $size === 'xs',
         'w-4 h-4' => $size === 'sm',
         'w-5 h-5' => $size === 'md',
         'w-6 h-6' => $size === 'lg',
+        'w-7 h-7' => $size === 'xl',
+        'mr-1 -ml-1 rtl:ml-1 rtl:-mr-1' => ($iconPosition === 'before') && ($size === 'xs') && (! $labelSrOnly),
+        'mr-1 -ml-1.5 rtl:ml-1 rtl:-mr-1.5' => ($iconPosition === 'before') && ($size === 'sm') && (! $labelSrOnly),
         'mr-1 -ml-2 rtl:ml-1 rtl:-mr-2' => ($iconPosition === 'before') && ($size === 'md') && (! $labelSrOnly),
         'mr-2 -ml-3 rtl:ml-2 rtl:-mr-3' => ($iconPosition === 'before') && ($size === 'lg') && (! $labelSrOnly),
-        'mr-1 -ml-1.5 rtl:ml-1 rtl:-mr-1.5' => ($iconPosition === 'before') && ($size === 'sm') && (! $labelSrOnly),
+        'mr-2 -ml-4 rtl:ml-2 rtl:-mr-4' => ($iconPosition === 'before') && ($size === 'xl') && (! $labelSrOnly),
+        'ml-1 -mr-1 rtl:mr-1 rtl:-ml-1' => ($iconPosition === 'after') && ($size === 'xs') && (! $labelSrOnly),
+        'ml-1 -mr-1.5 rtl:mr-1 rtl:-ml-1.5' => ($iconPosition === 'after') && ($size === 'sm') && (! $labelSrOnly),
         'ml-1 -mr-2 rtl:mr-1 rtl:-ml-2' => ($iconPosition === 'after') && ($size === 'md') && (! $labelSrOnly),
         'ml-2 -mr-3 rtl:mr-2 rtl:-ml-3' => ($iconPosition === 'after') && ($size === 'lg') && (! $labelSrOnly),
-        'ml-1 -mr-1.5 rtl:mr-1 rtl:-ml-1.5' => ($iconPosition === 'after') && ($size === 'sm') && (! $labelSrOnly),
+        'ml-2 -mr-4 rtl:mr-2 rtl:-ml-4' => ($iconPosition === 'after') && ($size === 'xl') && (! $labelSrOnly),
     ]);
 
     $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || (($type === 'submit') && filled($form));
