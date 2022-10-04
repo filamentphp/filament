@@ -395,9 +395,9 @@ In this example, `$action->getRecordSelect()` outputs the select field to pick t
 
 Please ensure that any pivot attributes are listed in the `withPivot()` method of the relationship *and* inverse relationship.
 
-### Scoping attachable models
+### Scoping available models
 
-You may want to apply a scope to the models available for attaching in a relation manager:
+You may want to apply a scope to the models available to `AttachAction` or `DetachAction`:
 
 ```php
 use Filament\Tables\Actions\AttachAction;
@@ -464,6 +464,18 @@ By default, as you search for a record to associate, options will load from the 
 use Filament\Tables\Actions\AssociateAction;
 
 AssociateAction::make()->preloadRecordSelect()
+```
+
+### Scoping available models
+
+You may want to apply a scope to the models available to `AssociateAction` or `DissociateAction`:
+
+```php
+use Filament\Tables\Actions\AssociateAction;
+use Illuminate\Database\Eloquent\Builder;
+
+AssociateAction::make()
+    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
 ```
 
 ## Viewing records
