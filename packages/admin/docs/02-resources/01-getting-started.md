@@ -573,8 +573,10 @@ Additionally, you may want to apply a scope to the models available for attachin
 
 ```php
 use Filament\Tables\Actions\AttachAction;
+use Illuminate\Database\Eloquent\Builder;
 
-AttachAction::make()->recordSelectOptionsQuery(fn ($query) => $query->whereBelongsTo(auth()->user())
+AttachAction::make()
+    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
 ```
 
 ### `stancl/tenancy`
