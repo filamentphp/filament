@@ -4,6 +4,14 @@ return [
 
     'columns' => [
 
+        'color' => [
+
+            'messages' => [
+                'copied' => 'Kimásolva',
+            ],
+
+        ],
+
         'tags' => [
             'more' => 'és további :count',
         ],
@@ -141,6 +149,29 @@ return [
 
             'deselect_all' => [
                 'label' => 'Kijelölés megszüntetése',
+            ],
+
+        ],
+
+    ],
+
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Rendezve',
+            ],
+
+            'direction' => [
+
+                'label' => 'Rendezési irány',
+
+                'options' => [
+                    'asc' => 'Növekvő',
+                    'desc' => 'Csökkenő',
+                ],
+
             ],
 
         ],
