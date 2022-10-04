@@ -10,6 +10,10 @@ return [
             'label' => 'Attiva modalità scura',
         ],
 
+        'database_notifications' => [
+            'label' => 'Apri notifiche',
+        ],
+
         'light_mode' => [
             'label' => 'Attiva modalità chiara',
         ],
