@@ -11,7 +11,7 @@ return [
             ],
 
         ],
-        
+
         'tags' => [
             'more' => 'e altri :count',
         ],
@@ -155,7 +155,7 @@ return [
         ],
 
     ],
-    
+
     'sorting' => [
 
         'fields' => [
@@ -176,7 +176,7 @@ return [
             ],
 
         ],
-    
+
     ],
 
 ];
