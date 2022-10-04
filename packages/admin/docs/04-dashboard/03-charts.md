@@ -152,3 +152,17 @@ You may place a maximum height on the chart to ensure that it doesn't get too bi
 ```php
 protected static ?string $maxHeight = '300px';
 ```
+
+## Setting chart configuration options
+
+You may specify an `$options` variable on the chart class to control the many configuration options that the Chart.js library provides. For instance, you could turn off the [legend](https://www.chartjs.org/docs/latest/configuration/legend.html) for `LineChartWidget` class:
+
+```php
+protected static ?array $options = [
+    'plugins' => [
+        'legend' => [
+            'display' => true,
+        ],
+    ],
+];
+```
