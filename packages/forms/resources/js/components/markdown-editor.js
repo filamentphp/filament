@@ -36,6 +36,8 @@ export default (Alpine) => {
                         this.$refs.textarea.scrollHeight + 'px'
                 }
 
+                this.state = this.state.replace('\r\n', '\n')
+
                 this.overlay = null
                 this.overlay = highlight(this.state)
 
@@ -43,7 +45,7 @@ export default (Alpine) => {
                 this.preview = DOMPurify.sanitize(marked(this.state))
             },
 
-            checkForAutoInsertion($event) {
+            checkForAutoInsertion: function () {
                 const lines = this.$refs.textarea.value.split('\n')
 
                 const currentLine = this.$refs.textarea.value

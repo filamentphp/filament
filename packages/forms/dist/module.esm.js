@@ -27773,12 +27773,13 @@ var markdown_editor_default = (Alpine) => {
           this.$refs.overlay.style.height = "150px";
           this.$refs.overlay.style.height = this.$refs.textarea.scrollHeight + "px";
         }
+        this.state = this.state.replace("\r\n", "\n");
         this.overlay = null;
         this.overlay = a(this.state);
         this.preview = null;
         this.preview = purify.sanitize(marked(this.state));
       },
-      checkForAutoInsertion($event) {
+      checkForAutoInsertion: function() {
         const lines = this.$refs.textarea.value.split("\n");
         const currentLine = this.$refs.textarea.value.substring(0, this.$refs.textarea.value.selectionStart).split("\n").length;
         const previousLine = lines[currentLine - 2];
