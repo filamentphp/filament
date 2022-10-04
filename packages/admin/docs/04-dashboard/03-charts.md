@@ -161,7 +161,7 @@ You may specify an `$options` variable on the chart class to control the many co
 protected static ?array $options = [
     'plugins' => [
         'legend' => [
-            'display' => true,
+            'display' => false,
         ],
     ],
 ];
