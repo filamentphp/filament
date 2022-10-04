@@ -10,6 +10,10 @@ return [
             'label' => 'Sötét mód bekapcsolása',
         ],
 
+        'database_notifications' => [
+            'label' => 'Értesítések',
+        ],
+
         'light_mode' => [
             'label' => 'Világos mód bekapcsolása',
         ],

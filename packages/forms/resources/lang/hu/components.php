@@ -8,12 +8,20 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'Másol',
+            ],
+
             'create_item' => [
                 'label' => 'Új :label',
             ],
 
             'delete_item' => [
                 'label' => 'Törlés',
+            ],
+
+            'move_item' => [
+                'label' => 'Mozgatás',
             ],
 
             'move_item_down' => [
@@ -101,6 +109,14 @@ return [
 
             'delete_item' => [
                 'label' => 'Törlés',
+            ],
+
+            'clone_item' => [
+                'label' => 'Másol',
+            ],
+
+            'move_item' => [
+                'label' => 'Mozgatás',
             ],
 
             'move_item_down' => [
@@ -199,6 +215,8 @@ return [
         ],
 
         'loading_message' => 'Kérlek várj...',
+
+        'max_items_message' => 'Csak :count elem választható ki.',
 
         'no_search_results_message' => 'Nincs találat',
 
