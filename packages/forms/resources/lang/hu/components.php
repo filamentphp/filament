@@ -9,7 +9,7 @@ return [
         'buttons' => [
 
             'clone_item' => [
-                'label' => 'Másol',
+                'label' => 'Másolás',
             ],
 
             'create_item' => [
@@ -112,7 +112,7 @@ return [
             ],
 
             'clone_item' => [
-                'label' => 'Másol',
+                'label' => 'Másolás',
             ],
 
             'move_item' => [
