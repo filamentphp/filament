@@ -293,7 +293,7 @@ Field::make('name')->nullable()
 
 ### Prohibited
 
-The field under validation must be an empty string or not present. [See the Laravel documentation](https://laravel.com/docs/9.x/validation#rule-prohibited)
+The field value must be empty. [See the Laravel documentation](https://laravel.com/docs/validation#rule-prohibited)
 
 ```php
 Field::make('name')->required()
