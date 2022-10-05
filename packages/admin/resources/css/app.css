@@ -50,7 +50,7 @@
     }
 
     .filament-sidebar-header::before {
-        @apply absolute inset-x-0 pointer-events-none mx-auto h-px w-full bg-gradient-to-r from-gray-200 via-primary-400 to-gray-200 dark:from-gray-700 dark:via-primary-400 dark:to-gray-700;
+        @apply pointer-events-none absolute inset-x-0 mx-auto h-px w-full bg-gradient-to-r from-gray-200 via-primary-400 to-gray-200 dark:from-gray-700 dark:via-primary-400 dark:to-gray-700;
         content: '';
         z-index: 1;
         bottom: -1px;
