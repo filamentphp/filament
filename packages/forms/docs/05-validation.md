@@ -447,7 +447,7 @@ TextInput::make('slug')->rules([
 ])
 ```
 
-## Sending validation notiications
+## Sending validation notifications
 
 If you want to send a notification when validation error occurs, you may do so by using the `onValidationError()` method on your Livewire component:
 
