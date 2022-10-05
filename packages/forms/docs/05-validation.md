@@ -425,6 +425,14 @@ TextInput::make('slug')->rules(['alpha_dash'])
 
 A full list of validation rules may be found in the [Laravel documentation](https://laravel.com/docs/validation#available-validation-rules).
 
+### Referencing other fields
+
+For certain rules, like `required_if` or `prohibited_if`, you may need to reference other fields. To do so, you must prefix the field name with `data.` like this:
+
+```php
+TextInput::make('state')->rules(['required_if:data.country,US'])
+```
+
 ## Custom rules
 
 You may use any custom validation rules as you would do in [Laravel](https://laravel.com/docs/validation#custom-validation-rules):
