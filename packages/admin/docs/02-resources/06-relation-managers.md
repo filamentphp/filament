@@ -397,7 +397,7 @@ Please ensure that any pivot attributes are listed in the `withPivot()` method o
 
 ### Scoping available models
 
-You may want to apply a scope to the models available to `AttachAction` or `DetachAction`:
+You may want to apply a database scope to the models available to `AttachAction`:
 
 ```php
 use Filament\Tables\Actions\AttachAction;
@@ -468,7 +468,7 @@ AssociateAction::make()->preloadRecordSelect()
 
 ### Scoping available models
 
-You may want to apply a scope to the models available to `AssociateAction` or `DissociateAction`:
+You may want to apply a database scope to the models available to `AssociateAction`:
 
 ```php
 use Filament\Tables\Actions\AssociateAction;

@@ -569,7 +569,7 @@ public function creating(Post $post): void
 }
 ```
 
-Additionally, you may want to apply a scope to the models available to the following relation manager Actions: `AttachAction`, `DetachAction`, `AssociateAction` or `DissociateAction`.
+Additionally, you may want to apply a database scope to the models available to the `AttachAction` or `AssociateAction` relation manager Actions.
 
 ```php
 use Filament\Tables\Actions\AttachAction;
