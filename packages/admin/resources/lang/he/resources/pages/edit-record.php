@@ -2,32 +2,32 @@
 
 return [
 
-    'title' => 'Edit :label',
+    'title' => 'ערוך :label',
 
-    'breadcrumb' => 'Edit',
+    'breadcrumb' => 'עריכה',
 
     'form' => [
 
         'actions' => [
 
             'cancel' => [
-                'label' => 'Cancel',
+                'label' => 'ביטול',
             ],
 
             'save' => [
-                'label' => 'Save changes',
+                'label' => 'שמור שינויים',
             ],
 
         ],
 
         'tab' => [
-            'label' => 'Edit',
+            'label' => 'עריכה',
         ],
 
     ],
 
     'messages' => [
-        'saved' => 'Saved',
+        'saved' => 'נשמר בהצלחה',
     ],
 
 ];
