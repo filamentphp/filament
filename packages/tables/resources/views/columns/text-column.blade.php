@@ -30,8 +30,14 @@
             default => null,
         },
         match ($getWeight()) {
+            'thin' => 'font-thin',
+            'extralight' => 'font-extralight',
+            'light' => 'font-light',
             'medium' => 'font-medium',
+            'semibold' => 'font-semibold',
             'bold' => 'font-bold',
+            'extrabold' => 'font-extrabold',
+            'black' => 'font-black'
             default => null,
         },
         'whitespace-normal' => $canWrap(),
