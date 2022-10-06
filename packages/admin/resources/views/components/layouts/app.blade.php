@@ -30,7 +30,7 @@
                 'flex lg:pl-[var(--sidebar-width)] rtl:lg:pr-[var(--sidebar-width)]' => ! config('filament.layout.sidebar.is_collapsible_on_desktop'),
             ])
         >
-            <x-filament::header :breadcrumbs="$breadcrumbs" />
+            <x-filament::topbar :breadcrumbs="$breadcrumbs" />
 
             <div @class([
                 'filament-main-content flex-1 w-full px-4 mx-auto md:px-6 lg:px-8',
