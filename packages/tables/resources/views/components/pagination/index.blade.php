@@ -27,7 +27,7 @@
             @endif
         </div>
 
-        @if(count($recordsPerPageSelectOptions) > 1)
+        @if (count($recordsPerPageSelectOptions) > 1)
             <x-tables::pagination.records-per-page-selector :options="$recordsPerPageSelectOptions" />
         @endif
 
@@ -74,7 +74,7 @@
         </div>
 
         <div class="flex items-center justify-center">
-            @if(count($recordsPerPageSelectOptions) > 1)
+            @if (count($recordsPerPageSelectOptions) > 1)
                 <x-tables::pagination.records-per-page-selector :options="$recordsPerPageSelectOptions" />
             @endif
         </div>
