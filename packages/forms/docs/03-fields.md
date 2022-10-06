@@ -255,30 +255,6 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('backgroundColor')->type('color')
 ```
 
-You may place text before and after the input using the `prefix()` and `suffix()` methods:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('domain')
-    ->url()
-    ->prefix('https://')
-    ->suffix('.com')
-```
-
-![](https://user-images.githubusercontent.com/41773797/147612784-5eb58d0f-5111-4db8-8f54-3b5c3e2cc80a.png)
-
-You may place a icon before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('domain')
-    ->url()
-    ->prefixIcon('heroicon-o-external-link')
-    ->suffixIcon('heroicon-o-external-link')
-```
-
 You may limit the length of the input by setting the `minLength()` and `maxLength()` methods. These methods add both frontend and backend validation:
 
 ```php
@@ -439,6 +415,57 @@ TextInput::make('manufacturer')
 ![](https://user-images.githubusercontent.com/41773797/147612844-f46e113f-82b3-4675-9097-4d64a4315082.png)
 
 Datalists provide autocomplete options to users when they use a text input. However, these are purely recommendations, and the user is still able to type any value into the input. If you're looking for strictly predefined options, check out [select fields](#select).
+
+### Affixes
+
+You may place text before and after the input using the `prefix()` and `suffix()` methods:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('domain')
+    ->url()
+    ->prefix('https://')
+    ->suffix('.com')
+```
+
+![](https://user-images.githubusercontent.com/41773797/147612784-5eb58d0f-5111-4db8-8f54-3b5c3e2cc80a.png)
+
+You may place a icon before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('domain')
+    ->url()
+    ->prefixIcon('heroicon-o-external-link')
+    ->suffixIcon('heroicon-o-external-link')
+```
+
+You may place an action before and after the input using the `->prefixAction()` and `->suffixAction()` methods:
+
+```php
+use Closure;
+use Filament\Forms\Components\Actions\Action;
+use Illuminate\Support\Str;
+
+TextInput::make('title')
+    ->prefixAction(
+        Action::make('view-details')
+            ->icon('heroicon-o-external-link')
+            ->url('/link-to-somewhere')
+    )
+    ->suffixAction(fn ($state, Closure $set) =>
+        Action::make('generate-slug')
+            ->icon('heroicon-o-terminal')
+            ->action(function () use ($state, $set) {
+                if (filled($state)) {
+                    $set('slug', Str::slug($state));
+                }
+            })
+    )
+
+```
 
 ## Select
 
