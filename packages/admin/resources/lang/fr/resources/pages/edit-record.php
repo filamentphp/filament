@@ -18,6 +18,10 @@ return [
                 'label' => 'Sauvegarder',
             ],
 
+        ],z
+
+        'tab' => [
+            'label' => 'Modifier',
         ],
 
     ],

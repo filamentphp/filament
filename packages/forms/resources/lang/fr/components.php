@@ -8,6 +8,10 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'Cloner',
+            ],
+
             'create_item' => [
                 'label' => 'Ajouter à :label',
             ],
@@ -18,6 +22,10 @@ return [
 
             'delete_item' => [
                 'label' => 'Supprimer',
+            ],
+
+            'move_item' => [
+                'label' => 'Déplacer',
             ],
 
             'move_item_down' => [
@@ -104,6 +112,10 @@ return [
 
             'delete_item' => [
                 'label' => 'Supprimer',
+            ],
+
+            'clone_item' => [
+                'label' => 'Cloner',
             ],
 
             'move_item_down' => [
@@ -193,7 +205,15 @@ return [
             ],
 
         ],
+
+        'boolean' => [
+            'true' => 'Oui',
+            'false' => 'Non',
+        ],
+
         'loading_message' => 'En chargement...',
+
+        'max_items_message' => 'Uniquement :count peuvent être sélectionnés.',
 
         'no_search_results_message' => 'Aucune option ne correspond à votre recherche.',
 

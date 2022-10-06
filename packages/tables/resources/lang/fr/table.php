@@ -4,6 +4,14 @@ return [
 
     'columns' => [
 
+        'color' => [
+
+            'messages' => [
+                'copied' => 'Copié',
+            ],
+
+        ],
+
         'tags' => [
             'more' => ':count de plus',
         ],
@@ -83,9 +91,17 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Supprimer le filtre',
+            ],
+
+            'remove_all' => [
+                'label' => 'Supprimer tous les filters',
+                'tooltip' => 'Supprimer all filters',
+            ],
+
             'reset' => [
-                'label' => 'Réinitialiser',
-                'tooltip' => 'Réinitialiser',
+                'label' => 'Réinitialiser les filtres',
             ],
 
         ],
