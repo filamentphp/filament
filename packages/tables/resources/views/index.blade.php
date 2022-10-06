@@ -439,10 +439,10 @@
                                             'h-full relative px-4 transition',
                                             'hover:bg-gray-50' => $recordUrl || $recordAction,
                                             'dark:hover:bg-gray-500/10' => ($recordUrl || $recordAction) && config('tables.dark_mode'),
-                                            'dark:border-gray-600 dark:bg-gray-700' => (! $contentGrid) && config('tables.dark_mode'),
+                                            'dark:border-gray-600' => (! $contentGrid) && config('tables.dark_mode'),
                                             'group' => $isReordering,
                                             'rounded-xl shadow-sm border border-gray-200' => $contentGrid,
-                                            'dark:border-gray-700' => $contentGrid && config('tables.dark_mode'),
+                                            'dark:border-gray-700 dark:bg-gray-700/40' => $contentGrid && config('tables.dark_mode'),
                                         ],
                                         $getRecordClasses($record),
                                     ))
