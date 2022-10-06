@@ -119,7 +119,7 @@ class ImageColumn extends Column
             return null;
         }
 
-        if ($this->getVisibility() === 'private' || $storage->getVisibility($state) === 'private') {
+        if ($this->getVisibility() === 'private') {
             try {
                 return $storage->temporaryUrl(
                     $state,
