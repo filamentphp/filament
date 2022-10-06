@@ -1,6 +1,7 @@
-<header @class([
+<header {{ $attributes->class([
+    'filament-main-topbar sticky top-0 z-10 flex h-16 w-full shrink-0 items-center border-b bg-white',
     'dark:bg-gray-800 dark:border-gray-700' => config('filament.dark_mode'),
-])>
+]) }}>
     <div @class([
         'flex items-center w-full px-2 sm:px-4 md:px-6 lg:px-8',
     ])>
