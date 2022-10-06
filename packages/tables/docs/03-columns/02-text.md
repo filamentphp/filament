@@ -188,22 +188,13 @@ TextColumn::make('title')
 
 ## Customizing the font weight
 
-Text columns have regular font weight by default.
+Text columns have regular font weight by default but you may change this to any of the the following options: `thin`, `extralight`, `light`, `medium`, `semibold`, `bold`, `extrabold` or `black`.
 
-You may make the font medium using `weight('medium')`:
+For instance, you may make the font bold using `weight('bold')`:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('email')
-    ->weight('medium')
-```
-
-Or you can make it bold using `weight('bold')`:
-
-```php
-use Filament\Tables\Columns\TextColumn;
-
-TextColumn::make('title')
     ->weight('bold')
 ```
