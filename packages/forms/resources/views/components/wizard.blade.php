@@ -83,12 +83,10 @@
     <ol
         {!! $getLabel() ? 'aria-label="' . $getLabel() . '"' : null !!}
         role="list"
-
-            @class([
+        @class([
             'border border-gray-300 shadow-sm bg-white rounded-xl overflow-hidden divide-y divide-gray-300 md:flex flex-wrap md:divide-y-0',
             'dark:bg-gray-800 dark:border-gray-700 dark:divide-gray-700' => config('forms.dark_mode'),
-            ])
-
+        ])
     >
         @foreach ($getChildComponentContainer()->getComponents() as $step)
             <li class="group relative overflow-hidden w-full md:w-1/2">
