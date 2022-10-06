@@ -291,6 +291,14 @@ The field value can be empty. This rule is applied by default if the `required` 
 Field::make('name')->nullable()
 ```
 
+### Prohibited
+
+The field value must be empty. [See the Laravel documentation](https://laravel.com/docs/validation#rule-prohibited)
+
+```php
+Field::make('name')->required()
+```
+
 ### Required
 
 The field value must not be empty. [See the Laravel documentation](https://laravel.com/docs/validation#rule-required)
@@ -447,7 +455,7 @@ TextInput::make('slug')->rules([
 ])
 ```
 
-## Sending validation notiications
+## Sending validation notifications
 
 If you want to send a notification when validation error occurs, you may do so by using the `onValidationError()` method on your Livewire component:
 
