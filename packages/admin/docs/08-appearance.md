@@ -113,23 +113,25 @@ module.exports = {
 
 You may specify your own colors, which will be used throughout the admin panel.
 
-If you use Vite to compile assets, in your `vite.config.js` file, register the `filament.css` theme file:
+_Compilation with tailwind/vite is standard in latest laravel (through laravel breeze), so you don't need to change much._
+
+If you use Vite to compile assets, in your `vite.config.js` file, register your `app.css` theme file:
 
 ```js
-import { defineConfig } from 'vite'
-import laravel from 'laravel-vite-plugin'
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
 
 export default defineConfig({
     plugins: [
         laravel({
             input: [
-                // ...
-                'resources/css/filament.css',
+                'resources/css/app.css', // [tl! focus]
+                'resources/js/app.js',
             ],
-            // ...
+            refresh: true,
         }),
     ],
-})
+});
 ```
 
 And add Tailwind to the `postcss.config.js` file:
@@ -148,12 +150,14 @@ Or if you're using Laravel Mix instead of Vite, in your `webpack.mix.js` file, r
 ```js
 const mix = require('laravel-mix')
 
-mix.postCss('resources/css/filament.css', 'public/css', [
+mix.postCss('resources/css/app.css', 'public/css', [
     require('tailwindcss'), // [tl! focus]
 ])
 ```
 
-In `/resources/css/filament.css`, import Filament's vendor CSS:
+In `/resources/css/app.css`, import Filament's vendor CSS:
+
+_it doesn't need to include tailwind utils, they're imported in filament css (@tailwind base, @tailwind components, @tailwind utilities)_
 
 ```css
 @import '../../vendor/filament/filament/resources/css/app.css';
@@ -166,15 +170,11 @@ use Filament\Facades\Filament;
 use Illuminate\Foundation\Vite;
 
 Filament::serving(function () {
-    // Using Vite
-    Filament::registerTheme(
-        app(Vite::class)('resources/css/filament.css'),
-    );
+    // if using Vite
+    Filament::registerTheme(app(Vite::class)('resources/css/app.css'));
 
-    // Using Laravel Mix
-    Filament::registerTheme(
-        mix('css/filament.css'),
-    );
+    // if using Laravel Mix
+    Filament::registerTheme(mix('css/app.css'));
 });
 ```
 
