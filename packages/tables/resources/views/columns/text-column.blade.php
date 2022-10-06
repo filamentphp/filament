@@ -37,7 +37,7 @@
             'semibold' => 'font-semibold',
             'bold' => 'font-bold',
             'extrabold' => 'font-extrabold',
-            'black' => 'font-black'
+            'black' => 'font-black',
             default => null,
         },
         'whitespace-normal' => $canWrap(),
