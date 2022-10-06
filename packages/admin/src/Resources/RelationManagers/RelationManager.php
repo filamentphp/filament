@@ -414,6 +414,11 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return $this->getResourceTable()->getFilters();
     }
 
+    protected function getTableFiltersLayout(): ?string
+    {
+        return $this->getResourceTable()->getFiltersLayout();
+    }
+
     protected function getTableHeaderActions(): array
     {
         return $this->getResourceTable()->getHeaderActions();
