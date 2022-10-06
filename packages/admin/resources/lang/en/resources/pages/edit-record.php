@@ -22,7 +22,7 @@ return [
 
         'tab' => [
             'label' => 'Edit',
-        ],zz
+        ],
 
     ],
 
