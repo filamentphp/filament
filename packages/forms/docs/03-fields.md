@@ -306,6 +306,46 @@ TextInput::make('password')
 
 For more complex autocomplete options, text inputs also support [datalists](#datalists).
 
+### Affixes
+
+You may place text before and after the input using the `prefix()` and `suffix()` methods:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('domain')
+    ->url()
+    ->prefix('https://')
+    ->suffix('.com')
+```
+
+![](https://user-images.githubusercontent.com/41773797/147612784-5eb58d0f-5111-4db8-8f54-3b5c3e2cc80a.png)
+
+You may place a icon before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('domain')
+    ->url()
+    ->prefixIcon('heroicon-s-external-link')
+    ->suffixIcon('heroicon-s-external-link')
+```
+
+You may render an action before and after the input using the `->prefixAction()` and `->suffixAction()` methods:
+
+```php
+use Closure;
+use Filament\Forms\Components\Actions\Action;
+
+TextInput::make('domain')
+    ->suffixAction(
+        Action::make('visit')
+            ->icon('heroicon-s-external-link')
+            ->url(fn ($state): string => "https://$state.com"),
+    )
+```
+
 ### Input masking
 
 Input masking is the practice of defining a format that the input value must conform to.
@@ -393,57 +433,6 @@ You can also control whether the number is signed or not. While the default is t
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask->money(prefix: '$', thousandsSeparator: ',', decimalPlaces: 2, isSigned: false))
-```
-
-### Affixes
-
-You may place text before and after the input using the `prefix()` and `suffix()` methods:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('domain')
-    ->url()
-    ->prefix('https://')
-    ->suffix('.com')
-```
-
-![](https://user-images.githubusercontent.com/41773797/147612784-5eb58d0f-5111-4db8-8f54-3b5c3e2cc80a.png)
-
-You may place a icon before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('domain')
-    ->url()
-    ->prefixIcon('heroicon-o-external-link')
-    ->suffixIcon('heroicon-o-external-link')
-```
-
-You may place an action before and after the input using the `->prefixAction()` and `->suffixAction()` methods:
-
-```php
-use Closure;
-use Filament\Forms\Components\Actions\Action;
-use Illuminate\Support\Str;
-
-TextInput::make('title')
-    ->prefixAction(
-        Action::make('view-details')
-            ->icon('heroicon-o-external-link')
-            ->url('/link-to-somewhere')
-    )
-    ->suffixAction(fn ($state, Closure $set) =>
-        Action::make('generate-slug')
-            ->icon('heroicon-o-terminal')
-            ->action(function () use ($state, $set) {
-                if (filled($state)) {
-                    $set('slug', Str::slug($state));
-                }
-            })
-    )
-
 ```
 
 ### Datalists
