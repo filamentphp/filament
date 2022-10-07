@@ -117,7 +117,7 @@ RichEditor::make('content')
     ->hintIcon('heroicon-s-translate')
 ```
 
-Hints may have a `color()`. The default is a light gray, but you may use `primary`, `secondary`, `success`, `warning`, or `danger`:
+Hints may have a `color()`. By default it's gray, but you may use `primary`, `success`, `warning`, or `danger`:
 
 ```php
 use Filament\Forms\Components\RichEditor;
