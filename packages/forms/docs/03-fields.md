@@ -335,7 +335,6 @@ TextInput::make('domain')
 You may render an action before and after the input using the `prefixAction()` and `suffixAction()` methods:
 
 ```php
-use Closure;
 use Filament\Forms\Components\Actions\Action;
 
 TextInput::make('domain')
