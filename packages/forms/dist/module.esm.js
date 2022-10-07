@@ -12229,6 +12229,40 @@ var RgbaStringColorPicker = class extends RgbaStringBase {
 };
 customElements.define("rgba-string-color-picker", RgbaStringColorPicker);
 
+// packages/forms/resources/js/components/color-picker.js
+var color_picker_default2 = (Alpine) => {
+  Alpine.data("colorPickerFormComponent", ({isAutofocused, isDisabled, state: state2}) => {
+    return {
+      state: state2,
+      init: function() {
+        if (!(this.state === null || this.state === "")) {
+          this.setState(this.state);
+        }
+        if (isAutofocused) {
+          this.togglePanelVisibility(this.$refs.input);
+        }
+        this.$refs.input.addEventListener("change", (event) => {
+          this.setState(event.target.value);
+        });
+        this.$refs.panel.addEventListener("color-changed", (event) => {
+          this.setState(event.detail.value);
+        });
+      },
+      togglePanelVisibility: function() {
+        if (isDisabled) {
+          return;
+        }
+        this.$refs.panel.toggle(this.$refs.input);
+      },
+      setState: function(value) {
+        this.state = value;
+        this.$refs.input.value = value;
+        this.$refs.panel.color = value;
+      }
+    };
+  });
+};
+
 // node_modules/dayjs/esm/constant.js
 var SECONDS_A_MINUTE = 60;
 var SECONDS_A_HOUR = SECONDS_A_MINUTE * 60;
@@ -12645,40 +12679,6 @@ dayjs.en = Ls[L];
 dayjs.Ls = Ls;
 dayjs.p = {};
 var esm_default = dayjs;
-
-// packages/forms/resources/js/components/color-picker.js
-var color_picker_default2 = (Alpine) => {
-  Alpine.data("colorPickerFormComponent", ({isAutofocused, isDisabled, state: state2}) => {
-    return {
-      state: state2,
-      init: function() {
-        if (!(this.state === null || this.state === "")) {
-          this.setState(this.state);
-        }
-        if (isAutofocused) {
-          this.togglePanelVisibility(this.$refs.input);
-        }
-        this.$refs.input.addEventListener("change", (event) => {
-          this.setState(event.target.value);
-        });
-        this.$refs.panel.addEventListener("color-changed", (event) => {
-          this.setState(event.detail.value);
-        });
-      },
-      togglePanelVisibility: function() {
-        if (isDisabled) {
-          return;
-        }
-        this.$refs.panel.toggle(this.$refs.input);
-      },
-      setState: function(value) {
-        this.state = value;
-        this.$refs.input.value = value;
-        this.$refs.panel.color = value;
-      }
-    };
-  });
-};
 
 // packages/forms/resources/js/components/date-time-picker.js
 var import_customParseFormat = __toModule(require_customParseFormat());
