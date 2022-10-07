@@ -4,7 +4,6 @@ import 'vanilla-colorful/rgb-string-color-picker'
 import 'vanilla-colorful/rgba-string-color-picker'
 
 import '../../css/components/color-picker.css'
-import dayjs from 'dayjs/esm'
 
 export default (Alpine) => {
     Alpine.data(
