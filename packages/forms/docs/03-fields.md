@@ -265,30 +265,6 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('backgroundColor')->type('color')
 ```
 
-You may place text before and after the input using the `prefix()` and `suffix()` methods:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('domain')
-    ->url()
-    ->prefix('https://')
-    ->suffix('.com')
-```
-
-![](https://user-images.githubusercontent.com/41773797/147612784-5eb58d0f-5111-4db8-8f54-3b5c3e2cc80a.png)
-
-You may place a icon before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('domain')
-    ->url()
-    ->prefixIcon('heroicon-o-external-link')
-    ->suffixIcon('heroicon-o-external-link')
-```
-
 You may limit the length of the input by setting the `minLength()` and `maxLength()` methods. These methods add both frontend and backend validation:
 
 ```php
@@ -339,6 +315,49 @@ TextInput::make('password')
 ```
 
 For more complex autocomplete options, text inputs also support [datalists](#datalists).
+
+### Affixes
+
+You may place text before and after the input using the `prefix()` and `suffix()` methods:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('domain')
+    ->url()
+    ->prefix('https://')
+    ->suffix('.com')
+```
+
+![](https://user-images.githubusercontent.com/41773797/147612784-5eb58d0f-5111-4db8-8f54-3b5c3e2cc80a.png)
+
+You may place a icon before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('domain')
+    ->url()
+    ->prefixIcon('heroicon-s-external-link')
+    ->suffixIcon('heroicon-s-external-link')
+```
+
+You may render an action before and after the input using the `prefixAction()` and `suffixAction()` methods:
+
+```php
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('domain')
+    ->suffixAction(
+        Action::make('visit')
+            ->icon('heroicon-s-external-link')
+            ->url(
+                fn (?string $state): ?string => filled($state) ? "https://{$state}" : null,
+                shouldOpenInNewTab: true,
+            ),
+    )
+```
 
 ### Input masking
 
