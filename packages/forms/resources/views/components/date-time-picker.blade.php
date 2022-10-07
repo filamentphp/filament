@@ -19,6 +19,7 @@
             shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
+        x-on:keydown.esc="isOpen() && $event.stopPropagation()"
         {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-date-time-picker-component relative']) }}
         {{ $getExtraAlpineAttributeBag() }}
     >
