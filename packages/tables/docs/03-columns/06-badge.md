@@ -53,7 +53,7 @@ Or dynamically calculate the color based on the `$record` and / or `$state`:
 use Filament\Tables\Columns\BadgeColumn;
 
 BadgeColumn::make('status')
-    ->icon(static function ($state): string {
+    ->color(static function ($state): string {
         if ($state === 'published') {
             return 'success';
         }
