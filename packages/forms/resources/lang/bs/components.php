@@ -61,7 +61,7 @@ return [
         'fields' => [
 
             'key' => [
-                'label' => 'Key',
+                'label' => 'Ključ',
             ],
 
             'value' => [
@@ -75,16 +75,16 @@ return [
     'markdown_editor' => [
 
         'toolbar_buttons' => [
-            'attach_files' => 'Attach files',
+            'attach_files' => 'Priložite fajlove',
             'bold' => 'Bold',
             'bullet_list' => 'Bullet list',
-            'code_block' => 'Code block',
-            'edit' => 'Edit',
-            'italic' => 'Italic',
+            'code_block' => 'Blok koda',
+            'edit' => 'Uredite',
+            'italic' => 'Kurziv',
             'link' => 'Link',
-            'ordered_list' => 'Numbered list',
-            'preview' => 'Preview',
-            'strike' => 'Strikethrough',
+            'ordered_list' => 'Numerisana lista',
+            'preview' => 'Prethodan pregled',
+            'strike' => 'Precrtano',
         ],
 
     ],
@@ -139,7 +139,7 @@ return [
 
                 'buttons' => [
                     'link' => 'Link',
-                    'unlink' => 'Unlink',
+                    'unlink' => 'Otkačite link',
                 ],
 
                 'label' => 'URL',
@@ -151,20 +151,20 @@ return [
         ],
 
         'toolbar_buttons' => [
-            'attach_files' => 'Attach files',
-            'blockquote' => 'Blockquote',
+            'attach_files' => 'Priložite fajlove',
+            'blockquote' => 'Blok citat',
             'bold' => 'Bold',
             'bullet_list' => 'Bullet list',
-            'code_block' => 'Code block',
-            'h1' => 'Title',
-            'h2' => 'Heading',
-            'h3' => 'Subheading',
-            'italic' => 'Italic',
+            'code_block' => 'Blok koda',
+            'h1' => 'Titula',
+            'h2' => 'Naslov',
+            'h3' => 'Podnaslov',
+            'italic' => 'Kurziv',
             'link' => 'Link',
-            'ordered_list' => 'Numbered list',
-            'redo' => 'Redo',
-            'strike' => 'Strikethrough',
-            'undo' => 'Undo',
+            'ordered_list' => 'Numerisana lista',
+            'redo' => 'Ponovo uradite',
+            'strike' => 'Precrtano',
+            'undo' => 'Poništite',
         ],
 
     ],
