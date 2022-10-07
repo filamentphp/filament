@@ -15,7 +15,7 @@ return [
         ],
 
         'logout' => [
-            'label' => 'Izlaz',
+            'label' => 'Odjava',
         ],
 
     ],

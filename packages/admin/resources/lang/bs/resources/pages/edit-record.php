@@ -2,16 +2,16 @@
 
 return [
 
-    'title' => 'Uredi :label',
+    'title' => 'Uredite :label',
 
-    'breadcrumb' => 'Uredi',
+    'breadcrumb' => 'Uredite',
 
     'form' => [
 
         'actions' => [
 
             'cancel' => [
-                'label' => 'Otkaži',
+                'label' => 'Prekinit',
             ],
 
             'save' => [
