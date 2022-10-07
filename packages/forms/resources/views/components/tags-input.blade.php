@@ -58,7 +58,7 @@
 
                     <datalist id="{{ $getId() }}-suggestions">
                         @foreach ($getSuggestions() as $suggestion)
-                            <template x-if="! state.includes('{{ $suggestion }}')" x-bind:key="'{{ $suggestion }}'">
+                            <template x-if="! state.includes(@js($suggestion))" x-bind:key="@js($suggestion)">
                                 <option value="{{ $suggestion }}" />
                             </template>
                         @endforeach
