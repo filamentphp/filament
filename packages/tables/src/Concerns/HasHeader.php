@@ -5,6 +5,7 @@ namespace Filament\Tables\Concerns;
 use Closure;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 
 trait HasHeader
@@ -69,12 +70,12 @@ trait HasHeader
         return null;
     }
 
-    protected function getTableDescription(): ?string
+    protected function getTableDescription(): string | Htmlable | null
     {
         return null;
     }
 
-    protected function getTableHeader(): ?View
+    protected function getTableHeader(): View | Htmlable | null
     {
         return null;
     }
@@ -84,7 +85,7 @@ trait HasHeader
         return [];
     }
 
-    protected function getTableHeading(): string | Closure | null
+    protected function getTableHeading(): string | Htmlable | null
     {
         return null;
     }

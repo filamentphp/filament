@@ -5,6 +5,7 @@ namespace Filament\Resources\RelationManagers;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Http\Livewire\Concerns\CanNotify;
+use Illuminate\Contracts\Support\Htmlable;
 use function Filament\locale_has_pluralization;
 use Filament\Resources\Form;
 use Filament\Resources\Table;
@@ -439,7 +440,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return $this->getResourceTable()->getPollingInterval();
     }
 
-    protected function getTableHeading(): ?string
+    protected function getTableHeading(): string | Htmlable | null
     {
         return static::getTitle();
     }
