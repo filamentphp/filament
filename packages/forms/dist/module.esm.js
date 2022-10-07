@@ -12858,6 +12858,15 @@ var date_time_picker_default = (Alpine) => {
         this.$nextTick(() => this.isClearingState = false);
       },
       dateIsDisabled: function(date) {
+        if (JSON.parse(this.$refs.disabledDates?.value ?? []).some((disabledDate) => {
+          disabledDate = esm_default(disabledDate);
+          if (!disabledDate.isValid()) {
+            return false;
+          }
+          return disabledDate.isSame(date, "day");
+        })) {
+          return true;
+        }
         if (this.getMaxDate() && date.isAfter(this.getMaxDate())) {
           return true;
         }
