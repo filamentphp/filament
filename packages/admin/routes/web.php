@@ -4,6 +4,7 @@ use Filament\Facades\Filament;
 use Filament\Http\Controllers\AssetController;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 Route::domain(config('filament.domain'))
     ->middleware(config('filament.middleware.base'))
@@ -12,11 +13,12 @@ Route::domain(config('filament.domain'))
         Route::prefix(config('filament.core_path'))->group(function () {
             Route::get('/assets/{file}', AssetController::class)->where('file', '.*')->name('asset');
 
-            Route::post('/logout', function (): LogoutResponse {
+            Route::post('/logout', function (Request $request): LogoutResponse {
                 Filament::auth()->logout();
 
-                session()->invalidate();
-                session()->regenerateToken();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
 
                 return app(LogoutResponse::class);
             })->name('auth.logout');
