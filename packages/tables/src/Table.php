@@ -227,7 +227,7 @@ class Table extends ViewComponent
         return invade($livewire)->getTableColumnToggleFormWidth();
     }
 
-    public function getHeader(): View | Htmlable | string | null
+    public function getHeader(): View | Htmlable | null
     {
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();
