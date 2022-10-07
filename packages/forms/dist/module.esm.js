@@ -12698,7 +12698,6 @@ var date_time_picker_default = (Alpine) => {
     displayFormat,
     firstDayOfWeek,
     isAutofocused,
-    isDisabled,
     locale,
     shouldCloseOnDateSelection,
     state: state2
@@ -12943,9 +12942,6 @@ var date_time_picker_default = (Alpine) => {
         return date;
       },
       togglePanelVisibility: function() {
-        if (isDisabled) {
-          return;
-        }
         if (!this.isOpen()) {
           this.focusedDate = this.getSelectedDate() ?? this.getMinDate() ?? esm_default().tz(timezone2);
           this.setupDaysGrid();
@@ -12996,7 +12992,7 @@ var date_time_picker_default = (Alpine) => {
         this.setDisplayText();
       },
       isOpen: function() {
-        return this.$refs.panel.style.display === "block";
+        return this.$refs.panel?.style.display === "block";
       }
     };
   });

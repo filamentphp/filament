@@ -18,7 +18,6 @@ export default (Alpine) => {
             displayFormat,
             firstDayOfWeek,
             isAutofocused,
-            isDisabled,
             locale,
             shouldCloseOnDateSelection,
             state,
@@ -392,10 +391,6 @@ export default (Alpine) => {
                 },
 
                 togglePanelVisibility: function () {
-                    if (isDisabled) {
-                        return
-                    }
-
                     if (!this.isOpen()) {
                         this.focusedDate =
                             this.getSelectedDate() ??
@@ -484,7 +479,7 @@ export default (Alpine) => {
                 },
 
                 isOpen: function () {
-                    return this.$refs.panel.style.display === 'block'
+                    return this.$refs.panel?.style.display === 'block'
                 },
             }
         },
