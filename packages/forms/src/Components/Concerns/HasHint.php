@@ -9,9 +9,11 @@ trait HasHint
 {
     protected string | HtmlString | Closure | null $hint = null;
 
-    protected bool | Closure $hintTooltip = false;
+    protected string | Closure | null $hintColor = null;
 
     protected string | Closure | null $hintIcon = null;
+
+    protected bool | Closure $hintTooltip = false;
 
     public function hint(string | HtmlString | Closure | null $hint): static
     {
@@ -19,10 +21,10 @@ trait HasHint
 
         return $this;
     }
-
-    public function hintTooltip(bool | Closure $hintTooltip): static
+    
+    public function hintColor(string | Closure | null $hintColor): static
     {
-        $this->hintTooltip = $hintTooltip;
+        $this->hintColor = $hintColor;
 
         return $this;
     }
@@ -33,19 +35,31 @@ trait HasHint
 
         return $this;
     }
+    
+    public function hintTooltip(bool | Closure $hintTooltip): static
+    {
+        $this->hintTooltip = $hintTooltip;
+        
+        return $this;
+    }
 
     public function getHint(): string | HtmlString | null
     {
         return $this->evaluate($this->hint);
     }
-
-    public function getHintTooltip(): bool
+    
+    public function getHintColor(): ?string
     {
-        return $this->evaluate($this->hintTooltip);
+        return $this->evaluate($this->hintColor);
     }
 
     public function getHintIcon(): ?string
     {
         return $this->evaluate($this->hintIcon);
+    }
+    
+    public function getHintTooltip(): bool
+    {
+        return $this->evaluate($this->hintTooltip);
     }
 }

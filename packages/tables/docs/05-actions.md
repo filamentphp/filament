@@ -130,6 +130,17 @@ BulkAction::make('delete')
     ->color('danger')
 ```
 
+## Setting a size
+
+The default size for table actions is `sm` but you may also change it to either `md` or `lg`:
+
+```php
+use Filament\Tables\Actions\Action;
+
+Action::make('delete')
+    ->size('lg')
+```
+
 ## Setting an icon
 
 Bulk actions and some single actions may also render a Blade icon component to indicate their purpose:

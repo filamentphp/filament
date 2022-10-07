@@ -39,7 +39,7 @@
 
     @if (! $layoutComponent->isHidden())
         <div @class([
-            'flex-1 w-full' => $isColumn ? $layoutComponent->canGrow() : true,
+            'flex-1 w-full' => $layoutComponent->canGrow(),
             $getHiddenClasses($layoutComponent),
         ])>
             @if ($isColumn)

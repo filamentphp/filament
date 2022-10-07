@@ -22,6 +22,7 @@
 
             this.step = this.getSteps()[nextStepIndex]
 
+            this.autofocusFields()
             this.scrollToTop()
         },
 
@@ -34,11 +35,16 @@
 
             this.step = this.getSteps()[previousStepIndex]
 
+            this.autofocusFields()
             this.scrollToTop()
         },
 
         scrollToTop: function () {
             this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        },
+
+        autofocusFields: function () {
+            $nextTick(() => this.$refs[`step-${this.step}`].querySelector('[autofocus]')?.focus())
         },
 
         getStepIndex: function (step) {

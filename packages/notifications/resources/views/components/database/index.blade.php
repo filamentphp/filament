@@ -1,4 +1,5 @@
 @php
+    $notifications = $this->getDatabaseNotifications();
     $unreadNotificationsCount = $this->getUnreadDatabaseNotificationsCount();
 @endphp
 
@@ -15,7 +16,7 @@
     @endif
 
     <x-notifications::database.modal
-        :notifications="$this->getDatabaseNotifications()"
+        :notifications="$notifications"
         :unread-notifications-count="$unreadNotificationsCount"
     />
 </div>

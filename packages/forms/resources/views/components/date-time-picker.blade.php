@@ -5,6 +5,7 @@
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
@@ -19,6 +20,7 @@
             shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
+        x-on:keydown.esc="isOpen() && $event.stopPropagation()"
         {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-date-time-picker-component relative']) }}
         {{ $getExtraAlpineAttributeBag() }}
     >

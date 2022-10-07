@@ -117,6 +117,16 @@ RichEditor::make('content')
     ->hintIcon('heroicon-s-translate')
 ```
 
+Hints may have a `color()`. By default it's gray, but you may use `primary`, `success`, `warning`, or `danger`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->hint('Translatable')
+    ->hintColor('primary')
+```
+
 ### Custom attributes
 
 The HTML attributes of the field's wrapper can be customized by passing an array of `extraAttributes()`:
@@ -1866,6 +1876,7 @@ Using [Livewire's entangle](https://laravel-livewire.com/docs/alpine-js#sharing-
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
@@ -1885,6 +1896,7 @@ Or, you may bind the value to a Livewire property using [`wire:model`](https://l
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
@@ -1927,6 +1939,7 @@ The `$getStatePath()` closure may be used by the view to retrieve the Livewire p
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
