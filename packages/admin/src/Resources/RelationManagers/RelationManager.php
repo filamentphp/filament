@@ -595,4 +595,19 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
             return null;
         };
     }
+
+    public function reorderTable(array $order): void
+    {
+        if (! $this->isTableReorderable()) {
+            return;
+        }
+
+        $orderColumn = $this->getTableReorderColumn();
+
+        foreach ($order as $index => $recordKey) {
+            $this->getOwnerRecord()->{static::$relationship}()->updateExistingPivot($recordKey, [
+                $orderColumn => $index + 1,
+            ]);
+        }
+    }
 }
