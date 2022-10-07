@@ -70,7 +70,7 @@ trait HasHeader
         return null;
     }
 
-    protected function getTableDescription(): ?string
+    protected function getTableDescription(): string | Htmlable | null
     {
         return null;
     }
@@ -85,7 +85,7 @@ trait HasHeader
         return [];
     }
 
-    protected function getTableHeading(): string | Closure | null
+    protected function getTableHeading(): string | Htmlable | null
     {
         return null;
     }

@@ -140,7 +140,7 @@ class Table extends ViewComponent
         return invade($livewire)->getTableContentFooter();
     }
 
-    public function getDescription(): ?string
+    public function getDescription(): string | Htmlable | null
     {
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();
@@ -243,7 +243,7 @@ class Table extends ViewComponent
         );
     }
 
-    public function getHeading(): ?string
+    public function getHeading(): string | Htmlable | null
     {
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();

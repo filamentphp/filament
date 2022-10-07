@@ -166,18 +166,7 @@
             {!! ! $renderHeader ? 'x-cloak' : null !!}
         >
             @if ($header)
-                @if (gettype($header) == 'object' && $header instanceof \Illuminate\Support\HtmlString)
-                    <div class="flex flex-row justify-between">
-                        {{ $header }}
-                        @if ($headerActions)
-                            <div class="pr-6 flex flex-col justify-center">
-                                <x-tables::actions :actions="$headerActions" alignment="right" wrap class="shrink-0" />
-                            </div>
-                        @endif
-                    </div>
-                @else
-                    {{ $header }}
-                @endif
+                {{ $header }}
             @elseif ($heading || $headerActions)
                 <div @class([
                     'px-2 pt-2',
