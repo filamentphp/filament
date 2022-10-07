@@ -21,7 +21,7 @@
     @endif
 
     <div class="space-y-2">
-        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hint)
+        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hint || $hintIcon || $hintAction)
             <div class="flex items-center justify-between space-x-2 rtl:space-x-reverse">
                 @if ($label && (! $labelSrOnly))
                     <x-forms::field-wrapper.label
@@ -38,7 +38,7 @@
                 @elseif ($labelSuffix)
                     {{ $labelSuffix }}
                 @endif
-                
+
                 @if ($hint || $hintIcon || $hintAction)
                     <x-forms::field-wrapper.hint :action="$hintAction" :color="$hintColor" :icon="$hintIcon">
                         {{ filled($hint) ? ($hint instanceof \Illuminate\Support\HtmlString ? $hint : \Illuminate\Support\Str::of($hint)->markdown()->sanitizeHtml()->toHtmlString()) : null }}

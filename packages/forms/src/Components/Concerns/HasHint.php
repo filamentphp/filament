@@ -10,11 +10,11 @@ trait HasHint
 {
     protected string | HtmlString | Closure | null $hint = null;
 
+    protected Action | Closure | null $hintAction = null;
+
     protected string | Closure | null $hintColor = null;
 
     protected string | Closure | null $hintIcon = null;
-
-    protected Action | Closure | null $hintAction = null;
 
     public function hint(string | HtmlString | Closure | null $hint): static
     {
