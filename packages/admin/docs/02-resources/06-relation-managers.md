@@ -395,6 +395,18 @@ In this example, `$action->getRecordSelect()` outputs the select field to pick t
 
 Please ensure that any pivot attributes are listed in the `withPivot()` method of the relationship *and* inverse relationship.
 
+### Scoping the options
+
+You may want to scope the options available to `AttachAction`:
+
+```php
+use Filament\Tables\Actions\AttachAction;
+use Illuminate\Database\Eloquent\Builder;
+
+AttachAction::make()
+    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+```
+
 ### Handling duplicates
 
 By default, you will not be allowed to attach a record more than once. This is because you must also set up a primary `id` column on the pivot table for this feature to work.
@@ -452,6 +464,18 @@ By default, as you search for a record to associate, options will load from the 
 use Filament\Tables\Actions\AssociateAction;
 
 AssociateAction::make()->preloadRecordSelect()
+```
+
+### Scoping the options
+
+You may want to scope the options available to `AssociateAction`:
+
+```php
+use Filament\Tables\Actions\AssociateAction;
+use Illuminate\Database\Eloquent\Builder;
+
+AssociateAction::make()
+    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
 ```
 
 ## Viewing records
