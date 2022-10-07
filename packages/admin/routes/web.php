@@ -19,7 +19,6 @@ Route::domain(config('filament.domain'))
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
 
-
                 return app(LogoutResponse::class);
             })->name('auth.logout');
         });
