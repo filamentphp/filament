@@ -569,7 +569,7 @@ public function creating(Post $post): void
 }
 ```
 
-Additionally, you may want to apply a database scope to the options available in the [relation manager](relation-managers) `AttachAction` or `AssociateAction`:
+Additionally, you may want to scope the options available in the [relation manager](relation-managers) `AttachAction` or `AssociateAction`:
 
 ```php
 use Filament\Tables\Actions\AttachAction;
