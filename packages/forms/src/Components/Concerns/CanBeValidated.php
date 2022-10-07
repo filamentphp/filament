@@ -291,6 +291,13 @@ trait CanBeValidated
         return $this;
     }
 
+    public function prohibited(bool | Closure $condition = true): static
+    {
+        $this->rule('prohibited', $condition);
+
+        return $this;
+    }
+
     public function required(bool | Closure $condition = true): static
     {
         $this->isRequired = $condition;

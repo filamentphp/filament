@@ -8,10 +8,14 @@
     $logoutItem = $items['logout'] ?? null;
 @endphp
 
+{{ \Filament\Facades\Filament::renderHook('user-menu.start') }}
+
 <x-filament::dropdown placement="bottom-end">
     <x-slot name="trigger" class="ml-4">
         <x-filament::user-avatar :user="$user" />
     </x-slot>
+    
+    {{ \Filament\Facades\Filament::renderHook('user-menu.account.before') }}
 
     <x-filament::dropdown.header
         :color="$accountItem?->getColor() ?? 'secondary'"
@@ -21,6 +25,8 @@
     >
         {{ $accountItem?->getLabel() ?? \Filament\Facades\Filament::getUserName($user) }}
     </x-filament::dropdown.header>
+    
+    {{ \Filament\Facades\Filament::renderHook('user-menu.account.after') }}
 
     <x-filament::dropdown.list
         x-data="{
@@ -102,3 +108,5 @@
         </x-filament::dropdown.list.item>
     </x-filament::dropdown.list>
 </x-filament::dropdown>
+
+{{ \Filament\Facades\Filament::renderHook('user-menu.end') }}

@@ -5,6 +5,7 @@
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :hint-action="$getHintAction()"
     :required="$isRequired()"
@@ -20,11 +21,13 @@
             shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
+        x-on:keydown.esc="isOpen() && $event.stopPropagation()"
         {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-date-time-picker-component relative']) }}
         {{ $getExtraAlpineAttributeBag() }}
     >
         <input x-ref="maxDate" type="hidden" value="{{ $getMaxDate() }}" />
         <input x-ref="minDate" type="hidden" value="{{ $getMinDate() }}" />
+        <input x-ref="disabledDates" type="hidden" value="{{ json_encode($getDisabledDates()) }}" />
 
         <button
             @unless($isDisabled())

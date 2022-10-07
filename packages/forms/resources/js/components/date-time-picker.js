@@ -257,10 +257,30 @@ export default (Alpine) => {
 
                     this.setState(null)
 
+                    this.hour = 0
+                    this.minute = 0
+                    this.second = 0
+
                     this.$nextTick(() => (this.isClearingState = false))
                 },
 
                 dateIsDisabled: function (date) {
+                    if (
+                        JSON.parse(this.$refs.disabledDates?.value ?? []).some(
+                            (disabledDate) => {
+                                disabledDate = dayjs(disabledDate)
+
+                                if (!disabledDate.isValid()) {
+                                    return false
+                                }
+
+                                return disabledDate.isSame(date, 'day')
+                            },
+                        )
+                    ) {
+                        return true
+                    }
+
                     if (this.getMaxDate() && date.isAfter(this.getMaxDate())) {
                         return true
                     }

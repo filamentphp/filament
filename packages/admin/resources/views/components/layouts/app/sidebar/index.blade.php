@@ -14,7 +14,7 @@
     ])
 >
     <header @class([
-        'filament-sidebar-header border-b h-[4rem] shrink-0 flex items-center justify-center',
+        'filament-sidebar-header border-b h-[4rem] shrink-0 flex items-center justify-center relative',
         'dark:border-gray-700' => config('filament.dark_mode'),
     ])>
         <div
@@ -69,7 +69,7 @@
         @endif
     </header>
 
-    <nav class="flex-1 py-6 overflow-y-auto filament-sidebar-nav">
+    <nav class="flex-1 py-6 overflow-x-hidden overflow-y-auto filament-sidebar-nav">
         <x-filament::layouts.app.sidebar.start />
         {{ \Filament\Facades\Filament::renderHook('sidebar.start') }}
 

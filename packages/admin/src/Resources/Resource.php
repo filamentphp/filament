@@ -57,6 +57,8 @@ class Resource
 
     protected static string | array $middlewares = [];
 
+    protected static int $globalSearchResultsLimit = 50;
+
     public static function form(Form $form): Form
     {
         return $form;
@@ -227,6 +229,11 @@ class Resource
         return null;
     }
 
+    public static function getGlobalSearchResultsLimit(): int
+    {
+        return static::$globalSearchResultsLimit;
+    }
+
     public static function getGlobalSearchResults(string $searchQuery): Collection
     {
         $query = static::getGlobalSearchEloquentQuery();
@@ -242,7 +249,7 @@ class Resource
         }
 
         return $query
-            ->limit(50)
+            ->limit(static::getGlobalSearchResultsLimit())
             ->get()
             ->map(function (Model $record): ?GlobalSearchResult {
                 $url = static::getGlobalSearchResultUrl($record);

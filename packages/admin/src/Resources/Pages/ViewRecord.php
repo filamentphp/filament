@@ -63,6 +63,14 @@ class ViewRecord extends Page
         $this->callHook('afterFill');
     }
 
+    protected function refreshFormData(array $attributes): void
+    {
+        $this->data = array_merge(
+            $this->data,
+            $this->getRecord()->only($attributes),
+        );
+    }
+
     protected function mutateFormDataBeforeFill(array $data): array
     {
         return $data;

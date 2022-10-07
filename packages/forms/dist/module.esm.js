@@ -12229,6 +12229,43 @@ var RgbaStringColorPicker = class extends RgbaStringBase {
 };
 customElements.define("rgba-string-color-picker", RgbaStringColorPicker);
 
+// packages/forms/resources/js/components/color-picker.js
+var color_picker_default2 = (Alpine) => {
+  Alpine.data("colorPickerFormComponent", ({isAutofocused, isDisabled, state: state2}) => {
+    return {
+      state: state2,
+      init: function() {
+        if (!(this.state === null || this.state === "")) {
+          this.setState(this.state);
+        }
+        if (isAutofocused) {
+          this.togglePanelVisibility(this.$refs.input);
+        }
+        this.$refs.input.addEventListener("change", (event) => {
+          this.setState(event.target.value);
+        });
+        this.$refs.panel.addEventListener("color-changed", (event) => {
+          this.setState(event.detail.value);
+        });
+      },
+      togglePanelVisibility: function() {
+        if (isDisabled) {
+          return;
+        }
+        this.$refs.panel.toggle(this.$refs.input);
+      },
+      setState: function(value) {
+        this.state = value;
+        this.$refs.input.value = value;
+        this.$refs.panel.color = value;
+      },
+      isOpen: function() {
+        return this.$refs.panel.style.display === "block";
+      }
+    };
+  });
+};
+
 // node_modules/dayjs/esm/constant.js
 var SECONDS_A_MINUTE = 60;
 var SECONDS_A_HOUR = SECONDS_A_MINUTE * 60;
@@ -12646,40 +12683,6 @@ dayjs.Ls = Ls;
 dayjs.p = {};
 var esm_default = dayjs;
 
-// packages/forms/resources/js/components/color-picker.js
-var color_picker_default2 = (Alpine) => {
-  Alpine.data("colorPickerFormComponent", ({isAutofocused, isDisabled, state: state2}) => {
-    return {
-      state: state2,
-      init: function() {
-        if (!(this.state === null || this.state === "")) {
-          this.setState(this.state);
-        }
-        if (isAutofocused) {
-          this.togglePanelVisibility(this.$refs.input);
-        }
-        this.$refs.input.addEventListener("change", (event) => {
-          this.setState(event.target.value);
-        });
-        this.$refs.panel.addEventListener("color-changed", (event) => {
-          this.setState(event.detail.value);
-        });
-      },
-      togglePanelVisibility: function() {
-        if (isDisabled) {
-          return;
-        }
-        this.$refs.panel.toggle(this.$refs.input);
-      },
-      setState: function(value) {
-        this.state = value;
-        this.$refs.input.value = value;
-        this.$refs.panel.color = value;
-      }
-    };
-  });
-};
-
 // packages/forms/resources/js/components/date-time-picker.js
 var import_customParseFormat = __toModule(require_customParseFormat());
 var import_localeData = __toModule(require_localeData());
@@ -12852,9 +12855,21 @@ var date_time_picker_default = (Alpine) => {
       clearState: function() {
         this.isClearingState = true;
         this.setState(null);
+        this.hour = 0;
+        this.minute = 0;
+        this.second = 0;
         this.$nextTick(() => this.isClearingState = false);
       },
       dateIsDisabled: function(date) {
+        if (JSON.parse(this.$refs.disabledDates?.value ?? []).some((disabledDate) => {
+          disabledDate = esm_default(disabledDate);
+          if (!disabledDate.isValid()) {
+            return false;
+          }
+          return disabledDate.isSame(date, "day");
+        })) {
+          return true;
+        }
         if (this.getMaxDate() && date.isAfter(this.getMaxDate())) {
           return true;
         }
@@ -27770,12 +27785,13 @@ var markdown_editor_default = (Alpine) => {
           this.$refs.overlay.style.height = "150px";
           this.$refs.overlay.style.height = this.$refs.textarea.scrollHeight + "px";
         }
+        this.state = this.state.replace("\r\n", "\n");
         this.overlay = null;
         this.overlay = a(this.state);
         this.preview = null;
         this.preview = purify.sanitize(marked(this.state));
       },
-      checkForAutoInsertion($event) {
+      checkForAutoInsertion: function() {
         const lines = this.$refs.textarea.value.split("\n");
         const currentLine = this.$refs.textarea.value.substring(0, this.$refs.textarea.value.selectionStart).split("\n").length;
         const previousLine = lines[currentLine - 2];
@@ -27875,6 +27891,7 @@ var select_default = (Alpine) => {
     options: options2,
     optionsLimit,
     placeholder,
+    searchDebounce,
     searchingMessage,
     searchPrompt,
     state: state2
@@ -27955,7 +27972,7 @@ var select_default = (Alpine) => {
               search: event.detail.value?.trim()
             });
             this.isSearching = false;
-          }, 1e3));
+          }, searchDebounce));
         }
         this.$watch("state", async () => {
           this.refreshPlaceholder();
@@ -27986,18 +28003,10 @@ var select_default = (Alpine) => {
         if (withInitialOptions) {
           return options2;
         }
-        let results = [];
         if (search !== "" && search !== null && search !== void 0) {
-          results = await getSearchResultsUsing(search);
-        } else {
-          results = await getOptionsUsing();
+          return await getSearchResultsUsing(search);
         }
-        const selectOption = (option3) => {
-          option3.selected = true;
-          return option3;
-        };
-        this.select.clearStore();
-        return isMultiple ? results.map((option3) => this.state.includes(option3.value) ? selectOption(option3) : option3) : results.map((option3) => this.state === option3.value ? selectOption(option3) : option3);
+        return await getOptionsUsing();
       },
       refreshPlaceholder: function() {
         if (isMultiple) {

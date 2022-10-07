@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Exception;
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Arrayable;
@@ -58,6 +59,8 @@ class Select extends Field
     protected string | Closure | null $maxItemsMessage = null;
 
     protected string | Htmlable | Closure | null $noSearchResultsMessage = null;
+
+    protected int | Closure $searchDebounce = 1000;
 
     protected string | Closure | null $searchingMessage = null;
 
@@ -217,13 +220,14 @@ class Select extends Field
         $action = Action::make($this->getCreateOptionActionName())
             ->component($this)
             ->form($actionFormSchema)
-            ->action(static function (Select $component, $data) {
+            ->action(static function (Select $component, array $data, ComponentContainer $form) {
                 if (! $component->getCreateOptionUsing()) {
                     throw new Exception("Select field [{$component->getStatePath()}] must have a [createOptionUsing()] closure set.");
                 }
 
                 $createdOptionKey = $component->evaluate($component->getCreateOptionUsing(), [
                     'data' => $data,
+                    'form' => $form,
                 ]);
 
                 $state = $component->isMultiple() ?
@@ -315,6 +319,13 @@ class Select extends Field
         return $this;
     }
 
+    public function searchDebounce(int | Closure $debounce): static
+    {
+        $this->searchDebounce = $debounce;
+
+        return $this;
+    }
+
     public function searchingMessage(string | Closure | null $message): static
     {
         $this->searchingMessage = $message;
@@ -374,6 +385,11 @@ class Select extends Field
     public function getMaxItemsMessage(): string
     {
         return $this->evaluate($this->maxItemsMessage);
+    }
+
+    public function getSearchDebounce(): int
+    {
+        return $this->evaluate($this->searchDebounce);
     }
 
     public function getSearchingMessage(): string
@@ -660,10 +676,12 @@ class Select extends Field
             $record->save();
         });
 
-        $this->createOptionUsing(static function (Select $component, array $data) {
+        $this->createOptionUsing(static function (Select $component, array $data, ComponentContainer $form) {
             $record = $component->getRelationship()->getRelated();
             $record->fill($data);
             $record->save();
+
+            $form->model($record)->saveRelationships();
 
             return $record->getKey();
         });

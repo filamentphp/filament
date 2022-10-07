@@ -4,7 +4,6 @@ import 'vanilla-colorful/rgb-string-color-picker'
 import 'vanilla-colorful/rgba-string-color-picker'
 
 import '../../css/components/color-picker.css'
-import dayjs from 'dayjs/esm'
 
 export default (Alpine) => {
     Alpine.data(
@@ -47,6 +46,10 @@ export default (Alpine) => {
 
                     this.$refs.input.value = value
                     this.$refs.panel.color = value
+                },
+
+                isOpen: function () {
+                    return this.$refs.panel.style.display === 'block'
                 },
             }
         },

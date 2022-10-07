@@ -302,16 +302,17 @@ For more information on relation managers, see the [full documentation](relation
 
 #### Multi-select field
 
-Filament can automatically load `MultiSelect` options from a `BelongsToMany` relationship:
+Filament can automatically load `Select` options from a `BelongsToMany` relationship:
 
 ```php
-use Filament\Forms\Components\MultiSelect;
+use Filament\Forms\Components\Select;
 
-MultiSelect::make('technologies')
+Select::make('technologies')
+    ->multiple()
     ->relationship('technologies', 'name')
 ```
 
-More information about `BelongsToManyMultiSelect` is available in the [Form docs](../../forms/fields#populating-automatically-from-a-belongstomany-relationship).
+More information is available in the [Form docs](../../forms/fields#populating-automatically-from-a-belongstomany-relationship).
 
 #### Checkbox list field
 
@@ -566,6 +567,16 @@ public function creating(Post $post): void
 {
     $post->user()->associate(auth()->user());
 }
+```
+
+Additionally, you may want to scope the options available in the [relation manager](relation-managers) `AttachAction` or `AssociateAction`:
+
+```php
+use Filament\Tables\Actions\AttachAction;
+use Illuminate\Database\Eloquent\Builder;
+
+AttachAction::make()
+    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
 ```
 
 ### `stancl/tenancy`

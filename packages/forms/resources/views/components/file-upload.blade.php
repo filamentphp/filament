@@ -5,6 +5,7 @@
     :label-sr-only="$isAvatar() || $isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :hint-action="$getHintAction()"
     :required="$isRequired()"

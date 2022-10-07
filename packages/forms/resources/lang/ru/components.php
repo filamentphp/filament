@@ -8,12 +8,20 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'Клонировать',
+            ],
+
             'create_item' => [
                 'label' => 'Добавить к :label',
             ],
 
             'delete_item' => [
                 'label' => 'Удалить',
+            ],
+
+            'move_item' => [
+                'label' => 'Переместить',
             ],
 
             'move_item_down' => [
@@ -105,6 +113,10 @@ return [
 
             'clone_item' => [
                 'label' => 'Клонировать',
+            ],
+
+            'move_item' => [
+                'label' => 'Переместить',
             ],
 
             'move_item_down' => [
@@ -203,6 +215,8 @@ return [
         ],
 
         'loading_message' => 'Загрузка...',
+
+        'max_items_message' => 'Только :count можно выбрать.',
 
         'no_search_results_message' => 'Нет вариантов, соответствующих вашему запросу.',
 

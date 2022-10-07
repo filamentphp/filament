@@ -10,6 +10,7 @@ use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -414,6 +415,11 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return $this->getResourceTable()->getFilters();
     }
 
+    protected function getTableFiltersLayout(): ?string
+    {
+        return $this->getResourceTable()->getFiltersLayout();
+    }
+
     protected function getTableHeaderActions(): array
     {
         return $this->getResourceTable()->getHeaderActions();
@@ -434,7 +440,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return $this->getResourceTable()->getPollingInterval();
     }
 
-    protected function getTableHeading(): ?string
+    protected function getTableHeading(): string | Htmlable | null
     {
         return static::getTitle();
     }

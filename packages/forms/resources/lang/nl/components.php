@@ -1,11 +1,16 @@
 <?php
 
 return [
+
     'builder' => [
 
         'collapsed' => 'Inhoud ingeklapt',
 
         'buttons' => [
+
+            'clone_item' => [
+                'label' => 'Klonen',
+            ],
 
             'create_item' => [
                 'label' => 'Toevoegen aan :label',
@@ -107,7 +112,7 @@ return [
             ],
 
             'clone_item' => [
-                'label' => 'Dupliceren',
+                'label' => 'Klonen',
             ],
 
             'move_item' => [

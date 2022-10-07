@@ -42,6 +42,7 @@ return [
                 'options' => [
                     'all' => 'Tất cả',
                 ],
+
             ],
 
         ],
@@ -149,6 +150,29 @@ return [
 
             'deselect_all' => [
                 'label' => 'Bỏ chọn tất cả',
+            ],
+
+        ],
+
+    ],
+
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Sắp xếp theo',
+            ],
+
+            'direction' => [
+
+                'label' => 'Thứ tự sắp xếp',
+
+                'options' => [
+                    'asc' => 'Tăng dần',
+                    'desc' => 'Giảm dần',
+                ],
+
             ],
 
         ],

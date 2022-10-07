@@ -13,6 +13,7 @@
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :hint-action="$getHintAction()"
     :required="$isRequired()"
@@ -39,6 +40,7 @@
                 isDisabled: @js($isDisabled()),
                 state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }}
             })"
+            x-on:keydown.esc="isOpen() && $event.stopPropagation()"
             {{ $getExtraAlpineAttributeBag()->class(['relative flex-1']) }}
         >
             <input

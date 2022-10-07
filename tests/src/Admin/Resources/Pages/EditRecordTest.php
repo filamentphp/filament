@@ -5,6 +5,7 @@ use Filament\Pages\Actions\DeleteAction;
 use Filament\Tests\Admin\Fixtures\Resources\PostResource;
 use Filament\Tests\Admin\Resources\TestCase;
 use Filament\Tests\Models\Post;
+use Illuminate\Support\Str;
 use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
@@ -82,4 +83,33 @@ it('can delete', function () {
         ->callPageAction(DeleteAction::class);
 
     $this->assertModelMissing($post);
+});
+
+it('can refresh data', function () {
+    $post = Post::factory()->create();
+
+    $page = livewire(PostResource\Pages\EditPost::class, [
+        'record' => $post->getKey(),
+    ]);
+
+    $originalPostTitle = $post->title;
+
+    $page->assertFormSet([
+        'title' => $originalPostTitle,
+    ]);
+
+    $newPostTitle = Str::random();
+
+    $post->title = $newPostTitle;
+    $post->save();
+
+    $page->assertFormSet([
+        'title' => $originalPostTitle,
+    ]);
+
+    $page->call('refreshTitle');
+
+    $page->assertFormSet([
+        'title' => $newPostTitle,
+    ]);
 });

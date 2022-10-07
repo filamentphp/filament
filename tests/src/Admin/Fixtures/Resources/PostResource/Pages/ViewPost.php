@@ -16,4 +16,11 @@ class ViewPost extends ViewRecord
             Actions\EditAction::make(),
         ];
     }
+
+    public function refreshTitle()
+    {
+        $this->refreshFormData([
+            'title',
+        ]);
+    }
 }

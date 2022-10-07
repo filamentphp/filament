@@ -6,6 +6,7 @@
     'labelSuffix' => null,
     'helperText' => null,
     'hint' => null,
+    'hintColor' => null,
     'hintIcon' => null,
     'hintAction' => null,
     'required' => false,
@@ -37,9 +38,9 @@
                 @elseif ($labelSuffix)
                     {{ $labelSuffix }}
                 @endif
-
+                
                 @if ($hint || $hintIcon || $hintAction)
-                    <x-forms::field-wrapper.hint :icon="$hintIcon" :hint-action="$hintAction">
+                    <x-forms::field-wrapper.hint :action="$hintAction" :color="$hintColor" :icon="$hintIcon">
                         {{ filled($hint) ? ($hint instanceof \Illuminate\Support\HtmlString ? $hint : \Illuminate\Support\Str::of($hint)->markdown()->sanitizeHtml()->toHtmlString()) : null }}
                     </x-forms::field-wrapper.hint>
                 @endif

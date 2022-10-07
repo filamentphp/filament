@@ -117,6 +117,16 @@ RichEditor::make('content')
     ->hintIcon('heroicon-s-translate')
 ```
 
+Hints may have a `color()`. By default it's gray, but you may use `primary`, `success`, `warning`, or `danger`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->hint('Translatable')
+    ->hintColor('primary')
+```
+
 ### Custom attributes
 
 The HTML attributes of the field's wrapper can be customized by passing an array of `extraAttributes()`:
@@ -499,6 +509,42 @@ Select::make('status')
     ->disablePlaceholderSelection()
 ```
 
+### Multi-select
+
+The `multiple()` method on the `Select` component allows you to select multiple values from the list of options:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('technologies')
+    ->multiple()
+    ->options([
+        'tailwind' => 'Tailwind CSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+    ])
+```
+
+![](https://user-images.githubusercontent.com/41773797/147613070-cd82703a-fa05-4f29-b0ac-3eb03b542077.png)
+
+These options are returned in JSON format. If you're saving them using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+class App extends Model
+{
+    protected $casts = [
+        'technologies' => 'array',
+    ];
+
+    // ...
+}
+```
+
+Instead of `getOptionLabelUsing()`, the `getOptionLabelsUsing()` method can be used to transform the selected options' `$value`s into labels.
+
 ### Dependant selects
 
 Commonly, you may desire "dependant" select inputs, which populate their options based on the state of another.
@@ -516,6 +562,16 @@ use Filament\Forms\Components\Select;
 
 Select::make('authorId')
     ->relationship('author', 'name')
+```
+
+The `multiple()` method may be used in combination with `relationship()` to automatically populate from a `BelongsToMany` relationship:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('technologies')
+    ->multiple()
+    ->relationship('technologies', 'name')
 ```
 
 > To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
@@ -587,102 +643,6 @@ Since HTML does not support nested `<form>` elements, you must also render the m
 </form>
 
 {{ $this->modal }}
-```
-
-## Multi-select
-
-The multi-select component allows you to select multiple values from a list of predefined options:
-
-```php
-use Filament\Forms\Components\MultiSelect;
-use Filament\Forms\Components\Select;
-
-MultiSelect::make('technologies')
-    ->options([
-        'tailwind' => 'Tailwind CSS',
-        'alpine' => 'Alpine.js',
-        'laravel' => 'Laravel',
-        'livewire' => 'Laravel Livewire',
-    ])
-```
-
-![](https://user-images.githubusercontent.com/41773797/147613070-cd82703a-fa05-4f29-b0ac-3eb03b542077.png)
-
-These options are returned in JSON format. If you're saving them using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
-
-```php
-use Illuminate\Database\Eloquent\Model;
-
-class App extends Model
-{
-    protected $casts = [
-        'technologies' => 'array',
-    ];
-
-    // ...
-}
-```
-
-If you have lots of options and want to populate them based on a database search or other external data source, you can use the `getSearchResultsUsing()` and `getOptionLabelsUsing()` methods instead of `options()`.
-
-The `getSearchResultsUsing()` method accepts a callback that returns search results in `$key => $value` format.
-
-The `getOptionLabelsUsing()` method accepts a callback that transforms the selected options' `$value`s into labels.
-
-```php
-use Filament\Forms\Components\MultiSelect;
-
-MultiSelect::make('technologies')
-    ->getSearchResultsUsing(fn (string $search) => Technology::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id'))
-    ->getOptionLabelsUsing(fn (array $values) => Technology::find($values)->pluck('name')),
-```
-
-### Populating automatically from a `BelongsToMany` relationship
-
-You may employ the `relationship()` method of the `MultiSelect` to configure a relationship to automatically retrieve and save options from:
-
-```php
-use App\Models\App;
-use Filament\Forms\Components\MultiSelect;
-
-MultiSelect::make('technologies')
-    ->relationship('technologies', 'name')
-```
-
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
-
-You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
-
-```php
-use Filament\Forms\Components\MultiSelect;
-use Illuminate\Database\Eloquent\Builder;
-
-MultiSelect::make('technologies')
-    ->relationship('technologies', 'name', fn (Builder $query) => $query->withTrashed())
-```
-
-If you'd like to customize the label of each option, maybe to be more descriptive, or to concatenate a first and last name, you should use a virtual column in your database migration:
-
-```php
-$table->string('full_name')->virtualAs('concat(first_name, \' \', last_name)');
-```
-
-```php
-use Filament\Forms\Components\MultiSelect;
-
-MultiSelect::make('participants')
-    ->relationship('participants', 'full_name')
-```
-
-Alternatively, you can use the `getOptionLabelFromRecordUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
-
-```php
-use Filament\Forms\Components\MultiSelect;
-use Illuminate\Database\Eloquent\Model;
-
-MultiSelect::make('participants')
-    ->relationship('participants', 'first_name')
-    ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
 
 ## Checkbox
@@ -1038,6 +998,18 @@ use Filament\Forms\Components\DateTimePicker;
 
 DateTimePicker::make('published_at')->weekStartsOnMonday()
 DateTimePicker::make('published_at')->weekStartsOnSunday()
+```
+
+To disable specific dates:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::make('date')
+    ->label('Appointment date')
+    ->minDate(now())
+    ->maxDate(Carbon::now()->addDays(30))
+    ->disabledDates(['2022-10-02', '2022-10-05', '2022-10-15'])
 ```
 
 ### Timezones
@@ -1916,6 +1888,7 @@ Using [Livewire's entangle](https://laravel-livewire.com/docs/alpine-js#sharing-
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :hint-action="$getHintAction()"
     :required="$isRequired()"
@@ -1936,6 +1909,7 @@ Or, you may bind the value to a Livewire property using [`wire:model`](https://l
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :hint-action="$getHintAction()"
     :required="$isRequired()"
@@ -1979,6 +1953,7 @@ The `$getStatePath()` closure may be used by the view to retrieve the Livewire p
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :hint-action="$getHintAction()"
     :required="$isRequired()"
