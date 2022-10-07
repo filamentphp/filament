@@ -47,6 +47,10 @@ export default (Alpine) => {
                     this.$refs.input.value = value
                     this.$refs.panel.color = value
                 },
+
+                isOpen: function () {
+                    return this.$refs.panel.style.display === 'block'
+                },
             }
         },
     )

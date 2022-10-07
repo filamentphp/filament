@@ -38,6 +38,7 @@
                 isDisabled: @js($isDisabled()),
                 state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }}
             })"
+            x-on:keydown.esc="isOpen() && $event.stopPropagation()"
             {{ $getExtraAlpineAttributeBag()->class(['relative flex-1']) }}
         >
             <input
