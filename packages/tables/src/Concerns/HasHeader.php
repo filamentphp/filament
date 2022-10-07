@@ -75,7 +75,7 @@ trait HasHeader
         return null;
     }
 
-    protected function getTableHeader(): View | Htmlable | string | null
+    protected function getTableHeader(): View | Htmlable | null
     {
         return null;
     }
