@@ -1888,9 +1888,9 @@ Using [Livewire's entangle](https://laravel-livewire.com/docs/alpine-js#sharing-
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-action="$getHintAction()"
     :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
-    :hint-action="$getHintAction()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
@@ -1909,9 +1909,9 @@ Or, you may bind the value to a Livewire property using [`wire:model`](https://l
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-action="$getHintAction()"
     :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
-    :hint-action="$getHintAction()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
@@ -1953,9 +1953,9 @@ The `$getStatePath()` closure may be used by the view to retrieve the Livewire p
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-action="$getHintAction()"
     :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
-    :hint-action="$getHintAction()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >

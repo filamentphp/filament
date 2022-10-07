@@ -13,9 +13,9 @@
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-action="$getHintAction()"
     :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
-    :hint-action="$getHintAction()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
