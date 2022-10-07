@@ -117,7 +117,7 @@ class Resource
             return $policy->before($user, $action);
         }
 
-        if (!method_exists($policy, $action)) {
+        if (! method_exists($policy, $action)) {
             return true;
         }
 
