@@ -332,7 +332,7 @@ TextInput::make('domain')
     ->suffixIcon('heroicon-s-external-link')
 ```
 
-You may render an action before and after the input using the `->prefixAction()` and `->suffixAction()` methods:
+You may render an action before and after the input using the `prefixAction()` and `suffixAction()` methods:
 
 ```php
 use Closure;
