@@ -17,14 +17,17 @@ class MakeUserCommand extends Command
 
     protected $description = 'Creates a Filament user.';
 
-    protected $signature = 'make:filament-user';
+    protected $signature = 'make:filament-user
+        {--name= : The name of the user}
+        {--email= : The email of the user}
+        {--password= : The password of the user}';
 
     protected function getUserData(): array
     {
         return [
-            'name' => $this->validateInput(fn () => $this->ask('Name'), 'name', ['required']),
-            'email' => $this->validateInput(fn () => $this->ask('Email address'), 'email', ['required', 'email', 'unique:' . $this->getUserModel()]),
-            'password' => Hash::make($this->validateInput(fn () => $this->secret('Password'), 'password', ['required', 'min:8'])),
+            'name' => $this->validateInput(fn () =>  $this->option('name') ? $this->option('name') : $this->ask('Name'), 'name', ['required']),
+            'email' => $this->validateInput(fn () => $this->option('email') ? $this->option('email') : $this->ask('Email address'), 'email', ['required', 'email', 'unique:' . $this->getUserModel()]),
+            'password' => Hash::make($this->validateInput(fn () => $this->option('password') ? $this->option('password') : $this->secret('Password'), 'password', ['required', 'min:8'])),
         ];
     }
 
