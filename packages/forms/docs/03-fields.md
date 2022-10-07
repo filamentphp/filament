@@ -336,12 +336,16 @@ You may render an action before and after the input using the `prefixAction()` a
 
 ```php
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\TextInput;
 
 TextInput::make('domain')
     ->suffixAction(
         Action::make('visit')
             ->icon('heroicon-s-external-link')
-            ->url(fn ($state): string => "https://$state.com"),
+            ->url(
+                fn (?string $state): ?string => filled($state) ? "https://{$state}" : null,
+                shouldOpenInNewTab: true,
+            ),
     )
 ```
 
