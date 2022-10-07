@@ -107,7 +107,7 @@ return [
             ],
 
             'reset' => [
-                'label' => 'Resetujete filters',
+                'label' => 'Resetujte filtere',
             ],
 
         ],
@@ -124,13 +124,13 @@ return [
 
         'trashed' => [
 
-            'label' => 'Izbriseni zapise',
+            'label' => 'Izbrisani zapisi',
 
             'only_trashed' => 'Samo izbrisani zapisi',
 
-            'with_trashed' => 'Sa izbrisani zapisi',
+            'with_trashed' => 'Sa izbrisanim zapisima',
 
-            'without_trashed' => 'Bez izbrisani zapisi',
+            'without_trashed' => 'Bez izbrisanih zapisa',
 
         ],
 
@@ -140,7 +140,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '1 napis izabran.|:count napisi izabrani.',
+        'selected_count' => '1 izabran zapis.|:count izabrani zapisi.',
 
         'buttons' => [
 
