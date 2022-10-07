@@ -2,6 +2,10 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Tables\Contracts\HasRelationshipTable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Arr;
+
 trait CanReorderRecords
 {
     public bool $isTableReordering = false;
@@ -13,6 +17,20 @@ trait CanReorderRecords
         }
 
         $orderColumn = $this->getTableReorderColumn();
+
+        if (
+            $this instanceof HasRelationshipTable &&
+            (($relationship = $this->getRelationship()) instanceof BelongsToMany) &&
+            in_array($orderColumn, $relationship->getPivotColumns())
+        ) {
+            foreach ($order as $index => $recordKey) {
+                $this->getTableRecord($recordKey)->{$relationship->getPivotAccessor()}->update([
+                    $orderColumn => $index + 1,
+                ]);
+            }
+
+            return;
+        }
 
         foreach ($order as $index => $recordKey) {
             $this->getTableRecord($recordKey)->update([
