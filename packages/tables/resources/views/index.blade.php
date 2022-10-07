@@ -719,7 +719,9 @@
                                 <x-tables::reorder.cell :class="\Illuminate\Support\Arr::toCssClasses([
                                     'hidden' => ! $isReordering,
                                 ])">
-                                    <x-tables::reorder.handle />
+                                    @if ($isReordering)
+                                        <x-tables::reorder.handle />
+                                    @endif
                                 </x-tables::reorder.cell>
 
                                 @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)
