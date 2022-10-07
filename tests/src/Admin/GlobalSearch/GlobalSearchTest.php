@@ -5,7 +5,6 @@ use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\GlobalSearch\GlobalSearchResults;
 use Filament\Http\Livewire\GlobalSearch;
-use Filament\Tests\Admin\Fixtures\Resources\PostResource;
 use Filament\Tests\Admin\GlobalSearch\TestCase;
 use Filament\Tests\Models\Post;
 use Illuminate\Database\Eloquent\Factories\Sequence;
