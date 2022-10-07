@@ -1,7 +1,7 @@
 @props([
+    'action' => null,
     'color' => null,
     'icon' => null,
-    'hintAction' => null,
 ])
 
 <div {{ $attributes->class([
@@ -39,7 +39,9 @@
         <x-dynamic-component :component="$icon" class="h-4 w-4" />
     @endif
 
-    @if ($hintAction && ! $hintAction->isHidden())
-        <div class="filament-forms-field-wrapper-hint-action">{{ $hintAction }}</div>
+    @if ($action && (! $action->isHidden()))
+        <div class="filament-forms-field-wrapper-hint-action">
+            {{ $action }}
+        </div>
     @endif
 </div>
