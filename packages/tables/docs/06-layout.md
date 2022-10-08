@@ -162,9 +162,9 @@ Stack::make([
 
 ## Controlling column width using a grid
 
-Sometimes, using a `Split` creates inconsistent widths when columns which contain lots of content. This is because it's powered by Flexbox internally and each row individually controls how much space is allocated to content.
+Sometimes, using a `Split` creates inconsistent widths when columns contain lots of content. This is because it's powered by Flexbox internally and each row individually controls how much space is allocated to content.
 
-Instead, you may use a `Grid` layout, which uses CSS grid to allow you to define control column widths:
+Instead, you may use a `Grid` layout, which uses CSS Grid Layout to allow you to control column widths:
 
 ```php
 use Filament\Tables\Columns\Layout\Grid;
@@ -179,9 +179,9 @@ Grid::make([
     ])
 ```
 
-These columns will always consume equal with within the grid, from the `lg` [breakpoint](https://tailwindcss.com/docs/responsive-design#overview).
+These columns will always consume equal width within the grid, from the `lg` [breakpoint](https://tailwindcss.com/docs/responsive-design#overview).
 
-You may choose to customize the number of columns within the Grid at other breakpoints:
+You may choose to customize the number of columns within the grid at other breakpoints:
 
 ```php
 use Filament\Tables\Columns\Layout\Grid;
