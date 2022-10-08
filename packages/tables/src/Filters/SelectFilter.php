@@ -125,8 +125,7 @@ class SelectFilter extends BaseFilter
             ->options($this->getOptions())
             ->placeholder($this->getPlaceholder())
             ->searchable($this->isSearchable())
-            ->optionsLimit($this->getOptionsLimit())
-            ->columnSpan($this->getColumnSpan());
+            ->optionsLimit($this->getOptionsLimit());
 
         if (filled($defaultState = $this->getDefaultState())) {
             $field->default($defaultState);

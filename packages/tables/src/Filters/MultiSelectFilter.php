@@ -114,8 +114,7 @@ class MultiSelectFilter extends BaseFilter
             ->label($this->getLabel())
             ->options($this->getOptions())
             ->placeholder($this->getPlaceholder())
-            ->default($this->getDefaultState())
-            ->columnSpan($this->getColumnSpan());
+            ->default($this->getDefaultState());
 
         if (filled($defaultState = $this->getDefaultState())) {
             $field->default($defaultState);
