@@ -28,7 +28,7 @@ return [
 
     'multiple' => [
 
-        'label' => 'Xoá mục đã chọn',
+        'label' => 'Xoá các mục đã chọn',
 
         'modal' => [
 
