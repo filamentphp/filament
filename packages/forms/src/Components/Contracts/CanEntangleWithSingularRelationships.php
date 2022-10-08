@@ -18,4 +18,10 @@ interface CanEntangleWithSingularRelationships
     public function getRelatedModel(): ?string;
 
     public function getRelationship(): BelongsTo | HasOne | MorphOne | null;
+
+    public function mutateRelationshipDataBeforeFill(array $data): array;
+
+    public function mutateRelationshipDataBeforeCreate(array $data): array;
+
+    public function mutateRelationshipDataBeforeSave(array $data): array;
 }
