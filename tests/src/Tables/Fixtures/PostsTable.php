@@ -28,7 +28,7 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
                     Tables\Actions\Action::make('column-action-object')
                         ->action(fn () => $this->emit('column-action-object-called')),
                 ),
-            Tables\Columns\BooleanColumn::make('is_published'),
+            Tables\Columns\IconColumn::make('is_published')->boolean(),
             Tables\Columns\TextColumn::make('visible'),
             Tables\Columns\TextColumn::make('hidden')
                 ->hidden(),

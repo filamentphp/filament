@@ -9,7 +9,6 @@ The `$table->columns()` method is used to define the [columns](../../tables/colu
 We have many columns available for your tables, including:
 
 - [Text column](../../tables/columns/text)
-- [Boolean column](../../tables/columns/boolean)
 - [Image column](../../tables/columns/image)
 - [Icon column](../../tables/columns/icon)
 - [Badge column](../../tables/columns/badge)
