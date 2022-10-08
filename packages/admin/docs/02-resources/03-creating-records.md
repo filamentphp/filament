@@ -43,6 +43,12 @@ protected function getRedirectUrl(): string
 }
 ```
 
+As an alternative if you wish to be redirected to the previous page you may use the HasBackUrl Trait:
+
+```php
+use Filament\Resources\Pages\Concerns\HasBackUrl;
+```
+
 ## Customizing the save notification
 
 When the record is successfully created, a notification is dispatched to the user, which indicates the success of their action.
