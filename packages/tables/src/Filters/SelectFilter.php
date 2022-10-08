@@ -6,8 +6,6 @@ use Closure;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
-use Spatie\LaravelIgnition\Exceptions\ViewException;
-use Throwable;
 
 class SelectFilter extends BaseFilter
 {

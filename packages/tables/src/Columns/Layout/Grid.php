@@ -2,9 +2,6 @@
 
 namespace Filament\Tables\Columns\Layout;
 
-use Closure;
-use Filament\Tables\Columns\Concerns\HasColumns;
-
 class Grid extends Component
 {
     protected string $view = 'tables::columns.layout.grid';
