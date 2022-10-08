@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Forms\Components\Concerns;
+namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
 

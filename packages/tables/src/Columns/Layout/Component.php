@@ -10,6 +10,7 @@ use Filament\Tables\Columns\Concerns\BelongsToLayout;
 use Filament\Tables\Columns\Concerns\BelongsToTable;
 use Filament\Tables\Columns\Concerns\CanBeHidden;
 use Filament\Tables\Columns\Concerns\CanGrow;
+use Filament\Tables\Columns\Concerns\CanSpanColumns;
 use Filament\Tables\Columns\Concerns\HasRecord;
 use Illuminate\Support\Traits\Conditionable;
 
@@ -18,6 +19,7 @@ class Component extends ViewComponent
     use BelongsToLayout;
     use BelongsToTable;
     use CanBeHidden;
+    use CanSpanColumns;
     use CanGrow;
     use HasRecord;
     use Conditionable;
