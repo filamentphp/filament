@@ -44,9 +44,8 @@ Filament ships with two main types of columns - static and editable.
 Static columns display data to the user:
 
 - [Text column](text)
-- [Boolean column](boolean)
-- [Image column](image)
 - [Icon column](icon)
+- [Image column](image)
 - [Badge column](badge)
 - [Tags column](tags)
 - [Color column](color)
@@ -346,9 +345,9 @@ Column::configureUsing(function (Column $column): void {
 Additionally, you can call this code on specific column types as well:
 
 ```php
-use Filament\Tables\Columns\BooleanColumn;
+use Filament\Tables\Columns\TextColumn;
 
-BooleanColumn::configureUsing(function (BooleanColumn $column): void {
+TextColumn::configureUsing(function (TextColumn $column): void {
     $column
         ->toggleable()
         ->sortable();
@@ -358,7 +357,7 @@ BooleanColumn::configureUsing(function (BooleanColumn $column): void {
 Of course, you are still able to overwrite this on each column individually:
 
 ```php
-use Filament\Tables\Columns\BooleanColumn;
+use Filament\Tables\Columns\TextColumn;
 
-BooleanColumn::make('is_admin')->toggleable(false)
+TextColumn::make('name')->toggleable(false)
 ```
