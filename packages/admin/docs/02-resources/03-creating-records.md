@@ -43,10 +43,13 @@ protected function getRedirectUrl(): string
 }
 ```
 
-As an alternative if you wish to be redirected to the previous page you may use the HasBackUrl Trait:
+If you wish to be redirected to the previous page with fallback to the index page:
 
 ```php
-use Filament\Resources\Pages\Concerns\HasBackUrl;
+protected function getRedirectUrl(): string
+{
+    return $this->backUrl ?? $this->getResource()::getUrl('index');
+}
 ```
 
 ## Customizing the save notification

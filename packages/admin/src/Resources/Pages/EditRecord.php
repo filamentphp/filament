@@ -27,6 +27,8 @@ class EditRecord extends Page implements HasFormActions
 
     public $data;
 
+    public ?string $backUrl;
+
     protected $queryString = [
         'activeRelationManager',
     ];
@@ -43,6 +45,8 @@ class EditRecord extends Page implements HasFormActions
 
     public function mount($record): void
     {
+        $this->backUrl = url()->previous();
+
         $this->record = $this->resolveRecord($record);
 
         $this->authorizeAccess();
@@ -298,7 +302,7 @@ class EditRecord extends Page implements HasFormActions
     {
         return Action::make('cancel')
             ->label(__('filament::resources/pages/edit-record.form.actions.cancel.label'))
-            ->url(static::getResource()::getUrl())
+            ->url($this->backUrl ?? static::getResource()::getUrl())
             ->color('secondary');
     }
 
