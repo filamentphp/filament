@@ -232,12 +232,24 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
     protected function can(string $action, ?Model $record = null): bool
     {
         $policy = Gate::getPolicyFor($model = $this->getRelatedModel());
+        $user = Filament::auth()->user();
 
-        if ($policy === null || (! method_exists($policy, $action))) {
+        if ($policy === null) {
             return true;
         }
 
-        return Gate::forUser(Filament::auth()->user())->check($action, $record ?? $model);
+        if (
+            method_exists($policy, 'before') &&
+            is_bool($response = $policy->before($user, $action))
+        ) {
+            return $response;
+        }
+
+        if (! method_exists($policy, $action)) {
+            return true;
+        }
+
+        return Gate::forUser($user)->check($action, $record ?? $model);
     }
 
     public static function canViewForRecord(Model $ownerRecord): bool
@@ -245,13 +257,25 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         $model = $ownerRecord->{static::getRelationshipName()}()->getQuery()->getModel()::class;
 
         $policy = Gate::getPolicyFor($model);
+        $user = Filament::auth()->user();
         $action = 'viewAny';
 
-        if ($policy === null || (! method_exists($policy, $action))) {
+        if ($policy === null) {
             return true;
         }
 
-        return Gate::forUser(Filament::auth()->user())->check($action, $model);
+        if (
+            method_exists($policy, 'before') &&
+            is_bool($response = $policy->before($user, $action))
+        ) {
+            return $response;
+        }
+
+        if (! method_exists($policy, $action)) {
+            return true;
+        }
+
+        return Gate::forUser($user)->check($action, $model);
     }
 
     public static function form(Form $form): Form
