@@ -51,3 +51,17 @@ IconColumn::make('is_featured')
         'success' => 'published',
     ])
 ```
+
+## Customizing the size
+
+You can also customize the size of the icon using the `size()` method, where the default is `lg`:
+
+```php
+use Filament\Tables\Columns\IconColumn;
+
+IconColumn::make('is_featured')
+    ->options([
+        // ...
+    ])
+    ->size('sm') // `sm`, `md` or `lg`
+```
