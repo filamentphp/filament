@@ -13,7 +13,7 @@ class IconColumn extends Column
 
     protected array | Arrayable | Closure $options = [];
 
-    protected string $size = 'md';
+    protected string $size = 'lg';
 
     public function options(array | Arrayable | Closure $options): static
     {
