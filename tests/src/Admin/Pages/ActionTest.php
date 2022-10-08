@@ -51,11 +51,11 @@ it('can call an action with arguments', function () {
         ]);
 });
 
-it('can call an action and hold', function () {
+it('can call an action and halt', function () {
     livewire(PageActions::class)
-        ->callPageAction('hold')
-        ->assertEmitted('hold-called')
-        ->assertPageActionHeld('hold');
+        ->callPageAction('halt')
+        ->assertEmitted('halt-called')
+        ->assertPageActionHalted('halt');
 });
 
 it('can hide an action', function () {

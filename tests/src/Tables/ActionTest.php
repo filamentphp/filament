@@ -56,11 +56,11 @@ it('can call an action with arguments', function () {
         ]);
 });
 
-it('can call an action and hold', function () {
+it('can call an action and halt', function () {
     livewire(PostsTable::class)
-        ->callTableAction('hold')
-        ->assertEmitted('hold-called')
-        ->assertTableActionHeld('hold');
+        ->callTableAction('halt')
+        ->assertEmitted('halt-called')
+        ->assertTableActionHalted('halt');
 });
 
 it('can hide an action', function () {

@@ -53,7 +53,7 @@ namespace Livewire\Testing {
 
         public function assertPageActionDoesNotHaveLabel(string $name, string $label): static {}
 
-        public function assertPageActionHeld(string $name): static {}
+        public function assertPageActionHalted(string $name): static {}
 
         public function assertHasPageActionErrors(array $keys = []): static {}
 

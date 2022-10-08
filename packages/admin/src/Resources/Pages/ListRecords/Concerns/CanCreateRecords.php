@@ -104,7 +104,7 @@ trait CanCreateRecords
         }
 
         if ($another) {
-            $this->getMountedAction()->hold();
+            $this->getMountedAction()->halt();
         }
     }
 

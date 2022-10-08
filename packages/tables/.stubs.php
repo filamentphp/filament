@@ -29,7 +29,7 @@ namespace Livewire\Testing {
 
         public function assertTableActionDisabled(string $name, $record = null): static {}
 
-        public function assertTableActionHeld(string $name): static {}
+        public function assertTableActionHalted(string $name): static {}
 
         public function assertHasTableActionErrors(array $keys = []): static {}
 
@@ -89,7 +89,7 @@ namespace Livewire\Testing {
 
         public function assertTableActionShouldNotOpenUrlInNewTab(string $name): static {}
 
-        public function assertTableBulkActionHeld(string $name): static {}
+        public function assertTableBulkActionHalted(string $name): static {}
 
         public function assertHasTableBulkActionErrors(array $keys = []): static {}
 

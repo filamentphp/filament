@@ -31,12 +31,12 @@ class PageActions extends Page
                 ->action(function (array $arguments) {
                     $this->emit('arguments-called', $arguments);
                 }),
-            Action::make('hold')
+            Action::make('halt')
                 ->requiresConfirmation()
                 ->action(function (Action $action) {
-                    $this->emit('hold-called');
+                    $this->emit('halt-called');
 
-                    $action->hold();
+                    $action->halt();
                 }),
             Action::make('visible'),
             Action::make('hidden')
