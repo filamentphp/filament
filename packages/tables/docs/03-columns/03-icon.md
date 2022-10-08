@@ -60,6 +60,7 @@ Icon columns can display a check or cross icon based on the contents of the data
 use Filament\Tables\Columns\IconColumn;
 
 IconColumn::make('is_featured')
+    ->boolean()
 ```
 
 ### Customizing the boolean icons
