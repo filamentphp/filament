@@ -13,6 +13,8 @@ class IconColumn extends Column
 
     protected array | Arrayable | Closure $options = [];
 
+    protected string $size = 'md';
+
     public function options(array | Arrayable | Closure $options): static
     {
         $this->options = $options;
@@ -47,5 +49,17 @@ class IconColumn extends Column
         }
 
         return $options;
+    }
+
+    public function size(string $size): static
+    {
+        $this->size = $size;
+
+        return $this;
+    }
+
+    public function getSize(): string
+    {
+        return $this->size;
     }
 }

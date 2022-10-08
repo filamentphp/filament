@@ -7,6 +7,13 @@
         null => \Illuminate\Support\Arr::toCssClasses(['text-gray-700', 'dark:text-gray-200' => config('tables.dark_mode'),]),
         default => $getStateColor(),
     };
+
+    $size = match ($getSize()) {
+        'sm' => 'w-5 h-5',
+        'md' => 'w-6 h-6',
+        'lg' => 'w-7 h-7',
+        default => 'w-6 h-6',
+    };
 @endphp
 
 <div {{ $attributes->merge($getExtraAttributes())->class([
@@ -16,7 +23,7 @@
     @if ($getStateIcon())
         <x-dynamic-component
             :component="$getStateIcon()"
-            :class="'w-6 h-6 ' . $stateColor"
+            :class="$size . ' ' . $stateColor"
         />
     @endif
 </div>
