@@ -38,10 +38,18 @@
     @endphp
 
     @if (! $layoutComponent->isHidden())
-        <div @class([
-            'flex-1 w-full' => $layoutComponent->canGrow(),
-            $getHiddenClasses($layoutComponent),
-        ])>
+        <x-filament-support::grid.column
+            :default="$layoutComponent->getColumnSpan('default')"
+            :sm="$layoutComponent->getColumnSpan('sm')"
+            :md="$layoutComponent->getColumnSpan('md')"
+            :lg="$layoutComponent->getColumnSpan('lg')"
+            :xl="$layoutComponent->getColumnSpan('xl')"
+            :twoXl="$layoutComponent->getColumnSpan('2xl')"
+            :class="\Illuminate\Support\Arr::toCssClasses([
+                'flex-1 w-full' => $layoutComponent->canGrow(),
+                $getHiddenClasses($layoutComponent),
+            ])"
+        >
             @if ($isColumn)
                 <x-tables::columns.column
                     :column="$layoutComponent->inline()"
@@ -51,6 +59,6 @@
             @else
                 {{ $layoutComponent->viewData(['recordKey' => $recordKey]) }}
             @endif
-        </div>
+        </x-filament-support::grid.column>
     @endif
 @endforeach
