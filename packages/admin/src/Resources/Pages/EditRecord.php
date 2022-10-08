@@ -11,6 +11,7 @@ use Filament\Pages\Actions\ReplicateAction;
 use Filament\Pages\Actions\RestoreAction;
 use Filament\Pages\Actions\ViewAction;
 use Filament\Pages\Contracts\HasFormActions;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -87,19 +88,23 @@ class EditRecord extends Page implements HasFormActions
     {
         $this->authorizeAccess();
 
-        $this->callHook('beforeValidate');
+        try {
+            $this->callHook('beforeValidate');
 
-        $data = $this->form->getState();
+            $data = $this->form->getState();
 
-        $this->callHook('afterValidate');
+            $this->callHook('afterValidate');
 
-        $data = $this->mutateFormDataBeforeSave($data);
+            $data = $this->mutateFormDataBeforeSave($data);
 
-        $this->callHook('beforeSave');
+            $this->callHook('beforeSave');
 
-        $this->handleRecordUpdate($this->getRecord(), $data);
+            $this->handleRecordUpdate($this->getRecord(), $data);
 
-        $this->callHook('afterSave');
+            $this->callHook('afterSave');
+        } catch (Halt $exception) {
+            return;
+        }
 
         $shouldRedirect = $shouldRedirect && ($redirectUrl = $this->getRedirectUrl());
 

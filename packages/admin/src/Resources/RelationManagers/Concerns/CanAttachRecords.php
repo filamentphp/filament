@@ -223,7 +223,7 @@ trait CanAttachRecords
         }
 
         if ($another) {
-            $this->getMountedTableAction()->hold();
+            $this->getMountedTableAction()->halt();
         }
     }
 

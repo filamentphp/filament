@@ -7,6 +7,7 @@ use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Http\Livewire\Concerns\CanNotify;
 use Filament\Navigation\NavigationItem;
+use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Contracts\RendersFormComponentActionModal;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Route;
@@ -228,5 +229,10 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
         }
 
         (static::$reportValidationErrorUsing)($exception);
+    }
+
+    protected function halt(): void
+    {
+        throw new Halt();
     }
 }
