@@ -2,7 +2,6 @@
 
 namespace Filament\Support\Actions;
 
-use Filament\Support\Actions\Exceptions\Hold;
 use Filament\Support\Exceptions\Halt;
 
 abstract class Action extends BaseAction
