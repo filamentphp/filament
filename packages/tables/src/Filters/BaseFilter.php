@@ -3,7 +3,6 @@
 namespace Filament\Tables\Filters;
 
 use Exception;
-use Filament\Forms\Concerns\HasColumns;
 use Filament\Support\Components\Component;
 use Illuminate\Support\Traits\Conditionable;
 

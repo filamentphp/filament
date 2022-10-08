@@ -2,8 +2,6 @@
 
 namespace Filament\Tables\Filters\Concerns;
 
-use Closure;
-
 trait HasColumns
 {
     protected array | int | null $columns = null;
