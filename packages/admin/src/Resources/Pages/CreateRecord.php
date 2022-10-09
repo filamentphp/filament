@@ -22,7 +22,7 @@ class CreateRecord extends Page implements HasFormActions
 
     public $data;
 
-    public ?string $backUrl;
+    public ?string $previousUrl = null;
 
     protected static bool $canCreateAnother = true;
 
@@ -33,11 +33,11 @@ class CreateRecord extends Page implements HasFormActions
 
     public function mount(): void
     {
-        $this->backUrl = url()->previous();
-
         $this->authorizeAccess();
 
         $this->fillForm();
+        
+        $this->previousUrl = url()->previous();
     }
 
     protected function authorizeAccess(): void
@@ -151,7 +151,7 @@ class CreateRecord extends Page implements HasFormActions
     {
         return Action::make('cancel')
             ->label(__('filament::resources/pages/create-record.form.actions.cancel.label'))
-            ->url($this->backUrl ?? static::getResource()::getUrl())
+            ->url($this->previousUrl ?? static::getResource()::getUrl())
             ->color('secondary');
     }
 
