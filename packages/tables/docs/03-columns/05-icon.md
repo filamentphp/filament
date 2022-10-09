@@ -63,5 +63,5 @@ IconColumn::make('is_featured')
     ->options([
         // ...
     ])
-    ->size('sm') // `sm`, `md` or `lg`
+    ->size('sm') // `sm`, `md`, `lg`, or `xl`
 ```
