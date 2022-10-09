@@ -148,7 +148,7 @@ class IconColumn extends Column
 
         return $options;
     }
-    
+
     public function getSize(): string
     {
         return $this->size;
