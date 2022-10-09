@@ -428,7 +428,7 @@ var Notification = class {
     return this;
   }
   persistent() {
-    this.duration(null);
+    this.duration("persistent");
     return this;
   }
   success() {
