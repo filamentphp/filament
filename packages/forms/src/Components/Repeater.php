@@ -338,7 +338,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 if ($record = ($existingRecords[$itemKey] ?? null)) {
                     $activeLocale && method_exists($record, 'setLocale') && $record->setLocale($activeLocale);
 
-                    $itemData = $component->mutateRelationshipDataBeforeSave($itemData);
+                    $itemData = $component->mutateRelationshipDataBeforeSave($itemData, record: $record);
 
                     $record->fill($itemData)->save();
 
@@ -535,11 +535,12 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
-    public function mutateRelationshipDataBeforeSave(array $data): array
+    public function mutateRelationshipDataBeforeSave(array $data, Model $record): array
     {
         if ($this->mutateRelationshipDataBeforeSaveUsing instanceof Closure) {
             $data = $this->evaluate($this->mutateRelationshipDataBeforeSaveUsing, [
                 'data' => $data,
+                'record' => $record,
             ]);
         }
 
