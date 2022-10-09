@@ -61,7 +61,6 @@ trait HasActions
         } catch (Halt $exception) {
             return;
         } catch (Cancel $exception) {
-
         }
 
         $this->mountedAction = null;

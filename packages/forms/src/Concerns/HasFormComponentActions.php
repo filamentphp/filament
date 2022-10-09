@@ -80,7 +80,6 @@ trait HasFormComponentActions
         } catch (Halt $exception) {
             return;
         } catch (Cancel $exception) {
-
         }
 
         $this->mountedFormComponentAction = null;

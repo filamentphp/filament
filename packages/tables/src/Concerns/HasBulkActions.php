@@ -76,7 +76,6 @@ trait HasBulkActions
         } catch (Halt $exception) {
             return;
         } catch (Cancel $exception) {
-
         }
 
         $this->mountedTableBulkAction = null;
