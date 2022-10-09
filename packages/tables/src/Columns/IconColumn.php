@@ -10,12 +10,11 @@ class IconColumn extends Column
     use Concerns\HasColors {
         getStateColor as getBaseStateColor;
     }
+    use Concerns\HasSize;
 
     protected string $view = 'tables::columns.icon-column';
 
     protected array | Arrayable | Closure $options = [];
-
-    protected string $size = 'lg';
 
     protected bool | Closure $isBoolean = false;
 
@@ -30,13 +29,6 @@ class IconColumn extends Column
     public function options(array | Arrayable | Closure $options): static
     {
         $this->options = $options;
-
-        return $this;
-    }
-
-    public function size(string $size): static
-    {
-        $this->size = $size;
 
         return $this;
     }
@@ -147,11 +139,6 @@ class IconColumn extends Column
         }
 
         return $options;
-    }
-
-    public function getSize(): string
-    {
-        return $this->size;
     }
 
     public function getFalseColor(): string
