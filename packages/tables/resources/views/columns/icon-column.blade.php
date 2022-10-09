@@ -9,9 +9,10 @@
     };
 
     $size = match ($getSize()) {
-        'sm' => 'w-4 h-4',
-        'md' => 'w-5 h-5',
-        'xl' => 'w-7 h-7',
+        'xs' => 'h-3 w-3'
+        'sm' => 'h-4 w-4',
+        'md' => 'h-5 w-5',
+        'xl' => 'h-7 w-7',
         default => 'w-6 h-6',
     };
 @endphp
