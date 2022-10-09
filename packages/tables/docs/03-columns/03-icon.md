@@ -58,6 +58,7 @@ The default icon size is `lg`, but you may customize the size to be either `xs`,
 
 ```php
 use Filament\Tables\Columns\IconColumn;
+
 IconColumn::make('is_featured')
     ->options([
         'heroicon-s-x-circle',
