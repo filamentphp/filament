@@ -8,7 +8,6 @@ use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -20,14 +19,18 @@ use Illuminate\Validation\Rules\Exists;
 
 class Select extends Field
 {
+    use Concerns\CanAllowHtml;
+    use Concerns\CanBePreloaded;
+    use Concerns\CanBeSearchable;
     use Concerns\CanDisableOptions;
     use Concerns\CanDisablePlaceholderSelection;
+    use Concerns\CanLimitItemsLength;
     use Concerns\HasAffixes {
         getActions as getBaseActions;
         getSuffixAction as getBaseSuffixAction;
     }
     use Concerns\HasExtraInputAttributes;
-    use Concerns\CanLimitItemsLength;
+    use Concerns\HasLoadingMessage;
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
@@ -48,29 +51,13 @@ class Select extends Field
 
     protected ?Closure $getSearchResultsUsing = null;
 
-    protected bool | Closure $isHtmlAllowed = false;
-
-    protected bool | Closure $isSearchable = false;
-
     protected ?array $searchColumns = null;
 
-    protected string | Closure | null $loadingMessage = null;
-
     protected string | Closure | null $maxItemsMessage = null;
-
-    protected string | Htmlable | Closure | null $noSearchResultsMessage = null;
-
-    protected int | Closure $searchDebounce = 1000;
-
-    protected string | Closure | null $searchingMessage = null;
-
-    protected string | Htmlable | Closure | null $searchPrompt = null;
 
     protected string | Closure | null $relationshipTitleColumnName = null;
 
     protected ?Closure $getOptionLabelFromRecordUsing = null;
-
-    protected bool | Closure $isPreloaded = false;
 
     protected string | Closure | null $relationship = null;
 
@@ -114,20 +101,7 @@ class Select extends Field
             return $labels;
         });
 
-        $this->loadingMessage(__('forms::components.select.loading_message'));
-        $this->maxItemsMessage(__('forms::components.select.max_items_message'));
-        $this->noSearchResultsMessage(__('forms::components.select.no_search_results_message'));
-        $this->searchingMessage(__('forms::components.select.searching_message'));
-        $this->searchPrompt(__('forms::components.select.search_prompt'));
-
         $this->placeholder(__('forms::components.select.placeholder'));
-    }
-
-    public function allowHtml(bool | Closure $condition = true): static
-    {
-        $this->isHtmlAllowed = $condition;
-
-        return $this;
     }
 
     public function boolean(?string $trueLabel = null, ?string $falseLabel = null, ?string $placeholder = null): static
@@ -298,44 +272,9 @@ class Select extends Field
         return $this;
     }
 
-    public function loadingMessage(string | Closure | null $message): static
-    {
-        $this->loadingMessage = $message;
-
-        return $this;
-    }
-
     public function maxItemsMessage(string | Closure | null $message): static
     {
         $this->maxItemsMessage = $message;
-
-        return $this;
-    }
-
-    public function noSearchResultsMessage(string | Htmlable | Closure | null $message): static
-    {
-        $this->noSearchResultsMessage = $message;
-
-        return $this;
-    }
-
-    public function searchDebounce(int | Closure $debounce): static
-    {
-        $this->searchDebounce = $debounce;
-
-        return $this;
-    }
-
-    public function searchingMessage(string | Closure | null $message): static
-    {
-        $this->searchingMessage = $message;
-
-        return $this;
-    }
-
-    public function searchPrompt(string | Htmlable | Closure | null $message): static
-    {
-        $this->searchPrompt = $message;
 
         return $this;
     }
@@ -365,36 +304,6 @@ class Select extends Field
         }
 
         return $labels;
-    }
-
-    public function getNoSearchResultsMessage(): string | Htmlable
-    {
-        return $this->evaluate($this->noSearchResultsMessage);
-    }
-
-    public function getSearchPrompt(): string | Htmlable
-    {
-        return $this->evaluate($this->searchPrompt);
-    }
-
-    public function getLoadingMessage(): string
-    {
-        return $this->evaluate($this->loadingMessage);
-    }
-
-    public function getMaxItemsMessage(): string
-    {
-        return $this->evaluate($this->maxItemsMessage);
-    }
-
-    public function getSearchDebounce(): int
-    {
-        return $this->evaluate($this->searchDebounce);
-    }
-
-    public function getSearchingMessage(): string
-    {
-        return $this->evaluate($this->searchingMessage);
     }
 
     public function getSearchColumns(): ?array
@@ -450,11 +359,6 @@ class Select extends Field
             ->all();
     }
 
-    public function isHtmlAllowed(): bool
-    {
-        return $this->evaluate($this->isHtmlAllowed);
-    }
-
     public function isMultiple(): bool
     {
         return $this->evaluate($this->isMultiple);
@@ -463,13 +367,6 @@ class Select extends Field
     public function isSearchable(): bool
     {
         return $this->evaluate($this->isSearchable) || $this->isMultiple();
-    }
-
-    public function preload(bool | Closure $condition = true): static
-    {
-        $this->isPreloaded = $condition;
-
-        return $this;
     }
 
     public function relationship(string | Closure $relationshipName, string | Closure $titleColumnName, ?Closure $callback = null): static
@@ -525,9 +422,9 @@ class Select extends Field
                 ->toArray();
         });
 
-        $this->options(static function (Select $component) use ($callback): array {
+        $this->options(static function (Select $component) use ($callback): ?array {
             if (($component->isSearchable()) && ! $component->isPreloaded()) {
-                return [];
+                return null;
             }
 
             $relationship = $component->getRelationship();
@@ -544,7 +441,11 @@ class Select extends Field
                 $relationshipQuery->orderBy($component->getRelationshipTitleColumnName());
             }
 
-            $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
+            if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
+                $keyName = $relationship->getRelated()->getKeyName();
+            } else {
+                $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
+            }
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
@@ -778,11 +679,6 @@ class Select extends Field
         return filled($this->getRelationshipName());
     }
 
-    public function isPreloaded(): bool
-    {
-        return $this->evaluate($this->isPreloaded);
-    }
-
     public function hasDynamicOptions(): bool
     {
         if ($this->hasRelationship()) {
@@ -813,5 +709,10 @@ class Select extends Field
     public function getOptionsLimit(): int
     {
         return $this->evaluate($this->optionsLimit);
+    }
+
+    public function getMaxItemsMessage(): string
+    {
+        return $this->evaluate($this->maxItemsMessage) ?? __('forms::components.select.max_items_message');
     }
 }

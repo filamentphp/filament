@@ -489,7 +489,6 @@ Select::make('status')
 You may enable a search input to allow easier access to many options, using the `searchable()` method:
 
 ```php
-use App\Models\User;
 use Filament\Forms\Components\Select;
 
 Select::make('authorId')
@@ -595,6 +594,16 @@ Select::make('technologies')
 
 > To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
 
+If you'd like to populate the options from the database when the page is loaded, instead of when the user searches, you can use the `preload()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('authorId')
+    ->relationship('author', 'name')
+    ->preload()
+```
+
 You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
 
 ```php
@@ -628,6 +637,54 @@ Select::make('authorId')
     ->relationship('author', 'first_name')
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
+
+#### Handling `MorphTo` relationships
+
+`MorphTo` relationships are special, since they give the user the ability to select records from a range of different models. Because of this, we have a dedicated `MorphToSelect` component which is not actually a select field, rather 2 select fields inside a fieldset. The first select field allows you to select the type, and the second allows you to select the record of that type.
+
+To use the `MorphToSelect`, you must pass `types()` into the component, which tell it how to render options for different types:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)->titleColumnName('name'),
+        MorphToSelect\Type::make(Post::class)->titleColumnName('title'),
+    ])
+```
+
+The `titleColumnName()` is used to extract the titles out of each product or post. You can choose to extract the option labels using `getOptionLabelFromRecordUsing` instead if you wish:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->getOptionLabelFromRecordUsing(fn (Product $record): string => "{$record->name} - {$record->slug}"),
+        MorphToSelect\Type::make(Post::class)->titleColumnName('title'),
+    ])
+```
+
+You may customise the database query that retrieves options using the `modifyOptionsQueryUsing()` method:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+use Illuminate\Database\Eloquent\Builder;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->titleColumnName('name')
+            ->modifyOptionsQueryUsing(fn (Builder $query) => $query->whereBelongsTo($this->team)),
+        MorphToSelect\Type::make(Post::class)
+            ->titleColumnName('title')
+            ->modifyOptionsQueryUsing(fn (Builder $query) => $query->whereBelongsTo($this->team)),
+    ])
+```
+
+> Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `allowHtml()`, and `optionsLimit()`.
 
 #### Creating new records
 
@@ -841,7 +898,6 @@ This method accepts the same options as the `columns()` method of the [grid](lay
 You may employ the `relationship()` method to configure a relationship to automatically retrieve and save options from:
 
 ```php
-use App\Models\App;
 use Filament\Forms\Components\CheckboxList;
 
 CheckboxList::make('technologies')
@@ -1484,7 +1540,6 @@ Repeater::make('qualifications')
 You may employ the `relationship()` method of the repeater to configure a relationship to automatically retrieve and save repeater items:
 
 ```php
-use App\Models\App;
 use Filament\Forms\Components\Repeater;
 
 Repeater::make('qualifications')

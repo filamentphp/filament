@@ -38,9 +38,9 @@ trait HasLabel
     {
         $label = $this->evaluate($this->label);
 
-        return is_string($label) && $this->shouldTranslateLabel
-            ? __($label)
-            : $label;
+        return (is_string($label) && $this->shouldTranslateLabel) ?
+            __($label) :
+            $label;
     }
 
     public function isLabelHidden(): bool
