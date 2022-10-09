@@ -43,6 +43,15 @@ protected function getRedirectUrl(): string
 }
 ```
 
+If you wish to be redirected to the previous page, else the index page:
+
+```php
+protected function getRedirectUrl(): string
+{
+    return $this->previousUrl ?? $this->getResource()::getUrl('index');
+}
+```
+
 ## Customizing the save notification
 
 When the record is successfully created, a notification is dispatched to the user, which indicates the success of their action.

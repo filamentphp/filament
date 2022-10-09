@@ -28,6 +28,8 @@ class EditRecord extends Page implements HasFormActions
 
     public $data;
 
+    public ?string $previousUrl = null;
+
     protected $queryString = [
         'activeRelationManager',
     ];
@@ -49,6 +51,8 @@ class EditRecord extends Page implements HasFormActions
         $this->authorizeAccess();
 
         $this->fillForm();
+        
+        $this->previousUrl = url()->previous();
     }
 
     protected function authorizeAccess(): void
@@ -303,7 +307,7 @@ class EditRecord extends Page implements HasFormActions
     {
         return Action::make('cancel')
             ->label(__('filament::resources/pages/edit-record.form.actions.cancel.label'))
-            ->url(static::getResource()::getUrl())
+            ->url($this->previousUrl ?? static::getResource()::getUrl())
             ->color('secondary');
     }
 
