@@ -277,8 +277,4 @@ class ActionGroup {
     }
 }
 
-export {
-    Action,
-    ActionGroup,
-    Notification,
-}
+export { Action, ActionGroup, Notification }
