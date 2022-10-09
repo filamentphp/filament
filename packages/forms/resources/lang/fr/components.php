@@ -117,7 +117,7 @@ return [
             'clone_item' => [
                 'label' => 'Cloner',
             ],
-    
+
             'move_item' => [
                 'label' => 'Déplacer',
             ],
