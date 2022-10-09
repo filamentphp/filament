@@ -52,6 +52,23 @@ IconColumn::make('is_featured')
     ])
 ```
 
+## Customizing the size
+
+The default icon size is `lg`, but you may customize the size to be either `xs`, `sm`, `md`, `lg` or `xl`:
+
+```php
+use Filament\Tables\Columns\IconColumn;
+
+IconColumn::make('is_featured')
+    ->options([
+        'heroicon-s-x-circle',
+        'heroicon-s-pencil' => 'draft',
+        'heroicon-s-clock' => 'reviewing',
+        'heroicon-s-check-circle' => 'published',
+    ])
+    ->size('md')
+```
+
 ## Handling booleans
 
 Icon columns can display a check or cross icon based on the contents of the database column, either true or false, using the `boolean()` method:

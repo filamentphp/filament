@@ -10,6 +10,7 @@ class IconColumn extends Column
     use Concerns\HasColors {
         getStateColor as getBaseStateColor;
     }
+    use Concerns\HasSize;
 
     protected string $view = 'tables::columns.icon-column';
 
