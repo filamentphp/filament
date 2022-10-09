@@ -43,12 +43,12 @@ protected function getRedirectUrl(): string
 }
 ```
 
-If you wish to be redirected to the previous page with fallback to the index page:
+If you wish to be redirected to the previous page, else the index page:
 
 ```php
 protected function getRedirectUrl(): string
 {
-    return $this->backUrl ?? $this->getResource()::getUrl('index');
+    return $this->previousUrl ?? $this->getResource()::getUrl('index');
 }
 ```
 
