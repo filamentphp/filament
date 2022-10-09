@@ -79,7 +79,6 @@ trait HasBulkActions
         }
 
         $this->mountedTableBulkAction = null;
-
         $this->selectedTableRecords = [];
 
         $action->resetArguments();
@@ -128,7 +127,7 @@ trait HasBulkActions
             return;
         } catch (Cancel $exception) {
             $this->mountedTableBulkAction = null;
-            $this->selectedTableRecords = null;
+            $this->selectedTableRecords = [];
 
             return;
         }
