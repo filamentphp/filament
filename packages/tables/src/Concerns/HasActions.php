@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Forms\ComponentContainer;
+use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
@@ -93,6 +94,8 @@ trait HasActions
 
         $form = $this->getMountedTableActionForm();
 
+        $result = null;
+
         try {
             if ($action->hasForm()) {
                 $action->callBeforeFormValidated();
@@ -108,24 +111,26 @@ trait HasActions
                 'form' => $form,
             ]);
 
-            try {
-                return $action->callAfter() ?? $result;
-            } finally {
-                $this->mountedTableAction = null;
-
-                $action->record(null);
-                $this->mountedTableActionRecord(null);
-
-                $action->resetArguments();
-                $action->resetFormData();
-
-                $this->dispatchBrowserEvent('close-modal', [
-                    'id' => "{$this->id}-table-action",
-                ]);
-            }
+            $result = $action->callAfter() ?? $result;
         } catch (Halt $exception) {
             return;
+        } catch (Cancel $exception) {
+
         }
+
+        $this->mountedTableAction = null;
+
+        $action->record(null);
+        $this->mountedTableActionRecord(null);
+
+        $action->resetArguments();
+        $action->resetFormData();
+
+        $this->dispatchBrowserEvent('close-modal', [
+            'id' => "{$this->id}-table-action",
+        ]);
+
+        return $result;
     }
 
     public function mountedTableActionRecord($record): void
@@ -166,6 +171,11 @@ trait HasActions
                 $action->callAfterFormFilled();
             }
         } catch (Halt $exception) {
+            return;
+        } catch (Cancel $exception) {
+            $this->mountedTableAction = null;
+            $this->mountedTableActionRecord(null);
+
             return;
         }
 

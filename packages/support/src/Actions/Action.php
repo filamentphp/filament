@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Actions;
 
+use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 
 abstract class Action extends BaseAction
@@ -20,6 +21,11 @@ abstract class Action extends BaseAction
     public function call(array $parameters = [])
     {
         return $this->evaluate($this->getAction(), $parameters);
+    }
+
+    public function cancel(): void
+    {
+        throw new Cancel();
     }
 
     public function halt(): void
