@@ -51,7 +51,7 @@ class EditRecord extends Page implements HasFormActions
         $this->authorizeAccess();
 
         $this->fillForm();
-        
+
         $this->previousUrl = url()->previous();
     }
 
