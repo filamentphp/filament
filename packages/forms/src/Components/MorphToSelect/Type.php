@@ -5,7 +5,6 @@ namespace Filament\Forms\Components\MorphToSelect;
 use Closure;
 use Exception;
 use Filament\Forms\Components\Select;
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -278,6 +277,6 @@ class Type
 
     public function getOptionsLimit(): int
     {
-        return $this->evaluate($this->optionsLimit);
+        return $this->optionsLimit;
     }
 }

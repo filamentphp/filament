@@ -52,12 +52,12 @@ class MorphToSelect extends Component
         $types = $this->getTypes();
         $isRequired = $this->isRequired();
 
-        /** @var Type | null $selectedType */
+        /** @var ?Type $selectedType */
         $selectedType = $types[$this->evaluate(fn (Closure $get): ?string => $get($typeColumn))] ?? null;
 
         return [
             Select::make($typeColumn)
-                ->label('Type')
+                ->label($this->getLabel())
                 ->disableLabel()
                 ->options(array_map(
                     fn (Type $type): string => $type->getLabel(),
