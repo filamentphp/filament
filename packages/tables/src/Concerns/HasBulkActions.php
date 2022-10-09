@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Forms\ComponentContainer;
+use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\BulkAction;
 
@@ -54,6 +55,8 @@ trait HasBulkActions
 
         $form = $this->getMountedTableBulkActionForm();
 
+        $result = null;
+
         try {
             if ($action->hasForm()) {
                 $action->callBeforeFormValidated();
@@ -69,23 +72,25 @@ trait HasBulkActions
                 'form' => $form,
             ]);
 
-            try {
-                return $action->callAfter() ?? $result;
-            } finally {
-                $this->mountedTableBulkAction = null;
-
-                $this->selectedTableRecords = [];
-
-                $action->resetArguments();
-                $action->resetFormData();
-
-                $this->dispatchBrowserEvent('close-modal', [
-                    'id' => "{$this->id}-table-bulk-action",
-                ]);
-            }
+            $result = $action->callAfter() ?? $result;
         } catch (Halt $exception) {
             return;
+        } catch (Cancel $exception) {
+
         }
+
+        $this->mountedTableBulkAction = null;
+
+        $this->selectedTableRecords = [];
+
+        $action->resetArguments();
+        $action->resetFormData();
+
+        $this->dispatchBrowserEvent('close-modal', [
+            'id' => "{$this->id}-table-bulk-action",
+        ]);
+
+        return $result;
     }
 
     public function mountTableBulkAction(string $name, array $selectedRecords)
@@ -121,6 +126,11 @@ trait HasBulkActions
                 $action->callAfterFormFilled();
             }
         } catch (Halt $exception) {
+            return;
+        } catch (Cancel $exception) {
+            $this->mountedTableBulkAction = null;
+            $this->selectedTableRecords = null;
+
             return;
         }
 

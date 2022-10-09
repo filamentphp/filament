@@ -276,6 +276,12 @@ CreateAction::make()
     })
 ```
 
+If you'd like the action modal to close too, you can `cancel()` the action instead of halting it:
+
+```php
+$action->cancel();
+```
+
 ## Editing records in modals
 
 If your resource is simple, you may wish to edit records a modal rather than on the [Edit page](editing-records).
@@ -405,6 +411,12 @@ EditAction::make()
             $action->halt();
         }
     })
+```
+
+If you'd like the action modal to close too, you can `cancel()` the action instead of halting it:
+
+```php
+$action->cancel();
 ```
 
 ## Viewing records in modals

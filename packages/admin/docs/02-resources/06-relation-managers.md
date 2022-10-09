@@ -238,6 +238,12 @@ CreateAction::make()
     })
 ```
 
+If you'd like the action modal to close too, you can `cancel()` the action instead of halting it:
+
+```php
+$action->cancel();
+```
+
 ## Editing records
 
 ### Editing with pivot attributes
@@ -385,6 +391,12 @@ EditAction::make()
             $action->halt();
         }
     })
+```
+
+If you'd like the action modal to close too, you can `cancel()` the action instead of halting it:
+
+```php
+$action->cancel();
 ```
 
 ## Attaching and detaching records

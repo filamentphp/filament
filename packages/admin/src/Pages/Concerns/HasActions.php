@@ -7,6 +7,7 @@ use Filament\Forms;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\ActionGroup;
 use Filament\Pages\Contracts;
+use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 
@@ -39,6 +40,8 @@ trait HasActions
 
         $form = $this->getMountedActionForm();
 
+        $result = null;
+
         try {
             if ($action->hasForm()) {
                 $action->callBeforeFormValidated();
@@ -54,21 +57,23 @@ trait HasActions
                 'form' => $form,
             ]);
 
-            try {
-                return $action->callAfter() ?? $result;
-            } finally {
-                $this->mountedAction = null;
-
-                $action->resetArguments();
-                $action->resetFormData();
-
-                $this->dispatchBrowserEvent('close-modal', [
-                    'id' => 'page-action',
-                ]);
-            }
+            $result = $action->callAfter() ?? $result;
         } catch (Halt $exception) {
             return;
+        } catch (Cancel $exception) {
+
         }
+
+        $this->mountedAction = null;
+
+        $action->resetArguments();
+        $action->resetFormData();
+
+        $this->dispatchBrowserEvent('close-modal', [
+            'id' => 'page-action',
+        ]);
+
+        return $result;
     }
 
     public function mountAction(string $name)
@@ -103,6 +108,10 @@ trait HasActions
                 $action->callAfterFormFilled();
             }
         } catch (Halt $exception) {
+            return;
+        } catch (Cancel $exception) {
+            $this->mountedAction = null;
+
             return;
         }
 
