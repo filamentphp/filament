@@ -360,7 +360,7 @@ class TestsBulkActions
         };
     }
 
-    public function assertTableBulkActionHeld(): Closure
+    public function assertTableBulkActionHalted(): Closure
     {
         return function (string $name): static {
             $name = $this->parseActionName($name);
@@ -372,6 +372,14 @@ class TestsBulkActions
 
             return $this;
         };
+    }
+
+    /**
+     * @deprecated Use `->assertTableBulkActionHalted()` instead.
+     */
+    public function assertTableBulkActionHeld(): Closure
+    {
+        return $this->assertTableBulkActionHalted();
     }
 
     public function assertHasTableBulkActionErrors(): Closure

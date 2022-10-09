@@ -2,7 +2,7 @@
 
 namespace Filament\Support\Actions;
 
-use Filament\Support\Actions\Exceptions\Hold;
+use Filament\Support\Exceptions\Halt;
 
 abstract class Action extends BaseAction
 {
@@ -22,9 +22,17 @@ abstract class Action extends BaseAction
         return $this->evaluate($this->getAction(), $parameters);
     }
 
+    public function halt(): void
+    {
+        throw new Halt();
+    }
+
+    /**
+     * @deprecated Use `->halt()` instead.
+     */
     public function hold(): void
     {
-        throw new Hold();
+        $this->halt();
     }
 
     public function success(): void

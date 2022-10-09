@@ -4,7 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Forms\ComponentContainer;
-use Filament\Support\Actions\Exceptions\Hold;
+use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\BulkAction;
 
 /**
@@ -54,37 +54,37 @@ trait HasBulkActions
 
         $form = $this->getMountedTableBulkActionForm();
 
-        if ($action->hasForm()) {
-            $action->callBeforeFormValidated();
-
-            $action->formData($form->getState());
-
-            $action->callAfterFormValidated();
-        }
-
-        $action->callBefore();
-
         try {
+            if ($action->hasForm()) {
+                $action->callBeforeFormValidated();
+
+                $action->formData($form->getState());
+
+                $action->callAfterFormValidated();
+            }
+
+            $action->callBefore();
+
             $result = $action->call([
                 'form' => $form,
             ]);
-        } catch (Hold $exception) {
+
+            try {
+                return $action->callAfter() ?? $result;
+            } finally {
+                $this->mountedTableBulkAction = null;
+
+                $this->selectedTableRecords = [];
+
+                $action->resetArguments();
+                $action->resetFormData();
+
+                $this->dispatchBrowserEvent('close-modal', [
+                    'id' => "{$this->id}-table-bulk-action",
+                ]);
+            }
+        } catch (Halt $exception) {
             return;
-        }
-
-        try {
-            return $action->callAfter() ?? $result;
-        } finally {
-            $this->mountedTableBulkAction = null;
-
-            $this->selectedTableRecords = [];
-
-            $action->resetArguments();
-            $action->resetFormData();
-
-            $this->dispatchBrowserEvent('close-modal', [
-                'id' => "{$this->id}-table-bulk-action",
-            ]);
         }
     }
 
@@ -108,16 +108,20 @@ trait HasBulkActions
             fn () => $this->getMountedTableBulkActionForm(),
         );
 
-        if ($action->hasForm()) {
-            $action->callBeforeFormFilled();
-        }
+        try {
+            if ($action->hasForm()) {
+                $action->callBeforeFormFilled();
+            }
 
-        $action->mount([
-            'form' => $this->getMountedTableBulkActionForm(),
-        ]);
+            $action->mount([
+                'form' => $this->getMountedTableBulkActionForm(),
+            ]);
 
-        if ($action->hasForm()) {
-            $action->callAfterFormFilled();
+            if ($action->hasForm()) {
+                $action->callAfterFormFilled();
+            }
+        } catch (Halt $exception) {
+            return;
         }
 
         if (! $action->shouldOpenModal()) {

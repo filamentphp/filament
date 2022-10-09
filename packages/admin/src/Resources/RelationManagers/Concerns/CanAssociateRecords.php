@@ -229,7 +229,7 @@ trait CanAssociateRecords
             ->send();
 
         if ($another) {
-            $this->getMountedTableAction()->hold();
+            $this->getMountedTableAction()->halt();
         }
     }
 

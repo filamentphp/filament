@@ -21,6 +21,7 @@ class Column extends ViewComponent
     use Concerns\CanCallAction;
     use Concerns\CanGrow;
     use Concerns\CanOpenUrl;
+    use Concerns\CanSpanColumns;
     use Concerns\HasAlignment;
     use Concerns\HasExtraHeaderAttributes;
     use Concerns\HasLabel;

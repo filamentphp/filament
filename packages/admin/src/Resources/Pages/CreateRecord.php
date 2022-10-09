@@ -6,6 +6,7 @@ use Filament\Forms\ComponentContainer;
 use Filament\Notifications\Notification;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Contracts\HasFormActions;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -56,21 +57,25 @@ class CreateRecord extends Page implements HasFormActions
     {
         $this->authorizeAccess();
 
-        $this->callHook('beforeValidate');
+        try {
+            $this->callHook('beforeValidate');
 
-        $data = $this->form->getState();
+            $data = $this->form->getState();
 
-        $this->callHook('afterValidate');
+            $this->callHook('afterValidate');
 
-        $data = $this->mutateFormDataBeforeCreate($data);
+            $data = $this->mutateFormDataBeforeCreate($data);
 
-        $this->callHook('beforeCreate');
+            $this->callHook('beforeCreate');
 
-        $this->record = $this->handleRecordCreation($data);
+            $this->record = $this->handleRecordCreation($data);
 
-        $this->form->model($this->record)->saveRelationships();
+            $this->form->model($this->record)->saveRelationships();
 
-        $this->callHook('afterCreate');
+            $this->callHook('afterCreate');
+        } catch (Halt $exception) {
+            return;
+        }
 
         if (filled($this->getCreatedNotificationMessage())) {
             Notification::make()

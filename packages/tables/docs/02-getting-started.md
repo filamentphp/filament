@@ -100,7 +100,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
                     'warning' => 'reviewing',
                     'success' => 'published',
                 ]),
-            Tables\Columns\BooleanColumn::make('is_featured'),
+            Tables\Columns\IconColumn::make('is_featured')->boolean(),
         ]; // [tl! collapse:end]
     }
     
@@ -393,7 +393,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
                     'warning' => 'reviewing',
                     'success' => 'published',
                 ]),
-            Tables\Columns\BooleanColumn::make('is_featured'),
+            Tables\Columns\IconColumn::make('is_featured')->boolean(),
         ]; // [tl! collapse:end]
     }
     
@@ -544,7 +544,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
                     'warning' => 'reviewing',
                     'success' => 'published',
                 ]),
-            Tables\Columns\BooleanColumn::make('is_featured'),
+            Tables\Columns\IconColumn::make('is_featured')->boolean(),
         ];
     } // [tl! collapse:end]
     

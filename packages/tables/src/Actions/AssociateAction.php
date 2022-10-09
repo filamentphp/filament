@@ -82,7 +82,7 @@ class AssociateAction extends Action
 
                 $form->fill();
 
-                $this->hold();
+                $this->halt();
 
                 return;
             }

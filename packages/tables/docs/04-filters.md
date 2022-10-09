@@ -111,6 +111,22 @@ SelectFilter::make('status')
     ->attribute('status_id')
 ```
 
+#### Multi-select filters
+
+These allow the user to select multiple options to apply the filter to their table. For example, a status filter may present the user with a few status options to pick from and filter the table using:
+
+```php
+use Filament\Tables\Filters\SelectFilter;
+
+SelectFilter::make('status')
+    ->multiple()
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+```
+
 #### Relationship select filters
 
 Select filters are also able to automatically populate themselves based on a `BelongsTo` relationship. For example, if your table has a `author` relationship with a `name` column, you may use `relationship()` to filter the records belonging to an author:
@@ -129,45 +145,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 SelectFilter::make('author')
     ->relationship('author', 'name', fn (Builder $query) => $query->withTrashed())
-```
-
-### Multi-select filters
-
-Multi-select filters allow you to quickly create a filter that allows the user to select multiple options to apply the filter to their table. For example, a status filter may present the user with a few status options to pick from and filter the table using:
-
-```php
-use Filament\Tables\Filters\MultiSelectFilter;
-
-MultiSelectFilter::make('status')
-    ->options([
-        'draft' => 'Draft',
-        'reviewing' => 'Reviewing',
-        'published' => 'Published',
-    ])
-```
-
-Multi-select filters do not require a custom `query()` method. The column name used to scope the query is the name of the filter. To customize this, you may use the `attribute()` method:
-
-```php
-use Filament\Tables\Filters\MultiSelectFilter;
-
-MultiSelectFilter::make('status')
-    ->options([
-        'draft' => 'Draft',
-        'reviewing' => 'Reviewing',
-        'published' => 'Published',
-    ])
-    ->attribute('status_id')
-```
-
-#### Relationship multi-select filters
-
-Multi-select filters are also able to automatically populate themselves based on a `BelongsTo` relationship. For example, if your table has a `author` relationship with a `name` column, you may use `relationship()` to filter the records belonging to a selection of authors:
-
-```php
-use Filament\Tables\Filters\MultiSelectFilter;
-
-MultiSelectFilter::make('author')->relationship('author', 'name')
 ```
 
 ### Ternary filters

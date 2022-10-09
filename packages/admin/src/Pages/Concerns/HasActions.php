@@ -7,7 +7,7 @@ use Filament\Forms;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\ActionGroup;
 use Filament\Pages\Contracts;
-use Filament\Support\Actions\Exceptions\Hold;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -39,35 +39,35 @@ trait HasActions
 
         $form = $this->getMountedActionForm();
 
-        if ($action->hasForm()) {
-            $action->callBeforeFormValidated();
-
-            $action->formData($form->getState());
-
-            $action->callAfterFormValidated();
-        }
-
-        $action->callBefore();
-
         try {
+            if ($action->hasForm()) {
+                $action->callBeforeFormValidated();
+
+                $action->formData($form->getState());
+
+                $action->callAfterFormValidated();
+            }
+
+            $action->callBefore();
+
             $result = $action->call([
                 'form' => $form,
             ]);
-        } catch (Hold $exception) {
+
+            try {
+                return $action->callAfter() ?? $result;
+            } finally {
+                $this->mountedAction = null;
+
+                $action->resetArguments();
+                $action->resetFormData();
+
+                $this->dispatchBrowserEvent('close-modal', [
+                    'id' => 'page-action',
+                ]);
+            }
+        } catch (Halt $exception) {
             return;
-        }
-
-        try {
-            return $action->callAfter() ?? $result;
-        } finally {
-            $this->mountedAction = null;
-
-            $action->resetArguments();
-            $action->resetFormData();
-
-            $this->dispatchBrowserEvent('close-modal', [
-                'id' => 'page-action',
-            ]);
         }
     }
 
@@ -90,16 +90,20 @@ trait HasActions
             fn () => $this->getMountedActionForm(),
         );
 
-        if ($action->hasForm()) {
-            $action->callBeforeFormFilled();
-        }
+        try {
+            if ($action->hasForm()) {
+                $action->callBeforeFormFilled();
+            }
 
-        $action->mount([
-            'form' => $this->getMountedActionForm(),
-        ]);
+            $action->mount([
+                'form' => $this->getMountedActionForm(),
+            ]);
 
-        if ($action->hasForm()) {
-            $action->callAfterFormFilled();
+            if ($action->hasForm()) {
+                $action->callAfterFormFilled();
+            }
+        } catch (Halt $exception) {
+            return;
         }
 
         if (! $action->shouldOpenModal()) {
