@@ -8,8 +8,12 @@ trait HasDuration
 {
     protected int | Closure | null $duration = 6000;
 
-    public function duration(int | Closure | null $duration): static
+    public function duration(int | string | Closure | null $duration): static
     {
+        if ($duration === 'persistent') {
+            $duration = null;
+        }
+
         $this->duration = $duration;
 
         return $this;
@@ -29,7 +33,7 @@ trait HasDuration
 
     public function persistent(): static
     {
-        $this->duration(null);
+        $this->duration('persistent');
 
         return $this;
     }

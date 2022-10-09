@@ -77,7 +77,7 @@ class Notification {
     }
 
     persistent() {
-        this.duration(null)
+        this.duration('persistent')
 
         return this
     }

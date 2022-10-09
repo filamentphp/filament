@@ -55,7 +55,7 @@ class Notification extends ViewComponent implements Arrayable
             'id' => $this->getId(),
             'actions' => array_map(fn (Action | ActionGroup $action): array => $action->toArray(), $this->getActions()),
             'body' => $this->getBody(),
-            'duration' => $this->getDuration(),
+            'duration' => $this->getDuration() ?? 'persistent',
             'icon' => $this->getIcon(),
             'iconColor' => $this->getIconColor(),
             'title' => $this->getTitle(),
