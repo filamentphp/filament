@@ -3,16 +3,10 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Exception;
-use Filament\Forms\Components\Concerns\HasName;
 use Filament\Forms\Components\MorphToSelect\Type;
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
-use function Filament\Support\get_model_label;
 
 class MorphToSelect extends Component
 {
