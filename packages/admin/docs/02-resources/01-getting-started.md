@@ -208,7 +208,7 @@ Filament has many utilities available for managing resource relationships. Which
 
 #### Select field
 
-Filament includes the ability automatically loads options from a `BelongsTo` relationship:
+Filament includes the ability to automatically load options from a `BelongsTo` relationship:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -334,6 +334,24 @@ More information about `CheckboxList` is available in the [Form docs](../../form
 The related records are listed in a table, which has buttons to open a modal for each action.
 
 For more information on relation managers, see the [full documentation](relation-managers).
+
+### `MorphTo`
+
+#### Select field
+
+Filament includes the ability to automatically load options from a `MorphTo` relationship:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)->titleColumnName('name'),
+        MorphToSelect\Type::make(Post::class)->titleColumnName('title'),
+    ])
+```
+
+More information is available in the [Form docs](../../forms/fields#handling-morphto-relationships).
 
 ### `MorphOne`
 
