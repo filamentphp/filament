@@ -42,8 +42,8 @@ class Field extends Component implements Contracts\HasValidationRules
             ->replace(['-', '_'], ' ')
             ->ucfirst();
 
-        return is_string($label) && $this->shouldTranslateLabel
-            ? __($label)
-            : $label;
+        return (is_string($label) && $this->shouldTranslateLabel) ?
+            __($label) :
+            $label;
     }
 }
