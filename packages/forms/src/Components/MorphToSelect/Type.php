@@ -5,13 +5,12 @@ namespace Filament\Forms\Components\MorphToSelect;
 use Closure;
 use Exception;
 use Filament\Forms\Components\Select;
-use Illuminate\Contracts\Support\Arrayable;
+use function Filament\Support\get_model_label;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
-use function Filament\Support\get_model_label;
 
 class Type
 {
