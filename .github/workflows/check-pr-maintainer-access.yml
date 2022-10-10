@@ -12,7 +12,7 @@ jobs:
   notify-when-maintainers-cannot-edit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@2b34a689ec86a68d8ab9478298f91d5401337b7d
+      - uses: actions/github-script@v3
         with:
           script: |
             const query = `
@@ -50,8 +50,8 @@ jobs:
 
                     await github.issues.createComment({
                         issue_number: pullNumber,
-                        owner: 'github',
-                        repo: 'docs',
+                        owner: 'filamentphp',
+                        repo: 'filament',
                         body: 'Thanks for submitting a PR!\n\nIn order to review and merge PRs most efficiently, we require that all PRs grant maintainer edit access before we review them. For information on how to do this, [see the GitHub documentation](https://docs.github.com/en/github/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork).'
                     })
 
