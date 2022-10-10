@@ -14,7 +14,7 @@ jobs:
           script: |
             const query = `
                 query($number: Int!) {
-                    repository(owner: "github", name: "docs") {
+                    repository(owner: "filamentphp", name: "filament") {
                         pullRequest(number: $number) {
                             headRepositoryOwner {
                                 login
