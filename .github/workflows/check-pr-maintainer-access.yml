@@ -55,8 +55,8 @@ jobs:
                         body: 'Thanks for submitting a PR!\n\nIn order to review and merge PRs most efficiently, we require that all PRs grant maintainer edit access before we review them. For information on how to do this, [see the GitHub documentation](https://docs.github.com/en/github/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork).'
                     })
 
-                    await github.rest.pulls.update({
-                        pull_number: pullNumber,
+                    await github.issues.update({
+                        issue_number: pullNumber,
                         owner: 'filamentphp',
                         repo: context.repo.repo,
                         state: 'closed'
