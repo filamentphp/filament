@@ -38,7 +38,7 @@
     @elseif ($url || ($recordUrl && $action === null))
         <a
             href="{{ $url ?: $recordUrl }}"
-            {{ $shouldOpenUrlInNewTab ? 'target="_blank"' : null }}
+            {!! $shouldOpenUrlInNewTab ? 'target="_blank"' : null !!}
             class="block"
         >
             {{ $slot }}
