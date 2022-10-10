@@ -78,29 +78,10 @@ abstract class ViewComponent extends Component implements Htmlable
         $values = [];
 
         foreach (static::$methodCache[$class] as $method) {
-            $values[$method] = $this->createVariableFromMethod(new ReflectionMethod($this, $method));
+            $values[$method] = Closure::fromCallable([$this, $method]);
         }
 
         return $values;
-    }
-
-    protected function createVariableFromMethod(ReflectionMethod $method): InvokableComponentVariable | Closure
-    {
-        return $method->getNumberOfParameters() === 0
-            ? $this->createInvokableVariable($method->getName())
-            : Closure::fromCallable([$this, $method->getName()]);
-    }
-
-    protected function createInvokableVariable(string $method): InvokableComponentVariable
-    {
-        return new InvokableComponentVariable(function () use ($method) {
-            return $this->{$method}();
-        });
-    }
-
-    protected function newAttributeBag(array $attributes = []): ComponentAttributeBag
-    {
-        return new ComponentAttributeBag($attributes);
     }
 
     public function viewData(array $data): static
@@ -129,7 +110,7 @@ abstract class ViewComponent extends Component implements Htmlable
         return view(
             $this->getView(),
             array_merge(
-                ['attributes' => $this->newAttributeBag()],
+                ['attributes' => new ComponentAttributeBag()],
                 $this->extractPublicProperties(),
                 $this->extractPublicMethods(),
                 isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : [],
