@@ -329,7 +329,18 @@ protected function getSteps(): array
 }
 ```
 
-Now, visit the Create page to see your wizard in action! The Edit page will still use the form defined within the resource class.
+Alternatively, if you're creating records in a modal action, simply define a `steps()` array and pass your `Step` objects:
+
+```php
+use Filament\Tables\Actions\CreateAction;
+
+CreateAction::make()
+    ->steps([
+        // ...
+    ])
+```
+
+Now, create a new record to see your wizard in action! Edit will still use the form defined within the resource class.
 
 If you'd like to allow free navigation, so all the steps are skippable, override the `hasSkippableSteps()` method:
 
@@ -338,6 +349,18 @@ public function hasSkippableSteps(): bool
 {
     return true;
 }
+```
+
+Alternatively, if you're creating records in a modal action:
+
+```php
+use Filament\Tables\Actions\CreateAction;
+
+CreateAction::make()
+    ->steps([
+        // ...
+    ])
+    ->skippableSteps()
 ```
 
 ### Sharing fields between the resource form and wizards
