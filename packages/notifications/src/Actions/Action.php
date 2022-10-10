@@ -46,21 +46,23 @@ class Action extends BaseAction implements Arrayable
     {
         $static = static::make($data['name']);
 
-        if ($static->getView() !== $data['view'] && static::isViewSafe($data['view'])) {
+        $view = $data['view'] ?? null;
+
+        if (filled($view) && ($static->getView() !== $view) && static::isViewSafe($view)) {
             $static->view($data['view']);
         }
 
-        $static->close($data['shouldCloseNotification']);
-        $static->color($data['color']);
-        $static->disabled($data['isDisabled']);
-        $static->emit($data['event'], $data['eventData']);
-        $static->extraAttributes($data['extraAttributes']);
-        $static->icon($data['icon']);
-        $static->iconPosition($data['iconPosition']);
-        $static->label($data['label']);
-        $static->outlined($data['isOutlined']);
-        $static->size($data['size']);
-        $static->url($data['url'], $data['shouldOpenUrlInNewTab']);
+        $static->close($data['shouldCloseNotification'] ?? false);
+        $static->color($data['color'] ?? null);
+        $static->disabled($data['isDisabled'] ?? false);
+        $static->emit($data['event'] ?? null, $data['eventData'] ?? []);
+        $static->extraAttributes($data['extraAttributes'] ?? []);
+        $static->icon($data['icon'] ?? null);
+        $static->iconPosition($data['iconPosition'] ?? null);
+        $static->label($data['label'] ?? null);
+        $static->outlined($data['isOutlined'] ?? false);
+        $static->size($data['size'] ?? null);
+        $static->url($data['url'] ?? null, $data['shouldOpenUrlInNewTab'] ?? false);
 
         return $static;
     }

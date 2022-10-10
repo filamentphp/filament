@@ -1,3 +1,162 @@
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __markAsModule = (target) => __defProp(target, "__esModule", {value: true});
+var __commonJS = (callback, module) => () => {
+  if (!module) {
+    module = {exports: {}};
+    callback(module.exports, module);
+  }
+  return module.exports;
+};
+var __exportStar = (target, module, desc) => {
+  if (module && typeof module === "object" || typeof module === "function") {
+    for (let key of __getOwnPropNames(module))
+      if (!__hasOwnProp.call(target, key) && key !== "default")
+        __defProp(target, key, {get: () => module[key], enumerable: !(desc = __getOwnPropDesc(module, key)) || desc.enumerable});
+  }
+  return target;
+};
+var __toModule = (module) => {
+  return __exportStar(__markAsModule(__defProp(module != null ? __create(__getProtoOf(module)) : {}, "default", module && module.__esModule && "default" in module ? {get: () => module.default, enumerable: true} : {value: module, enumerable: true})), module);
+};
+
+// node_modules/uuid-browser/lib/rng-browser.js
+var require_rng_browser = __commonJS((exports, module) => {
+  var rng;
+  var crypto = typeof global !== "undefined" && (global.crypto || global.msCrypto);
+  if (crypto && crypto.getRandomValues) {
+    rnds8 = new Uint8Array(16);
+    rng = function whatwgRNG() {
+      crypto.getRandomValues(rnds8);
+      return rnds8;
+    };
+  }
+  var rnds8;
+  if (!rng) {
+    rnds = new Array(16);
+    rng = function() {
+      for (var i = 0, r; i < 16; i++) {
+        if ((i & 3) === 0)
+          r = Math.random() * 4294967296;
+        rnds[i] = r >>> ((i & 3) << 3) & 255;
+      }
+      return rnds;
+    };
+  }
+  var rnds;
+  module.exports = rng;
+});
+
+// node_modules/uuid-browser/lib/bytesToUuid.js
+var require_bytesToUuid = __commonJS((exports, module) => {
+  var byteToHex = [];
+  for (var i = 0; i < 256; ++i) {
+    byteToHex[i] = (i + 256).toString(16).substr(1);
+  }
+  function bytesToUuid(buf, offset) {
+    var i2 = offset || 0;
+    var bth = byteToHex;
+    return bth[buf[i2++]] + bth[buf[i2++]] + bth[buf[i2++]] + bth[buf[i2++]] + "-" + bth[buf[i2++]] + bth[buf[i2++]] + "-" + bth[buf[i2++]] + bth[buf[i2++]] + "-" + bth[buf[i2++]] + bth[buf[i2++]] + "-" + bth[buf[i2++]] + bth[buf[i2++]] + bth[buf[i2++]] + bth[buf[i2++]] + bth[buf[i2++]] + bth[buf[i2++]];
+  }
+  module.exports = bytesToUuid;
+});
+
+// node_modules/uuid-browser/v1.js
+var require_v1 = __commonJS((exports, module) => {
+  var rng = require_rng_browser();
+  var bytesToUuid = require_bytesToUuid();
+  var _seedBytes = rng();
+  var _nodeId = [
+    _seedBytes[0] | 1,
+    _seedBytes[1],
+    _seedBytes[2],
+    _seedBytes[3],
+    _seedBytes[4],
+    _seedBytes[5]
+  ];
+  var _clockseq = (_seedBytes[6] << 8 | _seedBytes[7]) & 16383;
+  var _lastMSecs = 0;
+  var _lastNSecs = 0;
+  function v1(options, buf, offset) {
+    var i = buf && offset || 0;
+    var b = buf || [];
+    options = options || {};
+    var clockseq = options.clockseq !== void 0 ? options.clockseq : _clockseq;
+    var msecs = options.msecs !== void 0 ? options.msecs : new Date().getTime();
+    var nsecs = options.nsecs !== void 0 ? options.nsecs : _lastNSecs + 1;
+    var dt = msecs - _lastMSecs + (nsecs - _lastNSecs) / 1e4;
+    if (dt < 0 && options.clockseq === void 0) {
+      clockseq = clockseq + 1 & 16383;
+    }
+    if ((dt < 0 || msecs > _lastMSecs) && options.nsecs === void 0) {
+      nsecs = 0;
+    }
+    if (nsecs >= 1e4) {
+      throw new Error("uuid.v1(): Can't create more than 10M uuids/sec");
+    }
+    _lastMSecs = msecs;
+    _lastNSecs = nsecs;
+    _clockseq = clockseq;
+    msecs += 122192928e5;
+    var tl = ((msecs & 268435455) * 1e4 + nsecs) % 4294967296;
+    b[i++] = tl >>> 24 & 255;
+    b[i++] = tl >>> 16 & 255;
+    b[i++] = tl >>> 8 & 255;
+    b[i++] = tl & 255;
+    var tmh = msecs / 4294967296 * 1e4 & 268435455;
+    b[i++] = tmh >>> 8 & 255;
+    b[i++] = tmh & 255;
+    b[i++] = tmh >>> 24 & 15 | 16;
+    b[i++] = tmh >>> 16 & 255;
+    b[i++] = clockseq >>> 8 | 128;
+    b[i++] = clockseq & 255;
+    var node = options.node || _nodeId;
+    for (var n = 0; n < 6; ++n) {
+      b[i + n] = node[n];
+    }
+    return buf ? buf : bytesToUuid(b);
+  }
+  module.exports = v1;
+});
+
+// node_modules/uuid-browser/v4.js
+var require_v4 = __commonJS((exports, module) => {
+  var rng = require_rng_browser();
+  var bytesToUuid = require_bytesToUuid();
+  function v4(options, buf, offset) {
+    var i = buf && offset || 0;
+    if (typeof options == "string") {
+      buf = options == "binary" ? new Array(16) : null;
+      options = null;
+    }
+    options = options || {};
+    var rnds = options.random || (options.rng || rng)();
+    rnds[6] = rnds[6] & 15 | 64;
+    rnds[8] = rnds[8] & 63 | 128;
+    if (buf) {
+      for (var ii = 0; ii < 16; ++ii) {
+        buf[i + ii] = rnds[ii];
+      }
+    }
+    return buf || bytesToUuid(rnds);
+  }
+  module.exports = v4;
+});
+
+// node_modules/uuid-browser/index.js
+var require_uuid_browser = __commonJS((exports, module) => {
+  var v1 = require_v1();
+  var v4 = require_v4();
+  var uuid2 = v4;
+  uuid2.v1 = v1;
+  uuid2.v4 = v4;
+  module.exports = uuid2;
+});
+
 // node_modules/alpinejs/src/mutation.js
 var onAttributeAddeds = [];
 var onElRemoveds = [];
@@ -152,7 +311,7 @@ var notification_default = (Alpine) => {
       this.computedStyle = window.getComputedStyle(this.$el);
       this.configureTransitions();
       this.configureAnimations();
-      if (notification.duration !== null) {
+      if (notification.duration !== "persistent") {
         setTimeout(() => this.close(), notification.duration);
       }
       this.isShown = true;
@@ -215,11 +374,208 @@ var notification_default = (Alpine) => {
   }));
 };
 
+// packages/notifications/resources/js/Notification.js
+var import_uuid_browser = __toModule(require_uuid_browser());
+var Notification = class {
+  constructor() {
+    this.id((0, import_uuid_browser.v4)());
+    return this;
+  }
+  id(id) {
+    this.id = id;
+    return this;
+  }
+  title(title) {
+    this.title = title;
+    return this;
+  }
+  body(body) {
+    this.body = body;
+    return this;
+  }
+  actions(actions) {
+    this.actions = actions;
+    return this;
+  }
+  status(status) {
+    switch (status) {
+      case "success":
+        this.success();
+        break;
+      case "warning":
+        this.warning();
+        break;
+      case "danger":
+        this.danger();
+        break;
+    }
+    return this;
+  }
+  icon(icon) {
+    this.icon = icon;
+    return this;
+  }
+  iconColor(color) {
+    this.iconColor = color;
+    return this;
+  }
+  duration(duration) {
+    this.duration = duration;
+    return this;
+  }
+  seconds(seconds) {
+    this.duration(seconds * 1e3);
+    return this;
+  }
+  persistent() {
+    this.duration("persistent");
+    return this;
+  }
+  success() {
+    this.icon("heroicon-o-check-circle");
+    this.iconColor("success");
+    return this;
+  }
+  warning() {
+    this.icon("heroicon-o-exclamation-circle");
+    this.iconColor("warning");
+    return this;
+  }
+  danger() {
+    this.icon("heroicon-o-x-circle");
+    this.iconColor("danger");
+    return this;
+  }
+  send() {
+    Livewire.emit("notificationSent", this);
+    return this;
+  }
+};
+var Action = class {
+  constructor(name) {
+    this.name(name);
+    return this;
+  }
+  name(name) {
+    this.name = name;
+    return this;
+  }
+  color(color) {
+    this.color = color;
+    return this;
+  }
+  emit(event, data) {
+    this.event(event);
+    this.eventData(data);
+    return this;
+  }
+  event(event) {
+    this.event = event;
+    return this;
+  }
+  eventData(data) {
+    this.eventData = data;
+    return this;
+  }
+  extraAttributes(attributes) {
+    this.extraAttributes = attributes;
+    return this;
+  }
+  icon(icon) {
+    this.icon = icon;
+    return this;
+  }
+  iconPosition(position) {
+    this.iconPosition = position;
+    return this;
+  }
+  outlined(condition = true) {
+    this.isOutlined = condition;
+    return this;
+  }
+  disabled(condition = true) {
+    this.isDisabled = condition;
+    return this;
+  }
+  label(label) {
+    this.label = label;
+    return this;
+  }
+  close(condition = true) {
+    this.shouldCloseNotification = condition;
+    return this;
+  }
+  openUrlInNewTab(condition = true) {
+    this.shouldOpenUrlInNewTab = condition;
+    return this;
+  }
+  size(size) {
+    this.size = size;
+    return this;
+  }
+  url(url) {
+    this.url = url;
+    return this;
+  }
+  view(view) {
+    this.view = view;
+    return this;
+  }
+  button() {
+    this.view("notifications::actions.button-action");
+    return this;
+  }
+  grouped() {
+    this.view("notifications::actions.grouped-action");
+    return this;
+  }
+  link() {
+    this.view("notifications::actions.link-action");
+    return this;
+  }
+};
+var ActionGroup = class {
+  constructor(actions) {
+    this.actions(actions);
+    return this;
+  }
+  actions(actions) {
+    this.actions = actions.map((action) => action.grouped());
+    return this;
+  }
+  color(color) {
+    this.color = color;
+    return this;
+  }
+  icon(icon) {
+    this.icon = icon;
+    return this;
+  }
+  iconPosition(position) {
+    this.iconPosition = position;
+    return this;
+  }
+  label(label) {
+    this.label = label;
+    return this;
+  }
+  tooltip(tooltip) {
+    this.tooltip = tooltip;
+    return this;
+  }
+};
+
 // packages/notifications/resources/js/index.js
+window.NotificationAction = Action;
+window.NotificationActionGroup = ActionGroup;
+window.Notification = Notification;
 var js_default = (Alpine) => {
   Alpine.plugin(notification_default);
 };
 export {
+  Notification,
+  Action as NotificationAction,
+  ActionGroup as NotificationActionGroup,
   notification_default as NotificationComponentAlpinePlugin,
   js_default as default
 };

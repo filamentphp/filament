@@ -75,9 +75,9 @@ class Notification extends ViewComponent implements Arrayable
             ),
         );
         $static->body($data['body'] ?? null);
-        $static->duration($data['duration'] ?? null);
+        $static->duration($data['duration'] ?? $static->getDuration());
         $static->icon($data['icon'] ?? null);
-        $static->iconColor($data['iconColor'] ?? null);
+        $static->iconColor($data['iconColor'] ?? $static->getIconColor());
         $static->title($data['title'] ?? null);
 
         return $static;
