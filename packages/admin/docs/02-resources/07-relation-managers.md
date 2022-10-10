@@ -63,14 +63,6 @@ protected static ?string $inverseRelationship = 'section'; // Since the inverse 
 
 Once a table and form have been defined for the relation manager, visit the [Edit](editing-records) or [View](viewing-records) page of your resource to see it in action.
 
-### Handling soft deletes
-
-By default, you will not be able to interact with deleted records in the relation manager. If you'd like to add functionality to restore, force delete and filter trashed records in your relation manager, use the `--soft-deletes` flag when generating the relation manager:
-
-```bash
-php artisan make:filament-relation-manager CategoryResource posts title --soft-deletes
-```
-
 ## Listing records
 
 Related records will be listed in a table. The entire relation manager is based around this table, which contains actions to [create](#creating-records), [edit](#editing-records), [attach / detach](#attaching-and-detaching-records), [associate / dissociate](#associating-and-dissociating-records), and delete records.
@@ -238,7 +230,7 @@ CreateAction::make()
     })
 ```
 
-If you'd like the action modal to close too, you can `cancel()` the action instead of halting it:
+If you'd like the action modal to close too, you can completely `cancel()` the action instead of halting it:
 
 ```php
 $action->cancel();
@@ -393,7 +385,7 @@ EditAction::make()
     })
 ```
 
-If you'd like the action modal to close too, you can `cancel()` the action instead of halting it:
+If you'd like the action modal to close too, you can completely `cancel()` the action instead of halting it:
 
 ```php
 $action->cancel();
@@ -573,6 +565,110 @@ public static function table(Table $table): Table
             // ...
         ]);
 }
+```
+
+## Deleting records
+
+### Creating a relation manager with soft deletes
+
+By default, you will not be able to interact with deleted records in the relation manager. If you'd like to add functionality to restore, force delete and filter trashed records in your relation manager, use the `--soft-deletes` flag when generating the relation manager:
+
+```bash
+php artisan make:filament-relation-manager CategoryResource posts title --soft-deletes
+```
+
+### Adding soft deletes to an existing relation manager
+
+Alternatively, you may add soft deleting functionality to an existing resource:
+
+```php
+use Filament\Resources\Table;
+use Filament\Tables;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->filters([
+            Tables\Filters\TrashedFilter::make(),
+            // ...
+        ])
+        ->actions([
+            Tables\Actions\DeleteAction::make(),
+            Tables\Actions\ForceDeleteAction::make(),
+            Tables\Actions\RestoreAction::make(),
+            // ...
+        ])
+        ->bulkActions([
+            Tables\Actions\DeleteBulkAction::make(),
+            Tables\Actions\ForceDeleteBulkAction::make(),
+            Tables\Actions\RestoreBulkAction::make(),
+            // ...
+        ]);
+}
+
+protected function getTableQuery(): Builder
+{
+    return parent::getTableQuery()
+        ->withoutGlobalScopes([
+            SoftDeletingScope::class,
+        ]);
+}
+```
+
+### Lifecycle hooks
+
+You can use the `before()` and `after()` methods to execute code before and after a record is deleted:
+
+```php
+use Filament\Tables\Actions\DeleteAction;
+
+DeleteAction::make()
+    ->before(function () {
+        // ...
+    })
+    ->after(function () {
+        // ...
+    })
+```
+
+### Halting the deletion process
+
+At any time, you may call `$action->halt()` from inside a lifecycle hook or mutation method, which will halt the entire deletion process:
+
+```php
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\DeleteAction;
+
+DeleteAction::make()
+    ->before(function (DeleteAction $action) {
+        if (! $this->record->team->subscribed()) {
+            Notification::make()
+                ->warning()
+                ->title('You don\'t have an active subscription!')
+                ->body('Choose a plan to continue.')
+                ->persistent()
+                ->actions([
+                    Action::make('subscribe')
+                        ->button()
+                        ->url(route('subscribe'), shouldOpenInNewTab: true),
+                ])
+                ->send();
+        
+            $action->halt();
+        }
+    })
+```
+
+If you'd like the action modal to close too, you can completely `cancel()` the action instead of halting it:
+
+```php
+$action->cancel();
 ```
 
 ## Grouping relation managers

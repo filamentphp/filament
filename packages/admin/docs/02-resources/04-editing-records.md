@@ -4,7 +4,7 @@ title: Editing records
 
 ## Customizing data before filling the form
 
-You may wish to modify the data from a record before it is filled into the form. To do this, you may define a `mutateFormDataBeforeFill()` method to modify the `$data` array, and return the modified version before it is filled into the form:
+You may wish to modify the data from a record before it is filled into the form. To do this, you may define a `mutateFormDataBeforeFill()` method on the Edit page class to modify the `$data` array, and return the modified version before it is filled into the form:
 
 ```php
 protected function mutateFormDataBeforeFill(array $data): array
@@ -15,9 +15,22 @@ protected function mutateFormDataBeforeFill(array $data): array
 }
 ```
 
+Alternatively, if you're editing records in a modal action:
+
+```php
+use Filament\Tables\Actions\EditAction;
+
+EditAction::make()
+    ->mutateRecordDataUsing(function (array $data): array {
+        $data['user_id'] = auth()->id();
+
+        return $data;
+    })
+```
+
 ## Customizing data before saving
 
-Sometimes, you may wish to modify form data before it is finally saved to the database. To do this, you may define a `mutateFormDataBeforeSave()` method, which accepts the `$data` as an array, and returns it modified:
+Sometimes, you may wish to modify form data before it is finally saved to the database. To do this, you may define a `mutateFormDataBeforeSave()` method on the Edit page class, which accepts the `$data` as an array, and returns it modified:
 
 ```php
 protected function mutateFormDataBeforeSave(array $data): array
@@ -28,9 +41,22 @@ protected function mutateFormDataBeforeSave(array $data): array
 }
 ```
 
+Alternatively, if you're editing records in a modal action:
+
+```php
+use Filament\Tables\Actions\EditAction;
+
+EditAction::make()
+    ->mutateFormDataUsing(function (array $data): array {
+        $data['last_edited_by_id'] = auth()->id();
+
+        return $data;
+    })
+```
+
 ## Customizing the saving process
 
-You can tweak how the record is updated using the `handleRecordUpdate()` method:
+You can tweak how the record is updated using the `handleRecordUpdate()` method on the Edit page class:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -43,11 +69,25 @@ protected function handleRecordUpdate(Model $record, array $data): Model
 }
 ```
 
+Alternatively, if you're editing records in a modal action:
+
+```php
+use Filament\Tables\Actions\EditAction;
+use Illuminate\Database\Eloquent\Model;
+
+EditAction::make()
+    ->using(function (Model $record, array $data): Model {
+        $record->update($data);
+
+        return $record;
+    })
+```
+
 ## Customizing form redirects
 
 By default, saving the form will not redirect the user to another page.
 
-You may set up a custom redirect when the form is saved by overriding the `getRedirectUrl()` method.
+You may set up a custom redirect when the form is saved by overriding the `getRedirectUrl()` method on the Edit page class.
 
 For example, the form can redirect back to the [List page](listing-records) of the resource:
 
@@ -80,7 +120,7 @@ protected function getRedirectUrl(): string
 
 When the record is successfully updated, a notification is dispatched to the user, which indicates the success of their action.
 
-To customize the text content of this notification:
+To customize the text content of this notification by defining a `getSavedNotificationMessage()` method on the Edit page class:
 
 ```php
 protected function getSavedNotificationMessage(): ?string
@@ -98,9 +138,27 @@ protected function getSavedNotificationMessage(): ?string
 }
 ```
 
+Alternatively, if you're editing records in a modal action:
+
+```php
+use Filament\Tables\Actions\EditAction;
+
+EditAction::make()
+    ->successNotificationMessage('User updated')
+```
+
+And to disable the notification altogether from a modal action:
+
+```php
+use Filament\Tables\Actions\EditAction;
+
+EditAction::make()
+    ->successNotificationMessage(null)
+```
+
 ## Lifecycle hooks
 
-Hooks may be used to execute code at various points within a page's lifecycle, like before a form is saved. To set up a hook, create a protected method on the page class with the name of the hook:
+Hooks may be used to execute code at various points within a page's lifecycle, like before a form is saved. To set up a hook, create a protected method on the Edit page class with the name of the hook:
 
 ```php
 protected function beforeSave(): void
@@ -152,23 +210,30 @@ class EditUser extends EditRecord
 }
 ```
 
-### Lifecycle hooks for deleting records
-
-You can use the `before()` and `after()` methods to execute code before and after a record is deleted:
+Alternatively, if you're editing records in a modal action:
 
 ```php
-protected function getActions(): array
-{
-    return [
-        DeleteAction::make()
-            ->before(function () {
-                // ...
-            })
-            ->after(function () {
-                // ...
-            }),
-    ];
-}
+use Filament\Tables\Actions\EditAction;
+
+EditAction::make()
+    ->beforeFormFilled(function () {
+        // Runs before the form fields are populated from the database.
+    })
+    ->afterFormFilled(function () {
+        // Runs after the form fields are populated from the database.
+    })
+    ->beforeFormValidated(function () {
+        // Runs before the form fields are validated when the form is saved.
+    })
+    ->afterFormValidated(function () {
+        // Runs after the form fields are validated when the form is saved.
+    })
+    ->before(function () {
+        // Runs before the form fields are saved to the database.
+    })
+    ->after(function () {
+        // Runs after the form fields are saved to the database.
+    })
 ```
 
 ## Halting the saving process
@@ -199,17 +264,15 @@ protected function beforeSave(): void
 }
 ```
 
-### Halting the deletion process
-
-At any time, you may call `$action->halt()` from inside a lifecycle hook or mutation method, which will halt the entire deletion process:
+Alternatively, if you're editing records in a modal action:
 
 ```php
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
-use Filament\Pages\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
 
-DeleteAction::make()
-    ->before(function (DeleteAction $action) {
+EditAction::make()
+    ->before(function (EditAction $action) {
         if (! $this->record->team->subscribed()) {
             Notification::make()
                 ->warning()
@@ -226,6 +289,12 @@ DeleteAction::make()
             $action->halt();
         }
     })
+```
+
+If you'd like the action modal to close too, you can completely `cancel()` the action instead of halting it:
+
+```php
+$action->cancel();
 ```
 
 ## Authorization

@@ -32,9 +32,32 @@ public static function getPages(): array
 }
 ```
 
+## Viewing records in modals
+
+If your resource is simple, you may wish to view records in modals rather than on the [View page](viewing-records). If this is the case, you can just [delete the view page](getting-started#deleting-pages).
+
+If your resource doesn't contain a `ViewAction`, you can add one to the `$table->actions()` array:
+
+```php
+use Filament\Resources\Table;
+use Filament\Tables;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->actions([
+            Tables\Actions\ViewAction::make(),
+            // ...
+        ]);
+}
+```
+
 ## Customizing data before filling the form
 
-You may wish to modify the data from a record before it is filled into the form. To do this, you may define a `mutateFormDataBeforeFill()` method to modify the `$data` array, and return the modified version before it is filled into the form:
+You may wish to modify the data from a record before it is filled into the form. To do this, you may define a `mutateFormDataBeforeFill()` method on the View page class to modify the `$data` array, and return the modified version before it is filled into the form:
 
 ```php
 protected function mutateFormDataBeforeFill(array $data): array
@@ -43,6 +66,19 @@ protected function mutateFormDataBeforeFill(array $data): array
 
     return $data;
 }
+```
+
+Alternatively, if you're viewing records in a modal action:
+
+```php
+use Filament\Tables\Actions\ViewAction;
+
+ViewAction::make()
+    ->mutateRecordDataUsing(function (array $data): array {
+        $data['user_id'] = auth()->id();
+
+        return $data;
+    })
 ```
 
 ## Authorization
