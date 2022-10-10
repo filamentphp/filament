@@ -311,7 +311,7 @@ var notification_default = (Alpine) => {
       this.computedStyle = window.getComputedStyle(this.$el);
       this.configureTransitions();
       this.configureAnimations();
-      if (notification.duration !== "persistent") {
+      if (notification.duration && notification.duration !== "persistent") {
         setTimeout(() => this.close(), notification.duration);
       }
       this.isShown = true;
