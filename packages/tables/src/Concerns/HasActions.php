@@ -23,6 +23,8 @@ trait HasActions
 
     protected array $cachedTableActions;
 
+    protected array $cachedTableColumnActions;
+
     protected ?Model $cachedMountedTableActionRecord = null;
 
     protected $cachedMountedTableActionRecordKey = null;
@@ -55,6 +57,8 @@ trait HasActions
 
     public function cacheTableColumnActions(): void
     {
+        $this->cachedTableColumnActions = [];
+
         foreach ($this->getCachedTableColumns() as $column) {
             $action = $column->getAction();
 
@@ -64,13 +68,13 @@ trait HasActions
 
             $actionName = $action->getName();
 
-            if (array_key_exists($actionName, $this->cachedTableActions)) {
+            if (array_key_exists($actionName, $this->cachedTableColumnActions)) {
                 continue;
             }
 
             $action->table($this->getCachedTable());
 
-            $this->cachedTableActions[$actionName] = $action;
+            $this->cachedTableColumnActions[$actionName] = $action;
         }
     }
 
@@ -194,6 +198,11 @@ trait HasActions
         return $this->cachedTableActions;
     }
 
+    public function getCachedTableColumnActions(): array
+    {
+        return $this->cachedTableColumnActions;
+    }
+
     public function getMountedTableAction(): ?Action
     {
         if (! $this->mountedTableAction) {
@@ -267,6 +276,14 @@ trait HasActions
             }
 
             return $groupedAction;
+        }
+
+        $actions = $this->getCachedTableColumnActions();
+
+        $action = $actions[$name] ?? null;
+
+        if ($action) {
+            return $action;
         }
 
         return null;
