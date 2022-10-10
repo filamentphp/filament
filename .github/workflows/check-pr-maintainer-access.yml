@@ -5,6 +5,9 @@ on:
     types:
       - opened
 
+permissions:
+  pull-requests: write
+
 jobs:
   notify-when-maintainers-cannot-edit:
     runs-on: ubuntu-latest
