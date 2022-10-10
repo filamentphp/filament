@@ -42,12 +42,6 @@ jobs:
                     return
                 }
 
-                if (pullRequest.state !== 'OPEN') {
-                    console.log('PR has already been closed or merged')
-
-                    return;
-                }
-
                 if (! pullRequest.maintainerCanModify) {
                     console.log('PR not owned by filamentphp and does not have maintainer edits enabled')
 
