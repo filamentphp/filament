@@ -100,7 +100,10 @@
                     })"
                     x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                     wire:ignore
-                    {{ $attributes->merge($getExtraAttributes())->merge($getExtraAlpineAttributes()) }}
+                    {{ $attributes->merge($getExtraAttributes())->merge($getExtraAlpineAttributes())->merge($getExtraAttributes()) }}
+                    x-bind:class="{
+                        'choices--error': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
+                    }"
                 >
                     <select
                         x-ref="input"
