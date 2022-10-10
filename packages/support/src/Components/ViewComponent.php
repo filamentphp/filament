@@ -11,7 +11,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
 use Illuminate\View\ComponentAttributeBag;
-use Illuminate\View\InvokableComponentVariable;
 use ReflectionClass;
 use ReflectionMethod;
 use ReflectionProperty;
