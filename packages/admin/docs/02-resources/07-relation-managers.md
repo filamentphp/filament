@@ -63,6 +63,16 @@ protected static ?string $inverseRelationship = 'section'; // Since the inverse 
 
 Once a table and form have been defined for the relation manager, visit the [Edit](editing-records) or [View](viewing-records) page of your resource to see it in action.
 
+### Handling soft deletes
+
+By default, you will not be able to interact with deleted records in the relation manager. If you'd like to add functionality to restore, force delete and filter trashed records in your relation manager, use the `--soft-deletes` flag when generating the relation manager:
+
+```bash
+php artisan make:filament-relation-manager CategoryResource posts title --soft-deletes
+```
+
+You can find out more about soft deleting [here](#deleting-records).
+
 ## Listing records
 
 Related records will be listed in a table. The entire relation manager is based around this table, which contains actions to [create](#creating-records), [edit](#editing-records), [attach / detach](#attaching-and-detaching-records), [associate / dissociate](#associating-and-dissociating-records), and delete records.
@@ -548,7 +558,7 @@ When generating your relation manager, you may pass the `--view` flag to also ad
 php artisan make:filament-relation-manager CategoryResource posts title --view
 ```
 
-Alternatively, if you've already generated your resource, you can just add the `ViewAction` to the `$table->actions()` array:
+Alternatively, if you've already generated your relation manager, you can just add the `ViewAction` to the `$table->actions()` array:
 
 ```php
 use Filament\Resources\Table;
@@ -569,17 +579,13 @@ public static function table(Table $table): Table
 
 ## Deleting records
 
-### Creating a relation manager with soft deletes
-
 By default, you will not be able to interact with deleted records in the relation manager. If you'd like to add functionality to restore, force delete and filter trashed records in your relation manager, use the `--soft-deletes` flag when generating the relation manager:
 
 ```bash
 php artisan make:filament-relation-manager CategoryResource posts title --soft-deletes
 ```
 
-### Adding soft deletes to an existing relation manager
-
-Alternatively, you may add soft deleting functionality to an existing resource:
+Alternatively, you may add soft deleting functionality to an existing relation manager:
 
 ```php
 use Filament\Resources\Table;
