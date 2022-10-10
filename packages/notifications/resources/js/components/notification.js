@@ -13,7 +13,10 @@ export default (Alpine) => {
             this.configureTransitions()
             this.configureAnimations()
 
-            if (notification.duration && notification.duration !== 'persistent') {
+            if (
+                notification.duration &&
+                notification.duration !== 'persistent'
+            ) {
                 setTimeout(() => this.close(), notification.duration)
             }
 
