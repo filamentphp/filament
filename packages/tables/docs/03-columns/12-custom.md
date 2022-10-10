@@ -54,3 +54,26 @@ Inside your view, you may retrieve the state of the cell using the `$getState()`
 ```
 
 You can also access the entire Eloquent record with `$getRecord()`.
+
+## Calculated values
+
+Sometimes you need to calculate the content values that depends on others fields in the database. This is also called _computed column_.
+
+By passing a callback function to the `getStateUsing()` method from a Column component, you can customize the returned $state value.
+
+```php
+Tables\Columns\TextColumn::make('incl_vat_amount')
+    ->getStateUsing(function(Model $record) {
+        return $record->excl_vat_amout * (1 + $record->vat_rate);
+    })
+    
+Tables\Columns\TextColumn::make('name')
+    ->getStateUsing(function(User $record) {
+        return strtoupper($record->lastname) . ' '. $record->firstname;
+    })
+    
+Tables\Columns\TextColumn::make("download_url")
+    ->getStateUsing(function(Model $record) {
+         return new HtmlString('<a href="'.Storage::url($record->filename).'">Download</a>);
+     }),
+```
