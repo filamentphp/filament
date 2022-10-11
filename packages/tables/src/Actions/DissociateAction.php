@@ -26,7 +26,7 @@ class DissociateAction extends Action
 
         $this->modalButton(__('filament-support::actions/dissociate.single.modal.actions.dissociate.label'));
 
-        $this->successNotificationMessage(__('filament-support::actions/dissociate.single.messages.dissociated'));
+        $this->successNotificationTitle(__('filament-support::actions/dissociate.single.messages.dissociated'));
 
         $this->color('danger');
 

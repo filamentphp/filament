@@ -24,7 +24,7 @@ class DeleteAction extends Action
 
         $this->modalButton(__('filament-support::actions/delete.single.modal.actions.delete.label'));
 
-        $this->successNotificationMessage(__('filament-support::actions/delete.single.messages.deleted'));
+        $this->successNotificationTitle(__('filament-support::actions/delete.single.messages.deleted'));
 
         $this->color('danger');
 

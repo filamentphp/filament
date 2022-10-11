@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Actions;
 
+use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 
@@ -17,6 +18,14 @@ abstract class Action extends BaseAction
     use Concerns\HasForm;
     use Concerns\HasLifecycleHooks;
     use Concerns\HasWizard;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->failureNotification(fn (Notification $notification): Notification => $notification);
+        $this->successNotification(fn (Notification $notification): Notification => $notification);
+    }
 
     public function call(array $parameters = [])
     {

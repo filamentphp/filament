@@ -27,7 +27,7 @@ class RestoreBulkAction extends BulkAction
 
         $this->modalButton(__('filament-support::actions/restore.multiple.modal.actions.restore.label'));
 
-        $this->successNotificationMessage(__('filament-support::actions/restore.multiple.messages.restored'));
+        $this->successNotificationTitle(__('filament-support::actions/restore.multiple.messages.restored'));
 
         $this->color('secondary');
 

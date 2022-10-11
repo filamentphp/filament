@@ -18,7 +18,7 @@ protected function mutateFormDataBeforeCreate(array $data): array
 Alternatively, if you're creating records in a modal action:
 
 ```php
-use Filament\Tables\Actions\CreateAction;
+use Filament\Pages\Actions\CreateAction;
 
 CreateAction::make()
     ->mutateFormDataUsing(function (array $data): array {
@@ -44,7 +44,7 @@ protected function handleRecordCreation(array $data): Model
 Alternatively, if you're creating records in a modal action:
 
 ```php
-use Filament\Tables\Actions\CreateAction;
+use Filament\Pages\Actions\CreateAction;
 use Illuminate\Database\Eloquent\Model;
 
 CreateAction::make()
@@ -81,19 +81,59 @@ protected function getRedirectUrl(): string
 
 When the record is successfully created, a notification is dispatched to the user, which indicates the success of their action.
 
-To customize the text content of this notification, add the `getCreatedNotificationMessage()` method to the Create page class:
+To customize the title of this notification, define a `getCreatedNotificationTitle()` method to the create page class:
 
 ```php
-protected function getCreatedNotificationMessage(): ?string
+protected function getCreatedNotificationTitle(): ?string
 {
     return 'User registered';
 }
 ```
 
-And to disable the notification altogether on the Create page class:
+Alternatively, if you're creating records in a modal action:
 
 ```php
-protected function getCreatedNotificationMessage(): ?string
+use Filament\Pages\Actions\CreateAction;
+
+CreateAction::make()
+    ->successNotificationTitle('User registered')
+```
+
+You may customize the entire notification by overriding the `getCreatedNotification()` method on the create page class:
+
+```php
+use Filament\Notifications\Notification;
+
+protected function getCreatedNotification(): ?Notification
+{
+    return Notification::make()
+        ->success()
+        ->title('User registered')
+        ->body('The user has been created successfully.');
+}
+```
+
+Alternatively, if you're creating records in a modal action:
+
+```php
+use Filament\Notifications\Notification;
+use Filament\Pages\Actions\CreateAction;
+
+CreateAction::make()
+    ->successNotification(
+       Notification::make()
+            ->success()
+            ->title('User registered')
+            ->body('The user has been created successfully.'),
+    )
+```
+
+To disable the notification altogether, return `null` from the `getCreatedNotification()` method on the create page class:
+
+```php
+use Filament\Notifications\Notification;
+
+protected function getCreatedNotification(): ?Notification
 {
     return null;
 }
@@ -102,19 +142,10 @@ protected function getCreatedNotificationMessage(): ?string
 Alternatively, if you're creating records in a modal action:
 
 ```php
-use Filament\Tables\Actions\CreateAction;
+use Filament\Pages\Actions\CreateAction;
 
 CreateAction::make()
-    ->successNotificationMessage('User registered')
-```
-
-And to disable the notification altogether from a modal action:
-
-```php
-use Filament\Tables\Actions\CreateAction;
-
-CreateAction::make()
-    ->successNotificationMessage(null)
+    ->successNotification(null)
 ```
 
 ## Lifecycle hooks
@@ -174,7 +205,7 @@ class CreateUser extends CreateRecord
 Alternatively, if you're creating records in a modal action:
 
 ```php
-use Filament\Tables\Actions\CreateAction;
+use Filament\Pages\Actions\CreateAction;
 
 CreateAction::make()
     ->beforeFormFilled(function () {
@@ -230,7 +261,7 @@ Alternatively, if you're creating records in a modal action:
 ```php
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
-use Filament\Tables\Actions\CreateAction;
+use Filament\Pages\Actions\CreateAction;
 
 CreateAction::make()
     ->before(function (CreateAction $action) {
@@ -332,7 +363,7 @@ protected function getSteps(): array
 Alternatively, if you're creating records in a modal action, simply define a `steps()` array and pass your `Step` objects:
 
 ```php
-use Filament\Tables\Actions\CreateAction;
+use Filament\Pages\Actions\CreateAction;
 
 CreateAction::make()
     ->steps([
@@ -354,7 +385,7 @@ public function hasSkippableSteps(): bool
 Alternatively, if you're creating records in a modal action:
 
 ```php
-use Filament\Tables\Actions\CreateAction;
+use Filament\Pages\Actions\CreateAction;
 
 CreateAction::make()
     ->steps([
