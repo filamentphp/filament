@@ -2,7 +2,6 @@
 
 namespace Filament\Widgets;
 
-use Closure;
 use Filament\Tables;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\Support\Htmlable;
