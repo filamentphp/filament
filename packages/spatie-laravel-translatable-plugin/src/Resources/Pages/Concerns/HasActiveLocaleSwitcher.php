@@ -11,7 +11,7 @@ trait HasActiveLocaleSwitcher
 
     public ?array $translatableLocales = null;
 
-    protected function getActiveLocaleSelectAction(): Action
+    protected function getActiveLocaleSwitcherAction(): Action
     {
         return LocaleSwitcher::make();
     }

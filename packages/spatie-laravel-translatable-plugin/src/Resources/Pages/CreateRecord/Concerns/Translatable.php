@@ -2,12 +2,14 @@
 
 namespace Filament\Resources\Pages\CreateRecord\Concerns;
 
-use Filament\Resources\Pages\Concerns\HasActiveFormLocaleSwitcher;
+use Filament\Resources\Pages\Concerns\HasActiveLocaleSwitcher;
+use Filament\Resources\Pages\Concerns\HasTranslatableRecordTitle;
 use Illuminate\Database\Eloquent\Model;
 
 trait Translatable
 {
-    use HasActiveFormLocaleSwitcher;
+    use HasActiveLocaleSwitcher;
+    use HasTranslatableRecordTitle;
 
     public function mount(): void
     {
@@ -15,20 +17,20 @@ trait Translatable
 
         abort_unless(static::getResource()::canCreate(), 403);
 
-        $this->setActiveFormLocale();
+        $this->setActiveLocale();
 
         $this->fillForm();
     }
 
-    protected function setActiveFormLocale(): void
+    protected function setActiveLocale(): void
     {
-        $this->activeLocale = $this->activeFormLocale = static::getResource()::getDefaultTranslatableLocale();
+        $this->activeLocale = static::getResource()::getDefaultTranslatableLocale();
     }
 
     protected function handleRecordCreation(array $data): Model
     {
         $record = static::getModel()::usingLocale(
-            $this->activeFormLocale,
+            $this->activeLocale,
         )->fill($data);
         $record->save();
 
@@ -38,7 +40,7 @@ trait Translatable
     protected function getActions(): array
     {
         return array_merge(
-            [$this->getActiveFormLocaleSelectAction()],
+            [$this->getActiveLocaleSwitcherAction()],
             parent::getActions() ?? [],
         );
     }
