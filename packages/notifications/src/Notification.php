@@ -75,7 +75,7 @@ class Notification extends ViewComponent implements Arrayable
             ),
         );
         $static->body($data['body'] ?? null);
-        $static->duration($data['duration'] ?? $static->getDuration());
+        $static->duration($data['duration'] ?? null);
         $static->icon($data['icon'] ?? null);
         $static->iconColor($data['iconColor'] ?? $static->getIconColor());
         $static->title($data['title'] ?? null);
@@ -143,7 +143,7 @@ class Notification extends ViewComponent implements Arrayable
     public function getDatabaseMessage(): array
     {
         $data = $this->toArray();
-        unset($data['duration']);
+        $data['duration'] = 'persistent';
         $data['format'] = 'filament';
         unset($data['id']);
 
