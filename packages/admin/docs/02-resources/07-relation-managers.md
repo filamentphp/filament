@@ -77,7 +77,7 @@ You can find out more about soft deleting [here](#deleting-records).
 
 Related records will be listed in a table. The entire relation manager is based around this table, which contains actions to [create](#creating-records), [edit](#editing-records), [attach / detach](#attaching-and-detaching-records), [associate / dissociate](#associating-and-dissociating-records), and delete records.
 
-As per the documentation on [listing records](listing-records), you may use all the same utilities for customisation on the relation manager:
+As per the documentation on [listing records](listing-records), you may use all the same utilities for customization on the relation manager:
 
 - [Columns](listing-records#columns)
 - [Filters](listing-records#filters)
@@ -676,6 +676,38 @@ If you'd like the action modal to close too, you can completely `cancel()` the a
 ```php
 $action->cancel();
 ```
+
+## Accessing the owner record
+
+Relation managers are Livewire components. When they are first loaded, the owner record (the Eloquent record which serves as a parent - the main resource model) is mounted in a public `$ownerRecord` property. Thus, you may access the owner record using:
+
+```php
+$this->record
+```
+
+However, in you're inside a `static` method like `form()` or `table()`, `$this` isn't accessible. So, you may [use a callback](../../forms/advanced#using-closure-customization) to access the `$livewire` instance:
+
+```php
+use Filament\Forms;
+use Filament\Resources\Form;
+use Filament\Resources\RelationManagers\RelationManager;
+
+public static function form(Form $form): Form
+{
+    return $form
+        ->schema([
+            Forms\Components\Select::make('store_id')
+                ->options(function (RelationManager $livewire): array {
+                    return $livewire->ownerRecord->stores()
+                        ->pluck('name', 'id')
+                        ->toArray();
+                }),
+            // ...
+        ]);
+}
+```
+
+All methods in Filament accept a callback which you can access `$livewire->ownerRecord` in.
 
 ## Grouping relation managers
 

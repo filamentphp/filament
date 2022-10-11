@@ -215,9 +215,9 @@ Users may access the List page if the `viewAny()` method of the model policy ret
 
 The `reorder()` method is used to control [reordering a record](#reordering-records).
 
-## Customising the Eloquent query
+## Customizing the Eloquent query
 
-Although you can [customise the Eloquent query for the entire resource](getting-started#customising-the-eloquent-query), you may also make specific modifications for the List page table. To do this, override the `getTableQuery()` method on the page class:
+Although you can [customize the Eloquent query for the entire resource](getting-started#customizing-the-eloquent-query), you may also make specific modifications for the List page table. To do this, override the `getTableQuery()` method on the page class:
 
 ```php
 protected function getTableQuery(): Builder

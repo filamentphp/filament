@@ -137,7 +137,7 @@ use Filament\Tables\Filters\SelectFilter;
 SelectFilter::make('author')->relationship('author', 'name')
 ```
 
-You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
+You may customize the database query that retrieves options using the third parameter of the `relationship()` method:
 
 ```php
 use Filament\Tables\Filters\SelectFilter;
@@ -176,7 +176,7 @@ TernaryFilter::make('verified')
     ->attribute('status_id')
 ```
 
-You may customise the query used for each state of the ternary filter, using the `queries()` method:
+You may customize the query used for each state of the ternary filter, using the `queries()` method:
 
 ```php
 use Illuminate\Database\Eloquent\Builder;

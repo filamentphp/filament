@@ -430,7 +430,7 @@ For authorization, Filament will observe any [model policies](https://laravel.co
 
 Each resource has a "model label" which is automatically generated from the model name. For example, an `App\Models\Customer` model will have a `customer` label.
 
-The label is used in several parts of the UI, and you may customise it using the `$modelLabel` property:
+The label is used in several parts of the UI, and you may customize it using the `$modelLabel` property:
 
 ```php
 protected static ?string $modelLabel = 'cliente';
@@ -534,7 +534,7 @@ protected static function getNavigationGroup(): ?string
 }
 ```
 
-## Customising the Eloquent query
+## Customizing the Eloquent query
 
 Within Filament, every query to your resource model will start with the `getEloquentQuery()` method.
 
@@ -572,7 +572,7 @@ Multi-tenancy, simply, is the concept of users "owning" records, and only being 
 
 Simple multi-tenancy is easy to set up with Filament.
 
-First, scope the [base Eloquent query](#customising-the-eloquent-query) for every "owned" resource by defining the `getEloquentQuery()` method:
+First, scope the [base Eloquent query](#customizing-the-eloquent-query) for every "owned" resource by defining the `getEloquentQuery()` method:
 
 ```php
 public static function getEloquentQuery(): Builder

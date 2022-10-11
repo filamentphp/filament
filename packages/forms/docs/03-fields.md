@@ -569,7 +569,7 @@ Commonly, you may desire "dependant" select inputs, which populate their options
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/W_eNyimRi3w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-Some of the techniques described in the [advanced forms](advanced) section are required to create dependant selects. These techniques can be applied across all form components for many dynamic customisation possibilities.
+Some of the techniques described in the [advanced forms](advanced) section are required to create dependant selects. These techniques can be applied across all form components for many dynamic customization possibilities.
 
 ### Populating automatically from a relationship
 
@@ -604,7 +604,7 @@ Select::make('authorId')
     ->preload()
 ```
 
-You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
+You may customize the database query that retrieves options using the third parameter of the `relationship()` method:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -667,7 +667,7 @@ MorphToSelect::make('commentable')
     ])
 ```
 
-You may customise the database query that retrieves options using the `modifyOptionsQueryUsing()` method:
+You may customize the database query that retrieves options using the `modifyOptionsQueryUsing()` method:
 
 ```php
 use Filament\Forms\Components\MorphToSelect;
@@ -906,7 +906,7 @@ CheckboxList::make('technologies')
 
 > To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
 
-You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
+You may customize the database query that retrieves options using the third parameter of the `relationship()` method:
 
 ```php
 use Filament\Forms\Components\CheckboxList;
@@ -1230,7 +1230,7 @@ class Message extends Model
 }
 ```
 
-You may customise the number of files that may be uploaded, using the `minFiles()` and `maxFiles()` methods:
+You may customize the number of files that may be uploaded, using the `minFiles()` and `maxFiles()` methods:
 
 ```php
 use Filament\Forms\Components\FileUpload;
@@ -1321,7 +1321,7 @@ RichEditor::make('content')
     ])
 ```
 
-You may customise how images are uploaded using configuration methods:
+You may customize how images are uploaded using configuration methods:
 
 ```php
 use Filament\Forms\Components\RichEditor;
@@ -1379,7 +1379,7 @@ MarkdownEditor::make('content')
     ])
 ```
 
-You may customise how images are uploaded using configuration methods:
+You may customize how images are uploaded using configuration methods:
 
 ```php
 use Filament\Forms\Components\MarkdownEditor;
@@ -1482,7 +1482,7 @@ Repeater::make('members')
     ->disableItemMovement()
 ```
 
-You may customise the number of items that may be created, using the `minItems()` and `maxItems()` methods:
+You may customize the number of items that may be created, using the `minItems()` and `maxItems()` methods:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -1732,7 +1732,7 @@ Builder\Block::make('heading')->icon('heroicon-o-bookmark')
 
 ![](https://user-images.githubusercontent.com/41773797/147614039-d9aa43dd-acfe-43b6-9cd1-1fc322aa4526.png)
 
-You may customise the number of items that may be created, using the `minItems()` and `maxItems()` methods:
+You may customize the number of items that may be created, using the `minItems()` and `maxItems()` methods:
 
 ```php
 use Filament\Forms\Components\Builder;
