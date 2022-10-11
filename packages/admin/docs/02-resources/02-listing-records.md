@@ -42,7 +42,7 @@ public static function table(Table $table): Table
 
 ### Displaying filters above or below the table content
 
-To render the filters above the table content instead of in a popover, you may use:
+To render the filters above the table content instead of in a dropdown, you may use:
 
 ```php
 use Filament\Tables\Filters\Layout;
@@ -63,7 +63,7 @@ public static function table(Table $table): Table
 }
 ```
 
-To render the filters below the table content instead of in a popover, you may use:
+To render the filters below the table content instead of in a dropdown, you may use:
 
 ```php
 use Filament\Tables\Filters\Layout;

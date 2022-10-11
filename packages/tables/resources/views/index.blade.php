@@ -26,7 +26,7 @@
     $isSelectionEnabled = $isSelectionEnabled();
     $isStriped = $isStriped();
     $hasFilters = $isFilterable();
-    $hasFiltersPopover = $hasFilters && ($getFiltersLayout() === FiltersLayout::Popover);
+    $hasFiltersDropdown = $hasFilters && ($getFiltersLayout() === FiltersLayout::Dropdown);
     $hasFiltersAboveContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::AboveContent);
     $hasFiltersAfterContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::BelowContent);
     $isColumnToggleFormVisible = $hasToggleableColumns();
@@ -197,7 +197,7 @@
             @endif
 
             <div
-                x-show="@js($shouldRenderHeaderDiv = ($isReorderable || $isGlobalSearchVisible || $hasFiltersPopover || $isColumnToggleFormVisible)) || selectedRecords.length"
+                x-show="@js($shouldRenderHeaderDiv = ($isReorderable || $isGlobalSearchVisible || $hasFiltersDropdown || $isColumnToggleFormVisible)) || selectedRecords.length"
                 {!! ! $shouldRenderHeaderDiv ? 'x-cloak' : null !!}
                 class="flex items-center justify-between p-2 h-14"
                 x-bind:class="{
@@ -219,7 +219,7 @@
                     @endif
                 </div>
 
-                @if ($isGlobalSearchVisible || $hasFiltersPopover || $isColumnToggleFormVisible)
+                @if ($isGlobalSearchVisible || $hasFiltersDropdown || $isColumnToggleFormVisible)
                     <div class="flex items-center justify-end w-full gap-2 md:max-w-md">
                         @if ($isGlobalSearchVisible)
                             <div class="flex items-center justify-end flex-1">
@@ -227,8 +227,8 @@
                             </div>
                         @endif
 
-                        @if ($hasFiltersPopover)
-                            <x-tables::filters.popover
+                        @if ($hasFiltersDropdown)
+                            <x-tables::filters.dropdown
                                 :form="$getFiltersForm()"
                                 :width="$getFiltersFormWidth()"
                                 :indicators-count="count(\Illuminate\Support\Arr::flatten($filterIndicators))"

@@ -301,7 +301,7 @@ Filter::make('created_at')
 
 ## Appearance
 
-By default, filters are displayed in a thin popover on the right side of the table, in 1 column.
+By default, filters are displayed in a thin dropdown on the right side of the table, in 1 column.
 
 To change the number of columns that filters may occupy, you may use the `getTableFiltersFormColumns()` method:
 
@@ -312,7 +312,7 @@ protected function getTableFiltersFormColumns(): int
 }
 ```
 
-Adding more columns to the filter form will automatically widen the popover. To customize the popover width, you may use the `getTableFiltersFormWidth()` method, and specify a width from `xs` to `7xl`:
+To customize the dropdown width, you may use the `getTableFiltersFormWidth()` method, and specify a width from `xs` to `7xl`:
 
 ```php
 protected function getTableFiltersFormWidth(): string
@@ -323,7 +323,7 @@ protected function getTableFiltersFormWidth(): string
 
 ## Displaying filters above or below the table content
 
-To render the filters above the table content instead of in a popover, you may use:
+To render the filters above the table content instead of in a dropdown, you may use:
 
 ```php
 use Filament\Tables\Filters\Layout;
@@ -334,7 +334,7 @@ protected function getTableFiltersLayout(): ?string
 }
 ```
 
-To render the filters below the table content instead of in a popover, you may use:
+To render the filters below the table content instead of in a dropdown, you may use:
 
 ```php
 use Filament\Tables\Filters\Layout;
