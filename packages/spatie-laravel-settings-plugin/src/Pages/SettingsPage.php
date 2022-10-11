@@ -85,7 +85,7 @@ class SettingsPage extends Page implements HasFormActions
 
     protected function getSavedNotificationTitle(): ?string
     {
-        return $this->getSavedNotificationMessage();
+        return $this->getSavedNotificationMessage() ?? __('filament-spatie-laravel-settings-plugin::pages/settings-page.messages.saved');
     }
 
     /**
@@ -93,7 +93,7 @@ class SettingsPage extends Page implements HasFormActions
      */
     protected function getSavedNotificationMessage(): ?string
     {
-        return __('filament-spatie-laravel-settings-plugin::pages/settings-page.messages.saved');
+        return null;
     }
 
     protected function callHook(string $hook): void

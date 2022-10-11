@@ -141,7 +141,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     }
 
     /**
-     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     * @deprecated Use `->successNotificationTitle()` on the action instead.
      */
     protected function getBulkDeletedNotificationMessage(): ?string
     {

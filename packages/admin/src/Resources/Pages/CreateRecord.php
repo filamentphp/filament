@@ -111,7 +111,7 @@ class CreateRecord extends Page implements HasFormActions
 
     protected function getCreatedNotificationTitle(): ?string
     {
-        return $this->getCreatedNotificationMessage();
+        return $this->getCreatedNotificationMessage() ?? __('filament::resources/pages/create-record.messages.created');
     }
 
     /**
@@ -119,7 +119,7 @@ class CreateRecord extends Page implements HasFormActions
      */
     protected function getCreatedNotificationMessage(): ?string
     {
-        return __('filament::resources/pages/create-record.messages.created');
+        return null;
     }
 
     public function createAnother(): void

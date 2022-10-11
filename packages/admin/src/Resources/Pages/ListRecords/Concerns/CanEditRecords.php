@@ -85,7 +85,7 @@ trait CanEditRecords
     }
 
     /**
-     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     * @deprecated Use `->successNotificationTitle()` on the action instead.
      */
     protected function getSavedNotificationMessage(): ?string
     {

@@ -11,9 +11,21 @@ trait CanNotify
 
     protected Notification | Closure | null $successNotification = null;
 
+    protected string | Closure | null $failureNotificationTitle = null;
+
+    protected string | Closure | null $successNotificationTitle = null;
+
     public function sendFailureNotification(): static
     {
-        $this->evaluate($this->failureNotification)?->send();
+        $notification = $this->evaluate($this->failureNotification, [
+            'notification' => Notification::make()
+                ->danger()
+                ->title($this->getFailureNotificationTitle()),
+        ]);
+
+        if (filled($notification?->getTitle())) {
+            $notification->send();
+        }
 
         return $this;
     }
@@ -30,27 +42,27 @@ trait CanNotify
      */
     public function failureNotificationMessage(string | Closure | null $message): static
     {
-        $title = $this->evaluate($message);
-
-        if (blank($title)) {
-            return $this;
-        }
-
-        return $this->failureNotification(
-            Notification::make()
-                ->danger()
-                ->title($title),
-        );
+        return $this->failureNotificationTitle($message);
     }
 
     public function failureNotificationTitle(string | Closure | null $title): static
     {
-        return $this->failureNotificationMessage($title);
+        $this->failureNotificationTitle = $title;
+
+        return $this;
     }
 
     public function sendSuccessNotification(): static
     {
-        $this->evaluate($this->successNotification)?->send();
+        $notification = $this->evaluate($this->successNotification, [
+            'notification' => Notification::make()
+                ->success()
+                ->title($this->getSuccessNotificationTitle()),
+        ]);
+
+        if (filled($notification?->getTitle())) {
+            $notification->send();
+        }
 
         return $this;
     }
@@ -67,21 +79,23 @@ trait CanNotify
      */
     public function successNotificationMessage(string | Closure | null $message): static
     {
-        $title = $this->evaluate($message);
-
-        if (blank($title)) {
-            return $this;
-        }
-
-        return $this->successNotification(
-            Notification::make()
-                ->success()
-                ->title($title),
-        );
+        return $this->successNotificationTitle($message);
     }
 
     public function successNotificationTitle(string | Closure | null $title): static
     {
-        return $this->successNotificationMessage($title);
+        $this->successNotificationTitle = $title;
+
+        return $this;
+    }
+
+    public function getSuccessNotificationTitle(): ?string
+    {
+        return $this->evaluate($this->successNotificationTitle);
+    }
+
+    public function getFailureNotificationTitle(): ?string
+    {
+        return $this->evaluate($this->failureNotificationTitle);
     }
 }

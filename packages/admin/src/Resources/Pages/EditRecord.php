@@ -195,7 +195,7 @@ class EditRecord extends Page implements HasFormActions
 
     protected function getDeletedNotificationTitle(): ?string
     {
-        return $this->getDeletedNotificationMessage();
+        return $this->getDeletedNotificationMessage() ?? __('filament-support::actions/delete.single.messages.deleted');
     }
 
     /**
@@ -203,7 +203,7 @@ class EditRecord extends Page implements HasFormActions
      */
     protected function getDeletedNotificationMessage(): ?string
     {
-        return __('filament-support::actions/delete.single.messages.deleted');
+        return null;
     }
 
     protected function getActions(): array

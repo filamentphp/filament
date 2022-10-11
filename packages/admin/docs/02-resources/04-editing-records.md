@@ -120,15 +120,22 @@ protected function getRedirectUrl(): string
 
 When the record is successfully updated, a notification is dispatched to the user, which indicates the success of their action.
 
-### Edit page
-
-To customize the title of this notification by defining a `getSavedNotificationTitle()` method on the edit page class:
+To customize the title of this notification, define a `getSavedNotificationTitle()` method on the edit page class:
 
 ```php
 protected function getSavedNotificationTitle(): ?string
 {
     return 'User updated';
 }
+```
+
+Alternatively, if you're editing records in a modal action:
+
+```php
+use Filament\Tables\Actions\EditAction;
+
+EditAction::make()
+    ->successNotificationTitle('User updated')
 ```
 
 You may customize the entire notification by overriding the `getSavedNotification()` method on the edit page class:
@@ -145,6 +152,21 @@ protected function getSavedNotification(): ?Notification
 }
 ```
 
+Alternatively, if you're editing records in a modal action:
+
+```php
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\EditAction;
+
+EditAction::make()
+    ->successNotification(
+       Notification::make()
+            ->success()
+            ->title('User updated')
+            ->body('The user has been saved successfully.'),
+    )
+```
+
 To disable the notification altogether, return `null` from the `getSavedNotification()` method on the edit page class:
 
 ```php
@@ -156,33 +178,7 @@ protected function getSavedNotification(): ?Notification
 }
 ```
 
-### Edit action
-
-If you're editing records in a modal action, you may customize the success notification title:
-
-```php
-use Filament\Tables\Actions\EditAction;
-
-EditAction::make()
-    ->successNotificationTitle('User updated')
-```
-
-Alternatively, you may customize the entire notification:
-
-```php
-use Filament\Notifications\Notification;
-use Filament\Tables\Actions\EditAction;
-
-EditAction::make()
-    ->successNotification(
-        Notification::make()
-            ->success()
-            ->title('User updated')
-            ->body('The user has been saved successfully.'),
-    )
-```
-
-And to disable the notification altogether:
+Alternatively, if you're editing records in a modal action:
 
 ```php
 use Filament\Tables\Actions\EditAction;
