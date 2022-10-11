@@ -2,9 +2,6 @@
 
 namespace Filament\Resources\Pages\Concerns;
 
-use Filament\Pages\Actions\Action;
-use Filament\Pages\Actions\LocaleSwitcher;
-
 trait HasTranslatableRecordTitle
 {
     public function getRecordTitle(): string
