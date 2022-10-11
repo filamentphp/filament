@@ -71,12 +71,7 @@
                     '-rotate-180' => ! $isCollapsed(),
                 ])
             >
-                <svg @class([
-                    'w-7 h-7' => ! $isCompact(),
-                    'w-5 h-5' => $isCompact(),
-                ]) xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
+                <x-heroicon-m-chevron-down class="h-5 w-5" />
             </button>
         @endif
     </div>
