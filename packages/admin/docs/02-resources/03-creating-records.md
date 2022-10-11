@@ -81,7 +81,7 @@ protected function getRedirectUrl(): string
 
 When the record is successfully created, a notification is dispatched to the user, which indicates the success of their action.
 
-To customize the title of this notification, define a `getCreatedNotificationTitle()` method to the create page class:
+To customize the title of this notification, define a `getCreatedNotificationTitle()` method on the create page class:
 
 ```php
 protected function getCreatedNotificationTitle(): ?string
