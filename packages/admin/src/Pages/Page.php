@@ -5,7 +5,6 @@ namespace Filament\Pages;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Forms;
-use Filament\Http\Livewire\Concerns\CanNotify;
 use Filament\Navigation\NavigationItem;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Contracts\RendersFormComponentActionModal;

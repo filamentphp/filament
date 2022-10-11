@@ -47,7 +47,7 @@ class Page extends BasePage
     }
 
     /**
-     * @return class-string<Resource>
+     * @return class-string<resource>
      */
     public static function getResource(): string
     {
