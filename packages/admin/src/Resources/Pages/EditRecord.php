@@ -132,7 +132,7 @@ class EditRecord extends Page implements HasFormActions
 
     protected function getSavedNotificationTitle(): ?string
     {
-        return $this->getSavedNotificationMessage();
+        return $this->getSavedNotificationMessage() ?? __('filament::resources/pages/edit-record.messages.saved');
     }
 
     /**
@@ -140,7 +140,7 @@ class EditRecord extends Page implements HasFormActions
      */
     protected function getSavedNotificationMessage(): ?string
     {
-        return __('filament::resources/pages/edit-record.messages.saved');
+        return null;
     }
 
     protected function handleRecordUpdate(Model $record, array $data): Model
