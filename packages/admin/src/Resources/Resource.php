@@ -5,6 +5,7 @@ namespace Filament\Resources;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\GlobalSearch\GlobalSearchResult;
+use Illuminate\Support\Stringable;
 use function Filament\locale_has_pluralization;
 use Filament\Navigation\NavigationItem;
 use function Filament\Support\get_model_label;
@@ -390,8 +391,13 @@ class Resource
             return static::$slug;
         }
 
-        return Str::of(static::getModel())
-            ->afterLast('\\Models\\')
+        return Str::of(static::class)
+            ->whenContains(
+                '\\Resources\\',
+                fn (Stringable $slug): Stringable => $slug->afterLast('\\Resources\\'),
+                fn (Stringable $slug): Stringable => $slug->classBasename(),
+            )
+            ->beforeLast('Resource')
             ->plural()
             ->explode('\\')
             ->map(fn (string $string) => Str::of($string)->kebab()->slug())
