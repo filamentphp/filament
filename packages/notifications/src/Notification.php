@@ -143,7 +143,7 @@ class Notification extends ViewComponent implements Arrayable
     public function getDatabaseMessage(): array
     {
         $data = $this->toArray();
-        unset($data['duration']);
+        $data['duration'] = 'persistent';
         $data['format'] = 'filament';
         unset($data['id']);
 
