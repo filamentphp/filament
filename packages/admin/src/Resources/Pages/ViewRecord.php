@@ -76,21 +76,6 @@ class ViewRecord extends Page
         return $data;
     }
 
-    protected function getActions(): array
-    {
-        $resource = static::getResource();
-
-        if (! $resource::hasPage('edit')) {
-            return [];
-        }
-
-        if (! $resource::canEdit($this->getRecord())) {
-            return [];
-        }
-
-        return [$this->getEditAction()];
-    }
-
     protected function configureAction(Action $action): void
     {
         match (true) {
@@ -119,14 +104,6 @@ class ViewRecord extends Page
         }
 
         $action->form($this->getFormSchema());
-    }
-
-    /**
-     * @deprecated Actions are no longer pre-defined.
-     */
-    protected function getEditAction(): Action
-    {
-        return EditAction::make();
     }
 
     protected function configureForceDeleteAction(ForceDeleteAction $action): void

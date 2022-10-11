@@ -148,42 +148,9 @@ class EditRecord extends Page implements HasFormActions
         ]);
     }
 
-    /**
-     * @deprecated Use `->action()` on the action instead.
-     */
-    public function delete(): void
-    {
-        abort_unless(static::getResource()::canDelete($this->getRecord()), 403);
-
-        $this->callHook('beforeDelete');
-
-        $this->getRecord()->delete();
-
-        $this->callHook('afterDelete');
-
-        if (filled($this->getDeletedNotificationMessage())) {
-            Notification::make()
-                ->title($this->getDeletedNotificationMessage())
-                ->success()
-                ->send();
-        }
-
-        $this->redirect($this->getDeleteRedirectUrl());
-    }
-
     protected function getDeletedNotificationMessage(): ?string
     {
         return __('filament-support::actions/delete.single.messages.deleted');
-    }
-
-    protected function getActions(): array
-    {
-        $resource = static::getResource();
-
-        return array_merge(
-            (($resource::hasPage('view') && $resource::canView($this->getRecord())) ? [$this->getViewAction()] : []),
-            ($resource::canDelete($this->getRecord()) ? [$this->getDeleteAction()] : []),
-        );
     }
 
     protected function configureAction(Action $action): void
@@ -214,14 +181,6 @@ class EditRecord extends Page implements HasFormActions
         }
 
         $action->form($this->getFormSchema());
-    }
-
-    /**
-     * @deprecated Actions are no longer pre-defined.
-     */
-    protected function getViewAction(): Action
-    {
-        return ViewAction::make();
     }
 
     protected function configureForceDeleteAction(ForceDeleteAction $action): void
@@ -260,15 +219,6 @@ class EditRecord extends Page implements HasFormActions
             ->record($this->getRecord())
             ->recordTitle($this->getRecordTitle())
             ->successRedirectUrl($resource::getUrl('index'));
-    }
-
-    /**
-     * @deprecated Actions are no longer pre-defined.
-     */
-    protected function getDeleteAction(): Action
-    {
-        return DeleteAction::make()
-            ->action(fn () => $this->delete());
     }
 
     protected function getTitle(): string
@@ -331,14 +281,6 @@ class EditRecord extends Page implements HasFormActions
     protected function getRedirectUrl(): ?string
     {
         return null;
-    }
-
-    /**
-     * @deprecated Use `->successRedirectUrl()` on the action instead.
-     */
-    protected function getDeleteRedirectUrl(): ?string
-    {
-        return static::getResource()::getUrl('index');
     }
 
     protected function getMountedActionFormModel(): Model

@@ -165,17 +165,6 @@ class FilamentManager
         Event::listen(ServingFilament::class, $callback);
     }
 
-    /**
-     * @deprecated Use \Filament\Notifications\Notification::send() instead.
-     */
-    public function notify(string $status, string $message, bool $isAfterRedirect = false): void
-    {
-        Notification::make()
-            ->title($message)
-            ->status($status)
-            ->send();
-    }
-
     public function getGlobalSearchProvider(): GlobalSearchProvider
     {
         return app($this->globalSearchProvider);
@@ -325,17 +314,6 @@ class FilamentManager
     public function getStyles(): array
     {
         return $this->styles;
-    }
-
-    /**
-     * @deprecated Use `getThemeLink()` instead.
-     */
-    public function getThemeUrl(): string
-    {
-        return $this->theme ?? route('filament.asset', [
-            'id' => get_asset_id('app.css'),
-            'file' => 'app.css',
-        ]);
     }
 
     public function getThemeLink(): Htmlable

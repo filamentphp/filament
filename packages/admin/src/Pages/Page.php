@@ -17,7 +17,6 @@ use Livewire\Component;
 
 class Page extends Component implements Forms\Contracts\HasForms, RendersFormComponentActionModal
 {
-    use CanNotify;
     use Concerns\HasActions;
 
     protected static string $layout = 'filament::components.layouts.app';

@@ -3,6 +3,7 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Pages\Page as BasePage;
+use Filament\Resources\Resource;
 
 class Page extends BasePage
 {
@@ -45,6 +46,9 @@ class Page extends BasePage
         return static::getResource()::getModel();
     }
 
+    /**
+     * @return class-string<Resource>
+     */
     public static function getResource(): string
     {
         return static::$resource;

@@ -164,14 +164,6 @@ class SelectFilter extends BaseFilter
 
     protected function getFormField(): Select
     {
-        return $this->getFormSelectComponent();
-    }
-
-    /**
-     * @deprecated Overwrite `getFormField()` instead.
-     */
-    protected function getFormSelectComponent(): Select
-    {
         $field = Select::make($this->isMultiple() ? 'values' : 'value')
             ->multiple($this->isMultiple())
             ->label($this->getLabel())

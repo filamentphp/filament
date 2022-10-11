@@ -21,7 +21,6 @@ use Livewire\Component;
 
 class RelationManager extends Component implements Tables\Contracts\HasRelationshipTable, Tables\Contracts\HasTable
 {
-    use CanNotify;
     use Tables\Concerns\InteractsWithTable;
 
     public Model $ownerRecord;

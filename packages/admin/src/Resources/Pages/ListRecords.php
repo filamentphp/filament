@@ -42,45 +42,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function getResourceTable(): Table
     {
-        $table = Table::make();
-
-        $resource = static::getResource();
-
-        $table->actions(array_merge(
-            ($this->hasViewAction() ? [$this->getViewAction()] : []),
-            ($this->hasEditAction() ? [$this->getEditAction()] : []),
-            ($this->hasDeleteAction() ? [$this->getDeleteAction()] : []),
-        ));
-
-        if ($resource::canDeleteAny()) {
-            $table->bulkActions([$this->getDeleteBulkAction()]);
-        }
-
-        return $this->table($table);
-    }
-
-    /**
-     * @deprecated Actions are no longer pre-defined.
-     */
-    protected function hasDeleteAction(): bool
-    {
-        return $this->getDeleteAction() !== null;
-    }
-
-    /**
-     * @deprecated Actions are no longer pre-defined.
-     */
-    protected function hasEditAction(): bool
-    {
-        return static::getResource()::hasPage('edit');
-    }
-
-    /**
-     * @deprecated Actions are no longer pre-defined.
-     */
-    protected function hasViewAction(): bool
-    {
-        return static::getResource()::hasPage('view');
+        return $this->table(Table::make());
     }
 
     protected function table(Table $table): Table
@@ -88,112 +50,9 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return static::getResource()::table($table);
     }
 
-    /**
-     * @deprecated Actions are no longer pre-defined.
-     */
-    protected function getViewAction(): Tables\Actions\Action
-    {
-        return Tables\Actions\ViewAction::make();
-    }
-
-    /**
-     * @deprecated Actions are no longer pre-defined.
-     */
-    protected function getEditAction(): Tables\Actions\Action
-    {
-        return Tables\Actions\EditAction::make();
-    }
-
-    /**
-     * @deprecated Actions are no longer pre-defined.
-     */
-    protected function getDeleteAction(): ?Tables\Actions\Action
-    {
-        return null;
-    }
-
-    /**
-     * @deprecated Actions are no longer pre-defined.
-     */
-    protected function getDeleteBulkAction(): Tables\Actions\BulkAction
-    {
-        return Tables\Actions\DeleteBulkAction::make()
-            ->action(fn () => $this->bulkDelete());
-    }
-
-    /**
-     * @deprecated Use `->action()` on the action instead.
-     */
-    public function bulkDelete(): void
-    {
-        $this->callHook('beforeBulkDelete');
-
-        $this->handleRecordBulkDeletion($this->getSelectedTableRecords());
-
-        $this->callHook('afterBulkDelete');
-
-        if (filled($this->getBulkDeletedNotificationMessage())) {
-            Notification::make()
-                ->title($this->getBulkDeletedNotificationMessage())
-                ->success()
-                ->send();
-        }
-    }
-
-    /**
-     * @deprecated Use `->successNotificationMessage()` on the action instead.
-     */
-    protected function getBulkDeletedNotificationMessage(): ?string
-    {
-        return __('filament-support::actions/delete.multiple.messages.deleted');
-    }
-
-    /**
-     * @deprecated Use `->using()` on the action instead.
-     */
-    protected function handleRecordBulkDeletion(Collection $records): void
-    {
-        $records->each(fn (Model $record) => $record->delete());
-    }
-
     protected function getTitle(): string
     {
         return static::$title ?? Str::headline(static::getResource()::getPluralModelLabel());
-    }
-
-    protected function getActions(): array
-    {
-        if (! $this->hasCreateAction()) {
-            return [];
-        }
-
-        return [$this->getCreateAction()];
-    }
-
-    /**
-     * @deprecated Actions are no longer pre-defined.
-     */
-    protected function hasCreateAction(): bool
-    {
-        $resource = static::getResource();
-
-        if (! $resource::hasPage('create')) {
-            return false;
-        }
-
-        if (! $resource::canCreate()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @deprecated Actions are no longer pre-defined.
-     */
-    protected function getCreateAction(): Action
-    {
-        return CreateAction::make();
     }
 
     protected function configureAction(Action $action): void
