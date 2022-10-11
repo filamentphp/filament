@@ -15,7 +15,7 @@ trait CanPaginateRecords
 
     public $tableRecordsPerPage;
 
-    protected int $defaultTableRecordsPerPageSelectOption = 0;
+    protected int | string | null $defaultTableRecordsPerPageSelectOption = null;
 
     public function updatedTableRecordsPerPage(): void
     {
@@ -28,9 +28,11 @@ trait CanPaginateRecords
 
     protected function paginateTableQuery(Builder $query): Paginator
     {
+        $perPage = $this->getTableRecordsPerPage();
+
         /** @var LengthAwarePaginator $records */
         $records = $query->paginate(
-            $this->getTableRecordsPerPage() === -1 ? $query->count() : $this->getTableRecordsPerPage(),
+            $perPage === 'all' ? $query->count() : $perPage,
             ['*'],
             $this->getTablePaginationPageName(),
         );
@@ -38,21 +40,21 @@ trait CanPaginateRecords
         return $records->onEachSide(1);
     }
 
-    protected function getTableRecordsPerPage(): int
+    protected function getTableRecordsPerPage(): int | string | null
     {
-        return (int) $this->tableRecordsPerPage;
+        return $this->tableRecordsPerPage;
     }
 
     protected function getTableRecordsPerPageSelectOptions(): array
     {
-        return config('tables.pagination.records_per_page_select_options') ?? [5, 10, 25, 50, -1];
+        return config('tables.pagination.records_per_page_select_options') ?? [5, 10, 25, 50, 'all'];
     }
 
     protected function getDefaultTableRecordsPerPageSelectOption(): int
     {
         $perPage = session()->get(
             $this->getTablePerPageSessionKey(),
-            $this->defaultTableRecordsPerPageSelectOption ?: config('tables.pagination.default_records_per_page'),
+            $this->defaultTableRecordsPerPageSelectOption ?? config('tables.pagination.default_records_per_page'),
         );
 
         if (in_array($perPage, $this->getTableRecordsPerPageSelectOptions())) {
