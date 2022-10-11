@@ -27,7 +27,7 @@ class DetachAction extends Action
 
         $this->modalButton(__('filament-support::actions/detach.single.modal.actions.detach.label'));
 
-        $this->successNotificationMessage(__('filament-support::actions/detach.single.messages.detached'));
+        $this->successNotificationTitle(__('filament-support::actions/detach.single.messages.detached'));
 
         $this->color('danger');
 

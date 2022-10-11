@@ -28,7 +28,7 @@ class DetachBulkAction extends BulkAction
 
         $this->modalButton(__('filament-support::actions/detach.multiple.modal.actions.detach.label'));
 
-        $this->successNotificationMessage(__('filament-support::actions/detach.multiple.messages.detached'));
+        $this->successNotificationTitle(__('filament-support::actions/detach.multiple.messages.detached'));
 
         $this->color('danger');
 

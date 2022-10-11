@@ -91,7 +91,7 @@ trait CanCreateRecords
     }
 
     /**
-     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     * @deprecated Use `->successNotificationTitle()` on the action instead.
      */
     protected function getCreatedNotificationMessage(): ?string
     {

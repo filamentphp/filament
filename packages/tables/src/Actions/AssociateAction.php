@@ -54,7 +54,7 @@ class AssociateAction extends Action
             ];
         });
 
-        $this->successNotificationMessage(__('filament-support::actions/associate.single.messages.associated'));
+        $this->successNotificationTitle(__('filament-support::actions/associate.single.messages.associated'));
 
         $this->color('secondary');
 
