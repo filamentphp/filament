@@ -30,12 +30,7 @@ trait CanNotify
      */
     public function failureNotificationMessage(string | Closure | null $message): static
     {
-        return $this->failureNotificationTitle($message);
-    }
-
-    public function failureNotificationTitle(string | Closure | null $title): static
-    {
-        $title = $this->evaluate($title);
+        $title = $this->evaluate($message);
 
         if (blank($title)) {
             return $this;
@@ -46,6 +41,11 @@ trait CanNotify
                 ->danger()
                 ->title($title),
         );
+    }
+
+    public function failureNotificationTitle(string | Closure | null $title): static
+    {
+        return $this->failureNotificationMessage($title);
     }
 
     public function sendSuccessNotification(): static
@@ -67,12 +67,7 @@ trait CanNotify
      */
     public function successNotificationMessage(string | Closure | null $message): static
     {
-        return $this->successNotificationTitle($message);
-    }
-
-    public function successNotificationTitle(string | Closure | null $title): static
-    {
-        $title = $this->evaluate($title);
+        $title = $this->evaluate($message);
 
         if (blank($title)) {
             return $this;
@@ -83,5 +78,10 @@ trait CanNotify
                 ->success()
                 ->title($title),
         );
+    }
+
+    public function successNotificationTitle(string | Closure | null $title): static
+    {
+        return $this->successNotificationMessage($title);
     }
 }
