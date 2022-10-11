@@ -462,7 +462,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return $this->getResourceTable()->getPollingInterval();
     }
 
-    protected function getTableHeading(): string | Htmlable | null
+    protected function getTableHeading(): string | Htmlable | Closure | null
     {
         return static::getTitle();
     }
