@@ -418,7 +418,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
             Tables\Actions\Action::make('create')
                 ->label('Create post')
                 ->url(route('posts.create'))
-                ->icon('heroicon-o-plus')
+                ->icon('heroicon-m-plus')
                 ->button(),
         ];
     } // [tl! focus:end]

@@ -155,12 +155,12 @@ BulkAction::make('delete')
     ->action(fn (Collection $records) => $records->each->delete())
     ->deselectRecordsAfterCompletion()
     ->color('danger')
-    ->icon('heroicon-o-trash')
+    ->icon('heroicon-m-trash')
 
 Action::make('edit')
     ->label('Edit post')
     ->url(fn (Post $record): string => route('posts.edit', $record))
-    ->icon('heroicon-s-pencil')
+    ->icon('heroicon-m-pencil')
 ```
 
 ## Modals

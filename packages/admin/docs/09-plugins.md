@@ -262,7 +262,7 @@ class ExampleServiceProvider extends PluginServiceProvider
             UserMenuItem::make()
                 ->label('Settings')
                 ->url(route('filament.pages.settings'))
-                ->icon('heroicon-s-cog'),
+                ->icon('heroicon-m-cog-6-tooth'),
         ];
     }
 }

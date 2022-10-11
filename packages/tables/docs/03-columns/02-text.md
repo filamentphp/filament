@@ -153,7 +153,7 @@ Text columns may also have an icon:
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('email')
-    ->icon('heroicon-s-mail')
+    ->icon('heroicon-m-envelope')
 ```
 
 You may set the position of an icon using `iconPosition()`:
@@ -162,7 +162,7 @@ You may set the position of an icon using `iconPosition()`:
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('email')
-    ->icon('heroicon-s-mail')
+    ->icon('heroicon-m-envelope')
     ->iconPosition('after') // `before` or `after`
 ```
 

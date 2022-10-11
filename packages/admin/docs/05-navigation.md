@@ -68,7 +68,7 @@ class AppServiceProvider extends ServiceProvider
                     ->icon('heroicon-s-pencil'),
                 NavigationGroup::make()
                     ->label('Settings')
-                    ->icon('heroicon-s-cog')
+                    ->icon('heroicon-s-cog-6-tooth')
                     ->collapsed(),
             ]);
         });
@@ -192,7 +192,7 @@ Filament::serving(function () {
         UserMenuItem::make()
             ->label('Settings')
             ->url(route('filament.pages.settings'))
-            ->icon('heroicon-s-cog'),
+            ->icon('heroicon-m-cog-6-tooth'),
         // ...
     ]);
 });

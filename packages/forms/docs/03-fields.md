@@ -114,7 +114,7 @@ use Filament\Forms\Components\RichEditor;
 
 RichEditor::make('content')
     ->hint('Translatable')
-    ->hintIcon('heroicon-s-translate')
+    ->hintIcon('heroicon-m-language')
 ```
 
 Hints may have a `color()`. By default it's gray, but you may use `primary`, `success`, `warning`, or `danger`:
@@ -338,8 +338,8 @@ use Filament\Forms\Components\TextInput;
 
 TextInput::make('domain')
     ->url()
-    ->prefixIcon('heroicon-s-external-link')
-    ->suffixIcon('heroicon-s-external-link')
+    ->prefixIcon('heroicon-m-arrow-top-right-on-square')
+    ->suffixIcon('heroicon-m-arrow-top-right-on-square')
 ```
 
 You may render an action before and after the input using the `prefixAction()` and `suffixAction()` methods:
@@ -351,7 +351,7 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('domain')
     ->suffixAction(
         Action::make('visit')
-            ->icon('heroicon-s-external-link')
+            ->icon('heroicon-m-arrow-top-right-on-square')
             ->url(
                 fn (?string $state): ?string => filled($state) ? "https://{$state}" : null,
                 shouldOpenInNewTab: true,
@@ -810,8 +810,8 @@ Toggles may also use an "on icon" and an "off icon". These are displayed on its 
 use Filament\Forms\Components\Toggle;
 
 Toggle::make('is_admin')
-    ->onIcon('heroicon-s-lightning-bolt')
-    ->offIcon('heroicon-s-user')
+    ->onIcon('heroicon-m-bolt')
+    ->offIcon('heroicon-m-user')
 ```
 
 You may also customize the color representing each state. These may be either `primary`, `secondary`, `success`, `warning` or `danger`:
@@ -1727,7 +1727,7 @@ Blocks may also have an icon, which is displayed next to the label. The `icon()`
 ```php
 use Filament\Forms\Components\Builder;
 
-Builder\Block::make('heading')->icon('heroicon-o-bookmark')
+Builder\Block::make('heading')->icon('heroicon-m-bookmark')
 ```
 
 ![](https://user-images.githubusercontent.com/41773797/147614039-d9aa43dd-acfe-43b6-9cd1-1fc322aa4526.png)

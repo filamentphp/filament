@@ -71,10 +71,10 @@ use Filament\Tables\Columns\BadgeColumn;
 
 BadgeColumn::make('status')
     ->icons([
-        'heroicon-o-x',
-        'heroicon-o-document' => 'draft',
-        'heroicon-o-refresh' => 'reviewing',
-        'heroicon-o-truck' => 'published',
+        'heroicon-m-x-mark',
+        'heroicon-m-document' => 'draft',
+        'heroicon-m-arrow-path' => 'reviewing',
+        'heroicon-m-truck' => 'published',
     ])
 ```
 
@@ -85,10 +85,10 @@ use Filament\Tables\Columns\BadgeColumn;
 
 BadgeColumn::make('status')
     ->icons([
-        'heroicon-o-x',
-        'heroicon-o-document' => static fn ($state): bool => $state === 'draft',
-        'heroicon-o-refresh' => static fn ($state): bool => $state === 'reviewing',
-        'heroicon-o-truck' => static fn ($state): bool => $state === 'published',
+        'heroicon-m-x-mark',
+        'heroicon-m-document' => static fn ($state): bool => $state === 'draft',
+        'heroicon-m-arrow-path' => static fn ($state): bool => $state === 'reviewing',
+        'heroicon-m-truck' => static fn ($state): bool => $state === 'published',
     ])
 ```
 
@@ -100,10 +100,10 @@ use Filament\Tables\Columns\BadgeColumn;
 BadgeColumn::make('status')
     ->icon(static function ($state): string {
         if ($state === 'published') {
-            return 'heroicon-o-truck';
+            return 'heroicon-m-truck';
         }
         
-        return 'heroicon-o-x';
+        return 'heroicon-m-x-mark';
     })
 ```
 
@@ -114,10 +114,10 @@ use Filament\Tables\Columns\BadgeColumn;
 
 BadgeColumn::make('status')
     ->icons([
-        'heroicon-o-x',
-        'heroicon-o-document' => 'draft',
-        'heroicon-o-refresh' => 'reviewing',
-        'heroicon-o-truck' => 'published',
+        'heroicon-m-x-mark',
+        'heroicon-m-document' => 'draft',
+        'heroicon-m-arrow-path' => 'reviewing',
+        'heroicon-m-truck' => 'published',
     ])
     ->iconPosition('after') // `before` or `after`
 ```

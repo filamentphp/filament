@@ -310,7 +310,7 @@ use Filament\Forms\Components\Tabs;
 Tabs::make('Heading')
     ->tabs([
         Tabs\Tab::make('Notifications')
-            ->icon('heroicon-o-bell') // [tl! focus:start]
+            ->icon('heroicon-m-bell') // [tl! focus:start]
             ->badge('39') // [tl! focus:end]
             ->schema([
                 // ...
@@ -362,7 +362,7 @@ Steps may also have an icon, which can be the name of any Blade icon component:
 use Filament\Forms\Components\Wizard;
 
 Wizard\Step::make('Order')
-    ->icon('heroicon-o-shopping-bag')
+    ->icon('heroicon-m-shopping-bag')
     ->schema([
         // ...
     ]),

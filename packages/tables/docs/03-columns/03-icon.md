@@ -61,10 +61,10 @@ use Filament\Tables\Columns\IconColumn;
 
 IconColumn::make('is_featured')
     ->options([
-        'heroicon-s-x-circle',
-        'heroicon-s-pencil' => 'draft',
-        'heroicon-s-clock' => 'reviewing',
-        'heroicon-s-check-circle' => 'published',
+        'heroicon-m-x-circle',
+        'heroicon-m-pencil' => 'draft',
+        'heroicon-m-clock' => 'reviewing',
+        'heroicon-m-check-circle' => 'published',
     ])
     ->size('md')
 ```
@@ -89,7 +89,7 @@ use Filament\Tables\Columns\IconColumn;
 
 IconColumn::make('is_featured')
     ->boolean()
-    ->trueIcon('heroicon-o-badge-check')
+    ->trueIcon('heroicon-o-check-badge')
     ->falseIcon('heroicon-o-x-circle')
 ```
 

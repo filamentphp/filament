@@ -88,7 +88,7 @@ use Filament\Pages\Actions\Action;
 protected function getActions(): array
 {
     return [
-        Action::make('settings')->icon('heroicon-s-cog'),
+        Action::make('settings')->icon('heroicon-m-cog-6-tooth'),
     ];
 }
 ```

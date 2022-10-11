@@ -157,7 +157,7 @@ public static function table(Table $table): Table
                 ->action(fn (Collection $records) => $records->each->activate())
                 ->requiresConfirmation()
                 ->color('success')
-                ->icon('heroicon-o-check'),
+                ->icon('heroicon-m-check'),
         ]);
 }
 ```
