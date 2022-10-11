@@ -26,7 +26,7 @@ return [
     |
     */
 
-    'default_filesystem_disk' => env('TABLES_FILESYSTEM_DRIVER', 'public'),
+    'default_filesystem_disk' => env('TABLES_FILESYSTEM_DISK', 'public'),
 
     /*
     |--------------------------------------------------------------------------

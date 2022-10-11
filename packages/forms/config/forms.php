@@ -49,7 +49,7 @@ return [
     |
     */
 
-    'default_filesystem_disk' => env('FORMS_FILESYSTEM_DRIVER', 'public'),
+    'default_filesystem_disk' => env('FORMS_FILESYSTEM_DISK', 'public'),
 
     /*
     |--------------------------------------------------------------------------
