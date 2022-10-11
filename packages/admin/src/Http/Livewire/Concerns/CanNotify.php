@@ -9,7 +9,7 @@ use Filament\Facades\Filament;
  */
 trait CanNotify
 {
-    public function notify(string $status, string $message, bool $isAfterRedirect = false): void
+    public function notify(string $status, string $message): void
     {
         Filament::notify($status, $message);
     }
