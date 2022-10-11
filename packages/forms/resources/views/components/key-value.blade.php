@@ -113,7 +113,7 @@
                                                 type="button"
                                                 class="text-gray-600 hover:text-gray-700"
                                             >
-                                                <x-heroicon-o-switch-vertical class="w-4 h-4" />
+                                                <x-heroicon-m-arrows-up-down class="w-4 h-4" />
 
                                                 <span class="sr-only">
                                                     {{ $getDeleteButtonLabel() }}
@@ -127,7 +127,7 @@
                                                 type="button"
                                                 class="text-danger-600 hover:text-danger-700"
                                             >
-                                                <x-heroicon-o-trash class="w-4 h-4" />
+                                                <x-heroicon-m-trash class="w-4 h-4" />
 
                                                 <span class="sr-only">
                                                     {{ $getDeleteButtonLabel() }}
@@ -151,7 +151,7 @@
                         'dark:text-white dark:bg-gray-800/60 dark:hover:bg-gray-800/30' => config('forms.dark_mode'),
                     ])
                 >
-                    <x-heroicon-s-plus class="w-4 h-4" />
+                    <x-heroicon-m-plus class="w-4 h-4" />
 
                     <span>
                         {{ $getAddButtonLabel() }}

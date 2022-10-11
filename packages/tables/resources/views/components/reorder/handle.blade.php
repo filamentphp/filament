@@ -5,5 +5,5 @@
         'dark:text-gray-400 dark:group-hover:text-primary-400' => config('tables.dark_mode'),
     ]) }}
 >
-    <x-heroicon-s-menu class="block h-4 w-4" />
+    <x-heroicon-o-bars-3 class="block h-4 w-4" />
 </button>

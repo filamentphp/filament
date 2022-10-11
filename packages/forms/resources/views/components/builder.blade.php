@@ -114,7 +114,7 @@
                                             {{ __('forms::components.builder.buttons.move_item.label') }}
                                         </span>
 
-                                        <x-heroicon-s-switch-vertical class="w-4 h-4"/>
+                                        <x-heroicon-m-arrows-up-down class="w-4 h-4"/>
                                     </button>
                                 @endunless
 
@@ -162,7 +162,7 @@
                                                     {{ __('forms::components.builder.buttons.clone_item.label') }}
                                                 </span>
 
-                                                <x-heroicon-s-duplicate class="w-4 h-4"/>
+                                                <x-heroicon-m-square-2-stack class="w-4 h-4"/>
                                             </button>
                                         </li>
                                     @endif
@@ -182,7 +182,7 @@
                                                     {{ __('forms::components.builder.buttons.delete_item.label') }}
                                                 </span>
 
-                                                <x-heroicon-s-trash class="w-4 h-4"/>
+                                                <x-heroicon-m-trash class="w-4 h-4"/>
                                             </button>
                                         </li>
                                     @endunless
@@ -195,13 +195,13 @@
                                                 type="button"
                                                 class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500"
                                             >
-                                                <x-heroicon-s-minus-sm class="w-4 h-4" x-show="! isCollapsed"/>
+                                                <x-heroicon-m-minus class="w-4 h-4" x-show="! isCollapsed"/>
 
                                                 <span class="sr-only" x-show="! isCollapsed">
                                                     {{ __('forms::components.builder.buttons.collapse_item.label') }}
                                                 </span>
 
-                                                <x-heroicon-s-plus-sm class="w-4 h-4" x-show="isCollapsed" x-cloak/>
+                                                <x-heroicon-m-plus class="w-4 h-4" x-show="isCollapsed" x-cloak/>
 
                                                 <span class="sr-only" x-show="isCollapsed" x-cloak>
                                                     {{ __('forms::components.builder.buttons.expand_item.label') }}
@@ -231,7 +231,7 @@
                                     <x-slot name="trigger">
                                         <x-forms::icon-button
                                             :label="$getCreateItemBetweenButtonLabel()"
-                                            icon="heroicon-o-plus"
+                                            icon="heroicon-m-plus"
                                         />
                                     </x-slot>
 

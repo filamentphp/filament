@@ -45,7 +45,7 @@ class PageActions extends Page
             Action::make('disabled')
                 ->disabled(),
             Action::make('has-icon')
-                ->icon('heroicon-s-pencil'),
+                ->icon('heroicon-m-pencil'),
             Action::make('has-label')
                 ->label('My Action'),
             Action::make('has-color')

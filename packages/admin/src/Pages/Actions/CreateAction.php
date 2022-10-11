@@ -39,7 +39,7 @@ class CreateAction extends Action
 
         $this->button();
 
-        $this->groupedIcon('heroicon-s-plus');
+        $this->groupedIcon('heroicon-m-plus');
 
         $this->action(function (array $arguments, ComponentContainer $form): void {
             $model = $this->getModel();

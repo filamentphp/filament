@@ -30,7 +30,7 @@ class ViewAction extends Action
 
         $this->color('secondary');
 
-        $this->icon('heroicon-s-eye');
+        $this->icon('heroicon-m-eye');
 
         $this->disableForm();
 

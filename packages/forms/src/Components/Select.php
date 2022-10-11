@@ -211,7 +211,7 @@ class Select extends Field
                 $component->state($state);
                 $component->callAfterStateUpdated();
             })
-            ->icon('heroicon-o-plus')
+            ->icon('heroicon-m-plus')
             ->iconButton()
             ->modalHeading(__('forms::components.select.actions.create_option.modal.heading'))
             ->modalButton(__('forms::components.select.actions.create_option.modal.actions.create.label'))

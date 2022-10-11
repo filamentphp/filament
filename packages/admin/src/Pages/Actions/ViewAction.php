@@ -17,6 +17,6 @@ class ViewAction extends Action
 
         $this->color('secondary');
 
-        $this->groupedIcon('heroicon-s-eye');
+        $this->groupedIcon('heroicon-m-eye');
     }
 }

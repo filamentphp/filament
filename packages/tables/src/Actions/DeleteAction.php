@@ -28,7 +28,7 @@ class DeleteAction extends Action
 
         $this->color('danger');
 
-        $this->icon('heroicon-s-trash');
+        $this->icon('heroicon-m-trash');
 
         $this->requiresConfirmation();
 

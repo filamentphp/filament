@@ -14,18 +14,18 @@
     <x-slot name="trigger" class="ml-4">
         <x-filament::user-avatar :user="$user" />
     </x-slot>
-    
+
     {{ \Filament\Facades\Filament::renderHook('user-menu.account.before') }}
 
     <x-filament::dropdown.header
         :color="$accountItem?->getColor() ?? 'secondary'"
-        :icon="$accountItem?->getIcon() ?? 'heroicon-s-user-circle'"
+        :icon="$accountItem?->getIcon() ?? 'heroicon-m-user-circle'"
         :href="$accountItemUrl"
         :tag="filled($accountItemUrl) ? 'a' : 'div'"
     >
         {{ $accountItem?->getLabel() ?? \Filament\Facades\Filament::getUserName($user) }}
     </x-filament::dropdown.header>
-    
+
     {{ \Filament\Facades\Filament::renderHook('user-menu.account.after') }}
 
     <x-filament::dropdown.list
@@ -74,11 +74,11 @@
     >
         <div>
             @if (config('filament.dark_mode'))
-                <x-filament::dropdown.list.item icon="heroicon-s-moon" x-show="theme === 'dark'" x-on:click="close(); mode = 'manual'; theme = 'light'">
+                <x-filament::dropdown.list.item icon="heroicon-m-moon" x-show="theme === 'dark'" x-on:click="close(); mode = 'manual'; theme = 'light'">
                     {{ __('filament::layout.buttons.light_mode.label') }}
                 </x-filament::dropdown.list.item>
 
-                <x-filament::dropdown.list.item icon="heroicon-s-sun" x-show="theme === 'light'" x-on:click="close(); mode = 'manual'; theme = 'dark'">
+                <x-filament::dropdown.list.item icon="heroicon-m-sun" x-show="theme === 'light'" x-on:click="close(); mode = 'manual'; theme = 'dark'">
                     {{ __('filament::layout.buttons.dark_mode.label') }}
                 </x-filament::dropdown.list.item>
             @endif
@@ -99,7 +99,7 @@
 
         <x-filament::dropdown.list.item
             :color="$logoutItem?->getColor() ?? 'secondary'"
-            :icon="$logoutItem?->getIcon() ?? 'heroicon-s-logout'"
+            :icon="$logoutItem?->getIcon() ?? 'heroicon-m-arrow-left-on-rectangle'"
             :action="$logoutItem?->getUrl() ?? route('filament.auth.logout')"
             method="post"
             tag="form"

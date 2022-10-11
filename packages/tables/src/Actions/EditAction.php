@@ -33,7 +33,7 @@ class EditAction extends Action
 
         $this->successNotificationTitle(__('filament-support::actions/edit.single.messages.saved'));
 
-        $this->icon('heroicon-s-pencil');
+        $this->icon('heroicon-m-pencil');
 
         $this->mountUsing(function (ComponentContainer $form, Model $record): void {
             $data = $record->attributesToArray();

@@ -15,6 +15,6 @@ class ReplicateAction extends Action implements ReplicatesRecords
     {
         $this->baseSetUp();
 
-        $this->icon('heroicon-s-duplicate');
+        $this->icon('heroicon-m-square-2-stack');
     }
 }

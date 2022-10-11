@@ -1,7 +1,7 @@
 @php
     $isRtl = __('filament::layout.direction') === 'rtl';
-    $previousArrowIcon = $isRtl ? 'heroicon-o-chevron-right' : 'heroicon-o-chevron-left';
-    $nextArrowIcon = $isRtl ? 'heroicon-o-chevron-left' : 'heroicon-o-chevron-right';
+    $previousArrowIcon = $isRtl ? 'heroicon-m-chevron-right' : 'heroicon-m-chevron-left';
+    $nextArrowIcon = $isRtl ? 'heroicon-m-chevron-left' : 'heroicon-m-chevron-right';
 @endphp
 
 <div
@@ -126,7 +126,7 @@
                                 }"
                                 class="w-10 h-10 flex items-center justify-center rounded-full"
                             >
-                                <x-heroicon-o-check
+                                <x-heroicon-m-check
                                     x-show="getStepIndex(step) > {{ $loop->index }}"
                                     x-cloak
                                     class="w-5 h-5 text-white"

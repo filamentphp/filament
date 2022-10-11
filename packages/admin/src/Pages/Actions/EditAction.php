@@ -19,6 +19,6 @@ class EditAction extends Action
 
         $this->label(__('filament-support::actions/edit.single.label'));
 
-        $this->groupedIcon('heroicon-s-pencil');
+        $this->groupedIcon('heroicon-m-pencil');
     }
 }

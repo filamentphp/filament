@@ -72,8 +72,8 @@ it('can disable an action', function () {
 
 it('can have an icon', function () {
     livewire(PageActions::class)
-        ->assertPageActionHasIcon('has-icon', 'heroicon-s-pencil')
-        ->assertPageActionDoesNotHaveIcon('has-icon', 'heroicon-o-trash');
+        ->assertPageActionHasIcon('has-icon', 'heroicon-m-pencil')
+        ->assertPageActionDoesNotHaveIcon('has-icon', 'heroicon-m-trash');
 });
 
 it('can have a label', function () {

@@ -479,7 +479,7 @@
                                                     'hidden' => $isReordering,
                                                 ])>
                                                     <x-tables::icon-button
-                                                        icon="heroicon-s-chevron-down"
+                                                        icon="heroicon-m-chevron-down"
                                                         color="secondary"
                                                         size="sm"
                                                         x-on:click="isCollapsed = ! isCollapsed"

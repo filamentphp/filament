@@ -30,7 +30,7 @@ class DissociateAction extends Action
 
         $this->color('danger');
 
-        $this->icon('heroicon-s-x');
+        $this->icon('heroicon-m-x-mark');
 
         $this->requiresConfirmation();
 
