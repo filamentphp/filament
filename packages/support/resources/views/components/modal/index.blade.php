@@ -47,7 +47,10 @@
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         x-cloak
-        class="fixed inset-0 z-40 p-4 flex items-center min-h-screen overflow-y-auto overflow-x-hidden transition"
+        @class([
+            'fixed inset-0 z-40 flex items-center min-h-screen overflow-y-auto overflow-x-hidden transition',
+            'p-4' => ! $slideOver,
+        ])
     >
         <div
             @if (config('filament-support.modal.is_closed_by_clicking_away', true))
@@ -95,7 +98,7 @@
                     'filament-modal-window w-full p-2 bg-white cursor-default pointer-events-auto',
                     'dark:bg-gray-800' => $darkMode,
                     'relative' => $width !== 'screen',
-                    'h-screen overflow-y-auto ml-auto -mr-4 rtl:mr-auto rtl:-ml-4' => $slideOver,
+                    'h-screen overflow-y-auto ml-auto mr-0 rtl:mr-auto rtl:ml-0' => $slideOver,
                     'rounded-xl mx-auto' => ! ($slideOver || ($width === 'screen')),
                     'hidden' => ! $visible,
                     'max-w-xs' => $width === 'xs',

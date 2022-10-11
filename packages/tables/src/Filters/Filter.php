@@ -47,8 +47,7 @@ class Filter extends BaseFilter
     protected function getFormField(): Field
     {
         $field = $this->formComponent::make('isActive')
-            ->label($this->getLabel())
-            ->columnSpan($this->getColumnSpan());
+            ->label($this->getLabel());
 
         if (filled($defaultState = $this->getDefaultState())) {
             $field->default($defaultState);

@@ -71,11 +71,13 @@ By default, you will not be able to interact with deleted records in the relatio
 php artisan make:filament-relation-manager CategoryResource posts title --soft-deletes
 ```
 
+You can find out more about soft deleting [here](#deleting-records).
+
 ## Listing records
 
 Related records will be listed in a table. The entire relation manager is based around this table, which contains actions to [create](#creating-records), [edit](#editing-records), [attach / detach](#attaching-and-detaching-records), [associate / dissociate](#associating-and-dissociating-records), and delete records.
 
-As per the documentation on [listing records](listing-records), you may use all the same utilities for customisation on the relation manager:
+As per the documentation on [listing records](listing-records), you may use all the same utilities for customization on the relation manager:
 
 - [Columns](listing-records#columns)
 - [Filters](listing-records#filters)
@@ -209,6 +211,41 @@ CreateAction::make()
     })
 ```
 
+### Halting the creation process
+
+At any time, you may call `$action->halt()` from inside a lifecycle hook or mutation method, which will halt the entire creation process:
+
+```php
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\CreateAction;
+
+CreateAction::make()
+    ->before(function (CreateAction $action) {
+        if (! $this->record->team->subscribed()) {
+            Notification::make()
+                ->warning()
+                ->title('You don\'t have an active subscription!')
+                ->body('Choose a plan to continue.')
+                ->persistent()
+                ->actions([
+                    Action::make('subscribe')
+                        ->button()
+                        ->url(route('subscribe'), shouldOpenInNewTab: true),
+                ])
+                ->send();
+        
+            $action->halt();
+        }
+    })
+```
+
+If you'd like the action modal to close too, you can completely `cancel()` the action instead of halting it:
+
+```php
+$action->cancel();
+```
+
 ## Editing records
 
 ### Editing with pivot attributes
@@ -329,6 +366,41 @@ EditAction::make()
     })
 ```
 
+### Halting the saving process
+
+At any time, you may call `$action->halt()` from inside a lifecycle hook or mutation method, which will halt the entire saving process:
+
+```php
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\EditAction;
+
+EditAction::make()
+    ->before(function (EditAction $action) {
+        if (! $this->record->team->subscribed()) {
+            Notification::make()
+                ->warning()
+                ->title('You don\'t have an active subscription!')
+                ->body('Choose a plan to continue.')
+                ->persistent()
+                ->actions([
+                    Action::make('subscribe')
+                        ->button()
+                        ->url(route('subscribe'), shouldOpenInNewTab: true),
+                ])
+                ->send();
+        
+            $action->halt();
+        }
+    })
+```
+
+If you'd like the action modal to close too, you can completely `cancel()` the action instead of halting it:
+
+```php
+$action->cancel();
+```
+
 ## Attaching and detaching records
 
 Filament is able to attach and detach records for `BelongsToMany` and `MorphToMany` relationships.
@@ -395,6 +467,18 @@ In this example, `$action->getRecordSelect()` outputs the select field to pick t
 
 Please ensure that any pivot attributes are listed in the `withPivot()` method of the relationship *and* inverse relationship.
 
+### Scoping the options
+
+You may want to scope the options available to `AttachAction`:
+
+```php
+use Filament\Tables\Actions\AttachAction;
+use Illuminate\Database\Eloquent\Builder;
+
+AttachAction::make()
+    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+```
+
 ### Handling duplicates
 
 By default, you will not be allowed to attach a record more than once. This is because you must also set up a primary `id` column on the pivot table for this feature to work.
@@ -454,6 +538,18 @@ use Filament\Tables\Actions\AssociateAction;
 AssociateAction::make()->preloadRecordSelect()
 ```
 
+### Scoping the options
+
+You may want to scope the options available to `AssociateAction`:
+
+```php
+use Filament\Tables\Actions\AssociateAction;
+use Illuminate\Database\Eloquent\Builder;
+
+AssociateAction::make()
+    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+```
+
 ## Viewing records
 
 When generating your relation manager, you may pass the `--view` flag to also add a `ViewAction` to the table:
@@ -462,7 +558,7 @@ When generating your relation manager, you may pass the `--view` flag to also ad
 php artisan make:filament-relation-manager CategoryResource posts title --view
 ```
 
-Alternatively, if you've already generated your resource, you can just add the `ViewAction` to the `$table->actions()` array:
+Alternatively, if you've already generated your relation manager, you can just add the `ViewAction` to the `$table->actions()` array:
 
 ```php
 use Filament\Resources\Table;
@@ -480,6 +576,138 @@ public static function table(Table $table): Table
         ]);
 }
 ```
+
+## Deleting records
+
+By default, you will not be able to interact with deleted records in the relation manager. If you'd like to add functionality to restore, force delete and filter trashed records in your relation manager, use the `--soft-deletes` flag when generating the relation manager:
+
+```bash
+php artisan make:filament-relation-manager CategoryResource posts title --soft-deletes
+```
+
+Alternatively, you may add soft deleting functionality to an existing relation manager:
+
+```php
+use Filament\Resources\Table;
+use Filament\Tables;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->filters([
+            Tables\Filters\TrashedFilter::make(),
+            // ...
+        ])
+        ->actions([
+            Tables\Actions\DeleteAction::make(),
+            Tables\Actions\ForceDeleteAction::make(),
+            Tables\Actions\RestoreAction::make(),
+            // ...
+        ])
+        ->bulkActions([
+            Tables\Actions\DeleteBulkAction::make(),
+            Tables\Actions\ForceDeleteBulkAction::make(),
+            Tables\Actions\RestoreBulkAction::make(),
+            // ...
+        ]);
+}
+
+protected function getTableQuery(): Builder
+{
+    return parent::getTableQuery()
+        ->withoutGlobalScopes([
+            SoftDeletingScope::class,
+        ]);
+}
+```
+
+### Lifecycle hooks
+
+You can use the `before()` and `after()` methods to execute code before and after a record is deleted:
+
+```php
+use Filament\Tables\Actions\DeleteAction;
+
+DeleteAction::make()
+    ->before(function () {
+        // ...
+    })
+    ->after(function () {
+        // ...
+    })
+```
+
+### Halting the deletion process
+
+At any time, you may call `$action->halt()` from inside a lifecycle hook or mutation method, which will halt the entire deletion process:
+
+```php
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\DeleteAction;
+
+DeleteAction::make()
+    ->before(function (DeleteAction $action) {
+        if (! $this->record->team->subscribed()) {
+            Notification::make()
+                ->warning()
+                ->title('You don\'t have an active subscription!')
+                ->body('Choose a plan to continue.')
+                ->persistent()
+                ->actions([
+                    Action::make('subscribe')
+                        ->button()
+                        ->url(route('subscribe'), shouldOpenInNewTab: true),
+                ])
+                ->send();
+        
+            $action->halt();
+        }
+    })
+```
+
+If you'd like the action modal to close too, you can completely `cancel()` the action instead of halting it:
+
+```php
+$action->cancel();
+```
+
+## Accessing the owner record
+
+Relation managers are Livewire components. When they are first loaded, the owner record (the Eloquent record which serves as a parent - the main resource model) is mounted in a public `$ownerRecord` property. Thus, you may access the owner record using:
+
+```php
+$this->record
+```
+
+However, in you're inside a `static` method like `form()` or `table()`, `$this` isn't accessible. So, you may [use a callback](../../forms/advanced#using-closure-customization) to access the `$livewire` instance:
+
+```php
+use Filament\Forms;
+use Filament\Resources\Form;
+use Filament\Resources\RelationManagers\RelationManager;
+
+public static function form(Form $form): Form
+{
+    return $form
+        ->schema([
+            Forms\Components\Select::make('store_id')
+                ->options(function (RelationManager $livewire): array {
+                    return $livewire->ownerRecord->stores()
+                        ->pluck('name', 'id')
+                        ->toArray();
+                }),
+            // ...
+        ]);
+}
+```
+
+All methods in Filament accept a callback which you can access `$livewire->ownerRecord` in.
 
 ## Grouping relation managers
 

@@ -55,18 +55,18 @@
             >
                 @if ($hasOffIcon())
                     <x-dynamic-component
-                    :component="$getOffIcon()"
-                    :class="\Illuminate\Support\Arr::toCssClasses([
-                        'h-3 w-3',
-                        match ($getOffColor()) {
-                            'danger' => 'text-danger-500',
-                            'primary' => 'text-primary-500',
-                            'success' => 'text-success-500',
-                            'warning' => 'text-warning-500',
-                            default => 'text-gray-400',
-                        },
-                    ])"
-                />
+                        :component="$getOffIcon()"
+                        :class="\Illuminate\Support\Arr::toCssClasses([
+                            'h-3 w-3',
+                            match ($getOffColor()) {
+                                'danger' => 'text-danger-500',
+                                'primary' => 'text-primary-500',
+                                'success' => 'text-success-500',
+                                'warning' => 'text-warning-500',
+                                default => 'text-gray-400',
+                            },
+                        ])"
+                    />
                 @endif
             </span>
 

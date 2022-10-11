@@ -54,6 +54,10 @@
     @apply border-gray-600 bg-gray-700 text-white;
 }
 
+.choices--error .choices__inner {
+    @apply border-danger-600 ring-danger-600;
+}
+
 [dir='rtl'] .choices__inner {
     background-position: left 0.5rem center;
 }

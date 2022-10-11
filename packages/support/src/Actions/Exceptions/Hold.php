@@ -2,8 +2,11 @@
 
 namespace Filament\Support\Actions\Exceptions;
 
-use Exception;
+use Filament\Support\Exceptions\Halt;
 
-class Hold extends Exception
+/**
+ * @deprecated Throw `Halt` instead.
+ */
+class Hold extends Halt
 {
 }

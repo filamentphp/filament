@@ -13,6 +13,8 @@
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-action="$getHintAction()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
@@ -96,8 +98,12 @@
                         searchPrompt: @js($getSearchPrompt()),
                         state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
                     })"
+                    x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                     wire:ignore
                     {{ $attributes->merge($getExtraAttributes())->merge($getExtraAlpineAttributes()) }}
+                    x-bind:class="{
+                        'choices--error': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
+                    }"
                 >
                     <select
                         x-ref="input"

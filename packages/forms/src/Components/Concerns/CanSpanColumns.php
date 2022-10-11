@@ -28,7 +28,7 @@ trait CanSpanColumns
         return $this;
     }
 
-    public function getColumnSpan($breakpoint = null): array | int | string | null
+    public function getColumnSpan(int | string | null $breakpoint = null): array | int | string | null
     {
         $span = $this->columnSpan;
 

@@ -5,6 +5,8 @@
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-action="$getHintAction()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
@@ -58,7 +60,7 @@
 
                     <datalist id="{{ $getId() }}-suggestions">
                         @foreach ($getSuggestions() as $suggestion)
-                            <template x-if="! state.includes('{{ $suggestion }}')" x-bind:key="'{{ $suggestion }}'">
+                            <template x-if="! state.includes(@js($suggestion))" x-bind:key="@js($suggestion)">
                                 <option value="{{ $suggestion }}" />
                             </template>
                         @endforeach

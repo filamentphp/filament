@@ -68,6 +68,8 @@ By default, you will not be able to interact with deleted records in the admin p
 php artisan make:filament-resource Customer --soft-deletes
 ```
 
+You can find out more about soft deleting [here](deleting-records#handling-soft-deletes).
+
 ### Generating a View page
 
 By default, only List, Create and Edit pages are generated for your resource. If you'd also like a [View page](viewing-records), use the `--view` flag:
@@ -208,7 +210,7 @@ Filament has many utilities available for managing resource relationships. Which
 
 #### Select field
 
-Filament includes the ability automatically loads options from a `BelongsTo` relationship:
+Filament includes the ability to automatically load options from a `BelongsTo` relationship:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -335,6 +337,24 @@ The related records are listed in a table, which has buttons to open a modal for
 
 For more information on relation managers, see the [full documentation](relation-managers).
 
+### `MorphTo`
+
+#### Select field
+
+Filament includes the ability to automatically load options from a `MorphTo` relationship:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)->titleColumnName('name'),
+        MorphToSelect\Type::make(Post::class)->titleColumnName('title'),
+    ])
+```
+
+More information is available in the [Form docs](../../forms/fields#handling-morphto-relationships).
+
 ### `MorphOne`
 
 #### Layout component
@@ -400,14 +420,17 @@ For authorization, Filament will observe any [model policies](https://laravel.co
 - `viewAny()` is used to completely hide resources from the navigation menu, and prevents the user from accessing any pages.
 - `create()` is used to control [creating new records](creating-records).
 - `update()` is used to control [editing a record](editing-records).
-- `delete()` is used to prevent a single record from being deleted. `deleteAny()` is used to prevent records from being bulk deleted. Filament uses the `deleteAny()` method because iterating through multiple records and checking the `delete()` policy is not very performant.
 - `view()` is used to control [viewing a record](viewing-records).
+- `delete()` is used to prevent a single record from being deleted. `deleteAny()` is used to prevent records from being bulk deleted. Filament uses the `deleteAny()` method because iterating through multiple records and checking the `delete()` policy is not very performant.
+- `forceDelete()` is used to prevent a single soft-deleted record from being force-deleted. `forceDeleteAny()` is used to prevent records from being bulk force-deleted. Filament uses the `forceDeleteAny()` method because iterating through multiple records and checking the `forceDelete()` policy is not very performant.
+- `restore()` is used to prevent a single soft-deleted record from being restored. `restoreAny()` is used to prevent records from being bulk restored. Filament uses the `restoreAny()` method because iterating through multiple records and checking the `restore()` policy is not very performant.
+- `reorder()` is used to control [reordering a record](listing-records#reordering-records).
 
 ## Model labels
 
 Each resource has a "model label" which is automatically generated from the model name. For example, an `App\Models\Customer` model will have a `customer` label.
 
-The label is used in several parts of the UI, and you may customise it using the `$modelLabel` property:
+The label is used in several parts of the UI, and you may customize it using the `$modelLabel` property:
 
 ```php
 protected static ?string $modelLabel = 'cliente';
@@ -511,7 +534,7 @@ protected static function getNavigationGroup(): ?string
 }
 ```
 
-## Customising the Eloquent query
+## Customizing the Eloquent query
 
 Within Filament, every query to your resource model will start with the `getEloquentQuery()` method.
 
@@ -549,7 +572,7 @@ Multi-tenancy, simply, is the concept of users "owning" records, and only being 
 
 Simple multi-tenancy is easy to set up with Filament.
 
-First, scope the [base Eloquent query](#customising-the-eloquent-query) for every "owned" resource by defining the `getEloquentQuery()` method:
+First, scope the [base Eloquent query](#customizing-the-eloquent-query) for every "owned" resource by defining the `getEloquentQuery()` method:
 
 ```php
 public static function getEloquentQuery(): Builder
@@ -567,6 +590,16 @@ public function creating(Post $post): void
 {
     $post->user()->associate(auth()->user());
 }
+```
+
+Additionally, you may want to scope the options available in the [relation manager](relation-managers) `AttachAction` or `AssociateAction`:
+
+```php
+use Filament\Tables\Actions\AttachAction;
+use Illuminate\Database\Eloquent\Builder;
+
+AttachAction::make()
+    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
 ```
 
 ### `stancl/tenancy`

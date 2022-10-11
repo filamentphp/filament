@@ -14,7 +14,7 @@
     ])
 >
     <header @class([
-        'filament-sidebar-header border-b h-[4rem] shrink-0 flex items-center justify-center',
+        'filament-sidebar-header border-b h-[4rem] shrink-0 flex items-center justify-center relative',
         'dark:border-gray-700' => config('filament.dark_mode'),
     ])>
         <div

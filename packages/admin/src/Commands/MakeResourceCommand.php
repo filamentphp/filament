@@ -121,8 +121,8 @@ class MakeResourceCommand extends Command
         $eloquentQuery = '';
 
         if ($this->option('soft-deletes')) {
-            $tableBulkActions[] = 'Tables\Actions\RestoreBulkAction::make(),';
             $tableBulkActions[] = 'Tables\Actions\ForceDeleteBulkAction::make(),';
+            $tableBulkActions[] = 'Tables\Actions\RestoreBulkAction::make(),';
 
             $eloquentQuery .= PHP_EOL . PHP_EOL . 'public static function getEloquentQuery(): Builder';
             $eloquentQuery .= PHP_EOL . '{';

@@ -67,6 +67,19 @@ protected function getActions(): array
 }
 ```
 
+Buttons may have a `size()`. The default is `md`, but you may also use `sm` or `lg`:
+
+```php
+use Filament\Pages\Actions\Action;
+
+protected function getActions(): array
+{
+    return [
+        Action::make('settings')->size('lg'),
+    ];
+}
+```
+
 Buttons may also have an `icon()`, which is the name of any Blade component. By default, the [Blade Heroicons](https://github.com/blade-ui-kit/blade-heroicons) package is installed, so you may use the name of any [Heroicon](https://heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
 
 ```php

@@ -1,0 +1,67 @@
+name: check-pr-maintainer-access
+
+on:
+  pull_request_target:
+    types:
+      - opened
+
+permissions:
+  pull-requests: write
+
+jobs:
+  notify-when-maintainers-cannot-edit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v3
+        with:
+          script: |
+            const query = `
+                query($number: Int!) {
+                    repository(owner: "filamentphp", name: "filament") {
+                        pullRequest(number: $number) {
+                            headRepositoryOwner {
+                                login
+                            }
+                            maintainerCanModify
+                        }
+                    }
+                }
+            `
+
+            const pullNumber = context.issue.number
+            const variables = { number: pullNumber }
+
+            try {
+                console.log(`Check #${pullNumber} for maintainer edit access...`)
+                const result = await github.graphql(query, variables)
+
+                console.log(JSON.stringify(result, null, 2))
+
+                const pullRequest = result.repository.pullRequest
+
+                if (pullRequest.headRepositoryOwner.login === 'filamentphp') {
+                    console.log('PR owned by filamentphp')
+
+                    return
+                }
+
+                if (! pullRequest.maintainerCanModify) {
+                    console.log('PR not owned by filamentphp and does not have maintainer edits enabled')
+
+                    await github.issues.createComment({
+                        issue_number: pullNumber,
+                        owner: 'filamentphp',
+                        repo: 'filament',
+                        body: 'Thanks for submitting a PR!\n\nIn order to review and merge PRs most efficiently, we require that all PRs grant maintainer edit access before we review them. For information on how to do this, [see the GitHub documentation](https://docs.github.com/en/github/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork).'
+                    })
+
+                    await github.issues.update({
+                        issue_number: pullNumber,
+                        owner: 'filamentphp',
+                        repo: context.repo.repo,
+                        state: 'closed'
+                    })
+                }
+            } catch(error) {
+                console.log(error)
+            }

@@ -2,11 +2,27 @@
 
 return [
 
+    'columns' => [
+
+        'color' => [
+
+            'messages' => [
+                'copied' => 'Kopirano',
+            ],
+
+        ],
+
+        'tags' => [
+            'more' => 'i :count više',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
             'label' => 'Pretraga',
-            'placeholder' => 'Traži',
+            'placeholder' => 'Tražite',
         ],
 
     ],
@@ -20,7 +36,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'po stranici',
+
+                'options' => [
+                    'all' => 'Svi',
+                ],
+
             ],
 
         ],
@@ -28,7 +50,7 @@ return [
         'buttons' => [
 
             'go_to_page' => [
-                'label' => 'Idi na stranu :page',
+                'label' => 'Idite na stranicu :page',
             ],
 
             'next' => [
@@ -45,6 +67,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Završite preuređivanje zapisa',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Preuredite zapise',
+        ],
+
         'filter' => [
             'label' => 'Filter',
         ],
@@ -54,7 +84,7 @@ return [
         ],
 
         'toggle_columns' => [
-            'label' => 'Uključi/isključi kolone',
+            'label' => 'Preklopiti kolone',
         ],
 
     ],
@@ -67,18 +97,29 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Sklonite filter',
+            ],
+
+            'remove_all' => [
+                'label' => 'Sklonite svi filteri',
+                'tooltip' => 'Sklonite svi filteri',
+            ],
+
             'reset' => [
                 'label' => 'Resetujte filtere',
             ],
 
         ],
 
+        'indicator' => 'Aktivne filteri',
+
         'multi_select' => [
             'placeholder' => 'Svi',
         ],
 
         'select' => [
-            'placeholder' => 'Sve/svi',
+            'placeholder' => 'Svi',
         ],
 
         'trashed' => [
@@ -95,22 +136,46 @@ return [
 
     ],
 
+    'reorder_indicator' => 'Prevucite i ispustite zapise u red.',
+
     'selection_indicator' => [
 
-        'selected_count' => '1 odabran zapis.|:count odabrani zapisi.',
+        'selected_count' => '1 izabran zapis.|:count izabrani zapisi.',
 
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Odaberi sve :count',
+                'label' => 'Izaberite sve :count',
             ],
 
             'deselect_all' => [
-                'label' => 'Opozovite izbor',
+                'label' => 'Poništitite izbor',
             ],
 
         ],
 
     ],
 
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Sortirajte po',
+            ],
+
+            'direction' => [
+
+                'label' => 'Sortirajte po smjeru',
+
+                'options' => [
+                    'asc' => 'Uzlazno',
+                    'desc' => 'Silazno',
+                ],
+
+            ],
+
+        ],
+
+    ],
 ];

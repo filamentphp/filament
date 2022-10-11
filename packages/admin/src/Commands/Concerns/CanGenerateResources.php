@@ -131,12 +131,12 @@ trait CanGenerateResources
 
             $columnData = [];
 
-            $columnData['type'] = $type = match ($column->getType()::class) {
-                Types\BooleanType::class => Tables\Columns\BooleanColumn::class,
-                default => Tables\Columns\TextColumn::class,
-            };
+            if ($column->getType() instanceof Types\BooleanType) {
+                $columnData['type'] = Tables\Columns\IconColumn::class;
+                $columnData['boolean'] = [];
+            } else {
+                $columnData['type'] = Tables\Columns\TextColumn::class;
 
-            if ($type === Tables\Columns\TextColumn::class) {
                 if ($column->getType()::class === Types\DateType::class) {
                     $columnData['date'] = [];
                 }

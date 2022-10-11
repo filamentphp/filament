@@ -14,7 +14,7 @@ protected static ?string $recordTitleAttribute = 'title';
 
 This attribute is used to retrieve the search result title for that record.
 
-You may customise the title further by overriding `getGlobalSearchResultTitle()` method:
+You may customize the title further by overriding `getGlobalSearchResultTitle()` method:
 
 ```php
 public static function getGlobalSearchResultTitle(Model $record): string

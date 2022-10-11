@@ -28,7 +28,7 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
                     Tables\Actions\Action::make('column-action-object')
                         ->action(fn () => $this->emit('column-action-object-called')),
                 ),
-            Tables\Columns\BooleanColumn::make('is_published'),
+            Tables\Columns\IconColumn::make('is_published')->boolean(),
             Tables\Columns\TextColumn::make('visible'),
             Tables\Columns\TextColumn::make('hidden')
                 ->hidden(),
@@ -69,12 +69,12 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
                 ->action(function (array $arguments) {
                     $this->emit('arguments-called', $arguments);
                 }),
-            Tables\Actions\Action::make('hold')
+            Tables\Actions\Action::make('halt')
                 ->requiresConfirmation()
                 ->action(function (Tables\Actions\Action $action) {
-                    $this->emit('hold-called');
+                    $this->emit('halt-called');
 
-                    $action->hold();
+                    $action->halt();
                 }),
             Tables\Actions\Action::make('visible'),
             Tables\Actions\Action::make('hidden')
@@ -123,12 +123,12 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
                 ->action(function (array $arguments) {
                     $this->emit('arguments-called', $arguments);
                 }),
-            Tables\Actions\BulkAction::make('hold')
+            Tables\Actions\BulkAction::make('halt')
                 ->requiresConfirmation()
                 ->action(function (Tables\Actions\BulkAction $action) {
-                    $this->emit('hold-called');
+                    $this->emit('halt-called');
 
-                    $action->hold();
+                    $action->halt();
                 }),
             Tables\Actions\BulkAction::make('visible'),
             Tables\Actions\BulkAction::make('hidden')

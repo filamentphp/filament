@@ -57,6 +57,8 @@ class Resource
 
     protected static string | array $middlewares = [];
 
+    protected static int $globalSearchResultsLimit = 50;
+
     public static function form(Form $form): Form
     {
         return $form;
@@ -105,12 +107,24 @@ class Resource
     public static function can(string $action, ?Model $record = null): bool
     {
         $policy = Gate::getPolicyFor($model = static::getModel());
+        $user = Filament::auth()->user();
 
-        if ($policy === null || (! method_exists($policy, $action))) {
+        if ($policy === null) {
             return true;
         }
 
-        return Gate::forUser(Filament::auth()->user())->check($action, $record ?? $model);
+        if (
+            method_exists($policy, 'before') &&
+            is_bool($response = $policy->before($user, $action))
+        ) {
+            return $response;
+        }
+
+        if (! method_exists($policy, $action)) {
+            return true;
+        }
+
+        return Gate::forUser($user)->check($action, $record ?? $model);
     }
 
     public static function canViewAny(): bool
@@ -227,6 +241,11 @@ class Resource
         return null;
     }
 
+    public static function getGlobalSearchResultsLimit(): int
+    {
+        return static::$globalSearchResultsLimit;
+    }
+
     public static function getGlobalSearchResults(string $searchQuery): Collection
     {
         $query = static::getGlobalSearchEloquentQuery();
@@ -242,7 +261,7 @@ class Resource
         }
 
         return $query
-            ->limit(50)
+            ->limit(static::getGlobalSearchResultsLimit())
             ->get()
             ->map(function (Model $record): ?GlobalSearchResult {
                 $url = static::getGlobalSearchResultUrl($record);

@@ -12229,6 +12229,43 @@ var RgbaStringColorPicker = class extends RgbaStringBase {
 };
 customElements.define("rgba-string-color-picker", RgbaStringColorPicker);
 
+// packages/forms/resources/js/components/color-picker.js
+var color_picker_default2 = (Alpine) => {
+  Alpine.data("colorPickerFormComponent", ({isAutofocused, isDisabled, state: state2}) => {
+    return {
+      state: state2,
+      init: function() {
+        if (!(this.state === null || this.state === "")) {
+          this.setState(this.state);
+        }
+        if (isAutofocused) {
+          this.togglePanelVisibility(this.$refs.input);
+        }
+        this.$refs.input.addEventListener("change", (event) => {
+          this.setState(event.target.value);
+        });
+        this.$refs.panel.addEventListener("color-changed", (event) => {
+          this.setState(event.detail.value);
+        });
+      },
+      togglePanelVisibility: function() {
+        if (isDisabled) {
+          return;
+        }
+        this.$refs.panel.toggle(this.$refs.input);
+      },
+      setState: function(value) {
+        this.state = value;
+        this.$refs.input.value = value;
+        this.$refs.panel.color = value;
+      },
+      isOpen: function() {
+        return this.$refs.panel.style.display === "block";
+      }
+    };
+  });
+};
+
 // node_modules/dayjs/esm/constant.js
 var SECONDS_A_MINUTE = 60;
 var SECONDS_A_HOUR = SECONDS_A_MINUTE * 60;
@@ -12646,40 +12683,6 @@ dayjs.Ls = Ls;
 dayjs.p = {};
 var esm_default = dayjs;
 
-// packages/forms/resources/js/components/color-picker.js
-var color_picker_default2 = (Alpine) => {
-  Alpine.data("colorPickerFormComponent", ({isAutofocused, isDisabled, state: state2}) => {
-    return {
-      state: state2,
-      init: function() {
-        if (!(this.state === null || this.state === "")) {
-          this.setState(this.state);
-        }
-        if (isAutofocused) {
-          this.togglePanelVisibility(this.$refs.input);
-        }
-        this.$refs.input.addEventListener("change", (event) => {
-          this.setState(event.target.value);
-        });
-        this.$refs.panel.addEventListener("color-changed", (event) => {
-          this.setState(event.detail.value);
-        });
-      },
-      togglePanelVisibility: function() {
-        if (isDisabled) {
-          return;
-        }
-        this.$refs.panel.toggle(this.$refs.input);
-      },
-      setState: function(value) {
-        this.state = value;
-        this.$refs.input.value = value;
-        this.$refs.panel.color = value;
-      }
-    };
-  });
-};
-
 // packages/forms/resources/js/components/date-time-picker.js
 var import_customParseFormat = __toModule(require_customParseFormat());
 var import_localeData = __toModule(require_localeData());
@@ -12695,7 +12698,6 @@ var date_time_picker_default = (Alpine) => {
     displayFormat,
     firstDayOfWeek,
     isAutofocused,
-    isDisabled,
     locale,
     shouldCloseOnDateSelection,
     state: state2
@@ -12858,6 +12860,15 @@ var date_time_picker_default = (Alpine) => {
         this.$nextTick(() => this.isClearingState = false);
       },
       dateIsDisabled: function(date) {
+        if (JSON.parse(this.$refs.disabledDates?.value ?? []).some((disabledDate) => {
+          disabledDate = esm_default(disabledDate);
+          if (!disabledDate.isValid()) {
+            return false;
+          }
+          return disabledDate.isSame(date, "day");
+        })) {
+          return true;
+        }
         if (this.getMaxDate() && date.isAfter(this.getMaxDate())) {
           return true;
         }
@@ -12931,9 +12942,6 @@ var date_time_picker_default = (Alpine) => {
         return date;
       },
       togglePanelVisibility: function() {
-        if (isDisabled) {
-          return;
-        }
         if (!this.isOpen()) {
           this.focusedDate = this.getSelectedDate() ?? this.getMinDate() ?? esm_default().tz(timezone2);
           this.setupDaysGrid();
@@ -12984,7 +12992,7 @@ var date_time_picker_default = (Alpine) => {
         this.setDisplayText();
       },
       isOpen: function() {
-        return this.$refs.panel.style.display === "block";
+        return this.$refs.panel?.style.display === "block";
       }
     };
   });

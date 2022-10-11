@@ -18,7 +18,6 @@ export default (Alpine) => {
             displayFormat,
             firstDayOfWeek,
             isAutofocused,
-            isDisabled,
             locale,
             shouldCloseOnDateSelection,
             state,
@@ -265,6 +264,22 @@ export default (Alpine) => {
                 },
 
                 dateIsDisabled: function (date) {
+                    if (
+                        JSON.parse(this.$refs.disabledDates?.value ?? []).some(
+                            (disabledDate) => {
+                                disabledDate = dayjs(disabledDate)
+
+                                if (!disabledDate.isValid()) {
+                                    return false
+                                }
+
+                                return disabledDate.isSame(date, 'day')
+                            },
+                        )
+                    ) {
+                        return true
+                    }
+
                     if (this.getMaxDate() && date.isAfter(this.getMaxDate())) {
                         return true
                     }
@@ -376,10 +391,6 @@ export default (Alpine) => {
                 },
 
                 togglePanelVisibility: function () {
-                    if (isDisabled) {
-                        return
-                    }
-
                     if (!this.isOpen()) {
                         this.focusedDate =
                             this.getSelectedDate() ??
@@ -468,7 +479,7 @@ export default (Alpine) => {
                 },
 
                 isOpen: function () {
-                    return this.$refs.panel.style.display === 'block'
+                    return this.$refs.panel?.style.display === 'block'
                 },
             }
         },
