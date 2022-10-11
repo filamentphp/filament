@@ -4,7 +4,7 @@ return [
 
     'fields' => [
 
-        'search_query' => [
+        'search' => [
             'label' => '搜索',
             'placeholder' => '搜索',
         ],

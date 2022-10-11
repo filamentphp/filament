@@ -20,7 +20,7 @@ return [
 
     'fields' => [
 
-        'search_query' => [
+        'search' => [
             'label' => '検索',
             'placeholder' => '検索',
         ],

@@ -246,16 +246,21 @@ class Resource
         return static::$globalSearchResultsLimit;
     }
 
-    public static function getGlobalSearchResults(string $searchQuery): Collection
+    public static function getGlobalSearchResults(string $search): Collection
     {
         $query = static::getGlobalSearchEloquentQuery();
 
-        foreach (explode(' ', $searchQuery) as $searchQueryWord) {
-            $query->where(function (Builder $query) use ($searchQueryWord) {
+        foreach (explode(' ', $search) as $searchWord) {
+            $query->where(function (Builder $query) use ($searchWord) {
                 $isFirst = true;
 
                 foreach (static::getGloballySearchableAttributes() as $attributes) {
-                    static::applyGlobalSearchAttributeConstraint($query, Arr::wrap($attributes), $searchQueryWord, $isFirst);
+                    static::applyGlobalSearchAttributeConstraint(
+                        query: $query,
+                        search: $searchWord,
+                        searchAttributes: Arr::wrap($attributes),
+                        isFirst: $isFirst,
+                    );
                 }
             });
         }
@@ -410,7 +415,7 @@ class Resource
         return static::getRecordTitleAttribute() !== null;
     }
 
-    protected static function applyGlobalSearchAttributeConstraint(Builder $query, array $searchAttributes, string $searchQuery, bool &$isFirst): Builder
+    protected static function applyGlobalSearchAttributeConstraint(Builder $query, string $search, array $searchAttributes, bool &$isFirst): Builder
     {
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();
@@ -427,7 +432,7 @@ class Resource
 
             $query->when(
                 method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchAttribute),
-                function (Builder $query) use ($databaseConnection, $searchAttribute, $searchOperator, $searchQuery, $whereClause): Builder {
+                function (Builder $query) use ($databaseConnection, $searchAttribute, $searchOperator, $search, $whereClause): Builder {
                     $activeLocale = app()->getLocale();
 
                     $searchColumn = match ($databaseConnection->getDriverName()) {
@@ -437,7 +442,7 @@ class Resource
 
                     return $query->{"{$whereClause}Raw"}(
                         "lower({$searchColumn}) {$searchOperator} ?",
-                        "%{$searchQuery}%",
+                        "%{$search}%",
                     );
                 },
                 fn (Builder $query): Builder => $query->when(
@@ -446,12 +451,12 @@ class Resource
                         (string) Str::of($searchAttribute)->beforeLast('.'),
                         (string) Str::of($searchAttribute)->afterLast('.'),
                         $searchOperator,
-                        "%{$searchQuery}%",
+                        "%{$search}%",
                     ),
                     fn ($query) => $query->{$whereClause}(
                         $searchAttribute,
                         $searchOperator,
-                        "%{$searchQuery}%",
+                        "%{$search}%",
                     ),
                 ),
             );

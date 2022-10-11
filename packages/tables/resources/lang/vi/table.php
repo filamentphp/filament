@@ -20,7 +20,7 @@ return [
 
     'fields' => [
 
-        'search_query' => [
+        'search' => [
             'label' => 'Tìm kiếm',
             'placeholder' => 'Tìm kiếm',
         ],

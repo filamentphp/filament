@@ -20,7 +20,7 @@ return [
 
     'fields' => [
 
-        'search_query' => [
+        'search' => [
             'label' => 'Keresés',
             'placeholder' => 'Keres',
         ],

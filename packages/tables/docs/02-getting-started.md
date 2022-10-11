@@ -280,8 +280,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 protected function applySearchToTableQuery(Builder $query): Builder
 {
-    if (filled($searchQuery = $this->getTableSearchQuery())) {
-        $query->whereIn('id', Post::search($searchQuery)->keys());
+    if (filled($search = $this->getTableSearch())) {
+        $query->whereIn('id', Post::search($search)->keys());
     }
 
     return $query;
@@ -443,7 +443,7 @@ protected $queryString = [
     'tableFilters',
     'tableSortColumn',
     'tableSortDirection',
-    'tableSearchQuery' => ['except' => ''],
+    'tableSearch' => ['except' => ''],
 ];
 ```
 

@@ -25,7 +25,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         'tableFilters',
         'tableSortColumn' => ['except' => ''],
         'tableSortDirection' => ['except' => ''],
-        'tableSearchQuery' => ['except' => ''],
+        'tableSearch' => ['except' => ''],
     ];
 
     public function mount(): void

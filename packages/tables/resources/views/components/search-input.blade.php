@@ -1,10 +1,10 @@
 @props([
-    'wireModel' => 'tableSearchQuery',
+    'wireModel' => 'tableSearch',
 ])
 
 <div {{ $attributes->class(['filament-tables-search-input']) }}>
     <label for="tableSearchInput" class="sr-only">
-        {{ __('tables::table.fields.search_query.label') }}
+        {{ __('tables::table.fields.search.label') }}
     </label>
 
     <div class="relative group">
@@ -15,7 +15,7 @@
         <input
             wire:model.debounce.500ms="{{ $wireModel }}"
             id="tableSearchInput"
-            placeholder="{{ __('tables::table.fields.search_query.placeholder') }}"
+            placeholder="{{ __('tables::table.fields.search.placeholder') }}"
             type="search"
             autocomplete="off"
             @class([

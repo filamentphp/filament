@@ -64,6 +64,7 @@ trait InteractsWithTableQuery
             $this->evaluate($this->searchQuery, [
                 'query' => $query,
                 'search' => $search,
+                'searchQuery' => $search,
             ]);
 
             return $query;

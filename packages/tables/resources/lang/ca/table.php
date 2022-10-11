@@ -4,7 +4,7 @@ return [
 
     'fields' => [
 
-        'search_query' => [
+        'search' => [
             'label' => 'Cerca',
             'placeholder' => 'Cerca',
         ],

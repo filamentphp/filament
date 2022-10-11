@@ -200,7 +200,7 @@ class TestsColumns
     public function searchTable(): Closure
     {
         return function (?string $search = null): static {
-            $this->set('tableSearchQuery', $search);
+            $this->set('tableSearch', $search);
 
             return $this;
         };

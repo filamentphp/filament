@@ -82,7 +82,7 @@ trait InteractsWithTable
         $searchSessionKey = $this->getTableSearchSessionKey();
 
         if ($this->shouldPersistTableSearchInSession() && session()->has($searchSessionKey)) {
-            $this->tableSearchQuery = session()->get($searchSessionKey) ?? '';
+            $this->tableSearch = session()->get($searchSessionKey) ?? '';
         }
 
         $columnSearchSessionKey = $this->getTableColumnSearchSessionKey();

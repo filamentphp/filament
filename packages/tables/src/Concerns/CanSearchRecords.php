@@ -10,7 +10,7 @@ trait CanSearchRecords
 {
     public $tableColumnSearchQueries = [];
 
-    public $tableSearchQuery = '';
+    public $tableSearch = '';
 
     public function isTableSearchable(): bool
     {
@@ -38,12 +38,12 @@ trait CanSearchRecords
         return false;
     }
 
-    public function updatedTableSearchQuery(): void
+    public function updatedTableSearch(): void
     {
         if ($this->shouldPersistTableSearchInSession()) {
             session()->put(
                 $this->getTableSearchSessionKey(),
-                $this->tableSearchQuery,
+                $this->tableSearch,
             );
         }
 
@@ -110,7 +110,7 @@ trait CanSearchRecords
 
     protected function applyGlobalSearchToTableQuery(Builder $query): Builder
     {
-        $search = $this->getTableSearchQuery();
+        $search = $this->getTableSearch();
 
         if ($search === '') {
             return $query;
@@ -133,9 +133,9 @@ trait CanSearchRecords
         return $query;
     }
 
-    protected function getTableSearchQuery(): string
+    protected function getTableSearch(): string
     {
-        return trim(strtolower($this->tableSearchQuery));
+        return trim(strtolower($this->tableSearch));
     }
 
     protected function getTableColumnSearchQueries(): array

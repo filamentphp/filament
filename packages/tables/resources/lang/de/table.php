@@ -12,7 +12,7 @@ return [
 
     'fields' => [
 
-        'search_query' => [
+        'search' => [
             'label' => 'Suche',
             'placeholder' => 'Suche',
         ],
