@@ -171,7 +171,7 @@ To customize the text content of this notification:
 use Filament\Tables\Actions\CreateAction;
 
 CreateAction::make()
-    ->successNotificationMessage('User registered')
+    ->successNotificationTitle('User registered')
 ```
 
 And to disable the notification altogether:
@@ -180,7 +180,7 @@ And to disable the notification altogether:
 use Filament\Tables\Actions\CreateAction;
 
 CreateAction::make()
-    ->successNotificationMessage(null)
+    ->successNotification(null)
 ```
 
 ### Lifecycle hooks
@@ -326,7 +326,7 @@ To customize the text content of this notification:
 use Filament\Tables\Actions\EditAction;
 
 EditAction::make()
-    ->successNotificationMessage('User updated')
+    ->successNotificationTitle('User updated')
 ```
 
 And to disable the notification altogether:
@@ -335,7 +335,7 @@ And to disable the notification altogether:
 use Filament\Tables\Actions\EditAction;
 
 EditAction::make()
-    ->successNotificationMessage(null)
+    ->successNotification(null)
 ```
 
 ### Lifecycle hooks

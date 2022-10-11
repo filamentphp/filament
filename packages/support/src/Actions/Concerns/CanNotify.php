@@ -7,49 +7,81 @@ use Filament\Notifications\Notification;
 
 trait CanNotify
 {
-    protected string | Closure | null $failureNotificationMessage = null;
+    protected Notification | Closure | null $failureNotification = null;
 
-    protected string | Closure | null $successNotificationMessage = null;
+    protected Notification | Closure | null $successNotification = null;
 
     public function sendFailureNotification(): static
     {
-        $message = $this->evaluate($this->failureNotificationMessage);
-
-        if (filled($message)) {
-            Notification::make()
-                ->title($message)
-                ->danger()
-                ->send();
-        }
+        $this->evaluate($this->failureNotification)?->send();
 
         return $this;
+    }
+
+    public function failureNotification(Notification | Closure | null $notification): static
+    {
+        $this->failureNotification = $notification;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `failureNotificationTitle()` instead.
+     */
+    public function failureNotificationMessage(string | Closure | null $message): static
+    {
+        return $this->failureNotificationTitle($message);
+    }
+
+    public function failureNotificationTitle(string | Closure | null $title): static
+    {
+        $title = $this->evaluate($title);
+
+        if (blank($title)) {
+            return $this;
+        }
+
+        return $this->failureNotification(
+            Notification::make()
+                ->danger()
+                ->title($title),
+        );
     }
 
     public function sendSuccessNotification(): static
     {
-        $message = $this->evaluate($this->successNotificationMessage);
-
-        if (filled($message)) {
-            Notification::make()
-                ->title($message)
-                ->success()
-                ->send();
-        }
+        $this->evaluate($this->successNotification)?->send();
 
         return $this;
     }
 
-    public function failureNotificationMessage(string | Closure | null $message): static
+    public function successNotification(Notification | Closure | null $notification): static
     {
-        $this->failureNotificationMessage = $message;
+        $this->successNotification = $notification;
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `successNotificationTitle()` instead.
+     */
     public function successNotificationMessage(string | Closure | null $message): static
     {
-        $this->successNotificationMessage = $message;
+        return $this->successNotificationTitle($message);
+    }
 
-        return $this;
+    public function successNotificationTitle(string | Closure | null $title): static
+    {
+        $title = $this->evaluate($title);
+
+        if (blank($title)) {
+            return $this;
+        }
+
+        return $this->successNotification(
+            Notification::make()
+                ->success()
+                ->title($title),
+        );
     }
 }

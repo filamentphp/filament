@@ -110,20 +110,34 @@ class EditRecord extends Page implements HasFormActions
             return;
         }
 
-        $shouldRedirect = $shouldRedirect && ($redirectUrl = $this->getRedirectUrl());
+        $this->getSavedNotification()?->send();
 
-        if (filled($this->getSavedNotificationMessage())) {
-            Notification::make()
-                ->title($this->getSavedNotificationMessage())
-                ->success()
-                ->send();
-        }
-
-        if ($shouldRedirect) {
+        if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
             $this->redirect($redirectUrl);
         }
     }
 
+    protected function getSavedNotification(): ?Notification
+    {
+        $title = $this->getSavedNotificationTitle();
+
+        if (blank($title)) {
+            return null;
+        }
+
+        return Notification::make()
+            ->success()
+            ->title($this->getSavedNotificationTitle());
+    }
+
+    protected function getSavedNotificationTitle(): ?string
+    {
+        return $this->getSavedNotificationMessage();
+    }
+
+    /**
+     * @deprecated Use `getSavedNotificationTitle()` instead.
+     */
     protected function getSavedNotificationMessage(): ?string
     {
         return __('filament::resources/pages/edit-record.messages.saved');
@@ -161,16 +175,32 @@ class EditRecord extends Page implements HasFormActions
 
         $this->callHook('afterDelete');
 
-        if (filled($this->getDeletedNotificationMessage())) {
-            Notification::make()
-                ->title($this->getDeletedNotificationMessage())
-                ->success()
-                ->send();
-        }
+        $this->getDeletedNotification()?->send();
 
         $this->redirect($this->getDeleteRedirectUrl());
     }
 
+    protected function getDeletedNotification(): ?Notification
+    {
+        $title = $this->getDeletedNotificationTitle();
+
+        if (blank($title)) {
+            return null;
+        }
+
+        return Notification::make()
+            ->success()
+            ->title($title);
+    }
+
+    protected function getDeletedNotificationTitle(): ?string
+    {
+        return $this->getDeletedNotificationMessage();
+    }
+
+    /**
+     * @deprecated Use `getDeletedNotificationTitle()` instead.
+     */
     protected function getDeletedNotificationMessage(): ?string
     {
         return __('filament-support::actions/delete.single.messages.deleted');

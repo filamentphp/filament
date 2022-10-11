@@ -81,40 +81,75 @@ protected function getRedirectUrl(): string
 
 When the record is successfully created, a notification is dispatched to the user, which indicates the success of their action.
 
-To customize the text content of this notification, add the `getCreatedNotificationMessage()` method to the Create page class:
+### Create page
+
+To customize the title of this notification, add the `getCreatedNotificationTitle()` method to the create page class:
 
 ```php
-protected function getCreatedNotificationMessage(): ?string
+protected function getCreatedNotificationTitle(): ?string
 {
     return 'User registered';
 }
 ```
 
-And to disable the notification altogether on the Create page class:
+You may customize the entire notification by overriding the `getCreatedNotification()` method on the create page class:
 
 ```php
-protected function getCreatedNotificationMessage(): ?string
+use Filament\Notifications\Notification;
+
+protected function getCreatedNotification(): ?Notification
+{
+    return Notification::make()
+        ->success()
+        ->title('User registered')
+        ->body('The user has been created successfully.');
+}
+```
+
+To disable the notification altogether, return `null` from the `getCreatedNotification()` method on the create page class:
+
+```php
+use Filament\Notifications\Notification;
+
+protected function getCreatedNotification(): ?Notification
 {
     return null;
 }
 ```
 
-Alternatively, if you're creating records in a modal action:
+### Create action
+
+If you're creating records in a modal action, you may customize the success notification title:
 
 ```php
 use Filament\Tables\Actions\CreateAction;
 
 CreateAction::make()
-    ->successNotificationMessage('User registered')
+    ->successNotificationTitle('User registered')
 ```
 
-And to disable the notification altogether from a modal action:
+Alternatively, you may customize the entire notification:
+
+```php
+use Filament\Notifications\Notification;
+use Filament\Tables\Actions\CreateAction;
+
+CreateAction::make()
+    ->successNotification(
+        Notification::make()
+            ->success()
+            ->title('User registered')
+            ->body('The user has been created successfully.'),
+    )
+```
+
+And to disable the notification altogether:
 
 ```php
 use Filament\Tables\Actions\CreateAction;
 
 CreateAction::make()
-    ->successNotificationMessage(null)
+    ->successNotification(null)
 ```
 
 ## Lifecycle hooks

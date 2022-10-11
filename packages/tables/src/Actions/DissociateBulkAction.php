@@ -27,7 +27,7 @@ class DissociateBulkAction extends BulkAction
 
         $this->modalButton(__('filament-support::actions/dissociate.multiple.modal.actions.dissociate.label'));
 
-        $this->successNotificationMessage(__('filament-support::actions/dissociate.multiple.messages.dissociated'));
+        $this->successNotificationTitle(__('filament-support::actions/dissociate.multiple.messages.dissociated'));
 
         $this->color('danger');
 

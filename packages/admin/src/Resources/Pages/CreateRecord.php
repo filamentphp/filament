@@ -81,12 +81,7 @@ class CreateRecord extends Page implements HasFormActions
             return;
         }
 
-        if (filled($this->getCreatedNotificationMessage())) {
-            Notification::make()
-                ->title($this->getCreatedNotificationMessage())
-                ->success()
-                ->send();
-        }
+        $this->getCreatedNotification()?->send();
 
         if ($another) {
             // Ensure that the form record is anonymized so that relationships aren't loaded.
@@ -101,6 +96,27 @@ class CreateRecord extends Page implements HasFormActions
         $this->redirect($this->getRedirectUrl());
     }
 
+    protected function getCreatedNotification(): ?Notification
+    {
+        $title = $this->getCreatedNotificationTitle();
+
+        if (blank($title)) {
+            return null;
+        }
+
+        return Notification::make()
+            ->success()
+            ->title($title);
+    }
+
+    protected function getCreatedNotificationTitle(): ?string
+    {
+        return $this->getCreatedNotificationMessage();
+    }
+
+    /**
+     * @deprecated Use `getCreatedNotificationTitle()` instead.
+     */
     protected function getCreatedNotificationMessage(): ?string
     {
         return __('filament::resources/pages/create-record.messages.created');
