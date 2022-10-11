@@ -211,7 +211,7 @@ class Table extends ViewComponent
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();
 
-        return invade($livewire)->getTableFiltersLayout() ?? Layout::Popover;
+        return invade($livewire)->getTableFiltersLayout() ?? Layout::Dropdown;
     }
 
     public function getColumnToggleForm(): ComponentContainer

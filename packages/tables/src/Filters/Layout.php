@@ -8,5 +8,10 @@ class Layout
 
     public const BelowContent = 'below_content';
 
-    public const Popover = 'in_popover';
+    public const Dropdown = 'dropdown';
+
+    /**
+     * @deprecated Use `Dropdown` instead.
+     */
+    public const Popover = 'dropdown';
 }
