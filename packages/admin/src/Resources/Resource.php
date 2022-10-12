@@ -16,9 +16,12 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Macroable;
 
 class Resource
 {
+    use Macroable { __call as macroCall; }
+
     protected static ?string $breadcrumb = null;
 
     protected static bool $isGloballySearchable = true;
