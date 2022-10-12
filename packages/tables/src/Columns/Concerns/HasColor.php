@@ -4,7 +4,6 @@ namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
 use Filament\Tables\Columns\Column;
-use Illuminate\Database\Eloquent\Model;
 
 trait HasColor
 {
