@@ -179,6 +179,7 @@ export default (Alpine) => {
                                 file.startsWith('livewire-file:'),
                             ).length
                         ) {
+                            this.lastState = null;
                             return
                         }
 
