@@ -238,14 +238,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
             return true;
         }
 
-        if (
-            method_exists($policy, 'before') &&
-            is_bool($response = $policy->before($user, $action))
-        ) {
-            return $response;
-        }
-
-        if (! method_exists($policy, $action)) {
+        if (! is_callable($policy, $action)) {
             return true;
         }
 
