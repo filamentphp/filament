@@ -189,9 +189,28 @@ trait HasState
         return data_get($this->getLivewire(), $this->getStatePath()) ?? [];
     }
 
-    public function getStateOnly(array $keys): array
+    public function getStateOnly(array $keys, bool $shouldCallHooksBefore = true): array
     {
-        return Arr::only($this->getState(), $keys);
+        if ($statePath = $this->getStatePath()) {
+            $keys = array_map(fn (string $key) => "{$statePath}.{$key}", $keys);
+        }
+
+        $state = $this->validateOnly($keys);
+
+        if ($shouldCallHooksBefore) {
+            $this->callBeforeStateDehydrated();
+            $this->saveRelationships();
+            $this->loadStateFromRelationships(andHydrate: true);
+        }
+
+        $this->dehydrateState($state);
+        $this->mutateDehydratedState($state);
+
+        if ($statePath) {
+            return data_get($state, $statePath) ?? [];
+        }
+
+        return $state;
     }
 
     public function getStateExcept(array $keys): array
