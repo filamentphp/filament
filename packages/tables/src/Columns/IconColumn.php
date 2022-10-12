@@ -7,14 +7,15 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class IconColumn extends Column
 {
-    use Concerns\HasColors {
-        getStateColor as getBaseStateColor;
+    use Concerns\HasColor {
+        getColor as getBaseColor;
+    }
+    use Concerns\HasIcon {
+        getIcon as getBaseIcon;
     }
     use Concerns\HasSize;
 
     protected string $view = 'tables::columns.icon-column';
-
-    protected array | Arrayable | Closure $options = [];
 
     protected bool | Closure $isBoolean = false;
 
@@ -25,13 +26,6 @@ class IconColumn extends Column
     protected string | Closure | null $trueColor = null;
 
     protected string | Closure | null $trueIcon = null;
-
-    public function options(array | Arrayable | Closure $options): static
-    {
-        $this->options = $options;
-
-        return $this;
-    }
 
     public function boolean(bool | Closure $condition = true): static
     {
@@ -88,11 +82,21 @@ class IconColumn extends Column
         return $this;
     }
 
-    public function getStateIcon(): ?string
+    /**
+     * @deprecated Use `icons()` instead.
+     */
+    public function options(array | Arrayable | Closure $options): static
     {
-        $state = $this->getState();
+        $this->icons($options);
 
+        return $this;
+    }
+
+    public function getIcon(): ?string
+    {
         if ($this->isBoolean()) {
+            $state = $this->getState();
+
             if ($state === null) {
                 return null;
             }
@@ -100,22 +104,10 @@ class IconColumn extends Column
             return $state ? $this->getTrueIcon() : $this->getFalseIcon();
         }
 
-        $stateIcon = null;
-
-        foreach ($this->getOptions() as $icon => $condition) {
-            if (is_numeric($icon)) {
-                $stateIcon = $condition;
-            } elseif ($condition instanceof Closure && $condition($state)) {
-                $stateIcon = $icon;
-            } elseif ($condition === $state) {
-                $stateIcon = $icon;
-            }
-        }
-
-        return $stateIcon;
+        return $this->getBaseIcon();
     }
 
-    public function getStateColor(): ?string
+    public function getColor(): ?string
     {
         if ($this->isBoolean()) {
             $state = $this->getState();
@@ -127,18 +119,7 @@ class IconColumn extends Column
             return $state ? $this->getTrueColor() : $this->getFalseColor();
         }
 
-        return $this->getBaseStateColor();
-    }
-
-    public function getOptions(): array
-    {
-        $options = $this->evaluate($this->options);
-
-        if ($options instanceof Arrayable) {
-            $options = $options->toArray();
-        }
-
-        return $options;
+        return $this->getBaseColor();
     }
 
     public function getFalseColor(): string
