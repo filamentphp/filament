@@ -238,7 +238,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
             return true;
         }
 
-        if (! is_callable($policy, $action)) {
+        if (! method_exists($policy, $action)) {
             return true;
         }
 
