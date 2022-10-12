@@ -26,7 +26,7 @@ export default (Alpine) => {
 
                 this.$watch('state', (value) => {
                     if (value === null) {
-                        this.state = '';
+                        this.state = ''
                     }
                     this.render()
                 })
