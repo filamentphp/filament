@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
+use Filament\Tables\Columns\Column;
 
 trait HasIcon
 {
@@ -13,6 +14,29 @@ trait HasIcon
     public function icon(string | Closure | null $icon): static
     {
         $this->icon = $icon;
+
+        return $this;
+    }
+
+    public function icons(array | Closure $icons): static
+    {
+        $this->icon(function (Column $column, $state) use ($icons) {
+            $icons = $column->evaluate($icons);
+
+            $icon = null;
+
+            foreach ($icons as $conditionalIcon => $condition) {
+                if (is_numeric($conditionalIcon)) {
+                    $icon = $condition;
+                } elseif ($condition instanceof Closure && $column->evaluate($condition)) {
+                    $icon = $conditionalIcon;
+                } elseif ($condition === $state) {
+                    $icon = $conditionalIcon;
+                }
+            }
+
+            return $icon;
+        });
 
         return $this;
     }
