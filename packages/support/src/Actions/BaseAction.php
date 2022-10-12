@@ -49,6 +49,9 @@ abstract class BaseAction extends ViewComponent
         return null;
     }
 
+    /**
+     * @deprecated Use `->extraAttributes()` instead.
+     */
     public function withAttributes(array $attributes): static
     {
         return $this->extraAttributes($attributes);
