@@ -40,7 +40,7 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
 
     protected $minValue = null;
 
-    protected string | Closure $telRegex = '/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/';
+    protected string | Closure | null $telRegex = null;
 
     protected string | Closure | null $type = null;
 
@@ -136,7 +136,7 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
         return $this;
     }
 
-    public function telRegex(string | Closure $regex): static
+    public function telRegex(string | Closure | null $regex): static
     {
         $this->telRegex = $regex;
 
@@ -217,7 +217,7 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
 
     public function getTelRegex(): string
     {
-        return $this->evaluate($this->telRegex);
+        return $this->evaluate($this->telRegex) ?? '/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/';
     }
 
     public function hasMask(): bool
