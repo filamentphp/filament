@@ -5,6 +5,7 @@ namespace Filament\Tables\Columns;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Tables\Columns\Concerns\BelongsToLayout;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
 
 class Column extends ViewComponent
@@ -52,9 +53,15 @@ class Column extends ViewComponent
 
     protected function getDefaultEvaluationParameters(): array
     {
+        $record = $this->getRecord();
+
         return array_merge(parent::getDefaultEvaluationParameters(), [
             'livewire' => $this->getLivewire(),
-            'record' => $this->getRecord(),
+            'record' => $record,
+            'state' => $this->resolveEvaluationParameter(
+                'state',
+                fn () => $this->getState(),
+            ),
         ]);
     }
 }

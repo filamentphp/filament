@@ -31,13 +31,17 @@ trait HasState
 
     public function getDefaultState()
     {
-        return $this->evaluate($this->defaultState);
+        return $this->evaluate($this->defaultState, exceptParameters: ['state']);
     }
 
     public function getState()
     {
+        if (! $this->getRecord()) {
+            return;
+        }
+
         $state = $this->getStateUsing ?
-            $this->evaluate($this->getStateUsing) :
+            $this->evaluate($this->getStateUsing, exceptParameters: ['state']) :
             $this->getStateFromRecord();
 
         if (
