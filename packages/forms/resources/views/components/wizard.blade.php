@@ -126,11 +126,14 @@
                                 }"
                                 class="w-10 h-10 flex items-center justify-center rounded-full"
                             >
-                                <x-heroicon-m-check
-                                    x-show="getStepIndex(step) > {{ $loop->index }}"
-                                    x-cloak
-                                    class="w-5 h-5 text-white"
-                                />
+                                @svg(
+                                    'heroicon-m-check',
+                                    'h-5 w-5 text-white',
+                                    [
+                                        'x-show' => "getStepIndex(step) > {$loop->index}",
+                                        'x-cloak',
+                                    ],
+                                )
 
                                 @if ($icon = $step->getIcon())
                                     @php

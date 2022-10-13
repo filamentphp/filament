@@ -71,7 +71,7 @@
                     '-rotate-180' => ! $isCollapsed(),
                 ])
             >
-                <x-heroicon-m-chevron-down class="h-5 w-5" />
+                @svg('heroicon-m-chevron-down', 'h-5 w-5')
             </button>
         @endif
     </div>

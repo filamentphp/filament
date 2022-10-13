@@ -29,10 +29,17 @@
             </div>
 
             @if ($collapsible)
-                <x-heroicon-m-chevron-down :class="\Illuminate\Support\Arr::toCssClasses([
-                    'w-3 h-3 text-gray-600 transition',
-                    'dark:text-gray-300' => config('filament.dark_mode'),
-                ])" x-bind:class="$store.sidebar.groupIsCollapsed(label) || '-rotate-180'" x-cloak />
+                @svg(
+                    'heroicon-m-chevron-down',
+                    \Illuminate\Support\Arr::toCssClasses([
+                        'h-3 w-3 text-gray-600 transition',
+                        'dark:text-gray-300' => config('filament.dark_mode'),
+                    ]),
+                    [
+                        'x-bind:class' => '$store.sidebar.groupIsCollapsed(label) || "-rotate-180"',
+                        'x-cloak',
+                    ],
+                )
             @endif
         </button>
     @endif

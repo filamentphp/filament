@@ -29,7 +29,7 @@
                             type="button"
                             class="ml-1 -mr-2 rtl:mr-1 rtl:-ml-2 p-1 -my-1 hover:bg-gray-500/10 rounded-full"
                         >
-                            <x-heroicon-m-x-mark class="w-3 h-3" />
+                            @svg('heroicon-m-x-mark', 'h-3 w-3')
 
                             <span class="sr-only">
                                 {{ __('tables::table.filters.buttons.remove.label') }}
@@ -50,12 +50,15 @@
                 ])
             >
                 <div class="w-5 h-5 flex items-center justify-center">
-                    <x-heroicon-m-x-mark
-                        :x-tooltip.raw="__('tables::table.filters.buttons.remove_all.tooltip')"
-                        wire:loading.remove.delay
-                        wire:target="removeTableFilters,removeTableFilter"
-                        class="w-5 h-5"
-                    />
+                    @svg(
+                        'heroicon-m-x-mark',
+                        'h-5 w-5',
+                        [
+                            'x-tooltip.raw' => __('tables::table.filters.buttons.remove_all.tooltip'),
+                            'wire:loading.remove.delay',
+                            'wire:target' => 'removeTableFilters,removeTableFilter',
+                        ],
+                    )
 
                     <x-filament-support::loading-indicator
                         wire:loading.delay
