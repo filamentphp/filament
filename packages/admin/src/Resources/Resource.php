@@ -20,7 +20,9 @@ use Illuminate\Support\Traits\Macroable;
 
 class Resource
 {
-    use Macroable { __call as macroCall; }
+    use Macroable {
+        __call as dynamicMacroCall;
+    }
 
     protected static ?string $breadcrumb = null;
 
