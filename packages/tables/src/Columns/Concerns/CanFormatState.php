@@ -137,13 +137,7 @@ trait CanFormatState
 
     public function getFormattedState()
     {
-        $state = $this->getState();
-
-        if ($this->formatStateUsing) {
-            $state = $this->evaluate($this->formatStateUsing, [
-                'state' => $state,
-            ]);
-        }
+        $state = $this->evaluate($this->formatStateUsing ?? fn ($state) => $state);
 
         if ($this->prefix) {
             $state = $this->evaluate($this->prefix) . $state;
