@@ -258,7 +258,7 @@ class Type
     {
         $model = $this->getModel();
 
-        return Relation::getMorphedModel($model) ?? $model;
+        return (new $model)->getMorphClass();
     }
 
     public function getSearchColumns(): ?array
