@@ -123,7 +123,7 @@ When the record is successfully updated, a notification is dispatched to the use
 To customize the title of this notification, define a `getSavedNotificationTitle()` method on the edit page class:
 
 ```php
-protected function getSavedNotificationTitle(): ?string
+protected function getSavedNotificationMessage(): ?string
 {
     return 'User updated';
 }
