@@ -9,7 +9,7 @@ uses(TestCase::class);
 
 test('computed properties used to generate form schema can be accessed before caching forms', function () {
     expect(ComputedPropertySchema::make())
-        ->getTheSchema()
+        ->getSchema()
         ->toBeArray()
         ->sequence(
             fn (Expectation $expect) => $expect->toBeInstanceOf(TextInput::class)
@@ -30,7 +30,7 @@ class ComputedPropertySchema extends Livewire
         ];
     }
 
-    public function getTheSchema()
+    public function getSchema()
     {
         return $this->schema;
     }
