@@ -28,6 +28,7 @@ export default (Alpine) => {
                     if (value === null) {
                         this.state = ''
                     }
+
                     this.render()
                 })
             },
