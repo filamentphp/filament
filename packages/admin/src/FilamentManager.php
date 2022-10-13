@@ -244,7 +244,7 @@ class FilamentManager
                             )
                     )
                     ->items(
-                        $items->filter(fn (Navigation\NavigationItem $item): bool => $item->getSubgroup() === null)
+                        $items->filter(fn (Navigation\NavigationItem $item): bool => $item->getSubgroup() === null),
                     );
             })
             ->sortBy(function (NavigationGroup $group, ?string $groupIndex): int {
