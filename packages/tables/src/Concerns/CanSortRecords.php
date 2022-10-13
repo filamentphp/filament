@@ -59,22 +59,24 @@ trait CanSortRecords
             return $query->orderBy($this->getTableReorderColumn());
         }
 
-        $columnName = $this->tableSortColumn;
+        $sortColumn = $this->tableSortColumn;
 
-        if (! $columnName) {
+        if (! $sortColumn) {
             return $query;
         }
 
-        $direction = $this->tableSortDirection === 'desc' ? 'desc' : 'asc';
+        $sortDirection = $this->tableSortDirection === 'desc' ? 'desc' : 'asc';
 
-        if ($column = $this->getCachedTableColumn($columnName)) {
-            $column->applySort($query, $direction);
+        $column = $this->getCachedTableColumn($sortColumn);
+
+        if ($column && (! $column->isHidden()) && $column->isSortable()) {
+            $column->applySort($query, $sortDirection);
 
             return $query;
         }
 
-        if ($columnName === $this->getDefaultTableSortColumn()) {
-            return $query->orderBy($columnName, $direction);
+        if ($sortColumn === $this->getDefaultTableSortColumn()) {
+            return $query->orderBy($sortColumn, $sortDirection);
         }
 
         return $query;

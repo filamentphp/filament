@@ -236,13 +236,6 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
             return true;
         }
 
-        if (
-            method_exists($policy, 'before') &&
-            is_bool($response = $policy->before($user, $action))
-        ) {
-            return $response;
-        }
-
         if (! method_exists($policy, $action)) {
             return true;
         }
@@ -260,13 +253,6 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
         if ($policy === null) {
             return true;
-        }
-
-        if (
-            method_exists($policy, 'before') &&
-            is_bool($response = $policy->before($user, $action))
-        ) {
-            return $response;
         }
 
         if (! method_exists($policy, $action)) {
