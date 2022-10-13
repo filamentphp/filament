@@ -8,6 +8,10 @@ class NavigationItem
 {
     protected ?string $group = null;
 
+    protected ?string $subgroup = null;
+
+    protected ?string $subgroupIcon = null;
+
     protected ?Closure $isActiveWhen = null;
 
     protected string $icon;
@@ -47,6 +51,20 @@ class NavigationItem
     public function group(?string $group): static
     {
         $this->group = $group;
+
+        return $this;
+    }
+
+    public function subgroup(?string $subgroup): static
+    {
+        $this->subgroup = $subgroup;
+
+        return $this;
+    }
+
+    public function subgroupIcon(?string $subgroupIcon): static
+    {
+        $this->subgroupIcon = $subgroupIcon;
 
         return $this;
     }
@@ -107,6 +125,16 @@ class NavigationItem
     public function getGroup(): ?string
     {
         return $this->group;
+    }
+
+    public function getSubgroup(): ?string
+    {
+        return $this->subgroup;
+    }
+
+    public function getSubgroupIcon(): ?string
+    {
+        return $this->subgroupIcon;
     }
 
     public function getIcon(): string
