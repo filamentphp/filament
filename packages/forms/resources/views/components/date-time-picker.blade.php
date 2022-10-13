@@ -67,10 +67,13 @@
             />
 
             <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none rtl:right-auto rtl:left-0 rtl:pl-2">
-                <x-heroicon-m-calendar @class([
-                    'w-5 h-5 text-gray-400',
-                    'dark:text-gray-400' => config('forms.dark_mode'),
-                ]) />
+                @svg(
+                    'heroicon-m-calendar',
+                    \Illuminate\Support\Arr::toCssClasses([
+                        'h-5 w-5 text-gray-400',
+                        'dark:text-gray-400' => config('forms.dark_mode'),
+                    ]),
+                )
             </span>
         </button>
 

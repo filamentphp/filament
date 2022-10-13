@@ -17,7 +17,7 @@
                 'lg:hidden' => ! (config('filament.layout.sidebar.is_collapsible_on_desktop') && (config('filament.layout.sidebar.collapsed_width') === 0)),
             ])
         >
-            <x-heroicon-o-bars-3 class="w-6 h-6" />
+            @svg('heroicon-o-bars-3', 'h-6 w-6')
         </button>
 
         <div class="flex items-center justify-between flex-1">

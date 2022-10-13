@@ -55,10 +55,7 @@
                 }"
             >
                 @if ($icon = $tab->getIcon())
-                    <x-dynamic-component
-                        :component="$icon"
-                        class="h-5 w-5"
-                    />
+                    @svg($icon, 'h-5 w-5')
                 @endif
 
                 <span>{{ $tab->getLabel() }}</span>

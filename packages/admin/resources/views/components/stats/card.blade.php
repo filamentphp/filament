@@ -27,7 +27,7 @@
             'dark:text-gray-200' => config('filament.dark_mode'),
         ])>
             @if ($icon)
-                <x-dynamic-component :component="$icon" class="w-4 h-4" />
+                @svg($icon, 'h-4 w-4')
             @endif
 
             <span>{{ $label }}</span>
@@ -51,7 +51,7 @@
                 <span>{{ $description }}</span>
 
                 @if ($descriptionIcon)
-                    <x-dynamic-component :component="$descriptionIcon" class="w-4 h-4" />
+                    @svg($descriptionIcon, 'h-4 w-4')
                 @endif
             </div>
         @endif

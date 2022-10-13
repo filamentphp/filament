@@ -32,7 +32,7 @@
             $colorClasses,
         ])>
             @if ($icon && $iconPosition === 'before')
-                <x-dynamic-component :component="$icon" :class="$iconClasses" />
+                @svg($icon, $iconClasses)
             @endif
 
             <span>
@@ -40,7 +40,7 @@
             </span>
 
             @if ($icon && $iconPosition === 'after')
-                <x-dynamic-component :component="$icon" :class="$iconClasses" />
+                @svg($icon, $iconClasses)
             @endif
         </div>
     @endif

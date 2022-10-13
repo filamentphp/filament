@@ -117,7 +117,7 @@
                                                 {{ __('forms::components.repeater.buttons.move_item.label') }}
                                             </span>
 
-                                            <x-heroicon-m-arrows-up-down class="w-4 h-4"/>
+                                            @svg('heroicon-m-arrows-up-down', 'h-4 w-4')
                                         </button>
                                     @endunless
 
@@ -149,7 +149,7 @@
                                                         {{ __('forms::components.repeater.buttons.clone_item.label') }}
                                                     </span>
 
-                                                    <x-heroicon-m-square-2-stack class="w-4 h-4"/>
+                                                    @svg('heroicon-m-square-2-stack', 'h-4 w-4')
                                                 </button>
                                             </li>
                                         @endunless
@@ -169,7 +169,7 @@
                                                         {{ __('forms::components.repeater.buttons.delete_item.label') }}
                                                     </span>
 
-                                                    <x-heroicon-m-trash class="w-4 h-4"/>
+                                                    @svg('heroicon-m-trash', 'h-4 w-4')
                                                 </button>
                                             </li>
                                         @endunless
@@ -182,13 +182,24 @@
                                                     type="button"
                                                     class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500"
                                                 >
-                                                    <x-heroicon-m-minus class="w-4 h-4" x-show="! isCollapsed"/>
+                                                    @svg(
+                                                        'heroicon-m-minus',
+                                                        'h-4 w-4',
+                                                        ['x-show' => '! isCollapsed'],
+                                                    )
 
                                                     <span class="sr-only" x-show="! isCollapsed">
                                                         {{ __('forms::components.repeater.buttons.collapse_item.label') }}
                                                     </span>
 
-                                                    <x-heroicon-m-plus class="w-4 h-4" x-show="isCollapsed" x-cloak/>
+                                                    @svg(
+                                                        'heroicon-m-plus',
+                                                        'h-4 w-4',
+                                                        [
+                                                            'x-show' => 'isCollapsed',
+                                                            'x-cloak',
+                                                        ],
+                                                    )
 
                                                     <span class="sr-only" x-show="isCollapsed" x-cloak>
                                                         {{ __('forms::components.repeater.buttons.expand_item.label') }}

@@ -23,7 +23,7 @@
         ]) }}
     >
         @if ($icon)
-            <x-dynamic-component :component="$icon" class="w-5 h-5 rtl:scale-x-[-1]" />
+            @svg($icon, 'h-5 w-5 rtl:-scale-x-100')
         @endif
 
         <span>{{ $label ?? ($separator ? '...' : '') }}</span>

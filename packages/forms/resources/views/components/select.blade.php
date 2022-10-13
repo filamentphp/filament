@@ -25,7 +25,7 @@
         @endif
 
         @if ($icon = $getPrefixIcon())
-            <x-dynamic-component :component="$icon" class="w-5 h-5" />
+            @svg($icon, 'h-5 w-5')
         @endif
 
         @if ($label = $getPrefixLabel())
@@ -123,7 +123,7 @@
         @endif
 
         @if ($icon = $getSuffixIcon())
-            <x-dynamic-component :component="$icon" class="w-5 h-5" />
+            @svg($icon, 'h-5 w-5')
         @endif
 
         @if (($suffixAction = $getSuffixAction()) && (! $suffixAction->isHidden()))

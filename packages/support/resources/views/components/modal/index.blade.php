@@ -121,12 +121,15 @@
                         type="button"
                         class="absolute top-2 right-2 rtl:right-auto rtl:left-2"
                     >
-                        <x-heroicon-m-x-mark
-                            class="filament-modal-close-button h-4 w-4 cursor-pointer text-gray-400"
-                            title="__('filament-support::components/modal.actions.close.label')"
-                            x-on:click="isOpen = false"
-                            tabindex="-1"
-                        />
+                        @svg(
+                            'heroicon-m-x-mark',
+                            'filament-modal-close-button h-4 w-4 cursor-pointer text-gray-400',
+                            [
+                                'title' => __('filament-support::components/modal.actions.close.label'),
+                                'x-on:click' => 'isOpen = false',
+                                'tabindex' => -1,
+                            ],
+                        )
 
                         <span class="sr-only">
                             {{ __('filament-support::components/modal.actions.close.label') }}

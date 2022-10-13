@@ -6,7 +6,7 @@
         'flex items-center justify-center w-12 h-12 text-primary-500 rounded-full bg-primary-50',
         'dark:bg-gray-700' => config('notifications.dark_mode'),
     ])>
-        <x-heroicon-o-bell class="w-5 h-5" />
+        @svg('heroicon-o-bell', 'h-5 w-5')
     </div>
 
     <div class="max-w-md space-y-1">

@@ -77,12 +77,14 @@
             </span>
         @endif
 
-        <x-dynamic-component
-            :component="$icon"
-            :wire:loading.remove.delay="$hasLoadingIndicator"
-            :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
-            :class="$iconClasses"
-        />
+        @svg(
+            $icon,
+            $iconClasses,
+            [
+                'wire:loading.remove.delay' => $hasLoadingIndicator,
+                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+            ],
+        )
 
         @if ($hasLoadingIndicator)
             <x-filament-support::loading-indicator
@@ -121,7 +123,7 @@
             </span>
         @endif
 
-        <x-dynamic-component :component="$icon" :class="$iconClasses" />
+        @svg($icon, $iconClasses)
 
         @if ($indicator)
             <span class="{{ $indicatorClasses }}">
