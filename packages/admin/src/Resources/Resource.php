@@ -17,9 +17,14 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
+use Illuminate\Support\Traits\Macroable;
 
 class Resource
 {
+    use Macroable {
+        __call as dynamicMacroCall;
+    }
+
     protected static ?string $breadcrumb = null;
 
     protected static bool $isGloballySearchable = true;

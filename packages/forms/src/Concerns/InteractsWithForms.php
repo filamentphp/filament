@@ -7,6 +7,7 @@ use Filament\Forms\ComponentContainer;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
+use Livewire\Exceptions\PropertyNotFoundException;
 use Livewire\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
@@ -27,15 +28,19 @@ trait InteractsWithForms
 
     public function __get($property)
     {
-        if ((! $this->isCachingForms) && $form = $this->getCachedForm($property)) {
-            return $form;
-        }
+        try {
+            return parent::__get($property);
+        } catch (PropertyNotFoundException $exception) {
+            if ((! $this->isCachingForms) && $form = $this->getCachedForm($property)) {
+                return $form;
+            }
 
-        if ($property === 'modal') {
-            return $this->getModalViewOnce();
-        }
+            if ($property === 'modal') {
+                return $this->getModalViewOnce();
+            }
 
-        return parent::__get($property);
+            throw $exception;
+        }
     }
 
     protected function getModalViewOnce(): ?View
