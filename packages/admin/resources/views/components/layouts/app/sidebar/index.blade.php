@@ -91,6 +91,27 @@
         <ul class="px-6 space-y-6">
             @foreach ($navigation as $group)
                 <x-filament::layouts.app.sidebar.group :label="$group->getLabel()" :icon="$group->getIcon()" :collapsible="$group->isCollapsible()">
+                    @foreach($group->getSubgroups() as $subgroup)
+                        <x-filament::layouts.app.sidebar.subgroup
+                            :name="$group->getLabel().'.'.$subgroup->getLabel()"
+                            :label="$subgroup->getLabel()"
+                            :icon="$subgroup->getIcon()"
+                        >
+                            @foreach ($subgroup->getItems() as $item)
+                                <x-filament::layouts.app.sidebar.item
+                                    :active="$item->isActive()"
+                                    :icon="$item->getIcon()"
+                                    :url="$item->getUrl()"
+                                    :badge="$item->getBadge()"
+                                    :badgeColor="$item->getBadgeColor()"
+                                    :shouldOpenUrlInNewTab="$item->shouldOpenUrlInNewTab()"
+                                >
+                                    {{ $item->getLabel() }}
+                                </x-filament::layouts.app.sidebar.item>
+                            @endforeach
+                        </x-filament::layouts.app.sidebar.subgroup>
+                    @endforeach
+
                     @foreach ($group->getItems() as $item)
                         <x-filament::layouts.app.sidebar.item
                             :active="$item->isActive()"
