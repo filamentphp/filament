@@ -113,10 +113,10 @@ class MakePageCommand extends Command
             $this->copyStubToApp('PageView', $viewPath);
         }
 
-        $this->info("Successfully created {$page}!");
+        $this->components->info("Successfully created {$page}!");
 
         if ($resource !== null) {
-            $this->info("Make sure to register the page in `{$resourceClass}::getPages()`.");
+            $this->components->info("Make sure to register the page in `{$resourceClass}::getPages()`.");
         }
 
         return static::SUCCESS;
