@@ -10,6 +10,8 @@ use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
 use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
+use Filament\Navigation\NavigationSubgroup;
 use Filament\Navigation\UserMenuItem;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -231,7 +233,19 @@ class FilamentManager
                 }
 
                 return NavigationGroup::make($registeredGroup ?? $groupIndex)
-                    ->items($items);
+                    ->subgroups(
+                        $items
+                            ->filter(fn (Navigation\NavigationItem $item): bool => $item->getSubgroup() !== null)
+                            ->groupBy(fn (NavigationItem $item): string => $item->getSubgroup())
+                            ->map(
+                                fn (Collection $items, string $subgroup): NavigationSubgroup => NavigationSubgroup::make($subgroup)
+                                    ->icon($items->first()->getSubgroupIcon())
+                                    ->items($items)
+                            )
+                    )
+                    ->items(
+                        $items->filter(fn (Navigation\NavigationItem $item): bool => $item->getSubgroup() === null)
+                    );
             })
             ->sortBy(function (NavigationGroup $group, ?string $groupIndex): int {
                 if (blank($group->getLabel())) {
