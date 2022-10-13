@@ -9,7 +9,6 @@ use function Filament\Support\get_model_label;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 
 class Type
@@ -256,9 +255,7 @@ class Type
 
     public function getAlias(): string
     {
-        $model = $this->getModel();
-
-        return Relation::getMorphedModel($model) ?? $model;
+        return app($this->getModel())->getMorphClass();
     }
 
     public function getSearchColumns(): ?array

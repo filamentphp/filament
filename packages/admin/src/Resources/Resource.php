@@ -114,13 +114,6 @@ class Resource
             return true;
         }
 
-        if (
-            method_exists($policy, 'before') &&
-            is_bool($response = $policy->before($user, $action))
-        ) {
-            return $response;
-        }
-
         if (! method_exists($policy, $action)) {
             return true;
         }
