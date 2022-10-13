@@ -240,7 +240,7 @@ class FilamentManager
                             ->map(
                                 fn (Collection $items, string $subgroup): NavigationSubgroup => NavigationSubgroup::make($subgroup)
                                     ->icon($items->first()->getSubgroupIcon())
-                                    ->items($items)
+                                    ->items($items),
                             )
                     )
                     ->items(
