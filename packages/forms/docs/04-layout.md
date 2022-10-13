@@ -428,6 +428,17 @@ Section::make('Heading')
     ])
     ->columns(2)
 ```
+You may use the `aside()` to align heading & description on the left, and the form components inside `schema([])` on the right:
+
+```php
+use Filament\Forms\Components\Section;
+
+Section::make('Heading')
+    ->aside()
+    ->schema([
+        // ...
+    ])
+```
 
 Sections may be `collapsible()` to optionally hide content in long forms:
 

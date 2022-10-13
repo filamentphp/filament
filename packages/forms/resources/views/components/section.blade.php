@@ -1,5 +1,5 @@
 <div
-    @if ($isCollapsible())
+    @if ($isCollapsible() && !$isAside())
         x-data="{
             isCollapsed: @js($isCollapsed()),
         }"
@@ -24,8 +24,9 @@
     @endif
     id="{{ $getId() }}"
     {{ $attributes->merge($getExtraAttributes())->class([
-        'filament-forms-section-component bg-white rounded-xl border border-gray-300',
-        'dark:border-gray-600 dark:bg-gray-800' => config('forms.dark_mode'),
+        'filament-forms-section-component bg-white rounded-xl border border-gray-300' => ! $isAside(),
+        'grid grid-cols-2' => $isAside(),
+        'dark:border-gray-600 dark:bg-gray-800' => config('forms.dark_mode')  && ! $isAside(),
     ]) }}
     {{ $getExtraAlpineAttributeBag() }}
 >
@@ -33,16 +34,18 @@
         @class([
             'filament-forms-section-header-wrapper flex items-center px-4 py-2 bg-gray-100 rtl:space-x-reverse overflow-hidden rounded-t-xl min-h-[40px]',
             'min-h-[56px]' => ! $isCompact(),
+            'align-top flex' => $isAside(),
+            'flex items-center' => ! $isAside(),
             'dark:bg-gray-900' => config('forms.dark_mode'),
         ])
-        @if ($isCollapsible())
+        @if ($isCollapsible() && !$isAside())
             x-bind:class="{ 'rounded-b-xl': isCollapsed }"
             x-on:click="isCollapsed = ! isCollapsed"
         @endif
     >
         <div @class([
             'filament-forms-section-header flex-1',
-            'cursor-pointer' => $isCollapsible(),
+            'cursor-pointer' => $isCollapsible() && !$isAside(),
         ])>
             <h3 @class([
                 'font-bold tracking-tight pointer-events-none',
@@ -58,7 +61,7 @@
             @endif
         </div>
 
-        @if ($isCollapsible())
+        @if ($isCollapsible() && !$isAside())
             <button
                 x-on:click.stop="isCollapsed = ! isCollapsed"
                 x-bind:class="{
@@ -82,7 +85,7 @@
     </div>
 
     <div
-        @if ($isCollapsible())
+        @if ($isCollapsible() && !$isAside())
             x-bind:class="{ 'invisible h-0 !m-0 overflow-y-hidden': isCollapsed }"
             x-bind:aria-expanded="(! isCollapsed).toString()"
             @if ($isCollapsed()) x-cloak @endif
@@ -91,6 +94,8 @@
     >
         <div @class([
             'filament-forms-section-content',
+            'bg-white rounded-xl border border-gray-300' => $isAside(),
+            'dark:border-gray-600 dark:bg-gray-800' => config('forms.dark_mode') && $isAside(),
             'p-6' => ! $isCompact(),
             'p-4' => $isCompact(),
         ])>
