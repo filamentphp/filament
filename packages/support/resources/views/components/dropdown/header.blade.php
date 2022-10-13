@@ -23,7 +23,7 @@
 @if ($tag === 'div')
     <div {{ $attributes->class([$headerClasses]) }}>
         @if ($icon)
-            <x-dynamic-component :component="$icon" :class="$iconClasses" />
+            @svg($icon, $iconClasses)
         @endif
 
         <span class="{{ $labelClasses }}">
@@ -33,7 +33,7 @@
 @elseif ($tag === 'a')
     <a {{ $attributes->class([$headerClasses]) }}>
         @if ($icon)
-            <x-dynamic-component :component="$icon" :class="$iconClasses" />
+            @svg($icon, $iconClasses)
         @endif
 
         <span class="{{ $labelClasses }}">

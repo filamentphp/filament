@@ -36,7 +36,7 @@
     @endif
 
     @if ($icon)
-        <x-dynamic-component :component="$icon" class="h-4 w-4" />
+        @svg($icon, 'h-4 w-4')
     @endif
 
     @if ($action && (! $action->isHidden()))

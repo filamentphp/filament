@@ -132,17 +132,26 @@
                                     class="w-5 h-5 text-white"
                                 />
 
-                                @if ($step->getIcon())
-                                    <x-dynamic-component
-                                        :component="$step->getIcon()"
-                                        x-show="getStepIndex(step) <= {{ $loop->index }}"
-                                        x-cloak
-                                        x-bind:class="{
-                                            'text-gray-500 @if (config('forms.dark_mode')) dark:text-gray-400 @endif': getStepIndex(step) !== {{ $loop->index }},
-                                            'text-primary-500': getStepIndex(step) === {{ $loop->index }},
-                                        }"
-                                        class="w-5 h-5"
-                                    />
+                                @if ($icon = $step->getIcon())
+                                    @php
+                                        $inactiveIconClasses = \Illuminate\Support\Arr::toCssClasses([
+                                            'text-gray-500',
+                                            'dark:text-gray-400' => config('forms.dark_mode'),
+                                        ]);
+                                    @endphp
+
+                                    @svg(
+                                        $icon,
+                                        'h-5 w-5',
+                                        [
+                                            'x-show' => "getStepIndex(step) <= {$loop->index}",
+                                            'x-cloak',
+                                            'x-bind:class' => "{
+                                                '{$inactiveIconClasses}': getStepIndex(step) !== {$loop->index},
+                                                'text-primary-500': getStepIndex(step) === {$loop->index},
+                                            }",
+                                        ],
+                                    )
                                 @else
                                     <span
                                         x-show="getStepIndex(step) <= {{ $loop->index }}"

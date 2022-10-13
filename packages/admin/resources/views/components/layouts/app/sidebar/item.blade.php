@@ -36,7 +36,7 @@
             'bg-primary-500 text-white' => $active,
         ])
     >
-        <x-dynamic-component :component="$icon" class="h-5 w-5 shrink-0" />
+        @svg($icon, 'h-5 w-5 shrink-0')
 
         <div class="flex flex-1"
             @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))

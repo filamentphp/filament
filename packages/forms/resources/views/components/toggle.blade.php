@@ -63,9 +63,9 @@
                         }"
                     >
                         @if ($hasOffIcon())
-                            <x-dynamic-component
-                                :component="$getOffIcon()"
-                                :class="\Illuminate\Support\Arr::toCssClasses([
+                            @svg(
+                                $getOffIcon(),
+                                \Illuminate\Support\Arr::toCssClasses([
                                     'h-3 w-3',
                                     match ($getOffColor()) {
                                         'danger' => 'text-danger-500',
@@ -74,8 +74,8 @@
                                         'warning' => 'text-warning-500',
                                         default => 'text-gray-400',
                                     },
-                                ])"
-                            />
+                                ]),
+                            )
                         @endif
                     </span>
 
@@ -88,10 +88,9 @@
                         }"
                     >
                         @if ($hasOnIcon())
-                            <x-dynamic-component
-                                :component="$getOnIcon()"
-                                x-cloak
-                                :class="\Illuminate\Support\Arr::toCssClasses([
+                            @svg(
+                                $getOnIcon(),
+                                \Illuminate\Support\Arr::toCssClasses([
                                     'h-3 w-3',
                                     match ($getOnColor()) {
                                         'danger' => 'text-danger-500',
@@ -100,8 +99,9 @@
                                         'warning' => 'text-warning-500',
                                         default => 'text-primary-500',
                                     },
-                                ])"
-                            />
+                                ]),
+                                ['x-cloak'],
+                            )
                         @endif
                     </span>
                 </span>

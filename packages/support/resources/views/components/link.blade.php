@@ -60,13 +60,13 @@
         {{ $attributes->class($linkClasses) }}
     >
         @if ($icon && $iconPosition === 'before')
-            <x-dynamic-component :component="$icon" :class="$iconClasses"/>
+            @svg($icon, $iconClasses)
         @endif
 
         {{ $slot }}
 
         @if ($icon && $iconPosition === 'after')
-            <x-dynamic-component :component="$icon" :class="$iconClasses" />
+            @svg($icon, $iconClasses)
         @endif
     </a>
 @elseif ($tag === 'button')
@@ -86,12 +86,14 @@
     >
         @if ($iconPosition === 'before')
             @if ($icon)
-                <x-dynamic-component
-                    :component="$icon"
-                    :wire:loading.remove.delay="$hasLoadingIndicator"
-                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
-                    :class="$iconClasses"
-                />
+                @svg(
+                    $icon,
+                    $iconClasses,
+                    [
+                        'wire:loading.remove.delay' => $hasLoadingIndicator,
+                        'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+                    ],
+                )
             @endif
 
             @if ($hasLoadingIndicator)
@@ -108,12 +110,14 @@
 
         @if ($iconPosition === 'after')
             @if ($icon)
-                <x-dynamic-component
-                    :component="$icon"
-                    :wire:loading.remove.delay="$hasLoadingIndicator"
-                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
-                    :class="$iconClasses"
-                />
+                @svg(
+                    $icon,
+                    $iconClasses,
+                    [
+                        'wire:loading.remove.delay' => $hasLoadingIndicator,
+                        'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
+                    ],
+                )
             @endif
 
             @if ($hasLoadingIndicator)

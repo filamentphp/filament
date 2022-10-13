@@ -20,7 +20,7 @@
                 'dark:text-gray-300' => config('filament.dark_mode'),
             ])>
                 @if ($icon)
-                    <x-dynamic-component :component="$icon" class="ml-1 w-3 h-3 flex-shrink-0" />
+                    @svg($icon, 'ml-1 w-3 h-3 flex-shrink-0')
                 @endif
 
                 <p class="flex-1 font-bold uppercase text-xs tracking-wider">
