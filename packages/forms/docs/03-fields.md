@@ -316,7 +316,7 @@ TextInput::make('password')
 
 For more complex autocomplete options, text inputs also support [datalists](#datalists).
 
-#### Telephone validation
+#### Phone number validation
 
 When using a `tel()` field, the value will be validated using: `/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/`.
 
