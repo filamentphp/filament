@@ -180,6 +180,7 @@ export default (Alpine) => {
                             ).length
                         ) {
                             this.lastState = null
+
                             return
                         }
 
