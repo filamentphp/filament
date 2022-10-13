@@ -5,8 +5,9 @@
     'icon' => null,
 ])
 
-<li x-data="{ label: {{ \Illuminate\Support\Js::from($name) }} }"
-    @class(['filament-sidebar-subgroup overflow-hidden'])
+<li
+    x-data="{ label: @js($name) }"
+    class="filament-sidebar-subgroup overflow-hidden"
 >
     @if ($label)
         <button
