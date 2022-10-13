@@ -19,14 +19,14 @@ trait HasColor
     public function colors(array | Closure $colors): static
     {
         $this->color(function (Column $column, $state) use ($colors) {
-            $colors = $column->evaluate($colors);
+            $colors = $column->evaluate($colors, ['state' => $state]);
 
             $color = null;
 
             foreach ($colors as $conditionalColor => $condition) {
                 if (is_numeric($conditionalColor)) {
                     $color = $condition;
-                } elseif ($condition instanceof Closure && $column->evaluate($condition)) {
+                } elseif ($condition instanceof Closure && $column->evaluate($condition, ['state' => $state])) {
                     $color = $conditionalColor;
                 } elseif ($condition === $state) {
                     $color = $conditionalColor;
@@ -41,6 +41,6 @@ trait HasColor
 
     public function getColor(): ?string
     {
-        return $this->evaluate($this->color);
+        return $this->evaluate($this->color, ['state' => $this->getState()]);
     }
 }

@@ -21,14 +21,14 @@ trait HasIcon
     public function icons(array | Closure $icons): static
     {
         $this->icon(function (Column $column, $state) use ($icons) {
-            $icons = $column->evaluate($icons);
+            $icons = $column->evaluate($icons, ['state' => $state]);
 
             $icon = null;
 
             foreach ($icons as $conditionalIcon => $condition) {
                 if (is_numeric($conditionalIcon)) {
                     $icon = $condition;
-                } elseif ($condition instanceof Closure && $column->evaluate($condition)) {
+                } elseif ($condition instanceof Closure && $column->evaluate($condition, ['state' => $state])) {
                     $icon = $conditionalIcon;
                 } elseif ($condition === $state) {
                     $icon = $conditionalIcon;
@@ -50,11 +50,11 @@ trait HasIcon
 
     public function getIcon(): ?string
     {
-        return $this->evaluate($this->icon);
+        return $this->evaluate($this->icon, ['state' => $this->getState()]);
     }
 
     public function getIconPosition(): string
     {
-        return $this->evaluate($this->iconPosition) ?? 'before';
+        return $this->evaluate($this->iconPosition, ['state' => $this->getState()]) ?? 'before';
     }
 }
