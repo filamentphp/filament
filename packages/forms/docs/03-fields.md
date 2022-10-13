@@ -316,6 +316,30 @@ TextInput::make('password')
 
 For more complex autocomplete options, text inputs also support [datalists](#datalists).
 
+#### Phone number validation
+
+When using a `tel()` field, the value will be validated using: `/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/`.
+
+If you wish to change that, that you can use the `telRegex()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('phone')
+    ->tel()
+    ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')
+```
+
+Alternatively, to customize the `telRegex()` across all fields, use a service provider:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::configureUsing(function (TextInput $component): void {
+    $component->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/');
+});
+```
+
 ### Affixes
 
 You may place text before and after the input using the `prefix()` and `suffix()` methods:
