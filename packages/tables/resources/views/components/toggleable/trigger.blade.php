@@ -1,5 +1,5 @@
 <x-tables::icon-button
-    icon="heroicon-m-view-columns"
+    icon="heroicon-o-view-columns"
     :label="__('tables::table.buttons.toggle_columns.label')"
     {{ $attributes->class(['filament-tables-column-toggling-trigger']) }}
 />

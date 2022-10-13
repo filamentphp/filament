@@ -4,7 +4,7 @@
 
 <x-tables::icon-button
     wire:click="toggleTableReordering"
-    :icon="$enabled ? 'heroicon-m-check' : 'heroicon-m-chevron-up-down'"
+    :icon="$enabled ? 'heroicon-o-check' : 'heroicon-o-chevron-up-down'"
     :label="$enabled ? __('tables::table.buttons.disable_reordering.label') : __('tables::table.buttons.enable_reordering.label')"
     {{ $attributes->class(['filament-tables-reordering-trigger']) }}
 />
