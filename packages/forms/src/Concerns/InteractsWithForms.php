@@ -30,7 +30,7 @@ trait InteractsWithForms
     {
         try {
             return parent::__get($property);
-        } catch (PropertyNotFoundException $e) {
+        } catch (PropertyNotFoundException $exception) {
             if ((! $this->isCachingForms) && $form = $this->getCachedForm($property)) {
                 return $form;
             }
@@ -39,7 +39,7 @@ trait InteractsWithForms
                 return $this->getModalViewOnce();
             }
 
-            throw $e;
+            throw $exception;
         }
     }
 
