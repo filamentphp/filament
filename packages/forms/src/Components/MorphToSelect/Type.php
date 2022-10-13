@@ -256,9 +256,7 @@ class Type
 
     public function getAlias(): string
     {
-        $model = $this->getModel();
-
-        return (new $model)->getMorphClass();
+        return app($this->getModel())->getMorphClass();
     }
 
     public function getSearchColumns(): ?array
