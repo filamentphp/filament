@@ -3,12 +3,13 @@
 namespace Filament\Forms\Concerns;
 
 use Closure;
-use Filament\Forms\ComponentContainer;
+use Livewire\WithFileUploads;
 use Illuminate\Contracts\View\View;
+use Livewire\TemporaryUploadedFile;
+use Filament\Forms\ComponentContainer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
-use Livewire\TemporaryUploadedFile;
-use Livewire\WithFileUploads;
+use Livewire\Exceptions\PropertyNotFoundException;
 
 trait InteractsWithForms
 {
@@ -27,15 +28,19 @@ trait InteractsWithForms
 
     public function __get($property)
     {
-        if ((! $this->isCachingForms) && $form = $this->getCachedForm($property)) {
-            return $form;
-        }
+        try {
+            return parent::__get($property);
+        } catch (PropertyNotFoundException $e) {
+            if ((! $this->isCachingForms) && $form = $this->getCachedForm($property)) {
+                return $form;
+            }
 
-        if ($property === 'modal') {
-            return $this->getModalViewOnce();
-        }
+            if ($property === 'modal') {
+                return $this->getModalViewOnce();
+            }
 
-        return parent::__get($property);
+            throw $e;
+        }
     }
 
     protected function getModalViewOnce(): ?View
