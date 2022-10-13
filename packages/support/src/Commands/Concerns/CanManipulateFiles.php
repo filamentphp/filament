@@ -12,7 +12,7 @@ trait CanManipulateFiles
     {
         foreach ($paths as $path) {
             if ($this->fileExists($path)) {
-                $this->error("{$path} already exists, aborting.");
+                $this->components->error("{$path} already exists, aborting.");
 
                 return true;
             }
