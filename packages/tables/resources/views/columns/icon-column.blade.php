@@ -17,7 +17,7 @@
     @if ($icon)
         <x-dynamic-component
             :component="$icon"
-            @class="\Illuminate\Support\Arr::toCssClasses([
+            :class="\Illuminate\Support\Arr::toCssClasses([
                 match ($color) {
                     'danger' => 'text-danger-500',
                     'primary' => 'text-primary-500',
