@@ -3,13 +3,13 @@
 namespace Filament\Forms\Concerns;
 
 use Closure;
-use Livewire\WithFileUploads;
-use Illuminate\Contracts\View\View;
-use Livewire\TemporaryUploadedFile;
 use Filament\Forms\ComponentContainer;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use Livewire\Exceptions\PropertyNotFoundException;
+use Livewire\TemporaryUploadedFile;
+use Livewire\WithFileUploads;
 
 trait InteractsWithForms
 {

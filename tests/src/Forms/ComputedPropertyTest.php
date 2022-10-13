@@ -1,8 +1,8 @@
 <?php
 
-use Filament\Tests\TestCase;
 use Filament\Forms\Components\TextInput;
 use Filament\Tests\Forms\Fixtures\Livewire;
+use Filament\Tests\TestCase;
 use Pest\Expectation;
 
 uses(TestCase::class);
