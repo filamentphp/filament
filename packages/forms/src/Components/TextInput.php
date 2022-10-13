@@ -129,7 +129,7 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     {
         $this->isTel = $condition;
 
-        $this->regex(static fn (TextInput $component) => $component->evaluate($condition) ? '/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/' : null);
+        $this->regex(static fn (TextInput $component) => $component->evaluate($condition) ? config('forms.validation.tel') : null);
 
         return $this;
     }
