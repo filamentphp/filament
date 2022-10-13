@@ -14,6 +14,8 @@ class NavigationGroup
 
     protected array | Arrayable $items = [];
 
+    protected array | Arrayable $subgroups = [];
+
     protected ?string $label = null;
 
     final public function __construct(?string $label = null)
@@ -56,6 +58,13 @@ class NavigationGroup
         return $this;
     }
 
+    public function subgroups(array | Arrayable $subgroups): static
+    {
+        $this->subgroups = $subgroups;
+
+        return $this;
+    }
+
     public function label(?string $label): static
     {
         $this->label = $label;
@@ -71,6 +80,11 @@ class NavigationGroup
     public function getItems(): array | Arrayable
     {
         return $this->items;
+    }
+
+    public function getSubgroups(): array | Arrayable
+    {
+        return $this->subgroups;
     }
 
     public function getLabel(): ?string
