@@ -69,7 +69,7 @@
             @else
                 <div
                     x-ignore
-                    ax-load="visible"
+                    ax-load
                     ax-load-src="/js/filament/forms/components/select.js"
                     x-data="selectFormComponent({
                         isHtmlAllowed: @js($isHtmlAllowed()),

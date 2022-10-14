@@ -13,7 +13,7 @@
 >
     <div
         x-ignore
-        ax-load="visible"
+        ax-load
         ax-load-src="/js/filament/forms/components/rich-editor.js"
         x-data="richEditorFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},

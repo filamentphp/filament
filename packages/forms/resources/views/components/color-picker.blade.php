@@ -36,7 +36,7 @@
 
         <div
             x-ignore
-            ax-load="visible"
+            ax-load
             ax-load-src="/js/filament/forms/components/color-picker.js"
             x-data="colorPickerFormComponent({
                 isAutofocused: @js($isAutofocused()),

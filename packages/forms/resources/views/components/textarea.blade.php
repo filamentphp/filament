@@ -40,7 +40,7 @@
         }}
         @if ($shouldAutosize())
             x-ignore
-            ax-load="visible"
+            ax-load
             ax-load-src="/js/filament/forms/components/textarea.js"
             x-data="textareaFormComponent()"
             x-on:input="render()"

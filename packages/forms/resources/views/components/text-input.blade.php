@@ -44,7 +44,7 @@
                     type="{{ $getType() }}"
                 @else
                     x-ignore
-                    ax-load="visible"
+                    ax-load
                     ax-load-src="/js/filament/forms/components/text-input.js"
                     x-data="textInputFormComponent({
                         {{ $hasMask() ? "getMaskOptionsUsing: (IMask) => ({$getJsonMaskConfiguration()})," : null }}

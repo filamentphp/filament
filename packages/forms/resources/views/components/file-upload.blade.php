@@ -20,7 +20,7 @@
     @endphp
     <div
         x-ignore
-        ax-load="visible"
+        ax-load
         ax-load-src="/js/filament/forms/components/file-upload.js"
         x-data="fileUploadFormComponent({
             acceptedFileTypes: {{ json_encode($getAcceptedFileTypes()) }},

@@ -13,7 +13,7 @@
 >
     <div
         x-ignore
-        ax-load="visible"
+        ax-load
         ax-load-src="/js/filament/forms/components/markdown-editor.js"
         x-data="markdownEditorFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
