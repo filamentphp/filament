@@ -123,6 +123,22 @@ class FilamentManager
         $this->theme = $theme;
     }
 
+    /**
+     * @deprecated Use `registerTheme()` instead.
+     */
+    public function registerThemeUrl(string | Htmlable | null $theme): void
+    {
+        $this->registerTheme($theme);
+    }
+
+    /**
+     * @deprecated Use `registerTheme()` instead.
+     */
+    public function registerThemeLink(string | Htmlable | null $theme): void
+    {
+        $this->registerTheme($theme);
+    }
+
     public function registerUserMenuItems(array $items): void
     {
         $this->userMenuItems = array_merge($this->userMenuItems, $items);
