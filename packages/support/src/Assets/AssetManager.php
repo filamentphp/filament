@@ -32,7 +32,7 @@ class AssetManager
         return $this->getAssets($this->alpineComponents, $packages);
     }
 
-    public function getScripts(?array $packages = null, bool $withCore = false): array
+    public function getScripts(?array $packages = null, bool $withCore = true): array
     {
         $assets = $this->getAssets($this->scripts, $packages);
 

@@ -6,7 +6,7 @@ class Js extends Asset
 {
     protected bool $isAsync = false;
 
-    protected bool $isDeferred = true;
+    protected bool $isDeferred = false;
 
     protected bool $isCore = false;
 

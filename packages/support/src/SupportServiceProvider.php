@@ -58,7 +58,7 @@ class SupportServiceProvider extends PackageServiceProvider
     public function packageBooted()
     {
         Asset::register([
-            Js::make('index', __DIR__ . '/../dist/index.js'),
+            Js::make('support', __DIR__ . '/../dist/index.js'),
         ]);
 
         Blade::directive('captureSlots', function (string $expression): string {

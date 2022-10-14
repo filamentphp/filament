@@ -28,7 +28,7 @@ class NotificationsServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         Asset::register([
-            Js::make('index', __DIR__ . '/../dist/index.js'),
+            Js::make('notifications', __DIR__ . '/../dist/index.js'),
         ], 'notifications');
 
         Livewire::component('notifications', Notifications::class);
