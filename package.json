@@ -2,9 +2,11 @@
     "name": "filament",
     "scripts": {
         "dev:js": "node bin/build --watch",
+        "dev:admin": "mix --watch",
         "dev:css": "npx tailwindcss -c ./packages/admin/tailwind.config.js -i ./packages/admin/resources/css/index.css -o ./packages/admin/dist/index.css --minify --watch",
         "dev": "npm-run-all --parallel dev:*",
         "build:js": "node bin/build",
+        "build:admin": "mix",
         "build:css": "npx tailwindcss -c ./packages/admin/tailwind.config.js -i ./packages/admin/resources/css/index.css -o ./packages/admin/dist/index.css --minify",
         "build": "npm-run-all build:*",
         "prettier": "npx prettier --write '**/*.{css,js,yml}' '!**/dist' '!**/vendor'"

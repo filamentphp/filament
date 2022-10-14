@@ -11,8 +11,6 @@ Route::domain(config('filament.domain'))
     ->name('filament.')
     ->group(function () {
         Route::prefix(config('filament.core_path'))->group(function () {
-            Route::get('/assets/{file}', AssetController::class)->where('file', '.*')->name('asset');
-
             Route::post('/logout', function (Request $request): LogoutResponse {
                 Filament::auth()->logout();
 
