@@ -6,7 +6,6 @@ use Filament\Tables;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Str;
 
 class TableWidget extends Widget implements Tables\Contracts\HasTable
 {

@@ -6,7 +6,6 @@ use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types;
 use Filament\Forms;
 use Filament\Tables;
-use Illuminate\Support\Str;
 use Throwable;
 
 trait CanGenerateResources

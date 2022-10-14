@@ -5,7 +5,6 @@ namespace Filament\Support\Assets;
 use Composer\InstalledVersions;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
-use Illuminate\Support\Str;
 
 class Js extends Asset
 {

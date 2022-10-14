@@ -3,7 +3,6 @@
 namespace Filament\Support\Commands\Concerns;
 
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Str;
 use ReflectionClass;
 
 trait CanManipulateFiles

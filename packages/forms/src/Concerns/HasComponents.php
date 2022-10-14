@@ -6,7 +6,6 @@ use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
-use Illuminate\Support\Str;
 
 trait HasComponents
 {

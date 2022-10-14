@@ -3,7 +3,6 @@
 namespace Filament\Forms\Concerns;
 
 use Filament\Forms\Components\Component;
-use Illuminate\Support\Str;
 
 trait HasStateBindingModifiers
 {

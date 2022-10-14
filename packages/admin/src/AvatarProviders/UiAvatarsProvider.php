@@ -4,7 +4,6 @@ namespace Filament\AvatarProviders;
 
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class UiAvatarsProvider implements Contracts\AvatarProvider
 {

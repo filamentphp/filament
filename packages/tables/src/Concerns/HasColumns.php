@@ -10,7 +10,6 @@ use Filament\Tables\Columns\Layout\Component;
 use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 trait HasColumns

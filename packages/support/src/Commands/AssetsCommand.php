@@ -6,7 +6,6 @@ use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Facades\Asset;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Str;
 
 class AssetsCommand extends Command
 {

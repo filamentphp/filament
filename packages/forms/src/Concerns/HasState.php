@@ -5,7 +5,6 @@ namespace Filament\Forms\Concerns;
 use Filament\Forms\Components\BaseFileUpload;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 
 trait HasState
 {
