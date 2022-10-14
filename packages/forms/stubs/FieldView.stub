@@ -10,7 +10,7 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}') }">
+    <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}').defer }">
         <!-- Interact with the `state` property in Alpine.js -->
     </div>
 </x-forms::field-wrapper>
