@@ -396,9 +396,8 @@
                         {{ $content->with(['records' => $records]) }}
                     @else
                         <x-filament-support::grid
-                            wire:sortable
-                            wire:end.stop="reorderTable($event.target.sortable.toArray())"
-                            wire:sortable.options="{ animation: 100 }"
+                            x-sortable
+                            x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
                             :default="$contentGrid['default'] ?? 1"
                             :sm="$contentGrid['sm'] ?? null"
                             :md="$contentGrid['md'] ?? null"
@@ -427,8 +426,8 @@
                                     @endif
                                     wire:key="{{ $this->id }}.table.records.{{ $recordKey }}"
                                     @if ($isReordering)
-                                        wire:sortable.item="{{ $recordKey }}"
-                                        wire:sortable.handle
+                                        x-sortable-item="{{ $recordKey }}"
+                                        x-sortable-handle
                                     @endif
                                 >
                                     <div
@@ -703,8 +702,8 @@
                                 :record-action="$recordAction"
                                 :record-url="$recordUrl"
                                 :wire:key="$this->id . '.table.records.' . $recordKey"
-                                :wire:sortable.item="$isReordering ? $recordKey : null"
-                                :wire:sortable.handle="$isReordering"
+                                :x-sortable-item="$isReordering ? $recordKey : null"
+                                :x-sortable-handle="$isReordering"
                                 :striped="$isStriped"
                                 x-bind:class="{
                                     'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $recordKey }}'),

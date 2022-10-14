@@ -43,7 +43,7 @@
         @endif
     </div>
 
-    <div {{ $attributes->merge($getExtraAttributes())->class([
+    <div x-data="{}" {{ $attributes->merge($getExtraAttributes())->class([
         'filament-forms-builder-component space-y-6 rounded-xl',
         'bg-gray-50 p-6' => $isInset(),
         'dark:bg-gray-500/10' => $isInset() && config('forms.dark_mode'),
@@ -51,8 +51,8 @@
         @if (count($containers))
             <ul
                 class="space-y-12"
-                wire:sortable
-                wire:end.stop="dispatchFormEvent('builder::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
+                x-sortable
+                x-on:end.stop="$wire.dispatchFormEvent('builder::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
             >
                 @php
                     $hasBlockLabels = $hasBlockLabels();
@@ -72,7 +72,7 @@
                         x-on:click.away="isCreateButtonVisible = false"
                         x-on:mouseleave="isCreateButtonVisible = false"
                         wire:key="{{ $this->id }}.{{ $item->getStatePath() }}.item"
-                        wire:sortable.item="{{ $uuid }}"
+                        x-sortable-item="{{ $uuid }}"
                         x-on:expand-concealing-component.window="
                             error = $el.querySelector('[data-validation-error]')
 
@@ -101,7 +101,7 @@
                                 @unless ($isItemMovementDisabled)
                                     <button
                                         title="{{ __('forms::components.builder.buttons.move_item.label') }}"
-                                        wire:sortable.handle
+                                        x-sortable-handle
                                         wire:keydown.prevent.arrow-up="dispatchFormEvent('builder::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                         wire:keydown.prevent.arrow-down="dispatchFormEvent('builder::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                         type="button"

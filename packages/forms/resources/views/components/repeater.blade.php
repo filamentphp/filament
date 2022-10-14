@@ -44,7 +44,7 @@
         @endif
     </div>
 
-    <div {{ $attributes->merge($getExtraAttributes())->class([
+    <div x-data="{}" {{ $attributes->merge($getExtraAttributes())->class([
         'filament-forms-repeater-component space-y-6 rounded-xl',
         'bg-gray-50 p-6' => $isInset(),
         'dark:bg-gray-500/10' => $isInset() && config('forms.dark_mode'),
@@ -58,8 +58,8 @@
                     :lg="$getGridColumns('lg')"
                     :xl="$getGridColumns('xl')"
                     :two-xl="$getGridColumns('2xl')"
-                    wire:sortable
-                    wire:end.stop="dispatchFormEvent('repeater::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
+                    x-sortable
+                    x-on:end.stop="$wire.dispatchFormEvent('repeater::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
                     class="gap-6"
                 >
                     @foreach ($containers as $uuid => $item)
@@ -70,7 +70,7 @@
                             x-on:repeater-collapse.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = true)"
                             x-on:repeater-expand.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = false)"
                             wire:key="{{ $this->id }}.{{ $item->getStatePath() }}.item"
-                            wire:sortable.item="{{ $uuid }}"
+                            x-sortable-item="{{ $uuid }}"
                             x-on:expand-concealing-component.window="
                                 error = $el.querySelector('[data-validation-error]')
 
@@ -104,7 +104,7 @@
                                         <button
                                             title="{{ __('forms::components.repeater.buttons.move_item.label') }}"
                                             x-on:click.stop
-                                            wire:sortable.handle
+                                            x-sortable-handle
                                             wire:keydown.prevent.arrow-up="dispatchFormEvent('repeater::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                             wire:keydown.prevent.arrow-down="dispatchFormEvent('repeater::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                             type="button"

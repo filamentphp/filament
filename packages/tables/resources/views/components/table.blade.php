@@ -16,9 +16,8 @@
     @endif
 
     <tbody
-        wire:sortable
-        wire:end.stop="reorderTable($event.target.sortable.toArray())"
-        wire:sortable.options="{ animation: 100 }"
+        x-sortable
+        x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
         @class([
             'divide-y whitespace-nowrap',
             'dark:divide-gray-700' => config('tables.dark_mode'),
