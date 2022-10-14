@@ -280,18 +280,9 @@ class FilamentManager
         return $this->scriptData;
     }
 
-    public function getThemeLink(): Htmlable
+    public function getTheme(): string | Htmlable | null
     {
-        if (Str::of($this->theme)->contains('<link')) {
-            return $this->theme instanceof Htmlable ? $this->theme : new HtmlString($this->theme);
-        }
-
-        $url = $this->theme ?? route('filament.asset', [
-            'id' => get_asset_id('app.css'),
-            'file' => 'app.css',
-        ]);
-
-        return new HtmlString("<link rel=\"stylesheet\" href=\"{$url}\" />");
+        return $this->theme;
     }
 
     public function getUrl(): ?string

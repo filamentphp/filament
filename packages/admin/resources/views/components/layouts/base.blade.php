@@ -47,8 +47,6 @@
 
         @filamentStyles
 
-        {{ \Filament\Facades\Filament::getThemeLink() }}
-
         {{ \Filament\Facades\Filament::renderHook('styles.end') }}
 
         @if (config('filament.dark_mode'))

@@ -3,8 +3,5 @@
 @endphp
 
 @foreach ($assets as $asset)
-    <link
-        href="{{ asset($asset->getHref()) }}?v={{ $version }}"
-        rel="stylesheet"
-    />
+    {{ $asset->getHtml() }}
 @endforeach
