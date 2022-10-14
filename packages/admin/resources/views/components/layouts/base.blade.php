@@ -80,9 +80,9 @@
             window.filamentData = @json(\Filament\Facades\Filament::getScriptData());
         </script>
 
-        <script src="//unpkg.com/alpinejs" defer></script>
-
         @filamentScripts(withCore: true)
+
+        <script src="//unpkg.com/alpinejs" defer></script>
 
         @stack('scripts')
 
