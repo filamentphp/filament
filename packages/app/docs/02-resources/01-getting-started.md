@@ -348,8 +348,8 @@ use Filament\Forms\Components\MorphToSelect;
 
 MorphToSelect::make('commentable')
     ->types([
-        MorphToSelect\Type::make(Product::class)->titleColumnName('name'),
-        MorphToSelect\Type::make(Post::class)->titleColumnName('title'),
+        MorphToSelect\Type::make(Product::class)->titleAttribute('name'),
+        MorphToSelect\Type::make(Post::class)->titleAttribute('title'),
     ])
 ```
 

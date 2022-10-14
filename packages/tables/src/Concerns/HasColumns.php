@@ -135,7 +135,7 @@ trait HasColumns
 
         if ($columnRelationship = $column->getRelationship($record)) {
             $record = $columnRelationship->getResults();
-            $columnName = $column->getRelationshipTitleColumnName();
+            $columnName = $column->getRelationshipTitleAttribute();
         } elseif (
             $this instanceof HasRelationshipTable &&
             (($tableRelationship = $this->getRelationship()) instanceof BelongsToMany) &&

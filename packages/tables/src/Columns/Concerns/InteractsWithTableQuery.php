@@ -79,17 +79,17 @@ trait InteractsWithTableQuery
 
         $model = $query->getModel();
 
-        foreach ($this->getSearchColumns() as $searchColumnName) {
+        foreach ($this->getSearchColumns() as $searchColumn) {
             $whereClause = $isFirst ? 'where' : 'orWhere';
 
             $query->when(
-                method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchColumnName),
-                function (Builder $query) use ($searchColumnName, $searchOperator, $search, $whereClause, $databaseConnection): Builder {
+                method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchColumn),
+                function (Builder $query) use ($searchColumn, $searchOperator, $search, $whereClause, $databaseConnection): Builder {
                     $activeLocale = $this->getLivewire()->getActiveTableLocale() ?: app()->getLocale();
 
                     $searchColumn = match ($databaseConnection->getDriverName()) {
-                        'pgsql' => "{$searchColumnName}->>'{$activeLocale}'",
-                        default => "json_extract({$searchColumnName}, \"$.{$activeLocale}\")",
+                        'pgsql' => "{$searchColumn}->>'{$activeLocale}'",
+                        default => "json_extract({$searchColumn}, \"$.{$activeLocale}\")",
                     };
 
                     return $query->{"{$whereClause}Raw"}(
@@ -101,12 +101,12 @@ trait InteractsWithTableQuery
                     $this->queriesRelationships($query->getModel()),
                     fn (Builder $query): Builder => $query->{"{$whereClause}Relation"}(
                         $this->getRelationshipName(),
-                        $searchColumnName,
+                        $searchColumn,
                         $searchOperator,
                         "%{$search}%",
                     ),
                     fn (Builder $query): Builder => $query->{$whereClause}(
-                        $searchColumnName,
+                        $searchColumn,
                         $searchOperator,
                         "%{$search}%",
                     ),
@@ -188,7 +188,7 @@ trait InteractsWithTableQuery
         return $relationship;
     }
 
-    public function getRelationshipTitleColumnName(): string
+    public function getRelationshipTitleAttribute(): string
     {
         return (string) str($this->getName())->afterLast('.');
     }

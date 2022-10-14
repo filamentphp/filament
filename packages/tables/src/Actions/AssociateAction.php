@@ -165,9 +165,9 @@ class AssociateAction extends Action
             /** @var HasMany $relationship */
             $relationship = $this->getRelationship();
 
-            $titleColumnName = $this->getRecordTitleAttribute();
+            $titleAttribute = $this->getRecordTitleAttribute();
 
-            $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleColumnName);
+            $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleAttribute);
 
             if ($this->modifyRecordSelectOptionsQueryUsing) {
                 $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
@@ -186,15 +186,15 @@ class AssociateAction extends Action
                     default => 'like',
                 };
 
-                $searchColumns ??= [$titleColumnName];
+                $searchColumns ??= [$titleAttribute];
                 $isFirst = true;
 
                 $relationshipQuery->where(function (Builder $query) use ($isFirst, $searchColumns, $searchOperator, $search): Builder {
-                    foreach ($searchColumns as $searchColumnName) {
+                    foreach ($searchColumns as $searchColumn) {
                         $whereClause = $isFirst ? 'where' : 'orWhere';
 
                         $query->{$whereClause}(
-                            $searchColumnName,
+                            $searchColumn,
                             $searchOperator,
                             "%{$search}%",
                         );

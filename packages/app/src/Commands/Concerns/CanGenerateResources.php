@@ -71,11 +71,11 @@ trait CanGenerateResources
 
         $output = count($components) ? '' : '//';
 
-        foreach ($components as $componentName => $componentData) {
+        foreach ($components as $component => $componentData) {
             // Constructor
             $output .= (string) str($componentData['type'])->after('Filament\\');
             $output .= '::make(\'';
-            $output .= $componentName;
+            $output .= $component;
             $output .= '\')';
 
             unset($componentData['type']);
@@ -93,7 +93,7 @@ trait CanGenerateResources
             // Termination
             $output .= ',';
 
-            if (! (array_key_last($components) === $componentName)) {
+            if (! (array_key_last($components) === $component)) {
                 $output .= PHP_EOL;
             }
         }
@@ -150,11 +150,11 @@ trait CanGenerateResources
 
         $output = count($columns) ? '' : '//';
 
-        foreach ($columns as $columnName => $columnData) {
+        foreach ($columns as $column => $columnData) {
             // Constructor
             $output .= (string) str($columnData['type'])->after('Filament\\');
             $output .= '::make(\'';
-            $output .= $columnName;
+            $output .= $column;
             $output .= '\')';
 
             unset($columnData['type']);
@@ -172,7 +172,7 @@ trait CanGenerateResources
             // Termination
             $output .= ',';
 
-            if (! (array_key_last($columns) === $columnName)) {
+            if (! (array_key_last($columns) === $column)) {
                 $output .= PHP_EOL;
             }
         }

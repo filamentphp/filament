@@ -673,12 +673,12 @@ use Filament\Forms\Components\MorphToSelect;
 
 MorphToSelect::make('commentable')
     ->types([
-        MorphToSelect\Type::make(Product::class)->titleColumnName('name'),
-        MorphToSelect\Type::make(Post::class)->titleColumnName('title'),
+        MorphToSelect\Type::make(Product::class)->titleAttribute('name'),
+        MorphToSelect\Type::make(Post::class)->titleAttribute('title'),
     ])
 ```
 
-The `titleColumnName()` is used to extract the titles out of each product or post. You can choose to extract the option labels using `getOptionLabelFromRecordUsing` instead if you wish:
+The `titleAttribute()` is used to extract the titles out of each product or post. You can choose to extract the option labels using `getOptionLabelFromRecordUsing` instead if you wish:
 
 ```php
 use Filament\Forms\Components\MorphToSelect;
@@ -687,7 +687,7 @@ MorphToSelect::make('commentable')
     ->types([
         MorphToSelect\Type::make(Product::class)
             ->getOptionLabelFromRecordUsing(fn (Product $record): string => "{$record->name} - {$record->slug}"),
-        MorphToSelect\Type::make(Post::class)->titleColumnName('title'),
+        MorphToSelect\Type::make(Post::class)->titleAttribute('title'),
     ])
 ```
 
@@ -700,10 +700,10 @@ use Illuminate\Database\Eloquent\Builder;
 MorphToSelect::make('commentable')
     ->types([
         MorphToSelect\Type::make(Product::class)
-            ->titleColumnName('name')
+            ->titleAttribute('name')
             ->modifyOptionsQueryUsing(fn (Builder $query) => $query->whereBelongsTo($this->team)),
         MorphToSelect\Type::make(Post::class)
-            ->titleColumnName('title')
+            ->titleAttribute('title')
             ->modifyOptionsQueryUsing(fn (Builder $query) => $query->whereBelongsTo($this->team)),
     ])
 ```

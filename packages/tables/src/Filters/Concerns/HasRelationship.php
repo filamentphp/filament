@@ -13,9 +13,9 @@ trait HasRelationship
 {
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
-    public function relationship(string $relationshipName, string $titleColumnName = null, Closure $callback = null): static
+    public function relationship(string $relationshipName, string $titleAttribute = null, Closure $callback = null): static
     {
-        $this->attribute("{$relationshipName}.{$titleColumnName}");
+        $this->attribute("{$relationshipName}.{$titleAttribute}");
 
         $this->modifyRelationshipQueryUsing = $callback;
 
@@ -44,9 +44,9 @@ trait HasRelationship
     {
         $relationship = $this->getRelationship();
 
-        $titleColumnName = $this->getRelationshipTitleColumnName();
+        $titleAttribute = $this->getRelationshipTitleAttribute();
 
-        $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleColumnName);
+        $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleAttribute);
 
         if ($this->modifyRelationshipQueryUsing) {
             $relationshipQuery = $this->evaluate($this->modifyRelationshipQueryUsing, [
@@ -55,7 +55,7 @@ trait HasRelationship
         }
 
         return $relationshipQuery
-            ->pluck($titleColumnName, $this->getRelationshipKey())
+            ->pluck($titleAttribute, $this->getRelationshipKey())
             ->toArray();
     }
 
@@ -76,7 +76,7 @@ trait HasRelationship
         return (string) str($this->getAttribute())->beforeLast('.');
     }
 
-    protected function getRelationshipTitleColumnName(): string
+    protected function getRelationshipTitleAttribute(): string
     {
         return (string) str($this->getAttribute())->afterLast('.');
     }

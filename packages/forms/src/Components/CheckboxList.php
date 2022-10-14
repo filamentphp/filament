@@ -13,7 +13,7 @@ class CheckboxList extends Field
 
     protected string $view = 'forms::components.checkbox-list';
 
-    protected string | Closure | null $relationshipTitleColumnName = null;
+    protected string | Closure | null $relationshipTitleAttribute = null;
 
     protected ?Closure $getOptionLabelFromRecordUsing = null;
 
@@ -34,15 +34,15 @@ class CheckboxList extends Field
         });
     }
 
-    public function relationship(string | Closure $relationshipName, string | Closure $titleColumnName, ?Closure $callback = null): static
+    public function relationship(string | Closure $relationshipName, string | Closure $titleAttribute, ?Closure $callback = null): static
     {
-        $this->relationshipTitleColumnName = $titleColumnName;
+        $this->relationshipTitleAttribute = $titleAttribute;
         $this->relationship = $relationshipName;
 
         $this->options(static function (CheckboxList $component) use ($callback): array {
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getRelationshipTitleColumnName());
+            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getRelationshipTitleAttribute());
 
             if ($callback) {
                 $relationshipQuery = $component->evaluate($callback, [
@@ -60,7 +60,7 @@ class CheckboxList extends Field
             }
 
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleColumnName(), $relationship->getRelatedKeyName())
+                ->pluck($component->getRelationshipTitleAttribute(), $relationship->getRelatedKeyName())
                 ->toArray();
         });
 
@@ -108,9 +108,9 @@ class CheckboxList extends Field
         return $this->evaluate($this->getOptionLabelFromRecordUsing, ['record' => $record]);
     }
 
-    public function getRelationshipTitleColumnName(): string
+    public function getRelationshipTitleAttribute(): string
     {
-        return $this->evaluate($this->relationshipTitleColumnName);
+        return $this->evaluate($this->relationshipTitleAttribute);
     }
 
     public function getLabel(): string

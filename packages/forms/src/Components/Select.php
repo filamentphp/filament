@@ -54,7 +54,7 @@ class Select extends Field
 
     protected string | Closure | null $maxItemsMessage = null;
 
-    protected string | Closure | null $relationshipTitleColumnName = null;
+    protected string | Closure | null $relationshipTitleAttribute = null;
 
     protected ?Closure $getOptionLabelFromRecordUsing = null;
 
@@ -310,7 +310,7 @@ class Select extends Field
         $columns = $this->searchColumns;
 
         if ($this->hasRelationship()) {
-            $columns ??= [$this->getRelationshipTitleColumnName()];
+            $columns ??= [$this->getRelationshipTitleAttribute()];
         }
 
         return $columns;
@@ -368,10 +368,10 @@ class Select extends Field
         return $this->evaluate($this->isSearchable) || $this->isMultiple();
     }
 
-    public function relationship(string | Closure $relationshipName, string | Closure $titleColumnName, ?Closure $callback = null): static
+    public function relationship(string | Closure $relationshipName, string | Closure $titleAttribute, ?Closure $callback = null): static
     {
         $this->relationship = $relationshipName;
-        $this->relationshipTitleColumnName = $titleColumnName;
+        $this->relationshipTitleAttribute = $titleAttribute;
 
         $this->getSearchResultsUsing(static function (Select $component, ?string $search) use ($callback): array {
             $relationship = $component->getRelationship();
@@ -385,7 +385,7 @@ class Select extends Field
             }
 
             if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipQuery->orderBy($component->getRelationshipTitleColumnName());
+                $relationshipQuery->orderBy($component->getRelationshipTitleAttribute());
             }
 
             $component->applySearchConstraint(
@@ -417,7 +417,7 @@ class Select extends Field
             }
 
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleColumnName(), $keyName)
+                ->pluck($component->getRelationshipTitleAttribute(), $keyName)
                 ->toArray();
         });
 
@@ -437,7 +437,7 @@ class Select extends Field
             }
 
             if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipQuery->orderBy($component->getRelationshipTitleColumnName());
+                $relationshipQuery->orderBy($component->getRelationshipTitleAttribute());
             }
 
             if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
@@ -456,7 +456,7 @@ class Select extends Field
             }
 
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleColumnName(), $keyName)
+                ->pluck($component->getRelationshipTitleAttribute(), $keyName)
                 ->toArray();
         });
 
@@ -519,7 +519,7 @@ class Select extends Field
                 return $component->getOptionLabelFromRecord($record);
             }
 
-            return $record->getAttributeValue($component->getRelationshipTitleColumnName());
+            return $record->getAttributeValue($component->getRelationshipTitleAttribute());
         });
 
         $this->getOptionLabelsUsing(static function (Select $component, array $values) use ($callback): array {
@@ -545,7 +545,7 @@ class Select extends Field
             }
 
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleColumnName(), $relatedKeyName)
+                ->pluck($component->getRelationshipTitleAttribute(), $relatedKeyName)
                 ->toArray();
         });
 
@@ -604,11 +604,11 @@ class Select extends Field
         $isFirst = true;
 
         $query->where(function (Builder $query) use ($isFirst, $searchOperator, $search): Builder {
-            foreach ($this->getSearchColumns() as $searchColumnName) {
+            foreach ($this->getSearchColumns() as $searchColumn) {
                 $whereClause = $isFirst ? 'where' : 'orWhere';
 
                 $query->{$whereClause}(
-                    $searchColumnName,
+                    $searchColumn,
                     $searchOperator,
                     "%{$search}%",
                 );
@@ -639,9 +639,9 @@ class Select extends Field
         return $this->evaluate($this->getOptionLabelFromRecordUsing, ['record' => $record]);
     }
 
-    public function getRelationshipTitleColumnName(): string
+    public function getRelationshipTitleAttribute(): string
     {
-        return $this->evaluate($this->relationshipTitleColumnName);
+        return $this->evaluate($this->relationshipTitleAttribute);
     }
 
     public function getLabel(): string
