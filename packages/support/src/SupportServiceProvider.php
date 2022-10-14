@@ -74,15 +74,6 @@ class SupportServiceProvider extends PackageServiceProvider
             return "<?php echo \Filament\Support\Facades\Asset::renderStyles({$expression}) ?>";
         });
 
-        Str::macro('lcfirst', function (string $string): string {
-            return Str::lower(Str::substr($string, 0, 1)) . Str::substr($string, 1);
-        });
-
-        Stringable::macro('lcfirst', function (): Stringable {
-            /** @phpstan-ignore-next-line */
-            return new Stringable(Str::lcfirst($this->value));
-        });
-
         Str::macro('sanitizeHtml', function (string $html): string {
             return app(SanitizerInterface::class)->sanitize($html);
         });

@@ -164,7 +164,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
         $this->createItemButtonLabel(static function (Repeater $component) {
             return __('forms::components.repeater.buttons.create_item.label', [
-                'label' => lcfirst($component->getLabel()),
+                'label' => Str::lcfirst($component->getLabel()),
             ]);
         });
 

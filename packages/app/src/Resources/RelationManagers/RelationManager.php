@@ -52,7 +52,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     protected function getTableQueryStringIdentifier(): ?string
     {
-        return lcfirst(class_basename(static::class));
+        return Str::lcfirst(class_basename(static::class));
     }
 
     protected function getResourceForm(?int $columns = null, bool $isDisabled = false): Form

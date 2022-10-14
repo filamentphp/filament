@@ -180,7 +180,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
 
         $this->createItemButtonLabel(static function (Builder $component) {
             return __('forms::components.builder.buttons.create_item.label', [
-                'label' => lcfirst($component->getLabel()),
+                'label' => Str::lcfirst($component->getLabel()),
             ]);
         });
 
