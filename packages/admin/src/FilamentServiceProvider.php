@@ -16,6 +16,7 @@ use Filament\Http\Responses\Auth\LogoutResponse;
 use Filament\Pages\Page;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
+use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\Asset;
 use Filament\Tables\Actions\Action as TableAction;
@@ -102,6 +103,7 @@ class FilamentServiceProvider extends PluginServiceProvider
         parent::packageBooted();
 
         Asset::register([
+            Css::make('app', __DIR__ . '/../dist/app.css')->html(Filament::getTheme()),
             Js::make('app', __DIR__ . '/../dist/app.js')->core(),
             Js::make('echo', __DIR__ . '/../dist/echo.js')->core(),
         ]);
