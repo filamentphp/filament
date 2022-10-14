@@ -19,7 +19,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\HtmlString;
-use Illuminate\Support\Str;
 
 class FilamentManager
 {
