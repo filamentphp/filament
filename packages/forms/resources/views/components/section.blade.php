@@ -25,7 +25,7 @@
     id="{{ $getId() }}"
     {{ $attributes->merge($getExtraAttributes())->class([
         'filament-forms-section-component bg-white rounded-xl border border-gray-300' => ! $isAside(),
-        'grid grid-cols-2' => $isAside(),
+        'md:grid grid-cols-2 flex-row' => $isAside(),
         'dark:border-gray-600 dark:bg-gray-800' => config('forms.dark_mode')  && ! $isAside(),
     ]) }}
     {{ $getExtraAlpineAttributeBag() }}
@@ -34,7 +34,7 @@
         @class([
             'filament-forms-section-header-wrapper flex items-center px-4 py-2 bg-gray-100 rtl:space-x-reverse overflow-hidden rounded-t-xl min-h-[40px]',
             'min-h-[56px]' => ! $isCompact(),
-            'align-top flex' => $isAside(),
+            'align-top flex px-2' => $isAside(),
             'flex items-center' => ! $isAside(),
             'dark:bg-gray-900' => config('forms.dark_mode'),
         ])
