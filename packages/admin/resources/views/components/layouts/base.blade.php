@@ -80,6 +80,8 @@
 
         @filamentScripts(withCore: true)
 
+        <script src="https://cdn.jsdelivr.net/npm/async-alpine@0.5.x/dist/async-alpine.script.js"></script>
+
         <script src="//unpkg.com/alpinejs" defer></script>
 
         @stack('scripts')

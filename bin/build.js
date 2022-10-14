@@ -1,7 +1,7 @@
 const esbuild = require('esbuild')
 const shouldWatch = process.argv.includes('--watch')
 
-const packages = ['forms', 'notifications', 'support']
+const packages = ['admin', 'forms', 'notifications', 'support']
 
 packages.forEach((package) => {
     esbuild
@@ -14,11 +14,11 @@ packages.forEach((package) => {
             entryPoints: [`packages/${package}/resources/js/index.js`],
             outfile: `packages/${package}/dist/index.js`,
             bundle: true,
-            platform: 'neutral',
+            platform: 'browser',
             mainFields: ['module', 'main'],
             watch: shouldWatch,
-            minifySyntax: true,
-            minifyWhitespace: true,
+            // minifySyntax: true,
+            // minifyWhitespace: true,
         })
         .catch(() => process.exit(1))
 })

@@ -1,6 +1,5 @@
 import SortableAlpinePlugin from './sortable'
 import AlpineFloatingUI from '@awcodes/alpine-floating-ui'
-import AsyncAlpine from 'async-alpine/dist/async-alpine.esm'
 
 // https://github.com/laravel/framework/blob/5299c22321c0f1ea8ff770b84a6c6469c4d6edec/src/Illuminate/Translation/MessageSelector.php#L15
 const pluralize = function (text, number, variables) {
@@ -96,7 +95,4 @@ window.pluralize = pluralize
 document.addEventListener('alpine:init', () => {
     window.Alpine.plugin(SortableAlpinePlugin)
     window.Alpine.plugin(AlpineFloatingUI)
-
-    AsyncAlpine.init(window.Alpine)
-    AsyncAlpine.start()
 })
