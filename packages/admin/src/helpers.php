@@ -2,7 +2,6 @@
 
 namespace Filament;
 
-use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;
 
 if (! function_exists('Filament\locale_has_pluralization')) {
