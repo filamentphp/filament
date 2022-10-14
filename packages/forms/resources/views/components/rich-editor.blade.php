@@ -12,6 +12,9 @@
     :state-path="$getStatePath()"
 >
     <div
+        x-ignore
+        ax-load="visible"
+        ax-load-src="/js/filament/forms/components/rich-editor.js"
         x-data="richEditorFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"

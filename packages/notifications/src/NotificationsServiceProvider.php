@@ -4,6 +4,8 @@ namespace Filament\Notifications;
 
 use Filament\Notifications\Http\Livewire\Notifications;
 use Filament\Notifications\Testing\TestsNotifications;
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\Asset;
 use Livewire\Component;
 use Livewire\Livewire;
 use Livewire\Response;
@@ -25,6 +27,10 @@ class NotificationsServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        Asset::register([
+            Js::make('index', __DIR__ . '/../dist/index.js'),
+        ], 'notifications');
+
         Livewire::component('notifications', Notifications::class);
 
         Livewire::listen('component.dehydrate', function (Component $component, Response $response): Response {

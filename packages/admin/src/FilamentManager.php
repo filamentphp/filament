@@ -35,13 +35,7 @@ class FilamentManager
 
     protected array $resources = [];
 
-    protected array $beforeCoreScripts = [];
-
-    protected array $scripts = [];
-
     protected array $scriptData = [];
-
-    protected array $styles = [];
 
     protected array $meta = [];
 
@@ -120,23 +114,9 @@ class FilamentManager
         $this->resources = array_merge($this->resources, $resources);
     }
 
-    public function registerScripts(array $scripts, bool $shouldBeLoadedBeforeCoreScripts = false): void
-    {
-        if ($shouldBeLoadedBeforeCoreScripts) {
-            $this->beforeCoreScripts = array_merge($this->beforeCoreScripts, $scripts);
-        } else {
-            $this->scripts = array_merge($this->scripts, $scripts);
-        }
-    }
-
     public function registerScriptData(array $data): void
     {
         $this->scriptData = array_merge($this->scriptData, $data);
-    }
-
-    public function registerStyles(array $styles): void
-    {
-        $this->styles = array_merge($this->styles, $styles);
     }
 
     public function registerTheme(string | Htmlable | null $theme): void
@@ -295,24 +275,9 @@ class FilamentManager
         return null;
     }
 
-    public function getScripts(): array
-    {
-        return $this->scripts;
-    }
-
-    public function getBeforeCoreScripts(): array
-    {
-        return $this->beforeCoreScripts;
-    }
-
     public function getScriptData(): array
     {
         return $this->scriptData;
-    }
-
-    public function getStyles(): array
-    {
-        return $this->styles;
     }
 
     public function getThemeLink(): Htmlable

@@ -1,0 +1,1 @@
+function t(){return{init:function(){this.$nextTick(()=>{this.render()})},render:function(){this.$el.scrollHeight>0&&(this.$el.style.height="150px",this.$el.style.height=this.$el.scrollHeight+2+"px")}}}export{t as default};

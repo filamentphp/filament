@@ -68,6 +68,9 @@
                 </select>
             @else
                 <div
+                    x-ignore
+                    ax-load="visible"
+                    ax-load-src="/js/filament/forms/components/select.js"
                     x-data="selectFormComponent({
                         isHtmlAllowed: @js($isHtmlAllowed()),
                         getOptionLabelUsing: async () => {

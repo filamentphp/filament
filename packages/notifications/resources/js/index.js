@@ -9,13 +9,6 @@ window.NotificationAction = NotificationAction
 window.NotificationActionGroup = NotificationActionGroup
 window.Notification = Notification
 
-export default (Alpine) => {
-    Alpine.plugin(NotificationComponentAlpinePlugin)
-}
-
-export {
-    NotificationAction,
-    NotificationActionGroup,
-    Notification,
-    NotificationComponentAlpinePlugin,
-}
+document.addEventListener('alpine:init', () => {
+    window.Alpine.plugin(NotificationComponentAlpinePlugin)
+})

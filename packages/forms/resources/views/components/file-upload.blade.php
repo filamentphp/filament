@@ -19,6 +19,9 @@
         $shouldTransformImage = $imageCropAspectRatio || $imageResizeTargetHeight || $imageResizeTargetWidth;
     @endphp
     <div
+        x-ignore
+        ax-load="visible"
+        ax-load-src="/js/filament/forms/components/file-upload.js"
         x-data="fileUploadFormComponent({
             acceptedFileTypes: {{ json_encode($getAcceptedFileTypes()) }},
             canDownload: {{ $canDownload() ? 'true' : 'false' }},

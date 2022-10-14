@@ -3,8 +3,12 @@
 namespace Filament\Support;
 
 use Composer\InstalledVersions;
+use Filament\Support\Assets\AssetManager;
+use Filament\Support\Assets\Js;
+use Filament\Support\Commands\AssetsCommand;
 use Filament\Support\Commands\CheckTranslationsCommand;
 use Filament\Support\Commands\UpgradeCommand;
+use Filament\Support\Facades\Asset;
 use Filament\Support\Testing\TestsActions;
 use HtmlSanitizer\Sanitizer;
 use HtmlSanitizer\SanitizerInterface;
@@ -23,6 +27,7 @@ class SupportServiceProvider extends PackageServiceProvider
         $package
             ->name('filament-support')
             ->hasCommands([
+                AssetsCommand::class,
                 CheckTranslationsCommand::class,
                 UpgradeCommand::class,
             ])
@@ -33,6 +38,13 @@ class SupportServiceProvider extends PackageServiceProvider
 
     public function packageRegistered()
     {
+        $this->app->scoped(
+            AssetManager::class,
+            function () {
+                return new AssetManager();
+            },
+        );
+
         $this->app->scoped(
             SanitizerInterface::class,
             function () {
@@ -45,8 +57,20 @@ class SupportServiceProvider extends PackageServiceProvider
 
     public function packageBooted()
     {
+        Asset::register([
+            Js::make('index', __DIR__ . '/../dist/index.js'),
+        ]);
+
         Blade::directive('captureSlots', function (string $expression): string {
             return "<?php \$slotContents = get_defined_vars(); \$slots = collect({$expression})->mapWithKeys(fn (string \$slot): array => [\$slot => \$slotContents[\$slot] ?? null])->all(); unset(\$slotContents) ?>";
+        });
+
+        Blade::directive('filamentScripts', function (string $expression): string {
+            return "<?php echo \Filament\Support\Facades\Asset::renderScripts({$expression}) ?>";
+        });
+
+        Blade::directive('filamentStyles', function (string $expression): string {
+            return "<?php echo \Filament\Support\Facades\Asset::renderStyles({$expression}) ?>";
         });
 
         Str::macro('lcfirst', function (string $string): string {

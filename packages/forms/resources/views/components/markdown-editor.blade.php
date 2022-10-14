@@ -12,6 +12,9 @@
     :state-path="$getStatePath()"
 >
     <div
+        x-ignore
+        ax-load="visible"
+        ax-load-src="/js/filament/forms/components/markdown-editor.js"
         x-data="markdownEditorFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
             tab: '{{ $isDisabled() ? 'preview' : 'edit' }}',

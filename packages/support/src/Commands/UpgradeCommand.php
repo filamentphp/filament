@@ -13,6 +13,7 @@ class UpgradeCommand extends Command
     public function handle(): int
     {
         foreach ([
+            'filament:assets',
             'config:clear',
             'livewire:discover',
             'route:clear',

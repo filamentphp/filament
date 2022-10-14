@@ -12,6 +12,9 @@
     :state-path="$getStatePath()"
 >
     <div
+        x-ignore
+        ax-load="visible"
+        ax-load-src="/js/filament/forms/components/key-value.js"
         x-data="keyValueFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"

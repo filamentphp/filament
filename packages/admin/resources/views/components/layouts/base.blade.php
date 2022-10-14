@@ -45,17 +45,7 @@
             <link href="{{ $fontsUrl }}" rel="stylesheet" />
         @endif
 
-        @foreach (\Filament\Facades\Filament::getStyles() as $name => $path)
-            @if (\Illuminate\Support\Str::of($path)->startsWith(['http://', 'https://']))
-                <link rel="stylesheet" href="{{ $path }}" />
-            @elseif (\Illuminate\Support\Str::of($path)->startsWith('<'))
-                {!! $path !!}
-            @else
-                <link rel="stylesheet" href="{{ route('filament.asset', [
-                    'file' => "{$name}.css",
-                ]) }}" />
-            @endif
-        @endforeach
+        @filamentStyles
 
         {{ \Filament\Facades\Filament::getThemeLink() }}
 
@@ -90,19 +80,9 @@
             window.filamentData = @json(\Filament\Facades\Filament::getScriptData());
         </script>
 
-        @foreach (\Filament\Facades\Filament::getBeforeCoreScripts() as $name => $path)
-            @if (\Illuminate\Support\Str::of($path)->startsWith(['http://', 'https://']))
-                <script defer src="{{ $path }}"></script>
-            @elseif (\Illuminate\Support\Str::of($path)->startsWith('<'))
-                {!! $path !!}
-            @else
-                <script defer src="{{ route('filament.asset', [
-                    'file' => "{$name}.js",
-                ]) }}"></script>
-            @endif
-        @endforeach
+        @filamentScripts
 
-        @stack('beforeCoreScripts')
+        @stack('scripts')
 
         <script defer src="{{ route('filament.asset', [
             'id' => Filament\get_asset_id('app.js'),
@@ -123,20 +103,6 @@
                 })
             </script>
         @endif
-
-        @foreach (\Filament\Facades\Filament::getScripts() as $name => $path)
-            @if (\Illuminate\Support\Str::of($path)->startsWith(['http://', 'https://']))
-                <script defer src="{{ $path }}"></script>
-            @elseif (\Illuminate\Support\Str::of($path)->startsWith('<'))
-                {!! $path !!}
-            @else
-                <script defer src="{{ route('filament.asset', [
-                    'file' => "{$name}.js",
-                ]) }}"></script>
-            @endif
-        @endforeach
-
-        @stack('scripts')
 
         {{ \Filament\Facades\Filament::renderHook('scripts.end') }}
 

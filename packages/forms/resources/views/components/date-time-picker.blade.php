@@ -12,6 +12,9 @@
     :state-path="$getStatePath()"
 >
     <div
+        x-ignore
+        ax-load="visible"
+        ax-load-src="/js/filament/forms/components/date-time-picker.js"
         x-data="dateTimePickerFormComponent({
             displayFormat: '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
             firstDayOfWeek: {{ $getFirstDayOfWeek() }},

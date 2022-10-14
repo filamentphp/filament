@@ -12,6 +12,9 @@
     :state-path="$getStatePath()"
 >
     <div
+        x-ignore
+        ax-load="visible"
+        ax-load-src="/js/filament/forms/components/tags-input.js"
         x-data="tagsInputFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
