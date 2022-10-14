@@ -52,7 +52,7 @@ class AssetsCommand extends Command
         $filesystem = app(Filesystem::class);
 
         $filesystem->ensureDirectoryExists(
-            (string) Str::of($to)
+            (string) str($to)
                 ->beforeLast(DIRECTORY_SEPARATOR),
         );
 

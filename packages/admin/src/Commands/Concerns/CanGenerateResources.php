@@ -26,7 +26,7 @@ trait CanGenerateResources
                 continue;
             }
 
-            if (Str::of($column->getName())->is([
+            if (str($column->getName())->is([
                 'created_at',
                 'deleted_at',
                 'updated_at',
@@ -46,15 +46,15 @@ trait CanGenerateResources
             };
 
             if ($type === Forms\Components\TextInput::class) {
-                if (Str::of($column->getName())->contains(['email'])) {
+                if (str($column->getName())->contains(['email'])) {
                     $componentData['email'] = [];
                 }
 
-                if (Str::of($column->getName())->contains(['password'])) {
+                if (str($column->getName())->contains(['password'])) {
                     $componentData['password'] = [];
                 }
 
-                if (Str::of($column->getName())->contains(['phone', 'tel'])) {
+                if (str($column->getName())->contains(['phone', 'tel'])) {
                     $componentData['tel'] = [];
                 }
             }
@@ -74,7 +74,7 @@ trait CanGenerateResources
 
         foreach ($components as $componentName => $componentData) {
             // Constructor
-            $output .= (string) Str::of($componentData['type'])->after('Filament\\');
+            $output .= (string) str($componentData['type'])->after('Filament\\');
             $output .= '::make(\'';
             $output .= $componentName;
             $output .= '\')';
@@ -117,13 +117,13 @@ trait CanGenerateResources
                 continue;
             }
 
-            if (Str::of($column->getName())->endsWith([
+            if (str($column->getName())->endsWith([
                 '_token',
             ])) {
                 continue;
             }
 
-            if (Str::of($column->getName())->contains([
+            if (str($column->getName())->contains([
                 'password',
             ])) {
                 continue;
@@ -153,7 +153,7 @@ trait CanGenerateResources
 
         foreach ($columns as $columnName => $columnData) {
             // Constructor
-            $output .= (string) Str::of($columnData['type'])->after('Filament\\');
+            $output .= (string) str($columnData['type'])->after('Filament\\');
             $output .= '::make(\'';
             $output .= $columnName;
             $output .= '\')';

@@ -29,7 +29,7 @@ trait CanManipulateFiles
             $stubPath = $this->getDefaultStubPath() . "/{$stub}.stub";
         }
 
-        $stub = Str::of($filesystem->get($stubPath));
+        $stub = str($filesystem->get($stubPath));
 
         foreach ($replacements as $key => $replacement) {
             $stub = $stub->replace("{{ {$key} }}", $replacement);
@@ -52,7 +52,7 @@ trait CanManipulateFiles
         $filesystem = app(Filesystem::class);
 
         $filesystem->ensureDirectoryExists(
-            (string) Str::of($path)
+            (string) str($path)
                 ->beforeLast('/'),
         );
 
@@ -63,7 +63,7 @@ trait CanManipulateFiles
     {
         $reflectionClass = new ReflectionClass($this);
 
-        return (string) Str::of($reflectionClass->getFileName())
+        return (string) str($reflectionClass->getFileName())
             ->beforeLast('Commands')
             ->append('../stubs');
     }

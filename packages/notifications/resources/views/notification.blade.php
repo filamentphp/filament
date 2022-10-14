@@ -25,7 +25,7 @@
     <div class="grid flex-1">
         @if ($title = $getTitle())
             <x-notifications::title>
-                {{ \Illuminate\Support\Str::of($title)->markdown()->sanitizeHtml()->toHtmlString() }}
+                {{ str($title)->markdown()->sanitizeHtml()->toHtmlString() }}
             </x-notifications::title>
         @endif
 
@@ -37,7 +37,7 @@
 
         @if ($body = $getBody())
             <x-notifications::body>
-                {{ \Illuminate\Support\Str::of($body)->markdown()->sanitizeHtml()->toHtmlString() }}
+                {{ str($body)->markdown()->sanitizeHtml()->toHtmlString() }}
             </x-notifications::body>
         @endif
 

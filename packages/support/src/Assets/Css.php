@@ -41,7 +41,7 @@ class Css extends Asset
     {
         $html = $this->html;
 
-        if (Str::of($html)->contains('<link')) {
+        if (str($html)->contains('<link')) {
             return $html instanceof Htmlable ? $html : new HtmlString($html);
         }
 

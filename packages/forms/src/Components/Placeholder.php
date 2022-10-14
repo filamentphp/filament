@@ -55,7 +55,7 @@ class Placeholder extends Component
 
     public function getLabel(): string | Htmlable | null
     {
-        return parent::getLabel() ?? (string) Str::of($this->getName())
+        return parent::getLabel() ?? (string) str($this->getName())
             ->kebab()
             ->replace(['-', '_'], ' ')
             ->ucfirst();

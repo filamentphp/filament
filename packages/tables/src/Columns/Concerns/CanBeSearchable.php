@@ -60,6 +60,6 @@ trait CanBeSearchable
 
     protected function getDefaultSearchColumns(): array
     {
-        return [Str::of($this->getName())->afterLast('.')];
+        return [str($this->getName())->afterLast('.')];
     }
 }

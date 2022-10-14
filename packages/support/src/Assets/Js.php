@@ -64,7 +64,7 @@ class Js extends Asset
     {
         $html = $this->html;
 
-        if (Str::of($html)->contains('<script')) {
+        if (str($html)->contains('<script')) {
             return $html instanceof Htmlable ? $html : new HtmlString($html);
         }
 

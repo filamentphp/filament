@@ -161,7 +161,7 @@ class FilamentServiceProvider extends PluginServiceProvider
         }
 
         foreach ($filesystem->allFiles($directory) as $file) {
-            $fileClass = (string) Str::of($namespace)
+            $fileClass = (string) str($namespace)
                 ->append('\\', $file->getRelativePathname())
                 ->replace(['/', '.php'], ['\\', '']);
 
@@ -173,7 +173,7 @@ class FilamentServiceProvider extends PluginServiceProvider
                 continue;
             }
 
-            $filePath = Str::of($directory . '/' . $file->getRelativePathname());
+            $filePath = str($directory . '/' . $file->getRelativePathname());
 
             if ($filePath->startsWith(config('filament.resources.path')) && is_subclass_of($fileClass, Resource::class)) {
                 $this->resources[] = $fileClass;
@@ -201,7 +201,7 @@ class FilamentServiceProvider extends PluginServiceProvider
                 continue;
             }
 
-            $livewireAlias = Str::of($fileClass)
+            $livewireAlias = str($fileClass)
                 ->after($namespace . '\\')
                 ->replace(['/', '\\'], '.')
                 ->prepend('filament.')
@@ -219,17 +219,17 @@ class FilamentServiceProvider extends PluginServiceProvider
             return;
         }
 
-        if (Str::of($directory)->startsWith(config('filament.livewire.path'))) {
+        if (str($directory)->startsWith(config('filament.livewire.path'))) {
             return;
         }
 
         $filesystem = app(Filesystem::class);
 
-        if ((! $filesystem->exists($directory)) && (! Str::of($directory)->contains('*'))) {
+        if ((! $filesystem->exists($directory)) && (! str($directory)->contains('*'))) {
             return;
         }
 
-        $namespace = Str::of($namespace);
+        $namespace = str($namespace);
 
         $register = array_merge(
             $register,
@@ -238,7 +238,7 @@ class FilamentServiceProvider extends PluginServiceProvider
                     $variableNamespace = $namespace->contains('*') ? str_ireplace(
                         ['\\' . $namespace->before('*'), $namespace->after('*')],
                         ['', ''],
-                        Str::of($file->getPath())
+                        str($file->getPath())
                             ->after(base_path())
                             ->replace(['/'], ['\\']),
                     ) : null;

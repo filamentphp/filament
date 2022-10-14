@@ -269,7 +269,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     public function getInverseRelationshipName(): string
     {
-        return static::$inverseRelationship ?? (string) Str::of(class_basename($this->getOwnerRecord()))
+        return static::$inverseRelationship ?? (string) str(class_basename($this->getOwnerRecord()))
             ->plural()
             ->camel();
     }
@@ -319,7 +319,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     protected static function getModelLabel(): string
     {
-        return static::$modelLabel ?? static::getRecordLabel() ?? (string) Str::of(static::getRelationshipName())
+        return static::$modelLabel ?? static::getRecordLabel() ?? (string) str(static::getRelationshipName())
             ->kebab()
             ->replace('-', ' ')
             ->singular();
@@ -340,7 +340,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         }
 
         if (locale_has_pluralization()) {
-            return (string) Str::of(static::getRelationshipName())
+            return (string) str(static::getRelationshipName())
                 ->kebab()
                 ->replace('-', ' ');
         }

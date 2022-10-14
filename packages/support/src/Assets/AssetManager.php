@@ -21,6 +21,7 @@ class AssetManager
                 AlpineComponent::class => $this->alpineComponents[$package][] = $asset,
                 Css::class => $this->styles[$package][] = $asset,
                 Js::class => $this->scripts[$package][] = $asset,
+                default => null,
             };
         }
 

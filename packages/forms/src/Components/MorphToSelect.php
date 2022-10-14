@@ -103,7 +103,7 @@ class MorphToSelect extends Component
 
     public function getLabel(): string | Htmlable | null
     {
-        $label = parent::getLabel() ?? (string) Str::of($this->getName())
+        $label = parent::getLabel() ?? (string) str($this->getName())
             ->afterLast('.')
             ->kebab()
             ->replace(['-', '_'], ' ')

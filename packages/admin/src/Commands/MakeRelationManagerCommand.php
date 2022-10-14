@@ -20,28 +20,28 @@ class MakeRelationManagerCommand extends Command
 
     public function handle(): int
     {
-        $resource = (string) Str::of($this->argument('resource') ?? $this->askRequired('Resource (e.g. `DepartmentResource`)', 'resource'))
+        $resource = (string) str($this->argument('resource') ?? $this->askRequired('Resource (e.g. `DepartmentResource`)', 'resource'))
             ->studly()
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
             ->replace('/', '\\');
 
-        if (! Str::of($resource)->endsWith('Resource')) {
+        if (! str($resource)->endsWith('Resource')) {
             $resource .= 'Resource';
         }
 
-        $relationship = (string) Str::of($this->argument('relationship') ?? $this->askRequired('Relationship (e.g. `members`)', 'relationship'))
+        $relationship = (string) str($this->argument('relationship') ?? $this->askRequired('Relationship (e.g. `members`)', 'relationship'))
             ->trim(' ');
-        $managerClass = (string) Str::of($relationship)
+        $managerClass = (string) str($relationship)
             ->studly()
             ->append('RelationManager');
 
-        $recordTitleAttribute = (string) Str::of($this->argument('recordTitleAttribute') ?? $this->askRequired('Title attribute (e.g. `name`)', 'title attribute'))
+        $recordTitleAttribute = (string) str($this->argument('recordTitleAttribute') ?? $this->askRequired('Title attribute (e.g. `name`)', 'title attribute'))
             ->trim(' ');
 
         $path = app_path(
-            (string) Str::of($managerClass)
+            (string) str($managerClass)
                 ->prepend("Filament\\Resources\\{$resource}\\RelationManagers\\")
                 ->replace('\\', '/')
                 ->append('.php'),

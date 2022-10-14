@@ -52,7 +52,7 @@ class Block extends Component
             $this->labelState ? ['state' => $this->labelState] : [],
         ));
 
-        return $label ?? (string) Str::of($this->getName())
+        return $label ?? (string) str($this->getName())
             ->kebab()
             ->replace(['-', '_'], ' ')
             ->ucfirst();

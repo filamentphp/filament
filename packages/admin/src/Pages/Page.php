@@ -89,7 +89,7 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
 
     public static function getSlug(): string
     {
-        return static::$slug ?? Str::of(static::$title ?? class_basename(static::class))
+        return static::$slug ?? str(static::$title ?? class_basename(static::class))
             ->kebab()
             ->slug();
     }
@@ -122,7 +122,7 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
 
     protected static function getNavigationLabel(): string
     {
-        return static::$navigationLabel ?? static::$title ?? Str::of(class_basename(static::class))
+        return static::$navigationLabel ?? static::$title ?? str(class_basename(static::class))
             ->kebab()
             ->replace('-', ' ')
             ->title();
@@ -190,7 +190,7 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
 
     protected function getTitle(): string
     {
-        return static::$title ?? (string) Str::of(class_basename(static::class))
+        return static::$title ?? (string) str(class_basename(static::class))
             ->kebab()
             ->replace('-', ' ')
             ->title();

@@ -40,6 +40,6 @@ trait CanBeSortable
 
     protected function getDefaultSortColumns(): array
     {
-        return [Str::of($this->getName())->afterLast('.')];
+        return [str($this->getName())->afterLast('.')];
     }
 }

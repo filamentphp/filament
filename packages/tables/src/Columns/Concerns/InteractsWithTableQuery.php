@@ -169,7 +169,7 @@ trait InteractsWithTableQuery
 
     public function getRelationship(Model $record): ?Relation
     {
-        if (! Str::of($this->getName())->contains('.')) {
+        if (! str($this->getName())->contains('.')) {
             return null;
         }
 
@@ -191,11 +191,11 @@ trait InteractsWithTableQuery
 
     public function getRelationshipTitleColumnName(): string
     {
-        return (string) Str::of($this->getName())->afterLast('.');
+        return (string) str($this->getName())->afterLast('.');
     }
 
     public function getRelationshipName(): string
     {
-        return (string) Str::of($this->getName())->beforeLast('.');
+        return (string) str($this->getName())->beforeLast('.');
     }
 }

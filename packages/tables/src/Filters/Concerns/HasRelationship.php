@@ -62,7 +62,7 @@ trait HasRelationship
 
     public function queriesRelationships(): bool
     {
-        return Str::of($this->getAttribute())->contains('.');
+        return str($this->getAttribute())->contains('.');
     }
 
     protected function getRelationship(): Relation | Builder
@@ -74,11 +74,11 @@ trait HasRelationship
 
     protected function getRelationshipName(): string
     {
-        return (string) Str::of($this->getAttribute())->beforeLast('.');
+        return (string) str($this->getAttribute())->beforeLast('.');
     }
 
     protected function getRelationshipTitleColumnName(): string
     {
-        return (string) Str::of($this->getAttribute())->afterLast('.');
+        return (string) str($this->getAttribute())->afterLast('.');
     }
 }

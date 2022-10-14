@@ -43,7 +43,7 @@ trait HasStateBindingModifiers
     {
         $modifiers = $this->getStateBindingModifiers();
 
-        if (Str::of($expression)->contains('entangle') && ($this->isLazy() || $this->getDebounce())) {
+        if (str($expression)->contains('entangle') && ($this->isLazy() || $this->getDebounce())) {
             $modifiers = $lazilyEntangledModifiers;
         }
 

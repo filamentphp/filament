@@ -4,7 +4,7 @@
         'dark:text-white' => config('filament.dark_mode'),
     ])>
         {{
-            \Illuminate\Support\Str::of($brand)
+            str($brand)
                 ->snake()
                 ->upper()
                 ->explode('_')

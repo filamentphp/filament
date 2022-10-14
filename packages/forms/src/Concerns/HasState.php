@@ -31,7 +31,7 @@ trait HasState
                 return true;
             }
 
-            if ($component instanceof BaseFileUpload && Str::of($path)->startsWith("{$component->getStatePath()}.")) {
+            if ($component instanceof BaseFileUpload && str($path)->startsWith("{$component->getStatePath()}.")) {
                 $component->callAfterStateUpdated();
 
                 return true;

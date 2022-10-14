@@ -18,14 +18,14 @@ class MakeWidgetCommand extends Command
 
     public function handle(): int
     {
-        $widget = (string) Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `BlogPostsChart`)', 'name'))
+        $widget = (string) str($this->argument('name') ?? $this->askRequired('Name (e.g. `BlogPostsChart`)', 'name'))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
             ->replace('/', '\\');
-        $widgetClass = (string) Str::of($widget)->afterLast('\\');
-        $widgetNamespace = Str::of($widget)->contains('\\') ?
-            (string) Str::of($widget)->beforeLast('\\') :
+        $widgetClass = (string) str($widget)->afterLast('\\');
+        $widgetNamespace = str($widget)->contains('\\') ?
+            (string) str($widget)->beforeLast('\\') :
             '';
 
         $resource = null;
@@ -34,36 +34,36 @@ class MakeWidgetCommand extends Command
         $resourceInput = $this->option('resource') ?? $this->ask('(Optional) Resource (e.g. `BlogPostResource`)');
 
         if ($resourceInput !== null) {
-            $resource = (string) Str::of($resourceInput)
+            $resource = (string) str($resourceInput)
                 ->studly()
                 ->trim('/')
                 ->trim('\\')
                 ->trim(' ')
                 ->replace('/', '\\');
 
-            if (! Str::of($resource)->endsWith('Resource')) {
+            if (! str($resource)->endsWith('Resource')) {
                 $resource .= 'Resource';
             }
 
-            $resourceClass = (string) Str::of($resource)
+            $resourceClass = (string) str($resource)
                 ->afterLast('\\');
         }
 
-        $view = Str::of($widget)
+        $view = str($widget)
             ->prepend($resource === null ? 'filament\\widgets\\' : "filament\\resources\\{$resource}\\widgets\\")
             ->explode('\\')
             ->map(fn ($segment) => Str::kebab($segment))
             ->implode('.');
 
         $path = app_path(
-            (string) Str::of($widget)
+            (string) str($widget)
                 ->prepend($resource === null ? 'Filament\\Widgets\\' : "Filament\\Resources\\{$resource}\\Widgets\\")
                 ->replace('\\', '/')
                 ->append('.php'),
         );
 
         $viewPath = resource_path(
-            (string) Str::of($view)
+            (string) str($view)
                 ->replace('.', '/')
                 ->prepend('views/')
                 ->append('.blade.php'),

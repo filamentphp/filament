@@ -18,23 +18,23 @@ class MakeSettingsPageCommand extends Command
 
     public function handle(): int
     {
-        $page = (string) Str::of($this->argument('name') ?? $this->askRequired('Page name (e.g. `ManageFooter`)', 'name'))
+        $page = (string) str($this->argument('name') ?? $this->askRequired('Page name (e.g. `ManageFooter`)', 'name'))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
             ->replace('/', '\\');
-        $pageClass = (string) Str::of($page)->afterLast('\\');
-        $pageNamespace = Str::of($page)->contains('\\') ?
-            (string) Str::of($page)->beforeLast('\\') :
+        $pageClass = (string) str($page)->afterLast('\\');
+        $pageNamespace = str($page)->contains('\\') ?
+            (string) str($page)->beforeLast('\\') :
             '';
 
-        $settingsClass = (string) Str::of($this->argument('settingsClass') ?? $this->askRequired('Settings class (e.g. `FooterSettings`)', 'settings class'))
+        $settingsClass = (string) str($this->argument('settingsClass') ?? $this->askRequired('Settings class (e.g. `FooterSettings`)', 'settings class'))
             ->trim('/')
             ->trim('\\')
             ->trim(' ');
 
         $path = app_path(
-            (string) Str::of($page)
+            (string) str($page)
                 ->prepend('Filament\\Pages\\')
                 ->replace('\\', '/')
                 ->append('.php'),

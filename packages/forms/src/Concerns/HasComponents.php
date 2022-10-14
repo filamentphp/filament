@@ -59,7 +59,7 @@ trait HasComponents
                 $fieldStatePath = $field->getStatePath();
 
                 if ((! $withAbsolutePathKeys) && filled($statePath)) {
-                    $fieldStatePath = (string) Str::of($fieldStatePath)->after("{$statePath}.");
+                    $fieldStatePath = (string) str($fieldStatePath)->after("{$statePath}.");
                 }
 
                 return [$fieldStatePath => $field];

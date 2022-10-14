@@ -144,7 +144,7 @@ trait HasColumns
         ) {
             $record = $record->{$tableRelationship->getPivotAccessor()};
         } else {
-            $columnName = (string) Str::of($columnName)->replace('.', '->');
+            $columnName = (string) str($columnName)->replace('.', '->');
         }
 
         if (! ($record instanceof Model)) {

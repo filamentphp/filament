@@ -332,12 +332,12 @@ trait HasState
 
         $containerPath = $this->getContainer()->getStatePath();
 
-        while (Str::of($path)->startsWith('../')) {
+        while (str($path)->startsWith('../')) {
             $containerPath = Str::contains($containerPath, '.') ?
-                (string) Str::of($containerPath)->beforeLast('.') :
+                (string) str($containerPath)->beforeLast('.') :
                 null;
 
-            $path = (string) Str::of($path)->after('../');
+            $path = (string) str($path)->after('../');
         }
 
         if (blank($containerPath)) {

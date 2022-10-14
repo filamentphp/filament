@@ -10,7 +10,7 @@ class UiAvatarsProvider implements Contracts\AvatarProvider
 {
     public function get(Model $user): string
     {
-        $name = Str::of(Filament::getUserName($user))
+        $name = str(Filament::getUserName($user))
             ->trim()
             ->explode(' ')
             ->map(fn (string $segment): string => filled($segment) ? mb_substr($segment, 0, 1) : '')

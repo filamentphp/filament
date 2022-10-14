@@ -299,7 +299,7 @@ class Resource
 
     public static function getModel(): string
     {
-        return static::$model ?? (string) Str::of(class_basename(static::class))
+        return static::$model ?? (string) str(class_basename(static::class))
             ->beforeLast('Resource')
             ->prepend('App\\Models\\');
     }
@@ -389,7 +389,7 @@ class Resource
             return static::$slug;
         }
 
-        return Str::of(static::class)
+        return str(static::class)
             ->whenContains(
                 '\\Resources\\',
                 fn (Stringable $slug): Stringable => $slug->afterLast('\\Resources\\'),
@@ -398,7 +398,7 @@ class Resource
             ->beforeLast('Resource')
             ->plural()
             ->explode('\\')
-            ->map(fn (string $string) => Str::of($string)->kebab()->slug())
+            ->map(fn (string $string) => str($string)->kebab()->slug())
             ->implode('/');
     }
 
@@ -450,10 +450,10 @@ class Resource
                     );
                 },
                 fn (Builder $query): Builder => $query->when(
-                    Str::of($searchAttribute)->contains('.'),
+                    str($searchAttribute)->contains('.'),
                     fn ($query) => $query->{"{$whereClause}Relation"}(
-                        (string) Str::of($searchAttribute)->beforeLast('.'),
-                        (string) Str::of($searchAttribute)->afterLast('.'),
+                        (string) str($searchAttribute)->beforeLast('.'),
+                        (string) str($searchAttribute)->afterLast('.'),
                         $searchOperator,
                         "%{$search}%",
                     ),

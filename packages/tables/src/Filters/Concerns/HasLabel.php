@@ -27,7 +27,7 @@ trait HasLabel
 
     public function getLabel(): string
     {
-        $label = $this->evaluate($this->label) ?? (string) Str::of($this->getName())
+        $label = $this->evaluate($this->label) ?? (string) str($this->getName())
             ->before('.')
             ->kebab()
             ->replace(['-', '_'], ' ')
