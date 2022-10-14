@@ -17,11 +17,29 @@ packages.forEach((package) => {
             platform: 'browser',
             mainFields: ['module', 'main'],
             watch: shouldWatch,
-            // minifySyntax: true,
-            // minifyWhitespace: true,
+            minifySyntax: true,
+            minifyWhitespace: true,
         })
         .catch(() => process.exit(1))
 })
+
+esbuild
+    .build({
+        define: {
+            'process.env.NODE_ENV': shouldWatch
+                ? `'production'`
+                : `'development'`,
+        },
+        entryPoints: [`packages/admin/resources/js/echo.js`],
+        outfile: `packages/admin/dist/echo.js`,
+        bundle: true,
+        platform: 'browser',
+        mainFields: ['module', 'main'],
+        watch: shouldWatch,
+        minifySyntax: true,
+        minifyWhitespace: true,
+    })
+    .catch(() => process.exit(1))
 
 const formComponents = [
     'color-picker',
