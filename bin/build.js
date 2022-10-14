@@ -17,7 +17,8 @@ packages.forEach((package) => {
             platform: 'neutral',
             mainFields: ['module', 'main'],
             watch: shouldWatch,
-            minify: true,
+            minifySyntax: true,
+            minifyWhitespace: true,
         })
         .catch(() => process.exit(1))
 })
@@ -51,7 +52,8 @@ formComponents.forEach((component) => {
             platform: 'neutral',
             mainFields: ['module', 'main'],
             watch: shouldWatch,
-            minify: true,
+            minifySyntax: true,
+            minifyWhitespace: true,
         })
         .catch(() => process.exit(1))
 })
