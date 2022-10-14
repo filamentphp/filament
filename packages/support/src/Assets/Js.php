@@ -2,6 +2,11 @@
 
 namespace Filament\Support\Assets;
 
+use Composer\InstalledVersions;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
+
 class Js extends Asset
 {
     protected bool $isAsync = false;
@@ -9,6 +14,8 @@ class Js extends Asset
     protected bool $isDeferred = true;
 
     protected bool $isCore = false;
+
+    protected string | Htmlable | null $html = null;
 
     public function async(bool $condition = true): static
     {
@@ -31,6 +38,13 @@ class Js extends Asset
         return $this;
     }
 
+    public function html(string | Htmlable | null $html): static
+    {
+        $this->html = $html;
+
+        return $this;
+    }
+
     public function isAsync(): bool
     {
         return $this->isAsync;
@@ -46,19 +60,45 @@ class Js extends Asset
         return $this->isCore;
     }
 
+    public function getHtml(): Htmlable
+    {
+        $html = $this->html;
+
+        if (Str::of($html)->contains('<script')) {
+            return $html instanceof Htmlable ? $html : new HtmlString($html);
+        }
+
+        $html ??= $this->getSrc();
+
+        $async = $this->isAsync() ? 'async' : '';
+        $defer = $this->isDeferred() ? 'defer' : '';
+
+        return new HtmlString("
+            <script
+                src=\"{$html}\"
+                {$async}
+                {$defer}
+            ></script>
+        ");
+    }
+
     public function getSrc(): string
     {
-        $href = '/js/filament/';
+        if ($this->isRemote()) {
+            return $this->getPath();
+        }
+
+        $src = '/js/filament/';
 
         $package = $this->getPackage();
 
         if (filled($package)) {
-            $href .= "{$package}/";
+            $src .= "{$package}/";
         }
 
-        $href .= "{$this->getName()}.js";
+        $src .= "{$this->getName()}.js";
 
-        return $href;
+        return asset($src) . '?v=' . InstalledVersions::getVersion('filament/support');
     }
 
     public function getPublicPath(): string

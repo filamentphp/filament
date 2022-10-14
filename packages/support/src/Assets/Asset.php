@@ -43,5 +43,10 @@ abstract class Asset
         return $this->path;
     }
 
+    public function isRemote(): bool
+    {
+        return str($this->getPath())->startsWith(['http://', 'https://', '//']);
+    }
+
     abstract public function getPublicPath(): string;
 }

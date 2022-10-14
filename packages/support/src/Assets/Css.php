@@ -20,6 +20,10 @@ class Css extends Asset
 
     public function getHref(): string
     {
+        if ($this->isRemote()) {
+            return $this->getPath();
+        }
+
         $href = '/css/filament/';
 
         $package = $this->getPackage();
@@ -30,7 +34,7 @@ class Css extends Asset
 
         $href .= "{$this->getName()}.css";
 
-        return $href;
+        return asset($href) . '?v=' . InstalledVersions::getVersion('filament/support');
     }
 
     public function getHtml(): Htmlable
@@ -41,7 +45,7 @@ class Css extends Asset
             return $html instanceof Htmlable ? $html : new HtmlString($html);
         }
 
-        $html ??= (asset($this->getHref()) . '?v=' . InstalledVersions::getVersion('filament/support'));
+        $html ??= $this->getHref();
 
         return new HtmlString("<link href=\"{$html}\" rel=\"stylesheet\" />");
     }

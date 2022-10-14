@@ -59,6 +59,7 @@ class SupportServiceProvider extends PackageServiceProvider
     {
         Asset::register([
             Js::make('support', __DIR__ . '/../dist/index.js'),
+            Js::make('async-alpine', 'https://cdn.jsdelivr.net/npm/async-alpine@0.5.x/dist/async-alpine.script.js'),
         ]);
 
         Blade::directive('captureSlots', function (string $expression): string {

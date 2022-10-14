@@ -57,7 +57,7 @@ class AssetManager
             );
         }
 
-        return view('filament-support::assets.scripts', [
+        return view('filament-support::assets', [
             'assets' => $assets,
         ])->render();
     }
@@ -69,7 +69,7 @@ class AssetManager
 
     public function renderStyles(?array $packages = null): string
     {
-        return view('filament-support::assets.styles', [
+        return view('filament-support::assets', [
             'assets' => $this->getStyles($packages),
         ])->render();
     }

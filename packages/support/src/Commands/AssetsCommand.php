@@ -19,14 +19,26 @@ class AssetsCommand extends Command
     public function handle(): int
     {
         foreach (Asset::getAlpineComponents() as $asset) {
+            if ($asset->isRemote()) {
+                continue;
+            }
+
             $this->copyAsset($asset->getPath(), $asset->getPublicPath());
         }
 
         foreach (Asset::getScripts() as $asset) {
+            if ($asset->isRemote()) {
+                continue;
+            }
+
             $this->copyAsset($asset->getPath(), $asset->getPublicPath());
         }
 
         foreach (Asset::getStyles() as $asset) {
+            if ($asset->isRemote()) {
+                continue;
+            }
+
             $this->copyAsset($asset->getPath(), $asset->getPublicPath());
         }
 
