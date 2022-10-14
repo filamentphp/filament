@@ -1,16 +1,31 @@
 @props([
-    'id',
+    'field' => null,
+    'id' => null,
     'label' => null,
     'labelPrefix' => null,
-    'labelSrOnly' => false,
+    'labelSrOnly' => null,
     'labelSuffix' => null,
     'helperText' => null,
     'hint' => null,
+    'hintAction' => null,
     'hintColor' => null,
     'hintIcon' => null,
-    'required' => false,
-    'statePath',
+    'required' => null,
+    'statePath' => null,
 ])
+
+@php
+    $id ??= $field->getId();
+    $label ??= $field->getLabel();
+    $labelSrOnly ??= $field->isLabelHidden();
+    $helperText ??= $field->getHelperText();
+    $hint ??= $field->getHint();
+    $hintAction ??= $field->getHintAction();
+    $hintColor ??= $field->getHintColor();
+    $hintIcon ??= $field->getHintIcon();
+    $required ??= $field->isRequired();
+    $statePath ??= $field->getStatePath();
+@endphp
 
 <div {{ $attributes->class(['filament-forms-field-wrapper']) }}>
     @if ($label && $labelSrOnly)

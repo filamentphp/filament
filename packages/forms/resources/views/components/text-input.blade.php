@@ -10,16 +10,7 @@
 
 <x-dynamic-component
     :component="$getFieldWrapperView()"
-    :id="$getId()"
-    :label="$getLabel()"
-    :label-sr-only="$isLabelHidden()"
-    :helper-text="$getHelperText()"
-    :hint="$getHint()"
-    :hint-action="$getHintAction()"
-    :hint-color="$getHintColor()"
-    :hint-icon="$getHintIcon()"
-    :required="$isRequired()"
-    :state-path="$getStatePath()"
+    :field="$field"
 >
     <div {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-text-input-component flex items-center space-x-2 rtl:space-x-reverse group']) }}>
         @if (($prefixAction = $getPrefixAction()) && (! $prefixAction->isHidden()))

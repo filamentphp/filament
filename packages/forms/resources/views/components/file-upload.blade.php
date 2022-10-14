@@ -1,15 +1,7 @@
 <x-dynamic-component
     :component="$getFieldWrapperView()"
-    :id="$getId()"
-    :label="$getLabel()"
+    :field="$field"
     :label-sr-only="$isAvatar() || $isLabelHidden()"
-    :helper-text="$getHelperText()"
-    :hint="$getHint()"
-    :hint-action="$getHintAction()"
-    :hint-color="$getHintColor()"
-    :hint-icon="$getHintIcon()"
-    :required="$isRequired()"
-    :state-path="$getStatePath()"
 >
     @php
         $imageCropAspectRatio = $getImageCropAspectRatio();
