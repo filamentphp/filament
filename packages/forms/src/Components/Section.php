@@ -56,12 +56,11 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
         return $this;
     }
 
-    public function aside(bool | Closure | null $condition = true) : static
+    public function aside(bool | Closure | null $condition = true): static
     {
         $this->isAside = $condition;
 
         return $this;
-
     }
 
     public function getDescription(): string | Htmlable | null
@@ -94,8 +93,8 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
         return $this->isCollapsible();
     }
 
-    public function isAside() : bool{
-
+    public function isAside(): bool
+    {
         return (bool) ($this->evaluate($this->isAside) ?? false);
     }
 }
