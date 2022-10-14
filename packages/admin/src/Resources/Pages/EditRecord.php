@@ -127,8 +127,7 @@ class EditRecord extends Page implements HasFormActions
 
         return Notification::make()
             ->success()
-            ->title($this->getSavedNotificationTitle())
-            ->persistent();
+            ->title($this->getSavedNotificationTitle());
     }
 
     protected function getSavedNotificationTitle(): ?string
