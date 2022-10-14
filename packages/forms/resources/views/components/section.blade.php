@@ -25,7 +25,7 @@
     id="{{ $getId() }}"
     {{ $attributes->merge($getExtraAttributes())->class([
         'filament-forms-section-component bg-white rounded-xl border border-gray-300' => ! $isAside(),
-        'md:grid grid-cols-2 flex-row' => $isAside(),
+        'flex-row md:grid md:grid-cols-2' => $isAside(),
         'dark:border-gray-600 dark:bg-gray-800' => config('forms.dark_mode')  && ! $isAside(),
     ]) }}
     {{ $getExtraAlpineAttributeBag() }}
