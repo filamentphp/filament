@@ -32,15 +32,33 @@ class AssetManager
         return $this->getAssets($this->alpineComponents, $packages);
     }
 
-    public function getScripts(?array $packages = null): array
+    public function getScripts(?array $packages = null, bool $withCore = false): array
     {
-        return $this->getAssets($this->scripts, $packages);
+        $assets = $this->getAssets($this->scripts, $packages);
+
+        if (! $withCore) {
+            $assets = array_filter(
+                $assets,
+                fn (Js $asset): bool => ! $asset->isCore(),
+            );
+        }
+
+        return $assets;
     }
 
-    public function renderScripts(?array $packages = null): string
+    public function renderScripts(?array $packages = null, bool $withCore = false): string
     {
+        $assets = $this->getScripts($packages, true);
+
+        if ($withCore) {
+            usort(
+                $assets,
+                fn (Js $a): int => $a->isCore() ? 1 : -1,
+            );
+        }
+
         return view('filament-support::assets.scripts', [
-            'assets' => $this->getScripts($packages),
+            'assets' => $assets,
         ])->render();
     }
 

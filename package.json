@@ -21,7 +21,7 @@
         "@ryangjchandler/alpine-tooltip": "^1.2.0",
         "@tailwindcss/forms": "^0.5.2",
         "@tailwindcss/typography": "^0.5.0",
-        "alpinejs": "^3.9.0",
+        "alpinejs": "^3.10.4",
         "async-alpine": "^0.5.3",
         "autoprefixer": "^10.4.0",
         "chart.js": "^3.6.0",

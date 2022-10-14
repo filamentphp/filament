@@ -9,7 +9,6 @@ mix.options({
 })
 mix.setPublicPath('packages/admin/dist')
 mix.setResourceRoot('packages/admin/resources')
-mix.sourceMaps()
 mix.version()
 
 mix.js('packages/admin/resources/js/app.js', 'packages/admin/dist')

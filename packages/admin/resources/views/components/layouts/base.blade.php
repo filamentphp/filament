@@ -80,21 +80,13 @@
             window.filamentData = @json(\Filament\Facades\Filament::getScriptData());
         </script>
 
-        @filamentScripts
+        <script src="//unpkg.com/alpinejs" defer></script>
+
+        @filamentScripts(withCore: true)
 
         @stack('scripts')
 
-        <script defer src="{{ route('filament.asset', [
-            'id' => Filament\get_asset_id('app.js'),
-            'file' => 'app.js',
-        ]) }}"></script>
-
         @if (config('filament.broadcasting.echo'))
-            <script defer src="{{ route('filament.asset', [
-                'id' => Filament\get_asset_id('echo.js'),
-                'file' => 'echo.js',
-            ]) }}"></script>
-
             <script>
                 window.addEventListener('DOMContentLoaded', () => {
                     window.Echo = new window.EchoFactory(@js(config('filament.broadcasting.echo')))

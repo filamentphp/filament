@@ -16,6 +16,8 @@ use Filament\Http\Responses\Auth\LogoutResponse;
 use Filament\Pages\Page;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\Asset;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\ButtonAction;
 use Filament\Tables\Actions\IconButtonAction;
@@ -98,6 +100,11 @@ class FilamentServiceProvider extends PluginServiceProvider
     public function packageBooted(): void
     {
         parent::packageBooted();
+
+        Asset::register([
+            Js::make('app', __DIR__ . '/../dist/app.js')->core(),
+            Js::make('echo', __DIR__ . '/../dist/echo.js')->core(),
+        ]);
 
         $this->bootLivewireComponents();
 

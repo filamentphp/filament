@@ -1,3 +1,6 @@
 @foreach ($assets as $asset)
-    <link rel="stylesheet" href="{{ $asset->getHref() }}" />
+    <link
+        href="{{ asset($asset->getHref()) }}"
+        rel="stylesheet"
+    />
 @endforeach

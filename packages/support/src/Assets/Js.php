@@ -8,6 +8,8 @@ class Js extends Asset
 
     protected bool $isDeferred = true;
 
+    protected bool $isCore = false;
+
     public function async(bool $condition = true): static
     {
         $this->isAsync = $condition;
@@ -22,6 +24,13 @@ class Js extends Asset
         return $this;
     }
 
+    public function core(bool $condition = true): static
+    {
+        $this->isCore = $condition;
+
+        return $this;
+    }
+
     public function isAsync(): bool
     {
         return $this->isAsync;
@@ -30,6 +39,11 @@ class Js extends Asset
     public function isDeferred(): bool
     {
         return $this->isDeferred;
+    }
+
+    public function isCore(): bool
+    {
+        return $this->isCore;
     }
 
     public function getSrc(): string
