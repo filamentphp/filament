@@ -34,7 +34,7 @@
         @class([
             'filament-forms-section-header-wrapper flex items-center px-4 py-2 bg-gray-100 rtl:space-x-reverse overflow-hidden rounded-t-xl min-h-[40px]',
             'min-h-[56px]' => ! $isCompact(),
-            'align-top flex px-2' => $isAside(),
+            'align-top flex px-0' => $isAside(),
             'flex items-center' => ! $isAside(),
             'dark:bg-gray-900' => config('forms.dark_mode'),
         ])
