@@ -94,7 +94,7 @@
     >
         <div @class([
             'filament-forms-section-content',
-            'bg-white rounded-xl border border-gray-300' => $isAside(),
+            'rounded-xl border border-gray-300 bg-white' => $isAside(),
             'dark:border-gray-600 dark:bg-gray-800' => config('forms.dark_mode') && $isAside(),
             'p-6' => ! $isCompact(),
             'p-4' => $isCompact(),
