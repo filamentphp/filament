@@ -1,7 +1,7 @@
 const esbuild = require('esbuild')
 const shouldWatch = process.argv.includes('--watch')
 
-const packages = ['admin', 'forms', 'notifications', 'support']
+const packages = ['app', 'forms', 'notifications', 'support']
 
 packages.forEach((package) => {
     esbuild
@@ -30,8 +30,8 @@ esbuild
                 ? `'production'`
                 : `'development'`,
         },
-        entryPoints: [`packages/admin/resources/js/echo.js`],
-        outfile: `packages/admin/dist/echo.js`,
+        entryPoints: [`packages/app/resources/js/echo.js`],
+        outfile: `packages/app/dist/echo.js`,
         bundle: true,
         platform: 'browser',
         mainFields: ['module', 'main'],

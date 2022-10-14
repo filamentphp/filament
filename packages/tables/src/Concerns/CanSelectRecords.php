@@ -25,7 +25,7 @@ trait CanSelectRecords
 
         if ($this->shouldSelectCurrentPageOnly()) {
             return $this->getTableRecords()
-                ->map(fn ($key): string => (string) $key->id)
+                ->map(fn ($key): string => (string) $key->getKey())
                 ->all();
         }
 

@@ -16,13 +16,14 @@
         "filament/support": "*",
         "laravel/pint": "^1.0",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "nunomaduro/larastan": "^1.0",
+        "nunomaduro/larastan": "^2.0",
         "orchestra/testbench": "^7.0",
         "pestphp/pest": "^1.17",
         "pestphp/pest-plugin-laravel": "^1.0",
         "pestphp/pest-plugin-livewire": "^1.0",
         "pestphp/pest-plugin-parallel": "^0.3",
         "phpstan/extension-installer": "^1.1",
+        "phpstan/phpstan": "1.8.8",
         "ryangjchandler/blade-capture-directive": "^0.2",
         "spatie/invade": "^1.0",
         "spatie/laravel-medialibrary": "^9.11|^10.0",
@@ -35,12 +36,12 @@
     },
     "autoload": {
         "files": [
-            "packages/admin/src/helpers.php",
+            "packages/app/src/helpers.php",
             "packages/support/src/helpers.php"
         ],
         "psr-4": {
             "Filament\\": [
-                "packages/admin/src",
+                "packages/app/src",
                 "packages/spatie-laravel-media-library-plugin/src",
                 "packages/spatie-laravel-settings-plugin/src",
                 "packages/spatie-laravel-tags-plugin/src",

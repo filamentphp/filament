@@ -248,7 +248,7 @@ class Table extends ViewComponent
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();
 
-        return value(invade($livewire)->getTableHeading());
+        return invade($livewire)->getTableHeading();
     }
 
     public function getModel(): string
