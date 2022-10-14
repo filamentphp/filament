@@ -307,6 +307,7 @@ The available hooks are as follows:
 - `footer.after` - after footer
 - `sidebar.start` - before [sidebar](navigation) content
 - `sidebar.end` - after [sidebar](navigation) content
+- `sidebar.footer` - pinned to the bottom of the sidebar, below the content
 - `scripts.start` - before scripts are defined
 - `scripts.end` - after scripts are defined
 - `styles.start` - before styles are defined

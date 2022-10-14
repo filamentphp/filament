@@ -66,7 +66,6 @@
     </header>
 
     <nav class="flex-1 py-6 overflow-x-hidden overflow-y-auto filament-sidebar-nav">
-        <x-filament::layouts.app.sidebar.start />
         {{ \Filament\Facades\Filament::renderHook('sidebar.start') }}
 
         @php
@@ -112,9 +111,8 @@
             @endforeach
         </ul>
 
-        <x-filament::layouts.app.sidebar.end />
         {{ \Filament\Facades\Filament::renderHook('sidebar.end') }}
     </nav>
 
-    <x-filament::layouts.app.sidebar.footer />
+    {{ \Filament\Facades\Filament::renderHook('sidebar.footer') }}
 </aside>
