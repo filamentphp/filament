@@ -104,7 +104,7 @@ class FilamentServiceProvider extends PluginServiceProvider
 
         Asset::register([
             Css::make('app', __DIR__ . '/../dist/index.css')->html(Filament::getTheme()),
-            Js::make('app', __DIR__ . '/../dist/app.js')->core(),
+            Js::make('app', __DIR__ . '/../dist/index.js')->core(),
             Js::make('echo', __DIR__ . '/../dist/echo.js')->core(),
         ]);
 
