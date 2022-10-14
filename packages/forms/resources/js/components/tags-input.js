@@ -1,4 +1,4 @@
-export default function tagsInputFormComponent ({ state }) {
+export default function tagsInputFormComponent({ state }) {
     return {
         newTag: '',
 

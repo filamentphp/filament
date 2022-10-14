@@ -57,9 +57,7 @@ export default function selectFormComponent({
             await this.refreshChoices({ withInitialOptions: true })
 
             if (![null, undefined, ''].includes(this.state)) {
-                this.select.setChoiceByValue(
-                    this.formatState(this.state),
-                )
+                this.select.setChoiceByValue(this.formatState(this.state))
             }
 
             this.refreshPlaceholder()
@@ -81,45 +79,39 @@ export default function selectFormComponent({
             })
 
             if (hasDynamicOptions) {
-                this.$refs.input.addEventListener(
-                    'showDropdown',
-                    async () => {
-                        this.select.clearChoices()
-                        await this.select.setChoices([
-                            {
-                                label: loadingMessage,
-                                value: '',
-                                disabled: true,
-                            },
-                        ])
+                this.$refs.input.addEventListener('showDropdown', async () => {
+                    this.select.clearChoices()
+                    await this.select.setChoices([
+                        {
+                            label: loadingMessage,
+                            value: '',
+                            disabled: true,
+                        },
+                    ])
 
-                        await this.refreshChoices()
-                    },
-                )
+                    await this.refreshChoices()
+                })
             }
 
             if (hasDynamicSearchResults) {
-                this.$refs.input.addEventListener(
-                    'search',
-                    async (event) => {
-                        let search = event.detail.value?.trim()
+                this.$refs.input.addEventListener('search', async (event) => {
+                    let search = event.detail.value?.trim()
 
-                        if ([null, undefined, ''].includes(search)) {
-                            return
-                        }
+                    if ([null, undefined, ''].includes(search)) {
+                        return
+                    }
 
-                        this.isSearching = true
+                    this.isSearching = true
 
-                        this.select.clearChoices()
-                        await this.select.setChoices([
-                            {
-                                label: searchingMessage,
-                                value: '',
-                                disabled: true,
-                            },
-                        ])
-                    },
-                )
+                    this.select.clearChoices()
+                    await this.select.setChoices([
+                        {
+                            label: searchingMessage,
+                            value: '',
+                            disabled: true,
+                        },
+                    ])
+                })
 
                 this.$refs.input.addEventListener(
                     'search',
@@ -149,9 +141,7 @@ export default function selectFormComponent({
                 this.setChoices(choices)
 
                 if (![null, undefined, ''].includes(this.state)) {
-                    this.select.setChoiceByValue(
-                        this.formatState(this.state),
-                    )
+                    this.select.setChoiceByValue(this.formatState(this.state))
                 }
             })
         },
@@ -177,11 +167,7 @@ export default function selectFormComponent({
                 return options
             }
 
-            if (
-                search !== '' &&
-                search !== null &&
-                search !== undefined
-            ) {
+            if (search !== '' && search !== null && search !== undefined) {
                 return await getSearchResultsUsing(search)
             }
 
@@ -226,11 +212,7 @@ export default function selectFormComponent({
             )
 
             if (isMultiple) {
-                if (
-                    state.every((value) =>
-                        existingOptionValues.has(value),
-                    )
-                ) {
+                if (state.every((value) => existingOptionValues.has(value))) {
                     return {}
                 }
 

@@ -1,4 +1,4 @@
-export default function keyValueFormComponent ({ state }) {
+export default function keyValueFormComponent({ state }) {
     return {
         state,
 

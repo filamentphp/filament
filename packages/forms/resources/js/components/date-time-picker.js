@@ -57,10 +57,7 @@ export default function dateTimePickerFormComponent({
                 this.getSelectedDate() ??
                 dayjs().tz(timezone).hour(0).minute(0).second(0)
 
-            if (
-                this.getMaxDate() !== null &&
-                date.isAfter(this.getMaxDate())
-            ) {
+            if (this.getMaxDate() !== null && date.isAfter(this.getMaxDate())) {
                 date = null
             } else if (
                 this.getMinDate() !== null &&
@@ -90,9 +87,7 @@ export default function dateTimePickerFormComponent({
                     return
                 }
 
-                this.focusedDate = this.focusedDate.month(
-                    this.focusedMonth,
-                )
+                this.focusedDate = this.focusedDate.month(this.focusedMonth)
             })
 
             this.$watch('focusedYear', () => {
@@ -100,10 +95,7 @@ export default function dateTimePickerFormComponent({
                     this.focusedYear = this.focusedYear.substring(0, 4)
                 }
 
-                if (
-                    !this.focusedYear ||
-                    this.focusedYear?.length !== 4
-                ) {
+                if (!this.focusedYear || this.focusedYear?.length !== 4) {
                     return
                 }
 
@@ -433,9 +425,7 @@ export default function dateTimePickerFormComponent({
 
             this.emptyDaysInFocusedMonth = Array.from(
                 {
-                    length: this.focusedDate
-                        .date(8 - firstDayOfWeek)
-                        .day(),
+                    length: this.focusedDate.date(8 - firstDayOfWeek).day(),
                 },
                 (_, i) => i + 1,
             )
@@ -449,9 +439,9 @@ export default function dateTimePickerFormComponent({
         },
 
         setFocusedDay: function (day) {
-            this.focusedDate = (
-                this.focusedDate ?? dayjs().tz(timezone)
-            ).date(day)
+            this.focusedDate = (this.focusedDate ?? dayjs().tz(timezone)).date(
+                day,
+            )
         },
 
         setState: function (date) {

@@ -3,7 +3,11 @@ import 'vanilla-colorful/hsl-string-color-picker'
 import 'vanilla-colorful/rgb-string-color-picker'
 import 'vanilla-colorful/rgba-string-color-picker'
 
-export default function colorPickerFormComponent({ isAutofocused, isDisabled, state }) {
+export default function colorPickerFormComponent({
+    isAutofocused,
+    isDisabled,
+    state,
+}) {
     return {
         state,
 
@@ -20,12 +24,9 @@ export default function colorPickerFormComponent({ isAutofocused, isDisabled, st
                 this.setState(event.target.value)
             })
 
-            this.$refs.panel.addEventListener(
-                'color-changed',
-                (event) => {
-                    this.setState(event.detail.value)
-                },
-            )
+            this.$refs.panel.addEventListener('color-changed', (event) => {
+                this.setState(event.detail.value)
+            })
         },
 
         togglePanelVisibility: function () {

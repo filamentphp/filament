@@ -1,11 +1,7 @@
 const esbuild = require('esbuild')
 const shouldWatch = process.argv.includes('--watch')
 
-const packages = [
-    'forms',
-    'notifications',
-    'support',
-]
+const packages = ['forms', 'notifications', 'support']
 
 packages.forEach((package) => {
     esbuild
@@ -47,7 +43,9 @@ formComponents.forEach((component) => {
                     ? `'production'`
                     : `'development'`,
             },
-            entryPoints: [`packages/forms/resources/js/components/${component}.js`],
+            entryPoints: [
+                `packages/forms/resources/js/components/${component}.js`,
+            ],
             outfile: `packages/forms/dist/components/${component}.js`,
             bundle: true,
             platform: 'neutral',

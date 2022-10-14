@@ -4,7 +4,7 @@ import DOMPurify from 'dompurify'
 import { marked } from 'marked'
 import { highlight } from 'mdhl'
 
-export default function markdownEditorFormComponent ({ state, tab }) {
+export default function markdownEditorFormComponent({ state, tab }) {
     return {
         attachment: null,
 
