@@ -8,6 +8,7 @@
     'hint' => null,
     'hintColor' => null,
     'hintIcon' => null,
+    'hintAction' => null,
     'required' => false,
     'statePath',
 ])
