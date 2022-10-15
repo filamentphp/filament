@@ -1281,7 +1281,7 @@ You can add a button to open each file in a new tab with the `enableOpen()` meth
 use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('attachments')
-    ->multipe()
+    ->multiple()
     ->enableOpen()
 ```
 
