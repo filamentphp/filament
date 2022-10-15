@@ -428,12 +428,14 @@ Section::make('Heading')
     ])
     ->columns(2)
 ```
-You may use the `aside()` to align heading & description on the left, and the form components inside `schema([])` on the right:
+
+You may use the `aside()` to align heading & description on the left, and the form components inside a card on the right:
 
 ```php
 use Filament\Forms\Components\Section;
 
 Section::make('Heading')
+    ->description('Description')
     ->aside()
     ->schema([
         // ...
