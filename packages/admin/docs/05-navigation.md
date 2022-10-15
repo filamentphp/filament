@@ -52,6 +52,7 @@ You may customize navigation groups by calling `Filament::registerNavigationGrou
 
 ```php
 use Filament\Facades\Filament;
+use Filament\Navigation\NavigationGroup;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
