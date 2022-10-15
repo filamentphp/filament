@@ -28,6 +28,14 @@ trait HasColors
                     $stateColor = $condition;
                 } elseif ($condition instanceof Closure && $condition($state, $record)) {
                     $stateColor = $color;
+                } elseif (is_array($condition)) {
+                    $conditions = $condition;
+
+                    foreach ($conditions as $condition) {
+                        if ($state === $condition) {
+                            $stateColor = $color;
+                        }
+                    }
                 } elseif ($condition === $state) {
                     $stateColor = $color;
                 }
