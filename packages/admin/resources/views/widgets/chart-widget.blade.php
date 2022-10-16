@@ -1,9 +1,11 @@
 <x-filament::widget class="filament-widgets-chart-widget">
     <x-filament::card>
         <div class="flex items-center justify-between gap-8">
-            <x-filament::card.heading>
-                {{ $this->getHeading() }}
-            </x-filament::card.heading>
+            @if($heading = $this->getHeading())
+                <x-filament::card.heading>
+                    {{ $heading }}
+                </x-filament::card.heading>
+            @endif
 
             @if ($filters = $this->getFilters())
                 <select
@@ -23,7 +25,9 @@
             @endif
         </div>
 
-        <x-filament::hr />
+        @if($heading || $filters)
+            <x-filament::hr />
+        @endif
 
         <div {!! ($pollingInterval = $this->getPollingInterval()) ? "wire:poll.{$pollingInterval}=\"updateChartData\"" : '' !!}>
             <canvas
