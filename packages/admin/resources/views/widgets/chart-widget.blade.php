@@ -1,4 +1,5 @@
 @php
+    $filters = $this->getFilters();
     $heading = $this->getHeading();
 @endphp
 
@@ -11,7 +12,7 @@
                 </x-filament::card.heading>
             @endif
 
-            @if ($filters = $this->getFilters())
+            @if ($filters)
                 <select
                     wire:model="filter"
                     @class([
