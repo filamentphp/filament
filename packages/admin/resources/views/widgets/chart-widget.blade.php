@@ -1,7 +1,11 @@
+@php
+    $heading = $this->getHeading();
+@endphp
+
 <x-filament::widget class="filament-widgets-chart-widget">
     <x-filament::card>
         <div class="flex items-center justify-between gap-8">
-            @if($heading = $this->getHeading())
+            @if ($heading)
                 <x-filament::card.heading>
                     {{ $heading }}
                 </x-filament::card.heading>
@@ -25,7 +29,7 @@
             @endif
         </div>
 
-        @if($heading || $filters)
+        @if ($heading || $filters)
             <x-filament::hr />
         @endif
 
