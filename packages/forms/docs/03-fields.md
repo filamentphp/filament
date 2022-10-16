@@ -2000,7 +2000,7 @@ Using [Livewire's entangle](https://laravel-livewire.com/docs/alpine-js#sharing-
 
 Or, you may bind the value to a Livewire property using [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding):
 
-```
+```blade
 <x-forms::field-wrapper
     :id="$getId()"
     :label="$getLabel()"
