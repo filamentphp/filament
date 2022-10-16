@@ -77,10 +77,10 @@
             x-transition:enter="ease duration-300"
             x-transition:leave="ease duration-300"
             @if ($slideOver)
-                x-transition:enter-start="translate-x-full"
+                x-transition:enter-start="translate-x-full rtl:-translate-x-full"
                 x-transition:enter-end="translate-x-0"
                 x-transition:leave-start="translate-x-0"
-                x-transition:leave-end="translate-x-full"
+                x-transition:leave-end="translate-x-full rtl:-translate-x-full"
             @elseif ($width !== 'screen')
                 x-transition:enter-start="translate-y-8"
                 x-transition:enter-end="translate-y-0"
