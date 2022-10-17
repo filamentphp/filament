@@ -45,7 +45,7 @@
                         :error="$errors->has($statePath)"
                         :prefix="$labelPrefix"
                         :required="$required"
-                        :should-be-marked-required="$shouldBeMarkedAsRequired"
+                        :should-be-marked-as-required="$shouldBeMarkedAsRequired"
                         :suffix="$labelSuffix"
                     >
                         {{ $label }}
