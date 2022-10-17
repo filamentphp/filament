@@ -4,7 +4,6 @@ namespace Filament\Support\Actions\Concerns;
 
 use Closure;
 use Filament\Forms\ComponentContainer;
-use Filament\Support\Actions\Action;
 
 trait CanBeMounted
 {

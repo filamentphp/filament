@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Contracts;
 
-use Filament\Forms\ComponentContainer;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Tables\Actions\Action;

@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Concerns;
 
-use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Form;
 use Illuminate\Support\Arr;

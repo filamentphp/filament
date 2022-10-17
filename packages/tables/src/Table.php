@@ -2,7 +2,6 @@
 
 namespace Filament\Tables;
 
-use Filament\Forms\ComponentContainer;
 use Filament\Forms\Form;
 use Filament\Support\Components\ViewComponent;
 use Filament\Tables\Actions\Action;

@@ -2,7 +2,6 @@
 
 namespace Filament\Resources\Pages;
 
-use Filament\Forms\ComponentContainer;
 use Filament\Forms\Form;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\DeleteAction;
