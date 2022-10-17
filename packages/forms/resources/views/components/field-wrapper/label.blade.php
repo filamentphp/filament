@@ -1,8 +1,8 @@
 @props([
     'error' => false,
+    'isMarkedAsRequired' => true,
     'prefix' => null,
     'required' => false,
-    'isMarkedAsRequired' => true,
     'suffix' => null,
 ])
 

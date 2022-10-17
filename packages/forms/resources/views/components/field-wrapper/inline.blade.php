@@ -10,8 +10,8 @@
     'hintAction' => null,
     'hintColor' => null,
     'hintIcon' => null,
-    'required' => null,
     'isMarkedAsRequired' => null,
+    'required' => null,
     'statePath' => null,
 ])
 
@@ -45,9 +45,9 @@
                     <x-forms::field-wrapper.label
                         :for="$id"
                         :error="$errors->has($statePath)"
+                        :is-marked-as-required="$isMarkedAsRequired"
                         :prefix="$labelPrefix"
                         :required="$required"
-                        :is-marked-as-required="$isMarkedAsRequired"
                         :suffix="$labelSuffix"
                     >
                         {{ $label }}
