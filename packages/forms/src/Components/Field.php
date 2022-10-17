@@ -7,6 +7,7 @@ use Illuminate\Contracts\Support\Htmlable;
 class Field extends Component implements Contracts\HasValidationRules
 {
     use Concerns\CanBeAutofocused;
+    use Concerns\CanBeMarkedRequired;
     use Concerns\CanBeValidated;
     use Concerns\HasHelperText;
     use Concerns\HasHint;

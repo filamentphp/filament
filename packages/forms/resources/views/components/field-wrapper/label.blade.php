@@ -2,6 +2,7 @@
     'error' => false,
     'prefix' => null,
     'required' => false,
+    'shouldBeMarkedRequired' => true,
     'suffix' => null,
 ])
 
@@ -16,7 +17,7 @@
     ])>
         {{ $slot }}
 
-        @if ($required)
+        @if ($required && $shouldBeMarkedRequired)
             <sup class="font-medium text-danger-700">*</sup>
         @endif
     </span>
