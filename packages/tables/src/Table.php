@@ -3,6 +3,7 @@
 namespace Filament\Tables;
 
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Form;
 use Filament\Support\Components\ViewComponent;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
@@ -193,7 +194,7 @@ class Table extends ViewComponent
         return $this->getLivewire()->getCachedTableFilters();
     }
 
-    public function getFiltersForm(): ComponentContainer
+    public function getFiltersForm(): Form
     {
         return $this->getLivewire()->getTableFiltersForm();
     }
@@ -214,7 +215,7 @@ class Table extends ViewComponent
         return invade($livewire)->getTableFiltersLayout() ?? Layout::Dropdown;
     }
 
-    public function getColumnToggleForm(): ComponentContainer
+    public function getColumnToggleForm(): Form
     {
         return $this->getLivewire()->getTableColumnToggleForm();
     }
@@ -269,7 +270,7 @@ class Table extends ViewComponent
         return $this->getLivewire()->getMountedTableActionRecordKey();
     }
 
-    public function getMountedActionForm(): ?ComponentContainer
+    public function getMountedActionForm(): ?Form
     {
         return $this->getLivewire()->getMountedTableActionForm();
     }
@@ -279,7 +280,7 @@ class Table extends ViewComponent
         return $this->getLivewire()->getMountedTableBulkAction();
     }
 
-    public function getMountedBulkActionForm(): ?ComponentContainer
+    public function getMountedBulkActionForm(): ?Form
     {
         return $this->getLivewire()->getMountedTableBulkActionForm();
     }

@@ -20,7 +20,7 @@ This will create a `CategoryResource/RelationManagers/PostsRelationManager.php` 
 
 ```php
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Table;
 use Filament\Tables;
 
@@ -91,8 +91,6 @@ Additionally, you may use any other feature of the [table builder](../../tables)
 For `BelongsToMany` and `MorphToMany` relationships, you may also add pivot table attributes. For example, if you have a `TeamsRelationManager` for your `UserResource`, and you want to add the `role` pivot attribute to the table, you can use:
 
 ```php
-use Filament\Forms;
-use Filament\Resources\Form;
 use Filament\Tables;
 
 public static function table(Table $table): Table
@@ -115,8 +113,7 @@ For `BelongsToMany` and `MorphToMany` relationships, you may also add pivot tabl
 
 ```php
 use Filament\Forms;
-use Filament\Resources\Form;
-use Filament\Tables;
+use Filament\Forms\Form;
 
 public static function form(Form $form): Form
 {
@@ -254,8 +251,7 @@ For `BelongsToMany` and `MorphToMany` relationships, you may also edit pivot tab
 
 ```php
 use Filament\Forms;
-use Filament\Resources\Form;
-use Filament\Tables;
+use Filament\Forms\Form;
 
 public static function form(Form $form): Form
 {
@@ -689,7 +685,7 @@ However, in you're inside a `static` method like `form()` or `table()`, `$this` 
 
 ```php
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 
 public static function form(Form $form): Form

@@ -78,7 +78,7 @@
 
                 {{ $action->getModalContent() }}
 
-                @if ($action->hasFormSchema())
+                @if ($this->mountedActionHasForm())
                     {{ $this->getMountedActionForm() }}
                 @endif
 

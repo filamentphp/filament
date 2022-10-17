@@ -4,6 +4,7 @@ namespace Filament\Tables\Actions;
 
 use Closure;
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Form;
 use Illuminate\Database\Eloquent\Model;
 
 class ViewAction extends Action
@@ -34,7 +35,7 @@ class ViewAction extends Action
 
         $this->disableForm();
 
-        $this->mountUsing(function (ComponentContainer $form, Model $record): void {
+        $this->mountUsing(function (Form $form, Model $record): void {
             $data = $record->attributesToArray();
 
             if ($this->mutateRecordDataUsing) {

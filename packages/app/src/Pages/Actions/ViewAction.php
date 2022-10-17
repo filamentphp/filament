@@ -18,5 +18,7 @@ class ViewAction extends Action
         $this->color('secondary');
 
         $this->groupedIcon('heroicon-m-eye');
+
+        $this->disableForm();
     }
 }

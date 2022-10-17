@@ -19,15 +19,13 @@ class TestsRecords
     public function assertCanSeeTableRecords(): Closure
     {
         return function (array | Collection $records, bool $inOrder = false): static {
-            $livewire = $this->instance();
-
             $html = array_map(
-                function ($record) use ($livewire) {
+                function ($record) {
                     if ($record instanceof Model) {
-                        $record = $livewire->getTableRecordKey($record);
+                        $record = $this->instance()->getTableRecordKey($record);
                     }
 
-                    return "{$livewire->id}.table.records.{$record}";
+                    return "{$this->instance()->id}.table.records.{$record}";
                 },
                 $records instanceof Collection ? $records->all() : $records,
             );
@@ -45,15 +43,13 @@ class TestsRecords
     public function assertCanNotSeeTableRecords(): Closure
     {
         return function (array | Collection $records): static {
-            $livewire = $this->instance();
-
             $html = array_map(
-                function ($record) use ($livewire) {
+                function ($record) {
                     if ($record instanceof Model) {
-                        $record = $livewire->getTableRecordKey($record);
+                        $record = $this->instance()->getTableRecordKey($record);
                     }
 
-                    return "wire:key=\"{$livewire->id}.table.records.{$record}\"";
+                    return "wire:key=\"{$this->instance()->id}.table.records.{$record}\"";
                 },
                 $records instanceof Collection ? $records->all() : $records,
             );

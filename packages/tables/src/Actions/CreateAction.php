@@ -4,6 +4,7 @@ namespace Filament\Tables\Actions;
 
 use Closure;
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Form;
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
@@ -43,7 +44,7 @@ class CreateAction extends Action
 
         $this->button();
 
-        $this->action(function (array $arguments, ComponentContainer $form, HasTable $livewire): void {
+        $this->action(function (array $arguments, Form $form, HasTable $livewire): void {
             $model = $this->getModel();
 
             $record = $this->process(function (array $data) use ($model): Model {

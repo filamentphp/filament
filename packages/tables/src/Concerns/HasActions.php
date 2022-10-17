@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Form;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\Action;
@@ -11,7 +12,7 @@ use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property ComponentContainer $mountedTableActionForm
+ * @property Form $mountedTableActionForm
  */
 trait HasActions
 {
@@ -101,7 +102,7 @@ trait HasActions
         $result = null;
 
         try {
-            if ($action->hasForm()) {
+            if ($this->mountedTableActionHasForm()) {
                 $action->callBeforeFormValidated();
 
                 $action->formData($form->getState());
@@ -162,7 +163,9 @@ trait HasActions
         );
 
         try {
-            if ($action->hasForm()) {
+            $hasForm = $this->mountedTableActionHasForm();
+
+            if ($hasForm) {
                 $action->callBeforeFormFilled();
             }
 
@@ -170,7 +173,7 @@ trait HasActions
                 'form' => $this->getMountedTableActionForm(),
             ]);
 
-            if ($action->hasForm()) {
+            if ($hasForm) {
                 $action->callAfterFormFilled();
             }
         } catch (Halt $exception) {
@@ -182,7 +185,7 @@ trait HasActions
             return;
         }
 
-        if (! $action->shouldOpenModal()) {
+        if (! $this->mountedTableActionShouldOpenModal()) {
             return $this->callMountedTableAction();
         }
 
@@ -191,6 +194,20 @@ trait HasActions
         $this->dispatchBrowserEvent('open-modal', [
             'id' => "{$this->id}-table-action",
         ]);
+    }
+
+    public function mountedTableActionShouldOpenModal(): bool
+    {
+        $action = $this->getMountedTableAction();
+
+        return $action->isConfirmationRequired() ||
+            $action->getModalContent() ||
+            $this->mountedTableActionHasForm();
+    }
+
+    public function mountedTableActionHasForm(): bool
+    {
+        return (bool) count($this->getMountedTableActionForm()?->getComponents() ?? []);
     }
 
     public function getCachedTableActions(): array
@@ -212,7 +229,7 @@ trait HasActions
         return $this->getCachedTableAction($this->mountedTableAction) ?? $this->getCachedTableEmptyStateAction($this->mountedTableAction) ?? $this->getCachedTableHeaderAction($this->mountedTableAction);
     }
 
-    public function getMountedTableActionForm(): ?ComponentContainer
+    public function getMountedTableActionForm(): ?Form
     {
         $action = $this->getMountedTableAction();
 
@@ -224,11 +241,12 @@ trait HasActions
             return $this->getCachedForm('mountedTableActionForm');
         }
 
-        return $this->makeForm()
-            ->schema($action->getFormSchema())
-            ->model($this->getMountedTableActionRecord() ?? $this->getTableQuery()->getModel()::class)
-            ->statePath('mountedTableActionData')
-            ->context($this->mountedTableAction);
+        return $action->getForm(
+            $this->makeForm()
+                ->model($this->getMountedTableActionRecord() ?? $this->getTableQuery()->getModel()::class)
+                ->statePath('mountedTableActionData')
+                ->context($this->mountedTableAction),
+        );
     }
 
     public function getMountedTableActionRecordKey()

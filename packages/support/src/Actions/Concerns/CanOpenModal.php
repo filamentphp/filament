@@ -242,11 +242,6 @@ trait CanOpenModal
         return $this->evaluate($this->isModalSlideOver);
     }
 
-    public function shouldOpenModal(): bool
-    {
-        return $this->isConfirmationRequired() || $this->hasFormSchema() || $this->getModalContent();
-    }
-
     protected function makeExtraModalAction(string $name, ?array $arguments = null): ModalAction
     {
         return static::makeModalAction($name)

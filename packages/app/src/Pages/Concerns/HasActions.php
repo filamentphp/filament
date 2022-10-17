@@ -12,7 +12,7 @@ use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property Forms\ComponentContainer $mountedActionForm
+ * @property Forms\Form $mountedActionForm
  */
 trait HasActions
 {
@@ -43,7 +43,7 @@ trait HasActions
         $result = null;
 
         try {
-            if ($action->hasForm()) {
+            if ($this->mountedActionHasForm()) {
                 $action->callBeforeFormValidated();
 
                 $action->formData($form->getState());
@@ -95,7 +95,9 @@ trait HasActions
         );
 
         try {
-            if ($action->hasForm()) {
+            $hasForm = $this->mountedActionHasForm();
+
+            if ($hasForm) {
                 $action->callBeforeFormFilled();
             }
 
@@ -103,7 +105,7 @@ trait HasActions
                 'form' => $this->getMountedActionForm(),
             ]);
 
-            if ($action->hasForm()) {
+            if ($hasForm) {
                 $action->callAfterFormFilled();
             }
         } catch (Halt $exception) {
@@ -114,7 +116,7 @@ trait HasActions
             return;
         }
 
-        if (! $action->shouldOpenModal()) {
+        if (! $this->mountedActionShouldOpenModal()) {
             return $this->callMountedAction();
         }
 
@@ -123,6 +125,20 @@ trait HasActions
         $this->dispatchBrowserEvent('open-modal', [
             'id' => 'page-action',
         ]);
+    }
+
+    public function mountedActionShouldOpenModal(): bool
+    {
+        $action = $this->getMountedAction();
+
+        return $action->isConfirmationRequired() ||
+            $action->getModalContent() ||
+            $this->mountedActionHasForm();
+    }
+
+    public function mountedActionHasForm(): bool
+    {
+        return (bool) count($this->getMountedActionForm()?->getComponents() ?? []);
     }
 
     protected function getCachedActions(): array
@@ -176,7 +192,7 @@ trait HasActions
             return $action;
         }
 
-        if (! $this instanceof Contracts\HasFormActions) {
+        if (! $this instanceof Contracts\HasCachedFormActions) {
             return null;
         }
 
@@ -190,7 +206,7 @@ trait HasActions
         ];
     }
 
-    public function getMountedActionForm(): ?Forms\ComponentContainer
+    public function getMountedActionForm(): ?Forms\Form
     {
         $action = $this->getMountedAction();
 
@@ -202,11 +218,12 @@ trait HasActions
             return $this->getCachedForm('mountedActionForm');
         }
 
-        return $this->makeForm()
-            ->schema($action->getFormSchema())
-            ->statePath('mountedActionData')
-            ->model($this->getMountedActionFormModel())
-            ->context($this->mountedAction);
+        return $action->getForm(
+            $this->makeForm()
+                ->statePath('mountedActionData')
+                ->model($this->getMountedActionFormModel())
+                ->context($this->mountedAction),
+        );
     }
 
     protected function getMountedActionFormModel(): Model | string | null

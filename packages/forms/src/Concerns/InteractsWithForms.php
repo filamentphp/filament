@@ -3,7 +3,9 @@
 namespace Filament\Forms\Concerns;
 
 use Closure;
+use Exception;
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
@@ -199,7 +201,7 @@ trait InteractsWithForms
         }
     }
 
-    protected function cacheForm(string $name, ComponentContainer | Closure | null $form): ?ComponentContainer
+    protected function cacheForm(string $name, Form | Closure | null $form): ?Form
     {
         $this->isCachingForms = true;
 
@@ -207,6 +209,8 @@ trait InteractsWithForms
 
         if ($form) {
             $this->cachedForms[$name] = $form;
+        } else {
+            unset($this->cachedForms[$name]);
         }
 
         $this->isCachingForms = false;
@@ -218,7 +222,27 @@ trait InteractsWithForms
     {
         $this->isCachingForms = true;
 
-        $this->cachedForms = array_filter($this->getUncachedForms());
+        $this->cachedForms = collect($this->getForms())
+            ->merge($this->getTraitForms())
+            ->mapWithKeys(function (Form | string | null $form, string | int $formName): array {
+                if ($form === null) {
+                    return ['' => null];
+                }
+
+                if (is_string($formName)) {
+                    return [$formName => $form];
+                }
+
+                if (! method_exists($this, $form)) {
+                    $livewireClass = $this::class;
+
+                    throw new Exception("Form configuration method [{$formName}()] is missing from Livewire component [{$livewireClass}].");
+                }
+
+                return [$form => $this->{$form}($this->makeForm())];
+            })
+            ->forget('')
+            ->all();
 
         $this->isCachingForms = false;
 
@@ -230,11 +254,6 @@ trait InteractsWithForms
         );
 
         return $this->cachedForms;
-    }
-
-    protected function getUncachedForms(): array
-    {
-        return array_merge($this->getTraitForms(), $this->getForms());
     }
 
     protected function getTraitForms(): array
@@ -255,7 +274,7 @@ trait InteractsWithForms
         return array_key_exists($name, $this->getCachedForms());
     }
 
-    protected function getCachedForm($name): ?ComponentContainer
+    protected function getCachedForm($name): ?Form
     {
         return $this->getCachedForms()[$name] ?? null;
     }
@@ -269,32 +288,49 @@ trait InteractsWithForms
         return $this->cachedForms;
     }
 
+    protected function getForms(): array
+    {
+        return [
+            'form',
+        ];
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema($this->getFormSchema())
+            ->model($this->getFormModel())
+            ->statePath($this->getFormStatePath())
+            ->context($this->getFormContext());
+    }
+
+    /**
+     * @deprecated Override the `form()` method to configure the default form.
+     */
     protected function getFormModel(): Model | string | null
     {
         return null;
     }
 
+    /**
+     * @deprecated Override the `form()` method to configure the default form.
+     */
     protected function getFormSchema(): array
     {
         return [];
     }
 
-    protected function getForms(): array
-    {
-        return [
-            'form' => $this->makeForm()
-                ->schema($this->getFormSchema())
-                ->model($this->getFormModel())
-                ->statePath($this->getFormStatePath())
-                ->context($this->getFormContext()),
-        ];
-    }
-
+    /**
+     * @deprecated Override the `form()` method to configure the default form.
+     */
     protected function getFormContext(): ?string
     {
         return null;
     }
 
+    /**
+     * @deprecated Override the `form()` method to configure the default form.
+     */
     protected function getFormStatePath(): ?string
     {
         return null;
@@ -322,8 +358,8 @@ trait InteractsWithForms
         return $attributes;
     }
 
-    protected function makeForm(): ComponentContainer
+    protected function makeForm(): Form
     {
-        return ComponentContainer::make($this);
+        return Form::make($this);
     }
 }

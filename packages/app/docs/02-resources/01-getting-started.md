@@ -98,7 +98,7 @@ Resource classes contain a static `form()` method that is used to build the form
 
 ```php
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 
 public static function form(Form $form): Form
 {

@@ -5,12 +5,13 @@ namespace Filament\Support\Actions\Concerns;
 use Closure;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Wizard;
+use Filament\Forms\Form;
 
 trait HasForm
 {
     protected array $formData = [];
 
-    protected array | Closure $formSchema = [];
+    protected array | Closure | null $form = null;
 
     protected bool | Closure $isFormDisabled = false;
 
@@ -23,43 +24,47 @@ trait HasForm
         return $this;
     }
 
-    public function form(array | Closure $schema): static
+    public function form(array | Closure | null $form): static
     {
-        $this->formSchema = $schema;
+        $this->form = $form;
 
         return $this;
     }
 
-    public function getFormSchema(): array
+    public function getForm(Form $form): ?Form
     {
-        $schema = $this->evaluate($this->formSchema);
+        $modifiedForm = $this->evaluate($this->form, [
+            'form' => $form,
+        ]);
 
-        if ($this->isWizard()) {
-            return [
-                Wizard::make($schema)
+        if ($modifiedForm === null) {
+            return null;
+        }
+
+        if (is_array($modifiedForm) && (! count($modifiedForm))) {
+            return null;
+        }
+
+        if (is_array($modifiedForm) && $this->isWizard()) {
+            $modifiedForm = [
+                Wizard::make($modifiedForm)
                     ->startOnStep($this->getWizardStartStep())
                     ->cancelAction($this->getModalCancelAction())
                     ->submitAction($this->getModalSubmitAction())
                     ->skippable($this->isWizardSkippable())
                     ->disabled($this->isFormDisabled()),
             ];
-        } elseif ($this->isFormDisabled()) {
-            return [
-                Group::make($schema)->disabled(),
-            ];
         }
 
-        return $schema;
-    }
+        if (is_array($modifiedForm)) {
+            $modifiedForm = $form->schema($modifiedForm);
+        }
 
-    public function hasForm(): bool
-    {
-        return $this->hasFormSchema();
-    }
+        if ($this->isFormDisabled()) {
+            return $modifiedForm->disabled();
+        }
 
-    public function hasFormSchema(): bool
-    {
-        return (bool) count($this->getFormSchema());
+        return $modifiedForm;
     }
 
     public function mutateFormDataUsing(?Closure $callback): static

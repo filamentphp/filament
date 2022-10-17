@@ -13,7 +13,7 @@
 @endphp
 
 <x-forms::button
-    :form="$getForm()"
+    :form="$getFormToSubmit()"
     :type="$canSubmitForm() ? 'submit' : 'button'"
     :tag="$action->getUrl() ? 'a' : 'button'"
     :wire:click="$wireClickAction"

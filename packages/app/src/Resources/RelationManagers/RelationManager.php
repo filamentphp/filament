@@ -4,8 +4,7 @@ namespace Filament\Resources\RelationManagers;
 
 use Closure;
 use Filament\Facades\Filament;
-use function Filament\locale_has_pluralization;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
@@ -17,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Livewire\Component;
+use function Filament\locale_has_pluralization;
 
 class RelationManager extends Component implements Tables\Contracts\HasRelationshipTable, Tables\Contracts\HasTable
 {
@@ -55,23 +55,6 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return Str::lcfirst(class_basename(static::class));
     }
 
-    protected function getResourceForm(?int $columns = null, bool $isDisabled = false): Form
-    {
-        return static::form(
-            $this->getBaseResourceForm(
-                columns: $columns,
-                isDisabled: $isDisabled,
-            ),
-        );
-    }
-
-    protected function getBaseResourceForm(?int $columns = null, bool $isDisabled = false): Form
-    {
-        return Form::make()
-            ->columns($columns)
-            ->disabled($isDisabled);
-    }
-
     protected function configureTableAction(Tables\Actions\Action $action): void
     {
         match (true) {
@@ -104,16 +87,11 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
             ->recordTitleAttribute(static::getRecordTitleAttribute());
     }
 
-    protected function getCreateFormSchema(): array
-    {
-        return $this->getResourceForm(columns: 2)->getSchema();
-    }
-
     protected function configureCreateAction(Tables\Actions\CreateAction $action): void
     {
         $action
             ->authorize($this->canCreate())
-            ->form($this->getCreateFormSchema());
+            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
     }
 
     protected function configureDeleteAction(Tables\Actions\DeleteAction $action): void
@@ -134,16 +112,11 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
             ->authorize(fn (Model $record): bool => $this->canDissociate($record));
     }
 
-    protected function getEditFormSchema(): array
-    {
-        return $this->getResourceForm(columns: 2)->getSchema();
-    }
-
     protected function configureEditAction(Tables\Actions\EditAction $action): void
     {
         $action
             ->authorize(fn (Model $record): bool => $this->canEdit($record))
-            ->form($this->getEditFormSchema());
+            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
     }
 
     protected function configureForceDeleteAction(Tables\Actions\ForceDeleteAction $action): void
@@ -164,16 +137,11 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
             ->authorize(fn (Model $record): bool => $this->canRestore($record));
     }
 
-    protected function getViewFormSchema(): array
-    {
-        return $this->getResourceForm(columns: 2, isDisabled: true)->getSchema();
-    }
-
     protected function configureViewAction(Tables\Actions\ViewAction $action): void
     {
         $action
             ->authorize(fn (Model $record): bool => $this->canView($record))
-            ->form($this->getViewFormSchema());
+            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
     }
 
     protected function configureTableBulkAction(BulkAction $action): void
@@ -262,7 +230,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return Gate::forUser($user)->check($action, $model);
     }
 
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form;
     }
@@ -602,5 +570,10 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
             return null;
         };
+    }
+
+    protected function getForms(): array
+    {
+        return [];
     }
 }

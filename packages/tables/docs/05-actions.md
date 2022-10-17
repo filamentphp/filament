@@ -221,7 +221,7 @@ use Filament\Tables\Actions\Action;
 use Illuminate\Database\Eloquent\Collection;
 
 Action::make('updateAuthor')
-    ->mountUsing(fn (Forms\ComponentContainer $form, User $record) => $form->fill([
+    ->mountUsing(fn (Forms\Form $form, User $record) => $form->fill([
         'authorId' => $record->author->id,
     ]))
     ->action(function (User $record, array $data): void {

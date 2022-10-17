@@ -3,6 +3,7 @@
 namespace Filament\Tests\App\Fixtures\Pages;
 
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 
@@ -28,11 +29,12 @@ class Settings extends Page
             ->send();
     }
 
-    protected function getFormSchema(): array
+    public function form(Form $form): Form
     {
-        return [
-            TextInput::make('name')->required(),
-        ];
+        return $form
+            ->schema([
+                TextInput::make('name')->required(),
+            ]);
     }
 
     public function save()

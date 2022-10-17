@@ -3,13 +3,13 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Forms;
-use Filament\Forms\ComponentContainer;
+use Filament\Forms\Form;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Filters\Layout;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * @property ComponentContainer $tableFiltersForm
+ * @property Form $tableFiltersForm
  */
 trait HasFilters
 {
@@ -41,7 +41,7 @@ trait HasFilters
         return $this->getCachedTableFilters()[$name] ?? null;
     }
 
-    public function getTableFiltersForm(): Forms\ComponentContainer
+    public function getTableFiltersForm(): Form
     {
         if ((! $this->isCachingForms) && $this->hasCachedForm('tableFiltersForm')) {
             return $this->getCachedForm('tableFiltersForm');

@@ -901,7 +901,7 @@
 
                 {{ $action->getModalContent() }}
 
-                @if ($action->hasFormSchema())
+                @if ($this->mountedTableActionHasForm())
                     {{ $getMountedActionForm() }}
                 @endif
 
@@ -958,7 +958,7 @@
 
                 {{ $action->getModalContent() }}
 
-                @if ($action->hasFormSchema())
+                @if ($this->mountedTableBulkActionHasForm())
                     {{ $getMountedBulkActionForm() }}
                 @endif
 

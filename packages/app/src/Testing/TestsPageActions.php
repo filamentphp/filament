@@ -27,12 +27,8 @@ class TestsPageActions
 
             $this->call('mountAction', $name);
 
-            $action = $this->instance()->getCachedAction($name);
-
-            if (! $action->shouldOpenModal()) {
+            if ($this->instance()->mountedAction === null) {
                 $this->assertNotDispatchedBrowserEvent('open-modal');
-
-                $this->assertNotSet('mountedAction', $action->getName());
 
                 return $this;
             }
@@ -111,10 +107,9 @@ class TestsPageActions
     public function assertPageActionExists(): Closure
     {
         return function (string $name): static {
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
+            $action = $this->instance()->getCachedAction($name);
 
-            $action = $livewire->getCachedAction($name);
+            $livewireClass = $this->instance()::class;
 
             Assert::assertInstanceOf(
                 Action::class,
@@ -129,10 +124,9 @@ class TestsPageActions
     public function assertPageActionDoesNotExist(): Closure
     {
         return function (string $name): static {
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
+            $action = $this->instance()->getCachedAction($name);
 
-            $action = $livewire->getCachedAction($name);
+            $livewireClass = $this->instance()::class;
 
             Assert::assertNull(
                 $action,
@@ -149,10 +143,9 @@ class TestsPageActions
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
+            $action = $this->instance()->getCachedAction($name);
 
-            $action = $livewire->getCachedAction($name);
+            $livewireClass = $this->instance()::class;
 
             Assert::assertFalse(
                 $action->isHidden(),
@@ -169,10 +162,9 @@ class TestsPageActions
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
+            $action = $this->instance()->getCachedAction($name);
 
-            $action = $livewire->getCachedAction($name);
+            $livewireClass = $this->instance()::class;
 
             Assert::assertTrue(
                 $action->isHidden(),
@@ -189,10 +181,9 @@ class TestsPageActions
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
+            $action = $this->instance()->getCachedAction($name);
 
-            $action = $livewire->getCachedAction($name);
+            $livewireClass = $this->instance()::class;
 
             Assert::assertTrue(
                 $action->isEnabled(),
@@ -209,10 +200,9 @@ class TestsPageActions
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
+            $action = $this->instance()->getCachedAction($name);
 
-            $action = $livewire->getCachedAction($name);
+            $livewireClass = $this->instance()::class;
 
             Assert::assertTrue(
                 $action->isDisabled(),
@@ -229,10 +219,9 @@ class TestsPageActions
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
+            $action = $this->instance()->getCachedAction($name);
 
-            $action = $livewire->getCachedAction($name);
+            $livewireClass = $this->instance()::class;
 
             Assert::assertTrue(
                 $action->getIcon() === $icon,
@@ -249,10 +238,9 @@ class TestsPageActions
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
+            $action = $this->instance()->getCachedAction($name);
 
-            $action = $livewire->getCachedAction($name);
+            $livewireClass = $this->instance()::class;
 
             Assert::assertFalse(
                 $action->getIcon() === $icon,
@@ -269,10 +257,9 @@ class TestsPageActions
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
+            $action = $this->instance()->getCachedAction($name);
 
-            $action = $livewire->getCachedAction($name);
+            $livewireClass = $this->instance()::class;
 
             Assert::assertTrue(
                 $action->getLabel() === $label,
@@ -289,10 +276,9 @@ class TestsPageActions
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
+            $action = $this->instance()->getCachedAction($name);
 
-            $action = $livewire->getCachedAction($name);
+            $livewireClass = $this->instance()::class;
 
             Assert::assertFalse(
                 $action->getLabel() === $label,
@@ -309,10 +295,9 @@ class TestsPageActions
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
+            $action = $this->instance()->getCachedAction($name);
 
-            $action = $livewire->getCachedAction($name);
+            $livewireClass = $this->instance()::class;
 
             Assert::assertTrue(
                 $action->getColor() === $color,
@@ -329,10 +314,9 @@ class TestsPageActions
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
+            $action = $this->instance()->getCachedAction($name);
 
-            $action = $livewire->getCachedAction($name);
+            $livewireClass = $this->instance()::class;
 
             Assert::assertFalse(
                 $action->getColor() === $color,
@@ -349,10 +333,9 @@ class TestsPageActions
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
+            $action = $this->instance()->getCachedAction($name);
 
-            $action = $livewire->getCachedAction($name);
+            $livewireClass = $this->instance()::class;
 
             Assert::assertTrue(
                 $action->getUrl() === $url,
@@ -369,10 +352,9 @@ class TestsPageActions
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
+            $action = $this->instance()->getCachedAction($name);
 
-            $action = $livewire->getCachedAction($name);
+            $livewireClass = $this->instance()::class;
 
             Assert::assertFalse(
                 $action->getUrl() === $url,
@@ -389,10 +371,9 @@ class TestsPageActions
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
+            $action = $this->instance()->getCachedAction($name);
 
-            $action = $livewire->getCachedAction($name);
+            $livewireClass = $this->instance()::class;
 
             Assert::assertTrue(
                 $action->shouldOpenUrlInNewTab(),
@@ -409,10 +390,9 @@ class TestsPageActions
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
+            $action = $this->instance()->getCachedAction($name);
 
-            $action = $livewire->getCachedAction($name);
+            $livewireClass = $this->instance()::class;
 
             Assert::assertFalse(
                 $action->shouldOpenUrlInNewTab(),
