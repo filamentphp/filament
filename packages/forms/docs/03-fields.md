@@ -212,7 +212,7 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')->placeholder('John Doe')
 ```
 
-### Marking required
+### Marking as required
 
 By default, [required fields](validation#required) will show an asterisk (*) next to their label. You may want to hide the asterisk on forms with only required fields, or where it makes sense to add a [hint](#helper-messages-and-hints) to optional fields instead:
 
@@ -221,7 +221,7 @@ use Filament\Forms\Components\TextInput;
 
 TextInput::make('name')
     ->required()
-    ->markRequired(false)
+    ->markAsRequired(false)
 ```
 
 ### Global settings
