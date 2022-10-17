@@ -2,8 +2,8 @@
 
 namespace {{ namespace }};
 
-use App\Filament\Resources\{{ resource }}\Pages;
-use App\Filament\Resources\{{ resource }}\RelationManagers;
+use {{ resource }}\Pages;
+use {{ resource }}\RelationManagers;
 use App\Models\{{ model }};
 use Filament\Forms;
 use Filament\Resources\Form;

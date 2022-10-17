@@ -2,7 +2,7 @@
 
 namespace {{ namespace }};
 
-use App\Filament\Resources\{{ resource }};
+use {{ resource }};
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
 

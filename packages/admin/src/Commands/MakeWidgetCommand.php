@@ -18,14 +18,19 @@ class MakeWidgetCommand extends Command
 
     public function handle(): int
     {
-        $widget = (string) Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `BlogPostsChart`)', 'name'))
+        $path = config('filament.widgets.path', app_path('Filament\\Widgets\\'));
+        $resourcesPath = config('filament.resources.path', app_path('Filament\\Resources\\'));
+        $namespace = config('filament.widgets.namespace', 'App\\Filament\\Widgets');
+        $resourcesNamespace = config('filament.resources.namespace', 'App\\Filament\\Resources');
+
+        $widget = (string)Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `BlogPostsChart`)', 'name'))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
             ->replace('/', '\\');
-        $widgetClass = (string) Str::of($widget)->afterLast('\\');
+        $widgetClass = (string)Str::of($widget)->afterLast('\\');
         $widgetNamespace = Str::of($widget)->contains('\\') ?
-            (string) Str::of($widget)->beforeLast('\\') :
+            (string)Str::of($widget)->beforeLast('\\') :
             '';
 
         $resource = null;
@@ -34,45 +39,50 @@ class MakeWidgetCommand extends Command
         $resourceInput = $this->option('resource') ?? $this->ask('(Optional) Resource (e.g. `BlogPostResource`)');
 
         if ($resourceInput !== null) {
-            $resource = (string) Str::of($resourceInput)
+            $resource = (string)Str::of($resourceInput)
                 ->studly()
                 ->trim('/')
                 ->trim('\\')
                 ->trim(' ')
                 ->replace('/', '\\');
 
-            if (! Str::of($resource)->endsWith('Resource')) {
+            if (!Str::of($resource)->endsWith('Resource')) {
                 $resource .= 'Resource';
             }
 
-            $resourceClass = (string) Str::of($resource)
+            $resourceClass = (string)Str::of($resource)
                 ->afterLast('\\');
         }
 
-        $view = Str::of($widget)
-            ->prepend($resource === null ? 'filament\\widgets\\' : "filament\\resources\\{$resource}\\widgets\\")
+        $view = Str::of($widget)->prepend(
+            (string)Str::of($resource === null ? $namespace : "{$resourcesNamespace}\\{$resource}\\widgets\\")
+                ->replace('App\\', '')
+        )
             ->explode('\\')
-            ->map(fn ($segment) => Str::kebab($segment))
+            ->map(fn($segment) => Str::lower(Str::kebab($segment)))
             ->implode('.');
 
-        $path = app_path(
-            (string) Str::of($widget)
-                ->prepend($resource === null ? 'Filament\\Widgets\\' : "Filament\\Resources\\{$resource}\\Widgets\\")
-                ->replace('\\', '/')
-                ->append('.php'),
-        );
+
+        $path = (string)Str::of($widget)
+            ->prepend('/')
+            ->prepend($resource === null ? $path : "{$resourcesPath}\\{$resource}\\Widgets\\")
+            ->replace('\\', '/')
+            ->replace('//', '/')
+            ->append('.php');
+
 
         $viewPath = resource_path(
-            (string) Str::of($view)
+            (string)Str::of($view)
                 ->replace('.', '/')
                 ->prepend('views/')
                 ->append('.blade.php'),
         );
 
-        if (! $this->option('force') && $this->checkForCollision([
-            $path,
-            ($this->option('stats-overview') || $this->option('chart')) ?: $viewPath,
-        ])) {
+
+        if (!$this->option('force') && $this->checkForCollision([
+                $path,
+                ($this->option('stats-overview') || $this->option('chart')) ?: $viewPath,
+            ])) {
             return static::INVALID;
         }
 
@@ -93,23 +103,23 @@ class MakeWidgetCommand extends Command
 
             $this->copyStubToApp('ChartWidget', $path, [
                 'class' => $widgetClass,
-                'namespace' => filled($resource) ? "App\\Filament\\Resources\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : 'App\\Filament\\Widgets' . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
+                'namespace' => filled($resource) ? "{$resourcesNamespace}\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : $namespace . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
                 'chart' => Str::studly($chart),
             ]);
         } elseif ($this->option('table')) {
             $this->copyStubToApp('TableWidget', $path, [
                 'class' => $widgetClass,
-                'namespace' => filled($resource) ? "App\\Filament\\Resources\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : 'App\\Filament\\Widgets' . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
+                'namespace' => filled($resource) ? "{$resourcesNamespace}\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : $namespace . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
             ]);
         } elseif ($this->option('stats-overview')) {
             $this->copyStubToApp('StatsOverviewWidget', $path, [
                 'class' => $widgetClass,
-                'namespace' => filled($resource) ? "App\\Filament\\Resources\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : 'App\\Filament\\Widgets' . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
+                'namespace' => filled($resource) ? "{$resourcesNamespace}\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : $namespace . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
             ]);
         } else {
             $this->copyStubToApp('Widget', $path, [
                 'class' => $widgetClass,
-                'namespace' => filled($resource) ? "App\\Filament\\Resources\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : 'App\\Filament\\Widgets' . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
+                'namespace' => filled($resource) ? "{$resourcesNamespace}\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : $namespace . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
                 'view' => $view,
             ]);
 
