@@ -6,17 +6,17 @@ use Closure;
 
 trait CanBeMarkedAsRequired
 {
-    protected bool | Closure $shouldBeMarkedAsRequired = true;
+    protected bool | Closure $isMarkedAsRequired = true;
 
     public function markAsRequired(bool | Closure $condition = true): static
     {
-        $this->shouldBeMarkedAsRequired = $condition;
+        $this->isMarkedAsRequired = $condition;
 
         return $this;
     }
 
-    public function shouldBeMarkedAsRequired(): string
+    public function isMarkedAsRequired(): string
     {
-        return $this->evaluate($this->shouldBeMarkedAsRequired);
+        return $this->evaluate($this->isMarkedAsRequired);
     }
 }

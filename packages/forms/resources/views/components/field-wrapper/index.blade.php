@@ -11,7 +11,7 @@
     'hintColor' => null,
     'hintIcon' => null,
     'required' => null,
-    'shouldBeMarkedAsRequired' => null,
+    'isMarkedAsRequired' => null,
     'statePath' => null,
 ])
 
@@ -25,7 +25,7 @@
     $hintColor ??= $field->getHintColor();
     $hintIcon ??= $field->getHintIcon();
     $required ??= $field->isRequired();
-    $shouldBeMarkedAsRequired ??= $field->shouldBeMarkedAsRequired();
+    $isMarkedAsRequired ??= $field->isMarkedAsRequired();
     $statePath ??= $field->getStatePath();
 @endphp
 
@@ -45,7 +45,7 @@
                         :error="$errors->has($statePath)"
                         :prefix="$labelPrefix"
                         :required="$required"
-                        :should-be-marked-as-required="$shouldBeMarkedAsRequired"
+                        :is-marked-as-required="$isMarkedAsRequired"
                         :suffix="$labelSuffix"
                     >
                         {{ $label }}
