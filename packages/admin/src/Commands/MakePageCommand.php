@@ -23,14 +23,14 @@ class MakePageCommand extends Command
         $namespace = config('filament.pages.namespace', 'App\\Filament\\Pages');
         $resourcesNamespace = config('filament.resources.namespace', 'App\\Filament\\Resources');
 
-        $page = (string)Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `Settings`)', 'name'))
+        $page = (string) Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `Settings`)', 'name'))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
             ->replace('/', '\\');
-        $pageClass = (string)Str::of($page)->afterLast('\\');
+        $pageClass = (string) Str::of($page)->afterLast('\\');
         $pageNamespace = Str::of($page)->contains('\\') ?
-            (string)Str::of($page)->beforeLast('\\') :
+            (string) Str::of($page)->beforeLast('\\') :
             '';
 
         $resource = null;
@@ -40,18 +40,18 @@ class MakePageCommand extends Command
         $resourceInput = $this->option('resource') ?? $this->ask('(Optional) Resource (e.g. `UserResource`)');
 
         if ($resourceInput !== null) {
-            $resource = (string)Str::of($resourceInput)
+            $resource = (string) Str::of($resourceInput)
                 ->studly()
                 ->trim('/')
                 ->trim('\\')
                 ->trim(' ')
                 ->replace('/', '\\');
 
-            if (!Str::of($resource)->endsWith('Resource')) {
+            if (! Str::of($resource)->endsWith('Resource')) {
                 $resource .= 'Resource';
             }
 
-            $resourceClass = (string)Str::of($resource)
+            $resourceClass = (string) Str::of($resource)
                 ->afterLast('\\');
 
             $resourcePage = $this->option('type') ?? $this->choice(
@@ -69,14 +69,14 @@ class MakePageCommand extends Command
         }
 
         $view = Str::of($page)->prepend(
-            (string)Str::of($resource === null ? $namespace : "{$resourcesNamespace}\\{$resource}\\pages\\")
+            (string) Str::of($resource === null ? $namespace : "{$resourcesNamespace}\\{$resource}\\pages\\")
                 ->replace('App\\', '')
         )
             ->explode('\\')
-            ->map(fn($segment) => Str::lower(Str::kebab($segment)))
+            ->map(fn ($segment) => Str::lower(Str::kebab($segment)))
             ->implode('.');
 
-        $path = (string)Str::of($page)
+        $path = (string) Str::of($page)
             ->prepend('/')
             ->prepend($resource === null ? $path : "{$resourcesPath}\\{$resource}\\Pages\\")
             ->replace('\\', '/')
@@ -84,7 +84,7 @@ class MakePageCommand extends Command
             ->append('.php');
 
         $viewPath = resource_path(
-            (string)Str::of($view)
+            (string) Str::of($view)
                 ->replace('.', '/')
                 ->prepend('views/')
                 ->append('.blade.php'),
@@ -95,7 +95,7 @@ class MakePageCommand extends Command
             $resourcePage === 'custom' ? [$viewPath] : [],
         );
 
-        if (!$this->option('force') && $this->checkForCollision($files)) {
+        if (! $this->option('force') && $this->checkForCollision($files)) {
             return static::INVALID;
         }
 

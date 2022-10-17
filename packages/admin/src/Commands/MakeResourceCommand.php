@@ -24,7 +24,7 @@ class MakeResourceCommand extends Command
         $path = config('filament.resources.path', app_path('Filament\\Resources\\'));
         $namespace = config('filament.resources.namespace', 'App\\Filament\\Resources');
 
-        $model = (string)Str::of($this->argument('name') ?? $this->askRequired('Model (e.g. `BlogPost`)', 'name'))
+        $model = (string) Str::of($this->argument('name') ?? $this->askRequired('Model (e.g. `BlogPost`)', 'name'))
             ->studly()
             ->beforeLast('Resource')
             ->trim('/')
@@ -37,11 +37,11 @@ class MakeResourceCommand extends Command
             $model = 'Resource';
         }
 
-        $modelClass = (string)Str::of($model)->afterLast('\\');
+        $modelClass = (string) Str::of($model)->afterLast('\\');
         $modelNamespace = Str::of($model)->contains('\\') ?
-            (string)Str::of($model)->beforeLast('\\') :
+            (string) Str::of($model)->beforeLast('\\') :
             '';
-        $pluralModelClass = (string)Str::of($modelClass)->pluralStudly();
+        $pluralModelClass = (string) Str::of($modelClass)->pluralStudly();
 
         $resource = "{$model}Resource";
         $resourceClass = "{$modelClass}Resource";
@@ -53,7 +53,7 @@ class MakeResourceCommand extends Command
         $viewResourcePageClass = "View{$modelClass}";
 
         $baseResourcePath =
-            (string)Str::of($resource)
+            (string) Str::of($resource)
                 ->prepend('/')
                 ->prepend($path)
                 ->replace('\\', '/')
@@ -67,21 +67,21 @@ class MakeResourceCommand extends Command
         $editResourcePagePath = "{$resourcePagesDirectory}/{$editResourcePageClass}.php";
         $viewResourcePagePath = "{$resourcePagesDirectory}/{$viewResourcePageClass}.php";
 
-        if (!$this->option('force') && $this->checkForCollision([
-                $resourcePath,
-                $listResourcePagePath,
-                $manageResourcePagePath,
-                $createResourcePagePath,
-                $editResourcePagePath,
-                $viewResourcePagePath,
-            ])) {
+        if (! $this->option('force') && $this->checkForCollision([
+            $resourcePath,
+            $listResourcePagePath,
+            $manageResourcePagePath,
+            $createResourcePagePath,
+            $editResourcePagePath,
+            $viewResourcePagePath,
+        ])) {
             return static::INVALID;
         }
 
         $pages = '';
         $pages .= '\'index\' => Pages\\' . ($this->option('simple') ? $manageResourcePageClass : $listResourcePageClass) . '::route(\'/\'),';
 
-        if (!$this->option('simple')) {
+        if (! $this->option('simple')) {
             $pages .= PHP_EOL . "'create' => Pages\\{$createResourcePageClass}::route('/create'),";
 
             if ($this->option('view')) {
