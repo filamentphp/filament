@@ -3,7 +3,7 @@
 namespace Filament\Tables\Actions;
 
 use Closure;
-use Filament\Forms\ComponentContainer;
+use Filament\Forms\Form;
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -35,7 +35,7 @@ class EditAction extends Action
 
         $this->icon('heroicon-m-pencil');
 
-        $this->mountUsing(function (ComponentContainer $form, Model $record): void {
+        $this->mountUsing(function (Form $form, Model $record): void {
             $data = $record->attributesToArray();
 
             if ($this->mutateRecordDataUsing) {

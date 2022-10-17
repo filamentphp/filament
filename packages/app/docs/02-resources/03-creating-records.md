@@ -400,7 +400,7 @@ If you'd like to reduce the amount of repetition between the resource form and w
 
 ```php
 use Filament\Forms;
-use Filament\Resources\Form;
+use Filament\Forms\Form;
 use Filament\Resources\Resource;
 
 class CategoryResource extends Resource

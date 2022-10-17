@@ -161,7 +161,7 @@ use Filament\Forms;
 use Filament\Pages\Actions\Action;
 
 Action::make('updateAuthor')
-    ->mountUsing(fn (Forms\ComponentContainer $form) => $form->fill([
+    ->mountUsing(fn (Forms\Form $form) => $form->fill([
         'authorId' => $this->record->author->id,
     ]))
     ->action(function (array $data): void {

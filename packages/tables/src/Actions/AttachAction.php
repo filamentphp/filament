@@ -4,8 +4,8 @@ namespace Filament\Tables\Actions;
 
 use Closure;
 use Exception;
-use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Form;
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
@@ -62,7 +62,7 @@ class AttachAction extends Action
 
         $this->form(fn (): array => [$this->getRecordSelect()]);
 
-        $this->action(function (array $arguments, ComponentContainer $form): void {
+        $this->action(function (array $arguments, Form $form): void {
             $this->process(function (array $data) {
                 /** @var BelongsToMany $relationship */
                 $relationship = $this->getRelationship();

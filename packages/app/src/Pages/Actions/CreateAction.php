@@ -3,7 +3,7 @@
 namespace Filament\Pages\Actions;
 
 use Closure;
-use Filament\Forms\ComponentContainer;
+use Filament\Forms\Form;
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Illuminate\Database\Eloquent\Model;
 
@@ -41,7 +41,7 @@ class CreateAction extends Action
 
         $this->groupedIcon('heroicon-m-plus');
 
-        $this->action(function (array $arguments, ComponentContainer $form): void {
+        $this->action(function (array $arguments, Form $form): void {
             $model = $this->getModel();
 
             $record = $this->process(fn (array $data): Model => $model::create($data));

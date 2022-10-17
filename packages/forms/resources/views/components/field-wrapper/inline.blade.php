@@ -16,17 +16,19 @@
 ])
 
 @php
-    $id ??= $field->getId();
-    $label ??= $field->getLabel();
-    $labelSrOnly ??= $field->isLabelHidden();
-    $helperText ??= $field->getHelperText();
-    $hint ??= $field->getHint();
-    $hintAction ??= $field->getHintAction();
-    $hintColor ??= $field->getHintColor();
-    $hintIcon ??= $field->getHintIcon();
-    $required ??= $field->isRequired();
-    $isMarkedAsRequired ??= $field->isMarkedAsRequired();
-    $statePath ??= $field->getStatePath();
+    if ($field) {
+        $id ??= $field->getId();
+        $label ??= $field->getLabel();
+        $labelSrOnly ??= $field->isLabelHidden();
+        $helperText ??= $field->getHelperText();
+        $hint ??= $field->getHint();
+        $hintAction ??= $field->getHintAction();
+        $hintColor ??= $field->getHintColor();
+        $hintIcon ??= $field->getHintIcon();
+        $isMarkedAsRequired ??= $field->isMarkedAsRequired();
+        $required ??= $field->isRequired();
+        $statePath ??= $field->getStatePath();
+    }
 @endphp
 
 <div {{ $attributes->class(['filament-forms-field-wrapper']) }}>

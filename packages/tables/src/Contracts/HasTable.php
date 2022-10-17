@@ -2,8 +2,8 @@
 
 namespace Filament\Tables\Contracts;
 
-use Filament\Forms\ComponentContainer;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\Layout\Component;
@@ -49,15 +49,15 @@ interface HasTable extends HasForms
 
     public function getMountedTableAction(): ?Action;
 
-    public function getMountedTableActionForm(): ?ComponentContainer;
+    public function getMountedTableActionForm(): ?Form;
 
     public function getMountedTableActionRecordKey();
 
     public function getMountedTableBulkAction(): ?BulkAction;
 
-    public function getMountedTableBulkActionForm(): ?ComponentContainer;
+    public function getMountedTableBulkActionForm(): ?Form;
 
-    public function getTableFiltersForm(): ComponentContainer;
+    public function getTableFiltersForm(): Form;
 
     public function getTableModel(): string;
 
@@ -79,7 +79,7 @@ interface HasTable extends HasForms
 
     public function isTableColumnToggledHidden(string $name): bool;
 
-    public function getTableColumnToggleForm(): ComponentContainer;
+    public function getTableColumnToggleForm(): Form;
 
     public function getTableRecord(?string $key): ?Model;
 

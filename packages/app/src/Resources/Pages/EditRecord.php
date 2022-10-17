@@ -2,7 +2,7 @@
 
 namespace Filament\Resources\Pages;
 
-use Filament\Forms\ComponentContainer;
+use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\DeleteAction;
@@ -10,19 +10,20 @@ use Filament\Pages\Actions\ForceDeleteAction;
 use Filament\Pages\Actions\ReplicateAction;
 use Filament\Pages\Actions\RestoreAction;
 use Filament\Pages\Actions\ViewAction;
-use Filament\Pages\Contracts\HasFormActions;
+use Filament\Pages\Concerns\HasFormActions;
+use Filament\Pages\Contracts\HasCachedFormActions;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property ComponentContainer $form
+ * @property Form $form
  */
-class EditRecord extends Page implements HasFormActions
+class EditRecord extends Page implements HasCachedFormActions
 {
     use Concerns\HasRecordBreadcrumb;
     use Concerns\HasRelationManagers;
     use Concerns\InteractsWithRecord;
-    use Concerns\UsesResourceForm;
+    use HasFormActions;
 
     protected static string $view = 'filament::resources.pages.edit-record';
 
@@ -181,15 +182,12 @@ class EditRecord extends Page implements HasFormActions
         $action
             ->authorize($resource::canView($this->getRecord()))
             ->record($this->getRecord())
-            ->recordTitle($this->getRecordTitle());
+            ->recordTitle($this->getRecordTitle())
+            ->form(fn (Form $form): Form => static::getResource()::form($form));
 
         if ($resource::hasPage('view')) {
             $action->url(fn (): string => static::getResource()::getUrl('view', ['record' => $this->getRecord()]));
-
-            return;
         }
-
-        $action->form($this->getFormSchema());
     }
 
     protected function configureForceDeleteAction(ForceDeleteAction $action): void
@@ -270,21 +268,16 @@ class EditRecord extends Page implements HasFormActions
             ->color('secondary');
     }
 
-    protected function getForms(): array
+    public function form(Form $form): Form
     {
-        return [
-            'form' => $this->makeForm()
+        return static::getResource()::form(
+            $form
                 ->context('edit')
                 ->model($this->getRecord())
-                ->schema($this->getFormSchema())
                 ->statePath('data')
+                ->columns(config('filament.layout.forms.have_inline_labels') ? 1 : 2)
                 ->inlineLabel(config('filament.layout.forms.have_inline_labels')),
-        ];
-    }
-
-    protected function getFormSchema(): array
-    {
-        return $this->getResourceForm(columns: config('filament.layout.forms.have_inline_labels') ? 1 : 2)->getSchema();
+        );
     }
 
     protected function getRedirectUrl(): ?string

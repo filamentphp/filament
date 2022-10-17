@@ -34,10 +34,6 @@ trait CanReplicateRecords
         $this->successNotificationTitle(__('filament-support::actions/replicate.single.messages.replicated'));
 
         $this->mountUsing(function (Model $record, ?ComponentContainer $form = null): void {
-            if (! $this->hasForm()) {
-                return;
-            }
-
             if (! $form) {
                 return;
             }

@@ -3,9 +3,9 @@
 namespace Filament\Resources\Pages;
 
 use Closure;
+use Filament\Forms\Form;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\CreateAction;
-use Filament\Resources\Pages\Concerns\UsesResourceForm;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
@@ -16,7 +16,6 @@ use Illuminate\Support\Str;
 class ListRecords extends Page implements Tables\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable;
-    use UsesResourceForm;
 
     protected static string $view = 'filament::resources.pages.list-records';
 
@@ -61,9 +60,9 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         };
     }
 
-    protected function getCreateFormSchema(): array
+    public function form(Form $form): Form
     {
-        return $this->getResourceForm(columns: 2)->getSchema();
+        return static::getResource()::form($form);
     }
 
     protected function configureCreateAction(CreateAction $action): void
@@ -74,7 +73,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->authorize($resource::canCreate())
             ->model($this->getModel())
             ->modelLabel($this->getModelLabel())
-            ->form($this->getCreateFormSchema());
+            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
 
         if ($resource::hasPage('create')) {
             $action->url(fn (): string => $resource::getUrl('create'));
@@ -100,18 +99,13 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->authorize(fn (Model $record): bool => static::getResource()::canDelete($record));
     }
 
-    protected function getEditFormSchema(): array
-    {
-        return $this->getResourceForm(columns: 2)->getSchema();
-    }
-
     protected function configureEditAction(Tables\Actions\EditAction $action): void
     {
         $resource = static::getResource();
 
         $action
             ->authorize(fn (Model $record): bool => $resource::canEdit($record))
-            ->form($this->getEditFormSchema());
+            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
 
         if ($resource::hasPage('edit')) {
             $action->url(fn (Model $record): string => $resource::getUrl('edit', ['record' => $record]));
@@ -136,18 +130,13 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->authorize(fn (Model $record): bool => static::getResource()::canRestore($record));
     }
 
-    protected function getViewFormSchema(): array
-    {
-        return $this->getResourceForm(columns: 2, isDisabled: true)->getSchema();
-    }
-
     protected function configureViewAction(Tables\Actions\ViewAction $action): void
     {
         $resource = static::getResource();
 
         $action
             ->authorize(fn (Model $record): bool => $resource::canView($record))
-            ->form($this->getViewFormSchema());
+            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
 
         if ($resource::hasPage('view')) {
             $action->url(fn (Model $record): string => $resource::getUrl('view', ['record' => $record]));
@@ -352,5 +341,10 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     public function getTablePluralModelLabel(): string
     {
         return $this->getPluralModelLabel();
+    }
+
+    protected function getForms(): array
+    {
+        return [];
     }
 }

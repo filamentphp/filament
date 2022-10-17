@@ -22,14 +22,12 @@ class TestsFilters
     public function filterTable(): Closure
     {
         return function (string $name, $data = null): static {
-            $livewire = $this->instance();
-
-            $name = $livewire->parseFilterName($name);
+            $name = $this->instance()->parseFilterName($name);
 
             /** @phpstan-ignore-next-line */
             $this->assertTableFilterExists($name);
 
-            $filter = $livewire->getCachedTableFilter($name);
+            $filter = $this->instance()->getCachedTableFilter($name);
 
             if ($filter instanceof TernaryFilter) {
                 if ($data === true || ($data === null && func_num_args() === 1)) {
@@ -86,12 +84,11 @@ class TestsFilters
     public function assertTableFilterExists(): Closure
     {
         return function (string $name): static {
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
+            $name = $this->instance()->parseFilterName($name);
 
-            $name = $livewire->parseFilterName($name);
+            $filter = $this->instance()->getCachedTableFilter($name);
 
-            $filter = $livewire->getCachedTableFilter($name);
+            $livewireClass = $this->instance()::class;
 
             Assert::assertInstanceOf(
                 BaseFilter::class,

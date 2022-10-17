@@ -5,18 +5,18 @@ namespace Filament\Http\Livewire\Auth;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Facades\Filament;
-use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Illuminate\Contracts\View\View;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 /**
- * @property ComponentContainer $form
+ * @property Form $form
  */
 class Login extends Component implements HasForms
 {
@@ -65,21 +65,22 @@ class Login extends Component implements HasForms
         return app(LoginResponse::class);
     }
 
-    protected function getFormSchema(): array
+    public function form(Form $form): Form
     {
-        return [
-            TextInput::make('email')
-                ->label(__('filament::login.fields.email.label'))
-                ->email()
-                ->required()
-                ->autocomplete(),
-            TextInput::make('password')
-                ->label(__('filament::login.fields.password.label'))
-                ->password()
-                ->required(),
-            Checkbox::make('remember')
-                ->label(__('filament::login.fields.remember.label')),
-        ];
+        return $form
+            ->schema([
+                TextInput::make('email')
+                    ->label(__('filament::login.fields.email.label'))
+                    ->email()
+                    ->required()
+                    ->autocomplete(),
+                TextInput::make('password')
+                    ->label(__('filament::login.fields.password.label'))
+                    ->password()
+                    ->required(),
+                Checkbox::make('remember')
+                    ->label(__('filament::login.fields.remember.label')),
+            ]);
     }
 
     public function render(): View

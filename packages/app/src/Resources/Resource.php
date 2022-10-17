@@ -4,6 +4,7 @@ namespace Filament\Resources;
 
 use Closure;
 use Filament\Facades\Filament;
+use Filament\Forms\Form;
 use Filament\GlobalSearch\GlobalSearchResult;
 use function Filament\locale_has_pluralization;
 use Filament\Navigation\NavigationItem;

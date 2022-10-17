@@ -6,12 +6,12 @@ trait CanSubmitForm
 {
     protected bool $canSubmitForm = false;
 
-    protected ?string $form = null;
+    protected ?string $formToSubmit = null;
 
     public function submit(?string $form = null): static
     {
         $this->canSubmitForm = true;
-        $this->form = $form;
+        $this->formToSubmit = $form;
 
         return $this;
     }
@@ -21,8 +21,8 @@ trait CanSubmitForm
         return $this->canSubmitForm;
     }
 
-    public function getForm(): ?string
+    public function getFormToSubmit(): ?string
     {
-        return $this->form;
+        return $this->formToSubmit;
     }
 }

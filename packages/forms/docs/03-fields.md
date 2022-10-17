@@ -1293,7 +1293,7 @@ You can add a button to open each file in a new tab with the `enableOpen()` meth
 use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('attachments')
-    ->multipe()
+    ->multiple()
     ->enableOpen()
 ```
 
@@ -2004,7 +2004,7 @@ Using [Livewire's entangle](https://laravel-livewire.com/docs/alpine-js#sharing-
 
 Or, you may bind the value to a Livewire property using [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding):
 
-```
+```blade
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :field="$field"

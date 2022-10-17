@@ -7,10 +7,10 @@
 @php
     if ((! $action->getAction()) || $action->getUrl()) {
         $wireClickAction = null;
-    } elseif ($action->shouldOpenModal() || ($action->getAction() instanceof \Closure)) {
-        $wireClickAction = "mountAction('{$action->getName()}')";
-    } else {
+    } elseif (is_string($action->getAction())) {
         $wireClickAction = $action->getAction();
+    } else {
+        $wireClickAction = "mountAction('{$action->getName()}')";
     }
 @endphp
 
@@ -18,7 +18,7 @@
     :component="$component"
     :dark-mode="config('filament.dark_mode')"
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes())"
-    :form="$action->getForm()"
+    :form="$action->getFormToSubmit()"
     :tag="$action->getUrl() ? 'a' : 'button'"
     :wire:click="$wireClickAction"
     :href="$action->isEnabled() ? $action->getUrl() : null"

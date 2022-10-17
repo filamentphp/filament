@@ -2,20 +2,21 @@
 
 namespace Filament\Resources\Pages;
 
-use Filament\Forms\ComponentContainer;
+use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Actions\Action;
-use Filament\Pages\Contracts\HasFormActions;
+use Filament\Pages\Concerns\HasFormActions;
+use Filament\Pages\Contracts\HasCachedFormActions;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 /**
- * @property ComponentContainer $form
+ * @property Form $form
  */
-class CreateRecord extends Page implements HasFormActions
+class CreateRecord extends Page implements HasCachedFormActions
 {
-    use Concerns\UsesResourceForm;
+    use HasFormActions;
 
     protected static string $view = 'filament::resources.pages.create-record';
 
@@ -187,21 +188,16 @@ class CreateRecord extends Page implements HasFormActions
         ]);
     }
 
-    protected function getForms(): array
+    public function form(Form $form): Form
     {
-        return [
-            'form' => $this->makeForm()
+        return static::getResource()::form(
+            $form
                 ->context('create')
                 ->model($this->getModel())
-                ->schema($this->getFormSchema())
                 ->statePath('data')
+                ->columns(config('filament.layout.forms.have_inline_labels') ? 1 : 2)
                 ->inlineLabel(config('filament.layout.forms.have_inline_labels')),
-        ];
-    }
-
-    protected function getFormSchema(): array
-    {
-        return $this->getResourceForm(columns: config('filament.layout.forms.have_inline_labels') ? 1 : 2)->getSchema();
+        );
     }
 
     protected function getRedirectUrl(): string
