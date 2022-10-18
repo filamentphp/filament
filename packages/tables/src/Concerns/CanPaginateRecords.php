@@ -45,14 +45,6 @@ trait CanPaginateRecords
         return $this->tableRecordsPerPage;
     }
 
-    /**
-     * @deprecated Override the `table()` method to configure the table.
-     */
-    protected function getTableRecordsPerPageSelectOptions(): ?array
-    {
-        return null;
-    }
-
     protected function getDefaultTableRecordsPerPageSelectOption(): int
     {
         $perPage = session()->get(
@@ -71,14 +63,6 @@ trait CanPaginateRecords
         return $pageOptions[0];
     }
 
-    /**
-     * @deprecated Override the `table()` method to configure the table.
-     */
-    protected function isTablePaginationEnabled(): bool
-    {
-        return true;
-    }
-
     protected function getTablePaginationPageName(): string
     {
         return $this->getIdentifiedTableQueryStringPropertyNameFor('page');
@@ -94,5 +78,21 @@ trait CanPaginateRecords
     public function resetPage(?string $pageName = null): void
     {
         $this->livewireResetPage($pageName ?? $this->getTablePaginationPageName());
+    }
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected function getTableRecordsPerPageSelectOptions(): ?array
+    {
+        return null;
+    }
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected function isTablePaginationEnabled(): bool
+    {
+        return true;
     }
 }

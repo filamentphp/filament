@@ -107,6 +107,8 @@ class Table extends ViewComponent
 
     protected bool | Closure $isPaginated = true;
 
+    protected bool | Closure $isPaginatedWhileReordering = true;
+
     protected bool | Closure $isReorderable = true;
 
     protected bool | Closure $isStriped = false;
@@ -114,6 +116,12 @@ class Table extends ViewComponent
     protected string | Closure | null $modelLabel = null;
 
     protected array | Closure | null $paginationPageOptions = null;
+
+    protected bool | Closure | null $persistsFiltersInSession = false;
+
+    protected bool | Closure | null $persistsSearchInSession = false;
+
+    protected bool | Closure | null $persistsColumnSearchInSession = false;
 
     protected string | Closure | null $pluralModelLabel = null;
 
@@ -136,6 +144,8 @@ class Table extends ViewComponent
     protected Relation | Closure | null $relationship = null;
 
     protected string | Closure | null $reorderColumn = null;
+
+    protected bool | Closure | null $selectsCurrentPageOnly = false;
 
     final public function __construct(HasTable $livewire)
     {
@@ -416,9 +426,21 @@ class Table extends ViewComponent
         return $this;
     }
 
-    public function paginated(bool | Closure $condition = true): static
+    public function paginated(bool | array | Closure $condition = true): static
     {
+        if (is_array($condition)) {
+            $this->paginationPageOptions($condition);
+            $condition = true;
+        }
+
         $this->isPaginated = $condition;
+
+        return $this;
+    }
+
+    public function paginatedWhileReordering(bool | Closure $condition = true): static
+    {
+        $this->isPaginatedWhileReordering = $condition;
 
         return $this;
     }
@@ -426,6 +448,27 @@ class Table extends ViewComponent
     public function paginationPageOptions(array | Closure | null $options): static
     {
         $this->paginationPageOptions = $options;
+
+        return $this;
+    }
+
+    public function persistFiltersInSession(bool | Closure $condition = true): static
+    {
+        $this->persistsFiltersInSession = $condition;
+
+        return $this;
+    }
+
+    public function persistSearchInSession(bool | Closure $condition = true): static
+    {
+        $this->persistsSearchInSession = $condition;
+
+        return $this;
+    }
+
+    public function persistColumnSearchInSession(bool | Closure $condition = true): static
+    {
+        $this->persistsColumnSearchInSession = $condition;
 
         return $this;
     }
@@ -507,6 +550,13 @@ class Table extends ViewComponent
         if ($condition !== null) {
             $this->isReorderable = $condition;
         }
+
+        return $this;
+    }
+
+    public function selectCurrentPageOnly(bool | Closure $condition = true): static
+    {
+        $this->selectsCurrentPageOnly = $condition;
 
         return $this;
     }
@@ -897,6 +947,11 @@ class Table extends ViewComponent
         return (bool) $this->evaluate($this->isPaginated);
     }
 
+    public function isPaginatedWhileReordering(): bool
+    {
+        return (bool) $this->evaluate($this->isPaginatedWhileReordering);
+    }
+
     public function isSelectionEnabled(): bool
     {
         return (bool) count(array_filter(
@@ -1098,5 +1153,25 @@ class Table extends ViewComponent
     public function getQueryStringIdentifier(): ?string
     {
         return $this->evaluate($this->queryStringIdentifier);
+    }
+
+    public function persistsFiltersInSession(): bool
+    {
+        return (bool) $this->evaluate($this->persistsFiltersInSession);
+    }
+
+    public function persistsSearchInSession(): bool
+    {
+        return (bool) $this->evaluate($this->persistsSearchInSession);
+    }
+
+    public function persistsColumnSearchInSession(): bool
+    {
+        return (bool) $this->evaluate($this->persistsColumnSearchInSession);
+    }
+
+    public function selectsCurrentPageOnly(): bool
+    {
+        return (bool) $this->evaluate($this->selectsCurrentPageOnly);
     }
 }

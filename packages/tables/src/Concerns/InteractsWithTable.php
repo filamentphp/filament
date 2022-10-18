@@ -64,7 +64,7 @@ trait InteractsWithTable
 
         $filtersSessionKey = $this->getTableFiltersSessionKey();
 
-        if ($this->shouldPersistTableFiltersInSession() && session()->has($filtersSessionKey)) {
+        if ($this->getTable()->persistsFiltersInSession() && session()->has($filtersSessionKey)) {
             $this->tableFilters = array_merge(
                 $this->tableFilters ?? [],
                 session()->get($filtersSessionKey) ?? [],
@@ -79,13 +79,13 @@ trait InteractsWithTable
 
         $searchSessionKey = $this->getTableSearchSessionKey();
 
-        if ($this->shouldPersistTableSearchInSession() && session()->has($searchSessionKey)) {
+        if ($this->getTable()->persistsSearchInSession() && session()->has($searchSessionKey)) {
             $this->tableSearch = session()->get($searchSessionKey) ?? '';
         }
 
         $columnSearchSessionKey = $this->getTableColumnSearchSessionKey();
 
-        if ($this->shouldPersistTableColumnSearchInSession() && session()->has($columnSearchSessionKey)) {
+        if ($this->getTable()->persistsColumnSearchInSession() && session()->has($columnSearchSessionKey)) {
             $this->tableColumnSearchQueries = session()->get($columnSearchSessionKey) ?? [];
         }
 
@@ -135,7 +135,11 @@ trait InteractsWithTable
             ->headerActions($this->getTableHeaderActions())
             ->modelLabel($this->getTableModelLabel())
             ->paginated($this->isTablePaginationEnabled())
+            ->paginatedWhileReordering($this->isTablePaginationEnabledWhileReordering())
             ->paginationPageOptions($this->getTableRecordsPerPageSelectOptions())
+            ->persistFiltersInSession($this->shouldPersistTableFiltersInSession())
+            ->persistSearchInSession($this->shouldPersistTableSearchInSession())
+            ->persistColumnSearchInSession($this->shouldPersistTableColumnSearchInSession())
             ->pluralModelLabel($this->getTablePluralModelLabel())
             ->poll($this->getTablePollingInterval())
             ->recordAction($this->getTableRecordActionUsing())
@@ -143,6 +147,7 @@ trait InteractsWithTable
             ->recordTitle(fn (Model $record): ?string => $this->getTableRecordTitle($record))
             ->recordUrl($this->getTableRecordUrlUsing())
             ->reorderable($this->getTableReorderColumn())
+            ->selectCurrentPageOnly($this->shouldSelectCurrentPageOnly())
             ->striped($this->isTableStriped());
     }
 

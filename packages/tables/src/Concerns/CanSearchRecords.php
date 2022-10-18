@@ -14,7 +14,7 @@ trait CanSearchRecords
 
     public function updatedTableSearch(): void
     {
-        if ($this->shouldPersistTableSearchInSession()) {
+        if ($this->getTable()->persistsSearchInSession()) {
             session()->put(
                 $this->getTableSearchSessionKey(),
                 $this->tableSearch,
@@ -32,7 +32,7 @@ trait CanSearchRecords
             unset($this->tableColumnSearchQueries[$key]);
         }
 
-        if ($this->shouldPersistTableColumnSearchInSession()) {
+        if ($this->getTable()->persistsColumnSearchInSession()) {
             session()->put(
                 $this->getTableColumnSearchSessionKey(),
                 $this->tableColumnSearchQueries,
@@ -161,11 +161,6 @@ trait CanSearchRecords
         return "tables.{$table}_search";
     }
 
-    protected function shouldPersistTableSearchInSession(): bool
-    {
-        return false;
-    }
-
     public function getTableColumnSearchSessionKey(): string
     {
         $table = class_basename($this::class);
@@ -173,6 +168,17 @@ trait CanSearchRecords
         return "tables.{$table}_column_search";
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected function shouldPersistTableSearchInSession(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function shouldPersistTableColumnSearchInSession(): bool
     {
         return false;

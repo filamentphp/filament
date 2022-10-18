@@ -30,7 +30,7 @@ trait HasFilters
 
     public function updatedTableFilters(): void
     {
-        if ($this->shouldPersistTableFiltersInSession()) {
+        if ($this->getTable()->persistsFiltersInSession()) {
             session()->put(
                 $this->getTableFiltersSessionKey(),
                 $this->tableFilters,
@@ -107,14 +107,6 @@ trait HasFilters
         });
     }
 
-    /**
-     * @deprecated Override the `table()` method to configure the table.
-     */
-    protected function getTableFilters(): array
-    {
-        return [];
-    }
-
     public function getTableFilterState(string $name): ?array
     {
         return $this->getTableFiltersForm()->getRawState()[$this->parseFilterName($name)] ?? null;
@@ -133,6 +125,36 @@ trait HasFilters
         return $name::getDefaultName();
     }
 
+    protected function getTableFiltersFormSchema(): array
+    {
+        $schema = [];
+
+        foreach ($this->getTable()->getFilters() as $filter) {
+            $schema[$filter->getName()] = Forms\Components\Group::make()
+                ->schema($filter->getFormSchema())
+                ->statePath($filter->getName())
+                ->columnSpan($filter->getColumnSpan())
+                ->columns($filter->getColumns());
+        }
+
+        return $schema;
+    }
+
+    public function getTableFiltersSessionKey(): string
+    {
+        $table = class_basename($this::class);
+
+        return "tables.{$table}_filters";
+    }
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected function getTableFilters(): array
+    {
+        return [];
+    }
+
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
@@ -147,21 +169,6 @@ trait HasFilters
             ],
             default => 1,
         };
-    }
-
-    protected function getTableFiltersFormSchema(): array
-    {
-        $schema = [];
-
-        foreach ($this->getTable()->getFilters() as $filter) {
-            $schema[$filter->getName()] = Forms\Components\Group::make()
-                ->schema($filter->getFormSchema())
-                ->statePath($filter->getName())
-                ->columnSpan($filter->getColumnSpan())
-                ->columns($filter->getColumns());
-        }
-
-        return $schema;
     }
 
     /**
@@ -180,13 +187,9 @@ trait HasFilters
         return null;
     }
 
-    public function getTableFiltersSessionKey(): string
-    {
-        $table = class_basename($this::class);
-
-        return "tables.{$table}_filters";
-    }
-
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function shouldPersistTableFiltersInSession(): bool
     {
         return false;

@@ -5,6 +5,9 @@ namespace Filament\Tables\Concerns;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @deprecated Override the `table()` method to configure the table.
+ */
 trait HasRecordAction
 {
     /**

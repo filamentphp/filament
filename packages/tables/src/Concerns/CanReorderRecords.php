@@ -47,6 +47,9 @@ trait CanReorderRecords
         return $this->getTable()->isReorderable() && $this->isTableReordering;
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function isTablePaginationEnabledWhileReordering(): bool
     {
         return false;

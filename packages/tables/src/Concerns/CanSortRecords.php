@@ -38,22 +38,6 @@ trait CanSortRecords
         return $this->tableSortDirection;
     }
 
-    /**
-     * @deprecated Override the `table()` method to configure the table.
-     */
-    protected function getDefaultTableSortColumn(): ?string
-    {
-        return null;
-    }
-
-    /**
-     * @deprecated Override the `table()` method to configure the table.
-     */
-    protected function getDefaultTableSortDirection(): ?string
-    {
-        return null;
-    }
-
     public function updatedTableSort(): void
     {
         $this->resetPage();
@@ -86,5 +70,21 @@ trait CanSortRecords
         }
 
         return $query;
+    }
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected function getDefaultTableSortColumn(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected function getDefaultTableSortDirection(): ?string
+    {
+        return null;
     }
 }

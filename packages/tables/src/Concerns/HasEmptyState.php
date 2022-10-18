@@ -6,6 +6,9 @@ use Closure;
 use Filament\Tables\Actions\Action;
 use Illuminate\Contracts\View\View;
 
+/**
+ * @deprecated Override the `table()` method to configure the table.
+ */
 trait HasEmptyState
 {
     /**

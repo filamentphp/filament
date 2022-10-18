@@ -45,12 +45,12 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     protected static ?string $inverseRelationship = null;
 
     /**
-     * @deprecated Use `$modelLabel` instead.
+     * @deprecated Override the `table()` method to configure the table.
      */
     protected static ?string $label = null;
 
     /**
-     * @deprecated Use `$pluralModelLabel` instead.
+     * @deprecated Override the `table()` method to configure the table.
      */
     protected static ?string $pluralLabel = null;
 
@@ -264,7 +264,8 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     {
         return static::$title ?? (string) str(static::getRelationshipName())
             ->kebab()
-            ->replace('-', ' ');
+            ->replace('-', ' ')
+            ->headline();
     }
 
     /**

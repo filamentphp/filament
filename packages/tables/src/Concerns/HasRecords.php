@@ -62,7 +62,7 @@ trait HasRecords
 
         if (
             (! $this->getTable()->isPaginated()) ||
-            ($this->isTableReordering() && (! $this->isTablePaginationEnabledWhileReordering()))
+            ($this->isTableReordering() && (! $this->getTable()->isPaginatedWhileReordering()))
         ) {
             return $this->records = $this->hydratePivotRelationForTableRecords($query->get());
         }

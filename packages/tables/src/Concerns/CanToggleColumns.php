@@ -64,6 +64,18 @@ trait CanToggleColumns
         return $schema;
     }
 
+    public function isTableColumnToggledHidden(string $name): bool
+    {
+        return Arr::has($this->toggledTableColumns, $name) && ! data_get($this->toggledTableColumns, $name);
+    }
+
+    public function getTableColumnToggleFormStateSessionKey(): string
+    {
+        $table = class_basename($this::class);
+
+        return "tables.{$table}_toggled_columns";
+    }
+
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
@@ -78,17 +90,5 @@ trait CanToggleColumns
     protected function getTableColumnToggleFormWidth(): ?string
     {
         return null;
-    }
-
-    public function isTableColumnToggledHidden(string $name): bool
-    {
-        return Arr::has($this->toggledTableColumns, $name) && ! data_get($this->toggledTableColumns, $name);
-    }
-
-    public function getTableColumnToggleFormStateSessionKey(): string
-    {
-        $table = class_basename($this::class);
-
-        return "tables.{$table}_toggled_columns";
     }
 }

@@ -23,7 +23,7 @@ trait CanSelectRecords
     {
         $query = $this->getFilteredTableQuery();
 
-        if ($this->shouldSelectCurrentPageOnly()) {
+        if ($this->getTable()->selectsCurrentPageOnly()) {
             return $this->getTableRecords()
                 ->map(fn ($key): string => (string) $key->getKey())
                 ->all();
@@ -37,7 +37,7 @@ trait CanSelectRecords
 
     public function getAllTableRecordsCount(): int
     {
-        if ($this->shouldSelectCurrentPageOnly()) {
+        if ($this->getTable()->selectsCurrentPageOnly()) {
             return $this->records->count();
         }
 
@@ -70,6 +70,9 @@ trait CanSelectRecords
         )->get());
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     public function shouldSelectCurrentPageOnly(): bool
     {
         return $this->shouldSelectCurrentPageOnly;

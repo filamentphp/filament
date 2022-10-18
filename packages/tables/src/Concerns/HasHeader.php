@@ -8,6 +8,9 @@ use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 
+/**
+ * @deprecated Override the `table()` method to configure the table.
+ */
 trait HasHeader
 {
     /**
