@@ -18,7 +18,7 @@ class SelectAction extends StaticAction
     {
         parent::setUp();
 
-        $this->view('filament-actions::.select-action');
+        $this->view('filament-actions::select-action');
     }
 
     public function options(array | Arrayable | Closure $options): static
