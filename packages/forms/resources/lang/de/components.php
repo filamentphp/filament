@@ -8,12 +8,20 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'Klonen',
+            ],
+
             'create_item' => [
                 'label' => 'Zu :label hinzufügen',
             ],
 
             'delete_item' => [
                 'label' => 'Löschen',
+            ],
+
+            'move_item' => [
+                'label' => 'Verschieben',
             ],
 
             'move_item_down' => [
@@ -105,6 +113,10 @@ return [
 
             'clone_item' => [
                 'label' => 'Klonen',
+            ],
+
+            'move_item' => [
+                'label' => 'Verschieben',
             ],
 
             'move_item_down' => [
@@ -205,6 +217,8 @@ return [
         'loading_message' => 'Lädt...',
 
         'no_search_results_message' => 'Die Suche ergab keine Treffer.',
+
+        'max_items_message' => 'Es können nur :count ausgewählt werden.',
 
         'placeholder' => 'Wählen Sie eine Option',
 
