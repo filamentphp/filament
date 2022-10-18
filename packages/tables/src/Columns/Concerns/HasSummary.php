@@ -17,7 +17,7 @@ trait HasSummary
 
     public function getSummary(array $records): ?string
     {
-        if (class_exists($this->summary)) {
+        if (is_string($this->summary) && class_exists($this->summary)) {
             return (new $this->summary($this, $records))();
         }
 
