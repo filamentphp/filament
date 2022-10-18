@@ -216,9 +216,9 @@ return [
 
         'loading_message' => 'Lädt...',
 
-        'no_search_results_message' => 'Die Suche ergab keine Treffer.',
-
         'max_items_message' => 'Es können nur :count ausgewählt werden.',
+
+        'no_search_results_message' => 'Die Suche ergab keine Treffer.',
 
         'placeholder' => 'Wählen Sie eine Option',
 
