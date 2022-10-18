@@ -1,5 +1,6 @@
 @props([
     'error' => false,
+    'isMarkedAsRequired' => true,
     'prefix' => null,
     'required' => false,
     'suffix' => null,
@@ -16,7 +17,7 @@
     ])>
         {{ $slot }}
 
-        @if ($required)
+        @if ($required && $isMarkedAsRequired)
             <sup class="font-medium text-danger-700">*</sup>
         @endif
     </span>
