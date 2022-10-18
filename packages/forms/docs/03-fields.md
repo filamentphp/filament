@@ -212,6 +212,18 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')->placeholder('John Doe')
 ```
 
+### Marking as required
+
+By default, [required fields](validation#required) will show an asterisk (*) next to their label. You may want to hide the asterisk on forms with only required fields, or where it makes sense to add a [hint](#helper-messages-and-hints) to optional fields instead:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->required()
+    ->markAsRequired(false)
+```
+
 ### Global settings
 
 If you wish to change the default behaviour of a field globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the component using. For example, if you wish to make all checkboxes [`inline(false)`](#checkbox), you can do it like so:

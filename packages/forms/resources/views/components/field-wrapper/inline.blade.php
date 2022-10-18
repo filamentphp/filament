@@ -10,6 +10,7 @@
     'hintAction' => null,
     'hintColor' => null,
     'hintIcon' => null,
+    'isMarkedAsRequired' => null,
     'required' => null,
     'statePath' => null,
 ])
@@ -24,6 +25,7 @@
         $hintAction ??= $field->getHintAction();
         $hintColor ??= $field->getHintColor();
         $hintIcon ??= $field->getHintIcon();
+        $isMarkedAsRequired ??= $field->isMarkedAsRequired();
         $required ??= $field->isRequired();
         $statePath ??= $field->getStatePath();
     }
@@ -43,6 +45,7 @@
                     <x-forms::field-wrapper.label
                         :for="$id"
                         :error="$errors->has($statePath)"
+                        :is-marked-as-required="$isMarkedAsRequired"
                         :prefix="$labelPrefix"
                         :required="$required"
                         :suffix="$labelSuffix"
