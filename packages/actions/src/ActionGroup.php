@@ -21,7 +21,7 @@ class ActionGroup extends ViewComponent
     use HasSize;
     use HasTooltip;
 
-    protected string $view = 'filament-actions::.group';
+    protected string $view = 'filament-actions::group';
 
     protected string $evaluationIdentifier = 'group';
 

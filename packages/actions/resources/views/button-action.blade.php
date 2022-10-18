@@ -1,4 +1,4 @@
-<x-filament-actions::.action
+<x-filament-actions::action
     :action="$action"
     component="filament-actions::button"
     :outlined="$isOutlined()"
@@ -6,4 +6,4 @@
     class="filament-page-button-action"
 >
     {{ $getLabel() }}
-</x-filament-actions::.action>
+</x-filament-actions::action>

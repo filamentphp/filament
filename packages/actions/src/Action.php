@@ -19,32 +19,32 @@ class Action extends BaseAction implements Groupable, HasRecord
     use Concerns\HasTooltip;
     use Concerns\InteractsWithRecord;
 
-    protected string $view = 'filament-actions::.button-action';
+    protected string $view = 'filament-actions::button-action';
 
     public function button(): static
     {
-        $this->view('filament-actions::.button-action');
+        $this->view('filament-actions::button-action');
 
         return $this;
     }
 
     public function grouped(): static
     {
-        $this->view('filament-actions::.grouped-action');
+        $this->view('filament-actions::grouped-action');
 
         return $this;
     }
 
     public function iconButton(): static
     {
-        $this->view('filament-actions::.icon-button-action');
+        $this->view('filament-actions::icon-button-action');
 
         return $this;
     }
 
     public function link(): static
     {
-        $this->view('filament-actions::.link-action');
+        $this->view('filament-actions::link-action');
 
         return $this;
     }
