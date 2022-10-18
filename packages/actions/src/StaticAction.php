@@ -2,7 +2,6 @@
 
 namespace Filament\Actions;
 
-use Exception;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Support\Traits\Conditionable;
