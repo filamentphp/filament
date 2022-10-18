@@ -1,7 +1,7 @@
 <?php
 
 use Filament\Facades\Filament;
-use Filament\Pages\Actions\DeleteAction;
+use Filament\Actions\DeleteAction;
 use Filament\Tests\App\Fixtures\Resources\PostResource;
 use Filament\Tests\App\Resources\TestCase;
 use Filament\Tests\Models\Post;
@@ -80,7 +80,7 @@ it('can delete', function () {
     livewire(PostResource\Pages\EditPost::class, [
         'record' => $post->getKey(),
     ])
-        ->callPageAction(DeleteAction::class);
+        ->callAction(DeleteAction::class);
 
     $this->assertModelMissing($post);
 });

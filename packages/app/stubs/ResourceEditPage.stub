@@ -10,7 +10,7 @@ class {{ resourcePageClass }} extends EditRecord
 {
     protected static string $resource = {{ resourceClass }}::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
 {{ actions }}

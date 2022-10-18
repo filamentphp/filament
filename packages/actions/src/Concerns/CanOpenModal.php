@@ -165,7 +165,7 @@ trait CanOpenModal
         }
 
         return static::makeModalAction('cancel')
-            ->label(__('filament-support::actions/modal.actions.cancel.label'))
+            ->label(__('filament-actions::modal.actions.cancel.label'))
             ->cancel()
             ->color('secondary');
     }
@@ -182,10 +182,10 @@ trait CanOpenModal
         }
 
         if ($this->isConfirmationRequired()) {
-            return __('filament-support::actions/modal.actions.confirm.label');
+            return __('filament-actions::modal.actions.confirm.label');
         }
 
-        return __('filament-support::actions/modal.actions.submit.label');
+        return __('filament-actions::modal.actions.submit.label');
     }
 
     public function getModalContent(): View | Htmlable | null
@@ -205,7 +205,7 @@ trait CanOpenModal
         }
 
         if ($this->isConfirmationRequired()) {
-            return __('filament-support::actions/modal.confirmation');
+            return __('filament-actions::modal.confirmation');
         }
 
         return null;

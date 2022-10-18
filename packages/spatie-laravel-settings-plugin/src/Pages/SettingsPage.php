@@ -10,9 +10,9 @@ use Filament\Pages\Contracts\HasCachedFormActions;
 /**
  * @property ComponentContainer $form
  */
-class SettingsPage extends Page implements HasCachedFormActions
+class SettingsPage extends Page
 {
-    use Concerns\HasFormActions;
+    use Concerns\InteractsWithFormActions;
 
     protected static string $settings;
 

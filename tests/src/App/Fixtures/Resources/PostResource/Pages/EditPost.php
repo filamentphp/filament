@@ -2,7 +2,7 @@
 
 namespace Filament\Tests\App\Fixtures\Resources\PostResource\Pages;
 
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Tests\App\Fixtures\Resources\PostResource;
 

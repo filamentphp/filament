@@ -25,13 +25,13 @@ class EditAction extends Action
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/edit.single.label'));
+        $this->label(__('filament-actions::edit.single.label'));
 
-        $this->modalHeading(fn (): string => __('filament-support::actions/edit.single.modal.heading', ['label' => $this->getRecordTitle()]));
+        $this->modalHeading(fn (): string => __('filament-actions::edit.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
-        $this->modalButton(__('filament-support::actions/edit.single.modal.actions.save.label'));
+        $this->modalButton(__('filament-actions::edit.single.modal.actions.save.label'));
 
-        $this->successNotificationTitle(__('filament-support::actions/edit.single.messages.saved'));
+        $this->successNotificationTitle(__('filament-actions::edit.single.messages.saved'));
 
         $this->icon('heroicon-m-pencil');
 

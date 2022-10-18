@@ -21,13 +21,13 @@ class ForceDeleteBulkAction extends BulkAction
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/force-delete.multiple.label'));
+        $this->label(__('filament-actions::force-delete.multiple.label'));
 
-        $this->modalHeading(fn (): string => __('filament-support::actions/force-delete.multiple.modal.heading', ['label' => $this->getPluralModelLabel()]));
+        $this->modalHeading(fn (): string => __('filament-actions::force-delete.multiple.modal.heading', ['label' => $this->getPluralModelLabel()]));
 
-        $this->modalButton(__('filament-support::actions/force-delete.multiple.modal.actions.delete.label'));
+        $this->modalButton(__('filament-actions::force-delete.multiple.modal.actions.delete.label'));
 
-        $this->successNotificationTitle(__('filament-support::actions/force-delete.multiple.messages.deleted'));
+        $this->successNotificationTitle(__('filament-actions::force-delete.multiple.messages.deleted'));
 
         $this->color('danger');
 

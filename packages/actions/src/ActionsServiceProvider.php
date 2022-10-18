@@ -2,6 +2,7 @@
 
 namespace Filament\Actions;
 
+use Filament\Actions\Testing\TestsActions;
 use Filament\Notifications\Http\Livewire\Notifications;
 use Filament\Notifications\Testing\TestsNotifications;
 use Filament\Support\Assets\Js;
@@ -25,6 +26,6 @@ class ActionsServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-//        TestableLivewire::mixin(new TestsNotifications());
+        TestableLivewire::mixin(new TestsActions());
     }
 }

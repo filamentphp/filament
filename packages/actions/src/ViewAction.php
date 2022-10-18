@@ -13,7 +13,7 @@ class ViewAction extends Action
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/view.single.label'));
+        $this->label(__('filament-actions::view.single.label'));
 
         $this->color('secondary');
 

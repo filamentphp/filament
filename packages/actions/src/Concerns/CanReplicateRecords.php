@@ -25,13 +25,13 @@ trait CanReplicateRecords
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/replicate.single.label'));
+        $this->label(__('filament-actions::replicate.single.label'));
 
-        $this->modalHeading(fn (): string => __('filament-support::actions/replicate.single.modal.heading', ['label' => $this->getRecordTitle()]));
+        $this->modalHeading(fn (): string => __('filament-actions::replicate.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
-        $this->modalButton(__('filament-support::actions/replicate.single.modal.actions.replicate.label'));
+        $this->modalButton(__('filament-actions::replicate.single.modal.actions.replicate.label'));
 
-        $this->successNotificationTitle(__('filament-support::actions/replicate.single.messages.replicated'));
+        $this->successNotificationTitle(__('filament-actions::replicate.single.messages.replicated'));
 
         $this->mountUsing(function (Model $record, ?ComponentContainer $form = null): void {
             if (! $form) {

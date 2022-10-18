@@ -9,16 +9,16 @@ uses(TestCase::class);
 
 it('can call an action', function () {
     livewire(PageActions::class)
-        ->callPageAction('simple')
+        ->callAction('simple')
         ->assertEmitted('simple-called');
 });
 
 it('can call an action with data', function () {
     livewire(PageActions::class)
-        ->callPageAction('data', data: [
+        ->callAction('data', data: [
             'payload' => $payload = Str::random(),
         ])
-        ->assertHasNoPageActionErrors()
+        ->assertHasNoActionErrors()
         ->assertEmitted('data-called', [
             'payload' => $payload,
         ]);
@@ -26,24 +26,24 @@ it('can call an action with data', function () {
 
 it('can validate an action\'s data', function () {
     livewire(PageActions::class)
-        ->callPageAction('data', data: [
+        ->callAction('data', data: [
             'payload' => null,
         ])
-        ->assertHasPageActionErrors(['payload' => ['required']])
+        ->assertHasActionErrors(['payload' => ['required']])
         ->assertNotEmitted('data-called');
 });
 
 it('can set default action data when mounted', function () {
     livewire(PageActions::class)
-        ->mountPageAction('data')
-        ->assertPageActionDataSet([
+        ->mountAction('data')
+        ->assertActionDataSet([
             'foo' => 'bar',
         ]);
 });
 
 it('can call an action with arguments', function () {
     livewire(PageActions::class)
-        ->callPageAction('arguments', arguments: [
+        ->callAction('arguments', arguments: [
             'payload' => $payload = Str::random(),
         ])
         ->assertEmitted('arguments-called', [
@@ -53,55 +53,55 @@ it('can call an action with arguments', function () {
 
 it('can call an action and halt', function () {
     livewire(PageActions::class)
-        ->callPageAction('halt')
+        ->callAction('halt')
         ->assertEmitted('halt-called')
-        ->assertPageActionHalted('halt');
+        ->assertActionHalted('halt');
 });
 
 it('can hide an action', function () {
     livewire(PageActions::class)
-        ->assertPageActionVisible('visible')
-        ->assertPageActionHidden('hidden');
+        ->assertActionVisible('visible')
+        ->assertActionHidden('hidden');
 });
 
 it('can disable an action', function () {
     livewire(PageActions::class)
-        ->assertPageActionEnabled('enabled')
-        ->assertPageActionDisabled('disabled');
+        ->assertActionEnabled('enabled')
+        ->assertActionDisabled('disabled');
 });
 
 it('can have an icon', function () {
     livewire(PageActions::class)
-        ->assertPageActionHasIcon('has-icon', 'heroicon-m-pencil')
-        ->assertPageActionDoesNotHaveIcon('has-icon', 'heroicon-m-trash');
+        ->assertActionHasIcon('has-icon', 'heroicon-m-pencil')
+        ->assertActionDoesNotHaveIcon('has-icon', 'heroicon-m-trash');
 });
 
 it('can have a label', function () {
     livewire(PageActions::class)
-        ->assertPageActionHasLabel('has-label', 'My Action')
-        ->assertPageActionDoesNotHaveLabel('has-label', 'My Other Action');
+        ->assertActionHasLabel('has-label', 'My Action')
+        ->assertActionDoesNotHaveLabel('has-label', 'My Other Action');
 });
 
 it('can have a color', function () {
     livewire(PageActions::class)
-        ->assertPageActionHasColor('has-color', 'primary')
-        ->assertPageActionDoesNotHaveColor('has-color', 'secondary');
+        ->assertActionHasColor('has-color', 'primary')
+        ->assertActionDoesNotHaveColor('has-color', 'secondary');
 });
 
 it('can have a URL', function () {
     livewire(PageActions::class)
-        ->assertPageActionHasUrl('url', 'https://filamentphp.com')
-        ->assertPageActionDoesNotHaveUrl('url', 'https://google.com');
+        ->assertActionHasUrl('url', 'https://filamentphp.com')
+        ->assertActionDoesNotHaveUrl('url', 'https://google.com');
 });
 
 it('can open a URL in a new tab', function () {
     livewire(PageActions::class)
-        ->assertPageActionShouldOpenUrlInNewTab('url_in_new_tab')
-        ->assertPageActionShouldNotOpenUrlInNewTab('url_not_in_new_tab');
+        ->assertActionShouldOpenUrlInNewTab('url_in_new_tab')
+        ->assertActionShouldNotOpenUrlInNewTab('url_not_in_new_tab');
 });
 
 it('can state whether a page action exists', function () {
     livewire(PageActions::class)
-        ->assertPageActionExists('exists')
-        ->assertPageActionDoesNotExist('does_not_exist');
+        ->assertActionExists('exists')
+        ->assertActionDoesNotExist('does_not_exist');
 });

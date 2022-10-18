@@ -11,7 +11,7 @@ To define actions for a page, use the `getActions()` method:
 ```php
 use Filament\Actions\Action;
 
-protected function getActions(): array
+protected function getHeaderActions(): array
 {
     return [
         Action::make('settings')->action('openSettingsModal'),
@@ -29,7 +29,7 @@ The button's label is generated based on it's name. To override it, you may use 
 ```php
 use Filament\Actions\Action;
 
-protected function getActions(): array
+protected function getHeaderActions(): array
 {
     return [
         Action::make('settings')
@@ -44,7 +44,7 @@ You may also allow the button to open a URL, using the `url()` method:
 ```php
 use Filament\Actions\Action;
 
-protected function getActions(): array
+protected function getHeaderActions(): array
 {
     return [
         Action::make('settings')
@@ -59,7 +59,7 @@ Buttons may have a `color()`. The default is `primary`, but you may use `seconda
 ```php
 use Filament\Actions\Action;
 
-protected function getActions(): array
+protected function getHeaderActions(): array
 {
     return [
         Action::make('settings')->color('secondary'),
@@ -72,7 +72,7 @@ Buttons may have a `size()`. The default is `md`, but you may also use `sm` or `
 ```php
 use Filament\Actions\Action;
 
-protected function getActions(): array
+protected function getHeaderActions(): array
 {
     return [
         Action::make('settings')->size('lg'),
@@ -85,7 +85,7 @@ Buttons may also have an `icon()`, which is the name of any Blade component. By 
 ```php
 use Filament\Actions\Action;
 
-protected function getActions(): array
+protected function getHeaderActions(): array
 {
     return [
         Action::make('settings')->icon('heroicon-m-cog-6-tooth'),
@@ -98,7 +98,7 @@ You may customize the size of a button using the `size()` method:
 ```php
 use Filament\Actions\Action;
 
-protected function getActions(): array
+protected function getHeaderActions(): array
 {
     return [
         Action::make('settings')
@@ -210,7 +210,7 @@ You may use an `ActionGroup` object to group multiple actions together in a drop
 ```php
 use Filament\Actions;
 
-protected function getActions(): array
+protected function getHeaderActions(): array
 {
     return [
         Actions\ActionGroup::make([

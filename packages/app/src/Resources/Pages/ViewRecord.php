@@ -9,7 +9,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
-use Filament\Pages\Concerns\HasFormActions;
+use Filament\Pages\Concerns\InteractsWithFormActions;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -20,7 +20,7 @@ class ViewRecord extends Page
     use Concerns\HasRecordBreadcrumb;
     use Concerns\HasRelationManagers;
     use Concerns\InteractsWithRecord;
-    use HasFormActions;
+    use InteractsWithFormActions;
 
     protected static string $view = 'filament::resources.pages.view-record';
 

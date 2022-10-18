@@ -21,13 +21,13 @@ class DetachBulkAction extends BulkAction
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/detach.multiple.label'));
+        $this->label(__('filament-actions::detach.multiple.label'));
 
-        $this->modalHeading(fn (): string => __('filament-support::actions/detach.multiple.modal.heading', ['label' => $this->getPluralModelLabel()]));
+        $this->modalHeading(fn (): string => __('filament-actions::detach.multiple.modal.heading', ['label' => $this->getPluralModelLabel()]));
 
-        $this->modalButton(__('filament-support::actions/detach.multiple.modal.actions.detach.label'));
+        $this->modalButton(__('filament-actions::detach.multiple.modal.actions.detach.label'));
 
-        $this->successNotificationTitle(__('filament-support::actions/detach.multiple.messages.detached'));
+        $this->successNotificationTitle(__('filament-actions::detach.multiple.messages.detached'));
 
         $this->color('danger');
 

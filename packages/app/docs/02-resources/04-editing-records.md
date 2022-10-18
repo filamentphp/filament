@@ -352,7 +352,7 @@ class EditUser extends EditRecord
 {
     // ...
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\Action::make('impersonate')->action('impersonate'),

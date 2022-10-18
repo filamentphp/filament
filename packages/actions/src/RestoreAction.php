@@ -18,13 +18,13 @@ class RestoreAction extends Action
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/restore.single.label'));
+        $this->label(__('filament-actions::restore.single.label'));
 
-        $this->modalHeading(fn (): string => __('filament-support::actions/restore.single.modal.heading', ['label' => $this->getRecordTitle()]));
+        $this->modalHeading(fn (): string => __('filament-actions::restore.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
-        $this->modalButton(__('filament-support::actions/restore.single.modal.actions.restore.label'));
+        $this->modalButton(__('filament-actions::restore.single.modal.actions.restore.label'));
 
-        $this->successNotificationTitle(__('filament-support::actions/restore.single.messages.restored'));
+        $this->successNotificationTitle(__('filament-actions::restore.single.messages.restored'));
 
         $this->color('secondary');
 

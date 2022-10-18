@@ -1,30 +1,30 @@
 <?php
 
-namespace Filament\Testing;
+namespace Filament\Actions\Testing;
 
 use Closure;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\BaseAction;
-use Filament\Pages\Page;
-use Filament\Support\Testing\TestsActions;
+use Filament\Actions\Contracts\HasActions;
 use Illuminate\Testing\Assert;
 use Livewire\Testing\TestableLivewire;
 
 /**
- * @method Page instance()
+ * @method HasActions instance()
  *
  * @mixin TestableLivewire
- * @mixin TestsActions
  */
-class TestsPageActions
+class TestsActions
 {
-    public function mountPageAction(): Closure
+    public function mountAction(): Closure
     {
         return function (string $name): static {
+            /** @phpstan-ignore-next-line */
             $name = $this->parseActionName($name);
 
             /** @phpstan-ignore-next-line */
-            $this->assertPageActionVisible($name);
+            $this->assertActionVisible($name);
 
             $this->call('mountAction', $name);
 
@@ -44,7 +44,7 @@ class TestsPageActions
         };
     }
 
-    public function setPageActionData(): Closure
+    public function setActionData(): Closure
     {
         return function (array $data): static {
             $this->set('mountedActionData', $data);
@@ -53,7 +53,7 @@ class TestsPageActions
         };
     }
 
-    public function assertPageActionDataSet(): Closure
+    public function assertActionDataSet(): Closure
     {
         return function (array $data): static {
             foreach ($data as $key => $value) {
@@ -64,27 +64,27 @@ class TestsPageActions
         };
     }
 
-    public function callPageAction(): Closure
+    public function callAction(): Closure
     {
         return function (string $name, array $data = [], array $arguments = []): static {
             /** @phpstan-ignore-next-line */
-            $this->mountPageAction($name);
+            $this->mountAction($name);
 
             if (! $this->instance()->getMountedAction()) {
                 return $this;
             }
 
             /** @phpstan-ignore-next-line */
-            $this->setPageActionData($data);
+            $this->setActionData($data);
 
             /** @phpstan-ignore-next-line */
-            $this->callMountedPageAction($arguments);
+            $this->callMountedAction($arguments);
 
             return $this;
         };
     }
 
-    public function callMountedPageAction(): Closure
+    public function callMountedAction(): Closure
     {
         return function (array $arguments = []): static {
             $action = $this->instance()->getMountedAction();
@@ -105,10 +105,10 @@ class TestsPageActions
         };
     }
 
-    public function assertPageActionExists(): Closure
+    public function assertActionExists(): Closure
     {
         return function (string $name): static {
-            $action = $this->instance()->getCachedAction($name);
+            $action = $this->instance()->getAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -122,15 +122,22 @@ class TestsPageActions
         };
     }
 
-    public function assertPageActionDoesNotExist(): Closure
+    public function assertActionDoesNotExist(): Closure
     {
         return function (string $name): static {
-            $action = $this->instance()->getCachedAction($name);
+            $exceptionMessage = null;
+
+            try {
+                $this->instance()->getAction($name);
+            } catch (Exception $exception) {
+                $exceptionMessage = $exception->getMessage();
+            }
 
             $livewireClass = $this->instance()::class;
 
-            Assert::assertNull(
-                $action,
+            Assert::assertSame(
+                'Action [does_not_exist] is missing from Livewire component [Filament\\Tests\\App\\Fixtures\\Pages\\PageActions].',
+                $exceptionMessage,
                 message: "Failed asserting that an action with name [{$name}] does not exist on the [{$livewireClass}] page.",
             );
 
@@ -138,13 +145,13 @@ class TestsPageActions
         };
     }
 
-    public function assertPageActionVisible(): Closure
+    public function assertActionVisible(): Closure
     {
         return function (string $name): static {
             /** @phpstan-ignore-next-line */
-            $this->assertPageActionExists($name);
+            $this->assertActionExists($name);
 
-            $action = $this->instance()->getCachedAction($name);
+            $action = $this->instance()->getAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -157,13 +164,13 @@ class TestsPageActions
         };
     }
 
-    public function assertPageActionHidden(): Closure
+    public function assertActionHidden(): Closure
     {
         return function (string $name): static {
             /** @phpstan-ignore-next-line */
-            $this->assertPageActionExists($name);
+            $this->assertActionExists($name);
 
-            $action = $this->instance()->getCachedAction($name);
+            $action = $this->instance()->getAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -176,13 +183,13 @@ class TestsPageActions
         };
     }
 
-    public function assertPageActionEnabled(): Closure
+    public function assertActionEnabled(): Closure
     {
         return function (string $name): static {
             /** @phpstan-ignore-next-line */
-            $this->assertPageActionExists($name);
+            $this->assertActionExists($name);
 
-            $action = $this->instance()->getCachedAction($name);
+            $action = $this->instance()->getAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -195,13 +202,13 @@ class TestsPageActions
         };
     }
 
-    public function assertPageActionDisabled(): Closure
+    public function assertActionDisabled(): Closure
     {
         return function (string $name): static {
             /** @phpstan-ignore-next-line */
-            $this->assertPageActionExists($name);
+            $this->assertActionExists($name);
 
-            $action = $this->instance()->getCachedAction($name);
+            $action = $this->instance()->getAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -214,13 +221,13 @@ class TestsPageActions
         };
     }
 
-    public function assertPageActionHasIcon(): Closure
+    public function assertActionHasIcon(): Closure
     {
         return function (string $name, string $icon, $record = null): static {
             /** @phpstan-ignore-next-line */
-            $this->assertPageActionExists($name);
+            $this->assertActionExists($name);
 
-            $action = $this->instance()->getCachedAction($name);
+            $action = $this->instance()->getAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -233,13 +240,13 @@ class TestsPageActions
         };
     }
 
-    public function assertPageActionDoesNotHaveIcon(): Closure
+    public function assertActionDoesNotHaveIcon(): Closure
     {
         return function (string $name, string $icon, $record = null): static {
             /** @phpstan-ignore-next-line */
-            $this->assertPageActionExists($name);
+            $this->assertActionExists($name);
 
-            $action = $this->instance()->getCachedAction($name);
+            $action = $this->instance()->getAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -252,13 +259,13 @@ class TestsPageActions
         };
     }
 
-    public function assertPageActionHasLabel(): Closure
+    public function assertActionHasLabel(): Closure
     {
         return function (string $name, string $label, $record = null): static {
             /** @phpstan-ignore-next-line */
-            $this->assertPageActionExists($name);
+            $this->assertActionExists($name);
 
-            $action = $this->instance()->getCachedAction($name);
+            $action = $this->instance()->getAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -271,13 +278,13 @@ class TestsPageActions
         };
     }
 
-    public function assertPageActionDoesNotHaveLabel(): Closure
+    public function assertActionDoesNotHaveLabel(): Closure
     {
         return function (string $name, string $label, $record = null): static {
             /** @phpstan-ignore-next-line */
-            $this->assertPageActionExists($name);
+            $this->assertActionExists($name);
 
-            $action = $this->instance()->getCachedAction($name);
+            $action = $this->instance()->getAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -290,13 +297,13 @@ class TestsPageActions
         };
     }
 
-    public function assertPageActionHasColor(): Closure
+    public function assertActionHasColor(): Closure
     {
         return function (string $name, string $color, $record = null): static {
             /** @phpstan-ignore-next-line */
-            $this->assertPageActionExists($name);
+            $this->assertActionExists($name);
 
-            $action = $this->instance()->getCachedAction($name);
+            $action = $this->instance()->getAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -309,13 +316,13 @@ class TestsPageActions
         };
     }
 
-    public function assertPageActionDoesNotHaveColor(): Closure
+    public function assertActionDoesNotHaveColor(): Closure
     {
         return function (string $name, string $color, $record = null): static {
             /** @phpstan-ignore-next-line */
-            $this->assertPageActionExists($name);
+            $this->assertActionExists($name);
 
-            $action = $this->instance()->getCachedAction($name);
+            $action = $this->instance()->getAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -328,13 +335,13 @@ class TestsPageActions
         };
     }
 
-    public function assertPageActionHasUrl(): Closure
+    public function assertActionHasUrl(): Closure
     {
         return function (string $name, string $url, $record = null): static {
             /** @phpstan-ignore-next-line */
-            $this->assertPageActionExists($name);
+            $this->assertActionExists($name);
 
-            $action = $this->instance()->getCachedAction($name);
+            $action = $this->instance()->getAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -347,13 +354,13 @@ class TestsPageActions
         };
     }
 
-    public function assertPageActionDoesNotHaveUrl(): Closure
+    public function assertActionDoesNotHaveUrl(): Closure
     {
         return function (string $name, string $url, $record = null): static {
             /** @phpstan-ignore-next-line */
-            $this->assertPageActionExists($name);
+            $this->assertActionExists($name);
 
-            $action = $this->instance()->getCachedAction($name);
+            $action = $this->instance()->getAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -366,13 +373,13 @@ class TestsPageActions
         };
     }
 
-    public function assertPageActionShouldOpenUrlInNewTab(): Closure
+    public function assertActionShouldOpenUrlInNewTab(): Closure
     {
         return function (string $name, $record = null): static {
             /** @phpstan-ignore-next-line */
-            $this->assertPageActionExists($name);
+            $this->assertActionExists($name);
 
-            $action = $this->instance()->getCachedAction($name);
+            $action = $this->instance()->getAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -385,13 +392,13 @@ class TestsPageActions
         };
     }
 
-    public function assertPageActionShouldNotOpenUrlInNewTab(): Closure
+    public function assertActionShouldNotOpenUrlInNewTab(): Closure
     {
         return function (string $name, $record = null): static {
             /** @phpstan-ignore-next-line */
-            $this->assertPageActionExists($name);
+            $this->assertActionExists($name);
 
-            $action = $this->instance()->getCachedAction($name);
+            $action = $this->instance()->getAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -404,13 +411,14 @@ class TestsPageActions
         };
     }
 
-    public function assertPageActionHalted(): Closure
+    public function assertActionHalted(): Closure
     {
         return function (string $name): static {
+            /** @phpstan-ignore-next-line */
             $name = $this->parseActionName($name);
 
             /** @phpstan-ignore-next-line */
-            $this->assertPageActionExists($name);
+            $this->assertActionExists($name);
 
             $this->assertSet('mountedAction', $name);
 
@@ -419,14 +427,14 @@ class TestsPageActions
     }
 
     /**
-     * @deprecated Use `->assertPageActionHalted()` instead.
+     * @deprecated Use `->assertActionHalted()` instead.
      */
-    public function assertPageActionHeld(): Closure
+    public function assertActionHeld(): Closure
     {
-        return $this->assertPageActionHalted();
+        return $this->assertActionHalted();
     }
 
-    public function assertHasPageActionErrors(): Closure
+    public function assertHasActionErrors(): Closure
     {
         return function (array $keys = []): static {
             $this->assertHasErrors(
@@ -445,7 +453,7 @@ class TestsPageActions
         };
     }
 
-    public function assertHasNoPageActionErrors(): Closure
+    public function assertHasNoActionErrors(): Closure
     {
         return function (array $keys = []): static {
             $this->assertHasNoErrors(
@@ -461,6 +469,21 @@ class TestsPageActions
             );
 
             return $this;
+        };
+    }
+
+    public function parseActionName(): Closure
+    {
+        return function (string $name): string {
+            if (! class_exists($name)) {
+                return $name;
+            }
+
+            if (! is_subclass_of($name, BaseAction::class)) {
+                return $name;
+            }
+
+            return $name::getDefaultName();
         };
     }
 }

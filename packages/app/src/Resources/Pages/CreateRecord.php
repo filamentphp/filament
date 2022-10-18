@@ -5,7 +5,7 @@ namespace Filament\Resources\Pages;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Actions\Action;
-use Filament\Pages\Concerns\HasFormActions;
+use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Contracts\HasCachedFormActions;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
@@ -14,9 +14,9 @@ use Illuminate\Support\Str;
 /**
  * @property Form $form
  */
-class CreateRecord extends Page implements HasCachedFormActions
+class CreateRecord extends Page
 {
-    use HasFormActions;
+    use InteractsWithFormActions;
 
     protected static string $view = 'filament::resources.pages.create-record';
 

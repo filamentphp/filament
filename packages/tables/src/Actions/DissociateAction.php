@@ -20,13 +20,13 @@ class DissociateAction extends Action
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/dissociate.single.label'));
+        $this->label(__('filament-actions::dissociate.single.label'));
 
-        $this->modalHeading(fn (): string => __('filament-support::actions/dissociate.single.modal.heading', ['label' => $this->getRecordTitle()]));
+        $this->modalHeading(fn (): string => __('filament-actions::dissociate.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
-        $this->modalButton(__('filament-support::actions/dissociate.single.modal.actions.dissociate.label'));
+        $this->modalButton(__('filament-actions::dissociate.single.modal.actions.dissociate.label'));
 
-        $this->successNotificationTitle(__('filament-support::actions/dissociate.single.messages.dissociated'));
+        $this->successNotificationTitle(__('filament-actions::dissociate.single.messages.dissociated'));
 
         $this->color('danger');
 

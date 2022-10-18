@@ -65,7 +65,7 @@ Now, update the Edit page class, if you have one:
 ```php
 use Filament\Actions;
 
-protected function getActions(): array
+protected function getHeaderActions(): array
 {
     return [
         Actions\DeleteAction::make(),

@@ -22,20 +22,20 @@ class CreateAction extends Action
     {
         parent::setUp();
 
-        $this->label(fn (): string => __('filament-support::actions/create.single.label', ['label' => $this->getModelLabel()]));
+        $this->label(fn (): string => __('filament-actions::create.single.label', ['label' => $this->getModelLabel()]));
 
-        $this->modalHeading(fn (): string => __('filament-support::actions/create.single.modal.heading', ['label' => $this->getModelLabel()]));
+        $this->modalHeading(fn (): string => __('filament-actions::create.single.modal.heading', ['label' => $this->getModelLabel()]));
 
-        $this->modalButton(__('filament-support::actions/create.single.modal.actions.create.label'));
+        $this->modalButton(__('filament-actions::create.single.modal.actions.create.label'));
 
         $this->extraModalActions(function (): array {
             return $this->isCreateAnotherDisabled() ? [] : [
                 $this->makeExtraModalAction('createAnother', ['another' => true])
-                    ->label(__('filament-support::actions/create.single.modal.actions.create_another.label')),
+                    ->label(__('filament-actions::create.single.modal.actions.create_another.label')),
             ];
         });
 
-        $this->successNotificationTitle(__('filament-support::actions/create.single.messages.created'));
+        $this->successNotificationTitle(__('filament-actions::create.single.messages.created'));
 
         $this->button();
 

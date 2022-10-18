@@ -2,7 +2,7 @@
 
 namespace Filament\Tests\App\Fixtures\Resources\UserResource\Pages;
 
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tests\App\Fixtures\Resources\UserResource;
 

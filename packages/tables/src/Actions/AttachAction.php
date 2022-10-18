@@ -39,22 +39,22 @@ class AttachAction extends Action
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/attach.single.label'));
+        $this->label(__('filament-actions::attach.single.label'));
 
-        $this->modalHeading(fn (): string => __('filament-support::actions/attach.single.modal.heading', ['label' => $this->getModelLabel()]));
+        $this->modalHeading(fn (): string => __('filament-actions::attach.single.modal.heading', ['label' => $this->getModelLabel()]));
 
-        $this->modalButton(__('filament-support::actions/attach.single.modal.actions.attach.label'));
+        $this->modalButton(__('filament-actions::attach.single.modal.actions.attach.label'));
 
         $this->modalWidth('lg');
 
         $this->extraModalActions(function (): array {
             return $this->isAttachAnotherDisabled() ? [] : [
                 $this->makeExtraModalAction('attachAnother', ['another' => true])
-                    ->label(__('filament-support::actions/attach.single.modal.actions.attach_another.label')),
+                    ->label(__('filament-actions::attach.single.modal.actions.attach_another.label')),
             ];
         });
 
-        $this->successNotificationTitle(__('filament-support::actions/attach.single.messages.attached'));
+        $this->successNotificationTitle(__('filament-actions::attach.single.messages.attached'));
 
         $this->color('secondary');
 
@@ -225,7 +225,7 @@ class AttachAction extends Action
         };
 
         $select = Select::make('recordId')
-            ->label(__('filament-support::actions/attach.single.modal.fields.record_id.label'))
+            ->label(__('filament-actions::attach.single.modal.fields.record_id.label'))
             ->required()
             ->searchable($this->getRecordSelectSearchColumns() ?? true)
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(search: $search, searchColumns: $component->getSearchColumns()))

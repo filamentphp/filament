@@ -2,20 +2,21 @@
 
 namespace Filament\Actions\Concerns;
 
-use Filament\Pages\Page;
+
+use Filament\Actions\Contracts\HasActions;
 
 trait BelongsToLivewire
 {
-    protected Page $livewire;
+    protected HasActions $livewire;
 
-    public function livewire(Page $livewire): static
+    public function livewire(HasActions $livewire): static
     {
         $this->livewire = $livewire;
 
         return $this;
     }
 
-    public function getLivewire(): Page
+    public function getLivewire(): HasActions
     {
         return $this->livewire;
     }

@@ -3,7 +3,7 @@
     'color' => null,
     'darkMode' => false,
     'icon' => 'heroicon-m-ellipsis-vertical',
-    'label' => __('filament-support::actions/group.trigger.label'),
+    'label' => __('filament-actions::group.trigger.label'),
     'size' => null,
     'tooltip' => null,
 ])

@@ -21,13 +21,13 @@ class DissociateBulkAction extends BulkAction
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/dissociate.multiple.label'));
+        $this->label(__('filament-actions::dissociate.multiple.label'));
 
-        $this->modalHeading(fn (): string => __('filament-support::actions/dissociate.multiple.modal.heading', ['label' => $this->getPluralModelLabel()]));
+        $this->modalHeading(fn (): string => __('filament-actions::dissociate.multiple.modal.heading', ['label' => $this->getPluralModelLabel()]));
 
-        $this->modalButton(__('filament-support::actions/dissociate.multiple.modal.actions.dissociate.label'));
+        $this->modalButton(__('filament-actions::dissociate.multiple.modal.actions.dissociate.label'));
 
-        $this->successNotificationTitle(__('filament-support::actions/dissociate.multiple.messages.dissociated'));
+        $this->successNotificationTitle(__('filament-actions::dissociate.multiple.messages.dissociated'));
 
         $this->color('danger');
 

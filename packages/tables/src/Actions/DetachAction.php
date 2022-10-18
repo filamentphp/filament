@@ -20,13 +20,13 @@ class DetachAction extends Action
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/detach.single.label'));
+        $this->label(__('filament-actions::detach.single.label'));
 
-        $this->modalHeading(fn (): string => __('filament-support::actions/detach.single.modal.heading', ['label' => $this->getRecordTitle()]));
+        $this->modalHeading(fn (): string => __('filament-actions::detach.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
-        $this->modalButton(__('filament-support::actions/detach.single.modal.actions.detach.label'));
+        $this->modalButton(__('filament-actions::detach.single.modal.actions.detach.label'));
 
-        $this->successNotificationTitle(__('filament-support::actions/detach.single.messages.detached'));
+        $this->successNotificationTitle(__('filament-actions::detach.single.messages.detached'));
 
         $this->color('danger');
 

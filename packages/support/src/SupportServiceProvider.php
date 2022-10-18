@@ -51,8 +51,6 @@ class SupportServiceProvider extends PackageServiceProvider
                 return Sanitizer::create(require __DIR__ . '/../config/html-sanitizer.php');
             },
         );
-
-        TestableLivewire::mixin(new TestsActions());
     }
 
     public function packageBooted()

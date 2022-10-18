@@ -19,13 +19,13 @@ class ViewAction extends Action
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/view.single.label'));
+        $this->label(__('filament-actions::view.single.label'));
 
-        $this->modalHeading(fn (): string => __('filament-support::actions/view.single.modal.heading', ['label' => $this->getRecordTitle()]));
+        $this->modalHeading(fn (): string => __('filament-actions::view.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
         $this->modalActions(fn (): array => array_merge(
             $this->getExtraModalActions(),
-            [$this->getModalCancelAction()->label(__('filament-support::actions/view.single.modal.actions.close.label'))],
+            [$this->getModalCancelAction()->label(__('filament-actions::view.single.modal.actions.close.label'))],
         ));
 
         $this->color('secondary');

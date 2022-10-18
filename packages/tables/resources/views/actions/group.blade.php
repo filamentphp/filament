@@ -1,4 +1,4 @@
-<x-filament-support::actions.group
+<x-filament-actions::group
     :actions="$getActions()"
     :dark-mode="config('tables.dark_mode')"
     :color="$getColor()"

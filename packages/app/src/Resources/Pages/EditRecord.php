@@ -10,7 +10,7 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
-use Filament\Pages\Concerns\HasFormActions;
+use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Contracts\HasCachedFormActions;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
@@ -18,12 +18,12 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property Form $form
  */
-class EditRecord extends Page implements HasCachedFormActions
+class EditRecord extends Page
 {
     use Concerns\HasRecordBreadcrumb;
     use Concerns\HasRelationManagers;
     use Concerns\InteractsWithRecord;
-    use HasFormActions;
+    use InteractsWithFormActions;
 
     protected static string $view = 'filament::resources.pages.edit-record';
 

@@ -8,7 +8,7 @@
         @if ($header = $this->getHeader())
             {{ $header }}
         @elseif ($heading = $this->getHeading())
-            <x-filament::header :actions="$this->getCachedActions()">
+            <x-filament::header :actions="$this->getCachedHeaderActions()">
                 <x-slot name="heading">
                     {{ $heading }}
                 </x-slot>

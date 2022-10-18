@@ -39,22 +39,22 @@ class AssociateAction extends Action
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/associate.single.label'));
+        $this->label(__('filament-actions::associate.single.label'));
 
-        $this->modalHeading(fn (): string => __('filament-support::actions/associate.single.modal.heading', ['label' => $this->getModelLabel()]));
+        $this->modalHeading(fn (): string => __('filament-actions::associate.single.modal.heading', ['label' => $this->getModelLabel()]));
 
-        $this->modalButton(__('filament-support::actions/associate.single.modal.actions.associate.label'));
+        $this->modalButton(__('filament-actions::associate.single.modal.actions.associate.label'));
 
         $this->modalWidth('lg');
 
         $this->extraModalActions(function (): array {
             return $this->isAssociateAnotherDisabled ? [] : [
                 $this->makeExtraModalAction('associateAnother', ['another' => true])
-                    ->label(__('filament-support::actions/associate.single.modal.actions.associate_another.label')),
+                    ->label(__('filament-actions::associate.single.modal.actions.associate_another.label')),
             ];
         });
 
-        $this->successNotificationTitle(__('filament-support::actions/associate.single.messages.associated'));
+        $this->successNotificationTitle(__('filament-actions::associate.single.messages.associated'));
 
         $this->color('secondary');
 
@@ -220,7 +220,7 @@ class AssociateAction extends Action
         };
 
         $select = Select::make('recordId')
-            ->label(__('filament-support::actions/associate.single.modal.fields.record_id.label'))
+            ->label(__('filament-actions::associate.single.modal.fields.record_id.label'))
             ->required()
             ->searchable($this->getRecordSelectSearchColumns() ?? true)
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(search: $search, searchColumns: $component->getSearchColumns()))

@@ -3,6 +3,8 @@
 namespace Filament\Pages;
 
 use Closure;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Navigation\NavigationItem;
@@ -13,9 +15,10 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
-class Page extends Component implements Forms\Contracts\HasForms, RendersFormComponentActionModal
+class Page extends Component implements HasActions, RendersFormComponentActionModal
 {
-    use Concerns\HasActions;
+    use Concerns\InteractsWithHeaderActions;
+    use InteractsWithActions;
 
     protected static string $layout = 'filament::components.layouts.app';
 
@@ -145,11 +148,6 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
     public static function getNavigationUrl(): string
     {
         return static::getUrl();
-    }
-
-    protected function getActions(): array
-    {
-        return [];
     }
 
     protected function getFooter(): ?View

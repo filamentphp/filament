@@ -18,13 +18,13 @@ class DeleteAction extends Action
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/delete.single.label'));
+        $this->label(__('filament-actions::delete.single.label'));
 
-        $this->modalHeading(fn (): string => __('filament-support::actions/delete.single.modal.heading', ['label' => $this->getRecordTitle()]));
+        $this->modalHeading(fn (): string => __('filament-actions::delete.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
-        $this->modalButton(__('filament-support::actions/delete.single.modal.actions.delete.label'));
+        $this->modalButton(__('filament-actions::delete.single.modal.actions.delete.label'));
 
-        $this->successNotificationTitle(__('filament-support::actions/delete.single.messages.deleted'));
+        $this->successNotificationTitle(__('filament-actions::delete.single.messages.deleted'));
 
         $this->color('danger');
 

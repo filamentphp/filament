@@ -1,12 +1,12 @@
 <?php
 
-namespace Filament\Pages\Concerns;
+namespace Filament\Actions\Concerns;
 
 use Closure;
-use Filament\Forms;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Pages\Contracts;
+use Filament\Forms;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property Forms\Form $mountedActionForm
  */
-trait HasActions
+trait InteractsWithActions
 {
     use Forms\Concerns\InteractsWithForms;
 
@@ -22,7 +22,7 @@ trait HasActions
 
     public $mountedActionData = [];
 
-    protected ?array $cachedActions = null;
+    protected array $cachedActions = [];
 
     public function callMountedAction(?string $arguments = null)
     {
@@ -141,39 +141,11 @@ trait HasActions
         return (bool) count($this->getMountedActionForm()?->getComponents() ?? []);
     }
 
-    public function getCachedActions(): array
+    protected function cacheAction(Action $action): Action
     {
-        if ($this->cachedActions === null) {
-            $this->cacheActions();
-        }
+        $action->livewire($this);
 
-        return $this->cachedActions;
-    }
-
-    protected function cacheActions(): void
-    {
-        $actions = Action::configureUsing(
-            Closure::fromCallable([$this, 'configureAction']),
-            fn (): array => $this->getActions(),
-        );
-
-        $this->cachedActions = [];
-
-        foreach ($actions as $index => $action) {
-            if ($action instanceof ActionGroup) {
-                foreach ($action->getActions() as $groupedAction) {
-                    $groupedAction->livewire($this);
-                }
-
-                $this->cachedActions[$index] = $action;
-
-                continue;
-            }
-
-            $action->livewire($this);
-
-            $this->cachedActions[$action->getName()] = $action;
-        }
+        return $this->cachedActions[$action->getName()] = $action;
     }
 
     protected function configureAction(Action $action): void
@@ -186,20 +158,10 @@ trait HasActions
             return null;
         }
 
-        $action = $this->getCachedAction($this->mountedAction);
-
-        if ($action) {
-            return $action;
-        }
-
-        if (! $this instanceof Contracts\HasCachedFormActions) {
-            return null;
-        }
-
-        return $this->getCachedFormAction($this->mountedAction);
+        return $this->getAction($this->mountedAction);
     }
 
-    protected function getHasActionsForms(): array
+    protected function getInteractsWithActionsForms(): array
     {
         return [
             'mountedActionForm' => $this->getMountedActionForm(),
@@ -231,9 +193,9 @@ trait HasActions
         return null;
     }
 
-    public function getCachedAction(string $name): ?Action
+    public function getAction(string $name): Action
     {
-        $actions = $this->getCachedActions();
+        $actions = $this->cachedActions;
 
         $action = $actions[$name] ?? null;
 
@@ -241,25 +203,19 @@ trait HasActions
             return $action;
         }
 
-        foreach ($actions as $action) {
-            if (! $action instanceof ActionGroup) {
-                continue;
-            }
-
-            $groupedAction = $action->getActions()[$name] ?? null;
-
-            if (! $groupedAction) {
-                continue;
-            }
-
-            return $groupedAction;
+        if (method_exists($this, $name)) {
+            $action = $this->cacheAction(Action::configureUsing(
+                Closure::fromCallable([$this, 'configureAction']),
+                fn (): ?Action => $this->{$name}(),
+            ));
         }
 
-        return null;
-    }
+        if ($action) {
+            return $action;
+        }
 
-    protected function getActions(): array
-    {
-        return [];
+        $livewireClass = $this::class;
+
+        throw new Exception("Action [{$name}] is missing from Livewire component [{$livewireClass}].");
     }
 }
