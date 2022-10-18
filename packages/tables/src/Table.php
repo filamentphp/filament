@@ -6,6 +6,8 @@ use Closure;
 use Exception;
 use Filament\Forms\Form;
 use Filament\Support\Components\ViewComponent;
+use function Filament\Support\get_model_label;
+use function Filament\Support\locale_has_pluralization;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
@@ -27,8 +29,6 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use function Filament\Support\locale_has_pluralization;
-use function Filament\Support\get_model_label;
 use function Livewire\invade;
 
 class Table extends ViewComponent

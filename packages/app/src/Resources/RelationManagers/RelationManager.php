@@ -2,13 +2,11 @@
 
 namespace Filament\Resources\RelationManagers;
 
-use Closure;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +14,6 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Livewire\Component;
-use function Filament\Support\locale_has_pluralization;
 
 class RelationManager extends Component implements Tables\Contracts\HasTable
 {
