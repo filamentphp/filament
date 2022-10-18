@@ -2,10 +2,11 @@
 
 namespace Filament\Pages\Actions;
 
+use Filament\Actions\Action as BaseAction;
+
 /**
- * @deprecated Use `\Filament\Pages\Actions\Action` instead.
- * @see Action
+ * @deprecated Use `\Filament\Actions\Action` instead.
  */
-class ButtonAction extends Action
+class ButtonAction extends BaseAction
 {
 }

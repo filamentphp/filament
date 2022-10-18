@@ -3,7 +3,7 @@
 namespace Filament\Support\Testing;
 
 use Closure;
-use Filament\Support\Actions\Action as BaseAction;
+use Filament\Actions\BaseAction;
 use Livewire\Component;
 use Livewire\Testing\TestableLivewire;
 

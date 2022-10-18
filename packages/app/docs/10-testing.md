@@ -206,7 +206,7 @@ it('can validate input', function () {
 You can test the `DeleteAction` using `callPageAction()`:
 
 ```php
-use Filament\Pages\Actions\DeleteAction;
+use Filament\Actions\DeleteAction;
 use function Pest\Livewire\livewire;
 
 it('can delete', function () {
@@ -224,7 +224,7 @@ it('can delete', function () {
 You can ensure that a particular user is not able to see a `DeleteAction` using `assertPageActionHidden()`:
 
 ```php
-use Filament\Pages\Actions\DeleteAction;
+use Filament\Actions\DeleteAction;
 use function Pest\Livewire\livewire;
 
 it('can not delete', function () {

@@ -2,23 +2,11 @@
 
 namespace Filament\Pages\Actions;
 
-class ViewAction extends Action
+use Filament\Actions\ViewAction as BaseAction;
+
+/**
+ * @deprecated Use `\Filament\Actions\ViewAction` instead.
+ */
+class ViewAction extends BaseAction
 {
-    public static function getDefaultName(): ?string
-    {
-        return 'view';
-    }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->label(__('filament-support::actions/view.single.label'));
-
-        $this->color('secondary');
-
-        $this->groupedIcon('heroicon-m-eye');
-
-        $this->disableForm();
-    }
 }

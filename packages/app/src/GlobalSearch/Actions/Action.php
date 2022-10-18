@@ -2,12 +2,12 @@
 
 namespace Filament\GlobalSearch\Actions;
 
-use Filament\Support\Actions\BaseAction;
-use Filament\Support\Actions\Concerns\CanBeOutlined;
-use Filament\Support\Actions\Concerns\CanEmitEvent;
-use Filament\Support\Actions\Concerns\CanOpenUrl;
+use Filament\Actions\StaticAction;
+use Filament\Actions\Concerns\CanBeOutlined;
+use Filament\Actions\Concerns\CanEmitEvent;
+use Filament\Actions\Concerns\CanOpenUrl;
 
-class Action extends BaseAction
+class Action extends StaticAction
 {
     use CanBeOutlined;
     use CanEmitEvent;

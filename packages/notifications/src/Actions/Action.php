@@ -2,15 +2,15 @@
 
 namespace Filament\Notifications\Actions;
 
+use Filament\Actions\StaticAction;
+use Filament\Actions\Concerns\CanBeOutlined;
+use Filament\Actions\Concerns\CanEmitEvent;
+use Filament\Actions\Concerns\CanOpenUrl;
 use Filament\Notifications\Actions\Concerns\CanCloseNotification;
-use Filament\Support\Actions\BaseAction;
-use Filament\Support\Actions\Concerns\CanBeOutlined;
-use Filament\Support\Actions\Concerns\CanEmitEvent;
-use Filament\Support\Actions\Concerns\CanOpenUrl;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Str;
 
-class Action extends BaseAction implements Arrayable
+class Action extends StaticAction implements Arrayable
 {
     use CanBeOutlined;
     use CanCloseNotification;

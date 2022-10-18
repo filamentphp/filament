@@ -2,23 +2,11 @@
 
 namespace Filament\Pages\Actions;
 
-use Filament\Support\Actions\Concerns\CanCustomizeProcess;
+use Filament\Actions\EditAction as BaseAction;
 
-class EditAction extends Action
+/**
+ * @deprecated Use `\Filament\Actions\EditAction` instead.
+ */
+class EditAction extends BaseAction
 {
-    use CanCustomizeProcess;
-
-    public static function getDefaultName(): ?string
-    {
-        return 'edit';
-    }
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->label(__('filament-support::actions/edit.single.label'));
-
-        $this->groupedIcon('heroicon-m-pencil');
-    }
 }

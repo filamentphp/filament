@@ -32,7 +32,7 @@ You may [publish the package's configuration file](installation#publishing-confi
 After [preparing your resource class](#preparing-your-resource-class), you must make each of your resource's pages translatable too. You can find your resource's pages in the `Pages` directory of each resource folder:
 
 ```php
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
 class ListBlogPosts extends ListRecords
@@ -52,7 +52,7 @@ class ListBlogPosts extends ListRecords
 ```
 
 ```php
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateBlogPost extends CreateRecord
@@ -72,7 +72,7 @@ class CreateBlogPost extends CreateRecord
 ```
 
 ```php
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditBlogPost extends EditRecord
@@ -94,7 +94,7 @@ class EditBlogPost extends EditRecord
 And if you have a `ViewRecord` page for your resource:
 
 ```php
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewBlogPost extends ViewRecord

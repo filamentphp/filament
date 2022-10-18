@@ -9,7 +9,7 @@ title: Actions
 To define actions for a page, use the `getActions()` method:
 
 ```php
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 
 protected function getActions(): array
 {
@@ -27,7 +27,7 @@ public function openSettingsModal(): void
 The button's label is generated based on it's name. To override it, you may use the `label()` method:
 
 ```php
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 
 protected function getActions(): array
 {
@@ -42,7 +42,7 @@ protected function getActions(): array
 You may also allow the button to open a URL, using the `url()` method:
 
 ```php
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 
 protected function getActions(): array
 {
@@ -57,7 +57,7 @@ protected function getActions(): array
 Buttons may have a `color()`. The default is `primary`, but you may use `secondary`, `success`, `warning`, or `danger`:
 
 ```php
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 
 protected function getActions(): array
 {
@@ -70,7 +70,7 @@ protected function getActions(): array
 Buttons may have a `size()`. The default is `md`, but you may also use `sm` or `lg`:
 
 ```php
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 
 protected function getActions(): array
 {
@@ -83,7 +83,7 @@ protected function getActions(): array
 Buttons may also have an `icon()`, which is the name of any Blade component. By default, the [Blade Heroicons](https://github.com/blade-ui-kit/blade-heroicons) package is installed, so you may use the name of any [Heroicon](https://heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
 
 ```php
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 
 protected function getActions(): array
 {
@@ -96,7 +96,7 @@ protected function getActions(): array
 You may customize the size of a button using the `size()` method:
 
 ```php
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 
 protected function getActions(): array
 {
@@ -118,7 +118,7 @@ Actions may require additional confirmation or form information before they run.
 You may require confirmation before an action is run using the `requiresConfirmation()` method. This is useful for particularly destructive actions, such as those that delete records.
 
 ```php
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 
 Action::make('delete')
     ->action(fn () => $this->record->delete())
@@ -136,7 +136,7 @@ You may use components from the [Form Builder](/docs/forms/fields) to create cus
 ```php
 use App\Models\User;
 use Filament\Forms;
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 
 Action::make('updateAuthor')
     ->action(function (array $data): void {
@@ -158,7 +158,7 @@ You may fill the form with default data, using the `mountUsing()` method:
 ```php
 use App\Models\User;
 use Filament\Forms;
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 
 Action::make('updateAuthor')
     ->mountUsing(fn (Forms\Form $form) => $form->fill([
@@ -181,7 +181,7 @@ Action::make('updateAuthor')
 You may customize the heading, subheading and button label of the modal:
 
 ```php
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 
 Action::make('delete')
     ->action(fn () => $this->record->delete())
@@ -196,7 +196,7 @@ Action::make('delete')
 You may define custom content to be rendered inside your modal, which you can specify by passing a Blade view into the `modalContent()` method:
 
 ```php
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 
 Action::make('advance')
     ->action(fn () => $this->record->advance())
@@ -208,7 +208,7 @@ Action::make('advance')
 You may use an `ActionGroup` object to group multiple actions together in a dropdown:
 
 ```php
-use Filament\Pages\Actions;
+use Filament\Actions;
 
 protected function getActions(): array
 {
@@ -227,7 +227,7 @@ protected function getActions(): array
 You can attach keyboard shortcuts to actions. These use the same key codes as [Mousetrap](https://craig.is/killing/mice):
 
 ```php
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 
 Action::make('save')
     ->action(fn () => $this->save())
@@ -239,7 +239,7 @@ Action::make('save')
 If you're using actions on an [Edit](../resources/editing-records) or [View](../resources/viewing-records) resource page, you can refresh data within the main form using the `refreshFormData()` method:
 
 ```php
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 
 Action::make('approve')
     ->action(function () {

@@ -3,8 +3,8 @@
 namespace Filament\Tables\Actions;
 
 use Closure;
+use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Form;
-use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

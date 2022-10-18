@@ -3,7 +3,8 @@
 namespace Filament\Testing;
 
 use Closure;
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
+use Filament\Actions\BaseAction;
 use Filament\Pages\Page;
 use Filament\Support\Testing\TestsActions;
 use Illuminate\Testing\Assert;

@@ -63,7 +63,7 @@ public static function getEloquentQuery(): Builder
 Now, update the Edit page class, if you have one:
 
 ```php
-use Filament\Pages\Actions;
+use Filament\Actions;
 
 protected function getActions(): array
 {

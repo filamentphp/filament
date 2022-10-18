@@ -2,7 +2,7 @@
 
 namespace Filament\Notifications\Actions;
 
-use Filament\Support\Actions\ActionGroup as BaseActionGroup;
+use Filament\Actions\ActionGroup as BaseActionGroup;
 use Illuminate\Contracts\Support\Arrayable;
 
 class ActionGroup extends BaseActionGroup implements Arrayable

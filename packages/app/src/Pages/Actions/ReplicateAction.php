@@ -2,19 +2,11 @@
 
 namespace Filament\Pages\Actions;
 
-use Filament\Support\Actions\Concerns\CanReplicateRecords;
-use Filament\Support\Actions\Contracts\ReplicatesRecords;
+use Filament\Actions\ReplicateAction as BaseAction;
 
-class ReplicateAction extends Action implements ReplicatesRecords
+/**
+ * @deprecated Use `\Filament\Actions\ReplicateAction` instead.
+ */
+class ReplicateAction extends BaseAction
 {
-    use CanReplicateRecords {
-        setUp as baseSetUp;
-    }
-
-    protected function setUp(): void
-    {
-        $this->baseSetUp();
-
-        $this->groupedIcon('heroicon-m-square-2-stack');
-    }
 }

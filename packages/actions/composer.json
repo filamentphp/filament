@@ -1,0 +1,34 @@
+{
+    "name": "filament/actions",
+    "description": "Effortlessly build TALL-powered modals and slide-overs.",
+    "license": "MIT",
+    "homepage": "https://github.com/filamentphp/filament",
+    "support": {
+        "issues": "https://github.com/filamentphp/filament/issues",
+        "source": "https://github.com/filamentphp/filament"
+    },
+    "require": {
+        "php": "^8.0",
+        "blade-ui-kit/blade-heroicons": "^2.0",
+        "filament/support": "self.version",
+        "livewire/livewire": "^2.10.7",
+        "spatie/laravel-package-tools": "^1.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Filament\\Actions\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Filament\\Actions\\ActionsServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

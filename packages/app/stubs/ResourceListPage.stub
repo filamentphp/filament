@@ -3,7 +3,7 @@
 namespace {{ namespace }};
 
 use App\Filament\Resources\{{ resource }};
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
 class {{ resourcePageClass }} extends ListRecords

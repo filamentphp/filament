@@ -2,7 +2,7 @@
 
 namespace Filament\Forms\Components\Actions\Modal\Actions;
 
-use Filament\Support\Actions\Modal\Actions\Action as BaseAction;
+use Filament\Actions\Modal\Actions\Action as BaseAction;
 
 class Action extends BaseAction
 {

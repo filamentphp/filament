@@ -4,9 +4,9 @@ namespace Filament\Tables\Actions;
 
 use Closure;
 use Exception;
+use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
-use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Filament\Tables\Table;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;

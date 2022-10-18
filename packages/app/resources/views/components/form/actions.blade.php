@@ -3,7 +3,7 @@
     'fullWidth' => false,
 ])
 
-<x-filament::pages.actions
+<x-filament-actions::actions
     :actions="$actions"
     :alignment="config('filament.layout.forms.actions.alignment')"
     :full-width="$fullWidth"

@@ -4,12 +4,12 @@ namespace Filament\Resources\Pages;
 
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
-use Filament\Pages\Actions\Action;
-use Filament\Pages\Actions\DeleteAction;
-use Filament\Pages\Actions\ForceDeleteAction;
-use Filament\Pages\Actions\ReplicateAction;
-use Filament\Pages\Actions\RestoreAction;
-use Filament\Pages\Actions\ViewAction;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ReplicateAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\ViewAction;
 use Filament\Pages\Concerns\HasFormActions;
 use Filament\Pages\Contracts\HasCachedFormActions;
 use Filament\Support\Exceptions\Halt;

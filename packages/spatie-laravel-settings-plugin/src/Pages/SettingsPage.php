@@ -4,7 +4,7 @@ namespace Filament\Pages;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Notifications\Notification;
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Pages\Contracts\HasCachedFormActions;
 
 /**

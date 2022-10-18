@@ -2,8 +2,8 @@
 
 namespace Filament\Tables\Actions;
 
-use Filament\Support\Actions\ActionGroup as BaseActionGroup;
-use Filament\Support\Actions\Concerns\InteractsWithRecord;
+use Filament\Actions\ActionGroup as BaseActionGroup;
+use Filament\Actions\Concerns\InteractsWithRecord;
 
 class ActionGroup extends BaseActionGroup
 {

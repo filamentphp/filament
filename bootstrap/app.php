@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Actions\ActionsServiceProvider;
 use Filament\FilamentServiceProvider;
 use Filament\Forms\FormsServiceProvider;
 use Filament\Notifications\NotificationsServiceProvider;
@@ -23,6 +24,7 @@ $app = (new Application($basePathLocator::applicationBasePath()))
 
 $app->register(LivewireServiceProvider::class);
 $app->register(FilamentServiceProvider::class);
+$app->register(ActionsServiceProvider::class);
 $app->register(FormsServiceProvider::class);
 $app->register(NotificationsServiceProvider::class);
 $app->register(SpatieLaravelTranslatablePluginServiceProvider::class);

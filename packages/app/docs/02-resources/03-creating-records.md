@@ -18,7 +18,7 @@ protected function mutateFormDataBeforeCreate(array $data): array
 Alternatively, if you're creating records in a modal action:
 
 ```php
-use Filament\Pages\Actions\CreateAction;
+use Filament\Actions\CreateAction;
 
 CreateAction::make()
     ->mutateFormDataUsing(function (array $data): array {
@@ -44,7 +44,7 @@ protected function handleRecordCreation(array $data): Model
 Alternatively, if you're creating records in a modal action:
 
 ```php
-use Filament\Pages\Actions\CreateAction;
+use Filament\Actions\CreateAction;
 use Illuminate\Database\Eloquent\Model;
 
 CreateAction::make()
@@ -93,7 +93,7 @@ protected function getCreatedNotificationTitle(): ?string
 Alternatively, if you're creating records in a modal action:
 
 ```php
-use Filament\Pages\Actions\CreateAction;
+use Filament\Actions\CreateAction;
 
 CreateAction::make()
     ->successNotificationTitle('User registered')
@@ -117,7 +117,7 @@ Alternatively, if you're creating records in a modal action:
 
 ```php
 use Filament\Notifications\Notification;
-use Filament\Pages\Actions\CreateAction;
+use Filament\Actions\CreateAction;
 
 CreateAction::make()
     ->successNotification(
@@ -142,7 +142,7 @@ protected function getCreatedNotification(): ?Notification
 Alternatively, if you're creating records in a modal action:
 
 ```php
-use Filament\Pages\Actions\CreateAction;
+use Filament\Actions\CreateAction;
 
 CreateAction::make()
     ->successNotification(null)
@@ -205,7 +205,7 @@ class CreateUser extends CreateRecord
 Alternatively, if you're creating records in a modal action:
 
 ```php
-use Filament\Pages\Actions\CreateAction;
+use Filament\Actions\CreateAction;
 
 CreateAction::make()
     ->beforeFormFilled(function () {
@@ -261,7 +261,7 @@ Alternatively, if you're creating records in a modal action:
 ```php
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
-use Filament\Pages\Actions\CreateAction;
+use Filament\Actions\CreateAction;
 
 CreateAction::make()
     ->before(function (CreateAction $action) {
@@ -363,7 +363,7 @@ protected function getSteps(): array
 Alternatively, if you're creating records in a modal action, simply define a `steps()` array and pass your `Step` objects:
 
 ```php
-use Filament\Pages\Actions\CreateAction;
+use Filament\Actions\CreateAction;
 
 CreateAction::make()
     ->steps([
@@ -385,7 +385,7 @@ public function hasSkippableSteps(): bool
 Alternatively, if you're creating records in a modal action:
 
 ```php
-use Filament\Pages\Actions\CreateAction;
+use Filament\Actions\CreateAction;
 
 CreateAction::make()
     ->steps([

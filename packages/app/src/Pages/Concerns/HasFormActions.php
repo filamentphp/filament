@@ -2,7 +2,7 @@
 
 namespace Filament\Pages\Concerns;
 
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 
 trait HasFormActions
 {

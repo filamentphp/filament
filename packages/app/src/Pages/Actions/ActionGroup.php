@@ -2,9 +2,11 @@
 
 namespace Filament\Pages\Actions;
 
-use Filament\Support\Actions\ActionGroup as BaseActionGroup;
+use Filament\Actions\ActionGroup as BaseActionGroup;
 
+/**
+ * @deprecated Use `\Filament\Actions\ActionGroup` instead.
+ */
 class ActionGroup extends BaseActionGroup
 {
-    protected string $view = 'filament::pages.actions.group';
 }

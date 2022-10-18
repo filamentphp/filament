@@ -4,7 +4,7 @@ namespace Filament\Tests\App\Fixtures\Pages;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\TextInput;
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Pages\Page;
 
 class PageActions extends Page

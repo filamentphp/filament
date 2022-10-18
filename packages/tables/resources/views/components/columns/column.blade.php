@@ -30,7 +30,7 @@
     ]) }}
     @if ($tooltip)
         x-data="{}"
-        x-tooltip.raw="{{ $tooltip }}"
+    x-tooltip.raw="{{ $tooltip }}"
     @endif
 >
     @if ($isClickDisabled)

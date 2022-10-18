@@ -345,7 +345,7 @@ On resource pages, actions are usually in 2 places: in the top right of the page
 For example, you may add a new button action next to "Delete" on the Edit page that runs the `impersonate()` Livewire method:
 
 ```php
-use Filament\Pages\Actions;
+use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditUser extends EditRecord
@@ -370,7 +370,7 @@ class EditUser extends EditRecord
 Or, a new button next to "Save" below the form:
 
 ```php
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Resources\Pages\EditRecord;
 
 class EditUser extends EditRecord

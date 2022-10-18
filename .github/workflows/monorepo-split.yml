@@ -11,8 +11,10 @@ jobs:
       fail-fast: false
       matrix:
         package:
-          - admin
+          - actions
+          - app
           - forms
+          - navigation
           - notifications
           - spatie-laravel-media-library-plugin
           - spatie-laravel-settings-plugin
@@ -20,6 +22,7 @@ jobs:
           - spatie-laravel-translatable-plugin
           - support
           - tables
+          - widgets
     steps:
       - uses: actions/checkout@v2
       - id: previous-tag

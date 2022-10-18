@@ -2,7 +2,7 @@
 
 namespace Filament\Pages\Contracts;
 
-use Filament\Pages\Actions\Action;
+use Filament\Actions\Action;
 
 interface HasCachedFormActions
 {
