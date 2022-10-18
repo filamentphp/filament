@@ -3,26 +3,40 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
 use Filament\Forms;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
+use Livewire\Exceptions\PropertyNotFoundException;
 
 /**
  * @property Forms\Form $mountedActionForm
  */
 trait InteractsWithActions
 {
-    use Forms\Concerns\InteractsWithForms;
+    use Forms\Concerns\InteractsWithForms {
+        __get as __getForm;
+    }
 
     public $mountedAction = null;
 
     public $mountedActionData = [];
 
     protected array $cachedActions = [];
+
+    public function __get($property)
+    {
+        try {
+            return $this->__getForm($property);
+        } catch (PropertyNotFoundException $exception) {
+            if ($action = $this->getAction($property)) {
+                return $action;
+            }
+
+            throw $exception;
+        }
+    }
 
     public function callMountedAction(?string $arguments = null)
     {
@@ -193,7 +207,7 @@ trait InteractsWithActions
         return null;
     }
 
-    public function getAction(string $name): Action
+    public function getAction(string $name): ?Action
     {
         $actions = $this->cachedActions;
 
@@ -206,16 +220,14 @@ trait InteractsWithActions
         if (method_exists($this, $name)) {
             $action = $this->cacheAction(Action::configureUsing(
                 Closure::fromCallable([$this, 'configureAction']),
-                fn (): ?Action => $this->{$name}(),
+                fn () => $this->{$name}(),
             ));
         }
 
-        if ($action) {
+        if ($action instanceof Action) {
             return $action;
         }
 
-        $livewireClass = $this::class;
-
-        throw new Exception("Action [{$name}] is missing from Livewire component [{$livewireClass}].");
+        return null;
     }
 }

@@ -125,19 +125,12 @@ class TestsActions
     public function assertActionDoesNotExist(): Closure
     {
         return function (string $name): static {
-            $exceptionMessage = null;
-
-            try {
-                $this->instance()->getAction($name);
-            } catch (Exception $exception) {
-                $exceptionMessage = $exception->getMessage();
-            }
+            $action = $this->instance()->getAction($name);
 
             $livewireClass = $this->instance()::class;
 
-            Assert::assertSame(
-                'Action [does_not_exist] is missing from Livewire component [Filament\\Tests\\App\\Fixtures\\Pages\\PageActions].',
-                $exceptionMessage,
+            Assert::assertNull(
+                $action,
                 message: "Failed asserting that an action with name [{$name}] does not exist on the [{$livewireClass}] page.",
             );
 

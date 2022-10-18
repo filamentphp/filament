@@ -3,7 +3,7 @@
 namespace Filament\Tables\Testing;
 
 use Closure;
-use Filament\Support\Testing\TestsActions as BaseTestsActions;
+use Filament\Actions\Testing\TestsActions as BaseTestsActions;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
