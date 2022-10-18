@@ -179,4 +179,22 @@ return [
 
     ],
 
+    'summary' => [
+
+        'from' => 'from',
+
+        'to' => 'to',
+
+        'false_value' => 'false',
+
+        'true_value' => 'true',
+
+        'records_count' => '1 record|:count records',
+
+        'past_records' => 'past',
+
+        'incoming_records' => 'incoming',
+
+    ],
+
 ];

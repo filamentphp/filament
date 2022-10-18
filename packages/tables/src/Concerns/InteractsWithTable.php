@@ -28,6 +28,7 @@ trait InteractsWithTable
     use HasContent;
     use HasEmptyState;
     use HasFilters;
+    use HasFooterSummary;
     use HasHeader;
     use HasRecords;
     use HasRecordAction;
@@ -73,7 +74,7 @@ trait InteractsWithTable
             );
         }
 
-        if (! count($this->tableFilters ?? [])) {
+        if (!count($this->tableFilters ?? [])) {
             $this->tableFilters = null;
         }
 
@@ -148,7 +149,7 @@ trait InteractsWithTable
 
     protected function getTableQuery(): Builder | Relation
     {
-        if (! $this instanceof HasRelationshipTable) {
+        if (!$this instanceof HasRelationshipTable) {
             $livewireClass = static::class;
 
             throw new Exception("Class [{$livewireClass}] must define a [getTableQuery()] method.");
@@ -167,7 +168,7 @@ trait InteractsWithTable
 
         if ($relationship instanceof BelongsToMany) {
             // https://github.com/laravel/framework/issues/4962
-            if (! $this->allowsDuplicates()) {
+            if (!$this->allowsDuplicates()) {
                 $this->selectPivotDataInQuery($query);
             }
 
@@ -182,7 +183,7 @@ trait InteractsWithTable
 
     protected function selectPivotDataInQuery(Builder | Relation $query): Builder | Relation
     {
-        if (! $this instanceof HasRelationshipTable) {
+        if (!$this instanceof HasRelationshipTable) {
             return $query;
         }
 
@@ -194,7 +195,7 @@ trait InteractsWithTable
             $query->getModel()->getTable() . '.*',
         ];
 
-        if (! $this->allowsDuplicates()) {
+        if (!$this->allowsDuplicates()) {
             $columns = array_merge(invade($relationship)->aliasedPivotColumns(), $columns);
         }
 

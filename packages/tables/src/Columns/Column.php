@@ -29,6 +29,7 @@ class Column extends ViewComponent
     use Concerns\HasRecord;
     use Concerns\HasState;
     use Concerns\HasTooltip;
+    use Concerns\HasValueType;
     use Concerns\InteractsWithTableQuery;
     use Conditionable;
     use HasExtraAttributes;

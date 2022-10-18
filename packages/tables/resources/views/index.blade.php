@@ -10,6 +10,7 @@
     $content = $getContent();
     $contentGrid = $getContentGrid();
     $contentFooter = $getContentFooter();
+    $hasFooterSummary = $hasFooterSummary();
     $filterIndicators = collect($getFilters())
         ->mapWithKeys(fn (\Filament\Tables\Filters\BaseFilter $filter): array => [$filter->getName() => $filter->getIndicators()])
         ->filter(fn (array $indicators): bool => count($indicators))
@@ -811,6 +812,49 @@
                                 {{ $contentFooter->with(['columns' => $columns, 'records' => $records]) }}
                             </x-slot>
                         @endif
+
+                        @if ($hasFooterSummary)
+                            <x-slot name="footer">
+                                @if ($isSelectionEnabled)
+                                    <x-tables::checkbox.cell>
+                                        <x-tables::checkbox
+                                            x-on:click="toggleSelectRecordsOnPage"
+                                            x-bind:checked="
+                                                let recordsOnPage = getRecordsOnPage()
+
+                                                if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
+                                                    $el.checked = true
+
+                                                    return 'checked'
+                                                }
+
+                                                $el.checked = false
+
+                                                return null
+                                            "
+                                        />
+                                    </x-tables::checkbox.cell>
+                                @endif
+
+                                @foreach ($columns as $column)
+                                    <x-tables::header-cell
+                                        :extra-attributes="$column->getExtraHeaderAttributes()"
+                                        :name="$column->getName()"
+                                        :alignment="$column->getAlignment()"
+                                        :class="$getHiddenClasses($column)"
+                                    >
+                                        @if ($column->hasSummary())
+                                            {!! $column->getSummary($records->items()) !!}
+                                        @endif
+                                    </x-tables::header-cell>
+                                @endforeach
+
+                                @if (count($actions))
+                                    <th class="w-5"></th>
+                                @endif
+                            </x-slot>
+                        @endif
+
                     @else
                         @if ($emptyState = $getEmptyState())
                             {{ $emptyState }}

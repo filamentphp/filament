@@ -6,6 +6,8 @@ use Closure;
 
 class ColorColumn extends Column
 {
+    use Concerns\HasSummary;
+
     protected string $view = 'tables::columns.color-column';
 
     protected bool | Closure $isCopyable = false;
