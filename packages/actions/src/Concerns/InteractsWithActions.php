@@ -155,9 +155,13 @@ trait InteractsWithActions
         return (bool) count($this->getMountedActionForm()?->getComponents() ?? []);
     }
 
-    protected function cacheAction(Action $action): Action
+    protected function cacheAction(Action $action, ?string $name = null): Action
     {
         $action->livewire($this);
+
+        if (filled($name)) {
+            $action->name($name);
+        }
 
         return $this->cachedActions[$action->getName()] = $action;
     }
@@ -221,11 +225,11 @@ trait InteractsWithActions
             $action = $this->cacheAction(Action::configureUsing(
                 Closure::fromCallable([$this, 'configureAction']),
                 fn () => $this->{$name}(),
-            ));
+            ), name: $name);
         }
 
         if ($action instanceof Action) {
-            return $action->name($name);
+            return $action;
         }
 
         return null;

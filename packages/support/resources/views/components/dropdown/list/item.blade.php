@@ -12,7 +12,8 @@
     $hasHoverAndFocusState = ($tag !== 'a' || filled($attributes->get('href')));
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-list-item group flex w-full items-center whitespace-nowrap rounded-md p-2 text-sm',
+        'filament-dropdown-list-item group flex w-full items-center whitespace-nowrap rounded-md p-2 text-sm text-gray-900',
+        'dark:text-gray-100' => $darkMode,
         'focus:outline-none hover:text-white focus:text-white' => $hasHoverAndFocusState,
         'hover:bg-primary-500 focus:bg-primary-500' => ($color === 'primary' || $color === 'secondary') && $hasHoverAndFocusState,
         'hover:bg-danger-500 focus:bg-danger-500' => $color === 'danger' && $hasHoverAndFocusState,
