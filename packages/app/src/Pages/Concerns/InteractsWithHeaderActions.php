@@ -3,13 +3,8 @@
 namespace Filament\Pages\Concerns;
 
 use Closure;
-use Filament\Forms;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Pages\Contracts;
-use Filament\Support\Exceptions\Cancel;
-use Filament\Support\Exceptions\Halt;
-use Illuminate\Database\Eloquent\Model;
 
 trait InteractsWithHeaderActions
 {

@@ -2,10 +2,10 @@
 
 namespace Filament\Actions\Modal\Actions;
 
-use Filament\Actions\StaticAction;
 use Filament\Actions\Concerns\CanBeOutlined;
 use Filament\Actions\Concerns\CanOpenUrl;
 use Filament\Actions\Concerns\CanSubmitForm;
+use Filament\Actions\StaticAction;
 
 class Action extends StaticAction
 {

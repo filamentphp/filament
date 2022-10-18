@@ -2,10 +2,10 @@
 
 namespace Filament\Notifications\Actions;
 
-use Filament\Actions\StaticAction;
 use Filament\Actions\Concerns\CanBeOutlined;
 use Filament\Actions\Concerns\CanEmitEvent;
 use Filament\Actions\Concerns\CanOpenUrl;
+use Filament\Actions\StaticAction;
 use Filament\Notifications\Actions\Concerns\CanCloseNotification;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Str;

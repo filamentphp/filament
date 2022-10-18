@@ -2,10 +2,9 @@
 
 namespace Filament\Pages;
 
+use Filament\Actions\Action;
 use Filament\Forms\ComponentContainer;
 use Filament\Notifications\Notification;
-use Filament\Actions\Action;
-use Filament\Pages\Contracts\HasCachedFormActions;
 
 /**
  * @property ComponentContainer $form

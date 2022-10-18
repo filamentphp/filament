@@ -2,7 +2,6 @@
 
 namespace Filament\Actions\Concerns;
 
-
 use Filament\Actions\Contracts\HasActions;
 
 trait BelongsToLivewire

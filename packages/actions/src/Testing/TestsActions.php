@@ -3,7 +3,6 @@
 namespace Filament\Actions\Testing;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\BaseAction;
 use Filament\Actions\Contracts\HasActions;

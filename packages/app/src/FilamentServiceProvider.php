@@ -22,7 +22,6 @@ use Filament\Support\Facades\Asset;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\ButtonAction;
 use Filament\Tables\Actions\IconButtonAction;
-use Filament\Testing\TestsActions;
 use Filament\Testing\TestsPages;
 use Filament\Widgets\Widget;
 use Illuminate\Filesystem\Filesystem;

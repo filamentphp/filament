@@ -2,9 +2,9 @@
 
 namespace Filament\Tests\App\Fixtures\Pages;
 
+use Filament\Actions\Action;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\TextInput;
-use Filament\Actions\Action;
 use Filament\Pages\Page;
 
 class PageActions extends Page
