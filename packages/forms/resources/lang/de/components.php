@@ -17,11 +17,11 @@ return [
             ],
 
             'move_item_down' => [
-                'label' => 'Runter verschieben',
+                'label' => 'Nach unter verschieben',
             ],
 
             'move_item_up' => [
-                'label' => 'Hoch verschieben',
+                'label' => 'Nach oben verschieben',
             ],
 
             'collapse_item' => [
@@ -204,7 +204,7 @@ return [
 
         'loading_message' => 'Lädt...',
 
-        'no_search_results_message' => 'Keine Optionen passen zu Ihrer Suche.',
+        'no_search_results_message' => 'Die Suche ergab keine Treffer.',
 
         'placeholder' => 'Wählen Sie eine Option',
 
