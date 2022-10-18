@@ -31,7 +31,7 @@ public static function form(Form $form): Form
         ]);
 }
 
-public static function table(Table $table): Table
+public function table(Table $table): Table
 {
     return $table
         ->columns([
@@ -90,7 +90,7 @@ For `BelongsToMany` and `MorphToMany` relationships, you may also add pivot tabl
 ```php
 use Filament\Tables;
 
-public static function table(Table $table): Table
+public function table(Table $table): Table
 {
     return $table
         ->columns([
@@ -409,7 +409,7 @@ Alternatively, if you've already generated your resource, you can just add the a
 ```php
 use Filament\Tables;use Filament\Tables\Table;
 
-public static function table(Table $table): Table
+public function table(Table $table): Table
 {
     return $table
         ->columns([
@@ -498,7 +498,7 @@ Alternatively, if you've already generated your resource, you can just add the a
 ```php
 use Filament\Tables;use Filament\Tables\Table;
 
-public static function table(Table $table): Table
+public function table(Table $table): Table
 {
     return $table
         ->columns([
@@ -554,7 +554,7 @@ Alternatively, if you've already generated your relation manager, you can just a
 ```php
 use Filament\Tables;use Filament\Tables\Table;
 
-public static function table(Table $table): Table
+public function table(Table $table): Table
 {
     return $table
         ->columns([
@@ -580,7 +580,7 @@ Alternatively, you may add soft deleting functionality to an existing relation m
 ```php
 use Filament\Tables;use Filament\Tables\Table;use Illuminate\Database\Eloquent\Builder;use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-public static function table(Table $table): Table
+public function table(Table $table): Table
 {
     return $table
         ->columns([

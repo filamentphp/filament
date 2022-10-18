@@ -71,6 +71,8 @@ class Table extends ViewComponent
 
     protected array | Closure | null $contentGrid = null;
 
+    protected int | string | Closure | null $defaultPaginationPageOption = null;
+
     protected string | Closure | null $defaultSortColumn = null;
 
     protected string | Closure | null $defaultSortDirection = null;
@@ -285,6 +287,13 @@ class Table extends ViewComponent
     public function contentGrid(array | Closure | null $grid): static
     {
         $this->contentGrid = $grid;
+
+        return $this;
+    }
+
+    public function defaultPaginationPageOption(int | string | Closure | null $option): static
+    {
+        $this->defaultPaginationPageOption = $option;
 
         return $this;
     }
@@ -701,6 +710,11 @@ class Table extends ViewComponent
     public function getContentFooter(): View | Htmlable | null
     {
         return $this->evaluate($this->contentFooter);
+    }
+
+    public function getDefaultPaginationPageOption(): int | string | null
+    {
+        return $this->evaluate($this->defaultPaginationPageOption);
     }
 
     public function getDefaultSortColumn(): ?string

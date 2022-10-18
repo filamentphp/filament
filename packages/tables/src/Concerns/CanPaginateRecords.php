@@ -47,15 +47,15 @@ trait CanPaginateRecords
 
     public function getDefaultTableRecordsPerPageSelectOption(): int
     {
-        $perPage = session()->get(
+        $option = session()->get(
             $this->getTablePerPageSessionKey(),
-            $this->defaultTableRecordsPerPageSelectOption ?? config('tables.pagination.default_records_per_page'),
+            $this->defaultTableRecordsPerPageSelectOption ?? $this->getTable()->getDefaultPaginationPageOption() ?? config('tables.pagination.default_records_per_page'),
         );
 
         $pageOptions = $this->getTable()->getPaginationPageOptions();
 
-        if (in_array($perPage, $pageOptions)) {
-            return $perPage;
+        if (in_array($option, $pageOptions)) {
+            return $option;
         }
 
         session()->remove($this->getTablePerPageSessionKey());

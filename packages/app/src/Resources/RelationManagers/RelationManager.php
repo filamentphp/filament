@@ -247,7 +247,7 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
         return $this->getOwnerRecord()->{static::getRelationshipName()}();
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table;
     }
