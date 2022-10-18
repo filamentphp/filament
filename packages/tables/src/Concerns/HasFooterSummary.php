@@ -4,7 +4,7 @@ namespace Filament\Tables\Concerns;
 
 trait HasFooterSummary
 {
-    public function hasTableFooterSummary() : bool
+    public function hasTableFooterSummary(): bool
     {
         foreach ($this->getCachedTableColumns() as $column) {
             if ($column->hasSummary()) {

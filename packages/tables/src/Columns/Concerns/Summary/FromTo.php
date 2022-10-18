@@ -4,11 +4,10 @@ namespace Filament\Tables\Columns\Concerns\Summary;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use Filament\Tables\Columns\Concerns\Summary\Strategy;
 
 class FromTo extends Strategy
 {
-    public function __invoke() : ?string
+    public function __invoke(): ?string
     {
         $valueType = $this->column->getValueType();
 
@@ -31,12 +30,12 @@ class FromTo extends Strategy
         };
     }
 
-    private function fromToFloat(Collection $sortedRecords) : string
+    private function fromToFloat(Collection $sortedRecords): string
     {
         return implode(' - ', [$sortedRecords->min(), $sortedRecords->max()]);
     }
 
-    private function fromToBoolean(Collection $sortedRecords) : string
+    private function fromToBoolean(Collection $sortedRecords): string
     {
         $fromTo = [];
 
@@ -51,17 +50,17 @@ class FromTo extends Strategy
         return implode(' - ', $fromTo);
     }
 
-    private function formatDate(Carbon $date) : string
+    private function formatDate(Carbon $date): string
     {
         return $this->column->evaluate(
             invade($this->column)->formatStateUsing,
             [
-                'state' => $date
+                'state' => $date,
             ]
         ) ?? $date->format(config('tables.date_format'));
     }
 
-    private function fromToDateTime(Collection $sortedRecords) : string
+    private function fromToDateTime(Collection $sortedRecords): string
     {
         $from = $sortedRecords->min();
         $to = $sortedRecords->max();
@@ -74,7 +73,7 @@ class FromTo extends Strategy
             __('tables::table.summary.to') . ' ' . $this->formatDate($to);
     }
 
-    private function fromToString(Collection $sortedRecords) : string
+    private function fromToString(Collection $sortedRecords): string
     {
         if ($sortedRecords->count() === 1) {
             return strtoupper($sortedRecords->first()[0]);
@@ -90,7 +89,7 @@ class FromTo extends Strategy
         $shortestRecordLength = min([
             strlen($firstRecord),
             strlen($lastRecord),
-            $maxLetters
+            $maxLetters,
         ]);
 
         for ($letter = 0; $letter < $shortestRecordLength; $letter++) {

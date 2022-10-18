@@ -3,11 +3,10 @@
 namespace Filament\Tables\Columns\Concerns\Summary;
 
 use Illuminate\Support\Collection;
-use Filament\Tables\Columns\Concerns\Summary\Strategy;
 
 class Count extends Strategy
 {
-    public function __invoke() : string
+    public function __invoke(): string
     {
         $valueType = $this->column->getValueType();
 
@@ -26,7 +25,7 @@ class Count extends Strategy
         };
     }
 
-    private function countDatetime(Collection $mappedRecords) : string
+    private function countDatetime(Collection $mappedRecords): string
     {
         $pastCount = $mappedRecords
             ->filter(fn ($record) => $record->lt(now()))
@@ -49,7 +48,7 @@ class Count extends Strategy
         return implode(', ', $summary);
     }
 
-    private function countBoolean(Collection $mappedRecords) : string
+    private function countBoolean(Collection $mappedRecords): string
     {
         $trueCount = $mappedRecords
             ->reject(fn ($record) => $record !== true)
@@ -80,7 +79,7 @@ class Count extends Strategy
         return implode(' ', $summary);
     }
 
-    private function countDefault(Collection $mappedRecords) : string
+    private function countDefault(Collection $mappedRecords): string
     {
         return $mappedRecords->filter()->count();
     }

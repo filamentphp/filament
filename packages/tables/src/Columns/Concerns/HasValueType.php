@@ -3,9 +3,9 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ColorColumn;
+use Filament\Tables\Columns\IconColumn;
+use Illuminate\Support\Collection;
 
 trait HasValueType
 {
