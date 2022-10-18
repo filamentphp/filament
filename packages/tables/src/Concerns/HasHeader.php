@@ -2,9 +2,6 @@
 
 namespace Filament\Tables\Concerns;
 
-use Closure;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 
