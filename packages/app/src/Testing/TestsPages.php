@@ -11,7 +11,6 @@ use Livewire\Testing\TestableLivewire;
  * @method Page instance()
  *
  * @mixin TestableLivewire
- * @mixin TestsActions
  */
 class TestsPages
 {

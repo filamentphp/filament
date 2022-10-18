@@ -12,6 +12,7 @@ class MirrorConfigToSubpackages
         $config = config();
 
         $darkMode = $config->get('filament.dark_mode');
+        $config->set('actions.dark_mode', $darkMode);
         $config->set('forms.dark_mode', $darkMode);
         $config->set('notifications.dark_mode', $darkMode);
         $config->set('tables.dark_mode', $darkMode);

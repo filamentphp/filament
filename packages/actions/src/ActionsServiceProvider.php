@@ -13,6 +13,7 @@ class ActionsServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('filament-actions')
+            ->hasConfigFile()
             ->hasTranslations()
             ->hasViews();
     }

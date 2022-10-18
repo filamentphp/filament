@@ -16,7 +16,7 @@
 
 <x-dynamic-component
     :component="$component"
-    :dark-mode="config('filament.dark_mode')"
+    :dark-mode="config('filament-actions.dark_mode')"
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes())"
     :form="$action->getFormToSubmit()"
     :tag="$action->getUrl() ? 'a' : 'button'"
@@ -31,7 +31,7 @@
     :icon="$icon ?? $action->getIcon()"
     :size="$action->getSize()"
     :label-sr-only="$action->isLabelHidden()"
-    dusk="filament.admin.action.{{ $action->getName() }}"
+    dusk="filament-actions.admin.action.{{ $action->getName() }}"
 >
     {{ $slot }}
 </x-dynamic-component>
