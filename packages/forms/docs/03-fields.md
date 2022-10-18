@@ -754,7 +754,7 @@ Since HTML does not support nested `<form>` elements, you must also render the m
     </button>
 </form>
 
-{{ $this->modal }}
+{{ $this->formsModal }}
 ```
 
 ## Checkbox

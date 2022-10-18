@@ -25,7 +25,7 @@ trait InteractsWithForms
 
     protected bool $isCachingForms = false;
 
-    protected bool $hasModalViewRendered = false;
+    protected bool $hasFormsModalViewRendered = false;
 
     public function __get($property)
     {
@@ -36,24 +36,24 @@ trait InteractsWithForms
                 return $form;
             }
 
-            if ($property === 'modal') {
-                return $this->getModalViewOnce();
+            if ($property === 'formsModal') {
+                return $this->getFormsModalViewOnce();
             }
 
             throw $exception;
         }
     }
 
-    public function getModalViewOnce(): ?View
+    public function getFormsModalViewOnce(): ?View
     {
-        if ($this->hasModalViewRendered) {
+        if ($this->hasFormsModalViewRendered) {
             return null;
         }
 
         try {
             return view('forms::components.actions.modal.index');
         } finally {
-            $this->hasModalViewRendered = true;
+            $this->hasFormsModalViewRendered = true;
         }
     }
 

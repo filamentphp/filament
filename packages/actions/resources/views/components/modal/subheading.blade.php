@@ -1,6 +1,6 @@
 <x-filament-support::modal.subheading
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)"
-    :dark-mode="config('filament.dark_mode')"
+    :dark-mode="config('filament-actions.dark_mode')"
 >
     {{ $slot }}
 </x-filament-support::modal.subheading>

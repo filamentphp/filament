@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Exceptions\PropertyNotFoundException;
 
@@ -25,6 +26,8 @@ trait InteractsWithActions
 
     protected array $cachedActions = [];
 
+    protected bool $hasActionsModalViewRendered = false;
+
     public function __get($property)
     {
         try {
@@ -32,6 +35,10 @@ trait InteractsWithActions
         } catch (PropertyNotFoundException $exception) {
             if ($action = $this->getAction($property)) {
                 return $action;
+            }
+
+            if ($property === 'actionsModal') {
+                return $this->getActionsModalViewOnce();
             }
 
             throw $exception;
@@ -233,5 +240,18 @@ trait InteractsWithActions
         }
 
         return null;
+    }
+
+    public function getActionsModalViewOnce(): ?View
+    {
+        if ($this->hasActionsModalViewRendered) {
+            return null;
+        }
+
+        try {
+            return view('filament-actions::modal.index');
+        } finally {
+            $this->hasActionsModalViewRendered = true;
+        }
     }
 }

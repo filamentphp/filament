@@ -976,6 +976,6 @@
     </form>
 
     @if (! $this instanceof \Filament\Tables\Contracts\RendersFormComponentActionModal)
-        {{ $this->modal }}
+        {{ $this->formsModal }}
     @endif
 </div>
