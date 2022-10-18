@@ -1,17 +1,17 @@
 <?php
 
-namespace Filament\Tests\App\Fixtures\Pages;
+namespace Filament\Tests\Actions\Fixtures\Pages;
 
 use Filament\Actions\Action;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\Page;
 
-class PageActions extends Page
+class Actions extends Page
 {
-    protected static string $view = 'app.fixtures.pages.actions';
+    protected static string $view = 'actions.fixtures.pages.actions';
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Action::make('simple')

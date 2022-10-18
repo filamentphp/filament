@@ -10,7 +10,7 @@ class ViewPost extends ViewRecord
 {
     protected static string $resource = PostResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\EditAction::make(),

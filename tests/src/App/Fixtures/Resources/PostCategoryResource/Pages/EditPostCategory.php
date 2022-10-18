@@ -10,7 +10,7 @@ class EditPostCategory extends EditRecord
 {
     protected static string $resource = PostCategoryResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\ViewAction::make(),

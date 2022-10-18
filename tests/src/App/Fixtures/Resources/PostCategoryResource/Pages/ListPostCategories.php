@@ -10,7 +10,7 @@ class ListPostCategories extends ListRecords
 {
     protected static string $resource = PostCategoryResource::class;
 
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),
