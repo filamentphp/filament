@@ -22,7 +22,8 @@ You may also build your own completely [custom table columns](../../tables/colum
 If a column is `sortable()`, you may choose to sort it by default using the `$table->defaultSort()` method:
 
 ```php
-use Filament\Tables;use Filament\Tables\Table;
+use Filament\Tables;
+use Filament\Tables\Table;
 
 public static function table(Table $table): Table
 {
@@ -44,7 +45,8 @@ public static function table(Table $table): Table
 To render the filters above the table content instead of in a dropdown, you may use:
 
 ```php
-use Filament\Tables\Filters\Layout;use Filament\Tables\Table;
+use Filament\Tables\Filters\Layout;
+use Filament\Tables\Table;
 
 public static function table(Table $table): Table
 {
@@ -64,7 +66,8 @@ public static function table(Table $table): Table
 To render the filters below the table content instead of in a dropdown, you may use:
 
 ```php
-use Filament\Tables\Filters\Layout;use Filament\Tables\Table;
+use Filament\Tables\Filters\Layout;
+use Filament\Tables\Table;
 
 public static function table(Table $table): Table
 {
@@ -88,7 +91,8 @@ public static function table(Table $table): Table
 To add actions to a table, use the `$table->actions()` method:
 
 ```php
-use Filament\Tables;use Filament\Tables\Table;
+use Filament\Tables;
+use Filament\Tables\Table;
 
 public static function table(Table $table): Table
 {
@@ -111,7 +115,8 @@ public static function table(Table $table): Table
 You may use an `ActionGroup` object to group multiple table actions together in a dropdown:
 
 ```php
-use Filament\Tables;use Filament\Tables\Table;
+use Filament\Tables;
+use Filament\Tables\Table;
 
 public static function table(Table $table): Table
 {
@@ -136,7 +141,9 @@ public static function table(Table $table): Table
 To add bulk actions, use the `$table->bulkActions()` method:
 
 ```php
-use Filament\Tables;use Filament\Tables\Table;use Illuminate\Database\Eloquent\Collection;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 
 public static function table(Table $table): Table
 {
