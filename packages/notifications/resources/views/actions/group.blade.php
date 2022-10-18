@@ -2,6 +2,7 @@
     :actions="$getActions()"
     :dark-mode="config('notifications.dark_mode')"
     :color="$getColor()"
+    :dropdown-placement="$getDropdownPlacement()"
     :icon="$getIcon()"
     :label="$getLabel()"
     :size="$getSize()"

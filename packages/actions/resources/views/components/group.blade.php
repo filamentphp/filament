@@ -2,6 +2,7 @@
     'actions',
     'color' => null,
     'darkMode' => false,
+    'dropdownPlacement' => null,
     'icon' => 'heroicon-m-ellipsis-vertical',
     'label' => __('filament-actions::group.trigger.label'),
     'size' => null,
@@ -10,7 +11,7 @@
 
 <x-filament-support::dropdown
     :dark-mode="$darkMode"
-    placement="bottom-end"
+    :placement="$dropdownPlacement ?? 'bottom-end'"
     teleport
     {{ $attributes }}
 >

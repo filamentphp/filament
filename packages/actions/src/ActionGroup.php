@@ -4,6 +4,7 @@ namespace Filament\Actions;
 
 use Filament\Actions\Concerns\CanBeHidden;
 use Filament\Actions\Concerns\HasColor;
+use Filament\Actions\Concerns\HasDropdown;
 use Filament\Actions\Concerns\HasIcon;
 use Filament\Actions\Concerns\HasLabel;
 use Filament\Actions\Concerns\HasSize;
@@ -16,6 +17,7 @@ class ActionGroup extends ViewComponent
         isHidden as baseIsHidden;
     }
     use HasColor;
+    use HasDropdown;
     use HasIcon;
     use HasLabel;
     use HasSize;
