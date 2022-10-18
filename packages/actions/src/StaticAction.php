@@ -23,22 +23,16 @@ abstract class StaticAction extends ViewComponent
 
     protected string $viewIdentifier = 'action';
 
-    final public function __construct(string $name)
+    final public function __construct(?string $name)
     {
         $this->name($name);
     }
 
     public static function make(?string $name = null): static
     {
-        $actionClass = static::class;
-
-        $name ??= static::getDefaultName();
-
-        if (blank($name)) {
-            throw new Exception("Action of class [$actionClass] must have a unique name, passed to the [make()] method.");
-        }
-
-        $static = app($actionClass, ['name' => $name]);
+        $static = app(static::class, [
+            'name' => $name ?? static::getDefaultName(),
+        ]);
         $static->configure();
 
         return $static;
