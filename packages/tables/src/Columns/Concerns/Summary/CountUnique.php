@@ -9,6 +9,6 @@ class CountUnique extends Strategy
         return collect($this->records)
             ->pluck($this->column->getName())
             ->unique()
-            ->count() ?? 0;
+            ->count();
     }
 }

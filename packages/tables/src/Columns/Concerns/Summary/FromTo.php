@@ -14,7 +14,7 @@ class FromTo extends Strategy
         $sortedRecords = collect($this->records)
             ->pluck($this->column->getName())
             ->map(fn ($record) => $this->mapValue($record, $valueType))
-            ->reject(fn ($record) => $record === '' || $record === null) //but keep "false" for columns with boolean values
+            ->reject(fn ($record) => $record == '' || $record === null) //but keep "false" for columns with boolean values
             ->unique()
             ->sort();
 
