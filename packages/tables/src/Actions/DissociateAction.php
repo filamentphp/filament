@@ -3,13 +3,13 @@
 namespace Filament\Tables\Actions;
 
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class DissociateAction extends Action
 {
     use CanCustomizeProcess;
-    use Concerns\InteractsWithRelationship;
 
     public static function getDefaultName(): ?string
     {
@@ -35,9 +35,9 @@ class DissociateAction extends Action
         $this->requiresConfirmation();
 
         $this->action(function (): void {
-            $this->process(function (Model $record): void {
+            $this->process(function (Model $record, Table $table): void {
                 /** @var BelongsTo $inverseRelationship */
-                $inverseRelationship = $this->getInverseRelationshipFor($record);
+                $inverseRelationship = $table->getInverseRelationshipFor($record);
 
                 $inverseRelationship->dissociate();
                 $record->save();

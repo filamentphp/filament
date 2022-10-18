@@ -62,12 +62,13 @@ class BulkAction extends BaseAction
                 'records',
                 fn (): ?Collection => $this->getRecords(),
             ),
+            'table' => $this->getTable(),
         ]);
     }
 
     protected function parseAuthorizationArguments(array $arguments): array
     {
-        array_unshift($arguments, $this->getLivewire()->getTableModel());
+        array_unshift($arguments, $this->getTable()->getModel());
 
         return $arguments;
     }

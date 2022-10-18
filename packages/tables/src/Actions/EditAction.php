@@ -5,6 +5,7 @@ namespace Filament\Tables\Actions;
 use Closure;
 use Filament\Forms\Form;
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
@@ -12,7 +13,6 @@ use Illuminate\Support\Arr;
 class EditAction extends Action
 {
     use CanCustomizeProcess;
-    use Concerns\InteractsWithRelationship;
 
     protected ?Closure $mutateRecordDataUsing = null;
 
@@ -46,8 +46,8 @@ class EditAction extends Action
         });
 
         $this->action(function (): void {
-            $this->process(function (array $data, Model $record) {
-                $relationship = $this->getRelationship();
+            $this->process(function (array $data, Model $record, Table $table) {
+                $relationship = $table->getRelationship();
 
                 if ($relationship instanceof BelongsToMany) {
                     $pivotColumns = $relationship->getPivotColumns();

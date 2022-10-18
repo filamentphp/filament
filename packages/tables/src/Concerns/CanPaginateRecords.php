@@ -45,9 +45,12 @@ trait CanPaginateRecords
         return $this->tableRecordsPerPage;
     }
 
-    protected function getTableRecordsPerPageSelectOptions(): array
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected function getTableRecordsPerPageSelectOptions(): ?array
     {
-        return config('tables.pagination.records_per_page_select_options') ?? [5, 10, 25, 50, 'all'];
+        return null;
     }
 
     protected function getDefaultTableRecordsPerPageSelectOption(): int
@@ -57,15 +60,20 @@ trait CanPaginateRecords
             $this->defaultTableRecordsPerPageSelectOption ?? config('tables.pagination.default_records_per_page'),
         );
 
-        if (in_array($perPage, $this->getTableRecordsPerPageSelectOptions())) {
+        $pageOptions = $this->getTable()->getPaginationPageOptions();
+
+        if (in_array($perPage, $pageOptions)) {
             return $perPage;
         }
 
         session()->remove($this->getTablePerPageSessionKey());
 
-        return $this->getTableRecordsPerPageSelectOptions()[0];
+        return $pageOptions[0];
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function isTablePaginationEnabled(): bool
     {
         return true;

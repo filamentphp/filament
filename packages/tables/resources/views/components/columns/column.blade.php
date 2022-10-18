@@ -50,7 +50,7 @@
             } elseif ($action) {
                 $wireClickAction = "callTableColumnAction('{$name}', '{$recordKey}')";
             } else {
-                if ($this->getCachedTableAction($recordAction)) {
+                if ($this->getTable()->getAction($recordAction)) {
                     $wireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
                 } else {
                     $wireClickAction = "{$recordAction}('{$recordKey}')";

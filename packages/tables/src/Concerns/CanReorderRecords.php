@@ -11,15 +11,14 @@ trait CanReorderRecords
 
     public function reorderTable(array $order): void
     {
-        if (! $this->isTableReorderable()) {
+        if (! $this->getTable()->isReorderable()) {
             return;
         }
 
         $orderColumn = $this->getTableReorderColumn();
 
         if (
-            $this instanceof HasRelationshipTable &&
-            (($relationship = $this->getRelationship()) instanceof BelongsToMany) &&
+            (($relationship = $this->getTable()->getRelationship()) instanceof BelongsToMany) &&
             in_array($orderColumn, $relationship->getPivotColumns())
         ) {
             foreach ($order as $index => $recordKey) {
@@ -45,7 +44,7 @@ trait CanReorderRecords
 
     public function isTableReordering(): bool
     {
-        return $this->isTableReorderable() && $this->isTableReordering;
+        return $this->getTable()->isReorderable() && $this->isTableReordering;
     }
 
     protected function isTablePaginationEnabledWhileReordering(): bool
@@ -53,11 +52,9 @@ trait CanReorderRecords
         return false;
     }
 
-    protected function isTableReorderable(): bool
-    {
-        return filled($this->getTableReorderColumn());
-    }
-
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getTableReorderColumn(): ?string
     {
         return null;

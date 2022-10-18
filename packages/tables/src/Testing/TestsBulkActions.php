@@ -120,7 +120,7 @@ class TestsBulkActions
     public function assertTableBulkActionExists(): Closure
     {
         return function (string $name): static {
-            $action = $this->instance()->getCachedTableBulkAction($name);
+            $action = $this->instance()->getTable()->getBulkAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -137,7 +137,7 @@ class TestsBulkActions
     public function assertTableBulkActionDoesNotExist(): Closure
     {
         return function (string $name): static {
-            $action = $this->instance()->getCachedTableBulkAction($name);
+            $action = $this->instance()->getTable()->getBulkAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -156,7 +156,7 @@ class TestsBulkActions
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 
-            $action = $this->instance()->getCachedTableBulkAction($name);
+            $action = $this->instance()->getTable()->getBulkAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -175,7 +175,7 @@ class TestsBulkActions
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 
-            $action = $this->instance()->getCachedTableBulkAction($name);
+            $action = $this->instance()->getTable()->getBulkAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -194,7 +194,7 @@ class TestsBulkActions
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 
-            $action = $this->instance()->getCachedTableBulkAction($name);
+            $action = $this->instance()->getTable()->getBulkAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -213,7 +213,7 @@ class TestsBulkActions
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 
-            $action = $this->instance()->getCachedTableBulkAction($name);
+            $action = $this->instance()->getTable()->getBulkAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -232,7 +232,7 @@ class TestsBulkActions
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 
-            $action = $this->instance()->getCachedTableBulkAction($name);
+            $action = $this->instance()->getTable()->getBulkAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -251,7 +251,7 @@ class TestsBulkActions
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 
-            $action = $this->instance()->getCachedTableBulkAction($name);
+            $action = $this->instance()->getTable()->getBulkAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -270,7 +270,7 @@ class TestsBulkActions
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 
-            $action = $this->instance()->getCachedTableBulkAction($name);
+            $action = $this->instance()->getTable()->getBulkAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -289,7 +289,7 @@ class TestsBulkActions
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 
-            $action = $this->instance()->getCachedTableBulkAction($name);
+            $action = $this->instance()->getTable()->getBulkAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -308,7 +308,7 @@ class TestsBulkActions
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 
-            $action = $this->instance()->getCachedTableBulkAction($name);
+            $action = $this->instance()->getTable()->getBulkAction($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -327,7 +327,7 @@ class TestsBulkActions
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 
-            $action = $this->instance()->getCachedTableBulkAction($name);
+            $action = $this->instance()->getTable()->getBulkAction($name);
 
             $livewireClass = $this->instance()::class;
 

@@ -13,33 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
  */
 trait HasFilters
 {
-    protected array $cachedTableFilters;
-
     public $tableFilters = null;
-
-    public function cacheTableFilters(): void
-    {
-        $this->cachedTableFilters = [];
-
-        foreach ($this->getTableFilters() as $filter) {
-            $filter->table($this->getCachedTable());
-
-            $this->cachedTableFilters[$filter->getName()] = $filter;
-        }
-    }
-
-    public function getCachedTableFilters(): array
-    {
-        return array_filter(
-            $this->cachedTableFilters,
-            fn (BaseFilter $filter): bool => ! $filter->isHidden(),
-        );
-    }
-
-    public function getCachedTableFilter(string $name): ?BaseFilter
-    {
-        return $this->getCachedTableFilters()[$name] ?? null;
-    }
 
     public function getTableFiltersForm(): Form
     {
@@ -49,14 +23,9 @@ trait HasFilters
 
         return $this->makeForm()
             ->schema($this->getTableFiltersFormSchema())
-            ->columns($this->getTableFiltersFormColumns())
+            ->columns($this->getTable()->getFiltersFormColumns())
             ->statePath('tableFilters')
             ->reactive();
-    }
-
-    public function isTableFilterable(): bool
-    {
-        return (bool) count($this->getCachedTableFilters());
     }
 
     public function updatedTableFilters(): void
@@ -121,7 +90,7 @@ trait HasFilters
     {
         $data = $this->getTableFiltersForm()->getRawState();
 
-        foreach ($this->getCachedTableFilters() as $filter) {
+        foreach ($this->getTable()->getFilters() as $filter) {
             $filter->applyToBaseQuery(
                 $query,
                 $data[$filter->getName()] ?? [],
@@ -129,7 +98,7 @@ trait HasFilters
         }
 
         return $query->where(function (Builder $query) use ($data) {
-            foreach ($this->getCachedTableFilters() as $filter) {
+            foreach ($this->getTable()->getFilters() as $filter) {
                 $filter->apply(
                     $query,
                     $data[$filter->getName()] ?? [],
@@ -138,6 +107,9 @@ trait HasFilters
         });
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getTableFilters(): array
     {
         return [];
@@ -161,6 +133,9 @@ trait HasFilters
         return $name::getDefaultName();
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getTableFiltersFormColumns(): int | array
     {
         return match ($this->getTableFiltersLayout()) {
@@ -178,7 +153,7 @@ trait HasFilters
     {
         $schema = [];
 
-        foreach ($this->getCachedTableFilters() as $filter) {
+        foreach ($this->getTable()->getFilters() as $filter) {
             $schema[$filter->getName()] = Forms\Components\Group::make()
                 ->schema($filter->getFormSchema())
                 ->statePath($filter->getName())
@@ -189,16 +164,17 @@ trait HasFilters
         return $schema;
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getTableFiltersFormWidth(): ?string
     {
-        return match ($this->getTableFiltersFormColumns()) {
-            2 => '2xl',
-            3 => '4xl',
-            4 => '6xl',
-            default => null,
-        };
+        return null;
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getTableFiltersLayout(): ?string
     {
         return null;

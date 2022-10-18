@@ -12,32 +12,6 @@ trait CanSearchRecords
 
     public $tableSearch = '';
 
-    public function isTableSearchable(): bool
-    {
-        foreach ($this->getCachedTableColumns() as $column) {
-            if (! $column->isGloballySearchable()) {
-                continue;
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    public function isTableSearchableByColumn(): bool
-    {
-        foreach ($this->getCachedTableColumns() as $column) {
-            if (! $column->isIndividuallySearchable()) {
-                continue;
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
     public function updatedTableSearch(): void
     {
         if ($this->shouldPersistTableSearchInSession()) {
@@ -85,7 +59,7 @@ trait CanSearchRecords
                 continue;
             }
 
-            $column = $this->getCachedTableColumn($column);
+            $column = $this->getTable()->getColumn($column);
 
             if (! $column) {
                 continue;
@@ -120,7 +94,7 @@ trait CanSearchRecords
             $query->where(function (Builder $query) use ($searchWord) {
                 $isFirst = true;
 
-                foreach ($this->getCachedTableColumns() as $column) {
+                foreach ($this->getTable()->getColumns() as $column) {
                     $column->applySearchConstraint(
                         $query,
                         $searchWord,

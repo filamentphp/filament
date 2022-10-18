@@ -61,6 +61,7 @@ class Column extends ViewComponent
                 'state',
                 fn () => $this->getState(),
             ),
+            'table' => $this->getTable(),
         ]);
     }
 }

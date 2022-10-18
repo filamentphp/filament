@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 trait HasRecordAction
 {
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getTableRecordActionUsing(): ?Closure
     {
         return function (Model $record): ?string {
@@ -15,7 +18,7 @@ trait HasRecordAction
     }
 
     /**
-     * @deprecated Use `getTableRecordActionUsing()` instead.
+     * @deprecated Override the `table()` method to configure the table.
      */
     protected function getTableRecordAction(): ?string
     {

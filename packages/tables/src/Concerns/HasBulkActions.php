@@ -17,24 +17,6 @@ trait HasBulkActions
 
     public $mountedTableBulkActionData = [];
 
-    protected array $cachedTableBulkActions;
-
-    public function cacheTableBulkActions(): void
-    {
-        $actions = BulkAction::configureUsing(
-            Closure::fromCallable([$this, 'configureTableBulkAction']),
-            fn (): array => $this->getTableBulkActions(),
-        );
-
-        $this->cachedTableBulkActions = [];
-
-        foreach ($actions as $action) {
-            $action->table($this->getCachedTable());
-
-            $this->cachedTableBulkActions[$action->getName()] = $action;
-        }
-    }
-
     protected function configureTableBulkAction(BulkAction $action): void
     {
     }
@@ -159,18 +141,13 @@ trait HasBulkActions
         return (bool) count($this->getMountedTableBulkActionForm()?->getComponents() ?? []);
     }
 
-    public function getCachedTableBulkActions(): array
-    {
-        return $this->cachedTableBulkActions;
-    }
-
     public function getMountedTableBulkAction(): ?BulkAction
     {
         if (! $this->mountedTableBulkAction) {
             return null;
         }
 
-        return $this->getCachedTableBulkAction($this->mountedTableBulkAction);
+        return $this->getTable()->getBulkAction($this->mountedTableBulkAction);
     }
 
     public function getMountedTableBulkActionForm(): ?Form
@@ -187,20 +164,15 @@ trait HasBulkActions
 
         return $action->getForm(
             $this->makeForm()
-                ->model($this->getTableQuery()->getModel()::class)
+                ->model($this->getTable()->getModel())
                 ->statePath('mountedTableBulkActionData')
                 ->context($this->mountedTableBulkAction),
         );
     }
 
-    public function getCachedTableBulkAction(string $name): ?BulkAction
-    {
-        $action = $this->getCachedTableBulkActions()[$name] ?? null;
-        $action?->records($this->getSelectedTableRecords());
-
-        return $action;
-    }
-
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getTableBulkActions(): array
     {
         return [];

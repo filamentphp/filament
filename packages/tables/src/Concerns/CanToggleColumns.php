@@ -17,7 +17,7 @@ trait CanToggleColumns
     {
         $state = [];
 
-        foreach ($this->getCachedTableColumns() as $column) {
+        foreach ($this->getTable()->getColumns() as $column) {
             if (! $column->isToggleable()) {
                 continue;
             }
@@ -35,19 +35,6 @@ trait CanToggleColumns
         ]);
     }
 
-    public function hasToggleableTableColumns(): bool
-    {
-        foreach ($this->getCachedTableColumns() as $column) {
-            if (! $column->isToggleable()) {
-                continue;
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
     public function getTableColumnToggleForm(): Form
     {
         if ((! $this->isCachingForms) && $this->hasCachedForm('toggleTableColumnForm')) {
@@ -56,7 +43,7 @@ trait CanToggleColumns
 
         return $this->makeForm()
             ->schema($this->getTableColumnToggleFormSchema())
-            ->columns($this->getTableColumnToggleFormColumns())
+            ->columns($this->getTable()->getColumnToggleFormColumns())
             ->statePath('toggledTableColumns')
             ->reactive();
     }
@@ -65,7 +52,7 @@ trait CanToggleColumns
     {
         $schema = [];
 
-        foreach ($this->getCachedTableColumns() as $column) {
+        foreach ($this->getTable()->getColumns() as $column) {
             if (! $column->isToggleable()) {
                 continue;
             }
@@ -77,19 +64,20 @@ trait CanToggleColumns
         return $schema;
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getTableColumnToggleFormColumns(): int | array
     {
         return 1;
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getTableColumnToggleFormWidth(): ?string
     {
-        return match ($this->getTableColumnToggleFormColumns()) {
-            2 => '2xl',
-            3 => '4xl',
-            4 => '6xl',
-            default => null,
-        };
+        return null;
     }
 
     public function isTableColumnToggledHidden(string $name): bool

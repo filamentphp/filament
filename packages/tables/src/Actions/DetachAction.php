@@ -4,13 +4,13 @@ namespace Filament\Tables\Actions;
 
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class DetachAction extends Action
 {
     use CanCustomizeProcess;
-    use Concerns\InteractsWithRelationship;
 
     public static function getDefaultName(): ?string
     {
@@ -36,11 +36,11 @@ class DetachAction extends Action
         $this->requiresConfirmation();
 
         $this->action(function (): void {
-            $this->process(function (HasTable $livewire, Model $record): void {
+            $this->process(function (Model $record, Table $table): void {
                 /** @var BelongsToMany $relationship */
-                $relationship = $this->getRelationship();
+                $relationship = $table->getRelationship();
 
-                if ($livewire->allowsDuplicates()) {
+                if ($table->allowsDuplicates()) {
                     $record->{$relationship->getPivotAccessor()}->delete();
                 } else {
                     $relationship->detach($record);

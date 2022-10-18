@@ -7,6 +7,7 @@ use Exception;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
+use Filament\Tables\Table;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +17,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class AssociateAction extends Action
 {
     use CanCustomizeProcess;
-    use Concerns\InteractsWithRelationship;
 
     protected ?Closure $modifyRecordSelectUsing = null;
 
@@ -63,14 +63,14 @@ class AssociateAction extends Action
         $this->form(fn (): array => [$this->getRecordSelect()]);
 
         $this->action(function (array $arguments, Form $form): void {
-            $this->process(function (array $data) {
+            $this->process(function (array $data, Table $table) {
                 /** @var HasMany $relationship */
-                $relationship = $this->getRelationship();
+                $relationship = $table->getRelationship();
 
                 $record = $relationship->getRelated()->query()->find($data['recordId']);
 
                 /** @var BelongsTo $inverseRelationship */
-                $inverseRelationship = $this->getInverseRelationshipFor($record);
+                $inverseRelationship = $table->getInverseRelationshipFor($record);
 
                 $inverseRelationship->associate($relationship->getParent());
                 $record->save();
@@ -161,9 +161,11 @@ class AssociateAction extends Action
 
     public function getRecordSelect(): Select
     {
-        $getOptions = function (?string $search = null, ?array $searchColumns = []): array {
+        $table = $this->getTable();
+
+        $getOptions = function (?string $search = null, ?array $searchColumns = []) use ($table): array {
             /** @var HasMany $relationship */
-            $relationship = $this->getRelationship();
+            $relationship = $table->getRelationship();
 
             $titleAttribute = $this->getRecordTitleAttribute();
 
@@ -209,7 +211,7 @@ class AssociateAction extends Action
             $localKeyName = $relationship->getLocalKeyName();
 
             return $relationshipQuery
-                ->whereDoesntHave($this->getInverseRelationshipName(), function (Builder $query) use ($relationship): Builder {
+                ->whereDoesntHave($table->getInverseRelationship(), function (Builder $query) use ($relationship): Builder {
                     return $query->where($relationship->getParent()->getQualifiedKeyName(), $relationship->getParent()->getKey());
                 })
                 ->get()
@@ -222,7 +224,7 @@ class AssociateAction extends Action
             ->required()
             ->searchable($this->getRecordSelectSearchColumns() ?? true)
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(search: $search, searchColumns: $component->getSearchColumns()))
-            ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle($this->getRelationship()->getRelated()->query()->find($value)))
+            ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle($table->getRelationship()->getRelated()->query()->find($value)))
             ->options(fn (): array => $this->isRecordSelectPreloaded() ? $getOptions() : [])
             ->disableLabel();
 

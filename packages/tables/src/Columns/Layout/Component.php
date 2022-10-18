@@ -88,6 +88,7 @@ class Component extends ViewComponent
         return array_merge(parent::getDefaultEvaluationParameters(), [
             'livewire' => $this->getLivewire(),
             'record' => $this->getRecord(),
+            'table' => $this->getTable(),
         ]);
     }
 }

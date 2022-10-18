@@ -14,44 +14,6 @@ use Illuminate\Validation\ValidationException;
 
 trait HasColumns
 {
-    protected array $cachedTableColumns;
-
-    protected array $cachedTableColumnsLayout;
-
-    protected ?Component $cachedTableCollapsibleColumnsLayout = null;
-
-    protected bool $hasTableColumnsLayout = false;
-
-    public function cacheTableColumns(): void
-    {
-        $this->cachedTableColumns = [];
-        $this->cachedTableColumnsLayout = [];
-
-        $components = Action::configureUsing(
-            Closure::fromCallable([$this, 'configureTableAction']),
-            fn (): array => $this->getTableColumns(),
-        );
-
-        foreach ($components as $component) {
-            $component->table($this->getCachedTable());
-
-            if ($component instanceof Component && $component->isCollapsible()) {
-                $this->cachedTableCollapsibleColumnsLayout = $component;
-            } else {
-                $this->cachedTableColumnsLayout[] = $component;
-            }
-
-            if ($component instanceof Column) {
-                $this->cachedTableColumns[$component->getName()] = $component;
-
-                continue;
-            }
-
-            $this->hasTableColumnsLayout = true;
-            $this->cachedTableColumns = array_merge($this->cachedTableColumns, $component->getColumns());
-        }
-    }
-
     public function callTableColumnAction(string $name, string $recordKey)
     {
         $record = $this->getTableRecord($recordKey);
@@ -60,7 +22,7 @@ trait HasColumns
             return;
         }
 
-        $column = $this->getCachedTableColumn($name);
+        $column = $this->getTable()->getColumn($name);
 
         if (! $column) {
             return;
@@ -79,35 +41,10 @@ trait HasColumns
         return $column->record($record)->evaluate($action);
     }
 
-    public function getCachedTableColumns(): array
-    {
-        return $this->cachedTableColumns;
-    }
-
-    public function getCachedTableColumnsLayout(): array
-    {
-        return $this->cachedTableColumnsLayout;
-    }
-
-    public function getCachedCollapsibleTableColumnsLayout(): ?Component
-    {
-        return $this->cachedTableCollapsibleColumnsLayout;
-    }
-
-    public function hasTableColumnsLayout(): bool
-    {
-        return $this->hasTableColumnsLayout || $this->getTableContentGrid();
-    }
-
-    public function getCachedTableColumn(string $name): ?Column
-    {
-        return $this->getCachedTableColumns()[$name] ?? null;
-    }
-
     public function setColumnValue(string $column, string $record, $input): ?array
     {
         $columnName = $column;
-        $column = $this->getCachedTableColumn($column);
+        $column = $this->getTable()->getColumn($column);
 
         if (! ($column instanceof Editable)) {
             return null;
@@ -137,8 +74,7 @@ trait HasColumns
             $record = $columnRelationship->getResults();
             $columnName = $column->getRelationshipTitleAttribute();
         } elseif (
-            $this instanceof HasRelationshipTable &&
-            (($tableRelationship = $this->getRelationship()) instanceof BelongsToMany) &&
+            (($tableRelationship = $this->getTable()->getRelationship()) instanceof BelongsToMany) &&
             in_array($columnName, $tableRelationship->getPivotColumns())
         ) {
             $record = $record->{$tableRelationship->getPivotAccessor()};
@@ -156,6 +92,9 @@ trait HasColumns
         return null;
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getTableColumns(): array
     {
         return [];

@@ -50,30 +50,24 @@ trait CanSelectRecords
 
     public function getSelectedTableRecords(): Collection
     {
-        if (! ($this instanceof HasRelationshipTable && $this->getRelationship() instanceof BelongsToMany && $this->allowsDuplicates())) {
-            $query = $this->getTableQuery()->whereIn(app($this->getTableModel())->getQualifiedKeyName(), $this->selectedTableRecords);
+        $table = $this->getTable();
+
+        if (! ($table->getRelationship() instanceof BelongsToMany && $table->allowsDuplicates())) {
+            $query = $table->getQuery()->whereIn(app($table->getModel())->getQualifiedKeyName(), $this->selectedTableRecords);
             $this->applySortingToTableQuery($query);
 
             return $query->get();
         }
 
         /** @var BelongsToMany $relationship */
-        $relationship = $this->getRelationship();
+        $relationship = $table->getRelationship();
 
         $pivotClass = $relationship->getPivotClass();
         $pivotKeyName = app($pivotClass)->getKeyName();
 
-        return $this->hydratePivotRelationForTableRecords($this->selectPivotDataInQuery(
+        return $this->hydratePivotRelationForTableRecords($table->selectPivotDataInQuery(
             $relationship->wherePivotIn($pivotKeyName, $this->selectedTableRecords),
         )->get());
-    }
-
-    public function isTableSelectionEnabled(): bool
-    {
-        return (bool) count(array_filter(
-            $this->getCachedTableBulkActions(),
-            fn (BulkAction $action): bool => ! $action->isHidden(),
-        ));
     }
 
     public function shouldSelectCurrentPageOnly(): bool

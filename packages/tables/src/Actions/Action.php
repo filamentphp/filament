@@ -79,6 +79,7 @@ class Action extends BaseAction implements Groupable, HasRecord
                 'record',
                 fn (): ?Model => $this->getRecord(),
             ),
+            'table' => $this->getTable(),
         ]);
     }
 
@@ -86,21 +87,21 @@ class Action extends BaseAction implements Groupable, HasRecord
     {
         $record ??= $this->getRecord();
 
-        return $this->getCustomRecordTitle($record) ?? $this->getLivewire()->getTableRecordTitle($record);
+        return $this->getCustomRecordTitle($record) ?? $this->getTable()->getRecordTitle($record);
     }
 
     public function getModelLabel(): string
     {
-        return $this->getCustomModelLabel() ?? $this->getLivewire()->getTableModelLabel();
+        return $this->getCustomModelLabel() ?? $this->getTable()->getModelLabel();
     }
 
     public function getPluralModelLabel(): string
     {
-        return $this->getCustomPluralModelLabel() ?? $this->getLivewire()->getTablePluralModelLabel();
+        return $this->getCustomPluralModelLabel() ?? $this->getTable()->getPluralModelLabel();
     }
 
     public function getModel(): string
     {
-        return $this->getCustomModel() ?? $this->getLivewire()->getTableModel();
+        return $this->getCustomModel() ?? $this->getTable()->getModel();
     }
 }

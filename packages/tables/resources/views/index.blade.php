@@ -501,7 +501,7 @@
                                                 </a>
                                             @elseif ($recordAction)
                                                 @php
-                                                    if ($this->getCachedTableAction($recordAction)) {
+                                                    if ($getAction($recordAction)) {
                                                         $recordWireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
                                                     } else {
                                                         $recordWireClickAction = "{$recordAction}('{$recordKey}')";
@@ -845,7 +845,7 @@
             ])>
                 <x-tables::pagination
                     :paginator="$records"
-                    :records-per-page-select-options="$getRecordsPerPageSelectOptions()"
+                    :page-options="$getPaginationPageOptions()"
                 />
             </div>
         @endif

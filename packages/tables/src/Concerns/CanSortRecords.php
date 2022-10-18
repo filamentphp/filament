@@ -38,11 +38,17 @@ trait CanSortRecords
         return $this->tableSortDirection;
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getDefaultTableSortColumn(): ?string
     {
         return null;
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getDefaultTableSortDirection(): ?string
     {
         return null;
@@ -67,7 +73,7 @@ trait CanSortRecords
 
         $sortDirection = $this->tableSortDirection === 'desc' ? 'desc' : 'asc';
 
-        $column = $this->getCachedTableColumn($sortColumn);
+        $column = $this->getTable()->getColumn($sortColumn);
 
         if ($column && (! $column->isHidden()) && $column->isSortable()) {
             $column->applySort($query, $sortDirection);

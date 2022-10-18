@@ -2,20 +2,21 @@
 
 namespace Filament\Resources\Pages;
 
-use Closure;
 use Filament\Forms\Form;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Actions\CreateAction;
-use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class ListRecords extends Page implements Tables\Contracts\HasTable
 {
-    use Tables\Concerns\InteractsWithTable;
+    use Tables\Concerns\InteractsWithTable {
+        makeTable as makeBaseTable;
+    }
 
     protected static string $view = 'filament::resources.pages.list-records';
 
@@ -37,12 +38,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return static::$breadcrumb ?? __('filament::resources/pages/list-records.breadcrumb');
     }
 
-    protected function getResourceTable(): Table
-    {
-        return $this->table(Table::make());
-    }
-
-    protected function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return static::getResource()::table($table);
     }
@@ -171,176 +167,97 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->authorize(static::getResource()::canRestoreAny());
     }
 
-    protected function getDefaultTableSortColumn(): ?string
-    {
-        return $this->getResourceTable()->getDefaultSortColumn();
-    }
-
-    protected function getDefaultTableSortDirection(): ?string
-    {
-        return $this->getResourceTable()->getDefaultSortDirection();
-    }
-
-    protected function getTableActions(): array
-    {
-        return $this->getResourceTable()->getActions();
-    }
-
-    protected function getTableActionsPosition(): ?string
-    {
-        return $this->getResourceTable()->getActionsPosition();
-    }
-
-    protected function getTableBulkActions(): array
-    {
-        return $this->getResourceTable()->getBulkActions();
-    }
-
-    protected function getTableColumns(): array
-    {
-        return $this->getResourceTable()->getColumns();
-    }
-
-    protected function getTableContentGrid(): ?array
-    {
-        return $this->getResourceTable()->getContentGrid();
-    }
-
-    protected function getTableFilters(): array
-    {
-        return $this->getResourceTable()->getFilters();
-    }
-
-    protected function getTableFiltersLayout(): ?string
-    {
-        return $this->getResourceTable()->getFiltersLayout();
-    }
-
-    protected function getTableHeaderActions(): array
-    {
-        return $this->getResourceTable()->getHeaderActions();
-    }
-
-    protected function getTableReorderColumn(): ?string
-    {
-        return $this->getResourceTable()->getReorderColumn();
-    }
-
-    protected function isTableReorderable(): bool
-    {
-        return filled($this->getTableReorderColumn()) && static::getResource()::canReorder();
-    }
-
-    protected function getTablePollingInterval(): ?string
-    {
-        return $this->getResourceTable()->getPollingInterval();
-    }
-
-    protected function getTableRecordUrlUsing(): ?Closure
-    {
-        return function (Model $record): ?string {
-            foreach (['view', 'edit'] as $action) {
-                $action = $this->getCachedTableAction($action);
-
-                if (! $action) {
-                    continue;
-                }
-
-                $action->record($record);
-
-                if ($action->isHidden()) {
-                    continue;
-                }
-
-                $url = $action->getUrl();
-
-                if (! $url) {
-                    continue;
-                }
-
-                return $url;
-            }
-
-            $resource = static::getResource();
-
-            foreach (['view', 'edit'] as $action) {
-                if (! $resource::hasPage($action)) {
-                    continue;
-                }
-
-                if (! $resource::{'can' . ucfirst($action)}($record)) {
-                    continue;
-                }
-
-                return $resource::getUrl($action, ['record' => $record]);
-            }
-
-            return null;
-        };
-    }
-
-    protected function getTableRecordActionUsing(): ?Closure
-    {
-        return function (Model $record): ?string {
-            foreach (['view', 'edit'] as $action) {
-                $action = $this->getCachedTableAction($action);
-
-                if (! $action) {
-                    continue;
-                }
-
-                $action->record($record);
-
-                if ($action->isHidden()) {
-                    continue;
-                }
-
-                if ($action->getUrl()) {
-                    continue;
-                }
-
-                return $action->getName();
-            }
-
-            return null;
-        };
-    }
-
-    protected function getTableQuery(): Builder
-    {
-        return static::getResource()::getEloquentQuery();
-    }
-
     protected function getMountedActionFormModel(): string
     {
         return $this->getModel();
     }
 
-    public function getTableRecordTitle(Model $record): string
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    public function getModelLabel(): ?string
     {
-        $resource = static::getResource();
-
-        return $resource::getRecordTitle($record);
+        return null;
     }
 
-    public function getModelLabel(): string
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    public function getPluralModelLabel(): ?string
     {
-        return static::getResource()::getModelLabel();
+        return null;
     }
 
-    public function getPluralModelLabel(): string
+    protected function makeTable(): Table
     {
-        return static::getResource()::getPluralModelLabel();
-    }
+        return $this->makeBaseTable()
+            ->query($this->getTableQuery() ?? static::getResource()::getEloquentQuery())
+            ->modelLabel($this->getModelLabel() ?? static::getResource()::getModelLabel())
+            ->pluralModelLabel($this->getPluralModelLabel() ?? static::getResource()::getPluralModelLabel())
+            ->recordAction(function (Model $record, Table $table): ?string {
+                foreach (['view', 'edit'] as $action) {
+                    $action = $table->getAction($action);
 
-    public function getTableModelLabel(): string
-    {
-        return $this->getModelLabel();
-    }
+                    if (! $action) {
+                        continue;
+                    }
 
-    public function getTablePluralModelLabel(): string
-    {
-        return $this->getPluralModelLabel();
+                    $action->record($record);
+
+                    if ($action->isHidden()) {
+                        continue;
+                    }
+
+                    if ($action->getUrl()) {
+                        continue;
+                    }
+
+                    return $action->getName();
+                }
+
+                return null;
+            })
+            ->recordTitle(fn (Model $record): string => static::getResource()::getRecordTitle($record))
+            ->recordUrl($this->getTableRecordUrlUsing() ?? function (Model $record, Table $table): ?string {
+                foreach (['view', 'edit'] as $action) {
+                    $action = $table->getAction($action);
+
+                    if (! $action) {
+                        continue;
+                    }
+
+                    $action->record($record);
+
+                    if ($action->isHidden()) {
+                        continue;
+                    }
+
+                    $url = $action->getUrl();
+
+                    if (! $url) {
+                        continue;
+                    }
+
+                    return $url;
+                }
+
+                $resource = static::getResource();
+
+                foreach (['view', 'edit'] as $action) {
+                    if (! $resource::hasPage($action)) {
+                        continue;
+                    }
+
+                    if (! $resource::{'can' . ucfirst($action)}($record)) {
+                        continue;
+                    }
+
+                    return $resource::getUrl($action, ['record' => $record]);
+                }
+
+                return null;
+            })
+            ->reorderable(condition: static::getResource()::canReorder());
     }
 
     protected function getForms(): array

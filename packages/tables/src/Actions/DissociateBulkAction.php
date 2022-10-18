@@ -3,6 +3,7 @@
 namespace Filament\Tables\Actions;
 
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class DissociateBulkAction extends BulkAction
 {
     use CanCustomizeProcess;
-    use Concerns\InteractsWithRelationship;
 
     public static function getDefaultName(): ?string
     {
@@ -36,10 +36,10 @@ class DissociateBulkAction extends BulkAction
         $this->requiresConfirmation();
 
         $this->action(function (): void {
-            $this->process(function (Collection $records): void {
-                $records->each(function (Model $record): void {
+            $this->process(function (Collection $records, Table $table): void {
+                $records->each(function (Model $record) use ($table): void {
                     /** @var BelongsTo $inverseRelationship */
-                    $inverseRelationship = $this->getInverseRelationshipFor($record);
+                    $inverseRelationship = $table->getInverseRelationshipFor($record);
 
                     $inverseRelationship->dissociate();
                     $record->save();

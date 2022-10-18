@@ -8,54 +8,41 @@ use Illuminate\Contracts\View\View;
 
 trait HasEmptyState
 {
-    protected array $cachedTableEmptyStateActions;
-
-    public function cacheTableEmptyStateActions(): void
-    {
-        $actions = Action::configureUsing(
-            Closure::fromCallable([$this, 'configureTableAction']),
-            fn (): array => $this->getTableEmptyStateActions(),
-        );
-
-        $this->cachedTableEmptyStateActions = [];
-
-        foreach ($actions as $action) {
-            $action->table($this->getCachedTable());
-
-            $this->cachedTableEmptyStateActions[$action->getName()] = $action;
-        }
-    }
-
-    public function getCachedTableEmptyStateActions(): array
-    {
-        return $this->cachedTableEmptyStateActions;
-    }
-
-    public function getCachedTableEmptyStateAction(string $name): ?Action
-    {
-        return $this->getCachedTableEmptyStateActions()[$name] ?? null;
-    }
-
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getTableEmptyState(): ?View
     {
         return null;
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getTableEmptyStateActions(): array
     {
         return [];
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getTableEmptyStateDescription(): ?string
     {
         return null;
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getTableEmptyStateHeading(): ?string
     {
         return null;
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getTableEmptyStateIcon(): ?string
     {
         return null;

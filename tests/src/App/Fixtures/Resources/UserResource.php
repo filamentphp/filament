@@ -5,8 +5,8 @@ namespace Filament\Tests\App\Fixtures\Resources;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Table;
 use Filament\Tests\App\Fixtures\Resources\UserResource\Pages;
 use Filament\Tests\Models\User;
 

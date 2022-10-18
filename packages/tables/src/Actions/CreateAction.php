@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\Form;
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
@@ -13,7 +14,6 @@ use Illuminate\Support\Arr;
 class CreateAction extends Action
 {
     use CanCustomizeProcess;
-    use Concerns\InteractsWithRelationship;
 
     protected bool | Closure $isCreateAnotherDisabled = false;
 
@@ -46,8 +46,8 @@ class CreateAction extends Action
         $this->action(function (array $arguments, Form $form, HasTable $livewire): void {
             $model = $this->getModel();
 
-            $record = $this->process(function (array $data) use ($model): Model {
-                $relationship = $this->getRelationship();
+            $record = $this->process(function (array $data, Table $table) use ($model): Model {
+                $relationship = $table->getRelationship();
 
                 if (! $relationship) {
                     return $model::create($data);

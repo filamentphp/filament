@@ -1,6 +1,6 @@
 @props([
     'paginator',
-    'recordsPerPageSelectOptions',
+    'pageOptions',
 ])
 
 @php
@@ -27,8 +27,8 @@
             @endif
         </div>
 
-        @if (count($recordsPerPageSelectOptions) > 1)
-            <x-tables::pagination.records-per-page-selector :options="$recordsPerPageSelectOptions" />
+        @if (count($pageOptions) > 1)
+            <x-tables::pagination.records-per-page-selector :options="$pageOptions" />
         @endif
 
         <div class="w-10">
@@ -74,8 +74,8 @@
         </div>
 
         <div class="flex items-center justify-center">
-            @if (count($recordsPerPageSelectOptions) > 1)
-                <x-tables::pagination.records-per-page-selector :options="$recordsPerPageSelectOptions" />
+            @if (count($pageOptions) > 1)
+                <x-tables::pagination.records-per-page-selector :options="$pageOptions" />
             @endif
         </div>
 

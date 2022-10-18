@@ -27,7 +27,7 @@ class TestsFilters
             /** @phpstan-ignore-next-line */
             $this->assertTableFilterExists($name);
 
-            $filter = $this->instance()->getCachedTableFilter($name);
+            $filter = $this->instance()->getTable()->getFilter($name);
 
             if ($filter instanceof TernaryFilter) {
                 if ($data === true || ($data === null && func_num_args() === 1)) {
@@ -86,7 +86,7 @@ class TestsFilters
         return function (string $name): static {
             $name = $this->instance()->parseFilterName($name);
 
-            $filter = $this->instance()->getCachedTableFilter($name);
+            $filter = $this->instance()->getTable()->getFilter($name);
 
             $livewireClass = $this->instance()::class;
 

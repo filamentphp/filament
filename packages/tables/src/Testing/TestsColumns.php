@@ -22,7 +22,7 @@ class TestsColumns
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnVisible($name);
 
-            $column = $this->instance()->getCachedTableColumn($name);
+            $column = $this->instance()->getTable()->getColumn($name);
 
             $html = array_map(
                 function ($record) use ($column) {
@@ -43,7 +43,7 @@ class TestsColumns
             /** @phpstan-ignore-next-line  */
             $this->assertTableColumnExists($name);
 
-            $column = $this->instance()->getCachedTableColumn($name);
+            $column = $this->instance()->getTable()->getColumn($name);
 
             $html = array_map(
                 function ($record) use ($column) {
@@ -61,7 +61,7 @@ class TestsColumns
     public function assertTableColumnExists(): Closure
     {
         return function (string $name): static {
-            $column = $this->instance()->getCachedTableColumn($name);
+            $column = $this->instance()->getTable()->getColumn($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -81,7 +81,7 @@ class TestsColumns
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
-            $column = $this->instance()->getCachedTableColumn($name);
+            $column = $this->instance()->getTable()->getColumn($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -100,7 +100,7 @@ class TestsColumns
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
-            $column = $this->instance()->getCachedTableColumn($name);
+            $column = $this->instance()->getTable()->getColumn($name);
 
             $livewireClass = $this->instance()::class;
 
@@ -119,7 +119,7 @@ class TestsColumns
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
-            $column = $this->instance()->getCachedTableColumn($name);
+            $column = $this->instance()->getTable()->getColumn($name);
 
             if (! ($record instanceof Model)) {
                 $record = $this->instance()->getTableRecord($record);
@@ -144,7 +144,7 @@ class TestsColumns
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
-            $column = $this->instance()->getCachedTableColumn($name);
+            $column = $this->instance()->getTable()->getColumn($name);
 
             if (! ($record instanceof Model)) {
                 $record = $this->instance()->getTableRecord($record);

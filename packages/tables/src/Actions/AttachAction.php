@@ -7,6 +7,7 @@ use Exception;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
+use Filament\Tables\Table;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +17,6 @@ use Illuminate\Support\Arr;
 class AttachAction extends Action
 {
     use CanCustomizeProcess;
-    use Concerns\InteractsWithRelationship;
 
     protected ?Closure $modifyRecordSelectUsing = null;
 
@@ -63,9 +63,9 @@ class AttachAction extends Action
         $this->form(fn (): array => [$this->getRecordSelect()]);
 
         $this->action(function (array $arguments, Form $form): void {
-            $this->process(function (array $data) {
+            $this->process(function (array $data, Table $table) {
                 /** @var BelongsToMany $relationship */
-                $relationship = $this->getRelationship();
+                $relationship = $table->getRelationship();
 
                 $record = $relationship->getRelated()->query()->find($data['recordId']);
 
@@ -160,9 +160,11 @@ class AttachAction extends Action
 
     public function getRecordSelect(): Select
     {
-        $getOptions = function (?string $search = null, ?array $searchColumns = []): array {
+        $table = $this->getTable();
+
+        $getOptions = function (?string $search = null, ?array $searchColumns = []) use ($table): array {
             /** @var BelongsToMany $relationship */
-            $relationship = $this->getRelationship();
+            $relationship = $table->getRelationship();
 
             $titleAttribute = $this->getRecordTitleAttribute();
 
@@ -209,11 +211,11 @@ class AttachAction extends Action
 
             return $relationshipQuery
                 ->when(
-                    ! $this->getLivewire()->allowsDuplicates(),
+                    ! $table->allowsDuplicates(),
                     fn (Builder $query): Builder => $query->whereDoesntHave(
-                        $this->getInverseRelationshipName(),
-                        function (Builder $query): Builder {
-                            return $query->where($this->getRelationship()->getParent()->getQualifiedKeyName(), $this->getRelationship()->getParent()->getKey());
+                        $table->getInverseRelationship(),
+                        function (Builder $query) use ($table): Builder {
+                            return $query->where($table->getRelationship()->getParent()->getQualifiedKeyName(), $table->getRelationship()->getParent()->getKey());
                         },
                     ),
                 )
@@ -227,7 +229,7 @@ class AttachAction extends Action
             ->required()
             ->searchable($this->getRecordSelectSearchColumns() ?? true)
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(search: $search, searchColumns: $component->getSearchColumns()))
-            ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle($this->getRelationship()->getRelated()->query()->find($value)))
+            ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle($table->getRelationship()->getRelated()->query()->find($value)))
             ->options(fn (): array => $this->isRecordSelectPreloaded() ? $getOptions() : [])
             ->disableLabel();
 

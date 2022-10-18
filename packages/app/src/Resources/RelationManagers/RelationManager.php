@@ -5,10 +5,9 @@ namespace Filament\Resources\RelationManagers;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
-use function Filament\locale_has_pluralization;
-use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,22 +16,33 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Livewire\Component;
+use function Filament\Support\locale_has_pluralization;
 
-class RelationManager extends Component implements Tables\Contracts\HasRelationshipTable, Tables\Contracts\HasTable
+class RelationManager extends Component implements Tables\Contracts\HasTable
 {
-    use Tables\Concerns\InteractsWithTable;
+    use Tables\Concerns\InteractsWithTable {
+        makeTable as makeBaseTable;
+    }
 
     public Model $ownerRecord;
 
     public ?string $pageClass = null;
 
-    protected static ?string $recordTitleAttribute = null;
-
     protected static string $relationship;
 
-    protected static ?string $inverseRelationship = null;
+    protected static ?string $title = null;
 
     protected static string $view = 'filament::resources.relation-manager';
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected static ?string $recordTitleAttribute = null;
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected static ?string $inverseRelationship = null;
 
     /**
      * @deprecated Use `$modelLabel` instead.
@@ -44,16 +54,15 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
      */
     protected static ?string $pluralLabel = null;
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected static ?string $modelLabel = null;
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected static ?string $pluralModelLabel = null;
-
-    protected static ?string $title = null;
-
-    protected function getTableQueryStringIdentifier(): ?string
-    {
-        return Str::lcfirst(class_basename(static::class));
-    }
 
     protected function configureTableAction(Tables\Actions\Action $action): void
     {
@@ -76,21 +85,21 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
     protected function configureAssociateAction(Tables\Actions\AssociateAction $action): void
     {
         $action
-            ->authorize($this->canAssociate())
+            ->authorize(static fn (RelationManager $livewire): bool => $livewire->canAssociate())
             ->recordTitleAttribute(static::getRecordTitleAttribute());
     }
 
     protected function configureAttachAction(Tables\Actions\AttachAction $action): void
     {
         $action
-            ->authorize($this->canAttach())
+            ->authorize(static fn (RelationManager $livewire): bool => $livewire->canAttach())
             ->recordTitleAttribute(static::getRecordTitleAttribute());
     }
 
     protected function configureCreateAction(Tables\Actions\CreateAction $action): void
     {
         $action
-            ->authorize($this->canCreate())
+            ->authorize(static fn (RelationManager $livewire): bool => $livewire->canCreate())
             ->form(fn (Form $form): Form => $this->form($form->columns(2)));
     }
 
@@ -159,45 +168,36 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
     protected function configureDeleteBulkAction(Tables\Actions\DeleteBulkAction $action): void
     {
         $action
-            ->authorize($this->canDeleteAny());
+            ->authorize(static fn (RelationManager $livewire): bool => $livewire->canDeleteAny());
     }
 
     protected function configureDetachBulkAction(Tables\Actions\DetachBulkAction $action): void
     {
         $action
-            ->authorize($this->canDetachAny());
+            ->authorize(static fn (RelationManager $livewire): bool => $livewire->canDetachAny());
     }
 
     protected function configureDissociateBulkAction(Tables\Actions\DissociateBulkAction $action): void
     {
         $action
-            ->authorize($this->canDissociateAny());
+            ->authorize(static fn (RelationManager $livewire): bool => $livewire->canDissociateAny());
     }
 
     protected function configureForceDeleteBulkAction(Tables\Actions\ForceDeleteBulkAction $action): void
     {
         $action
-            ->authorize($this->canForceDeleteAny());
+            ->authorize(static fn (RelationManager $livewire): bool => $livewire->canForceDeleteAny());
     }
 
     protected function configureRestoreBulkAction(Tables\Actions\RestoreBulkAction $action): void
     {
         $action
-            ->authorize($this->canRestoreAny());
-    }
-
-    protected function callHook(string $hook): void
-    {
-        if (! method_exists($this, $hook)) {
-            return;
-        }
-
-        $this->{$hook}();
+            ->authorize(static fn (RelationManager $livewire): bool => $livewire->canRestoreAny());
     }
 
     protected function can(string $action, ?Model $record = null): bool
     {
-        $policy = Gate::getPolicyFor($model = $this->getRelatedModel());
+        $policy = Gate::getPolicyFor($model = $this->getTable()->getModel());
         $user = Filament::auth()->user();
 
         if ($policy === null) {
@@ -235,16 +235,19 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return $form;
     }
 
-    public function getInverseRelationshipName(): string
+    public function getInverseRelationshipName(): ?string
     {
-        return static::$inverseRelationship ?? (string) str(class_basename($this->getOwnerRecord()))
-            ->plural()
-            ->camel();
+        return static::$inverseRelationship;
     }
 
     public function getOwnerRecord(): Model
     {
         return $this->ownerRecord;
+    }
+
+    public function getRelationship(): Relation | Builder
+    {
+        return $this->getOwnerRecord()->{static::getRelationshipName()}();
     }
 
     public static function table(Table $table): Table
@@ -259,166 +262,49 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     public static function getTitle(): string
     {
-        return static::$title ?? Str::headline(static::getPluralModelLabel());
+        return static::$title ?? (string) str(static::getRelationshipName())
+            ->kebab()
+            ->replace('-', ' ');
     }
 
-    public static function getTitleForRecord(Model $ownerRecord): string
-    {
-        return static::getTitle();
-    }
-
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     public static function getRecordTitleAttribute(): ?string
     {
         return static::$recordTitleAttribute;
     }
 
-    public static function getRecordTitle(?Model $record): ?string
-    {
-        return $record?->getAttributeValue(static::getRecordTitleAttribute()) ?? static::getModelLabel();
-    }
-
     /**
-     * @deprecated Use `getModelLabel()` instead.
+     * @deprecated Override the `table()` method to configure the table.
      */
     protected static function getRecordLabel(): ?string
     {
         return static::$label;
     }
 
-    protected static function getModelLabel(): string
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected static function getModelLabel(): ?string
     {
-        return static::$modelLabel ?? static::getRecordLabel() ?? (string) str(static::getRelationshipName())
-            ->kebab()
-            ->replace('-', ' ')
-            ->singular();
+        return static::$modelLabel ?? static::getRecordLabel();
     }
 
     /**
-     * @deprecated Use `getPluralModelLabel()` instead.
+     * @deprecated Override the `table()` method to configure the table.
      */
     protected static function getPluralRecordLabel(): ?string
     {
         return static::$pluralLabel;
     }
 
-    protected static function getPluralModelLabel(): string
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected static function getPluralModelLabel(): ?string
     {
-        if (filled($label = static::$pluralModelLabel ?? static::getPluralRecordLabel())) {
-            return $label;
-        }
-
-        if (locale_has_pluralization()) {
-            return (string) str(static::getRelationshipName())
-                ->kebab()
-                ->replace('-', ' ');
-        }
-
-        return static::getModelLabel();
-    }
-
-    protected function getRelatedModel(): string
-    {
-        return $this->getRelationship()->getQuery()->getModel()::class;
-    }
-
-    public function getRelationship(): Relation | Builder
-    {
-        return $this->getOwnerRecord()->{static::getRelationshipName()}();
-    }
-
-    protected function getInverseRelationshipFor(Model $record): Relation | Builder
-    {
-        return $record->{$this->getInverseRelationshipName()}();
-    }
-
-    protected function getResourceTable(): Table
-    {
-        return $this->table(Table::make());
-    }
-
-    protected function getDefaultTableSortColumn(): ?string
-    {
-        return $this->getResourceTable()->getDefaultSortColumn();
-    }
-
-    protected function getDefaultTableSortDirection(): ?string
-    {
-        return $this->getResourceTable()->getDefaultSortDirection();
-    }
-
-    public function getTableRecordTitle(Model $record): string
-    {
-        return static::getRecordTitle($record);
-    }
-
-    public function getTableModelLabel(): string
-    {
-        return static::getModelLabel();
-    }
-
-    public function getTablePluralModelLabel(): string
-    {
-        return static::getPluralModelLabel();
-    }
-
-    protected function getTableActions(): array
-    {
-        return $this->getResourceTable()->getActions();
-    }
-
-    protected function getTableActionsPosition(): ?string
-    {
-        return $this->getResourceTable()->getActionsPosition();
-    }
-
-    protected function getTableBulkActions(): array
-    {
-        return $this->getResourceTable()->getBulkActions();
-    }
-
-    protected function getTableColumns(): array
-    {
-        return $this->getResourceTable()->getColumns();
-    }
-
-    protected function getTableContentGrid(): ?array
-    {
-        return $this->getResourceTable()->getContentGrid();
-    }
-
-    protected function getTableFilters(): array
-    {
-        return $this->getResourceTable()->getFilters();
-    }
-
-    protected function getTableFiltersLayout(): ?string
-    {
-        return $this->getResourceTable()->getFiltersLayout();
-    }
-
-    protected function getTableHeaderActions(): array
-    {
-        return $this->getResourceTable()->getHeaderActions();
-    }
-
-    protected function getTableReorderColumn(): ?string
-    {
-        return $this->getResourceTable()->getReorderColumn();
-    }
-
-    protected function isTableReorderable(): bool
-    {
-        return filled($this->getTableReorderColumn()) && $this->canReorder();
-    }
-
-    protected function getTablePollingInterval(): ?string
-    {
-        return $this->getResourceTable()->getPollingInterval();
-    }
-
-    protected function getTableHeading(): string | Htmlable | null
-    {
-        return static::getTitle();
+        return static::$pluralModelLabel ?? static::getPluralRecordLabel();
     }
 
     public function render(): View
@@ -516,60 +402,66 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return [];
     }
 
-    protected function getTableRecordUrlUsing(): ?Closure
+    protected function makeTable(): Table
     {
-        return function (Model $record): ?string {
-            foreach (['view', 'edit'] as $action) {
-                $action = $this->getCachedTableAction($action);
+        return $this->makeBaseTable()
+            ->query($this->getTableQuery())
+            ->relationship($this->getRelationship())
+            ->inverseRelationship(static::getInverseRelationshipName())
+            ->heading($this->getTableHeading() ?? static::getTitle())
+            ->modelLabel(static::getModelLabel())
+            ->pluralModelLabel(static::getPluralModelLabel())
+            ->queryStringIdentifier(Str::lcfirst(class_basename(static::class)))
+            ->recordAction(function (Model $record, Table $table): ?string {
+                foreach (['view', 'edit'] as $action) {
+                    $action = $table->getAction($action);
 
-                if (! $action) {
-                    continue;
+                    if (! $action) {
+                        continue;
+                    }
+
+                    $action->record($record);
+
+                    if ($action->isHidden()) {
+                        continue;
+                    }
+
+                    if ($action->getUrl()) {
+                        continue;
+                    }
+
+                    return $action->getName();
                 }
 
-                $action->record($record);
+                return null;
+            })
+            ->recordTitleAttribute(static::getRecordTitleAttribute())
+            ->recordUrl($this->getTableRecordUrlUsing() ?? function (Model $record, Table $table): ?string {
+                foreach (['view', 'edit'] as $action) {
+                    $action = $table->getAction($action);
 
-                if ($action->isHidden()) {
-                    continue;
+                    if (! $action) {
+                        continue;
+                    }
+
+                    $action->record($record);
+
+                    if ($action->isHidden()) {
+                        continue;
+                    }
+
+                    $url = $action->getUrl();
+
+                    if (! $url) {
+                        continue;
+                    }
+
+                    return $url;
                 }
 
-                $url = $action->getUrl();
-
-                if (! $url) {
-                    continue;
-                }
-
-                return $url;
-            }
-
-            return null;
-        };
-    }
-
-    protected function getTableRecordActionUsing(): ?Closure
-    {
-        return function (Model $record): ?string {
-            foreach (['view', 'edit'] as $action) {
-                $action = $this->getCachedTableAction($action);
-
-                if (! $action) {
-                    continue;
-                }
-
-                $action->record($record);
-
-                if ($action->isHidden()) {
-                    continue;
-                }
-
-                if ($action->getUrl()) {
-                    continue;
-                }
-
-                return $action->getName();
-            }
-
-            return null;
-        };
+                return null;
+            })
+            ->reorderable(condition: static fn (RelationManager $livewire): bool => $livewire->canReorder());
     }
 
     protected function getForms(): array

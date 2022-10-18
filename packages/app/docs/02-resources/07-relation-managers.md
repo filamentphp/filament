@@ -19,10 +19,7 @@ php artisan make:filament-relation-manager CategoryResource posts title
 This will create a `CategoryResource/RelationManagers/PostsRelationManager.php` file. This contains a class where you are able to define a [form](getting-started#forms) and [table](getting-started#tables) for your relation manager:
 
 ```php
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Table;
-use Filament\Tables;
+use Filament\Forms;use Filament\Forms\Form;use Filament\Tables;use Filament\Tables\Table;
 
 public static function form(Form $form): Form
 {
@@ -149,12 +146,12 @@ You can tweak how the record is created using the `using()` method:
 
 ```php
 use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Contracts\HasRelationshipTable;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
 CreateAction::make()
-    ->using(function (HasRelationshipTable $livewire, array $data): Model {
-        return $livewire->getRelationship()->create($data);
+    ->using(function (array $data, Table $table): Model {
+        return $table->getRelationship()->create($data);
     })
 ```
 
@@ -410,8 +407,7 @@ php artisan make:filament-relation-manager CategoryResource posts title --attach
 Alternatively, if you've already generated your resource, you can just add the actions to the `$table` arrays:
 
 ```php
-use Filament\Resources\Table;
-use Filament\Tables;
+use Filament\Tables;use Filament\Tables\Table;
 
 public static function table(Table $table): Table
 {
@@ -500,8 +496,7 @@ php artisan make:filament-relation-manager CategoryResource posts title --associ
 Alternatively, if you've already generated your resource, you can just add the actions to the `$table` arrays:
 
 ```php
-use Filament\Resources\Table;
-use Filament\Tables;
+use Filament\Tables;use Filament\Tables\Table;
 
 public static function table(Table $table): Table
 {
@@ -557,8 +552,7 @@ php artisan make:filament-relation-manager CategoryResource posts title --view
 Alternatively, if you've already generated your relation manager, you can just add the `ViewAction` to the `$table->actions()` array:
 
 ```php
-use Filament\Resources\Table;
-use Filament\Tables;
+use Filament\Tables;use Filament\Tables\Table;
 
 public static function table(Table $table): Table
 {
@@ -584,10 +578,7 @@ php artisan make:filament-relation-manager CategoryResource posts title --soft-d
 Alternatively, you may add soft deleting functionality to an existing relation manager:
 
 ```php
-use Filament\Resources\Table;
-use Filament\Tables;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables;use Filament\Tables\Table;use Illuminate\Database\Eloquent\Builder;use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 public static function table(Table $table): Table
 {

@@ -36,7 +36,6 @@
     },
     "autoload": {
         "files": [
-            "packages/app/src/helpers.php",
             "packages/support/src/helpers.php"
         ],
         "psr-4": {

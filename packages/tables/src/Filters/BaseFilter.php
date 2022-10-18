@@ -52,6 +52,7 @@ class BaseFilter extends Component
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [
             'livewire' => $this->getLivewire(),
+            'table' => $this->getTable(),
         ]);
     }
 }

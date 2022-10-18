@@ -22,8 +22,7 @@ You may also build your own completely [custom table columns](../../tables/colum
 If a column is `sortable()`, you may choose to sort it by default using the `$table->defaultSort()` method:
 
 ```php
-use Filament\Resources\Table;
-use Filament\Tables;
+use Filament\Tables;use Filament\Tables\Table;
 
 public static function table(Table $table): Table
 {
@@ -45,8 +44,7 @@ public static function table(Table $table): Table
 To render the filters above the table content instead of in a dropdown, you may use:
 
 ```php
-use Filament\Tables\Filters\Layout;
-use Filament\Resources\Table;
+use Filament\Tables\Filters\Layout;use Filament\Tables\Table;
 
 public static function table(Table $table): Table
 {
@@ -66,8 +64,7 @@ public static function table(Table $table): Table
 To render the filters below the table content instead of in a dropdown, you may use:
 
 ```php
-use Filament\Tables\Filters\Layout;
-use Filament\Resources\Table;
+use Filament\Tables\Filters\Layout;use Filament\Tables\Table;
 
 public static function table(Table $table): Table
 {
@@ -91,8 +88,7 @@ public static function table(Table $table): Table
 To add actions to a table, use the `$table->actions()` method:
 
 ```php
-use Filament\Resources\Table;
-use Filament\Tables;
+use Filament\Tables;use Filament\Tables\Table;
 
 public static function table(Table $table): Table
 {
@@ -115,8 +111,7 @@ public static function table(Table $table): Table
 You may use an `ActionGroup` object to group multiple table actions together in a dropdown:
 
 ```php
-use Filament\Resources\Table;
-use Filament\Tables;
+use Filament\Tables;use Filament\Tables\Table;
 
 public static function table(Table $table): Table
 {
@@ -141,9 +136,7 @@ public static function table(Table $table): Table
 To add bulk actions, use the `$table->bulkActions()` method:
 
 ```php
-use Filament\Resources\Table;
-use Filament\Tables;
-use Illuminate\Database\Eloquent\Collection;
+use Filament\Tables;use Filament\Tables\Table;use Illuminate\Database\Eloquent\Collection;
 
 public static function table(Table $table): Table
 {
@@ -167,7 +160,7 @@ public static function table(Table $table): Table
 To allow the user to reorder records using drag and drop in your table, you can use the `reorderable()` method:
 
 ```php
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 
 public static function table(Table $table): Table
 {
@@ -182,7 +175,7 @@ When making the table reorderable, a new button will be available on the table t
 The `reorderable()` method passes in the name of a column to store the record order in. If you use something like [`spatie/eloquent-sortable`](https://github.com/spatie/eloquent-sortable) with an order column such as `order_column`, you may pass this in to `reorderable()`:
 
 ```php
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 
 public static function table(Table $table): Table
 {
@@ -197,7 +190,7 @@ public static function table(Table $table): Table
 You may poll table content so that it refreshes at a set interval, using the `poll()` method:
 
 ```php
-use Filament\Resources\Table;
+use Filament\Tables\Table;
 
 public static function table(Table $table): Table
 {
