@@ -85,7 +85,7 @@ public static $filamentAdminColumn = 'is_filament_admin'; // The name of a boole
 public static $filamentRolesColumn = 'filament_roles'; // The name of a JSON column in your database.
 ```
 
-To disable roles and admin features, just emit these properties from your class.
+To disable roles and admin features, just omit these properties from your class.
 
 Alternatively, you may specify custom logic for calculating if a user has admin permissions by overriding the `isFilamentAdmin()` method:
 
