@@ -104,22 +104,22 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
             ->layout(static::$layout, $this->getLayoutData());
     }
 
-    protected function getBreadcrumbs(): array
+    public function getBreadcrumbs(): array
     {
         return [];
     }
 
-    protected static function getNavigationGroup(): ?string
+    public static function getNavigationGroup(): ?string
     {
         return static::$navigationGroup;
     }
 
-    protected static function getNavigationIcon(): string
+    public static function getNavigationIcon(): string
     {
         return static::$navigationIcon ?? 'heroicon-o-document-text';
     }
 
-    protected static function getNavigationLabel(): string
+    public static function getNavigationLabel(): string
     {
         return static::$navigationLabel ?? static::$title ?? str(class_basename(static::class))
             ->kebab()
@@ -127,22 +127,22 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
             ->title();
     }
 
-    protected static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): ?string
     {
         return null;
     }
 
-    protected static function getNavigationBadgeColor(): ?string
+    public static function getNavigationBadgeColor(): ?string
     {
         return null;
     }
 
-    protected static function getNavigationSort(): ?int
+    public static function getNavigationSort(): ?int
     {
         return static::$navigationSort;
     }
 
-    protected static function getNavigationUrl(): string
+    public static function getNavigationUrl(): string
     {
         return static::getUrl();
     }
@@ -214,7 +214,7 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
         return [];
     }
 
-    protected static function shouldRegisterNavigation(): bool
+    public static function shouldRegisterNavigation(): bool
     {
         return static::$shouldRegisterNavigation;
     }

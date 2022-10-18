@@ -177,7 +177,7 @@ class Select extends Field
         return $this->createOptionUsing;
     }
 
-    protected function getCreateOptionActionName(): string
+    public function getCreateOptionActionName(): string
     {
         return 'createOption';
     }

@@ -44,7 +44,7 @@ class Filter extends BaseFilter
         return $this;
     }
 
-    protected function getFormField(): Field
+    public function getFormField(): Field
     {
         $field = $this->formComponent::make('isActive')
             ->label($this->getLabel());

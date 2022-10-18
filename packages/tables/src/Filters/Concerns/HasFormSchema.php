@@ -33,7 +33,7 @@ trait HasFormSchema
         return [$field];
     }
 
-    protected function getFormField(): ?Field
+    public function getFormField(): ?Field
     {
         return null;
     }

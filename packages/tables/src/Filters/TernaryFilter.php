@@ -59,7 +59,7 @@ class TernaryFilter extends SelectFilter
         return $this->falseLabel;
     }
 
-    protected function getFormField(): Select
+    public function getFormField(): Select
     {
         return parent::getFormField()
             ->boolean(

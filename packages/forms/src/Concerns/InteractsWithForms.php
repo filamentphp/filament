@@ -44,7 +44,7 @@ trait InteractsWithForms
         }
     }
 
-    protected function getModalViewOnce(): ?View
+    public function getModalViewOnce(): ?View
     {
         if ($this->hasModalViewRendered) {
             return null;
@@ -255,7 +255,7 @@ trait InteractsWithForms
         return $this->cachedForms;
     }
 
-    protected function getTraitForms(): array
+    public function getTraitForms(): array
     {
         $forms = [];
 
@@ -273,12 +273,12 @@ trait InteractsWithForms
         return array_key_exists($name, $this->getCachedForms());
     }
 
-    protected function getCachedForm($name): ?Form
+    public function getCachedForm($name): ?Form
     {
         return $this->getCachedForms()[$name] ?? null;
     }
 
-    protected function getCachedForms(): array
+    public function getCachedForms(): array
     {
         if (! $this->hasCachedForms) {
             return $this->cacheForms();

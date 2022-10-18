@@ -30,7 +30,7 @@ class GlobalSearch extends Component
         return $results;
     }
 
-    protected function isEnabled(): bool
+    public function isEnabled(): bool
     {
         foreach (Filament::getResources() as $resource) {
             if ($resource::canGloballySearch()) {

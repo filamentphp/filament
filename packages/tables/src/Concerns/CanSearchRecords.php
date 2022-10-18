@@ -107,12 +107,12 @@ trait CanSearchRecords
         return $query;
     }
 
-    protected function getTableSearch(): string
+    public function getTableSearch(): string
     {
         return trim(strtolower($this->tableSearch));
     }
 
-    protected function getTableColumnSearchQueries(): array
+    public function getTableColumnSearchQueries(): array
     {
         // Example input of `$this->tableColumnSearchQueries`:
         // [

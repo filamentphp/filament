@@ -125,7 +125,7 @@ trait HasFilters
         return $name::getDefaultName();
     }
 
-    protected function getTableFiltersFormSchema(): array
+    public function getTableFiltersFormSchema(): array
     {
         $schema = [];
 

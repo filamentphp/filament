@@ -7,7 +7,7 @@ use Filament\Forms\Form;
 
 trait HasWizard
 {
-    protected function getStartStep(): int
+    public function getStartStep(): int
     {
         return 1;
     }
@@ -23,12 +23,12 @@ trait HasWizard
         ]);
     }
 
-    protected function getFormActions(): array
+    public function getFormActions(): array
     {
         return [];
     }
 
-    protected function getSteps(): array
+    public function getSteps(): array
     {
         return [];
     }

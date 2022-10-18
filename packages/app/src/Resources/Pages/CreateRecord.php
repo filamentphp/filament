@@ -220,7 +220,7 @@ class CreateRecord extends Page implements HasCachedFormActions
         return $this->getModel();
     }
 
-    protected static function canCreateAnother(): bool
+    public static function canCreateAnother(): bool
     {
         return static::$canCreateAnother;
     }

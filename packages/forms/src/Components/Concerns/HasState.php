@@ -293,7 +293,7 @@ trait HasState
         return (bool) $this->evaluate($this->isDehydrated);
     }
 
-    protected function getGetCallback(): Closure
+    public function getGetCallback(): Closure
     {
         return function (Component | string $path, bool $isAbsolute = false) {
             $livewire = $this->getLivewire();
@@ -305,7 +305,7 @@ trait HasState
         };
     }
 
-    protected function getSetCallback(): Closure
+    public function getSetCallback(): Closure
     {
         return function (string | Component $path, $state, bool $isAbsolute = false) {
             $livewire = $this->getLivewire();

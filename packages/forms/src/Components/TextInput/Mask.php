@@ -250,7 +250,7 @@ class Mask implements Jsonable
         return $this;
     }
 
-    protected function getArrayableConfiguration(): array
+    public function getArrayableConfiguration(): array
     {
         $configuration = [];
 

@@ -57,7 +57,7 @@ trait CanBeSearchable
         return $this->isSearchable() && $this->isIndividuallySearchable;
     }
 
-    protected function getDefaultSearchColumns(): array
+    public function getDefaultSearchColumns(): array
     {
         return [str($this->getName())->afterLast('.')];
     }

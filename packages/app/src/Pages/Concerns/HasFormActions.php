@@ -8,7 +8,7 @@ trait HasFormActions
 {
     protected ?array $cachedFormActions = null;
 
-    protected function getCachedFormActions(): array
+    public function getCachedFormActions(): array
     {
         if ($this->cachedFormActions === null) {
             $this->cacheFormActions();
@@ -33,7 +33,7 @@ trait HasFormActions
         return $this->getCachedFormActions()[$name] ?? null;
     }
 
-    protected function getFormActions(): array
+    public function getFormActions(): array
     {
         return [];
     }

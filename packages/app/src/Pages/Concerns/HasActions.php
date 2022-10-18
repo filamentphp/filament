@@ -141,7 +141,7 @@ trait HasActions
         return (bool) count($this->getMountedActionForm()?->getComponents() ?? []);
     }
 
-    protected function getCachedActions(): array
+    public function getCachedActions(): array
     {
         if ($this->cachedActions === null) {
             $this->cacheActions();

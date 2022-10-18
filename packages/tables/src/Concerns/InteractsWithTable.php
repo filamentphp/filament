@@ -161,7 +161,7 @@ trait InteractsWithTable
         return null;
     }
 
-    protected function getIdentifiedTableQueryStringPropertyNameFor(string $property): string
+    public function getIdentifiedTableQueryStringPropertyNameFor(string $property): string
     {
         if (filled($identifier = $this->getTable()->getQueryStringIdentifier())) {
             return $identifier . ucfirst($property);
@@ -172,20 +172,15 @@ trait InteractsWithTable
 
     protected function getInteractsWithTableForms(): array
     {
-        return $this->getTableForms();
+        return [
+            'mountedTableActionForm' => $this->getMountedTableActionForm(),
+            'mountedTableBulkActionForm' => $this->getMountedTableBulkActionForm(),
+        ];
     }
 
     public function getActiveTableLocale(): ?string
     {
         return null;
-    }
-
-    protected function getTableForms(): array
-    {
-        return [
-            'mountedTableActionForm' => $this->getMountedTableActionForm(),
-            'mountedTableBulkActionForm' => $this->getMountedTableBulkActionForm(),
-        ];
     }
 
     /**

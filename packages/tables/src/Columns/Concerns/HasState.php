@@ -63,7 +63,7 @@ trait HasState
         return $state;
     }
 
-    protected function getStateFromRecord()
+    public function getStateFromRecord()
     {
         $record = $this->getRecord();
 

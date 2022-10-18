@@ -8,7 +8,7 @@ trait HasRelationManagers
 {
     public $activeRelationManager = null;
 
-    protected function getRelationManagers(): array
+    public function getRelationManagers(): array
     {
         $managers = $this->getResource()::getRelations();
 

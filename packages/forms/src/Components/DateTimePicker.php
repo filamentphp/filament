@@ -301,7 +301,7 @@ class DateTimePicker extends Field
         return $this->evaluate($this->shouldCloseOnDateSelection);
     }
 
-    protected function getDefaultFirstDayOfWeek(): int
+    public function getDefaultFirstDayOfWeek(): int
     {
         return config('forms.components.date_time_picker.first_day_of_week', 1);
     }

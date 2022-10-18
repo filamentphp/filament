@@ -24,7 +24,7 @@ use Illuminate\Support\Traits\Macroable;
 class Resource
 {
     use Macroable {
-        __call as dynamicMacroCall;
+        Macroable::__call as dynamicMacroCall;
     }
 
     protected static ?string $breadcrumb = null;
@@ -473,12 +473,12 @@ class Resource
         return $query;
     }
 
-    protected static function getGlobalSearchEloquentQuery(): Builder
+    public static function getGlobalSearchEloquentQuery(): Builder
     {
         return static::getEloquentQuery();
     }
 
-    protected static function getNavigationGroup(): ?string
+    public static function getNavigationGroup(): ?string
     {
         return static::$navigationGroup;
     }
@@ -488,7 +488,7 @@ class Resource
         static::$navigationGroup = $group;
     }
 
-    protected static function getNavigationIcon(): string
+    public static function getNavigationIcon(): string
     {
         return static::$navigationIcon ?? 'heroicon-o-rectangle-stack';
     }
@@ -498,22 +498,22 @@ class Resource
         static::$navigationIcon = $icon;
     }
 
-    protected static function getNavigationLabel(): string
+    public static function getNavigationLabel(): string
     {
         return static::$navigationLabel ?? Str::headline(static::getPluralModelLabel());
     }
 
-    protected static function getNavigationBadge(): ?string
+    public static function getNavigationBadge(): ?string
     {
         return null;
     }
 
-    protected static function getNavigationBadgeColor(): ?string
+    public static function getNavigationBadgeColor(): ?string
     {
         return null;
     }
 
-    protected static function getNavigationSort(): ?int
+    public static function getNavigationSort(): ?int
     {
         return static::$navigationSort;
     }
@@ -523,12 +523,12 @@ class Resource
         static::$navigationSort = $sort;
     }
 
-    protected static function getNavigationUrl(): string
+    public static function getNavigationUrl(): string
     {
         return static::getUrl();
     }
 
-    protected static function shouldRegisterNavigation(): bool
+    public static function shouldRegisterNavigation(): bool
     {
         return static::$shouldRegisterNavigation;
     }

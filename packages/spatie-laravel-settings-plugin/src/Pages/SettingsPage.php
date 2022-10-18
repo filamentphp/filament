@@ -69,7 +69,7 @@ class SettingsPage extends Page implements HasCachedFormActions
         }
     }
 
-    protected function getSavedNotification(): ?Notification
+    public function getSavedNotification(): ?Notification
     {
         $title = $this->getSavedNotificationTitle();
 
@@ -82,7 +82,7 @@ class SettingsPage extends Page implements HasCachedFormActions
             ->title($title);
     }
 
-    protected function getSavedNotificationTitle(): ?string
+    public function getSavedNotificationTitle(): ?string
     {
         return $this->getSavedNotificationMessage() ?? __('filament-spatie-laravel-settings-plugin::pages/settings-page.messages.saved');
     }
@@ -117,14 +117,14 @@ class SettingsPage extends Page implements HasCachedFormActions
                 ->append('Settings');
     }
 
-    protected function getFormActions(): array
+    public function getFormActions(): array
     {
         return [
             $this->getSaveFormAction(),
         ];
     }
 
-    protected function getSaveFormAction(): Action
+    public function getSaveFormAction(): Action
     {
         return Action::make('save')
             ->label(__('filament-spatie-laravel-settings-plugin::pages/settings-page.form.actions.save.label'))
@@ -132,7 +132,7 @@ class SettingsPage extends Page implements HasCachedFormActions
             ->keyBindings(['mod+s']);
     }
 
-    protected function getSubmitFormAction(): Action
+    public function getSubmitFormAction(): Action
     {
         return $this->getSaveFormAction();
     }
@@ -148,7 +148,7 @@ class SettingsPage extends Page implements HasCachedFormActions
         ];
     }
 
-    protected function getRedirectUrl(): ?string
+    public function getRedirectUrl(): ?string
     {
         return null;
     }

@@ -482,7 +482,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         $this->cachedExistingRecords = null;
     }
 
-    protected function getRelatedModel(): string
+    public function getRelatedModel(): string
     {
         return $this->getRelationship()->getModel()::class;
     }

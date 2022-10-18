@@ -40,12 +40,12 @@ trait CanPaginateRecords
         return $records->onEachSide(1);
     }
 
-    protected function getTableRecordsPerPage(): int | string | null
+    public function getTableRecordsPerPage(): int | string | null
     {
         return $this->tableRecordsPerPage;
     }
 
-    protected function getDefaultTableRecordsPerPageSelectOption(): int
+    public function getDefaultTableRecordsPerPageSelectOption(): int
     {
         $perPage = session()->get(
             $this->getTablePerPageSessionKey(),
@@ -63,7 +63,7 @@ trait CanPaginateRecords
         return $pageOptions[0];
     }
 
-    protected function getTablePaginationPageName(): string
+    public function getTablePaginationPageName(): string
     {
         return $this->getIdentifiedTableQueryStringPropertyNameFor('page');
     }

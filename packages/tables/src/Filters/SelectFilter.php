@@ -162,7 +162,7 @@ class SelectFilter extends BaseFilter
         return $this->getAttribute();
     }
 
-    protected function getFormField(): Select
+    public function getFormField(): Select
     {
         $field = Select::make($this->isMultiple() ? 'values' : 'value')
             ->multiple($this->isMultiple())

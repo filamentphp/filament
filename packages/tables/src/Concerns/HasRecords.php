@@ -18,7 +18,7 @@ trait HasRecords
 
     protected Collection | Paginator | null $records = null;
 
-    protected function getFilteredTableQuery(): Builder
+    public function getFilteredTableQuery(): Builder
     {
         $query = $this->getTable()->getQuery();
 

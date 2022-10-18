@@ -14,7 +14,7 @@ class Dashboard extends Page
 
     protected static string $view = 'filament::pages.dashboard';
 
-    protected static function getNavigationLabel(): string
+    public static function getNavigationLabel(): string
     {
         return static::$navigationLabel ?? static::$title ?? __('filament::pages/dashboard.title');
     }
@@ -26,17 +26,17 @@ class Dashboard extends Page
         };
     }
 
-    protected function getWidgets(): array
+    public function getWidgets(): array
     {
         return Filament::getWidgets();
     }
 
-    protected function getColumns(): int | array
+    public function getColumns(): int | array
     {
         return 2;
     }
 
-    protected function getTitle(): string
+    public function getTitle(): string
     {
         return static::$title ?? __('filament::pages/dashboard.title');
     }
