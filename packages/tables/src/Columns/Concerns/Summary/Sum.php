@@ -4,7 +4,7 @@ namespace Filament\Tables\Columns\Concerns\Summary;
 
 class Sum extends Strategy
 {
-    public function __invoke(): float
+    public function __invoke(): ?string
     {
         $additionComponents = collect($this->records)
             ->pluck($this->column->getName())
