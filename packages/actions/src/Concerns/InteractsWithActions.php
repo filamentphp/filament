@@ -225,7 +225,7 @@ trait InteractsWithActions
         }
 
         if ($action instanceof Action) {
-            return $action;
+            return $action->name($name);
         }
 
         return null;
