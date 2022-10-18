@@ -25,7 +25,7 @@ class Count extends Strategy
         };
     }
 
-    private function countDatetime(Collection $mappedRecords): string
+    private function countDateTime(Collection $mappedRecords): string
     {
         $pastCount = $mappedRecords
             ->filter(fn ($record) => $record->lt(now()))
@@ -73,13 +73,13 @@ class Count extends Strategy
         }
 
         if ($nullsCount) {
-            $summary[] = $nullsCount . '- ';
+            $summary[] = $nullsCount . '-';
         }
 
         return implode(' ', $summary);
     }
 
-    private function countDefault(Collection $mappedRecords): string
+    private function countDefault(Collection $mappedRecords): int
     {
         return $mappedRecords->filter()->count();
     }

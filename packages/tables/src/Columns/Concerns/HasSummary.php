@@ -24,7 +24,7 @@ trait HasSummary
         return $this->evaluate($this->summary, [
             'records' => $records,
             'column' => $this,
-        ]); //TODO: sprawdzic czy $records jest widoczne uzywajac callbackow
+        ]);
     }
 
     public function hasSummary(): bool
