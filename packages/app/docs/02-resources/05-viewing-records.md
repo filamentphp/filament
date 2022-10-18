@@ -39,7 +39,8 @@ If your resource is simple, you may wish to view records in modals rather than o
 If your resource doesn't contain a `ViewAction`, you can add one to the `$table->actions()` array:
 
 ```php
-use Filament\Tables;use Filament\Tables\Table;
+use Filament\Tables;
+use Filament\Tables\Table;
 
 public static function table(Table $table): Table
 {

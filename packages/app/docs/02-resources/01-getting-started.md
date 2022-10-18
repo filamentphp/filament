@@ -174,7 +174,9 @@ Forms\Components\TextInput::make('password')
 Resource classes contain a static `table()` method that is used to build the table on the [List page](listing-records):
 
 ```php
-use Filament\Tables;use Filament\Tables\Table;use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 public static function table(Table $table): Table
 {

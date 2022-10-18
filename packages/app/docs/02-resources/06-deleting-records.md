@@ -19,7 +19,10 @@ Alternatively, you may add soft deleting functionality to an existing resource.
 Firstly, you must update the resource:
 
 ```php
-use Filament\Tables;use Filament\Tables\Table;use Illuminate\Database\Eloquent\Builder;use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 public static function table(Table $table): Table
 {
@@ -78,7 +81,8 @@ protected function getActions(): array
 By default, you can bulk-delete records in your table. You may also wish to delete single records, using a `DeleteAction`:
 
 ```php
-use Filament\Tables;use Filament\Tables\Table;
+use Filament\Tables;
+use Filament\Tables\Table;
 
 public static function table(Table $table): Table
 {
