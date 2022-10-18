@@ -4,7 +4,6 @@ namespace Filament\Testing;
 
 use Closure;
 use Filament\Pages\Page;
-use Filament\Support\Testing\TestsActions;
 use Livewire\Testing\TestableLivewire;
 
 /**
