@@ -92,7 +92,7 @@
                     'rgb' => 'rgb-string',
                     'rgba' => 'rgba-string',
                     default => 'hex',
-                } }}-color-picker />
+                } }}-color-picker color="{{ $getState() }}" />
             </div>
         </div>
 
