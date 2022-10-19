@@ -13,7 +13,7 @@ return [
         ],
 
         'tags' => [
-            'more' => 'a :count dalších',
+            'more' => 'a 1 další|a :count další| a :count dalších',
         ],
 
     ],
