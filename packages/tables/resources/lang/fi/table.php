@@ -166,7 +166,7 @@ return [
 
             'direction' => [
 
-                'label' => 'Järjestykse suunta',
+                'label' => 'Järjestyksen suunta',
 
                 'options' => [
                     'asc' => 'Nousevasti',

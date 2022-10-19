@@ -15,7 +15,7 @@ return [
         ],
 
         'light_mode' => [
-            'label' => 'Valoisa tila',
+            'label' => 'Vaalea tila',
         ],
 
         'logout' => [
