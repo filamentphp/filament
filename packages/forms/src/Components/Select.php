@@ -713,6 +713,10 @@ class Select extends Field
 
     public function getMaxItemsMessage(): string
     {
-        return $this->evaluate($this->maxItemsMessage) ?? __('forms::components.select.max_items_message');
+        $maxItems = $this->getMaxItems();
+
+        return $this->evaluate($this->maxItemsMessage) ?? trans_choice('forms::components.select.max_items_message', $maxItems, [
+            ':count' => $maxItems,
+        ]);
     }
 }
