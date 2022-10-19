@@ -1,7 +1,7 @@
 @props([
     'alias',
     'class' => [],
-    'color',
+    'color' => null,
     'name',
     'size',
 ])
@@ -18,17 +18,13 @@
         $customIcon?->class ?? [],
     );
 
-    if ($customIcon?->color !== null) {
-        $color = $customIcon->color;
+    $color = $customIcon?->color ?? $color;
+
+    if ($color !== null) {
+        $class[] = $color;
     }
 
-    $class[] = $color;
-
-    if ($customIcon?->size !== null) {
-        $size = $customIcon->size;
-    }
-
-    $class[] = $size;
+    $class[] = $customIcon?->size ?? $size;
 @endphp
 
-@svg($name, \Illuminate\Support\Arr::toCssClasses($class), $attributes)
+@svg($name, \Illuminate\Support\Arr::toCssClasses($class), $attributes->getAttributes())
