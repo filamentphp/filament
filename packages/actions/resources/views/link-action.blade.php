@@ -2,7 +2,7 @@
     :action="$action"
     component="filament-actions::link"
     :icon-position="$getIconPosition()"
-    class="filament-page-link-action"
+    class="filament-actions-link-action"
 >
     {{ $getLabel() }}
 </x-filament-actions::action>

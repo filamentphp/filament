@@ -3,7 +3,7 @@
     component="filament-actions::button"
     :outlined="$isOutlined()"
     :icon-position="$getIconPosition()"
-    class="filament-page-button-action"
+    class="filament-actions-button-action"
 >
     {{ $getLabel() }}
 </x-filament-actions::action>

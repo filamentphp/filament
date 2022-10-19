@@ -17,7 +17,7 @@
     @if (count($actions))
         <div
             {{ $attributes->class([
-                'filament-page-actions',
+                'filament-actions-actions',
                 'flex flex-wrap items-center gap-4' => ! $fullWidth,
                 match ($alignment) {
                     'center' => 'justify-center',
