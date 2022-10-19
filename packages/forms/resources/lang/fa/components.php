@@ -55,7 +55,7 @@ return [
             'delete' => [
                 'label' => 'حذف ردیف',
             ],
-            
+
             'reorder' => [
                 'label' => 'بازچینش ردیف',
             ],
