@@ -8,10 +8,11 @@
     </label>
 
     <div class="relative group">
-        <span class="absolute inset-y-0 left-0 flex items-center justify-center w-9 h-9 text-gray-400 pointer-events-none group-focus-within:text-primary-500">
+        <span class="absolute inset-y-0 left-0 flex items-center justify-center w-9 h-9 pointer-events-none">
             <x-filament-support::icon
                 name="heroicon-m-magnifying-glass"
                 alias="tables::search-input.prefix"
+                color="text-gray-400"
                 size="h-5 w-5"
             />
         </span>
