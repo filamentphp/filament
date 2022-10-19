@@ -2,5 +2,5 @@
     :action="$action"
     :label="$getLabel()"
     component="filament-actions::icon-button"
-    class="filament-page-icon-button-action"
+    class="filament-actions-icon-button-action"
 />
