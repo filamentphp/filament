@@ -57,11 +57,15 @@ return [
         'buttons' => [
 
             'add' => [
-                'label' => 'Añadir Fila',
+                'label' => 'Añadir fila',
             ],
 
             'delete' => [
-                'label' => 'Eliminar Fila',
+                'label' => 'Eliminar fila',
+            ],
+
+            'reorder' => [
+                'label' => 'Reordenar fila',
             ],
 
         ],
