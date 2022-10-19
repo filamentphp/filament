@@ -78,7 +78,7 @@
                 }"
                 type="button"
                 @class([
-                    'flex items-center justify-center transform rounded-full text-primary-500 hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none',
+                    'flex items-center justify-center transform rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none',
                     'w-10 h-10' => ! $isCompact,
                     'w-8 h-8 -my-1' => $isCompact,
                     '-rotate-180' => ! $isCollapsed,
@@ -87,6 +87,7 @@
                 <x-filament-support::icon
                     name="heroicon-m-chevron-down"
                     alias="forms::section.buttons.collapse"
+                    color="text-primary-500"
                     :size="$isCompact ? 'h-5 w-5' : 'h-7 w-7'"
                 />
             </button>
