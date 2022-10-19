@@ -2,10 +2,6 @@
 
 namespace Filament\Support\Icons;
 
-use BladeUI\Icons\Svg;
-use Exception;
-use Illuminate\Support\Arr;
-
 class IconManager
 {
     protected array $icons = [];
