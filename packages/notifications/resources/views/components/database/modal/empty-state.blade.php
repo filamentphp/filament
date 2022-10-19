@@ -2,13 +2,11 @@
     'flex flex-col items-center justify-center mx-auto my-6 space-y-4 text-center bg-white',
     'dark:bg-gray-800' => config('notifications.dark_mode'),
 ]) }}>
-    <div @class([
-        'flex items-center justify-center w-12 h-12 text-primary-500 rounded-full bg-primary-50',
-        'dark:bg-gray-700' => config('notifications.dark_mode'),
-    ])>
+    <div class="flex items-center justify-center w-12 h-12 rounded-full bg-primary-50 dark:bg-gray-700">
         <x-filament-support::icon
             name="heroicon-o-bell"
             alias="notifications::database.modal.empty-state"
+            color="text-primary-500"
             size="h-6 w-6"
         />
     </div>
