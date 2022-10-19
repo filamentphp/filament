@@ -10,118 +10,91 @@
     :component="$getFieldWrapperView()"
     :field="$field"
 >
-    <div {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-select-component flex items-center space-x-1 rtl:space-x-reverse group']) }}>
-        @if (($prefixAction = $getPrefixAction()) && (! $prefixAction->isHidden()))
-            {{ $prefixAction }}
-        @endif
+    <x-filament-support::input.affixes
+        :state-path="$statePath"
+        :prefix="$getPrefixLabel()"
+        :prefix-action="$getPrefixAction()"
+        :prefix-icon="$getPrefixIcon()"
+        :suffix="$getSuffixLabel()"
+        :suffix-action="$getSuffixAction()"
+        :suffix-icon="$getSuffixIcon()"
+        class="filament-forms-select-component"
+        :attributes="$getExtraAttributeBag()"
+    >
+        @unless ($isSearchable() || $isMultiple())
+            <x-filament-support::input.select
+                :autofocus="$isAutofocused()"
+                :disabled="$isDisabled()"
+                :id="$getId()"
+                dusk="filament.forms.{{ $getStatePath() }}"
+                :required="$isRequired() && (! ! $isConcealed())"
+                :attributes="$getExtraInputAttributeBag()->merge([
+                    $applyStateBindingModifiers('wire:model') => $getStatePath(),
+                ])"
+            >
+                @unless ($isPlaceholderSelectionDisabled())
+                    <option value="">{{ $getPlaceholder() }}</option>
+                @endif
 
-        @if ($icon = $getPrefixIcon())
-            @svg($icon, 'h-5 w-5')
-        @endif
-
-        @if ($label = $getPrefixLabel())
-            <span @class($affixLabelClasses)>
-                {{ $label }}
-            </span>
-        @endif
-
-        <div class="flex-1 min-w-0">
-            @unless ($isSearchable() || $isMultiple())
+                @foreach ($getOptions() as $value => $label)
+                    <option
+                        value="{{ $value }}"
+                        {!! $isOptionDisabled($value, $label) ? 'disabled' : null !!}
+                    >
+                        {{ $label }}
+                    </option>
+                @endforeach
+            </x-filament-support::input.select>
+        @else
+            <div
+                x-ignore
+                ax-load
+                ax-load-src="/js/filament/forms/components/select.js"
+                x-data="selectFormComponent({
+                    isHtmlAllowed: @js($isHtmlAllowed()),
+                    getOptionLabelUsing: async () => {
+                        return await $wire.getSelectOptionLabel(@js($getStatePath()))
+                    },
+                    getOptionLabelsUsing: async () => {
+                        return await $wire.getSelectOptionLabels(@js($getStatePath()))
+                    },
+                    getOptionsUsing: async () => {
+                        return await $wire.getSelectOptions(@js($getStatePath()))
+                    },
+                    getSearchResultsUsing: async (search) => {
+                        return await $wire.getSelectSearchResults(@js($getStatePath()), search)
+                    },
+                    isAutofocused: @js($isAutofocused()),
+                    isMultiple: @js($isMultiple()),
+                    hasDynamicOptions: @js($hasDynamicOptions()),
+                    hasDynamicSearchResults: @js($hasDynamicSearchResults()),
+                    loadingMessage: @js($getLoadingMessage()),
+                    maxItems: @js($getMaxItems()),
+                    maxItemsMessage: @js($getMaxItemsMessage()),
+                    noSearchResultsMessage: @js($getNoSearchResultsMessage()),
+                    options: @js($getOptionsForJs()),
+                    optionsLimit: @js($getOptionsLimit()),
+                    placeholder: @js($getPlaceholder()),
+                    searchDebounce: @js($getSearchDebounce()),
+                    searchingMessage: @js($getSearchingMessage()),
+                    searchPrompt: @js($getSearchPrompt()),
+                    state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
+                })"
+                x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
+                wire:ignore
+                {{ $attributes->merge($getExtraAttributes())->merge($getExtraAlpineAttributes()) }}
+                x-bind:class="{
+                    'choices--error': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
+                }"
+            >
                 <select
-                    {!! $isAutofocused() ? 'autofocus' : null !!}
-                    {!! $isDisabled() ? 'disabled' : null !!}
+                    x-ref="input"
                     id="{{ $getId() }}"
-                    {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
-                    dusk="filament.forms.{{ $getStatePath() }}"
-                    @if (! $isConcealed())
-                        {!! $isRequired() ? 'required' : null !!}
-                    @endif
-                    {{ $attributes->merge($getExtraInputAttributes())->merge($getExtraAttributes())->class([
-                        'text-gray-900 block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70',
-                        'dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('forms.dark_mode'),
-                        'border-gray-300' => ! $errors->has($getStatePath()),
-                        'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
-                        'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
-                    ]) }}
-                >
-                    @unless ($isPlaceholderSelectionDisabled())
-                        <option value="">{{ $getPlaceholder() }}</option>
-                    @endif
-
-                    @foreach ($getOptions() as $value => $label)
-                        <option
-                            value="{{ $value }}"
-                            {!! $isOptionDisabled($value, $label) ? 'disabled' : null !!}
-                        >
-                            {{ $label }}
-                        </option>
-                    @endforeach
-                </select>
-            @else
-                <div
-                    x-ignore
-                    ax-load
-                    ax-load-src="/js/filament/forms/components/select.js"
-                    x-data="selectFormComponent({
-                        isHtmlAllowed: @js($isHtmlAllowed()),
-                        getOptionLabelUsing: async () => {
-                            return await $wire.getSelectOptionLabel(@js($getStatePath()))
-                        },
-                        getOptionLabelsUsing: async () => {
-                            return await $wire.getSelectOptionLabels(@js($getStatePath()))
-                        },
-                        getOptionsUsing: async () => {
-                            return await $wire.getSelectOptions(@js($getStatePath()))
-                        },
-                        getSearchResultsUsing: async (search) => {
-                            return await $wire.getSelectSearchResults(@js($getStatePath()), search)
-                        },
-                        isAutofocused: @js($isAutofocused()),
-                        isMultiple: @js($isMultiple()),
-                        hasDynamicOptions: @js($hasDynamicOptions()),
-                        hasDynamicSearchResults: @js($hasDynamicSearchResults()),
-                        loadingMessage: @js($getLoadingMessage()),
-                        maxItems: @js($getMaxItems()),
-                        maxItemsMessage: @js($getMaxItemsMessage()),
-                        noSearchResultsMessage: @js($getNoSearchResultsMessage()),
-                        options: @js($getOptionsForJs()),
-                        optionsLimit: @js($getOptionsLimit()),
-                        placeholder: @js($getPlaceholder()),
-                        searchDebounce: @js($getSearchDebounce()),
-                        searchingMessage: @js($getSearchingMessage()),
-                        searchPrompt: @js($getSearchPrompt()),
-                        state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
-                    })"
-                    x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
-                    wire:ignore
-                    {{ $attributes->merge($getExtraAttributes())->merge($getExtraAlpineAttributes()) }}
-                    x-bind:class="{
-                        'choices--error': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
-                    }"
-                >
-                    <select
-                        x-ref="input"
-                        id="{{ $getId() }}"
-                        {!! $isDisabled() ? 'disabled' : null !!}
-                        {!! $isMultiple() ? 'multiple' : null !!}
-                        {{ $getExtraInputAttributeBag() }}
-                    ></select>
-                </div>
-            @endif
-        </div>
-
-        @if ($label = $getSuffixLabel())
-            <span @class($affixLabelClasses)>
-                {{ $label }}
-            </span>
+                    {!! $isDisabled() ? 'disabled' : null !!}
+                    {!! $isMultiple() ? 'multiple' : null !!}
+                    {{ $getExtraInputAttributeBag() }}
+                ></select>
+            </div>
         @endif
-
-        @if ($icon = $getSuffixIcon())
-            @svg($icon, 'h-5 w-5')
-        @endif
-
-        @if (($suffixAction = $getSuffixAction()) && (! $suffixAction->isHidden()))
-            {{ $suffixAction }}
-        @endif
-    </div>
+    </x-filament-support::input.affixes>
 </x-dynamic-component>
