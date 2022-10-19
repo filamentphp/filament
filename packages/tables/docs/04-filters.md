@@ -346,7 +346,9 @@ protected function getTableFiltersFormWidth(): string
 
 ## Displaying filters above or below the table content
 
-To render the filters above the table content instead of in a popover, you may use:
+Filters may be rendered above or below the table content instead of in a popover.
+
+If you're using the filters in a Livewire component, you can put them in the following method:
 
 ```php
 use Filament\Tables\Filters\Layout;
@@ -357,7 +359,7 @@ protected function getTableFiltersLayout(): ?string
 }
 ```
 
-To render the filters below the table content instead of in a popover, you may use:
+... or ...
 
 ```php
 use Filament\Tables\Filters\Layout;
@@ -365,6 +367,36 @@ use Filament\Tables\Filters\Layout;
 protected function getTableFiltersLayout(): ?string
 {
     return Layout::BelowContent;
+}
+```
+
+If you're using them in admin panel resources or relation managers, you must put them in the `$table->filtersLayout()` method:
+
+```php
+use Filament\Tables\Filters\Layout;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ])
+        ->filtersLayout(Layout::AboveContent);
+}
+```
+
+... or ...
+
+```php
+use Filament\Tables\Filters\Layout;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ])
+        ->filtersLayout(Layout::BelowContent);
 }
 ```
 
