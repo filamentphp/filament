@@ -22,14 +22,12 @@
     <div @class([
         'space-y-2',
     ])>
-        <div @class([
-            'flex items-center space-x-2 rtl:space-x-reverse text-sm font-medium text-gray-500',
-            'dark:text-gray-200' => config('filament.dark_mode'),
-        ])>
+        <div class="flex items-center space-x-2 rtl:space-x-reverse text-sm font-medium">
             @if ($icon)
                 <x-filament-support::icon
                     :name="$icon"
                     alias="app::stats.card"
+                    color="text-gray-500 dark:text-gray-200"
                     size="h-4 w-4"
                 />
             @endif
@@ -56,7 +54,7 @@
 
                 @if ($descriptionIcon)
                     <x-filament-support::icon
-                        name="$descriptionIcon"
+                        :name="$descriptionIcon"
                         alias="app::stats.card.description"
                         size="h-4 w-4"
                     />
