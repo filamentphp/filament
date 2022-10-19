@@ -47,11 +47,14 @@
         'dark:bg-gray-800 dark:hover:bg-gray-700 dark:border-gray-600 dark:hover:border-gray-500 dark:text-gray-200 dark:focus:text-primary-400 dark:focus:border-primary-400 dark:focus:bg-gray-800' => $color === 'secondary' && $darkMode,
     ]);
 
+    $iconSize = match ($size) {
+        'sm' => 'h-4 w-4',
+        'md' => 'h-5 w-5',
+        'lg' => 'h-6 w-6',
+    };
+
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-button-icon',
-        'w-4 h-4' => $size === 'sm',
-        'w-5 h-5' => $size === 'md',
-        'w-6 h-6' => $size === 'lg',
         'mr-1 -ml-2 rtl:ml-1 rtl:-mr-2' => ($iconPosition === 'before') && ($size === 'md') && (! $labelSrOnly),
         'mr-2 -ml-3 rtl:ml-2 rtl:-mr-3' => ($iconPosition === 'before') && ($size === 'lg') && (! $labelSrOnly),
         'mr-1 -ml-1.5 rtl:ml-1 rtl:-mr-1.5' => ($iconPosition === 'before') && ($size === 'sm') && (! $labelSrOnly),
@@ -106,6 +109,7 @@
                 <x-filament-support::icon
                     :name="$icon"
                     alias="support::button.prefix"
+                    :size="$iconSize"
                     :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
@@ -117,7 +121,7 @@
                     x-cloak
                     wire:loading.delay
                     :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses"
+                    :class="$iconClasses . ' ' . $iconSize"
                 />
             @endif
         @endif
@@ -127,7 +131,7 @@
                 <x-filament-support::loading-indicator
                     x-show="isUploadingFile"
                     x-cloak
-                    :class="$iconClasses"
+                    :class="$iconClasses . ' ' . $iconSize"
                 />
 
                 <span x-show="isUploadingFile" x-cloak>
@@ -153,6 +157,7 @@
                 <x-filament-support::icon
                     :name="$icon"
                     alias="support::button.suffix"
+                    :size="$iconSize"
                     :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
@@ -164,7 +169,7 @@
                     x-cloak
                     wire:loading.delay
                     :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses"
+                    :class="$iconClasses . ' ' . $iconSize"
                 />
             @endif
         @endif
