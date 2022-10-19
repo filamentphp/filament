@@ -67,7 +67,7 @@ return [
             'delete' => [
                 'label' => 'Supprimer une ligne',
             ],
-            
+
             'reorder' => [
                 'label' => 'Réorganiser une ligne',
             ],
