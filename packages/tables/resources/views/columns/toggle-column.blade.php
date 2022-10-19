@@ -57,16 +57,14 @@
                     <x-filament-support::icon
                         :name="$getOffIcon()"
                         alias="tables::columns.toggle.off"
+                        :color="match ($getOffColor()) {
+                            'danger' => 'text-danger-500',
+                            'primary' => 'text-primary-500',
+                            'success' => 'text-success-500',
+                            'warning' => 'text-warning-500',
+                            default => 'text-gray-400',
+                        }"
                         size="h-3 w-3"
-                        :class="\Illuminate\Support\Arr::toCssClasses([
-                            match ($getOffColor()) {
-                                'danger' => 'text-danger-500',
-                                'primary' => 'text-primary-500',
-                                'success' => 'text-success-500',
-                                'warning' => 'text-warning-500',
-                                default => 'text-gray-400',
-                            },
-                        ])"
                     />
                 @endif
             </span>
@@ -83,16 +81,14 @@
                     <x-filament-support::icon
                         :name="$getOnIcon()"
                         alias="tables::columns.toggle.on"
+                        :color="match ($getOnColor()) {
+                            'danger' => 'text-danger-500',
+                            'secondary' => 'text-gray-400',
+                            'success' => 'text-success-500',
+                            'warning' => 'text-warning-500',
+                            default => 'text-primary-500',
+                        }"
                         size="h-3 w-3"
-                        :class="\Illuminate\Support\Arr::toCssClasses([
-                            match ($getOnColor()) {
-                                'danger' => 'text-danger-500',
-                                'secondary' => 'text-gray-400',
-                                'success' => 'text-success-500',
-                                'warning' => 'text-warning-500',
-                                default => 'text-primary-500',
-                            },
-                        ])"
                         x-cloak
                     />
                 @endif
