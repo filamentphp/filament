@@ -28,13 +28,18 @@
             @if (config('filament.layout.sidebar.is_collapsible_on_desktop') && (config('filament.layout.sidebar.collapsed_width') !== 0))
                 <button
                     type="button"
-                    class="filament-sidebar-collapse-button shrink-0 hidden lg:flex items-center justify-center w-10 h-10 text-primary-500 rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none"
+                    class="filament-sidebar-collapse-button shrink-0 hidden lg:flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none"
                     x-on:click.stop="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                     x-transition:enter="lg:transition delay-100"
                     x-transition:enter-start="opacity-0"
                     x-transition:enter-end="opacity-100"
                 >
-                    @svg('heroicon-o-chevron-left', 'h-6 w-6')
+                    <x-filament-support::icon
+                        name="heroicon-o-chevron-left"
+                        alias="app::sidebar.buttons.collapse"
+                        color="text-primary-500"
+                        size="h-6 w-6"
+                    />
                 </button>
             @endif
 
@@ -60,7 +65,11 @@
                 x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100"
             >
-                @svg('heroicon-o-bars-3', 'h-6 w-6')
+                <x-filament-support::icon
+                    name="heroicon-o-bars-3"
+                    alias="app::sidebar.buttons.toggle"
+                    size="h-6 w-6"
+                />
             </button>
         @endif
     </header>

@@ -28,13 +28,14 @@
         'w-12 h-12' => $size === 'lg',
     ];
 
-    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-icon-button-icon',
-        'w-5 h-5' => $size === 'md',
-        'w-4 h-4' => $size === 'sm',
-        'w-4 h-4 md:w-5 md:h-5' => $size === 'sm md:md',
-        'w-6 h-6' => $size === 'lg',
-    ]);
+    $iconSize = match ($size) {
+        'md' => 'h-5 w-5',
+        'sm' => 'h-4 w-4',
+        'sm md:md' => 'h-4 w-4 md:h-5 md:w-5',
+        'lg' => 'h-6 w-6',
+    };
+
+    $iconClasses = 'filament-icon-button-icon';
 
     $indicatorClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-icon-button-indicator absolute rounded-full text-xs inline-block w-4 h-4 -top-0.5 -right-0.5',
@@ -76,14 +77,14 @@
             </span>
         @endif
 
-        @svg(
-            $icon,
-            $iconClasses,
-            [
-                'wire:loading.remove.delay' => $hasLoadingIndicator,
-                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-            ],
-        )
+        <x-filament-support::icon
+            :name="$icon"
+            alias="support::icon-button"
+            :size="$iconSize"
+            :class="$iconClasses"
+            :wire:loading.remove.delay="$hasLoadingIndicator"
+            :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+        />
 
         @if ($hasLoadingIndicator)
             <x-filament-support::loading-indicator
@@ -122,7 +123,12 @@
             </span>
         @endif
 
-        @svg($icon, $iconClasses)
+        <x-filament-support::icon
+            :name="$icon"
+            alias="support::icon-button"
+            :size="$iconSize"
+            :class="$iconClasses"
+        />
 
         @if ($indicator)
             <span class="{{ $indicatorClasses }}">

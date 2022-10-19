@@ -15,12 +15,15 @@
             @endif
             class="flex items-center justify-between w-full"
         >
-            <div @class([
-                'flex items-center gap-4 text-gray-600',
-                'dark:text-gray-300' => config('filament.dark_mode'),
-            ])>
+            <div class="flex items-center gap-4">
                 @if ($icon)
-                    @svg($icon, 'ml-1 w-3 h-3 flex-shrink-0')
+                    <x-filament-support::icon
+                        :name="$icon"
+                        alias="app::sidebar.group"
+                        color="text-gray-600 dark:text-gray-300"
+                        size="h-3 w-3"
+                        class="ml-1 flex-shrink-0"
+                    />
                 @endif
 
                 <p class="flex-1 font-bold uppercase text-xs tracking-wider">
@@ -29,17 +32,17 @@
             </div>
 
             @if ($collapsible)
-                @svg(
-                    'heroicon-m-chevron-down',
-                    \Illuminate\Support\Arr::toCssClasses([
-                        'h-3 w-3 text-gray-600 transition',
+                <x-filament-support::icon
+                    name="heroicon-m-chevron-down"
+                    alias="app::sidebar.group.trigger"
+                    size="h-3 w-3"
+                    :class="\Illuminate\Support\Arr::toCssClasses([
+                        'text-gray-600 transition',
                         'dark:text-gray-300' => config('filament.dark_mode'),
-                    ]),
-                    [
-                        'x-bind:class' => '$store.sidebar.groupIsCollapsed(label) || "-rotate-180"',
-                        'x-cloak',
-                    ],
-                )
+                    ])"
+                    x-bind:class="$store.sidebar.groupIsCollapsed(label) || '-rotate-180'"
+                    x-cloak
+                />
             @endif
         </button>
     @endif

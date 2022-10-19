@@ -54,19 +54,18 @@
                         }"
                     >
                         @if ($hasOffIcon())
-                            @svg(
-                                $getOffIcon(),
-                                \Illuminate\Support\Arr::toCssClasses([
-                                    'h-3 w-3',
-                                    match ($getOffColor()) {
-                                        'danger' => 'text-danger-500',
-                                        'primary' => 'text-primary-500',
-                                        'success' => 'text-success-500',
-                                        'warning' => 'text-warning-500',
-                                        default => 'text-gray-400',
-                                    },
-                                ]),
-                            )
+                            <x-filament-support::icon
+                                :name="$getOffIcon()"
+                                alias="forms::components.toggle.off"
+                                :color="match ($getOffColor()) {
+                                    'danger' => 'text-danger-500',
+                                    'primary' => 'text-primary-500',
+                                    'success' => 'text-success-500',
+                                    'warning' => 'text-warning-500',
+                                    default => 'text-gray-400',
+                                }"
+                                size="h-3 w-3"
+                            />
                         @endif
                     </span>
 
@@ -79,20 +78,19 @@
                         }"
                     >
                         @if ($hasOnIcon())
-                            @svg(
-                                $getOnIcon(),
-                                \Illuminate\Support\Arr::toCssClasses([
-                                    'h-3 w-3',
-                                    match ($getOnColor()) {
-                                        'danger' => 'text-danger-500',
-                                        'secondary' => 'text-gray-400',
-                                        'success' => 'text-success-500',
-                                        'warning' => 'text-warning-500',
-                                        default => 'text-primary-500',
-                                    },
-                                ]),
-                                ['x-cloak'],
-                            )
+                            <x-filament-support::icon
+                                :name="$getOnIcon()"
+                                alias="forms::components.toggle.on"
+                                :color="match ($getOnColor()) {
+                                    'danger' => 'text-danger-500',
+                                    'secondary' => 'text-gray-400',
+                                    'success' => 'text-success-500',
+                                    'warning' => 'text-warning-500',
+                                    default => 'text-primary-500',
+                                }"
+                                size="h-3 w-3"
+                                x-cloak
+                            />
                         @endif
                     </span>
                 </span>

@@ -107,7 +107,11 @@
                                                 type="button"
                                                 class="text-gray-600 hover:text-gray-700"
                                             >
-                                                @svg('heroicon-m-arrows-up-down', 'h-4 w-4')
+                                                <x-filament-support::icon
+                                                    name="heroicon-m-arrows-up-down"
+                                                    alias="forms::components.key-value.buttons.reorder"
+                                                    size="h-4 w-4"
+                                                />
 
                                                 <span class="sr-only">
                                                     {{ $getDeleteButtonLabel() }}
@@ -121,7 +125,11 @@
                                                 type="button"
                                                 class="text-danger-600 hover:text-danger-700"
                                             >
-                                                @svg('heroicon-m-trash', 'h-4 w-4')
+                                                <x-filament-support::icon
+                                                    name="heroicon-m-trash"
+                                                    alias="forms::components.key-value.buttons.delete"
+                                                    size="h-4 w-4"
+                                                />
 
                                                 <span class="sr-only">
                                                     {{ $getDeleteButtonLabel() }}
@@ -145,7 +153,11 @@
                         'dark:text-white dark:bg-gray-800/60 dark:hover:bg-gray-800/30' => config('forms.dark_mode'),
                     ])
                 >
-                    @svg('heroicon-m-plus', 'h-4 w-4')
+                    <x-filament-support::icon
+                        name="heroicon-m-plus"
+                        alias="forms::components.key-value.buttons.add"
+                        size="h-4 w-4"
+                    />
 
                     <span>
                         {{ $getAddButtonLabel() }}

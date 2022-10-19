@@ -30,11 +30,14 @@
         'dark:text-warning-500 dark:hover:text-warning-400' => $color === 'warning' && $darkMode,
     ];
 
+    $iconSize = match ($size) {
+        'sm' => 'h-4 w-4',
+        'md' => 'h-5 w-5',
+        'lg' => 'h-6 w-6',
+    };
+
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-link-icon',
-        'w-4 h-4' => $size === 'sm',
-        'w-5 h-5' => $size === 'md',
-        'w-6 h-6' => $size === 'lg',
         'mr-1 rtl:ml-1' => $iconPosition === 'before',
         'ml-1 rtl:mr-1' => $iconPosition === 'after'
     ]);
@@ -60,13 +63,23 @@
         {{ $attributes->class($linkClasses) }}
     >
         @if ($icon && $iconPosition === 'before')
-            @svg($icon, $iconClasses)
+            <x-filament-support::icon
+                :name="$icon"
+                alias="support::link.prefix"
+                :size="$iconSize"
+                :class="$iconClasses"
+            />
         @endif
 
         {{ $slot }}
 
         @if ($icon && $iconPosition === 'after')
-            @svg($icon, $iconClasses)
+            <x-filament-support::icon
+                :name="$icon"
+                alias="support::link.suffix"
+                :size="$iconSize"
+                :class="$iconClasses"
+            />
         @endif
     </a>
 @elseif ($tag === 'button')
@@ -86,14 +99,14 @@
     >
         @if ($iconPosition === 'before')
             @if ($icon)
-                @svg(
-                    $icon,
-                    $iconClasses,
-                    [
-                        'wire:loading.remove.delay' => $hasLoadingIndicator,
-                        'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                    ],
-                )
+                <x-filament-support::icon
+                    :name="$icon"
+                    alias="support::link.prefix"
+                    :size="$iconSize"
+                    :class="$iconClasses"
+                    :wire:loading.remove.delay="$hasLoadingIndicator"
+                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+                />
             @endif
 
             @if ($hasLoadingIndicator)
@@ -101,7 +114,7 @@
                     x-cloak
                     wire:loading.delay
                     :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses"
+                    :class="$iconClasses . ' ' . $iconSize"
                 />
             @endif
         @endif
@@ -110,14 +123,14 @@
 
         @if ($iconPosition === 'after')
             @if ($icon)
-                @svg(
-                    $icon,
-                    $iconClasses,
-                    [
-                        'wire:loading.remove.delay' => $hasLoadingIndicator,
-                        'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                    ],
-                )
+                <x-filament-support::icon
+                    :name="$icon"
+                    alias="support::link.suffix"
+                    :size="$iconSize"
+                    :class="$iconClasses"
+                    :wire:loading.remove.delay="$hasLoadingIndicator"
+                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+                />
             @endif
 
             @if ($hasLoadingIndicator)
@@ -125,7 +138,7 @@
                     x-cloak
                     wire:loading.delay
                     :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses"
+                    :class="$iconClasses . ' ' . $iconSize"
                 />
             @endif
         @endif

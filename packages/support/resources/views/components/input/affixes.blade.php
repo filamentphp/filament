@@ -21,7 +21,11 @@
     @endif
 
     @if ($prefixIcon)
-        @svg($prefixIcon, 'filament-input-affix-icon h-5 w-5')
+        <x-filament-support::icon
+            :name="$prefixIcon"
+            size="h-5 w-5"
+            class="filament-input-affix-icon"
+        />
     @endif
 
     @if ($prefix)
@@ -57,7 +61,11 @@
     @endif
 
     @if ($suffixIcon)
-        @svg($suffixIcon, 'filament-input-affix-icon h-5 w-5')
+        <x-filament-support::icon
+            :name="$prefixIcon"
+            size="h-5 w-5"
+            class="filament-input-affix-icon"
+        />
     @endif
 
     @if ($suffixAction && (! $suffixAction->isHidden()))

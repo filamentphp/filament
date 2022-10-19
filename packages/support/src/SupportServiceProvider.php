@@ -9,6 +9,7 @@ use Filament\Support\Commands\AssetsCommand;
 use Filament\Support\Commands\CheckTranslationsCommand;
 use Filament\Support\Commands\UpgradeCommand;
 use Filament\Support\Facades\Asset;
+use Filament\Support\Icons\IconManager;
 use HtmlSanitizer\Sanitizer;
 use HtmlSanitizer\SanitizerInterface;
 use Illuminate\Foundation\Console\AboutCommand;
@@ -40,6 +41,13 @@ class SupportServiceProvider extends PackageServiceProvider
             AssetManager::class,
             function () {
                 return new AssetManager();
+            },
+        );
+
+        $this->app->scoped(
+            IconManager::class,
+            function () {
+                return new IconManager();
             },
         );
 

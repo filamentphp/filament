@@ -30,14 +30,16 @@
         </span>
 
         @if ($sortable)
-            @svg(
-                $activelySorted && $sortDirection === 'asc' ? 'heroicon-m-chevron-up' : 'heroicon-m-chevron-down',
-                \Illuminate\Support\Arr::toCssClasses([
-                    'filament-tables-header-cell-sort-icon h-3 w-3',
-                    'dark:text-gray-300' => config('tables.dark_mode'),
+            <x-filament-support::icon
+                :name="$activelySorted && $sortDirection === 'asc' ? 'heroicon-m-chevron-up' : 'heroicon-m-chevron-down'"
+                alias="tables::header-cell.sort"
+                color="dark:text-gray-300"
+                size="h-3 w-3"
+                :class="[
+                    'filament-tables-header-cell-sort-icon',
                     'opacity-25' => ! $activelySorted,
-                ]),
-            )
+                ]"
+            />
         @endif
     </button>
 </th>
