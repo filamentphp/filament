@@ -64,11 +64,8 @@
                 <x-filament-support::icon
                     name="heroicon-m-calendar"
                     alias="forms::components.date-time-picker.suffix"
+                    color="text-gray-400 dark:text-gray-400"
                     size="h-5 w-5"
-                    :class="\Illuminate\Support\Arr::toCssClasses([
-                        'text-gray-400',
-                        'dark:text-gray-400' => config('forms.dark_mode'),
-                    ])"
                 />
             </span>
         </button>
