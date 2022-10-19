@@ -123,7 +123,10 @@
                     >
                         <x-filament-support::icon
                             name="heroicon-m-x-mark"
-                            class="filament-modal-close-button h-4 w-4 cursor-pointer text-gray-400"
+                            alias="support::modal.close-button"
+                            color="text-gray-400"
+                            size="h-4 w-4"
+                            class="filament-modal-close-button cursor-pointer"
                             :title="__('filament-support::components/modal.actions.close.label')"
                             x-on:click="isOpen = false"
                             tabindex="-1"

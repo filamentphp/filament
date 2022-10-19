@@ -20,7 +20,12 @@
                 'dark:text-gray-300' => config('filament.dark_mode'),
             ])>
                 @if ($icon)
-                    <x-filament-support::icon :name="$icon" class="ml-1 w-3 h-3 flex-shrink-0" />
+                    <x-filament-support::icon
+                        :name="$icon"
+                        alias="app::sidebar.group"
+                        size="h-3 w-3"
+                        class="ml-1 flex-shrink-0"
+                    />
                 @endif
 
                 <p class="flex-1 font-bold uppercase text-xs tracking-wider">
@@ -31,8 +36,10 @@
             @if ($collapsible)
                 <x-filament-support::icon
                     name="heroicon-m-chevron-down"
+                    alias="app::sidebar.group.trigger"
+                    size="h-3 w-3"
                     :class="\Illuminate\Support\Arr::toCssClasses([
-                        'h-3 w-3 text-gray-600 transition',
+                        'text-gray-600 transition',
                         'dark:text-gray-300' => config('filament.dark_mode'),
                     ])"
                     x-bind:class="$store.sidebar.groupIsCollapsed(label) || '-rotate-180'"

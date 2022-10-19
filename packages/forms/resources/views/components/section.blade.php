@@ -75,7 +75,8 @@
                 x-on:click.stop="isCollapsed = ! isCollapsed"
                 x-bind:class="{
                     '-rotate-180': !isCollapsed,
-                }" type="button"
+                }"
+                type="button"
                 @class([
                     'flex items-center justify-center transform rounded-full text-primary-500 hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none',
                     'w-10 h-10' => ! $isCompact,
@@ -85,10 +86,8 @@
             >
                 <x-filament-support::icon
                     name="heroicon-m-chevron-down"
-                    :class="\Illuminate\Support\Arr::toCssClasses([
-                        'w-7 h-7' => ! $isCompact,
-                        'w-5 h-5' => $isCompact,
-                    ])"
+                    alias="forms::section.buttons.collapse"
+                    :size="$isCompact ? 'h-5 w-5' : 'h-7 w-7'"
                 />
             </button>
         @endif

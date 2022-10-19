@@ -55,7 +55,11 @@
                 }"
             >
                 @if ($icon = $tab->getIcon())
-                    <x-filament-support::icon :name="$icon" class="h-5 w-5" />
+                    <x-filament-support::icon
+                        :name="$icon"
+                        alias="forms::components.tabs.button"
+                        size="h-5 w-5"
+                    />
                 @endif
 
                 <span>{{ $tab->getLabel() }}</span>

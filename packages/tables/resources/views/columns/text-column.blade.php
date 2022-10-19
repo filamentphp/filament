@@ -4,7 +4,7 @@
 
     $icon = $getIcon();
     $iconPosition = $getIconPosition();
-    $iconClasses = 'w-4 h-4';
+    $iconSize = 'h-4 w-4';
 @endphp
 
 <div
@@ -51,7 +51,11 @@
 
     <div class="inline-flex items-center space-x-1 rtl:space-x-reverse">
         @if ($icon && $iconPosition === 'before')
-            <x-filament-support::icon :name="$icon" :class="$iconClasses" />
+            <x-filament-support::icon
+                :name="$icon"
+                alias="tables::columns.text.prefix"
+                :size="$iconSize"
+            />
         @endif
 
         <span>
@@ -59,7 +63,11 @@
         </span>
 
         @if ($icon && $iconPosition === 'after')
-            <x-filament-support::icon :name="$icon" :class="$iconClasses" />
+            <x-filament-support::icon
+                :name="$icon"
+                alias="tables::columns.text.suffix"
+                :size="$iconSize"
+            />
         @endif
     </div>
 

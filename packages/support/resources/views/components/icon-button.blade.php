@@ -78,6 +78,7 @@
 
         <x-filament-support::icon
             :name="$icon"
+            alias="support::icon-button"
             :class="$iconClasses"
             :wire:loading.remove.delay="$hasLoadingIndicator"
             :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
@@ -120,7 +121,11 @@
             </span>
         @endif
 
-        <x-filament-support::icon :name="$icon" :class="$iconClasses" />
+        <x-filament-support::icon
+            :name="$icon"
+            alias="support::icon-button"
+            :class="$iconClasses"
+        />
 
         @if ($indicator)
             <span class="{{ $indicatorClasses }}">

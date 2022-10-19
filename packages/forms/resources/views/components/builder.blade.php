@@ -105,7 +105,11 @@
                                             {{ __('forms::components.builder.buttons.move_item.label') }}
                                         </span>
 
-                                        <x-filament-support::icon name="heroicon-m-arrows-up-down" class="h-4 w-4" />
+                                        <x-filament-support::icon
+                                            name="heroicon-m-arrows-up-down"
+                                            alias="forms::components.builder.buttons.move-item"
+                                            size="h-4 w-4"
+                                        />
                                     </button>
                                 @endunless
 
@@ -153,7 +157,11 @@
                                                     {{ __('forms::components.builder.buttons.clone_item.label') }}
                                                 </span>
 
-                                                <x-filament-support::icon name="heroicon-m-square-2-stack" class="h-4 w-4" />
+                                                <x-filament-support::icon
+                                                    name="heroicon-m-square-2-stack"
+                                                    alias="forms::components.builder.buttons.clone-item"
+                                                    size="h-4 w-4"
+                                                />
                                             </button>
                                         </li>
                                     @endif
@@ -173,7 +181,11 @@
                                                     {{ __('forms::components.builder.buttons.delete_item.label') }}
                                                 </span>
 
-                                                <x-filament-support::icon name="heroicon-m-trash" class="h-4 w-4" />
+                                                <x-filament-support::icon
+                                                    name="heroicon-m-trash"
+                                                    alias="forms::components.builder.buttons.delete-item"
+                                                    size="h-4 w-4"
+                                                />
                                             </button>
                                         </li>
                                     @endunless
@@ -188,7 +200,8 @@
                                             >
                                                 <x-filament-support::icon
                                                     name="heroicon-m-minus"
-                                                    class="h-4 w-4"
+                                                    alias="forms::components.builder.buttons.collapse-item"
+                                                    size="h-4 w-4"
                                                     x-show="!isCollapsed"
                                                 />
 
@@ -198,7 +211,8 @@
 
                                                 <x-filament-support::icon
                                                     name="heroicon-m-plus"
-                                                    class="h-4 w-4"
+                                                    alias="forms::components.builder.buttons.expand-item"
+                                                    size="h-4 w-4"
                                                     x-show="isCollapsed"
                                                     x-cloak
                                                 />

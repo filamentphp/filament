@@ -27,7 +27,11 @@
             'dark:text-gray-200' => config('filament.dark_mode'),
         ])>
             @if ($icon)
-                <x-filament-support::icon :name="$icon" class="h-4 w-4" />
+                <x-filament-support::icon
+                    :name="$icon"
+                    alias="app::stats.card"
+                    size="h-4 w-4"
+                />
             @endif
 
             <span>{{ $label }}</span>
@@ -51,7 +55,11 @@
                 <span>{{ $description }}</span>
 
                 @if ($descriptionIcon)
-                    <x-filament-support::icon name="$descriptionIcon" class="h-4 w-4" />
+                    <x-filament-support::icon
+                        name="$descriptionIcon"
+                        alias="app::stats.card.description"
+                        size="h-4 w-4"
+                    />
                 @endif
             </div>
         @endif

@@ -23,7 +23,12 @@
         ]) }}
     >
         @if ($icon)
-            <x-filament-support::icon :name="$icon" class="h-5 w-5 rtl:-scale-x-100" />
+            <x-filament-support::icon
+                :name="$icon"
+                alias="tables::pagination.item"
+                size="h-5 w-5"
+                class="rtl:-scale-x-100"
+            />
         @endif
 
         <span>{{ $label ?? ($separator ? '...' : '') }}</span>

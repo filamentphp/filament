@@ -60,13 +60,21 @@
         {{ $attributes->class($linkClasses) }}
     >
         @if ($icon && $iconPosition === 'before')
-            <x-filament-support::icon :name="$icon" :class="$iconClasses" />
+            <x-filament-support::icon
+                :name="$icon"
+                alias="support::link.prefix"
+                :class="$iconClasses"
+            />
         @endif
 
         {{ $slot }}
 
         @if ($icon && $iconPosition === 'after')
-            <x-filament-support::icon :name="$icon" :class="$iconClasses" />
+            <x-filament-support::icon
+                :name="$icon"
+                alias="support::link.suffix"
+                :class="$iconClasses"
+            />
         @endif
     </a>
 @elseif ($tag === 'button')
@@ -88,6 +96,7 @@
             @if ($icon)
                 <x-filament-support::icon
                     :name="$icon"
+                    alias="support::link.prefix"
                     :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
@@ -110,6 +119,7 @@
             @if ($icon)
                 <x-filament-support::icon
                     :name="$icon"
+                    alias="support::link.suffix"
                     :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"

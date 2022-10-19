@@ -105,6 +105,7 @@
             @if ($icon)
                 <x-filament-support::icon
                     :name="$icon"
+                    alias="support::button.prefix"
                     :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
@@ -151,6 +152,7 @@
             @if ($icon)
                 <x-filament-support::icon
                     :name="$icon"
+                    alias="support::button.suffix"
                     :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
@@ -181,7 +183,11 @@
         {{ $attributes->class($buttonClasses) }}
     >
         @if ($icon && $iconPosition === 'before')
-            <x-filament-support::icon :name="$icon" :class="$iconClasses" />
+            <x-filament-support::icon
+                :name="$icon"
+                alias="support::button.prefix"
+                :class="$iconClasses"
+            />
         @endif
 
         <span @class([
@@ -191,7 +197,11 @@
         </span>
 
         @if ($icon && $iconPosition === 'after')
-            <x-filament-support::icon :name="$icon" :class="$iconClasses" />
+            <x-filament-support::icon
+                :name="$icon"
+                alias="support::button.suffix"
+                :class="$iconClasses"
+            />
         @endif
     </a>
 @endif

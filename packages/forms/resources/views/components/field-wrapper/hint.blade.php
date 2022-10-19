@@ -36,7 +36,11 @@
     @endif
 
     @if ($icon)
-        <x-filament-support::icon :name="$icon" class="h-4 w-4" />
+        <x-filament-support::icon
+            :name="$icon"
+            alias="forms::field-wrapper.hint"
+            size="h-5 w-5"
+        />
     @endif
 
     @if ($action && (! $action->isHidden()))

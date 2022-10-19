@@ -17,6 +17,7 @@
     @if ($icon)
         <x-filament-support::icon
             :name="$icon"
+            alias="tables::columns.icon"
             :class="\Illuminate\Support\Arr::toCssClasses([
                 match ($color) {
                     'danger' => 'text-danger-500',

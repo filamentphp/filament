@@ -34,7 +34,11 @@
                     x-transition:enter-start="opacity-0"
                     x-transition:enter-end="opacity-100"
                 >
-                    <x-filament-support::icon name="heroicon-o-chevron-left" class="h-6 w-6" />
+                    <x-filament-support::icon
+                        name="heroicon-o-chevron-left"
+                        alias="app::sidebar.buttons.collapse"
+                        size="h-6 w-6"
+                    />
                 </button>
             @endif
 
@@ -60,7 +64,11 @@
                 x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100"
             >
-                <x-filament-support::icon name="heroicon-o-bars-3" class="h-6 w-6" />
+                <x-filament-support::icon
+                    name="heroicon-o-bars-3"
+                    alias="app::sidebar.buttons.toggle"
+                    size="h-6 w-6"
+                />
             </button>
         @endif
     </header>

@@ -5,8 +5,10 @@
 
 <x-filament-support::icon
     :name="$icon"
+    alias="notifications::notification"
+    size="h-6 w-6"
     :class="\Illuminate\Support\Arr::toCssClasses([
-        'filament-notifications-icon h-6 w-6',
+        'filament-notifications-notification-icon',
         match ($color) {
             'success' => 'text-success-400',
             'warning' => 'text-warning-400',

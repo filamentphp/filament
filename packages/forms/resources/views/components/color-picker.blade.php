@@ -16,7 +16,11 @@
         @endif
 
         @if ($icon = $getPrefixIcon())
-            <x-filament-support::icon :name="$icon" class="h-5 w-5" />
+            <x-filament-support::icon
+                :name="$icon"
+                alias="forms::components.color-picker.prefix"
+                size="h-5 w-5"
+            />
         @endif
 
         @if ($label = $getPrefixLabel())
@@ -101,7 +105,11 @@
         @endif
 
         @if ($icon = $getSuffixIcon())
-            <x-filament-support::icon :name="$icon" class="h-5 w-5" />
+            <x-filament-support::icon
+                :name="$icon"
+                alias="forms::components.color-picker.suffix"
+                size="h-5 w-5"
+            />
         @endif
 
         @if (($suffixAction = $getSuffixAction()) && (! $suffixAction->isHidden()))

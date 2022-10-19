@@ -23,7 +23,11 @@
 @if ($tag === 'div')
     <div {{ $attributes->class([$headerClasses]) }}>
         @if ($icon)
-            <x-filament-support::icon :name="$icon" :class="$iconClasses" />
+            <x-filament-support::icon
+                :name="$icon"
+                alias="support::dropdown.header"
+                :class="$iconClasses"
+            />
         @endif
 
         <span class="{{ $labelClasses }}">
@@ -33,7 +37,11 @@
 @elseif ($tag === 'a')
     <a {{ $attributes->class([$headerClasses]) }}>
         @if ($icon)
-            <x-filament-support::icon :name="$icon" :class="$iconClasses" />
+            <x-filament-support::icon
+                :name="$icon"
+                alias="support::dropdown.header"
+                :class="$iconClasses"
+            />
         @endif
 
         <span class="{{ $labelClasses }}">

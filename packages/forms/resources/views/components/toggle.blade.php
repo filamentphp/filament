@@ -56,8 +56,9 @@
                         @if ($hasOffIcon())
                             <x-filament-support::icon
                                 :name="$getOffIcon()"
+                                alias="forms::components.toggle.off"
+                                size="h-3 w-3"
                                 :class="\Illuminate\Support\Arr::toCssClasses([
-                                    'h-3 w-3',
                                     match ($getOffColor()) {
                                         'danger' => 'text-danger-500',
                                         'primary' => 'text-primary-500',
@@ -81,8 +82,9 @@
                         @if ($hasOnIcon())
                             <x-filament-support::icon
                                 :name="$getOnIcon()"
+                                alias="forms::components.toggle.on"
+                                size="h-3 w-3"
                                 :class="\Illuminate\Support\Arr::toCssClasses([
-                                    'h-3 w-3',
                                     match ($getOnColor()) {
                                         'danger' => 'text-danger-500',
                                         'secondary' => 'text-gray-400',

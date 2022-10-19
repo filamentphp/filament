@@ -13,7 +13,7 @@
 
     $icon = $getIcon();
     $iconPosition = $getIconPosition();
-    $iconClasses = 'w-4 h-4';
+    $iconSize = 'h-4 w-4';
 @endphp
 
 <div {{ $attributes->merge($getExtraAttributes())->class([
@@ -32,7 +32,11 @@
             $colorClasses,
         ])>
             @if ($icon && $iconPosition === 'before')
-                <x-filament-support::icon :name="$icon" :class="$iconClasses" />
+                <x-filament-support::icon
+                    :name="$icon"
+                    alias="tables::columns.badge.prefix"
+                    :size="$iconSize"
+                />
             @endif
 
             <span>
@@ -40,7 +44,11 @@
             </span>
 
             @if ($icon && $iconPosition === 'after')
-                <x-filament-support::icon :name="$icon" :class="$iconClasses" />
+                <x-filament-support::icon
+                    :name="$icon"
+                    alias="tables::columns.badge.suffix"
+                    :size="$iconSize"
+                />
             @endif
         </div>
     @endif

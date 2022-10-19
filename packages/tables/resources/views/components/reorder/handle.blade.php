@@ -5,5 +5,10 @@
         'dark:text-gray-400 dark:group-hover:text-primary-400' => config('tables.dark_mode'),
     ]) }}
 >
-    <x-filament-support::icon name="heroicon-o-bars-3" class="block h-4 w-4" />
+    <x-filament-support::icon
+        name="heroicon-o-bars-3"
+        size="h-4 w-4"
+        alias="tables::reorder.handle"
+        class="block"
+    />
 </button>

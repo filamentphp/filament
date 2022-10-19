@@ -108,7 +108,11 @@
                                                 {{ __('forms::components.repeater.buttons.move_item.label') }}
                                             </span>
 
-                                            <x-filament-support::icon name="heroicon-m-arrows-up-down" class="h-4 w-4" />
+                                            <x-filament-support::icon
+                                                name="heroicon-m-arrows-up-down"
+                                                alias="forms::components.repeater.buttons.move-item"
+                                                size="h-4 w-4"
+                                            />
                                         </button>
                                     @endunless
 
@@ -140,7 +144,11 @@
                                                         {{ __('forms::components.repeater.buttons.clone_item.label') }}
                                                     </span>
 
-                                                    <x-filament-support::icon name="heroicon-m-square-2-stack" class="h-4 w-4" />
+                                                    <x-filament-support::icon
+                                                        name="heroicon-m-square-2-stack"
+                                                        alias="forms::components.repeater.buttons.clone-item"
+                                                        size="h-4 w-4"
+                                                    />
                                                 </button>
                                             </li>
                                         @endunless
@@ -160,7 +168,11 @@
                                                         {{ __('forms::components.repeater.buttons.delete_item.label') }}
                                                     </span>
 
-                                                    <x-filament-support::icon name="heroicon-m-trash" class="h-4 w-4" />
+                                                    <x-filament-support::icon
+                                                        name="heroicon-m-trash"
+                                                        alias="forms::components.repeater.buttons.delete-item"
+                                                        size="h-4 w-4"
+                                                    />
                                                 </button>
                                             </li>
                                         @endunless
@@ -175,7 +187,8 @@
                                                 >
                                                     <x-filament-support::icon
                                                         name="heroicon-m-minus"
-                                                        class="h-4 w-4"
+                                                        alias="forms::components.repeater.buttons.collapse-item"
+                                                        size="h-4 w-4"
                                                         x-show="!isCollapsed"
                                                     />
 
@@ -185,7 +198,8 @@
 
                                                     <x-filament-support::icon
                                                         name="heroicon-m-plus"
-                                                        class="h-4 w-4"
+                                                        alias="forms::components.repeater.buttons.expand-item"
+                                                        size="h-4 w-4"
                                                         x-show="isCollapsed"
                                                         x-cloak
                                                     />

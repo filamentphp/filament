@@ -29,7 +29,11 @@
                             type="button"
                             class="ml-1 -mr-2 rtl:mr-1 rtl:-ml-2 p-1 -my-1 hover:bg-gray-500/10 rounded-full"
                         >
-                            <x-filament-support::icon name="heroicon-m-x-mark" class="h-3 w-3" />
+                            <x-filament-support::icon
+                                name="heroicon-m-x-mark"
+                                alias="tables::filters.buttons.remove"
+                                size="h-3 w-3"
+                            />
 
                             <span class="sr-only">
                                 {{ __('tables::table.filters.buttons.remove.label') }}
@@ -52,7 +56,8 @@
                 <div class="w-5 h-5 flex items-center justify-center">
                     <x-filament-support::icon
                         name="heroicon-m-x-mark"
-                        class="h-5 w-5"
+                        alias="tables::filters.buttons.remove-all"
+                        size="h-5 w-5"
                         :x-tooltip.raw="__('tables::table.filters.buttons.remove_all.tooltip')"
                         wire:loading.remove.delay
                         wire:target="removeTableFilters,removeTableFilter"

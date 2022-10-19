@@ -32,8 +32,10 @@
         @if ($sortable)
             <x-filament-support::icon
                 :name="$isSortColumn && $sortDirection === 'asc' ? 'heroicon-m-chevron-up' : 'heroicon-m-chevron-down'"
+                alias="tables::header-cell.sort"
+                size="h-3 w-3"
                 :class="\Illuminate\Support\Arr::toCssClasses([
-                    'filament-tables-header-cell-sort-icon h-3 w-3',
+                    'filament-tables-header-cell-sort-icon',
                     'dark:text-gray-300' => config('tables.dark_mode'),
                     'opacity-25' => ! $isSortColumn,
                 ])"

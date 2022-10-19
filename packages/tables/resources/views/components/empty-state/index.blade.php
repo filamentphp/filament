@@ -15,13 +15,14 @@
     ])>
         <x-filament-support::icon
             :name="$icon"
-            class="h-6 w-6"
+            alias="tables::empty-state"
+            size="h-6 w-6"
             wire:loading.remove.delay
             :wire:target="implode(',', \Filament\Tables\Table::LOADING_TARGETS)"
         />
 
         <x-filament-support::loading-indicator
-            class="w-6 h-6"
+            class="h-6 w-6"
             wire:loading.delay
             wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
         />

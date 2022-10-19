@@ -128,7 +128,9 @@
                             >
                                 <x-filament-support::icon
                                     name="heroicon-m-check"
-                                    class="h-5 w-5 text-white"
+                                    alias="forms::components.wizard.completed-step"
+                                    color="text-white"
+                                    size="h-5 w-5"
                                     x-show="getStepIndex(step) > {{ $loop->index }}"
                                     x-cloak
                                 />
@@ -143,7 +145,8 @@
 
                                     <x-filament-support::icon
                                         :name="$icon"
-                                        class="h-5 w-5"
+                                        alias="forms::components.wizard.current-step"
+                                        size="h-5 w-5"
                                         x-show="getStepIndex(step) <= {{ $loop->index }}"
                                         x-cloak
                                         x-bind:class="{

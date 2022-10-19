@@ -10,7 +10,8 @@
         ])>
             <x-filament-support::icon
                 name="heroicon-m-magnifying-glass"
-                class="h-5 w-5"
+                alias="app::global-search.input.prefix"
+                size="h-5 w-5"
                 wire:loading.remove.delay
                 wire:target="search"
             />
