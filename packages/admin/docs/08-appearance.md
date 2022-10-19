@@ -317,3 +317,7 @@ The available hooks are as follows:
 - `user-menu.end` - after [user menu](navigation#customizing-the-user-menu) input
 - `user-menu.account.before` - before the account item in the [user menu](navigation#customizing-the-user-menu)
 - `user-menu.account.after` - after the account item in the [user menu](navigation#customizing-the-user-menu)
+- `header-widgets.start` - before header widgets
+- `header-widgets.end` - after header widgets
+- `footer-widgets.start` - before footer widgets
+- `footer-widgets.end` - after footer widgets
