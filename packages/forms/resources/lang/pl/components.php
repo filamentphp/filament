@@ -64,6 +64,10 @@ return [
                 'label' => 'Usuń wiersz',
             ],
 
+            'reorder' => [
+                'label' => 'Przenieś wiersz',
+            ],
+
         ],
 
         'fields' => [
