@@ -60,6 +60,9 @@ return [
                 'label' => 'Poista rivi',
             ],
 
+            'reorder' => [
+                'label' => 'Järjestele rivi',
+            ],
         ],
 
         'fields' => [
