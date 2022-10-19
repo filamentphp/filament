@@ -4,7 +4,7 @@ namespace Filament\Actions\Testing;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Actions\BaseAction;
+use Filament\Actions\MountableAction;
 use Filament\Actions\Contracts\HasActions;
 use Illuminate\Testing\Assert;
 use Livewire\Testing\TestableLivewire;
@@ -471,7 +471,7 @@ class TestsActions
                 return $name;
             }
 
-            if (! is_subclass_of($name, BaseAction::class)) {
+            if (! is_subclass_of($name, MountableAction::class)) {
                 return $name;
             }
 

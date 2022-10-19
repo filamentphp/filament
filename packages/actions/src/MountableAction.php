@@ -6,7 +6,7 @@ use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 
-abstract class BaseAction extends StaticAction
+abstract class MountableAction extends StaticAction
 {
     use Concerns\CanBeMounted;
     use Concerns\CanNotify;

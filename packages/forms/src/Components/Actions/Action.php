@@ -2,13 +2,13 @@
 
 namespace Filament\Forms\Components\Actions;
 
-use Filament\Actions\BaseAction;
+use Filament\Actions\MountableAction;
 use Filament\Actions\Concerns\CanBeDisabled;
 use Filament\Actions\Concerns\CanOpenUrl;
 use Filament\Actions\Concerns\HasTooltip;
 use Filament\Forms\Components\Actions\Modal\Actions\Action as ModalAction;
 
-class Action extends BaseAction
+class Action extends MountableAction
 {
     use Concerns\BelongsToComponent;
     use CanBeDisabled;

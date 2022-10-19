@@ -7,7 +7,7 @@ use Filament\Actions\Contracts\HasRecord;
 use Filament\Actions\Modal\Actions\Action as ModalAction;
 use Illuminate\Database\Eloquent\Model;
 
-class Action extends BaseAction implements Groupable, HasRecord
+class Action extends MountableAction implements Groupable, HasRecord
 {
     use Concerns\CanBeDisabled;
     use Concerns\CanBeOutlined;

@@ -2,7 +2,7 @@
 
 namespace Filament\Tables\Actions;
 
-use Filament\Actions\BaseAction;
+use Filament\Actions\MountableAction;
 use Filament\Actions\Concerns\CanBeDisabled;
 use Filament\Actions\Concerns\CanBeOutlined;
 use Filament\Actions\Concerns\CanOpenUrl;
@@ -14,7 +14,7 @@ use Filament\Actions\Contracts\HasRecord;
 use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
 use Illuminate\Database\Eloquent\Model;
 
-class Action extends BaseAction implements Groupable, HasRecord
+class Action extends MountableAction implements Groupable, HasRecord
 {
     use CanBeDisabled;
     use CanBeOutlined;
