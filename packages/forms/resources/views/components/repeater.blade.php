@@ -108,7 +108,7 @@
                                                 {{ __('forms::components.repeater.buttons.move_item.label') }}
                                             </span>
 
-                                            @svg('heroicon-m-arrows-up-down', 'h-4 w-4')
+                                            <x-filament-support::icon name="heroicon-m-arrows-up-down" class="h-4 w-4" />
                                         </button>
                                     @endunless
 
@@ -140,7 +140,7 @@
                                                         {{ __('forms::components.repeater.buttons.clone_item.label') }}
                                                     </span>
 
-                                                    @svg('heroicon-m-square-2-stack', 'h-4 w-4')
+                                                    <x-filament-support::icon name="heroicon-m-square-2-stack" class="h-4 w-4" />
                                                 </button>
                                             </li>
                                         @endunless
@@ -160,7 +160,7 @@
                                                         {{ __('forms::components.repeater.buttons.delete_item.label') }}
                                                     </span>
 
-                                                    @svg('heroicon-m-trash', 'h-4 w-4')
+                                                    <x-filament-support::icon name="heroicon-m-trash" class="h-4 w-4" />
                                                 </button>
                                             </li>
                                         @endunless
@@ -173,24 +173,22 @@
                                                     type="button"
                                                     class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500"
                                                 >
-                                                    @svg(
-                                                        'heroicon-m-minus',
-                                                        'h-4 w-4',
-                                                        ['x-show' => '! isCollapsed'],
-                                                    )
+                                                    <x-filament-support::icon
+                                                        name="heroicon-m-minus"
+                                                        class="h-4 w-4"
+                                                        x-show="!isCollapsed"
+                                                    />
 
                                                     <span class="sr-only" x-show="! isCollapsed">
                                                         {{ __('forms::components.repeater.buttons.collapse_item.label') }}
                                                     </span>
 
-                                                    @svg(
-                                                        'heroicon-m-plus',
-                                                        'h-4 w-4',
-                                                        [
-                                                            'x-show' => 'isCollapsed',
-                                                            'x-cloak',
-                                                        ],
-                                                    )
+                                                    <x-filament-support::icon
+                                                        name="heroicon-m-plus"
+                                                        class="h-4 w-4"
+                                                        x-show="isCollapsed"
+                                                        x-cloak
+                                                    />
 
                                                     <span class="sr-only" x-show="isCollapsed" x-cloak>
                                                         {{ __('forms::components.repeater.buttons.expand_item.label') }}

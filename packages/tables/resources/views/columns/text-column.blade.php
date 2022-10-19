@@ -51,7 +51,7 @@
 
     <div class="inline-flex items-center space-x-1 rtl:space-x-reverse">
         @if ($icon && $iconPosition === 'before')
-            @svg($icon, $iconClasses)
+            <x-filament-support::icon :name="$icon" :class="$iconClasses" />
         @endif
 
         <span>
@@ -59,7 +59,7 @@
         </span>
 
         @if ($icon && $iconPosition === 'after')
-            @svg($icon, $iconClasses)
+            <x-filament-support::icon :name="$icon" :class="$iconClasses" />
         @endif
     </div>
 

@@ -30,14 +30,14 @@
         </span>
 
         @if ($sortable)
-            @svg(
-                $isSortColumn && $sortDirection === 'asc' ? 'heroicon-m-chevron-up' : 'heroicon-m-chevron-down',
-                \Illuminate\Support\Arr::toCssClasses([
+            <x-filament-support::icon
+                :name="$isSortColumn && $sortDirection === 'asc' ? 'heroicon-m-chevron-up' : 'heroicon-m-chevron-down'"
+                :class="\Illuminate\Support\Arr::toCssClasses([
                     'filament-tables-header-cell-sort-icon h-3 w-3',
                     'dark:text-gray-300' => config('tables.dark_mode'),
                     'opacity-25' => ! $isSortColumn,
-                ]),
-            )
+                ])"
+            />
         @endif
     </button>
 </th>

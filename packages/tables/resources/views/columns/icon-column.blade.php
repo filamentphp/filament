@@ -15,9 +15,9 @@
     }}
 >
     @if ($icon)
-        @svg(
-            $icon,
-            \Illuminate\Support\Arr::toCssClasses([
+        <x-filament-support::icon
+            :name="$icon"
+            :class="\Illuminate\Support\Arr::toCssClasses([
                 match ($color) {
                     'danger' => 'text-danger-500',
                     'primary' => 'text-primary-500',
@@ -34,7 +34,7 @@
                     'xl' => 'h-7 w-7',
                     default => $size,
                 },
-            ]),
-        )
+            ])"
+        />
     @endif
 </div>

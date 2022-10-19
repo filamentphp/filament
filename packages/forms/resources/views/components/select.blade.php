@@ -16,7 +16,7 @@
         @endif
 
         @if ($icon = $getPrefixIcon())
-            @svg($icon, 'h-5 w-5')
+            <x-filament-support::icon :name="$icon" class="h-5 w-5" />
         @endif
 
         @if ($label = $getPrefixLabel())
@@ -117,7 +117,7 @@
         @endif
 
         @if ($icon = $getSuffixIcon())
-            @svg($icon, 'h-5 w-5')
+            <x-filament-support::icon :name="$icon" class="h-5 w-5" />
         @endif
 
         @if (($suffixAction = $getSuffixAction()) && (! $suffixAction->isHidden()))

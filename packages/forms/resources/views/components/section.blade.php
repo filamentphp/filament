@@ -83,13 +83,13 @@
                     '-rotate-180' => ! $isCollapsed,
                 ])
             >
-                @svg(
-                    'heroicon-m-chevron-down',
-                    \Illuminate\Support\Arr::toCssClasses([
+                <x-filament-support::icon
+                    name="heroicon-m-chevron-down"
+                    :class="\Illuminate\Support\Arr::toCssClasses([
                         'w-7 h-7' => ! $isCompact,
                         'w-5 h-5' => $isCompact,
-                    ]),
-                )
+                    ])"
+                />
             </button>
         @endif
     </div>

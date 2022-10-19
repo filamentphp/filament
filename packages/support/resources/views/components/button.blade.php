@@ -103,14 +103,12 @@
     >
         @if ($iconPosition === 'before')
             @if ($icon)
-                @svg(
-                    $icon,
-                    $iconClasses,
-                    [
-                        'wire:loading.remove.delay' => $hasLoadingIndicator,
-                        'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                    ],
-                )
+                <x-filament-support::icon
+                    :name="$icon"
+                    :class="$iconClasses"
+                    :wire:loading.remove.delay="$hasLoadingIndicator"
+                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+                />
             @endif
 
             @if ($hasLoadingIndicator)
@@ -151,14 +149,12 @@
 
         @if ($iconPosition === 'after')
             @if ($icon)
-                @svg(
-                    $icon,
-                    $iconClasses,
-                    [
-                        'wire:loading.remove.delay' => $hasLoadingIndicator,
-                        'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                    ],
-                )
+                <x-filament-support::icon
+                    :name="$icon"
+                    :class="$iconClasses"
+                    :wire:loading.remove.delay="$hasLoadingIndicator"
+                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+                />
             @endif
 
             @if ($hasLoadingIndicator)
@@ -185,7 +181,7 @@
         {{ $attributes->class($buttonClasses) }}
     >
         @if ($icon && $iconPosition === 'before')
-            @svg($icon, $iconClasses)
+            <x-filament-support::icon :name="$icon" :class="$iconClasses" />
         @endif
 
         <span @class([
@@ -195,7 +191,7 @@
         </span>
 
         @if ($icon && $iconPosition === 'after')
-            @svg($icon, $iconClasses)
+            <x-filament-support::icon :name="$icon" :class="$iconClasses" />
         @endif
     </a>
 @endif

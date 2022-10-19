@@ -126,14 +126,12 @@
                                 }"
                                 class="w-10 h-10 flex items-center justify-center rounded-full"
                             >
-                                @svg(
-                                    'heroicon-m-check',
-                                    'h-5 w-5 text-white',
-                                    [
-                                        'x-show' => "getStepIndex(step) > {$loop->index}",
-                                        'x-cloak',
-                                    ],
-                                )
+                                <x-filament-support::icon
+                                    name="heroicon-m-check"
+                                    class="h-5 w-5 text-white"
+                                    x-show="getStepIndex(step) > {{ $loop->index }}"
+                                    x-cloak
+                                />
 
                                 @if ($icon = $step->getIcon())
                                     @php
@@ -143,18 +141,16 @@
                                         ]);
                                     @endphp
 
-                                    @svg(
-                                        $icon,
-                                        'h-5 w-5',
-                                        [
-                                            'x-show' => "getStepIndex(step) <= {$loop->index}",
-                                            'x-cloak',
-                                            'x-bind:class' => "{
-                                                '{$inactiveIconClasses}': getStepIndex(step) !== {$loop->index},
-                                                'text-primary-500': getStepIndex(step) === {$loop->index},
-                                            }",
-                                        ],
-                                    )
+                                    <x-filament-support::icon
+                                        :name="$icon"
+                                        class="h-5 w-5"
+                                        x-show="getStepIndex(step) <= {{ $loop->index }}"
+                                        x-cloak
+                                        x-bind:class="{
+                                            {{ $inactiveIconClasses }}: getStepIndex(step) !== {{ $loop->index }},
+                                            'text-primary-500': getStepIndex(step) === {{ $loop->index }},
+                                        }"
+                                    />
                                 @else
                                     <span
                                         x-show="getStepIndex(step) <= {{ $loop->index }}"

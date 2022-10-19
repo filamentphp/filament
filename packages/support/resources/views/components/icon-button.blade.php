@@ -76,14 +76,12 @@
             </span>
         @endif
 
-        @svg(
-            $icon,
-            $iconClasses,
-            [
-                'wire:loading.remove.delay' => $hasLoadingIndicator,
-                'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-            ],
-        )
+        <x-filament-support::icon
+            :name="$icon"
+            :class="$iconClasses"
+            :wire:loading.remove.delay="$hasLoadingIndicator"
+            :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+        />
 
         @if ($hasLoadingIndicator)
             <x-filament-support::loading-indicator
@@ -122,7 +120,7 @@
             </span>
         @endif
 
-        @svg($icon, $iconClasses)
+        <x-filament-support::icon :name="$icon" :class="$iconClasses" />
 
         @if ($indicator)
             <span class="{{ $indicatorClasses }}">

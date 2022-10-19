@@ -84,7 +84,7 @@
                             <span class="text-left" x-text="tag"></span>
 
                             @unless ($isDisabled())
-                                @svg('heroicon-m-x-mark', 'h-3 w-3 shrink-0')
+                                <x-filament-support::icon name="heroicon-m-x-mark" class="h-3 w-3 shrink-0" />
                             @endunless
                         </button>
                     </template>

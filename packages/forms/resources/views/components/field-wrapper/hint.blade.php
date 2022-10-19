@@ -36,7 +36,7 @@
     @endif
 
     @if ($icon)
-        @svg($icon, 'h-4 w-4')
+        <x-filament-support::icon :name="$icon" class="h-4 w-4" />
     @endif
 
     @if ($action && (! $action->isHidden()))

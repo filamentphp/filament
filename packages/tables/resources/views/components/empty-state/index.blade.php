@@ -13,14 +13,12 @@
         'flex items-center justify-center w-16 h-16 text-primary-500 rounded-full bg-primary-50',
         'dark:bg-gray-700' => config('tables.dark_mode'),
     ])>
-        @svg(
-            $icon,
-            'h-6 w-6',
-            [
-                'wire:loading.remove.delay',
-                'wire:target' => implode(',', \Filament\Tables\Table::LOADING_TARGETS),
-            ],
-        )
+        <x-filament-support::icon
+            :name="$icon"
+            class="h-6 w-6"
+            wire:loading.remove.delay
+            :wire:target="implode(',', \Filament\Tables\Table::LOADING_TARGETS)"
+        />
 
         <x-filament-support::loading-indicator
             class="w-6 h-6"

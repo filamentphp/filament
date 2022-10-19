@@ -9,7 +9,7 @@
 
     <div class="relative group">
         <span class="absolute inset-y-0 left-0 flex items-center justify-center w-9 h-9 text-gray-400 pointer-events-none group-focus-within:text-primary-500">
-            @svg('heroicon-m-magnifying-glass', 'h-5 w-5')
+            <x-filament-support::icon name="heroicon-m-magnifying-glass" class="h-5 w-5" />
         </span>
 
         <input

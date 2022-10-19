@@ -57,14 +57,12 @@
         {{ $attributes->class([$buttonClasses]) }}
     >
         @if ($icon)
-            @svg(
-                $icon,
-                $iconClasses,
-                [
-                    'wire:loading.remove.delay' => $hasLoadingIndicator,
-                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : false,
-                ],
-            )
+            <x-filament-support::icon
+                :name="$icon"
+                :class="$iconClasses"
+                :wire:loading.remove.delay="$hasLoadingIndicator"
+                :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+            />
         @endif
 
         @if ($hasLoadingIndicator)
@@ -89,7 +87,7 @@
 @elseif ($tag === 'a')
     <a {{ $attributes->class([$buttonClasses]) }}>
         @if ($icon)
-            @svg($icon, $iconClasses)
+            <x-filament-support::icon :name="$icon" :class="$iconClasses" />
         @endif
 
         <span class="{{ $labelClasses }}">
@@ -111,7 +109,7 @@
             {{ $attributes->except(['action', 'class', 'method', 'wire:submit.prevent'])->class([$buttonClasses]) }}
         >
             @if ($icon)
-                @svg($icon, $iconClasses)
+                <x-filament-support::icon :name="$icon" :class="$iconClasses" />
             @endif
 
             <span class="{{ $labelClasses }}">
