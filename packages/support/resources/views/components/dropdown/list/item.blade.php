@@ -1,19 +1,16 @@
 @props([
     'color' => 'primary',
-    'darkMode' => false,
     'detail' => null,
     'icon' => null,
     'keyBindings' => null,
     'tag' => 'button',
-    'type' => 'button',
 ])
 
 @php
     $hasHoverAndFocusState = ($tag !== 'a' || filled($attributes->get('href')));
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-list-item group flex w-full items-center whitespace-nowrap rounded-md p-2 text-sm text-gray-900',
-        'dark:text-gray-100' => $darkMode,
+        'filament-dropdown-list-item group flex w-full items-center whitespace-nowrap rounded-md p-2 text-sm text-gray-900 dark:text-gray-100',
         'focus:outline-none hover:text-white focus:text-white' => $hasHoverAndFocusState,
         'hover:bg-primary-500 focus:bg-primary-500' => ($color === 'primary' || $color === 'secondary') && $hasHoverAndFocusState,
         'hover:bg-danger-500 focus:bg-danger-500' => $color === 'danger' && $hasHoverAndFocusState,
@@ -31,14 +28,19 @@
 
     $labelClasses = 'filament-dropdown-list-item-label truncate';
 
+    $iconColor = match ($color) {
+        'danger' => 'text-danger-500',
+        'primary' => 'text-primary-500',
+        'secondary' => 'text-gray-500',
+        'success' => 'text-success-500',
+        'warning' => 'text-warning-500',
+    };
+
+    $iconSize = 'h-5 w-5';
+
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-list-item-icon mr-2 h-5 w-5 rtl:ml-2 rtl:mr-0',
+        'filament-dropdown-list-item-icon mr-2 rtl:ml-2 rtl:mr-0',
         'group-hover:text-white group-focus:text-white' => $hasHoverAndFocusState,
-        'text-primary-500' => $color === 'primary',
-        'text-danger-500' => $color === 'danger',
-        'text-gray-500' => $color === 'secondary',
-        'text-success-500' => $color === 'success',
-        'text-warning-500' => $color === 'warning',
     ]);
 
     $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click'));
@@ -50,7 +52,7 @@
 
 @if ($tag === 'button')
     <button
-        type="{{ $type }}"
+        type="button"
         wire:loading.attr="disabled"
         {!! $hasLoadingIndicator ? 'wire:loading.class.delay="opacity-70 cursor-wait"' : '' !!}
         {!! ($hasLoadingIndicator && $loadingIndicatorTarget) ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
@@ -60,6 +62,8 @@
             <x-filament-support::icon
                 :name="$icon"
                 alias="support::dropdown.list.item"
+                :color="$iconColor"
+                :size="$iconSize"
                 :class="$iconClasses"
                 :wire:loading.remove.delay="$hasLoadingIndicator"
                 :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
@@ -71,7 +75,7 @@
                 x-cloak
                 wire:loading.delay
                 :wire:target="$loadingIndicatorTarget"
-                :class="$iconClasses"
+                :class="$iconClasses . ' ' . $iconColor . ' ' . $iconSize"
             />
         @endif
 
@@ -91,6 +95,8 @@
             <x-filament-support::icon
                 :name="$icon"
                 alias="support::dropdown.list.item"
+                :color="$iconColor"
+                :size="$iconSize"
                 :class="$iconClasses"
             />
         @endif
@@ -117,6 +123,8 @@
                 <x-filament-support::icon
                     :name="$icon"
                     alias="support::dropdown.list.item"
+                    :color="$iconColor"
+                    :size="$iconSize"
                     :class="$iconClasses"
                 />
             @endif
