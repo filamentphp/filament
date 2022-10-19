@@ -530,7 +530,7 @@ Alternatively, you may use the `getNavigationGroup()` method to set a dynamic gr
 ```php
 protected static function getNavigationGroup(): ?string
 {
-    return return __('filament/navigation.groups.shop');
+    return __('filament/navigation.groups.shop');
 }
 ```
 
