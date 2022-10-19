@@ -4,19 +4,21 @@
     </label>
 
     <div class="relative group max-w-md">
-        <span @class([
-            'absolute inset-y-0 left-0 flex items-center justify-center w-10 h-10 text-gray-500 pointer-events-none group-focus-within:text-primary-500',
-            'dark:text-gray-400' => config('filament.dark_mode'),
-        ])>
+        <span class="absolute inset-y-0 left-0 flex items-center justify-center w-10 h-10 pointer-events-none">
             <x-filament-support::icon
                 name="heroicon-m-magnifying-glass"
                 alias="app::global-search.input.prefix"
+                color="text-gray-500 dark:text-gray-400"
                 size="h-5 w-5"
                 wire:loading.remove.delay
                 wire:target="search"
             />
 
-            <x-filament-support::loading-indicator class="w-5 h-5" wire:loading.delay wire:target="search" />
+            <x-filament-support::loading-indicator
+                class="h-5 w-5 text-gray-500 dark:text-gray-400"
+                wire:loading.delay
+                wire:target="search"
+            />
         </span>
 
         <input
