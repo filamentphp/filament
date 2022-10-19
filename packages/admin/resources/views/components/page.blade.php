@@ -14,6 +14,8 @@
                 </x-slot>
             </x-filament::header>
         @endif
+        
+        {{ \Filament\Facades\Filament::renderHook('header-widgets.start') }}
 
         @if ($headerWidgets = $this->getHeaderWidgets())
             <x-filament::widgets
@@ -22,8 +24,12 @@
                 :data="$widgetData"
             />
         @endif
+        
+        {{ \Filament\Facades\Filament::renderHook('header-widgets.end') }}
 
         {{ $slot }}
+        
+        {{ \Filament\Facades\Filament::renderHook('footer-widgets.start') }}
 
         @if ($footerWidgets = $this->getFooterWidgets())
             <x-filament::widgets
@@ -32,6 +38,8 @@
                 :data="$widgetData"
             />
         @endif
+        
+        {{ \Filament\Facades\Filament::renderHook('footer-widgets.end') }}
 
         @if ($footer = $this->getFooter())
             {{ $footer }}
