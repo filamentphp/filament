@@ -2,7 +2,7 @@
     'alias',
     'class' => [],
     'color',
-    'icon',
+    'name',
     'size',
 ])
 
@@ -10,7 +10,7 @@
     $customIcon = \Filament\Support\Facades\Icon::resolve($alias);
 
     if ($customIcon) {
-        $icon = $customIcon->name;
+        $name = $customIcon->name;
     }
 
     $class = array_merge(
@@ -31,4 +31,4 @@
     $class[] = $size;
 @endphp
 
-@svg($icon, \Illuminate\Support\Arr::toCssClasses($class), $attributes)
+@svg($name, \Illuminate\Support\Arr::toCssClasses($class), $attributes)
