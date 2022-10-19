@@ -15,14 +15,12 @@
             @endif
             class="flex items-center justify-between w-full"
         >
-            <div @class([
-                'flex items-center gap-4 text-gray-600',
-                'dark:text-gray-300' => config('filament.dark_mode'),
-            ])>
+            <div class="flex items-center gap-4">
                 @if ($icon)
                     <x-filament-support::icon
                         :name="$icon"
                         alias="app::sidebar.group"
+                        color="text-gray-600 dark:text-gray-300"
                         size="h-3 w-3"
                         class="ml-1 flex-shrink-0"
                     />
