@@ -116,7 +116,7 @@
                                                 <x-heroicon-o-switch-vertical class="w-4 h-4" />
 
                                                 <span class="sr-only">
-                                                    {{ $getDeleteButtonLabel() }}
+                                                    {{ $getReorderButtonLabel() }}
                                                 </span>
                                             </button>
                                         @endif
