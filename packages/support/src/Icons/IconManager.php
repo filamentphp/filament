@@ -3,11 +3,11 @@
 namespace Filament\Support\Icons;
 
 use BladeUI\Icons\Svg;
+use Exception;
+use Illuminate\Support\Arr;
 
 class IconManager
 {
-    protected array $defaultIcons = [];
-
     protected array $icons = [];
 
     public function register(array $icons = []): static
@@ -17,24 +17,8 @@ class IconManager
         return $this;
     }
 
-    public function registerDefaults(array $icons = []): static
+    public function resolve(string $name): ?Icon
     {
-        $this->defaultIcons = array_merge($this->defaultIcons, $icons);
-
-        return $this;
-    }
-
-    public function resolve(string $name): string
-    {
-        return $this->icons[$name] ?? $this->defaultIcons[$name] ?? $name;
-    }
-
-    public function render(string $icon, string | array | null $class = null, array $attributes = []): Svg
-    {
-        return svg(
-            $this->resolve($icon),
-            $class,
-            $attributes,
-        );
+        return $this->icons[$name] ?? null;
     }
 }

@@ -70,10 +70,6 @@ class SupportServiceProvider extends PackageServiceProvider
             return "<?php \$slotContents = get_defined_vars(); \$slots = collect({$expression})->mapWithKeys(fn (string \$slot): array => [\$slot => \$slotContents[\$slot] ?? null])->all(); unset(\$slotContents) ?>";
         });
 
-        Blade::directive('filamentIcon', function (string $expression): string {
-            return "<?php echo \Filament\Support\Facades\Icon::render({$expression}) ?>";
-        });
-
         Blade::directive('filamentScripts', function (string $expression): string {
             return "<?php echo \Filament\Support\Facades\Asset::renderScripts({$expression}) ?>";
         });
