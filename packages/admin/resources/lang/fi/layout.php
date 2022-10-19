@@ -21,7 +21,7 @@ return [
         'logout' => [
             'label' => 'Kirjaudu ulos',
         ],
-        
+
     ],
 
 ];
