@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Actions;
 
-use Filament\Actions\MountableAction;
 use Filament\Actions\Concerns\CanBeDisabled;
 use Filament\Actions\Concerns\CanBeOutlined;
 use Filament\Actions\Concerns\CanOpenUrl;
@@ -11,6 +10,7 @@ use Filament\Actions\Concerns\HasTooltip;
 use Filament\Actions\Concerns\InteractsWithRecord;
 use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\Contracts\HasRecord;
+use Filament\Actions\MountableAction;
 use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
 use Illuminate\Database\Eloquent\Model;
 

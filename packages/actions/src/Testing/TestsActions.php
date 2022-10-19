@@ -4,8 +4,8 @@ namespace Filament\Actions\Testing;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Actions\MountableAction;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Actions\MountableAction;
 use Illuminate\Testing\Assert;
 use Livewire\Testing\TestableLivewire;
 
