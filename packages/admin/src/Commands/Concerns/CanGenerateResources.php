@@ -2,10 +2,13 @@
 
 namespace Filament\Commands\Concerns;
 
+use Doctrine\DBAL\Schema\AbstractAsset;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types;
 use Filament\Forms;
 use Filament\Tables;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Throwable;
 
@@ -14,6 +17,7 @@ trait CanGenerateResources
     protected function getResourceFormSchema(string $model): string
     {
         $table = $this->getModelTable($model);
+
 
         if (! $table) {
             return $this->indentString('//', 4);
@@ -45,6 +49,17 @@ trait CanGenerateResources
                 default => Forms\Components\TextInput::class,
             };
 
+            $guessedRelationName = null;
+            if(Str::of($column->getName())->endsWith('_id')){
+
+                $guessedRelationName = $this->guessBelongsToSelectRelationName($column,$model);
+                if(!empty($guessedRelationName)){
+                    $titleColumnName = $this->guessBelongsToSelectRelationTitleColumnName($column,$model);
+                    $componentData['type'] = Forms\Components\Select::class;
+                    $componentData['relationship'] = ["'$guessedRelationName",$titleColumnName."'"];
+                }
+            }
+
             if ($type === Forms\Components\TextInput::class) {
                 if (Str::of($column->getName())->contains(['email'])) {
                     $componentData['email'] = [];
@@ -63,7 +78,7 @@ trait CanGenerateResources
                 $componentData['required'] = [];
             }
 
-            if (in_array($type, [Forms\Components\TextInput::class, Forms\Components\Textarea::class]) && ($length = $column->getLength())) {
+            if (in_array($type, [Forms\Components\TextInput::class, Forms\Components\Textarea::class]) && ($length = $column->getLength()) && empty($guessedRelationName)) {
                 $componentData['maxLength'] = [$length];
             }
 
@@ -197,5 +212,79 @@ trait CanGenerateResources
         } catch (Throwable $exception) {
             return null;
         }
+    }
+
+    protected function getTableSchemaByTableName(string $model, $tableName): ?Table
+    {
+        if ((! class_exists($model)) && (! class_exists($model = "App\\Models\\{$model}"))) {
+            return null;
+        }
+
+        $model = app($model);
+
+        try {
+            return $model
+                ->getConnection()
+                ->getDoctrineSchemaManager()
+                ->listTableDetails($tableName);
+        } catch (Throwable $exception) {
+            return null;
+        }
+    }
+
+    protected function guessBelongsToSelectRelationName(AbstractAsset $column, string $model) :string
+    {
+        $modelReflection = invade(new $model);
+        $hasRelation = false;
+        $guessedRelationName = Str::of($column->getName())->replaceLast("_id",'');
+        if($modelReflection->reflected->hasMethod($guessedRelationName)){
+            $hasRelation = true;
+        }
+
+        if(!$hasRelation){
+            $guessedRelationName = $guessedRelationName->camel();
+            if($modelReflection->reflected->hasMethod($guessedRelationName)){
+                $hasRelation = true;
+            }
+        }
+
+
+        try {
+            if ($modelReflection->reflected->getMethod($guessedRelationName)->getReturnType() == BelongsTo::class) {
+                $hasRelation = true;
+            }
+        } catch (\ReflectionException $e) {
+            $hasRelation = false;
+        }
+
+        return  $hasRelation?$guessedRelationName:"";
+    }
+
+    protected function guessBelongsToSelectRelationTableName(AbstractAsset $column) : string{
+        $tempTableName = Str::of($column->getName())->replaceLast("_id",'');
+        $tableName = "";
+        if(Schema::hasTable(Str::of($tempTableName)->plural())){
+            $tableName = Str::of($tempTableName)->plural();
+        }else if(Schema::hasTable($tempTableName)){
+            $tableName =$tempTableName;
+        }
+        return $tableName;
+    }
+
+    protected function guessBelongsToSelectRelationTitleColumnName(AbstractAsset $column, string $model) : string{
+        $tableName = $this->guessBelongsToSelectRelationTableName($column);
+        $titleKey = "";
+        $primaryKey ="";
+        if(empty($tableName)){
+            $titleKey = "id";
+        }else{
+            $schema = $this->getTableSchemaByTableName($model,$tableName);
+            $primaryKey = $schema->getPrimaryKey()->getColumns()[0];
+            $columns = collect(array_keys($schema->getColumns()));
+            $titleKey = $columns->contains('name')
+                ?"name":($columns->contains('title')?'title':"");
+        }
+
+        return empty($titleKey)?$primaryKey:$titleKey;
     }
 }
