@@ -381,6 +381,7 @@ import de from 'filepond/locale/de-de'
 import en from 'filepond/locale/en-en'
 import es from 'filepond/locale/es-es'
 import fa from 'filepond/locale/fa_ir'
+import fi from 'filepond/locale/fi-fi'
 import fr from 'filepond/locale/fr-fr'
 import hu from 'filepond/locale/hu-hu'
 import id from 'filepond/locale/id-id'
@@ -406,6 +407,7 @@ const locales = {
     en,
     es,
     fa,
+    fi,
     fr,
     hu,
     id,
