@@ -63,6 +63,7 @@ return [
             'reorder' => [
                 'label' => 'Järjestele rivi',
             ],
+
         ],
 
         'fields' => [
