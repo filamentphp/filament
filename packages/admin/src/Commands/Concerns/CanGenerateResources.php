@@ -18,7 +18,6 @@ trait CanGenerateResources
     {
         $table = $this->getModelTable($model);
 
-
         if (! $table) {
             return $this->indentString('//', 4);
         }
@@ -50,13 +49,12 @@ trait CanGenerateResources
             };
 
             $guessedRelationName = null;
-            if(Str::of($column->getName())->endsWith('_id')){
-
-                $guessedRelationName = $this->guessBelongsToSelectRelationName($column,$model);
-                if(!empty($guessedRelationName)){
-                    $titleColumnName = $this->guessBelongsToSelectRelationTitleColumnName($column,$model);
+            if (Str::of($column->getName())->endsWith('_id')) {
+                $guessedRelationName = $this->guessBelongsToSelectRelationName($column, $model);
+                if (! empty($guessedRelationName)) {
+                    $titleColumnName = $this->guessBelongsToSelectRelationTitleColumnName($column, $model);
                     $componentData['type'] = Forms\Components\Select::class;
-                    $componentData['relationship'] = ["'$guessedRelationName",$titleColumnName."'"];
+                    $componentData['relationship'] = ["'$guessedRelationName", $titleColumnName . "'"];
                 }
             }
 
@@ -232,22 +230,21 @@ trait CanGenerateResources
         }
     }
 
-    protected function guessBelongsToSelectRelationName(AbstractAsset $column, string $model) :string
+    protected function guessBelongsToSelectRelationName(AbstractAsset $column, string $model): string
     {
         $modelReflection = invade(new $model);
         $hasRelation = false;
-        $guessedRelationName = Str::of($column->getName())->replaceLast("_id",'');
-        if($modelReflection->reflected->hasMethod($guessedRelationName)){
+        $guessedRelationName = Str::of($column->getName())->replaceLast('_id', '');
+        if ($modelReflection->reflected->hasMethod($guessedRelationName)) {
             $hasRelation = true;
         }
 
-        if(!$hasRelation){
+        if (! $hasRelation) {
             $guessedRelationName = $guessedRelationName->camel();
-            if($modelReflection->reflected->hasMethod($guessedRelationName)){
+            if ($modelReflection->reflected->hasMethod($guessedRelationName)) {
                 $hasRelation = true;
             }
         }
-
 
         try {
             if ($modelReflection->reflected->getMethod($guessedRelationName)->getReturnType() == BelongsTo::class) {
@@ -257,34 +254,37 @@ trait CanGenerateResources
             $hasRelation = false;
         }
 
-        return  $hasRelation?$guessedRelationName:"";
+        return  $hasRelation ? $guessedRelationName : '';
     }
 
-    protected function guessBelongsToSelectRelationTableName(AbstractAsset $column) : string{
-        $tempTableName = Str::of($column->getName())->replaceLast("_id",'');
-        $tableName = "";
-        if(Schema::hasTable(Str::of($tempTableName)->plural())){
+    protected function guessBelongsToSelectRelationTableName(AbstractAsset $column): string
+    {
+        $tempTableName = Str::of($column->getName())->replaceLast('_id', '');
+        $tableName = '';
+        if (Schema::hasTable(Str::of($tempTableName)->plural())) {
             $tableName = Str::of($tempTableName)->plural();
-        }else if(Schema::hasTable($tempTableName)){
-            $tableName =$tempTableName;
+        } elseif (Schema::hasTable($tempTableName)) {
+            $tableName = $tempTableName;
         }
+
         return $tableName;
     }
 
-    protected function guessBelongsToSelectRelationTitleColumnName(AbstractAsset $column, string $model) : string{
+    protected function guessBelongsToSelectRelationTitleColumnName(AbstractAsset $column, string $model): string
+    {
         $tableName = $this->guessBelongsToSelectRelationTableName($column);
-        $titleKey = "";
-        $primaryKey ="";
-        if(empty($tableName)){
-            $titleKey = "id";
-        }else{
-            $schema = $this->getTableSchemaByTableName($model,$tableName);
+        $titleKey = '';
+        $primaryKey = '';
+        if (empty($tableName)) {
+            $titleKey = 'id';
+        } else {
+            $schema = $this->getTableSchemaByTableName($model, $tableName);
             $primaryKey = $schema->getPrimaryKey()->getColumns()[0];
             $columns = collect(array_keys($schema->getColumns()));
             $titleKey = $columns->contains('name')
-                ?"name":($columns->contains('title')?'title':"");
+                ? 'name' : ($columns->contains('title') ? 'title' : '');
         }
 
-        return empty($titleKey)?$primaryKey:$titleKey;
+        return empty($titleKey) ? $primaryKey : $titleKey;
     }
 }
