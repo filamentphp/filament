@@ -9,6 +9,7 @@ use Filament\Support\Commands\AssetsCommand;
 use Filament\Support\Commands\CheckTranslationsCommand;
 use Filament\Support\Commands\UpgradeCommand;
 use Filament\Support\Facades\Asset;
+use Filament\Support\Icons\IconManager;
 use HtmlSanitizer\Sanitizer;
 use HtmlSanitizer\SanitizerInterface;
 use Illuminate\Foundation\Console\AboutCommand;
@@ -44,6 +45,13 @@ class SupportServiceProvider extends PackageServiceProvider
         );
 
         $this->app->scoped(
+            IconManager::class,
+            function () {
+                return new IconManager();
+            },
+        );
+
+        $this->app->scoped(
             SanitizerInterface::class,
             function () {
                 return Sanitizer::create(require __DIR__ . '/../config/html-sanitizer.php');
@@ -60,6 +68,10 @@ class SupportServiceProvider extends PackageServiceProvider
 
         Blade::directive('captureSlots', function (string $expression): string {
             return "<?php \$slotContents = get_defined_vars(); \$slots = collect({$expression})->mapWithKeys(fn (string \$slot): array => [\$slot => \$slotContents[\$slot] ?? null])->all(); unset(\$slotContents) ?>";
+        });
+
+        Blade::directive('filamentIcon', function (string $expression): string {
+            return "<?php echo \Filament\Support\Facades\Icon::render({$expression}) ?>";
         });
 
         Blade::directive('filamentScripts', function (string $expression): string {

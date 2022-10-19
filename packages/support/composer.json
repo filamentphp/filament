@@ -9,6 +9,7 @@
     },
     "require": {
         "php": "^8.0",
+        "blade-ui-kit/blade-icons": "^1.4",
         "illuminate/contracts": "^9.0",
         "illuminate/support": "^9.0",
         "illuminate/view": "^9.0",
