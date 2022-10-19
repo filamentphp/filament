@@ -64,6 +64,10 @@ return [
                 'label' => 'Rij verwijderen',
             ],
 
+            'reorder' => [
+                'label' => 'Rij herordenen',
+            ],
+
         ],
 
         'fields' => [
