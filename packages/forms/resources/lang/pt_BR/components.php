@@ -64,6 +64,10 @@ return [
                 'label' => 'Excluir linha',
             ],
 
+            'reorder' => [
+                'label' => 'Reordenar linha',
+            ],
+
         ],
 
         'fields' => [
