@@ -1,5 +1,4 @@
 @props([
-    'modals' => null,
     'widgetData' => [],
 ])
 

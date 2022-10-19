@@ -31,7 +31,7 @@
     :icon="$icon ?? $action->getIcon()"
     :size="$action->getSize()"
     :label-sr-only="$action->isLabelHidden()"
-    dusk="filament-actions.admin.action.{{ $action->getName() }}"
+    dusk="filament.actions.action.{{ $action->getName() }}"
 >
     {{ $slot }}
 </x-dynamic-component>

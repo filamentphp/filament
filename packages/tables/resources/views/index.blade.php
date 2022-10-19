@@ -640,7 +640,7 @@
                         @foreach ($columns as $column)
                             <x-tables::header-cell
                                 :extra-attributes="$column->getExtraHeaderAttributes()"
-                                :is-sort-column="$getSortColumn() === $column->getName()"
+                                :actively-sorted="$getSortColumn() === $column->getName()"
                                 :name="$column->getName()"
                                 :alignment="$column->getAlignment()"
                                 :sortable="$column->isSortable() && (! $isReordering)"

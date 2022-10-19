@@ -23,7 +23,7 @@
     :label="$action->getLabel()"
     :icon="$action->getIcon()"
     :size="$action->getSize()"
-    dusk="filament.forms.action.{{ $action->getName() }}"
+    dusk="filament.forms.{{ $action->getComponent()->getStatePath() }}.action.{{ $action->getName() }}"
 >
     {{ $slot }}
 </x-dynamic-component>

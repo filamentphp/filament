@@ -1,6 +1,6 @@
 @props([
+    'activelySorted' => false,
     'extraAttributes' => [],
-    'isSortColumn' => false,
     'name',
     'sortable' => false,
     'sortDirection',
@@ -31,13 +31,13 @@
 
         @if ($sortable)
             <x-filament-support::icon
-                :name="$isSortColumn && $sortDirection === 'asc' ? 'heroicon-m-chevron-up' : 'heroicon-m-chevron-down'"
+                :name="$activelySorted && $sortDirection === 'asc' ? 'heroicon-m-chevron-up' : 'heroicon-m-chevron-down'"
                 alias="tables::header-cell.sort"
                 color="dark:text-gray-300"
                 size="h-3 w-3"
                 :class="[
                     'filament-tables-header-cell-sort-icon',
-                    'opacity-25' => ! $isSortColumn,
+                    'opacity-25' => ! $activelySorted,
                 ]"
             />
         @endif
