@@ -1,6 +1,6 @@
 @props([
+    'activelySorted' => false,
     'extraAttributes' => [],
-    'isSortColumn' => false,
     'name',
     'sortable' => false,
     'sortDirection',
@@ -31,11 +31,11 @@
 
         @if ($sortable)
             @svg(
-                $isSortColumn && $sortDirection === 'asc' ? 'heroicon-m-chevron-up' : 'heroicon-m-chevron-down',
+                $activelySorted && $sortDirection === 'asc' ? 'heroicon-m-chevron-up' : 'heroicon-m-chevron-down',
                 \Illuminate\Support\Arr::toCssClasses([
                     'filament-tables-header-cell-sort-icon h-3 w-3',
                     'dark:text-gray-300' => config('tables.dark_mode'),
-                    'opacity-25' => ! $isSortColumn,
+                    'opacity-25' => ! $activelySorted,
                 ]),
             )
         @endif
