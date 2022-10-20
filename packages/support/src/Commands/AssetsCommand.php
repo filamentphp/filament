@@ -3,7 +3,7 @@
 namespace Filament\Support\Commands;
 
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
-use Filament\Support\Facades\Asset;
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 
@@ -17,7 +17,7 @@ class AssetsCommand extends Command
 
     public function handle(): int
     {
-        foreach (Asset::getAlpineComponents() as $asset) {
+        foreach (FilamentAsset::getAlpineComponents() as $asset) {
             if ($asset->isRemote()) {
                 continue;
             }
@@ -25,7 +25,7 @@ class AssetsCommand extends Command
             $this->copyAsset($asset->getPath(), $asset->getPublicPath());
         }
 
-        foreach (Asset::getScripts() as $asset) {
+        foreach (FilamentAsset::getScripts() as $asset) {
             if ($asset->isRemote()) {
                 continue;
             }
@@ -33,7 +33,7 @@ class AssetsCommand extends Command
             $this->copyAsset($asset->getPath(), $asset->getPublicPath());
         }
 
-        foreach (Asset::getStyles() as $asset) {
+        foreach (FilamentAsset::getStyles() as $asset) {
             if ($asset->isRemote()) {
                 continue;
             }

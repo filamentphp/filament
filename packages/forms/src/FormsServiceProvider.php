@@ -4,7 +4,7 @@ namespace Filament\Forms;
 
 use Filament\Forms\Testing\TestsForms;
 use Filament\Support\Assets\AlpineComponent;
-use Filament\Support\Facades\Asset;
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Filesystem\Filesystem;
 use Livewire\Testing\TestableLivewire;
 use Spatie\LaravelPackageTools\Package;
@@ -47,7 +47,7 @@ class FormsServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        Asset::register([
+        FilamentAsset::register([
             AlpineComponent::make('color-picker', __DIR__ . '/../dist/components/color-picker.js'),
             AlpineComponent::make('date-time-picker', __DIR__ . '/../dist/components/date-time-picker.js'),
             AlpineComponent::make('file-upload', __DIR__ . '/../dist/components/file-upload.js'),

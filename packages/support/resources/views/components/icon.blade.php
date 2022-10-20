@@ -2,12 +2,12 @@
     'alias',
     'class' => [],
     'color' => null,
-    'name',
+    'name' => null,
     'size',
 ])
 
 @php
-    $customIcon = \Filament\Support\Facades\Icon::resolve($alias);
+    $customIcon = \Filament\Support\Facades\FilamentIcon::resolve($alias);
 
     if ($customIcon) {
         $name = $customIcon->name;
@@ -27,4 +27,10 @@
     $class[] = $customIcon?->size ?? $size;
 @endphp
 
-@svg($name, \Illuminate\Support\Arr::toCssClasses($class), $attributes->getAttributes())
+@if ($name)
+    @svg($name, \Illuminate\Support\Arr::toCssClasses($class), $attributes->getAttributes())
+@else
+    <div {{ $attributes->class($class) }}>
+        {{ $slot }}
+    </div>
+@endif

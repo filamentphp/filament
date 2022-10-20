@@ -12,7 +12,7 @@ class AssetManager
 
     protected array $styles = [];
 
-    public function register(array $assets, ?string $package = null): static
+    public function register(array $assets, ?string $package = null): void
     {
         foreach ($assets as $asset) {
             $asset->package($package);
@@ -24,8 +24,6 @@ class AssetManager
                 default => null,
             };
         }
-
-        return $this;
     }
 
     public function getAlpineComponents(?array $packages = null): array

@@ -6,7 +6,7 @@ use Illuminate\Support\Arr;
 
 class Icon
 {
-    public string $name;
+    public ?string $name = null;
 
     public ?string $size = null;
 
@@ -14,12 +14,12 @@ class Icon
 
     public array $class = [];
 
-    final public function __construct(string $name)
+    final public function __construct(?string $name = null)
     {
         $this->name = $name;
     }
 
-    public static function make(string $name): static
+    public static function make(?string $name = null): static
     {
         return new static($name);
     }

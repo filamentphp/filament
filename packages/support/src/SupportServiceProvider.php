@@ -8,7 +8,7 @@ use Filament\Support\Assets\Js;
 use Filament\Support\Commands\AssetsCommand;
 use Filament\Support\Commands\CheckTranslationsCommand;
 use Filament\Support\Commands\UpgradeCommand;
-use Filament\Support\Facades\Asset;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\IconManager;
 use HtmlSanitizer\Sanitizer;
 use HtmlSanitizer\SanitizerInterface;
@@ -61,7 +61,7 @@ class SupportServiceProvider extends PackageServiceProvider
 
     public function packageBooted()
     {
-        Asset::register([
+        FilamentAsset::register([
             Js::make('support', __DIR__ . '/../dist/index.js'),
             Js::make('async-alpine', 'https://cdn.jsdelivr.net/npm/async-alpine@0.5.x/dist/async-alpine.script.js'),
         ]);
@@ -71,11 +71,11 @@ class SupportServiceProvider extends PackageServiceProvider
         });
 
         Blade::directive('filamentScripts', function (string $expression): string {
-            return "<?php echo \Filament\Support\Facades\Asset::renderScripts({$expression}) ?>";
+            return "<?php echo \Filament\Support\Facades\FilamentAsset::renderScripts({$expression}) ?>";
         });
 
         Blade::directive('filamentStyles', function (string $expression): string {
-            return "<?php echo \Filament\Support\Facades\Asset::renderStyles({$expression}) ?>";
+            return "<?php echo \Filament\Support\Facades\FilamentAsset::renderStyles({$expression}) ?>";
         });
 
         Str::macro('sanitizeHtml', function (string $html): string {

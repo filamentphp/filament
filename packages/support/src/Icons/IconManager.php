@@ -6,11 +6,9 @@ class IconManager
 {
     protected array $icons = [];
 
-    public function register(array $icons = []): static
+    public function register(array $icons): void
     {
         $this->icons = array_merge($this->icons, $icons);
-
-        return $this;
     }
 
     public function resolve(string $name): ?Icon

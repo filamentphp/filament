@@ -18,7 +18,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
-use Filament\Support\Facades\Asset;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\ButtonAction;
 use Filament\Tables\Actions\IconButtonAction;
@@ -101,7 +101,7 @@ class FilamentServiceProvider extends PluginServiceProvider
     {
         parent::packageBooted();
 
-        Asset::register([
+        FilamentAsset::register([
             Css::make('app', __DIR__ . '/../dist/index.css')->html(Filament::getTheme()),
             Js::make('app', __DIR__ . '/../dist/index.js')->core(),
             Js::make('echo', __DIR__ . '/../dist/echo.js')->core(),
