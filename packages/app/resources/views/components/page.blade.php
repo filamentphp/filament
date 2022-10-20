@@ -37,7 +37,7 @@
                 :data="$widgetData"
             />
         @endif
-            
+
         {{ \Filament\Facades\Filament::renderHook('page.footer-widgets.end') }}
 
         @if ($footer = $this->getFooter())
