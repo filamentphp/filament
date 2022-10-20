@@ -18,7 +18,7 @@
     <div class="flex justify-between items-center flex-1 lg:hidden">
         <div class="w-10">
             @if ($paginator->hasPages() && (! $paginator->onFirstPage()))
-                <x-filament-tables::icon-button
+                <x-filament-support::icon-button
                     :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
                     rel="prev"
                     :icon="$previousArrowIcon"
@@ -33,7 +33,7 @@
 
         <div class="w-10">
             @if ($paginator->hasPages() && $paginator->hasMorePages())
-                <x-filament-tables::icon-button
+                <x-filament-support::icon-button
                     :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
                     rel="next"
                     :icon="$nextArrowIcon"
@@ -47,7 +47,7 @@
         <div class="flex items-center">
             @if ($isSimple)
                 @if (! $paginator->onFirstPage())
-                    <x-filament-tables::button
+                    <x-filament-support::button
                         :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
                         :icon="$previousArrowIcon"
                         rel="prev"
@@ -55,7 +55,7 @@
                         color="secondary"
                     >
                         {{ __('filament-tables::table.pagination.buttons.previous.label') }}
-                    </x-filament-tables::button>
+                    </x-filament-support::button>
                 @endif
             @else
                 <div class="pl-2 text-sm font-medium dark:text-white">
@@ -79,7 +79,7 @@
         <div class="flex items-center justify-end">
             @if ($isSimple)
                 @if ($paginator->hasMorePages())
-                    <x-filament-tables::button
+                    <x-filament-support::button
                         :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
                         :icon="$nextArrowIcon"
                         icon-position="after"
@@ -88,7 +88,7 @@
                         color="secondary"
                     >
                         {{ __('filament-tables::table.pagination.buttons.next.label') }}
-                    </x-filament-tables::button>
+                    </x-filament-support::button>
                 @endif
             @else
                 @if ($paginator->hasPages())
