@@ -57,11 +57,15 @@ return [
         'buttons' => [
 
             'add' => [
-                'label' => 'Add Row',
+                'label' => 'Add row',
             ],
 
             'delete' => [
-                'label' => 'Delete Row',
+                'label' => 'Delete row',
+            ],
+
+            'reorder' => [
+                'label' => 'Reorder row',
             ],
 
         ],

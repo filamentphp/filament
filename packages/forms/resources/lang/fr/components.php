@@ -68,6 +68,10 @@ return [
                 'label' => 'Supprimer une ligne',
             ],
 
+            'reorder' => [
+                'label' => 'Réorganiser une ligne',
+            ],
+
         ],
 
         'fields' => [

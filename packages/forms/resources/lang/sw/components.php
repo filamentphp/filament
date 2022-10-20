@@ -64,6 +64,10 @@ return [
                 'label' => 'Futa safu',
             ],
 
+            'reorder' => [
+                'label' => 'Pangilia safu',
+            ],
+
         ],
 
         'fields' => [

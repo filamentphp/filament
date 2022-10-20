@@ -10,6 +10,10 @@ return [
             'label' => 'Zapnout tmavý režim',
         ],
 
+        'database_notifications' => [
+            'label' => 'Zobrazit notifikace',
+        ],
+
         'light_mode' => [
             'label' => 'Zapnout světlý režim',
         ],
