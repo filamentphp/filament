@@ -16,7 +16,7 @@
 
     @if (count($relationManagers))
         @if (! $this->hasCombinedRelationManagerTabsWithForm())
-            <x-filament::hr />
+            <x-filament-support::hr />
         @endif
 
         <x-filament::resources.relation-managers

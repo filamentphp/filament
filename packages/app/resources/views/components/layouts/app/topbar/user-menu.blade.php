@@ -10,25 +10,25 @@
 
 {{ \Filament\Facades\Filament::renderHook('user-menu.start') }}
 
-<x-filament::dropdown placement="bottom-end">
+<x-filament-support::dropdown placement="bottom-end">
     <x-slot name="trigger" class="ml-4">
         <x-filament::user-avatar :user="$user" />
     </x-slot>
 
     {{ \Filament\Facades\Filament::renderHook('user-menu.account.before') }}
 
-    <x-filament::dropdown.header
+    <x-filament-support::dropdown.header
         :color="$accountItem?->getColor() ?? 'secondary'"
         :icon="$accountItem?->getIcon() ?? 'heroicon-m-user-circle'"
         :href="$accountItemUrl"
         :tag="filled($accountItemUrl) ? 'a' : 'div'"
     >
         {{ $accountItem?->getLabel() ?? \Filament\Facades\Filament::getUserName($user) }}
-    </x-filament::dropdown.header>
+    </x-filament-support::dropdown.header>
 
     {{ \Filament\Facades\Filament::renderHook('user-menu.account.after') }}
 
-    <x-filament::dropdown.list
+    <x-filament-support::dropdown.list
         x-data="{
             mode: null,
 
@@ -73,29 +73,29 @@
         }"
     >
         <div>
-            <x-filament::dropdown.list.item icon="heroicon-m-moon" x-show="theme === 'dark'" x-on:click="close(); mode = 'manual'; theme = 'light'">
+            <x-filament-support::dropdown.list.item icon="heroicon-m-moon" x-show="theme === 'dark'" x-on:click="close(); mode = 'manual'; theme = 'light'">
                 {{ __('filament::layout.buttons.light_mode.label') }}
-            </x-filament::dropdown.list.item>
+            </x-filament-support::dropdown.list.item>
 
-            <x-filament::dropdown.list.item icon="heroicon-m-sun" x-show="theme === 'light'" x-on:click="close(); mode = 'manual'; theme = 'dark'">
+            <x-filament-support::dropdown.list.item icon="heroicon-m-sun" x-show="theme === 'light'" x-on:click="close(); mode = 'manual'; theme = 'dark'">
                 {{ __('filament::layout.buttons.dark_mode.label') }}
-            </x-filament::dropdown.list.item>
+            </x-filament-support::dropdown.list.item>
         </div>
 
         @foreach ($items as $key => $item)
             @if ($key !== 'account' && $key !== 'logout')
-                <x-filament::dropdown.list.item
+                <x-filament-support::dropdown.list.item
                     :color="$item->getColor() ?? 'secondary'"
                     :icon="$item->getIcon()"
                     :href="$item->getUrl()"
                     tag="a"
                 >
                     {{ $item->getLabel() }}
-                </x-filament::dropdown.list.item>
+                </x-filament-support::dropdown.list.item>
             @endif
         @endforeach
 
-        <x-filament::dropdown.list.item
+        <x-filament-support::dropdown.list.item
             :color="$logoutItem?->getColor() ?? 'secondary'"
             :icon="$logoutItem?->getIcon() ?? 'heroicon-m-arrow-left-on-rectangle'"
             :action="$logoutItem?->getUrl() ?? route('filament.auth.logout')"
@@ -103,8 +103,8 @@
             tag="form"
         >
             {{ $logoutItem?->getLabel() ?? __('filament::layout.buttons.logout.label') }}
-        </x-filament::dropdown.list.item>
-    </x-filament::dropdown.list>
-</x-filament::dropdown>
+        </x-filament-support::dropdown.list.item>
+    </x-filament-support::dropdown.list>
+</x-filament-support::dropdown>
 
 {{ \Filament\Facades\Filament::renderHook('user-menu.end') }}

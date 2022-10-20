@@ -1,6 +1,6 @@
 <x-filament::global-search.actions.action
     :action="$action"
-    component="filament::link"
+    component="filament-support::link"
     :icon-position="$getIconPosition()"
     class="filament-global-search-link-action"
 >
