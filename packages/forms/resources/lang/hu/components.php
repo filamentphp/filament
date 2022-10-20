@@ -65,7 +65,7 @@ return [
             ],
 
             'reorder' => [
-                'label' => 'Sor újrarendezése'
+                'label' => 'Sor újrarendezése',
             ],
 
         ],
