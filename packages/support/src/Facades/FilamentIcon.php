@@ -2,14 +2,8 @@
 
 namespace Filament\Support\Facades;
 
-use Closure;
-use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\Support\Icons\Icon;
 use Filament\Support\Icons\IconManager;
-use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Contracts\Auth\StatefulGuard;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Facade;
 
 /**
