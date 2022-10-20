@@ -14,7 +14,6 @@ use Filament\Support\SupportServiceProvider;
 use Filament\Tables\TablesServiceProvider;
 use Filament\Tests\App\Navigation\NavigationServiceProvider;
 use Filament\Tests\Models\User;
-use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetsServiceProvider;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Livewire\LivewireServiceProvider;
