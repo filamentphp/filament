@@ -111,7 +111,7 @@
                                             <button
                                                 x-sortable-handle
                                                 type="button"
-                                                class="text-gray-600 hover:text-gray-700"
+                                                class="text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                                             >
                                                 <x-heroicon-o-switch-vertical class="w-4 h-4" />
 
