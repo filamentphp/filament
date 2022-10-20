@@ -73,13 +73,15 @@
         }"
     >
         <div>
-            <x-filament-support::dropdown.list.item icon="heroicon-m-moon" x-show="theme === 'dark'" x-on:click="close(); mode = 'manual'; theme = 'light'">
-                {{ __('filament::layout.buttons.light_mode.label') }}
-            </x-filament-support::dropdown.list.item>
+            @if (config('filament.dark_mode'))
+                <x-filament-support::dropdown.list.item icon="heroicon-m-moon" x-show="theme === 'dark'" x-on:click="close(); mode = 'manual'; theme = 'light'">
+                    {{ __('filament::layout.buttons.light_mode.label') }}
+                </x-filament-support::dropdown.list.item>
 
-            <x-filament-support::dropdown.list.item icon="heroicon-m-sun" x-show="theme === 'light'" x-on:click="close(); mode = 'manual'; theme = 'dark'">
-                {{ __('filament::layout.buttons.dark_mode.label') }}
-            </x-filament-support::dropdown.list.item>
+                <x-filament-support::dropdown.list.item icon="heroicon-m-sun" x-show="theme === 'light'" x-on:click="close(); mode = 'manual'; theme = 'dark'">
+                    {{ __('filament::layout.buttons.dark_mode.label') }}
+                </x-filament-support::dropdown.list.item>
+            @endif
         </div>
 
         @foreach ($items as $key => $item)
