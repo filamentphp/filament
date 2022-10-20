@@ -15,7 +15,7 @@ class IconColumn extends Column
     }
     use Concerns\HasSize;
 
-    protected string $view = 'tables::columns.icon-column';
+    protected string $view = 'filament-tables::columns.icon-column';
 
     protected bool | Closure $isBoolean = false;
 

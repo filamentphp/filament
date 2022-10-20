@@ -4,7 +4,7 @@
     'indicatorsCount' => null,
 ])
 
-<x-tables::dropdown
+<x-filament-tables::dropdown
     {{ $attributes->class(['filament-tables-filters']) }}
     placement="bottom-end"
     shift
@@ -12,11 +12,11 @@
     wire:key="{{ $this->id }}.table.filters"
 >
     <x-slot name="trigger">
-        <x-tables::filters.trigger :indicators-count="$indicatorsCount" />
+        <x-filament-tables::filters.trigger :indicators-count="$indicatorsCount" />
     </x-slot>
 
-    <x-tables::filters
+    <x-filament-tables::filters
         class="p-4"
         :form="$form"
     />
-</x-tables::dropdown>
+</x-filament-tables::dropdown>

@@ -13,7 +13,7 @@ use Livewire\Testing\TestableLivewire;
 
 class NotificationsServiceProvider extends PluginServiceProvider
 {
-    public static string $name = 'notifications';
+    public static string $name = 'filament-notifications';
 
     public function packageBooted(): void
     {

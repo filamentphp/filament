@@ -12,7 +12,7 @@
     }
 @endphp
 
-<x-forms::button
+<x-filament-forms::button
     :form="$getFormToSubmit()"
     :type="$canSubmitForm() ? 'submit' : 'button'"
     :tag="$action->getUrl() ? 'a' : 'button'"
@@ -29,4 +29,4 @@
     class="filament-forms-modal-button-action"
 >
     {{ $getLabel() }}
-</x-forms::button>
+</x-filament-forms::button>

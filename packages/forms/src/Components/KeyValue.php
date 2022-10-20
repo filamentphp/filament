@@ -9,7 +9,7 @@ class KeyValue extends Field
 {
     use HasExtraAlpineAttributes;
 
-    protected string $view = 'forms::components.key-value';
+    protected string $view = 'filament-forms::components.key-value';
 
     protected string | Closure | null $addButtonLabel = null;
 
@@ -46,13 +46,13 @@ class KeyValue extends Field
                 ->all();
         });
 
-        $this->addButtonLabel(__('forms::components.key_value.buttons.add.label'));
+        $this->addButtonLabel(__('filament-forms::components.key_value.buttons.add.label'));
 
-        $this->deleteButtonLabel(__('forms::components.key_value.buttons.delete.label'));
+        $this->deleteButtonLabel(__('filament-forms::components.key_value.buttons.delete.label'));
 
-        $this->keyLabel(__('forms::components.key_value.fields.key.label'));
+        $this->keyLabel(__('filament-forms::components.key_value.fields.key.label'));
 
-        $this->valueLabel(__('forms::components.key_value.fields.value.label'));
+        $this->valueLabel(__('filament-forms::components.key_value.fields.value.label'));
     }
 
     public function addButtonLabel(string | Closure | null $label): static

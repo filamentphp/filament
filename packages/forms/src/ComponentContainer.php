@@ -28,7 +28,7 @@ class ComponentContainer extends ViewComponent
 
     protected array $meta = [];
 
-    protected string $view = 'forms::component-container';
+    protected string $view = 'filament-forms::component-container';
 
     protected string $evaluationIdentifier = 'container';
 

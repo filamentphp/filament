@@ -18,7 +18,7 @@
 
 <x-dynamic-component
     :component="$component"
-    :dark-mode="config('notifications.dark_mode')"
+    :dark-mode="config('filament-notifications.dark_mode')"
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes())"
     :tag="$action->getUrl() ? 'a' : 'button'"
     :wire:click="$action->isEnabled() ? $wireClickAction : null"

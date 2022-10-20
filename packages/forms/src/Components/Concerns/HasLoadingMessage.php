@@ -17,6 +17,6 @@ trait HasLoadingMessage
 
     public function getLoadingMessage(): string
     {
-        return $this->evaluate($this->loadingMessage) ?? __('forms::components.select.loading_message');
+        return $this->evaluate($this->loadingMessage) ?? __('filament-forms::components.select.loading_message');
     }
 }

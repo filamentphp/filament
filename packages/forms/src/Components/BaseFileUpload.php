@@ -352,7 +352,7 @@ class BaseFileUpload extends Field
 
     public function getDiskName(): string
     {
-        return $this->evaluate($this->diskName) ?? config('forms.default_filesystem_disk');
+        return $this->evaluate($this->diskName) ?? config('filament-forms.default_filesystem_disk');
     }
 
     public function getMaxSize(): ?int

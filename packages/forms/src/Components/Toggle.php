@@ -12,7 +12,7 @@ class Toggle extends Field
     use Concerns\HasToggleIcons;
     use HasExtraAlpineAttributes;
 
-    protected string $view = 'forms::components.toggle';
+    protected string $view = 'filament-forms::components.toggle';
 
     protected function setUp(): void
     {

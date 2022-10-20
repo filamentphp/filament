@@ -40,7 +40,7 @@ In the configuration file, point to this new trigger view:
 ```php
 'database' => [
     'enabled' => true,
-    'trigger' => 'notifications.database-notifications-trigger',
+    'trigger' => 'filament-notifications.database-notifications-trigger',
     // ...
 ],
 ```

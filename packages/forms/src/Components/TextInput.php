@@ -20,7 +20,7 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     use Concerns\HasStep;
     use HasExtraAlpineAttributes;
 
-    protected string $view = 'forms::components.text-input';
+    protected string $view = 'filament-forms::components.text-input';
 
     protected ?Closure $configureMaskUsing = null;
 

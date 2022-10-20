@@ -12,7 +12,7 @@ class TagsInput extends Field
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
 
-    protected string $view = 'forms::components.tags-input';
+    protected string $view = 'filament-forms::components.tags-input';
 
     protected string | Closure | null $separator = null;
 
@@ -52,7 +52,7 @@ class TagsInput extends Field
             return $state;
         });
 
-        $this->placeholder(__('forms::components.tags_input.placeholder'));
+        $this->placeholder(__('filament-forms::components.tags_input.placeholder'));
     }
 
     public function separator(string | Closure | null $separator = ','): static

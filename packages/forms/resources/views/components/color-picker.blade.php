@@ -18,7 +18,7 @@
         @if ($icon = $getPrefixIcon())
             <x-filament-support::icon
                 :name="$icon"
-                alias="forms::components.color-picker.prefix"
+                alias="filament-forms::components.color-picker.prefix"
                 size="h-5 w-5"
             />
         @endif
@@ -57,9 +57,9 @@
                 @endif
                 {{ $getExtraInputAttributeBag()->class([
                     'text-gray-900 block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70',
-                    'dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('forms.dark_mode'),
+                    'dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('filament-forms.dark_mode'),
                     'border-gray-300' => ! $errors->has($getStatePath()),
-                    'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
+                    'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('filament-forms.dark_mode'),
                     'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
                 ]) }}
             />
@@ -107,7 +107,7 @@
         @if ($icon = $getSuffixIcon())
             <x-filament-support::icon
                 :name="$icon"
-                alias="forms::components.color-picker.suffix"
+                alias="filament-forms::components.color-picker.suffix"
                 size="h-5 w-5"
             />
         @endif

@@ -8,19 +8,19 @@
     <div class="flex flex-col gap-4 md:justify-between md:items-start md:flex-row md:-mr-2">
         <div>
             @if ($heading)
-                <x-tables::header.heading>
+                <x-filament-tables::header.heading>
                     {{ $heading }}
-                </x-tables::header.heading>
+                </x-filament-tables::header.heading>
             @endif
 
             @if ($description)
-                <x-tables::header.description>
+                <x-filament-tables::header.description>
                     {{ $description }}
-                </x-tables::header.description>
+                </x-filament-tables::header.description>
             @endif
         </div>
 
-        <x-tables::actions
+        <x-filament-tables::actions
             :actions="$actions"
             alignment="right"
             wrap

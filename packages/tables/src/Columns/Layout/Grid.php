@@ -4,7 +4,7 @@ namespace Filament\Tables\Columns\Layout;
 
 class Grid extends Component
 {
-    protected string $view = 'tables::columns.layout.grid';
+    protected string $view = 'filament-tables::columns.layout.grid';
 
     protected ?array $columns = null;
 

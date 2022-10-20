@@ -19,7 +19,7 @@
             ($columns['2xl'] ?? null) ? (($columns['2xl'] === 1) ? '2xl:gap-1' : '2xl:gap-3') : null,
         ])"
     >
-        <x-tables::columns.layout
+        <x-filament-tables::columns.layout
             :components="$getComponents()"
             :record="$getRecord()"
             :record-key="$recordKey"

@@ -13,7 +13,7 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
     use Concerns\InteractsWithToolbarButtons;
     use HasExtraAlpineAttributes;
 
-    protected string $view = 'forms::components.markdown-editor';
+    protected string $view = 'filament-forms::components.markdown-editor';
 
     protected array | Closure $toolbarButtons = [
         'attachFiles',

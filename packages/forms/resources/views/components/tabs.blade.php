@@ -16,7 +16,7 @@
     {!! $getId() ? "id=\"{$getId()}\"" : null !!}
     {{ $attributes->merge($getExtraAttributes())->class([
         'filament-forms-tabs-component rounded-xl shadow-sm border border-gray-300 bg-white',
-        'dark:bg-gray-800 dark:border-gray-700' => config('forms.dark_mode'),
+        'dark:bg-gray-800 dark:border-gray-700' => config('filament-forms.dark_mode'),
     ]) }}
     {{ $getExtraAlpineAttributeBag() }}
 >
@@ -37,7 +37,7 @@
         role="tablist"
         @class([
             'filament-forms-tabs-component-header rounded-t-xl flex overflow-y-auto bg-gray-100',
-            'dark:bg-gray-700' => config('forms.dark_mode'),
+            'dark:bg-gray-700' => config('filament-forms.dark_mode'),
         ])
     >
         @foreach ($getChildComponentContainer()->getComponents() as $tab)
@@ -50,14 +50,14 @@
                 x-bind:tabindex="tab === '{{ $tab->getId() }}' ? 0 : -1"
                 class="filament-forms-tabs-component-button flex items-center gap-2 shrink-0 p-3 text-sm font-medium"
                 x-bind:class="{
-                    'text-gray-500 @if (config('forms.dark_mode')) dark:text-gray-400 @endif': tab !== '{{ $tab->getId() }}',
-                    'filament-forms-tabs-component-button-active bg-white text-primary-600 @if (config('forms.dark_mode')) dark:bg-gray-800 @endif': tab === '{{ $tab->getId() }}',
+                    'text-gray-500 @if (config('filament-forms.dark_mode')) dark:text-gray-400 @endif': tab !== '{{ $tab->getId() }}',
+                    'filament-forms-tabs-component-button-active bg-white text-primary-600 @if (config('filament-forms.dark_mode')) dark:bg-gray-800 @endif': tab === '{{ $tab->getId() }}',
                 }"
             >
                 @if ($icon = $tab->getIcon())
                     <x-filament-support::icon
                         :name="$icon"
-                        alias="forms::components.tabs.button"
+                        alias="filament-forms::components.tabs.button"
                         size="h-5 w-5"
                     />
                 @endif
@@ -68,7 +68,7 @@
                     <span
                         class="inline-flex items-center justify-center ml-auto rtl:ml-0 rtl:mr-auto min-h-4 px-2 py-0.5 text-xs font-medium tracking-tight rounded-xl whitespace-normal"
                         x-bind:class="{
-                            'bg-gray-200 @if (config('forms.dark_mode')) dark:bg-gray-600 @endif': tab !== '{{ $tab->getId() }}',
+                            'bg-gray-200 @if (config('filament-forms.dark_mode')) dark:bg-gray-600 @endif': tab !== '{{ $tab->getId() }}',
                             'bg-primary-500/10 font-medium': tab === '{{ $tab->getId() }}',
                         }"
                     >

@@ -17,7 +17,7 @@ class TablesServiceProvider extends PackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package
-            ->name('tables')
+            ->name('filament-tables')
             ->hasCommands($this->getCommands())
             ->hasConfigFile()
             ->hasTranslations()

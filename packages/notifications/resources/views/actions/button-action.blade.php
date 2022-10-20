@@ -1,9 +1,9 @@
-<x-notifications::actions.action
+<x-filament-notifications::actions.action
     :action="$action"
-    component="notifications::button"
+    component="filament-notifications::button"
     :outlined="$isOutlined()"
     :icon-position="$getIconPosition()"
     class="filament-notifications-button-action"
 >
     {{ $getLabel() }}
-</x-notifications::actions.action>
+</x-filament-notifications::actions.action>

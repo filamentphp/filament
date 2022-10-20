@@ -16,7 +16,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
     use Concerns\CanLimitItemsLength;
     use Concerns\CanBeCloned;
 
-    protected string $view = 'forms::components.builder';
+    protected string $view = 'filament-forms::components.builder';
 
     protected string | Closure | null $createItemBetweenButtonLabel = null;
 
@@ -176,10 +176,10 @@ class Builder extends Field implements Contracts\CanConcealComponents
             ],
         ]);
 
-        $this->createItemBetweenButtonLabel(__('forms::components.builder.buttons.create_item_between.label'));
+        $this->createItemBetweenButtonLabel(__('filament-forms::components.builder.buttons.create_item_between.label'));
 
         $this->createItemButtonLabel(static function (Builder $component) {
-            return __('forms::components.builder.buttons.create_item.label', [
+            return __('filament-forms::components.builder.buttons.create_item.label', [
                 'label' => Str::lcfirst($component->getLabel()),
             ]);
         });

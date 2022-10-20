@@ -17,7 +17,7 @@
     @if ($icon)
         <x-filament-support::icon
             :name="$icon"
-            alias="tables::columns.icon"
+            alias="filament-tables::columns.icon"
             :color="match ($color) {
                 'danger' => 'text-danger-500',
                 'primary' => 'text-primary-500',

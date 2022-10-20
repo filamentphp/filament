@@ -1,6 +1,6 @@
 <x-filament-actions::group
     :actions="$getActions()"
-    :dark-mode="config('tables.dark_mode')"
+    :dark-mode="config('filament-tables.dark_mode')"
     :color="$getColor()"
     :dropdown-placement="$getDropdownPlacement()"
     :icon="$getIcon()"

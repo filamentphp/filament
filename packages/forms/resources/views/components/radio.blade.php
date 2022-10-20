@@ -40,9 +40,9 @@
                                 {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
                                 {{ $getExtraInputAttributeBag()->class([
                                     'focus:ring-primary-500 h-4 w-4 text-primary-600 disabled:opacity-70',
-                                    'dark:bg-gray-700 dark:checked:bg-primary-500' => config('forms.dark_mode'),
+                                    'dark:bg-gray-700 dark:checked:bg-primary-500' => config('filament-forms.dark_mode'),
                                     'border-gray-300' => ! $errors->has($getStatePath()),
-                                    'dark:border-gray-500' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
+                                    'dark:border-gray-500' => (! $errors->has($getStatePath())) && config('filament-forms.dark_mode'),
                                     'border-danger-600 ring-1 ring-inset ring-danger-600' => $errors->has($getStatePath()),
                                 ]) }}
                                 {!! ($isDisabled || $isOptionDisabled($value, $label)) ? 'disabled' : null !!}
@@ -54,7 +54,7 @@
                             <label for="{{ $getId() }}-{{ $value }}" @class([
                                 'font-medium',
                                 'text-gray-700' => ! $errors->has($getStatePath()),
-                                'dark:text-gray-200' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
+                                'dark:text-gray-200' => (! $errors->has($getStatePath())) && config('filament-forms.dark_mode'),
                                 'text-danger-600' => $errors->has($getStatePath()),
                             ])>
                                 {{ $label }}
@@ -63,7 +63,7 @@
                             @if ($hasDescription($value))
                                 <p @class([
                                     'text-gray-500',
-                                    'dark:text-gray-400' => config('forms.dark_mode'),
+                                    'dark:text-gray-400' => config('filament-forms.dark_mode'),
                                 ])>
                                     {{ $getDescription($value) }}
                                 </p>

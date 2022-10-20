@@ -29,8 +29,8 @@ class SelectFilter extends BaseFilter
 
         $this->placeholder(
             fn (SelectFilter $filter): string => $filter->isMultiple() ?
-                __('tables::table.filters.multi_select.placeholder') :
-                __('tables::table.filters.select.placeholder'),
+                __('filament-tables::table.filters.multi_select.placeholder') :
+                __('filament-tables::table.filters.select.placeholder'),
         );
 
         $this->indicateUsing(function (SelectFilter $filter, array $state): array {

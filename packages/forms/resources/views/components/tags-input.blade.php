@@ -17,9 +17,9 @@
             x-show="state.length || {{ $isDisabled() ? 'false' : 'true' }}"
             @class([
                 'block w-full transition duration-75 divide-y rounded-lg shadow-sm border overflow-hidden focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500',
-                'dark:divide-gray-600' => config('forms.dark_mode'),
+                'dark:divide-gray-600' => config('filament-forms.dark_mode'),
                 'border-gray-300' => ! $errors->has($getStatePath()),
-                'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
+                'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('filament-forms.dark_mode'),
                 'border-danger-600 ring-1 ring-inset ring-danger-600' => $errors->has($getStatePath()),
             ])
         >
@@ -48,7 +48,7 @@
                         x-model="newTag"
                         {{ $getExtraInputAttributeBag()->class([
                             'webkit-calendar-picker-indicator:opacity-0 block w-full border-0',
-                            'dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400' => config('forms.dark_mode'),
+                            'dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400' => config('filament-forms.dark_mode'),
                         ]) }}
                     />
 
@@ -77,7 +77,7 @@
                             x-bind:dusk="'filament.forms.{{ $getStatePath() }}' + '.tag.' + tag + '.delete'"
                             @class([
                                 'inline-flex items-center justify-center min-h-6 px-2 py-0.5 text-sm font-medium tracking-tight text-primary-700 rounded-xl bg-primary-500/10 space-x-1 rtl:space-x-reverse',
-                                'dark:text-primary-500' => config('forms.dark_mode'),
+                                'dark:text-primary-500' => config('filament-forms.dark_mode'),
                                 'cursor-default' => $isDisabled(),
                             ])
                         >
@@ -86,7 +86,7 @@
                             @unless ($isDisabled())
                                 <x-filament-support::icon
                                     name="heroicon-m-x-mark"
-                                    alias="forms::components.tags-input.buttons.delete-tag"
+                                    alias="filament-forms::components.tags-input.buttons.delete-tag"
                                     size="h-3 w-3"
                                     class="shrink-0"
                                 />

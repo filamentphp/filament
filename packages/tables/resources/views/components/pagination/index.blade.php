@@ -12,32 +12,32 @@
 
 <nav
     role="navigation"
-    aria-label="{{ __('tables::table.pagination.label') }}"
+    aria-label="{{ __('filament-tables::table.pagination.label') }}"
     class="filament-tables-pagination flex items-center justify-between"
 >
     <div class="flex justify-between items-center flex-1 lg:hidden">
         <div class="w-10">
             @if ($paginator->hasPages() && (! $paginator->onFirstPage()))
-                <x-tables::icon-button
+                <x-filament-tables::icon-button
                     :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
                     rel="prev"
                     :icon="$previousArrowIcon"
-                    :label="__('tables::table.pagination.buttons.previous.label')"
+                    :label="__('filament-tables::table.pagination.buttons.previous.label')"
                 />
             @endif
         </div>
 
         @if (count($pageOptions) > 1)
-            <x-tables::pagination.records-per-page-selector :options="$pageOptions" />
+            <x-filament-tables::pagination.records-per-page-selector :options="$pageOptions" />
         @endif
 
         <div class="w-10">
             @if ($paginator->hasPages() && $paginator->hasMorePages())
-                <x-tables::icon-button
+                <x-filament-tables::icon-button
                     :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
                     rel="next"
                     :icon="$nextArrowIcon"
-                    :label="__('tables::table.pagination.buttons.next.label')"
+                    :label="__('filament-tables::table.pagination.buttons.next.label')"
                 />
             @endif
         </div>
@@ -47,23 +47,23 @@
         <div class="flex items-center">
             @if ($isSimple)
                 @if (! $paginator->onFirstPage())
-                    <x-tables::button
+                    <x-filament-tables::button
                         :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
                         :icon="$previousArrowIcon"
                         rel="prev"
                         size="sm"
                         color="secondary"
                     >
-                        {{ __('tables::table.pagination.buttons.previous.label') }}
-                    </x-tables::button>
+                        {{ __('filament-tables::table.pagination.buttons.previous.label') }}
+                    </x-filament-tables::button>
                 @endif
             @else
                 <div @class([
                     'pl-2 text-sm font-medium',
-                    'dark:text-white' => config('tables.dark_mode'),
+                    'dark:text-white' => config('filament-tables.dark_mode'),
                 ])>
                     @if ($paginator->total() > 1)
-                        {{ __('tables::table.pagination.overview', [
+                        {{ __('filament-tables::table.pagination.overview', [
                             'first' => $paginator->firstItem(),
                             'last' => $paginator->lastItem(),
                             'total' => $paginator->total(),
@@ -75,14 +75,14 @@
 
         <div class="flex items-center justify-center">
             @if (count($pageOptions) > 1)
-                <x-tables::pagination.records-per-page-selector :options="$pageOptions" />
+                <x-filament-tables::pagination.records-per-page-selector :options="$pageOptions" />
             @endif
         </div>
 
         <div class="flex items-center justify-end">
             @if ($isSimple)
                 @if ($paginator->hasMorePages())
-                    <x-tables::button
+                    <x-filament-tables::button
                         :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
                         :icon="$nextArrowIcon"
                         icon-position="after"
@@ -90,39 +90,39 @@
                         size="sm"
                         color="secondary"
                     >
-                        {{ __('tables::table.pagination.buttons.next.label') }}
-                    </x-tables::button>
+                        {{ __('filament-tables::table.pagination.buttons.next.label') }}
+                    </x-filament-tables::button>
                 @endif
             @else
                 @if ($paginator->hasPages())
                     <div @class([
                         'py-3 border rounded-lg',
-                        'dark:border-gray-600' => config('tables.dark_mode'),
+                        'dark:border-gray-600' => config('filament-tables.dark_mode'),
                     ])>
                         <ol @class([
                             'flex items-center text-sm text-gray-500 divide-x rtl:divide-x-reverse divide-gray-300',
-                            'dark:text-gray-400 dark:divide-gray-600' => config('tables.dark_mode'),
+                            'dark:text-gray-400 dark:divide-gray-600' => config('filament-tables.dark_mode'),
                         ])>
                             @if (! $paginator->onFirstPage())
-                                <x-tables::pagination.item
+                                <x-filament-tables::pagination.item
                                     :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
                                     icon="heroicon-m-chevron-left"
-                                    aria-label="{{ __('tables::table.pagination.buttons.previous.label') }}"
+                                    aria-label="{{ __('filament-tables::table.pagination.buttons.previous.label') }}"
                                     rel="prev"
                                 />
                             @endif
 
                             @foreach ($paginator->render()->offsetGet('elements') as $element)
                                 @if (is_string($element))
-                                    <x-tables::pagination.item :label="$element" disabled />
+                                    <x-filament-tables::pagination.item :label="$element" disabled />
                                 @endif
 
                                 @if (is_array($element))
                                     @foreach ($element as $page => $url)
-                                        <x-tables::pagination.item
+                                        <x-filament-tables::pagination.item
                                             :wire:click="'gotoPage(' . $page . ', \'' . $paginator->getPageName() . '\')'"
                                             :label="$page"
-                                            :aria-label="__('tables::table.pagination.buttons.go_to_page.label', ['page' => $page])"
+                                            :aria-label="__('filament-tables::table.pagination.buttons.go_to_page.label', ['page' => $page])"
                                             :active="$page === $paginator->currentPage()"
                                             :wire:key="$this->id . '.table.pagination.' . $paginator->getPageName() . '.' . $page"
                                         />
@@ -131,10 +131,10 @@
                             @endforeach
 
                             @if ($paginator->hasMorePages())
-                                <x-tables::pagination.item
+                                <x-filament-tables::pagination.item
                                     :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
                                     icon="heroicon-m-chevron-right"
-                                    aria-label="{{ __('tables::table.pagination.buttons.next.label') }}"
+                                    aria-label="{{ __('filament-tables::table.pagination.buttons.next.label') }}"
                                     rel="next"
                                 />
                             @endif

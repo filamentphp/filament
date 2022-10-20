@@ -12,7 +12,7 @@
     <span @class([
         'text-sm font-medium leading-4',
         'text-gray-700' => ! $error,
-        'dark:text-gray-300' => (! $error) && config('forms.dark_mode'),
+        'dark:text-gray-300' => (! $error) && config('filament-forms.dark_mode'),
         'text-danger-700' => $error,
     ])>
         {{ $slot }}

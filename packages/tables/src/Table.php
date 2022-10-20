@@ -35,7 +35,7 @@ class Table extends ViewComponent
 {
     use Concerns\BelongsToLivewire;
 
-    protected string $view = 'tables::index';
+    protected string $view = 'filament-tables::index';
 
     protected string $viewIdentifier = 'table';
 
@@ -754,7 +754,7 @@ class Table extends ViewComponent
 
     public function getEmptyStateHeading(): string | Htmlable
     {
-        return $this->evaluate($this->emptyStateHeading) ?? __('tables::table.empty.heading');
+        return $this->evaluate($this->emptyStateHeading) ?? __('filament-tables::table.empty.heading');
     }
 
     public function getEmptyStateIcon(): string
@@ -902,7 +902,7 @@ class Table extends ViewComponent
 
     public function getPaginationPageOptions(): array
     {
-        return $this->evaluate($this->paginationPageOptions) ?? config('tables.pagination.records_per_page_select_options') ?? [5, 10, 25, 50, 'all'];
+        return $this->evaluate($this->paginationPageOptions) ?? config('filament-tables.pagination.records_per_page_select_options') ?? [5, 10, 25, 50, 'all'];
     }
 
     public function getRecordAction(Model $record): ?string

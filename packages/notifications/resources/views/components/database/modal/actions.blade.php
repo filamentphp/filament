@@ -7,7 +7,7 @@
     @if ($notifications->count())
         <div class="mt-2 text-sm">
             @if ($unreadNotificationsCount)
-                <x-notifications::link
+                <x-filament-notifications::link
                     wire:click="markAllDatabaseNotificationsAsRead"
                     color="secondary"
                     tag="button"
@@ -16,15 +16,15 @@
                     wire:loading.attr="disabled"
                     wire:loading.class="opacity-70 cursor-wait"
                 >
-                    {{ __('notifications::database.modal.buttons.mark_all_as_read.label') }}
-                </x-notifications::link>
+                    {{ __('filament-notifications::database.modal.buttons.mark_all_as_read.label') }}
+                </x-filament-notifications::link>
 
                 <span>
                     &bull;
                 </span>
             @endif
 
-            <x-notifications::link
+            <x-filament-notifications::link
                 wire:click="clearDatabaseNotifications"
                 x-on:click="isOpen = false"
                 color="secondary"
@@ -34,8 +34,8 @@
                 wire:loading.attr="disabled"
                 wire:loading.class="opacity-70 cursor-wait"
             >
-                {{ __('notifications::database.modal.buttons.clear.label') }}
-            </x-notifications::link>
+                {{ __('filament-notifications::database.modal.buttons.clear.label') }}
+            </x-filament-notifications::link>
         </div>
     @endif
 </div>

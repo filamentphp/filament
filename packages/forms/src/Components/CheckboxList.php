@@ -11,7 +11,7 @@ class CheckboxList extends Field
 {
     use Concerns\HasOptions;
 
-    protected string $view = 'forms::components.checkbox-list';
+    protected string $view = 'filament-forms::components.checkbox-list';
 
     protected string | Closure | null $relationshipTitleAttribute = null;
 

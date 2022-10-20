@@ -10,7 +10,7 @@ use Livewire\Testing\TestableLivewire;
 
 class FormsServiceProvider extends PluginServiceProvider
 {
-    public static string $name = 'forms';
+    public static string $name = 'filament-forms';
 
     public function packageBooted(): void
     {

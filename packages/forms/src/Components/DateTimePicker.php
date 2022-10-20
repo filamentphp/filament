@@ -14,7 +14,7 @@ class DateTimePicker extends Field
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
 
-    protected string $view = 'forms::components.date-time-picker';
+    protected string $view = 'filament-forms::components.date-time-picker';
 
     protected string | Closure | null $displayFormat = null;
 
@@ -209,18 +209,18 @@ class DateTimePicker extends Field
         }
 
         if (! $this->hasTime()) {
-            return config('forms.components.date_time_picker.display_formats.date', 'M j, Y');
+            return config('filament-forms.components.date_time_picker.display_formats.date', 'M j, Y');
         }
 
         if (! $this->hasDate()) {
             return $this->hasSeconds() ?
-                config('forms.components.date_time_picker.display_formats.time_with_seconds', 'H:i:s') :
-                config('forms.components.date_time_picker.display_formats.time', 'H:i');
+                config('filament-forms.components.date_time_picker.display_formats.time_with_seconds', 'H:i:s') :
+                config('filament-forms.components.date_time_picker.display_formats.time', 'H:i');
         }
 
         return $this->hasSeconds() ?
-            config('forms.components.date_time_picker.display_formats.date_time_with_seconds', 'M j, Y H:i:s') :
-            config('forms.components.date_time_picker.display_formats.date_time', 'M j, Y H:i');
+            config('filament-forms.components.date_time_picker.display_formats.date_time_with_seconds', 'M j, Y H:i:s') :
+            config('filament-forms.components.date_time_picker.display_formats.date_time', 'M j, Y H:i');
     }
 
     public function getExtraTriggerAttributes(): array
@@ -303,6 +303,6 @@ class DateTimePicker extends Field
 
     public function getDefaultFirstDayOfWeek(): int
     {
-        return config('forms.components.date_time_picker.first_day_of_week', 1);
+        return config('filament-forms.components.date_time_picker.first_day_of_week', 1);
     }
 }

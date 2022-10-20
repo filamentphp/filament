@@ -42,7 +42,7 @@
         @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hint || $hintIcon || $hintAction)
             <div class="flex items-center justify-between space-x-2 rtl:space-x-reverse">
                 @if ($label && (! $labelSrOnly))
-                    <x-forms::field-wrapper.label
+                    <x-filament-forms::field-wrapper.label
                         :for="$id"
                         :error="$errors->has($statePath)"
                         :is-marked-as-required="$isMarkedAsRequired"
@@ -51,7 +51,7 @@
                         :suffix="$labelSuffix"
                     >
                         {{ $label }}
-                    </x-forms::field-wrapper.label>
+                    </x-filament-forms::field-wrapper.label>
                 @elseif ($labelPrefix)
                     {{ $labelPrefix }}
                 @elseif ($labelSuffix)
@@ -59,9 +59,9 @@
                 @endif
 
                 @if ($hint || $hintIcon || $hintAction)
-                    <x-forms::field-wrapper.hint :action="$hintAction" :color="$hintColor" :icon="$hintIcon">
+                    <x-filament-forms::field-wrapper.hint :action="$hintAction" :color="$hintColor" :icon="$hintIcon">
                         {{ filled($hint) ? ($hint instanceof \Illuminate\Support\HtmlString ? $hint : str($hint)->markdown()->sanitizeHtml()->toHtmlString()) : null }}
-                    </x-forms::field-wrapper.hint>
+                    </x-filament-forms::field-wrapper.hint>
                 @endif
             </div>
         @endif
@@ -69,15 +69,15 @@
         {{ $slot }}
 
         @if ($errors->has($statePath))
-            <x-forms::field-wrapper.error-message>
+            <x-filament-forms::field-wrapper.error-message>
                 {{ $errors->first($statePath) }}
-            </x-forms::field-wrapper.error-message>
+            </x-filament-forms::field-wrapper.error-message>
         @endif
 
         @if ($helperText)
-            <x-forms::field-wrapper.helper-text>
+            <x-filament-forms::field-wrapper.helper-text>
                 {{ $helperText instanceof \Illuminate\Support\HtmlString ? $helperText : str($helperText)->markdown()->sanitizeHtml()->toHtmlString() }}
-            </x-forms::field-wrapper.helper-text>
+            </x-filament-forms::field-wrapper.helper-text>
         @endif
     </div>
 </div>

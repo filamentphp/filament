@@ -9,11 +9,11 @@
     match ($color) {
         'danger' => [
             'text-danger-500',
-            'dark:text-danger-300' => config('tables.dark_mode'),
+            'dark:text-danger-300' => config('filament-tables.dark_mode'),
         ],
         'success' => [
             'text-success-500',
-            'dark:text-success-300' => config('tables.dark_mode'),
+            'dark:text-success-300' => config('filament-tables.dark_mode'),
         ],
         'warning' => [
             'text-warning-500',
@@ -21,11 +21,11 @@
         ],
         'primary' => [
             'text-primary-500',
-            'dark:text-primary-300' => config('tables.dark_mode'),
+            'dark:text-primary-300' => config('filament-tables.dark_mode'),
         ],
         default => [
             'text-gray-500',
-            'dark:text-gray-300' => config('tables.dark_mode'),
+            'dark:text-gray-300' => config('filament-tables.dark_mode'),
         ],
     },
 )) }}>
@@ -38,7 +38,7 @@
     @if ($icon)
         <x-filament-support::icon
             :name="$icon"
-            alias="forms::field-wrapper.hint"
+            alias="filament-forms::field-wrapper.hint"
             size="h-5 w-5"
         />
     @endif

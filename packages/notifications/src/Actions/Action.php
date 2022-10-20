@@ -17,7 +17,7 @@ class Action extends StaticAction implements Arrayable
     use CanEmitEvent;
     use CanOpenUrl;
 
-    protected string $view = 'notifications::actions.link-action';
+    protected string $view = 'filament-notifications::actions.link-action';
 
     protected string $viewIdentifier = 'action';
 
@@ -69,26 +69,26 @@ class Action extends StaticAction implements Arrayable
 
     protected static function isViewSafe(string $view): bool
     {
-        return Str::startsWith($view, 'notifications::actions.');
+        return Str::startsWith($view, 'filament-notifications::actions.');
     }
 
     public function button(): static
     {
-        $this->view('notifications::actions.button-action');
+        $this->view('filament-notifications::actions.button-action');
 
         return $this;
     }
 
     public function grouped(): static
     {
-        $this->view('notifications::actions.grouped-action');
+        $this->view('filament-notifications::actions.grouped-action');
 
         return $this;
     }
 
     public function link(): static
     {
-        $this->view('notifications::actions.link-action');
+        $this->view('filament-notifications::actions.link-action');
 
         return $this;
     }

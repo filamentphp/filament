@@ -13,7 +13,7 @@ class TextColumn extends Column
     use Concerns\HasSize;
     use Concerns\HasWeight;
 
-    protected string $view = 'tables::columns.text-column';
+    protected string $view = 'filament-tables::columns.text-column';
 
     protected bool | Closure $canWrap = false;
 

@@ -1,8 +1,8 @@
-<x-tables::actions.action
+<x-filament-tables::actions.action
     :action="$action"
-    component="tables::dropdown.list.item"
+    component="filament-tables::dropdown.list.item"
     :icon="$action->getGroupedIcon()"
     class="filament-tables-grouped-action"
 >
     {{ $getLabel() }}
-</x-tables::actions.action>
+</x-filament-tables::actions.action>

@@ -10,7 +10,7 @@ class CheckboxColumn extends Column implements Editable
     use Concerns\CanBeValidated;
     use HasExtraInputAttributes;
 
-    protected string $view = 'tables::columns.checkbox-column';
+    protected string $view = 'filament-tables::columns.checkbox-column';
 
     protected function setUp(): void
     {

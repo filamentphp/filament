@@ -25,7 +25,7 @@ trait CanFormatState
 
     public function date(?string $format = null, ?string $timezone = null): static
     {
-        $format ??= config('tables.date_format');
+        $format ??= config('filament-tables.date_format');
 
         $this->formatStateUsing(static function (Column $column, $state) use ($format, $timezone): ?string {
             /** @var TextColumn $column */
@@ -43,7 +43,7 @@ trait CanFormatState
 
     public function dateTime(?string $format = null, ?string $timezone = null): static
     {
-        $format ??= config('tables.date_time_format');
+        $format ??= config('filament-tables.date_time_format');
 
         $this->date($format, $timezone);
 
@@ -157,7 +157,7 @@ trait CanFormatState
 
     public function time(?string $format = null, ?string $timezone = null): static
     {
-        $format ??= config('tables.time_format');
+        $format ??= config('filament-tables.time_format');
 
         $this->date($format, $timezone);
 

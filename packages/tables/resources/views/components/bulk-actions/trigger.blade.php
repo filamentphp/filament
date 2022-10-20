@@ -1,6 +1,6 @@
-<x-tables::icon-button
+<x-filament-tables::icon-button
     icon="heroicon-o-ellipsis-vertical"
-    :label="__('tables::table.buttons.open_actions.label')"
+    :label="__('filament-tables::table.buttons.open_actions.label')"
     x-cloak
     {{ $attributes->class(['filament-tables-bulk-actions-trigger']) }}
 />

@@ -18,12 +18,12 @@ trait HasFieldWrapper
     public function getFieldWrapperView(): string
     {
         if ($this->hasInlineLabel()) {
-            return 'forms::field-wrapper.inline';
+            return 'filament-forms::field-wrapper.inline';
         }
 
         return $this->getCustomFieldWrapperView() ??
             $this->getContainer()->getCustomFieldWrapperView() ??
-            'forms::field-wrapper';
+            'filament-forms::field-wrapper';
     }
 
     public function getCustomFieldWrapperView(): ?string

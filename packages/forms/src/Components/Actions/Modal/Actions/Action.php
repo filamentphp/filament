@@ -6,11 +6,11 @@ use Filament\Actions\Modal\Actions\Action as BaseAction;
 
 class Action extends BaseAction
 {
-    protected string $view = 'forms::components.actions.modal.actions.button-action';
+    protected string $view = 'filament-forms::components.actions.modal.actions.button-action';
 
     public function button(): static
     {
-        $this->view('forms::components.actions.modal.actions.button-action');
+        $this->view('filament-forms::components.actions.modal.actions.button-action');
 
         return $this;
     }

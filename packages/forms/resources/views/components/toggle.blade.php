@@ -25,7 +25,7 @@
                         'success' => 'bg-success-500',
                         'warning' => 'bg-warning-500',
                         default => 'bg-gray-200',
-                    } }} @if (config('forms.dark_mode')) dark:bg-white/10 @endif': ! state,
+                    } }} @if (config('filament-forms.dark_mode')) dark:bg-white/10 @endif': ! state,
                 }"
                 {!! $isAutofocused() ? 'autofocus' : null !!}
                 {!! $isDisabled() ? 'disabled' : null !!}
@@ -56,7 +56,7 @@
                         @if ($hasOffIcon())
                             <x-filament-support::icon
                                 :name="$getOffIcon()"
-                                alias="forms::components.toggle.off"
+                                alias="filament-forms::components.toggle.off"
                                 :color="match ($getOffColor()) {
                                     'danger' => 'text-danger-500',
                                     'primary' => 'text-primary-500',
@@ -80,7 +80,7 @@
                         @if ($hasOnIcon())
                             <x-filament-support::icon
                                 :name="$getOnIcon()"
-                                alias="forms::components.toggle.on"
+                                alias="filament-forms::components.toggle.on"
                                 :color="match ($getOnColor()) {
                                     'danger' => 'text-danger-500',
                                     'secondary' => 'text-gray-400',

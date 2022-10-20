@@ -13,7 +13,7 @@ class BulkAction extends MountableAction
     use Concerns\CanDeselectRecordsAfterCompletion;
     use Concerns\InteractsWithRecords;
 
-    protected string $view = 'tables::actions.bulk-action';
+    protected string $view = 'filament-tables::actions.bulk-action';
 
     public function call(array $parameters = [])
     {

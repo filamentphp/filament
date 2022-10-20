@@ -64,15 +64,15 @@
                             match ($badgeColor) {
                                 'danger' => [
                                     'text-danger-700 bg-danger-500/10' => ! $active,
-                                    'dark:text-danger-500' => (! $active) && config('tables.dark_mode'),
+                                    'dark:text-danger-500' => (! $active) && config('filament-tables.dark_mode'),
                                 ],
                                 'secondary' => [
                                     'text-gray-700 bg-gray-500/10' => ! $active,
-                                    'dark:text-gray-500' => (! $active) && config('tables.dark_mode'),
+                                    'dark:text-gray-500' => (! $active) && config('filament-tables.dark_mode'),
                                 ],
                                 'success' => [
                                     'text-success-700 bg-success-500/10' => ! $active,
-                                    'dark:text-success-500' => (! $active) && config('tables.dark_mode'),
+                                    'dark:text-success-500' => (! $active) && config('filament-tables.dark_mode'),
                                 ],
                                 'warning' => [
                                     'text-warning-700 bg-warning-500/10' => ! $active,
@@ -80,7 +80,7 @@
                                 ],
                                 'primary', null => [
                                     'text-primary-700 bg-primary-500/10' => ! $active,
-                                    'dark:text-primary-500' => (! $active) && config('tables.dark_mode'),
+                                    'dark:text-primary-500' => (! $active) && config('filament-tables.dark_mode'),
                                 ],
                                 default => [
                                     $badgeColor => ! $active,

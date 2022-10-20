@@ -51,7 +51,7 @@
             ])"
         >
             @if ($isColumn)
-                <x-tables::columns.column
+                <x-filament-tables::columns.column
                     :column="$layoutComponent->inline()"
                     :record="$record"
                     :record-key="$recordKey"

@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 class Tab extends Component implements CanConcealComponents
 {
-    protected string $view = 'forms::components.tabs.tab';
+    protected string $view = 'filament-forms::components.tabs.tab';
 
     protected string | Closure | null $badge = null;
 

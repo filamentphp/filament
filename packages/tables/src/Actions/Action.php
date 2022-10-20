@@ -24,32 +24,32 @@ class Action extends MountableAction implements Groupable, HasRecord
     use HasTooltip;
     use InteractsWithRecord;
 
-    protected string $view = 'tables::actions.link-action';
+    protected string $view = 'filament-tables::actions.link-action';
 
     public function button(): static
     {
-        $this->view('tables::actions.button-action');
+        $this->view('filament-tables::actions.button-action');
 
         return $this;
     }
 
     public function grouped(): static
     {
-        $this->view('tables::actions.grouped-action');
+        $this->view('filament-tables::actions.grouped-action');
 
         return $this;
     }
 
     public function link(): static
     {
-        $this->view('tables::actions.link-action');
+        $this->view('filament-tables::actions.link-action');
 
         return $this;
     }
 
     public function iconButton(): static
     {
-        $this->view('tables::actions.icon-button-action');
+        $this->view('filament-tables::actions.icon-button-action');
 
         return $this;
     }

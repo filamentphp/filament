@@ -6,7 +6,7 @@ use Closure;
 
 class Split extends Component
 {
-    protected string $view = 'tables::columns.layout.split';
+    protected string $view = 'filament-tables::columns.layout.split';
 
     protected string | Closure | null $fromBreakpoint = null;
 

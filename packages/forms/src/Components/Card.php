@@ -8,7 +8,7 @@ class Card extends Component implements CanEntangleWithSingularRelationships
 {
     use Concerns\EntanglesStateWithSingularRelationship;
 
-    protected string $view = 'forms::components.card';
+    protected string $view = 'filament-forms::components.card';
 
     final public function __construct(array $schema = [])
     {

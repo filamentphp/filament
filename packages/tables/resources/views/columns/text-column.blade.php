@@ -23,7 +23,7 @@
         match ($getColor()) {
             'secondary' => 'dark:text-gray-400',
             default => null,
-        } => (! ($getAction() || $getUrl())) && config('tables.dark_mode'),
+        } => (! ($getAction() || $getUrl())) && config('filament-tables.dark_mode'),
         match ($getSize()) {
             'sm' => 'text-sm',
             'lg' => 'text-lg',
@@ -53,7 +53,7 @@
         @if ($icon && $iconPosition === 'before')
             <x-filament-support::icon
                 :name="$icon"
-                alias="tables::columns.text.prefix"
+                alias="filament-tables::columns.text.prefix"
                 :size="$iconSize"
             />
         @endif
@@ -65,7 +65,7 @@
         @if ($icon && $iconPosition === 'after')
             <x-filament-support::icon
                 :name="$icon"
-                alias="tables::columns.text.suffix"
+                alias="filament-tables::columns.text.suffix"
                 :size="$iconSize"
             />
         @endif

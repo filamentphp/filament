@@ -15,11 +15,11 @@ class Action extends MountableAction
     use CanOpenUrl;
     use HasTooltip;
 
-    protected string $view = 'forms::components.actions.icon-button-action';
+    protected string $view = 'filament-forms::components.actions.icon-button-action';
 
     public function iconButton(): static
     {
-        $this->view('forms::components.actions.icon-button-action');
+        $this->view('filament-forms::components.actions.icon-button-action');
 
         return $this;
     }

@@ -6,7 +6,7 @@ use Closure;
 
 class ColorColumn extends Column
 {
-    protected string $view = 'tables::columns.color-column';
+    protected string $view = 'filament-tables::columns.color-column';
 
     protected bool | Closure $isCopyable = false;
 
@@ -37,7 +37,7 @@ class ColorColumn extends Column
 
     public function getCopyMessage(): string
     {
-        return $this->evaluate($this->copyMessage) ?? __('tables::table.columns.color.messages.copied');
+        return $this->evaluate($this->copyMessage) ?? __('filament-tables::table.columns.color.messages.copied');
     }
 
     public function getCopyMessageDuration(): int

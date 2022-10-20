@@ -1,8 +1,8 @@
-<x-tables::actions.action
+<x-filament-tables::actions.action
     :action="$action"
-    component="tables::link"
+    component="filament-tables::link"
     :icon-position="$getIconPosition()"
     class="filament-tables-link-action"
 >
     {{ $getLabel() }}
-</x-tables::actions.action>
+</x-filament-tables::actions.action>

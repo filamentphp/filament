@@ -15,7 +15,7 @@
         type="button"
         @class([
             'flex items-center w-full px-4 py-2 whitespace-nowrap space-x-1 rtl:space-x-reverse font-medium text-sm text-gray-600',
-            'dark:text-gray-300' => config('tables.dark_mode'),
+            'dark:text-gray-300' => config('filament-tables.dark_mode'),
             'cursor-default' => ! $sortable,
             match ($alignment) {
                 'left' => 'justify-start',
@@ -32,7 +32,7 @@
         @if ($sortable)
             <x-filament-support::icon
                 :name="$activelySorted && $sortDirection === 'asc' ? 'heroicon-m-chevron-up' : 'heroicon-m-chevron-down'"
-                alias="tables::header-cell.sort"
+                alias="filament-tables::header-cell.sort"
                 color="dark:text-gray-300"
                 size="h-3 w-3"
                 :class="[

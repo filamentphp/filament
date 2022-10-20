@@ -19,7 +19,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     use Concerns\HasContainerGridLayout;
     use Concerns\CanBeCloned;
 
-    protected string $view = 'forms::components.repeater';
+    protected string $view = 'filament-forms::components.repeater';
 
     protected string | Closure | null $createItemButtonLabel = null;
 
@@ -163,7 +163,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         ]);
 
         $this->createItemButtonLabel(static function (Repeater $component) {
-            return __('forms::components.repeater.buttons.create_item.label', [
+            return __('filament-forms::components.repeater.buttons.create_item.label', [
                 'label' => Str::lcfirst($component->getLabel()),
             ]);
         });

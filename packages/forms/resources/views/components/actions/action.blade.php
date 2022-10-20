@@ -11,7 +11,7 @@
 
 <x-dynamic-component
     :component="$component"
-    :dark-mode="config('forms.dark_mode')"
+    :dark-mode="config('filament-forms.dark_mode')"
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes())"
     :tag="$action->getUrl() ? 'a' : 'button'"
     :wire:click="$wireClickAction"

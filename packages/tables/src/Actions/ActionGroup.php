@@ -9,7 +9,7 @@ class ActionGroup extends BaseActionGroup
 {
     use InteractsWithRecord;
 
-    protected string $view = 'tables::actions.group';
+    protected string $view = 'filament-tables::actions.group';
 
     public function getActions(): array
     {

@@ -10,12 +10,12 @@
     class="flex items-center"
 >
     @if ($databaseNotificationsTrigger = $this->getDatabaseNotificationsTrigger())
-        <x-notifications::database.trigger>
+        <x-filament-notifications::database.trigger>
             {{ $databaseNotificationsTrigger->with(['unreadNotificationsCount' => $unreadNotificationsCount]) }}
-        </x-notifications::database.trigger>
+        </x-filament-notifications::database.trigger>
     @endif
 
-    <x-notifications::database.modal
+    <x-filament-notifications::database.modal
         :notifications="$notifications"
         :unread-notifications-count="$unreadNotificationsCount"
     />

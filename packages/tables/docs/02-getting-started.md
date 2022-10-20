@@ -322,7 +322,7 @@ protected function getTableRecordClassesUsing(): ?Closure
         'draft' => 'opacity-30',
         'reviewing' => [
             'border-l-2 border-orange-600',
-            'dark:border-orange-300' => config('tables.dark_mode'),
+            'dark:border-orange-300' => config('filament-tables.dark_mode'),
         ],
         'published' => 'border-l-2 border-green-600',
         default => null,

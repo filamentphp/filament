@@ -5,7 +5,7 @@
 
 <x-filament-support::icon
     :name="$icon"
-    alias="notifications::notification"
+    alias="filament-notifications::notification"
     :color="match ($color) {
         'danger' => 'text-danger-400',
         'primary' => 'text-primary-400',

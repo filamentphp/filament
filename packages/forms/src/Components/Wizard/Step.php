@@ -17,7 +17,7 @@ class Step extends Component implements CanConcealComponents
 
     protected string | Closure | null $icon = null;
 
-    protected string $view = 'forms::components.wizard.step';
+    protected string $view = 'filament-forms::components.wizard.step';
 
     final public function __construct(string $label)
     {

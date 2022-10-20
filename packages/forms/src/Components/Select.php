@@ -34,7 +34,7 @@ class Select extends Field
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
 
-    protected string $view = 'forms::components.select';
+    protected string $view = 'filament-forms::components.select';
 
     protected array | Closure | null $createOptionActionFormSchema = null;
 
@@ -100,14 +100,14 @@ class Select extends Field
             return $labels;
         });
 
-        $this->placeholder(__('forms::components.select.placeholder'));
+        $this->placeholder(__('filament-forms::components.select.placeholder'));
     }
 
     public function boolean(?string $trueLabel = null, ?string $falseLabel = null, ?string $placeholder = null): static
     {
         $this->options([
-            1 => $trueLabel ?? __('forms::components.select.boolean.true'),
-            0 => $falseLabel ?? __('forms::components.select.boolean.false'),
+            1 => $trueLabel ?? __('filament-forms::components.select.boolean.true'),
+            0 => $falseLabel ?? __('filament-forms::components.select.boolean.false'),
         ]);
 
         $this->placeholder($placeholder ?? '-');
@@ -212,8 +212,8 @@ class Select extends Field
             })
             ->icon('heroicon-m-plus')
             ->iconButton()
-            ->modalHeading(__('forms::components.select.actions.create_option.modal.heading'))
-            ->modalButton(__('forms::components.select.actions.create_option.modal.actions.create.label'))
+            ->modalHeading(__('filament-forms::components.select.actions.create_option.modal.heading'))
+            ->modalButton(__('filament-forms::components.select.actions.create_option.modal.actions.create.label'))
             ->hidden(fn (Component $component): bool => $component->isDisabled());
 
         if ($this->modifyCreateOptionActionUsing) {
@@ -712,6 +712,6 @@ class Select extends Field
 
     public function getMaxItemsMessage(): string
     {
-        return $this->evaluate($this->maxItemsMessage) ?? __('forms::components.select.max_items_message');
+        return $this->evaluate($this->maxItemsMessage) ?? __('filament-forms::components.select.max_items_message');
     }
 }

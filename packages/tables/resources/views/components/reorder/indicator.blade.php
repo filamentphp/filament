@@ -14,6 +14,6 @@
     />
 
     <span>
-        {{ __('tables::table.reorder_indicator') }}
+        {{ __('filament-tables::table.reorder_indicator') }}
     </span>
 </div>

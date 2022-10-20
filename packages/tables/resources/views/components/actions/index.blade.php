@@ -9,7 +9,7 @@
     'filament-tables-actions-container flex items-center gap-4',
     'flex-wrap' => $wrap,
     'md:flex-nowrap' => $wrap === '-md',
-    match ($alignment ?? config('tables.layout.action_alignment') ?? config('tables.layout.actions.cell.alignment')) {
+    match ($alignment ?? config('filament-tables.layout.action_alignment') ?? config('filament-tables.layout.actions.cell.alignment')) {
         'center' => 'justify-center',
         'left' => 'justify-start',
         'left md:right' => 'justify-start md:justify-end',

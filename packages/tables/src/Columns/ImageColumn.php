@@ -11,7 +11,7 @@ use Throwable;
 
 class ImageColumn extends Column
 {
-    protected string $view = 'tables::columns.image-column';
+    protected string $view = 'filament-tables::columns.image-column';
 
     protected string | Closure | null $disk = null;
 
@@ -29,7 +29,7 @@ class ImageColumn extends Column
     {
         parent::setUp();
 
-        $this->disk(config('tables.default_filesystem_disk'));
+        $this->disk(config('filament-tables.default_filesystem_disk'));
     }
 
     public function disk(string | Closure | null $disk): static
@@ -82,7 +82,7 @@ class ImageColumn extends Column
 
     public function getDiskName(): string
     {
-        return $this->evaluate($this->disk) ?? config('tables.default_filesystem_disk');
+        return $this->evaluate($this->disk) ?? config('filament-tables.default_filesystem_disk');
     }
 
     public function getHeight(): ?string

@@ -6,7 +6,7 @@ use Closure;
 
 class Panel extends Component
 {
-    protected string $view = 'tables::columns.layout.panel';
+    protected string $view = 'filament-tables::columns.layout.panel';
 
     final public function __construct(array | Closure $schema)
     {

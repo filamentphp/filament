@@ -1,6 +1,6 @@
 <x-filament-actions::group
     :actions="$getActions()"
-    :dark-mode="config('notifications.dark_mode')"
+    :dark-mode="config('filament-notifications.dark_mode')"
     :color="$getColor()"
     :dropdown-placement="$getDropdownPlacement()"
     :icon="$getIcon()"

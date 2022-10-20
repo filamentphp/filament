@@ -117,17 +117,17 @@ class Notifications extends Component
 
     public function hasDatabaseNotifications(): bool
     {
-        return $this->getUser() && config('notifications.database.enabled');
+        return $this->getUser() && config('filament-notifications.database.enabled');
     }
 
     public function getPollingInterval(): ?string
     {
-        return config('notifications.database.polling_interval');
+        return config('filament-notifications.database.polling_interval');
     }
 
     public function getDatabaseNotificationsTrigger(): ?View
     {
-        $viewPath = config('notifications.database.trigger');
+        $viewPath = config('filament-notifications.database.trigger');
 
         if (blank($viewPath)) {
             return null;
@@ -171,6 +171,6 @@ class Notifications extends Component
 
     public function render(): View
     {
-        return view('notifications::notifications');
+        return view('filament-notifications::notifications');
     }
 }

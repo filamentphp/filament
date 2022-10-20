@@ -15,7 +15,7 @@
     @foreach (array_slice($getTags(), 0, $getLimit()) as $tag)
         <span @class([
             'inline-flex items-center justify-center min-h-6 px-2 py-0.5 text-sm font-medium tracking-tight rounded-xl text-primary-700 bg-primary-500/10 whitespace-normal',
-            'dark:text-primary-500' => config('tables.dark_mode'),
+            'dark:text-primary-500' => config('filament-tables.dark_mode'),
         ])>
             {{ $tag }}
         </span>
@@ -23,7 +23,7 @@
 
     @if ($hasActiveLimit())
         <span class="text-xs ml-1">
-            {{ trans_choice('tables::table.columns.tags.more', count($getTags()) - $getLimit()) }}
+            {{ trans_choice('filament-tables::table.columns.tags.more', count($getTags()) - $getLimit()) }}
         </span>
     @endif
 </div>
