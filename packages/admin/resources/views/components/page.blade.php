@@ -13,7 +13,7 @@
                     {{ $heading }}
                 </x-slot>
 
-                @if($subheading = $this->getSubheading())
+                @if ($subheading = $this->getSubheading())
                     <x-slot name="subheading">
                         {{ $subheading }}
                     </x-slot>
