@@ -83,9 +83,7 @@ esbuild
                 ? `'production'`
                 : `'development'`,
         },
-        entryPoints: [
-            `packages/widgets/resources/js/components/chart.js`,
-        ],
+        entryPoints: [`packages/widgets/resources/js/components/chart.js`],
         outfile: `packages/widgets/dist/components/chart.js`,
         bundle: true,
         platform: 'neutral',
