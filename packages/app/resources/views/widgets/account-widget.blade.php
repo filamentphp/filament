@@ -17,10 +17,7 @@
 
                     <button
                         type="submit"
-                        @class([
-                            'text-gray-600 hover:text-primary-500 focus:outline-none focus:underline',
-                            'dark:text-gray-300 dark:hover:text-primary-500' => config('filament.dark_mode'),
-                        ])
+                        class="text-gray-600 hover:text-primary-500 focus:outline-none focus:underline dark:text-gray-300 dark:hover:text-primary-500"
                     >
                         {{ __('filament::widgets/account-widget.buttons.logout.label') }}
                     </button>

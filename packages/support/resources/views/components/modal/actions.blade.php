@@ -1,6 +1,5 @@
 @props([
     'alignment' => 'left',
-    'darkMode' => false,
     'fullWidth' => false,
 ])
 

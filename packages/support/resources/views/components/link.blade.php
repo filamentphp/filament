@@ -1,6 +1,5 @@
 @props([
     'color' => 'primary',
-    'darkMode' => false,
     'disabled' => false,
     'form' => null,
     'icon' => null,
@@ -18,16 +17,11 @@
         'opacity-70 cursor-not-allowed pointer-events-none' => $disabled,
         'text-sm' => $size === 'sm',
         'text-lg' => $size === 'lg',
-        'text-primary-600 hover:text-primary-500' => $color === 'primary',
-        'text-danger-600 hover:text-danger-500' => $color === 'danger',
-        'text-gray-600 hover:text-gray-500' => $color === 'secondary',
-        'text-success-600 hover:text-success-500' => $color === 'success',
-        'text-warning-600 hover:text-warning-500' => $color === 'warning',
-        'dark:text-primary-500 dark:hover:text-primary-400' => $color === 'primary' && $darkMode,
-        'dark:text-danger-500 dark:hover:text-danger-400' => $color === 'danger' && $darkMode,
-        'dark:text-gray-300 dark:hover:text-gray-200' => $color === 'secondary' && $darkMode,
-        'dark:text-success-500 dark:hover:text-success-400' => $color === 'success' && $darkMode,
-        'dark:text-warning-500 dark:hover:text-warning-400' => $color === 'warning' && $darkMode,
+        'text-primary-600 hover:text-primary-500 dark:text-primary-500 dark:hover:text-primary-400' => $color === 'primary',
+        'text-danger-600 hover:text-danger-500 dark:text-danger-500 dark:hover:text-danger-400' => $color === 'danger',
+        'text-gray-600 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200' => $color === 'secondary',
+        'text-success-600 hover:text-success-500 dark:text-success-500 dark:hover:text-success-400' => $color === 'success',
+        'text-warning-600 hover:text-warning-500 dark:text-warning-500 dark:hover:text-warning-400' => $color === 'warning',
     ];
 
     $iconSize = match ($size) {

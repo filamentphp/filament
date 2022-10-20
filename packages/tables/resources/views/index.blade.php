@@ -251,20 +251,14 @@
         @if ($isReordering)
             <x-filament-tables::reorder.indicator
                 :colspan="$columnsCount"
-                :class="\Illuminate\Support\Arr::toCssClasses([
-                    'border-t',
-                    'dark:border-gray-700' => config('filament-tables.dark_mode'),
-                ])"
+                class="border-t dark:border-gray-700"
             />
         @elseif ($isSelectionEnabled)
             <x-filament-tables::selection-indicator
                 :all-records-count="$getAllRecordsCount()"
                 :colspan="$columnsCount"
                 x-show="selectedRecords.length"
-                :class="\Illuminate\Support\Arr::toCssClasses([
-                    'border-t',
-                    'dark:border-gray-700' => config('filament-tables.dark_mode'),
-                ])"
+                class="border-t dark:border-gray-700"
             >
                 <x-slot name="selectedRecordsCount">
                     <span x-text="selectedRecords.length"></span>
@@ -274,10 +268,7 @@
 
         <x-filament-tables::filters.indicators
             :indicators="$filterIndicators"
-            :class="\Illuminate\Support\Arr::toCssClasses([
-                'border-t',
-                'dark:border-gray-700' => config('filament-tables.dark_mode'),
-            ])"
+            class="border-t dark:border-gray-700"
         />
 
         <div
@@ -285,8 +276,7 @@
                 wire:poll.{{ $pollingInterval }}
             @endif
             @class([
-                'filament-tables-table-container overflow-x-auto relative',
-                'dark:border-gray-700' => config('filament-tables.dark_mode'),
+                'filament-tables-table-container overflow-x-auto relative dark:border-gray-700',
                 'overflow-x-auto' => $content || $hasColumnsLayout,
                 'rounded-t-xl' => ! $renderHeader,
                 'border-t' => $renderHeader,
@@ -299,10 +289,7 @@
             @if ($content || $hasColumnsLayout)
                 @if (count($records))
                     @if (($content || $hasColumnsLayout) && (! $isReordering))
-                        <div @class([
-                            'bg-gray-500/5 flex items-center gap-4 px-4 border-b',
-                            'dark:border-gray-700' => config('filament-tables.dark_mode'),
-                        ])>
+                        <div class="bg-gray-500/5 flex items-center gap-4 px-4 border-b dark:border-gray-700">
                             @if ($isSelectionEnabled)
                                 <x-filament-tables::checkbox
                                     x-on:click="toggleSelectRecordsOnPage"
@@ -405,9 +392,9 @@
                             :xl="$contentGrid['xl'] ?? null"
                             :two-xl="$contentGrid['2xl'] ?? null"
                             :class="\Illuminate\Support\Arr::toCssClasses([
+                                'dark:divide-gray-700',
                                 'divide-y' => ! $contentGrid,
                                 'p-2 gap-2' => $contentGrid,
-                                'dark:divide-gray-700' => config('filament-tables.dark_mode'),
                             ])"
                         >
                             @foreach ($records as $record)
@@ -432,17 +419,15 @@
                                 >
                                     <div
                                         x-bind:class="{
-                                            'bg-gray-50 {{ config('filament-tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $recordKey }}'),
+                                            'bg-gray-50 dark:bg-gray-500/10': isRecordSelected('{{ $recordKey }}'),
                                         }"
                                         @class(array_merge(
                                             [
                                                 'h-full relative px-4 transition',
-                                                'hover:bg-gray-50' => $recordUrl || $recordAction,
-                                                'dark:hover:bg-gray-500/10' => ($recordUrl || $recordAction) && config('filament-tables.dark_mode'),
-                                                'dark:border-gray-600' => (! $contentGrid) && config('filament-tables.dark_mode'),
+                                                'hover:bg-gray-50 dark:hover:bg-gray-500/10' => $recordUrl || $recordAction,
+                                                'dark:border-gray-600' => ! $contentGrid,
                                                 'group' => $isReordering,
-                                                'rounded-xl shadow-sm border border-gray-200' => $contentGrid,
-                                                'dark:border-gray-700 dark:bg-gray-700/40' => $contentGrid && config('filament-tables.dark_mode'),
+                                                'rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 dark:bg-gray-700/40' => $contentGrid,
                                             ],
                                             $getRecordClasses($record),
                                         ))
@@ -706,7 +691,7 @@
                                 :x-sortable-handle="$isReordering"
                                 :striped="$isStriped"
                                 x-bind:class="{
-                                    'bg-gray-50 {{ config('filament-tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $recordKey }}'),
+                                    'bg-gray-50 dark:bg-gray-500/10': isRecordSelected('{{ $recordKey }}'),
                                 }"
                                 :class="\Illuminate\Support\Arr::toCssClasses(array_merge(
                                     [
@@ -839,10 +824,7 @@
             $records instanceof \Illuminate\Contracts\Pagination\Paginator &&
             ((! $records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) || $records->total())
         )
-            <div @class([
-                'filament-tables-pagination-container p-2 border-t',
-                'dark:border-gray-700' => config('filament-tables.dark_mode'),
-            ])>
+            <div class="filament-tables-pagination-container p-2 border-t dark:border-gray-700">
                 <x-filament-tables::pagination
                     :paginator="$records"
                     :page-options="$getPaginationPageOptions()"

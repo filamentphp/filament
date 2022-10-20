@@ -1,6 +1,3 @@
-<x-filament-support::link
-    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)"
-    :dark-mode="config('filament-tables.dark_mode')"
->
+<x-filament-support::link :attributes="\Filament\Support\prepare_inherited_attributes($attributes)">
     {{ $slot }}
 </x-filament-support::link>

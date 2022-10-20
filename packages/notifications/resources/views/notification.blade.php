@@ -2,8 +2,7 @@
     :notification="$notification"
     :class="\Illuminate\Support\Arr::toCssClasses([
         'flex gap-3 w-full transition duration-300',
-        'shadow-lg max-w-sm bg-white rounded-xl p-4 border border-gray-200' => ! $isInline(),
-        'dark:border-gray-700 dark:bg-gray-800' => (! $isInline()) && config('filament-notifications.dark_mode'),
+        'shadow-lg max-w-sm bg-white rounded-xl p-4 border border-gray-200 dark:border-gray-700 dark:bg-gray-800' => ! $isInline(),
     ])"
     :x-transition:enter-start="\Illuminate\Support\Arr::toCssClasses([
         'opacity-0',

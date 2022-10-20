@@ -10,7 +10,6 @@
 
 <x-filament-support::modal
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($slots)"
-    :dark-mode="config('filament-forms.dark_mode')"
     heading-component="filament-forms::modal.heading"
     hr-component="filament-forms::hr"
     subheading-component="filament-forms::modal.subheading"

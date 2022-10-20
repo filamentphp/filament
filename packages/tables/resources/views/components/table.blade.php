@@ -3,10 +3,7 @@
     'header' => null,
 ])
 
-<table {{ $attributes->class([
-    'filament-tables-table w-full text-left rtl:text-right divide-y table-auto',
-    'dark:divide-gray-700' => config('filament-tables.dark_mode'),
-]) }}>
+<table {{ $attributes->class(['filament-tables-table w-full text-left rtl:text-right divide-y table-auto dark:divide-gray-700']) }}>
     @if ($header)
         <thead>
             <tr class="bg-gray-500/5">
@@ -18,10 +15,7 @@
     <tbody
         x-sortable
         x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
-        @class([
-            'divide-y whitespace-nowrap',
-            'dark:divide-gray-700' => config('filament-tables.dark_mode'),
-        ])
+        class="divide-y whitespace-nowrap dark:divide-gray-700"
     >
         {{ $slot }}
     </tbody>

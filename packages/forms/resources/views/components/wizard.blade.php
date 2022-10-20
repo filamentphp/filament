@@ -89,10 +89,7 @@
     <ol
         {!! $getLabel() ? 'aria-label="' . $getLabel() . '"' : null !!}
         role="list"
-        @class([
-            'border border-gray-300 shadow-sm bg-white rounded-xl overflow-hidden divide-y divide-gray-300 md:flex md:divide-y-0',
-            'dark:bg-gray-800 dark:border-gray-700 dark:divide-gray-700' => config('filament-forms.dark_mode'),
-        ])
+        class="border border-gray-300 shadow-sm bg-white rounded-xl overflow-hidden divide-y divide-gray-300 md:flex md:divide-y-0 dark:bg-gray-800 dark:border-gray-700 dark:divide-gray-700"
     >
         @foreach ($getChildComponentContainer()->getComponents() as $step)
             <li class="group relative overflow-hidden md:flex-1">
@@ -109,7 +106,7 @@
                     <div
                         x-bind:class="{
                             'bg-primary-600': getStepIndex(step) === {{ $loop->index }},
-                            'bg-transparent group-hover:bg-gray-200 @if (config('filament-forms.dark_mode')) dark:group-hover:bg-gray-600 @endif': getStepIndex(step) > {{ $loop->index }},
+                            'bg-transparent group-hover:bg-gray-200 dark:group-hover:bg-gray-600': getStepIndex(step) > {{ $loop->index }},
                         }"
                         class="absolute top-0 left-0 w-1 h-full md:w-full md:h-1 md:bottom-0 md:top-auto"
                         aria-hidden="true"
@@ -122,7 +119,7 @@
                                     'bg-primary-600': getStepIndex(step) > {{ $loop->index }},
                                     'border-2': getStepIndex(step) <= {{ $loop->index }},
                                     'border-primary-500': getStepIndex(step) === {{ $loop->index }},
-                                    'border-gray-300 @if (config('filament-forms.dark_mode')) dark:border-gray-500 @endif': getStepIndex(step) < {{ $loop->index }},
+                                    'border-gray-300 dark:border-gray-500': getStepIndex(step) < {{ $loop->index }},
                                 }"
                                 class="w-10 h-10 flex items-center justify-center rounded-full"
                             >
@@ -136,13 +133,6 @@
                                 />
 
                                 @if ($icon = $step->getIcon())
-                                    @php
-                                        $inactiveIconClasses = \Illuminate\Support\Arr::toCssClasses([
-                                            'text-gray-500',
-                                            'dark:text-gray-400' => config('filament-forms.dark_mode'),
-                                        ]);
-                                    @endphp
-
                                     <x-filament-support::icon
                                         :name="$icon"
                                         alias="filament-forms::components.wizard.current-step"
@@ -150,7 +140,7 @@
                                         x-show="getStepIndex(step) <= {{ $loop->index }}"
                                         x-cloak
                                         x-bind:class="{
-                                            {{ $inactiveIconClasses }}: getStepIndex(step) !== {{ $loop->index }},
+                                            'text-gray-500 dark:text-gray-400': getStepIndex(step) !== {{ $loop->index }},
                                             'text-primary-500': getStepIndex(step) === {{ $loop->index }},
                                         }"
                                     />
@@ -158,7 +148,7 @@
                                     <span
                                         x-show="getStepIndex(step) <= {{ $loop->index }}"
                                         x-bind:class="{
-                                            'text-gray-500 @if (config('filament-forms.dark_mode')) dark:text-gray-400 @endif': getStepIndex(step) !== {{ $loop->index }},
+                                            'text-gray-500 dark:text-gray-400': getStepIndex(step) !== {{ $loop->index }},
                                             'text-primary-500': getStepIndex(step) === {{ $loop->index }},
                                         }"
                                     >
@@ -174,10 +164,7 @@
                             </div>
 
                             @if (filled($description = $step->getDescription()))
-                                <div @class([
-                                    'text-sm leading-4 font-medium text-gray-500',
-                                    'dark:text-gray-400' => config('filament-forms.dark_mode'),
-                                ])>
+                                <div class="text-sm leading-4 font-medium text-gray-500 dark:text-gray-400">
                                     {{ $description }}
                                 </div>
                             @endif
@@ -187,10 +174,12 @@
 
                 @if (! $loop->first)
                     <div class="hidden absolute top-0 left-0 w-3 inset-0 md:block" aria-hidden="true">
-                        <svg @class([
-                            'h-full w-full text-gray-300 rtl:rotate-180',
-                            'dark:text-gray-700' => config('filament-forms.dark_mode'),
-                        ]) viewBox="0 0 12 82" fill="none" preserveAspectRatio="none">
+                        <svg
+                            class="h-full w-full text-gray-300 rtl:rotate-180 dark:text-gray-700"
+                            viewBox="0 0 12 82"
+                            fill="none"
+                            preserveAspectRatio="none"
+                        >
                             <path d="M0.5 0V31L10.5 41L0.5 51V82" stroke="currentcolor" vector-effect="non-scaling-stroke" />
                         </svg>
                     </div>

@@ -58,10 +58,7 @@
                     </x-filament-tables::button>
                 @endif
             @else
-                <div @class([
-                    'pl-2 text-sm font-medium',
-                    'dark:text-white' => config('filament-tables.dark_mode'),
-                ])>
+                <div class="pl-2 text-sm font-medium dark:text-white">
                     @if ($paginator->total() > 1)
                         {{ __('filament-tables::table.pagination.overview', [
                             'first' => $paginator->firstItem(),
@@ -95,14 +92,8 @@
                 @endif
             @else
                 @if ($paginator->hasPages())
-                    <div @class([
-                        'py-3 border rounded-lg',
-                        'dark:border-gray-600' => config('filament-tables.dark_mode'),
-                    ])>
-                        <ol @class([
-                            'flex items-center text-sm text-gray-500 divide-x rtl:divide-x-reverse divide-gray-300',
-                            'dark:text-gray-400 dark:divide-gray-600' => config('filament-tables.dark_mode'),
-                        ])>
+                    <div class="py-3 border rounded-lg dark:border-gray-600">
+                        <ol class="flex items-center text-sm text-gray-500 divide-x rtl:divide-x-reverse divide-gray-300 dark:text-gray-400 dark:divide-gray-600">
                             @if (! $paginator->onFirstPage())
                                 <x-filament-tables::pagination.item
                                     :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"

@@ -32,9 +32,8 @@
     id="{{ $getId() }}"
     {{ $attributes->merge($getExtraAttributes())->class([
         'filament-forms-section-component',
-        'rounded-xl border border-gray-300 bg-white' => ! $isAside,
+        'rounded-xl border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800' => ! $isAside,
         'grid grid-cols-1 md:grid-cols-2' => $isAside,
-        'dark:border-gray-600 dark:bg-gray-800' => config('filament-forms.dark_mode')  && ! $isAside,
     ]) }}
     {{ $getExtraAlpineAttributeBag() }}
 >
@@ -44,8 +43,7 @@
             'min-h-[40px]' => $isCompact,
             'min-h-[56px]' => ! $isCompact,
             'pr-6 pb-4' => $isAside,
-            'px-4 py-2 items-center bg-gray-100' => ! $isAside,
-            'dark:bg-gray-900' => config('filament-forms.dark_mode') && (! $isAside),
+            'px-4 py-2 items-center bg-gray-100 dark:bg-gray-900' => ! $isAside,
         ])
         @if ($isCollapsible)
             x-bind:class="{ 'rounded-b-xl': isCollapsed }"
@@ -104,8 +102,7 @@
     >
         <div @class([
             'filament-forms-section-content',
-            'rounded-xl border border-gray-300 bg-white' => $isAside,
-            'dark:border-gray-600 dark:bg-gray-800' => config('filament-forms.dark_mode') && $isAside,
+            'rounded-xl border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800' => $isAside,
             'p-6' => ! $isCompact,
             'p-4' => $isCompact,
         ])>

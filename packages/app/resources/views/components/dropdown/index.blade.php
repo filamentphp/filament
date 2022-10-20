@@ -2,9 +2,6 @@
     'trigger',
 ])
 
-<x-filament-support::dropdown
-    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($slots)"
-    :dark-mode="config('filament.dark_mode')"
->
+<x-filament-support::dropdown :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($slots)">
     {{ $slot }}
 </x-filament-support::dropdown>

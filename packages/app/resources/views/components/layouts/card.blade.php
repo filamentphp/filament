@@ -4,10 +4,7 @@
 ])
 
 <x-filament::layouts.base :title="$title">
-    <div @class([
-        'filament-login-page flex items-center justify-center min-h-screen bg-gray-100 text-gray-900 py-12',
-        'dark:bg-gray-900 dark:text-white' => config('filament.dark_mode'),
-    ])>
+    <div class="filament-login-page flex items-center justify-center min-h-screen bg-gray-100 text-gray-900 py-12 dark:bg-gray-900 dark:text-white">
         <div @class([
             'w-screen px-6 -mt-16 space-y-8 md:mt-0 md:px-2',
             match($width) {
@@ -25,10 +22,7 @@
                 default => $width,
             },
         ])>
-            <div @class([
-                'p-8 space-y-4 bg-white/50 backdrop-blur-xl border border-gray-200 shadow-2xl rounded-2xl relative',
-                'dark:bg-gray-900/50 dark:border-gray-700' => config('filament.dark_mode'),
-            ])>
+            <div class="p-8 space-y-4 bg-white/50 backdrop-blur-xl border border-gray-200 shadow-2xl rounded-2xl relative dark:bg-gray-900/50 dark:border-gray-700">
                 <div class="flex justify-center w-full">
                     <x-filament::brand />
                 </div>
@@ -45,6 +39,6 @@
             </div>
         </div>
     </div>
-    
+
     @livewire('notifications')
 </x-filament::layouts.base>

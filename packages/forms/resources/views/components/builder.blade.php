@@ -34,11 +34,17 @@
         @endif
     </div>
 
-    <div x-data="{}" {{ $attributes->merge($getExtraAttributes())->class([
-        'filament-forms-builder-component space-y-6 rounded-xl',
-        'bg-gray-50 p-6' => $isInset(),
-        'dark:bg-gray-500/10' => $isInset() && config('filament-forms.dark_mode'),
-    ]) }}>
+    <div
+        x-data="{}"
+        {{
+            $attributes
+                ->merge($getExtraAttributes())
+                ->class([
+                    'filament-forms-builder-component space-y-6 rounded-xl',
+                    'bg-gray-50 p-6 dark:bg-gray-500/10' => $isInset(),
+                ])
+        }}
+    >
         @if (count($containers))
             <ul
                 class="space-y-12"
@@ -79,16 +85,10 @@
 
                             setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
                         "
-                        @class([
-                            'bg-white border border-gray-300 shadow-sm rounded-xl relative',
-                            'dark:bg-gray-800 dark:border-gray-600' => config('filament-forms.dark_mode'),
-                        ])
+                        class="bg-white border border-gray-300 shadow-sm rounded-xl relative dark:bg-gray-800 dark:border-gray-600"
                     >
                         @if ((! $isItemMovementDisabled) || $hasBlockLabels || (! $isItemDeletionDisabled) || $isCollapsible || $isCloneable)
-                            <header @class([
-                                'flex items-center h-10 overflow-hidden border-b bg-gray-50 rounded-t-xl',
-                                'dark:bg-gray-800 dark:border-gray-700' => config('filament-forms.dark_mode'),
-                            ])>
+                            <header class="flex items-center h-10 overflow-hidden border-b bg-gray-50 rounded-t-xl dark:bg-gray-800 dark:border-gray-700">
                                 @unless ($isItemMovementDisabled)
                                     <button
                                         title="{{ __('filament-forms::components.builder.buttons.move_item.label') }}"
@@ -96,10 +96,7 @@
                                         wire:keydown.prevent.arrow-up="dispatchFormEvent('builder::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                         wire:keydown.prevent.arrow-down="dispatchFormEvent('builder::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                         type="button"
-                                        @class([
-                                            'flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-r rtl:border-l rtl:border-r-0 transition hover:text-gray-500',
-                                            'dark:border-gray-700' => config('filament-forms.dark_mode'),
-                                        ])
+                                        class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-r rtl:border-l rtl:border-r-0 transition hover:text-gray-500 dark:border-gray-700"
                                     >
                                         <span class="sr-only">
                                             {{ __('filament-forms::components.builder.buttons.move_item.label') }}
@@ -114,10 +111,7 @@
                                 @endunless
 
                                 @if ($hasBlockLabels)
-                                    <p @class([
-                                        'flex-none px-4 text-xs font-medium text-gray-600 truncate',
-                                        'dark:text-gray-400' => config('filament-forms.dark_mode'),
-                                    ])>
+                                    <p class="flex-none px-4 text-xs font-medium text-gray-600 truncate dark:text-gray-400">
                                         @php
                                             $block = $item->getParentComponent();
 
@@ -138,20 +132,14 @@
 
                                 <div class="flex-1"></div>
 
-                                <ul @class([
-                                    'flex divide-x rtl:divide-x-reverse',
-                                    'dark:divide-gray-700' => config('filament-forms.dark_mode'),
-                                ])>
+                                <ul class="flex divide-x rtl:divide-x-reverse dark:divide-gray-700">
                                     @if ($isCloneable)
                                         <li>
                                             <button
                                                 title="{{ __('filament-forms::components.builder.buttons.clone_item.label') }}"
                                                 wire:click="dispatchFormEvent('builder::cloneItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                 type="button"
-                                                @class([
-                                                    'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500',
-                                                    'dark:border-gray-700' => config('filament-forms.dark_mode'),
-                                                ])
+                                                class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500 dark:border-gray-700"
                                             >
                                                 <span class="sr-only">
                                                     {{ __('filament-forms::components.builder.buttons.clone_item.label') }}
@@ -172,10 +160,7 @@
                                                 title="{{ __('filament-forms::components.builder.buttons.delete_item.label') }}"
                                                 wire:click="dispatchFormEvent('builder::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                 type="button"
-                                                @class([
-                                                    'flex items-center justify-center flex-none w-10 h-10 text-danger-600 transition hover:text-danger-500',
-                                                    'dark:text-danger-500 dark:hover:text-danger-400' => config('filament-forms.dark_mode'),
-                                                ])
+                                                class="flex items-center justify-center flex-none w-10 h-10 text-danger-600 transition hover:text-danger-500 dark:text-danger-500 dark:hover:text-danger-400"
                                             >
                                                 <span class="sr-only">
                                                     {{ __('filament-forms::components.builder.buttons.delete_item.label') }}

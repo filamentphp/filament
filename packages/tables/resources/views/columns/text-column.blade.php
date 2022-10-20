@@ -15,15 +15,11 @@
         match ($getColor()) {
             'danger' => 'text-danger-600',
             'primary' => 'text-primary-600',
-            'secondary' => 'text-gray-500',
+            'secondary' => 'text-gray-500 dark:text-gray-400',
             'success' => 'text-success-600',
             'warning' => 'text-warning-600',
             default => null,
         } => ! ($getAction() || $getUrl()),
-        match ($getColor()) {
-            'secondary' => 'dark:text-gray-400',
-            default => null,
-        } => (! ($getAction() || $getUrl())) && config('filament-tables.dark_mode'),
         match ($getSize()) {
             'sm' => 'text-sm',
             'lg' => 'text-lg',

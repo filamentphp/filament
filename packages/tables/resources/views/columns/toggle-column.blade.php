@@ -32,7 +32,7 @@
                 'success' => 'bg-success-500',
                 'warning' => 'bg-warning-500',
                 default => 'bg-gray-200',
-            } }} @if (config('filament-forms.dark_mode')) dark:bg-white/10 @endif': ! state,
+            } }} dark:bg-white/10': ! state,
         }"
         {!! $isDisabled() ? 'disabled' : null !!}
         type="button"

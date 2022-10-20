@@ -5,14 +5,8 @@
     'icon',
 ])
 
-<div {{ $attributes->class([
-    'filament-tables-empty-state flex flex-1 flex-col items-center justify-center p-6 mx-auto space-y-6 text-center bg-white',
-    'dark:bg-gray-800' => config('filament-tables.dark_mode'),
-]) }}>
-    <div @class([
-        'flex items-center justify-center w-16 h-16 text-primary-500 rounded-full bg-primary-50',
-        'dark:bg-gray-700' => config('filament-tables.dark_mode'),
-    ])>
+<div {{ $attributes->class(['filament-tables-empty-state flex flex-1 flex-col items-center justify-center p-6 mx-auto space-y-6 text-center bg-white dark:bg-gray-800']) }}>
+    <div class="flex items-center justify-center w-16 h-16 text-primary-500 rounded-full bg-primary-50 dark:bg-gray-700">
         <x-filament-support::icon
             :name="$icon"
             alias="filament-tables::empty-state"
