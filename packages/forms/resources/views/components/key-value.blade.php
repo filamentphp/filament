@@ -5,7 +5,7 @@
     <div
         x-ignore
         ax-load
-        ax-load-src="/js/filament/forms/components/key-value.js"
+        ax-load-src="/js/filament/forms/components/key-value.js?v={{ \Composer\InstalledVersions::getVersion('filament/support') }}"
         x-data="keyValueFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"

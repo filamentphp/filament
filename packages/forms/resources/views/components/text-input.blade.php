@@ -27,7 +27,7 @@
             @else
                 x-ignore
                 ax-load
-                ax-load-src="/js/filament/forms/components/text-input.js"
+                ax-load-src="/js/filament/forms/components/text-input.js?v={{ \Composer\InstalledVersions::getVersion('filament/support') }}"
                 x-data="textInputFormComponent({
                     {{ $hasMask() ? "getMaskOptionsUsing: (IMask) => ({$getJsonMaskConfiguration()})," : null }}
                     state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')', lazilyEntangledModifiers: ['defer']) }},

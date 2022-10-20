@@ -5,7 +5,7 @@
     <div
         x-ignore
         ax-load
-        ax-load-src="/js/filament/forms/components/rich-editor.js"
+        ax-load-src="/js/filament/forms/components/rich-editor.js?v={{ \Composer\InstalledVersions::getVersion('filament/support') }}"
         x-data="richEditorFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"

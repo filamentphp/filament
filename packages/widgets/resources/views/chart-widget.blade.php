@@ -38,7 +38,7 @@
             <div
                 x-ignore
                 ax-load
-                ax-load-src="/js/filament/widgets/components/chart.js"
+                ax-load-src="/js/filament/widgets/components/chart.js?v={{ \Composer\InstalledVersions::getVersion('filament/support') }}"
                 x-data="chart({
                     cachedData: @js($this->getCachedData()),
                     options: @js($this->getOptions()),

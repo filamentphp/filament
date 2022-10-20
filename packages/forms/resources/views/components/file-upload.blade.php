@@ -13,7 +13,7 @@
     <div
         x-ignore
         ax-load
-        ax-load-src="/js/filament/forms/components/file-upload.js"
+        ax-load-src="/js/filament/forms/components/file-upload.js?v={{ \Composer\InstalledVersions::getVersion('filament/support') }}"
         x-data="fileUploadFormComponent({
             acceptedFileTypes: {{ json_encode($getAcceptedFileTypes()) }},
             canDownload: {{ $canDownload() ? 'true' : 'false' }},

@@ -5,7 +5,7 @@
     <div
         x-ignore
         ax-load
-        ax-load-src="/js/filament/forms/components/tags-input.js"
+        ax-load-src="/js/filament/forms/components/tags-input.js?v={{ \Composer\InstalledVersions::getVersion('filament/support') }}"
         x-data="tagsInputFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
