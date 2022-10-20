@@ -8,7 +8,6 @@ use Filament\Support\Assets\Js;
 use Filament\Support\Commands\AssetsCommand;
 use Filament\Support\Commands\CheckTranslationsCommand;
 use Filament\Support\Commands\UpgradeCommand;
-use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\IconManager;
 use HtmlSanitizer\Sanitizer;
 use HtmlSanitizer\SanitizerInterface;
@@ -16,8 +15,6 @@ use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
-use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class SupportServiceProvider extends PluginServiceProvider
 {

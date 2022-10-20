@@ -4,16 +4,13 @@ namespace Filament\Forms;
 
 use Filament\Forms\Testing\TestsForms;
 use Filament\Support\Assets\AlpineComponent;
-use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\PluginServiceProvider;
 use Illuminate\Filesystem\Filesystem;
 use Livewire\Testing\TestableLivewire;
-use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class FormsServiceProvider extends PluginServiceProvider
 {
-    static string $name = 'forms';
+    public static string $name = 'forms';
 
     public function packageBooted(): void
     {

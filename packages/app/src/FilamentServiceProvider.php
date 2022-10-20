@@ -18,7 +18,6 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\Resource;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
-use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\PluginServiceProvider;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\ButtonAction;
@@ -32,7 +31,6 @@ use Livewire\Component;
 use Livewire\Livewire;
 use Livewire\Testing\TestableLivewire;
 use ReflectionClass;
-use Spatie\LaravelPackageTools\Package;
 use Symfony\Component\Finder\SplFileInfo;
 
 class FilamentServiceProvider extends PluginServiceProvider
