@@ -11,8 +11,6 @@ use Livewire\Component;
 use Livewire\Livewire;
 use Livewire\Response;
 use Livewire\Testing\TestableLivewire;
-use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
 
 class NotificationsServiceProvider extends PluginServiceProvider
 {
