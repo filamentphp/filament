@@ -64,6 +64,10 @@ return [
                 'label' => 'Sor törlése',
             ],
 
+            'reorder' => [
+                'label' => 'Sor újrarendezése',
+            ],
+
         ],
 
         'fields' => [
