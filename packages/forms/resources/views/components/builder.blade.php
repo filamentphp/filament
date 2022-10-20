@@ -15,21 +15,21 @@
     <div>
         @if ((count($containers) > 1) && $isCollapsible)
             <div class="space-x-2 rtl:space-x-reverse" x-data="{}">
-                <x-filament-forms::link
+                <x-filament-support::link
                     x-on:click="$dispatch('builder-collapse', '{{ $getStatePath() }}')"
                     tag="button"
                     size="sm"
                 >
                     {{ __('filament-forms::components.builder.buttons.collapse_all.label') }}
-                </x-filament-forms::link>
+                </x-filament-support::link>
 
-                <x-filament-forms::link
+                <x-filament-support::link
                     x-on:click="$dispatch('builder-expand', '{{ $getStatePath() }}')"
                     tag="button"
                     size="sm"
                 >
                     {{ __('filament-forms::components.builder.buttons.expand_all.label') }}
-                </x-filament-forms::link>
+                </x-filament-support::link>
             </div>
         @endif
     </div>
@@ -226,9 +226,9 @@
                                 x-transition
                                 class="absolute inset-x-0 bottom-0 flex items-center justify-center h-12 -mb-12"
                             >
-                                <x-filament-forms::dropdown>
+                                <x-filament-support::dropdown>
                                     <x-slot name="trigger">
-                                        <x-filament-forms::icon-button
+                                        <x-filament-support::icon-button
                                             :label="$getCreateItemBetweenButtonLabel()"
                                             icon="heroicon-m-plus"
                                         />
@@ -239,7 +239,7 @@
                                         :create-after-item="$uuid"
                                         :state-path="$getStatePath()"
                                     />
-                                </x-filament-forms::dropdown>
+                                </x-filament-support::dropdown>
                             </div>
                         @endif
                     </li>
@@ -248,18 +248,18 @@
         @endif
 
         @if (! $isItemCreationDisabled)
-            <x-filament-forms::dropdown class="flex justify-center">
+            <x-filament-support::dropdown class="flex justify-center">
                 <x-slot name="trigger">
-                    <x-filament-forms::button size="sm">
+                    <x-filament-support::button size="sm">
                         {{ $getCreateItemButtonLabel() }}
-                    </x-filament-forms::button>
+                    </x-filament-support::button>
                 </x-slot>
 
                 <x-filament-forms::builder.block-picker
                     :blocks="$getBlocks()"
                     :state-path="$getStatePath()"
                 />
-            </x-filament-forms::dropdown>
+            </x-filament-support::dropdown>
         @endif
     </div>
 </x-dynamic-component>

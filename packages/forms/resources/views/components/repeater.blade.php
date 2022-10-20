@@ -16,21 +16,21 @@
     <div>
         @if ((count($containers) > 1) && $isCollapsible)
             <div class="space-x-2 rtl:space-x-reverse" x-data="{}">
-                <x-filament-forms::link
+                <x-filament-support::link
                     x-on:click="$dispatch('repeater-collapse', '{{ $getStatePath() }}')"
                     tag="button"
                     size="sm"
                 >
                     {{ __('filament-forms::components.repeater.buttons.collapse_all.label') }}
-                </x-filament-forms::link>
+                </x-filament-support::link>
 
-                <x-filament-forms::link
+                <x-filament-support::link
                     x-on:click="$dispatch('repeater-expand', '{{ $getStatePath() }}')"
                     tag="button"
                     size="sm"
                 >
                     {{ __('filament-forms::components.repeater.buttons.expand_all.label') }}
-                </x-filament-forms::link>
+                </x-filament-support::link>
             </div>
         @endif
     </div>
@@ -216,13 +216,13 @@
 
         @if (! $isItemCreationDisabled)
             <div class="relative flex justify-center">
-                <x-filament-forms::button
+                <x-filament-support::button
                     :wire:click="'dispatchFormEvent(\'repeater::createItem\', \'' . $getStatePath() . '\')'"
                     size="sm"
                     type="button"
                 >
                     {{ $getCreateItemButtonLabel() }}
-                </x-filament-forms::button>
+                </x-filament-support::button>
             </div>
         @endif
     </div>

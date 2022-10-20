@@ -4,14 +4,14 @@
     'statePath',
 ])
 
-<x-filament-forms::dropdown.list {{ $attributes->class(['filament-forms-builder-component-block-picker']) }}>
+<x-filament-support::dropdown.list {{ $attributes->class(['filament-forms-builder-component-block-picker']) }}>
     @foreach ($blocks as $block)
-        <x-filament-forms::dropdown.list.item
+        <x-filament-support::dropdown.list.item
             :wire:click="'dispatchFormEvent(\'builder::createItem\', \'' . $statePath . '\', \'' . $block->getName() . '\'' . ($createAfterItem ? ', \'' . $createAfterItem . '\'' : '') . ')'"
             :icon="$block->getIcon()"
             x-on:click="close"
         >
             {{ $block->getLabel() }}
-        </x-filament-forms::dropdown.list.item>
+        </x-filament-support::dropdown.list.item>
     @endforeach
-</x-filament-forms::dropdown.list>
+</x-filament-support::dropdown.list>

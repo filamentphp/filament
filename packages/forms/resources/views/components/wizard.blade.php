@@ -196,7 +196,7 @@
 
     <div class="flex items-center justify-between">
         <div>
-            <x-filament-forms::button
+            <x-filament-support::button
                 :icon="$previousArrowIcon"
                 x-show="! isFirstStep()"
                 x-cloak
@@ -205,7 +205,7 @@
                 size="sm"
             >
                 {{ __('filament-forms::components.wizard.buttons.previous_step.label') }}
-            </x-filament-forms::button>
+            </x-filament-support::button>
 
             <div x-show="isFirstStep()">
                 {{ $getCancelAction() }}
@@ -213,7 +213,7 @@
         </div>
 
         <div>
-            <x-filament-forms::button
+            <x-filament-support::button
                 :icon="$nextArrowIcon"
                 icon-position="after"
                 x-show="! isLastStep()"
@@ -223,7 +223,7 @@
                 size="sm"
             >
                 {{ __('filament-forms::components.wizard.buttons.next_step.label') }}
-            </x-filament-forms::button>
+            </x-filament-support::button>
 
             <div x-show="isLastStep()">
                 {{ $getSubmitAction() }}
