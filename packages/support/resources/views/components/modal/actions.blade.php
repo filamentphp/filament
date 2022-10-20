@@ -1,5 +1,5 @@
 @props([
-    'alignment' => 'left',
+    'alignment' => config('filament.layout.actions.modal.actions.alignment') ?? 'left',
     'fullWidth' => false,
 ])
 
