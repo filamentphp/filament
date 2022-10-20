@@ -9,6 +9,9 @@ module.exports = {
         './packages/support/resources/**/*.blade.php',
         './packages/tables/resources/**/*.blade.php',
     ],
+    safelist: [
+        'border-b',
+    ],
     darkMode: 'class',
     theme: {
         extend: {
