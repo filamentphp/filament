@@ -36,6 +36,8 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
 
     protected static ?string $title = null;
 
+    protected static ?string $subtitle = null;
+
     protected static string $view;
 
     protected static string | array $middlewares = [];
@@ -196,6 +198,11 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
             ->kebab()
             ->replace('-', ' ')
             ->title();
+    }
+
+    protected function getSubheading(): ?string
+    {
+        return static::$subtitle;
     }
 
     protected function getMaxContentWidth(): ?string
