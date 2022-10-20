@@ -1,9 +1,9 @@
 <x-filament-notifications::notification
     :notification="$notification"
-    :class="\Illuminate\Support\Arr::toCssClasses([
+    @class([
         'flex gap-3 w-full transition duration-300',
         'shadow-lg max-w-sm bg-white rounded-xl p-4 border border-gray-200 dark:border-gray-700 dark:bg-gray-800' => ! $isInline(),
-    ])"
+    ])
     :x-transition:enter-start="\Illuminate\Support\Arr::toCssClasses([
         'opacity-0',
         match (config('filament-notifications.layout.alignment.horizontal')) {

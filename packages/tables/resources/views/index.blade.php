@@ -306,9 +306,7 @@
 
                                         return null
                                     "
-                                    :class="\Illuminate\Support\Arr::toCssClasses([
-                                        'hidden' => $isReordering,
-                                    ])"
+                                    @class(['hidden' => $isReordering])
                                 />
                             @endif
 
@@ -391,11 +389,11 @@
                             :lg="$contentGrid['lg'] ?? null"
                             :xl="$contentGrid['xl'] ?? null"
                             :two-xl="$contentGrid['2xl'] ?? null"
-                            :class="\Illuminate\Support\Arr::toCssClasses([
+                            @class([
                                 'dark:divide-gray-700',
                                 'divide-y' => ! $contentGrid,
                                 'p-2 gap-2' => $contentGrid,
-                            ])"
+                            ])
                         >
                             @foreach ($records as $record)
                                 @php
@@ -436,21 +434,21 @@
                                             'items-center gap-4 md:flex md:mr-0 rtl:md:ml-0' => (! $contentGrid),
                                             'mr-6 rtl:mr-0 rtl:ml-6' => $isSelectionEnabled || $hasCollapsibleColumnsLayout || $isReordering,
                                         ])>
-                                            <x-filament-tables::reorder.handle :class="\Illuminate\Support\Arr::toCssClasses([
+                                            <x-filament-tables::reorder.handle @class([
                                                 'absolute top-3 right-3 rtl:right-auto rtl:left-3',
                                                 'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
                                                 'hidden' => ! $isReordering,
-                                            ])" />
+                                            ]) />
 
                                             @if ($isSelectionEnabled)
                                                 <x-filament-tables::checkbox
                                                     x-model="selectedRecords"
                                                     :value="$recordKey"
-                                                    :class="\Illuminate\Support\Arr::toCssClasses([
+                                                    @class([
                                                         'filament-tables-record-checkbox absolute top-3 right-3 rtl:right-auto rtl:left-3',
                                                         'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
                                                         'hidden' => $isReordering,
-                                                    ])"
+                                                    ])
                                                 />
                                             @endif
 
@@ -523,13 +521,13 @@
                                                     :alignment="$actionsPosition === ActionsPosition::AfterContent ? 'left' : 'left md:right'"
                                                     :record="$record"
                                                     wrap="-md"
-                                                    :class="\Illuminate\Support\Arr::toCssClasses([
+                                                    @class([
                                                         'absolute bottom-1 right-1 rtl:right-auto rtl:left-1' => $actionsPosition === ActionsPosition::BottomCorner,
                                                         'md:relative md:bottom-0 md:right-0 rtl:md:left-0' => $actionsPosition === ActionsPosition::BottomCorner && (! $contentGrid),
                                                         'mb-3' => $actionsPosition === ActionsPosition::AfterContent,
                                                         'md:mb-0' => $actionsPosition === ActionsPosition::AfterContent && (! $contentGrid),
                                                         'hidden' => $isReordering,
-                                                    ])"
+                                                    ])
                                                 />
                                             @endif
                                         </div>
@@ -693,27 +691,25 @@
                                 x-bind:class="{
                                     'bg-gray-50 dark:bg-gray-500/10': isRecordSelected('{{ $recordKey }}'),
                                 }"
-                                :class="\Illuminate\Support\Arr::toCssClasses(array_merge(
+                                @class(array_merge(
                                     [
                                         'group cursor-move' => $isReordering,
                                     ],
                                     $getRecordClasses($record),
-                                ))"
+                                ))
                             >
-                                <x-filament-tables::reorder.cell :class="\Illuminate\Support\Arr::toCssClasses([
+                                <x-filament-tables::reorder.cell @class([
                                     'hidden' => ! $isReordering,
-                                ])">
+                                ])>
                                     @if ($isReordering)
                                         <x-filament-tables::reorder.handle />
                                     @endif
                                 </x-filament-tables::reorder.cell>
 
                                 @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)
-                                    <x-filament-tables::actions.cell
-                                        :class="\Illuminate\Support\Arr::toCssClasses([
-                                            'hidden' => $isReordering,
-                                        ])"
-                                    >
+                                    <x-filament-tables::actions.cell @class([
+                                        'hidden' => $isReordering,
+                                    ])>
                                         <x-filament-tables::actions
                                             :actions="$actions"
                                             :record="$record"
@@ -722,9 +718,9 @@
                                 @endif
 
                                 @if ($isSelectionEnabled)
-                                    <x-filament-tables::checkbox.cell :class="\Illuminate\Support\Arr::toCssClasses([
+                                    <x-filament-tables::checkbox.cell @class([
                                         'hidden' => $isReordering,
-                                    ])">
+                                    ])>
                                         <x-filament-tables::checkbox
                                             x-model="selectedRecords"
                                             :value="$recordKey"
@@ -734,11 +730,9 @@
                                 @endif
 
                                 @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
-                                    <x-filament-tables::actions.cell
-                                        :class="\Illuminate\Support\Arr::toCssClasses([
-                                            'hidden' => $isReordering,
-                                        ])"
-                                    >
+                                    <x-filament-tables::actions.cell @class([
+                                        'hidden' => $isReordering,
+                                    ])>
                                         <x-filament-tables::actions
                                             :actions="$actions"
                                             :record="$record"
@@ -768,11 +762,9 @@
                                 @endforeach
 
                                 @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
-                                    <x-filament-tables::actions.cell
-                                        :class="\Illuminate\Support\Arr::toCssClasses([
-                                            'hidden' => $isReordering,
-                                        ])"
-                                    >
+                                    <x-filament-tables::actions.cell @class([
+                                        'hidden' => $isReordering,
+                                    ])>
                                         <x-filament-tables::actions
                                             :actions="$actions"
                                             :record="$record"
