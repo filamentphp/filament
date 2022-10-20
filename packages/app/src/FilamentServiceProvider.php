@@ -19,6 +19,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\PluginServiceProvider;
 use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\ButtonAction;
 use Filament\Tables\Actions\IconButtonAction;
@@ -36,48 +37,9 @@ use Symfony\Component\Finder\SplFileInfo;
 
 class FilamentServiceProvider extends PluginServiceProvider
 {
+    public static string $name = 'filament';
+
     protected array $livewireComponents = [];
-
-    public function configurePackage(Package $package): void
-    {
-        $package
-            ->name('filament')
-            ->hasCommands($this->getCommands())
-            ->hasConfigFile()
-            ->hasRoutes(['web'])
-            ->hasTranslations()
-            ->hasViews();
-    }
-
-    protected function getCommands(): array
-    {
-        $commands = [
-            Commands\MakeBelongsToManyCommand::class,
-            Commands\MakeHasManyCommand::class,
-            Commands\MakeHasManyThroughCommand::class,
-            Commands\MakeMorphManyCommand::class,
-            Commands\MakeMorphToManyCommand::class,
-            Commands\MakePageCommand::class,
-            Commands\MakeRelationManagerCommand::class,
-            Commands\MakeResourceCommand::class,
-            Commands\MakeUserCommand::class,
-            Commands\MakeWidgetCommand::class,
-        ];
-
-        $aliases = [];
-
-        foreach ($commands as $command) {
-            $class = 'Filament\\Commands\\Aliases\\' . class_basename($command);
-
-            if (! class_exists($class)) {
-                continue;
-            }
-
-            $aliases[] = $class;
-        }
-
-        return array_merge($commands, $aliases);
-    }
 
     public function packageRegistered(): void
     {
@@ -101,13 +63,7 @@ class FilamentServiceProvider extends PluginServiceProvider
     {
         parent::packageBooted();
 
-        FilamentAsset::register([
-            Css::make('app', __DIR__ . '/../dist/index.css')->html(Filament::getTheme()),
-            Js::make('app', __DIR__ . '/../dist/index.js')->core(),
-            Js::make('echo', __DIR__ . '/../dist/echo.js')->core(),
-        ]);
-
-        $this->bootLivewireComponents();
+        $this->registerLivewire();
 
         $this->bootTableActionConfiguration();
 
@@ -120,6 +76,20 @@ class FilamentServiceProvider extends PluginServiceProvider
         }
 
         TestableLivewire::mixin(new TestsPages());
+    }
+
+    protected function getAssetPackage(): ?string
+    {
+        return null;
+    }
+
+    protected function getAssets(): array
+    {
+        return [
+            Css::make('app', __DIR__ . '/../dist/index.css')->html(Filament::getTheme()),
+            Js::make('app', __DIR__ . '/../dist/index.js')->core(),
+            Js::make('echo', __DIR__ . '/../dist/echo.js')->core(),
+        ];
     }
 
     protected function registerComponents(): void
@@ -251,7 +221,7 @@ class FilamentServiceProvider extends PluginServiceProvider
         );
     }
 
-    protected function bootLivewireComponents(): void
+    protected function registerLivewire(): void
     {
         Livewire::addPersistentMiddleware([
             Authenticate::class,
@@ -281,6 +251,41 @@ class FilamentServiceProvider extends PluginServiceProvider
                 return $action;
             });
         });
+    }
+
+    protected function getRoutes(): array
+    {
+        return ['web'];
+    }
+
+    protected function getCommands(): array
+    {
+        $commands = [
+            Commands\MakeBelongsToManyCommand::class,
+            Commands\MakeHasManyCommand::class,
+            Commands\MakeHasManyThroughCommand::class,
+            Commands\MakeMorphManyCommand::class,
+            Commands\MakeMorphToManyCommand::class,
+            Commands\MakePageCommand::class,
+            Commands\MakeRelationManagerCommand::class,
+            Commands\MakeResourceCommand::class,
+            Commands\MakeUserCommand::class,
+            Commands\MakeWidgetCommand::class,
+        ];
+
+        $aliases = [];
+
+        foreach ($commands as $command) {
+            $class = 'Filament\\Commands\\Aliases\\' . class_basename($command);
+
+            if (! class_exists($class)) {
+                continue;
+            }
+
+            $aliases[] = $class;
+        }
+
+        return array_merge($commands, $aliases);
     }
 
     protected function mergeConfig(array $original, array $merging): array

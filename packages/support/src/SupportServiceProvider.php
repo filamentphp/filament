@@ -19,24 +19,14 @@ use Illuminate\Support\Stringable;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class SupportServiceProvider extends PackageServiceProvider
+class SupportServiceProvider extends PluginServiceProvider
 {
-    public function configurePackage(Package $package): void
-    {
-        $package
-            ->name('filament-support')
-            ->hasCommands([
-                AssetsCommand::class,
-                CheckTranslationsCommand::class,
-                UpgradeCommand::class,
-            ])
-            ->hasConfigFile()
-            ->hasTranslations()
-            ->hasViews();
-    }
+    public static string $name = 'filament-support';
 
-    public function packageRegistered()
+    public function packageRegistered(): void
     {
+        parent::packageRegistered();
+
         $this->app->scoped(
             AssetManager::class,
             function () {
@@ -59,12 +49,9 @@ class SupportServiceProvider extends PackageServiceProvider
         );
     }
 
-    public function packageBooted()
+    public function packageBooted(): void
     {
-        FilamentAsset::register([
-            Js::make('support', __DIR__ . '/../dist/index.js'),
-            Js::make('async-alpine', 'https://cdn.jsdelivr.net/npm/async-alpine@0.5.x/dist/async-alpine.script.js'),
-        ]);
+        parent::packageBooted();
 
         Blade::directive('captureSlots', function (string $expression): string {
             return "<?php \$slotContents = get_defined_vars(); \$slots = collect({$expression})->mapWithKeys(fn (string \$slot): array => [\$slot => \$slotContents[\$slot] ?? null])->all(); unset(\$slotContents) ?>";
@@ -113,5 +100,27 @@ class SupportServiceProvider extends PackageServiceProvider
                 },
             ]);
         }
+    }
+
+    protected function getAssetPackage(): ?string
+    {
+        return null;
+    }
+
+    protected function getAssets(): array
+    {
+        return [
+            Js::make('support', __DIR__ . '/../dist/index.js'),
+            Js::make('async-alpine', 'https://cdn.jsdelivr.net/npm/async-alpine@0.5.x/dist/async-alpine.script.js'),
+        ];
+    }
+
+    protected function getCommands(): array
+    {
+        return [
+            AssetsCommand::class,
+            CheckTranslationsCommand::class,
+            UpgradeCommand::class,
+        ];
     }
 }

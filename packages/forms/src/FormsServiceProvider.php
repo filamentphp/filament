@@ -5,21 +5,27 @@ namespace Filament\Forms;
 use Filament\Forms\Testing\TestsForms;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\PluginServiceProvider;
 use Illuminate\Filesystem\Filesystem;
 use Livewire\Testing\TestableLivewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class FormsServiceProvider extends PackageServiceProvider
+class FormsServiceProvider extends PluginServiceProvider
 {
-    public function configurePackage(Package $package): void
+    static string $name = 'forms';
+
+    public function packageBooted(): void
     {
-        $package
-            ->name('forms')
-            ->hasCommands($this->getCommands())
-            ->hasConfigFile()
-            ->hasTranslations()
-            ->hasViews();
+        if ($this->app->runningInConsole()) {
+            foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
+                $this->publishes([
+                    $file->getRealPath() => base_path("stubs/filament/{$file->getFilename()}"),
+                ], 'forms-stubs');
+            }
+        }
+
+        TestableLivewire::mixin(new TestsForms());
     }
 
     protected function getCommands(): array
@@ -45,9 +51,14 @@ class FormsServiceProvider extends PackageServiceProvider
         return array_merge($commands, $aliases);
     }
 
-    public function packageBooted(): void
+    protected function getAssetPackage(): ?string
     {
-        FilamentAsset::register([
+        return 'forms';
+    }
+
+    protected function getAssets(): array
+    {
+        return [
             AlpineComponent::make('color-picker', __DIR__ . '/../dist/components/color-picker.js'),
             AlpineComponent::make('date-time-picker', __DIR__ . '/../dist/components/date-time-picker.js'),
             AlpineComponent::make('file-upload', __DIR__ . '/../dist/components/file-upload.js'),
@@ -58,16 +69,6 @@ class FormsServiceProvider extends PackageServiceProvider
             AlpineComponent::make('tags-input', __DIR__ . '/../dist/components/tags-input.js'),
             AlpineComponent::make('text-input', __DIR__ . '/../dist/components/text-input.js'),
             AlpineComponent::make('textarea', __DIR__ . '/../dist/components/textarea.js'),
-        ], 'forms');
-
-        if ($this->app->runningInConsole()) {
-            foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
-                $this->publishes([
-                    $file->getRealPath() => base_path("stubs/filament/{$file->getFilename()}"),
-                ], 'forms-stubs');
-            }
-        }
-
-        TestableLivewire::mixin(new TestsForms());
+        ];
     }
 }

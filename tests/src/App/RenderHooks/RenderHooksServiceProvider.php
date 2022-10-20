@@ -2,7 +2,7 @@
 
 namespace Filament\Tests\App\RenderHooks;
 
-use Filament\PluginServiceProvider;
+use Filament\Support\PluginServiceProvider;
 
 class RenderHooksServiceProvider extends PluginServiceProvider
 {

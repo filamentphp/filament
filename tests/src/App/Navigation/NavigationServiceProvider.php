@@ -2,7 +2,7 @@
 
 namespace Filament\Tests\App\Navigation;
 
-use Filament\PluginServiceProvider;
+use Filament\Support\PluginServiceProvider;
 use Filament\Tests\App\Fixtures\Pages\Settings;
 use Filament\Tests\App\Fixtures\Resources\PostCategoryResource;
 use Filament\Tests\App\Fixtures\Resources\PostResource;

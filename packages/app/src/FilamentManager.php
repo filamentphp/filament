@@ -34,8 +34,6 @@ class FilamentManager
 
     protected array $resources = [];
 
-    protected array $scriptData = [];
-
     protected array $meta = [];
 
     protected string | Htmlable | null $theme = null;
@@ -111,11 +109,6 @@ class FilamentManager
     public function registerResources(array $resources): void
     {
         $this->resources = array_merge($this->resources, $resources);
-    }
-
-    public function registerScriptData(array $data): void
-    {
-        $this->scriptData = array_merge($this->scriptData, $data);
     }
 
     public function registerTheme(string | Htmlable | null $theme): void
@@ -288,11 +281,6 @@ class FilamentManager
         }
 
         return null;
-    }
-
-    public function getScriptData(): array
-    {
-        return $this->scriptData;
     }
 
     public function getTheme(): string | Htmlable | null

@@ -74,10 +74,6 @@
 
         @livewireScripts
 
-        <script>
-            window.filamentData = @json(\Filament\Facades\Filament::getScriptData());
-        </script>
-
         @filamentScripts(withCore: true)
 
         <script src="//unpkg.com/alpinejs" defer></script>

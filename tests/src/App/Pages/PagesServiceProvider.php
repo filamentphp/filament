@@ -2,7 +2,7 @@
 
 namespace Filament\Tests\App\Pages;
 
-use Filament\PluginServiceProvider;
+use Filament\Support\PluginServiceProvider;
 use Filament\Tests\App\Fixtures\Pages\Settings;
 
 class PagesServiceProvider extends PluginServiceProvider

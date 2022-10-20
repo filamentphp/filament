@@ -2,7 +2,7 @@
 
 namespace Filament\Tests\Actions;
 
-use Filament\PluginServiceProvider;
+use Filament\Support\PluginServiceProvider;
 use Filament\Tests\Actions\Fixtures\Pages\Actions;
 
 class ActionsServiceProvider extends PluginServiceProvider

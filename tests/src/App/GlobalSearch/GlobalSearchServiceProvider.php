@@ -2,7 +2,7 @@
 
 namespace Filament\Tests\App\GlobalSearch;
 
-use Filament\PluginServiceProvider;
+use Filament\Support\PluginServiceProvider;
 use Filament\Tests\App\Fixtures\Resources\PostResource;
 
 class GlobalSearchServiceProvider extends PluginServiceProvider

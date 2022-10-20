@@ -2,7 +2,7 @@
 
 namespace Filament\Tests\App\Resources;
 
-use Filament\PluginServiceProvider;
+use Filament\Support\PluginServiceProvider;
 use Filament\Tests\App\Fixtures\Resources\PostResource;
 use Filament\Tests\App\Fixtures\Resources\UserResource;
 
