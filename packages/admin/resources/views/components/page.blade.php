@@ -15,7 +15,7 @@
             </x-filament::header>
         @endif
         
-        {{ \Filament\Facades\Filament::renderHook('header-widgets.start') }}
+        {{ \Filament\Facades\Filament::renderHook('page.header-widgets.start') }}
 
         @if ($headerWidgets = $this->getHeaderWidgets())
             <x-filament::widgets
@@ -25,11 +25,11 @@
             />
         @endif
         
-        {{ \Filament\Facades\Filament::renderHook('header-widgets.end') }}
+        {{ \Filament\Facades\Filament::renderHook('page.header-widgets.end') }}
 
         {{ $slot }}
         
-        {{ \Filament\Facades\Filament::renderHook('footer-widgets.start') }}
+        {{ \Filament\Facades\Filament::renderHook('page.footer-widgets.start') }}
 
         @if ($footerWidgets = $this->getFooterWidgets())
             <x-filament::widgets
@@ -39,7 +39,7 @@
             />
         @endif
         
-        {{ \Filament\Facades\Filament::renderHook('footer-widgets.end') }}
+        {{ \Filament\Facades\Filament::renderHook('page.footer-widgets.end') }}
 
         @if ($footer = $this->getFooter())
             {{ $footer }}
