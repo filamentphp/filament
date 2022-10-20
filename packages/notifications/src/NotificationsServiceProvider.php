@@ -5,7 +5,6 @@ namespace Filament\Notifications;
 use Filament\Notifications\Http\Livewire\Notifications;
 use Filament\Notifications\Testing\TestsNotifications;
 use Filament\Support\Assets\Js;
-use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\PluginServiceProvider;
 use Livewire\Component;
 use Livewire\Livewire;
