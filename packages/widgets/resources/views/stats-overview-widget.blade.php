@@ -1,9 +1,9 @@
-<x-filament::widget class="filament-stats-overview-widget">
+<x-filament-widgets::widget class="filament-stats-overview-widget">
     <div {!! ($pollingInterval = $this->getPollingInterval()) ? "wire:poll.{$pollingInterval}" : '' !!}>
-        <x-filament::stats :columns="$this->getColumns()">
+        <x-filament-widgets::stats :columns="$this->getColumns()">
             @foreach ($this->getCachedCards() as $card)
                 {{ $card }}
             @endforeach
-        </x-filament::stats>
+        </x-filament-widgets::stats>
     </div>
-</x-filament::widget>
+</x-filament-widgets::widget>

@@ -1,5 +1,5 @@
-<x-filament::widget class="filament-filament-info-widget">
-    <x-filament::card class="relative">
+<x-filament-widgets::widget class="filament-filament-info-widget">
+    <x-filament-widgets::card class="relative">
         <div class="relative h-12 flex flex-col justify-center items-center space-y-2">
             <div class="space-y-1">
                 <a
@@ -100,5 +100,5 @@
                 <path d="m712 2047-32-24 23-21c31-29 33-28 47 14 16 49 2 60-38 31z"/>
             </g>
         </svg>
-    </x-filament::card>
-</x-filament::widget>
+    </x-filament-widgets::card>
+</x-filament-widgets::widget>

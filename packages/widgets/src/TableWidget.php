@@ -14,7 +14,7 @@ class TableWidget extends Widget implements Tables\Contracts\HasTable
         makeTable as makeBaseTable;
     }
 
-    protected static string $view = 'filament::widgets.table-widget';
+    protected static string $view = 'filament-widgets::table-widget';
 
     /**
      * @deprecated Override the `table()` method to configure the table.

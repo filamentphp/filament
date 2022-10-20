@@ -18,7 +18,7 @@ class ChartWidget extends Widget
 
     protected static ?array $options = null;
 
-    protected static string $view = 'filament::widgets.chart-widget';
+    protected static string $view = 'filament-widgets::chart-widget';
 
     public function mount()
     {

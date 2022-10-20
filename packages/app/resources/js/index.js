@@ -1,4 +1,3 @@
-import Chart from 'chart.js/auto'
 import Collapse from '@alpinejs/collapse'
 import Focus from '@alpinejs/focus'
 import Mousetrap from '@danharrin/alpine-mousetrap'
@@ -63,8 +62,3 @@ document.addEventListener('alpine:init', () => {
             window.Alpine.store('theme', event.matches ? 'dark' : 'light')
         })
 })
-
-Chart.defaults.font.family = `'DM Sans', sans-serif`
-Chart.defaults.color = '#6b7280'
-
-window.Chart = Chart

@@ -1,0 +1,5 @@
+<x-filament-widgets::widget>
+    <x-filament-widgets::card>
+        {{-- Widget content --}}
+    </x-filament-widgets::card>
+</x-filament-widgets::widget>

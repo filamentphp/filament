@@ -210,6 +210,6 @@ class Card extends Component implements Htmlable
 
     public function render(): View
     {
-        return view('filament::widgets.stats-overview-widget.card', $this->data());
+        return view('filament-widgets::stats-overview-widget.card', $this->data());
     }
 }

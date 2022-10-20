@@ -75,3 +75,23 @@ formComponents.forEach((component) => {
         })
         .catch(() => process.exit(1))
 })
+
+esbuild
+    .build({
+        define: {
+            'process.env.NODE_ENV': shouldWatch
+                ? `'production'`
+                : `'development'`,
+        },
+        entryPoints: [
+            `packages/widgets/resources/js/components/chart.js`,
+        ],
+        outfile: `packages/widgets/dist/components/chart.js`,
+        bundle: true,
+        platform: 'neutral',
+        mainFields: ['module', 'main'],
+        watch: shouldWatch,
+        minifySyntax: true,
+        minifyWhitespace: true,
+    })
+    .catch(() => process.exit(1))

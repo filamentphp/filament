@@ -15,7 +15,7 @@
         @endif
 
         @if ($headerWidgets = $this->getHeaderWidgets())
-            <x-filament::widgets
+            <x-filament-widgets::widgets
                 :widgets="$headerWidgets"
                 :columns="$this->getHeaderWidgetsColumns()"
                 :data="$widgetData"
@@ -25,7 +25,7 @@
         {{ $slot }}
 
         @if ($footerWidgets = $this->getFooterWidgets())
-            <x-filament::widgets
+            <x-filament-widgets::widgets
                 :widgets="$footerWidgets"
                 :columns="$this->getFooterWidgetsColumns()"
                 :data="$widgetData"

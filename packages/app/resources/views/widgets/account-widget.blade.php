@@ -1,5 +1,5 @@
-<x-filament::widget class="filament-account-widget">
-    <x-filament::card>
+<x-filament-widgets::widget class="filament-account-widget">
+    <x-filament-widgets::card>
         @php
             $user = \Filament\Facades\Filament::auth()->user();
         @endphp
@@ -27,5 +27,5 @@
                 </form>
             </div>
         </div>
-    </x-filament::card>
-</x-filament::widget>
+    </x-filament-widgets::card>
+</x-filament-widgets::widget>

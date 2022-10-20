@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Commands;
+namespace Filament\Widgets\Commands;
 
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanValidateInput;

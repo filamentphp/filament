@@ -2,7 +2,7 @@
     $url = $getUrl();
 @endphp
 
-<x-filament::stats.card
+<x-filament-widgets::stats.card
     :tag="$url ? 'a' : 'div'"
     :chart="$getChart()"
     :chart-color="$getChartColor()"
