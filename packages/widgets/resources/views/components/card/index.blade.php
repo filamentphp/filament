@@ -27,7 +27,7 @@
     @endif
 
     @if (($actions || $header || $heading) && $slot->isNotEmpty())
-        <x-filament-widgets::hr />
+        <x-filament-support::hr />
     @endif
 
     <div class="space-y-2">
@@ -39,7 +39,7 @@
     </div>
 
     @if ($footer && $slot->isNotEmpty())
-        <x-filament-widgets::hr />
+        <x-filament-support::hr />
     @endif
 
     @if ($footer)

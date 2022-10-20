@@ -28,7 +28,7 @@
                 @endif
             </div>
 
-            <x-filament-widgets::hr />
+            <x-filament-support::hr />
         @endif
 
         <div {!! ($pollingInterval = $this->getPollingInterval()) ? "wire:poll.{$pollingInterval}=\"updateChartData\"" : '' !!}>
