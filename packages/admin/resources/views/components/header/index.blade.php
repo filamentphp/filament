@@ -10,7 +10,7 @@
             {{ $heading }}
         </x-filament::header.heading>
 
-        @if($subheading)
+        @if ($subheading)
             <x-filament::header.subheading class="mt-1">
                 {{ $subheading }}
             </x-filament::header.subheading>
