@@ -20,10 +20,6 @@ class NotificationsServiceProvider extends PluginServiceProvider
     {
         parent::packageBooted();
 
-        FilamentAsset::register([
-            Js::make('notifications', __DIR__ . '/../dist/index.js'),
-        ], 'notifications');
-
         Livewire::component('notifications', Notifications::class);
 
         Livewire::listen('component.dehydrate', function (Component $component, Response $response): Response {
@@ -43,6 +39,18 @@ class NotificationsServiceProvider extends PluginServiceProvider
         });
 
         TestableLivewire::mixin(new TestsNotifications());
+    }
+
+    protected function getAssetPackage(): ?string
+    {
+        return 'notifications';
+    }
+
+    protected function getAssets(): array
+    {
+        return [
+            Js::make('notifications', __DIR__ . '/../dist/index.js'),
+        ];
     }
 
     protected function getCommands(): array
