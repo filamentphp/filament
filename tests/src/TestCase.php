@@ -12,7 +12,10 @@ use Filament\SpatieLaravelSettingsPluginServiceProvider;
 use Filament\SpatieLaravelTranslatablePluginServiceProvider;
 use Filament\Support\SupportServiceProvider;
 use Filament\Tables\TablesServiceProvider;
+use Filament\Tests\App\Navigation\NavigationServiceProvider;
 use Filament\Tests\Models\User;
+use Filament\Widgets\Widget;
+use Filament\Widgets\WidgetsServiceProvider;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
@@ -32,11 +35,13 @@ abstract class TestCase extends BaseTestCase
             FilamentServiceProvider::class,
             FormsServiceProvider::class,
             LivewireServiceProvider::class,
+            NavigationServiceProvider::class,
             NotificationsServiceProvider::class,
             SpatieLaravelSettingsPluginServiceProvider::class,
             SpatieLaravelTranslatablePluginServiceProvider::class,
             SupportServiceProvider::class,
             TablesServiceProvider::class,
+            WidgetsServiceProvider::class,
         ];
     }
 
