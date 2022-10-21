@@ -15,10 +15,7 @@
                         $field = is_numeric($field) ? null : $field;
                     @endphp
 
-                    <span @class([
-                        'filament-tables-filter-indicator inline-flex items-center justify-center min-h-6 px-2 py-0.5 text-xs font-medium tracking-tight rounded-xl text-gray-700 bg-gray-500/10 whitespace-normal',
-                        'dark:text-gray-300 dark:bg-gray-500/20' => config('filament-tables.dark_mode'),
-                    ])>
+                    <span class="filament-tables-filter-indicator inline-flex items-center justify-center min-h-6 px-2 py-0.5 text-xs font-medium tracking-tight rounded-xl text-gray-700 bg-gray-500/10 whitespace-normal dark:text-gray-300 dark:bg-gray-500/20">
                         {{ $indicator }}
 
                         <button
@@ -48,10 +45,7 @@
             <button
                 wire:click="removeTableFilters"
                 type="button"
-                @class([
-                    '-mb-1.5 -mt-0.5 -mr-2 p-1.5 text-gray-600 hover:bg-gray-500/10 rounded-full hover:text-gray-700',
-                    'dark:text-gray-400 dark:hover:text-gray-300 dark:hover:bg-gray-500/20' => config('filament-tables.dark_mode'),
-                ])
+                class="-mb-1.5 -mt-0.5 -mr-2 p-1.5 text-gray-600 hover:bg-gray-500/10 rounded-full hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:bg-gray-500/20"
             >
                 <div class="w-5 h-5 flex items-center justify-center">
                     <x-filament-support::icon

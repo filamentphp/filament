@@ -45,10 +45,10 @@
             :lg="$layoutComponent->getColumnSpan('lg')"
             :xl="$layoutComponent->getColumnSpan('xl')"
             :twoXl="$layoutComponent->getColumnSpan('2xl')"
-            :class="\Illuminate\Support\Arr::toCssClasses([
+            @class([
                 'flex-1 w-full' => $layoutComponent->canGrow(),
                 $getHiddenClasses($layoutComponent),
-            ])"
+            ])
         >
             @if ($isColumn)
                 <x-filament-tables::columns.column

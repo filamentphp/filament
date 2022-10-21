@@ -14,10 +14,11 @@
 ])
 
 <{!! $tag !!}
-    {{ $attributes->merge($extraAttributes)->class([
-        'filament-stats-card relative p-6 rounded-2xl bg-white shadow',
-        'dark:bg-gray-800' => config('filament.dark_mode'),
-    ]) }}
+    {{
+        $attributes
+            ->merge($extraAttributes)
+            ->class(['filament-stats-card relative p-6 rounded-2xl bg-white shadow dark:bg-gray-800'])
+    }}
 >
     <div @class([
         'space-y-2',
@@ -134,11 +135,11 @@
                     x-ref="backgroundColorElement"
                     @class([
                         match ($chartColor) {
-                            'danger' => \Illuminate\Support\Arr::toCssClasses(['text-danger-50', 'dark:text-danger-700' => config('filament.dark_mode')]),
-                            'primary' => \Illuminate\Support\Arr::toCssClasses(['text-primary-50', 'dark:text-primary-700' => config('filament.dark_mode')]),
-                            'success' => \Illuminate\Support\Arr::toCssClasses(['text-success-50', 'dark:text-success-700' => config('filament.dark_mode')]),
-                            'warning' => \Illuminate\Support\Arr::toCssClasses(['text-warning-50', 'dark:text-warning-700' => config('filament.dark_mode')]),
-                            default => \Illuminate\Support\Arr::toCssClasses(['text-gray-50', 'dark:text-gray-700' => config('filament.dark_mode')]),
+                            'danger' => 'text-danger-50 dark:text-danger-700',
+                            'primary' => 'text-primary-50 dark:text-primary-700',
+                            'success' => 'text-success-50 dark:text-success-700',
+                            'warning' => 'text-warning-50 dark:text-warning-700',
+                            default => 'text-gray-50 dark:text-gray-700',
                         },
                     ])
                 ></span>

@@ -1,10 +1,10 @@
 <x-filament::page
     :widget-data="['record' => $record]"
-    :class="\Illuminate\Support\Arr::toCssClasses([
+    @class([
         'filament-resources-view-record-page',
         'filament-resources-' . str_replace('/', '-', $this->getResource()::getSlug()),
         'filament-resources-record-' . $record->getKey(),
-    ])"
+    ])
 >
     @php
         $relationManagers = $this->getRelationManagers();
@@ -16,7 +16,7 @@
 
     @if (count($relationManagers))
         @if (! $this->hasCombinedRelationManagerTabsWithForm())
-            <x-filament::hr />
+            <x-filament-support::hr />
         @endif
 
         <x-filament::resources.relation-managers

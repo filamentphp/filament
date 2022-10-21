@@ -3,7 +3,7 @@
     'unreadNotificationsCount',
 ])
 
-<x-filament-notifications::modal
+<x-filament-support::modal
     id="database-notifications"
     close-button
     slide-over
@@ -25,14 +25,12 @@
             @foreach ($notifications as $notification)
                 <div @class([
                     '-mx-6 border-b',
-                    'border-t' => $notification->unread(),
-                    'dark:border-gray-700' => (! $notification->unread()) && config('filament-notifications.dark_mode'),
-                    'dark:border-gray-800' => $notification->unread() && config('filament-notifications.dark_mode'),
+                    'border-t dark:border-gray-800' => $notification->unread(),
+                    'dark:border-gray-700' => ! $notification->unread(),
                 ])>
                     <div @class([
                         'py-2 pl-4 pr-2',
-                        'bg-primary-50 -mb-px' => $notification->unread(),
-                        'dark:bg-gray-700' => $notification->unread() && config('filament-notifications.dark_mode'),
+                        'bg-primary-50 -mb-px dark:bg-gray-700' => $notification->unread(),
                     ])>
                         {{ $this->getNotificationFromDatabaseRecord($notification)->inline() }}
                     </div>
@@ -42,4 +40,4 @@
     @else
         <x-filament-notifications::database.modal.empty-state />
     @endif
-</x-filament-notifications::modal>
+</x-filament-support::modal>

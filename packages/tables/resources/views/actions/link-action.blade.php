@@ -1,6 +1,6 @@
 <x-filament-tables::actions.action
     :action="$action"
-    component="filament-tables::link"
+    component="filament-support::link"
     :icon-position="$getIconPosition()"
     class="filament-tables-link-action"
 >

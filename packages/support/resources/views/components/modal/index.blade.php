@@ -3,7 +3,6 @@
     'ariaLabelledby' => null,
     'closeButton' => true,
     'closeEventName' => 'close-modal',
-    'darkMode' => false,
     'displayClasses' => 'inline-block',
     'footer' => null,
     'header' => null,
@@ -95,8 +94,7 @@
         >
             <div
                 @class([
-                    'filament-modal-window w-full p-2 bg-white cursor-default pointer-events-auto',
-                    'dark:bg-gray-800' => $darkMode,
+                    'filament-modal-window w-full p-2 bg-white cursor-default pointer-events-auto dark:bg-gray-800',
                     'relative' => $width !== 'screen',
                     'h-screen overflow-y-auto ml-auto mr-0 rtl:mr-auto rtl:ml-0' => $slideOver,
                     'rounded-xl mx-auto' => ! ($slideOver || ($width === 'screen')),
@@ -162,9 +160,8 @@
                     >
                         @if ($heading || $subheading)
                             <div @class([
-                                'p-4 space-y-2',
+                                'p-4 space-y-2 dark:text-white',
                                 'text-center' => ! $slideOver,
-                                'dark:text-white' => $darkMode,
                             ])>
                                 @if ($heading)
                                     <x-dynamic-component

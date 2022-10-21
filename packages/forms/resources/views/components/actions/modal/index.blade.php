@@ -3,7 +3,7 @@
 @endphp
 
 <form wire:submit.prevent="callMountedFormComponentAction">
-    <x-filament-forms::modal
+    <x-filament-support::modal
         :id="$this->id . '-form-component-action'"
         :wire:key="$action ? $this->id . '.' . $action->getComponent()->getStatePath() . '.actions.' . $action->getName() . '.modal' : null"
         :visible="filled($action)"
@@ -24,14 +24,14 @@
                 @endif
             @else
                 <x-slot name="header">
-                    <x-filament-forms::modal.heading>
+                    <x-filament-support::modal.heading>
                         {{ $action->getModalHeading() }}
-                    </x-filament-forms::modal.heading>
+                    </x-filament-support::modal.heading>
 
                     @if ($subheading = $action->getModalSubheading())
-                        <x-filament-forms::modal.subheading>
+                        <x-filament-support::modal.subheading>
                             {{ $subheading }}
-                        </x-filament-forms::modal.subheading>
+                        </x-filament-support::modal.subheading>
                     @endif
                 </x-slot>
             @endif
@@ -44,13 +44,13 @@
 
             @if (count($action->getModalActions()))
                 <x-slot name="footer">
-                    <x-filament-forms::modal.actions :full-width="$action->isModalCentered()">
+                    <x-filament-support::modal.actions :full-width="$action->isModalCentered()">
                         @foreach ($action->getModalActions() as $modalAction)
                             {{ $modalAction }}
                         @endforeach
-                    </x-filament-forms::modal.actions>
+                    </x-filament-support::modal.actions>
                 </x-slot>
             @endif
         @endif
-    </x-filament-forms::modal>
+    </x-filament-support::modal>
 </form>

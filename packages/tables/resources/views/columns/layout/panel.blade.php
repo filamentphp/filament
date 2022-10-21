@@ -2,10 +2,7 @@
     {{
         $attributes
             ->merge($getExtraAttributes())
-            ->class([
-                'px-4 py-3 bg-gray-100 rounded-lg',
-                'dark:bg-gray-900' => config('filament-forms.dark_mode'),
-            ])
+            ->class(['px-4 py-3 bg-gray-100 rounded-lg dark:bg-gray-900'])
     }}
 >
     <x-filament-tables::columns.layout

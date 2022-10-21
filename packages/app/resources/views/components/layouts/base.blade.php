@@ -49,23 +49,18 @@
 
         {{ \Filament\Facades\Filament::renderHook('styles.end') }}
 
-        @if (config('filament.dark_mode'))
-            <script>
-                const theme = localStorage.getItem('theme')
+        <script>
+            const theme = localStorage.getItem('theme')
 
-                if ((theme === 'dark') || (! theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    document.documentElement.classList.add('dark')
-                }
-            </script>
-        @endif
+            if ((theme === 'dark') || (! theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark')
+            }
+        </script>
 
         {{ \Filament\Facades\Filament::renderHook('head.end') }}
     </head>
 
-    <body @class([
-        'filament-body bg-gray-100 text-gray-900',
-        'dark:text-gray-100 dark:bg-gray-900' => config('filament.dark_mode'),
-    ])>
+    <body class="filament-body bg-gray-100 text-gray-900 dark:text-gray-100 dark:bg-gray-900">
         {{ \Filament\Facades\Filament::renderHook('body.start') }}
 
         {{ $slot }}

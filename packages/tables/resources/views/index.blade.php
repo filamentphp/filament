@@ -182,7 +182,7 @@
                         </x-slot>
                     </x-filament-tables::header>
 
-                    <x-filament-tables::hr :x-show="\Illuminate\Support\Js::from($isReorderable || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible) . ' || selectedRecords.length'" />
+                    <x-filament-support::hr :x-show="\Illuminate\Support\Js::from($isReorderable || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible) . ' || selectedRecords.length'" />
                 </div>
             @endif
 
@@ -192,7 +192,7 @@
                         <x-filament-tables::filters :form="$getFiltersForm()" />
                     </div>
 
-                    <x-filament-tables::hr :x-show="\Illuminate\Support\Js::from($isReorderable || $isGlobalSearchVisible || $isColumnToggleFormVisible) . ' || selectedRecords.length'" />
+                    <x-filament-support::hr :x-show="\Illuminate\Support\Js::from($isReorderable || $isGlobalSearchVisible || $isColumnToggleFormVisible) . ' || selectedRecords.length'" />
                 </div>
             @endif
 
@@ -251,20 +251,14 @@
         @if ($isReordering)
             <x-filament-tables::reorder.indicator
                 :colspan="$columnsCount"
-                :class="\Illuminate\Support\Arr::toCssClasses([
-                    'border-t',
-                    'dark:border-gray-700' => config('filament-tables.dark_mode'),
-                ])"
+                class="border-t dark:border-gray-700"
             />
         @elseif ($isSelectionEnabled)
             <x-filament-tables::selection-indicator
                 :all-records-count="$getAllRecordsCount()"
                 :colspan="$columnsCount"
                 x-show="selectedRecords.length"
-                :class="\Illuminate\Support\Arr::toCssClasses([
-                    'border-t',
-                    'dark:border-gray-700' => config('filament-tables.dark_mode'),
-                ])"
+                class="border-t dark:border-gray-700"
             >
                 <x-slot name="selectedRecordsCount">
                     <span x-text="selectedRecords.length"></span>
@@ -274,10 +268,7 @@
 
         <x-filament-tables::filters.indicators
             :indicators="$filterIndicators"
-            :class="\Illuminate\Support\Arr::toCssClasses([
-                'border-t',
-                'dark:border-gray-700' => config('filament-tables.dark_mode'),
-            ])"
+            class="border-t dark:border-gray-700"
         />
 
         <div
@@ -285,8 +276,7 @@
                 wire:poll.{{ $pollingInterval }}
             @endif
             @class([
-                'filament-tables-table-container overflow-x-auto relative',
-                'dark:border-gray-700' => config('filament-tables.dark_mode'),
+                'filament-tables-table-container overflow-x-auto relative dark:border-gray-700',
                 'overflow-x-auto' => $content || $hasColumnsLayout,
                 'rounded-t-xl' => ! $renderHeader,
                 'border-t' => $renderHeader,
@@ -299,10 +289,7 @@
             @if ($content || $hasColumnsLayout)
                 @if (count($records))
                     @if (($content || $hasColumnsLayout) && (! $isReordering))
-                        <div @class([
-                            'bg-gray-500/5 flex items-center gap-4 px-4 border-b',
-                            'dark:border-gray-700' => config('filament-tables.dark_mode'),
-                        ])>
+                        <div class="bg-gray-500/5 flex items-center gap-4 px-4 border-b dark:border-gray-700">
                             @if ($isSelectionEnabled)
                                 <x-filament-tables::checkbox
                                     x-on:click="toggleSelectRecordsOnPage"
@@ -319,9 +306,7 @@
 
                                         return null
                                     "
-                                    :class="\Illuminate\Support\Arr::toCssClasses([
-                                        'hidden' => $isReordering,
-                                    ])"
+                                    @class(['hidden' => $isReordering])
                                 />
                             @endif
 
@@ -404,11 +389,11 @@
                             :lg="$contentGrid['lg'] ?? null"
                             :xl="$contentGrid['xl'] ?? null"
                             :two-xl="$contentGrid['2xl'] ?? null"
-                            :class="\Illuminate\Support\Arr::toCssClasses([
+                            @class([
+                                'dark:divide-gray-700',
                                 'divide-y' => ! $contentGrid,
                                 'p-2 gap-2' => $contentGrid,
-                                'dark:divide-gray-700' => config('filament-tables.dark_mode'),
-                            ])"
+                            ])
                         >
                             @foreach ($records as $record)
                                 @php
@@ -432,17 +417,15 @@
                                 >
                                     <div
                                         x-bind:class="{
-                                            'bg-gray-50 {{ config('filament-tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $recordKey }}'),
+                                            'bg-gray-50 dark:bg-gray-500/10': isRecordSelected('{{ $recordKey }}'),
                                         }"
                                         @class(array_merge(
                                             [
                                                 'h-full relative px-4 transition',
-                                                'hover:bg-gray-50' => $recordUrl || $recordAction,
-                                                'dark:hover:bg-gray-500/10' => ($recordUrl || $recordAction) && config('filament-tables.dark_mode'),
-                                                'dark:border-gray-600' => (! $contentGrid) && config('filament-tables.dark_mode'),
+                                                'hover:bg-gray-50 dark:hover:bg-gray-500/10' => $recordUrl || $recordAction,
+                                                'dark:border-gray-600' => ! $contentGrid,
                                                 'group' => $isReordering,
-                                                'rounded-xl shadow-sm border border-gray-200' => $contentGrid,
-                                                'dark:border-gray-700 dark:bg-gray-700/40' => $contentGrid && config('filament-tables.dark_mode'),
+                                                'rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 dark:bg-gray-700/40' => $contentGrid,
                                             ],
                                             $getRecordClasses($record),
                                         ))
@@ -451,21 +434,21 @@
                                             'items-center gap-4 md:flex md:mr-0 rtl:md:ml-0' => (! $contentGrid),
                                             'mr-6 rtl:mr-0 rtl:ml-6' => $isSelectionEnabled || $hasCollapsibleColumnsLayout || $isReordering,
                                         ])>
-                                            <x-filament-tables::reorder.handle :class="\Illuminate\Support\Arr::toCssClasses([
+                                            <x-filament-tables::reorder.handle @class([
                                                 'absolute top-3 right-3 rtl:right-auto rtl:left-3',
                                                 'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
                                                 'hidden' => ! $isReordering,
-                                            ])" />
+                                            ]) />
 
                                             @if ($isSelectionEnabled)
                                                 <x-filament-tables::checkbox
                                                     x-model="selectedRecords"
                                                     :value="$recordKey"
-                                                    :class="\Illuminate\Support\Arr::toCssClasses([
+                                                    @class([
                                                         'filament-tables-record-checkbox absolute top-3 right-3 rtl:right-auto rtl:left-3',
                                                         'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
                                                         'hidden' => $isReordering,
-                                                    ])"
+                                                    ])
                                                 />
                                             @endif
 
@@ -477,7 +460,7 @@
                                                     'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
                                                     'hidden' => $isReordering,
                                                 ])>
-                                                    <x-filament-tables::icon-button
+                                                    <x-filament-support::icon-button
                                                         icon="heroicon-m-chevron-down"
                                                         color="secondary"
                                                         size="sm"
@@ -538,13 +521,13 @@
                                                     :alignment="$actionsPosition === ActionsPosition::AfterContent ? 'left' : 'left md:right'"
                                                     :record="$record"
                                                     wrap="-md"
-                                                    :class="\Illuminate\Support\Arr::toCssClasses([
+                                                    @class([
                                                         'absolute bottom-1 right-1 rtl:right-auto rtl:left-1' => $actionsPosition === ActionsPosition::BottomCorner,
                                                         'md:relative md:bottom-0 md:right-0 rtl:md:left-0' => $actionsPosition === ActionsPosition::BottomCorner && (! $contentGrid),
                                                         'mb-3' => $actionsPosition === ActionsPosition::AfterContent,
                                                         'md:mb-0' => $actionsPosition === ActionsPosition::AfterContent && (! $contentGrid),
                                                         'hidden' => $isReordering,
-                                                    ])"
+                                                    ])
                                                 />
                                             @endif
                                         </div>
@@ -706,29 +689,27 @@
                                 :x-sortable-handle="$isReordering"
                                 :striped="$isStriped"
                                 x-bind:class="{
-                                    'bg-gray-50 {{ config('filament-tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $recordKey }}'),
+                                    'bg-gray-50 dark:bg-gray-500/10': isRecordSelected('{{ $recordKey }}'),
                                 }"
-                                :class="\Illuminate\Support\Arr::toCssClasses(array_merge(
+                                @class(array_merge(
                                     [
                                         'group cursor-move' => $isReordering,
                                     ],
                                     $getRecordClasses($record),
-                                ))"
+                                ))
                             >
-                                <x-filament-tables::reorder.cell :class="\Illuminate\Support\Arr::toCssClasses([
+                                <x-filament-tables::reorder.cell @class([
                                     'hidden' => ! $isReordering,
-                                ])">
+                                ])>
                                     @if ($isReordering)
                                         <x-filament-tables::reorder.handle />
                                     @endif
                                 </x-filament-tables::reorder.cell>
 
                                 @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)
-                                    <x-filament-tables::actions.cell
-                                        :class="\Illuminate\Support\Arr::toCssClasses([
-                                            'hidden' => $isReordering,
-                                        ])"
-                                    >
+                                    <x-filament-tables::actions.cell @class([
+                                        'hidden' => $isReordering,
+                                    ])>
                                         <x-filament-tables::actions
                                             :actions="$actions"
                                             :record="$record"
@@ -737,9 +718,9 @@
                                 @endif
 
                                 @if ($isSelectionEnabled)
-                                    <x-filament-tables::checkbox.cell :class="\Illuminate\Support\Arr::toCssClasses([
+                                    <x-filament-tables::checkbox.cell @class([
                                         'hidden' => $isReordering,
-                                    ])">
+                                    ])>
                                         <x-filament-tables::checkbox
                                             x-model="selectedRecords"
                                             :value="$recordKey"
@@ -749,11 +730,9 @@
                                 @endif
 
                                 @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
-                                    <x-filament-tables::actions.cell
-                                        :class="\Illuminate\Support\Arr::toCssClasses([
-                                            'hidden' => $isReordering,
-                                        ])"
-                                    >
+                                    <x-filament-tables::actions.cell @class([
+                                        'hidden' => $isReordering,
+                                    ])>
                                         <x-filament-tables::actions
                                             :actions="$actions"
                                             :record="$record"
@@ -783,11 +762,9 @@
                                 @endforeach
 
                                 @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
-                                    <x-filament-tables::actions.cell
-                                        :class="\Illuminate\Support\Arr::toCssClasses([
-                                            'hidden' => $isReordering,
-                                        ])"
-                                    >
+                                    <x-filament-tables::actions.cell @class([
+                                        'hidden' => $isReordering,
+                                    ])>
                                         <x-filament-tables::actions
                                             :actions="$actions"
                                             :record="$record"
@@ -839,10 +816,7 @@
             $records instanceof \Illuminate\Contracts\Pagination\Paginator &&
             ((! $records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) || $records->total())
         )
-            <div @class([
-                'filament-tables-pagination-container p-2 border-t',
-                'dark:border-gray-700' => config('filament-tables.dark_mode'),
-            ])>
+            <div class="filament-tables-pagination-container p-2 border-t dark:border-gray-700">
                 <x-filament-tables::pagination
                     :paginator="$records"
                     :page-options="$getPaginationPageOptions()"
@@ -852,7 +826,7 @@
 
         @if ($hasFiltersAfterContent)
             <div class="px-2 pb-2">
-                <x-filament-tables::hr />
+                <x-filament-support::hr />
 
                 <div class="p-4 mt-2">
                     <x-filament-tables::filters :form="$getFiltersForm()" />
@@ -866,7 +840,7 @@
             $action = $getMountedAction();
         @endphp
 
-        <x-filament-tables::modal
+        <x-filament-support::modal
             :id="$this->id . '-table-action'"
             :wire:key="$action ? $this->id . '.table' . ($getMountedActionRecordKey() ? '.records.' . $getMountedActionRecordKey() : null) . '.actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
@@ -887,14 +861,14 @@
                     @endif
                 @else
                     <x-slot name="header">
-                        <x-filament-tables::modal.heading>
+                        <x-filament-support::modal.heading>
                             {{ $action->getModalHeading() }}
-                        </x-filament-tables::modal.heading>
+                        </x-filament-support::modal.heading>
 
                         @if ($subheading = $action->getModalSubheading())
-                            <x-filament-tables::modal.subheading>
+                            <x-filament-support::modal.subheading>
                                 {{ $subheading }}
-                            </x-filament-tables::modal.subheading>
+                            </x-filament-support::modal.subheading>
                         @endif
                     </x-slot>
                 @endif
@@ -907,15 +881,15 @@
 
                 @if (count($action->getModalActions()))
                     <x-slot name="footer">
-                        <x-filament-tables::modal.actions :full-width="$action->isModalCentered()">
+                        <x-filament-support::modal.actions :full-width="$action->isModalCentered()">
                             @foreach ($action->getModalActions() as $modalAction)
                                 {{ $modalAction }}
                             @endforeach
-                        </x-filament-tables::modal.actions>
+                        </x-filament-support::modal.actions>
                     </x-slot>
                 @endif
             @endif
-        </x-filament-tables::modal>
+        </x-filament-support::modal>
     </form>
 
     <form wire:submit.prevent="callMountedTableBulkAction">
@@ -923,7 +897,7 @@
             $action = $getMountedBulkAction();
         @endphp
 
-        <x-filament-tables::modal
+        <x-filament-support::modal
             :id="$this->id . '-table-bulk-action'"
             :wire:key="$action ? $this->id . '.table.bulk-actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
@@ -944,14 +918,14 @@
                     @endif
                 @else
                     <x-slot name="header">
-                        <x-filament-tables::modal.heading>
+                        <x-filament-support::modal.heading>
                             {{ $action->getModalHeading() }}
-                        </x-filament-tables::modal.heading>
+                        </x-filament-support::modal.heading>
 
                         @if ($subheading = $action->getModalSubheading())
-                            <x-filament-tables::modal.subheading>
+                            <x-filament-support::modal.subheading>
                                 {{ $subheading }}
-                            </x-filament-tables::modal.subheading>
+                            </x-filament-support::modal.subheading>
                         @endif
                     </x-slot>
                 @endif
@@ -964,15 +938,15 @@
 
                 @if (count($action->getModalActions()))
                     <x-slot name="footer">
-                        <x-filament-tables::modal.actions :full-width="$action->isModalCentered()">
+                        <x-filament-support::modal.actions :full-width="$action->isModalCentered()">
                             @foreach ($action->getModalActions() as $modalAction)
                                 {{ $modalAction }}
                             @endforeach
-                        </x-filament-tables::modal.actions>
+                        </x-filament-support::modal.actions>
                     </x-slot>
                 @endif
             @endif
-        </x-filament-tables::modal>
+        </x-filament-support::modal>
     </form>
 
     @if (! $this instanceof \Filament\Tables\Contracts\RendersFormComponentActionModal)

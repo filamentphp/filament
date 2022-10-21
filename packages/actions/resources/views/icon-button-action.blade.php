@@ -1,6 +1,6 @@
 <x-filament-actions::action
     :action="$action"
     :label="$getLabel()"
-    component="filament-actions::icon-button"
+    component="filament-support::icon-button"
     class="filament-actions-icon-button-action"
 />

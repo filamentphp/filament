@@ -5,10 +5,7 @@
     'heading' => null,
 ])
 
-<div {{ $attributes->class([
-    'p-2 space-y-2 bg-white rounded-xl shadow',
-    'dark:border-gray-600 dark:bg-gray-800' => config('filament.dark_mode'),
-]) }}>
+<div {{ $attributes->class(['p-2 space-y-2 bg-white rounded-xl shadow dark:border-gray-600 dark:bg-gray-800']) }}>
     @if ($actions || $header || $heading)
         <div class="px-4 py-2">
             @if ($header)
@@ -30,7 +27,7 @@
     @endif
 
     @if (($actions || $header || $heading) && $slot->isNotEmpty())
-        <x-filament::hr />
+        <x-filament-support::hr />
     @endif
 
     <div class="space-y-2">
@@ -42,7 +39,7 @@
     </div>
 
     @if ($footer && $slot->isNotEmpty())
-        <x-filament::hr />
+        <x-filament-support::hr />
     @endif
 
     @if ($footer)
