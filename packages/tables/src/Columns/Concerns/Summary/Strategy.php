@@ -15,7 +15,7 @@ abstract class Strategy
 
     abstract public function __invoke();
 
-    protected function mapValue(?string $value, string $type): null|int|float|bool|string|Carbon
+    protected function mapValue(mixed $value, string $type): null|int|float|bool|string|Carbon
     {
         $value = trim(
             strip_tags($value)

@@ -13,8 +13,8 @@ class FromTo extends Strategy
 
         $sortedRecords = collect($this->records)
             ->pluck($this->column->getName())
-            ->map(fn ($record) => $this->mapValue($record, $valueType))
             ->reject(fn ($record) => $record === '' || $record === null) //but keep "false" for columns with boolean values
+            ->map(fn ($record) => $this->mapValue($record, $valueType))
             ->unique()
             ->sort();
 
@@ -53,7 +53,7 @@ class FromTo extends Strategy
     private function formatDate(Carbon $date): string
     {
         return $this->column->evaluate(
-            invade($this->column)->formatStateUsing,
+            invade($this->column)?->formatStateUsing,
             [
                 'state' => $date,
             ]

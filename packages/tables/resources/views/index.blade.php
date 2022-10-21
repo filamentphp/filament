@@ -843,7 +843,6 @@
                                         :alignment="$column->getAlignment()"
                                         :class="$getHiddenClasses($column)"
                                     >
-                                    <?php dd(method_exists($column, 'hasSummary')); ?>
                                         @if (method_exists($column, 'hasSummary') && $column->hasSummary())
                                             {!! $column->getSummary($records->items()) !!}
                                         @endif
