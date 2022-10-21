@@ -29,7 +29,7 @@
             @endif
         </div>
 
-        <div class="flex justify-between items-center flex-1">
+        <div class="flex justify-between items-center flex-1 w-full">
             <div class="w-10">
                 @if ($paginator->hasPages() && (! $paginator->onFirstPage()))
                     <x-tables::icon-button
