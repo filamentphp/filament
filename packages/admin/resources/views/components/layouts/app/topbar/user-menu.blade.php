@@ -12,7 +12,9 @@
 
 <x-filament::dropdown placement="bottom-end">
     <x-slot name="trigger" class="ml-4">
-        <x-filament::user-avatar :user="$user" />
+        <button class="block" aria-label="User Menu">
+            <x-filament::user-avatar :user="$user" />
+        </button>
     </x-slot>
     
     {{ \Filament\Facades\Filament::renderHook('user-menu.account.before') }}
