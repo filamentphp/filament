@@ -7,8 +7,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@apply z-1 absolute top-0 left-0 block h-full min-h-full w-full resize-none overflow-y-hidden whitespace-pre-wrap rounded-lg bg-transparent font-mono text-sm tracking-normal caret-black shadow-sm transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 rtl:whitespace-normal dark:caret-white dark:focus:border-primary-500;
-
 @layer base {
     html {
         -webkit-tap-highlight-color: transparent;
