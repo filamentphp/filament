@@ -1,5 +1,4 @@
 const colors = require('tailwindcss/colors')
-const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
     content: [
@@ -19,9 +18,6 @@ module.exports = {
                 primary: colors.blue,
                 success: colors.green,
                 warning: colors.yellow,
-            },
-            fontFamily: {
-                sans: [...defaultTheme.fontFamily.sans],
             },
         },
     },
