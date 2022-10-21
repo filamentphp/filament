@@ -7,7 +7,7 @@ trait HasFooterSummary
     public function hasTableFooterSummary(): bool
     {
         foreach ($this->getCachedTableColumns() as $column) {
-            if ($column->hasSummary()) {
+            if (method_exists($column, 'hasSummary') && $column->hasSummary()) {
                 return true;
             }
         }

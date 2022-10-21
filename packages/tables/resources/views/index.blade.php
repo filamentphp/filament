@@ -843,7 +843,8 @@
                                         :alignment="$column->getAlignment()"
                                         :class="$getHiddenClasses($column)"
                                     >
-                                        @if ($column->hasSummary())
+                                    <?php dd(method_exists($column, 'hasSummary')); ?>
+                                        @if (method_exists($column, 'hasSummary') && $column->hasSummary())
                                             {!! $column->getSummary($records->items()) !!}
                                         @endif
                                     </x-tables::header-cell>

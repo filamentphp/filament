@@ -21,7 +21,7 @@ abstract class Strategy
             strip_tags($value)
         );
 
-        if ($value === null || $value == '') {
+        if ($value === null || $value === '') {
             return null;
         }
 
