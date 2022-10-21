@@ -14,7 +14,13 @@ You may create a `resources/views/vendor/filament/components/brand.blade.php` fi
 
 ## Dark mode
 
-The admin panel will automatically obey your system's dark / light mode preference. You may switch to dark / light mode permanently through the button in the user dropdown menu.
+By default, Filament only includes a light theme. However, you may allow the user to switch to dark mode if they wish, using the `dark_mode` setting of the [configuration file](installation#publishing-configuration):
+
+```php
+'dark_mode' => true,
+```
+
+When dark mode is enabled, the admin panel will automatically obey your system's dark / light mode preference. You may switch to dark / light mode permanently through the button in the user dropdown menu.
 
 If you're using a [custom theme](#building-themes), make sure that you have the `darkMode: 'class'` setting in your `tailwind.config.js` file.
 
