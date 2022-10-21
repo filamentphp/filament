@@ -15,31 +15,45 @@
     aria-label="{{ __('tables::table.pagination.label') }}"
     class="filament-tables-pagination flex items-center justify-between"
 >
-    <div class="flex justify-between items-center flex-1 lg:hidden">
-        <div class="w-10">
-            @if ($paginator->hasPages() && (! $paginator->onFirstPage()))
-                <x-tables::icon-button
-                    :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
-                    rel="prev"
-                    :icon="$previousArrowIcon"
-                    :label="__('tables::table.pagination.buttons.previous.label')"
-                />
+    <div class="flex flex-col justify-between items-center flex-1 lg:hidden">
+        <div @class([
+                    'pl-2 text-sm font-medium',
+                    'dark:text-white' => config('tables.dark_mode'),
+                ])>
+            @if ($paginator->total() > 1)
+                {{ __('tables::table.pagination.overview', [
+                    'first' => $paginator->firstItem(),
+                    'last' => $paginator->lastItem(),
+                    'total' => $paginator->total(),
+                ]) }}
             @endif
         </div>
 
-        @if (count($recordsPerPageSelectOptions) > 1)
-            <x-tables::pagination.records-per-page-selector :options="$recordsPerPageSelectOptions" />
-        @endif
+        <div class="flex justify-between items-center flex-1">
+            <div class="w-10">
+                @if ($paginator->hasPages() && (! $paginator->onFirstPage()))
+                    <x-tables::icon-button
+                        :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
+                        rel="prev"
+                        :icon="$previousArrowIcon"
+                        :label="__('tables::table.pagination.buttons.previous.label')"
+                    />
+                @endif
+            </div>
 
-        <div class="w-10">
-            @if ($paginator->hasPages() && $paginator->hasMorePages())
-                <x-tables::icon-button
-                    :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
-                    rel="next"
-                    :icon="$nextArrowIcon"
-                    :label="__('tables::table.pagination.buttons.next.label')"
-                />
-            @endif
+
+            <x-tables::pagination.records-per-page-selector :options="$recordsPerPageSelectOptions" />
+
+            <div class="w-10">
+                @if ($paginator->hasPages() && $paginator->hasMorePages())
+                    <x-tables::icon-button
+                        :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
+                        rel="next"
+                        :icon="$nextArrowIcon"
+                        :label="__('tables::table.pagination.buttons.next.label')"
+                    />
+                @endif
+            </div>
         </div>
     </div>
 
