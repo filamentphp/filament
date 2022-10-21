@@ -15,13 +15,13 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                danger: colors.red,
-                primary: colors.blue,
+                danger: colors.rose,
+                primary: colors.amber,
                 success: colors.green,
-                warning: colors.yellow,
+                warning: colors.amber,
             },
             fontFamily: {
-                sans: [...defaultTheme.fontFamily.sans],
+                sans: ['DM Sans', ...defaultTheme.fontFamily.sans],
             },
         },
     },

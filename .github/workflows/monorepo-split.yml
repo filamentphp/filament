@@ -22,6 +22,7 @@ jobs:
           - spatie-laravel-translatable-plugin
           - support
           - tables
+          - theme
           - widgets
     steps:
       - uses: actions/checkout@v2
