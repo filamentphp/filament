@@ -10,6 +10,7 @@
     'hintAction' => null,
     'hintColor' => null,
     'hintIcon' => null,
+    'isDisabled' => null,
     'isMarkedAsRequired' => null,
     'required' => null,
     'statePath' => null,
@@ -25,6 +26,7 @@
         $hintAction ??= $field->getHintAction();
         $hintColor ??= $field->getHintColor();
         $hintIcon ??= $field->getHintIcon();
+        $isDisabled ??= $field->isDisabled();
         $isMarkedAsRequired ??= $field->isMarkedAsRequired();
         $required ??= $field->isRequired();
         $statePath ??= $field->getStatePath();
@@ -45,6 +47,7 @@
                     <x-filament-forms::field-wrapper.label
                         :for="$id"
                         :error="$errors->has($statePath)"
+                        :is-disabled="$isDisabled"
                         :is-marked-as-required="$isMarkedAsRequired"
                         :prefix="$labelPrefix"
                         :required="$required"
