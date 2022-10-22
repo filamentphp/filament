@@ -36,7 +36,9 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
 
     protected static ?string $title = null;
 
-    protected static ?string $subtitle = null;
+    protected static ?string $heading = null;
+
+    protected static ?string $subheading = null;
 
     protected static string $view;
 
@@ -189,7 +191,12 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
 
     protected function getHeading(): string
     {
-        return $this->getTitle();
+        return static::$heading ?? $this->getTitle();
+    }
+
+    protected function getSubheading(): ?string
+    {
+        return static::$subheading;
     }
 
     protected function getTitle(): string
@@ -198,11 +205,6 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
             ->kebab()
             ->replace('-', ' ')
             ->title();
-    }
-
-    protected function getSubheading(): ?string
-    {
-        return static::$subtitle;
     }
 
     protected function getMaxContentWidth(): ?string
