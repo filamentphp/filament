@@ -32,20 +32,22 @@ class RestoreAction extends Action
 
         $this->requiresConfirmation();
 
-        $this->action(function (): void {
-            $result = $this->process(function (Model $record): bool|null {
-                if (! method_exists($record, 'restore')) {
-                    return false;
-                }
-
-                return $record->restore();
-            });
-
-            if ($result) {
-                $this->success();
-            } else {
+        $this->action(function (Model $record): void {
+            if (! method_exists($record, 'restore')) {
                 $this->failure();
+
+                return;
             }
+
+            $result = $this->process(static fn () => $record->restore());
+
+            if (! $result) {
+                $this->failure();
+
+                return;
+            }
+
+            $this->success();
         });
 
         $this->visible(static function (Model $record): bool {
