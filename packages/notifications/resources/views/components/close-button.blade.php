@@ -1,4 +1,4 @@
-<x-filament-support::icon
+<x-filament::icon
     name="heroicon-m-x-mark"
     alias="filament-notifications::notification.close-button"
     color="text-gray-400"

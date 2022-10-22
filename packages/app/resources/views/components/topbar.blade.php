@@ -14,7 +14,7 @@
                 'lg:hidden' => ! (config('filament.layout.sidebar.is_collapsible_on_desktop') && (config('filament.layout.sidebar.collapsed_width') === 0)),
             ])
         >
-            <x-filament-support::icon
+            <x-filament::icon
                 name="heroicon-o-bars-3"
                 alias="app::topbar.buttons.toggle-sidebar"
                 color="text-primary-500"

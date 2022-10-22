@@ -15,21 +15,21 @@
     <div>
         @if ((count($containers) > 1) && $isCollapsible)
             <div class="space-x-2 rtl:space-x-reverse" x-data="{}">
-                <x-filament-support::link
+                <x-filament::link
                     x-on:click="$dispatch('builder-collapse', '{{ $getStatePath() }}')"
                     tag="button"
                     size="sm"
                 >
                     {{ __('filament-forms::components.builder.buttons.collapse_all.label') }}
-                </x-filament-support::link>
+                </x-filament::link>
 
-                <x-filament-support::link
+                <x-filament::link
                     x-on:click="$dispatch('builder-expand', '{{ $getStatePath() }}')"
                     tag="button"
                     size="sm"
                 >
                     {{ __('filament-forms::components.builder.buttons.expand_all.label') }}
-                </x-filament-support::link>
+                </x-filament::link>
             </div>
         @endif
     </div>
@@ -102,7 +102,7 @@
                                             {{ __('filament-forms::components.builder.buttons.move_item.label') }}
                                         </span>
 
-                                        <x-filament-support::icon
+                                        <x-filament::icon
                                             name="heroicon-m-arrows-up-down"
                                             alias="filament-forms::components.builder.buttons.move-item"
                                             size="h-4 w-4"
@@ -145,7 +145,7 @@
                                                     {{ __('filament-forms::components.builder.buttons.clone_item.label') }}
                                                 </span>
 
-                                                <x-filament-support::icon
+                                                <x-filament::icon
                                                     name="heroicon-m-square-2-stack"
                                                     alias="filament-forms::components.builder.buttons.clone-item"
                                                     size="h-4 w-4"
@@ -166,7 +166,7 @@
                                                     {{ __('filament-forms::components.builder.buttons.delete_item.label') }}
                                                 </span>
 
-                                                <x-filament-support::icon
+                                                <x-filament::icon
                                                     name="heroicon-m-trash"
                                                     alias="filament-forms::components.builder.buttons.delete-item"
                                                     size="h-4 w-4"
@@ -183,7 +183,7 @@
                                                 type="button"
                                                 class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500"
                                             >
-                                                <x-filament-support::icon
+                                                <x-filament::icon
                                                     name="heroicon-m-minus"
                                                     alias="filament-forms::components.builder.buttons.collapse-item"
                                                     size="h-4 w-4"
@@ -194,7 +194,7 @@
                                                     {{ __('filament-forms::components.builder.buttons.collapse_item.label') }}
                                                 </span>
 
-                                                <x-filament-support::icon
+                                                <x-filament::icon
                                                     name="heroicon-m-plus"
                                                     alias="filament-forms::components.builder.buttons.expand-item"
                                                     size="h-4 w-4"
@@ -226,9 +226,9 @@
                                 x-transition
                                 class="absolute inset-x-0 bottom-0 flex items-center justify-center h-12 -mb-12"
                             >
-                                <x-filament-support::dropdown>
+                                <x-filament::dropdown>
                                     <x-slot name="trigger">
-                                        <x-filament-support::icon-button
+                                        <x-filament::icon-button
                                             :label="$getCreateItemBetweenButtonLabel()"
                                             icon="heroicon-m-plus"
                                         />
@@ -239,7 +239,7 @@
                                         :create-after-item="$uuid"
                                         :state-path="$getStatePath()"
                                     />
-                                </x-filament-support::dropdown>
+                                </x-filament::dropdown>
                             </div>
                         @endif
                     </li>
@@ -248,18 +248,18 @@
         @endif
 
         @if (! $isItemCreationDisabled)
-            <x-filament-support::dropdown class="flex justify-center">
+            <x-filament::dropdown class="flex justify-center">
                 <x-slot name="trigger">
-                    <x-filament-support::button size="sm">
+                    <x-filament::button size="sm">
                         {{ $getCreateItemButtonLabel() }}
-                    </x-filament-support::button>
+                    </x-filament::button>
                 </x-slot>
 
                 <x-filament-forms::builder.block-picker
                     :blocks="$getBlocks()"
                     :state-path="$getStatePath()"
                 />
-            </x-filament-support::dropdown>
+            </x-filament::dropdown>
         @endif
     </div>
 </x-dynamic-component>

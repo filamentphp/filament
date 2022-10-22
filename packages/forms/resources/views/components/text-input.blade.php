@@ -8,7 +8,7 @@
     :component="$getFieldWrapperView()"
     :field="$field"
 >
-    <x-filament-support::input.affixes
+    <x-filament::input.affixes
         :state-path="$statePath"
         :prefix="$getPrefixLabel()"
         :prefix-action="$getPrefixAction()"
@@ -61,7 +61,7 @@
                 'border-danger-600 ring-danger-600': (@js($statePath) in $wire.__instance.serverMemo.errors),
             }"
         />
-    </x-filament-support::input.affixes>
+    </x-filament::input.affixes>
 
     @if ($datalistOptions)
         <datalist id="{{ $id }}-list">

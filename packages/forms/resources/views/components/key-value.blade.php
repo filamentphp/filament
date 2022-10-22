@@ -92,7 +92,7 @@
                                                 type="button"
                                                 class="text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                                             >
-                                                <x-filament-support::icon
+                                                <x-filament::icon
                                                     name="heroicon-m-arrows-up-down"
                                                     alias="filament-forms::components.key-value.buttons.reorder"
                                                     size="h-4 w-4"
@@ -110,7 +110,7 @@
                                                 type="button"
                                                 class="text-danger-600 hover:text-danger-700"
                                             >
-                                                <x-filament-support::icon
+                                                <x-filament::icon
                                                     name="heroicon-m-trash"
                                                     alias="filament-forms::components.key-value.buttons.delete"
                                                     size="h-4 w-4"
@@ -135,7 +135,7 @@
                     type="button"
                     class="w-full px-4 py-2 flex items-center space-x-1 rtl:space-x-reverse text-sm font-medium text-gray-800 hover:bg-gray-50 focus:bg-gray-50 dark:text-white dark:bg-gray-800/60 dark:hover:bg-gray-800/30"
                 >
-                    <x-filament-support::icon
+                    <x-filament::icon
                         name="heroicon-m-plus"
                         alias="filament-forms::components.key-value.buttons.add"
                         size="h-4 w-4"

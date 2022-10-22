@@ -16,21 +16,21 @@
     <div>
         @if ((count($containers) > 1) && $isCollapsible)
             <div class="space-x-2 rtl:space-x-reverse" x-data="{}">
-                <x-filament-support::link
+                <x-filament::link
                     x-on:click="$dispatch('repeater-collapse', '{{ $getStatePath() }}')"
                     tag="button"
                     size="sm"
                 >
                     {{ __('filament-forms::components.repeater.buttons.collapse_all.label') }}
-                </x-filament-support::link>
+                </x-filament::link>
 
-                <x-filament-support::link
+                <x-filament::link
                     x-on:click="$dispatch('repeater-expand', '{{ $getStatePath() }}')"
                     tag="button"
                     size="sm"
                 >
                     {{ __('filament-forms::components.repeater.buttons.expand_all.label') }}
-                </x-filament-support::link>
+                </x-filament::link>
             </div>
         @endif
     </div>
@@ -48,7 +48,7 @@
     >
         @if (count($containers))
             <ul>
-                <x-filament-support::grid
+                <x-filament::grid
                     :default="$getGridColumns('default')"
                     :sm="$getGridColumns('sm')"
                     :md="$getGridColumns('md')"
@@ -107,7 +107,7 @@
                                                 {{ __('filament-forms::components.repeater.buttons.move_item.label') }}
                                             </span>
 
-                                            <x-filament-support::icon
+                                            <x-filament::icon
                                                 name="heroicon-m-arrows-up-down"
                                                 alias="filament-forms::components.repeater.buttons.move-item"
                                                 size="h-4 w-4"
@@ -134,7 +134,7 @@
                                                         {{ __('filament-forms::components.repeater.buttons.clone_item.label') }}
                                                     </span>
 
-                                                    <x-filament-support::icon
+                                                    <x-filament::icon
                                                         name="heroicon-m-square-2-stack"
                                                         alias="filament-forms::components.repeater.buttons.clone-item"
                                                         size="h-4 w-4"
@@ -155,7 +155,7 @@
                                                         {{ __('filament-forms::components.repeater.buttons.delete_item.label') }}
                                                     </span>
 
-                                                    <x-filament-support::icon
+                                                    <x-filament::icon
                                                         name="heroicon-m-trash"
                                                         alias="filament-forms::components.repeater.buttons.delete-item"
                                                         size="h-4 w-4"
@@ -172,7 +172,7 @@
                                                     type="button"
                                                     class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500"
                                                 >
-                                                    <x-filament-support::icon
+                                                    <x-filament::icon
                                                         name="heroicon-m-minus"
                                                         alias="filament-forms::components.repeater.buttons.collapse-item"
                                                         size="h-4 w-4"
@@ -183,7 +183,7 @@
                                                         {{ __('filament-forms::components.repeater.buttons.collapse_item.label') }}
                                                     </span>
 
-                                                    <x-filament-support::icon
+                                                    <x-filament::icon
                                                         name="heroicon-m-plus"
                                                         alias="filament-forms::components.repeater.buttons.expand-item"
                                                         size="h-4 w-4"
@@ -210,19 +210,19 @@
                             </div>
                         </li>
                     @endforeach
-                </x-filament-support::grid>
+                </x-filament::grid>
             </ul>
         @endif
 
         @if (! $isItemCreationDisabled)
             <div class="relative flex justify-center">
-                <x-filament-support::button
+                <x-filament::button
                     :wire:click="'dispatchFormEvent(\'repeater::createItem\', \'' . $getStatePath() . '\')'"
                     size="sm"
                     type="button"
                 >
                     {{ $getCreateItemButtonLabel() }}
-                </x-filament-support::button>
+                </x-filament::button>
             </div>
         @endif
     </div>

@@ -35,7 +35,7 @@
             'bg-primary-500 text-white' => $active,
         ])
     >
-        <x-filament-support::icon
+        <x-filament::icon
             :name="$icon"
             alias="app::sidebar.item"
             size="h-5 w-5"

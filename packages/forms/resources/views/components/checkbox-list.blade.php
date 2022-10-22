@@ -2,7 +2,7 @@
     :component="$getFieldWrapperView()"
     :field="$field"
 >
-    <x-filament-support::grid
+    <x-filament::grid
         :default="$getColumns('default')"
         :sm="$getColumns('sm')"
         :md="$getColumns('md')"
@@ -37,5 +37,5 @@
                 </span>
             </label>
         @endforeach
-    </x-filament-support::grid>
+    </x-filament::grid>
 </x-dynamic-component>

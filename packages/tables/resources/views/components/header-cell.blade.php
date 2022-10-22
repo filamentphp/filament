@@ -29,7 +29,7 @@
         </span>
 
         @if ($sortable)
-            <x-filament-support::icon
+            <x-filament::icon
                 :name="$activelySorted && $sortDirection === 'asc' ? 'heroicon-m-chevron-up' : 'heroicon-m-chevron-down'"
                 alias="filament-tables::header-cell.sort"
                 color="dark:text-gray-300"

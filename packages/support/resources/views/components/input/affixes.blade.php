@@ -21,7 +21,7 @@
     @endif
 
     @if ($prefixIcon)
-        <x-filament-support::icon
+        <x-filament::icon
             :name="$prefixIcon"
             size="h-5 w-5"
             class="filament-input-affix-icon"
@@ -61,7 +61,7 @@
     @endif
 
     @if ($suffixIcon)
-        <x-filament-support::icon
+        <x-filament::icon
             :name="$prefixIcon"
             size="h-5 w-5"
             class="filament-input-affix-icon"

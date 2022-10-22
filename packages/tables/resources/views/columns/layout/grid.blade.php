@@ -3,7 +3,7 @@
         $columns = $getGridColumns();
     @endphp
 
-    <x-filament-support::grid
+    <x-filament::grid
         :default="$columns['default'] ?? 1"
         :sm="$columns['sm'] ?? null"
         :md="$columns['md'] ?? null"
@@ -25,5 +25,5 @@
             :record-key="$recordKey"
             grid
         />
-    </x-filament-support::grid>
+    </x-filament::grid>
 </div>

@@ -32,7 +32,7 @@
             $colorClasses,
         ])>
             @if ($icon && $iconPosition === 'before')
-                <x-filament-support::icon
+                <x-filament::icon
                     :name="$icon"
                     alias="filament-tables::columns.badge.prefix"
                     :size="$iconSize"
@@ -44,7 +44,7 @@
             </span>
 
             @if ($icon && $iconPosition === 'after')
-                <x-filament-support::icon
+                <x-filament::icon
                     :name="$icon"
                     alias="filament-tables::columns.badge.suffix"
                     :size="$iconSize"

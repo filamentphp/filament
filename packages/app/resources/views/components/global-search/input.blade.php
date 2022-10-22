@@ -5,7 +5,7 @@
 
     <div class="relative group max-w-md">
         <span class="absolute inset-y-0 left-0 flex items-center justify-center w-10 h-10 pointer-events-none">
-            <x-filament-support::icon
+            <x-filament::icon
                 name="heroicon-m-magnifying-glass"
                 alias="app::global-search.input.prefix"
                 color="text-gray-500 dark:text-gray-400"
@@ -14,7 +14,7 @@
                 wire:target="search"
             />
 
-            <x-filament-support::loading-indicator
+            <x-filament::loading-indicator
                 class="h-5 w-5 text-gray-500 dark:text-gray-400"
                 wire:loading.delay
                 wire:target="search"

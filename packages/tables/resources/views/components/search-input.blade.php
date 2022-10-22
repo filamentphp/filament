@@ -9,7 +9,7 @@
 
     <div class="relative group">
         <span class="absolute inset-y-0 left-0 flex items-center justify-center w-9 h-9 pointer-events-none">
-            <x-filament-support::icon
+            <x-filament::icon
                 name="heroicon-m-magnifying-glass"
                 alias="filament-tables::search-input.prefix"
                 color="text-gray-400"

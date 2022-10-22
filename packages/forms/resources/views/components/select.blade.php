@@ -10,7 +10,7 @@
     :component="$getFieldWrapperView()"
     :field="$field"
 >
-    <x-filament-support::input.affixes
+    <x-filament::input.affixes
         :state-path="$statePath"
         :prefix="$getPrefixLabel()"
         :prefix-action="$getPrefixAction()"
@@ -22,7 +22,7 @@
         :attributes="$getExtraAttributeBag()"
     >
         @unless ($isSearchable() || $isMultiple())
-            <x-filament-support::input.select
+            <x-filament::input.select
                 :autofocus="$isAutofocused()"
                 :disabled="$isDisabled()"
                 :id="$getId()"
@@ -44,7 +44,7 @@
                         {{ $label }}
                     </option>
                 @endforeach
-            </x-filament-support::input.select>
+            </x-filament::input.select>
         @else
             <div
                 x-ignore
@@ -96,5 +96,5 @@
                 ></select>
             </div>
         @endif
-    </x-filament-support::input.affixes>
+    </x-filament::input.affixes>
 </x-dynamic-component>

@@ -47,7 +47,7 @@
 
     <div class="inline-flex items-center space-x-1 rtl:space-x-reverse">
         @if ($icon && $iconPosition === 'before')
-            <x-filament-support::icon
+            <x-filament::icon
                 :name="$icon"
                 alias="filament-tables::columns.text.prefix"
                 :size="$iconSize"
@@ -59,7 +59,7 @@
         </span>
 
         @if ($icon && $iconPosition === 'after')
-            <x-filament-support::icon
+            <x-filament::icon
                 :name="$icon"
                 alias="filament-tables::columns.text.suffix"
                 :size="$iconSize"

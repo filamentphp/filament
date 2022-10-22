@@ -82,7 +82,7 @@
                     '-rotate-180' => ! $isCollapsed,
                 ])
             >
-                <x-filament-support::icon
+                <x-filament::icon
                     name="heroicon-m-chevron-down"
                     alias="filament-forms::section.buttons.collapse"
                     color="text-primary-500"

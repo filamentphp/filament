@@ -38,7 +38,7 @@
     @endphp
 
     @if (! $layoutComponent->isHidden())
-        <x-filament-support::grid.column
+        <x-filament::grid.column
             :default="$layoutComponent->getColumnSpan('default')"
             :sm="$layoutComponent->getColumnSpan('sm')"
             :md="$layoutComponent->getColumnSpan('md')"
@@ -59,6 +59,6 @@
             @else
                 {{ $layoutComponent->viewData(['recordKey' => $recordKey]) }}
             @endif
-        </x-filament-support::grid.column>
+        </x-filament::grid.column>
     @endif
 @endforeach

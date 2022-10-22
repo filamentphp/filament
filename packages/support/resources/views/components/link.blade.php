@@ -57,7 +57,7 @@
         {{ $attributes->class($linkClasses) }}
     >
         @if ($icon && $iconPosition === 'before')
-            <x-filament-support::icon
+            <x-filament::icon
                 :name="$icon"
                 alias="support::link.prefix"
                 :size="$iconSize"
@@ -68,7 +68,7 @@
         {{ $slot }}
 
         @if ($icon && $iconPosition === 'after')
-            <x-filament-support::icon
+            <x-filament::icon
                 :name="$icon"
                 alias="support::link.suffix"
                 :size="$iconSize"
@@ -93,7 +93,7 @@
     >
         @if ($iconPosition === 'before')
             @if ($icon)
-                <x-filament-support::icon
+                <x-filament::icon
                     :name="$icon"
                     alias="support::link.prefix"
                     :size="$iconSize"
@@ -104,7 +104,7 @@
             @endif
 
             @if ($hasLoadingIndicator)
-                <x-filament-support::loading-indicator
+                <x-filament::loading-indicator
                     x-cloak
                     wire:loading.delay
                     :wire:target="$loadingIndicatorTarget"
@@ -117,7 +117,7 @@
 
         @if ($iconPosition === 'after')
             @if ($icon)
-                <x-filament-support::icon
+                <x-filament::icon
                     :name="$icon"
                     alias="support::link.suffix"
                     :size="$iconSize"
@@ -128,7 +128,7 @@
             @endif
 
             @if ($hasLoadingIndicator)
-                <x-filament-support::loading-indicator
+                <x-filament::loading-indicator
                     x-cloak
                     wire:loading.delay
                     :wire:target="$loadingIndicatorTarget"

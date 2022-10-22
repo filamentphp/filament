@@ -16,6 +16,8 @@ abstract class PluginServiceProvider extends PackageServiceProvider
 {
     public static string $name;
 
+    public static ?string $viewNamespace = null;
+
     protected array $pages = [];
 
     protected array $relationManagers = [];
@@ -44,7 +46,7 @@ abstract class PluginServiceProvider extends PackageServiceProvider
         }
 
         if (file_exists($this->package->basePath('/../resources/views'))) {
-            $package->hasViews();
+            $package->hasViews(static::$viewNamespace);
         }
 
         $this->packageConfigured($package);

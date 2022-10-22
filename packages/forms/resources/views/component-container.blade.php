@@ -1,4 +1,4 @@
-<x-filament-support::grid
+<x-filament::grid
     :default="$getColumns('default')"
     :sm="$getColumns('sm')"
     :md="$getColumns('md')"
@@ -22,7 +22,7 @@
             $isHidden = $formComponent->isHidden();
         @endphp
 
-        <x-filament-support::grid.column
+        <x-filament::grid.column
             :wire:key="$formComponent instanceof \Filament\Forms\Components\Field ? $this->id . '.' . $formComponent->getStatePath() . '.' . $formComponent::class : null"
             :hidden="$isHidden"
             :default="$formComponent->getColumnSpan('default')"
@@ -49,6 +49,6 @@
             @if (! $isHidden)
                 {{ $formComponent }}
             @endif
-        </x-filament-support::grid.column>
+        </x-filament::grid.column>
     @endforeach
-</x-filament-support::grid>
+</x-filament::grid>

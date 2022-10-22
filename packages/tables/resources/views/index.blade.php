@@ -182,7 +182,7 @@
                         </x-slot>
                     </x-filament-tables::header>
 
-                    <x-filament-support::hr :x-show="\Illuminate\Support\Js::from($isReorderable || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible) . ' || selectedRecords.length'" />
+                    <x-filament::hr :x-show="\Illuminate\Support\Js::from($isReorderable || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible) . ' || selectedRecords.length'" />
                 </div>
             @endif
 
@@ -192,7 +192,7 @@
                         <x-filament-tables::filters :form="$getFiltersForm()" />
                     </div>
 
-                    <x-filament-support::hr :x-show="\Illuminate\Support\Js::from($isReorderable || $isGlobalSearchVisible || $isColumnToggleFormVisible) . ' || selectedRecords.length'" />
+                    <x-filament::hr :x-show="\Illuminate\Support\Js::from($isReorderable || $isGlobalSearchVisible || $isColumnToggleFormVisible) . ' || selectedRecords.length'" />
                 </div>
             @endif
 
@@ -380,7 +380,7 @@
                     @if ($content)
                         {{ $content->with(['records' => $records]) }}
                     @else
-                        <x-filament-support::grid
+                        <x-filament::grid
                             x-sortable
                             x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
                             :default="$contentGrid['default'] ?? 1"
@@ -460,7 +460,7 @@
                                                     'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
                                                     'hidden' => $isReordering,
                                                 ])>
-                                                    <x-filament-support::icon-button
+                                                    <x-filament::icon-button
                                                         icon="heroicon-m-chevron-down"
                                                         color="secondary"
                                                         size="sm"
@@ -549,7 +549,7 @@
                                     </div>
                                 </div>
                             @endforeach
-                        </x-filament-support::grid>
+                        </x-filament::grid>
                     @endif
 
                     @if (($content || $hasColumnsLayout) && $contentFooter)
@@ -826,7 +826,7 @@
 
         @if ($hasFiltersAfterContent)
             <div class="px-2 pb-2">
-                <x-filament-support::hr />
+                <x-filament::hr />
 
                 <div class="p-4 mt-2">
                     <x-filament-tables::filters :form="$getFiltersForm()" />
@@ -840,7 +840,7 @@
             $action = $getMountedAction();
         @endphp
 
-        <x-filament-support::modal
+        <x-filament::modal
             :id="$this->id . '-table-action'"
             :wire:key="$action ? $this->id . '.table' . ($getMountedActionRecordKey() ? '.records.' . $getMountedActionRecordKey() : null) . '.actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
@@ -861,14 +861,14 @@
                     @endif
                 @else
                     <x-slot name="header">
-                        <x-filament-support::modal.heading>
+                        <x-filament::modal.heading>
                             {{ $action->getModalHeading() }}
-                        </x-filament-support::modal.heading>
+                        </x-filament::modal.heading>
 
                         @if ($subheading = $action->getModalSubheading())
-                            <x-filament-support::modal.subheading>
+                            <x-filament::modal.subheading>
                                 {{ $subheading }}
-                            </x-filament-support::modal.subheading>
+                            </x-filament::modal.subheading>
                         @endif
                     </x-slot>
                 @endif
@@ -881,15 +881,15 @@
 
                 @if (count($action->getModalActions()))
                     <x-slot name="footer">
-                        <x-filament-support::modal.actions :full-width="$action->isModalCentered()">
+                        <x-filament::modal.actions :full-width="$action->isModalCentered()">
                             @foreach ($action->getModalActions() as $modalAction)
                                 {{ $modalAction }}
                             @endforeach
-                        </x-filament-support::modal.actions>
+                        </x-filament::modal.actions>
                     </x-slot>
                 @endif
             @endif
-        </x-filament-support::modal>
+        </x-filament::modal>
     </form>
 
     <form wire:submit.prevent="callMountedTableBulkAction">
@@ -897,7 +897,7 @@
             $action = $getMountedBulkAction();
         @endphp
 
-        <x-filament-support::modal
+        <x-filament::modal
             :id="$this->id . '-table-bulk-action'"
             :wire:key="$action ? $this->id . '.table.bulk-actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
@@ -918,14 +918,14 @@
                     @endif
                 @else
                     <x-slot name="header">
-                        <x-filament-support::modal.heading>
+                        <x-filament::modal.heading>
                             {{ $action->getModalHeading() }}
-                        </x-filament-support::modal.heading>
+                        </x-filament::modal.heading>
 
                         @if ($subheading = $action->getModalSubheading())
-                            <x-filament-support::modal.subheading>
+                            <x-filament::modal.subheading>
                                 {{ $subheading }}
-                            </x-filament-support::modal.subheading>
+                            </x-filament::modal.subheading>
                         @endif
                     </x-slot>
                 @endif
@@ -938,15 +938,15 @@
 
                 @if (count($action->getModalActions()))
                     <x-slot name="footer">
-                        <x-filament-support::modal.actions :full-width="$action->isModalCentered()">
+                        <x-filament::modal.actions :full-width="$action->isModalCentered()">
                             @foreach ($action->getModalActions() as $modalAction)
                                 {{ $modalAction }}
                             @endforeach
-                        </x-filament-support::modal.actions>
+                        </x-filament::modal.actions>
                     </x-slot>
                 @endif
             @endif
-        </x-filament-support::modal>
+        </x-filament::modal>
     </form>
 
     @if (! $this instanceof \Filament\Tables\Contracts\RendersFormComponentActionModal)

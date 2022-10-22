@@ -75,7 +75,7 @@
             </span>
         @endif
 
-        <x-filament-support::icon
+        <x-filament::icon
             :name="$icon"
             alias="support::icon-button"
             :size="$iconSize"
@@ -85,7 +85,7 @@
         />
 
         @if ($hasLoadingIndicator)
-            <x-filament-support::loading-indicator
+            <x-filament::loading-indicator
                 x-cloak
                 wire:loading.delay
                 :wire:target="$loadingIndicatorTarget"
@@ -121,7 +121,7 @@
             </span>
         @endif
 
-        <x-filament-support::icon
+        <x-filament::icon
             :name="$icon"
             alias="support::icon-button"
             :size="$iconSize"

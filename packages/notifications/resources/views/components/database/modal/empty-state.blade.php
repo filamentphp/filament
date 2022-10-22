@@ -1,6 +1,6 @@
 <div {{ $attributes->class(['flex flex-col items-center justify-center mx-auto my-6 space-y-4 text-center bg-white dark:bg-gray-800']) }}>
     <div class="flex items-center justify-center w-12 h-12 rounded-full bg-primary-50 dark:bg-gray-700">
-        <x-filament-support::icon
+        <x-filament::icon
             name="heroicon-o-bell"
             alias="filament-notifications::database.modal.empty-state"
             color="text-primary-500"

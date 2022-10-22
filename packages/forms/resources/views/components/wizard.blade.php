@@ -123,7 +123,7 @@
                                 }"
                                 class="w-10 h-10 flex items-center justify-center rounded-full"
                             >
-                                <x-filament-support::icon
+                                <x-filament::icon
                                     name="heroicon-m-check"
                                     alias="filament-forms::components.wizard.completed-step"
                                     color="text-white"
@@ -133,7 +133,7 @@
                                 />
 
                                 @if ($icon = $step->getIcon())
-                                    <x-filament-support::icon
+                                    <x-filament::icon
                                         :name="$icon"
                                         alias="filament-forms::components.wizard.current-step"
                                         size="h-5 w-5"
@@ -196,7 +196,7 @@
 
     <div class="flex items-center justify-between">
         <div>
-            <x-filament-support::button
+            <x-filament::button
                 :icon="$previousArrowIcon"
                 x-show="! isFirstStep()"
                 x-cloak
@@ -205,7 +205,7 @@
                 size="sm"
             >
                 {{ __('filament-forms::components.wizard.buttons.previous_step.label') }}
-            </x-filament-support::button>
+            </x-filament::button>
 
             <div x-show="isFirstStep()">
                 {{ $getCancelAction() }}
@@ -213,7 +213,7 @@
         </div>
 
         <div>
-            <x-filament-support::button
+            <x-filament::button
                 :icon="$nextArrowIcon"
                 icon-position="after"
                 x-show="! isLastStep()"
@@ -223,7 +223,7 @@
                 size="sm"
             >
                 {{ __('filament-forms::components.wizard.buttons.next_step.label') }}
-            </x-filament-support::button>
+            </x-filament::button>
 
             <div x-show="isLastStep()">
                 {{ $getSubmitAction() }}

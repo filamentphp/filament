@@ -6,7 +6,7 @@
 
 <{{ $tag }} {{ $attributes->class(['filament-dropdown-header flex w-full p-3 text-sm']) }}>
     @if ($icon)
-        <x-filament-support::icon
+        <x-filament::icon
             :name="$icon"
             alias="support::dropdown.header"
             :color="match ($color) {

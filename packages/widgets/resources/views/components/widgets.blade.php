@@ -6,7 +6,7 @@
     'widgets' => [],
 ])
 
-<x-filament-support::grid
+<x-filament::grid
     :default="$columns['default'] ?? 1"
     :sm="$columns['sm'] ?? null"
     :md="$columns['md'] ?? null"
@@ -20,4 +20,4 @@
             @livewire(\Livewire\Livewire::getAlias($widget), $data, key($widget))
         @endif
     @endforeach
-</x-filament-support::grid>
+</x-filament::grid>

@@ -20,6 +20,8 @@ class SupportServiceProvider extends PluginServiceProvider
 {
     public static string $name = 'filament-support';
 
+    public static ?string $viewNamespace = 'filament';
+
     public function packageRegistered(): void
     {
         parent::packageRegistered();

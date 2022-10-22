@@ -2,7 +2,7 @@
     'actions',
 ])
 
-<x-filament-support::dropdown
+<x-filament::dropdown
     {{ $attributes->class(['filament-tables-bulk-actions']) }}
     placement="bottom-start"
 >
@@ -10,9 +10,9 @@
         <x-filament-tables::bulk-actions.trigger />
     </x-slot>
 
-    <x-filament-support::dropdown.list>
+    <x-filament::dropdown.list>
         @foreach ($actions as $action)
             {{ $action }}
         @endforeach
-    </x-filament-support::dropdown.list>
-</x-filament-support::dropdown>
+    </x-filament::dropdown.list>
+</x-filament::dropdown>

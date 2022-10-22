@@ -25,7 +25,7 @@
     ])>
         <div class="flex items-center space-x-2 rtl:space-x-reverse text-sm font-medium">
             @if ($icon)
-                <x-filament-support::icon
+                <x-filament::icon
                     :name="$icon"
                     alias="app::stats.card"
                     color="text-gray-500 dark:text-gray-200"
@@ -54,7 +54,7 @@
                 <span>{{ $description }}</span>
 
                 @if ($descriptionIcon)
-                    <x-filament-support::icon
+                    <x-filament::icon
                         :name="$descriptionIcon"
                         alias="app::stats.card.description"
                         size="h-4 w-4"

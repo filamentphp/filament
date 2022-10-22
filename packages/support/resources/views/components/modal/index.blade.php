@@ -7,13 +7,13 @@
     'footer' => null,
     'header' => null,
     'heading' => null,
-    'headingComponent' => 'filament-support::modal.heading',
-    'hrComponent' => 'filament-support::hr',
+    'headingComponent' => 'filament::modal.heading',
+    'hrComponent' => 'filament::hr',
     'id' => null,
     'openEventName' => 'open-modal',
     'slideOver' => false,
     'subheading' => null,
-    'subheadingComponent' => 'filament-support::modal.subheading',
+    'subheadingComponent' => 'filament::modal.subheading',
     'trigger' => null,
     'visible' => true,
     'width' => 'sm',
@@ -119,19 +119,19 @@
                         type="button"
                         class="absolute top-2 right-2 rtl:right-auto rtl:left-2"
                     >
-                        <x-filament-support::icon
+                        <x-filament::icon
                             name="heroicon-m-x-mark"
                             alias="support::modal.close-button"
                             color="text-gray-400"
                             size="h-4 w-4"
                             class="filament-modal-close-button cursor-pointer"
-                            :title="__('filament-support::components/modal.actions.close.label')"
+                            :title="__('filament::components/modal.actions.close.label')"
                             x-on:click="isOpen = false"
                             tabindex="-1"
                         />
 
                         <span class="sr-only">
-                            {{ __('filament-support::components/modal.actions.close.label') }}
+                            {{ __('filament::components/modal.actions.close.label') }}
                         </span>
                     </button>
                 @endif

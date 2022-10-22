@@ -2,7 +2,7 @@
     'indicatorsCount' => null,
 ])
 
-<x-filament-support::icon-button
+<x-filament::icon-button
     icon="heroicon-o-funnel"
     :label="__('filament-tables::table.buttons.filter.label')"
     :indicator="$indicatorsCount"

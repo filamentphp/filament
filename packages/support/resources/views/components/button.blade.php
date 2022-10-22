@@ -97,7 +97,7 @@
     >
         @if ($iconPosition === 'before')
             @if ($icon)
-                <x-filament-support::icon
+                <x-filament::icon
                     :name="$icon"
                     alias="support::button.prefix"
                     :size="$iconSize"
@@ -108,7 +108,7 @@
             @endif
 
             @if ($hasLoadingIndicator)
-                <x-filament-support::loading-indicator
+                <x-filament::loading-indicator
                     x-cloak
                     wire:loading.delay
                     :wire:target="$loadingIndicatorTarget"
@@ -119,14 +119,14 @@
 
         <span class="flex items-center gap-1">
             @if (($type === 'submit') && filled($form))
-                <x-filament-support::loading-indicator
+                <x-filament::loading-indicator
                     x-show="isUploadingFile"
                     x-cloak
                     :class="$iconClasses . ' ' . $iconSize"
                 />
 
                 <span x-show="isUploadingFile" x-cloak>
-                    {{ __('filament-support::components/button.messages.uploading_file') }}
+                    {{ __('filament::components/button.messages.uploading_file') }}
                 </span>
 
                 <span x-show="! isUploadingFile" @class([
@@ -145,7 +145,7 @@
 
         @if ($iconPosition === 'after')
             @if ($icon)
-                <x-filament-support::icon
+                <x-filament::icon
                     :name="$icon"
                     alias="support::button.suffix"
                     :size="$iconSize"
@@ -156,7 +156,7 @@
             @endif
 
             @if ($hasLoadingIndicator)
-                <x-filament-support::loading-indicator
+                <x-filament::loading-indicator
                     x-cloak
                     wire:loading.delay
                     :wire:target="$loadingIndicatorTarget"
@@ -179,7 +179,7 @@
         {{ $attributes->class($buttonClasses) }}
     >
         @if ($icon && $iconPosition === 'before')
-            <x-filament-support::icon
+            <x-filament::icon
                 :name="$icon"
                 alias="support::button.prefix"
                 :class="$iconClasses"
@@ -193,7 +193,7 @@
         </span>
 
         @if ($icon && $iconPosition === 'after')
-            <x-filament-support::icon
+            <x-filament::icon
                 :name="$icon"
                 alias="support::button.suffix"
                 :class="$iconClasses"
