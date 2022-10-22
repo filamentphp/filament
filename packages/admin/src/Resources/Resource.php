@@ -41,6 +41,8 @@ class Resource
 
     protected static ?string $navigationIcon = null;
 
+    protected static ?string $activeNavigationIcon = null;
+
     protected static ?string $navigationLabel = null;
 
     protected static ?int $navigationSort = null;
@@ -90,6 +92,7 @@ class Resource
             NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
                 ->icon(static::getNavigationIcon())
+                ->activeIcon(static::getActiveNavigationIcon())
                 ->isActiveWhen(fn () => request()->routeIs("{$routeBaseName}.*"))
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->sort(static::getNavigationSort())
@@ -483,6 +486,11 @@ class Resource
     public static function navigationIcon(?string $icon): void
     {
         static::$navigationIcon = $icon;
+    }
+
+    protected static function getActiveNavigationIcon(): string
+    {
+        return static::$activeNavigationIcon ?? static::getNavigationIcon();
     }
 
     protected static function getNavigationLabel(): string

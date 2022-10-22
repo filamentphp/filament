@@ -3,6 +3,7 @@
     'badge' => null,
     'badgeColor' => null,
     'icon',
+    'activeIcon',
     'shouldOpenUrlInNewTab' => false,
     'url',
 ])
@@ -36,7 +37,11 @@
             'bg-primary-500 text-white' => $active,
         ])
     >
-        <x-dynamic-component :component="$icon" class="h-5 w-5 shrink-0" />
+        @if($activeIcon && $active)
+            <x-dynamic-component :component="$activeIcon" class="h-5 w-5 shrink-0" />
+        @else
+            <x-dynamic-component :component="$icon" class="h-5 w-5 shrink-0" />
+        @endif
 
         <div class="flex flex-1"
             @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))

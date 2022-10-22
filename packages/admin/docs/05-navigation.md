@@ -16,6 +16,23 @@ protected static ?int $navigationSort = 3;
 
 The `$navigationIcon` supports the name of any Blade component, and passes a set of formatting classes to it. By default, the [Blade Heroicons](https://github.com/blade-ui-kit/blade-heroicons) package is installed, so you may use the name of any [Heroicon](https://heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
 
+## Navigation active icons
+
+By default, Filament uses `$navigationIcon` for active and inactive states. If you need to assign different icons when enters & leaves Resource / Page you can assign `$activeNavigationIcon`:
+
+```php
+protected static ?string $activeNavigationIcon = 'heroicon-s-document-text';
+```
+
+or override the method `getActiveNavigationIcon()`:
+
+```php
+protected static function getActiveNavigationIcon(): string
+    {
+        return 'heroicon-s-document-text';
+    }
+```
+
 ## Navigation item badges
 
 To add a badge next to the navigation item, you can use the `getNavigationBadge()` method and return the content of the badge:
@@ -106,6 +123,7 @@ Filament::serving(function () {
         NavigationItem::make('Analytics')
             ->url('https://filament.pirsch.io', shouldOpenInNewTab: true)
             ->icon('heroicon-o-presentation-chart-line')
+            ->activeIcon('heroicon-s-presentation-chart-line')
             ->group('Reports')
             ->sort(3),
     ]);
@@ -148,6 +166,7 @@ Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
     return $builder->items([
         NavigationItem::make('Dashboard')
             ->icon('heroicon-o-home')
+            ->activeIcon('heroicon-s-home')
             ->isActiveWhen(fn (): bool => request()->routeIs('filament.pages.dashboard'))
             ->url(route('filament.pages.dashboard')),
         ...UserResource::getNavigationItems(),
