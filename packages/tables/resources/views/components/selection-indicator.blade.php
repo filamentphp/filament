@@ -9,7 +9,7 @@
     x-cloak
     {{ $attributes->class(['filament-tables-selection-indicator bg-primary-500/10 px-4 py-2 whitespace-nowrap text-sm']) }}
 >
-    <x-filament-support::loading-indicator
+    <x-filament::loading-indicator
         x-show="isLoading"
         class="inline-block w-4 h-4 mr-3 animate-spin text-primary-500"
     />

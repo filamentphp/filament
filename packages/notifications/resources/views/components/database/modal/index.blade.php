@@ -3,7 +3,7 @@
     'unreadNotificationsCount',
 ])
 
-<x-filament-support::modal
+<x-filament::modal
     id="database-notifications"
     close-button
     slide-over
@@ -40,4 +40,4 @@
     @else
         <x-filament-notifications::database.modal.empty-state />
     @endif
-</x-filament-support::modal>
+</x-filament::modal>

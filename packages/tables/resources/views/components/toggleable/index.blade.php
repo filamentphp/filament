@@ -3,7 +3,7 @@
     'width' => null,
 ])
 
-<x-filament-support::dropdown
+<x-filament::dropdown
     {{ $attributes->class(['filament-tables-column-toggling']) }}
     placement="bottom-end"
     shift
@@ -17,4 +17,4 @@
     <div class="p-4">
         {{ $form }}
     </div>
-</x-filament-support::dropdown>
+</x-filament::dropdown>

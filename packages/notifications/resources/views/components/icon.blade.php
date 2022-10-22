@@ -3,7 +3,7 @@
     'color',
 ])
 
-<x-filament-support::icon
+<x-filament::icon
     :name="$icon"
     alias="filament-notifications::notification"
     :color="match ($color) {

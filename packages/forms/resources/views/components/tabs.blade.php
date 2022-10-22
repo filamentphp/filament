@@ -53,7 +53,7 @@
                 }"
             >
                 @if ($icon = $tab->getIcon())
-                    <x-filament-support::icon
+                    <x-filament::icon
                         :name="$icon"
                         alias="filament-forms::components.tabs.button"
                         size="h-5 w-5"

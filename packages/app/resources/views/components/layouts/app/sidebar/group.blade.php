@@ -17,7 +17,7 @@
         >
             <div class="flex items-center gap-4">
                 @if ($icon)
-                    <x-filament-support::icon
+                    <x-filament::icon
                         :name="$icon"
                         alias="app::sidebar.group"
                         color="text-gray-600 dark:text-gray-300"
@@ -32,7 +32,7 @@
             </div>
 
             @if ($collapsible)
-                <x-filament-support::icon
+                <x-filament::icon
                     name="heroicon-m-chevron-down"
                     alias="app::sidebar.group.trigger"
                     size="h-3 w-3"

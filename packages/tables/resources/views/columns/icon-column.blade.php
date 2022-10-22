@@ -15,7 +15,7 @@
     }}
 >
     @if ($icon)
-        <x-filament-support::icon
+        <x-filament::icon
             :name="$icon"
             alias="filament-tables::columns.icon"
             :color="match ($color) {

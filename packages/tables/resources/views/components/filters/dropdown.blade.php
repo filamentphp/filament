@@ -4,7 +4,7 @@
     'indicatorsCount' => null,
 ])
 
-<x-filament-support::dropdown
+<x-filament::dropdown
     {{ $attributes->class(['filament-tables-filters']) }}
     placement="bottom-end"
     shift
@@ -19,4 +19,4 @@
         class="p-4"
         :form="$form"
     />
-</x-filament-support::dropdown>
+</x-filament::dropdown>

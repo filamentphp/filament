@@ -8,13 +8,13 @@
     'tooltip' => null,
 ])
 
-<x-filament-support::dropdown
+<x-filament::dropdown
     :placement="$dropdownPlacement ?? 'bottom-end'"
     teleport
     {{ $attributes }}
 >
     <x-slot name="trigger">
-        <x-filament-support::icon-button
+        <x-filament::icon-button
             :color="$color"
             :icon="$icon"
             :size="$size"
@@ -23,14 +23,14 @@
             <x-slot name="label">
                 {{ $label }}
             </x-slot>
-        </x-filament-support::icon-button>
+        </x-filament::icon-button>
     </x-slot>
 
-    <x-filament-support::dropdown.list>
+    <x-filament::dropdown.list>
         @foreach ($actions as $action)
             @if (! $action->isHidden())
                 {{ $action }}
             @endif
         @endforeach
-    </x-filament-support::dropdown.list>
-</x-filament-support::dropdown>
+    </x-filament::dropdown.list>
+</x-filament::dropdown>

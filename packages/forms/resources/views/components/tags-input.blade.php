@@ -78,7 +78,7 @@
                             <span class="text-left" x-text="tag"></span>
 
                             @unless ($isDisabled())
-                                <x-filament-support::icon
+                                <x-filament::icon
                                     name="heroicon-m-x-mark"
                                     alias="filament-forms::components.tags-input.buttons.delete-tag"
                                     size="h-3 w-3"

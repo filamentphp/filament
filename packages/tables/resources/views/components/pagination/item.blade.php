@@ -22,7 +22,7 @@
         ]) }}
     >
         @if ($icon)
-            <x-filament-support::icon
+            <x-filament::icon
                 :name="$icon"
                 alias="filament-tables::pagination.item"
                 size="h-5 w-5"

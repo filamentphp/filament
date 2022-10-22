@@ -30,7 +30,7 @@
                     x-transition:enter-start="opacity-0"
                     x-transition:enter-end="opacity-100"
                 >
-                    <x-filament-support::icon
+                    <x-filament::icon
                         alias="app::sidebar.buttons.collapse"
                         color="text-primary-500"
                         size="h-6 w-6"
@@ -38,7 +38,7 @@
                         <svg class="h-full w-full" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M20.25 7.5L16 12L20.25 16.5M3.75 12H12M3.75 17.25H16M3.75 6.75H16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
-                    </x-filament-support::icon>
+                    </x-filament::icon>
                 </button>
             @endif
 
@@ -64,7 +64,7 @@
                 x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100"
             >
-                <x-filament-support::icon
+                <x-filament::icon
                     name="heroicon-o-bars-3"
                     alias="app::sidebar.buttons.toggle"
                     size="h-6 w-6"

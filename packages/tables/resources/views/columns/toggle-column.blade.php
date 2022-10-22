@@ -54,7 +54,7 @@
                 }"
             >
                 @if ($hasOffIcon())
-                    <x-filament-support::icon
+                    <x-filament::icon
                         :name="$getOffIcon()"
                         alias="filament-tables::columns.toggle.off"
                         :color="match ($getOffColor()) {
@@ -78,7 +78,7 @@
                 }"
             >
                 @if ($hasOnIcon())
-                    <x-filament-support::icon
+                    <x-filament::icon
                         :name="$getOnIcon()"
                         alias="filament-tables::columns.toggle.on"
                         :color="match ($getOnColor()) {

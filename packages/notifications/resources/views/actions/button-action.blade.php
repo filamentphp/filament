@@ -1,6 +1,6 @@
 <x-filament-notifications::actions.action
     :action="$action"
-    component="filament-support::button"
+    component="filament::button"
     :outlined="$isOutlined()"
     :icon-position="$getIconPosition()"
     class="filament-notifications-button-action"

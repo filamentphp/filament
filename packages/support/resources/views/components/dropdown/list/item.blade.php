@@ -59,7 +59,7 @@
         {{ $attributes->class([$buttonClasses]) }}
     >
         @if ($icon)
-            <x-filament-support::icon
+            <x-filament::icon
                 :name="$icon"
                 alias="support::dropdown.list.item"
                 :color="$iconColor"
@@ -71,7 +71,7 @@
         @endif
 
         @if ($hasLoadingIndicator)
-            <x-filament-support::loading-indicator
+            <x-filament::loading-indicator
                 x-cloak
                 wire:loading.delay
                 :wire:target="$loadingIndicatorTarget"
@@ -92,7 +92,7 @@
 @elseif ($tag === 'a')
     <a {{ $attributes->class([$buttonClasses]) }}>
         @if ($icon)
-            <x-filament-support::icon
+            <x-filament::icon
                 :name="$icon"
                 alias="support::dropdown.list.item"
                 :color="$iconColor"
@@ -120,7 +120,7 @@
             {{ $attributes->except(['action', 'class', 'method', 'wire:submit.prevent'])->class([$buttonClasses]) }}
         >
             @if ($icon)
-                <x-filament-support::icon
+                <x-filament::icon
                     :name="$icon"
                     alias="support::dropdown.list.item"
                     :color="$iconColor"

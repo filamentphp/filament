@@ -1,4 +1,4 @@
-<x-filament-support::icon-button
+<x-filament::icon-button
     icon="heroicon-o-ellipsis-vertical"
     :label="__('filament-tables::table.buttons.open_actions.label')"
     x-cloak

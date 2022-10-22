@@ -2,7 +2,7 @@
     'unreadNotificationsCount',
 ])
 
-<x-filament-support::modal.heading class="relative">
+<x-filament::modal.heading class="relative">
     <span>
         {{ __('filament-notifications::database.modal.heading') }}
     </span>
@@ -12,4 +12,4 @@
             {{ $unreadNotificationsCount }}
         </span>
     @endif
-</x-filament-support::modal.heading>
+</x-filament::modal.heading>

@@ -16,7 +16,7 @@
         @endif
 
         @if ($icon = $getPrefixIcon())
-            <x-filament-support::icon
+            <x-filament::icon
                 :name="$icon"
                 alias="filament-forms::components.color-picker.prefix"
                 size="h-5 w-5"
@@ -103,7 +103,7 @@
         @endif
 
         @if ($icon = $getSuffixIcon())
-            <x-filament-support::icon
+            <x-filament::icon
                 :name="$icon"
                 alias="filament-forms::components.color-picker.suffix"
                 size="h-5 w-5"
