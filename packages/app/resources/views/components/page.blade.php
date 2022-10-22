@@ -11,6 +11,12 @@
                 <x-slot name="heading">
                     {{ $heading }}
                 </x-slot>
+
+                @if ($subheading = $this->getSubheading())
+                    <x-slot name="subheading">
+                        {{ $subheading }}
+                    </x-slot>
+                @endif
             </x-filament::header>
         @endif
 
