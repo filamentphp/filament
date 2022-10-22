@@ -64,6 +64,10 @@ return [
                 'label' => 'Hapus baris',
             ],
 
+            'reorder' => [
+                'label' => 'Ubah urutan baris',
+            ],
+
         ],
 
         'fields' => [

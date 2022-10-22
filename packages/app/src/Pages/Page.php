@@ -35,6 +35,10 @@ class Page extends Component implements HasActions, RendersFormComponentActionMo
 
     protected static ?string $title = null;
 
+    protected ?string $heading = null;
+
+    protected ?string $subheading = null;
+
     protected static string $view;
 
     protected static string | array $middlewares = [];
@@ -181,7 +185,12 @@ class Page extends Component implements HasActions, RendersFormComponentActionMo
 
     protected function getHeading(): string
     {
-        return $this->getTitle();
+        return $this->heading ?? $this->getTitle();
+    }
+
+    protected function getSubheading(): ?string
+    {
+        return $this->subheading;
     }
 
     protected function getTitle(): string
