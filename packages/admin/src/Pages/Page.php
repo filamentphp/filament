@@ -36,9 +36,9 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
 
     protected static ?string $title = null;
 
-    protected static ?string $heading = null;
+    protected ?string $heading = null;
 
-    protected static ?string $subheading = null;
+    protected ?string $subheading = null;
 
     protected static string $view;
 
@@ -191,12 +191,12 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
 
     protected function getHeading(): string
     {
-        return static::$heading ?? $this->getTitle();
+        return $this->heading ?? $this->getTitle();
     }
 
     protected function getSubheading(): ?string
     {
-        return static::$subheading;
+        return this->subheading;
     }
 
     protected function getTitle(): string
