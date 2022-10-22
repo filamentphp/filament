@@ -196,7 +196,7 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
 
     protected function getSubheading(): ?string
     {
-        return this->subheading;
+        return $this->subheading;
     }
 
     protected function getTitle(): string
