@@ -53,6 +53,7 @@
             <x-filament::layouts.app.sidebar.badge
                 :badge="$badge"
                 :color="$badgeColor"
-                :active="$active"/>
+                :active="$active"
+            />
     </a>
 </li>
