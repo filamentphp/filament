@@ -174,6 +174,11 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
         return [];
     }
 
+    protected function getVisibleHeaderWidgets(): array
+    {
+        return static::getVisibleWidgets($this->getFooterWidgets());
+    }
+
     protected function getHeaderWidgetsColumns(): int | array
     {
         return 2;
@@ -182,6 +187,16 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
     protected function getFooterWidgets(): array
     {
         return [];
+    }
+
+    protected function getVisibleFooterWidgets(): array
+    {
+        return static::getVisibleWidgets($this->getFooterWidgets());
+    }
+
+    protected static function getVisibleWidgets(array $widgets): array
+    {
+        return array_filter($widgets, fn (string $widget): bool => $widget::canView());
     }
 
     protected function getFooterWidgetsColumns(): int | array

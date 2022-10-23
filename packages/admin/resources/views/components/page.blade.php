@@ -23,7 +23,7 @@
 
         {{ \Filament\Facades\Filament::renderHook('page.header-widgets.start') }}
 
-        @if ($headerWidgets = $this->getHeaderWidgets())
+        @if ($headerWidgets = $this->getVisibleHeaderWidgets())
             <x-filament::widgets
                 :widgets="$headerWidgets"
                 :columns="$this->getHeaderWidgetsColumns()"
@@ -37,7 +37,7 @@
 
         {{ \Filament\Facades\Filament::renderHook('page.footer-widgets.start') }}
 
-        @if ($footerWidgets = $this->getFooterWidgets())
+        @if ($footerWidgets = $this->getVisibleFooterWidgets())
             <x-filament::widgets
                 :widgets="$footerWidgets"
                 :columns="$this->getFooterWidgetsColumns()"
