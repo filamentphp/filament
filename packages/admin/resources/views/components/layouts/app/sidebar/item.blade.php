@@ -54,7 +54,7 @@
             </span>
 
         </div>
-            <x-filament::layouts.app.sidebar.bage
+            <x-filament::layouts.app.sidebar.badge
                 :badge="$badge"
                 :color="$badgeColor"
                 :active="$active"/>
