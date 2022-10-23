@@ -50,10 +50,12 @@
             </span>
 
         </div>
+        @if (filled($badge))
             <x-filament::layouts.app.sidebar.badge
                 :badge="$badge"
                 :color="$badgeColor"
                 :active="$active"
             />
+        @endif
     </a>
 </li>

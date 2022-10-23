@@ -4,7 +4,6 @@
     'badgeColor' => null,
 ])
 
-@if (filled($badge))
     <span
         x-show="$store.sidebar.isOpen"
                     @class(
@@ -43,4 +42,3 @@
                 >
                     {{ $badge }}
                 </span>
-@endif
