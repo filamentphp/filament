@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Forms\Callbacks\Get;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Support\Arr;
 
@@ -45,7 +46,7 @@ trait CanBeHidden
     {
         $paths = Arr::wrap($paths);
 
-        $this->hidden(static function (Closure $get) use ($paths): bool {
+        $this->hidden(static function (Get $get) use ($paths): bool {
             foreach ($paths as $path) {
                 if (! $get($path)) {
                     return true;
@@ -62,7 +63,7 @@ trait CanBeHidden
     {
         $paths = Arr::wrap($paths);
 
-        $this->hidden(static function (Closure $get) use ($paths): bool {
+        $this->hidden(static function (Get $get) use ($paths): bool {
             foreach ($paths as $path) {
                 if ((bool) $get($path)) {
                     return true;

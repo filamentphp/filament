@@ -74,23 +74,23 @@ function (?Model $record) {
 }
 ```
 
-You may also retrieve the value of another field from within a callback, using a closure `$get` parameter:
+You may also retrieve the value of another field from within a callback, using a `$get` parameter:
 
 ```php
-use Closure;
+use Filament\Forms\Callbacks\Get;
 
-function (Closure $get) {
+function (Get $get) {
     $email = $get('email'); // Store the value of the `email` field in the `$email` variable.
     //...
 }
 ```
 
-In a similar way to `$get`, you may also set the value of another field from within a callback, using a closure `$set` parameter:
+In a similar way to `$get`, you may also set the value of another field from within a callback, using a `$set` parameter:
 
 ```php
-use Closure;
+use Filament\Forms\Callbacks\Set;
 
-function (Closure $set) {
+function (Set $set) {
     $set('title', 'Blog Post'); // Set the `title` field to `Blog Post`.
     //...
 }
@@ -109,10 +109,11 @@ function (string $context) {
 Callbacks are evaluated using Laravel's `app()->call()` under the hood, so you are able to combine multiple parameters in any order:
 
 ```php
-use Closure;
+use Filament\Forms\Callbacks\Get;
+use Filament\Forms\Callbacks\Set;
 use Livewire\Component as Livewire;
 
-function (Livewire $livewire, Closure $get, Closure $set) {
+function (Livewire $livewire, Get $get, Set $set) {
     // ...
 }
 ```
@@ -142,7 +143,7 @@ For example, you can build dependant [select](fields#select) inputs:
 Sometimes, you may wish to conditionally hide any form component based on the value of a field. You may do this with a `hidden()` method:
 
 ```php
-use Closure;
+use Filament\Forms\Callbacks\Get;
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('newPassword')
@@ -151,7 +152,7 @@ TextInput::make('newPassword')
 
 TextInput::make('newPasswordConfirmation')
     ->password()
-    ->hidden(fn (Closure $get) => $get('newPassword') !== null)
+    ->hidden(fn (Get $get) => $get('newPassword') !== null)
 ```
 
 The field/s you're depending on should be `reactive()`, to ensure the Livewire component is reloaded when they are updated.
@@ -181,13 +182,13 @@ You may use the `afterStateUpdated()` method to customize what happens after a f
 In this example, the `slug` field is updated with the slug version of the `title` field automatically:
 
 ```php
-use Closure;
+use Filament\Forms\Callbacks\Set;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Str;
 
 TextInput::make('title')
     ->reactive()
-    ->afterStateUpdated(function (Closure $set, $state) {
+    ->afterStateUpdated(function (Set $set, $state) {
         $set('slug', Str::slug($state));
     })
 TextInput::make('slug')

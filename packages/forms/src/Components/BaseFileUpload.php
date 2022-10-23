@@ -3,6 +3,8 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Forms\Callbacks\Get;
+use Filament\Forms\Callbacks\Set;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Filesystem\FilesystemAdapter;
@@ -471,7 +473,7 @@ class BaseFileUpload extends Field
             return;
         }
 
-        $this->evaluate(function (BaseFileUpload $component, Closure $get, Closure $set) use ($file, $statePath) {
+        $this->evaluate(function (BaseFileUpload $component, Get $get, Set $set) use ($file, $statePath) {
             if (! $component->isMultiple()) {
                 $set($statePath, null);
 
@@ -581,7 +583,7 @@ class BaseFileUpload extends Field
             return;
         }
 
-        $this->evaluate(function (BaseFileUpload $component, Closure $get, Closure $set) use ($file, $fileName, $statePath) {
+        $this->evaluate(function (BaseFileUpload $component, Get $get, Set $set) use ($file, $fileName, $statePath) {
             if (! $component->isMultiple()) {
                 $set($statePath, $fileName);
 
@@ -601,7 +603,7 @@ class BaseFileUpload extends Field
         $statePath = $this->fileNamesStatePath;
 
         if (filled($statePath)) {
-            $state = $this->evaluate(fn (Closure $get) => $get($statePath));
+            $state = $this->evaluate(fn (Get $get) => $get($statePath));
         }
 
         if (blank($state) && $this->isMultiple()) {

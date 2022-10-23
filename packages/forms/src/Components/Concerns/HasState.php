@@ -3,6 +3,8 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Forms\Callbacks\Get;
+use Filament\Forms\Callbacks\Set;
 use Filament\Forms\Components\Component;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
@@ -293,34 +295,17 @@ trait HasState
         return (bool) $this->evaluate($this->isDehydrated);
     }
 
-    public function getGetCallback(): Closure
+    public function getGetCallback(): Get
     {
-        return function (Component | string $path, bool $isAbsolute = false) {
-            $livewire = $this->getLivewire();
-
-            return data_get(
-                $livewire,
-                $this->generateRelativeStatePath($path, $isAbsolute)
-            );
-        };
+        return new Get($this);
     }
 
-    public function getSetCallback(): Closure
+    public function getSetCallback(): Set
     {
-        return function (string | Component $path, $state, bool $isAbsolute = false) {
-            $livewire = $this->getLivewire();
-
-            data_set(
-                $livewire,
-                $this->generateRelativeStatePath($path, $isAbsolute),
-                $this->evaluate($state),
-            );
-
-            return $state;
-        };
+        return new Set($this);
     }
 
-    protected function generateRelativeStatePath(string | Component $path, bool $isAbsolute = false): string
+    public function generateRelativeStatePath(string | Component $path, bool $isAbsolute = false): string
     {
         if ($path instanceof Component) {
             return $path->getStatePath();
