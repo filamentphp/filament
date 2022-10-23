@@ -1,9 +1,9 @@
 @props([
     'active' => false,
+    'activeIcon',
     'badge' => null,
     'badgeColor' => null,
     'icon',
-    'activeIcon',
     'shouldOpenUrlInNewTab' => false,
     'url',
 ])
