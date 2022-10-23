@@ -37,11 +37,7 @@
             'bg-primary-500 text-white' => $active,
         ])
     >
-        @if($activeIcon && $active)
-            <x-dynamic-component :component="$activeIcon" class="h-5 w-5 shrink-0" />
-        @else
-            <x-dynamic-component :component="$icon" class="h-5 w-5 shrink-0" />
-        @endif
+        <x-dynamic-component :component="$active && $activeIcon ? $activeIcon : $icon" class="h-5 w-5 shrink-0" />
 
         <div class="flex flex-1"
             @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
