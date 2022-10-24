@@ -16,7 +16,7 @@ protected static ?int $navigationSort = 3;
 
 The `$navigationIcon` supports the name of any Blade component, and passes a set of formatting classes to it. By default, the [Blade Heroicons](https://github.com/blade-ui-kit/blade-heroicons) package is installed, so you may use the name of any [Heroicon](https://heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
 
-## Navigation active icons
+## Active icon
 
 By default, Filament uses `$navigationIcon` for active and inactive states. If you need to assign different icons when enters & leaves Resource / Page you can assign `$activeNavigationIcon`:
 
