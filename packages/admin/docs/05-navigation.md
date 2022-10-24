@@ -24,7 +24,7 @@ By default, Filament uses `$navigationIcon` for active and inactive states. If y
 protected static ?string $activeNavigationIcon = 'heroicon-s-document-text';
 ```
 
-or override the method `getActiveNavigationIcon()`:
+Alternatively, override the `getActiveNavigationIcon()` method:
 
 ```php
 protected static function getActiveNavigationIcon(): string
