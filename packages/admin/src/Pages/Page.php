@@ -176,7 +176,7 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
 
     protected function getVisibleHeaderWidgets(): array
     {
-        return static::getVisibleWidgets($this->getFooterWidgets());
+        return static::getVisibleWidgets($this->getHeaderWidgets());
     }
 
     protected function getHeaderWidgetsColumns(): int | array
