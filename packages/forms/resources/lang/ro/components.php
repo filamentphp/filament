@@ -8,12 +8,20 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'Clonează',
+            ],
+
             'create_item' => [
                 'label' => 'Adăugare la :label',
             ],
 
             'delete_item' => [
                 'label' => 'Ștergere',
+            ],
+
+            'move_item' => [
+                'label' => 'Mutare',
             ],
 
             'move_item_down' => [
@@ -54,6 +62,10 @@ return [
 
             'delete' => [
                 'label' => 'Ștergere linie',
+            ],
+
+            'reorder' => [
+                'label' => 'Reordonare rând',
             ],
 
         ],
@@ -101,6 +113,14 @@ return [
 
             'delete_item' => [
                 'label' => 'Ștergere',
+            ],
+
+            'clone_item' => [
+                'label' => 'Clonează',
+            ],
+
+            'move_item' => [
+                'label' => 'Mutare',
             ],
 
             'move_item_down' => [
@@ -200,6 +220,8 @@ return [
 
         'loading_message' => 'Se încarcă...',
 
+        'max_items_message' => 'Numai :count elemente pot fi selectate.',
+
         'no_search_results_message' => 'Nu s-a găsit nimic.',
 
         'placeholder' => 'Selectați o opțiune',
@@ -219,7 +241,7 @@ return [
         'buttons' => [
 
             'previous_step' => [
-                'label' => 'Pasu anterior',
+                'label' => 'Pasul anterior',
             ],
 
             'next_step' => [

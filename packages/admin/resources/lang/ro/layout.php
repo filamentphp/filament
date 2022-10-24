@@ -10,6 +10,10 @@ return [
             'label' => 'Comutați modul întunecat',
         ],
 
+        'database_notifications' => [
+            'label' => 'Deschideți notificările',
+        ],
+
         'light_mode' => [
             'label' => 'Comutați modul deschis',
         ],
