@@ -7,6 +7,7 @@ return [
         'collapsed' => 'Conținutul este comprimat',
 
         'buttons' => [
+
             'clone_item' => [
                 'label' => 'Clonează',
             ],
