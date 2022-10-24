@@ -67,16 +67,6 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')->id('name-field')
 ```
 
-### Validation attributes
-
-When fields fail validation, their label is used in the error message. To customize the label used in field error messages, use the `validationAttribute()` method:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('name')->validationAttribute('full name')
-```
-
 ### Setting a default value
 
 Fields may have a default value. This will be filled if the [form's `fill()` method](getting-started#default-data) is called without any arguments. To define a default value, use the `default()` method:
