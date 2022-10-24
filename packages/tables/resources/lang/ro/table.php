@@ -2,7 +2,7 @@
 
 return [
 
-     'columns' => [
+    'columns' => [
 
         'color' => [
 
@@ -64,7 +64,7 @@ return [
 
     'buttons' => [
 
-         'disable_reordering' => [
+        'disable_reordering' => [
             'label' => 'Dezactivați reordonarea',
         ],
 
@@ -94,7 +94,7 @@ return [
 
         'buttons' => [
 
-             'remove' => [
+            'remove' => [
                 'label' => 'Ştergere filtru',
             ],
 

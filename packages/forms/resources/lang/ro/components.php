@@ -63,7 +63,7 @@ return [
                 'label' => 'Ștergere linie',
             ],
 
-             'reorder' => [
+            'reorder' => [
                 'label' => 'Reordonare rând',
             ],
 
@@ -114,11 +114,11 @@ return [
                 'label' => 'Ștergere',
             ],
 
-             'clone_item' => [
+            'clone_item' => [
                 'label' => 'Clonează',
             ],
 
-             'move_item' => [
+            'move_item' => [
                 'label' => 'Mutare',
             ],
 

@@ -9,7 +9,7 @@ return [
         'dark_mode' => [
             'label' => 'Comutați modul întunecat',
         ],
-         'database_notifications' => [
+        'database_notifications' => [
             'label' => 'Deschideți notificările',
         ],
         'light_mode' => [
