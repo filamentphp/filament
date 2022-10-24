@@ -12,6 +12,7 @@ return [
         'database_notifications' => [
             'label' => 'Deschideți notificările',
         ],
+
         'light_mode' => [
             'label' => 'Comutați modul deschis',
         ],
