@@ -108,6 +108,7 @@ return [
             ],
 
         ],
+
         'indicator' => 'Filtre active',
 
         'multi_select' => [
