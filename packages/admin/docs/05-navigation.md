@@ -18,7 +18,7 @@ The `$navigationIcon` supports the name of any Blade component, and passes a set
 
 ## Active icon
 
-By default, Filament uses `$navigationIcon` for active and inactive states. If you need to assign different icons when enters & leaves Resource / Page you can assign `$activeNavigationIcon`:
+You may assign navigation icon which will indicate active item by specifying `$activeNavigationIcon` property on a [resource](resources) and [custom page](pages):
 
 ```php
 protected static ?string $activeNavigationIcon = 'heroicon-s-document-text';
