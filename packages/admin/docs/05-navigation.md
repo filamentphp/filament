@@ -28,9 +28,9 @@ or override the method `getActiveNavigationIcon()`:
 
 ```php
 protected static function getActiveNavigationIcon(): string
-    {
-        return 'heroicon-s-document-text';
-    }
+{
+    return 'heroicon-s-document-text';
+}
 ```
 
 ## Navigation item badges
