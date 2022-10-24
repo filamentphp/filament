@@ -18,6 +18,10 @@ return [
             'label' => 'Oturumu kapat',
         ],
 
+        'user_menu' => [
+            'label' => 'Kullanıcı menüsü',
+        ],
+
     ],
 
 ];

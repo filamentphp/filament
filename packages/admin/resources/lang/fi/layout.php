@@ -22,6 +22,10 @@ return [
             'label' => 'Kirjaudu ulos',
         ],
 
+        'user_menu' => [
+            'label' => 'Käyttäjävalikko',
+        ],
+
     ],
 
 ];

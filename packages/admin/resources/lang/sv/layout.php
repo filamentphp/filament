@@ -18,6 +18,10 @@ return [
             'label' => 'Logga ut',
         ],
 
+        'user_menu' => [
+            'label' => 'Användarmeny',
+        ],
+
     ],
 
 ];

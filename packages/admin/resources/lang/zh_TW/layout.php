@@ -18,6 +18,10 @@ return [
             'label' => '登出',
         ],
 
+        'user_menu' => [
+            'label' => '用戶菜單',
+        ],
+
     ],
 
 ];
