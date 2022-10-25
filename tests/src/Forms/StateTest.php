@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Forms\Get;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Placeholder;
@@ -359,7 +360,7 @@ test('sibling state can be retrieved relatively from another component', functio
                 ->statePath($statePath = Str::random())
                 ->default($state = Str::random()),
             $placeholder = Placeholder::make(Str::random())
-                ->content(fn (Closure $get): string => $get($statePath)),
+                ->content(fn (Get $get): string => $get($statePath)),
         ])
         ->fill();
 
@@ -379,7 +380,7 @@ test('sibling nested state can be retrieved relatively from another component', 
                         ->default($state = Str::random()),
                 ]),
             $placeholder = Placeholder::make(Str::random())
-                ->content(fn (Closure $get): string => $get("{$parentStatePath}.{$statePath}")),
+                ->content(fn (Get $get): string => $get("{$parentStatePath}.{$statePath}")),
         ])
         ->fill();
 
@@ -398,7 +399,7 @@ test('parent sibling state can be retrieved relatively from another component', 
                 ->statePath(Str::random())
                 ->schema([
                     $placeholder = Placeholder::make(Str::random())
-                        ->content(fn (Closure $get): string => $get("../{$statePath}")),
+                        ->content(fn (Get $get): string => $get("../{$statePath}")),
                 ]),
         ])
         ->fill();
@@ -415,7 +416,7 @@ test('sibling state can be retrieved absolutely from another component', functio
                 ->statePath($statePath = Str::random())
                 ->default($state = Str::random()),
             $placeholder = Placeholder::make(Str::random())
-                ->content(fn (Closure $get): string => $get("data.{$statePath}", isAbsolute: true)),
+                ->content(fn (Get $get): string => $get("data.{$statePath}", isAbsolute: true)),
         ])
         ->fill();
 
@@ -435,7 +436,7 @@ test('sibling nested state can be retrieved absolutely from another component', 
                         ->default($state = Str::random()),
                 ]),
             $placeholder = Placeholder::make(Str::random())
-                ->content(fn (Closure $get): string => $get("data.{$parentStatePath}.{$statePath}", isAbsolute: true)),
+                ->content(fn (Get $get): string => $get("data.{$parentStatePath}.{$statePath}", isAbsolute: true)),
         ])
         ->fill();
 
@@ -454,7 +455,7 @@ test('parent sibling state can be retrieved absolutely from another component', 
                 ->statePath(Str::random())
                 ->schema([
                     $placeholder = Placeholder::make(Str::random())
-                        ->content(fn (Closure $get): string => $get("data.{$statePath}", isAbsolute: true)),
+                        ->content(fn (Get $get): string => $get("data.{$statePath}", isAbsolute: true)),
                 ]),
         ])
         ->fill();
