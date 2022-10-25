@@ -68,7 +68,7 @@ class MorphToSelect extends Component
                 ->getSearchResultsUsing($selectedType?->getSearchResultsUsing)
                 ->getOptionLabelUsing($selectedType?->getOptionLabelUsing)
                 ->required($isRequired)
-                ->hidden(!$selectedType)
+                ->hidden(! $selectedType)
                 ->searchable($this->isSearchable())
                 ->searchDebounce($this->getSearchDebounce())
                 ->searchPrompt($this->getSearchPrompt())

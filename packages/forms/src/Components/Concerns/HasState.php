@@ -107,7 +107,7 @@ trait HasState
 
     public function dehydrateState(array &$state): void
     {
-        if (!$this->isDehydrated()) {
+        if (! $this->isDehydrated()) {
             Arr::forget($state, $this->getStatePath());
 
             return;
@@ -175,7 +175,7 @@ trait HasState
             return;
         }
 
-        if (!$this->hasDefaultState()) {
+        if (! $this->hasDefaultState()) {
             $this->state(null);
 
             return;
@@ -190,7 +190,7 @@ trait HasState
 
     public function fillStateWithNull(): void
     {
-        if (!Arr::has((array) $this->getLivewire(), $this->getStatePath())) {
+        if (! Arr::has((array) $this->getLivewire(), $this->getStatePath())) {
             $this->state(null);
         }
 
@@ -257,7 +257,7 @@ trait HasState
 
     public function getOldState()
     {
-        if (!Livewire::isLivewireRequest()) {
+        if (! Livewire::isLivewireRequest()) {
             return null;
         }
 
