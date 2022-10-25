@@ -21,6 +21,10 @@ return [
         'logout' => [
             'label' => 'Disconnetti',
         ],
+
+        'user_menu' => [
+            'label' => 'Menu utente',
+        ],
     ],
 
 ];

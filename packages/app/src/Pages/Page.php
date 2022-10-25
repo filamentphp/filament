@@ -166,6 +166,11 @@ class Page extends Component implements HasActions, RendersFormComponentActionMo
         return [];
     }
 
+    protected function getVisibleHeaderWidgets(): array
+    {
+        return $this->filterVisibleWidgets($this->getHeaderWidgets());
+    }
+
     protected function getHeaderWidgetsColumns(): int | array
     {
         return 2;
@@ -174,6 +179,16 @@ class Page extends Component implements HasActions, RendersFormComponentActionMo
     protected function getFooterWidgets(): array
     {
         return [];
+    }
+
+    protected function getVisibleFooterWidgets(): array
+    {
+        return $this->filterVisibleWidgets($this->getFooterWidgets());
+    }
+
+    protected function filterVisibleWidgets(array $widgets): array
+    {
+        return array_filter($widgets, fn (string $widget): bool => $widget::canView());
     }
 
     protected function getFooterWidgetsColumns(): int | array

@@ -171,7 +171,7 @@ jobs:
                     comment += `
                         However, it looks like you forgot to fill in the reproduction repository URL. Can you edit your original post and then we'll look at your issue?
 
-                        We need a public Git repository which contains a Laravel app with the minimal amount of Filament code to reproduce the problem. That would allow us to download it and review your bug much easier, so it can be fixed quicker. Please make sure to include a database seeder with everything we need to set the app up quickly.
+                        We need a public GitHub repository which contains a Laravel app with the minimal amount of Filament code to reproduce the problem. **Please do not link to your actual project**, what we need instead is a _minimal_ reproduction in a fresh project without any unnecessary code. This means it doesn\'t matter if your real project is private / confidential, since we want a link to a separate, isolated reproduction. That would allow us to download it and review your bug much easier, so it can be fixed quicker. Please make sure to include a database seeder with everything we need to set the app up quickly.
                     `
                 }
 

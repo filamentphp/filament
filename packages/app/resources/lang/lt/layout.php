@@ -22,6 +22,10 @@ return [
             'label' => 'Atsijungti',
         ],
 
+        'user_menu' => [
+            'label' => 'Vartotojo meniu',
+        ],
+
     ],
 
 ];

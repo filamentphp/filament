@@ -22,6 +22,10 @@ return [
             'label' => 'Keluar',
         ],
 
+        'user_menu' => [
+            'label' => 'Menu pengguna',
+        ],
+
     ],
 
 ];

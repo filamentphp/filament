@@ -33,11 +33,13 @@ class ForceDeleteAction extends Action
         $this->action(function (): void {
             $result = $this->process(static fn (Model $record) => $record->forceDelete());
 
-            if ($result) {
-                $this->success();
-            } else {
+            if (! $result) {
                 $this->failure();
+
+                return;
             }
+
+            $this->success();
         });
 
         $this->visible(static function (Model $record): bool {

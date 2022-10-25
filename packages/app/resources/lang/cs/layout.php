@@ -22,6 +22,10 @@ return [
             'label' => 'Odhlásit se',
         ],
 
+        'user_menu' => [
+            'label' => 'Nabídka uživatele',
+        ],
+
     ],
 
 ];

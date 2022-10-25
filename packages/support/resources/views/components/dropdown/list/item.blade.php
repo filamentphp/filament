@@ -26,7 +26,7 @@
         'group-hover:text-warning-100 group-focus:text-warning-100' => $color === 'warning' && $hasHoverAndFocusState,
     ]);
 
-    $labelClasses = 'filament-dropdown-list-item-label truncate';
+    $labelClasses = 'filament-dropdown-list-item-label truncate w-full text-left';
 
     $iconColor = match ($color) {
         'danger' => 'text-danger-500',
