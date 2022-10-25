@@ -2,7 +2,6 @@
 
 namespace Filament\Resources;
 
-use Closure;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\GlobalSearch\GlobalSearchResult;
