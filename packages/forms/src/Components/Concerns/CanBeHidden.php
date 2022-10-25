@@ -3,8 +3,8 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
-use Filament\Forms\Get;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Get;
 use Illuminate\Support\Arr;
 
 trait CanBeHidden
