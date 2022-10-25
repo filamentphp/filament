@@ -3,8 +3,8 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Filament\Forms\Callbacks\Get;
-use Filament\Forms\Callbacks\Set;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Filesystem\FilesystemAdapter;
@@ -110,7 +110,7 @@ class BaseFileUpload extends Field
             /** @var FilesystemAdapter $storage */
             $storage = $component->getDisk();
 
-            if (! $storage->exists($file)) {
+            if (!$storage->exists($file)) {
                 return null;
             }
 
@@ -135,7 +135,7 @@ class BaseFileUpload extends Field
         $this->saveUploadedFileUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file): ?string {
             $storeMethod = $component->getVisibility() === 'public' ? 'storePubliclyAs' : 'storeAs';
 
-            if (! $file->exists()) {
+            if (!$file->exists()) {
                 return null;
             }
 
@@ -210,7 +210,7 @@ class BaseFileUpload extends Field
 
     public function disablePreview(bool | Closure $condition = true): static
     {
-        $this->canPreview = fn (BaseFileUpload $component): bool => ! $component->evaluate($condition);
+        $this->canPreview = fn (BaseFileUpload $component): bool => !$component->evaluate($condition);
 
         return $this;
     }
@@ -379,7 +379,7 @@ class BaseFileUpload extends Field
 
     public function getFileNamesStatePath(): ?string
     {
-        if (! $this->fileNamesStatePath) {
+        if (!$this->fileNamesStatePath) {
             return null;
         }
 
@@ -412,7 +412,7 @@ class BaseFileUpload extends Field
                 customAttributes: ["{$name}.*" => $this->getValidationAttribute()],
             );
 
-            if (! $validator->fails()) {
+            if (!$validator->fails()) {
                 return;
             }
 
@@ -432,7 +432,7 @@ class BaseFileUpload extends Field
 
         $callback = $this->deleteUploadedFileUsing;
 
-        if (! $callback) {
+        if (!$callback) {
             return $this;
         }
 
@@ -448,7 +448,7 @@ class BaseFileUpload extends Field
         $files = $this->getState();
         $file = $files[$fileKey] ?? null;
 
-        if (! $file) {
+        if (!$file) {
             return null;
         }
 
@@ -474,7 +474,7 @@ class BaseFileUpload extends Field
         }
 
         $this->evaluate(function (BaseFileUpload $component, Get $get, Set $set) use ($file, $statePath) {
-            if (! $component->isMultiple()) {
+            if (!$component->isMultiple()) {
                 $set($statePath, null);
 
                 return;
@@ -492,7 +492,7 @@ class BaseFileUpload extends Field
 
     public function reorderUploadedFiles(array $fileKeys): void
     {
-        if (! $this->canReorder) {
+        if (!$this->canReorder) {
             return;
         }
 
@@ -518,7 +518,7 @@ class BaseFileUpload extends Field
 
             $callback = $this->getUploadedFileUrlUsing;
 
-            if (! $callback) {
+            if (!$callback) {
                 return [$fileKey => null];
             }
 
@@ -539,13 +539,13 @@ class BaseFileUpload extends Field
         }
 
         $state = array_filter(array_map(function (TemporaryUploadedFile | string $file) {
-            if (! $file instanceof TemporaryUploadedFile) {
+            if (!$file instanceof TemporaryUploadedFile) {
                 return $file;
             }
 
             $callback = $this->saveUploadedFileUsing;
 
-            if (! $callback) {
+            if (!$callback) {
                 $file->delete();
 
                 return $file;
@@ -584,7 +584,7 @@ class BaseFileUpload extends Field
         }
 
         $this->evaluate(function (BaseFileUpload $component, Get $get, Set $set) use ($file, $fileName, $statePath) {
-            if (! $component->isMultiple()) {
+            if (!$component->isMultiple()) {
                 $set($statePath, $fileName);
 
                 return;

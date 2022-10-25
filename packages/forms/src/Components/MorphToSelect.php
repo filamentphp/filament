@@ -3,8 +3,8 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Filament\Forms\Callbacks\Get;
-use Filament\Forms\Callbacks\Set;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Forms\Components\MorphToSelect\Type;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -68,7 +68,7 @@ class MorphToSelect extends Component
                 ->getSearchResultsUsing($selectedType?->getSearchResultsUsing)
                 ->getOptionLabelUsing($selectedType?->getOptionLabelUsing)
                 ->required($isRequired)
-                ->hidden(! $selectedType)
+                ->hidden(!$selectedType)
                 ->searchable($this->isSearchable())
                 ->searchDebounce($this->getSearchDebounce())
                 ->searchPrompt($this->getSearchPrompt())

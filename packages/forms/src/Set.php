@@ -1,11 +1,16 @@
 <?php
 
-namespace Filament\Forms\Callbacks;
+namespace Filament\Forms;
 
 use Filament\Forms\Components\Component;
 
-class Set extends Callback
+class Set
 {
+    public function __construct(
+        protected Component $component,
+    ) {
+    }
+
     public function __invoke(string | Component $path, $state, bool $isAbsolute = false)
     {
         $livewire = $this->component->getLivewire();
