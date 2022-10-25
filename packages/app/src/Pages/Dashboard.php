@@ -19,11 +19,9 @@ class Dashboard extends Page
         return static::$navigationLabel ?? static::$title ?? __('filament::pages/dashboard.title');
     }
 
-    public static function getRoutes(): Closure
+    public static function routes(): void
     {
-        return function () {
-            Route::get('/', static::class)->name(static::getSlug());
-        };
+        Route::get('/', static::class)->name(static::getSlug());
     }
 
     public function getWidgets(): array

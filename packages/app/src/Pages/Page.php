@@ -76,15 +76,13 @@ class Page extends Component implements HasActions, RendersFormComponentActionMo
         return "filament.pages.{$slug}";
     }
 
-    public static function getRoutes(): Closure
+    public static function routes(): void
     {
-        return function () {
-            $slug = static::getSlug();
+        $slug = static::getSlug();
 
-            Route::get($slug, static::class)
-                ->middleware(static::getMiddlewares())
-                ->name($slug);
-        };
+        Route::get($slug, static::class)
+            ->middleware(static::getMiddlewares())
+            ->name($slug);
     }
 
     public static function getMiddlewares(): string | array

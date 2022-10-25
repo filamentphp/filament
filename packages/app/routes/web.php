@@ -28,13 +28,13 @@ Route::domain(config('filament.domain'))
             Route::middleware(config('filament.middleware.auth'))->group(function (): void {
                 Route::name('pages.')->group(function (): void {
                     foreach (Filament::getPages() as $page) {
-                        Route::group([], $page::getRoutes());
+                        Route::group([], Closure::fromCallable([$page, 'routes']));
                     }
                 });
 
                 Route::name('resources.')->group(function (): void {
                     foreach (Filament::getResources() as $resource) {
-                        Route::group([], $resource::getRoutes());
+                        Route::group([], Closure::fromCallable([$resource, 'routes']));
                     }
                 });
             });

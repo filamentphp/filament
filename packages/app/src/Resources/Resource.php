@@ -364,20 +364,18 @@ class Resource
         return static::$recordRouteKeyName;
     }
 
-    public static function getRoutes(): Closure
+    public static function routes(): void
     {
-        return function () {
-            $slug = static::getSlug();
+        $slug = static::getSlug();
 
-            Route::name("{$slug}.")
-                ->prefix($slug)
-                ->middleware(static::getMiddlewares())
-                ->group(function () {
-                    foreach (static::getPages() as $name => $page) {
-                        Route::get($page['route'], $page['class'])->name($name);
-                    }
-                });
-        };
+        Route::name("{$slug}.")
+            ->prefix($slug)
+            ->middleware(static::getMiddlewares())
+            ->group(function () {
+                foreach (static::getPages() as $name => $page) {
+                    Route::get($page['route'], $page['class'])->name($name);
+                }
+            });
     }
 
     public static function getMiddlewares(): string | array
