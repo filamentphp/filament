@@ -22,6 +22,10 @@ return [
             'label' => 'Deconectare',
         ],
 
+        'user_menu' => [
+            'label' => 'meniul utilizatorului',
+        ],
+
     ],
 
 ];

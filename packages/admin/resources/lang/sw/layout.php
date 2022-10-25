@@ -22,6 +22,10 @@ return [
             'label' => 'Toka',
         ],
 
+        'user_menu' => [
+            'label' => 'Menyu ya Mtumiaji',
+        ],
+
     ],
 
 ];

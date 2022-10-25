@@ -18,6 +18,10 @@ return [
             'label' => 'Odjava',
         ],
 
+        'user_menu' => [
+            'label' => 'Korisnički meni',
+        ],
+
     ],
 
 ];
