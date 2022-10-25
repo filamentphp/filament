@@ -2,7 +2,6 @@
 
 namespace Filament\Pages;
 
-use Closure;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Route;
 
