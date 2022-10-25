@@ -4,6 +4,8 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Forms\Components\MorphToSelect\Type;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -46,7 +48,7 @@ class MorphToSelect extends Component
         $isRequired = $this->isRequired();
 
         /** @var ?Type $selectedType */
-        $selectedType = $types[$this->evaluate(fn (Closure $get): ?string => $get($typeColumn))] ?? null;
+        $selectedType = $types[$this->evaluate(fn (Get $get): ?string => $get($typeColumn))] ?? null;
 
         return [
             Select::make($typeColumn)
@@ -58,7 +60,7 @@ class MorphToSelect extends Component
                 ))
                 ->required($isRequired)
                 ->reactive()
-                ->afterStateUpdated(fn (Closure $set) => $set($keyColumn, null)),
+                ->afterStateUpdated(fn (Set $set) => $set($keyColumn, null)),
             Select::make($keyColumn)
                 ->label($selectedType?->getLabel())
                 ->disableLabel()

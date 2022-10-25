@@ -530,10 +530,11 @@ By default, relationships will only be saved if the field is visible. For exampl
 This might cause unexpected behaviour if you still want to save the relationship, even when the field is hidden. To force relationships to be saved, you may call the `saveRelationshipsWhenHidden()` method on the form component:
 
 ```php
+use Filament\Forms\Get;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 SpatieMediaLibraryFileUpload::make('attachments')
-    ->visible(fn (Closure $get): bool => $get('has_attachments'))
+    ->visible(fn (Get $get): bool => $get('has_attachments'))
     ->saveRelationshipsWhenHidden();
 ```
 
