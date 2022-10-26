@@ -10,6 +10,10 @@ return [
             'label' => 'Växla till mörkt läge',
         ],
 
+        'database_notifications' => [
+            'label' => 'Öppna aviseringar',
+        ],
+
         'light_mode' => [
             'label' => 'Växla till ljust läge',
         ],
