@@ -112,7 +112,6 @@ class FilamentServiceProvider extends PluginServiceProvider
         }
 
         TestableLivewire::mixin(new TestsPageActions());
-        TestableLivewire::mixin(new TestsPages());
     }
 
     protected function registerComponents(): void
