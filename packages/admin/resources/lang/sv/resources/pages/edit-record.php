@@ -15,9 +15,13 @@ return [
             ],
 
             'save' => [
-                'label' => 'Spara',
+                'label' => 'Spara ändringar',
             ],
 
+        ],
+
+        'tab' => [
+            'label' => 'Redigera',
         ],
 
     ],
