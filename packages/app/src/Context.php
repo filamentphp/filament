@@ -4,5 +4,4 @@ namespace Filament;
 
 class Context
 {
-
 }
