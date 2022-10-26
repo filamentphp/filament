@@ -3,9 +3,7 @@
 namespace Filament\Http\Middleware;
 
 use Closure;
-use Filament\Events\ServingFilament;
 use Filament\Facades\Filament;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 class SetUpContext

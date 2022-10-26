@@ -3,22 +3,15 @@
 namespace Filament;
 
 use Closure;
-use Exception;
 use Filament\Events\ServingFilament;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
-use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
-use Filament\Navigation\NavigationGroup;
-use Filament\Navigation\UserMenuItem;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\HtmlString;
 
 class FilamentManager
 {
