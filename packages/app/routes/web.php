@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Facades\Filament;
+use Filament\Http\Middleware\SetUpContext;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;

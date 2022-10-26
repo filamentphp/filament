@@ -2,11 +2,20 @@
 
 namespace Filament;
 
-use Filament\Support\PluginServiceProvider;
+use Filament\Facades\Filament;
+use Illuminate\Support\ServiceProvider;
 
-class ContextServiceProvider extends PluginServiceProvider
+abstract class ContextServiceProvider extends ServiceProvider
 {
-    public function configureContext(Context $context): void
+    abstract public function configureContext(Context $context): void;
+
+    public function register()
     {
+        $this->app->resolving('filament', function () {
+            $context = new Context();
+            $this->configureContext($context);
+
+            Filament::registerContext($context);
+        });
     }
 }

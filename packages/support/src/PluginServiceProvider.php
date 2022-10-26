@@ -16,6 +16,8 @@ abstract class PluginServiceProvider extends PackageServiceProvider
 {
     public static string $name;
 
+    public static string $context = 'default';
+
     public static ?string $viewNamespace = null;
 
     protected array $pages = [];
@@ -62,13 +64,17 @@ abstract class PluginServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->app->resolving('filament', function () {
-            Filament::registerPages($this->getPages());
-            Filament::registerResources($this->getResources());
-            Filament::registerWidgets($this->getWidgets());
+        $this->app->afterResolving('filament', function () {
+            Filament::registerPages($this->getPages(), static::$context);
+            Filament::registerResources($this->getResources(), static::$context);
+            Filament::registerWidgets($this->getWidgets(), static::$context);
 
             Filament::serving(function () {
-                Filament::registerUserMenuItems($this->getUserMenuItems());
+                if (Filament::getCurrentContext()->getId() !== static::$context) {
+                    return;
+                }
+
+                Filament::registerUserMenuItems($this->getUserMenuItems(), static::$context);
             });
         });
 
@@ -84,47 +90,53 @@ abstract class PluginServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        foreach ($this->getPages() as $page) {
-            $this->registerLivewireComponent($page);
-        }
-
-        foreach ($this->getRelationManagers() as $manager) {
-            if ($manager instanceof RelationGroup) {
-                foreach ($manager->getManagers() as $groupedManager) {
-                    $this->registerLivewireComponent($groupedManager);
-                }
-
+        Filament::serving(function () {
+            if (Filament::getCurrentContext()->getId() !== static::$context) {
                 return;
             }
 
-            $this->registerLivewireComponent($manager);
-        }
-
-        foreach ($this->getResources() as $resource) {
-            foreach ($resource::getPages() as $page) {
-                $this->registerLivewireComponent($page['class']);
+            foreach ($this->getPages() as $page) {
+                $this->registerLivewireComponent($page);
             }
 
-            foreach ($resource::getRelations() as $relation) {
-                if ($relation instanceof RelationGroup) {
-                    foreach ($relation->getManagers() as $groupedRelation) {
-                        $this->registerLivewireComponent($groupedRelation);
+            foreach ($this->getRelationManagers() as $manager) {
+                if ($manager instanceof RelationGroup) {
+                    foreach ($manager->getManagers() as $groupedManager) {
+                        $this->registerLivewireComponent($groupedManager);
                     }
 
-                    continue;
+                    return;
                 }
 
-                $this->registerLivewireComponent($relation);
+                $this->registerLivewireComponent($manager);
             }
 
-            foreach ($resource::getWidgets() as $widget) {
+            foreach ($this->getResources() as $resource) {
+                foreach ($resource::getPages() as $page) {
+                    $this->registerLivewireComponent($page['class']);
+                }
+
+                foreach ($resource::getRelations() as $relation) {
+                    if ($relation instanceof RelationGroup) {
+                        foreach ($relation->getManagers() as $groupedRelation) {
+                            $this->registerLivewireComponent($groupedRelation);
+                        }
+
+                        continue;
+                    }
+
+                    $this->registerLivewireComponent($relation);
+                }
+
+                foreach ($resource::getWidgets() as $widget) {
+                    $this->registerLivewireComponent($widget);
+                }
+            }
+
+            foreach ($this->getWidgets() as $widget) {
                 $this->registerLivewireComponent($widget);
             }
-        }
-
-        foreach ($this->getWidgets() as $widget) {
-            $this->registerLivewireComponent($widget);
-        }
+        });
 
         $this->registerMacros();
     }
