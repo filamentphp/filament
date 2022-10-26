@@ -232,21 +232,6 @@ class FilamentServiceProvider extends PluginServiceProvider
         }
     }
 
-    protected function bootTableActionConfiguration(): void
-    {
-        Filament::serving(function (): void {
-            TableAction::configureUsing(function (TableAction $action): TableAction {
-                match (config('filament.layout.tables.actions.type')) {
-                    ButtonAction::class => $action->button(),
-                    IconButtonAction::class => $action->iconButton(),
-                    default => null,
-                };
-
-                return $action;
-            });
-        });
-    }
-
     protected function getRoutes(): array
     {
         return ['web'];
