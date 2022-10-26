@@ -4,7 +4,6 @@ namespace Filament\Tables\Columns;
 
 use BackedEnum;
 use Closure;
-use Filament\Support\Contracts\HasIcon as IconInterface;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Illuminate\Contracts\Support\Arrayable;
 
