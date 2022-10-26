@@ -6,7 +6,74 @@ All examples in this guide will be written using [Pest](https://pestphp.com). Ho
 
 Since the form builder works on Livewire components, you can use the [Livewire testing helpers](https://laravel-livewire.com/docs/testing). However, we have custom testing helpers that you can use with forms:
 
-## Form existance
+## Filling a form
+
+To fill a form with data, pass the data to `fillform()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+livewire(CreatePost::class)
+    ->fillForm([
+        'title' => fake()->sentence(),
+        // ...
+    ]);
+```
+
+> Note that if you have multiple forms on a Livewire component, you can specify which form you want to fill using `fillForm([...], 'createPostForm')`.
+
+To check that a form has data, use `assertFormSet()`:
+
+```php
+use Illuminate\Support\Str;
+use function Pest\Livewire\livewire;
+
+it('can automatically generate a slug from the title', function () {
+    $title = fake()->sentence();
+
+    livewire(CreatePost::class)
+        ->fillForm([
+            'title' => $title,
+        ])
+        ->assertFormSet([
+            'slug' => Str::slug($title),
+        ]);
+});
+```
+
+> Note that if you have multiple forms on a Livewire component, you can specify which form you want to check using `assertFormSet([...], 'createPostForm')`.
+
+## Validation
+
+Use `assertHasFormErrors()` to ensure that data is properly validated in a form:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can validate input', function () {
+    livewire(CreatePost::class)
+        ->fillForm([
+            'title' => null,
+        ])
+        ->assertHasFormErrors(['title' => 'required']);
+});
+```
+
+And `assertHasNoFormErrors()` to ensure there are no validation errors:
+
+```php
+use function Pest\Livewire\livewire;
+
+livewire(CreatePost::class)
+    ->fillForm([
+        'title' => fake()->sentence(),
+        // ...
+    ])
+    ->call('save')
+    ->assertHasNoFormErrors();
+```
+
+## Form existence
 
 To check that a Livewire component has a form, use `assertFormExists()`:
 
