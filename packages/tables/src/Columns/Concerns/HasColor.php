@@ -2,7 +2,9 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
+use BackedEnum;
 use Closure;
+use Filament\Support\Contracts\HasColor as ColorInterface;
 use Filament\Tables\Columns\Column;
 
 trait HasColor
@@ -41,6 +43,18 @@ trait HasColor
 
     public function getColor(): ?string
     {
-        return $this->evaluate($this->color);
+        $color = $this->evaluate($this->color);
+
+        $enum = $color ?? $this->enum;
+        if (
+            function_exists('enum_exists') &&
+            enum_exists($enum) &&
+            is_a($enum, BackedEnum::class, allow_string: true) &&
+            is_a($enum, ColorInterface::class, allow_string: true)
+        ) {
+            return $enum::tryFrom($this->getState())?->getColor();
+        }
+
+        return $color;
     }
 }

@@ -2,7 +2,11 @@
 
 namespace Filament\Tables\Columns;
 
+use BackedEnum;
 use Closure;
+use Filament\Support\Contracts\HasIcon as IconInterface;
+use Filament\Support\Contracts\HasLabel as LabelInterface;
+use Illuminate\Contracts\Support\Arrayable;
 
 class TextColumn extends Column
 {
@@ -16,6 +20,30 @@ class TextColumn extends Column
     protected string $view = 'filament-tables::columns.text-column';
 
     protected bool | Closure $canWrap = false;
+
+    protected ?string $enum = null;
+
+    public function enum(string | array | Arrayable $enum, $default = null): static
+    {
+        if (is_array($enum) || $enum instanceof Arrayable) {
+            $this->formatStateUsing(static fn ($state): ?string => $enum[$state] ?? ($default ?? $state));
+
+            return $this;
+        }
+
+        $this->enum = $enum;
+
+        if (
+            function_exists('enum_exists') &&
+            enum_exists($enum) &&
+            is_a($enum, BackedEnum::class, allow_string: true) &&
+            is_a($enum, LabelInterface::class, allow_string: true)
+        ) {
+            $this->formatStateUsing(static fn ($state): ?string => $enum::tryFrom($state)?->getLabel() ?? ($default ?? $state));
+        }
+
+        return $this;
+    }
 
     public function wrap(bool | Closure $condition = true): static
     {

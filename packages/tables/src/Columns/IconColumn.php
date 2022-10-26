@@ -17,6 +17,8 @@ class IconColumn extends Column
 
     protected string $view = 'filament-tables::columns.icon-column';
 
+    protected ?string $enum = null;
+
     protected bool | Closure $isBoolean = false;
 
     protected string | Closure | null $falseColor = null;
@@ -30,6 +32,13 @@ class IconColumn extends Column
     public function boolean(bool | Closure $condition = true): static
     {
         $this->isBoolean = $condition;
+
+        return $this;
+    }
+
+    public function enum(?string $enum): static
+    {
+        $this->enum = $enum;
 
         return $this;
     }
@@ -94,32 +103,40 @@ class IconColumn extends Column
 
     public function getIcon(): ?string
     {
-        if ($this->isBoolean()) {
-            $state = $this->getState();
-
-            if ($state === null) {
-                return null;
-            }
-
-            return $state ? $this->getTrueIcon() : $this->getFalseIcon();
+        if (filled($icon = $this->getBaseIcon())) {
+            return $icon;
         }
 
-        return $this->getBaseIcon();
+        if (! $this->isBoolean()) {
+            return null;
+        }
+
+        $state = $this->getState();
+
+        if ($state === null) {
+            return null;
+        }
+
+        return $state ? $this->getTrueIcon() : $this->getFalseIcon();
     }
 
     public function getColor(): ?string
     {
-        if ($this->isBoolean()) {
-            $state = $this->getState();
-
-            if ($state === null) {
-                return null;
-            }
-
-            return $state ? $this->getTrueColor() : $this->getFalseColor();
+        if (filled($color = $this->getBaseColor())) {
+            return $color;
         }
 
-        return $this->getBaseColor();
+        if (! $this->isBoolean()) {
+            return null;
+        }
+
+        $state = $this->getState();
+
+        if ($state === null) {
+            return null;
+        }
+
+        return $state ? $this->getTrueColor() : $this->getFalseColor();
     }
 
     public function getFalseColor(): string

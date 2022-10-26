@@ -2,7 +2,10 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
+use BackedEnum;
 use Closure;
+use Filament\Support\Contracts\HasColor as ColorInterface;
+use Filament\Support\Contracts\HasIcon as IconInterface;
 use Filament\Tables\Columns\Column;
 
 trait HasIcon
@@ -50,7 +53,19 @@ trait HasIcon
 
     public function getIcon(): ?string
     {
-        return $this->evaluate($this->icon);
+        $icon = $this->evaluate($this->icon);
+
+        $enum = $icon ?? $this->enum;
+        if (
+            function_exists('enum_exists') &&
+            enum_exists($enum) &&
+            is_a($enum, BackedEnum::class, allow_string: true) &&
+            is_a($enum, IconInterface::class, allow_string: true)
+        ) {
+            return $enum::tryFrom($this->getState())?->getIcon();
+        }
+
+        return $icon;
     }
 
     public function getIconPosition(): string

@@ -66,13 +66,6 @@ trait CanFormatState
         return $this;
     }
 
-    public function enum(array | Arrayable $options, $default = null): static
-    {
-        $this->formatStateUsing(static fn ($state): ?string => $options[$state] ?? ($default ?? $state));
-
-        return $this;
-    }
-
     public function limit(int $length = 100, string $end = '...'): static
     {
         $this->limit = $length;

@@ -12,20 +12,20 @@
         'filament-tables-text-column',
         'px-4 py-3' => ! $isInline(),
         'text-primary-600 transition hover:underline hover:text-primary-500 focus:underline focus:text-primary-500' => $getAction() || $getUrl(),
-        match ($getColor()) {
+        match ($color = $getColor()) {
             'danger' => 'text-danger-600',
             'primary' => 'text-primary-600',
             'secondary' => 'text-gray-500 dark:text-gray-400',
             'success' => 'text-success-600',
             'warning' => 'text-warning-600',
-            default => null,
+            default => $color,
         } => ! ($getAction() || $getUrl()),
-        match ($getSize()) {
+        match ($size = $getSize()) {
             'sm' => 'text-sm',
             'lg' => 'text-lg',
-            default => null,
+            default => $size,
         },
-        match ($getWeight()) {
+        match ($weight = $getWeight()) {
             'thin' => 'font-thin',
             'extralight' => 'font-extralight',
             'light' => 'font-light',
@@ -34,7 +34,7 @@
             'bold' => 'font-bold',
             'extrabold' => 'font-extrabold',
             'black' => 'font-black',
-            default => null,
+            default => $weight,
         },
         'whitespace-normal' => $canWrap(),
     ]) }}
