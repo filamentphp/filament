@@ -61,8 +61,6 @@ class FilamentServiceProvider extends PluginServiceProvider
 
         $this->registerLivewire();
 
-        $this->bootTableActionConfiguration();
-
         if ($this->app->runningInConsole()) {
             foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
                 $this->publishes([
