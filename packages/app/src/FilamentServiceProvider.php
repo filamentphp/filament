@@ -72,8 +72,6 @@ class FilamentServiceProvider extends PluginServiceProvider
                 ], 'filament-stubs');
             }
         }
-
-        TestableLivewire::mixin(new TestsPages());
     }
 
     protected function getAssetPackage(): ?string
