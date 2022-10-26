@@ -4,7 +4,6 @@ namespace Filament\Tables\Columns\Concerns;
 
 use BackedEnum;
 use Closure;
-use Filament\Support\Contracts\HasColor as ColorInterface;
 use Filament\Support\Contracts\HasIcon as IconInterface;
 use Filament\Tables\Columns\Column;
 

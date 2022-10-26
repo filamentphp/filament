@@ -6,7 +6,6 @@ use Akaunting\Money;
 use Closure;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\TextColumn;
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;

@@ -3,7 +3,6 @@
 namespace Filament\Tables\Filters\Concerns;
 
 use Closure;
-use Filament\Support\Contracts\HasIcon as IconInterface;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
