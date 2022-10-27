@@ -7,9 +7,17 @@ return [
         'collapsed' => 'محتوا جمع شد',
 
         'buttons' => [
+            
+            'clone_item' => [
+                'label' => 'همسان‌سازی',
+            ],
 
             'create_item' => [
                 'label' => 'افزودن به :label',
+            ],
+            
+            'create_item_between' => [
+                'label' => 'قرار دادن',
             ],
 
             'delete_item' => [
