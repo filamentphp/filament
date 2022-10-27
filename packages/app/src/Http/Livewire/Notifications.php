@@ -29,4 +29,9 @@ class Notifications extends BaseComponent
     {
         return view('filament::components.layouts.app.topbar.database-notifications-trigger');
     }
+
+    public static function getName(): string
+    {
+        return 'filament.core.notifications';
+    }
 }

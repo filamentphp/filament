@@ -22,6 +22,8 @@ class MirrorConfigToSubpackages
         $config->set('filament-notifications.layout.alignment.horizontal', $config->get('filament.layout.notifications.alignment'));
         $config->set('filament-notifications.layout.alignment.vertical', $config->get('filament.layout.notifications.vertical_alignment'));
 
+        $config->set('blade-icons.components.disabled', true);
+
         return $next($request);
     }
 }

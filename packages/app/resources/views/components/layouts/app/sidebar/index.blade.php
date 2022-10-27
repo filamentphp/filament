@@ -43,7 +43,7 @@
             @endif
 
             <a
-                href="{{ config('filament.home_url') }}"
+                href="{{ \Filament\Facades\Filament::getHomeUrl() }}"
                 data-turbo="false"
                 @class([
                     'block w-full',

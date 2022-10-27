@@ -2,6 +2,9 @@
 
 namespace Filament\Commands;
 
+use Arr;
+use Filament\Context;
+use Filament\Facades\Filament;
 use Filament\Support\Commands\Concerns\CanIndentStrings;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanValidateInput;
@@ -16,13 +19,10 @@ class MakeResourceCommand extends Command
 
     protected $description = 'Creates a Filament resource class and default page classes.';
 
-    protected $signature = 'make:filament-resource {name?} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--F|force}';
+    protected $signature = 'make:filament-resource {name?} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--context=} {--F|force}';
 
     public function handle(): int
     {
-        $path = config('filament.resources.path', app_path('Filament\\Resources\\'));
-        $namespace = config('filament.resources.namespace', 'App\\Filament\\Resources');
-
         $model = (string) str($this->argument('name') ?? $this->askRequired('Model (e.g. `BlogPost`)', 'name'))
             ->studly()
             ->beforeLast('Resource')
@@ -41,6 +41,29 @@ class MakeResourceCommand extends Command
             (string) str($model)->beforeLast('\\') :
             '';
         $pluralModelClass = (string) str($modelClass)->pluralStudly();
+
+        $context = $this->option('context');
+
+        if ($context) {
+            $context = Filament::getContext($context);
+        }
+
+        if (! $context) {
+            $contexts = Filament::getContexts();
+
+            /** @var Context $context */
+            $context = (count($contexts) > 1) ? $contexts[$this->choice(
+                'Which context would you like to create this in?',
+                array_map(
+                    fn (Context $context) => $context->getId(),
+                    $contexts,
+                ),
+                'default',
+            )] : Arr::first($contexts);
+        }
+
+        $path = $context->getResourceDirectory() ?? app_path('Filament/Resources/');
+        $namespace = $context->getResourceNamespace() ?? 'App\\Filament\\Resources';
 
         $resource = "{$model}Resource";
         $resourceClass = "{$modelClass}Resource";

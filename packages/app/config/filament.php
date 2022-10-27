@@ -20,6 +20,9 @@ return [
     | Filament Path
     |--------------------------------------------------------------------------
     |
+    | This is the path where you will be able to find the default Filament
+    | context.
+    |
     | The default is `admin` but you can change it to whatever works best and
     | doesn't conflict with the routing in your application.
     |
@@ -29,23 +32,11 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Filament Core Path
-    |--------------------------------------------------------------------------
-    |
-    | This is the path which Filament will use to load its core routes and assets.
-    | You may change it if it conflicts with your other routes.
-    |
-    */
-
-    'core_path' => env('FILAMENT_CORE_PATH', 'filament'),
-
-    /*
-    |--------------------------------------------------------------------------
     | Filament Domain
     |--------------------------------------------------------------------------
     |
-    | You may change the domain where Filament should be active. If the domain
-    | is empty, all domains will be valid.
+    | You may change the domain where the default Filament context should be
+    | active. If the domain is empty, all domains will be valid.
     |
     */
 
@@ -56,8 +47,8 @@ return [
     | Homepage URL
     |--------------------------------------------------------------------------
     |
-    | This is the URL that Filament will redirect the user to when they click
-    | on the sidebar's header.
+    | This is the URL that the default Filament context will redirect the
+    | user to when they click on the sidebar's header.
     |
     */
 
@@ -80,7 +71,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | This is the configuration that Filament will use to handle authentication
-    | into the admin panel.
+    | into the default context.
     |
     */
 
@@ -96,8 +87,8 @@ return [
     | Pages
     |--------------------------------------------------------------------------
     |
-    | This is the namespace and directory that Filament will automatically
-    | register pages from. You may also register pages here.
+    | This is the namespace and directory where the default Filament context
+    | will automatically discover pages.
     |
     */
 
@@ -114,8 +105,8 @@ return [
     | Resources
     |--------------------------------------------------------------------------
     |
-    | This is the namespace and directory that Filament will automatically
-    | register resources from. You may also register resources here.
+    | This is the namespace and directory where the default Filament context
+    | will automatically discover resources.
     |
     */
 
@@ -130,8 +121,8 @@ return [
     | Widgets
     |--------------------------------------------------------------------------
     |
-    | This is the namespace and directory that Filament will automatically
-    | register dashboard widgets from. You may also register widgets here.
+    | This is the namespace and directory where the default Filament context
+    | will automatically discover widgets.
     |
     */
 
@@ -146,26 +137,11 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Livewire
-    |--------------------------------------------------------------------------
-    |
-    | This is the namespace and directory that Filament will automatically
-    | register Livewire components inside.
-    |
-    */
-
-    'livewire' => [
-        'namespace' => 'App\\Filament',
-        'path' => app_path('Filament'),
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Dark mode
     |--------------------------------------------------------------------------
     |
     | By enabling this feature, your users are able to select between a light
-    | and dark appearance for the admin panel, or let their system decide.
+    | and dark appearance, or let their system decide.
     |
     */
 
@@ -176,8 +152,8 @@ return [
     | Database notifications
     |--------------------------------------------------------------------------
     |
-    | By enabling this feature, your users are able to open a slide-over within
-    | the admin panel to view their database notifications.
+    | By enabling this feature, your users are able to open a slide-over to
+    | view their database notifications.
     |
     */
 
@@ -191,10 +167,10 @@ return [
     | Broadcasting
     |--------------------------------------------------------------------------
     |
-    | By uncommenting the Laravel Echo configuration, you may connect your
-    | admin panel to any Pusher-compatible websockets server.
+    | By uncommenting the Laravel Echo configuration, you may connect Filament
+    | to any Pusher-compatible websockets server.
     |
-    | This will allow your admin panel to receive real-time notifications.
+    | This will allow your users to receive real-time notifications.
     |
     */
 
@@ -214,7 +190,7 @@ return [
     | Layout
     |--------------------------------------------------------------------------
     |
-    | This is the configuration for the general layout of the admin panel.
+    | This is the configuration for the general layout of Filament.
     |
     | You may configure the max content width from `xl` to `7xl`, or `full`
     | for no max width.
@@ -258,7 +234,7 @@ return [
     | Favicon
     |--------------------------------------------------------------------------
     |
-    | This is the path to the favicon used for pages in the admin panel.
+    | This is the path to the favicon used for all pages.
     |
     */
 

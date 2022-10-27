@@ -3,12 +3,10 @@
 namespace Filament\Support;
 
 use Filament\Facades\Filament;
-use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Support\Assets\AssetManager;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\IconManager;
-use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -18,9 +16,9 @@ abstract class PluginServiceProvider extends PackageServiceProvider
 
     public static ?string $viewNamespace = null;
 
-    protected array $pages = [];
+    protected string $context = 'default';
 
-    protected array $relationManagers = [];
+    protected array $pages = [];
 
     protected array $resources = [];
 
@@ -63,12 +61,22 @@ abstract class PluginServiceProvider extends PackageServiceProvider
     public function packageRegistered(): void
     {
         $this->app->resolving('filament', function () {
-            Filament::registerPages($this->getPages());
-            Filament::registerResources($this->getResources());
-            Filament::registerWidgets($this->getWidgets());
+            foreach ($this->getContexts() as $context) {
+                Filament::registerContext($context);
+            }
+        });
+
+        $this->app->afterResolving('filament', function () {
+            Filament::registerPages($this->getPages(), $this->getContext());
+            Filament::registerResources($this->getResources(), $this->getContext());
+            Filament::registerWidgets($this->getWidgets(), $this->getContext());
 
             Filament::serving(function () {
-                Filament::registerUserMenuItems($this->getUserMenuItems());
+                if (Filament::getCurrentContext()->getId() !== $this->getContext()) {
+                    return;
+                }
+
+                Filament::registerUserMenuItems($this->getUserMenuItems(), $this->getContext());
             });
         });
 
@@ -84,54 +92,12 @@ abstract class PluginServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
-        foreach ($this->getPages() as $page) {
-            $this->registerLivewireComponent($page);
-        }
-
-        foreach ($this->getRelationManagers() as $manager) {
-            if ($manager instanceof RelationGroup) {
-                foreach ($manager->getManagers() as $groupedManager) {
-                    $this->registerLivewireComponent($groupedManager);
-                }
-
-                return;
-            }
-
-            $this->registerLivewireComponent($manager);
-        }
-
-        foreach ($this->getResources() as $resource) {
-            foreach ($resource::getPages() as $page) {
-                $this->registerLivewireComponent($page['class']);
-            }
-
-            foreach ($resource::getRelations() as $relation) {
-                if ($relation instanceof RelationGroup) {
-                    foreach ($relation->getManagers() as $groupedRelation) {
-                        $this->registerLivewireComponent($groupedRelation);
-                    }
-
-                    continue;
-                }
-
-                $this->registerLivewireComponent($relation);
-            }
-
-            foreach ($resource::getWidgets() as $widget) {
-                $this->registerLivewireComponent($widget);
-            }
-        }
-
-        foreach ($this->getWidgets() as $widget) {
-            $this->registerLivewireComponent($widget);
-        }
-
         $this->registerMacros();
     }
 
-    protected function registerLivewireComponent(string $component): void
+    public function getContext(): string
     {
-        Livewire::component($component::getName(), $component);
+        return $this->context;
     }
 
     protected function getAssetPackage(): ?string
@@ -149,6 +115,11 @@ abstract class PluginServiceProvider extends PackageServiceProvider
         return [];
     }
 
+    protected function getContexts(): array
+    {
+        return [];
+    }
+
     protected function getIcons(): array
     {
         return [];
@@ -157,11 +128,6 @@ abstract class PluginServiceProvider extends PackageServiceProvider
     protected function getPages(): array
     {
         return $this->pages;
-    }
-
-    protected function getRelationManagers(): array
-    {
-        return $this->relationManagers;
     }
 
     protected function getResources(): array

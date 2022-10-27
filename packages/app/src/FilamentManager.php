@@ -3,117 +3,106 @@
 namespace Filament;
 
 use Closure;
-use Exception;
 use Filament\Events\ServingFilament;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
-use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
-use Filament\Navigation\NavigationGroup;
-use Filament\Navigation\UserMenuItem;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\HtmlString;
 
 class FilamentManager
 {
-    protected string $globalSearchProvider = DefaultGlobalSearchProvider::class;
+    protected ?Context $currentContext = null;
 
-    protected bool $isNavigationMounted = false;
+    protected array $contexts = [];
 
-    protected array $navigationGroups = [];
+    protected ?Model $tenant = null;
 
-    protected array $navigationItems = [];
-
-    protected array $pages = [];
-
-    protected array $resources = [];
-
-    protected array $meta = [];
-
-    protected string | Htmlable | null $theme = null;
-
-    protected array $userMenuItems = [];
-
-    protected array $widgets = [];
-
-    protected ?Closure $navigationBuilder = null;
-
-    protected array $renderHooks = [];
+    public function __construct()
+    {
+        $this->registerContext(
+            (new Context())
+                ->id('default')
+                ->path(config('filament.path'))
+                ->domain(config('filament.domain'))
+                ->homeUrl(config('filament.home_url'))
+                ->authGuard(config('filament.auth.guard'))
+                ->login(config('filament.auth.pages.login'))
+                ->pages(config('filament.pages.register') ?? [])
+                ->discoverPages(in: config('filament.pages.path'), for: config('filament.pages.namespace'))
+                ->resources(config('filament.resources.register') ?? [])
+                ->discoverResources(in: config('filament.resources.path'), for: config('filament.resources.namespace'))
+                ->widgets(config('filament.widgets.register') ?? [])
+                ->discoverWidgets(in: config('filament.widgets.path'), for: config('filament.widgets.namespace')),
+        );
+    }
 
     public function auth(): Guard
     {
-        return auth()->guard(config('filament.auth.guard'));
+        return $this->getCurrentContext()->auth();
     }
 
-    public function navigation(Closure $builder): void
+    public function bootCurrentContext(): void
     {
-        $this->navigationBuilder = $builder;
+        $this->getCurrentContext()->boot();
+    }
+
+    public function navigation(Closure $builder, string $context = 'default'): void
+    {
+        $this->getContext($context)->navigation($builder);
     }
 
     public function buildNavigation(): array
     {
-        /** @var \Filament\Navigation\NavigationBuilder $builder */
-        $builder = app()->call($this->navigationBuilder);
-
-        return $builder->getNavigation();
+        return $this->getCurrentContext()->buildNavigation();
     }
 
-    public function globalSearchProvider(string $provider): void
+    public function globalSearchProvider(string $provider, string $context = 'default'): void
     {
-        if (! in_array(GlobalSearchProvider::class, class_implements($provider))) {
-            throw new Exception("Global search provider {$provider} does not implement the " . GlobalSearchProvider::class . ' interface.');
-        }
-
-        $this->globalSearchProvider = $provider;
+        $this->getContext($context)->globalSearchProvider($provider);
     }
 
     public function mountNavigation(): void
     {
-        foreach ($this->getPages() as $page) {
-            $page::registerNavigationItems();
-        }
-
-        foreach ($this->getResources() as $resource) {
-            $resource::registerNavigationItems();
-        }
-
-        $this->isNavigationMounted = true;
+        $this->getCurrentContext()->mountNavigation();
     }
 
-    public function registerNavigationGroups(array $groups): void
+    public function registerContext(Context $context): void
     {
-        $this->navigationGroups = array_merge($this->navigationGroups, $groups);
+        $this->contexts[$context->getId()] = $context;
     }
 
-    public function registerNavigationItems(array $items): void
+    public function registerNavigationGroups(array $groups, string $context = 'default'): void
     {
-        $this->navigationItems = array_merge($this->navigationItems, $items);
+        $this->getContext($context)->navigationGroups($groups);
     }
 
-    public function registerPages(array $pages): void
+    public function registerNavigationItems(array $items, string $context = 'default'): void
     {
-        $this->pages = array_merge($this->pages, $pages);
+        $this->getContext($context)->navigationItems($items);
     }
 
-    public function registerRenderHook(string $name, Closure $callback): void
+    public function registerPages(array $pages, string $context = 'default'): void
     {
-        $this->renderHooks[$name][] = $callback;
+        $this->getContext($context)->pages($pages);
     }
 
-    public function registerResources(array $resources): void
+    public function registerRenderHook(string $name, Closure $callback, string $context = 'default'): void
     {
-        $this->resources = array_merge($this->resources, $resources);
+        $this->getContext($context)->renderHook($name, $callback);
     }
 
-    public function registerTheme(string | Htmlable | null $theme): void
+    public function registerResources(array $resources, string $context = 'default'): void
     {
-        $this->theme = $theme;
+        $this->getContext($context)->resources($resources);
+    }
+
+    public function registerTheme(string | Htmlable | null $theme, string $context = 'default'): void
+    {
+        $this->getContext($context)->theme($theme);
     }
 
     /**
@@ -132,19 +121,19 @@ class FilamentManager
         $this->registerTheme($theme);
     }
 
-    public function registerUserMenuItems(array $items): void
+    public function registerUserMenuItems(array $items, string $context = 'default'): void
     {
-        $this->userMenuItems = array_merge($this->userMenuItems, $items);
+        $this->getContext($context)->userMenuItems($items);
     }
 
-    public function registerWidgets(array $widgets): void
+    public function registerWidgets(array $widgets, string $context = 'default'): void
     {
-        $this->widgets = array_merge($this->widgets, $widgets);
+        $this->getContext($context)->widgets($widgets);
     }
 
-    public function pushMeta(array $meta): void
+    public function pushMeta(array $meta, string $context = 'default'): void
     {
-        $this->meta = array_merge($this->meta, $meta);
+        $this->getContext($context)->meta($meta);
     }
 
     public function serving(Closure $callback): void
@@ -154,155 +143,147 @@ class FilamentManager
 
     public function getGlobalSearchProvider(): GlobalSearchProvider
     {
-        return app($this->globalSearchProvider);
+        return $this->getCurrentContext()->getGlobalSearchProvider();
     }
 
-    public function renderHook(string $name): Htmlable
+    public function renderHook(string $name, string $context = 'default'): Htmlable
     {
-        $hooks = array_map(
-            fn (callable $hook): string => (string) app()->call($hook),
-            $this->renderHooks[$name] ?? [],
-        );
+        return $this->getCurrentContext()->getRenderHook($name);
+    }
 
-        return new HtmlString(implode('', $hooks));
+    public function getCurrentContext(): ?Context
+    {
+        return $this->currentContext ?? $this->contexts['default'];
+    }
+
+    public function getContext(string $id = 'default'): ?Context
+    {
+        return $this->contexts[$id] ?? null;
+    }
+
+    public function getContexts(): array
+    {
+        return $this->contexts;
+    }
+
+    public function getTenant(): ?Model
+    {
+        return $this->tenant;
+    }
+
+    public function getRoutableTenant(): ?Model
+    {
+        if (! $this->getCurrentContext()->hasRoutableTenancy()) {
+            return null;
+        }
+
+        return $this->getTenant();
+    }
+
+    public function setCurrentContext(?Context $context): void
+    {
+        $this->currentContext = $context;
+    }
+
+    public function setTenant(?Model $tenant): void
+    {
+        $this->tenant = $tenant;
+    }
+
+    public function hasLogin(): string
+    {
+        return $this->getCurrentContext()->hasLogin();
+    }
+
+    public function getAuthGuard(): string
+    {
+        return $this->getCurrentContext()->getAuthGuard();
+    }
+
+    public function getHomeUrl(): string
+    {
+        return $this->getCurrentContext()->getHomeUrl();
+    }
+
+    public function getLoginUrl(): ?string
+    {
+        return $this->getCurrentContext()->getLoginUrl();
+    }
+
+    public function getLogoutUrl(): string
+    {
+        return $this->getCurrentContext()->getLogoutUrl();
     }
 
     public function getNavigation(): array
     {
-        if ($this->navigationBuilder !== null) {
-            return $this->buildNavigation();
-        }
-
-        if (! $this->isNavigationMounted) {
-            $this->mountNavigation();
-        }
-
-        return collect($this->getNavigationItems())
-            ->sortBy(fn (Navigation\NavigationItem $item): int => $item->getSort())
-            ->groupBy(fn (Navigation\NavigationItem $item): ?string => $item->getGroup())
-            ->map(function (Collection $items, ?string $groupIndex): NavigationGroup {
-                if (blank($groupIndex)) {
-                    return NavigationGroup::make()->items($items);
-                }
-
-                $registeredGroup = collect($this->getNavigationGroups())
-                    ->first(function (NavigationGroup | string $registeredGroup, string | int $registeredGroupIndex) use ($groupIndex) {
-                        if ($registeredGroupIndex === $groupIndex) {
-                            return true;
-                        }
-
-                        if ($registeredGroup === $groupIndex) {
-                            return true;
-                        }
-
-                        if (! $registeredGroup instanceof NavigationGroup) {
-                            return false;
-                        }
-
-                        return $registeredGroup->getLabel() === $groupIndex;
-                    });
-
-                if ($registeredGroup instanceof NavigationGroup) {
-                    return $registeredGroup->items($items);
-                }
-
-                return NavigationGroup::make($registeredGroup ?? $groupIndex)
-                    ->items($items);
-            })
-            ->sortBy(function (NavigationGroup $group, ?string $groupIndex): int {
-                if (blank($group->getLabel())) {
-                    return -1;
-                }
-
-                $registeredGroups = $this->getNavigationGroups();
-
-                $groupsToSearch = $registeredGroups;
-
-                if (Arr::first($registeredGroups) instanceof NavigationGroup) {
-                    $groupsToSearch = array_merge(
-                        array_keys($registeredGroups),
-                        array_map(fn (NavigationGroup $registeredGroup): string => $registeredGroup->getLabel(), array_values($registeredGroups)),
-                    );
-                }
-
-                $sort = array_search(
-                    $groupIndex,
-                    $groupsToSearch,
-                );
-
-                if ($sort === false) {
-                    return count($registeredGroups);
-                }
-
-                return $sort;
-            })
-            ->all();
+        return $this->getCurrentContext()->getNavigation();
     }
 
     public function getNavigationGroups(): array
     {
-        return $this->navigationGroups;
+        return $this->getCurrentContext()->getNavigationGroups();
     }
 
     public function getNavigationItems(): array
     {
-        return $this->navigationItems;
+        return $this->getCurrentContext()->getNavigationItems();
     }
 
     public function getPages(): array
     {
-        return array_unique($this->pages);
+        return $this->getCurrentContext()->getPages();
     }
 
     public function getResources(): array
     {
-        return array_unique($this->resources);
+        return $this->getCurrentContext()->getResources();
     }
 
     public function getUserMenuItems(): array
     {
-        return collect($this->userMenuItems)
-            ->sort(fn (UserMenuItem $item): int => $item->getSort())
-            ->all();
+        return $this->getCurrentContext()->getUserMenuItems();
     }
 
     public function getModelResource(string | Model $model): ?string
     {
-        if ($model instanceof Model) {
-            $model = $model::class;
-        }
-
-        foreach ($this->getResources() as $resource) {
-            if ($model !== $resource::getModel()) {
-                continue;
-            }
-
-            return $resource;
-        }
-
-        return null;
+        return $this->getCurrentContext()->getModelResource($model);
     }
 
     public function getTheme(): string | Htmlable | null
     {
-        return $this->theme;
+        return $this->getCurrentContext()->getTheme();
     }
 
     public function getUrl(): ?string
     {
-        $firstGroup = Arr::first($this->getNavigation());
+        return $this->getCurrentContext()->getUrl();
+    }
 
-        if (! $firstGroup) {
-            return null;
+    public function getTenantAvatarUrl(Model $tenant): string
+    {
+        $avatar = null;
+
+        if ($tenant instanceof HasAvatar) {
+            $avatar = $tenant->getFilamentAvatarUrl();
         }
 
-        $firstItem = Arr::first($firstGroup->getItems());
-
-        if (! $firstItem) {
-            return null;
+        if ($avatar) {
+            return $avatar;
         }
 
-        return $firstItem->getUrl();
+        $provider = config('filament.default_avatar_provider');
+
+        return app($provider)->get($tenant);
+    }
+
+    public function getTenantName(Model $tenant): string
+    {
+        if ($tenant instanceof HasName) {
+            return $tenant->getFilamentName();
+        }
+
+        return $tenant->getAttributeValue('name');
     }
 
     public function getUserAvatarUrl(Model | Authenticatable $user): string
@@ -333,14 +314,11 @@ class FilamentManager
 
     public function getWidgets(): array
     {
-        return collect($this->widgets)
-            ->unique()
-            ->sortBy(fn (string $widget): int => $widget::getSort())
-            ->all();
+        return $this->getCurrentContext()->getWidgets();
     }
 
     public function getMeta(): array
     {
-        return array_unique($this->meta);
+        return $this->getCurrentContext()->getMeta();
     }
 }

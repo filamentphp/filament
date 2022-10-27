@@ -2,6 +2,9 @@
 
 namespace Filament\Commands;
 
+use Arr;
+use Filament\Context;
+use Filament\Facades\Filament;
 use Filament\Support\Commands\Concerns\CanIndentStrings;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanValidateInput;
@@ -15,7 +18,7 @@ class MakeRelationManagerCommand extends Command
 
     protected $description = 'Creates a Filament relation manager class for a resource.';
 
-    protected $signature = 'make:filament-relation-manager {resource?} {relationship?} {recordTitleAttribute?} {--attach} {--associate} {--soft-deletes} {--view} {--F|force}';
+    protected $signature = 'make:filament-relation-manager {resource?} {relationship?} {recordTitleAttribute?} {--attach} {--associate} {--soft-deletes} {--view} {--context=} {--F|force}';
 
     public function handle(): int
     {
@@ -39,12 +42,33 @@ class MakeRelationManagerCommand extends Command
         $recordTitleAttribute = (string) str($this->argument('recordTitleAttribute') ?? $this->askRequired('Title attribute (e.g. `name`)', 'title attribute'))
             ->trim(' ');
 
-        $path = app_path(
-            (string) str($managerClass)
-                ->prepend("Filament\\Resources\\{$resource}\\RelationManagers\\")
-                ->replace('\\', '/')
-                ->append('.php'),
-        );
+        $context = $this->option('context');
+
+        if ($context) {
+            $context = Filament::getContext($context);
+        }
+
+        if (! $context) {
+            $contexts = Filament::getContexts();
+
+            /** @var Context $context */
+            $context = (count($contexts) > 1) ? $contexts[$this->choice(
+                'Which context would you like to create this in?',
+                array_map(
+                    fn (Context $context) => $context->getId(),
+                    $contexts,
+                ),
+                'default',
+            )] : Arr::first($contexts);
+        }
+
+        $resourcePath = $context->getResourceDirectory() ?? app_path('Filament/Resources/');
+        $resourceNamespace = $context->getResourceNamespace() ?? 'App\\Filament\\Resources';
+
+        $path = (string) str($managerClass)
+            ->prepend("{$resourcePath}/{$resource}/RelationManagers/")
+            ->replace('\\', '/')
+            ->append('.php');
 
         if (! $this->option('force') && $this->checkForCollision([
             $path,
@@ -122,7 +146,7 @@ class MakeRelationManagerCommand extends Command
 
         $this->copyStubToApp('RelationManager', $path, [
             'eloquentQuery' => $this->indentString($eloquentQuery, 1),
-            'namespace' => "App\\Filament\\Resources\\{$resource}\\RelationManagers",
+            'namespace' => "{$resourceNamespace}\\{$resource}\\RelationManagers",
             'managerClass' => $managerClass,
             'recordTitleAttribute' => $recordTitleAttribute,
             'relationship' => $relationship,

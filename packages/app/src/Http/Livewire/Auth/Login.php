@@ -83,6 +83,11 @@ class Login extends Component implements HasForms
             ]);
     }
 
+    public static function getName(): string
+    {
+        return 'filament.core.auth.login';
+    }
+
     public function render(): View
     {
         return view('filament::login')

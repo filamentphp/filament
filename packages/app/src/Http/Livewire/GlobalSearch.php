@@ -41,6 +41,11 @@ class GlobalSearch extends Component
         return false;
     }
 
+    public static function getName(): string
+    {
+        return 'filament.core.global-search';
+    }
+
     public function render(): View
     {
         return view('filament::components.global-search.index', [

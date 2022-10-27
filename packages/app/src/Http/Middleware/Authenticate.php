@@ -2,6 +2,7 @@
 
 namespace Filament\Http\Middleware;
 
+use Filament\Facades\Filament;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 
@@ -9,8 +10,7 @@ class Authenticate extends Middleware
 {
     protected function authenticate($request, array $guards): void
     {
-        $guardName = config('filament.auth.guard');
-        $guard = $this->auth->guard($guardName);
+        $guard = Filament::auth();
 
         if (! $guard->check()) {
             $this->unauthenticated($request, $guards);
@@ -18,7 +18,7 @@ class Authenticate extends Middleware
             return;
         }
 
-        $this->auth->shouldUse($guardName);
+        $this->auth->shouldUse(Filament::getAuthGuard());
 
         $user = $guard->user();
 
@@ -33,6 +33,6 @@ class Authenticate extends Middleware
 
     protected function redirectTo($request): string
     {
-        return route('filament.auth.login');
+        return Filament::getLoginUrl() ?? Filament::getHomeUrl();
     }
 }

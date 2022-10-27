@@ -1,0 +1,19 @@
+<?php
+
+namespace App\Providers\Filament;
+
+use Filament\Context;
+use Filament\ContextServiceProvider;
+
+class {{ class }} extends ContextServiceProvider
+{
+    public function configureContext(Context $context): void
+    {
+        $context
+            ->id('{{ id }}')
+            ->path('{{ id }}')
+            ->discoverResources(in: app_path('Filament/{{ directory }}/Resources'), for: 'App\\Filament\\{{ directory }}\\Resources')
+            ->discoverPages(in: app_path('Filament/{{ directory }}/Pages'), for: 'App\\Filament\\{{ directory }}\\Pages')
+            ->discoverWidgets(in: app_path('Filament/{{ directory }}/Widgets'), for: 'App\\Filament\\{{ directory }}\\Widgets');
+    }
+}
