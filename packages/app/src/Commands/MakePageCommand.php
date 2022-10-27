@@ -68,6 +68,8 @@ class MakePageCommand extends Command
             );
         }
 
+        // context
+
         $view = str($page)
             ->prepend(
                 (string) str($resource === null ? "{$namespace}\\" : "{$resourceNamespace}\\{$resource}\\pages\\")
