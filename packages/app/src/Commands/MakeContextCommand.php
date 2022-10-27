@@ -29,7 +29,7 @@ class MakeContextCommand extends Command
 
         $path = app_path(
             (string) str($class)
-                ->prepend("Providers\\Filament\\")
+                ->prepend('Providers\\Filament\\')
                 ->replace('\\', '/')
                 ->append('.php'),
         );
@@ -46,7 +46,7 @@ class MakeContextCommand extends Command
 
         $this->components->info("Successfully created {$class}!");
 
-        $this->components->info("Make sure to register the service provider in `config/app.php`.");
+        $this->components->info('Make sure to register the service provider in `config/app.php`.');
 
         return static::SUCCESS;
     }

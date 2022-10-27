@@ -1,6 +1,5 @@
 <?php
 
-use Filament\Context;
 use Filament\Facades\Filament;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 use Illuminate\Http\Request;
@@ -11,7 +10,6 @@ Route::middleware(config('filament.middleware.base'))
     ->group(function () {
         foreach (Filament::getContexts() as $context) {
             /** @var \Filament\Context $context */
-
             $contextId = $context->getId();
 
             Route::domain($context->getDomain())
