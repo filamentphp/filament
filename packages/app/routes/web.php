@@ -21,23 +21,30 @@ Route::domain(config('filament.domain'))
             })->name('auth.logout');
         });
 
-        Route::prefix(config('filament.path'))->group(function () {
-            if ($loginPage = config('filament.auth.pages.login')) {
-                Route::get('/login', $loginPage)->name('auth.login');
-            }
+        foreach (Filament::getContexts() as $context) {
+            $contextId = $context->getId();
 
-            Route::middleware(config('filament.middleware.auth'))->group(function (): void {
-                Route::name('pages.')->group(function (): void {
-                    foreach (Filament::getPages() as $page) {
-                        Route::group([], Closure::fromCallable([$page, 'routes']));
+            Route::middleware(["context:{$contextId}"])
+                ->name(($contextId !== 'default') ? "{$contextId}." : '')
+                ->prefix($context->getPath())
+                ->group(function () use ($context) {
+                    if ($login = $context->getLogin()) {
+                        Route::get('/login', $login)->name('auth.login');
                     }
-                });
 
-                Route::name('resources.')->group(function (): void {
-                    foreach (Filament::getResources() as $resource) {
-                        Route::group([], Closure::fromCallable([$resource, 'routes']));
-                    }
+                    Route::middleware(config('filament.middleware.auth'))->group(function () use ($context): void {
+                        Route::name('pages.')->group(function () use ($context): void {
+                            foreach ($context->getPages() as $page) {
+                                Route::group([], Closure::fromCallable([$page, 'routes']));
+                            }
+                        });
+
+                        Route::name('resources.')->group(function () use ($context): void {
+                            foreach ($context->getResources() as $resource) {
+                                Route::group([], Closure::fromCallable([$resource, 'routes']));
+                            }
+                        });
+                    });
                 });
-            });
-        });
+        }
     });

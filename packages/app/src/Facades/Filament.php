@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static StatefulGuard auth()
+ * @method static void bootCurrentContext()
  * @method static Context | null getCurrentContext()
  * @method static Context getContext(string $id = 'default')
  * @method static array getContexts()

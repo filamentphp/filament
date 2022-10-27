@@ -6,18 +6,26 @@ use Closure;
 use Exception;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\DefaultGlobalSearchProvider;
-use Filament\Models\Contracts\HasAvatar;
-use Filament\Models\Contracts\HasName;
+use Filament\Http\Livewire\Auth\Login;
+use Filament\Http\Livewire\GlobalSearch;
+use Filament\Http\Livewire\Notifications;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\UserMenuItem;
-use Illuminate\Contracts\Auth\Authenticatable;
+use Filament\Pages\Page;
+use Filament\Resources\RelationManagers\RelationGroup;
+use Filament\Resources\Resource;
+use Filament\Widgets\Widget;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
+use Livewire\Livewire;
+use ReflectionClass;
+use Symfony\Component\Finder\SplFileInfo;
 
 class Context
 {
@@ -26,6 +34,8 @@ class Context
     protected string $globalSearchProvider = DefaultGlobalSearchProvider::class;
 
     protected bool $isNavigationMounted = false;
+
+    protected ?string $login = null;
 
     protected array $navigationGroups = [];
 
@@ -36,6 +46,8 @@ class Context
     protected array $resources = [];
 
     protected array $meta = [];
+
+    protected string $path = '';
 
     protected ?string $tenantModel = null;
 
@@ -63,6 +75,11 @@ class Context
         return $this;
     }
 
+    public function boot(): void
+    {
+        $this->registerLivewireComponents();
+    }
+
     public function buildNavigation(): array
     {
         /** @var \Filament\Navigation\NavigationBuilder $builder */
@@ -85,6 +102,13 @@ class Context
     public function id(string $id): static
     {
         $this->id = $id;
+
+        return $this;
+    }
+
+    public function login(?string $component = Login::class): static
+    {
+        $this->login = $component;
 
         return $this;
     }
@@ -119,6 +143,13 @@ class Context
     public function pages(array $pages): static
     {
         $this->pages = array_merge($this->pages, $pages);
+
+        return $this;
+    }
+
+    public function path(string $path): static
+    {
+        $this->path = $path;
 
         return $this;
     }
@@ -339,6 +370,11 @@ class Context
         return null;
     }
 
+    public function getPath(): string
+    {
+        return $this->path;
+    }
+
     public function getTheme(): string | Htmlable | null
     {
         return $this->theme;
@@ -372,5 +408,121 @@ class Context
     public function getMeta(): array
     {
         return array_unique($this->meta);
+    }
+
+    public function getLogin(): ?string
+    {
+        return $this->login;
+    }
+
+    public function discoverPages(string $in, string $for): static
+    {
+        $this->discoverComponents(
+            Page::class,
+            $this->pages,
+            directory: $in,
+            namespace: $for,
+        );
+
+        return $this;
+    }
+
+    public function discoverResources(string $in, string $for): static
+    {
+        $this->discoverComponents(
+            Resource::class,
+            $this->resources,
+            directory: $in,
+            namespace: $for,
+        );
+
+        return $this;
+    }
+
+    public function discoverWidgets(string $in, string $for): static
+    {
+        $this->discoverComponents(
+            Widget::class,
+            $this->widgets,
+            directory: $in,
+            namespace: $for,
+        );
+
+        return $this;
+    }
+
+    protected function discoverComponents(string $baseClass, array &$register, ?string $directory, ?string $namespace): void
+    {
+        if (blank($directory) || blank($namespace)) {
+            return;
+        }
+
+        $filesystem = app(Filesystem::class);
+
+        if ((! $filesystem->exists($directory)) && (! str($directory)->contains('*'))) {
+            return;
+        }
+
+        $namespace = str($namespace);
+
+        $register = array_merge(
+            $register,
+            collect($filesystem->allFiles($directory))
+                ->map(function (SplFileInfo $file) use ($namespace): string {
+                    $variableNamespace = $namespace->contains('*') ? str_ireplace(
+                        ['\\' . $namespace->before('*'), $namespace->after('*')],
+                        ['', ''],
+                        str($file->getPath())
+                            ->after(base_path())
+                            ->replace(['/'], ['\\']),
+                    ) : null;
+
+                    return (string) $namespace
+                        ->append('\\', $file->getRelativePathname())
+                        ->replace('*', $variableNamespace)
+                        ->replace(['/', '.php'], ['\\', '']);
+                })
+                ->filter(fn (string $class): bool => is_subclass_of($class, $baseClass) && (! (new ReflectionClass($class))->isAbstract()))
+                ->all(),
+        );
+    }
+
+    public function registerLivewireComponents(): void
+    {
+        $components = array_merge(
+            (($login = $this->getLogin()) ? [$login] : []),
+            [
+                GlobalSearch::class,
+                Notifications::class,
+            ],
+            $this->getPages(),
+            $this->getWidgets(),
+        );
+
+        foreach ($this->getResources() as $resource) {
+            foreach ($resource::getPages() as $page) {
+                $components[] = $page['class'];
+            }
+
+            foreach ($resource::getRelations() as $relation) {
+                if ($relation instanceof RelationGroup) {
+                    foreach ($relation->getManagers() as $groupedRelation) {
+                        $components[] = $groupedRelation;
+                    }
+
+                    continue;
+                }
+
+                $components[] = $relation;
+            }
+
+            foreach ($resource::getWidgets() as $widget) {
+                $components[] = $widget;
+            }
+        }
+
+        foreach ($components as $component) {
+            Livewire::component($component::getName(), $component);
+        }
     }
 }

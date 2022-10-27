@@ -30,12 +30,28 @@ class FilamentManager
 
     public function __construct()
     {
-        $this->registerContext((new Context())->id('default'));
+        $this->registerContext(
+            (new Context())
+                ->id('default')
+                ->path(config('filament.path'))
+                ->login()
+                ->pages(config('filament.pages.register') ?? [])
+                ->discoverPages(in: config('filament.pages.path'), for: config('filament.pages.namespace'))
+                ->resources(config('filament.resources.register') ?? [])
+                ->discoverResources(in: config('filament.resources.path'), for: config('filament.resources.namespace'))
+                ->widgets(config('filament.widgets.register') ?? [])
+                ->discoverWidgets(in: config('filament.widgets.path'), for: config('filament.widgets.namespace')),
+        );
     }
 
     public function auth(): Guard
     {
         return $this->getCurrentContext()->auth();
+    }
+
+    public function bootCurrentContext(): void
+    {
+        $this->getCurrentContext()->boot();
     }
 
     public function navigation(Closure $builder, string $context = 'default'): void

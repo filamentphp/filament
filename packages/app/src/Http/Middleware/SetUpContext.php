@@ -20,6 +20,8 @@ class SetUpContext
             Filament::setTenant($context->getTenant($request->get('tenant')));
         }
 
+        Filament::bootCurrentContext();
+
         return $next($request);
     }
 }
