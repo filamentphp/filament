@@ -14,7 +14,7 @@ class MakePageCommand extends Command
 
     protected $description = 'Creates a Filament page class and view.';
 
-    protected $signature = 'make:filament-page {name?} {--R|resource=} {--T|type=} {--F|force}';
+    protected $signature = 'make:filament-page {name?} {--R|resource=} {--T|type=} {--C|context=} {--F|force}';
 
     public function handle(): int
     {

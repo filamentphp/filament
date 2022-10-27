@@ -15,7 +15,7 @@ class MakeRelationManagerCommand extends Command
 
     protected $description = 'Creates a Filament relation manager class for a resource.';
 
-    protected $signature = 'make:filament-relation-manager {resource?} {relationship?} {recordTitleAttribute?} {--attach} {--associate} {--soft-deletes} {--view} {--F|force}';
+    protected $signature = 'make:filament-relation-manager {resource?} {relationship?} {recordTitleAttribute?} {--attach} {--associate} {--soft-deletes} {--view} {--C|context=} {--F|force}';
 
     public function handle(): int
     {

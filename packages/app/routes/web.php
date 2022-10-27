@@ -1,49 +1,57 @@
 <?php
 
+use Filament\Context;
 use Filament\Facades\Filament;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::domain(config('filament.domain'))
-    ->middleware(config('filament.middleware.base'))
+Route::middleware(config('filament.middleware.base'))
     ->name('filament.')
     ->group(function () {
-        Route::prefix(config('filament.core_path'))->group(function () {
-            Route::post('/logout', function (Request $request): LogoutResponse {
-                Filament::auth()->logout();
-
-                $request->session()->invalidate();
-                $request->session()->regenerateToken();
-
-                return app(LogoutResponse::class);
-            })->name('auth.logout');
-        });
-
         foreach (Filament::getContexts() as $context) {
+            /** @var \Filament\Context $context */
+
             $contextId = $context->getId();
 
-            Route::middleware(["context:{$contextId}"])
-                ->name(($contextId !== 'default') ? "{$contextId}." : '')
+            Route::domain($context->getDomain())
+                ->middleware(["context:{$contextId}"])
+                ->name("{$contextId}.")
                 ->prefix($context->getPath())
                 ->group(function () use ($context) {
-                    if ($login = $context->getLogin()) {
-                        Route::get('/login', $login)->name('auth.login');
-                    }
+                    Route::name('auth.')->group(function () use ($context) {
+                        if ($context->hasLogin()) {
+                            Route::get('/login', $context->getLogin())->name('login');
+                        }
 
-                    Route::middleware(config('filament.middleware.auth'))->group(function () use ($context): void {
-                        Route::name('pages.')->group(function () use ($context): void {
-                            foreach ($context->getPages() as $page) {
-                                Route::group([], Closure::fromCallable([$page, 'routes']));
-                            }
-                        });
+                        Route::post('/logout', function (Request $request) use ($context): LogoutResponse {
+                            $context->auth()->logout();
 
-                        Route::name('resources.')->group(function () use ($context): void {
-                            foreach ($context->getResources() as $resource) {
-                                Route::group([], Closure::fromCallable([$resource, 'routes']));
-                            }
-                        });
+                            $request->session()->invalidate();
+                            $request->session()->regenerateToken();
+
+                            return app(LogoutResponse::class);
+                        })->name('logout');
                     });
+
+                    $hasTenancy = $context->hasTenancy();
+                    $tenantSlugField = $context->getTenantSlugField();
+
+                    Route::middleware(config('filament.middleware.auth'))
+                        ->prefix($hasTenancy ? ('{tenant' . (($tenantSlugField) ? ":{$tenantSlugField}" : '') . '}') : '')
+                        ->group(function () use ($context): void {
+                            Route::name('pages.')->group(function () use ($context): void {
+                                foreach ($context->getPages() as $page) {
+                                    Route::group([], Closure::fromCallable([$page, 'routes']));
+                                }
+                            });
+
+                            Route::name('resources.')->group(function () use ($context): void {
+                                foreach ($context->getResources() as $resource) {
+                                    Route::group([], Closure::fromCallable([$resource, 'routes']));
+                                }
+                            });
+                        });
                 });
         }
     });

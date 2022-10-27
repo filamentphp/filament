@@ -199,7 +199,18 @@ class Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return static::getModel()::query();
+        $query = static::getModel()::query();
+
+        if ($tenant = Filament::getTenant()) {
+            static::scopeEloquentQueryToTenant($query, $tenant);
+        }
+
+        return $query;
+    }
+
+    public static function scopeEloquentQueryToTenant(Builder $query, Model $tenant): Builder
+    {
+        return $query->whereBelongsTo($tenant);
     }
 
     public static function getGloballySearchableAttributes(): array
@@ -351,11 +362,13 @@ class Resource
         return [];
     }
 
-    public static function getRouteBaseName(): string
+    public static function getRouteBaseName(?string $context = null): string
     {
+        $context ??= Filament::getCurrentContext()->getId();
+
         $slug = static::getSlug();
 
-        return "filament.resources.{$slug}";
+        return "filament.{$context}.resources.{$slug}";
     }
 
     public static function getRecordRouteKeyName(): ?string
@@ -401,11 +414,13 @@ class Resource
             ->implode('/');
     }
 
-    public static function getUrl($name = 'index', $params = [], $isAbsolute = true): string
+    public static function getUrl($name = 'index', $parameters = [], $isAbsolute = true, ?string $context = null, ?Model $tenant = null): string
     {
-        $routeBaseName = static::getRouteBaseName();
+        $parameters['tenant'] ??= ($tenant ?? Filament::getRoutableTenant());
 
-        return route("{$routeBaseName}.{$name}", $params, $isAbsolute);
+        $routeBaseName = static::getRouteBaseName(context: $context);
+
+        return route("{$routeBaseName}.{$name}", $parameters, $isAbsolute);
     }
 
     public static function hasPage($page): bool

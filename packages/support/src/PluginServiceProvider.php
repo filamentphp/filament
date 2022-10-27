@@ -60,6 +60,12 @@ abstract class PluginServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
+        $this->app->resolving('filament', function () {
+            foreach ($this->getContexts() as $context) {
+                Filament::registerContext($context);
+            }
+        });
+
         $this->app->afterResolving('filament', function () {
             Filament::registerPages($this->getPages(), $this->getContext());
             Filament::registerResources($this->getResources(), $this->getContext());
@@ -105,6 +111,11 @@ abstract class PluginServiceProvider extends PackageServiceProvider
     }
 
     protected function getCommands(): array
+    {
+        return [];
+    }
+
+    protected function getContexts(): array
     {
         return [];
     }

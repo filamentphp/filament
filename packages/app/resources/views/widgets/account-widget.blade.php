@@ -12,7 +12,7 @@
                     {{ __('filament::widgets/account-widget.welcome', ['user' => \Filament\Facades\Filament::getUserName($user)]) }}
                 </h2>
 
-                <form action="{{ route('filament.auth.logout') }}" method="post" class="text-sm">
+                <form action="{{ \Filament\Facades\Filament::getLogoutUrl() }}" method="post" class="text-sm">
                     @csrf
 
                     <button

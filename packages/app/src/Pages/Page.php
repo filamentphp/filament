@@ -10,6 +10,7 @@ use Filament\Navigation\NavigationItem;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Contracts\RendersFormComponentActionModal;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
@@ -69,11 +70,13 @@ class Page extends Component implements HasActions, RendersFormComponentActionMo
         ];
     }
 
-    public static function getRouteName(): string
+    public static function getRouteName(?string $context = null): string
     {
+        $context ??= Filament::getCurrentContext()->getId();
+
         $slug = static::getSlug();
 
-        return "filament.pages.{$slug}";
+        return "filament.{$context}.pages.{$slug}";
     }
 
     public static function routes(): void
@@ -97,9 +100,11 @@ class Page extends Component implements HasActions, RendersFormComponentActionMo
             ->slug();
     }
 
-    public static function getUrl(array $parameters = [], bool $isAbsolute = true): string
+    public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $context = null, ?Model $tenant = null): string
     {
-        return route(static::getRouteName(), $parameters, $isAbsolute);
+        $parameters['tenant'] ??= ($tenant ?? Filament::getRoutableTenant());
+
+        return route(static::getRouteName($context), $parameters, $isAbsolute);
     }
 
     public function render(): View

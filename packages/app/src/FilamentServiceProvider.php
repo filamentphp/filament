@@ -92,11 +92,7 @@ class FilamentServiceProvider extends PluginServiceProvider
     protected function getCommands(): array
     {
         $commands = [
-            Commands\MakeBelongsToManyCommand::class,
-            Commands\MakeHasManyCommand::class,
-            Commands\MakeHasManyThroughCommand::class,
-            Commands\MakeMorphManyCommand::class,
-            Commands\MakeMorphToManyCommand::class,
+            Commands\MakeContextCommand::class,
             Commands\MakePageCommand::class,
             Commands\MakeRelationManagerCommand::class,
             Commands\MakeResourceCommand::class,

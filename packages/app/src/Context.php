@@ -31,7 +31,13 @@ class Context
 {
     protected string $id;
 
+    protected string $authGuard = 'web';
+
+    protected ?string $domain = null;
+
     protected string $globalSearchProvider = DefaultGlobalSearchProvider::class;
+
+    protected string $homeUrl = '';
 
     protected bool $isNavigationMounted = false;
 
@@ -65,7 +71,14 @@ class Context
 
     public function auth(): Guard
     {
-        return auth()->guard(config('filament.auth.guard'));
+        return auth()->guard($this->authGuard);
+    }
+
+    public function authGuard(string $guard): static
+    {
+        $this->authGuard = $guard;
+
+        return $this;
     }
 
     public function navigation(Closure $builder): static
@@ -88,6 +101,13 @@ class Context
         return $builder->getNavigation();
     }
 
+    public function domain(?string $domain = null): static
+    {
+        $this->domain = $domain;
+
+        return $this;
+    }
+
     public function globalSearchProvider(string $provider): static
     {
         if (! in_array(GlobalSearchProvider::class, class_implements($provider))) {
@@ -95,6 +115,13 @@ class Context
         }
 
         $this->globalSearchProvider = $provider;
+
+        return $this;
+    }
+
+    public function homeUrl(string $url): static
+    {
+        $this->homeUrl = $url;
 
         return $this;
     }
@@ -196,6 +223,16 @@ class Context
         return $this;
     }
 
+    public function getAuthGuard(): string
+    {
+        return $this->authGuard;
+    }
+
+    public function getDomain(): ?string
+    {
+        return $this->domain;
+    }
+
     public function getRenderHook(string $name): Htmlable
     {
         $hooks = array_map(
@@ -222,6 +259,11 @@ class Context
     public function getGlobalSearchProvider(): GlobalSearchProvider
     {
         return app($this->globalSearchProvider);
+    }
+
+    public function getHomeUrl(): string
+    {
+        return $this->homeUrl;
     }
 
     public function getId(): string
@@ -252,6 +294,20 @@ class Context
     public function getTenantSlugField(): ?string
     {
         return $this->tenantSlugField;
+    }
+
+    public function getLoginUrl(): ?string
+    {
+        if (! $this->login) {
+            return null;
+        }
+
+        return route("filament.{$this->getId()}.auth.login");
+    }
+
+    public function getLogoutUrl(): string
+    {
+        return route("filament.{$this->getId()}.auth.logout");
     }
 
     public function getNavigation(): array
@@ -382,6 +438,10 @@ class Context
 
     public function getUrl(): ?string
     {
+        if (! $this->auth()->check()) {
+            return $this->hasLogin() ? $this->getLoginUrl() : url($this->getPath());
+        }
+
         $firstGroup = Arr::first($this->getNavigation());
 
         if (! $firstGroup) {
@@ -413,6 +473,11 @@ class Context
     public function getLogin(): ?string
     {
         return $this->login;
+    }
+
+    public function hasLogin(): bool
+    {
+        return filled($this->login);
     }
 
     public function discoverPages(string $in, string $for): static
@@ -490,7 +555,7 @@ class Context
     public function registerLivewireComponents(): void
     {
         $components = array_merge(
-            (($login = $this->getLogin()) ? [$login] : []),
+            ($this->hasLogin() ? [$this->getLogin()] : []),
             [
                 GlobalSearch::class,
                 Notifications::class,

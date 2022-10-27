@@ -27,7 +27,10 @@ class FilamentManager
             (new Context())
                 ->id('default')
                 ->path(config('filament.path'))
-                ->login()
+                ->domain(config('filament.domain'))
+                ->homeUrl(config('filament.home_url'))
+                ->authGuard(config('filament.auth.guard'))
+                ->login(config('filament.auth.pages.login'))
                 ->pages(config('filament.pages.register') ?? [])
                 ->discoverPages(in: config('filament.pages.path'), for: config('filament.pages.namespace'))
                 ->resources(config('filament.resources.register') ?? [])
@@ -168,6 +171,15 @@ class FilamentManager
         return $this->tenant;
     }
 
+    public function getRoutableTenant(): ?Model
+    {
+        if ($this->auth()->user()::class === $this->getCurrentContext()->getTenantModel()) {
+            return null;
+        }
+
+        return $this->getTenant();
+    }
+
     public function setCurrentContext(?Context $context): void
     {
         $this->currentContext = $context;
@@ -176,6 +188,31 @@ class FilamentManager
     public function setTenant(?Model $tenant): void
     {
         $this->tenant = $tenant;
+    }
+
+    public function hasLogin(): string
+    {
+        return $this->getCurrentContext()->hasLogin();
+    }
+
+    public function getAuthGuard(): string
+    {
+        return $this->getCurrentContext()->getAuthGuard();
+    }
+
+    public function getHomeUrl(): string
+    {
+        return $this->getCurrentContext()->getHomeUrl();
+    }
+
+    public function getLoginUrl(): ?string
+    {
+        return $this->getCurrentContext()->getLoginUrl();
+    }
+
+    public function getLogoutUrl(): string
+    {
+        return $this->getCurrentContext()->getLogoutUrl();
     }
 
     public function getNavigation(): array
@@ -221,6 +258,32 @@ class FilamentManager
     public function getUrl(): ?string
     {
         return $this->getCurrentContext()->getUrl();
+    }
+
+    public function getTenantAvatarUrl(Model $tenant): string
+    {
+        $avatar = null;
+
+        if ($tenant instanceof HasAvatar) {
+            $avatar = $tenant->getFilamentAvatarUrl();
+        }
+
+        if ($avatar) {
+            return $avatar;
+        }
+
+        $provider = config('filament.default_avatar_provider');
+
+        return app($provider)->get($tenant);
+    }
+
+    public function getTenantName(Model $tenant): string
+    {
+        if ($tenant instanceof HasName) {
+            return $tenant->getFilamentName();
+        }
+
+        return $tenant->getAttributeValue('name');
     }
 
     public function getUserAvatarUrl(Model | Authenticatable $user): string
