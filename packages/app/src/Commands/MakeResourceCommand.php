@@ -6,7 +6,6 @@ use Filament\Support\Commands\Concerns\CanIndentStrings;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
-use Illuminate\Support\Str;
 
 class MakeResourceCommand extends Command
 {
