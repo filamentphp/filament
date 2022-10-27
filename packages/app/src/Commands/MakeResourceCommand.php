@@ -6,6 +6,7 @@ use Filament\Support\Commands\Concerns\CanIndentStrings;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 
 class MakeResourceCommand extends Command
 {
@@ -20,6 +21,9 @@ class MakeResourceCommand extends Command
 
     public function handle(): int
     {
+        $path = config('filament.resources.path', app_path('Filament\\Resources\\'));
+        $namespace = config('filament.resources.namespace', 'App\\Filament\\Resources');
+
         $model = (string) str($this->argument('name') ?? $this->askRequired('Model (e.g. `BlogPost`)', 'name'))
             ->studly()
             ->beforeLast('Resource')
@@ -42,17 +46,20 @@ class MakeResourceCommand extends Command
         $resource = "{$model}Resource";
         $resourceClass = "{$modelClass}Resource";
         $resourceNamespace = $modelNamespace;
+        $namespace .= $resourceNamespace !== '' ? "\\{$resourceNamespace}" : '';
         $listResourcePageClass = "List{$pluralModelClass}";
         $manageResourcePageClass = "Manage{$pluralModelClass}";
         $createResourcePageClass = "Create{$modelClass}";
         $editResourcePageClass = "Edit{$modelClass}";
         $viewResourcePageClass = "View{$modelClass}";
 
-        $baseResourcePath = app_path(
+        $baseResourcePath =
             (string) str($resource)
-                ->prepend('Filament\\Resources\\')
-                ->replace('\\', '/'),
-        );
+                ->prepend('/')
+                ->prepend($path)
+                ->replace('\\', '/')
+                ->replace('//', '/');
+
         $resourcePath = "{$baseResourcePath}.php";
         $resourcePagesDirectory = "{$baseResourcePath}/Pages";
         $listResourcePagePath = "{$resourcePagesDirectory}/{$listResourcePageClass}.php";
@@ -141,10 +148,10 @@ class MakeResourceCommand extends Command
             ) : $this->indentString('//', 4),
             'model' => $model === 'Resource' ? 'Resource as ResourceModel' : $model,
             'modelClass' => $model === 'Resource' ? 'ResourceModel' : $modelClass,
-            'namespace' => 'App\\Filament\\Resources' . ($resourceNamespace !== '' ? "\\{$resourceNamespace}" : ''),
+            'namespace' => $namespace,
             'pages' => $this->indentString($pages, 3),
             'relations' => $this->indentString($relations, 1),
-            'resource' => $resource,
+            'resource' => "{$namespace}\\{$resourceClass}",
             'resourceClass' => $resourceClass,
             'tableActions' => $this->indentString($tableActions, 4),
             'tableBulkActions' => $this->indentString($tableBulkActions, 4),
@@ -159,15 +166,15 @@ class MakeResourceCommand extends Command
 
         if ($this->option('simple')) {
             $this->copyStubToApp('ResourceManagePage', $manageResourcePagePath, [
-                'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
-                'resource' => $resource,
+                'namespace' => "{$namespace}\\{$resourceClass}\\Pages",
+                'resource' => "{$namespace}\\{$resourceClass}",
                 'resourceClass' => $resourceClass,
                 'resourcePageClass' => $manageResourcePageClass,
             ]);
         } else {
             $this->copyStubToApp('ResourceListPage', $listResourcePagePath, [
-                'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
-                'resource' => $resource,
+                'namespace' => "{$namespace}\\{$resourceClass}\\Pages",
+                'resource' => "{$namespace}\\{$resourceClass}",
                 'resourceClass' => $resourceClass,
                 'resourcePageClass' => $listResourcePageClass,
             ]);
@@ -175,8 +182,8 @@ class MakeResourceCommand extends Command
             $this->copyStubToApp('ResourcePage', $createResourcePagePath, [
                 'baseResourcePage' => 'Filament\\Resources\\Pages\\CreateRecord',
                 'baseResourcePageClass' => 'CreateRecord',
-                'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
-                'resource' => $resource,
+                'namespace' => "{$namespace}\\{$resourceClass}\\Pages",
+                'resource' => "{$namespace}\\{$resourceClass}",
                 'resourceClass' => $resourceClass,
                 'resourcePageClass' => $createResourcePageClass,
             ]);
@@ -185,8 +192,8 @@ class MakeResourceCommand extends Command
 
             if ($this->option('view')) {
                 $this->copyStubToApp('ResourceViewPage', $viewResourcePagePath, [
-                    'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
-                    'resource' => $resource,
+                    'namespace' => "{$namespace}\\{$resourceClass}\\Pages",
+                    'resource' => "{$namespace}\\{$resourceClass}",
                     'resourceClass' => $resourceClass,
                     'resourcePageClass' => $viewResourcePageClass,
                 ]);
@@ -205,14 +212,14 @@ class MakeResourceCommand extends Command
 
             $this->copyStubToApp('ResourceEditPage', $editResourcePagePath, [
                 'actions' => $this->indentString($editPageActions, 3),
-                'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages",
-                'resource' => $resource,
+                'namespace' => "{$namespace}\\{$resourceClass}\\Pages",
+                'resource' => "{$namespace}\\{$resourceClass}",
                 'resourceClass' => $resourceClass,
                 'resourcePageClass' => $editResourcePageClass,
             ]);
         }
 
-        $this->components->info("Successfully created {$resource}!");
+        $this->info("Successfully created {$resource}!");
 
         return static::SUCCESS;
     }
