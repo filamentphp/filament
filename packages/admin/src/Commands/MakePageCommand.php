@@ -18,8 +18,8 @@ class MakePageCommand extends Command
 
     public function handle(): int
     {
-        $path = config('filament.pages.path', app_path('Filament\\Pages\\'));
-        $resourcePath = config('filament.resources.path', app_path('Filament\\Resources\\'));
+        $path = config('filament.pages.path', app_path('Filament/Pages/'));
+        $resourcePath = config('filament.resources.path', app_path('Filament/Resources/'));
         $namespace = config('filament.pages.namespace', 'App\\Filament\\Pages');
         $resourceNamespace = config('filament.resources.namespace', 'App\\Filament\\Resources');
 

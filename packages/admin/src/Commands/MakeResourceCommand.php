@@ -21,7 +21,7 @@ class MakeResourceCommand extends Command
 
     public function handle(): int
     {
-        $path = config('filament.resources.path', app_path('Filament\\Resources\\'));
+        $path = config('filament.resources.path', app_path('Filament/Resources/'));
         $namespace = config('filament.resources.namespace', 'App\\Filament\\Resources');
 
         $model = (string) Str::of($this->argument('name') ?? $this->askRequired('Model (e.g. `BlogPost`)', 'name'))
