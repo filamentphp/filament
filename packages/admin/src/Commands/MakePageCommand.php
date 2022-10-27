@@ -19,9 +19,9 @@ class MakePageCommand extends Command
     public function handle(): int
     {
         $path = config('filament.pages.path', app_path('Filament\\Pages\\'));
-        $resourcesPath = config('filament.resources.path', app_path('Filament\\Resources\\'));
+        $resourcePath = config('filament.resources.path', app_path('Filament\\Resources\\'));
         $namespace = config('filament.pages.namespace', 'App\\Filament\\Pages');
-        $resourcesNamespace = config('filament.resources.namespace', 'App\\Filament\\Resources');
+        $resourceNamespace = config('filament.resources.namespace', 'App\\Filament\\Resources');
 
         $page = (string) Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `Settings`)', 'name'))
             ->trim('/')
@@ -68,17 +68,19 @@ class MakePageCommand extends Command
             );
         }
 
-        $view = Str::of($page)->prepend(
-            (string) Str::of($resource === null ? $namespace : "{$resourcesNamespace}\\{$resource}\\pages\\")
-                ->replace('App\\', '')
-        )
-            ->explode('\\')
+        $view = Str::of($page)
+            ->prepend(
+                (string) Str::of($resource === null ? "{$namespace}\\" : "{$resourceNamespace}\\{$resource}\\pages\\")
+                    ->replace('App\\', '')
+            )
+            ->replace('\\', '/')
+            ->explode('/')
             ->map(fn ($segment) => Str::lower(Str::kebab($segment)))
             ->implode('.');
 
         $path = (string) Str::of($page)
             ->prepend('/')
-            ->prepend($resource === null ? $path : "{$resourcesPath}\\{$resource}\\Pages\\")
+            ->prepend($resource === null ? $path : "{$resourcePath}\\{$resource}\\Pages\\")
             ->replace('\\', '/')
             ->replace('//', '/')
             ->append('.php');
@@ -109,8 +111,8 @@ class MakePageCommand extends Command
             $this->copyStubToApp($resourcePage === 'custom' ? 'CustomResourcePage' : 'ResourcePage', $path, [
                 'baseResourcePage' => 'Filament\\Resources\\Pages\\' . ($resourcePage === 'custom' ? 'Page' : $resourcePage),
                 'baseResourcePageClass' => $resourcePage === 'custom' ? 'Page' : $resourcePage,
-                'namespace' => "{$resourcesNamespace}\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
-                'resource' => "$resourcesNamespace\\$resourceClass",
+                'namespace' => "{$resourceNamespace}\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'resource' => "{$resourceNamespace}\\{$resource}",
                 'resourceClass' => $resourceClass,
                 'resourcePageClass' => $pageClass,
                 'view' => $view,
