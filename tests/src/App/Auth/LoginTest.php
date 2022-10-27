@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Facades\Filament;
 use Filament\Http\Livewire\Auth\Login;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
@@ -9,7 +10,7 @@ use function Pest\Livewire\livewire;
 uses(TestCase::class);
 
 it('can render page', function () {
-    $this->get(route('filament.default.auth.login'))->assertSuccessful();
+    $this->get(Filament::getLoginUrl())->assertSuccessful();
 });
 
 it('can authenticate', function () {
@@ -39,7 +40,7 @@ it('can authenticate and redirect user to their intended URL', function () {
 });
 
 it('can redirect unauthenticated app requests', function () {
-    $this->get(route('filament.default.pages.dashboard'))->assertRedirect(route('filament.default.auth.login'));
+    $this->get(route('filament.default.pages.dashboard'))->assertRedirect(Filament::getLoginUrl());
 });
 
 it('cannot authenticate with incorrect credentials', function () {

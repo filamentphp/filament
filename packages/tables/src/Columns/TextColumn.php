@@ -33,6 +33,7 @@ class TextColumn extends Column
         $this->enum = $enum;
 
         if (
+            is_string($enum) &&
             function_exists('enum_exists') &&
             enum_exists($enum) &&
             is_a($enum, BackedEnum::class, allow_string: true) &&
