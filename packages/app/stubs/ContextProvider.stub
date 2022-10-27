@@ -3,11 +3,11 @@
 namespace App\Providers\Filament;
 
 use Filament\Context;
-use Filament\ContextServiceProvider;
+use Filament\ContextProvider;
 
-class {{ class }} extends ContextServiceProvider
+class {{ class }} extends ContextProvider
 {
-    public function configureContext(Context $context): void
+    public function context(Context $context): void
     {
         $context
             ->id('{{ id }}')
