@@ -2,6 +2,22 @@
 
 return [
 
+    'columns' => [
+
+        'color' => [
+
+            'messages' => [
+                'copied' => 'Kopierad',
+            ],
+
+        ],
+
+        'tags' => [
+            'more' => 'och :count till',
+        ],
+
+    ],
+
     'fields' => [
 
         'search' => [
@@ -20,7 +36,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'per sida',
+
+                'options' => [
+                    'all' => 'Alla',
+                ],
+
             ],
 
         ],
@@ -45,6 +67,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Sluta ändra ordning på rader',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Ändra ordning på rader',
+        ],
+
         'filter' => [
             'label' => 'Filter',
         ],
@@ -67,11 +97,22 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Ta bort filter',
+            ],
+
+            'remove_all' => [
+                'label' => 'Ta bort alla filter',
+                'tooltip' => 'Ta bort alla filter',
+            ],
+
             'reset' => [
                 'label' => 'Återställ filter',
             ],
 
         ],
+
+        'indicator' => 'Aktiva filter',
 
         'multi_select' => [
             'placeholder' => 'Alla',
@@ -95,6 +136,8 @@ return [
 
     ],
 
+    'reorder_indicator' => 'Dra och släpp raderna i önskad ordning.',
+
     'selection_indicator' => [
 
         'selected_count' => '1 rad vald.|:count rader valda.',
@@ -107,6 +150,29 @@ return [
 
             'deselect_all' => [
                 'label' => 'Avmarkera alla',
+            ],
+
+        ],
+
+    ],
+
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Sortera efter',
+            ],
+
+            'direction' => [
+
+                'label' => 'Sorteringsriktning',
+
+                'options' => [
+                    'asc' => 'Stigande',
+                    'desc' => 'Fallande',
+                ],
+
             ],
 
         ],

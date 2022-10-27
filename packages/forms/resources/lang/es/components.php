@@ -16,6 +16,10 @@ return [
                 'label' => 'Añadir a :label',
             ],
 
+            'create_item_between' => [
+                'label' => 'Insertar',
+            ],
+
             'delete_item' => [
                 'label' => 'Borrar',
             ],

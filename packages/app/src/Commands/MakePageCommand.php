@@ -18,14 +18,19 @@ class MakePageCommand extends Command
 
     public function handle(): int
     {
-        $page = (string) str($this->argument('name') ?? $this->askRequired('Name (e.g. `Settings`)', 'name'))
+        $path = config('filament.pages.path', app_path('Filament\\Pages\\'));
+        $resourcePath = config('filament.resources.path', app_path('Filament\\Resources\\'));
+        $namespace = config('filament.pages.namespace', 'App\\Filament\\Pages');
+        $resourceNamespace = config('filament.resources.namespace', 'App\\Filament\\Resources');
+
+        $page = (string) Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `Settings`)', 'name'))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
             ->replace('/', '\\');
-        $pageClass = (string) str($page)->afterLast('\\');
-        $pageNamespace = str($page)->contains('\\') ?
-            (string) str($page)->beforeLast('\\') :
+        $pageClass = (string) Str::of($page)->afterLast('\\');
+        $pageNamespace = Str::of($page)->contains('\\') ?
+            (string) Str::of($page)->beforeLast('\\') :
             '';
 
         $resource = null;
@@ -35,18 +40,18 @@ class MakePageCommand extends Command
         $resourceInput = $this->option('resource') ?? $this->ask('(Optional) Resource (e.g. `UserResource`)');
 
         if ($resourceInput !== null) {
-            $resource = (string) str($resourceInput)
+            $resource = (string) Str::of($resourceInput)
                 ->studly()
                 ->trim('/')
                 ->trim('\\')
                 ->trim(' ')
                 ->replace('/', '\\');
 
-            if (! str($resource)->endsWith('Resource')) {
+            if (! Str::of($resource)->endsWith('Resource')) {
                 $resource .= 'Resource';
             }
 
-            $resourceClass = (string) str($resource)
+            $resourceClass = (string) Str::of($resource)
                 ->afterLast('\\');
 
             $resourcePage = $this->option('type') ?? $this->choice(
@@ -63,20 +68,25 @@ class MakePageCommand extends Command
             );
         }
 
-        $view = str($page)
-            ->prepend($resource === null ? 'filament\\pages\\' : "filament\\resources\\{$resource}\\pages\\")
-            ->explode('\\')
-            ->map(fn ($segment) => Str::kebab($segment))
+        $view = Str::of($page)
+            ->prepend(
+                (string) Str::of($resource === null ? "{$namespace}\\" : "{$resourceNamespace}\\{$resource}\\pages\\")
+                    ->replace('App\\', '')
+            )
+            ->replace('\\', '/')
+            ->explode('/')
+            ->map(fn ($segment) => Str::lower(Str::kebab($segment)))
             ->implode('.');
 
-        $path = app_path(
-            (string) str($page)
-                ->prepend($resource === null ? 'Filament\\Pages\\' : "Filament\\Resources\\{$resource}\\Pages\\")
-                ->replace('\\', '/')
-                ->append('.php'),
-        );
+        $path = (string) Str::of($page)
+            ->prepend('/')
+            ->prepend($resource === null ? $path : "{$resourcePath}\\{$resource}\\Pages\\")
+            ->replace('\\', '/')
+            ->replace('//', '/')
+            ->append('.php');
+
         $viewPath = resource_path(
-            (string) str($view)
+            (string) Str::of($view)
                 ->replace('.', '/')
                 ->prepend('views/')
                 ->append('.blade.php'),
@@ -94,15 +104,15 @@ class MakePageCommand extends Command
         if ($resource === null) {
             $this->copyStubToApp('Page', $path, [
                 'class' => $pageClass,
-                'namespace' => 'App\\Filament\\Pages' . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'namespace' => $namespace . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
                 'view' => $view,
             ]);
         } else {
             $this->copyStubToApp($resourcePage === 'custom' ? 'CustomResourcePage' : 'ResourcePage', $path, [
                 'baseResourcePage' => 'Filament\\Resources\\Pages\\' . ($resourcePage === 'custom' ? 'Page' : $resourcePage),
                 'baseResourcePageClass' => $resourcePage === 'custom' ? 'Page' : $resourcePage,
-                'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
-                'resource' => $resource,
+                'namespace' => "{$resourceNamespace}\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'resource' => "{$resourceNamespace}\\{$resource}",
                 'resourceClass' => $resourceClass,
                 'resourcePageClass' => $pageClass,
                 'view' => $view,
@@ -113,10 +123,10 @@ class MakePageCommand extends Command
             $this->copyStubToApp('PageView', $viewPath);
         }
 
-        $this->components->info("Successfully created {$page}!");
+        $this->info("Successfully created {$page}!");
 
         if ($resource !== null) {
-            $this->components->info("Make sure to register the page in `{$resourceClass}::getPages()`.");
+            $this->info("Make sure to register the page in `{$resourceClass}::getPages()`.");
         }
 
         return static::SUCCESS;

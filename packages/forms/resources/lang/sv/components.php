@@ -8,12 +8,20 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'Klona',
+            ],
+
             'create_item' => [
                 'label' => 'Lägg till i :label',
             ],
 
             'delete_item' => [
                 'label' => 'Radera',
+            ],
+
+            'move_item' => [
+                'label' => 'Flytta',
             ],
 
             'move_item_down' => [
@@ -54,6 +62,10 @@ return [
 
             'delete' => [
                 'label' => 'Ta bort rad',
+            ],
+
+            'reorder' => [
+                'label' => 'Ändra ordning på rad',
             ],
 
         ],
@@ -101,6 +113,14 @@ return [
 
             'delete_item' => [
                 'label' => 'Radera',
+            ],
+
+            'clone_item' => [
+                'label' => 'Klona',
+            ],
+
+            'move_item' => [
+                'label' => 'Flytta',
             ],
 
             'move_item_down' => [
@@ -200,6 +220,8 @@ return [
 
         'loading_message' => 'Laddar...',
 
+        'max_items_message' => 'Kan endast välja :count st.',
+
         'no_search_results_message' => 'Inga alternativ matchar din sökning.',
 
         'placeholder' => 'Välj ett alternativ',
@@ -219,7 +241,7 @@ return [
         'buttons' => [
 
             'previous_step' => [
-                'label' => 'Tillbaka',
+                'label' => 'Föregående',
             ],
 
             'next_step' => [
