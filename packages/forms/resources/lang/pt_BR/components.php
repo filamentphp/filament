@@ -15,7 +15,7 @@ return [
             'create_item' => [
                 'label' => 'Adicionar em :label',
             ],
-            
+
             'create_item_between' => [
                 'label' => 'Inserir',
             ],
