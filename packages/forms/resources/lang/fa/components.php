@@ -24,6 +24,10 @@ return [
                 'label' => 'حذف',
             ],
 
+            'move_item' => [
+                'label' => 'جابه‌جایی',
+            ],
+
             'move_item_down' => [
                 'label' => 'پایین آوردن',
             ],
@@ -113,6 +117,14 @@ return [
 
             'delete_item' => [
                 'label' => 'حذف',
+            ],
+
+            'clone_item' => [
+                'label' => 'همسان‌سازی',
+            ],
+
+            'move_item' => [
+                'label' => 'جابه‌جایی',
             ],
 
             'move_item_down' => [
@@ -212,7 +224,9 @@ return [
 
         'loading_message' => 'درحال بارگذاری...',
 
-        'no_search_results_message' => 'هیچ گزینه ای با جستجوی شما مطابقت ندارد',
+        'max_items_message' => 'تنها :count مورد می‌تواند انتخاب شود.',
+
+        'no_search_results_message' => 'هیچ گزینه‌ای با جستجوی شما مطابقت ندارد.',
 
         'placeholder' => 'یک گزینه را انتخاب کنید',
 
