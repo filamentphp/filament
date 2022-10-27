@@ -3,9 +3,6 @@
 namespace Filament;
 
 use Filament\Facades\Filament;
-use Filament\Http\Livewire\Auth\Login;
-use Filament\Http\Livewire\GlobalSearch;
-use Filament\Http\Livewire\Notifications;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\MirrorConfigToSubpackages;
@@ -14,21 +11,13 @@ use Filament\Http\Responses\Auth\Contracts\LoginResponse as LoginResponseContrac
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
 use Filament\Http\Responses\Auth\LoginResponse;
 use Filament\Http\Responses\Auth\LogoutResponse;
-use Filament\Pages\Page;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Resources\Resource;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\PluginServiceProvider;
-use Filament\Widgets\Widget;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Livewire\Component;
 use Livewire\Livewire;
-use ReflectionClass;
-use Symfony\Component\Finder\SplFileInfo;
 
 class FilamentServiceProvider extends PluginServiceProvider
 {
