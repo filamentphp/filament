@@ -2,6 +2,9 @@
 
 namespace Filament\Commands;
 
+use Arr;
+use Filament\Context;
+use Filament\Facades\Filament;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
@@ -18,11 +21,6 @@ class MakeWidgetCommand extends Command
 
     public function handle(): int
     {
-        $path = config('filament.widgets.path', app_path('Filament/Widgets/'));
-        $resourcePath = config('filament.resources.path', app_path('Filament/Resources/'));
-        $namespace = config('filament.widgets.namespace', 'App\\Filament\\Widgets');
-        $resourceNamespace = config('filament.resources.namespace', 'App\\Filament\\Resources');
-
         $widget = (string) str($this->argument('name') ?? $this->askRequired('Name (e.g. `BlogPostsChart`)', 'name'))
             ->trim('/')
             ->trim('\\')
@@ -53,6 +51,31 @@ class MakeWidgetCommand extends Command
             $resourceClass = (string) str($resource)
                 ->afterLast('\\');
         }
+
+        $context = $this->option('context');
+
+        if ($context) {
+            $context = Filament::getContext($context);
+        }
+
+        if (! $context) {
+            $contexts = Filament::getContexts();
+
+            /** @var Context $context */
+            $context = (count($contexts) > 1) ? $contexts[$this->choice(
+                'Which context would you like to create this in?',
+                array_map(
+                    fn (Context $context) => $context->getId(),
+                    $contexts,
+                ),
+                'default',
+            )] : Arr::first($contexts);
+        }
+
+        $path = $context->getWidgetDirectory() ?? app_path('Filament/Widgets/');
+        $namespace = $context->getWidgetNamespace() ?? 'App\\Filament\\Widgets';
+        $resourcePath = $context->getResourceDirectory() ?? app_path('Filament/Resources/');
+        $resourceNamespace = $context->getResourceNamespace() ?? 'App\\Filament\\Resources';
 
         $view = str($widget)->prepend(
             (string) str($resource === null ? "{$namespace}\\" : "{$resourceNamespace}\\{$resource}\\widgets\\")

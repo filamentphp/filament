@@ -2,6 +2,9 @@
 
 namespace Filament\Commands;
 
+use Arr;
+use Filament\Context;
+use Filament\Facades\Filament;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
@@ -14,15 +17,10 @@ class MakePageCommand extends Command
 
     protected $description = 'Creates a Filament page class and view.';
 
-    protected $signature = 'make:filament-page {name?} {--R|resource=} {--T|type=} {--C|context=} {--F|force}';
+    protected $signature = 'make:filament-page {name?} {--R|resource=} {--T|type=} {--context=} {--F|force}';
 
     public function handle(): int
     {
-        $path = config('filament.pages.path', app_path('Filament/Pages/'));
-        $resourcePath = config('filament.resources.path', app_path('Filament/Resources/'));
-        $namespace = config('filament.pages.namespace', 'App\\Filament\\Pages');
-        $resourceNamespace = config('filament.resources.namespace', 'App\\Filament\\Resources');
-
         $page = (string) str($this->argument('name') ?? $this->askRequired('Name (e.g. `Settings`)', 'name'))
             ->trim('/')
             ->trim('\\')
@@ -68,7 +66,30 @@ class MakePageCommand extends Command
             );
         }
 
-        // context
+        $context = $this->option('context');
+
+        if ($context) {
+            $context = Filament::getContext($context);
+        }
+
+        if (! $context) {
+            $contexts = Filament::getContexts();
+
+            /** @var Context $context */
+            $context = (count($contexts) > 1) ? $contexts[$this->choice(
+                'Which context would you like to create this in?',
+                array_map(
+                    fn (Context $context) => $context->getId(),
+                    $contexts,
+                ),
+                'default',
+            )] : Arr::first($contexts);
+        }
+
+        $path = $context->getPageDirectory() ?? app_path('Filament/Pages/');
+        $namespace = $context->getPageNamespace() ?? 'App\\Filament\\Pages';
+        $resourcePath = $context->getResourceDirectory() ?? app_path('Filament/Resources/');
+        $resourceNamespace = $context->getResourceNamespace() ?? 'App\\Filament\\Resources';
 
         $view = str($page)
             ->prepend(

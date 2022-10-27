@@ -156,9 +156,9 @@ class FilamentManager
         return $this->currentContext ?? $this->contexts['default'];
     }
 
-    public function getContext(string $id = 'default'): Context
+    public function getContext(string $id = 'default'): ?Context
     {
-        return $this->contexts[$id];
+        return $this->contexts[$id] ?? null;
     }
 
     public function getContexts(): array
@@ -173,7 +173,7 @@ class FilamentManager
 
     public function getRoutableTenant(): ?Model
     {
-        if ($this->auth()->user()::class === $this->getCurrentContext()->getTenantModel()) {
+        if (! $this->getCurrentContext()->hasRoutableTenancy()) {
             return null;
         }
 

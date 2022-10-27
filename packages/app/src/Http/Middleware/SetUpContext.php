@@ -31,20 +31,22 @@ class SetUpContext
         /** @var Model $user */
         $user = $context->auth()->user();
 
-        if ($user::class === $context->getTenantModel()) {
+        if (! $context->hasRoutableTenancy()) {
             Filament::setTenant($user);
 
             return;
         }
 
-        if (! $request->filled('tenant')) {
+        if (! $request->route()->hasParameter('tenant')) {
             return;
         }
 
-        $tenant = $context->getTenant($request->get('tenant'));
+        $tenant = $context->getTenant($request->route()->parameter('tenant'));
 
         if ($user instanceof HasTenants && $user->canAccessTenant($tenant)) {
             Filament::setTenant($tenant);
+
+            return;
         }
 
         abort(404);

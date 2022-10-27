@@ -8,5 +8,5 @@ class MakeRelationManagerCommand extends Commands\MakeRelationManagerCommand
 {
     protected $hidden = true;
 
-    protected $signature = 'filament:relation-manager {resource?} {relationship?} {recordTitleAttribute?} {--attach} {--associate} {--soft-deletes} {--view} {--F|force}';
+    protected $signature = 'filament:relation-manager {resource?} {relationship?} {recordTitleAttribute?} {--attach} {--associate} {--soft-deletes} {--view} {--context=} {--F|force}';
 }

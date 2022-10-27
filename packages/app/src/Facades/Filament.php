@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void bootCurrentContext()
  * @method static string getAuthGuard()
  * @method static Context | null getCurrentContext()
- * @method static Context getContext(string $id = 'default')
+ * @method static Context | null getContext(string $id = 'default')
  * @method static array getContexts()
  * @method static GlobalSearchProvider getGlobalSearchProvider()
  * @method static string getHomeUrl()

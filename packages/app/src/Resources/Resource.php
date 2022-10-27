@@ -81,7 +81,8 @@ class Resource
             return;
         }
 
-        Filament::registerNavigationItems(static::getNavigationItems());
+        Filament::getCurrentContext()
+            ->navigationItems(static::getNavigationItems());
     }
 
     public static function getNavigationItems(): array

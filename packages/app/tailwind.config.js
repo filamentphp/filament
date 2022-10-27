@@ -3,11 +3,14 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
     content: [
+        './packages/actions/resources/**/*.blade.php',
         './packages/app/resources/**/*.blade.php',
         './packages/forms/resources/**/*.blade.php',
+        './packages/navigation/resources/**/*.blade.php',
         './packages/notifications/resources/**/*.blade.php',
         './packages/support/resources/**/*.blade.php',
         './packages/tables/resources/**/*.blade.php',
+        './packages/widgets/resources/**/*.blade.php',
     ],
     darkMode: 'class',
     theme: {

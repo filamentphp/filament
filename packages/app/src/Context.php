@@ -49,7 +49,15 @@ class Context
 
     protected array $pages = [];
 
+    protected ?string $pageDirectory = null;
+
+    protected ?string $pageNamespace = null;
+
     protected array $resources = [];
+
+    protected ?string $resourceDirectory = null;
+
+    protected ?string $resourceNamespace = null;
 
     protected array $meta = [];
 
@@ -64,6 +72,10 @@ class Context
     protected array $userMenuItems = [];
 
     protected array $widgets = [];
+
+    protected ?string $widgetDirectory = null;
+
+    protected ?string $widgetNamespace = null;
 
     protected ?Closure $navigationBuilder = null;
 
@@ -251,6 +263,11 @@ class Context
         return $this;
     }
 
+    public function hasRoutableTenancy(): bool
+    {
+        return $this->hasTenancy() && ($this->auth()->getProvider()->getModel() !== $this->getTenantModel());
+    }
+
     public function hasTenancy(): bool
     {
         return filled($this->getTenantModel());
@@ -276,8 +293,7 @@ class Context
         $tenantModel = $this->getTenantModel();
 
         $record = app($tenantModel)
-            ->resolveRouteBinding($key, $this->getTenantSlugField())
-            ->first();
+            ->resolveRouteBinding($key, $this->getTenantSlugField());
 
         if ($record === null) {
             throw (new ModelNotFoundException())->setModel($tenantModel, [$key]);
@@ -482,6 +498,9 @@ class Context
 
     public function discoverPages(string $in, string $for): static
     {
+        $this->pageDirectory = $in;
+        $this->pageNamespace = $for;
+
         $this->discoverComponents(
             Page::class,
             $this->pages,
@@ -492,8 +511,21 @@ class Context
         return $this;
     }
 
+    public function getPageDirectory(): ?string
+    {
+        return $this->pageDirectory;
+    }
+
+    public function getPageNamespace(): ?string
+    {
+        return $this->pageNamespace;
+    }
+
     public function discoverResources(string $in, string $for): static
     {
+        $this->resourceDirectory = $in;
+        $this->resourceNamespace = $for;
+
         $this->discoverComponents(
             Resource::class,
             $this->resources,
@@ -504,8 +536,21 @@ class Context
         return $this;
     }
 
+    public function getResourceDirectory(): ?string
+    {
+        return $this->resourceDirectory;
+    }
+
+    public function getResourceNamespace(): ?string
+    {
+        return $this->resourceNamespace;
+    }
+
     public function discoverWidgets(string $in, string $for): static
     {
+        $this->widgetDirectory = $in;
+        $this->widgetNamespace = $for;
+
         $this->discoverComponents(
             Widget::class,
             $this->widgets,
@@ -514,6 +559,16 @@ class Context
         );
 
         return $this;
+    }
+
+    public function getWidgetDirectory(): ?string
+    {
+        return $this->widgetDirectory;
+    }
+
+    public function getWidgetNamespace(): ?string
+    {
+        return $this->widgetNamespace;
     }
 
     protected function discoverComponents(string $baseClass, array &$register, ?string $directory, ?string $namespace): void

@@ -54,7 +54,8 @@ class Page extends Component implements HasActions, RendersFormComponentActionMo
             return;
         }
 
-        Filament::registerNavigationItems(static::getNavigationItems());
+        Filament::getCurrentContext()
+            ->navigationItems(static::getNavigationItems());
     }
 
     public static function getNavigationItems(): array

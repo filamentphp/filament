@@ -32,11 +32,11 @@ Route::middleware(config('filament.middleware.base'))
                         })->name('logout');
                     });
 
-                    $hasTenancy = $context->hasTenancy();
+                    $hasRoutableTenancy = $context->hasRoutableTenancy();
                     $tenantSlugField = $context->getTenantSlugField();
 
                     Route::middleware(config('filament.middleware.auth'))
-                        ->prefix($hasTenancy ? ('{tenant' . (($tenantSlugField) ? ":{$tenantSlugField}" : '') . '}') : '')
+                        ->prefix($hasRoutableTenancy ? ('{tenant' . (($tenantSlugField) ? ":{$tenantSlugField}" : '') . '}') : '')
                         ->group(function () use ($context): void {
                             Route::name('pages.')->group(function () use ($context): void {
                                 foreach ($context->getPages() as $page) {
