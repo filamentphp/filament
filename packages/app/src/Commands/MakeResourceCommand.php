@@ -24,7 +24,7 @@ class MakeResourceCommand extends Command
         $path = config('filament.resources.path', app_path('Filament\\Resources\\'));
         $namespace = config('filament.resources.namespace', 'App\\Filament\\Resources');
 
-        $model = (string) Str::of($this->argument('name') ?? $this->askRequired('Model (e.g. `BlogPost`)', 'name'))
+        $model = (string) str($this->argument('name') ?? $this->askRequired('Model (e.g. `BlogPost`)', 'name'))
             ->studly()
             ->beforeLast('Resource')
             ->trim('/')
@@ -37,11 +37,11 @@ class MakeResourceCommand extends Command
             $model = 'Resource';
         }
 
-        $modelClass = (string) Str::of($model)->afterLast('\\');
-        $modelNamespace = Str::of($model)->contains('\\') ?
-            (string) Str::of($model)->beforeLast('\\') :
+        $modelClass = (string) str($model)->afterLast('\\');
+        $modelNamespace = str($model)->contains('\\') ?
+            (string) str($model)->beforeLast('\\') :
             '';
-        $pluralModelClass = (string) Str::of($modelClass)->pluralStudly();
+        $pluralModelClass = (string) str($modelClass)->pluralStudly();
 
         $resource = "{$model}Resource";
         $resourceClass = "{$modelClass}Resource";
@@ -54,7 +54,7 @@ class MakeResourceCommand extends Command
         $viewResourcePageClass = "View{$modelClass}";
 
         $baseResourcePath =
-            (string) Str::of($resource)
+            (string) str($resource)
                 ->prepend('/')
                 ->prepend($path)
                 ->replace('\\', '/')
