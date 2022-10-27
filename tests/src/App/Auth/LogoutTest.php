@@ -10,8 +10,8 @@ uses(TestCase::class);
 it('can log a user out', function () {
     $this
         ->actingAs(User::factory()->create())
-        ->post(route('filament.auth.logout'))
-        ->assertRedirect(route('filament.auth.login'));
+        ->post(route('filament.default.auth.logout'))
+        ->assertRedirect(route('filament.default.auth.login'));
 
     $this->assertGuest();
 });
@@ -29,6 +29,6 @@ it('allows a user to override the logout response', function () {
 
     $this
         ->actingAs(User::factory()->create())
-        ->post(route('filament.auth.logout'))
+        ->post(route('filament.default.auth.logout'))
         ->assertRedirect('https://example.com');
 });

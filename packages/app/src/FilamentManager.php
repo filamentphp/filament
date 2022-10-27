@@ -190,7 +190,7 @@ class FilamentManager
         $this->tenant = $tenant;
     }
 
-    public function hasLogin(): string
+    public function hasLogin(): bool
     {
         return $this->getCurrentContext()->hasLogin();
     }

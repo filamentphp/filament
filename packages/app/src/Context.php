@@ -15,6 +15,7 @@ use Filament\Pages\Page;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
 use Filament\Widgets\Widget;
+use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -265,7 +266,10 @@ class Context
 
     public function hasRoutableTenancy(): bool
     {
-        return $this->hasTenancy() && ($this->auth()->getProvider()->getModel() !== $this->getTenantModel());
+        /** @var EloquentUserProvider $userProvider */
+        $userProvider = $this->auth()->getProvider();
+
+        return $this->hasTenancy() && ($userProvider->getModel() !== $this->getTenantModel());
     }
 
     public function hasTenancy(): bool
