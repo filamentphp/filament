@@ -19,6 +19,9 @@ class MakeRelationManagerCommand extends Command
 
     public function handle(): int
     {
+        $resourcePath = config('filament.resources.path', app_path('Filament/Resources/'));
+        $resourceNamespace = config('filament.resources.namespace', 'App\\Filament\\Resources');
+
         $resource = (string) str($this->argument('resource') ?? $this->askRequired('Resource (e.g. `DepartmentResource`)', 'resource'))
             ->studly()
             ->trim('/')
@@ -39,12 +42,10 @@ class MakeRelationManagerCommand extends Command
         $recordTitleAttribute = (string) str($this->argument('recordTitleAttribute') ?? $this->askRequired('Title attribute (e.g. `name`)', 'title attribute'))
             ->trim(' ');
 
-        $path = app_path(
-            (string) str($managerClass)
-                ->prepend("Filament\\Resources\\{$resource}\\RelationManagers\\")
-                ->replace('\\', '/')
-                ->append('.php'),
-        );
+        $path = (string) str($managerClass)
+            ->prepend("{$resourcePath}/{$resource}/RelationManagers/")
+            ->replace('\\', '/')
+            ->append('.php');
 
         if (! $this->option('force') && $this->checkForCollision([
             $path,
@@ -122,7 +123,7 @@ class MakeRelationManagerCommand extends Command
 
         $this->copyStubToApp('RelationManager', $path, [
             'eloquentQuery' => $this->indentString($eloquentQuery, 1),
-            'namespace' => "App\\Filament\\Resources\\{$resource}\\RelationManagers",
+            'namespace' => "{$resourceNamespace}\\{$resource}\\RelationManagers",
             'managerClass' => $managerClass,
             'recordTitleAttribute' => $recordTitleAttribute,
             'relationship' => $relationship,

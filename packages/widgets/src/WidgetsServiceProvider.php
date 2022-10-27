@@ -20,25 +20,4 @@ class WidgetsServiceProvider extends PluginServiceProvider
             AlpineComponent::make('chart', __DIR__ . '/../dist/components/chart.js'),
         ];
     }
-
-    protected function getCommands(): array
-    {
-        $commands = [
-            Commands\MakeWidgetCommand::class,
-        ];
-
-        $aliases = [];
-
-        foreach ($commands as $command) {
-            $class = 'Filament\\Widgets\\Commands\\Aliases\\' . class_basename($command);
-
-            if (! class_exists($class)) {
-                continue;
-            }
-
-            $aliases[] = $class;
-        }
-
-        return array_merge($commands, $aliases);
-    }
 }

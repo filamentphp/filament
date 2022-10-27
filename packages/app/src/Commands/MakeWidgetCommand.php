@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Widgets\Commands;
+namespace Filament\Commands;
 
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanValidateInput;
@@ -18,8 +18,8 @@ class MakeWidgetCommand extends Command
 
     public function handle(): int
     {
-        $path = config('filament.widgets.path', app_path('Filament\\Widgets\\'));
-        $resourcePath = config('filament.resources.path', app_path('Filament\\Resources\\'));
+        $path = config('filament.widgets.path', app_path('Filament/Widgets/'));
+        $resourcePath = config('filament.resources.path', app_path('Filament/Resources/'));
         $namespace = config('filament.widgets.namespace', 'App\\Filament\\Widgets');
         $resourceNamespace = config('filament.resources.namespace', 'App\\Filament\\Resources');
 

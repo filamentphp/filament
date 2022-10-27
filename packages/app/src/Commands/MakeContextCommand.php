@@ -29,7 +29,7 @@ class MakeContextCommand extends Command
 
         $path = app_path(
             (string) str($class)
-                ->prepend('Providers\\Filament\\')
+                ->prepend('Providers/Filament/')
                 ->replace('\\', '/')
                 ->append('.php'),
         );

@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament\Widgets\Commands\Aliases;
+namespace Filament\Commands\Aliases;
 
-use Filament\Widgets\Commands;
+use Filament\Commands;
 
 class MakeWidgetCommand extends Commands\MakeWidgetCommand
 {
