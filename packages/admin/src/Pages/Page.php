@@ -9,6 +9,7 @@ use Filament\Http\Livewire\Concerns\CanNotify;
 use Filament\Navigation\NavigationItem;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Contracts\RendersFormComponentActionModal;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -204,12 +205,12 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
         return 2;
     }
 
-    protected function getHeading(): string
+    protected function getHeading(): string | Htmlable
     {
         return $this->heading ?? $this->getTitle();
     }
 
-    protected function getSubheading(): ?string
+    protected function getSubheading(): string | Htmlable | null
     {
         return $this->subheading;
     }
