@@ -6,6 +6,7 @@ use Closure;
 use Filament\Context;
 use Filament\FilamentManager;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
+use Filament\Models\Contracts\HasTenants;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Contracts\Support\Htmlable;
@@ -34,13 +35,16 @@ use Illuminate\Support\Facades\Facade;
  * @method static string | null getTenantAvatarUrl(Model $tenant)
  * @method static string getTenantName(Model $tenant)
  * @method static string | Htmlable | null getTheme()
- * @method static string | null getUrl()
+ * @method static string | null getUrl(Model | null $tenant = null)
  * @method static string | null getUserAvatarUrl(Model | Authenticatable $user)
  * @method static array getUserMenuItems()
  * @method static string getUserName(Model | Authenticatable $user)
+ * @method static array getUserTenants(HasTenants $user)
  * @method static array getWidgets()
  * @method static void globalSearchProvider(string $provider, string $context = 'default')
  * @method static bool hasLogin()
+ * @method static bool hasTenancy()
+ * @method static bool hasRoutableTenancy()
  * @method static void navigation(Closure $builder, string $context = 'default')
  * @method static void registerContext(Context $context)
  * @method static void registerNavigationGroups(array $groups, string $context = 'default')

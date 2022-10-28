@@ -43,7 +43,7 @@
             @endif
 
             <a
-                href="{{ \Filament\Facades\Filament::getHomeUrl() }}"
+                href="{{ filament()->getHomeUrl() }}"
                 data-turbo="false"
                 @class([
                     'block w-full',
@@ -74,10 +74,18 @@
     </header>
 
     <nav class="flex-1 py-6 overflow-x-hidden overflow-y-auto filament-sidebar-nav">
-        {{ \Filament\Facades\Filament::renderHook('sidebar.start') }}
+        {{ filament()->renderHook('sidebar.start') }}
+
+        @if (filament()->hasRoutableTenancy())
+            <div class="px-6 space-y-6 mb-6">
+                <x-filament::layouts.app.sidebar.tenant-switcher />
+
+                <div class="border-t -mr-6 rtl:-mr-auto rtl:-ml-6 dark:border-gray-700"></div>
+            </div>
+        @endif
 
         @php
-            $navigation = \Filament\Facades\Filament::getNavigation();
+            $navigation = filament()->getNavigation();
 
             $collapsedNavigationGroupLabels = collect($navigation)
                 ->filter(fn (\Filament\Navigation\NavigationGroup $group): bool => $group->isCollapsed())
@@ -116,8 +124,8 @@
             @endforeach
         </ul>
 
-        {{ \Filament\Facades\Filament::renderHook('sidebar.end') }}
+        {{ filament()->renderHook('sidebar.end') }}
     </nav>
 
-    {{ \Filament\Facades\Filament::renderHook('sidebar.footer') }}
+    {{ filament()->renderHook('sidebar.footer') }}
 </aside>

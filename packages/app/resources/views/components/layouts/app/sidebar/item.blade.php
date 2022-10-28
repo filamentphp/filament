@@ -20,7 +20,7 @@
                         tooltip = false
                     } else {
                         tooltip = {
-                            content: {{ \Illuminate\Support\Js::from($slot->toHtml()) }},
+                            content: @js($slot->toHtml()),
                             theme: Alpine.store('theme') === 'light' ? 'dark' : 'light',
                             placement: document.dir === 'rtl' ? 'left' : 'right',
                         }
@@ -42,11 +42,12 @@
             class="shrink-0"
         />
 
-        <div class="flex flex-1"
+        <div
             @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
                 x-data="{}"
                 x-show="$store.sidebar.isOpen"
             @endif
+            class="flex flex-1"
         >
             <span>
                 {{ $slot }}

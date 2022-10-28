@@ -9,13 +9,13 @@
     class="antialiased bg-gray-100 filament js-focus-visible"
 >
     <head>
-        {{ \Filament\Facades\Filament::renderHook('head.start') }}
+        {{ filament()->renderHook('head.start') }}
 
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        @foreach (\Filament\Facades\Filament::getMeta() as $tag)
+        @foreach (filament()->getMeta() as $tag)
             {{ $tag }}
         @endforeach
 
@@ -25,7 +25,7 @@
 
         <title>{{ $title ? "{$title} - " : null }} {{ config('filament.brand') }}</title>
 
-        {{ \Filament\Facades\Filament::renderHook('styles.start') }}
+        {{ filament()->renderHook('styles.start') }}
 
         <style>
             [x-cloak=""], [x-cloak="x-cloak"], [x-cloak="1"] { display: none !important; }
@@ -47,7 +47,7 @@
 
         @filamentStyles
 
-        {{ \Filament\Facades\Filament::renderHook('styles.end') }}
+        {{ filament()->renderHook('styles.end') }}
 
         <script>
             const theme = localStorage.getItem('theme')
@@ -57,15 +57,15 @@
             }
         </script>
 
-        {{ \Filament\Facades\Filament::renderHook('head.end') }}
+        {{ filament()->renderHook('head.end') }}
     </head>
 
     <body class="filament-body bg-gray-100 text-gray-900 dark:text-gray-100 dark:bg-gray-900">
-        {{ \Filament\Facades\Filament::renderHook('body.start') }}
+        {{ filament()->renderHook('body.start') }}
 
         {{ $slot }}
 
-        {{ \Filament\Facades\Filament::renderHook('scripts.start') }}
+        {{ filament()->renderHook('scripts.start') }}
 
         @livewireScripts
 
@@ -85,8 +85,8 @@
             </script>
         @endif
 
-        {{ \Filament\Facades\Filament::renderHook('scripts.end') }}
+        {{ filament()->renderHook('scripts.end') }}
 
-        {{ \Filament\Facades\Filament::renderHook('body.end') }}
+        {{ filament()->renderHook('body.end') }}
     </body>
 </html>

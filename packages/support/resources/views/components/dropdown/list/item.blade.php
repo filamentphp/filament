@@ -2,6 +2,7 @@
     'color' => 'primary',
     'detail' => null,
     'icon' => null,
+    'image' => null,
     'keyBindings' => null,
     'tag' => 'button',
 ])
@@ -39,9 +40,11 @@
     $iconSize = 'h-5 w-5';
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-list-item-icon mr-2 rtl:ml-2 rtl:mr-0',
+        'filament-dropdown-list-item-icon flex-shrink-0 mr-2 rtl:ml-2 rtl:mr-0',
         'group-hover:text-white group-focus:text-white' => $hasHoverAndFocusState,
     ]);
+
+    $imageClasses = 'filament-dropdown-list-item-image flex-shrink-0 h-5 w-5 rounded-full bg-gray-200 bg-cover bg-center mr-2 dark:bg-gray-900 rtl:ml-2 rtl:mr-0';
 
     $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click'));
 
@@ -68,6 +71,13 @@
                 :wire:loading.remove.delay="$hasLoadingIndicator"
                 :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
             />
+        @endif
+
+        @if ($image)
+            <div
+                class="{{ $imageClasses }}"
+                style="background-image: url('{{ $image }}')"
+            ></div>
         @endif
 
         @if ($hasLoadingIndicator)
@@ -99,6 +109,13 @@
                 :size="$iconSize"
                 :class="$iconClasses"
             />
+        @endif
+
+        @if ($image)
+            <div
+                class="{{ $imageClasses }}"
+                style="background-image: url('{{ $image }}')"
+            ></div>
         @endif
 
         <span class="{{ $labelClasses }}">

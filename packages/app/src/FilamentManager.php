@@ -7,10 +7,13 @@ use Filament\Events\ServingFilament;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
+use Filament\Models\Contracts\HasTenants;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 
 class FilamentManager
@@ -195,6 +198,16 @@ class FilamentManager
         return $this->getCurrentContext()->hasLogin();
     }
 
+    public function hasTenancy(): bool
+    {
+        return $this->getCurrentContext()->hasTenancy();
+    }
+
+    public function hasRoutableTenancy(): bool
+    {
+        return $this->getCurrentContext()->hasRoutableTenancy();
+    }
+
     public function getAuthGuard(): string
     {
         return $this->getCurrentContext()->getAuthGuard();
@@ -255,9 +268,9 @@ class FilamentManager
         return $this->getCurrentContext()->getTheme();
     }
 
-    public function getUrl(): ?string
+    public function getUrl(?Model $tenant = null): ?string
     {
-        return $this->getCurrentContext()->getUrl();
+        return $this->getCurrentContext()->getUrl($tenant);
     }
 
     public function getTenantAvatarUrl(Model $tenant): string
@@ -310,6 +323,17 @@ class FilamentManager
         }
 
         return $user->getAttributeValue('name');
+    }
+
+    public function getUserTenants(HasTenants $user): array
+    {
+        $tenants = $user->getTenants($this->getCurrentContext());
+
+        if ($tenants instanceof Collection) {
+            $tenants = $tenants->all();
+        }
+
+        return $tenants;
     }
 
     public function getWidgets(): array

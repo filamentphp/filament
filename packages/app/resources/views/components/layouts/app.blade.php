@@ -46,11 +46,11 @@
                     default => $maxContentWidth,
                 },
             ])>
-                {{ \Filament\Facades\Filament::renderHook('content.start') }}
+                {{ filament()->renderHook('content.start') }}
 
                 {{ $slot }}
 
-                {{ \Filament\Facades\Filament::renderHook('content.end') }}
+                {{ filament()->renderHook('content.end') }}
             </div>
 
             <div class="filament-main-footer py-4 shrink-0">

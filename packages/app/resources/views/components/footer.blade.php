@@ -1,7 +1,7 @@
-{{ \Filament\Facades\Filament::renderHook('footer.before') }}
+{{ filament()->renderHook('footer.before') }}
 
 <div class="filament-footer flex items-center justify-center">
-    {{ \Filament\Facades\Filament::renderHook('footer.start') }}
+    {{ filament()->renderHook('footer.start') }}
 
     @if (config('filament.layout.footer.should_show_logo'))
         <a
@@ -19,7 +19,7 @@
         </a>
     @endif
 
-    {{ \Filament\Facades\Filament::renderHook('footer.end') }}
+    {{ filament()->renderHook('footer.end') }}
 </div>
 
-{{ \Filament\Facades\Filament::renderHook('footer.after') }}
+{{ filament()->renderHook('footer.after') }}

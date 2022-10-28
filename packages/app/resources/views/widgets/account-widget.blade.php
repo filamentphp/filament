@@ -1,18 +1,18 @@
 <x-filament-widgets::widget class="filament-account-widget">
     <x-filament-widgets::card>
         @php
-            $user = \Filament\Facades\Filament::auth()->user();
+            $user = filament()->auth()->user();
         @endphp
 
         <div class="h-12 flex items-center space-x-4 rtl:space-x-reverse">
             <x-filament::user-avatar :user="$user" />
 
             <div>
-                <h2 class="text-lg sm:text-xl font-bold tracking-tight">
-                    {{ __('filament::widgets/account-widget.welcome', ['user' => \Filament\Facades\Filament::getUserName($user)]) }}
+                <h2 class="text-lg font-bold tracking-tight sm:text-xl">
+                    {{ __('filament::widgets/account-widget.welcome', ['user' => filament()->getUserName($user)]) }}
                 </h2>
 
-                <form action="{{ \Filament\Facades\Filament::getLogoutUrl() }}" method="post" class="text-sm">
+                <form action="{{ filament()->getLogoutUrl() }}" method="post" class="text-sm">
                     @csrf
 
                     <button

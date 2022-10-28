@@ -2,12 +2,13 @@
 
 namespace Filament\Models\Contracts;
 
-use Illuminate\Contracts\Support\Arrayable;
+use Filament\Context;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 interface HasTenants
 {
     public function canAccessTenant(Model $tenant): bool;
 
-    public function getTenants(): array | Arrayable;
+    public function getTenants(Context $context): array | Collection;
 }

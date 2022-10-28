@@ -4,6 +4,7 @@ namespace Filament;
 
 use Closure;
 use Exception;
+use Filament\Facades\Filament;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 use Filament\Http\Livewire\Auth\Login;
@@ -456,13 +457,36 @@ class Context
         return $this->theme;
     }
 
-    public function getUrl(): ?string
+    public function getUrl(?Model $tenant = null): ?string
     {
         if (! $this->auth()->check()) {
             return $this->hasLogin() ? $this->getLoginUrl() : url($this->getPath());
         }
 
-        $firstGroup = Arr::first($this->getNavigation());
+        if ($tenant) {
+            $originalTenant = Filament::getTenant();
+            Filament::setTenant($tenant);
+
+            $isNavigationMountedOriginally = $this->isNavigationMounted;
+            $originalNavigationItems = $this->navigationItems;
+            $originalNavigationGroups = $this->navigationGroups;
+
+            $this->isNavigationMounted = false;
+            $this->navigationItems = [];
+            $this->navigationGroups = [];
+        }
+
+        $navigation = $this->getNavigation();
+
+        if ($tenant) {
+            Filament::setTenant($originalTenant);
+
+            $this->isNavigationMounted = $isNavigationMountedOriginally;
+            $this->navigationItems = $originalNavigationItems;
+            $this->navigationGroups = $originalNavigationGroups;
+        }
+
+        $firstGroup = Arr::first($navigation);
 
         if (! $firstGroup) {
             return null;

@@ -1,6 +1,6 @@
 @php
-    $user = \Filament\Facades\Filament::auth()->user();
-    $items = \Filament\Facades\Filament::getUserMenuItems();
+    $user = filament()->auth()->user();
+    $items = filament()->getUserMenuItems();
 
     $accountItem = $items['account'] ?? null;
     $accountItemUrl = $accountItem?->getUrl();
@@ -8,7 +8,7 @@
     $logoutItem = $items['logout'] ?? null;
 @endphp
 
-{{ \Filament\Facades\Filament::renderHook('user-menu.start') }}
+{{ filament()->renderHook('user-menu.start') }}
 
 <x-filament::dropdown placement="bottom-end">
     <x-slot name="trigger" class="ml-4">
@@ -17,7 +17,7 @@
         </button>
     </x-slot>
 
-    {{ \Filament\Facades\Filament::renderHook('user-menu.account.before') }}
+    {{ filament()->renderHook('user-menu.account.before') }}
 
     <x-filament::dropdown.header
         :color="$accountItem?->getColor() ?? 'secondary'"
@@ -25,10 +25,10 @@
         :href="$accountItemUrl"
         :tag="filled($accountItemUrl) ? 'a' : 'div'"
     >
-        {{ $accountItem?->getLabel() ?? \Filament\Facades\Filament::getUserName($user) }}
+        {{ $accountItem?->getLabel() ?? filament()->getUserName($user) }}
     </x-filament::dropdown.header>
 
-    {{ \Filament\Facades\Filament::renderHook('user-menu.account.after') }}
+    {{ filament()->renderHook('user-menu.account.after') }}
 
     <x-filament::dropdown.list
         x-data="{
@@ -102,7 +102,7 @@
         <x-filament::dropdown.list.item
             :color="$logoutItem?->getColor() ?? 'secondary'"
             :icon="$logoutItem?->getIcon() ?? 'heroicon-m-arrow-left-on-rectangle'"
-            :action="$logoutItem?->getUrl() ?? \Filament\Facades\Filament::getLogoutUrl()"
+            :action="$logoutItem?->getUrl() ?? filament()->getLogoutUrl()"
             method="post"
             tag="form"
         >
@@ -111,4 +111,4 @@
     </x-filament::dropdown.list>
 </x-filament::dropdown>
 
-{{ \Filament\Facades\Filament::renderHook('user-menu.end') }}
+{{ filament()->renderHook('user-menu.end') }}
