@@ -77,6 +77,8 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')->default('John')
 ```
 
+Note that inside the admin panel this only works on Create Pages, as Edit Pages will always fill the data from the model.
+
 ### Helper messages and hints
 
 Sometimes, you may wish to provide extra information for the user of the form. For this purpose, you may use helper messages and hints.
