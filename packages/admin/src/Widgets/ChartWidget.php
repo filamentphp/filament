@@ -24,6 +24,10 @@ class ChartWidget extends Widget
     {
         $this->dataChecksum = $this->generateDataChecksum();
     }
+    public function onChartClick($label = null, $value = null)
+    {
+
+    }
 
     protected function generateDataChecksum(): string
     {

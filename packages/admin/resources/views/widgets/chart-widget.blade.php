@@ -1,6 +1,7 @@
 @php
     $heading = $this->getHeading();
     $filters = $this->getFilters();
+    $chart_name  = \Illuminate\Support\Str::slug($heading, "_");
 @endphp
 
 <x-filament::widget class="filament-widgets-chart-widget">
@@ -36,6 +37,7 @@
 
         <div {!! ($pollingInterval = $this->getPollingInterval()) ? "wire:poll.{$pollingInterval}=\"updateChartData\"" : '' !!}>
             <canvas
+                id="{{$chart_name."_id"}}"
                 x-data="{
                     chart: null,
 
@@ -59,7 +61,7 @@
                         return this.chart = new Chart($el, {
                             type: '{{ $this->getType() }}',
                             data: this.applyColorToData(data),
-                            options: {{ json_encode($this->getOptions()) }} ?? {},
+                            options: {{ json_encode($this->getOptions()) }} ?? {'onClick' : {{ $chart_name."clickEvent" }}},
                         })
                     },
 
@@ -99,5 +101,19 @@
                 ></span>
             </canvas>
         </div>
+        <script>
+            function {{$chart_name."clickEvent"}}(e, i, r, y) {
+                const chart = Chart.getChart({{$chart_name."_id"}});
+
+                const points = chart.getElementsAtEventForMode(e, 'nearest', {intersect: true}, true);
+
+                if (points.length) {
+                    const firstPoint = points[0];
+                    const label = chart.data.labels[firstPoint.index];
+                    const value = chart.data.datasets[firstPoint.datasetIndex].data[firstPoint.index];
+                @this.onChartClick(label, value);
+                }
+            }
+        </script>
     </x-filament::card>
 </x-filament::widget>
