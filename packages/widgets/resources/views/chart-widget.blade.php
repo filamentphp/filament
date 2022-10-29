@@ -27,8 +27,6 @@
                     </select>
                 @endif
             </div>
-
-            <x-filament::hr />
         @endif
 
         <div {!! ($pollingInterval = $this->getPollingInterval()) ? "wire:poll.{$pollingInterval}=\"updateChartData\"" : '' !!}>
