@@ -9,7 +9,7 @@
 
 <div
     {{ $attributes->merge($getExtraAttributes())->class([
-        'filament-tables-text-column',
+        'filament-tables-text-column text-sm',
         'px-4 py-3' => ! $isInline(),
         'text-primary-600 transition hover:underline hover:text-primary-500 focus:underline focus:text-primary-500' => $getAction() || $getUrl(),
         match ($color = $getColor()) {
