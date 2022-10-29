@@ -22,7 +22,7 @@
                 default => $width,
             },
         ])>
-            <div class="p-8 space-y-4 bg-white/50 backdrop-blur-xl border border-gray-200 shadow-2xl rounded-xl relative dark:bg-gray-900/50 dark:border-gray-700">
+            <div class="relative space-y-4 rounded-xl bg-white/50 p-8 shadow-2xl ring-1 ring-gray-900/10 backdrop-blur-xl dark:bg-gray-900/50 dark:ring-gray-50/10">
                 <div class="flex justify-center w-full">
                     <x-filament::brand />
                 </div>

@@ -17,7 +17,7 @@
     {{
         $attributes
             ->merge($extraAttributes)
-            ->class(['filament-stats-card relative p-6 rounded-xl bg-white shadow dark:bg-gray-800'])
+            ->class(['filament-stats-card relative rounded-xl bg-white p-6 shadow ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10'])
     }}
 >
     <div @class([
