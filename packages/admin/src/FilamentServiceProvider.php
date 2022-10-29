@@ -232,6 +232,10 @@ class FilamentServiceProvider extends PluginServiceProvider
                             ->replace(['/'], ['\\']),
                     ) : null;
 
+                    if (is_string($variableNamespace)) {
+                        $variableNamespace = explode('\\', $variableNamespace)[0];
+                    }
+
                     return (string) $namespace
                         ->append('\\', $file->getRelativePathname())
                         ->replace('*', $variableNamespace)
