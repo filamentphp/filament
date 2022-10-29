@@ -17,7 +17,7 @@
     {{
         $attributes
             ->merge($extraAttributes)
-            ->class(['filament-stats-card relative p-6 rounded-2xl bg-white shadow dark:bg-gray-800'])
+            ->class(['filament-stats-card relative p-6 rounded-xl bg-white shadow dark:bg-gray-800'])
     }}
 >
     <div @class([
@@ -124,7 +124,7 @@
                     this.chart.update()
                 },
             }"
-            class="absolute bottom-0 inset-x-0 rounded-b-2xl overflow-hidden"
+            class="absolute bottom-0 inset-x-0 rounded-b-xl overflow-hidden"
         >
             <canvas
                 wire:ignore

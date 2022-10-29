@@ -55,7 +55,7 @@
 
             @if (filled($badge))
                 <span @class([
-                    'inline-flex items-center justify-center ml-auto rtl:ml-0 rtl:mr-auto min-h-4 px-2 py-0.5 text-xs font-medium tracking-tight rounded-xl whitespace-normal',
+                    'inline-flex items-center justify-center ml-auto rtl:ml-0 rtl:mr-auto min-h-4 px-2 py-0.5 text-xs font-medium tracking-tight rounded-full whitespace-normal',
                     match ($active) {
                         true => 'text-white bg-white/20',
                         false => match ($badgeColor) {
