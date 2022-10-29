@@ -55,8 +55,8 @@
             'cursor-pointer' => $isCollapsible,
         ])>
             <h3 @class([
-                'font-bold tracking-tight pointer-events-none',
-                'text-xl font-bold'=> ! $isCompact,
+                'font-semibold tracking-tight pointer-events-none',
+                'text-xl'=> ! $isCompact,
             ])>
                 {{ $getHeading() }}
             </h3>
