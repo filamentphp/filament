@@ -40,6 +40,18 @@ class DateTimePicker extends Field
 
     protected array | Closure $disabledDates = [];
 
+    public static int $defaultFirstDayOfWeek = 1;
+
+    public static string $defaultDateDisplayFormat = 'M j, Y';
+
+    public static string $defaultDateTimeDisplayFormat = 'M j, Y H:i';
+
+    public static string $defaultDateTimeWithSecondsDisplayFormat = 'M j, Y H:i:s';
+
+    public static string $defaultTimeDisplayFormat = 'H:i';
+
+    public static string $defaultTimeWithSecondsDisplayFormat = 'H:i:s';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -209,18 +221,18 @@ class DateTimePicker extends Field
         }
 
         if (! $this->hasTime()) {
-            return config('filament-forms.components.date_time_picker.display_formats.date', 'M j, Y');
+            return static::$defaultDateDisplayFormat;
         }
 
         if (! $this->hasDate()) {
             return $this->hasSeconds() ?
-                config('filament-forms.components.date_time_picker.display_formats.time_with_seconds', 'H:i:s') :
-                config('filament-forms.components.date_time_picker.display_formats.time', 'H:i');
+                static::$defaultTimeWithSecondsDisplayFormat :
+                static::$defaultTimeDisplayFormat;
         }
 
         return $this->hasSeconds() ?
-            config('filament-forms.components.date_time_picker.display_formats.date_time_with_seconds', 'M j, Y H:i:s') :
-            config('filament-forms.components.date_time_picker.display_formats.date_time', 'M j, Y H:i');
+            static::$defaultDateTimeWithSecondsDisplayFormat :
+            static::$defaultDateTimeDisplayFormat;
     }
 
     public function getExtraTriggerAttributes(): array
@@ -235,7 +247,7 @@ class DateTimePicker extends Field
 
     public function getFirstDayOfWeek(): int
     {
-        return $this->firstDayOfWeek ?? $this->getDefaultFirstDayOfWeek();
+        return $this->firstDayOfWeek ?? static::$defaultFirstDayOfWeek;
     }
 
     public function getFormat(): string
@@ -299,10 +311,5 @@ class DateTimePicker extends Field
     public function shouldCloseOnDateSelection(): bool
     {
         return $this->evaluate($this->shouldCloseOnDateSelection);
-    }
-
-    public function getDefaultFirstDayOfWeek(): int
-    {
-        return config('filament-forms.components.date_time_picker.first_day_of_week', 1);
     }
 }

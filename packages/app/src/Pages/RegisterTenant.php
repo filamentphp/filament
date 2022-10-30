@@ -111,8 +111,7 @@ abstract class RegisterTenant extends Component implements HasForms
             'form' => $this->form(
                 $this->makeForm()
                     ->model($this->getModel())
-                    ->statePath('data')
-                    ->inlineLabel(config('filament.layout.forms.have_inline_labels')),
+                    ->statePath('data'),
             ),
         ];
     }

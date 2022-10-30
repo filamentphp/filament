@@ -49,7 +49,7 @@ trait CanPaginateRecords
     {
         $option = session()->get(
             $this->getTablePerPageSessionKey(),
-            $this->defaultTableRecordsPerPageSelectOption ?? $this->getTable()->getDefaultPaginationPageOption() ?? config('filament-tables.pagination.default_records_per_page'),
+            $this->defaultTableRecordsPerPageSelectOption ?? $this->getTable()->getDefaultPaginationPageOption(),
         );
 
         $pageOptions = $this->getTable()->getPaginationPageOptions();

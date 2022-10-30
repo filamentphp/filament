@@ -2,12 +2,12 @@
     <div
         @class([
             'filament-notifications pointer-events-none fixed inset-4 z-50 mx-auto flex justify-end gap-3',
-            match (config('filament-notifications.layout.alignment.horizontal')) {
+            match (static::$horizontalAlignment) {
                 'left' => 'items-start',
                 'center' => 'items-center',
                 'right' => 'items-end',
             },
-            match (config('filament-notifications.layout.alignment.vertical')) {
+            match (static::$verticalAlignment) {
                 'top' => 'flex-col-reverse',
                 'bottom' => 'flex-col',
             },

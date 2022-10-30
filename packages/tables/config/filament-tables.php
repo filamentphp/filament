@@ -4,20 +4,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Date / Time Formatting
-    |--------------------------------------------------------------------------
-    |
-    | These are the formats that Filament will use to display dates and times
-    | by default.
-    |
-    */
-
-    'date_format' => 'M j, Y',
-    'date_time_format' => 'M j, Y H:i:s',
-    'time_format' => 'H:i:s',
-
-    /*
-    |--------------------------------------------------------------------------
     | Default Filesystem Disk
     |--------------------------------------------------------------------------
     |
@@ -27,41 +13,5 @@ return [
     */
 
     'default_filesystem_disk' => env('TABLES_FILESYSTEM_DISK', 'public'),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Pagination
-    |--------------------------------------------------------------------------
-    |
-    | This is the configuration for the pagination of tables.
-    |
-    */
-
-    'pagination' => [
-        'default_records_per_page' => 10,
-        'records_per_page_select_options' => [5, 10, 25, 50, 'all'],
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Layout
-    |--------------------------------------------------------------------------
-    |
-    | This is the configuration for the general layout of tables.
-    |
-    */
-
-    'layout' => [
-        'actions' => [
-            'cell' => [
-                'alignment' => 'right',
-            ],
-            'modal' => [
-                'actions' => [
-                    'alignment' => 'left',
-                ],
-            ],
-        ],
-    ],
 
 ];

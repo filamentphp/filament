@@ -24,6 +24,16 @@ class Notifications extends Component
         'notificationClosed' => 'removeNotification',
     ];
 
+    public static bool $hasDatabaseNotifications = false;
+
+    public static ?string $databaseNotificationsTrigger = null;
+
+    public static ?string $databaseNotificationsPollingInterval = '30s';
+
+    public static string $horizontalAlignment = 'right';
+
+    public static string $verticalAlignment = 'top';
+
     public function mount(): void
     {
         $this->notifications = new Collection();
@@ -117,17 +127,17 @@ class Notifications extends Component
 
     public function hasDatabaseNotifications(): bool
     {
-        return $this->getUser() && config('filament-notifications.database.enabled');
+        return $this->getUser() && static::$hasDatabaseNotifications;
     }
 
     public function getPollingInterval(): ?string
     {
-        return config('filament-notifications.database.polling_interval');
+        return static::$databaseNotificationsPollingInterval;
     }
 
     public function getDatabaseNotificationsTrigger(): ?View
     {
-        $viewPath = config('filament-notifications.database.trigger');
+        $viewPath = static::$databaseNotificationsTrigger;
 
         if (blank($viewPath)) {
             return null;

@@ -3,6 +3,7 @@
     use Filament\Tables\Filters\Layout as FiltersLayout;
 
     $actions = $getActions();
+    $actionsAlignment = $getActionsAlignment();
     $actionsPosition = $getActionsPosition();
     $actionsColumnLabel = $getActionsColumnLabel();
     $columns = $getColumns();
@@ -712,6 +713,7 @@
                                     ])>
                                         <x-filament-tables::actions
                                             :actions="$actions"
+                                            :alignment="$actionsAlignment ?? 'left'"
                                             :record="$record"
                                         />
                                     </x-filament-tables::actions.cell>
@@ -735,6 +737,7 @@
                                     ])>
                                         <x-filament-tables::actions
                                             :actions="$actions"
+                                            :alignment="$actionsAlignment ?? 'left'"
                                             :record="$record"
                                         />
                                     </x-filament-tables::actions.cell>
@@ -767,6 +770,7 @@
                                     ])>
                                         <x-filament-tables::actions
                                             :actions="$actions"
+                                            :alignment="$actionsAlignment ?? 'right'"
                                             :record="$record"
                                         />
                                     </x-filament-tables::actions.cell>

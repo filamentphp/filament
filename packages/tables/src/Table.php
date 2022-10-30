@@ -47,6 +47,8 @@ class Table extends ViewComponent
 
     protected string | Closure | null $actionsColumnLabel = null;
 
+    protected string | Closure | null $actionsAlignment = null;
+
     protected string | Closure | null $actionsPosition = null;
 
     protected bool | Closure $allowsDuplicates = false;
@@ -149,6 +151,12 @@ class Table extends ViewComponent
 
     protected bool | Closure | null $selectsCurrentPageOnly = false;
 
+    public static string $defaultDateDisplayFormat = 'M j, Y';
+
+    public static string $defaultDateTimeDisplayFormat = 'M j, Y H:i:s';
+
+    public static string $defaultTimeDisplayFormat = 'H:i:s';
+
     final public function __construct(HasTable $livewire)
     {
         $this->livewire($livewire);
@@ -185,6 +193,13 @@ class Table extends ViewComponent
     public function actionsColumnLabel(string | Closure | null $label): static
     {
         $this->actionsColumnLabel = $label;
+
+        return $this;
+    }
+
+    public function actionsAlignment(string | Closure | null $alignment = null): static
+    {
+        $this->actionsAlignment = $alignment;
 
         return $this;
     }
@@ -644,6 +659,11 @@ class Table extends ViewComponent
         return Position::AfterContent;
     }
 
+    public function getActionsAlignment(): ?string
+    {
+        return $this->evaluate($this->actionsAlignment);
+    }
+
     public function getActionsColumnLabel(): ?string
     {
         return $this->evaluate($this->actionsColumnLabel);
@@ -714,7 +734,7 @@ class Table extends ViewComponent
 
     public function getDefaultPaginationPageOption(): int | string | null
     {
-        return $this->evaluate($this->defaultPaginationPageOption);
+        return $this->evaluate($this->defaultPaginationPageOption) ?? Arr::first($this->getPaginationPageOptions());
     }
 
     public function getDefaultSortColumn(): ?string
@@ -902,7 +922,7 @@ class Table extends ViewComponent
 
     public function getPaginationPageOptions(): array
     {
-        return $this->evaluate($this->paginationPageOptions) ?? config('filament-tables.pagination.records_per_page_select_options') ?? [5, 10, 25, 50, 'all'];
+        return $this->evaluate($this->paginationPageOptions) ?? [5, 10, 25, 50, 'all'];
     }
 
     public function getRecordAction(Model $record): ?string

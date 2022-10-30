@@ -3,11 +3,12 @@
 namespace Filament\AvatarProviders;
 
 use Filament\Facades\Filament;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
 class UiAvatarsProvider implements Contracts\AvatarProvider
 {
-    public function get(Model $user): string
+    public function get(Model | Authenticatable $user): string
     {
         $name = str(Filament::getUserName($user))
             ->trim()

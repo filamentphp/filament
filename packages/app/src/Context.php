@@ -4,6 +4,7 @@ namespace Filament;
 
 use Closure;
 use Exception;
+use Filament\AvatarProviders\UiAvatarsProvider;
 use Filament\Facades\Filament;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\DefaultGlobalSearchProvider;
@@ -104,6 +105,18 @@ class Context
     protected array $middleware = [];
 
     protected array $authMiddleware = [];
+
+    protected bool $hasDarkMode = true;
+
+    protected string $defaultAvatarProvider = UiAvatarsProvider::class;
+
+    protected ?string $brandName = null;
+
+    protected bool $hasDatabaseNotifications = false;
+
+    protected ?string $databaseNotificationsPolling = '30s';
+
+    protected ?string $googleFonts = 'https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap';
 
     public function default(bool $condition = true): static
     {
@@ -347,6 +360,48 @@ class Context
     public function tenantRegistrationPage(?string $page): static
     {
         $this->tenantRegistrationPage = $page;
+
+        return $this;
+    }
+
+    public function darkMode(bool $condition = true): static
+    {
+        $this->hasDarkMode = $condition;
+
+        return $this;
+    }
+
+    public function avatarProvider(string $provider): static
+    {
+        $this->defaultAvatarProvider = $provider;
+
+        return $this;
+    }
+
+    public function brandName(?string $name): static
+    {
+        $this->brandName = $name;
+
+        return $this;
+    }
+
+    public function databaseNotifications(bool $condition = true): static
+    {
+        $this->hasDatabaseNotifications = $condition;
+
+        return $this;
+    }
+
+    public function databaseNotificationsPolling(?string $interval): static
+    {
+        $this->databaseNotificationsPolling = $interval;
+
+        return $this;
+    }
+
+    public function googleFonts(?string $url): static
+    {
+        $this->googleFonts = $url;
 
         return $this;
     }
@@ -792,6 +847,36 @@ class Context
     public function isDefault(): bool
     {
         return $this->isDefault;
+    }
+
+    public function hasDarkMode(): bool
+    {
+        return $this->hasDarkMode;
+    }
+
+    public function getDefaultAvatarProvider(): string
+    {
+        return $this->defaultAvatarProvider;
+    }
+
+    public function getBrandName(): string
+    {
+        return $this->brandName ?? config('app.name');
+    }
+
+    public function hasDatabaseNotifications(): bool
+    {
+        return $this->hasDatabaseNotifications;
+    }
+
+    public function getDatabaseNotificationsPollingInterval(): ?string
+    {
+        return $this->databaseNotificationsPolling;
+    }
+
+    public function getGoogleFonts(): ?string
+    {
+        return $this->googleFonts;
     }
 
     protected function discoverComponents(string $baseClass, array &$register, ?string $directory, ?string $namespace): void

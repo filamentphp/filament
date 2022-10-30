@@ -6,10 +6,10 @@
     ])
     :x-transition:enter-start="\Illuminate\Support\Arr::toCssClasses([
         'opacity-0',
-        match (config('filament-notifications.layout.alignment.horizontal')) {
+        match (static::$horizontalAlignment) {
             'left' => '-translate-x-12',
             'right' => 'translate-x-12',
-            'center' => match (config('filament-notifications.layout.alignment.vertical')) {
+            'center' => match (static::$verticalAlignment) {
                 'top' => '-translate-y-12',
                 'bottom' => 'translate-y-12',
             },

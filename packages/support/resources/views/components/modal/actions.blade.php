@@ -1,5 +1,5 @@
 @props([
-    'alignment' => config('filament.layout.actions.modal.actions.alignment') ?? config('filament-forms.components.actions.modal.actions.alignment') ?? config('filament-tables.layout.actions.modal.actions.alignment') ?? 'left',
+    'alignment' => \Filament\Actions\Modal\Actions\Action::getAlignment(),
     'fullWidth' => false,
 ])
 

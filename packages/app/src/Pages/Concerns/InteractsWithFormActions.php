@@ -10,6 +10,8 @@ trait InteractsWithFormActions
 {
     protected array $cachedFormActions = [];
 
+    public static string $formActionsAlignment = 'left';
+
     public function bootedInteractsWithFormActions(): void
     {
         $this->cacheFormActions();
@@ -53,5 +55,25 @@ trait InteractsWithFormActions
     protected function hasFullWidthFormActions(): bool
     {
         return false;
+    }
+
+    public static function alignFormActionsLeft(): void
+    {
+        static::$formActionsAlignment = 'left';
+    }
+
+    public static function alignFormActionsCenter(): void
+    {
+        static::$formActionsAlignment = 'center';
+    }
+
+    public static function alignFormActionsRight(): void
+    {
+        static::$formActionsAlignment = 'right';
+    }
+
+    public static function getFormActionsAlignment(): string
+    {
+        return static::$formActionsAlignment;
     }
 }

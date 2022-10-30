@@ -17,10 +17,32 @@ class Action extends StaticAction
 
     protected string $view = 'filament-actions::modal.actions.button-action';
 
+    public static string $alignment = 'left';
+
     public function button(): static
     {
         $this->view('filament-actions::modal.actions.button-action');
 
         return $this;
+    }
+
+    public static function alignLeft(): void
+    {
+        static::$alignment = 'left';
+    }
+
+    public static function alignCenter(): void
+    {
+        static::$alignment = 'center';
+    }
+
+    public static function alignRight(): void
+    {
+        static::$alignment = 'right';
+    }
+
+    public static function getAlignment(): string
+    {
+        return static::$alignment;
     }
 }

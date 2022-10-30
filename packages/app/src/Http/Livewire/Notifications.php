@@ -17,12 +17,12 @@ class Notifications extends BaseComponent
 
     public function hasDatabaseNotifications(): bool
     {
-        return $this->getUser() && config('filament.database_notifications.enabled');
+        return $this->getUser() && Filament::hasDatabaseNotifications();
     }
 
     public function getPollingInterval(): ?string
     {
-        return config('filament.database_notifications.polling_interval');
+        return Filament::getDatabaseNotificationsPollingInterval();
     }
 
     public function getDatabaseNotificationsTrigger(): View

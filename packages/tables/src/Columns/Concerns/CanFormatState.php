@@ -6,6 +6,7 @@ use Akaunting\Money;
 use Closure;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
@@ -24,7 +25,7 @@ trait CanFormatState
 
     public function date(?string $format = null, ?string $timezone = null): static
     {
-        $format ??= config('filament-tables.date_format');
+        $format ??= Table::$defaultDateDisplayFormat;
 
         $this->formatStateUsing(static function (Column $column, $state) use ($format, $timezone): ?string {
             /** @var TextColumn $column */
@@ -42,7 +43,7 @@ trait CanFormatState
 
     public function dateTime(?string $format = null, ?string $timezone = null): static
     {
-        $format ??= config('filament-tables.date_time_format');
+        $format ??= Table::$defaultDateTimeDisplayFormat;
 
         $this->date($format, $timezone);
 
@@ -149,7 +150,7 @@ trait CanFormatState
 
     public function time(?string $format = null, ?string $timezone = null): static
     {
-        $format ??= config('filament-tables.time_format');
+        $format ??= Table::$defaultTimeDisplayFormat;
 
         $this->date($format, $timezone);
 

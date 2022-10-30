@@ -27,6 +27,8 @@ class FilamentManager
 
     protected ?Model $tenant = null;
 
+    protected ?string $favicon = null;
+
     public function auth(): Guard
     {
         return $this->getCurrentContext()->auth();
@@ -130,6 +132,11 @@ class FilamentManager
     public function pushMeta(array $meta, ?string $context = null): void
     {
         $this->getContext($context)->meta($meta);
+    }
+
+    public function favicon(?string $url): void
+    {
+        $this->favicon = $url;
     }
 
     public function serving(Closure $callback): void
@@ -331,9 +338,7 @@ class FilamentManager
             return $avatar;
         }
 
-        $provider = config('filament.default_avatar_provider');
-
-        return app($provider)->get($tenant);
+        return app($this->getDefaultAvatarProvider())->get($tenant);
     }
 
     public function getTenantName(Model $tenant): string
@@ -357,9 +362,7 @@ class FilamentManager
             return $avatar;
         }
 
-        $provider = config('filament.default_avatar_provider');
-
-        return app($provider)->get($user);
+        return app($this->getDefaultAvatarProvider())->get($user);
     }
 
     public function getUserName(Model | Authenticatable $user): string
@@ -406,5 +409,40 @@ class FilamentManager
     public function getMeta(): array
     {
         return $this->getCurrentContext()->getMeta();
+    }
+
+    public function getFavicon(): ?string
+    {
+        return $this->favicon;
+    }
+
+    public function hasDarkMode(): bool
+    {
+        return $this->getCurrentContext()->hasDarkMode();
+    }
+
+    public function getBrandName(): string
+    {
+        return $this->getCurrentContext()->getBrandName();
+    }
+
+    public function hasDatabaseNotifications(): bool
+    {
+        return $this->getCurrentContext()->hasDatabaseNotifications();
+    }
+
+    public function getDatabaseNotificationsPollingInterval(): ?string
+    {
+        return $this->getCurrentContext()->getDatabaseNotificationsPollingInterval();
+    }
+
+    public function getGoogleFonts(): ?string
+    {
+        return $this->getCurrentContext()->getGoogleFonts();
+    }
+
+    public function getDefaultAvatarProvider(): string
+    {
+        return $this->getCurrentContext()->getDefaultAvatarProvider();
     }
 }

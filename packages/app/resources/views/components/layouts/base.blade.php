@@ -19,11 +19,11 @@
             {{ $tag }}
         @endforeach
 
-        @if ($favicon = config('filament.favicon'))
+        @if ($favicon = filament()->getFavicon())
             <link rel="icon" href="{{ $favicon }}">
         @endif
 
-        <title>{{ $title ? "{$title} - " : null }} {{ config('filament.brand') }}</title>
+        <title>{{ $title ? "{$title} - " : null }} {{ filament()->getBrandName() }}</title>
 
         {{ filament()->renderHook('styles.start') }}
 
@@ -39,7 +39,7 @@
 
         @livewireStyles
 
-        @if (filled($fontsUrl = config('filament.google_fonts')))
+        @if (filled($fontsUrl = filament()->getGoogleFonts()))
             <link rel="preconnect" href="https://fonts.googleapis.com">
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             <link href="{{ $fontsUrl }}" rel="stylesheet" />
@@ -49,13 +49,15 @@
 
         {{ filament()->renderHook('styles.end') }}
 
-        <script>
-            const theme = localStorage.getItem('theme')
+        @if (filament()->hasDarkMode())
+            <script>
+                const theme = localStorage.getItem('theme')
 
-            if ((theme === 'dark') || (! theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark')
-            }
-        </script>
+                if ((theme === 'dark') || (! theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark')
+                }
+            </script>
+        @endif
 
         {{ filament()->renderHook('head.end') }}
     </head>
