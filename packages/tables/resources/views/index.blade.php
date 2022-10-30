@@ -384,7 +384,10 @@
                                             x-show="column"
                                             x-model="direction"
                                             style="background-position: right 0.2rem center"
-                                            class="text-xs pl-2 pr-6 py-1 font-medium border-0 bg-gray-500/5 rounded-lg focus:ring-0 sm:text-sm"
+                                            @class([
+                                                'h-8 text-sm pr-8 leading-none transition duration-75 border-gray-300 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500',
+                                                'dark:text-white dark:bg-gray-700 dark:border-gray-600 dark:focus:border-primary-500' => config('tables.dark_mode'),
+                                            ])
                                         >
                                             <option value="asc">{{ __('tables::table.sorting.fields.direction.options.asc') }}</option>
                                             <option value="desc">{{ __('tables::table.sorting.fields.direction.options.desc') }}</option>
