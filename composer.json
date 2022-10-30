@@ -49,10 +49,7 @@
                 "packages/spatie-laravel-translatable-plugin/src"
             ],
             "Filament\\Actions\\": "packages/actions/src",
-            "Filament\\Billing\\Providers\\": [
-                "packages/spark-billing-provider/src",
-                "packages/stripe-billing-provider/src"
-            ],
+            "Filament\\Billing\\Providers\\": "packages/spark-billing-provider/src",
             "Filament\\Forms\\": "packages/forms/src",
             "Filament\\Navigation\\": "packages/navigation/src",
             "Filament\\Notifications\\": "packages/notifications/src",

@@ -21,7 +21,6 @@ jobs:
           - spatie-laravel-settings-plugin
           - spatie-laravel-tags-plugin
           - spatie-laravel-translatable-plugin
-          - stripe-billing-provider
           - support
           - tables
           - widgets
