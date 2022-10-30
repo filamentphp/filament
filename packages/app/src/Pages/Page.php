@@ -10,6 +10,7 @@ use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Contracts\RendersFormComponentActionModal;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
@@ -218,12 +219,12 @@ abstract class Page extends Component implements HasActions, RendersFormComponen
         return 2;
     }
 
-    protected function getHeading(): string
+    protected function getHeading(): string | Htmlable
     {
         return $this->heading ?? $this->getTitle();
     }
 
-    protected function getSubheading(): ?string
+    protected function getSubheading(): string | Htmlable | null
     {
         return $this->subheading;
     }

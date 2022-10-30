@@ -8,8 +8,16 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'Kloonaa',
+            ],
+
             'create_item' => [
                 'label' => 'Lisää :label',
+            ],
+
+            'create_item_between' => [
+                'label' => 'Sijoita',
             ],
 
             'delete_item' => [

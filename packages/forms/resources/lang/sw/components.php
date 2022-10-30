@@ -16,6 +16,10 @@ return [
                 'label' => 'Ongeza kwenye :label',
             ],
 
+            'create_item_between' => [
+                'label' => 'Ingiza',
+            ],
+
             'delete_item' => [
                 'label' => 'Futa',
             ],
