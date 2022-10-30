@@ -162,7 +162,7 @@ trait InteractsWithActions
         return (bool) count($this->getMountedActionForm()?->getComponents() ?? []);
     }
 
-    protected function cacheAction(Action $action, ?string $name = null): Action
+    public function cacheAction(Action $action, ?string $name = null): Action
     {
         $action->livewire($this);
 

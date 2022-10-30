@@ -314,10 +314,10 @@ The available hooks are as follows:
 - `styles.end` - after styles are defined
 - `global-search.start` - before [global search](resources/global-search) input
 - `global-search.end` - after [global search](resources/global-search) input
-- `tenant-switcher.start` - before tenant switcher dropdown
-- `tenant-switcher.end` - after tenant switcher dropdown
-- `user-menu.start` - before [user menu](navigation#customizing-the-user-menu) input
-- `user-menu.end` - after [user menu](navigation#customizing-the-user-menu) input
+- `tenant-menu.start` - before tenant menu
+- `tenant-menu.end` - after tenant menu
+- `user-menu.start` - before [user menu](navigation#customizing-the-user-menu)
+- `user-menu.end` - after [user menu](navigation#customizing-the-user-menu)
 - `user-menu.account.before` - before the account item in the [user menu](navigation#customizing-the-user-menu)
 - `user-menu.account.after` - after the account item in the [user menu](navigation#customizing-the-user-menu)
 - `page.header-widgets.start` - before page header widgets

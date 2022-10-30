@@ -4,16 +4,29 @@ namespace Filament;
 
 use Closure;
 use Filament\Events\ServingFilament;
+use Filament\Events\TenantSet;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
+use Filament\Http\Middleware\Authenticate;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Http\Middleware\MirrorConfigToSubpackages;
 use Filament\Models\Contracts\HasAvatar;
+use Filament\Models\Contracts\HasDefaultTenant;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\HasTenants;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class FilamentManager
 {
@@ -32,13 +45,27 @@ class FilamentManager
                 ->domain(config('filament.domain'))
                 ->homeUrl(config('filament.home_url'))
                 ->authGuard(config('filament.auth.guard'))
-                ->login(config('filament.auth.pages.login'))
+                ->loginPage(config('filament.auth.pages.login'))
                 ->pages(config('filament.pages.register') ?? [])
                 ->discoverPages(in: config('filament.pages.path'), for: config('filament.pages.namespace'))
                 ->resources(config('filament.resources.register') ?? [])
                 ->discoverResources(in: config('filament.resources.path'), for: config('filament.resources.namespace'))
                 ->widgets(config('filament.widgets.register') ?? [])
-                ->discoverWidgets(in: config('filament.widgets.path'), for: config('filament.widgets.namespace')),
+                ->discoverWidgets(in: config('filament.widgets.path'), for: config('filament.widgets.namespace'))
+                ->middleware([
+                    EncryptCookies::class,
+                    AddQueuedCookiesToResponse::class,
+                    StartSession::class,
+                    AuthenticateSession::class,
+                    ShareErrorsFromSession::class,
+                    VerifyCsrfToken::class,
+                    SubstituteBindings::class,
+                    DispatchServingFilamentEvent::class,
+                    MirrorConfigToSubpackages::class,
+                ])
+                ->authMiddleware([
+                    Authenticate::class,
+                ]),
         );
     }
 
@@ -123,6 +150,11 @@ class FilamentManager
         $this->registerTheme($theme);
     }
 
+    public function registerTenantMenuItems(array $items, string $context = 'default'): void
+    {
+        $this->getContext($context)->tenantMenuItems($items);
+    }
+
     public function registerUserMenuItems(array $items, string $context = 'default'): void
     {
         $this->getContext($context)->userMenuItems($items);
@@ -173,6 +205,11 @@ class FilamentManager
         return $this->tenant;
     }
 
+    public function getTenantModel(): ?string
+    {
+        return $this->getCurrentContext()->getTenantModel();
+    }
+
     public function getRoutableTenant(): ?Model
     {
         if (! $this->getCurrentContext()->hasRoutableTenancy()) {
@@ -190,6 +227,10 @@ class FilamentManager
     public function setTenant(?Model $tenant): void
     {
         $this->tenant = $tenant;
+
+        if ($tenant) {
+            event(new TenantSet($tenant, $this->auth()->user()));
+        }
     }
 
     public function hasLogin(): bool
@@ -200,6 +241,16 @@ class FilamentManager
     public function hasTenancy(): bool
     {
         return $this->getCurrentContext()->hasTenancy();
+    }
+
+    public function hasTenantBilling(): bool
+    {
+        return $this->getCurrentContext()->hasTenantBilling();
+    }
+
+    public function hasTenantRegistration(): bool
+    {
+        return $this->getCurrentContext()->hasTenantRegistration();
     }
 
     public function hasRoutableTenancy(): bool
@@ -220,6 +271,26 @@ class FilamentManager
     public function getLoginUrl(): ?string
     {
         return $this->getCurrentContext()->getLoginUrl();
+    }
+
+    public function getTenantBillingProvider(): ?Billing\Providers\Contracts\Provider
+    {
+        return $this->getCurrentContext()->getTenantBillingProvider();
+    }
+
+    public function getTenantBillingUrl(Model $tenant): ?string
+    {
+        return $this->getCurrentContext()->getTenantBillingUrl($tenant);
+    }
+
+    public function getTenantRegistrationPage(): ?string
+    {
+        return $this->getCurrentContext()->getTenantRegistrationPage();
+    }
+
+    public function getTenantRegistrationUrl(): ?string
+    {
+        return $this->getCurrentContext()->getTenantRegistrationUrl();
     }
 
     public function getLogoutUrl(): string
@@ -250,6 +321,11 @@ class FilamentManager
     public function getResources(): array
     {
         return $this->getCurrentContext()->getResources();
+    }
+
+    public function getTenantMenuItems(): array
+    {
+        return $this->getCurrentContext()->getTenantMenuItems();
     }
 
     public function getUserMenuItems(): array
@@ -324,7 +400,7 @@ class FilamentManager
         return $user->getAttributeValue('name');
     }
 
-    public function getUserTenants(HasTenants $user): array
+    public function getUserTenants(HasTenants | Model | Authenticatable $user): array
     {
         $tenants = $user->getTenants($this->getCurrentContext());
 
@@ -333,6 +409,22 @@ class FilamentManager
         }
 
         return $tenants;
+    }
+
+    public function getUserDefaultTenant(HasTenants | Model | Authenticatable $user): ?Model
+    {
+        $tenant = null;
+        $context = $this->getCurrentContext();
+
+        if ($user instanceof HasDefaultTenant) {
+            $tenant = $user->getDefaultTenant($context);
+        }
+
+        if (! $tenant) {
+            $tenant = Arr::first($this->getUserTenants($user));
+        }
+
+        return $tenant;
     }
 
     public function getWidgets(): array

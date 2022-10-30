@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Actions\ActionsServiceProvider;
+use Filament\Billing\Providers\StripeBillingProviderServiceProvider;
 use Filament\FilamentServiceProvider;
 use Filament\Forms\FormsServiceProvider;
 use Filament\Notifications\NotificationsServiceProvider;

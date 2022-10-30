@@ -15,10 +15,12 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
-class Page extends Component implements HasActions, RendersFormComponentActionModal
+abstract class Page extends Component implements HasActions, RendersFormComponentActionModal
 {
     use Concerns\InteractsWithHeaderActions;
     use InteractsWithActions;
+
+    protected static bool $isDiscovered = true;
 
     protected static string $layout = 'filament::components.layouts.app';
 
@@ -42,7 +44,7 @@ class Page extends Component implements HasActions, RendersFormComponentActionMo
 
     protected static string $view;
 
-    protected static string | array $middlewares = [];
+    protected static string | array $middleware = [];
 
     public static ?Closure $reportValidationErrorUsing = null;
 
@@ -85,13 +87,26 @@ class Page extends Component implements HasActions, RendersFormComponentActionMo
         $slug = static::getSlug();
 
         Route::get($slug, static::class)
-            ->middleware(static::getMiddlewares())
+            ->middleware(static::getMiddleware())
             ->name($slug);
     }
 
-    public static function getMiddlewares(): string | array
+    public static function getMiddleware(): string | array
     {
-        return static::$middlewares;
+        return array_merge(
+            (static::isTenantSubscriptionRequired() ? [static::getTenantSubscribedMiddleware()] : []),
+            static::$middleware,
+        );
+    }
+
+    public static function getTenantSubscribedMiddleware(): string
+    {
+        return Filament::getTenantBillingProvider()->getSubscribedMiddleware();
+    }
+
+    public static function isTenantSubscriptionRequired(): bool
+    {
+        return Filament::getCurrentContext()->isTenantSubscriptionRequired();
     }
 
     public static function getSlug(): string
@@ -237,6 +252,11 @@ class Page extends Component implements HasActions, RendersFormComponentActionMo
     protected function getViewData(): array
     {
         return [];
+    }
+
+    public static function isDiscovered(): bool
+    {
+        return static::$isDiscovered;
     }
 
     public static function shouldRegisterNavigation(): bool

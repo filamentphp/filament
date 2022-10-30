@@ -233,7 +233,9 @@ You may now access this data in your scripts:
 To register [user menu items](navigation#customizing-the-user-menu) from your plugin, return them from the `getUserMenuItems()` method in your service provider:
 
 ```php
-use Filament\Support\PluginServiceProvider;use Spatie\LaravelPackageTools\Package;use Vendor\Package\Pages\CustomPage;
+use Filament\Support\PluginServiceProvider;
+use Spatie\LaravelPackageTools\Package;
+use Vendor\Package\Pages\CustomPage;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
@@ -245,7 +247,7 @@ class ExampleServiceProvider extends PluginServiceProvider
     protected function getUserMenuItems(): array
     {
         return [
-            UserMenuItem::make()
+            MenuItem::make()
                 ->label('Settings')
                 ->url(route('filament.pages.settings'))
                 ->icon('heroicon-m-cog-6-tooth'),

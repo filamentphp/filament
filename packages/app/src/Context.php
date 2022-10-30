@@ -10,6 +10,7 @@ use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 use Filament\Http\Livewire\Auth\Login;
 use Filament\Http\Livewire\GlobalSearch;
 use Filament\Http\Livewire\Notifications;
+use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\UserMenuItem;
 use Filament\Pages\Page;
@@ -25,6 +26,7 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
+use Livewire\Component;
 use Livewire\Livewire;
 use ReflectionClass;
 use Symfony\Component\Finder\SplFileInfo;
@@ -43,7 +45,9 @@ class Context
 
     protected bool $isNavigationMounted = false;
 
-    protected ?string $login = null;
+    protected array $livewireComponents = [];
+
+    protected ?string $loginPage = null;
 
     protected array $navigationGroups = [];
 
@@ -65,11 +69,19 @@ class Context
 
     protected string $path = '';
 
+    protected bool $isTenantSubscriptionRequired = false;
+
+    protected ?Billing\Providers\Contracts\Provider $tenantBillingProvider = null;
+
     protected ?string $tenantModel = null;
+
+    protected ?string $tenantRegistrationPage = null;
 
     protected ?string $tenantSlugField = null;
 
     protected string | Htmlable | null $theme = null;
+
+    protected array $tenantMenuItems = [];
 
     protected array $userMenuItems = [];
 
@@ -82,6 +94,16 @@ class Context
     protected ?Closure $navigationBuilder = null;
 
     protected array $renderHooks = [];
+
+    protected ?Closure $routes = null;
+
+    protected ?Closure $authenticatedRoutes = null;
+
+    protected ?Closure $authenticatedTenantRoutes = null;
+
+    protected array $middleware = [];
+
+    protected array $authMiddleware = [];
 
     public function auth(): Guard
     {
@@ -147,9 +169,9 @@ class Context
         return $this;
     }
 
-    public function login(?string $component = Login::class): static
+    public function loginPage(?string $page = Login::class): static
     {
-        $this->login = $component;
+        $this->loginPage = $page;
 
         return $this;
     }
@@ -185,12 +207,23 @@ class Context
     {
         $this->pages = array_merge($this->pages, $pages);
 
+        foreach ($pages as $page) {
+            $this->queueLivewireComponentForRegistration($page);
+        }
+
         return $this;
     }
 
     public function path(string $path): static
     {
         $this->path = $path;
+
+        return $this;
+    }
+
+    public function requiresTenantSubscription(bool $condition = true): static
+    {
+        $this->isTenantSubscriptionRequired = $condition;
 
         return $this;
     }
@@ -216,6 +249,13 @@ class Context
         return $this;
     }
 
+    public function tenantMenuItems(array $items): static
+    {
+        $this->tenantMenuItems = array_merge($this->tenantMenuItems, $items);
+
+        return $this;
+    }
+
     public function userMenuItems(array $items): static
     {
         $this->userMenuItems = array_merge($this->userMenuItems, $items);
@@ -227,6 +267,10 @@ class Context
     {
         $this->widgets = array_merge($this->widgets, $widgets);
 
+        foreach ($widgets as $widget) {
+            $this->queueLivewireComponentForRegistration($widget);
+        }
+
         return $this;
     }
 
@@ -237,30 +281,65 @@ class Context
         return $this;
     }
 
-    public function getAuthGuard(): string
+    public function routes(?Closure $routes): static
     {
-        return $this->authGuard;
+        $this->routes = $routes;
+
+        return $this;
     }
 
-    public function getDomain(): ?string
+    public function authenticatedRoutes(?Closure $routes): static
     {
-        return $this->domain;
+        $this->authenticatedRoutes = $routes;
+
+        return $this;
     }
 
-    public function getRenderHook(string $name): Htmlable
+    public function authenticatedTenantRoutes(?Closure $routes): static
     {
-        $hooks = array_map(
-            fn (callable $hook): string => (string) app()->call($hook),
-            $this->renderHooks[$name] ?? [],
+        $this->authenticatedTenantRoutes = $routes;
+
+        return $this;
+    }
+
+    public function middleware(array $middleware): static
+    {
+        $this->middleware = array_merge(
+            $this->middleware,
+            $middleware,
         );
 
-        return new HtmlString(implode('', $hooks));
+        return $this;
+    }
+
+    public function authMiddleware(array $middleware): static
+    {
+        $this->authMiddleware = array_merge(
+            $this->authMiddleware,
+            $middleware,
+        );
+
+        return $this;
     }
 
     public function tenant(?string $model, ?string $slugField = null): static
     {
         $this->tenantModel = $model;
         $this->tenantSlugField = $slugField;
+
+        return $this;
+    }
+
+    public function tenantBillingProvider(?Billing\Providers\Contracts\Provider $provider): static
+    {
+        $this->tenantBillingProvider = $provider;
+
+        return $this;
+    }
+
+    public function tenantRegistrationPage(?string $page): static
+    {
+        $this->tenantRegistrationPage = $page;
 
         return $this;
     }
@@ -276,6 +355,31 @@ class Context
     public function hasTenancy(): bool
     {
         return filled($this->getTenantModel());
+    }
+
+    public function isTenantSubscriptionRequired(): bool
+    {
+        return $this->isTenantSubscriptionRequired;
+    }
+
+    public function hasTenantBilling(): bool
+    {
+        return filled($this->getTenantBillingProvider());
+    }
+
+    public function hasTenantRegistration(): bool
+    {
+        return filled($this->getTenantRegistrationPage());
+    }
+
+    public function getTenantBillingProvider(): ?Billing\Providers\Contracts\Provider
+    {
+        return $this->tenantBillingProvider;
+    }
+
+    public function getTenantRegistrationPage(): ?string
+    {
+        return $this->tenantRegistrationPage;
     }
 
     public function getGlobalSearchProvider(): GlobalSearchProvider
@@ -307,6 +411,26 @@ class Context
         return $record;
     }
 
+    public function getDomain(): ?string
+    {
+        return $this->domain;
+    }
+
+    public function getAuthGuard(): ?string
+    {
+        return $this->authGuard;
+    }
+
+    public function getRenderHook(string $name): Htmlable
+    {
+        $hooks = array_map(
+            fn (callable $hook): string => (string) app()->call($hook),
+            $this->renderHooks[$name] ?? [],
+        );
+
+        return new HtmlString(implode('', $hooks));
+    }
+
     public function getTenantModel(): ?string
     {
         return $this->tenantModel;
@@ -319,16 +443,49 @@ class Context
 
     public function getLoginUrl(): ?string
     {
-        if (! $this->login) {
+        if (! $this->hasLogin()) {
             return null;
         }
 
         return route("filament.{$this->getId()}.auth.login");
     }
 
+    public function getTenantBillingUrl(Model $tenant): ?string
+    {
+        if (! $this->hasTenantBilling()) {
+            return null;
+        }
+
+        return route("filament.{$this->getId()}.tenant.billing", [
+            'tenant' => $tenant,
+        ]);
+    }
+
+    public function getTenantRegistrationUrl(): ?string
+    {
+        if (! $this->hasTenantRegistration()) {
+            return null;
+        }
+
+        return route("filament.{$this->getId()}.tenant.registration");
+    }
+
     public function getLogoutUrl(): string
     {
         return route("filament.{$this->getId()}.auth.logout");
+    }
+
+    public function getMiddleware(): array
+    {
+        return array_merge(
+            $this->middleware,
+            ["context:{$this->getId()}"],
+        );
+    }
+
+    public function getAuthMiddleware(): array
+    {
+        return $this->authMiddleware;
     }
 
     public function getNavigation(): array
@@ -423,10 +580,32 @@ class Context
         return array_unique($this->resources);
     }
 
+    public function getRoutes(): ?Closure
+    {
+        return $this->routes;
+    }
+
+    public function getAuthenticatedRoutes(): ?Closure
+    {
+        return $this->authenticatedRoutes;
+    }
+
+    public function getAuthenticatedTenantRoutes(): ?Closure
+    {
+        return $this->authenticatedTenantRoutes;
+    }
+
+    public function getTenantMenuItems(): array
+    {
+        return collect($this->tenantMenuItems)
+            ->sort(fn (MenuItem $item): int => $item->getSort())
+            ->all();
+    }
+
     public function getUserMenuItems(): array
     {
         return collect($this->userMenuItems)
-            ->sort(fn (UserMenuItem $item): int => $item->getSort())
+            ->sort(fn (MenuItem $item): int => $item->getSort())
             ->all();
     }
 
@@ -514,14 +693,14 @@ class Context
         return array_unique($this->meta);
     }
 
-    public function getLogin(): ?string
+    public function getLoginPage(): ?string
     {
-        return $this->login;
+        return $this->loginPage;
     }
 
     public function hasLogin(): bool
     {
-        return filled($this->login);
+        return filled($this->getLoginPage());
     }
 
     public function discoverPages(string $in, string $for): static
@@ -613,64 +792,80 @@ class Context
 
         $namespace = str($namespace);
 
-        $register = array_merge(
-            $register,
-            collect($filesystem->allFiles($directory))
-                ->map(function (SplFileInfo $file) use ($namespace): string {
-                    $variableNamespace = $namespace->contains('*') ? str_ireplace(
-                        ['\\' . $namespace->before('*'), $namespace->after('*')],
-                        ['', ''],
-                        str($file->getPath())
-                            ->after(base_path())
-                            ->replace(['/'], ['\\']),
-                    ) : null;
+        foreach ($filesystem->allFiles($directory) as $file) {
+            $variableNamespace = $namespace->contains('*') ? str_ireplace(
+                ['\\' . $namespace->before('*'), $namespace->after('*')],
+                ['', ''],
+                str($file->getPath())
+                    ->after(base_path())
+                    ->replace(['/'], ['\\']),
+            ) : null;
 
-                    return (string) $namespace
-                        ->append('\\', $file->getRelativePathname())
-                        ->replace('*', $variableNamespace)
-                        ->replace(['/', '.php'], ['\\', '']);
-                })
-                ->filter(fn (string $class): bool => is_subclass_of($class, $baseClass) && (! (new ReflectionClass($class))->isAbstract()))
-                ->all(),
-        );
+            $class = (string) $namespace
+                ->append('\\', $file->getRelativePathname())
+                ->replace('*', $variableNamespace)
+                ->replace(['/', '.php'], ['\\', '']);
+
+            if ((new ReflectionClass($class))->isAbstract()) {
+                continue;
+            }
+
+            if (is_subclass_of($class, Component::class)) {
+                $this->queueLivewireComponentForRegistration($class);
+            }
+
+            if (! is_subclass_of($class, $baseClass)) {
+                continue;
+            }
+
+            if (! $class::isDiscovered()) {
+                continue;
+            }
+
+            $register[] = $class;
+        }
     }
 
     public function registerLivewireComponents(): void
     {
-        $components = array_merge(
-            ($this->hasLogin() ? [$this->getLogin()] : []),
-            [
-                GlobalSearch::class,
-                Notifications::class,
-            ],
-            $this->getPages(),
-            $this->getWidgets(),
-        );
+        $this->queueLivewireComponentForRegistration(GlobalSearch::class);
+        $this->queueLivewireComponentForRegistration(Notifications::class);
+
+        if ($this->hasLogin()) {
+            $this->queueLivewireComponentForRegistration($this->getLoginPage());
+        }
 
         foreach ($this->getResources() as $resource) {
-            foreach ($resource::getPages() as $page) {
-                $components[] = $page['class'];
+            foreach ($resource::getPages() as $pageRegistration) {
+                $this->queueLivewireComponentForRegistration($pageRegistration->getPage());
             }
 
             foreach ($resource::getRelations() as $relation) {
                 if ($relation instanceof RelationGroup) {
                     foreach ($relation->getManagers() as $groupedRelation) {
-                        $components[] = $groupedRelation;
+                        $this->queueLivewireComponentForRegistration($groupedRelation);
                     }
 
                     continue;
                 }
 
-                $components[] = $relation;
+                $this->queueLivewireComponentForRegistration($relation);
             }
 
             foreach ($resource::getWidgets() as $widget) {
-                $components[] = $widget;
+                $this->queueLivewireComponentForRegistration($widget);
             }
         }
 
-        foreach ($components as $component) {
-            Livewire::component($component::getName(), $component);
+        foreach ($this->livewireComponents as $alias => $component) {
+            Livewire::component($alias, $component);
         }
+
+        $this->livewireComponents = [];
+    }
+
+    protected function queueLivewireComponentForRegistration(string $component): void
+    {
+        $this->livewireComponents[$component::getName()] = $component;
     }
 }

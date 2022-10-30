@@ -20,13 +20,15 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 use Illuminate\Support\Traits\Macroable;
 
-class Resource
+abstract class Resource
 {
     use Macroable {
         Macroable::__call as dynamicMacroCall;
     }
 
     protected static ?string $breadcrumb = null;
+
+    protected static bool $isDiscovered = true;
 
     protected static bool $isGloballySearchable = true;
 
@@ -62,7 +64,7 @@ class Resource
 
     protected static ?string $slug = null;
 
-    protected static string | array $middlewares = [];
+    protected static string | array $middleware = [];
 
     protected static int $globalSearchResultsLimit = 50;
 
@@ -383,17 +385,27 @@ class Resource
 
         Route::name("{$slug}.")
             ->prefix($slug)
-            ->middleware(static::getMiddlewares())
+            ->middleware(static::getMiddleware())
             ->group(function () {
                 foreach (static::getPages() as $name => $page) {
-                    Route::get($page['route'], $page['class'])->name($name);
+                    $page->registerRoute()?->name($name);
                 }
             });
     }
 
-    public static function getMiddlewares(): string | array
+    public static function getMiddleware(): string | array
     {
-        return static::$middlewares;
+        return static::$middleware;
+    }
+
+    public static function getTenantSubscribedMiddleware(): string
+    {
+        return Filament::getTenantBillingProvider()->getSubscribedMiddleware();
+    }
+
+    public static function isTenantSubscriptionRequired(): bool
+    {
+        return Filament::getCurrentContext()->isTenantSubscriptionRequired();
     }
 
     public static function getSlug(): string
@@ -544,5 +556,10 @@ class Resource
     public static function shouldRegisterNavigation(): bool
     {
         return static::$shouldRegisterNavigation;
+    }
+
+    public static function isDiscovered(): bool
+    {
+        return static::$isDiscovered;
     }
 }

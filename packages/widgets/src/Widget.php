@@ -5,8 +5,10 @@ namespace Filament\Widgets;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class Widget extends Component
+abstract class Widget extends Component
 {
+    protected static bool $isDiscovered = true;
+
     protected static ?int $sort = null;
 
     protected static string $view;
@@ -31,6 +33,11 @@ class Widget extends Component
     protected function getViewData(): array
     {
         return [];
+    }
+
+    public static function isDiscovered(): bool
+    {
+        return static::$isDiscovered;
     }
 
     public function render(): View

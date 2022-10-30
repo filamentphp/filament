@@ -78,7 +78,7 @@
 
         @if (filament()->hasRoutableTenancy())
             <div class="px-6 space-y-6 mb-6">
-                <x-filament::layouts.app.sidebar.tenant-switcher />
+                <x-filament::tenant-menu />
 
                 <div class="border-t -mr-6 rtl:-mr-auto rtl:-ml-6 dark:border-gray-700"></div>
             </div>

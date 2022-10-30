@@ -5,6 +5,7 @@ namespace Filament\Pages;
 use Filament\Actions\Action;
 use Filament\Forms\ComponentContainer;
 use Filament\Notifications\Notification;
+use Filament\Support\Exceptions\Halt;
 
 /**
  * @property ComponentContainer $form
@@ -44,22 +45,26 @@ class SettingsPage extends Page
 
     public function save(): void
     {
-        $this->callHook('beforeValidate');
+        try {
+            $this->callHook('beforeValidate');
 
-        $data = $this->form->getState();
+            $data = $this->form->getState();
 
-        $this->callHook('afterValidate');
+            $this->callHook('afterValidate');
 
-        $data = $this->mutateFormDataBeforeSave($data);
+            $data = $this->mutateFormDataBeforeSave($data);
 
-        $this->callHook('beforeSave');
+            $this->callHook('beforeSave');
 
-        $settings = app(static::getSettings());
+            $settings = app(static::getSettings());
 
-        $settings->fill($data);
-        $settings->save();
+            $settings->fill($data);
+            $settings->save();
 
-        $this->callHook('afterSave');
+            $this->callHook('afterSave');
+        } catch (Halt $exception) {
+            return;
+        }
 
         $this->getSavedNotification()?->send();
 
@@ -111,9 +116,9 @@ class SettingsPage extends Page
     public static function getSettings(): string
     {
         return static::$settings ?? (string) str(class_basename(static::class))
-                ->beforeLast('Settings')
-                ->prepend('App\\Settings\\')
-                ->append('Settings');
+            ->beforeLast('Settings')
+            ->prepend('App\\Settings\\')
+            ->append('Settings');
     }
 
     public function getFormActions(): array
@@ -139,11 +144,12 @@ class SettingsPage extends Page
     protected function getForms(): array
     {
         return [
-            'form' => $this->makeForm()
-                ->schema($this->getFormSchema())
-                ->statePath('data')
-                ->columns(2)
-                ->inlineLabel(config('filament.layout.forms.have_inline_labels')),
+            'form' => $this->form(
+                $this->makeForm()
+                    ->statePath('data')
+                    ->columns(2)
+                    ->inlineLabel(config('filament.layout.forms.have_inline_labels')),
+            ),
         ];
     }
 

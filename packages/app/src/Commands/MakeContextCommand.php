@@ -15,7 +15,7 @@ class MakeContextCommand extends Command
     use CanManipulateFiles;
     use CanValidateInput;
 
-    protected $description = 'Creates a Filament context provider.';
+    protected $description = 'Creates a Filament context.';
 
     protected $signature = 'make:filament-context {id?} {--F|force}';
 
@@ -25,7 +25,7 @@ class MakeContextCommand extends Command
 
         $class = (string) str($id)
             ->ucfirst()
-            ->append('ContextProvider');
+            ->append('FilamentProvider');
 
         $path = app_path(
             (string) str($class)

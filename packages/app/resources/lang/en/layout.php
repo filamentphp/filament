@@ -6,6 +6,10 @@ return [
 
     'buttons' => [
 
+        'billing' => [
+            'label' => 'Manage subscription',
+        ],
+
         'dark_mode' => [
             'label' => 'Toggle dark mode',
         ],

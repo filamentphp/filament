@@ -14,6 +14,7 @@
         "danharrin/livewire-rate-limiting": "^0.3|^1.0",
         "doctrine/dbal": "^3.2",
         "filament/support": "*",
+        "laravel/cashier": "^14.2",
         "laravel/pint": "^1.0",
         "league/flysystem-aws-s3-v3": "^3.0",
         "nunomaduro/larastan": "^2.0",
@@ -36,6 +37,7 @@
     },
     "autoload": {
         "files": [
+            "packages/app/src/helpers.php",
             "packages/support/src/helpers.php"
         ],
         "psr-4": {
@@ -47,6 +49,10 @@
                 "packages/spatie-laravel-translatable-plugin/src"
             ],
             "Filament\\Actions\\": "packages/actions/src",
+            "Filament\\Billing\\Providers\\": [
+                "packages/spark-billing-provider/src",
+                "packages/stripe-billing-provider/src"
+            ],
             "Filament\\Forms\\": "packages/forms/src",
             "Filament\\Navigation\\": "packages/navigation/src",
             "Filament\\Notifications\\": "packages/notifications/src",

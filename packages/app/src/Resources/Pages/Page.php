@@ -2,21 +2,36 @@
 
 namespace Filament\Resources\Pages;
 
+use Closure;
+use Filament\Facades\Filament;
 use Filament\Pages\Page as BasePage;
 use Filament\Resources\Resource;
+use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Route as RouteFacade;
 
-class Page extends BasePage
+abstract class Page extends BasePage
 {
     protected static ?string $breadcrumb = null;
 
     protected static string $resource;
 
-    public static function route(string $path): array
+    public static function route(string $path): PageRegistration
     {
-        return [
-            'class' => static::class,
-            'route' => $path,
-        ];
+        return new PageRegistration(
+            page: static::class,
+            route: fn (): Route => RouteFacade::get($path, static::class)
+                ->middleware(static::getMiddleware()),
+        );
+    }
+
+    public static function getTenantSubscribedMiddleware(): string
+    {
+        return static::getResource()::getTenantSubscribedMiddleware();
+    }
+
+    public static function isTenantSubscriptionRequired(): bool
+    {
+        return static::getResource()::isTenantSubscriptionRequired();
     }
 
     public function getBreadcrumb(): ?string

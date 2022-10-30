@@ -4,16 +4,40 @@ namespace App\Providers\Filament;
 
 use Filament\Context;
 use Filament\ContextProvider;
+use Filament\Http\Middleware\Authenticate;
+use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Http\Middleware\MirrorConfigToSubpackages;
+use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\AuthenticateSession;
+use Illuminate\Session\Middleware\StartSession;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class {{ class }} extends ContextProvider
 {
-    public function context(Context $context): void
+    public function context(Context $context): Context
     {
-        $context
+        return $context
             ->id('{{ id }}')
             ->path('{{ id }}')
             ->discoverResources(in: app_path('Filament/{{ directory }}/Resources'), for: 'App\\Filament\\{{ directory }}\\Resources')
             ->discoverPages(in: app_path('Filament/{{ directory }}/Pages'), for: 'App\\Filament\\{{ directory }}\\Pages')
-            ->discoverWidgets(in: app_path('Filament/{{ directory }}/Widgets'), for: 'App\\Filament\\{{ directory }}\\Widgets');
+            ->discoverWidgets(in: app_path('Filament/{{ directory }}/Widgets'), for: 'App\\Filament\\{{ directory }}\\Widgets')
+            ->middleware([
+                EncryptCookies::class,
+                AddQueuedCookiesToResponse::class,
+                StartSession::class,
+                AuthenticateSession::class,
+                ShareErrorsFromSession::class,
+                VerifyCsrfToken::class,
+                SubstituteBindings::class,
+                DispatchServingFilamentEvent::class,
+                MirrorConfigToSubpackages::class,
+            ])
+            ->authMiddleware([
+                Authenticate::class,
+            ]);
     }
 }

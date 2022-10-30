@@ -16,10 +16,12 @@ jobs:
           - forms
           - navigation
           - notifications
+          - spark-billing-provider
           - spatie-laravel-media-library-plugin
           - spatie-laravel-settings-plugin
           - spatie-laravel-tags-plugin
           - spatie-laravel-translatable-plugin
+          - stripe-billing-provider
           - support
           - tables
           - widgets

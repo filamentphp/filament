@@ -5,7 +5,7 @@
         @endphp
 
         <div class="h-12 flex items-center space-x-4 rtl:space-x-reverse">
-            <x-filament::user-avatar :user="$user" />
+            <x-filament::avatar.user :user="$user" />
 
             <div>
                 <h2 class="text-xl font-semibold tracking-tight">

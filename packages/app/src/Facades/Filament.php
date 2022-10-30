@@ -3,6 +3,7 @@
 namespace Filament\Facades;
 
 use Closure;
+use Filament\Billing\Providers\Contracts\Provider as BillingProvider;
 use Filament\Context;
 use Filament\FilamentManager;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
@@ -33,17 +34,25 @@ use Illuminate\Support\Facades\Facade;
  * @method static Model | null getRoutableTenant()
  * @method static Model | null getTenant()
  * @method static string | null getTenantAvatarUrl(Model $tenant)
+ * @method static BillingProvider | null getTenantBillingProvider()
+ * @method static string | null getTenantBillingUrl(Model $tenant)
+ * @method static array getTenantMenuItems()
+ * @method static string | null getTenantModel()
  * @method static string getTenantName(Model $tenant)
+ * @method static string | null getTenantRegistrationPage()
+ * @method static string | null getTenantRegistrationUrl()
  * @method static string | Htmlable | null getTheme()
  * @method static string | null getUrl(Model | null $tenant = null)
  * @method static string | null getUserAvatarUrl(Model | Authenticatable $user)
+ * @method static Model | null getUserDefaultTenant(HasTenants | Model | Authenticatable $user)
  * @method static array getUserMenuItems()
  * @method static string getUserName(Model | Authenticatable $user)
- * @method static array getUserTenants(HasTenants $user)
+ * @method static array getUserTenants(HasTenants | Model | Authenticatable $user)
  * @method static array getWidgets()
  * @method static void globalSearchProvider(string $provider, string $context = 'default')
  * @method static bool hasLogin()
  * @method static bool hasTenancy()
+ * @method static bool hasTenantRegistration()
  * @method static bool hasRoutableTenancy()
  * @method static void navigation(Closure $builder, string $context = 'default')
  * @method static void registerContext(Context $context)
@@ -52,6 +61,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void registerPages(array $pages, string $context = 'default')
  * @method static void registerRenderHook(string $name, Closure $callback, string $context = 'default')
  * @method static void registerResources(array $resources, string $context = 'default')
+ * @method static void registerTenantMenuItems(array $items, string $context = 'default')
  * @method static void registerTheme(string | Htmlable | null $theme, string $context = 'default')
  * @method static void registerUserMenuItems(array $items, string $context = 'default')
  * @method static void registerWidgets(array $widgets, string $context = 'default')

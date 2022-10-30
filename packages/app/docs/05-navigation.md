@@ -187,11 +187,11 @@ To register new items to the user menu, you should use a service provider:
 
 ```php
 use Filament\Facades\Filament;
-use Filament\Navigation\UserMenuItem;
+use Filament\Navigation\MenuItem;
 
 Filament::serving(function () {
     Filament::registerUserMenuItems([
-        UserMenuItem::make()
+        MenuItem::make()
             ->label('Settings')
             ->url(route('filament.pages.settings'))
             ->icon('heroicon-m-cog-6-tooth'),
@@ -206,11 +206,11 @@ To customize the user account link at the start of the user menu, register a new
 
 ```php
 use Filament\Facades\Filament;
-use Filament\Navigation\UserMenuItem;
+use Filament\Navigation\MenuItem;
 
 Filament::serving(function () {
     Filament::registerUserMenuItems([
-        'account' => UserMenuItem::make()->url(route('filament.pages.account')),
+        'account' => MenuItem::make()->url(route('filament.pages.account')),
         // ...
     ]);
 });
@@ -222,12 +222,12 @@ To customize the user account link at the end of the user menu, register a new i
 
 ```php
 use Filament\Facades\Filament;
-use Filament\Navigation\UserMenuItem;
+use Filament\Navigation\MenuItem;
 
 Filament::serving(function () {
     Filament::registerUserMenuItems([
         // ...
-        'logout' => UserMenuItem::make()->label('Log out'),
+        'logout' => MenuItem::make()->label('Log out'),
     ]);
 });
 ```

@@ -6,6 +6,8 @@
     $accountItemUrl = $accountItem?->getUrl();
 
     $logoutItem = $items['logout'] ?? null;
+
+    $items = \Illuminate\Support\Arr::except($items, ['account', 'logout']);
 @endphp
 
 {{ filament()->renderHook('user-menu.start') }}
@@ -13,7 +15,7 @@
 <x-filament::dropdown placement="bottom-end">
     <x-slot name="trigger" class="ml-4">
         <button class="block" aria-label="{{ __('filament::layout.buttons.user_menu.label') }}">
-            <x-filament::user-avatar :user="$user" />
+            <x-filament::avatar.user :user="$user" />
         </button>
     </x-slot>
 
@@ -87,16 +89,14 @@
         </div>
 
         @foreach ($items as $key => $item)
-            @if ($key !== 'account' && $key !== 'logout')
-                <x-filament::dropdown.list.item
-                    :color="$item->getColor() ?? 'secondary'"
-                    :icon="$item->getIcon()"
-                    :href="$item->getUrl()"
-                    tag="a"
-                >
-                    {{ $item->getLabel() }}
-                </x-filament::dropdown.list.item>
-            @endif
+            <x-filament::dropdown.list.item
+                :color="$item->getColor() ?? 'secondary'"
+                :icon="$item->getIcon()"
+                :href="$item->getUrl()"
+                tag="a"
+            >
+                {{ $item->getLabel() }}
+            </x-filament::dropdown.list.item>
         @endforeach
 
         <x-filament::dropdown.list.item
