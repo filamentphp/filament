@@ -12,7 +12,6 @@
 
             <x-filament::form.actions
                 :actions="$this->getCachedFormActions()"
-                :alignment="static::getFormActionsAlignment()"
                 :full-width="$this->hasFullWidthFormActions()"
             />
         </x-filament::form>

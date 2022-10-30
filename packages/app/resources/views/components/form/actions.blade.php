@@ -1,12 +1,12 @@
 @props([
     'actions',
-    'alignment' => 'left',
+    'alignment' => null,
     'fullWidth' => false,
 ])
 
 <x-filament-actions::actions
     :actions="$actions"
-    :alignment="$alignment"
+    :alignment="$alignment ?? static::getFormActionsAlignment()"
     :full-width="$fullWidth"
     class="filament-form-actions"
 />

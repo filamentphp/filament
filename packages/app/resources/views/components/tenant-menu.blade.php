@@ -25,9 +25,9 @@
     <x-slot name="trigger">
         <div
             class="flex items-center space-x-3 -m-3 p-2 rounded-lg transition rtl:space-x-reverse hover:bg-gray-500/5 dark:hover:bg-gray-900/50"
-            @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
+            @if (\Filament\Navigation\Sidebar::$isCollapsibleOnDesktop)
                 x-data="{ tooltip: {} }"
-            x-init="
+                x-init="
                     Alpine.effect(() => {
                         if (Alpine.store('sidebar').isOpen) {
                             tooltip = false
@@ -52,9 +52,9 @@
             />
 
             <div
-                @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
+                @if (\Filament\Navigation\Sidebar::$isCollapsibleOnDesktop)
                     x-data="{}"
-                x-show="$store.sidebar.isOpen"
+                    x-show="$store.sidebar.isOpen"
                 @endif
             >
                 @if ($currentTenant instanceof \Filament\Models\Contracts\HasCurrentTenantLabel)

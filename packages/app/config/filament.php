@@ -27,32 +27,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Layout
-    |--------------------------------------------------------------------------
-    |
-    | This is the configuration for the general layout of Filament.
-    |
-    | You may configure the max content width from `xl` to `7xl`, or `full`
-    | for no max width.
-    |
-    */
-
-    'layout' => [
-        'forms' => [
-            'have_inline_labels' => false,
-        ],
-        'sidebar' => [
-            'is_collapsible_on_desktop' => false,
-            'groups' => [
-                'are_collapsible' => true,
-            ],
-            'width' => null,
-            'collapsed_width' => null,
-        ],
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Default Filesystem Disk
     |--------------------------------------------------------------------------
     |

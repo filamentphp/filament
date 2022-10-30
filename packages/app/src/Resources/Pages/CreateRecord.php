@@ -194,8 +194,8 @@ class CreateRecord extends Page
                 ->context('create')
                 ->model($this->getModel())
                 ->statePath('data')
-                ->columns(config('filament.layout.forms.have_inline_labels') ? 1 : 2)
-                ->inlineLabel(config('filament.layout.forms.have_inline_labels')),
+                ->columns(static::$formHasInlineLabels ? 1 : 2)
+                ->inlineLabel(static::$formHasInlineLabels),
         );
     }
 

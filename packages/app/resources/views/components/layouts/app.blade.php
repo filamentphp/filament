@@ -16,7 +16,7 @@
         <x-filament::layouts.app.sidebar />
 
         <div
-            @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
+            @if (\Filament\Navigation\Sidebar::$isCollapsibleOnDesktop)
                 x-data="{}"
                 x-bind:class="{
                     'lg:pl-[var(--collapsed-sidebar-width)] rtl:lg:pr-[var(--collapsed-sidebar-width)]': ! $store.sidebar.isOpen,
@@ -26,8 +26,8 @@
             @endif
             @class([
                 'filament-main flex-col gap-y-6 w-screen flex-1 rtl:lg:pl-0',
-                'hidden h-full transition-all' => config('filament.layout.sidebar.is_collapsible_on_desktop'),
-                'flex lg:pl-[var(--sidebar-width)] rtl:lg:pr-[var(--sidebar-width)]' => ! config('filament.layout.sidebar.is_collapsible_on_desktop'),
+                'hidden h-full transition-all' => \Filament\Navigation\Sidebar::$isCollapsibleOnDesktop,
+                'flex lg:pl-[var(--sidebar-width)] rtl:lg:pr-[var(--sidebar-width)]' => ! \Filament\Navigation\Sidebar::$isCollapsibleOnDesktop,
             ])
         >
             <x-filament::topbar :breadcrumbs="$breadcrumbs" />
