@@ -3,10 +3,7 @@
 namespace Filament\Http\Middleware;
 
 use Closure;
-use Filament\Context;
 use Filament\Facades\Filament;
-use Filament\Models\Contracts\HasTenants;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
 class SetUpContext
