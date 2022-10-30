@@ -28,7 +28,7 @@ abstract class RegisterTenant extends Component implements HasForms
 
     protected static string $slug = 'new';
 
-    abstract static function getLabel(): string;
+    abstract public static function getLabel(): string;
 
     public static function routes(Context $context): void
     {
