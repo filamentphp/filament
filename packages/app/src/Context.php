@@ -12,7 +12,6 @@ use Filament\Http\Livewire\GlobalSearch;
 use Filament\Http\Livewire\Notifications;
 use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
-use Filament\Navigation\UserMenuItem;
 use Filament\Pages\Page;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
@@ -29,7 +28,6 @@ use Illuminate\Support\HtmlString;
 use Livewire\Component;
 use Livewire\Livewire;
 use ReflectionClass;
-use Symfony\Component\Finder\SplFileInfo;
 
 class Context
 {

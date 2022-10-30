@@ -10,7 +10,8 @@ class PageRegistration
     public function __construct(
         protected string $page,
         protected Closure $route,
-    ) {}
+    ) {
+    }
 
     public function registerRoute(): ?Route
     {

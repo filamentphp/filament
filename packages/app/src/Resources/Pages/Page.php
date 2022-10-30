@@ -2,8 +2,6 @@
 
 namespace Filament\Resources\Pages;
 
-use Closure;
-use Filament\Facades\Filament;
 use Filament\Pages\Page as BasePage;
 use Filament\Resources\Resource;
 use Illuminate\Routing\Route;
