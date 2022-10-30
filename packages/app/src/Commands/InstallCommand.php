@@ -58,6 +58,6 @@ class InstallCommand extends Command
             ));
         }
 
-        $this->components->info("Successfully created AdminProvider.php!");
+        $this->components->info('Successfully created AdminProvider.php!');
     }
 }
