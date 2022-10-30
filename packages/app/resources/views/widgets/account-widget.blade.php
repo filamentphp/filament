@@ -8,7 +8,7 @@
             <x-filament::user-avatar :user="$user" />
 
             <div>
-                <h2 class="text-lg font-bold tracking-tight sm:text-xl">
+                <h2 class="text-xl font-semibold tracking-tight">
                     {{ __('filament::widgets/account-widget.welcome', ['user' => filament()->getUserName($user)]) }}
                 </h2>
 

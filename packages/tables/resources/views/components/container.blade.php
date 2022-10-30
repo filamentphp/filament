@@ -1,3 +1,3 @@
-<div {{ $attributes->class(['border border-gray-300 shadow-sm bg-white rounded-xl filament-tables-container dark:bg-gray-800 dark:border-gray-700']) }}>
+<div {{ $attributes->class(['filament-tables-container rounded-xl bg-white shadow ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10']) }}>
     {{ $slot }}
 </div>

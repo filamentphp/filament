@@ -32,7 +32,7 @@
     id="{{ $getId() }}"
     {{ $attributes->merge($getExtraAttributes())->class([
         'filament-forms-section-component',
-        'rounded-xl border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800' => ! $isAside,
+        'rounded-xl bg-white ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10' => ! $isAside,
         'grid grid-cols-1 md:grid-cols-2' => $isAside,
     ]) }}
     {{ $getExtraAlpineAttributeBag() }}
@@ -55,8 +55,8 @@
             'cursor-pointer' => $isCollapsible,
         ])>
             <h3 @class([
-                'font-bold tracking-tight pointer-events-none',
-                'text-xl font-bold'=> ! $isCompact,
+                'font-semibold tracking-tight pointer-events-none',
+                'text-xl'=> ! $isCompact,
             ])>
                 {{ $getHeading() }}
             </h3>
@@ -102,7 +102,7 @@
     >
         <div @class([
             'filament-forms-section-content',
-            'rounded-xl border border-gray-300 bg-white dark:border-gray-600 dark:bg-gray-800' => $isAside,
+            'rounded-xl bg-white ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10' => $isAside,
             'p-6' => ! $isCompact,
             'p-4' => $isCompact,
         ])>
