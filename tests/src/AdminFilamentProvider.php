@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Providers\Filament;
+namespace Filament\Tests;
 
 use Filament\Context;
 use Filament\ContextProvider;
@@ -17,16 +17,17 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-class {{ class }} extends ContextProvider
+class AdminFilamentProvider extends ContextProvider
 {
     public function context(Context $context): Context
     {
         return $context
-            ->id('{{ id }}')
-            ->path('{{ id }}')
-            ->discoverResources(in: app_path('Filament/{{ directory }}/Resources'), for: 'App\\Filament\\{{ directory }}\\Resources')
-            ->discoverPages(in: app_path('Filament/{{ directory }}/Pages'), for: 'App\\Filament\\{{ directory }}\\Pages')
-            ->discoverWidgets(in: app_path('Filament/{{ directory }}/Widgets'), for: 'App\\Filament\\{{ directory }}\\Widgets')
+            ->default()
+            ->id('admin')
+            ->loginPage()
+            ->pages([
+                Pages\Dashboard::class,
+            ])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

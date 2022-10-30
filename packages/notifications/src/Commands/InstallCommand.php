@@ -2,12 +2,15 @@
 
 namespace Filament\Notifications\Commands;
 
+use Filament\Support\Commands\Concerns\CanInstallUpgradeCommand;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 
 class InstallCommand extends Command
 {
+    use CanInstallUpgradeCommand;
+
     protected $signature = 'notifications:install';
 
     protected $description = 'Set up notifications CSS and JS in a fresh Laravel installation.';
@@ -23,6 +26,22 @@ class InstallCommand extends Command
         $this->components->info('Scaffolding installed successfully.');
 
         $this->components->info('Please run `npm install && npm run dev` to compile your new assets.');
+
+        $this->installUpgradeCommand();
+
+        if ($this->confirm('All done! Would you like to show some love by starring the Filament repo on GitHub?', true)) {
+            if (PHP_OS_FAMILY === 'Darwin') {
+                exec('open https://github.com/filamentphp/filament');
+            }
+            if (PHP_OS_FAMILY === 'Linux') {
+                exec('xdg-open https://github.com/filamentphp/filament');
+            }
+            if (PHP_OS_FAMILY === 'Windows') {
+                exec('start https://github.com/filamentphp/filament');
+            }
+
+            $this->components->info('Thank you!');
+        }
 
         return static::SUCCESS;
     }

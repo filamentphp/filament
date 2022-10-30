@@ -3,6 +3,7 @@
 namespace Filament\Resources\Pages;
 
 use Closure;
+use Filament\Context;
 use Filament\Facades\Filament;
 use Filament\Pages\Page as BasePage;
 use Filament\Resources\Resource;
@@ -19,19 +20,19 @@ abstract class Page extends BasePage
     {
         return new PageRegistration(
             page: static::class,
-            route: fn (): Route => RouteFacade::get($path, static::class)
-                ->middleware(static::getMiddleware()),
+            route: fn (Context $context): Route => RouteFacade::get($path, static::class)
+                ->middleware(static::getRouteMiddleware($context)),
         );
     }
 
-    public static function getTenantSubscribedMiddleware(): string
+    public static function getTenantSubscribedMiddleware(Context $context): string
     {
-        return static::getResource()::getTenantSubscribedMiddleware();
+        return static::getResource()::getTenantSubscribedMiddleware($context);
     }
 
-    public static function isTenantSubscriptionRequired(): bool
+    public static function isTenantSubscriptionRequired(Context $context): bool
     {
-        return static::getResource()::isTenantSubscriptionRequired();
+        return static::getResource()::isTenantSubscriptionRequired($context);
     }
 
     public function getBreadcrumb(): ?string

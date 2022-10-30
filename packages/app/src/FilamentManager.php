@@ -3,6 +3,7 @@
 namespace Filament;
 
 use Closure;
+use Exception;
 use Filament\Events\ServingFilament;
 use Filament\Events\TenantSet;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
@@ -36,39 +37,6 @@ class FilamentManager
 
     protected ?Model $tenant = null;
 
-    public function __construct()
-    {
-        $this->registerContext(
-            (new Context())
-                ->id('default')
-                ->path(config('filament.path'))
-                ->domain(config('filament.domain'))
-                ->homeUrl(config('filament.home_url'))
-                ->authGuard(config('filament.auth.guard'))
-                ->loginPage(config('filament.auth.pages.login'))
-                ->pages(config('filament.pages.register') ?? [])
-                ->discoverPages(in: config('filament.pages.path'), for: config('filament.pages.namespace'))
-                ->resources(config('filament.resources.register') ?? [])
-                ->discoverResources(in: config('filament.resources.path'), for: config('filament.resources.namespace'))
-                ->widgets(config('filament.widgets.register') ?? [])
-                ->discoverWidgets(in: config('filament.widgets.path'), for: config('filament.widgets.namespace'))
-                ->middleware([
-                    EncryptCookies::class,
-                    AddQueuedCookiesToResponse::class,
-                    StartSession::class,
-                    AuthenticateSession::class,
-                    ShareErrorsFromSession::class,
-                    VerifyCsrfToken::class,
-                    SubstituteBindings::class,
-                    DispatchServingFilamentEvent::class,
-                    MirrorConfigToSubpackages::class,
-                ])
-                ->authMiddleware([
-                    Authenticate::class,
-                ]),
-        );
-    }
-
     public function auth(): Guard
     {
         return $this->getCurrentContext()->auth();
@@ -79,7 +47,7 @@ class FilamentManager
         $this->getCurrentContext()->boot();
     }
 
-    public function navigation(Closure $builder, string $context = 'default'): void
+    public function navigation(Closure $builder, ?string $context = null): void
     {
         $this->getContext($context)->navigation($builder);
     }
@@ -89,7 +57,7 @@ class FilamentManager
         return $this->getCurrentContext()->buildNavigation();
     }
 
-    public function globalSearchProvider(string $provider, string $context = 'default'): void
+    public function globalSearchProvider(string $provider, ?string $context = null): void
     {
         $this->getContext($context)->globalSearchProvider($provider);
     }
@@ -102,34 +70,38 @@ class FilamentManager
     public function registerContext(Context $context): void
     {
         $this->contexts[$context->getId()] = $context;
+
+        if ($context->isDefault()) {
+            $this->setCurrentContext($context);
+        }
     }
 
-    public function registerNavigationGroups(array $groups, string $context = 'default'): void
+    public function registerNavigationGroups(array $groups, ?string $context = null): void
     {
         $this->getContext($context)->navigationGroups($groups);
     }
 
-    public function registerNavigationItems(array $items, string $context = 'default'): void
+    public function registerNavigationItems(array $items, ?string $context = null): void
     {
         $this->getContext($context)->navigationItems($items);
     }
 
-    public function registerPages(array $pages, string $context = 'default'): void
+    public function registerPages(array $pages, ?string $context = null): void
     {
         $this->getContext($context)->pages($pages);
     }
 
-    public function registerRenderHook(string $name, Closure $callback, string $context = 'default'): void
+    public function registerRenderHook(string $name, Closure $callback, ?string $context = null): void
     {
         $this->getContext($context)->renderHook($name, $callback);
     }
 
-    public function registerResources(array $resources, string $context = 'default'): void
+    public function registerResources(array $resources, ?string $context = null): void
     {
         $this->getContext($context)->resources($resources);
     }
 
-    public function registerTheme(string | Htmlable | null $theme, string $context = 'default'): void
+    public function registerTheme(string | Htmlable | null $theme, ?string $context = null): void
     {
         $this->getContext($context)->theme($theme);
     }
@@ -150,22 +122,22 @@ class FilamentManager
         $this->registerTheme($theme);
     }
 
-    public function registerTenantMenuItems(array $items, string $context = 'default'): void
+    public function registerTenantMenuItems(array $items, ?string $context = null): void
     {
         $this->getContext($context)->tenantMenuItems($items);
     }
 
-    public function registerUserMenuItems(array $items, string $context = 'default'): void
+    public function registerUserMenuItems(array $items, ?string $context = null): void
     {
         $this->getContext($context)->userMenuItems($items);
     }
 
-    public function registerWidgets(array $widgets, string $context = 'default'): void
+    public function registerWidgets(array $widgets, ?string $context = null): void
     {
         $this->getContext($context)->widgets($widgets);
     }
 
-    public function pushMeta(array $meta, string $context = 'default'): void
+    public function pushMeta(array $meta, ?string $context = null): void
     {
         $this->getContext($context)->meta($meta);
     }
@@ -180,19 +152,28 @@ class FilamentManager
         return $this->getCurrentContext()->getGlobalSearchProvider();
     }
 
-    public function renderHook(string $name, string $context = 'default'): Htmlable
+    public function renderHook(string $name): Htmlable
     {
         return $this->getCurrentContext()->getRenderHook($name);
     }
 
     public function getCurrentContext(): ?Context
     {
-        return $this->currentContext ?? $this->contexts['default'];
+        return $this->currentContext ?? null;
     }
 
-    public function getContext(string $id = 'default'): ?Context
+    public function getContext(?string $id = null): Context
     {
-        return $this->contexts[$id] ?? null;
+        return $this->contexts[$id] ?? $this->getDefaultContext();
+    }
+
+    public function getDefaultContext(): Context
+    {
+        return Arr::first(
+            $this->contexts,
+            fn (Context $context): bool => $context->isDefault(),
+            fn () => throw new Exception('No default Filament context is set. You may do this with the `default()` method inside a Filament provider\'s `context()` configuration.'),
+        );
     }
 
     public function getContexts(): array

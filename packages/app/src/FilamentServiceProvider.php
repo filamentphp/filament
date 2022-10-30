@@ -14,6 +14,7 @@ use Filament\Http\Responses\Auth\LogoutResponse;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\PluginServiceProvider;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
@@ -67,7 +68,7 @@ class FilamentServiceProvider extends PluginServiceProvider
     protected function getAssets(): array
     {
         return [
-            Css::make('app', __DIR__ . '/../dist/index.css')->html(Filament::getTheme()),
+            Css::make('app', __DIR__ . '/../dist/index.css')->html(fn (): string | Htmlable | null => Filament::getTheme()),
             Js::make('app', __DIR__ . '/../dist/index.js')->core(),
             Js::make('echo', __DIR__ . '/../dist/echo.js')->core(),
         ];
@@ -81,6 +82,7 @@ class FilamentServiceProvider extends PluginServiceProvider
     protected function getCommands(): array
     {
         $commands = [
+            Commands\InstallCommand::class,
             Commands\MakeContextCommand::class,
             Commands\MakePageCommand::class,
             Commands\MakeRelationManagerCommand::class,

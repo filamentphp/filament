@@ -10,8 +10,6 @@ use Illuminate\Support\Str;
 
 class MakeContextCommand extends Command
 {
-    use Concerns\CanGenerateResources;
-    use CanIndentStrings;
     use CanManipulateFiles;
     use CanValidateInput;
 

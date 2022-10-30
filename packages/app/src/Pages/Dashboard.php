@@ -2,6 +2,7 @@
 
 namespace Filament\Pages;
 
+use Filament\Context;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Route;
 
@@ -18,9 +19,11 @@ class Dashboard extends Page
         return static::$navigationLabel ?? static::$title ?? __('filament::pages/dashboard.title');
     }
 
-    public static function routes(): void
+    public static function routes(Context $context): void
     {
-        Route::get('/', static::class)->name(static::getSlug());
+        Route::get('/', static::class)
+            ->middleware(static::getRouteMiddleware($context))
+            ->name(static::getSlug());
     }
 
     public function getWidgets(): array

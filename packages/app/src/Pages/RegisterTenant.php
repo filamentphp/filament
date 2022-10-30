@@ -2,6 +2,7 @@
 
 namespace Filament\Pages;
 
+use Filament\Context;
 use Filament\Facades\Filament;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -23,24 +24,24 @@ abstract class RegisterTenant extends Component implements HasForms
 
     public ?Model $tenant = null;
 
-    protected static string | array $middleware = [];
+    protected static string | array $routeMiddleware = [];
 
     protected static string $slug = 'new';
 
     abstract static function getLabel(): string;
 
-    public static function routes(): void
+    public static function routes(Context $context): void
     {
         $slug = static::getSlug();
 
         Route::get("/{$slug}", static::class)
-            ->middleware(static::getMiddleware())
+            ->middleware(static::getRouteMiddleware($context))
             ->name('registration');
     }
 
-    public static function getMiddleware(): string | array
+    public static function getRouteMiddleware(Context $context): string | array
     {
-        return static::$middleware;
+        return static::$routeMiddleware;
     }
 
     public static function getSlug(): string

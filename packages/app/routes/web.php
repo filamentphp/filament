@@ -51,13 +51,13 @@ Route::name('filament.')
                                     }
 
                                     return redirect($context->getTenantRegistrationUrl());
-                                });
+                                })->name('home');
                             }
 
                             Route::name('tenant.')
                                 ->group(function () use ($context, $hasTenantRegistration): void {
                                     if ($hasTenantRegistration) {
-                                        Route::group([], Closure::fromCallable([$context->getTenantRegistrationPage(), 'routes']));
+                                        $context->getTenantRegistrationPage()::routes($context);
                                     }
                                 });
 
@@ -65,7 +65,7 @@ Route::name('filament.')
                                 ->group(function () use ($context): void {
                                     Route::get('/', function () use ($context): RedirectResponse {
                                         return redirect($context->getUrl(Filament::getTenant()));
-                                    });
+                                    })->name('tenant');
 
                                     if ($context->hasTenantBilling()) {
                                         Route::get('/billing', $context->getTenantBillingProvider()->getRouteAction())
@@ -74,23 +74,29 @@ Route::name('filament.')
 
                                     Route::name('pages.')->group(function () use ($context): void {
                                         foreach ($context->getPages() as $page) {
-                                            Route::group([], Closure::fromCallable([$page, 'routes']));
+                                            $page::routes($context);
                                         }
                                     });
 
                                     Route::name('resources.')->group(function () use ($context): void {
                                         foreach ($context->getResources() as $resource) {
-                                            Route::group([], Closure::fromCallable([$resource, 'routes']));
+                                            $resource::routes($context);
                                         }
                                     });
 
-                                    Route::group([], Closure::fromCallable([$context, 'getAuthenticatedTenantRoutes']));
+                                    if ($routes = $context->getAuthenticatedTenantRoutes()) {
+                                        $routes($context);
+                                    }
                                 });
 
-                            Route::group([], Closure::fromCallable([$context, 'getAuthenticatedRoutes']));
+                            if ($routes = $context->getAuthenticatedRoutes()) {
+                                $routes($context);
+                            }
                         });
 
-                    Route::group([], Closure::fromCallable([$context, 'getRoutes']));
+                    if ($routes = $context->getRoutes()) {
+                        $routes($context);
+                    }
                 });
         }
     });

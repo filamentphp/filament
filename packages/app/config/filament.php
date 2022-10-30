@@ -1,58 +1,6 @@
 <?php
 
-use Filament\Http\Middleware\Authenticate;
-use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Http\Middleware\MirrorConfigToSubpackages;
-use Filament\Pages;
-use Filament\Widgets;
-use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Illuminate\Cookie\Middleware\EncryptCookies;
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Illuminate\Session\Middleware\AuthenticateSession;
-use Illuminate\Session\Middleware\StartSession;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
-
 return [
-
-    /*
-    |--------------------------------------------------------------------------
-    | Filament Path
-    |--------------------------------------------------------------------------
-    |
-    | This is the path where you will be able to find the default Filament
-    | context.
-    |
-    | The default is `admin` but you can change it to whatever works best and
-    | doesn't conflict with the routing in your application.
-    |
-    */
-
-    'path' => env('FILAMENT_PATH', 'admin'),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Filament Domain
-    |--------------------------------------------------------------------------
-    |
-    | You may change the domain where the default Filament context should be
-    | active. If the domain is empty, all domains will be valid.
-    |
-    */
-
-    'domain' => env('FILAMENT_DOMAIN'),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Homepage URL
-    |--------------------------------------------------------------------------
-    |
-    | This is the URL that the default Filament context will redirect the
-    | user to when they click on the sidebar's header.
-    |
-    */
-
-    'home_url' => '/',
 
     /*
     |--------------------------------------------------------------------------
@@ -64,76 +12,6 @@ return [
     */
 
     'brand' => env('APP_NAME'),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Auth
-    |--------------------------------------------------------------------------
-    |
-    | This is the configuration that Filament will use to handle authentication
-    | into the default context.
-    |
-    */
-
-    'auth' => [
-        'guard' => env('FILAMENT_AUTH_GUARD', 'web'),
-        'pages' => [
-            'login' => \Filament\Http\Livewire\Auth\Login::class,
-        ],
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Pages
-    |--------------------------------------------------------------------------
-    |
-    | This is the namespace and directory where the default Filament context
-    | will automatically discover pages.
-    |
-    */
-
-    'pages' => [
-        'namespace' => 'App\\Filament\\Pages',
-        'path' => app_path('Filament/Pages'),
-        'register' => [
-            Pages\Dashboard::class,
-        ],
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Resources
-    |--------------------------------------------------------------------------
-    |
-    | This is the namespace and directory where the default Filament context
-    | will automatically discover resources.
-    |
-    */
-
-    'resources' => [
-        'namespace' => 'App\\Filament\\Resources',
-        'path' => app_path('Filament/Resources'),
-        'register' => [],
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Widgets
-    |--------------------------------------------------------------------------
-    |
-    | This is the namespace and directory where the default Filament context
-    | will automatically discover widgets.
-    |
-    */
-
-    'widgets' => [
-        'namespace' => 'App\\Filament\\Widgets',
-        'path' => app_path('Filament/Widgets'),
-        'register' => [
-            Widgets\AccountWidget::class,
-            Widgets\FilamentInfoWidget::class,
-        ],
-    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -278,32 +156,5 @@ return [
     */
 
     'google_fonts' => 'https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap',
-
-    /*
-    |--------------------------------------------------------------------------
-    | Middleware
-    |--------------------------------------------------------------------------
-    |
-    | You may customize the middleware stack that Filament uses to handle
-    | requests.
-    |
-    */
-
-    'middleware' => [
-        'auth' => [
-            Authenticate::class,
-        ],
-        'base' => [
-            EncryptCookies::class,
-            AddQueuedCookiesToResponse::class,
-            StartSession::class,
-            AuthenticateSession::class,
-            ShareErrorsFromSession::class,
-            VerifyCsrfToken::class,
-            SubstituteBindings::class,
-            DispatchServingFilamentEvent::class,
-            MirrorConfigToSubpackages::class,
-        ],
-    ],
 
 ];

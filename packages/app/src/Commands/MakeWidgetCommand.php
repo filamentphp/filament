@@ -68,7 +68,7 @@ class MakeWidgetCommand extends Command
                     fn (Context $context) => $context->getId(),
                     $contexts,
                 ),
-                'default',
+                Filament::getDefaultContext()->getId(),
             )] : Arr::first($contexts);
         }
 

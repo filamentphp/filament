@@ -36,21 +36,8 @@ class MakeUserCommand extends Command
     protected function sendSuccessMessage(Authenticatable $user): void
     {
         $loginUrl = Filament::getLoginUrl();
+
         $this->components->info('Success! ' . ($user->getAttribute('email') ?? $user->getAttribute('username') ?? 'You') . " may now log in at {$loginUrl}.");
-
-        if ($this->getUserModel()::count() === 1 && $this->confirm('Would you like to show some love by starring the repo?', true)) {
-            if (PHP_OS_FAMILY === 'Darwin') {
-                exec('open https://github.com/filamentphp/filament');
-            }
-            if (PHP_OS_FAMILY === 'Linux') {
-                exec('xdg-open https://github.com/filamentphp/filament');
-            }
-            if (PHP_OS_FAMILY === 'Windows') {
-                exec('start https://github.com/filamentphp/filament');
-            }
-
-            $this->components->info('Thank you!');
-        }
     }
 
     protected function getAuthGuard(): Guard

@@ -22,7 +22,7 @@ it('can authenticate', function () {
         ->set('email', $userToAuthenticate->email)
         ->set('password', 'password')
         ->call('authenticate')
-        ->assertRedirect(route('filament.default.pages.dashboard'));
+        ->assertRedirect(route('filament.admin.pages.dashboard'));
 
     $this->assertAuthenticatedAs($userToAuthenticate);
 });
@@ -40,7 +40,7 @@ it('can authenticate and redirect user to their intended URL', function () {
 });
 
 it('can redirect unauthenticated app requests', function () {
-    $this->get(route('filament.default.pages.dashboard'))->assertRedirect(Filament::getLoginUrl());
+    $this->get(route('filament.admin.pages.dashboard'))->assertRedirect(Filament::getLoginUrl());
 });
 
 it('cannot authenticate with incorrect credentials', function () {

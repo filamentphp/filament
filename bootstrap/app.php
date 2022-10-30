@@ -8,6 +8,7 @@ use Filament\Notifications\NotificationsServiceProvider;
 use Filament\SpatieLaravelTranslatablePluginServiceProvider;
 use Filament\Support\SupportServiceProvider;
 use Filament\Tables\TablesServiceProvider;
+use Filament\Tests\AdminFilamentProvider;
 use Filament\Tests\App\Navigation\NavigationServiceProvider;
 use Filament\Widgets\WidgetsServiceProvider;
 use Livewire\LivewireServiceProvider;
@@ -25,6 +26,7 @@ $app = (new Application($basePathLocator::applicationBasePath()))
     ])
     ->createApplication();
 
+$app->register(AdminFilamentProvider::class);
 $app->register(LivewireServiceProvider::class);
 $app->register(FilamentServiceProvider::class);
 $app->register(ActionsServiceProvider::class);

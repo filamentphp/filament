@@ -35,6 +35,8 @@ class Context
 {
     protected string $id;
 
+    protected bool $isDefault = false;
+
     protected string $authGuard = 'web';
 
     protected ?string $domain = null;
@@ -104,6 +106,13 @@ class Context
     protected array $middleware = [];
 
     protected array $authMiddleware = [];
+
+    public function default(bool $condition = true): static
+    {
+        $this->isDefault = $condition;
+
+        return $this;
+    }
 
     public function auth(): Guard
     {
@@ -478,8 +487,8 @@ class Context
     public function getMiddleware(): array
     {
         return array_merge(
-            $this->middleware,
             ["context:{$this->getId()}"],
+            $this->middleware,
         );
     }
 
@@ -642,7 +651,11 @@ class Context
             return $this->hasLogin() ? $this->getLoginUrl() : url($this->getPath());
         }
 
-        if ($tenant) {
+        if ((! $tenant) && $this->hasRoutableTenancy()) {
+            $tenant = Filament::getUserDefaultTenant($this->auth()->user());
+        }
+
+        if ($tenant && $this->hasRoutableTenancy()) {
             $originalTenant = Filament::getTenant();
             Filament::setTenant($tenant);
 
@@ -653,16 +666,16 @@ class Context
             $this->isNavigationMounted = false;
             $this->navigationItems = [];
             $this->navigationGroups = [];
-        }
 
-        $navigation = $this->getNavigation();
+            $navigation = $this->getNavigation();
 
-        if ($tenant) {
             Filament::setTenant($originalTenant);
 
             $this->isNavigationMounted = $isNavigationMountedOriginally;
             $this->navigationItems = $originalNavigationItems;
             $this->navigationGroups = $originalNavigationGroups;
+        } else {
+            $navigation = $this->getNavigation();
         }
 
         $firstGroup = Arr::first($navigation);
@@ -776,6 +789,11 @@ class Context
     public function getWidgetNamespace(): ?string
     {
         return $this->widgetNamespace;
+    }
+
+    public function isDefault(): bool
+    {
+        return $this->isDefault;
     }
 
     protected function discoverComponents(string $baseClass, array &$register, ?string $directory, ?string $namespace): void

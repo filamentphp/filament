@@ -5,6 +5,7 @@ namespace Filament\Pages;
 use Closure;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Context;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
 use Filament\Support\Exceptions\Halt;
@@ -44,7 +45,7 @@ abstract class Page extends Component implements HasActions, RendersFormComponen
 
     protected static string $view;
 
-    protected static string | array $middleware = [];
+    protected static string | array $routeMiddleware = [];
 
     public static ?Closure $reportValidationErrorUsing = null;
 
@@ -82,31 +83,31 @@ abstract class Page extends Component implements HasActions, RendersFormComponen
         return "filament.{$context}.pages.{$slug}";
     }
 
-    public static function routes(): void
+    public static function routes(Context $context): void
     {
         $slug = static::getSlug();
 
         Route::get($slug, static::class)
-            ->middleware(static::getMiddleware())
+            ->middleware(static::getRouteMiddleware($context))
             ->name($slug);
     }
 
-    public static function getMiddleware(): string | array
+    public static function getRouteMiddleware(Context $context): string | array
     {
         return array_merge(
-            (static::isTenantSubscriptionRequired() ? [static::getTenantSubscribedMiddleware()] : []),
-            static::$middleware,
+            (static::isTenantSubscriptionRequired($context) ? [static::getTenantSubscribedMiddleware($context)] : []),
+            static::$routeMiddleware,
         );
     }
 
-    public static function getTenantSubscribedMiddleware(): string
+    public static function getTenantSubscribedMiddleware(Context $context): string
     {
         return Filament::getTenantBillingProvider()->getSubscribedMiddleware();
     }
 
-    public static function isTenantSubscriptionRequired(): bool
+    public static function isTenantSubscriptionRequired(Context $context): bool
     {
-        return Filament::getCurrentContext()->isTenantSubscriptionRequired();
+        return $context->isTenantSubscriptionRequired();
     }
 
     public static function getSlug(): string

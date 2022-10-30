@@ -2,6 +2,7 @@
 
 namespace Filament\Resources;
 
+use Filament\Context;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\GlobalSearch\GlobalSearchResult;
@@ -64,7 +65,7 @@ abstract class Resource
 
     protected static ?string $slug = null;
 
-    protected static string | array $middleware = [];
+    protected static string | array $routeMiddleware = [];
 
     protected static int $globalSearchResultsLimit = 50;
 
@@ -379,33 +380,33 @@ abstract class Resource
         return static::$recordRouteKeyName;
     }
 
-    public static function routes(): void
+    public static function routes(Context $context): void
     {
         $slug = static::getSlug();
 
         Route::name("{$slug}.")
             ->prefix($slug)
-            ->middleware(static::getMiddleware())
-            ->group(function () {
+            ->middleware(static::getRouteMiddleware($context))
+            ->group(function () use ($context) {
                 foreach (static::getPages() as $name => $page) {
-                    $page->registerRoute()?->name($name);
+                    $page->registerRoute($context)?->name($name);
                 }
             });
     }
 
-    public static function getMiddleware(): string | array
+    public static function getRouteMiddleware(Context $context): string | array
     {
-        return static::$middleware;
+        return static::$routeMiddleware;
     }
 
-    public static function getTenantSubscribedMiddleware(): string
+    public static function getTenantSubscribedMiddleware(Context $context): string
     {
         return Filament::getTenantBillingProvider()->getSubscribedMiddleware();
     }
 
-    public static function isTenantSubscriptionRequired(): bool
+    public static function isTenantSubscriptionRequired(Context $context): bool
     {
-        return Filament::getCurrentContext()->isTenantSubscriptionRequired();
+        return $context->isTenantSubscriptionRequired();
     }
 
     public static function getSlug(): string
