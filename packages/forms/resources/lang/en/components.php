@@ -56,6 +56,22 @@ return [
 
     ],
 
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Deselect all',
+            ],
+
+            'select_all' => [
+                'label' => 'Select all',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [
@@ -250,22 +266,6 @@ return [
 
             'next_step' => [
                 'label' => 'Next',
-            ],
-
-        ],
-
-    ],
-
-    'checkbox_list' => [
-
-        'buttons' => [
-
-            'deselect_all' => [
-                'label' => 'Deselect all',
-            ],
-
-            'select_all' => [
-                'label' => 'Select all',
             ],
 
         ],
