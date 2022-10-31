@@ -22,6 +22,21 @@ Route::name('filament.')
                             Route::get('/login', $context->getLoginPage())->name('login');
                         }
 
+                        if ($context->hasPasswordReset()) {
+                            Route::name('password-reset.')
+                                ->prefix('/password-reset')
+                                ->group(function () use ($context) {
+                                    Route::get('/request', $context->getRequestPasswordResetPage())->name('request');
+                                    Route::get('/reset', $context->getResetPasswordPage())
+                                        ->middleware(['signed'])
+                                        ->name('reset');
+                                });
+                        }
+
+                        if ($context->hasRegistration()) {
+                            Route::get('/register', $context->getRegistrationPage())->name('register');
+                        }
+
                         Route::post('/logout', function (Request $request) use ($context): LogoutResponse {
                             $context->auth()->logout();
 

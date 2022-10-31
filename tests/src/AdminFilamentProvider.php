@@ -29,7 +29,7 @@ class AdminFilamentProvider extends ContextProvider
         return $context
             ->default()
             ->id('admin')
-            ->loginPage()
+            ->login()
             ->resources([
                 PostResource::class,
                 PostCategoryResource::class,

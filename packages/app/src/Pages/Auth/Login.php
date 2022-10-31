@@ -9,7 +9,11 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
+use Filament\Notifications\Notification;
 use Filament\Pages\CardPage;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -41,12 +45,15 @@ class Login extends CardPage
         try {
             $this->rateLimit(5);
         } catch (TooManyRequestsException $exception) {
-            throw ValidationException::withMessages([
-                'email' => __('filament::login.messages.throttled', [
+            Notification::make()
+                ->title(__('filament::pages/auth/login.messages.throttled', [
                     'seconds' => $exception->secondsUntilAvailable,
                     'minutes' => ceil($exception->secondsUntilAvailable / 60),
-                ]),
-            ]);
+                ]))
+                ->danger()
+                ->send();
+
+            return null;
         }
 
         $data = $this->form->getState();
@@ -56,9 +63,11 @@ class Login extends CardPage
             'password' => $data['password'],
         ], $data['remember'])) {
             throw ValidationException::withMessages([
-                'email' => __('filament::login.messages.failed'),
+                'email' => __('filament::pages/auth/login.messages.failed'),
             ]);
         }
+
+        session()->regenerate();
 
         return app(LoginResponse::class);
     }
@@ -68,16 +77,17 @@ class Login extends CardPage
         return $form
             ->schema([
                 TextInput::make('email')
-                    ->label(__('filament::login.fields.email.label'))
+                    ->label(__('filament::pages/auth/login.fields.email.label'))
                     ->email()
                     ->required()
                     ->autocomplete(),
                 TextInput::make('password')
-                    ->label(__('filament::login.fields.password.label'))
+                    ->label(__('filament::pages/auth/login.fields.password.label'))
+                    ->hint(new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()"> {{ __(\'filament::pages/auth/login.buttons.request_password_reset.label\') }}</x-filament::link>')))
                     ->password()
                     ->required(),
                 Checkbox::make('remember')
-                    ->label(__('filament::login.fields.remember.label')),
+                    ->label(__('filament::pages/auth/login.fields.remember.label')),
             ]);
     }
 
@@ -88,6 +98,11 @@ class Login extends CardPage
 
     public function getTitle(): string
     {
-        return __('filament::login.title');
+        return __('filament::pages/auth/login.title');
+    }
+
+    public function getHeading(): string | Htmlable
+    {
+        return __('filament::pages/auth/login.heading');
     }
 }

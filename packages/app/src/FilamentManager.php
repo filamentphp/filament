@@ -13,6 +13,7 @@ use Filament\Models\Contracts\HasDefaultTenant;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\HasTenants;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -141,6 +142,16 @@ class FilamentManager
         return $this->getCurrentContext()->hasLogin();
     }
 
+    public function hasRegistration(): bool
+    {
+        return $this->getCurrentContext()->hasRegistration();
+    }
+
+    public function hasPasswordReset(): bool
+    {
+        return $this->getCurrentContext()->hasPasswordReset();
+    }
+
     public function hasTenancy(): bool
     {
         return $this->getCurrentContext()->hasTenancy();
@@ -174,6 +185,21 @@ class FilamentManager
     public function getLoginUrl(): ?string
     {
         return $this->getCurrentContext()->getLoginUrl();
+    }
+
+    public function getRegistrationUrl(): ?string
+    {
+        return $this->getCurrentContext()->getRegistrationUrl();
+    }
+
+    public function getRequestPasswordResetUrl(): ?string
+    {
+        return $this->getCurrentContext()->getRequestPasswordResetUrl();
+    }
+
+    public function getResetPasswordUrl(string $token, CanResetPassword $user): string
+    {
+        return $this->getCurrentContext()->getResetPasswordUrl($token, $user);
     }
 
     public function getTenantBillingProvider(): ?Billing\Providers\Contracts\Provider

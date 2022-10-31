@@ -10,6 +10,7 @@ use Filament\FilamentManager;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\Models\Contracts\HasTenants;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -31,12 +32,15 @@ use Illuminate\Support\Facades\Facade;
  * @method static string getHomeUrl()
  * @method static string | null getLoginUrl()
  * @method static string getLogoutUrl()
+ * @method static string | null getRegistrationUrl()
  * @method static string | null getModelResource(string | Model $model)
  * @method static array getNavigation()
  * @method static array getNavigationGroups()
  * @method static array getNavigationItems()
  * @method static array getPages()
  * @method static Plugin getPlugin(string $id)
+ * @method static string | null getRequestPasswordResetUrl()
+ * @method static string getResetPasswordUrl(string $token, CanResetPassword $user)
  * @method static array getResources()
  * @method static Model | null getRoutableTenant()
  * @method static Model | null getTenant()
@@ -61,6 +65,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool hasLogin()
  * @method static bool hasTenancy()
  * @method static bool hasTenantRegistration()
+ * @method static bool hasRegistration()
  * @method static bool hasRoutableTenancy()
  * @method static void registerContext(Context $context)
  * @method static Htmlable renderHook(string $name)

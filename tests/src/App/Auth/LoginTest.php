@@ -75,7 +75,7 @@ it('can throttle authentication attempts', function () {
         ->set('email', $userToAuthenticate->email)
         ->set('password', 'password')
         ->call('authenticate')
-        ->assertHasErrors(['email']);
+        ->assertNotified();
 
     $this->assertGuest();
 });

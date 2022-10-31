@@ -14,11 +14,15 @@ use Filament\Http\Livewire\Notifications;
 use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Pages\Auth\Login;
+use Filament\Pages\Auth\PasswordReset\RequestPasswordReset;
+use Filament\Pages\Auth\PasswordReset\ResetPassword;
+use Filament\Pages\Auth\Register;
 use Filament\Pages\Page;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
 use Filament\Widgets\Widget;
 use Illuminate\Auth\EloquentUserProvider;
+use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -26,6 +30,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
 use Livewire\Livewire;
@@ -50,6 +55,12 @@ class Context
     protected array $livewireComponents = [];
 
     protected ?string $loginPage = null;
+
+    protected ?string $registrationPage = null;
+
+    protected ?string $requestPasswordResetPage = null;
+
+    protected ?string $resetPasswordPage = null;
 
     protected array $navigationGroups = [];
 
@@ -196,9 +207,24 @@ class Context
         return $this;
     }
 
-    public function loginPage(?string $page = Login::class): static
+    public function login(?string $page = Login::class): static
     {
         $this->loginPage = $page;
+
+        return $this;
+    }
+
+    public function registration(?string $page = Register::class): static
+    {
+        $this->registrationPage = $page;
+
+        return $this;
+    }
+
+    public function passwordReset(?string $requestPage = RequestPasswordReset::class, ?string $resetPage = ResetPassword::class): static
+    {
+        $this->requestPasswordResetPage = $requestPage;
+        $this->resetPasswordPage = $resetPage;
 
         return $this;
     }
@@ -364,7 +390,7 @@ class Context
         return $this;
     }
 
-    public function tenantRegistrationPage(?string $page): static
+    public function tenantRegistration(?string $page): static
     {
         $this->tenantRegistrationPage = $page;
 
@@ -533,6 +559,32 @@ class Context
         }
 
         return route("filament.{$this->getId()}.auth.login");
+    }
+
+    public function getRegistrationUrl(): ?string
+    {
+        if (! $this->hasRegistration()) {
+            return null;
+        }
+
+        return route("filament.{$this->getId()}.auth.register");
+    }
+
+    public function getRequestPasswordResetUrl(): ?string
+    {
+        if (! $this->hasPasswordReset()) {
+            return null;
+        }
+
+        return route("filament.{$this->getId()}.auth.password-reset.request");
+    }
+
+    public function getResetPasswordUrl(string $token, CanResetPassword $user): string
+    {
+        return URL::signedRoute("filament.{$this->getId()}.auth.password-reset.reset", [
+            'email' => $user->getEmailForPasswordReset(),
+            'token' => $token,
+        ]);
     }
 
     public function getTenantBillingUrl(Model $tenant): ?string
@@ -787,9 +839,34 @@ class Context
         return $this->loginPage;
     }
 
+    public function getRegistrationPage(): ?string
+    {
+        return $this->registrationPage;
+    }
+
+    public function getRequestPasswordResetPage(): ?string
+    {
+        return $this->requestPasswordResetPage;
+    }
+
+    public function getResetPasswordPage(): ?string
+    {
+        return $this->resetPasswordPage;
+    }
+
     public function hasLogin(): bool
     {
         return filled($this->getLoginPage());
+    }
+
+    public function hasPasswordReset(): bool
+    {
+        return filled($this->getRequestPasswordResetPage());
+    }
+
+    public function hasRegistration(): bool
+    {
+        return filled($this->getRegistrationPage());
     }
 
     public function discoverPages(string $in, string $for): static
@@ -967,6 +1044,15 @@ class Context
 
         if ($this->hasLogin()) {
             $this->queueLivewireComponentForRegistration($this->getLoginPage());
+        }
+
+        if ($this->hasPasswordReset()) {
+            $this->queueLivewireComponentForRegistration($this->getRequestPasswordResetPage());
+            $this->queueLivewireComponentForRegistration($this->getResetPasswordPage());
+        }
+
+        if ($this->hasRegistration()) {
+            $this->queueLivewireComponentForRegistration($this->getRegistrationPage());
         }
 
         foreach ($this->getResources() as $resource) {

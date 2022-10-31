@@ -1,7 +1,17 @@
-<form wire:submit.prevent="authenticate" class="space-y-8">
-    {{ $this->form }}
+<div>
+    @if (filament()->hasRegistration())
+        <x-slot name="subheading">
+            {{ __('filament::pages/auth/login.buttons.register.before') }} <x-filament::link :href="filament()->getRegistrationUrl()">
+                {{ __('filament::pages/auth/login.buttons.register.label') }}
+            </x-filament::link>
+        </x-slot>
+    @endif
 
-    <x-filament::button type="submit" form="authenticate" class="w-full">
-        {{ __('filament::login.buttons.submit.label') }}
-    </x-filament::button>
-</form>
+    <form wire:submit.prevent="authenticate" class="space-y-8">
+        {{ $this->form }}
+
+        <x-filament::button type="submit" form="authenticate" class="w-full">
+            {{ __('filament::pages/auth/login.buttons.authenticate.label') }}
+        </x-filament::button>
+    </form>
+</div>

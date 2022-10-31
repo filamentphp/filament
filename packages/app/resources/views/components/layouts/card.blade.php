@@ -1,5 +1,7 @@
 @props([
     'after' => null,
+    'heading' => null,
+    'subheading' => null,
 ])
 
 <x-filament::layouts.base :livewire="$livewire">
@@ -28,11 +30,19 @@
                     </div>
                 @endif
 
-                @if (filled($livewire->getHeading()))
-                    <h2 class="text-2xl font-bold tracking-tight text-center">
-                        {{ $livewire->getHeading() }}
-                    </h2>
-                @endif
+                <div class="space-y-2">
+                    @if (filled($heading ??= $livewire->getHeading()))
+                        <h2 class="text-2xl font-bold tracking-tight text-center">
+                            {{ $heading }}
+                        </h2>
+                    @endif
+
+                    @if (filled($subheading ??= $livewire->getSubHeading()))
+                        <h3 class="text-sm font-medium tracking-tight text-center">
+                            {{ $subheading }}
+                        </h3>
+                    @endif
+                </div>
 
                 <div {{ $attributes }}>
                     {{ $slot }}

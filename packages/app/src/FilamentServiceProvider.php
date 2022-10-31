@@ -9,8 +9,12 @@ use Filament\Http\Middleware\MirrorConfigToSubpackages;
 use Filament\Http\Middleware\SetUpContext;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse as LoginResponseContract;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
+use Filament\Http\Responses\Auth\Contracts\PasswordResetResponse as PasswordResetResponseContract;
+use Filament\Http\Responses\Auth\Contracts\RegistrationResponse as RegistrationResponseContract;
 use Filament\Http\Responses\Auth\LoginResponse;
 use Filament\Http\Responses\Auth\LogoutResponse;
+use Filament\Http\Responses\Auth\PasswordResetResponse;
+use Filament\Http\Responses\Auth\RegistrationResponse;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\PluginServiceProvider;
@@ -34,6 +38,8 @@ class FilamentServiceProvider extends PluginServiceProvider
 
         $this->app->bind(LoginResponseContract::class, LoginResponse::class);
         $this->app->bind(LogoutResponseContract::class, LogoutResponse::class);
+        $this->app->bind(PasswordResetResponseContract::class, PasswordResetResponse::class);
+        $this->app->bind(RegistrationResponseContract::class, RegistrationResponse::class);
 
         $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
 
