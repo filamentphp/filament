@@ -380,7 +380,7 @@ export default function dateTimePickerFormComponent({
         },
 
         togglePanelVisibility: function () {
-            if (! this.isOpen()) {
+            if (!this.isOpen()) {
                 this.focusedDate =
                     this.getSelectedDate() ??
                     this.getMinDate() ??
