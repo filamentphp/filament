@@ -4,7 +4,7 @@
 ]) }}>
     @php
         $height = $getHeight();
-        $width = $getWidth() ?? ($isRounded() || $isSquare() ? $height : null);
+        $width = $getWidth() ?? ($isCircular() || $isSquare() ? $height : null);
     @endphp
 
     <div
@@ -13,8 +13,8 @@
             {!! $width !== null ? "width: {$width};" : null !!}
         "
         @class([
-            'overflow-hidden' => $isRounded() || $isSquare(),
-            'rounded-full' => $isRounded(),
+            'overflow-hidden' => $isCircular() || $isSquare(),
+            'rounded-full' => $isCircular(),
         ])
     >
         @if ($path = $getImagePath())
@@ -25,7 +25,7 @@
                     {!! $width !== null ? "width: {$width};" : null !!}
                 "
                 {{ $getExtraImgAttributeBag()->class([
-                    'object-cover object-center' => $isRounded() || $isSquare(),
+                    'object-cover object-center' => $isCircular() || $isSquare(),
                 ]) }}
             >
        @endif

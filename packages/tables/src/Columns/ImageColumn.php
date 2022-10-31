@@ -17,7 +17,7 @@ class ImageColumn extends Column
 
     protected int | string | Closure | null $height = 40;
 
-    protected bool | Closure $isRounded = false;
+    protected bool | Closure $isCircular = false;
 
     protected bool | Closure $isSquare = false;
 
@@ -48,11 +48,19 @@ class ImageColumn extends Column
         return $this;
     }
 
-    public function rounded(bool | Closure $condition = true): static
+    public function circular(bool | Closure $condition = true): static
     {
-        $this->isRounded = $condition;
+        $this->isCircular = $condition;
 
         return $this;
+    }
+
+    /**
+     * @deprecated Use `circular()` instead.
+     */
+    public function rounded(bool | Closure $condition = true): static
+    {
+        return $this->circular($condition);
     }
 
     public function square(bool | Closure $condition = true): static
@@ -162,9 +170,9 @@ class ImageColumn extends Column
         return $width;
     }
 
-    public function isRounded(): bool
+    public function isCircular(): bool
     {
-        return $this->evaluate($this->isRounded);
+        return $this->evaluate($this->isCircular);
     }
 
     public function isSquare(): bool
