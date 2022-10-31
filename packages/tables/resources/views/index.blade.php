@@ -869,7 +869,7 @@
 
         <x-tables::modal
             :id="$this->id . '-table-action'"
-            :wire:key="$action ? $this->id . '.table' . ($getMountedActionRecordKey() ? '.records.' . $getMountedActionRecordKey() : null) . '.actions.' . $action->getName() . '.modal' : null"
+            :wire:key="$action ? $this->id . '.table.actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
             :slide-over="$action?->isModalSlideOver()"
