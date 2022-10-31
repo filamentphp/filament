@@ -14,7 +14,6 @@ use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Illuminate\Contracts\View\View;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
-use Illuminate\Http\Request;
 
 /**
  * @property ComponentContainer $form
@@ -62,9 +61,9 @@ class Login extends Component implements HasForms
                 'email' => __('filament::login.messages.failed'),
             ]);
         }
-        
+
         session()->regenerate();
-        
+
         return app(LoginResponse::class);
     }
 
