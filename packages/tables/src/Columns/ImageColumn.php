@@ -175,6 +175,14 @@ class ImageColumn extends Column
         return $this->evaluate($this->isCircular);
     }
 
+    /**
+     * @deprecated Use `isCircular()` instead.
+     */
+    public function isRounded(): bool
+    {
+        return $this->isCircular();
+    }
+
     public function isSquare(): bool
     {
         return $this->evaluate($this->isSquare);
