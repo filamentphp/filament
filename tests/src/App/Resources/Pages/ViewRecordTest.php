@@ -1,6 +1,5 @@
 <?php
 
-use Filament\Facades\Filament;
 use Filament\Tests\App\Fixtures\Resources\PostResource;
 use Filament\Tests\App\Resources\TestCase;
 use Filament\Tests\Models\Post;
