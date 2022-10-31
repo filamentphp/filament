@@ -45,6 +45,15 @@
                 'opacity-70 dark:text-gray-300' => $isDisabled(),
             ]) }}
         >
+            <div class="grid grid-cols-7 gap-1">
+                <template x-for="(day, index) in dayLabels" x-bind:key="index">
+                    <div
+                        x-text="day"
+                        class="text-xs font-medium text-center text-gray-800 dark:text-gray-200"
+                    ></div>
+                </template>
+            </div>
+
             <input
                 readonly
                 placeholder="{{ $getPlaceholder() }}"
@@ -85,6 +94,7 @@
                             x-model="focusedMonth"
                             class="grow px-1 py-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none dark:bg-gray-700 dark:text-gray-200"
                             dusk="filament.forms.{{ $getStatePath() }}.focusedMonth"
+                            wire:ignore
                         >
                             <template x-for="(month, index) in months">
                                 <option x-bind:value="index" x-text="month"></option>
@@ -100,8 +110,8 @@
                         />
                     </div>
 
-                    <div class="grid grid-cols-7 gap-1">
-                        <template x-for="(day, index) in dayLabels" :key="index">
+                    <div class="grid grid-cols-7 gap-1" wire:ignore>
+                        <template x-for="(day, index) in dayLabels" x-bind:key="index">
                             <div
                                 x-text="day"
                                 class="text-xs font-medium text-center text-gray-800 dark:text-gray-200"

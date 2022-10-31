@@ -6,7 +6,7 @@
 
 <x-filament-actions::actions
     :actions="$actions"
-    :alignment="$alignment ?? static::getFormActionsAlignment()"
+    :alignment="$alignment ?? $this->getFormActionsAlignment()"
     :full-width="$fullWidth"
     class="filament-form-actions"
 />

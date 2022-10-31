@@ -161,8 +161,8 @@ class ViewRecord extends Page
                 ->disabled()
                 ->model($this->getRecord())
                 ->statePath('data')
-                ->columns(static::$formHasInlineLabels ? 1 : 2)
-                ->inlineLabel(static::$formHasInlineLabels),
+                ->columns($this->hasInlineFormLabels() ? 1 : 2)
+                ->inlineLabel($this->hasInlineFormLabels()),
         );
     }
 

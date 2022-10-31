@@ -148,7 +148,7 @@ class SettingsPage extends Page
                 $this->makeForm()
                     ->statePath('data')
                     ->columns(2)
-                    ->inlineLabel(static::$formHasInlineLabels),
+                    ->inlineLabel($this->hasInlineFormLabels()),
             ),
         ];
     }

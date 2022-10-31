@@ -274,8 +274,8 @@ class EditRecord extends Page
                 ->context('edit')
                 ->model($this->getRecord())
                 ->statePath('data')
-                ->columns(static::$formHasInlineLabels ? 1 : 2)
-                ->inlineLabel(static::$formHasInlineLabels),
+                ->columns($this->hasInlineFormLabels() ? 1 : 2)
+                ->inlineLabel($this->hasInlineFormLabels()),
         );
     }
 

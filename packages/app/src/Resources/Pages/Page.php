@@ -16,7 +16,7 @@ abstract class Page extends BasePage
 
     public static string $formActionsAlignment = 'left';
 
-    public static bool $formHasInlineLabels = false;
+    public static bool $hasInlineFormLabels = false;
 
     public static function route(string $path): PageRegistration
     {
@@ -96,8 +96,13 @@ abstract class Page extends BasePage
         static::$formActionsAlignment = 'right';
     }
 
-    public static function getFormActionsAlignment(): string
+    public function getFormActionsAlignment(): string
     {
         return static::$formActionsAlignment;
+    }
+
+    public function hasInlineFormLabels(): bool
+    {
+        return static::$hasInlineFormLabels;
     }
 }
