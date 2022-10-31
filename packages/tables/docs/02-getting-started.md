@@ -18,7 +18,7 @@ use Livewire\Component;
 class ListPosts extends Component implements Tables\Contracts\HasTable // [tl! focus]
 {
     use Tables\Concerns\InteractsWithTable; // [tl! focus]
-    
+
     public function render(): View
     {
         return view('list-posts');
@@ -50,12 +50,12 @@ use Livewire\Component;
 class ListPosts extends Component implements Tables\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable;
-    
+
     protected function getTableQuery(): Builder // [tl! focus:start]
     {
         return Post::query();
     } // [tl! focus:end]
-    
+
     public function render(): View
     {
         return view('list-posts');
@@ -80,18 +80,18 @@ use Livewire\Component;
 class ListPosts extends Component implements Tables\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable;
-    
+
     protected function getTableQuery(): Builder
     {
         return Post::query();
     }
-    
+
     protected function getTableColumns(): array // [tl! focus:start]
     {
         return [ // [tl! collapse:start]
             Tables\Columns\ImageColumn::make('author.avatar')
                 ->size(40)
-                ->rounded(),
+                ->circular(),
             Tables\Columns\TextColumn::make('title'),
             Tables\Columns\TextColumn::make('author.name'),
             Tables\Columns\BadgeColumn::make('status')
@@ -103,7 +103,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
             Tables\Columns\IconColumn::make('is_featured')->boolean(),
         ]; // [tl! collapse:end]
     }
-    
+
     protected function getTableFilters(): array
     {
         return [ // [tl! collapse:start]
@@ -117,7 +117,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
                 ]),
         ]; // [tl! collapse:end]
     }
-    
+
     protected function getTableActions(): array
     {
         return [ // [tl! collapse:start]
@@ -125,7 +125,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
                 ->url(fn (Post $record): string => route('posts.edit', $record)),
         ]; // [tl! collapse:end]
     }
-    
+
     protected function getTableBulkActions(): array
     {
         return [ // [tl! collapse:start]
@@ -138,7 +138,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
                 ->requiresConfirmation(),
         ]; // [tl! collapse:end]
     } // [tl! focus:end]
-    
+
     public function render(): View
     {
         return view('list-posts');
@@ -166,12 +166,12 @@ use Livewire\Component;
 class ListPosts extends Component implements Tables\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable;
-    
+
     protected function getTableQuery(): Builder
     {
         return Post::query();
     }
-    
+
     protected function getTableColumns(): array
     {
         return [
@@ -179,12 +179,12 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
             Tables\Columns\TextColumn::make('author.name'),
         ];
     }
-    
+
     protected function isTablePaginationEnabled(): bool // [tl! focus:start]
     {
         return false;
     } // [tl! focus:end]
-    
+
     public function render(): View
     {
         return view('list-posts');
@@ -208,12 +208,12 @@ use Livewire\Component;
 class ListPosts extends Component implements Tables\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable;
-    
+
     protected function getTableQuery(): Builder
     {
         return Post::query();
     }
-    
+
     protected function getTableColumns(): array
     {
         return [
@@ -221,12 +221,12 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
             Tables\Columns\TextColumn::make('author.name'),
         ];
     }
-    
+
     protected function getTableRecordsPerPageSelectOptions(): array // [tl! focus:start]
     {
         return [10, 25, 50, 100];
     } // [tl! focus:end]
-    
+
     public function render(): View
     {
         return view('list-posts');
@@ -334,9 +334,7 @@ These classes are not automatically compiled by Tailwind CSS. If you want to app
 
 ```js
 module.exports = {
-    content: [
-        './app/Filament/**/*.php',
-    ],
+    content: ['./app/Filament/**/*.php'],
 }
 ```
 
@@ -373,18 +371,18 @@ use Livewire\Component;
 class ListPosts extends Component implements Tables\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable;
-    
+
     protected function getTableQuery(): Builder
     {
         return Post::query();
     }
-    
+
     protected function getTableColumns(): array
     {
         return [ // [tl! collapse:start]
             Tables\Columns\ImageColumn::make('author.avatar')
                 ->size(40)
-                ->rounded(),
+                ->circular(),
             Tables\Columns\TextColumn::make('title'),
             Tables\Columns\TextColumn::make('author.name'),
             Tables\Columns\BadgeColumn::make('status')
@@ -396,22 +394,22 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
             Tables\Columns\IconColumn::make('is_featured')->boolean(),
         ]; // [tl! collapse:end]
     }
-    
+
     protected function getTableEmptyStateIcon(): ?string // [tl! focus:start]
     {
         return 'heroicon-o-bookmark';
     }
-    
+
     protected function getTableEmptyStateHeading(): ?string
     {
         return 'No posts yet';
     }
-    
+
     protected function getTableEmptyStateDescription(): ?string
     {
         return 'You may create a post using the button below.';
     }
-    
+
     protected function getTableEmptyStateActions(): array
     {
         return [
@@ -422,7 +420,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
                 ->button(),
         ];
     } // [tl! focus:end]
-    
+
     public function render(): View
     {
         return view('list-posts');
@@ -512,30 +510,30 @@ use Livewire\Component;
 class ListPosts extends Component implements Tables\Contracts\HasTable
 {
     use Tables\Concerns\InteractsWithTable;
-    
+
     public function mount(): void
     {
         $this->form->fill();
     }
-    
+
     protected function getFormSchema(): array
     {
         return [
             // ...
         ];
     }
-    
+
     protected function getTableQuery(): Builder // [tl! collapse:start]
     {
         return Post::query();
     }
-    
+
     protected function getTableColumns(): array
     {
         return [
             Tables\Columns\ImageColumn::make('author.avatar')
                 ->size(40)
-                ->rounded(),
+                ->circular(),
             Tables\Columns\TextColumn::make('title'),
             Tables\Columns\TextColumn::make('author.name'),
             Tables\Columns\BadgeColumn::make('status')
@@ -547,7 +545,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
             Tables\Columns\IconColumn::make('is_featured')->boolean(),
         ];
     } // [tl! collapse:end]
-    
+
     public function render(): View
     {
         return view('list-posts');
