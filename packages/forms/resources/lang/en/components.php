@@ -256,4 +256,19 @@ return [
 
     ],
 
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'select_all' => [
+                'label' => 'Select All',
+            ],
+
+            'deselect_all' => [
+                'label' => 'Deselect All',
+            ],
+
+        ],
+
+    ],
 ];

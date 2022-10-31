@@ -19,6 +19,8 @@ class CheckboxList extends Field
 
     protected string | Closure | null $relationship = null;
 
+    protected bool | Closure $selectable = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -32,6 +34,31 @@ class CheckboxList extends Field
 
             $component->state([]);
         });
+
+        $this->registerListeners([
+            'checkboxList::selectAll' => [
+                function(CheckboxList $component, string $statePath) {
+                    if ($statePath !== $component->getStatePath()) {
+                        return;
+                    }
+
+                    $livewire = $component->getLivewire();
+
+                    data_set($livewire, $statePath, array_keys($this->options));
+                }
+            ],
+            'checkboxList::deselectAll' => [
+                function(CheckboxList $component, string $statePath) {
+                    if ($statePath !== $component->getStatePath()) {
+                        return;
+                    }
+
+                    $livewire = $component->getLivewire();
+
+                    data_set($livewire, $statePath, []);
+                }
+            ],
+        ]);
     }
 
     public function relationship(string | Closure $relationshipName, string | Closure $titleColumnName, ?Closure $callback = null): static
@@ -89,6 +116,13 @@ class CheckboxList extends Field
         return $this;
     }
 
+    public function selectable(bool | Closure $condition = true): static
+    {
+        $this->selectable = $condition;
+
+        return $this;
+    }
+
     public function getOptionLabelFromRecordUsing(?Closure $callback): static
     {
         $this->getOptionLabelFromRecordUsing = $callback;
@@ -138,5 +172,10 @@ class CheckboxList extends Field
     public function getRelationshipName(): ?string
     {
         return $this->evaluate($this->relationship);
+    }
+
+    public function isSelectable(): bool
+    {
+        return $this->evaluate($this->selectable);
     }
 }
