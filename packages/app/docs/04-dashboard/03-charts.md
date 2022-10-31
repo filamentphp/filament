@@ -27,7 +27,7 @@ use Filament\Widgets\LineChartWidget;
 
 class BlogPostsChart extends LineChartWidget
 {
-    protected function getHeading(): string
+    public function getHeading(): string
     {
         return 'Blog posts';
     }

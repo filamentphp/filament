@@ -45,7 +45,7 @@ class ChartWidget extends Widget
         return null;
     }
 
-    protected function getHeading(): ?string
+    public function getHeading(): ?string
     {
         return static::$heading;
     }

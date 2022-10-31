@@ -1,8 +1,4 @@
-@props([
-    'maxContentWidth' => null,
-])
-
-<x-filament::layouts.base :title="$title">
+<x-filament::layouts.base :livewire="$livewire">
     <div class="filament-app-layout flex w-full min-h-screen overflow-x-clip">
         <div
             x-data="{}"
@@ -30,7 +26,7 @@
                 'flex lg:pl-[var(--sidebar-width)] rtl:lg:pr-[var(--sidebar-width)]' => ! \Filament\Navigation\Sidebar::$isCollapsibleOnDesktop,
             ])
         >
-            <x-filament::topbar :breadcrumbs="$breadcrumbs" />
+            <x-filament::topbar :breadcrumbs="$livewire->getBreadcrumbs()" />
 
             <div class="filament-main-content flex-1 w-full max-w-7xl px-4 mx-auto md:px-6 lg:px-8">
                 {{ filament()->renderHook('content.start') }}

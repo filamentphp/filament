@@ -190,28 +190,6 @@ Set the `google_fonts` config option to a new Google Fonts URL to load:
 'google_fonts' => 'https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap',
 ```
 
-## Changing the maximum content width
-
-Filament exposes a configuration option that allows you to change the maximum content width of all pages.
-
-You must [publish the configuration](installation#publishing-configuration) in order to access this feature.
-
-In `config/filament.php`, set the `layouts.max_content_width` to any value between `xl` and `7xl`, or `full` for no max width:
-
-```php
-'layout' => [
-    'max_content_width' => 'full',
-],
-```
-
-The default is `7xl`.
-
-You may override the maximum content width for a specific page in the admin panel by using the `$maxContentWidth` property:
-
-```php
-protected ?string $maxContentWidth = 'full';
-```
-
 ## Including frontend assets
 
 You may register your own scripts and styles using the `registerScripts()` and `registerStyles()` methods in a service provider's `boot()` method:

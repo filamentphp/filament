@@ -1,32 +1,28 @@
 <?php
 
-namespace Filament\Pages;
+namespace Filament\Pages\Tenancy;
 
 use Filament\Context;
 use Filament\Facades\Filament;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Pages\CardPage;
+use Filament\Pages\Concerns;
 use Filament\Support\Exceptions\Halt;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
-use Livewire\Component;
 
 /**
  * @property Form $form
  */
-abstract class RegisterTenant extends Component implements HasForms
+abstract class RegisterTenant extends CardPage
 {
-    use InteractsWithForms;
+    use Concerns\HasRoutes;
+
+    protected static string $view = 'filament::pages.tenancy.register-tenant';
 
     public $data;
 
     public ?Model $tenant = null;
-
-    protected static string | array $routeMiddleware = [];
-
-    protected static string $slug = 'new';
 
     abstract public static function getLabel(): string;
 
@@ -44,11 +40,6 @@ abstract class RegisterTenant extends Component implements HasForms
         return static::$routeMiddleware;
     }
 
-    public static function getSlug(): string
-    {
-        return static::$slug;
-    }
-
     public function mount(): void
     {
         $this->form->fill();
@@ -57,15 +48,6 @@ abstract class RegisterTenant extends Component implements HasForms
     protected function mutateFormDataBeforeRegister(array $data): array
     {
         return $data;
-    }
-
-    protected function callHook(string $hook): void
-    {
-        if (! method_exists($this, $hook)) {
-            return;
-        }
-
-        $this->{$hook}();
     }
 
     public function register(): void
@@ -100,7 +82,7 @@ abstract class RegisterTenant extends Component implements HasForms
         return $this->getModel()::create($data);
     }
 
-    protected function getRedirectUrl(): string
+    protected function getRedirectUrl(): ?string
     {
         return Filament::getUrl($this->tenant);
     }
@@ -121,11 +103,13 @@ abstract class RegisterTenant extends Component implements HasForms
         return Filament::getTenantModel();
     }
 
-    public function render(): View
+    public function getTitle(): string
     {
-        return view('filament::pages.tenancy.register-tenant')
-            ->layout('filament::components.layouts.card', [
-                'title' => static::getLabel(),
-            ]);
+        return static::getLabel();
+    }
+
+    public static function getSlug(): string
+    {
+        return static::$slug ?? 'new';
     }
 }

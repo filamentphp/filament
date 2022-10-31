@@ -99,15 +99,6 @@ class SettingsPage extends Page
         return null;
     }
 
-    protected function callHook(string $hook): void
-    {
-        if (! method_exists($this, $hook)) {
-            return;
-        }
-
-        $this->{$hook}();
-    }
-
     protected function mutateFormDataBeforeSave(array $data): array
     {
         return $data;

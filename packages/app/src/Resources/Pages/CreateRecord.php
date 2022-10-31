@@ -176,7 +176,7 @@ class CreateRecord extends Page
             ->color('secondary');
     }
 
-    protected function getTitle(): string
+    public function getTitle(): string
     {
         if (filled(static::$title)) {
             return static::$title;

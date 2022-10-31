@@ -1,5 +1,5 @@
 @props([
-    'title' => null,
+    'livewire',
 ])
 
 <!DOCTYPE html>
@@ -23,7 +23,7 @@
             <link rel="icon" href="{{ $favicon }}">
         @endif
 
-        <title>{{ $title ? "{$title} - " : null }} {{ filament()->getBrandName() }}</title>
+        <title>{{ filled($title = $livewire->getTitle()) ? "{$title} - " : null }} {{ filament()->getBrandName() }}</title>
 
         {{ filament()->renderHook('styles.start') }}
 

@@ -67,13 +67,4 @@ abstract class Page extends BasePage
     {
         return static::$resource;
     }
-
-    protected function callHook(string $hook): void
-    {
-        if (! method_exists($this, $hook)) {
-            return;
-        }
-
-        $this->{$hook}();
-    }
 }

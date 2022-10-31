@@ -142,7 +142,7 @@ class ViewRecord extends Page
             ->successRedirectUrl($resource::getUrl('index'));
     }
 
-    protected function getTitle(): string
+    public function getTitle(): string
     {
         if (filled(static::$title)) {
             return static::$title;
