@@ -5,6 +5,7 @@ namespace Filament;
 use Closure;
 use Exception;
 use Filament\AvatarProviders\UiAvatarsProvider;
+use Filament\Contracts\Plugin;
 use Filament\Facades\Filament;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\DefaultGlobalSearchProvider;
@@ -118,6 +119,8 @@ class Context
 
     protected ?string $googleFonts = 'https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap';
 
+    protected array $plugins = [];
+
     public function default(bool $condition = true): static
     {
         $this->isDefault = $condition;
@@ -146,6 +149,10 @@ class Context
 
     public function boot(): void
     {
+        foreach ($this->plugins as $plugin) {
+            $plugin->register($this);
+        }
+
         $this->registerLivewireComponents();
     }
 
@@ -402,6 +409,23 @@ class Context
     public function googleFonts(?string $url): static
     {
         $this->googleFonts = $url;
+
+        return $this;
+    }
+
+    public function plugin(Plugin $plugin): static
+    {
+        $this->plugins[] = $plugin;
+
+        return $this;
+    }
+
+    public function plugins(array $plugins): static
+    {
+        $this->plugins = array_merge(
+            $this->plugins,
+            $plugins,
+        );
 
         return $this;
     }

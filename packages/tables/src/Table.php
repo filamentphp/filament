@@ -73,7 +73,7 @@ class Table extends ViewComponent
 
     protected array | Closure | null $contentGrid = null;
 
-    protected int | string | Closure | null $defaultPaginationPageOption = null;
+    protected int | string | Closure | null $defaultPaginationPageOption = 10;
 
     protected string | Closure | null $defaultSortColumn = null;
 

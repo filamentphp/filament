@@ -39,19 +39,9 @@ class FilamentManager
         $this->getCurrentContext()->boot();
     }
 
-    public function navigation(Closure $builder, ?string $context = null): void
-    {
-        $this->getContext($context)->navigation($builder);
-    }
-
     public function buildNavigation(): array
     {
         return $this->getCurrentContext()->buildNavigation();
-    }
-
-    public function globalSearchProvider(string $provider, ?string $context = null): void
-    {
-        $this->getContext($context)->globalSearchProvider($provider);
     }
 
     public function mountNavigation(): void
@@ -66,72 +56,6 @@ class FilamentManager
         if ($context->isDefault()) {
             $this->setCurrentContext($context);
         }
-    }
-
-    public function registerNavigationGroups(array $groups, ?string $context = null): void
-    {
-        $this->getContext($context)->navigationGroups($groups);
-    }
-
-    public function registerNavigationItems(array $items, ?string $context = null): void
-    {
-        $this->getContext($context)->navigationItems($items);
-    }
-
-    public function registerPages(array $pages, ?string $context = null): void
-    {
-        $this->getContext($context)->pages($pages);
-    }
-
-    public function registerRenderHook(string $name, Closure $callback, ?string $context = null): void
-    {
-        $this->getContext($context)->renderHook($name, $callback);
-    }
-
-    public function registerResources(array $resources, ?string $context = null): void
-    {
-        $this->getContext($context)->resources($resources);
-    }
-
-    public function registerTheme(string | Htmlable | null $theme, ?string $context = null): void
-    {
-        $this->getContext($context)->theme($theme);
-    }
-
-    /**
-     * @deprecated Use `registerTheme()` instead.
-     */
-    public function registerThemeUrl(string | Htmlable | null $theme): void
-    {
-        $this->registerTheme($theme);
-    }
-
-    /**
-     * @deprecated Use `registerTheme()` instead.
-     */
-    public function registerThemeLink(string | Htmlable | null $theme): void
-    {
-        $this->registerTheme($theme);
-    }
-
-    public function registerTenantMenuItems(array $items, ?string $context = null): void
-    {
-        $this->getContext($context)->tenantMenuItems($items);
-    }
-
-    public function registerUserMenuItems(array $items, ?string $context = null): void
-    {
-        $this->getContext($context)->userMenuItems($items);
-    }
-
-    public function registerWidgets(array $widgets, ?string $context = null): void
-    {
-        $this->getContext($context)->widgets($widgets);
-    }
-
-    public function pushMeta(array $meta, ?string $context = null): void
-    {
-        $this->getContext($context)->meta($meta);
     }
 
     public function favicon(?string $url): void

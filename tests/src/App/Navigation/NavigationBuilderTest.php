@@ -15,7 +15,7 @@ use Filament\Tests\App\Navigation\TestCase;
 uses(TestCase::class);
 
 it('can register navigation', function () {
-    Filament::navigation(function (NavigationBuilder $navigation): NavigationBuilder {
+    Filament::getCurrentContext()->navigation(function (NavigationBuilder $navigation): NavigationBuilder {
         return $navigation
             ->items([
                 ...Dashboard::getNavigationItems(),
@@ -80,7 +80,7 @@ it('can register navigation', function () {
 });
 
 it('can register navigation groups individually', function () {
-    Filament::navigation(function (NavigationBuilder $navigation): NavigationBuilder {
+    Filament::getCurrentContext()->navigation(function (NavigationBuilder $navigation): NavigationBuilder {
         return $navigation
             ->group('Blog', [
                 ...PostResource::getNavigationItems(),

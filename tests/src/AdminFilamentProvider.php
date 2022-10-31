@@ -8,6 +8,12 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\MirrorConfigToSubpackages;
 use Filament\Pages;
+use Filament\Tests\Actions\Fixtures\Pages\Actions;
+use Filament\Tests\App\Fixtures\Pages\Settings;
+use Filament\Tests\App\Fixtures\Resources\PostCategoryResource;
+use Filament\Tests\App\Fixtures\Resources\PostResource;
+use Filament\Tests\App\Fixtures\Resources\ProductResource;
+use Filament\Tests\App\Fixtures\Resources\UserResource;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -24,8 +30,16 @@ class AdminFilamentProvider extends ContextProvider
             ->default()
             ->id('admin')
             ->loginPage()
+            ->resources([
+                PostResource::class,
+                PostCategoryResource::class,
+                ProductResource::class,
+                UserResource::class,
+            ])
             ->pages([
                 Pages\Dashboard::class,
+                Actions::class,
+                Settings::class,
             ])
             ->middleware([
                 EncryptCookies::class,

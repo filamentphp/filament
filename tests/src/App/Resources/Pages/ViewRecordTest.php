@@ -9,12 +9,6 @@ use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
 
-beforeEach(function () {
-    Filament::registerResources([
-        PostResource::class,
-    ]);
-});
-
 it('can render page', function () {
     $this->get(PostResource::getUrl('view', [
         'record' => Post::factory()->create(),

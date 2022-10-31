@@ -13,11 +13,4 @@ class TestCase extends BaseTestCase
 
         $this->actingAs(User::factory()->create());
     }
-
-    protected function getPackageProviders($app): array
-    {
-        return array_merge(parent::getPackageProviders($app), [
-            GlobalSearchServiceProvider::class,
-        ]);
-    }
 }

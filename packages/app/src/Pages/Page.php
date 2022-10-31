@@ -52,6 +52,10 @@ abstract class Page extends Component implements HasActions, RendersFormComponen
 
     protected ?string $maxContentWidth = null;
 
+    public static string $formActionsAlignment = 'left';
+
+    public static bool $hasInlineFormLabels = false;
+
     public static function registerNavigationItems(): void
     {
         if (! static::shouldRegisterNavigation()) {
@@ -278,5 +282,30 @@ abstract class Page extends Component implements HasActions, RendersFormComponen
     protected function halt(): void
     {
         throw new Halt();
+    }
+
+    public static function alignFormActionsLeft(): void
+    {
+        static::$formActionsAlignment = 'left';
+    }
+
+    public static function alignFormActionsCenter(): void
+    {
+        static::$formActionsAlignment = 'center';
+    }
+
+    public static function alignFormActionsRight(): void
+    {
+        static::$formActionsAlignment = 'right';
+    }
+
+    public function getFormActionsAlignment(): string
+    {
+        return static::$formActionsAlignment;
+    }
+
+    public function hasInlineFormLabels(): bool
+    {
+        return static::$hasInlineFormLabels;
     }
 }

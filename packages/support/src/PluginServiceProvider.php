@@ -18,12 +18,6 @@ abstract class PluginServiceProvider extends PackageServiceProvider
 
     protected string $context = 'default';
 
-    protected array $pages = [];
-
-    protected array $resources = [];
-
-    protected array $widgets = [];
-
     public function configurePackage(Package $package): void
     {
         $this->packageConfiguring($package);
@@ -64,20 +58,6 @@ abstract class PluginServiceProvider extends PackageServiceProvider
             foreach ($this->getContexts() as $context) {
                 Filament::registerContext($context);
             }
-        });
-
-        $this->app->afterResolving('filament', function () {
-            Filament::registerPages($this->getPages(), $this->getContext());
-            Filament::registerResources($this->getResources(), $this->getContext());
-            Filament::registerWidgets($this->getWidgets(), $this->getContext());
-
-            Filament::serving(function () {
-                if (Filament::getCurrentContext()->getId() !== $this->getContext()) {
-                    return;
-                }
-
-                Filament::registerUserMenuItems($this->getUserMenuItems(), $this->getContext());
-            });
         });
 
         $this->app->resolving(AssetManager::class, function () {
@@ -125,16 +105,6 @@ abstract class PluginServiceProvider extends PackageServiceProvider
         return [];
     }
 
-    protected function getPages(): array
-    {
-        return $this->pages;
-    }
-
-    protected function getResources(): array
-    {
-        return $this->resources;
-    }
-
     protected function getRoutes(): array
     {
         return [];
@@ -143,16 +113,6 @@ abstract class PluginServiceProvider extends PackageServiceProvider
     protected function getScriptData(): array
     {
         return [];
-    }
-
-    protected function getUserMenuItems(): array
-    {
-        return [];
-    }
-
-    protected function getWidgets(): array
-    {
-        return $this->widgets;
     }
 
     protected function registerMacros(): void
