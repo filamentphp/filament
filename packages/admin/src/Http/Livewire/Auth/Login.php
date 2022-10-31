@@ -39,7 +39,7 @@ class Login extends Component implements HasForms
         $this->form->fill();
     }
 
-    public function authenticate(Request $request): ?LoginResponse
+    public function authenticate(): ?LoginResponse
     {
         try {
             $this->rateLimit(5);
@@ -63,7 +63,7 @@ class Login extends Component implements HasForms
             ]);
         }
         
-        $request->session()->regenerate();
+        session()->regenerate();
         
         return app(LoginResponse::class);
     }
