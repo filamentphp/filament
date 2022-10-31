@@ -19,7 +19,7 @@
         x-text="window.pluralize(@js(__('filament-tables::table.selection_indicator.selected_count')), selectedRecords.length, { count: selectedRecords.length })"
     ></span>
 
-    <span x-show="{{ $allRecordsCount }} !== selectedRecords.length">
+    <span id="{{ $this->id }}.table.selection.indicator.record-count.{{ $allRecordsCount }}" x-show="{{ $allRecordsCount }} !== selectedRecords.length">
         <button x-on:click="selectAllRecords" class="text-sm font-medium text-primary-600">
             {{ __('filament-tables::table.selection_indicator.buttons.select_all.label', ['count' => $allRecordsCount]) }}.
         </button>
