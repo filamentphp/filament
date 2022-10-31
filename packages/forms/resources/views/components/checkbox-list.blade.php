@@ -11,7 +11,7 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    @if ($isSelectable())
+    @if ($hasSelectAll())
     <div x-data="{
         checkboxes: [],
         showSelectAll: true,
@@ -19,34 +19,32 @@
             this.checkboxes = this.$el.querySelectorAll('input[type=checkbox]')
             this.toggleSelectAll()
         },
-        toggleSelectAll: function() {
-            console.log({
-                root: Array.from(this.checkboxes).filter((item) => item),
-                boxes: this.checkboxes.length,
-                selected: this.$root.querySelectorAll('input[type=checkbox]:checked').length
+        toggleBoxes: function(condition) {
+            this.checkboxes.forEach((box) => {
+                box.checked = ! box.checked
+                box.dispatchEvent(new Event('change'))
             })
-            if (this.checkboxes.length === this.$root.querySelectorAll('input[type=checkbox]:checked').length) {
-                this.showSelectAll = false
-            }
+            this.toggleSelectAll()
+        },
+        toggleSelectAll: function() {
+            this.showSelectAll = this.checkboxes.length !== this.$root.querySelectorAll('input[type=checkbox]:checked').length;
         }
     }">
         <div class="mb-2">
             <x-forms::link
-                wire:click="dispatchFormEvent('checkboxList::selectAll', '{{ $getStatePath() }}')"
-                x-on:click="toggleSelectAll"
                 tag="button"
                 size="sm"
                 x-show="showSelectAll"
+                x-on:click="toggleBoxes"
             >
                 {{ __('forms::components.checkbox_list.buttons.select_all.label') }}
             </x-forms::link>
 
             <x-forms::link
-                wire:click="dispatchFormEvent('checkboxList::deselectAll', '{{ $getStatePath() }}')"
-                x-on:click="toggleSelectAll"
                 tag="button"
                 size="sm"
                 x-show="! showSelectAll"
+                x-on:click="toggleBoxes"
             >
                 {{ __('forms::components.checkbox_list.buttons.deselect_all.label') }}
             </x-forms::link>
@@ -75,7 +73,7 @@
                         type="checkbox"
                         value="{{ $optionValue }}"
                         dusk="filament.forms.{{ $getStatePath() }}"
-                        x-on:change="toggleSelectAll"
+                        x-on:click="toggleSelectAll"
                         {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
                         {{ $getExtraAttributeBag()->class([
                             'text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70',
@@ -96,9 +94,7 @@
             @endforeach
         </x-filament-support::grid>
 
-
-
-    @if ($isSelectable())
+    @if ($hasSelectAll())
     </div>
     @endif
 </x-dynamic-component>

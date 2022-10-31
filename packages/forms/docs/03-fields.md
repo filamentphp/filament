@@ -909,7 +909,7 @@ CheckboxList::make('technologies')
 
 This method accepts the same options as the `columns()` method of the [grid](layout#grid). This allows you to responsively customize the number of columns at various breakpoints.
 
-You may also allow user to select / deselect all options at once by using the `selectable()` method:
+You may also allow user to select / deselect all options at once by using the `canSelectAll()` method:
 
 ```php
 use Filament\Forms\Components\CheckboxList;
@@ -921,7 +921,7 @@ CheckboxList::make('technologies')
         'laravel' => 'Laravel',
         'livewire' => 'Laravel Livewire',
     ])
-    ->selectable()
+    ->canSelectAll()
 ```
 
 ### Populating automatically from a relationship
