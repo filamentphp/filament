@@ -260,12 +260,12 @@ return [
 
         'buttons' => [
 
-            'select_all' => [
-                'label' => 'Select All',
+            'deselect_all' => [
+                'label' => 'Deselect all',
             ],
 
-            'deselect_all' => [
-                'label' => 'Deselect All',
+            'select_all' => [
+                'label' => 'Select all',
             ],
 
         ],
