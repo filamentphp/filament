@@ -12,44 +12,44 @@
     :state-path="$getStatePath()"
 >
     @if ($hasSelectAll())
-    <div x-data="{
-        checkboxes: [],
-        showSelectAll: true,
-        init: function() {
-            this.checkboxes = this.$el.querySelectorAll('input[type=checkbox]')
-            this.toggleSelectAll()
-        },
-        toggleBoxes: function(condition) {
-            this.checkboxes.forEach((box) => {
-                box.checked = ! box.checked
-                box.dispatchEvent(new Event('change'))
-            })
-            this.toggleSelectAll()
-        },
-        toggleSelectAll: function() {
-            this.showSelectAll = this.checkboxes.length !== this.$root.querySelectorAll('input[type=checkbox]:checked').length;
-        }
-    }">
-        <div class="mb-2">
-            <x-forms::link
-                tag="button"
-                size="sm"
-                x-show="showSelectAll"
-                x-on:click="toggleBoxes"
-            >
-                {{ __('forms::components.checkbox_list.buttons.select_all.label') }}
-            </x-forms::link>
+        <div x-data="{
+            checkboxes: [],
+            showSelectAll: true,
+            init: function() {
+                this.checkboxes = this.$el.querySelectorAll('input[type=checkbox]')
+                this.toggleSelectAll()
+            },
+            toggleBoxes: function(condition) {
+                this.checkboxes.forEach((box) => {
+                    box.checked = ! box.checked
+                    box.dispatchEvent(new Event('change'))
+                })
+                this.toggleSelectAll()
+            },
+            toggleSelectAll: function() {
+                this.showSelectAll = this.checkboxes.length !== this.$root.querySelectorAll('input[type=checkbox]:checked').length;
+            }
+        }">
+            <div class="mb-2">
+                <x-forms::link
+                    tag="button"
+                    size="sm"
+                    x-show="showSelectAll"
+                    x-on:click="toggleBoxes"
+                >
+                    {{ __('forms::components.checkbox_list.buttons.select_all.label') }}
+                </x-forms::link>
 
-            <x-forms::link
-                tag="button"
-                size="sm"
-                x-show="! showSelectAll"
-                x-on:click="toggleBoxes"
-            >
-                {{ __('forms::components.checkbox_list.buttons.deselect_all.label') }}
-            </x-forms::link>
-        </div>
-    @endif
+                <x-forms::link
+                    tag="button"
+                    size="sm"
+                    x-show="! showSelectAll"
+                    x-on:click="toggleBoxes"
+                >
+                    {{ __('forms::components.checkbox_list.buttons.deselect_all.label') }}
+                </x-forms::link>
+            </div>
+        @endif
 
         <x-filament-support::grid
             :default="$getColumns('default')"
