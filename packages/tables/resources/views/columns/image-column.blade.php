@@ -13,8 +13,8 @@
             {!! $width !== null ? "width: {$width};" : null !!}
         "
         @class([
-            'rounded-full overflow-hidden' => $isRounded(),
-            'shadow-lg rounded-md overflow-hidden' => $isSquare()
+            'overflow-hidden' => $isRounded() || $isSquare(),
+            'rounded-full' => $isRounded(),
         ])
     >
         @if ($path = $getImagePath())
