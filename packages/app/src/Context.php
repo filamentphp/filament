@@ -415,17 +415,16 @@ class Context
 
     public function plugin(Plugin $plugin): static
     {
-        $this->plugins[] = $plugin;
+        $this->plugins[$plugin->getId()] = $plugin;
 
         return $this;
     }
 
     public function plugins(array $plugins): static
     {
-        $this->plugins = array_merge(
-            $this->plugins,
-            $plugins,
-        );
+        foreach ($plugins as $plugin) {
+            $this->plugin($plugin);
+        }
 
         return $this;
     }
@@ -901,6 +900,16 @@ class Context
     public function getGoogleFonts(): ?string
     {
         return $this->googleFonts;
+    }
+
+    public function getPlugins(): array
+    {
+        return $this->plugins;
+    }
+
+    public function getPlugin(string $id): Plugin
+    {
+        return $this->getPlugins()[$id] ?? throw new Exception("Plugin [{$id}] is not registered for context [{$this->getId()}].");
     }
 
     protected function discoverComponents(string $baseClass, array &$register, ?string $directory, ?string $namespace): void

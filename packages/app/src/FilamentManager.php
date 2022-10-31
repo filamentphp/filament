@@ -4,6 +4,7 @@ namespace Filament;
 
 use Closure;
 use Exception;
+use Filament\Contracts\Plugin;
 use Filament\Events\ServingFilament;
 use Filament\Events\TenantSet;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
@@ -368,5 +369,10 @@ class FilamentManager
     public function getDefaultAvatarProvider(): string
     {
         return $this->getCurrentContext()->getDefaultAvatarProvider();
+    }
+
+    public function getPlugin(string $id): Plugin
+    {
+        return $this->getCurrentContext()->getPlugin($id);
     }
 }
