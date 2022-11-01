@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Http\Controller\Auth;
+namespace Filament\Http\Controllers\Auth;
 
 use Filament\Facades\Filament;
 use Filament\Http\Responses\Auth\Contracts\EmailVerificationResponse;

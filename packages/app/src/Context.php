@@ -24,6 +24,7 @@ use Filament\Resources\Resource;
 use Filament\Widgets\Widget;
 use FontLib\Table\Type\name;
 use Illuminate\Auth\EloquentUserProvider;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -620,7 +621,7 @@ class Context
         return route("filament.{$this->getId()}.auth.password-reset.request");
     }
 
-    public function getVerifyEmailUrl(MustVerifyEmail $user): string
+    public function getVerifyEmailUrl(MustVerifyEmail | Model | Authenticatable $user): string
     {
         return URL::temporarySignedRoute(
             "filament.{$this->getId()}.auth.email-verification.verify",
@@ -632,7 +633,7 @@ class Context
         );
     }
 
-    public function getResetPasswordUrl(string $token, CanResetPassword $user): string
+    public function getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user): string
     {
         return URL::signedRoute("filament.{$this->getId()}.auth.password-reset.reset", [
             'email' => $user->getEmailForPasswordReset(),

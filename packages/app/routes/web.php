@@ -1,7 +1,8 @@
 <?php
 
 use Filament\Facades\Filament;
-use Filament\Http\Controller\Auth\EmailVerificationController;
+use Filament\Http\Controllers\Auth\EmailVerificationController;
+use Filament\Http\Controllers\Auth\LogoutController;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -38,14 +39,7 @@ Route::name('filament.')
                             Route::get('/register', $context->getRegistrationPage())->name('register');
                         }
 
-                        Route::post('/logout', function (Request $request) use ($context): LogoutResponse {
-                            $context->auth()->logout();
-
-                            $request->session()->invalidate();
-                            $request->session()->regenerateToken();
-
-                            return app(LogoutResponse::class);
-                        })->name('logout');
+                        Route::post('/logout', LogoutController::class)->name('logout');
                     });
 
                     Route::middleware($context->getAuthMiddleware())

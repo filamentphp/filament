@@ -216,12 +216,12 @@ class FilamentManager
         return $this->getCurrentContext()->getRequestPasswordResetUrl();
     }
 
-    public function getVerifyEmailUrl(MustVerifyEmail $user): string
+    public function getVerifyEmailUrl(MustVerifyEmail | Model | Authenticatable $user): string
     {
         return $this->getCurrentContext()->getVerifyEmailUrl($user);
     }
 
-    public function getResetPasswordUrl(string $token, CanResetPassword $user): string
+    public function getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user): string
     {
         return $this->getCurrentContext()->getResetPasswordUrl($token, $user);
     }

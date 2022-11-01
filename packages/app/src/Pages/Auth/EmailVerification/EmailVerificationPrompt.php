@@ -4,6 +4,7 @@ namespace Filament\Pages\Auth\EmailVerification;
 
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
+use Exception;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
@@ -51,6 +52,12 @@ class EmailVerificationPrompt extends CardPage
         }
 
         $user = Filament::auth()->user();
+
+        if (! method_exists($user, 'notify')) {
+            $userClass = $user::class;
+
+            throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
+        }
 
         $notification = new VerifyEmail();
         $notification->url = Filament::getVerifyEmailUrl($user);

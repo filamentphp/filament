@@ -2,6 +2,7 @@
 
 namespace Filament\Listeners\Auth;
 
+use Exception;
 use Filament\Facades\Filament;
 use Filament\Notifications\Auth\ResetPassword as ResetPasswordNotification;
 use Filament\Notifications\Auth\VerifyEmail;
@@ -19,6 +20,12 @@ class SendEmailVerificationNotification extends BaseListener
 
         if ($event->user->hasVerifiedEmail()) {
             return;
+        }
+
+        if (! method_exists($event->user, 'notify')) {
+            $userClass = $event->user::class;
+
+            throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
         }
 
         $notification = new VerifyEmail();
