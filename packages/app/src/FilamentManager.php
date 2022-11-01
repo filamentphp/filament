@@ -15,11 +15,15 @@ use Filament\Models\Contracts\HasTenants;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\URL;
 
 class FilamentManager
 {
@@ -137,6 +141,11 @@ class FilamentManager
         }
     }
 
+    public function hasEmailVerification(): bool
+    {
+        return $this->getCurrentContext()->hasEmailVerification();
+    }
+
     public function hasLogin(): bool
     {
         return $this->getCurrentContext()->hasLogin();
@@ -182,6 +191,16 @@ class FilamentManager
         return $this->getCurrentContext()->getHomeUrl();
     }
 
+    public function getEmailVerificationPromptUrl(): ?string
+    {
+        return $this->getCurrentContext()->getEmailVerificationPromptUrl();
+    }
+
+    public function getEmailVerifiedMiddleware(): string
+    {
+        return $this->getCurrentContext()->getEmailVerifiedMiddleware();
+    }
+
     public function getLoginUrl(): ?string
     {
         return $this->getCurrentContext()->getLoginUrl();
@@ -195,6 +214,11 @@ class FilamentManager
     public function getRequestPasswordResetUrl(): ?string
     {
         return $this->getCurrentContext()->getRequestPasswordResetUrl();
+    }
+
+    public function getVerifyEmailUrl(MustVerifyEmail $user): string
+    {
+        return $this->getCurrentContext()->getVerifyEmailUrl($user);
     }
 
     public function getResetPasswordUrl(string $token, CanResetPassword $user): string

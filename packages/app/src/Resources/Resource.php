@@ -399,9 +399,19 @@ abstract class Resource
         return static::$routeMiddleware;
     }
 
+    public static function getEmailVerifiedMiddleware(Context $context): string
+    {
+        return $context->getEmailVerifiedMiddleware();
+    }
+
+    public static function isEmailVerificationRequired(Context $context): bool
+    {
+        return $context->isEmailVerificationRequired();
+    }
+
     public static function getTenantSubscribedMiddleware(Context $context): string
     {
-        return Filament::getTenantBillingProvider()->getSubscribedMiddleware();
+        return $context->getTenantBillingProvider()->getSubscribedMiddleware();
     }
 
     public static function isTenantSubscriptionRequired(Context $context): bool

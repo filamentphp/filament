@@ -11,6 +11,7 @@ use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\Models\Contracts\HasTenants;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -26,6 +27,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getContexts()
  * @method static string | null getDatabaseNotificationsPollingInterval()
  * @method static Context getDefaultContext()
+ * @method static string | null getEmailVerificationPromptUrl()
+ * @method static string getEmailVerifiedMiddleware()
  * @method static string | null getFavicon()
  * @method static GlobalSearchProvider getGlobalSearchProvider()
  * @method static string | null getGoogleFonts()
@@ -59,9 +62,11 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getUserMenuItems()
  * @method static string getUserName(Model | Authenticatable $user)
  * @method static array getUserTenants(HasTenants | Model | Authenticatable $user)
+ * @method static string getVerifyEmailUrl(MustVerifyEmail $user)
  * @method static array getWidgets()
  * @method static bool hasDarkMode()
  * @method static bool hasDatabaseNotifications()
+ * @method static bool hasEmailVerification()
  * @method static bool hasLogin()
  * @method static bool hasTenancy()
  * @method static bool hasTenantRegistration()

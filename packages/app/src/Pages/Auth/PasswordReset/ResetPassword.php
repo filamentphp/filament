@@ -55,7 +55,7 @@ class ResetPassword extends CardPage
     public function resetPassword(): ?PasswordResetResponse
     {
         try {
-            $this->rateLimit(5);
+            $this->rateLimit(1);
         } catch (TooManyRequestsException $exception) {
             Notification::make()
                 ->title(__('filament::pages/auth/password-reset/reset-password.messages.throttled', [
@@ -124,6 +124,18 @@ class ResetPassword extends CardPage
                     ->required()
                     ->dehydrated(false),
             ]);
+    }
+
+    public function propertyIsPublicAndNotDefinedOnBaseClass($propertyName): bool
+    {
+        if (in_array($propertyName, [
+            'email',
+            'token',
+        ])) {
+            return false;
+        }
+
+        return parent::propertyIsPublicAndNotDefinedOnBaseClass($propertyName);
     }
 
     protected function getMessages(): array

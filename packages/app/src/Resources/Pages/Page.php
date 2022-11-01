@@ -23,6 +23,16 @@ abstract class Page extends BasePage
         );
     }
 
+    public static function getEmailVerifiedMiddleware(Context $context): string
+    {
+        return static::getResource()::getEmailVerifiedMiddleware($context);
+    }
+
+    public static function isEmailVerificationRequired(Context $context): bool
+    {
+        return static::getResource()::isEmailVerificationRequired($context);
+    }
+
     public static function getTenantSubscribedMiddleware(Context $context): string
     {
         return static::getResource()::getTenantSubscribedMiddleware($context);

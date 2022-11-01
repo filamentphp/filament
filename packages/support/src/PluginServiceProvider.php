@@ -16,8 +16,6 @@ abstract class PluginServiceProvider extends PackageServiceProvider
 
     public static ?string $viewNamespace = null;
 
-    protected string $context = 'default';
-
     public function configurePackage(Package $package): void
     {
         $this->packageConfiguring($package);
@@ -73,11 +71,6 @@ abstract class PluginServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         $this->registerMacros();
-    }
-
-    public function getContext(): string
-    {
-        return $this->context;
     }
 
     protected function getAssetPackage(): ?string

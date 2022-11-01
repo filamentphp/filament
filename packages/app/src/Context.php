@@ -13,6 +13,7 @@ use Filament\Http\Livewire\GlobalSearch;
 use Filament\Http\Livewire\Notifications;
 use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
+use Filament\Pages\Auth\EmailVerification\EmailVerificationPrompt;
 use Filament\Pages\Auth\Login;
 use Filament\Pages\Auth\PasswordReset\RequestPasswordReset;
 use Filament\Pages\Auth\PasswordReset\ResetPassword;
@@ -21,15 +22,19 @@ use Filament\Pages\Page;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
 use Filament\Widgets\Widget;
+use FontLib\Table\Type\name;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\HtmlString;
 use Livewire\Component;
@@ -53,6 +58,8 @@ class Context
     protected bool $isNavigationMounted = false;
 
     protected array $livewireComponents = [];
+
+    protected ?string $emailVerificationPromptPage = null;
 
     protected ?string $loginPage = null;
 
@@ -81,6 +88,8 @@ class Context
     protected array $meta = [];
 
     protected string $path = '';
+
+    protected bool $isEmailVerificationRequired = false;
 
     protected bool $isTenantSubscriptionRequired = false;
 
@@ -161,7 +170,7 @@ class Context
     public function boot(): void
     {
         foreach ($this->plugins as $plugin) {
-            $plugin->register($this);
+            $plugin->boot($this);
         }
 
         $this->registerLivewireComponents();
@@ -207,16 +216,17 @@ class Context
         return $this;
     }
 
-    public function login(?string $page = Login::class): static
+    public function emailVerification(?string $promptPage = EmailVerificationPrompt::class, bool $isRequired = true): static
     {
-        $this->loginPage = $page;
+        $this->emailVerificationPromptPage = $promptPage;
+        $this->isEmailVerificationRequired = $isRequired;
 
         return $this;
     }
 
-    public function registration(?string $page = Register::class): static
+    public function login(?string $page = Login::class): static
     {
-        $this->registrationPage = $page;
+        $this->loginPage = $page;
 
         return $this;
     }
@@ -225,6 +235,13 @@ class Context
     {
         $this->requestPasswordResetPage = $requestPage;
         $this->resetPasswordPage = $resetPage;
+
+        return $this;
+    }
+
+    public function registration(?string $page = Register::class): static
+    {
+        $this->registrationPage = $page;
 
         return $this;
     }
@@ -468,6 +485,11 @@ class Context
         return filled($this->getTenantModel());
     }
 
+    public function isEmailVerificationRequired(): bool
+    {
+        return $this->isEmailVerificationRequired;
+    }
+
     public function isTenantSubscriptionRequired(): bool
     {
         return $this->isTenantSubscriptionRequired;
@@ -552,6 +574,25 @@ class Context
         return $this->tenantSlugField;
     }
 
+    public function getEmailVerificationPromptUrl(): ?string
+    {
+        if (! $this->hasEmailVerification()) {
+            return null;
+        }
+
+        return route($this->getEmailVerificationPromptRouteName());
+    }
+
+    public function getEmailVerificationPromptRouteName(): string
+    {
+        return "filament.{$this->getId()}.auth.email-verification.prompt";
+    }
+
+    public function getEmailVerifiedMiddleware(): string
+    {
+        return "verified:{$this->getEmailVerificationPromptRouteName()}";
+    }
+
     public function getLoginUrl(): ?string
     {
         if (! $this->hasLogin()) {
@@ -577,6 +618,18 @@ class Context
         }
 
         return route("filament.{$this->getId()}.auth.password-reset.request");
+    }
+
+    public function getVerifyEmailUrl(MustVerifyEmail $user): string
+    {
+        return URL::temporarySignedRoute(
+            "filament.{$this->getId()}.auth.email-verification.verify",
+            now()->addMinutes(config('auth.verification.expire', 60)),
+            [
+                'id' => $user->getKey(),
+                'hash' => sha1($user->getEmailForVerification()),
+            ],
+        );
     }
 
     public function getResetPasswordUrl(string $token, CanResetPassword $user): string
@@ -834,6 +887,11 @@ class Context
         return array_unique($this->meta);
     }
 
+    public function getEmailVerificationPromptPage(): ?string
+    {
+        return $this->emailVerificationPromptPage;
+    }
+
     public function getLoginPage(): ?string
     {
         return $this->loginPage;
@@ -852,6 +910,11 @@ class Context
     public function getResetPasswordPage(): ?string
     {
         return $this->resetPasswordPage;
+    }
+
+    public function hasEmailVerification(): bool
+    {
+        return filled($this->getEmailVerificationPromptPage());
     }
 
     public function hasLogin(): bool
@@ -1041,6 +1104,10 @@ class Context
     {
         $this->queueLivewireComponentForRegistration(GlobalSearch::class);
         $this->queueLivewireComponentForRegistration(Notifications::class);
+
+        if ($this->hasEmailVerification()) {
+            $this->queueLivewireComponentForRegistration($this->getEmailVerificationPromptPage());
+        }
 
         if ($this->hasLogin()) {
             $this->queueLivewireComponentForRegistration($this->getLoginPage());

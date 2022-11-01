@@ -52,7 +52,7 @@ class Register extends CardPage
     public function register(): ?RegistrationResponse
     {
         try {
-            $this->rateLimit(5);
+            $this->rateLimit(1);
         } catch (TooManyRequestsException $exception) {
             Notification::make()
                 ->title(__('filament::pages/auth/register.messages.throttled', [
@@ -69,6 +69,10 @@ class Register extends CardPage
 
         $user = $this->getUserModel()::create($data);
 
+        app()->bind(
+            \Illuminate\Auth\Listeners\SendEmailVerificationNotification::class,
+            \Filament\Listeners\Auth\SendEmailVerificationNotification::class,
+        );
         event(new Registered($user));
 
         Filament::auth()->login($user);

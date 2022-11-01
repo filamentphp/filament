@@ -31,14 +31,25 @@ trait HasRoutes
     public static function getRouteMiddleware(Context $context): string | array
     {
         return array_merge(
+            (static::isEmailVerificationRequired($context) ? [static::getEmailVerifiedMiddleware($context)] : []),
             (static::isTenantSubscriptionRequired($context) ? [static::getTenantSubscribedMiddleware($context)] : []),
             static::$routeMiddleware,
         );
     }
 
+    public static function getEmailVerifiedMiddleware(Context $context): string
+    {
+        return $context->getEmailVerifiedMiddleware();
+    }
+
+    public static function isEmailVerificationRequired(Context $context): bool
+    {
+        return $context->isEmailVerificationRequired();
+    }
+
     public static function getTenantSubscribedMiddleware(Context $context): string
     {
-        return Filament::getTenantBillingProvider()->getSubscribedMiddleware();
+        return $context->getTenantBillingProvider()->getSubscribedMiddleware();
     }
 
     public static function isTenantSubscriptionRequired(Context $context): bool

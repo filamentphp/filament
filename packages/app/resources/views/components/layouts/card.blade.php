@@ -38,7 +38,7 @@
                     @endif
 
                     @if (filled($subheading ??= $livewire->getSubHeading()))
-                        <h3 class="text-sm font-medium tracking-tight text-center">
+                        <h3 class="text-sm text-gray-600 font-medium tracking-tight text-center dark:text-gray-300">
                             {{ $subheading }}
                         </h3>
                     @endif
@@ -61,5 +61,7 @@
         @endif
     </div>
 
-    @livewire('notifications')
+    @if (! filament()->auth()->check())
+        @livewire('filament.core.notifications')
+    @endif
 </x-filament::layouts.base>

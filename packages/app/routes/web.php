@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Facades\Filament;
+use Filament\Http\Controller\Auth\EmailVerificationController;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -67,6 +68,15 @@ Route::name('filament.')
 
                                     return redirect($context->getTenantRegistrationUrl());
                                 })->name('home');
+                            }
+
+                            if ($context->hasEmailVerification()) {
+                                Route::name('auth.email-verification.')
+                                    ->prefix('/email-verification')
+                                    ->group(function () use ($context) {
+                                        Route::get('/prompt', $context->getEmailVerificationPromptPage())->name('prompt');
+                                        Route::get('/verify', EmailVerificationController::class)->name('verify');
+                                    });
                             }
 
                             Route::name('tenant.')

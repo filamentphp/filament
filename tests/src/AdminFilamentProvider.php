@@ -30,6 +30,9 @@ class AdminFilamentProvider extends ContextProvider
             ->default()
             ->id('admin')
             ->login()
+            ->registration()
+            ->passwordReset()
+            ->emailVerification()
             ->resources([
                 PostResource::class,
                 PostCategoryResource::class,
