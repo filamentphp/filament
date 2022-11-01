@@ -3,7 +3,6 @@
 namespace Filament\Pages\Concerns;
 
 use Filament\Context;
-use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Route;
 
 trait HasRoutes
