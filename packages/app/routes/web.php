@@ -3,9 +3,7 @@
 use Filament\Facades\Filament;
 use Filament\Http\Controllers\Auth\EmailVerificationController;
 use Filament\Http\Controllers\Auth\LogoutController;
-use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::name('filament.')
