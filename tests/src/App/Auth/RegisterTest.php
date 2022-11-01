@@ -30,7 +30,6 @@ it('can register', function () {
         ->set('password', 'password')
         ->set('passwordConfirmation', 'password')
         ->call('register')
-            ->assertNotified()
         ->assertRedirect(Filament::getUrl());
 
     Event::assertDispatched(Registered::class);
@@ -72,7 +71,7 @@ it('can throttle registration attempts', function () {
         ->set('password', 'password')
         ->set('passwordConfirmation', 'password')
         ->call('register')
-        ->assertNotified();
+        ->assertRedirect(Filament::getUrl());
 
     Event::assertDispatchedTimes(Registered::class, times: 1);
 
@@ -86,7 +85,8 @@ it('can throttle registration attempts', function () {
         ->set('password', 'password')
         ->set('passwordConfirmation', 'password')
         ->call('register')
-        ->assertNotified();
+        ->assertNotified()
+        ->assertNoRedirect();
 
     Event::assertDispatchedTimes(Registered::class, times: 1);
 
