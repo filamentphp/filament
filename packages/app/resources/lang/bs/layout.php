@@ -10,6 +10,10 @@ return [
             'label' => 'Uključite tamni način rada',
         ],
 
+        'database_notifications' => [
+            'label' => 'Otvorite notifikacije',
+        ],
+
         'light_mode' => [
             'label' => 'Uključite svjijetli način rada',
         ],

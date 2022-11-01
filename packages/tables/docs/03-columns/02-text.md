@@ -89,6 +89,16 @@ TextColumn::make('description')
     })
 ```
 
+## Limiting word count
+
+You may limit the number of `words()` displayed in the cell:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('description')->words(10)
+```
+
 ## Wrapping content
 
 If you'd like your column's content to wrap if it's too long, you may use the `wrap()` method:
