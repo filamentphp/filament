@@ -3,7 +3,6 @@
 namespace Filament\Listeners\Auth;
 
 use Filament\Facades\Filament;
-use Filament\Notifications\Auth\ResetPassword as ResetPasswordNotification;
 use Filament\Notifications\Auth\VerifyEmail;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification as BaseListener;
