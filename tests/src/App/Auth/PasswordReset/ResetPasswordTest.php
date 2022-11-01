@@ -2,13 +2,10 @@
 
 use Filament\Facades\Filament;
 use Filament\Pages\Auth\PasswordReset\ResetPassword;
-use Filament\Pages\Auth\Register;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use function Pest\Livewire\livewire;
@@ -54,7 +51,7 @@ it('requires request signature', function () {
     $userToResetPassword = User::factory()->make();
     $token = Password::createToken($userToResetPassword);
 
-    $this->get(route("filament.admin.auth.password-reset.reset", [
+    $this->get(route('filament.admin.auth.password-reset.reset', [
         'email' => $userToResetPassword->getEmailForPasswordReset(),
         'token' => $token,
     ]))->assertForbidden();
