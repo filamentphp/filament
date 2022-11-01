@@ -1,10 +1,8 @@
 <?php
 
 use Filament\Facades\Filament;
-use Filament\Http\Responses\Auth\Contracts\LogoutResponse;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
-use Illuminate\Http\RedirectResponse;
 
 uses(TestCase::class);
 
