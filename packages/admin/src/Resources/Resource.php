@@ -64,6 +64,8 @@ class Resource
 
     protected static int $globalSearchResultsLimit = 50;
 
+    protected static bool $ignorePolicies = false;
+
     public static function form(Form $form): Form
     {
         return $form;
@@ -114,7 +116,7 @@ class Resource
         $policy = Gate::getPolicyFor($model = static::getModel());
         $user = Filament::auth()->user();
 
-        if ($policy === null) {
+        if ($policy === null || static::shouldIgnorePolicies()) {
             return true;
         }
 
@@ -123,6 +125,16 @@ class Resource
         }
 
         return Gate::forUser($user)->check($action, $record ?? $model);
+    }
+
+    public static function ignorePolicies(bool $condition = true): void
+    {
+        static::$ignorePolicies = $condition;
+    }
+
+    public static function shouldIgnorePolicies(): bool
+    {
+        return static::$ignorePolicies;
     }
 
     public static function canViewAny(): bool
