@@ -16,9 +16,13 @@ class Wizard extends Component
 
     protected bool | Closure $skippable = false;
 
+    protected bool | Closure $stepAsQuerystring = false;
+
     protected string | Htmlable | null $submitAction = null;
 
     public int | Closure $startStep = 1;
+
+    public ?int $currentStep = null;
 
     protected string $view = 'forms::components.wizard';
 
@@ -100,6 +104,13 @@ class Wizard extends Component
         return $this;
     }
 
+    public function setStepAsQuerystring(bool | Closure $condition = true): static
+    {
+        $this->stepAsQuerystring = $condition;
+
+        return $this;
+    }
+
     public function getCancelAction(): string | Htmlable | null
     {
         return $this->cancelAction;
@@ -118,5 +129,10 @@ class Wizard extends Component
     public function isSkippable(): bool
     {
         return $this->evaluate($this->skippable);
+    }
+
+    public function isStepAsQuerystring(): bool
+    {
+        return $this->evaluate($this->stepAsQuerystring);
     }
 }
