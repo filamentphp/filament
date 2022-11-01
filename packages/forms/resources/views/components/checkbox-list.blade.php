@@ -11,7 +11,7 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    @if ($hasSelectAll())
+    @if ($isToggleable())
     <div x-data="{
         checkboxes: $root.querySelectorAll('input[type=checkbox]'),
         isAllSelected: false,
@@ -21,9 +21,11 @@
         updateIsAllSelected: function () {
             this.isAllSelected = this.checkboxes.length === this.$root.querySelectorAll('input[type=checkbox]:checked').length
         },
-        selectAll: function (condition) {
+        toggle: function () {
+            state = !this.isAllSelected
+
             this.checkboxes.forEach((checkbox) => {
-                checkbox.checked = condition
+                checkbox.checked = state
                 checkbox.dispatchEvent(new Event('change'))
             })
         },
@@ -33,7 +35,7 @@
                 tag="button"
                 size="sm"
                 x-show="!isAllSelected"
-                x-on:click="selectAll"
+                x-on:click="toggle"
             >
                 {{ __('forms::components.checkbox_list.buttons.select_all.label') }}
             </x-forms::link>
@@ -42,7 +44,7 @@
                 tag="button"
                 size="sm"
                 x-show="isAllSelected"
-                x-on:click="selectAll(false)"
+                x-on:click="toggle"
             >
                 {{ __('forms::components.checkbox_list.buttons.deselect_all.label') }}
             </x-forms::link>
@@ -92,7 +94,7 @@
             @endforeach
         </x-filament-support::grid>
 
-    @if ($hasSelectAll())
+    @if ($isToggleable())
     </div>
     @endif
 </x-dynamic-component>
