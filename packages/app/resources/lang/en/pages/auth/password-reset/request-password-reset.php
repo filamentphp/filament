@@ -27,7 +27,7 @@ return [
     ],
 
     'messages' => [
-        'throttled' => 'Too many reset attempts. Please try again in :seconds seconds.',
+        'throttled' => 'Too many requests. Please try again in :seconds seconds.',
     ],
 
 ];

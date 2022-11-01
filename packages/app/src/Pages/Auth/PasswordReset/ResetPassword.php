@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password as PasswordRule;
+use Livewire\Livewire;
 
 /**
  * @property Form $form
@@ -106,9 +107,6 @@ class ResetPassword extends CardPage
             ->schema([
                 TextInput::make('email')
                     ->label(__('filament::pages/auth/password-reset/reset-password.fields.email.label'))
-                    ->email()
-                    ->required()
-                    ->maxLength(255)
                     ->disabled(),
                 TextInput::make('password')
                     ->label(__('filament::pages/auth/password-reset/reset-password.fields.password.label'))
@@ -126,7 +124,7 @@ class ResetPassword extends CardPage
 
     public function propertyIsPublicAndNotDefinedOnBaseClass($propertyName): bool
     {
-        if (in_array($propertyName, [
+        if ((! app()->runningUnitTests()) && in_array($propertyName, [
             'email',
             'token',
         ])) {

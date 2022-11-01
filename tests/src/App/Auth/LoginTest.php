@@ -22,7 +22,7 @@ it('can authenticate', function () {
         ->set('email', $userToAuthenticate->email)
         ->set('password', 'password')
         ->call('authenticate')
-        ->assertRedirect(route('filament.admin.pages.dashboard'));
+        ->assertRedirect(Filament::getUrl());
 
     $this->assertAuthenticatedAs($userToAuthenticate);
 });
@@ -82,7 +82,7 @@ it('can throttle authentication attempts', function () {
 
 it('can validate `email` is required', function () {
     livewire(Login::class)
-        ->assertSet('email', '')
+        ->set('email', '')
         ->call('authenticate')
         ->assertHasErrors(['email' => ['required']]);
 });
@@ -96,7 +96,7 @@ it('can validate `email` is valid email', function () {
 
 it('can validate `password` is required', function () {
     livewire(Login::class)
-        ->assertSet('password', '')
+        ->set('password', '')
         ->call('authenticate')
         ->assertHasErrors(['password' => ['required']]);
 });

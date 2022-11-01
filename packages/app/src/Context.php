@@ -217,7 +217,14 @@ class Context
     public function emailVerification(?string $promptPage = EmailVerificationPrompt::class, bool $isRequired = true): static
     {
         $this->emailVerificationPromptPage = $promptPage;
-        $this->isEmailVerificationRequired = $isRequired;
+        $this->requiresEmailVerification($isRequired);
+
+        return $this;
+    }
+
+    public function requiresEmailVerification(bool $condition = true): static
+    {
+        $this->isEmailVerificationRequired = $condition;
 
         return $this;
     }
