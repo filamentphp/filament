@@ -23,15 +23,15 @@ return [
         ],
 
         'sidebar' => [
-            
+
             'collapse' => [
                 'label' => 'Collapse sidebar',
             ],
-            
+
             'expand' => [
                 'label' => 'Expand sidebar',
             ],
-            
+
         ],
 
         'user_menu' => [
