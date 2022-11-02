@@ -117,9 +117,7 @@ export default function fileUploadFormComponent({
                         ).replace(/[018]/g, (c) =>
                             (
                                 c ^
-                                (crypto.getRandomValues(
-                                    new Uint8Array(1),
-                                )[0] &
+                                (crypto.getRandomValues(new Uint8Array(1))[0] &
                                     (15 >> (c / 4)))
                             ).toString(16),
                         )
@@ -137,8 +135,7 @@ export default function fileUploadFormComponent({
                         )
                     },
                     remove: async (source, load) => {
-                        let fileKey =
-                            this.uploadedFileUrlIndex[source] ?? null
+                        let fileKey = this.uploadedFileUrlIndex[source] ?? null
 
                         if (!fileKey) {
                             return
@@ -188,15 +185,14 @@ export default function fileUploadFormComponent({
                     .map((file) =>
                         file.source instanceof File
                             ? file.serverId
-                            : this.uploadedFileUrlIndex[file.source] ??
-                              null,
+                            : this.uploadedFileUrlIndex[file.source] ?? null,
                     ) // file.serverId is null for a file that is not yet uploaded
                     .filter((fileKey) => fileKey)
 
                 await reorderUploadedFilesUsing(
-                    shouldAppendFiles ?
-                        orderedFileKeys :
-                        orderedFileKeys.reverse(),
+                    shouldAppendFiles
+                        ? orderedFileKeys
+                        : orderedFileKeys.reverse(),
                 )
             })
 
