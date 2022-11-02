@@ -40,7 +40,7 @@ Repeater::make('members')
     ])
 ```
 
-If you wish to define a repeater with multiple schema blocks that can be repeated in any order, please use the [builder](#builder).
+If you wish to define a repeater with multiple schema blocks that can be repeated in any order, please use the [builder](builder).
 
 Repeaters may have a certain number of empty items created by default, using the `defaultItems()` method:
 
@@ -95,7 +95,7 @@ Repeater::make('members')
     ->maxItems(10)
 ```
 
-### Collapsible
+## Collapsible
 
 The repeater may be `collapsible()` to optionally hide content in long forms:
 
@@ -121,7 +121,7 @@ Repeater::make('qualifications')
     ->collapsed()
 ```
 
-### Cloning items
+## Cloning items
 
 You may allow repeater items to be duplicated using the `cloneable()` method:
 
@@ -135,7 +135,7 @@ Repeater::make('qualifications')
     ->cloneable()
 ```
 
-### Populating automatically from a relationship
+## Populating automatically from a relationship
 
 You may employ the `relationship()` method of the repeater to configure a relationship to automatically retrieve and save repeater items:
 
@@ -151,7 +151,7 @@ Repeater::make('qualifications')
 
 > To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
 
-#### Ordering items
+### Ordering items
 
 By default, ordering relationship repeater items is disabled. This is because your related model needs an `sort` column to store the order of related records. To enable ordering, you may use the `orderable()` method:
 
@@ -181,7 +181,7 @@ Repeater::make('qualifications')
     ->orderable('order_column')
 ```
 
-### Grid layout
+## Grid layout
 
 You may organize repeater items into columns by using the `grid()` method:
 
@@ -195,9 +195,9 @@ Repeater::make('members')
     ->grid(2)
 ```
 
-This method accepts the same options as the `columns()` method of the [grid](layout#grid). This allows you to responsively customize the number of grid columns at various breakpoints.
+This method accepts the same options as the `columns()` method of the [grid](layout/grid). This allows you to responsively customize the number of grid columns at various breakpoints.
 
-### Item labels
+## Item labels
 
 You may add a label for repeater items using the `itemLabel()` method:
 
@@ -215,7 +215,7 @@ Repeater::make('members')
 
 Any fields that you use from `$state` should be `reactive()` or `lazy()` if you wish to see the item label update live as you use the form.
 
-### Using `$get()` to access parent field values
+## Using `$get()` to access parent field values
 
 All form components are able to [use `$get()` and `$set()`](advanced) to access another field's value. However, you might experience unexpected behaviour when using this inside the repeater's schema.
 

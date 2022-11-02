@@ -40,7 +40,21 @@ Grid::make()
     ])
 ```
 
-### Setting an ID
+## Available layout components
+
+Filament ships with some layout components, suitable for arranging your form fields depending on your needs:
+
+- [Grid](grid)
+- [Fieldset](fieldset)
+- [Tabs](tabs)
+- [Wizard](wizard)
+- [Section](section)
+- [Placeholder](placeholder)
+- [Card](card)
+
+You may also [create your own custom layout components](custom) to organize fields however you wish.
+
+## Setting an ID
 
 You may define an ID for the component using the `id()` method:
 
@@ -50,7 +64,7 @@ use Filament\Forms\Components\Card;
 Card::make()->id('main-card')
 ```
 
-### Custom attributes
+## Custom attributes
 
 The HTML of components can be customized even further, by passing an array of `extraAttributes()`:
 
@@ -60,9 +74,9 @@ use Filament\Forms\Components\Card;
 Card::make()->extraAttributes(['class' => 'bg-gray-50'])
 ```
 
-### Global settings
+## Global settings
 
-If you wish to change the default behaviour of a component globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the component using. For example, if you wish to make all card components have [2 columns](#columns) by default, you can do it like so:
+If you wish to change the default behaviour of a component globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the component using. For example, if you wish to make all card components have [2 columns](grid#columns) by default, you can do it like so:
 
 ```php
 use Filament\Forms\Components\Card;
@@ -80,7 +94,7 @@ use Filament\Forms\Components\Card;
 Card::make()->columns(1)
 ```
 
-### Saving data to relationships
+## Saving data to relationships
 
 You may load and save the contents of a layout component to a `HasOne`, `BelongsTo` or `MorphOne` Eloquent relationship, using the `relationship()` method:
 

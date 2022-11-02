@@ -240,7 +240,7 @@ Action::make('updateAuthor')
 
 You may easily transform action forms into multistep wizards.
 
-On the action, simply pass in the [wizard steps](../forms/layout#wizard) to the `steps()` method, instead of `form()`:
+On the action, simply pass in the [wizard steps](../forms/layout/wizard) to the `steps()` method, instead of `form()`:
 
 ```php
 use Filament\Forms\Components\MarkdownEditor;

@@ -13,7 +13,7 @@ Fieldset::make('Label')
     ])
 ```
 
-You may use the `columns()` method to customize the [grid](#grid) within the fieldset:
+You may use the `columns()` method to customize the [grid](grid) within the fieldset:
 
 ```php
 use Filament\Forms\Components\Fieldset;

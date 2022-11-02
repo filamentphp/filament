@@ -87,7 +87,7 @@ DateTimePicker::make('date')
     ->disabledDates(['2022-10-02', '2022-10-05', '2022-10-15'])
 ```
 
-### Timezones
+## Timezones
 
 If you'd like users to be able to manage dates in their own timezone, you can use the `timezone()` method:
 

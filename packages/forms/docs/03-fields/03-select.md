@@ -58,7 +58,7 @@ Select::make('status')
     ->disablePlaceholderSelection()
 ```
 
-### Multi-select
+## Multi-select
 
 The `multiple()` method on the `Select` component allows you to select multiple values from the list of options:
 
@@ -94,7 +94,7 @@ class App extends Model
 
 Instead of `getOptionLabelUsing()`, the `getOptionLabelsUsing()` method can be used to transform the selected options' `$value`s into labels.
 
-### Dependant selects
+## Dependant selects
 
 Commonly, you may desire "dependant" select inputs, which populate their options based on the state of another.
 
@@ -102,7 +102,7 @@ Commonly, you may desire "dependant" select inputs, which populate their options
 
 Some of the techniques described in the [advanced forms](advanced) section are required to create dependant selects. These techniques can be applied across all form components for many dynamic customization possibilities.
 
-### Populating automatically from a relationship
+## Populating automatically from a relationship
 
 You may employ the `relationship()` method of the `Select` to configure a `BelongsTo` relationship to automatically retrieve and save options from:
 
@@ -169,7 +169,7 @@ Select::make('authorId')
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
 
-#### Handling `MorphTo` relationships
+### Handling `MorphTo` relationships
 
 `MorphTo` relationships are special, since they give the user the ability to select records from a range of different models. Because of this, we have a dedicated `MorphToSelect` component which is not actually a select field, rather 2 select fields inside a fieldset. The first select field allows you to select the type, and the second allows you to select the record of that type.
 
@@ -217,7 +217,7 @@ MorphToSelect::make('commentable')
 
 > Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `allowHtml()`, and `optionsLimit()`.
 
-#### Creating new records
+### Creating new records
 
 You may define a custom form that can be used to create a new record and attach it to the `BelongsTo` relationship:
 

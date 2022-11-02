@@ -2,7 +2,7 @@
 title: Builder
 ---
 
-Similar to a [repeater](#repeater), the builder component allows you to output a JSON array of repeated form components. Unlike the repeater, which only defines one form schema to repeat, the builder allows you to define different schema "blocks", which you can repeat in any order. This makes it useful for building more advanced array structures.
+Similar to a [repeater](repeater), the builder component allows you to output a JSON array of repeated form components. Unlike the repeater, which only defines one form schema to repeat, the builder allows you to define different schema "blocks", which you can repeat in any order. This makes it useful for building more advanced array structures.
 
 The primary use of the builder component is to build web page content using predefined blocks. The example below defines multiple blocks for different elements in the page content. On the frontend of your website, you could loop through each block in the JSON and format it how you wish.
 
@@ -103,7 +103,7 @@ Builder::make('content')
     ->maxItems(10)
 ```
 
-### Collapsible
+## Collapsible
 
 The builder may be `collapsible()` to optionally hide content in long forms:
 

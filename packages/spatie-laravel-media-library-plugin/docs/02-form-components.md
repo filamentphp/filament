@@ -2,7 +2,7 @@
 title: Form components
 ---
 
-You may use the field in the same way as the [original file upload](/docs/forms/fields#file-upload) field:
+You may use the field in the same way as the [original file upload](/docs/forms/fields/file-upload) field:
 
 ```php
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -10,7 +10,7 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 SpatieMediaLibraryFileUpload::make('avatar'),
 ```
 
-The media library file upload supports all the customization options of the [original file upload component](/docs/forms/fields#file-upload).
+The media library file upload supports all the customization options of the [original file upload component](/docs/forms/fields/file-upload).
 
 > The field will automatically load and save its uploads to your model. To set this functionality up, **you must also follow the instructions set out in the [field relationships](/docs/forms/getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
 

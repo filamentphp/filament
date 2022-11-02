@@ -2,9 +2,9 @@
 title: Custom fields
 ---
 
-## View
+## View fields
 
-Aside from [building custom fields](#building-custom-fields), you may create "view" fields which allow you to create custom fields without extra PHP classes.
+Aside from [building custom fields](custom), you may create "view" fields which allow you to create custom fields without extra PHP classes.
 
 ```php
 use Filament\Forms\Components\ViewField;
@@ -40,7 +40,7 @@ Or, you may bind the value to a Livewire property using [`wire:model`](https://l
 </x-dynamic-component>
 ```
 
-## Building custom fields
+## Custom field classes
 
 You may create your own custom field classes and views, which you can reuse across your project, and even release as a plugin to the community.
 

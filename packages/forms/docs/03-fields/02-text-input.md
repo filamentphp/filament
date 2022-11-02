@@ -84,7 +84,7 @@ TextInput::make('password')
 
 For more complex autocomplete options, text inputs also support [datalists](#datalists).
 
-#### Phone number validation
+### Phone number validation
 
 When using a `tel()` field, the value will be validated using: `/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/`.
 
@@ -108,7 +108,7 @@ TextInput::configureUsing(function (TextInput $component): void {
 });
 ```
 
-### Affixes
+## Affixes
 
 You may place text before and after the input using the `prefix()` and `suffix()` methods:
 
@@ -151,7 +151,7 @@ TextInput::make('domain')
     )
 ```
 
-### Input masking
+## Input masking
 
 Input masking is the practice of defining a format that the input value must conform to.
 
@@ -240,7 +240,7 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask->money(prefix: '$', thousandsSeparator: ',', decimalPlaces: 2, isSigned: false))
 ```
 
-### Datalists
+## Datalists
 
 You may specify [datalist](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist) options for a text input using the `datalist()` method:
 
@@ -259,4 +259,4 @@ TextInput::make('manufacturer')
 
 ![](https://user-images.githubusercontent.com/41773797/147612844-f46e113f-82b3-4675-9097-4d64a4315082.png)
 
-Datalists provide autocomplete options to users when they use a text input. However, these are purely recommendations, and the user is still able to type any value into the input. If you're looking for strictly predefined options, check out [select fields](#select).
+Datalists provide autocomplete options to users when they use a text input. However, these are purely recommendations, and the user is still able to type any value into the input. If you're looking for strictly predefined options, check out [select fields](select).

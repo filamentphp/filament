@@ -14,7 +14,7 @@ Section::make('Heading')
     ])
 ```
 
-You may use the `columns()` method to easily create a [grid](#grid) within the section:
+You may use the `columns()` method to easily create a [grid](grid) within the section:
 
 ```php
 use Filament\Forms\Components\Section;

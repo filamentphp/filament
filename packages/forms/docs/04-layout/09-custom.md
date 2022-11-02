@@ -2,9 +2,9 @@
 title: Custom layouts
 ---
 
-## View
+## View components
 
-Aside from [building custom layout components](#building-custom-layout-components), you may create "view" components which allow you to create custom layouts without extra PHP classes.
+Aside from [building custom layout components](custom), you may create "view" components which allow you to create custom layouts without extra PHP classes.
 
 ```php
 use Filament\Forms\Components\View;
@@ -20,7 +20,7 @@ Inside your view, you may render the component's `schema()` using the `$getChild
 </div>
 ```
 
-## Building custom layout components
+## Custom layout classes
 
 You may create your own custom component classes and views, which you can reuse across your project, and even release as a plugin to the community.
 

@@ -2,7 +2,7 @@
 title: Grid
 ---
 
-### Columns
+## Columns
 
 You may create multiple columns within each layout component using the `columns()` method:
 
@@ -12,9 +12,9 @@ use Filament\Forms\Components\Card;
 Card::make()->columns(2)
 ```
 
-> For more information about creating advanced, responsive column layouts, please see the [grid section](#grid). All column options in that section are also available in other layout components.
+> For more information about creating advanced, responsive column layouts, please see the [grid section](grid). All column options in that section are also available in other layout components.
 
-#### Controlling field column span
+### Controlling field column span
 
 You may specify the number of columns that any component may span in the parent grid:
 
@@ -69,7 +69,7 @@ Grid::make([
     ])
 ```
 
-## Grid
+## Grid component
 
 Generally, form fields are stacked on top of each other in one column. To change this, you may use a grid component:
 

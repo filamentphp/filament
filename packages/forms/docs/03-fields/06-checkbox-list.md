@@ -50,9 +50,9 @@ CheckboxList::make('technologies')
 
 ![](https://user-images.githubusercontent.com/41773797/147761438-558a9dcc-b81a-4fbe-a922-a6771407d928.png)
 
-This method accepts the same options as the `columns()` method of the [grid](layout#grid). This allows you to responsively customize the number of columns at various breakpoints.
+This method accepts the same options as the `columns()` method of the [grid](layout/grid). This allows you to responsively customize the number of columns at various breakpoints.
 
-### Populating automatically from a relationship
+## Populating automatically from a relationship
 
 You may employ the `relationship()` method to configure a relationship to automatically retrieve and save options from:
 

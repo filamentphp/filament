@@ -136,7 +136,7 @@ A great example to give a use case for this is when you wish to generate a slug 
 
 You may use the techniques described in the [closure customization section](#using-closure-customization) to build completely dependent fields and components, with full control over customization based on the values of other fields in your form.
 
-For example, you can build dependant [select](fields#select) inputs:
+For example, you can build dependant [select](fields/select) inputs:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/W_eNyimRi3w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 

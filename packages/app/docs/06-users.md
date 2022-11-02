@@ -13,6 +13,7 @@ To set up your `App\Models\User` to access Filament in non-local environments, y
 
 namespace App\Models;
 
+use Filament\Context;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -20,7 +21,7 @@ class User extends Authenticatable implements FilamentUser
 {
     // ...
 
-    public function canAccessFilament(): bool
+    public function canAccessFilament(Context $context): bool
     {
         return str_ends_with($this->email, '@yourdomain.com') && $this->hasVerifiedEmail();
     }

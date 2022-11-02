@@ -2,7 +2,7 @@
 title: Toggle
 ---
 
-The toggle component, similar to a [checkbox](#checkbox), allows you to interact a boolean value.
+The toggle component, similar to a [checkbox](checkbox), allows you to interact a boolean value.
 
 ```php
 use Filament\Forms\Components\Toggle;
