@@ -19,7 +19,7 @@ class CheckboxList extends Field
 
     protected string | Closure | null $relationship = null;
 
-    protected bool | Closure $isToggleable = false;
+    protected bool | Closure $isBulkToggleable = false;
 
     protected function setUp(): void
     {
@@ -91,9 +91,9 @@ class CheckboxList extends Field
         return $this;
     }
 
-    public function toggleable(bool | Closure $condition = true): static
+    public function bulkToggleable(bool | Closure $condition = true): static
     {
-        $this->isToggleable = $condition;
+        $this->isBulkToggleable = $condition;
 
         return $this;
     }
@@ -149,8 +149,8 @@ class CheckboxList extends Field
         return $this->evaluate($this->relationship);
     }
 
-    public function isToggleable(): bool
+    public function isBulkToggleable(): bool
     {
-        return (bool) $this->evaluate($this->isToggleable);
+        return (bool) $this->evaluate($this->isBulkToggleable);
     }
 }
