@@ -22,6 +22,10 @@ return [
             'label' => 'Uitloggen',
         ],
 
+        'user_menu' => [
+            'label' => 'gebruikersmenu',
+        ],
+
     ],
 
 ];

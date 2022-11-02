@@ -41,7 +41,13 @@ class DeleteAction extends Action
         });
 
         $this->action(function (): void {
-            $this->process(static fn (Model $record) => $record->delete());
+            $result = $this->process(static fn (Model $record) => $record->delete());
+
+            if (! $result) {
+                $this->failure();
+
+                return;
+            }
 
             $this->success();
         });

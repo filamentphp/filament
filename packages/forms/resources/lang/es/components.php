@@ -16,6 +16,10 @@ return [
                 'label' => 'Añadir a :label',
             ],
 
+            'create_item_between' => [
+                'label' => 'Insertar',
+            ],
+
             'delete_item' => [
                 'label' => 'Borrar',
             ],
@@ -57,11 +61,15 @@ return [
         'buttons' => [
 
             'add' => [
-                'label' => 'Añadir Fila',
+                'label' => 'Añadir fila',
             ],
 
             'delete' => [
-                'label' => 'Eliminar Fila',
+                'label' => 'Eliminar fila',
+            ],
+
+            'reorder' => [
+                'label' => 'Reordenar fila',
             ],
 
         ],

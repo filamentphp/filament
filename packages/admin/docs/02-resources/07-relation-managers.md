@@ -222,7 +222,7 @@ use Filament\Tables\Actions\CreateAction;
 
 CreateAction::make()
     ->before(function (CreateAction $action) {
-        if (! $this->record->team->subscribed()) {
+        if (! $this->ownerRecord->team->subscribed()) {
             Notification::make()
                 ->warning()
                 ->title('You don\'t have an active subscription!')
@@ -377,7 +377,7 @@ use Filament\Tables\Actions\EditAction;
 
 EditAction::make()
     ->before(function (EditAction $action) {
-        if (! $this->record->team->subscribed()) {
+        if (! $this->ownerRecord->team->subscribed()) {
             Notification::make()
                 ->warning()
                 ->title('You don\'t have an active subscription!')
@@ -653,7 +653,7 @@ use Filament\Tables\Actions\DeleteAction;
 
 DeleteAction::make()
     ->before(function (DeleteAction $action) {
-        if (! $this->record->team->subscribed()) {
+        if (! $this->ownerRecord->team->subscribed()) {
             Notification::make()
                 ->warning()
                 ->title('You don\'t have an active subscription!')
@@ -682,7 +682,7 @@ $action->cancel();
 Relation managers are Livewire components. When they are first loaded, the owner record (the Eloquent record which serves as a parent - the main resource model) is mounted in a public `$ownerRecord` property. Thus, you may access the owner record using:
 
 ```php
-$this->record
+$this->ownerRecord
 ```
 
 However, in you're inside a `static` method like `form()` or `table()`, `$this` isn't accessible. So, you may [use a callback](../../forms/advanced#using-closure-customization) to access the `$livewire` instance:

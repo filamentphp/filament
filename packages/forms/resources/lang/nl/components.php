@@ -16,6 +16,10 @@ return [
                 'label' => 'Toevoegen aan :label',
             ],
 
+            'create_item_between' => [
+                'label' => 'Invoegen',
+            ],
+
             'delete_item' => [
                 'label' => 'Verwijderen',
             ],
@@ -62,6 +66,10 @@ return [
 
             'delete' => [
                 'label' => 'Rij verwijderen',
+            ],
+
+            'reorder' => [
+                'label' => 'Rij herordenen',
             ],
 
         ],

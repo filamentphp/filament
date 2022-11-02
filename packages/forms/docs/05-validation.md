@@ -455,6 +455,16 @@ TextInput::make('slug')->rules([
 ])
 ```
 
+## Validation attributes
+
+When fields fail validation, their label is used in the error message. To customize the label used in field error messages, use the `validationAttribute()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')->validationAttribute('full name')
+```
+
 ## Sending validation notifications
 
 If you want to send a notification when validation error occurs, you may do so by using the `onValidationError()` method on your Livewire component:

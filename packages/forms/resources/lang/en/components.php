@@ -16,6 +16,10 @@ return [
                 'label' => 'Add to :label',
             ],
 
+            'create_item_between' => [
+                'label' => 'Insert',
+            ],
+
             'delete_item' => [
                 'label' => 'Delete',
             ],
@@ -57,11 +61,15 @@ return [
         'buttons' => [
 
             'add' => [
-                'label' => 'Add Row',
+                'label' => 'Add row',
             ],
 
             'delete' => [
-                'label' => 'Delete Row',
+                'label' => 'Delete row',
+            ],
+
+            'reorder' => [
+                'label' => 'Reorder row',
             ],
 
         ],

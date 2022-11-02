@@ -88,6 +88,19 @@ trait CanFormatState
         return $this;
     }
 
+    public function words(int $words = 100, string $end = '...'): static
+    {
+        $this->formatStateUsing(static function ($state) use ($words, $end): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            return Str::words($state, $words, $end);
+        });
+
+        return $this;
+    }
+
     public function prefix(string | Closure $prefix): static
     {
         $this->prefix = $prefix;

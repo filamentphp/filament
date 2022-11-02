@@ -87,12 +87,16 @@
                     'opacity-70 pointer-events-none' => $isDisabled(),
                 ])
             >
-                <{{ match($getFormat()) {
-                    'hsl' => 'hsl-string',
-                    'rgb' => 'rgb-string',
-                    'rgba' => 'rgba-string',
-                    default => 'hex',
-                } }}-color-picker />
+                @php
+                    $tag = match ($getFormat()) {
+                        'hsl' => 'hsl-string',
+                        'rgb' => 'rgb-string',
+                        'rgba' => 'rgba-string',
+                        default => 'hex',
+                    } . '-color-picker';
+                @endphp
+
+                <{{ $tag }} color="{{ $getState() }}" />
             </div>
         </div>
 
