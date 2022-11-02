@@ -20,6 +20,8 @@ abstract class Page extends BasePage
 
     protected static ?string $navigationIcon = null;
 
+    protected static ?string $activeNavigationIcon = null;
+
     protected static ?string $navigationLabel = null;
 
     protected static ?int $navigationSort = null;
@@ -79,6 +81,11 @@ abstract class Page extends BasePage
         return static::$navigationGroup;
     }
 
+    public static function getActiveNavigationIcon(): string
+    {
+        return static::$activeNavigationIcon ?? static::getNavigationIcon();
+    }
+
     public static function getNavigationIcon(): string
     {
         return static::$navigationIcon ?? 'heroicon-o-document-text';
@@ -87,9 +94,9 @@ abstract class Page extends BasePage
     public static function getNavigationLabel(): string
     {
         return static::$navigationLabel ?? static::$title ?? str(class_basename(static::class))
-                ->kebab()
-                ->replace('-', ' ')
-                ->title();
+            ->kebab()
+            ->replace('-', ' ')
+            ->title();
     }
 
     public static function getNavigationBadge(): ?string

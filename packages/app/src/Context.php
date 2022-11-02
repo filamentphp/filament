@@ -1080,6 +1080,10 @@ class Context
                     ->replace(['/'], ['\\']),
             ) : null;
 
+            if (is_string($variableNamespace)) {
+                $variableNamespace = (string) str($variableNamespace)->before('\\');
+            }
+
             $class = (string) $namespace
                 ->append('\\', $file->getRelativePathname())
                 ->replace('*', $variableNamespace)
