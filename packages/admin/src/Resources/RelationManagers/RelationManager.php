@@ -52,6 +52,8 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     protected static ?string $title = null;
 
+    protected static bool $shouldIgnorePolicies = false;
+
     protected function getTableQueryStringIdentifier(): ?string
     {
         return lcfirst(class_basename(static::class));
@@ -231,6 +233,10 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     protected function can(string $action, ?Model $record = null): bool
     {
+        if (static::shouldIgnorePolicies()) {
+            return true;
+        }
+
         $policy = Gate::getPolicyFor($model = $this->getRelatedModel());
         $user = Filament::auth()->user();
 
@@ -245,8 +251,22 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return Gate::forUser($user)->check($action, $record ?? $model);
     }
 
+    public static function ignorePolicies(bool $condition = true): void
+    {
+        static::$shouldIgnorePolicies = $condition;
+    }
+
+    public static function shouldIgnorePolicies(): bool
+    {
+        return static::$shouldIgnorePolicies;
+    }
+
     public static function canViewForRecord(Model $ownerRecord): bool
     {
+        if (static::shouldIgnorePolicies()) {
+            return true;
+        }
+
         $model = $ownerRecord->{static::getRelationshipName()}()->getQuery()->getModel()::class;
 
         $policy = Gate::getPolicyFor($model);
