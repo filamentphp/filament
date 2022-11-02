@@ -2,6 +2,7 @@
 
 namespace Filament\Tests\Models;
 
+use Filament\Context;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Tests\Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -22,7 +23,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'remember_token',
     ];
 
-    public function canAccessFilament(): bool
+    public function canAccessFilament(Context $context): bool
     {
         return true;
     }

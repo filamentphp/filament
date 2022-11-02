@@ -939,8 +939,8 @@ class Context
 
     public function discoverPages(string $in, string $for): static
     {
-        $this->pageDirectory = $in;
-        $this->pageNamespace = $for;
+        $this->pageDirectory ??= $in;
+        $this->pageNamespace ??= $for;
 
         $this->discoverComponents(
             Page::class,
@@ -964,8 +964,8 @@ class Context
 
     public function discoverResources(string $in, string $for): static
     {
-        $this->resourceDirectory = $in;
-        $this->resourceNamespace = $for;
+        $this->resourceDirectory ??= $in;
+        $this->resourceNamespace ??= $for;
 
         $this->discoverComponents(
             Resource::class,
@@ -989,8 +989,8 @@ class Context
 
     public function discoverWidgets(string $in, string $for): static
     {
-        $this->widgetDirectory = $in;
-        $this->widgetNamespace = $for;
+        $this->widgetDirectory ??= $in;
+        $this->widgetNamespace ??= $for;
 
         $this->discoverComponents(
             Widget::class,

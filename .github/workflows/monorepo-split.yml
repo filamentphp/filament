@@ -14,7 +14,6 @@ jobs:
           - actions
           - app
           - forms
-          - navigation
           - notifications
           - spark-billing-provider
           - spatie-laravel-media-library-plugin
