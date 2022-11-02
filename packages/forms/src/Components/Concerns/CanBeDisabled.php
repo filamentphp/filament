@@ -19,9 +19,9 @@ trait CanBeDisabled
 
     public function disabledOn(string | array $contexts): static
     {
-        $this->hidden(static function (string $context, HasForms $livewire) use ($contexts): bool {
-            foreach (Arr::wrap($contexts) as $hiddenContext) {
-                if ($hiddenContext === $context || $livewire instanceof $hiddenContext) {
+        $this->disabled(static function (string $context, HasForms $livewire) use ($contexts): bool {
+            foreach (Arr::wrap($contexts) as $disabledContext) {
+                if ($disabledContext === $context || $livewire instanceof $disabledContext) {
                     return true;
                 }
             }
