@@ -233,7 +233,7 @@ class FilamentServiceProvider extends PluginServiceProvider
                     ) : null;
 
                     if (is_string($variableNamespace)) {
-                        $variableNamespace = explode('\\', $variableNamespace)[0];
+                        $variableNamespace = (string) Str::of($variableNamespace)->before('\\');
                     }
 
                     return (string) $namespace
