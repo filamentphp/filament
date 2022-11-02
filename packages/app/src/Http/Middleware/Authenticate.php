@@ -27,14 +27,14 @@ class Authenticate extends Middleware
         /** @var Model $user */
         $user = $guard->user();
 
+        $context = Filament::getCurrentContext();
+
         abort_if(
             $user instanceof FilamentUser ?
-                (! $user->canAccessFilament()) :
+                (! $user->canAccessFilament($context)) :
                 (config('app.env') !== 'local'),
             403,
         );
-
-        $context = Filament::getCurrentContext();
 
         if (! $context->hasTenancy()) {
             return;

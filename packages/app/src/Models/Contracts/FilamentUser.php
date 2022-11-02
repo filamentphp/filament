@@ -2,7 +2,9 @@
 
 namespace Filament\Models\Contracts;
 
+use Filament\Context;
+
 interface FilamentUser
 {
-    public function canAccessFilament(): bool;
+    public function canAccessFilament(Context $context): bool;
 }
