@@ -70,6 +70,8 @@
 
         selectedRecords: [],
 
+        hasCollapsibleColumnsLayout: false,
+
         shouldCheckUniqueSelection: true,
 
         init: function () {
@@ -162,7 +164,7 @@
     <x-tables::container>
         <div
             class="filament-tables-header-container"
-            x-show="hasHeader = (@js($renderHeader = ($header || $heading || ($headerActions && (! $isReordering)) || $isReorderable || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible)) || selectedRecords.length)"
+            x-show="hasHeader = (@js($renderHeader = ($header || $heading || ($headerActions && (! $isReordering)) || $isReorderable || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible)) || selectedRecords.length || hasCollapsibleColumnsLayout)"
             {!! ! $renderHeader ? 'x-cloak' : null !!}
         >
             @if ($header)
@@ -182,7 +184,7 @@
                         </x-slot>
                     </x-tables::header>
 
-                    <x-tables::hr :x-show="\Illuminate\Support\Js::from($isReorderable || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible) . ' || selectedRecords.length'" />
+                    <x-tables::hr :x-show="\Illuminate\Support\Js::from($isReorderable || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible) . ' || selectedRecords.length || hasCollapsibleColumnsLayout'" />
                 </div>
             @endif
 
@@ -192,16 +194,16 @@
                         <x-tables::filters :form="$getFiltersForm()" />
                     </div>
 
-                    <x-tables::hr :x-show="\Illuminate\Support\Js::from($isReorderable || $isGlobalSearchVisible || $isColumnToggleFormVisible) . ' || selectedRecords.length'" />
+                    <x-tables::hr :x-show="\Illuminate\Support\Js::from($isReorderable || $isGlobalSearchVisible || $isColumnToggleFormVisible) . ' || selectedRecords.length || hasCollapsibleColumnsLayout'" />
                 </div>
             @endif
 
             <div
-                x-show="@js($shouldRenderHeaderDiv = ($isReorderable || $isGlobalSearchVisible || $hasFiltersPopover || $isColumnToggleFormVisible)) || selectedRecords.length"
+                x-show="@js($shouldRenderHeaderDiv = ($isReorderable || $isGlobalSearchVisible || $hasFiltersPopover || $isColumnToggleFormVisible)) || selectedRecords.length || hasCollapsibleColumnsLayout"
                 {!! ! $shouldRenderHeaderDiv ? 'x-cloak' : null !!}
                 class="flex items-center justify-between p-2 h-14"
                 x-bind:class="{
-                    'gap-2': @js($isReorderable) || selectedRecords.length,
+                    'gap-2': @js($isReorderable) || selectedRecords.length || hasCollapsibleColumnsLayout,
                 }"
             >
                 <div class="flex items-center gap-2">
@@ -217,6 +219,41 @@
                             :actions="$getBulkActions()"
                         />
                     @endif
+
+                    <div
+                        x-show="@js($isReordering) || ! selectedRecords.length && hasCollapsibleColumnsLayout"
+                        x-data="{
+                            allCollapsed: true,
+                            get label() {
+                                return this.allCollapsed ? 'Expand all' : 'Collapse all';
+                            },
+                            handle() {
+                                if (this.allCollapsed) {
+                                    this.$dispatch('expand-all-rows');
+                                } else {
+                                    this.$dispatch('collapse-all-rows');
+                                }
+                                this.allCollapsed = ! this.allCollapsed;
+                            },
+                        }"
+                        x-on:show-expand-all.window="hasCollapsibleColumnsLayout = true"
+                        x-cloak
+                        class="gap-2 flex items-center relative"
+                    >
+                        <x-tables::button
+                            color="secondary"
+                            size="sm"
+                            x-on:click="handle"
+                        >
+                            <span class="flex items-center gap-1">
+                                <x-heroicon-s-chevron-down
+                                    x-bind:class="allCollapsed || '-rotate-180'"
+                                    class="transition filament-button-icon w-4 h-4 'mr-1 -ml-1.5 rtl:ml-1 rtl:-mr-1.5"
+                                />
+                                <span x-text="label"></span>
+                            </span>
+                        </x-tables::button>
+                    </div>
                 </div>
 
                 @if ($isGlobalSearchVisible || $hasFiltersPopover || $isColumnToggleFormVisible)
@@ -424,6 +461,9 @@
                                 <div
                                     @if ($hasCollapsibleColumnsLayout)
                                         x-data="{ isCollapsed: true }"
+                                        x-init="$dispatch('show-expand-all')"
+                                        x-on:expand-all-rows.window="isCollapsed = false"
+                                        x-on:collapse-all-rows.window="isCollapsed = true"
                                     @endif
                                     wire:key="{{ $this->id }}.table.records.{{ $recordKey }}"
                                     @if ($isReordering)
