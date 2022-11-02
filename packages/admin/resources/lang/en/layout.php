@@ -22,6 +22,11 @@ return [
             'label' => 'Sign out',
         ],
 
+        'sidebar' => [
+            'collapse' => 'Collapse sidebar',
+            'expand' => 'Expand sidebar',
+        ],
+
         'user_menu' => [
             'label' => 'User Menu',
         ],
