@@ -51,7 +51,6 @@
             "Filament\\Actions\\": "packages/actions/src",
             "Filament\\Billing\\Providers\\": "packages/spark-billing-provider/src",
             "Filament\\Forms\\": "packages/forms/src",
-            "Filament\\Navigation\\": "packages/navigation/src",
             "Filament\\Notifications\\": "packages/notifications/src",
             "Filament\\Support\\": "packages/support/src",
             "Filament\\Tables\\": "packages/tables/src",
