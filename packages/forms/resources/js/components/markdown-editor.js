@@ -24,7 +24,11 @@ export default (Alpine) => {
                     })
                 }
 
-                this.$watch('state', () => {
+                this.$watch('state', (value) => {
+                    if (value === null) {
+                        this.state = ''
+                    }
+
                     this.render()
                 })
             },

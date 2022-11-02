@@ -23804,7 +23804,8 @@ var file_upload_default = (Alpine) => {
           if (!this.shouldUpdateState) {
             return;
           }
-          if (Object.values(this.state).filter((file2) => file2.startsWith("livewire-file:")).length) {
+          if (this.state !== null && Object.values(this.state).filter((file2) => file2.startsWith("livewire-file:")).length) {
+            this.lastState = null;
             return;
           }
           if (JSON.stringify(this.state) === this.lastState) {
@@ -27846,7 +27847,10 @@ var markdown_editor_default = (Alpine) => {
             this.render();
           });
         }
-        this.$watch("state", () => {
+        this.$watch("state", (value) => {
+          if (value === null) {
+            this.state = "";
+          }
           this.render();
         });
       },
