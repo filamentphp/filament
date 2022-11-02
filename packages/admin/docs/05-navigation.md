@@ -16,23 +16,6 @@ protected static ?int $navigationSort = 3;
 
 The `$navigationIcon` supports the name of any Blade component, and passes a set of formatting classes to it. By default, the [Blade Heroicons](https://github.com/blade-ui-kit/blade-heroicons) package is installed, so you may use the name of any [Heroicon](https://heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
 
-## Active icon
-
-You may assign navigation icon which will indicate active item by specifying `$activeNavigationIcon` property on a [resource](resources) and [custom page](pages):
-
-```php
-protected static ?string $activeNavigationIcon = 'heroicon-s-document-text';
-```
-
-Alternatively, override the `getActiveNavigationIcon()` method:
-
-```php
-protected static function getActiveNavigationIcon(): string
-{
-    return 'heroicon-s-document-text';
-}
-```
-
 ## Navigation item badges
 
 To add a badge next to the navigation item, you can use the `getNavigationBadge()` method and return the content of the badge:
@@ -108,6 +91,23 @@ Filament::registerNavigationGroups([
     'Blog',
     'Settings',
 ]);
+```
+
+## Active icons
+
+You may assign a navigation icon which will be displayed for active items using the `$activeNavigationIcon` property:
+
+```php
+protected static ?string $activeNavigationIcon = 'heroicon-s-document-text';
+```
+
+Alternatively, override the `getActiveNavigationIcon()` method:
+
+```php
+protected static function getActiveNavigationIcon(): string
+{
+    return 'heroicon-s-document-text';
+}
 ```
 
 ## Registering custom navigation items
