@@ -60,7 +60,7 @@
                     <x-filament::loading-indicator
                         wire:loading.delay
                         wire:target="removeTableFilters,removeTableFilter"
-                        class="animate-spin w-5 h-5"
+                        class="w-5 h-5"
                     />
                 </div>
 

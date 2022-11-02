@@ -10,7 +10,7 @@
     <x-filament::loading-indicator
         wire:loading.delay
         wire:target="reorderTable"
-        class="animate-spin w-4 h-4 mr-3 text-primary-500"
+        class="w-4 h-4 mr-3 rtl:mr-0 rtl:ml-3 text-primary-500"
     />
 
     <span>
