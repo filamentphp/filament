@@ -23,7 +23,11 @@ export default function markdownEditorFormComponent({ state, tab }) {
                 })
             }
 
-            this.$watch('state', () => {
+            this.$watch('state', (value) => {
+                if (value === null) {
+                    this.state = ''
+                }
+
                 this.render()
             })
         },

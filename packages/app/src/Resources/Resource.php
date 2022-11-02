@@ -46,6 +46,8 @@ abstract class Resource
 
     protected static ?string $navigationIcon = null;
 
+    protected static ?string $activeNavigationIcon = null;
+
     protected static ?string $navigationLabel = null;
 
     protected static ?int $navigationSort = null;
@@ -96,6 +98,7 @@ abstract class Resource
             NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
                 ->icon(static::getNavigationIcon())
+                ->activeIcon(static::getActiveNavigationIcon())
                 ->isActiveWhen(fn () => request()->routeIs("{$routeBaseName}.*"))
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->sort(static::getNavigationSort())
@@ -532,6 +535,11 @@ abstract class Resource
     public static function navigationIcon(?string $icon): void
     {
         static::$navigationIcon = $icon;
+    }
+
+    public static function getActiveNavigationIcon(): string
+    {
+        return static::$activeNavigationIcon ?? static::getNavigationIcon();
     }
 
     public static function getNavigationLabel(): string

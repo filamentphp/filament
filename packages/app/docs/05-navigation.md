@@ -93,6 +93,23 @@ Filament::registerNavigationGroups([
 ]);
 ```
 
+## Active icons
+
+You may assign a navigation icon which will be displayed for active items using the `$activeNavigationIcon` property:
+
+```php
+protected static ?string $activeNavigationIcon = 'heroicon-s-document-text';
+```
+
+Alternatively, override the `getActiveNavigationIcon()` method:
+
+```php
+protected static function getActiveNavigationIcon(): string
+{
+    return 'heroicon-s-document-text';
+}
+```
+
 ## Registering custom navigation items
 
 You may register custom navigation items by calling `Filament::registerNavigationItems()` from the `boot()` method of any service provider:
@@ -106,6 +123,7 @@ Filament::serving(function () {
         NavigationItem::make('Analytics')
             ->url('https://filament.pirsch.io', shouldOpenInNewTab: true)
             ->icon('heroicon-o-presentation-chart-line')
+            ->activeIcon('heroicon-s-presentation-chart-line')
             ->group('Reports')
             ->sort(3),
     ]);
@@ -148,6 +166,7 @@ Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
     return $builder->items([
         NavigationItem::make('Dashboard')
             ->icon('heroicon-o-home')
+            ->activeIcon('heroicon-s-home')
             ->isActiveWhen(fn (): bool => request()->routeIs('filament.pages.dashboard'))
             ->url(route('filament.pages.dashboard')),
         ...UserResource::getNavigationItems(),
