@@ -48,8 +48,8 @@
             <span>
                 {{ $slot }}
             </span>
-
         </div>
+        
         @if (filled($badge))
             <x-filament::layouts.app.sidebar.badge
                 :badge="$badge"
