@@ -13,11 +13,13 @@
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-action="$getHintAction()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <div {{ $attributes->merge($getExtraAttributes())->class(['flex items-center space-x-1 rtl:space-x-reverse group filament-forms-select-component']) }}>
+    <div {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-select-component flex items-center space-x-1 rtl:space-x-reverse group']) }}>
         @if (($prefixAction = $getPrefixAction()) && (! $prefixAction->isHidden()))
             {{ $prefixAction }}
         @endif
@@ -44,8 +46,8 @@
                         {!! $isRequired() ? 'required' : null !!}
                     @endif
                     {{ $attributes->merge($getExtraInputAttributes())->merge($getExtraAttributes())->class([
-                        'text-gray-900 block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-600 focus:ring-1 focus:ring-inset focus:ring-primary-600 disabled:opacity-70',
-                        'dark:bg-gray-700 dark:text-white dark:focus:border-primary-600' => config('forms.dark_mode'),
+                        'text-gray-900 block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70',
+                        'dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('forms.dark_mode'),
                         'border-gray-300' => ! $errors->has($getStatePath()),
                         'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                         'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
@@ -86,15 +88,22 @@
                         hasDynamicSearchResults: @js($hasDynamicSearchResults()),
                         loadingMessage: @js($getLoadingMessage()),
                         maxItems: @js($getMaxItems()),
+                        maxItemsMessage: @js($getMaxItemsMessage()),
                         noSearchResultsMessage: @js($getNoSearchResultsMessage()),
-                        options: @js($getOptions()),
+                        options: @js($getOptionsForJs()),
+                        optionsLimit: @js($getOptionsLimit()),
                         placeholder: @js($getPlaceholder()),
+                        searchDebounce: @js($getSearchDebounce()),
                         searchingMessage: @js($getSearchingMessage()),
                         searchPrompt: @js($getSearchPrompt()),
                         state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
                     })"
+                    x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                     wire:ignore
                     {{ $attributes->merge($getExtraAttributes())->merge($getExtraAlpineAttributes()) }}
+                    x-bind:class="{
+                        'choices--error': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
+                    }"
                 >
                     <select
                         x-ref="input"

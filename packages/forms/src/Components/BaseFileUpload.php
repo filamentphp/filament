@@ -41,6 +41,8 @@ class BaseFileUpload extends Field
 
     protected bool | Closure $shouldPreserveFilenames = false;
 
+    protected string | Closure | null $fileNamesStatePath = null;
+
     protected string | Closure $visibility = 'public';
 
     protected ?Closure $deleteUploadedFileUsing = null;
@@ -67,12 +69,16 @@ class BaseFileUpload extends Field
             $files = collect(Arr::wrap($state))
                 ->filter(static fn (string $file) => blank($file) || $component->getDisk()->exists($file))
                 ->mapWithKeys(static fn (string $file): array => [((string) Str::uuid()) => $file])
-                ->toArray();
+                ->all();
 
             $component->state($files);
         });
 
         $this->afterStateUpdated(static function (BaseFileUpload $component, $state) {
+            if ($state instanceof TemporaryUploadedFile) {
+                return;
+            }
+
             if (blank($state)) {
                 return;
             }
@@ -106,7 +112,7 @@ class BaseFileUpload extends Field
                 return null;
             }
 
-            if ($storage->getVisibility($file) === 'private') {
+            if ($component->getVisibility() === 'private') {
                 try {
                     return $storage->temporaryUrl(
                         $file,
@@ -124,8 +130,12 @@ class BaseFileUpload extends Field
             return $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : $file->getFilename();
         });
 
-        $this->saveUploadedFileUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file): string {
+        $this->saveUploadedFileUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file): ?string {
             $storeMethod = $component->getVisibility() === 'public' ? 'storePubliclyAs' : 'storeAs';
+
+            if (! $file->exists()) {
+                return null;
+            }
 
             return $file->{$storeMethod}(
                 $component->getDirectory(),
@@ -199,6 +209,13 @@ class BaseFileUpload extends Field
     public function disablePreview(bool | Closure $condition = true): static
     {
         $this->canPreview = fn (BaseFileUpload $component): bool => ! $component->evaluate($condition);
+
+        return $this;
+    }
+
+    public function storeFileNamesIn(string | Closure | null $statePath): static
+    {
+        $this->fileNamesStatePath = $statePath;
 
         return $this;
     }
@@ -358,6 +375,15 @@ class BaseFileUpload extends Field
         return $this->evaluate($this->shouldPreserveFilenames);
     }
 
+    public function getFileNamesStatePath(): ?string
+    {
+        if (! $this->fileNamesStatePath) {
+            return null;
+        }
+
+        return $this->generateRelativeStatePath($this->fileNamesStatePath);
+    }
+
     public function getValidationRules(): array
     {
         $rules = [
@@ -424,7 +450,9 @@ class BaseFileUpload extends Field
             return null;
         }
 
-        if ($file instanceof TemporaryUploadedFile) {
+        if (is_string($file)) {
+            $this->removeStoredFileName($file);
+        } elseif ($file instanceof TemporaryUploadedFile) {
             $file->delete();
         }
 
@@ -433,6 +461,31 @@ class BaseFileUpload extends Field
         $this->state($files);
 
         return $file;
+    }
+
+    public function removeStoredFileName(string $file): void
+    {
+        $statePath = $this->fileNamesStatePath;
+
+        if (blank($statePath)) {
+            return;
+        }
+
+        $this->evaluate(function (BaseFileUpload $component, Closure $get, Closure $set) use ($file, $statePath) {
+            if (! $component->isMultiple()) {
+                $set($statePath, null);
+
+                return;
+            }
+
+            $fileNames = $get($statePath) ?? [];
+
+            if (array_key_exists($file, $fileNames)) {
+                unset($fileNames[$file]);
+            }
+
+            $set($statePath, $fileNames);
+        });
     }
 
     public function reorderUploadedFiles(array $fileKeys): void
@@ -445,32 +498,34 @@ class BaseFileUpload extends Field
 
         $state = collect($this->getState())
             ->sortBy(static fn ($file, $fileKey) => $fileKeys[$fileKey] ?? null) // $fileKey may not be present in $fileKeys if it was added to the state during the reorder call
-            ->toArray();
+            ->all();
 
         $this->state($state);
     }
 
     public function getUploadedFileUrls(): ?array
     {
-        return collect($this->getState() ?? [])
-            ->mapWithKeys(function (TemporaryUploadedFile | string $file, string $fileKey): array {
-                if ($file instanceof TemporaryUploadedFile) {
-                    return [$fileKey => null];
-                }
+        $urls = [];
 
-                $callback = $this->getUploadedFileUrlUsing;
+        foreach ($this->getState() ?? [] as $fileKey => $file) {
+            if ($file instanceof TemporaryUploadedFile) {
+                $urls[$fileKey] = null;
 
-                if (! $callback) {
-                    return [$fileKey => null];
-                }
+                continue;
+            }
 
-                $url = $this->evaluate($callback, [
-                    'file' => $file,
-                ]);
+            $callback = $this->getUploadedFileUrlUsing;
 
-                return [$fileKey => ($url ?: null)];
-            })
-            ->toArray();
+            if (! $callback) {
+                return [$fileKey => null];
+            }
+
+            $urls[$fileKey] = $this->evaluate($callback, [
+                'file' => $file,
+            ]) ?: null;
+        }
+
+        return $urls;
     }
 
     public function saveUploadedFiles(): void
@@ -481,11 +536,7 @@ class BaseFileUpload extends Field
             return;
         }
 
-        if (! is_array($this->getState())) {
-            $this->state([$this->getState()]);
-        }
-
-        $state = array_map(function (TemporaryUploadedFile | string $file) {
+        $state = array_filter(array_map(function (TemporaryUploadedFile | string $file) {
             if (! $file instanceof TemporaryUploadedFile) {
                 return $file;
             }
@@ -502,10 +553,16 @@ class BaseFileUpload extends Field
                 'file' => $file,
             ]);
 
+            if ($storedFile === null) {
+                return null;
+            }
+
+            $this->storeFileName($storedFile, $file->getClientOriginalName());
+
             $file->delete();
 
             return $storedFile;
-        }, $this->getState());
+        }, Arr::wrap($this->getState())));
 
         if ($this->canReorder && ($callback = $this->reorderUploadedFilesUsing)) {
             $state = $this->evaluate($callback, [
@@ -514,6 +571,44 @@ class BaseFileUpload extends Field
         }
 
         $this->state($state);
+    }
+
+    public function storeFileName(string $file, string $fileName): void
+    {
+        $statePath = $this->fileNamesStatePath;
+
+        if (blank($statePath)) {
+            return;
+        }
+
+        $this->evaluate(function (BaseFileUpload $component, Closure $get, Closure $set) use ($file, $fileName, $statePath) {
+            if (! $component->isMultiple()) {
+                $set($statePath, $fileName);
+
+                return;
+            }
+
+            $fileNames = $get($statePath) ?? [];
+            $fileNames[$file] = $fileName;
+
+            $set($statePath, $fileNames);
+        });
+    }
+
+    public function getStoredFileNames(): string | array | null
+    {
+        $state = null;
+        $statePath = $this->fileNamesStatePath;
+
+        if (filled($statePath)) {
+            $state = $this->evaluate(fn (Closure $get) => $get($statePath));
+        }
+
+        if (blank($state) && $this->isMultiple()) {
+            return [];
+        }
+
+        return $state;
     }
 
     public function isMultiple(): bool
@@ -533,5 +628,27 @@ class BaseFileUpload extends Field
         return $this->evaluate($this->getUploadedFileNameForStorageUsing, [
             'file' => $file,
         ]);
+    }
+
+    public function getStateToDehydrate(): array
+    {
+        $state = parent::getStateToDehydrate();
+
+        if ($fileNamesStatePath = $this->getFileNamesStatePath()) {
+            $state = array_merge($state, [
+                $fileNamesStatePath => $this->getStoredFileNames(),
+            ]);
+        }
+
+        return $state;
+    }
+
+    public function dehydrateValidationRules(array &$rules): void
+    {
+        parent::dehydrateValidationRules($rules);
+
+        if ($fileNamesStatePath = $this->getFileNamesStatePath()) {
+            $rules[$fileNamesStatePath] = ['nullable'];
+        }
     }
 }

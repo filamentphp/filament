@@ -7,10 +7,8 @@
     $wireClickAction = null;
 
     if ($action->getEvent()) {
-        $emitArguments = collect([
-            $action->getEvent(),
-            ...$action->getEventData(),
-        ])
+        $emitArguments = collect([$action->getEvent()])
+            ->merge($action->getEventData())
             ->map(fn (mixed $value) => \Illuminate\Support\Js::from($value)->toHtml())
             ->implode(', ');
 

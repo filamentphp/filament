@@ -16,9 +16,16 @@ trait HasWizard
             ->wizard()
             ->modifyBaseComponentUsing(function (Wizard $component) {
                 $component
+                    ->startOnStep($this->getStartStep())
                     ->cancelAction($this->getCancelFormAction())
-                    ->submitAction($this->getSubmitFormAction());
+                    ->submitAction($this->getSubmitFormAction())
+                    ->skippable($this->hasSkippableSteps());
             });
+    }
+
+    protected function getStartStep(): int
+    {
+        return 1;
     }
 
     protected function form(Form $form): Form
@@ -34,5 +41,10 @@ trait HasWizard
     protected function getSteps(): array
     {
         return [];
+    }
+
+    protected function hasSkippableSteps(): bool
+    {
+        return false;
     }
 }

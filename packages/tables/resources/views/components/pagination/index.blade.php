@@ -13,7 +13,7 @@
 <nav
     role="navigation"
     aria-label="{{ __('tables::table.pagination.label') }}"
-    class="flex items-center justify-between filament-tables-pagination"
+    class="filament-tables-pagination flex items-center justify-between"
 >
     <div class="flex justify-between items-center flex-1 lg:hidden">
         <div class="w-10">
@@ -27,7 +27,9 @@
             @endif
         </div>
 
-        <x-tables::pagination.records-per-page-selector :options="$recordsPerPageSelectOptions" />
+        @if (count($recordsPerPageSelectOptions) > 1)
+            <x-tables::pagination.records-per-page-selector :options="$recordsPerPageSelectOptions" />
+        @endif
 
         <div class="w-10">
             @if ($paginator->hasPages() && $paginator->hasMorePages())
@@ -72,7 +74,9 @@
         </div>
 
         <div class="flex items-center justify-center">
-            <x-tables::pagination.records-per-page-selector :options="$recordsPerPageSelectOptions" />
+            @if (count($recordsPerPageSelectOptions) > 1)
+                <x-tables::pagination.records-per-page-selector :options="$recordsPerPageSelectOptions" />
+            @endif
         </div>
 
         <div class="flex items-center justify-end">
@@ -120,7 +124,7 @@
                                             :label="$page"
                                             :aria-label="__('tables::table.pagination.buttons.go_to_page.label', ['page' => $page])"
                                             :active="$page === $paginator->currentPage()"
-                                            :wire:key="'pagination-' . $paginator->getPageName() . '-page' . $page"
+                                            :wire:key="$this->id . '.table.pagination.' . $paginator->getPageName() . '.' . $page"
                                         />
                                     @endforeach
                                 @endif

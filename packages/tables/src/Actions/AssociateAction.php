@@ -20,11 +20,15 @@ class AssociateAction extends Action
 
     protected ?Closure $modifyRecordSelectUsing = null;
 
+    protected ?Closure $modifyRecordSelectOptionsQueryUsing = null;
+
     protected bool | Closure $isAssociateAnotherDisabled = false;
 
     protected bool | Closure $isRecordSelectPreloaded = false;
 
     protected string | Closure | null $recordTitleAttribute = null;
+
+    protected array | Closure | null $recordSelectSearchColumns = null;
 
     public static function getDefaultName(): ?string
     {
@@ -50,7 +54,7 @@ class AssociateAction extends Action
             ];
         });
 
-        $this->successNotificationMessage(__('filament-support::actions/associate.single.messages.associated'));
+        $this->successNotificationTitle(__('filament-support::actions/associate.single.messages.associated'));
 
         $this->color('secondary');
 
@@ -78,7 +82,7 @@ class AssociateAction extends Action
 
                 $form->fill();
 
-                $this->hold();
+                $this->halt();
 
                 return;
             }
@@ -90,6 +94,13 @@ class AssociateAction extends Action
     public function recordSelect(?Closure $callback): static
     {
         $this->modifyRecordSelectUsing = $callback;
+
+        return $this;
+    }
+
+    public function recordSelectOptionsQuery(?Closure $callback): static
+    {
+        $this->modifyRecordSelectOptionsQueryUsing = $callback;
 
         return $this;
     }
@@ -136,6 +147,18 @@ class AssociateAction extends Action
         return $attribute;
     }
 
+    public function recordSelectSearchColumns(array | Closure | null $columns): static
+    {
+        $this->recordSelectSearchColumns = $columns;
+
+        return $this;
+    }
+
+    public function getRecordSelectSearchColumns(): ?array
+    {
+        return $this->evaluate($this->recordSelectSearchColumns);
+    }
+
     public function getRecordSelect(): Select
     {
         $getOptions = function (?string $search = null, ?array $searchColumns = []): array {
@@ -145,6 +168,12 @@ class AssociateAction extends Action
             $titleColumnName = $this->getRecordTitleAttribute();
 
             $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleColumnName);
+
+            if ($this->modifyRecordSelectOptionsQueryUsing) {
+                $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
+                    'query' => $relationshipQuery,
+                ]) ?? $relationshipQuery;
+            }
 
             if (filled($search)) {
                 $search = strtolower($search);
@@ -191,7 +220,7 @@ class AssociateAction extends Action
         $select = Select::make('recordId')
             ->label(__('filament-support::actions/associate.single.modal.fields.record_id.label'))
             ->required()
-            ->searchable()
+            ->searchable($this->getRecordSelectSearchColumns() ?? true)
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(search: $search, searchColumns: $component->getSearchColumns()))
             ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle($this->getRelationship()->getRelated()->query()->find($value)))
             ->options(fn (): array => $this->isRecordSelectPreloaded() ? $getOptions() : [])

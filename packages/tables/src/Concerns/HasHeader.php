@@ -5,6 +5,7 @@ namespace Filament\Tables\Concerns;
 use Closure;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 
 trait HasHeader
@@ -18,21 +19,23 @@ trait HasHeader
             fn (): array => $this->getTableHeaderActions(),
         );
 
-        $this->cachedTableHeaderActions = collect($actions)
-            ->mapWithKeys(function (Action | ActionGroup $action, int $index): array {
-                if ($action instanceof ActionGroup) {
-                    foreach ($action->getActions() as $groupedAction) {
-                        $groupedAction->table($this->getCachedTable());
-                    }
+        $this->cachedTableHeaderActions = [];
 
-                    return [$index => $action];
+        foreach ($actions as $index => $action) {
+            if ($action instanceof ActionGroup) {
+                foreach ($action->getActions() as $groupedAction) {
+                    $groupedAction->table($this->getCachedTable());
                 }
 
-                $action->table($this->getCachedTable());
+                $this->cachedTableHeaderActions[$index] = $action;
 
-                return [$action->getName() => $action];
-            })
-            ->toArray();
+                continue;
+            }
+
+            $action->table($this->getCachedTable());
+
+            $this->cachedTableHeaderActions[$action->getName()] = $action;
+        }
     }
 
     public function getCachedTableHeaderActions(): array
@@ -67,12 +70,12 @@ trait HasHeader
         return null;
     }
 
-    protected function getTableDescription(): ?string
+    protected function getTableDescription(): string | Htmlable | null
     {
         return null;
     }
 
-    protected function getTableHeader(): ?View
+    protected function getTableHeader(): View | Htmlable | null
     {
         return null;
     }
@@ -82,7 +85,7 @@ trait HasHeader
         return [];
     }
 
-    protected function getTableHeading(): string | Closure | null
+    protected function getTableHeading(): string | Htmlable | Closure | null
     {
         return null;
     }

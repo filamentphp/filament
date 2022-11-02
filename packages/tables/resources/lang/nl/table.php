@@ -2,6 +2,22 @@
 
 return [
 
+    'columns' => [
+
+        'color' => [
+
+            'messages' => [
+                'copied' => 'Gekopieerd',
+            ],
+
+        ],
+
+        'tags' => [
+            'more' => 'en :count meer',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -20,7 +36,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'per pagina',
+
+                'options' => [
+                    'all' => 'Alles',
+                ],
+
             ],
 
         ],
@@ -45,6 +67,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Herordenen van records voltooien',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Records herordenen',
+        ],
+
         'filter' => [
             'label' => 'Filteren',
         ],
@@ -60,22 +90,29 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'Geen resultaten gevonden',
+        'heading' => 'Geen records gevonden',
     ],
 
     'filters' => [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Filter verwijderen',
+            ],
+
+            'remove_all' => [
+                'label' => 'Alle filters verwijderen',
+                'tooltip' => 'Alle filters verwijderen',
+            ],
+
             'reset' => [
                 'label' => 'Filters resetten',
             ],
 
-            'close' => [
-                'label' => 'Sluiten',
-            ],
-
         ],
+
+        'indicator' => 'Actieve filters',
 
         'multi_select' => [
             'placeholder' => 'Alles',
@@ -91,13 +128,15 @@ return [
 
             'only_trashed' => 'Alleen verwijderde records',
 
-            'with_trashed' => 'Met verwijderde records records',
+            'with_trashed' => 'Met verwijderde records',
 
             'without_trashed' => 'Zonder verwijderde records',
 
         ],
 
     ],
+
+    'reorder_indicator' => 'Sleep de records in de juiste volgorde.',
 
     'selection_indicator' => [
 
@@ -111,6 +150,29 @@ return [
 
             'deselect_all' => [
                 'label' => 'Alles deselecteren',
+            ],
+
+        ],
+
+    ],
+
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Sorteren op',
+            ],
+
+            'direction' => [
+
+                'label' => 'Sorteerrichting',
+
+                'options' => [
+                    'asc' => 'Oplopend',
+                    'desc' => 'Aflopend',
+                ],
+
             ],
 
         ],

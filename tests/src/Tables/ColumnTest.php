@@ -62,3 +62,33 @@ it('can search posts with relationship', function () {
         ->assertCanSeeTableRecords($posts->where('author.name', $author))
         ->assertCanNotSeeTableRecords($posts->where('author.name', '!=', $author));
 });
+
+it('can hide a column', function () {
+    livewire(PostsTable::class)
+        ->assertTableColumnVisible('visible')
+        ->assertTableColumnHidden('hidden');
+});
+
+it('can call a column action', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->callTableColumnAction('title', $post)
+        ->assertEmitted('title-action-called');
+});
+
+it('can call a column action object', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->callTableAction('column-action-object', $post)
+        ->assertEmitted('column-action-object-called');
+});
+
+it('can state whether a column has the correct value', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->assertTableColumnStateSet('with_state', 'correct state', $post)
+        ->assertTableColumnStateNotSet('with_state', 'incorrect state', $post);
+});

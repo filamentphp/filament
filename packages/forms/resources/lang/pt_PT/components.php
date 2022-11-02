@@ -4,14 +4,12 @@ return [
 
     'builder' => [
 
+        'collapsed' => 'Conteúdo recolhido',
+
         'buttons' => [
 
             'create_item' => [
                 'label' => 'Adicionar em :label',
-            ],
-
-            'create_item_between' => [
-                'label' => 'Adicionar entre',
             ],
 
             'delete_item' => [
@@ -24,6 +22,26 @@ return [
 
             'move_item_up' => [
                 'label' => 'Mover para cima',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Recolher',
+            ],
+
+            'expand_item' => [
+                'label' => 'Expandir',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Recolher todos',
+            ],
+
+            'expand_all' => [
+                'label' => 'Expandir todos',
+            ],
+
+            'create_item_between' => [
+                'label' => 'Adicionar entre',
             ],
 
         ],
@@ -39,7 +57,7 @@ return [
             ],
 
             'delete' => [
-                'label' => 'Excluír linha',
+                'label' => 'Remover linha',
             ],
 
         ],
@@ -77,6 +95,8 @@ return [
 
     'repeater' => [
 
+        'collapsed' => 'Conteúdo recolhido',
+
         'buttons' => [
 
             'create_item' => [
@@ -87,12 +107,32 @@ return [
                 'label' => 'Remover',
             ],
 
+            'clone_item' => [
+                'label' => 'Clonar',
+            ],
+
             'move_item_down' => [
                 'label' => 'Mover para baixo',
             ],
 
             'move_item_up' => [
                 'label' => 'Mover para cima',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Recolher',
+            ],
+
+            'expand_item' => [
+                'label' => 'Expandir',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Recolher todos',
+            ],
+
+            'expand_all' => [
+                'label' => 'Expandir todos',
             ],
 
         ],
@@ -131,20 +171,70 @@ return [
             'link' => 'Link',
             'ordered_list' => 'Números',
             'redo' => 'Refazer',
-            'strike' => 'Tachado',
+            'strike' => 'Rasurado',
             'undo' => 'Desfazer',
         ],
 
     ],
 
     'select' => [
+
+        'actions' => [
+
+            'create_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Criar',
+
+                    'actions' => [
+
+                        'create' => [
+                            'label' => 'Criar',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+        'boolean' => [
+            'true' => 'Sim',
+            'false' => 'Não',
+        ],
+
+        'loading_message' => 'A carregar...',
+
         'no_search_results_message' => 'Nenhuma opção corresponde à sua pesquisa.',
+
         'placeholder' => 'Selecione uma opção',
+
+        'searching_message' => 'A buscar...',
+
         'search_prompt' => 'Comece a escrever para pesquisar...',
     ],
 
     'tags_input' => [
         'placeholder' => 'Nova Tag',
+    ],
+
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => 'Voltar',
+            ],
+
+            'next_step' => [
+                'label' => 'Próximo',
+            ],
+
+        ],
+
     ],
 
 ];

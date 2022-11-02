@@ -2,6 +2,22 @@
 
 return [
 
+    'columns' => [
+
+        'color' => [
+
+            'messages' => [
+                'copied' => 'Kimásolva',
+            ],
+
+        ],
+
+        'tags' => [
+            'more' => 'és további :count',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -20,7 +36,12 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'oldalanként',
+
+                'options' => [
+                    'all' => 'Összes',
+                ],
             ],
 
         ],
@@ -45,6 +66,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Sorba rendezés befejezése',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Sorba rendezés',
+        ],
+
         'filter' => [
             'label' => 'Szűrés',
         ],
@@ -67,15 +96,22 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Szűrés megszűntetése',
+            ],
+
+            'remove_all' => [
+                'label' => 'Összes szűrés megszűntetése',
+                'tooltip' => 'Összes szűrés megszűntetése',
+            ],
+
             'reset' => [
                 'label' => 'Alapértelmezés',
             ],
 
-            'close' => [
-                'label' => 'Bezárás',
-            ],
-
         ],
+
+        'indicator' => 'Aktív szűrők',
 
         'multi_select' => [
             'placeholder' => 'Mind',
@@ -99,6 +135,8 @@ return [
 
     ],
 
+    'reorder_indicator' => 'Fogd meg és mozgasd a sorrendezéshez.',
+
     'selection_indicator' => [
 
         'selected_count' => '1 elem kiválasztva .|:count elem kiválasztva.',
@@ -111,6 +149,29 @@ return [
 
             'deselect_all' => [
                 'label' => 'Kijelölés megszüntetése',
+            ],
+
+        ],
+
+    ],
+
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Rendezve',
+            ],
+
+            'direction' => [
+
+                'label' => 'Rendezési irány',
+
+                'options' => [
+                    'asc' => 'Növekvő',
+                    'desc' => 'Csökkenő',
+                ],
+
             ],
 
         ],

@@ -11,35 +11,39 @@ Trix.config.blockAttributes.heading = {
     tagName: 'h2',
     terminal: true,
     breakOnReturn: true,
-    group: false
+    group: false,
 }
 
 Trix.config.blockAttributes.subHeading = {
     tagName: 'h3',
     terminal: true,
     breakOnReturn: true,
-    group: false
+    group: false,
 }
 
 Trix.Block.prototype.breaksOnReturn = function () {
     const lastAttribute = this.getLastAttribute()
-    const blockConfig = Trix.getBlockConfig(lastAttribute ? lastAttribute : 'default')
+    const blockConfig = Trix.getBlockConfig(
+        lastAttribute ? lastAttribute : 'default',
+    )
 
     return blockConfig?.breakOnReturn ?? false
 }
 
 Trix.LineBreakInsertion.prototype.shouldInsertBlockBreak = function () {
-    if (this.block.hasAttributes() && this.block.isListItem() && (! this.block.isEmpty())) {
+    if (
+        this.block.hasAttributes() &&
+        this.block.isListItem() &&
+        !this.block.isEmpty()
+    ) {
         return this.startLocation.offset > 0
     } else {
-        return (! this.shouldBreakFormattedBlock()) ? this.breaksOnReturn : false
+        return !this.shouldBreakFormattedBlock() ? this.breaksOnReturn : false
     }
 }
 
 export default (Alpine) => {
-    Alpine.data('richEditorFormComponent', ({
-        state,
-    }) => {
+    Alpine.data('richEditorFormComponent', ({ state }) => {
         return {
             state,
 
@@ -53,7 +57,7 @@ export default (Alpine) => {
 
                     this.$refs.trix?.editor?.loadHTML(this.state)
                 })
-            }
+            },
         }
     })
 }

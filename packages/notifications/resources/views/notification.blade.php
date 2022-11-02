@@ -1,8 +1,9 @@
 <x-notifications::notification
     :notification="$notification"
     :class="\Illuminate\Support\Arr::toCssClasses([
-        'flex w-full max-w-sm gap-3 rounded-xl border border-gray-200 bg-white p-4 shadow-lg transition duration-300',
-        'dark:border-gray-700 dark:bg-gray-800' => config('notifications.dark_mode'),
+        'flex gap-3 w-full transition duration-300',
+        'shadow-lg max-w-sm bg-white rounded-xl p-4 border border-gray-200' => ! $isInline(),
+        'dark:border-gray-700 dark:bg-gray-800' => (! $isInline()) && config('notifications.dark_mode'),
     ])"
     :x-transition:enter-start="\Illuminate\Support\Arr::toCssClasses([
         'opacity-0',
@@ -17,25 +18,31 @@
     ])"
     x-transition:leave-end="scale-95 opacity-0"
 >
-    @if ($getIcon())
-        <x-notifications::icon :icon="$getIcon()" :color="$getIconColor()" />
+    @if ($icon = $getIcon())
+        <x-notifications::icon :icon="$icon" :color="$getIconColor()" />
     @endif
 
     <div class="grid flex-1">
-        @if ($getTitle())
+        @if ($title = $getTitle())
             <x-notifications::title>
-                {!! \Illuminate\Support\Str::of($getTitle())->markdown()->sanitizeHtml() !!}
+                {{ \Illuminate\Support\Str::of($title)->markdown()->sanitizeHtml()->toHtmlString() }}
             </x-notifications::title>
         @endif
 
-        @if ($getBody())
+        @if ($date = $getDate())
+            <x-notifications::date>
+                {{ $date }}
+            </x-notifications::date>
+        @endif
+
+        @if ($body = $getBody())
             <x-notifications::body>
-                {!! \Illuminate\Support\Str::of($getBody())->markdown()->sanitizeHtml() !!}
+                {{ \Illuminate\Support\Str::of($body)->markdown()->sanitizeHtml()->toHtmlString() }}
             </x-notifications::body>
         @endif
 
-        @if ($getActions())
-            <x-notifications::actions :actions="$getActions()" />
+        @if ($actions = $getActions())
+            <x-notifications::actions :actions="$actions" />
         @endif
     </div>
 

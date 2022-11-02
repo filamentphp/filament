@@ -7,6 +7,7 @@ use Filament\Notifications\Notification;
 use Illuminate\Support\Arr;
 use Livewire\Component;
 use Livewire\Testing\TestableLivewire;
+use PHPUnit\Framework\Assert;
 
 /**
  * @method Component instance()
@@ -20,21 +21,16 @@ class TestsNotifications
         return function (Notification | string $notification = null): static {
             $notifications = session()->get('filament.notifications');
 
-            expect($notifications)
-                ->toBeArray();
+            Assert::assertIsArray($notifications);
 
             $expectedNotification = Arr::last($notifications);
 
-            expect($expectedNotification)
-                ->toBeArray();
+            Assert::assertIsArray($expectedNotification);
 
             if ($notification instanceof Notification) {
-                expect($expectedNotification)
-                    ->toBe($notification->toArray());
+                Assert::assertSame($expectedNotification, $notification->toArray());
             } elseif (filled($notification)) {
-                /** @phpstan-ignore-next-line */
-                expect($expectedNotification)
-                    ->title->toBe($notification);
+                Assert::assertSame($expectedNotification['title'], $notification);
             }
 
             return $this;

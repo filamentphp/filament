@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 class Section extends Component implements Contracts\CanConcealComponents, Contracts\CanEntangleWithSingularRelationships
 {
     use Concerns\CanBeCollapsed;
+    use Concerns\CanBeCompacted;
     use Concerns\EntanglesStateWithSingularRelationship;
     use HasExtraAlpineAttributes;
 
@@ -18,6 +19,8 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
     protected string | Htmlable | Closure | null $description = null;
 
     protected string | Closure $heading;
+
+    protected bool | Closure | null $isAside = null;
 
     final public function __construct(string | Closure $heading)
     {
@@ -53,6 +56,13 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
         return $this;
     }
 
+    public function aside(bool | Closure | null $condition = true): static
+    {
+        $this->isAside = $condition;
+
+        return $this;
+    }
+
     public function getDescription(): string | Htmlable | null
     {
         return $this->evaluate($this->description);
@@ -81,5 +91,10 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
     public function canConcealComponents(): bool
     {
         return $this->isCollapsible();
+    }
+
+    public function isAside(): bool
+    {
+        return (bool) ($this->evaluate($this->isAside) ?? false);
     }
 }

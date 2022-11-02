@@ -6,7 +6,9 @@ use Filament\Forms\ComponentContainer;
 use Filament\Notifications\Notification;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Contracts\HasFormActions;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 /**
  * @property ComponentContainer $form
@@ -21,6 +23,8 @@ class CreateRecord extends Page implements HasFormActions
 
     public $data;
 
+    public ?string $previousUrl = null;
+
     protected static bool $canCreateAnother = true;
 
     public function getBreadcrumb(): string
@@ -30,11 +34,18 @@ class CreateRecord extends Page implements HasFormActions
 
     public function mount(): void
     {
+        $this->authorizeAccess();
+
+        $this->fillForm();
+
+        $this->previousUrl = url()->previous();
+    }
+
+    protected function authorizeAccess(): void
+    {
         static::authorizeResourceAccess();
 
         abort_unless(static::getResource()::canCreate(), 403);
-
-        $this->fillForm();
     }
 
     protected function fillForm(): void
@@ -48,28 +59,29 @@ class CreateRecord extends Page implements HasFormActions
 
     public function create(bool $another = false): void
     {
-        $this->callHook('beforeValidate');
+        $this->authorizeAccess();
 
-        $data = $this->form->getState();
+        try {
+            $this->callHook('beforeValidate');
 
-        $this->callHook('afterValidate');
+            $data = $this->form->getState();
 
-        $data = $this->mutateFormDataBeforeCreate($data);
+            $this->callHook('afterValidate');
 
-        $this->callHook('beforeCreate');
+            $data = $this->mutateFormDataBeforeCreate($data);
 
-        $this->record = $this->handleRecordCreation($data);
+            $this->callHook('beforeCreate');
 
-        $this->form->model($this->record)->saveRelationships();
+            $this->record = $this->handleRecordCreation($data);
 
-        $this->callHook('afterCreate');
+            $this->form->model($this->record)->saveRelationships();
 
-        if (filled($this->getCreatedNotificationMessage())) {
-            Notification::make()
-                ->title($this->getCreatedNotificationMessage())
-                ->success()
-                ->send();
+            $this->callHook('afterCreate');
+        } catch (Halt $exception) {
+            return;
         }
+
+        $this->getCreatedNotification()?->send();
 
         if ($another) {
             // Ensure that the form record is anonymized so that relationships aren't loaded.
@@ -84,9 +96,30 @@ class CreateRecord extends Page implements HasFormActions
         $this->redirect($this->getRedirectUrl());
     }
 
+    protected function getCreatedNotification(): ?Notification
+    {
+        $title = $this->getCreatedNotificationTitle();
+
+        if (blank($title)) {
+            return null;
+        }
+
+        return Notification::make()
+            ->success()
+            ->title($title);
+    }
+
+    protected function getCreatedNotificationTitle(): ?string
+    {
+        return $this->getCreatedNotificationMessage() ?? __('filament::resources/pages/create-record.messages.created');
+    }
+
+    /**
+     * @deprecated Use `getCreatedNotificationTitle()` instead.
+     */
     protected function getCreatedNotificationMessage(): ?string
     {
-        return __('filament::resources/pages/create-record.messages.created');
+        return null;
     }
 
     public function createAnother(): void
@@ -139,7 +172,7 @@ class CreateRecord extends Page implements HasFormActions
     {
         return Action::make('cancel')
             ->label(__('filament::resources/pages/create-record.form.actions.cancel.label'))
-            ->url(static::getResource()::getUrl())
+            ->url($this->previousUrl ?? static::getResource()::getUrl())
             ->color('secondary');
     }
 
@@ -150,7 +183,7 @@ class CreateRecord extends Page implements HasFormActions
         }
 
         return __('filament::resources/pages/create-record.title', [
-            'label' => static::getResource()::getModelLabel(),
+            'label' => Str::headline(static::getResource()::getModelLabel()),
         ]);
     }
 
@@ -158,6 +191,7 @@ class CreateRecord extends Page implements HasFormActions
     {
         return [
             'form' => $this->makeForm()
+                ->context('create')
                 ->model($this->getModel())
                 ->schema($this->getFormSchema())
                 ->statePath('data')

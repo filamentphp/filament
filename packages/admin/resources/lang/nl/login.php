@@ -4,7 +4,7 @@ return [
 
     'title' => 'Inloggen',
 
-    'heading' => 'Inloggen met je account',
+    'heading' => 'Inloggen op je account',
 
     'buttons' => [
 
@@ -32,7 +32,7 @@ return [
 
     'messages' => [
         'failed' => 'Onjuiste inloggegevens.',
-        'throttled' => 'Teveel inlogpogingen. Probeer opnieuw over :seconds seconden.',
+        'throttled' => 'Te veel inlogpogingen. Probeer opnieuw over :seconds seconden.',
     ],
 
 ];

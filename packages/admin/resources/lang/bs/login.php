@@ -31,8 +31,8 @@ return [
     ],
 
     'messages' => [
-        'failed' => 'Ovi akreditivi se ne poklapaju sa našom evidencijom.',
-        'throttled' => 'TPreviše pokušaja prijave. Pokušajte ponovo za :seconds sekundi.',
+        'failed' => 'Vaša kombinacija se ne poklapa sa našom evidencijom.',
+        'throttled' => 'Previše pokušaja prijave. Pokušajte ponovo za :seconds sekundi.',
     ],
 
 ];

@@ -2,6 +2,10 @@
 
 return [
 
+    'title' => 'Đăng nhập',
+
+    'heading' => 'Đăng nhập vào tài khoản của bạn',
+
     'buttons' => [
 
         'submit' => [
@@ -21,7 +25,7 @@ return [
         ],
 
         'remember' => [
-            'label' => 'Giữ trạng thái đăng nhập',
+            'label' => 'Ghi nhớ đăng nhập',
         ],
 
     ],
@@ -30,7 +34,5 @@ return [
         'failed' => 'E-mail hoặc mật khẩu không hợp lệ.',
         'throttled' => 'Đăng nhập sai quá nhiều lần. Vui lòng thử lại sau :seconds giây nữa.',
     ],
-
-    'heading' => 'Đăng nhập',
 
 ];

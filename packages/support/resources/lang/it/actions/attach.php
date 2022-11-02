@@ -12,8 +12,8 @@ return [
 
             'fields' => [
 
-                'record_ids' => [
-                    'label' => 'Records',
+                'record_id' => [
+                    'label' => 'Record',
                 ],
 
             ],

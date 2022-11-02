@@ -17,7 +17,7 @@ return [
     'fields' => [
 
         'email' => [
-            'label' => 'Електронна пошти',
+            'label' => 'Електронна пошта',
         ],
 
         'password' => [

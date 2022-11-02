@@ -4,9 +4,7 @@ namespace Filament\Forms\Components\Contracts;
 
 interface HasValidationRules
 {
-    public function getStatePath(): string;
+    public function dehydrateValidationAttributes(array &$attributes): void;
 
-    public function getValidationAttribute(): string;
-
-    public function getValidationRules(): array;
+    public function dehydrateValidationRules(array &$rules): void;
 }

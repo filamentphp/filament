@@ -16,9 +16,23 @@ class TernaryFilter extends SelectFilter
     {
         parent::setUp();
 
+        $this->trueLabel(__('forms::components.select.boolean.true'));
+        $this->falseLabel(__('forms::components.select.boolean.false'));
         $this->placeholder('-');
 
         $this->boolean();
+
+        $this->indicateUsing(function (array $state): array {
+            if (blank($state['value'] ?? null)) {
+                return [];
+            }
+
+            $stateLabel = $state['value'] ?
+                $this->getTrueLabel() :
+                $this->getFalseLabel();
+
+            return ["{$this->getIndicator()}: {$stateLabel}"];
+        });
     }
 
     public function trueLabel(string | Closure | null $trueLabel): static
@@ -45,9 +59,9 @@ class TernaryFilter extends SelectFilter
         return $this->falseLabel;
     }
 
-    protected function getFormSelectComponent(): Select
+    protected function getFormField(): Select
     {
-        return parent::getFormSelectComponent()
+        return parent::getFormField()
             ->boolean(
                 trueLabel: $this->getTrueLabel(),
                 falseLabel: $this->getFalseLabel(),
@@ -68,7 +82,7 @@ class TernaryFilter extends SelectFilter
                     );
                 }
 
-                return $query->whereNotNull($this->getColumn());
+                return $query->whereNotNull($this->getAttribute());
             },
             false: function (Builder $query): Builder {
                 if ($this->queriesRelationships()) {
@@ -79,7 +93,7 @@ class TernaryFilter extends SelectFilter
                     );
                 }
 
-                return $query->whereNull($this->getColumn());
+                return $query->whereNull($this->getAttribute());
             },
         );
 
@@ -98,7 +112,7 @@ class TernaryFilter extends SelectFilter
                     );
                 }
 
-                return $query->where($this->getColumn(), true);
+                return $query->where($this->getAttribute(), true);
             },
             false: function (Builder $query): Builder {
                 if ($this->queriesRelationships()) {
@@ -109,7 +123,7 @@ class TernaryFilter extends SelectFilter
                     );
                 }
 
-                return $query->where($this->getColumn(), false);
+                return $query->where($this->getAttribute(), false);
             },
         );
 

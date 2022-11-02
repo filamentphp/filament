@@ -3,6 +3,8 @@
 namespace Filament\Tables\Actions;
 
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,7 +27,7 @@ class RestoreBulkAction extends BulkAction
 
         $this->modalButton(__('filament-support::actions/restore.multiple.modal.actions.restore.label'));
 
-        $this->successNotificationMessage(__('filament-support::actions/restore.multiple.messages.restored'));
+        $this->successNotificationTitle(__('filament-support::actions/restore.multiple.messages.restored'));
 
         $this->color('secondary');
 
@@ -48,5 +50,15 @@ class RestoreBulkAction extends BulkAction
         });
 
         $this->deselectRecordsAfterCompletion();
+
+        $this->hidden(function (HasTable $livewire): bool {
+            $trashedFilterState = $livewire->getTableFilterState(TrashedFilter::class) ?? [];
+
+            if (! array_key_exists('value', $trashedFilterState)) {
+                return false;
+            }
+
+            return blank($trashedFilterState['value']);
+        });
     }
 }

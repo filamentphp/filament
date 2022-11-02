@@ -4,7 +4,7 @@ title: Creating records
 
 ## Customizing data before saving
 
-Sometimes, you may wish to modify form data before it is finally saved to the database. To do this, you may define a `mutateFormDataBeforeCreate()` method, which accepts the `$data` as an array, and returns the modified version:
+Sometimes, you may wish to modify form data before it is finally saved to the database. To do this, you may define a `mutateFormDataBeforeCreate()` method on the Create page class, which accepts the `$data` as an array, and returns the modified version:
 
 ```php
 protected function mutateFormDataBeforeCreate(array $data): array
@@ -15,9 +15,22 @@ protected function mutateFormDataBeforeCreate(array $data): array
 }
 ```
 
+Alternatively, if you're creating records in a modal action:
+
+```php
+use Filament\Pages\Actions\CreateAction;
+
+CreateAction::make()
+    ->mutateFormDataUsing(function (array $data): array {
+        $data['user_id'] = auth()->id();
+
+        return $data;
+    })
+```
+
 ## Customizing the creation process
 
-You can tweak how the record is created using the `handleRecordCreation()` method:
+You can tweak how the record is created using the `handleRecordCreation()` method on the Create page class:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -28,11 +41,23 @@ protected function handleRecordCreation(array $data): Model
 }
 ```
 
+Alternatively, if you're creating records in a modal action:
+
+```php
+use Filament\Pages\Actions\CreateAction;
+use Illuminate\Database\Eloquent\Model;
+
+CreateAction::make()
+    ->using(function (array $data): Model {
+        return static::getModel()::create($data);
+    })
+```
+
 ## Customizing form redirects
 
 By default, after saving the form, the user will be redirected to the [Edit page](editing-records) of the resource, or the [View page](viewing-records) if it is present.
 
-You may set up a custom redirect when the form is saved by overriding the `getRedirectUrl()` method.
+You may set up a custom redirect when the form is saved by overriding the `getRedirectUrl()` method on the Create page class.
 
 For example, the form can redirect back to the [List page](listing-records):
 
@@ -43,31 +68,89 @@ protected function getRedirectUrl(): string
 }
 ```
 
+If you wish to be redirected to the previous page, else the index page:
+
+```php
+protected function getRedirectUrl(): string
+{
+    return $this->previousUrl ?? $this->getResource()::getUrl('index');
+}
+```
+
 ## Customizing the save notification
 
 When the record is successfully created, a notification is dispatched to the user, which indicates the success of their action.
 
-To customize the text content of this notification:
+To customize the title of this notification, define a `getCreatedNotificationTitle()` method on the create page class:
 
 ```php
-protected function getCreatedNotificationMessage(): ?string
+protected function getCreatedNotificationTitle(): ?string
 {
     return 'User registered';
 }
 ```
 
-And to disable the notification altogether:
+Alternatively, if you're creating records in a modal action:
 
 ```php
-protected function getCreatedNotificationMessage(): ?string
+use Filament\Pages\Actions\CreateAction;
+
+CreateAction::make()
+    ->successNotificationTitle('User registered')
+```
+
+You may customize the entire notification by overriding the `getCreatedNotification()` method on the create page class:
+
+```php
+use Filament\Notifications\Notification;
+
+protected function getCreatedNotification(): ?Notification
+{
+    return Notification::make()
+        ->success()
+        ->title('User registered')
+        ->body('The user has been created successfully.');
+}
+```
+
+Alternatively, if you're creating records in a modal action:
+
+```php
+use Filament\Notifications\Notification;
+use Filament\Pages\Actions\CreateAction;
+
+CreateAction::make()
+    ->successNotification(
+       Notification::make()
+            ->success()
+            ->title('User registered')
+            ->body('The user has been created successfully.'),
+    )
+```
+
+To disable the notification altogether, return `null` from the `getCreatedNotification()` method on the create page class:
+
+```php
+use Filament\Notifications\Notification;
+
+protected function getCreatedNotification(): ?Notification
 {
     return null;
 }
 ```
 
+Alternatively, if you're creating records in a modal action:
+
+```php
+use Filament\Pages\Actions\CreateAction;
+
+CreateAction::make()
+    ->successNotification(null)
+```
+
 ## Lifecycle hooks
 
-Hooks may be used to execute code at various points within a page's lifecycle, like before a form is saved. To set up a hook, create a protected method on the page class with the name of the hook:
+Hooks may be used to execute code at various points within a page's lifecycle, like before a form is saved. To set up a hook, create a protected method on the Create page class with the name of the hook:
 
 ```php
 protected function beforeCreate(): void
@@ -117,6 +200,93 @@ class CreateUser extends CreateRecord
         // Runs after the form fields are saved to the database.
     }
 }
+```
+
+Alternatively, if you're creating records in a modal action:
+
+```php
+use Filament\Pages\Actions\CreateAction;
+
+CreateAction::make()
+    ->beforeFormFilled(function () {
+        // Runs before the form fields are populated with their default values.
+    })
+    ->afterFormFilled(function () {
+        // Runs after the form fields are populated with their default values.
+    })
+    ->beforeFormValidated(function () {
+        // Runs before the form fields are validated when the form is submitted.
+    })
+    ->afterFormValidated(function () {
+        // Runs after the form fields are validated when the form is submitted.
+    })
+    ->before(function () {
+        // Runs before the form fields are saved to the database.
+    })
+    ->after(function () {
+        // Runs after the form fields are saved to the database.
+    })
+```
+
+## Halting the creation process
+
+At any time, you may call `$this->halt()` from inside a lifecycle hook or mutation method, which will halt the entire creation process:
+
+```php
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
+
+protected function beforeCreate(): void
+{
+    if (! $this->record->team->subscribed()) {
+        Notification::make()
+            ->warning()
+            ->title('You don\'t have an active subscription!')
+            ->body('Choose a plan to continue.')
+            ->persistent()
+            ->actions([
+                Action::make('subscribe')
+                    ->button()
+                    ->url(route('subscribe'), shouldOpenInNewTab: true),
+            ])
+            ->send();
+    
+        $this->halt();
+    }
+}
+```
+
+Alternatively, if you're creating records in a modal action:
+
+```php
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
+use Filament\Pages\Actions\CreateAction;
+
+CreateAction::make()
+    ->before(function (CreateAction $action) {
+        if (! $this->record->team->subscribed()) {
+            Notification::make()
+                ->warning()
+                ->title('You don\'t have an active subscription!')
+                ->body('Choose a plan to continue.')
+                ->persistent()
+                ->actions([
+                    Action::make('subscribe')
+                        ->button()
+                        ->url(route('subscribe'), shouldOpenInNewTab: true),
+                ])
+                ->send();
+        
+            $action->halt();
+        }
+    })
+```
+
+If you'd like the action modal to close too, you can completely `cancel()` the action instead of halting it:
+
+```php
+$action->cancel();
 ```
 
 ## Authorization
@@ -190,7 +360,39 @@ protected function getSteps(): array
 }
 ```
 
-Now, visit the Create page to see your wizard in action! The Edit page will still use the form defined within the resource class.
+Alternatively, if you're creating records in a modal action, simply define a `steps()` array and pass your `Step` objects:
+
+```php
+use Filament\Pages\Actions\CreateAction;
+
+CreateAction::make()
+    ->steps([
+        // ...
+    ])
+```
+
+Now, create a new record to see your wizard in action! Edit will still use the form defined within the resource class.
+
+If you'd like to allow free navigation, so all the steps are skippable, override the `hasSkippableSteps()` method:
+
+```php
+public function hasSkippableSteps(): bool
+{
+    return true;
+}
+```
+
+Alternatively, if you're creating records in a modal action:
+
+```php
+use Filament\Pages\Actions\CreateAction;
+
+CreateAction::make()
+    ->steps([
+        // ...
+    ])
+    ->skippableSteps()
+```
 
 ### Sharing fields between the resource form and wizards
 

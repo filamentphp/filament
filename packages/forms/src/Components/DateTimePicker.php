@@ -38,6 +38,8 @@ class DateTimePicker extends Field
 
     protected string | Closure | null $timezone = null;
 
+    protected array | Closure $disabledDates = [];
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -131,6 +133,13 @@ class DateTimePicker extends Field
         $this->rule(static function (DateTimePicker $component) {
             return "after_or_equal:{$component->getMinDate()}";
         }, static fn (DateTimePicker $component): bool => (bool) $component->getMinDate());
+
+        return $this;
+    }
+
+    public function disabledDates(array | Closure $dates): static
+    {
+        $this->disabledDates = $dates;
 
         return $this;
     }
@@ -260,6 +269,11 @@ class DateTimePicker extends Field
     public function getMinDate(): ?string
     {
         return $this->evaluate($this->minDate);
+    }
+
+    public function getDisabledDates(): array
+    {
+        return $this->evaluate($this->disabledDates);
     }
 
     public function getTimezone(): string

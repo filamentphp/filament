@@ -24,7 +24,7 @@ class ForceDeleteAction extends Action
 
         $this->modalButton(__('filament-support::actions/force-delete.single.modal.actions.delete.label'));
 
-        $this->successNotificationMessage(__('filament-support::actions/force-delete.single.messages.deleted'));
+        $this->successNotificationTitle(__('filament-support::actions/force-delete.single.messages.deleted'));
 
         $this->color('danger');
 
@@ -33,7 +33,13 @@ class ForceDeleteAction extends Action
         $this->requiresConfirmation();
 
         $this->action(function (): void {
-            $this->process(static fn (Model $record) => $record->forceDelete());
+            $result = $this->process(static fn (Model $record) => $record->forceDelete());
+
+            if (! $result) {
+                $this->failure();
+
+                return;
+            }
 
             $this->success();
         });

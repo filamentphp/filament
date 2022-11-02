@@ -10,11 +10,13 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use function Livewire\invade;
 
 trait InteractsWithTable
 {
     use CanBeStriped;
     use CanPaginateRecords;
+    use CanPollRecords;
     use CanReorderRecords;
     use CanSearchRecords;
     use CanSelectRecords;
@@ -29,6 +31,7 @@ trait InteractsWithTable
     use HasHeader;
     use HasRecords;
     use HasRecordAction;
+    use HasRecordClasses;
     use HasRecordUrl;
     use Forms\Concerns\InteractsWithForms;
 
@@ -46,6 +49,7 @@ trait InteractsWithTable
         $this->cacheTableHeaderActions();
 
         $this->cacheTableColumns();
+        $this->cacheTableColumnActions();
         $this->cacheForm('toggleTableColumnForm', $this->getTableColumnToggleForm());
 
         $this->cacheTableFilters();
@@ -75,6 +79,18 @@ trait InteractsWithTable
 
         $this->getTableFiltersForm()->fill($this->tableFilters);
 
+        $searchSessionKey = $this->getTableSearchSessionKey();
+
+        if ($this->shouldPersistTableSearchInSession() && session()->has($searchSessionKey)) {
+            $this->tableSearchQuery = session()->get($searchSessionKey) ?? '';
+        }
+
+        $columnSearchSessionKey = $this->getTableColumnSearchSessionKey();
+
+        if ($this->shouldPersistTableColumnSearchInSession() && session()->has($columnSearchSessionKey)) {
+            $this->tableColumnSearchQueries = session()->get($columnSearchSessionKey) ?? [];
+        }
+
         $this->hasMounted = true;
     }
 
@@ -95,25 +111,7 @@ trait InteractsWithTable
 
     protected function getTable(): Table
     {
-        return $this->makeTable()
-            ->content($this->getTableContent())
-            ->contentFooter($this->getTableContentFooter())
-            ->description($this->getTableDescription())
-            ->emptyState($this->getTableEmptyState())
-            ->emptyStateDescription($this->getTableEmptyStateDescription())
-            ->emptyStateHeading($this->getTableEmptyStateHeading())
-            ->emptyStateIcon($this->getTableEmptyStateIcon())
-            ->enablePagination($this->isTablePaginationEnabled())
-            ->filtersFormWidth($this->getTableFiltersFormWidth())
-            ->filtersLayout($this->getTableFiltersLayout())
-            ->recordAction($this->getTableRecordAction())
-            ->getRecordUrlUsing($this->getTableRecordUrlUsing())
-            ->header($this->getTableHeader())
-            ->heading($this->getTableHeading())
-            ->model($this->getTableQuery()->getModel()::class)
-            ->recordsPerPageSelectOptions($this->getTableRecordsPerPageSelectOptions())
-            ->reorderColumn($this->getTableReorderColumn())
-            ->reorderable($this->isTableReorderable());
+        return Table::make($this);
     }
 
     protected function getTableQueryStringIdentifier(): ?string
@@ -146,11 +144,6 @@ trait InteractsWithTable
             'mountedTableActionForm' => $this->getMountedTableActionForm(),
             'mountedTableBulkActionForm' => $this->getMountedTableBulkActionForm(),
         ];
-    }
-
-    protected function makeTable(): Table
-    {
-        return Table::make($this);
     }
 
     protected function getTableQuery(): Builder | Relation
@@ -196,10 +189,16 @@ trait InteractsWithTable
         /** @var BelongsToMany $relationship */
         $relationship = $this->getRelationship();
 
-        $query->select(
+        $columns = [
             $relationship->getTable() . '.*',
             $query->getModel()->getTable() . '.*',
-        );
+        ];
+
+        if (! $this->allowsDuplicates()) {
+            $columns = array_merge(invade($relationship)->aliasedPivotColumns(), $columns);
+        }
+
+        $query->select($columns);
 
         return $query;
     }

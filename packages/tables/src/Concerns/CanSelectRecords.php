@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -10,6 +11,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 trait CanSelectRecords
 {
     public array $selectedTableRecords = [];
+
+    protected bool $shouldSelectCurrentPageOnly = false;
 
     public function deselectAllTableRecords(): void
     {
@@ -20,11 +23,24 @@ trait CanSelectRecords
     {
         $query = $this->getFilteredTableQuery();
 
-        return $query->pluck($query->getModel()->getQualifiedKeyName())->toArray();
+        if ($this->shouldSelectCurrentPageOnly()) {
+            return $this->getTableRecords()
+                ->map(fn ($key): string => (string) $key->id)
+                ->all();
+        }
+
+        return $query
+            ->pluck($query->getModel()->getQualifiedKeyName())
+            ->map(fn ($key): string => (string) $key)
+            ->all();
     }
 
     public function getAllTableRecordsCount(): int
     {
+        if ($this->shouldSelectCurrentPageOnly()) {
+            return $this->records->count();
+        }
+
         if ($this->records instanceof LengthAwarePaginator) {
             return $this->records->total();
         }
@@ -47,13 +63,21 @@ trait CanSelectRecords
         $pivotClass = $relationship->getPivotClass();
         $pivotKeyName = app($pivotClass)->getKeyName();
 
-        return $this->selectPivotDataInQuery(
+        return $this->hydratePivotRelationForTableRecords($this->selectPivotDataInQuery(
             $relationship->wherePivotIn($pivotKeyName, $this->selectedTableRecords),
-        )->get();
+        )->get());
     }
 
     public function isTableSelectionEnabled(): bool
     {
-        return (bool) count($this->getCachedTableBulkActions());
+        return (bool) count(array_filter(
+            $this->getCachedTableBulkActions(),
+            fn (BulkAction $action): bool => ! $action->isHidden(),
+        ));
+    }
+
+    public function shouldSelectCurrentPageOnly(): bool
+    {
+        return $this->shouldSelectCurrentPageOnly;
     }
 }

@@ -6,8 +6,8 @@ use Filament\Support\Actions\Concerns\CanBeHidden;
 use Filament\Support\Actions\Concerns\HasColor;
 use Filament\Support\Actions\Concerns\HasIcon;
 use Filament\Support\Actions\Concerns\HasLabel;
+use Filament\Support\Actions\Concerns\HasSize;
 use Filament\Support\Actions\Concerns\HasTooltip;
-use Filament\Support\Actions\Contracts\Groupable;
 use Filament\Support\Components\ViewComponent;
 
 class ActionGroup extends ViewComponent
@@ -15,10 +15,11 @@ class ActionGroup extends ViewComponent
     use CanBeHidden {
         isHidden as baseIsHidden;
     }
-    use HasIcon;
-    use HasTooltip;
-    use HasLabel;
     use HasColor;
+    use HasIcon;
+    use HasLabel;
+    use HasSize;
+    use HasTooltip;
 
     protected string $evaluationIdentifier = 'group';
 
@@ -36,16 +37,20 @@ class ActionGroup extends ViewComponent
 
     public function getLabel(): ?string
     {
-        return $this->evaluate($this->label);
+        $label = $this->evaluate($this->label);
+
+        return $this->shouldTranslateLabel ? __($label) : $label;
     }
 
     public function getActions(): array
     {
-        return collect($this->actions)
-            ->mapWithKeys(fn (Action | Groupable $action): array => [
-                $action->getName() => $action->grouped(),
-            ])
-            ->toArray();
+        $actions = [];
+
+        foreach ($this->actions as $action) {
+            $actions[$action->getName()] = $action->grouped();
+        }
+
+        return $actions;
     }
 
     public function isHidden(): bool

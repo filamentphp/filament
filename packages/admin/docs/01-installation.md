@@ -47,7 +47,7 @@ Please see the [Users page](users#authorizing-access-to-the-admin-panel).
 
 If you don't complete these steps, there will be a 403 error when you try to access the admin panel in production.
 
-## Publishing the configuration
+## Publishing configuration
 
 If you wish, you may publish the configuration of the package using:
 
@@ -55,7 +55,7 @@ If you wish, you may publish the configuration of the package using:
 php artisan vendor:publish --tag=filament-config
 ```
 
-## Publishing the translations
+## Publishing translations
 
 If you wish to translate the package, you may publish the language files using:
 
@@ -63,25 +63,24 @@ If you wish to translate the package, you may publish the language files using:
 php artisan vendor:publish --tag=filament-translations
 ```
 
-## Upgrade Guide
-
-To upgrade the package to the latest version, you must run:
+Since this package depends on other Filament packages, you may wish to translate those as well:
 
 ```bash
-php artisan config:clear
-php artisan livewire:discover
-php artisan route:clear
-php artisan view:clear
+php artisan vendor:publish --tag=filament-forms-translations
+php artisan vendor:publish --tag=filament-tables-translations
+php artisan vendor:publish --tag=filament-support-translations
 ```
 
-Alternatively, you may use the `filament:upgrade` command to do this all at once:
+## Upgrading
+
+To upgrade the package to the latest version, you must run:
 
 ```bash
 composer update
 php artisan filament:upgrade
 ```
 
-We recommend adding these commands to your `composer.json`'s `post-update-cmd`:
+We recommend adding the `filament:upgrade` command to your `composer.json`'s `post-update-cmd` to run it automatically:
 
 ```json
 "post-update-cmd": [

@@ -25,7 +25,7 @@ class BlogPostResource extends Resource
 }
 ```
 
-You may [publish the package's configuration file](installation#publishing-the-configuration) to set the `default_locales` for all resources at once.
+You may [publish the package's configuration file](installation#publishing-configuration) to set the `default_locales` for all resources at once.
 
 ## Making resource pages translatable
 
@@ -41,8 +41,10 @@ class ListBlogPosts extends ListRecords
     
     protected function getActions(): array
     {
-        LocaleSwitcher::make(),
-        // ...
+        return [
+            Actions\LocaleSwitcher::make(),
+            // ...
+        ];
     }
     
     // ...
@@ -59,7 +61,10 @@ class CreateBlogPost extends CreateRecord
     
     protected function getActions(): array
     {
-        Actions\LocaleSwitcher::make(),
+        return [
+            Actions\LocaleSwitcher::make(),
+            // ...
+        ];
     }
     
     // ...
@@ -76,8 +81,10 @@ class EditBlogPost extends EditRecord
     
     protected function getActions(): array
     {
-        Actions\LocaleSwitcher::make(),
-        // ...
+        return [
+            Actions\LocaleSwitcher::make(),
+            // ...
+        ];
     }
     
     // ...
@@ -96,8 +103,10 @@ class ViewBlogPost extends ViewRecord
     
     protected function getActions(): array
     {
-        Actions\LocaleSwitcher::make(),
-        // ...
+        return [
+            Actions\LocaleSwitcher::make(),
+            // ...
+        ];
     }
     
     // ...

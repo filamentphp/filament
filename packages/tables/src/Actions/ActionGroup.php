@@ -13,10 +13,12 @@ class ActionGroup extends BaseActionGroup
 
     public function getActions(): array
     {
-        return collect($this->actions)
-            ->mapWithKeys(fn (Action $action): array => [
-                $action->getName() => $action->grouped()->record($this->getRecord()),
-            ])
-            ->toArray();
+        $actions = [];
+
+        foreach ($this->actions as $action) {
+            $actions[$action->getName()] = $action->grouped()->record($this->getRecord());
+        }
+
+        return $actions;
     }
 }

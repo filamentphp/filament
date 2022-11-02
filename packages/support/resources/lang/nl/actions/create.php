@@ -4,7 +4,7 @@ return [
 
     'single' => [
 
-        'label' => 'Aanmaken',
+        'label' => ':Label aanmaken',
 
         'modal' => [
 

@@ -2,9 +2,6 @@
     'detail',
 ])
 
-<x-filament-support::dropdown.item
-    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($slots)"
-    :dark-mode="config('forms.dark_mode')"
->
+<x-forms::dropdown.list.item :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($slots)">
     {{ $slot }}
-</x-filament-support::dropdown.item>
+</x-forms::dropdown.list.item>

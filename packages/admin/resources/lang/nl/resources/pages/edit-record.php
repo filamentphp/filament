@@ -15,9 +15,13 @@ return [
             ],
 
             'save' => [
-                'label' => 'Opslaan',
+                'label' => 'Wijzigingen opslaan',
             ],
 
+        ],
+
+        'tab' => [
+            'label' => 'Bewerken',
         ],
 
     ],

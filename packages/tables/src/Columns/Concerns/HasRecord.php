@@ -17,6 +17,6 @@ trait HasRecord
 
     public function getRecord(): ?Model
     {
-        return $this->record;
+        return $this->record ?? $this->getLayout()?->getRecord();
     }
 }

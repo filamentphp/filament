@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Lepas lampiran',
+        'label' => 'Lepaskan lampiran',
 
         'modal' => [
 
-            'heading' => 'Lepas lampiran :label',
+            'heading' => 'Lepaskan lampiran :label',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Lepas lampiran',
+                    'label' => 'Lepaskan lampiran',
                 ],
 
             ],
@@ -21,7 +21,7 @@ return [
         ],
 
         'messages' => [
-            'detached' => 'Lampiran berhasil dilepas',
+            'detached' => 'Lampiran berhasil dilepaskan',
         ],
 
     ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'detached' => 'Lampiran berhasil dilepas',
+            'detached' => 'Lampiran berhasil dilepaskan',
         ],
 
     ],

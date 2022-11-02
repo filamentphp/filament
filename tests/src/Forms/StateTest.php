@@ -184,6 +184,25 @@ test('child component state can be hydrated by parent component defaults', funct
         ->getData()->toBe([$parentStatePath => [$statePath => $state]]);
 });
 
+test('child component defaults are overwritten by parent component defaults', function () {
+    ComponentContainer::make($livewire = Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($parentStatePath = Str::random())
+                ->schema([
+                    (new Component())
+                        ->statePath($statePath = Str::random())
+                        ->default(Str::random()),
+                ])
+                ->default([$statePath => ($state = Str::random())]),
+        ])
+        ->fill();
+
+    expect($livewire)
+        ->getData()->toBe([$parentStatePath => [$statePath => $state]]);
+});
+
 test('missing child component state can be filled with null', function () {
     ComponentContainer::make($livewire = Livewire::make())
         ->statePath('data')

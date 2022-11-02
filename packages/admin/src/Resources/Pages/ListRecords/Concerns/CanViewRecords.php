@@ -31,7 +31,7 @@ trait CanViewRecords
         $this->callHook('beforeFill');
         $this->callHook('beforeViewFill');
 
-        $data = $this->getMountedTableActionRecord()->toArray();
+        $data = $this->getMountedTableActionRecord()->attributesToArray();
 
         $this->getMountedTableActionForm()->fill($data);
 

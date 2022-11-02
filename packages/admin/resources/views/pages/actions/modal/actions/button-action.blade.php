@@ -15,7 +15,10 @@
 <x-filament::button
     :form="$getForm()"
     :type="$canSubmitForm() ? 'submit' : 'button'"
+    :tag="$action->getUrl() ? 'a' : 'button'"
     :wire:click="$wireClickAction"
+    :href="$action->isEnabled() ? $action->getUrl() : null"
+    :target="$action->shouldOpenUrlInNewTab() ? '_blank' : null"
     :x-on:click="$canCancelAction() ? 'isOpen = false' : null"
     :color="$getColor()"
     :outlined="$isOutlined()"

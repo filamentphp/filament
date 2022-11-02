@@ -19,11 +19,11 @@ trait CanBeHidden
         return $this;
     }
 
-    public function hiddenOn(string | array $livewireClass): static
+    public function hiddenOn(string | array $contexts): static
     {
-        $this->hidden(static function (HasForms $livewire) use ($livewireClass): bool {
-            foreach (Arr::wrap($livewireClass) as $class) {
-                if ($livewire instanceof $class) {
+        $this->hidden(static function (string $context, HasForms $livewire) use ($contexts): bool {
+            foreach (Arr::wrap($contexts) as $hiddenContext) {
+                if ($hiddenContext === $context || $livewire instanceof $hiddenContext) {
                     return true;
                 }
             }
@@ -82,11 +82,11 @@ trait CanBeHidden
         return $this;
     }
 
-    public function visibleOn(string | array $livewireClass): static
+    public function visibleOn(string | array $contexts): static
     {
-        $this->visible(static function (HasForms $livewire) use ($livewireClass): bool {
-            foreach (Arr::wrap($livewireClass) as $class) {
-                if ($livewire instanceof $class) {
+        $this->visible(static function (string $context, HasForms $livewire) use ($contexts): bool {
+            foreach (Arr::wrap($contexts) as $visibleContext) {
+                if ($visibleContext === $context || $livewire instanceof $visibleContext) {
                     return true;
                 }
             }

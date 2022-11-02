@@ -22,7 +22,7 @@ composer require filament/spatie-laravel-settings-plugin:"^2.0"
 
 You're now ready to start building [settings pages](getting-started)!
 
-## Upgrade Guide
+## Upgrading
 
 To upgrade the package to the latest version, you must run:
 

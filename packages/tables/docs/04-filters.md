@@ -49,6 +49,15 @@ use Filament\Tables\Filters\Filter;
 Filter::make('is_featured')->label('Featured')
 ```
 
+
+Optionally, you can have the label automatically translated by using the `translateLabel()` method:
+
+```php
+use Filament\Tables\Filters\Filter;
+
+Filter::make('is_featured')->translateLabel() // Equivalent to `label(__('Is featured'))`
+```
+
 ### Using a toggle button instead of a checkbox
 
 By default, filters use a checkbox to control the filter. Instead, you may switch to using a toggle button, using the `toggle()` method:
@@ -88,7 +97,7 @@ SelectFilter::make('status')
     ])
 ```
 
-Select filters do not require a custom `query()` method. The column name used to scope the query is the name of the filter. To customize this, you may use the `column()` method:
+Select filters do not require a custom `query()` method. The column name used to scope the query is the name of the filter. To customize this, you may use the `attribute()` method:
 
 ```php
 use Filament\Tables\Filters\SelectFilter;
@@ -99,7 +108,23 @@ SelectFilter::make('status')
         'reviewing' => 'Reviewing',
         'published' => 'Published',
     ])
-    ->column('status_id')
+    ->attribute('status_id')
+```
+
+#### Multi-select filters
+
+These allow the user to select multiple options to apply the filter to their table. For example, a status filter may present the user with a few status options to pick from and filter the table using:
+
+```php
+use Filament\Tables\Filters\SelectFilter;
+
+SelectFilter::make('status')
+    ->multiple()
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
 ```
 
 #### Relationship select filters
@@ -112,43 +137,14 @@ use Filament\Tables\Filters\SelectFilter;
 SelectFilter::make('author')->relationship('author', 'name')
 ```
 
-### Multi-select filters
-
-Multi-select filters allow you to quickly create a filter that allows the user to select multiple options to apply the filter to their table. For example, a status filter may present the user with a few status options to pick from and filter the table using:
+You may customize the database query that retrieves options using the third parameter of the `relationship()` method:
 
 ```php
-use Filament\Tables\Filters\MultiSelectFilter;
+use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
 
-MultiSelectFilter::make('status')
-    ->options([
-        'draft' => 'Draft',
-        'reviewing' => 'Reviewing',
-        'published' => 'Published',
-    ])
-```
-
-Multi-select filters do not require a custom `query()` method. The column name used to scope the query is the name of the filter. To customize this, you may use the `column()` method:
-
-```php
-use Filament\Tables\Filters\MultiSelectFilter;
-
-MultiSelectFilter::make('status')
-    ->options([
-        'draft' => 'Draft',
-        'reviewing' => 'Reviewing',
-        'published' => 'Published',
-    ])
-    ->column('status_id')
-```
-
-#### Relationship multi-select filters
-
-Multi-select filters are also able to automatically populate themselves based on a `BelongsTo` relationship. For example, if your table has a `author` relationship with a `name` column, you may use `relationship()` to filter the records belonging to a selection of authors:
-
-```php
-use Filament\Tables\Filters\MultiSelectFilter;
-
-MultiSelectFilter::make('author')->relationship('author', 'name')
+SelectFilter::make('author')
+    ->relationship('author', 'name', fn (Builder $query) => $query->withTrashed())
 ```
 
 ### Ternary filters
@@ -170,17 +166,17 @@ TernaryFilter::make('email_verified_at')
     ->nullable()
 ```
 
-The column name used to scope the query is the name of the filter. To customize this, you may use the `column()` method:
+The column name used to scope the query is the name of the filter. To customize this, you may use the `attribute()` method:
 
 ```php
 use Filament\Tables\Filters\TernaryFilter;
 
 TernaryFilter::make('verified')
     ->nullable()
-    ->column('status_id')
+    ->attribute('status_id')
 ```
 
-You may customise the query used for each state of the ternary filter, using the `queries()` method:
+You may customize the query used for each state of the ternary filter, using the `queries()` method:
 
 ```php
 use Illuminate\Database\Eloquent\Builder;
@@ -240,6 +236,69 @@ Filter::make('created_at')
     ])
 ```
 
+## Active indicators
+
+When a filter is active, an indicator is displayed above the table content to signal that the table query has been scoped.
+
+By default, the label of the filter is used as the indicator. You can override this:
+
+```php
+use Filament\Tables\Filters\TernaryFilter;
+
+TernaryFilter::make('is_admin')
+    ->label('Administrators only?')
+    ->indicator('Administrators')
+```
+
+### Custom indicators
+
+Not all indicators are simple, so you may need to use `indicateUsing()` to customize which indicators should be shown at any time.
+
+For example, if you have a custom date filter, you may create a custom indicator that formats the selected date:
+
+```php
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\Filter;
+
+Filter::make('created_at')
+    ->form([DatePicker::make('date')])
+    // ...
+    ->indicateUsing(function (array $data): ?string {
+        if (! $data['date']) {
+            return null;
+        }
+
+        return 'Created at ' . Carbon::parse($data['date'])->toFormattedDateString();
+    })
+```
+
+You may even render multiple indicators at once, by returning an array. If you have different fields associated with different indicators, you should use the field's name as the array key, to ensure that the correct field is reset when the filter is removed:
+
+```php
+use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\Filter;
+
+Filter::make('created_at')
+    ->form([
+        DatePicker::make('from'),
+        DatePicker::make('until'),
+    ])
+    // ...
+    ->indicateUsing(function (array $data): array {
+        $indicators = [];
+
+        if ($data['from'] ?? null) {
+            $indicators['from'] = 'Created from ' . Carbon::parse($data['from'])->toFormattedDateString();
+        }
+
+        if ($data['until'] ?? null) {
+            $indicators['until'] = 'Created until ' . Carbon::parse($data['until'])->toFormattedDateString();
+        }
+
+        return $indicators;
+    })
+```
+
 ## Appearance
 
 By default, filters are displayed in a thin popover on the right side of the table, in 1 column.
@@ -262,7 +321,7 @@ protected function getTableFiltersFormWidth(): string
 }
 ```
 
-## Displaying filters above the table content
+## Displaying filters above or below the table content
 
 To render the filters above the table content instead of in a popover, you may use:
 
@@ -272,6 +331,17 @@ use Filament\Tables\Filters\Layout;
 protected function getTableFiltersLayout(): ?string
 {
     return Layout::AboveContent;
+}
+```
+
+To render the filters below the table content instead of in a popover, you may use:
+
+```php
+use Filament\Tables\Filters\Layout;
+
+protected function getTableFiltersLayout(): ?string
+{
+    return Layout::BelowContent;
 }
 ```
 

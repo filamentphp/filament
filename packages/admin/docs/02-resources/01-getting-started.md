@@ -49,7 +49,7 @@ If you'd like to save time, Filament can automatically generate the [form](#form
 The `doctrine/dbal` package is required to use this functionality:
 
 ```bash
-composer require doctrine/dbal
+composer require doctrine/dbal --dev
 ```
 
 When creating your resource, you may now use `--generate`:
@@ -58,6 +58,8 @@ When creating your resource, you may now use `--generate`:
 php artisan make:filament-resource Customer --generate
 ```
 
+> Note: If your table contains ENUM columns, `doctrine/dbal` is unable to scan your table and will crash. Hence Filament is unable to generate the schema for your resource if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
+
 ### Handling soft deletes
 
 By default, you will not be able to interact with deleted records in the admin panel. If you'd like to add functionality to restore, force delete and filter trashed records in your resource, use the `--soft-deletes` flag when generating the resource:
@@ -65,6 +67,8 @@ By default, you will not be able to interact with deleted records in the admin p
 ```bash
 php artisan make:filament-resource Customer --soft-deletes
 ```
+
+You can find out more about soft deleting [here](deleting-records#handling-soft-deletes).
 
 ### Generating a View page
 
@@ -139,11 +143,11 @@ To view a full list of available [layout components](../../forms/layout), see th
 
 You may also build your own completely [custom layout components](../../forms/layout#building-custom-layout-components).
 
-### Hiding components based on the page
+### Hiding components contextually
 
-The `hiddenOn()` method of form components allows you to dynamically hide fields based on the current page.
+The `hiddenOn()` method of form components allows you to dynamically hide fields based on the current page or action.
 
-In this example, we hide the `password` field on the `EditUser` resource page:
+In this example, we hide the `password` field on the `edit` page:
 
 ```php
 use Livewire\Component;
@@ -151,10 +155,10 @@ use Livewire\Component;
 Forms\Components\TextInput::make('password')
     ->password()
     ->required()
-    ->hiddenOn(Pages\EditUser::class),
+    ->hiddenOn('edit'),
 ```
 
-Alternatively, we have a `visibleOn()` shortcut method for only showing a field on one page:
+Alternatively, we have a `visibleOn()` shortcut method for only showing a field on one page or action:
 
 ```php
 use Livewire\Component;
@@ -162,7 +166,7 @@ use Livewire\Component;
 Forms\Components\TextInput::make('password')
     ->password()
     ->required()
-    ->visibleOn(Pages\CreateUser::class),
+    ->visibleOn('create'),
 ```
 
 ## Tables
@@ -206,7 +210,7 @@ Filament has many utilities available for managing resource relationships. Which
 
 #### Select field
 
-Filament includes the ability automatically loads options from a `BelongsTo` relationship:
+Filament includes the ability to automatically load options from a `BelongsTo` relationship:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -300,16 +304,17 @@ For more information on relation managers, see the [full documentation](relation
 
 #### Multi-select field
 
-Filament can automatically load `MultiSelect` options from a `BelongsToMany` relationship:
+Filament can automatically load `Select` options from a `BelongsToMany` relationship:
 
 ```php
-use Filament\Forms\Components\MultiSelect;
+use Filament\Forms\Components\Select;
 
-MultiSelect::make('technologies')
+Select::make('technologies')
+    ->multiple()
     ->relationship('technologies', 'name')
 ```
 
-More information about `BelongsToManyMultiSelect` is available in the [Form docs](../../forms/fields#populating-automatically-from-a-belongstomany-relationship).
+More information is available in the [Form docs](../../forms/fields#populating-automatically-from-a-belongstomany-relationship).
 
 #### Checkbox list field
 
@@ -331,6 +336,24 @@ More information about `CheckboxList` is available in the [Form docs](../../form
 The related records are listed in a table, which has buttons to open a modal for each action.
 
 For more information on relation managers, see the [full documentation](relation-managers).
+
+### `MorphTo`
+
+#### Select field
+
+Filament includes the ability to automatically load options from a `MorphTo` relationship:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)->titleColumnName('name'),
+        MorphToSelect\Type::make(Post::class)->titleColumnName('title'),
+    ])
+```
+
+More information is available in the [Form docs](../../forms/fields#handling-morphto-relationships).
 
 ### `MorphOne`
 
@@ -397,14 +420,17 @@ For authorization, Filament will observe any [model policies](https://laravel.co
 - `viewAny()` is used to completely hide resources from the navigation menu, and prevents the user from accessing any pages.
 - `create()` is used to control [creating new records](creating-records).
 - `update()` is used to control [editing a record](editing-records).
-- `delete()` is used to prevent a single record from being deleted. `deleteAny()` is used to prevent records from being bulk deleted. Filament uses the `deleteAny()` method because iterating through multiple records and checking the `delete()` policy is not very performant.
 - `view()` is used to control [viewing a record](viewing-records).
+- `delete()` is used to prevent a single record from being deleted. `deleteAny()` is used to prevent records from being bulk deleted. Filament uses the `deleteAny()` method because iterating through multiple records and checking the `delete()` policy is not very performant.
+- `forceDelete()` is used to prevent a single soft-deleted record from being force-deleted. `forceDeleteAny()` is used to prevent records from being bulk force-deleted. Filament uses the `forceDeleteAny()` method because iterating through multiple records and checking the `forceDelete()` policy is not very performant.
+- `restore()` is used to prevent a single soft-deleted record from being restored. `restoreAny()` is used to prevent records from being bulk restored. Filament uses the `restoreAny()` method because iterating through multiple records and checking the `restore()` policy is not very performant.
+- `reorder()` is used to control [reordering a record](listing-records#reordering-records).
 
 ## Model labels
 
 Each resource has a "model label" which is automatically generated from the model name. For example, an `App\Models\Customer` model will have a `customer` label.
 
-The label is used in several parts of the UI, and you may customise it using the `$modelLabel` property:
+The label is used in several parts of the UI, and you may customize it using the `$modelLabel` property:
 
 ```php
 protected static ?string $modelLabel = 'cliente';
@@ -504,11 +530,11 @@ Alternatively, you may use the `getNavigationGroup()` method to set a dynamic gr
 ```php
 protected static function getNavigationGroup(): ?string
 {
-    return return __('filament/navigation.groups.shop');
+    return __('filament/navigation.groups.shop');
 }
 ```
 
-## Customising the Eloquent query
+## Customizing the Eloquent query
 
 Within Filament, every query to your resource model will start with the `getEloquentQuery()` method.
 
@@ -546,7 +572,7 @@ Multi-tenancy, simply, is the concept of users "owning" records, and only being 
 
 Simple multi-tenancy is easy to set up with Filament.
 
-First, scope the [base Eloquent query](#customising-the-eloquent-query) for every "owned" resource by defining the `getEloquentQuery()` method:
+First, scope the [base Eloquent query](#customizing-the-eloquent-query) for every "owned" resource by defining the `getEloquentQuery()` method:
 
 ```php
 public static function getEloquentQuery(): Builder
@@ -566,9 +592,19 @@ public function creating(Post $post): void
 }
 ```
 
+Additionally, you may want to scope the options available in the [relation manager](relation-managers) `AttachAction` or `AssociateAction`:
+
+```php
+use Filament\Tables\Actions\AttachAction;
+use Illuminate\Database\Eloquent\Builder;
+
+AttachAction::make()
+    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+```
+
 ### `stancl/tenancy`
 
-To set up [`stancl/tenancy`](https://tenancyforlaravel.com/docs) to work with Filament, you just need to add the `InitializeTenancyByDomain::class` middleware to [Livewire](https://tenancyforlaravel.com/docs/v3/integrations/livewire) and the [Filament config file](../installation#publishing-the-configuration):
+To set up [`stancl/tenancy`](https://tenancyforlaravel.com/docs) to work with Filament, you just need to add the `InitializeTenancyByDomain::class` middleware to [Livewire](https://tenancyforlaravel.com/docs/v3/integrations/livewire) and the [Filament config file](../installation#publishing-configuration):
 
 ```php
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;

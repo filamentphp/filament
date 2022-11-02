@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'اصلاح',
+        'label' => 'ویرایش',
 
         'modal' => [
 
-            'heading' => 'اصلاح :label',
+            'heading' => 'ویرایش :label',
 
             'actions' => [
 

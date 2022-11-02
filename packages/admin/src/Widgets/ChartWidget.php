@@ -14,6 +14,8 @@ class ChartWidget extends Widget
 
     protected static ?string $heading = null;
 
+    protected static ?string $maxHeight = null;
+
     protected static ?array $options = null;
 
     protected static string $view = 'filament::widgets.chart-widget';
@@ -46,6 +48,11 @@ class ChartWidget extends Widget
     protected function getHeading(): ?string
     {
         return static::$heading;
+    }
+
+    protected function getMaxHeight(): ?string
+    {
+        return static::$maxHeight;
     }
 
     protected function getOptions(): ?array

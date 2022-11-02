@@ -69,7 +69,7 @@ trait HasState
             return $state;
         }
 
-        if (! $this->queriesRelationships()) {
+        if (! $this->queriesRelationships($record)) {
             return null;
         }
 

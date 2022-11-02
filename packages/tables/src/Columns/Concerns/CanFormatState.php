@@ -88,6 +88,19 @@ trait CanFormatState
         return $this;
     }
 
+    public function words(int $words = 100, string $end = '...'): static
+    {
+        $this->formatStateUsing(static function ($state) use ($words, $end): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            return Str::words($state, $words, $end);
+        });
+
+        return $this;
+    }
+
     public function prefix(string | Closure $prefix): static
     {
         $this->prefix = $prefix;
@@ -104,7 +117,7 @@ trait CanFormatState
 
     public function html(): static
     {
-        return $this->formatStateUsing(static fn ($state): HtmlString => Str::of($state)->sanitizeHtml()->toHtmlString());
+        return $this->formatStateUsing(static fn ($state): HtmlString => $state instanceof HtmlString ? $state : Str::of($state)->sanitizeHtml()->toHtmlString());
     }
 
     public function formatStateUsing(?Closure $callback): static
@@ -114,11 +127,15 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string | Closure $currency = 'usd', bool $shouldConvert = false): static
+    public function money(string | Closure | null $currency = null, bool $shouldConvert = false): static
     {
         $this->formatStateUsing(static function (Column $column, $state) use ($currency, $shouldConvert): ?string {
             if (blank($state)) {
                 return null;
+            }
+
+            if (blank($currency)) {
+                $currency = config('money.default_currency') ?? 'usd';
             }
 
             return (new Money\Money(

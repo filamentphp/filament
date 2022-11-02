@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => 'اصلاح :label',
+    'title' => 'ویرایش :label',
 
-    'breadcrumb' => 'اصلاح',
+    'breadcrumb' => 'ویرایش',
 
     'form' => [
 
@@ -18,6 +18,10 @@ return [
                 'label' => 'ذخیره',
             ],
 
+        ],
+
+        'tab' => [
+            'label' => 'ویرایش',
         ],
 
     ],

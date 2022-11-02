@@ -4,7 +4,21 @@ return [
 
     'single' => [
 
-        'label' => 'копіювати',
+        'label' => 'Копіювати',
+
+        'modal' => [
+
+            'heading' => 'Копіювати :label',
+
+            'actions' => [
+
+                'replicate' => [
+                    'label' => 'Копіювати',
+                ],
+
+            ],
+
+        ],
 
         'messages' => [
             'replicated' => 'Запис скопійовано',

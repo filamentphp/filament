@@ -5,6 +5,8 @@
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-action="$getHintAction()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
@@ -43,17 +45,23 @@
                             {{ $getValueLabel() }}
                         </th>
 
-                        @if ($canDeleteRows() && $getDeleteButtonLabel() && $isEnabled())
-                            <th class="w-12" scope="col" x-show="rows.length > 1">
-                                <span class="sr-only">
-                                    {{ $getDeleteButtonLabel() }}
-                                </span>
+                        @if (($canDeleteRows() || $isReorderable()) && $isEnabled())
+                            <th
+                                scope="col"
+                                x-show="rows.length > 1"
+                                class="{{ ($canDeleteRows() && $isReorderable()) ? 'w-16' : 'w-12' }}"
+                            >
+                                <span class="sr-only"></span>
                             </th>
                         @endif
                     </tr>
                 </thead>
 
                 <tbody
+                    @if ($isReorderable())
+                        x-sortable
+                        x-on:end="reorderRows($event)"
+                    @endif
                     x-ref="tableBody"
                     @class([
                         'divide-y whitespace-nowrap',
@@ -61,15 +69,20 @@
                     ])
                 >
                     <template x-for="(row, index) in rows" x-bind:key="index" x-ref="rowTemplate">
-                        <tr @class([
-                            'divide-x',
-                            'dark:divide-gray-600' => config('forms.dark_mode'),
-                        ])>
+                        <tr
+                            @if ($isReorderable())
+                                x-bind:x-sortable-item="row.key"
+                            @endif
+                            @class([
+                                'divide-x',
+                                'dark:divide-gray-600' => config('forms.dark_mode'),
+                            ])
+                        >
                             <td>
                                 <input
                                     type="text"
                                     x-model="row.key"
-                                    x-on:input.debounce.500ms="updateState"
+                                    x-on:input.debounce.{{ $getDebounce() ?? '500ms' }}="updateState"
                                     {!! ($placeholder = $getKeyPlaceholder()) ? "placeholder=\"{$placeholder}\"" : '' !!}
                                     @if ((! $canEditKeys()) || $isDisabled())
                                         disabled
@@ -82,7 +95,7 @@
                                 <input
                                     type="text"
                                     x-model="row.value"
-                                    x-on:input.debounce.500ms="updateState"
+                                    x-on:input.debounce.{{ $getDebounce() ?? '500ms' }}="updateState"
                                     {!! ($placeholder = $getValuePlaceholder()) ? "placeholder=\"{$placeholder}\"" : '' !!}
                                     @if ((! $canEditValues()) || $isDisabled())
                                         disabled
@@ -91,16 +104,36 @@
                                 >
                             </td>
 
-                            @if ($canDeleteRows() && $isEnabled())
+                            @if (($canDeleteRows() || $isReorderable()) && $isEnabled())
                                 <td x-show="rows.length > 1" class="whitespace-nowrap">
-                                    <div class="flex items-center justify-center">
-                                        <button
-                                            x-on:click="deleteRow(index)"
-                                            type="button"
-                                            class="text-danger-600 hover:text-danger-700"
-                                        >
-                                            <x-heroicon-o-trash class="w-4 h-4" />
-                                        </button>
+                                    <div class="flex items-center justify-center gap-2">
+                                        @if ($isReorderable())
+                                            <button
+                                                x-sortable-handle
+                                                type="button"
+                                                class="text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                            >
+                                                <x-heroicon-o-switch-vertical class="w-4 h-4" />
+
+                                                <span class="sr-only">
+                                                    {{ $getReorderButtonLabel() }}
+                                                </span>
+                                            </button>
+                                        @endif
+
+                                        @if ($canDeleteRows())
+                                            <button
+                                                x-on:click="deleteRow(index)"
+                                                type="button"
+                                                class="text-danger-600 hover:text-danger-700"
+                                            >
+                                                <x-heroicon-o-trash class="w-4 h-4" />
+
+                                                <span class="sr-only">
+                                                    {{ $getDeleteButtonLabel() }}
+                                                </span>
+                                            </button>
+                                        @endif
                                     </div>
                                 </td>
                             @endif

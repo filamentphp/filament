@@ -4,6 +4,14 @@ return [
 
     'columns' => [
 
+        'color' => [
+
+            'messages' => [
+                'copied' => 'Copiato',
+            ],
+
+        ],
+
         'tags' => [
             'more' => 'e altri :count',
         ],
@@ -28,7 +36,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'per pagina',
+
+                'options' => [
+                    'all' => 'Tutti',
+                ],
+
             ],
 
         ],
@@ -53,6 +67,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Termina riordino records',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Riordina records',
+        ],
+
         'filter' => [
             'label' => 'Filtra',
         ],
@@ -75,15 +97,22 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Rimuovi filtro',
+            ],
+
+            'remove_all' => [
+                'label' => 'Rimuovi tutti i filtri',
+                'tooltip' => 'Rimuovi tutti i filtri',
+            ],
+
             'reset' => [
                 'label' => 'Azzera filtri',
             ],
 
-            'close' => [
-                'label' => 'Chiudi',
-            ],
-
         ],
+
+        'indicator' => 'Filtri attivi',
 
         'multi_select' => [
             'placeholder' => 'Tutti',
@@ -92,10 +121,27 @@ return [
         'select' => [
             'placeholder' => 'Tutti',
         ],
+
+        'trashed' => [
+
+            'label' => 'Records eliminati',
+
+            'only_trashed' => 'Solo records eliminati',
+
+            'with_trashed' => 'Con records eliminati',
+
+            'without_trashed' => 'Senza records eliminati',
+
+        ],
+
     ],
 
+    'reorder_indicator' => 'Prendi e trascina i record in ordine.',
+
     'selection_indicator' => [
+
         'selected_count' => '1 record selezionato.|:count records selezionati.',
+
         'buttons' => [
 
             'select_all' => [
@@ -104,6 +150,29 @@ return [
 
             'deselect_all' => [
                 'label' => 'Deseleziona tutti',
+            ],
+
+        ],
+
+    ],
+
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Ordina per',
+            ],
+
+            'direction' => [
+
+                'label' => 'Ordine',
+
+                'options' => [
+                    'asc' => 'Crescente',
+                    'desc' => 'Decrescente',
+                ],
+
             ],
 
         ],

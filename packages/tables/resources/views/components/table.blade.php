@@ -4,15 +4,12 @@
 ])
 
 <table {{ $attributes->class([
-    'w-full text-left rtl:text-right divide-y table-auto filament-tables-table',
+    'filament-tables-table w-full text-left rtl:text-right divide-y table-auto',
     'dark:divide-gray-700' => config('tables.dark_mode'),
 ]) }}>
     @if ($header)
         <thead>
-            <tr @class([
-                'bg-gray-50',
-                'dark:bg-gray-500/10' => config('tables.dark_mode'),
-            ])>
+            <tr class="bg-gray-500/5">
                 {{ $header }}
             </tr>
         </thead>

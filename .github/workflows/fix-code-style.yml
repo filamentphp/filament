@@ -1,0 +1,27 @@
+name: fix-code-style
+
+on: push
+
+jobs:
+  fix-code-style:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Set up Node
+        uses: actions/setup-node@v2
+      - name: Install dependencies
+        run: |
+          composer install --no-interaction
+          npm ci
+      - name: Run Pint
+        run: composer pint
+      - name: Run Prettier
+        run: npm run prettier
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: >
+            chore: fix code style

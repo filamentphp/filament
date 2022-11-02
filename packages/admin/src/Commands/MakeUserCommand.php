@@ -3,6 +3,7 @@
 namespace Filament\Commands;
 
 use Filament\Facades\Filament;
+use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Hash;
 
 class MakeUserCommand extends Command
 {
-    use Concerns\CanValidateInput;
+    use CanValidateInput;
 
     protected $description = 'Creates a Filament user.';
 

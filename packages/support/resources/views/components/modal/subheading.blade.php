@@ -2,6 +2,6 @@
     'darkMode' => false,
 ])
 
-<h3 {{ $attributes->class(['text-gray-500 filament-modal-subheading']) }}>
+<p {{ $attributes->class(['filament-modal-subheading text-gray-500']) }}>
     {{ $slot }}
-</h3>
+</p>

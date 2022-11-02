@@ -11,6 +11,7 @@ use Filament\Pages\Actions\ReplicateAction;
 use Filament\Pages\Actions\RestoreAction;
 use Filament\Pages\Actions\ViewAction;
 use Filament\Pages\Contracts\HasFormActions;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -27,6 +28,8 @@ class EditRecord extends Page implements HasFormActions
 
     public $data;
 
+    public ?string $previousUrl = null;
+
     protected $queryString = [
         'activeRelationManager',
     ];
@@ -36,28 +39,48 @@ class EditRecord extends Page implements HasFormActions
         return static::$breadcrumb ?? __('filament::resources/pages/edit-record.breadcrumb');
     }
 
+    public function getFormTabLabel(): ?string
+    {
+        return __('filament::resources/pages/edit-record.form.tab.label');
+    }
+
     public function mount($record): void
+    {
+        $this->record = $this->resolveRecord($record);
+
+        $this->authorizeAccess();
+
+        $this->fillForm();
+
+        $this->previousUrl = url()->previous();
+    }
+
+    protected function authorizeAccess(): void
     {
         static::authorizeResourceAccess();
 
-        $this->record = $this->resolveRecord($record);
-
         abort_unless(static::getResource()::canEdit($this->getRecord()), 403);
-
-        $this->fillForm();
     }
 
     protected function fillForm(): void
     {
         $this->callHook('beforeFill');
 
-        $data = $this->getRecord()->toArray();
+        $data = $this->getRecord()->attributesToArray();
 
         $data = $this->mutateFormDataBeforeFill($data);
 
         $this->form->fill($data);
 
         $this->callHook('afterFill');
+    }
+
+    protected function refreshFormData(array $attributes): void
+    {
+        $this->data = array_merge(
+            $this->data,
+            $this->getRecord()->only($attributes),
+        );
     }
 
     protected function mutateFormDataBeforeFill(array $data): array
@@ -67,37 +90,57 @@ class EditRecord extends Page implements HasFormActions
 
     public function save(bool $shouldRedirect = true): void
     {
-        $this->callHook('beforeValidate');
+        $this->authorizeAccess();
 
-        $data = $this->form->getState();
+        try {
+            $this->callHook('beforeValidate');
 
-        $this->callHook('afterValidate');
+            $data = $this->form->getState();
 
-        $data = $this->mutateFormDataBeforeSave($data);
+            $this->callHook('afterValidate');
 
-        $this->callHook('beforeSave');
+            $data = $this->mutateFormDataBeforeSave($data);
 
-        $this->handleRecordUpdate($this->getRecord(), $data);
+            $this->callHook('beforeSave');
 
-        $this->callHook('afterSave');
+            $this->handleRecordUpdate($this->getRecord(), $data);
 
-        $shouldRedirect = $shouldRedirect && ($redirectUrl = $this->getRedirectUrl());
-
-        if (filled($this->getSavedNotificationMessage())) {
-            Notification::make()
-                ->title($this->getSavedNotificationMessage())
-                ->success()
-                ->send();
+            $this->callHook('afterSave');
+        } catch (Halt $exception) {
+            return;
         }
 
-        if ($shouldRedirect) {
+        $this->getSavedNotification()?->send();
+
+        if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
             $this->redirect($redirectUrl);
         }
     }
 
+    protected function getSavedNotification(): ?Notification
+    {
+        $title = $this->getSavedNotificationTitle();
+
+        if (blank($title)) {
+            return null;
+        }
+
+        return Notification::make()
+            ->success()
+            ->title($this->getSavedNotificationTitle());
+    }
+
+    protected function getSavedNotificationTitle(): ?string
+    {
+        return $this->getSavedNotificationMessage() ?? __('filament::resources/pages/edit-record.messages.saved');
+    }
+
+    /**
+     * @deprecated Use `getSavedNotificationTitle()` instead.
+     */
     protected function getSavedNotificationMessage(): ?string
     {
-        return __('filament::resources/pages/edit-record.messages.saved');
+        return null;
     }
 
     protected function handleRecordUpdate(Model $record, array $data): Model
@@ -132,19 +175,35 @@ class EditRecord extends Page implements HasFormActions
 
         $this->callHook('afterDelete');
 
-        if (filled($this->getDeletedNotificationMessage())) {
-            Notification::make()
-                ->title($this->getDeletedNotificationMessage())
-                ->success()
-                ->send();
-        }
+        $this->getDeletedNotification()?->send();
 
         $this->redirect($this->getDeleteRedirectUrl());
     }
 
+    protected function getDeletedNotification(): ?Notification
+    {
+        $title = $this->getDeletedNotificationTitle();
+
+        if (blank($title)) {
+            return null;
+        }
+
+        return Notification::make()
+            ->success()
+            ->title($title);
+    }
+
+    protected function getDeletedNotificationTitle(): ?string
+    {
+        return $this->getDeletedNotificationMessage() ?? __('filament-support::actions/delete.single.messages.deleted');
+    }
+
+    /**
+     * @deprecated Use `getDeletedNotificationTitle()` instead.
+     */
     protected function getDeletedNotificationMessage(): ?string
     {
-        return __('filament-support::actions/delete.single.messages.deleted');
+        return null;
     }
 
     protected function getActions(): array
@@ -278,7 +337,7 @@ class EditRecord extends Page implements HasFormActions
     {
         return Action::make('cancel')
             ->label(__('filament::resources/pages/edit-record.form.actions.cancel.label'))
-            ->url(static::getResource()::getUrl())
+            ->url($this->previousUrl ?? static::getResource()::getUrl())
             ->color('secondary');
     }
 
@@ -286,6 +345,7 @@ class EditRecord extends Page implements HasFormActions
     {
         return [
             'form' => $this->makeForm()
+                ->context('edit')
                 ->model($this->getRecord())
                 ->schema($this->getFormSchema())
                 ->statePath('data')

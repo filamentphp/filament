@@ -13,7 +13,7 @@ return [
             'actions' => [
 
                 'save' => [
-                    'label' => 'Lưu',
+                    'label' => 'Lưu thay đổi',
                 ],
 
             ],

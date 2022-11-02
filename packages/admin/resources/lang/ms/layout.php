@@ -10,12 +10,20 @@ return [
             'label' => 'Tukar mod gelap',
         ],
 
+        'database_notifications' => [
+            'label' => 'Buka pemberitahuan',
+        ],
+
         'light_mode' => [
             'label' => 'Tukar mod terang',
         ],
 
         'logout' => [
             'label' => 'Log keluar',
+        ],
+
+        'user_menu' => [
+            'label' => 'Menu Pengguna',
         ],
 
     ],

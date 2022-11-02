@@ -2,6 +2,22 @@
 
 return [
 
+    'columns' => [
+
+        'color' => [
+
+            'messages' => [
+                'copied' => 'کپی شد',
+            ],
+
+        ],
+
+        'tags' => [
+            'more' => 'و :count تا بیشتر',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -20,7 +36,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'در هر صفحه',
+
+                'options' => [
+                    'all' => 'همه',
+                ],
+
             ],
 
         ],
@@ -45,6 +67,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'اتمام بازچینش رکوردها',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'بازچینش رکوردها',
+        ],
+
         'filter' => [
             'label' => 'فیلتر',
         ],
@@ -54,7 +84,7 @@ return [
         ],
 
         'toggle_columns' => [
-            'label' => 'باز/بستن ستون ها',
+            'label' => 'باز/بستن ستون‌ها',
         ],
 
     ],
@@ -67,15 +97,22 @@ return [
 
         'buttons' => [
 
-            'reset' => [
-                'label' => 'حذف فیلترها',
+            'remove' => [
+                'label' => 'حذف فیلتر',
             ],
 
-            'close' => [
-                'label' => 'بستن',
+            'remove_all' => [
+                'label' => 'حذف تمام فیلترها',
+                'tooltip' => 'حذف تمام فیلترها',
+            ],
+
+            'reset' => [
+                'label' => 'بازنشانی فیلترها',
             ],
 
         ],
+
+        'indicator' => 'فیلترهای فعال',
 
         'multi_select' => [
             'placeholder' => 'همه',
@@ -87,17 +124,19 @@ return [
 
         'trashed' => [
 
-            'label' => 'رکوردهای حذف شده',
+            'label' => 'رکوردهای حذف‌شده',
 
-            'only_trashed' => 'فقط رکوردهای حذف شده',
+            'only_trashed' => 'فقط رکوردهای حذف‌شده',
 
-            'with_trashed' => 'به همراه رکوردهای حذف شده',
+            'with_trashed' => 'به همراه رکوردهای حذف‌شده',
 
-            'without_trashed' => 'بدون رکوردهای حذف شده',
+            'without_trashed' => 'بدون رکوردهای حذف‌شده',
 
         ],
 
     ],
+
+    'reorder_indicator' => 'برای تغییر ترتیب بکشید و رها کنید.',
 
     'selection_indicator' => [
 
@@ -111,6 +150,29 @@ return [
 
             'deselect_all' => [
                 'label' => 'عدم انتخاب',
+            ],
+
+        ],
+
+    ],
+
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'مرتب‌سازی براساس',
+            ],
+
+            'direction' => [
+
+                'label' => 'جهت مرتب‌سازی',
+
+                'options' => [
+                    'asc' => 'صعودی',
+                    'desc' => 'نزولی',
+                ],
+
             ],
 
         ],

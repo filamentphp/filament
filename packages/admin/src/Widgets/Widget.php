@@ -23,7 +23,7 @@ class Widget extends Component
         return static::$sort ?? -1;
     }
 
-    protected function getColumnSpan(): int | string | array
+    public function getColumnSpan(): int | string | array
     {
         return $this->columnSpan;
     }

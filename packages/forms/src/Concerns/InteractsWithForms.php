@@ -7,6 +7,7 @@ use Filament\Forms\ComponentContainer;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
+use Livewire\Exceptions\PropertyNotFoundException;
 use Livewire\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
@@ -27,15 +28,19 @@ trait InteractsWithForms
 
     public function __get($property)
     {
-        if ((! $this->isCachingForms) && $form = $this->getCachedForm($property)) {
-            return $form;
-        }
+        try {
+            return parent::__get($property);
+        } catch (PropertyNotFoundException $exception) {
+            if ((! $this->isCachingForms) && $form = $this->getCachedForm($property)) {
+                return $form;
+            }
 
-        if ($property === 'modal') {
-            return $this->getModalViewOnce();
-        }
+            if ($property === 'modal') {
+                return $this->getModalViewOnce();
+            }
 
-        return parent::__get($property);
+            throw $exception;
+        }
     }
 
     protected function getModalViewOnce(): ?View
@@ -157,7 +162,7 @@ trait InteractsWithForms
         } catch (ValidationException $exception) {
             $this->onValidationError($exception);
 
-            $this->focusConcealedComponents(array_keys($exception->validator->failed()));
+            $this->dispatchBrowserEvent('expand-concealing-component');
 
             throw $exception;
         }
@@ -172,7 +177,9 @@ trait InteractsWithForms
         try {
             return parent::validateOnly($field, $rules, $messages, $attributes);
         } catch (ValidationException $exception) {
-            $this->focusConcealedComponents(array_keys($exception->validator->failed()));
+            $this->onValidationError($exception);
+
+            $this->dispatchBrowserEvent('expand-concealing-component');
 
             throw $exception;
         }
@@ -262,23 +269,6 @@ trait InteractsWithForms
         return $this->cachedForms;
     }
 
-    protected function focusConcealedComponents(array $statePaths): void
-    {
-        $componentToFocus = null;
-
-        foreach ($this->getCachedForms() as $form) {
-            if ($componentToFocus = $form->getInvalidComponentToFocus($statePaths)) {
-                break;
-            }
-        }
-
-        if ($concealingComponent = $componentToFocus?->getConcealingComponent()) {
-            $this->dispatchBrowserEvent('expand-concealing-component', [
-                'id' => $concealingComponent->getId(),
-            ]);
-        }
-    }
-
     protected function getFormModel(): Model | string | null
     {
         return null;
@@ -295,8 +285,14 @@ trait InteractsWithForms
             'form' => $this->makeForm()
                 ->schema($this->getFormSchema())
                 ->model($this->getFormModel())
-                ->statePath($this->getFormStatePath()),
+                ->statePath($this->getFormStatePath())
+                ->context($this->getFormContext()),
         ];
+    }
+
+    protected function getFormContext(): ?string
+    {
+        return null;
     }
 
     protected function getFormStatePath(): ?string

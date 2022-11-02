@@ -27,7 +27,7 @@ class LatestOrders extends BaseWidget
 {
     protected function getTableQuery(): Builder
     {
-        return Order::query()->latest()->limit(10);
+        return Order::query()->latest();
     }
 
     protected function getTableColumns(): array

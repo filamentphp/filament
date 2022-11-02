@@ -1,3 +1,3 @@
-<h1 {{ $attributes->class(['text-2xl font-bold tracking-tight md:text-3xl filament-header-heading']) }}>
+<h1 {{ $attributes->class(['filament-header-heading text-2xl font-bold tracking-tight']) }}>
     {{ $slot }}
 </h1>

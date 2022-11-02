@@ -4,18 +4,24 @@ return [
 
     'builder' => [
 
+        'collapsed' => 'Thu gọn nội dung',
+
         'buttons' => [
 
-            'create_item' => [
-                'label' => 'Thêm vào :label',
+            'clone_item' => [
+                'label' => 'Nhân bản',
             ],
 
-            'create_item_between' => [
-                'label' => 'Thêm vào giữa',
+            'create_item' => [
+                'label' => 'Thêm :label mới',
             ],
 
             'delete_item' => [
                 'label' => 'Xóa',
+            ],
+
+            'move_item' => [
+                'label' => 'Di chuyển',
             ],
 
             'move_item_down' => [
@@ -24,6 +30,22 @@ return [
 
             'move_item_up' => [
                 'label' => 'Chuyển lên',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Thu gọn',
+            ],
+
+            'expand_item' => [
+                'label' => 'Mở rộng',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Thu gọn tất cả',
+            ],
+
+            'expand_all' => [
+                'label' => 'Mở rộng tất cả',
             ],
 
         ],
@@ -35,11 +57,11 @@ return [
         'buttons' => [
 
             'add' => [
-                'label' => 'Thêm Dòng',
+                'label' => 'Thêm dòng',
             ],
 
             'delete' => [
-                'label' => 'Xóa Dòng',
+                'label' => 'Xóa dòng',
             ],
 
         ],
@@ -47,7 +69,7 @@ return [
         'fields' => [
 
             'key' => [
-                'label' => 'Key',
+                'label' => 'Khóa',
             ],
 
             'value' => [
@@ -61,11 +83,11 @@ return [
     'markdown_editor' => [
 
         'toolbar_buttons' => [
-            'attach_files' => 'Đính kèm file',
+            'attach_files' => 'Đính kèm tệp',
             'bold' => 'In đậm',
-            'bullet_list' => 'Danh sách dùng dấu chấm',
+            'bullet_list' => 'Danh sách đánh dấu',
             'code_block' => 'Code block',
-            'edit' => 'Xóa',
+            'edit' => 'Sửa',
             'italic' => 'In nghiêng',
             'link' => 'Liên kết',
             'ordered_list' => 'Danh sách đánh số',
@@ -77,14 +99,24 @@ return [
 
     'repeater' => [
 
+        'collapsed' => 'Thu gọn nội dung',
+
         'buttons' => [
 
             'create_item' => [
-                'label' => 'Thêm vào :label',
+                'label' => 'Thêm :label mới',
             ],
 
             'delete_item' => [
                 'label' => 'Xóa',
+            ],
+
+            'move_item' => [
+                'label' => 'Di chuyển',
+            ],
+
+            'clone_item' => [
+                'label' => 'Nhân bản',
             ],
 
             'move_item_down' => [
@@ -93,6 +125,22 @@ return [
 
             'move_item_up' => [
                 'label' => 'Chuyển lên',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Thu gọn',
+            ],
+
+            'expand_item' => [
+                'label' => 'Mở rộng',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Thu gọn tất cả',
+            ],
+
+            'expand_all' => [
+                'label' => 'Mở rộng tất cả',
             ],
 
         ],
@@ -119,10 +167,10 @@ return [
         ],
 
         'toolbar_buttons' => [
-            'attach_files' => 'Đính kèm file',
+            'attach_files' => 'Đính kèm tệp',
             'blockquote' => 'Trích dẫn',
             'bold' => 'In đậm',
-            'bullet_list' => 'Danh sách dùng dấu chấm',
+            'bullet_list' => 'Danh sách đánh dấu',
             'code_block' => 'Code block',
             'h1' => 'Tiêu đề chính',
             'h2' => 'Tiêu đề',
@@ -130,21 +178,74 @@ return [
             'italic' => 'In nghiêng',
             'link' => 'Liên kết',
             'ordered_list' => 'Danh sách đánh số',
-            'redo' => 'Redo',
-            'strike' => 'Strikethrough',
+            'redo' => 'Làm lại',
+            'strike' => 'Gạch ngang',
             'undo' => 'Hoàn tác',
         ],
 
     ],
 
     'select' => [
+
+        'actions' => [
+
+            'create_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Tạo',
+
+                    'actions' => [
+
+                        'create' => [
+                            'label' => 'Tạo',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+        'boolean' => [
+            'true' => 'Có',
+            'false' => 'Không',
+        ],
+
+        'loading_message' => 'Đang tải...',
+
+        'max_items_message' => 'Chỉ có :count có thể chọn được.',
+
         'no_search_results_message' => 'Không có tùy chọn nào phù hợp với tìm kiếm của bạn.',
+
         'placeholder' => 'Chọn một mục',
+
+        'searching_message' => 'Đang tìm kiếm...',
+
         'search_prompt' => 'Gõ để tìm kiếm...',
+
     ],
 
     'tags_input' => [
         'placeholder' => 'Thêm thẻ mới',
+    ],
+
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => 'Trước',
+            ],
+
+            'next_step' => [
+                'label' => 'Sau',
+            ],
+
+        ],
+
     ],
 
 ];

@@ -68,12 +68,12 @@ trait HasAffixes
 
     public function getPrefixAction(): ?Action
     {
-        return $this->evaluate($this->prefixAction);
+        return $this->evaluate($this->prefixAction)?->component($this);
     }
 
     public function getSuffixAction(): ?Action
     {
-        return $this->evaluate($this->suffixAction);
+        return $this->evaluate($this->suffixAction)?->component($this);
     }
 
     public function getPrefixLabel()
@@ -99,5 +99,17 @@ trait HasAffixes
     public function getSuffixIcon()
     {
         return $this->evaluate($this->suffixIcon);
+    }
+
+    public function getActions(): array
+    {
+        $prefixAction = $this->getPrefixAction();
+        $suffixAction = $this->getSuffixAction();
+
+        return array_merge(
+            parent::getActions(),
+            $prefixAction ? [$prefixAction->getName() => $prefixAction->component($this)] : [],
+            $suffixAction ? [$suffixAction->getName() => $suffixAction->component($this)] : [],
+        );
     }
 }

@@ -2,24 +2,24 @@
 
 return [
 
-    'title' => 'Napravi :label',
+    'title' => 'Napravite :label',
 
-    'breadcrumb' => 'Napravi',
+    'breadcrumb' => 'Napravite',
 
     'form' => [
 
         'actions' => [
 
             'cancel' => [
-                'label' => 'Odustani',
+                'label' => 'Prekiniti',
             ],
 
             'create' => [
-                'label' => 'Napravi',
+                'label' => 'Napraviti',
             ],
 
             'create_another' => [
-                'label' => 'Napravi i napravi još jedan',
+                'label' => 'Napravite i napravite još jedan',
             ],
 
         ],

@@ -10,12 +10,20 @@ return [
             'label' => 'Donkere weergave inschakelen',
         ],
 
+        'database_notifications' => [
+            'label' => 'Meldingen openen',
+        ],
+
         'light_mode' => [
             'label' => 'Lichte weergave inschakelen',
         ],
 
         'logout' => [
             'label' => 'Uitloggen',
+        ],
+
+        'user_menu' => [
+            'label' => 'gebruikersmenu',
         ],
 
     ],

@@ -67,6 +67,19 @@ protected function getActions(): array
 }
 ```
 
+Buttons may have a `size()`. The default is `md`, but you may also use `sm` or `lg`:
+
+```php
+use Filament\Pages\Actions\Action;
+
+protected function getActions(): array
+{
+    return [
+        Action::make('settings')->size('lg'),
+    ];
+}
+```
+
 Buttons may also have an `icon()`, which is the name of any Blade component. By default, the [Blade Heroicons](https://github.com/blade-ui-kit/blade-heroicons) package is installed, so you may use the name of any [Heroicon](https://heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
 
 ```php
@@ -138,6 +151,31 @@ Action::make('updateAuthor')
     ])
 ```
 
+#### Filling default data
+
+You may fill the form with default data, using the `mountUsing()` method:
+
+```php
+use App\Models\User;
+use Filament\Forms;
+use Filament\Pages\Actions\Action;
+
+Action::make('updateAuthor')
+    ->mountUsing(fn (Forms\ComponentContainer $form) => $form->fill([
+        'authorId' => $this->record->author->id,
+    ]))
+    ->action(function (array $data): void {
+        $this->record->author()->associate($data['authorId']);
+        $this->record->save();
+    })
+    ->form([
+        Forms\Components\Select::make('authorId')
+            ->label('Author')
+            ->options(User::query()->pluck('name', 'id'))
+            ->required(),
+    ])
+```
+
 ### Setting a modal heading, subheading, and button label
 
 You may customize the heading, subheading and button label of the modal:
@@ -153,7 +191,7 @@ Action::make('delete')
     ->modalButton('Yes, delete them')
 ```
 
-## Custom content
+### Custom content
 
 You may define custom content to be rendered inside your modal, which you can specify by passing a Blade view into the `modalContent()` method:
 
@@ -195,3 +233,22 @@ Action::make('save')
     ->action(fn () => $this->save())
     ->keyBindings(['command+s', 'ctrl+s'])
 ```
+
+## Refreshing form data
+
+If you're using actions on an [Edit](../resources/editing-records) or [View](../resources/viewing-records) resource page, you can refresh data within the main form using the `refreshFormData()` method:
+
+```php
+use Filament\Pages\Actions\Action;
+
+Action::make('approve')
+    ->action(function () {
+        $this->record->approve();
+        
+        $this->refreshFormData([
+            'status',
+        ]);
+    })
+```
+
+This method accepts an array of model attributes that you wish to refresh in the form.

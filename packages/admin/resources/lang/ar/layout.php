@@ -10,12 +10,20 @@ return [
             'label' => 'تفعيل الوضع الليلي',
         ],
 
+        'database_notifications' => [
+            'label' => 'عرض التنبيهات',
+        ],
+
         'light_mode' => [
             'label' => 'تفعيل وضع النهار',
         ],
 
         'logout' => [
             'label' => 'تسجيل الخروج',
+        ],
+
+        'user_menu' => [
+            'label' => 'قائمة المستخدم',
         ],
 
     ],

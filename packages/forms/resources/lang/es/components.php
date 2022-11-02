@@ -8,12 +8,24 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'Clonar',
+            ],
+
             'create_item' => [
                 'label' => 'Añadir a :label',
             ],
 
+            'create_item_between' => [
+                'label' => 'Insertar',
+            ],
+
             'delete_item' => [
                 'label' => 'Borrar',
+            ],
+
+            'move_item' => [
+                'label' => 'Mover',
             ],
 
             'move_item_down' => [
@@ -49,11 +61,15 @@ return [
         'buttons' => [
 
             'add' => [
-                'label' => 'Añadir Fila',
+                'label' => 'Añadir fila',
             ],
 
             'delete' => [
-                'label' => 'Eliminar Fila',
+                'label' => 'Eliminar fila',
+            ],
+
+            'reorder' => [
+                'label' => 'Reordenar fila',
             ],
 
         ],
@@ -101,6 +117,14 @@ return [
 
             'delete_item' => [
                 'label' => 'Borrar',
+            ],
+
+            'move_item' => [
+                'label' => 'Mover',
+            ],
+
+            'clone_item' => [
+                'label' => 'Clonar',
             ],
 
             'move_item_down' => [
@@ -199,6 +223,8 @@ return [
         ],
 
         'loading_message' => 'Cargando...',
+
+        'max_items_message' => 'Solo :count pueden ser seleccionados.',
 
         'no_search_results_message' => 'No se encontraron coincidencias con su búsqueda.',
 

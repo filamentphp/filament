@@ -17,7 +17,9 @@ class ImageColumn extends Column
 
     protected int | string | Closure | null $height = 40;
 
-    protected bool | Closure $isRounded = false;
+    protected bool | Closure $isCircular = false;
+
+    protected bool | Closure $isSquare = false;
 
     protected string | Closure $visibility = 'public';
 
@@ -46,9 +48,24 @@ class ImageColumn extends Column
         return $this;
     }
 
+    public function circular(bool | Closure $condition = true): static
+    {
+        $this->isCircular = $condition;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `circular()` instead.
+     */
     public function rounded(bool | Closure $condition = true): static
     {
-        $this->isRounded = $condition;
+        return $this->circular($condition);
+    }
+
+    public function square(bool | Closure $condition = true): static
+    {
+        $this->isSquare = $condition;
 
         return $this;
     }
@@ -119,7 +136,7 @@ class ImageColumn extends Column
             return null;
         }
 
-        if ($this->getVisibility() === 'private' || $storage->getVisibility($state) === 'private') {
+        if ($this->getVisibility() === 'private') {
             try {
                 return $storage->temporaryUrl(
                     $state,
@@ -153,9 +170,22 @@ class ImageColumn extends Column
         return $width;
     }
 
+    public function isCircular(): bool
+    {
+        return $this->evaluate($this->isCircular);
+    }
+
+    /**
+     * @deprecated Use `isCircular()` instead.
+     */
     public function isRounded(): bool
     {
-        return $this->evaluate($this->isRounded);
+        return $this->isCircular();
+    }
+
+    public function isSquare(): bool
+    {
+        return $this->evaluate($this->isSquare);
     }
 
     public function extraImgAttributes(array | Closure $attributes): static

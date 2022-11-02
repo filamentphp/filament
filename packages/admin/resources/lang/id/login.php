@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => 'Login',
+    'title' => 'Masuk',
 
     'heading' => 'Masuk ke akun Anda',
 
@@ -25,14 +25,14 @@ return [
         ],
 
         'remember' => [
-            'label' => 'Ingat Saya',
+            'label' => 'Ingat saya',
         ],
 
     ],
 
     'messages' => [
         'failed' => 'Kredensial yang diberikan tidak dapat ditemukan.',
-        'throttled' => 'Terlalu banyak mencoba masuk. Silahkan ulangi dalam :seconds detik.',
+        'throttled' => 'Terlalu banyak percobaan masuk. Silakan ulangi dalam :seconds detik.',
     ],
 
 ];

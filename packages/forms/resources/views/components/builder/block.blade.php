@@ -1,3 +1,3 @@
-<div {{ $attributes->merge($getExtraAttributes())->class(['py-8 filament-forms-builder-component-block']) }}>
+<div {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-builder-component-block py-8']) }}>
     {{ $getChildComponentContainer() }}
 </div>

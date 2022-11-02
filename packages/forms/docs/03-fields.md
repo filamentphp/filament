@@ -49,6 +49,14 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')->label(__('fields.name'))
 ```
 
+Optionally, you can have the label automatically translated by using the `translateLabel()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')->translateLabel() // Equivalent to `label(__('Name'))`
+```
+
 ### Setting an ID
 
 In the same way as labels, field IDs are also automatically determined based on their names. To override a field ID, use the `id()` method:
@@ -57,16 +65,6 @@ In the same way as labels, field IDs are also automatically determined based on 
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('name')->id('name-field')
-```
-
-### Validation attributes
-
-When fields fail validation, their label is used in the error message. To customize the label used in field error messages, use the `validationAttribute()` method:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('name')->validationAttribute('full name')
 ```
 
 ### Setting a default value
@@ -78,6 +76,8 @@ use Filament\Forms\Components\TextInput;
 
 TextInput::make('name')->default('John')
 ```
+
+Note that inside the admin panel this only works on Create Pages, as Edit Pages will always fill the data from the model.
 
 ### Helper messages and hints
 
@@ -107,6 +107,16 @@ use Filament\Forms\Components\RichEditor;
 RichEditor::make('content')
     ->hint('Translatable')
     ->hintIcon('heroicon-s-translate')
+```
+
+Hints may have a `color()`. By default it's gray, but you may use `primary`, `success`, `warning`, or `danger`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->hint('Translatable')
+    ->hintColor('primary')
 ```
 
 ### Custom attributes
@@ -247,30 +257,6 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('backgroundColor')->type('color')
 ```
 
-You may place text before and after the input using the `prefix()` and `suffix()` methods:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('domain')
-    ->url()
-    ->prefix('https://')
-    ->suffix('.com')
-```
-
-![](https://user-images.githubusercontent.com/41773797/147612784-5eb58d0f-5111-4db8-8f54-3b5c3e2cc80a.png)
-
-You may place a icon before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('domain')
-    ->url()
-    ->prefixIcon('heroicon-o-external-link')
-    ->suffixIcon('heroicon-o-external-link')
-```
-
 You may limit the length of the input by setting the `minLength()` and `maxLength()` methods. These methods add both frontend and backend validation:
 
 ```php
@@ -281,8 +267,6 @@ TextInput::make('name')
     ->maxLength(255)
 ```
 
-> When using `minLength()` or `maxLength()` with `numeric()`, be aware that the validation will apply to the value of the input instead of its length. This is in line with the behaviour of Laravel's `min` and `max` validation rules.
-
 You may also specify the exact length of the input by setting the `length()`. This method adds both frontend and backend validation:
 
 ```php
@@ -290,8 +274,6 @@ use Filament\Forms\Components\TextInput;
 
 TextInput::make('code')->length(8)
 ```
-
-Internally, this uses the `size` rule by default, and the `digits` rule for numeric inputs.
 
 In addition, you may validate the minimum and maximum value of the input by setting the `minValue()` and `maxValue()` methods:
 
@@ -325,6 +307,73 @@ TextInput::make('password')
 ```
 
 For more complex autocomplete options, text inputs also support [datalists](#datalists).
+
+#### Phone number validation
+
+When using a `tel()` field, the value will be validated using: `/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/`.
+
+If you wish to change that, then you can use the `telRegex()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('phone')
+    ->tel()
+    ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')
+```
+
+Alternatively, to customize the `telRegex()` across all fields, use a service provider:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::configureUsing(function (TextInput $component): void {
+    $component->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/');
+});
+```
+
+### Affixes
+
+You may place text before and after the input using the `prefix()` and `suffix()` methods:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('domain')
+    ->url()
+    ->prefix('https://')
+    ->suffix('.com')
+```
+
+![](https://user-images.githubusercontent.com/41773797/147612784-5eb58d0f-5111-4db8-8f54-3b5c3e2cc80a.png)
+
+You may place a icon before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('domain')
+    ->url()
+    ->prefixIcon('heroicon-s-external-link')
+    ->suffixIcon('heroicon-s-external-link')
+```
+
+You may render an action before and after the input using the `prefixAction()` and `suffixAction()` methods:
+
+```php
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('domain')
+    ->suffixAction(
+        Action::make('visit')
+            ->icon('heroicon-s-external-link')
+            ->url(
+                fn (?string $state): ?string => filled($state) ? "https://{$state}" : null,
+                shouldOpenInNewTab: true,
+            ),
+    )
+```
 
 ### Input masking
 
@@ -404,7 +453,15 @@ There is also a `money()` method that is able to define easier formatting for cu
 ```php
 use Filament\Forms\Components\TextInput;
 
-TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask->money('$', ',', 2))
+TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask->money(prefix: '$', thousandsSeparator: ',', decimalPlaces: 2))
+```
+
+You can also control whether the number is signed or not. While the default is to allow both negative and positive numbers, `isSigned: false` allows only positive numbers:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask->money(prefix: '$', thousandsSeparator: ',', decimalPlaces: 2, isSigned: false))
 ```
 
 ### Datalists
@@ -438,7 +495,7 @@ use Filament\Forms\Components\Select;
 Select::make('status')
     ->options([
         'draft' => 'Draft',
-        'review' => 'In review',
+        'reviewing' => 'Reviewing',
         'published' => 'Published',
     ])
 ```
@@ -448,7 +505,6 @@ Select::make('status')
 You may enable a search input to allow easier access to many options, using the `searchable()` method:
 
 ```php
-use App\Models\User;
 use Filament\Forms\Components\Select;
 
 Select::make('authorId')
@@ -480,12 +536,48 @@ use Filament\Forms\Components\Select;
 Select::make('status')
     ->options([
         'draft' => 'Draft',
-        'review' => 'In review',
+        'reviewing' => 'Reviewing',
         'published' => 'Published',
     ])
     ->default('draft')
     ->disablePlaceholderSelection()
 ```
+
+### Multi-select
+
+The `multiple()` method on the `Select` component allows you to select multiple values from the list of options:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('technologies')
+    ->multiple()
+    ->options([
+        'tailwind' => 'Tailwind CSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+    ])
+```
+
+![](https://user-images.githubusercontent.com/41773797/147613070-cd82703a-fa05-4f29-b0ac-3eb03b542077.png)
+
+These options are returned in JSON format. If you're saving them using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+class App extends Model
+{
+    protected $casts = [
+        'technologies' => 'array',
+    ];
+
+    // ...
+}
+```
+
+Instead of `getOptionLabelUsing()`, the `getOptionLabelsUsing()` method can be used to transform the selected options' `$value`s into labels.
 
 ### Dependant selects
 
@@ -493,7 +585,7 @@ Commonly, you may desire "dependant" select inputs, which populate their options
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/W_eNyimRi3w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-Some of the techniques described in the [advanced forms](advanced) section are required to create dependant selects. These techniques can be applied across all form components for many dynamic customisation possibilities.
+Some of the techniques described in the [advanced forms](advanced) section are required to create dependant selects. These techniques can be applied across all form components for many dynamic customization possibilities.
 
 ### Populating automatically from a relationship
 
@@ -506,9 +598,29 @@ Select::make('authorId')
     ->relationship('author', 'name')
 ```
 
+The `multiple()` method may be used in combination with `relationship()` to automatically populate from a `BelongsToMany` relationship:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('technologies')
+    ->multiple()
+    ->relationship('technologies', 'name')
+```
+
 > To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
 
-You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
+If you'd like to populate the options from the database when the page is loaded, instead of when the user searches, you can use the `preload()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('authorId')
+    ->relationship('author', 'name')
+    ->preload()
+```
+
+You may customize the database query that retrieves options using the third parameter of the `relationship()` method:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -542,6 +654,54 @@ Select::make('authorId')
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
 
+#### Handling `MorphTo` relationships
+
+`MorphTo` relationships are special, since they give the user the ability to select records from a range of different models. Because of this, we have a dedicated `MorphToSelect` component which is not actually a select field, rather 2 select fields inside a fieldset. The first select field allows you to select the type, and the second allows you to select the record of that type.
+
+To use the `MorphToSelect`, you must pass `types()` into the component, which tell it how to render options for different types:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)->titleColumnName('name'),
+        MorphToSelect\Type::make(Post::class)->titleColumnName('title'),
+    ])
+```
+
+The `titleColumnName()` is used to extract the titles out of each product or post. You can choose to extract the option labels using `getOptionLabelFromRecordUsing` instead if you wish:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->getOptionLabelFromRecordUsing(fn (Product $record): string => "{$record->name} - {$record->slug}"),
+        MorphToSelect\Type::make(Post::class)->titleColumnName('title'),
+    ])
+```
+
+You may customize the database query that retrieves options using the `modifyOptionsQueryUsing()` method:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+use Illuminate\Database\Eloquent\Builder;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->titleColumnName('name')
+            ->modifyOptionsQueryUsing(fn (Builder $query) => $query->whereBelongsTo($this->team)),
+        MorphToSelect\Type::make(Post::class)
+            ->titleColumnName('title')
+            ->modifyOptionsQueryUsing(fn (Builder $query) => $query->whereBelongsTo($this->team)),
+    ])
+```
+
+> Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `allowHtml()`, and `optionsLimit()`.
+
 #### Creating new records
 
 You may define a custom form that can be used to create a new record and attach it to the `BelongsTo` relationship:
@@ -568,109 +728,13 @@ Since HTML does not support nested `<form>` elements, you must also render the m
 ```blade
 <form wire:submit.prevent="submit">
     {{ $this->form }}
-    
+
     <button type="submit">
         Submit
     </button>
 </form>
 
 {{ $this->modal }}
-```
-
-## Multi-select
-
-The multi-select component allows you to select multiple values from a list of predefined options:
-
-```php
-use Filament\Forms\Components\MultiSelect;
-use Filament\Forms\Components\Select;
-
-MultiSelect::make('technologies')
-    ->options([
-        'tailwind' => 'Tailwind CSS',
-        'alpine' => 'Alpine.js',
-        'laravel' => 'Laravel',
-        'livewire' => 'Laravel Livewire',
-    ])
-```
-
-![](https://user-images.githubusercontent.com/41773797/147613070-cd82703a-fa05-4f29-b0ac-3eb03b542077.png)
-
-These options are returned in JSON format. If you're saving them using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
-
-```php
-use Illuminate\Database\Eloquent\Model;
-
-class App extends Model
-{
-    protected $casts = [
-        'technologies' => 'array',
-    ];
-
-    // ...
-}
-```
-
-If you have lots of options and want to populate them based on a database search or other external data source, you can use the `getSearchResultsUsing()` and `getOptionLabelsUsing()` methods instead of `options()`.
-
-The `getSearchResultsUsing()` method accepts a callback that returns search results in `$key => $value` format.
-
-The `getOptionLabelsUsing()` method accepts a callback that transforms the selected options' `$value`s into labels.
-
-```php
-use Filament\Forms\Components\MultiSelect;
-
-MultiSelect::make('technologies')
-    ->getSearchResultsUsing(fn (string $search) => Technology::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id'))
-    ->getOptionLabelsUsing(fn (array $values) => Technology::find($values)->pluck('name')),
-```
-
-### Populating automatically from a `BelongsToMany` relationship
-
-You may employ the `relationship()` method of the `MultiSelect` to configure a relationship to automatically retrieve and save options from:
-
-```php
-use App\Models\App;
-use Filament\Forms\Components\MultiSelect;
-
-MultiSelect::make('technologies')
-    ->relationship('technologies', 'name')
-```
-
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
-
-You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
-
-```php
-use Filament\Forms\Components\MultiSelect;
-use Illuminate\Database\Eloquent\Builder;
-
-MultiSelect::make('technologies')
-    ->relationship('technologies', 'name', fn (Builder $query) => $query->withTrashed())
-```
-
-If you'd like to customize the label of each option, maybe to be more descriptive, or to concatenate a first and last name, you should use a virtual column in your database migration:
-
-```php
-$table->string('full_name')->virtualAs('concat(first_name, \' \', last_name)');
-```
-
-```php
-use Filament\Forms\Components\MultiSelect;
-
-MultiSelect::make('participants')
-    ->relationship('participants', 'full_name')
-```
-
-Alternatively, you can use the `getOptionLabelFromRecordUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
-
-```php
-use Filament\Forms\Components\MultiSelect;
-use Illuminate\Database\Eloquent\Model;
-
-MultiSelect::make('participants')
-    ->relationship('participants', 'first_name')
-    ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
 
 ## Checkbox
@@ -766,6 +830,16 @@ Toggle::make('is_admin')
     ->offIcon('heroicon-s-user')
 ```
 
+You may also customize the color representing each state. These may be either `primary`, `secondary`, `success`, `warning` or `danger`:
+
+```php
+use Filament\Forms\Components\Toggle;
+
+Toggle::make('is_admin')
+    ->onColor('success')
+    ->offColor('danger')
+```
+
 ![](https://user-images.githubusercontent.com/41773797/147613184-9086c102-ad71-4c4e-9170-9a4201a80c66.png)
 
 If you're saving the boolean value using Eloquent, you should be sure to add a `boolean` [cast](https://laravel.com/docs/eloquent-mutators#attribute-casting) to the model property:
@@ -840,7 +914,6 @@ This method accepts the same options as the `columns()` method of the [grid](lay
 You may employ the `relationship()` method to configure a relationship to automatically retrieve and save options from:
 
 ```php
-use App\Models\App;
 use Filament\Forms\Components\CheckboxList;
 
 CheckboxList::make('technologies')
@@ -849,7 +922,7 @@ CheckboxList::make('technologies')
 
 > To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
 
-You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
+You may customize the database query that retrieves options using the third parameter of the `relationship()` method:
 
 ```php
 use Filament\Forms\Components\CheckboxList;
@@ -1018,6 +1091,18 @@ DateTimePicker::make('published_at')->weekStartsOnMonday()
 DateTimePicker::make('published_at')->weekStartsOnSunday()
 ```
 
+To disable specific dates:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::make('date')
+    ->label('Appointment date')
+    ->minDate(now())
+    ->maxDate(Carbon::now()->addDays(30))
+    ->disabledDates(['2022-10-02', '2022-10-05', '2022-10-15'])
+```
+
 ### Timezones
 
 If you'd like users to be able to manage dates in their own timezone, you can use the `timezone()` method:
@@ -1075,6 +1160,18 @@ FileUpload::make('attachment')
         return (string) str($file->getClientOriginalName())->prepend('custom-prefix-');
     })
 ```
+
+You can keep the randomly generated file names, while still storing the original file name, using the `storeFileNamesIn()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->multiple()
+    ->storeFileNamesIn('attachment_file_names')
+```
+
+`attachment_file_names` will now store the original file name/s of your uploaded files.
 
 You may restrict the types of files that may be uploaded using the `acceptedFileTypes()` method, and passing an array of MIME types. You may also use the `image()` method as shorthand to allow all image MIME types.
 
@@ -1149,7 +1246,7 @@ class Message extends Model
 }
 ```
 
-You may customise the number of files that may be uploaded, using the `minFiles()` and `maxFiles()` methods:
+You may customize the number of files that may be uploaded, using the `minFiles()` and `maxFiles()` methods:
 
 ```php
 use Filament\Forms\Components\FileUpload;
@@ -1176,7 +1273,7 @@ You can add a button to open each file in a new tab with the `enableOpen()` meth
 use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('attachments')
-    ->multipe()
+    ->multiple()
     ->enableOpen()
 ```
 
@@ -1240,7 +1337,7 @@ RichEditor::make('content')
     ])
 ```
 
-You may customise how images are uploaded using configuration methods:
+You may customize how images are uploaded using configuration methods:
 
 ```php
 use Filament\Forms\Components\RichEditor;
@@ -1298,7 +1395,7 @@ MarkdownEditor::make('content')
     ])
 ```
 
-You may customise how images are uploaded using configuration methods:
+You may customize how images are uploaded using configuration methods:
 
 ```php
 use Filament\Forms\Components\MarkdownEditor;
@@ -1401,7 +1498,7 @@ Repeater::make('members')
     ->disableItemMovement()
 ```
 
-You may customise the number of items that may be created, using the `minItems()` and `maxItems()` methods:
+You may customize the number of items that may be created, using the `minItems()` and `maxItems()` methods:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -1440,12 +1537,25 @@ Repeater::make('qualifications')
     ->collapsed()
 ```
 
+### Cloning items
+
+You may allow repeater items to be duplicated using the `cloneable()` method:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('qualifications')
+    ->schema([
+        // ...
+    ])
+    ->cloneable()
+```
+
 ### Populating automatically from a relationship
 
 You may employ the `relationship()` method of the repeater to configure a relationship to automatically retrieve and save repeater items:
 
 ```php
-use App\Models\App;
 use Filament\Forms\Components\Repeater;
 
 Repeater::make('qualifications')
@@ -1520,6 +1630,34 @@ Repeater::make('members')
 ```
 
 Any fields that you use from `$state` should be `reactive()` or `lazy()` if you wish to see the item label update live as you use the form.
+
+### Using `$get()` to access parent field values
+
+All form components are able to [use `$get()` and `$set()`](advanced) to access another field's value. However, you might experience unexpected behaviour when using this inside the repeater's schema.
+
+This is because `$get()` and `$set()`, by default, are scoped to the current repeater item. This means that you are able to interact with another field inside that repeater item easily without knowing which repeater item the current form component belongs to.
+
+The consequence of this, is that you may be confused when you are unable to interact with a field outside the repeater. We use `../` syntax to solve this problem - `$get('../../parent_field_name')`.
+
+Consider your form has this data structure:
+
+```php
+[
+    'client_id' => 1,
+
+    'repeater' => [
+        'item1' => [
+            'service_id' => 2,
+        ],
+    ],
+]
+```
+
+You are trying to retrieve the value of `client_id` from inside the repeater item.
+
+`$get()` is relative to the current repeater item, so `$get('client_id')` is looking for `$get('repeater.item1.client_id')`.
+
+You can use `../` to go up a level in the data structure, so `$get('../client_id')` is $get('repeater.client_id') and `$get('../../client_id')` is `$get('client_id')`.
 
 ## Builder
 
@@ -1610,7 +1748,7 @@ Builder\Block::make('heading')->icon('heroicon-o-bookmark')
 
 ![](https://user-images.githubusercontent.com/41773797/147614039-d9aa43dd-acfe-43b6-9cd1-1fc322aa4526.png)
 
-You may customise the number of items that may be created, using the `minItems()` and `maxItems()` methods:
+You may customize the number of items that may be created, using the `minItems()` and `maxItems()` methods:
 
 ```php
 use Filament\Forms\Components\Builder;
@@ -1772,6 +1910,15 @@ KeyValue::make('meta')
     ->disableEditingKeys()
 ```
 
+You can allow the user to reorder rows within the table:
+
+```php
+use Filament\Forms\Components\KeyValue;
+
+KeyValue::make('meta')
+    ->reorderable()
+```
+
 You may also add placeholders for the key and value fields using the `keyPlaceholder()` and `valuePlaceholder()` methods:
 
 ```php
@@ -1820,23 +1967,48 @@ ViewField::make('notifications')->view('filament.forms.components.range-slider')
 
 Inside your view, you may interact with the state of the form component using Livewire and Alpine.js.
 
-The `$getStatePath()` closure may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
+The `$getStatePath()` closure may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js.
+
+Using [Livewire's entangle](https://laravel-livewire.com/docs/alpine-js#sharing-state) allows sharing state with Alpine.js:
 
 ```blade
-<x-forms::field-wrapper
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-action="$getHintAction()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}') }">
+    <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}').defer }">
         <!-- Interact with the `state` property in Alpine.js -->
     </div>
-</x-forms::field-wrapper>
+</x-dynamic-component>
+```
+
+Or, you may bind the value to a Livewire property using [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding):
+
+```blade
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
+    :id="$getId()"
+    :label="$getLabel()"
+    :label-sr-only="$isLabelHidden()"
+    :helper-text="$getHelperText()"
+    :hint="$getHint()"
+    :hint-action="$getHintAction()"
+    :hint-color="$getHintColor()"
+    :hint-icon="$getHintIcon()"
+    :required="$isRequired()"
+    :state-path="$getStatePath()"
+>
+    <input wire:model.defer="{{ $getStatePath() }}" />
+</x-dynamic-component>
 ```
 
 ## Building custom fields
@@ -1867,18 +2039,21 @@ Inside your view, you may interact with the state of the form component using Li
 The `$getStatePath()` closure may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
 
 ```blade
-<x-forms::field-wrapper
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-action="$getHintAction()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}') }">
+    <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}').defer }">
         <!-- Interact with the `state` property in Alpine.js -->
     </div>
-</x-forms::field-wrapper>
+</x-dynamic-component>
 ```

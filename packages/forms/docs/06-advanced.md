@@ -2,7 +2,7 @@
 title: Advanced
 ---
 
-## Using closure customisation
+## Using closure customization
 
 All configuration methods for [fields](fields) and [layout components](layout) accept closures as parameters instead of hardcoded values:
 
@@ -96,6 +96,16 @@ function (Closure $set) {
 }
 ```
 
+If you're writing a form for an admin panel resource or relation manager, and you wish to check if a form is `create`, `edit` or `view`, use the `$context` parameter:
+
+```php
+function (string $context) {
+    // ...
+}
+```
+
+> Outside of the admin panel, you can set a form's context by defining a `getFormContext()` method on your Livewire component.
+
 Callbacks are evaluated using Laravel's `app()->call()` under the hood, so you are able to combine multiple parameters in any order:
 
 ```php
@@ -123,7 +133,7 @@ A great example to give a use case for this is when you wish to generate a slug 
 
 ## Dependant fields / components
 
-You may use the techniques described in the [closure customization section](#using-closure-customisation) to build completely dependent fields and components, with full control over customization based on the values of other fields in your form.
+You may use the techniques described in the [closure customization section](#using-closure-customization) to build completely dependent fields and components, with full control over customization based on the values of other fields in your form.
 
 For example, you can build dependant [select](fields#select) inputs:
 

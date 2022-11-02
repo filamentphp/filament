@@ -3,6 +3,7 @@
 use Filament\FilamentServiceProvider;
 use Filament\Forms\FormsServiceProvider;
 use Filament\Notifications\NotificationsServiceProvider;
+use Filament\SpatieLaravelTranslatablePluginServiceProvider;
 use Filament\Support\SupportServiceProvider;
 use Filament\Tables\TablesServiceProvider;
 use Livewire\LivewireServiceProvider;
@@ -24,6 +25,7 @@ $app->register(LivewireServiceProvider::class);
 $app->register(FilamentServiceProvider::class);
 $app->register(FormsServiceProvider::class);
 $app->register(NotificationsServiceProvider::class);
+$app->register(SpatieLaravelTranslatablePluginServiceProvider::class);
 $app->register(SupportServiceProvider::class);
 $app->register(TablesServiceProvider::class);
 

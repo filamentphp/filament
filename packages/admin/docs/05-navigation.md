@@ -52,6 +52,7 @@ You may customize navigation groups by calling `Filament::registerNavigationGrou
 
 ```php
 use Filament\Facades\Filament;
+use Filament\Navigation\NavigationGroup;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -141,6 +142,7 @@ use App\Filament\Pages\Settings;
 use App\Filament\Resources\UserResource;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationBuilder;
+use Filament\Navigation\NavigationItem;
 
 Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
     return $builder->items([
@@ -166,7 +168,7 @@ use Filament\Navigation\NavigationGroup;
 
 Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
     return $builder
-        ->group([
+        ->groups([
             NavigationGroup::make('Website')
                 ->items([
                     ...PageResource::getNavigationItems(),

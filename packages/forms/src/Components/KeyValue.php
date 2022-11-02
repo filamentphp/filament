@@ -13,6 +13,10 @@ class KeyValue extends Field
 
     protected string | Closure | null $addButtonLabel = null;
 
+    protected string | Closure | null $deleteButtonLabel = null;
+
+    protected string | Closure | null $reorderButtonLabel = null;
+
     protected bool | Closure $shouldDisableAddingRows = false;
 
     protected bool | Closure $shouldDisableDeletingRows = false;
@@ -21,8 +25,6 @@ class KeyValue extends Field
 
     protected bool | Closure $shouldDisableEditingValues = false;
 
-    protected string | Closure | null $deleteButtonLabel = null;
-
     protected string | Closure | null $keyLabel = null;
 
     protected string | Closure | null $valueLabel = null;
@@ -30,6 +32,8 @@ class KeyValue extends Field
     protected string | Closure | null $keyPlaceholder = null;
 
     protected string | Closure | null $valuePlaceholder = null;
+
+    protected bool | Closure $isReorderable = false;
 
     protected function setUp(): void
     {
@@ -41,12 +45,14 @@ class KeyValue extends Field
             return collect($state ?? [])
                 ->filter(static fn (?string $value, ?string $key): bool => filled($key))
                 ->map(static fn (?string $value): ?string => filled($value) ? $value : null)
-                ->toArray();
+                ->all();
         });
 
         $this->addButtonLabel(__('forms::components.key_value.buttons.add.label'));
 
         $this->deleteButtonLabel(__('forms::components.key_value.buttons.delete.label'));
+
+        $this->reorderButtonLabel(__('forms::components.key_value.buttons.reorder.label'));
 
         $this->keyLabel(__('forms::components.key_value.fields.key.label'));
 
@@ -63,6 +69,13 @@ class KeyValue extends Field
     public function deleteButtonLabel(string | Closure | null $label): static
     {
         $this->deleteButtonLabel = $label;
+
+        return $this;
+    }
+
+    public function reorderButtonLabel(string | Closure | null $label): static
+    {
+        $this->reorderButtonLabel = $label;
 
         return $this;
     }
@@ -123,6 +136,13 @@ class KeyValue extends Field
         return $this;
     }
 
+    public function reorderable(bool | Closure $condition = true): static
+    {
+        $this->isReorderable = $condition;
+
+        return $this;
+    }
+
     public function canAddRows(): bool
     {
         return ! $this->evaluate($this->shouldDisableAddingRows);
@@ -153,6 +173,11 @@ class KeyValue extends Field
         return $this->evaluate($this->deleteButtonLabel);
     }
 
+    public function getReorderButtonLabel(): string
+    {
+        return $this->evaluate($this->reorderButtonLabel);
+    }
+
     public function getKeyLabel(): string
     {
         return $this->evaluate($this->keyLabel);
@@ -171,5 +196,10 @@ class KeyValue extends Field
     public function getValuePlaceholder(): ?string
     {
         return $this->evaluate($this->valuePlaceholder);
+    }
+
+    public function isReorderable(): bool
+    {
+        return $this->evaluate($this->isReorderable);
     }
 }

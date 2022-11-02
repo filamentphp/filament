@@ -3,8 +3,10 @@
 namespace Filament\Forms\Concerns;
 
 use Closure;
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
+use Illuminate\Support\Str;
 
 trait HasComponents
 {
@@ -36,24 +38,32 @@ trait HasComponents
     public function getFlatComponents(bool $withHidden = false): array
     {
         return collect($this->getComponents($withHidden))
-            ->map(static function (Component $component) use ($withHidden) {
-                if ($component->hasChildComponentContainer($withHidden)) {
-                    return array_merge([$component], $component->getChildComponentContainer()->getFlatComponents($withHidden));
-                }
-
-                return $component;
-            })
+            ->map(static fn (Component $component): array => [
+                $component,
+                array_map(
+                    fn (ComponentContainer $container): array => $container->getFlatComponents($withHidden),
+                    $component->getChildComponentContainers($withHidden),
+                ),
+            ])
             ->flatten()
             ->all();
     }
 
-    public function getFlatFields(bool $withHidden = false): array
+    public function getFlatFields(bool $withHidden = false, bool $withAbsolutePathKeys = false): array
     {
+        $statePath = $this->getStatePath();
+
         return collect($this->getFlatComponents($withHidden))
             ->whereInstanceOf(Field::class)
-            ->mapWithKeys(static fn (Field $field) => [
-                $field->getName() => $field,
-            ])
+            ->mapWithKeys(static function (Field $field) use ($statePath, $withAbsolutePathKeys): array {
+                $fieldStatePath = $field->getStatePath();
+
+                if ((! $withAbsolutePathKeys) && filled($statePath)) {
+                    $fieldStatePath = (string) Str::of($fieldStatePath)->after("{$statePath}.");
+                }
+
+                return [$fieldStatePath => $field];
+            })
             ->all();
     }
 

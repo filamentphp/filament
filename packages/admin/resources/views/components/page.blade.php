@@ -12,18 +12,40 @@
                 <x-slot name="heading">
                     {{ $heading }}
                 </x-slot>
+
+                @if ($subheading = $this->getSubheading())
+                    <x-slot name="subheading">
+                        {{ $subheading }}
+                    </x-slot>
+                @endif
             </x-filament::header>
         @endif
 
-        @if ($headerWidgets = $this->getHeaderWidgets())
-            <x-filament::widgets :widgets="$headerWidgets" :data="$widgetData" />
+        {{ \Filament\Facades\Filament::renderHook('page.header-widgets.start') }}
+
+        @if ($headerWidgets = $this->getVisibleHeaderWidgets())
+            <x-filament::widgets
+                :widgets="$headerWidgets"
+                :columns="$this->getHeaderWidgetsColumns()"
+                :data="$widgetData"
+            />
         @endif
+
+        {{ \Filament\Facades\Filament::renderHook('page.header-widgets.end') }}
 
         {{ $slot }}
 
-        @if ($footerWidgets = $this->getFooterWidgets())
-            <x-filament::widgets :widgets="$footerWidgets" :data="$widgetData" />
+        {{ \Filament\Facades\Filament::renderHook('page.footer-widgets.start') }}
+
+        @if ($footerWidgets = $this->getVisibleFooterWidgets())
+            <x-filament::widgets
+                :widgets="$footerWidgets"
+                :columns="$this->getFooterWidgetsColumns()"
+                :data="$widgetData"
+            />
         @endif
+
+        {{ \Filament\Facades\Filament::renderHook('page.footer-widgets.end') }}
 
         @if ($footer = $this->getFooter())
             {{ $footer }}
@@ -35,7 +57,14 @@
             $action = $this->getMountedAction();
         @endphp
 
-        <x-filament::modal id="page-action" :visible="filled($action)" :width="$action?->getModalWidth()" display-classes="block">
+        <x-filament::modal
+            id="page-action"
+            :wire:key="$action ? $this->id . '.actions.' . $action->getName() . '.modal' : null"
+            :visible="filled($action)"
+            :width="$action?->getModalWidth()"
+            :slide-over="$action?->isModalSlideOver()"
+            display-classes="block"
+        >
             @if ($action)
                 @if ($action->isModalCentered())
                     <x-slot name="heading">
@@ -52,6 +81,12 @@
                         <x-filament::modal.heading>
                             {{ $action->getModalHeading() }}
                         </x-filament::modal.heading>
+
+                        @if ($subheading = $action->getModalSubheading())
+                            <x-filament::modal.subheading>
+                                {{ $subheading }}
+                            </x-filament::modal.subheading>
+                        @endif
                     </x-slot>
                 @endif
 

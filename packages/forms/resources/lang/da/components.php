@@ -2,10 +2,6 @@
 
 return [
 
-    'file_upload' => [
-        'filepond_locale' => 'da-dk',
-    ],
-
     'rich_editor' => [
 
         'dialogs' => [

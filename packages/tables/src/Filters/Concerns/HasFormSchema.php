@@ -3,6 +3,7 @@
 namespace Filament\Tables\Filters\Concerns;
 
 use Closure;
+use Filament\Forms\Components\Field;
 
 trait HasFormSchema
 {
@@ -17,6 +18,23 @@ trait HasFormSchema
 
     public function getFormSchema(): array
     {
-        return $this->evaluate($this->formSchema) ?? [];
+        $schema = $this->evaluate($this->formSchema);
+
+        if ($schema !== null) {
+            return $schema;
+        }
+
+        $field = $this->getFormField();
+
+        if ($field === null) {
+            return [];
+        }
+
+        return [$field];
+    }
+
+    protected function getFormField(): ?Field
+    {
+        return null;
     }
 }

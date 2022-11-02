@@ -37,6 +37,7 @@ You're now ready to start [building tables](getting-started)!
 The package uses the following dependencies:
 
 - [Alpine.js](https://alpinejs.dev)
+- [Alpine.js Focus Plugin](https://alpinejs.dev/plugins/focus)
 - [Tailwind CSS](https://tailwindcss.com)
 - [Tailwind CSS Forms plugin](https://github.com/tailwindlabs/tailwindcss-forms)
 - [Tailwind CSS Typography plugin](https://tailwindcss.com/docs/typography-plugin)
@@ -130,18 +131,7 @@ export default defineConfig({
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/XslPKxtMR70" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-In your `webpack.mix.js` file, register Tailwind CSS as a PostCSS plugin :
-
-```js
-const mix = require('laravel-mix')
-
-mix.js('resources/js/app.js', 'public/js')
-    .postCss('resources/css/app.css', 'public/css', [
-        require('tailwindcss'), // [tl! focus]
-    ])
-```
-
-In your `webpack.mix.js` file, Register Tailwind CSS as a PostCSS plugin :
+In your `webpack.mix.js` file, register Tailwind CSS as a PostCSS plugin:
 
 ```js
 const mix = require('laravel-mix')
@@ -166,7 +156,7 @@ In `/resources/css/app.css`, import `filament/forms` vendor CSS and [Tailwind CS
 
 ### Configuring scripts
 
-In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), the `filament/forms`, `filament/notifications` and `@alpinejs/focus` plugins, and register them:
+In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), `@alpinejs/focus`, the `filament/forms` and `filament/notifications` plugins, and register them:
 
 ```js
 import Alpine from 'alpinejs'
@@ -236,22 +226,27 @@ If you wish to translate the package, you may publish the language files using:
 php artisan vendor:publish --tag=tables-translations
 ```
 
+Since this package depends on other Filament packages, you may wish to translate those as well:
+
+```bash
+php artisan vendor:publish --tag=filament-forms-translations
+php artisan vendor:publish --tag=filament-support-translations
+```
+
 ## Upgrading
 
 To upgrade the package to the latest version, you must run:
 
 ```bash
 composer update
-php artisan config:clear
-php artisan view:clear
+php artisan filament:upgrade
 ```
 
-To do this automatically, we recommend adding these commands to your `composer.json`'s `post-update-cmd`:
+We recommend adding the `filament:upgrade` command to your `composer.json`'s `post-update-cmd` to run it automatically:
 
 ```json
 "post-update-cmd": [
     // ...
-    "@php artisan config:clear",
-    "@php artisan view:clear"
+    "@php artisan filament:upgrade"
 ],
 ```

@@ -12,6 +12,7 @@ use Filament\Models\Contracts\HasName;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\UserMenuItem;
 use Filament\Notifications\Notification;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
@@ -259,7 +260,7 @@ class FilamentManager
 
                 return $sort;
             })
-            ->toArray();
+            ->all();
     }
 
     public function getNavigationGroups(): array
@@ -286,7 +287,7 @@ class FilamentManager
     {
         return collect($this->userMenuItems)
             ->sort(fn (UserMenuItem $item): int => $item->getSort())
-            ->toArray();
+            ->all();
     }
 
     public function getModelResource(string | Model $model): ?string
@@ -368,7 +369,7 @@ class FilamentManager
         return $firstItem->getUrl();
     }
 
-    public function getUserAvatarUrl(Model $user): string
+    public function getUserAvatarUrl(Model | Authenticatable $user): string
     {
         $avatar = null;
 
@@ -385,7 +386,7 @@ class FilamentManager
         return app($provider)->get($user);
     }
 
-    public function getUserName(Model $user): string
+    public function getUserName(Model | Authenticatable $user): string
     {
         if ($user instanceof HasName) {
             return $user->getFilamentName();
@@ -399,7 +400,7 @@ class FilamentManager
         return collect($this->widgets)
             ->unique()
             ->sortBy(fn (string $widget): int => $widget::getSort())
-            ->toArray();
+            ->all();
     }
 
     public function getMeta(): array

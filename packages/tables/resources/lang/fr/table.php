@@ -2,6 +2,22 @@
 
 return [
 
+    'columns' => [
+
+        'color' => [
+
+            'messages' => [
+                'copied' => 'Copié',
+            ],
+
+        ],
+
+        'tags' => [
+            'more' => ':count de plus',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -20,7 +36,12 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'par page',
+
+                'options' => [
+                    'all' => 'Tous',
+                ],
             ],
 
         ],
@@ -45,6 +66,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Fin du classement des enregistrements',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Classer les enregistrements',
+        ],
+
         'filter' => [
             'label' => 'Filtre',
         ],
@@ -67,15 +96,22 @@ return [
 
         'buttons' => [
 
-            'reset' => [
-                'label' => 'Réinitialiser',
+            'remove' => [
+                'label' => 'Supprimer le filtre',
             ],
 
-            'close' => [
-                'label' => 'Fermer',
+            'remove_all' => [
+                'label' => 'Supprimer tous les filters',
+                'tooltip' => 'Supprimer tous les filtres',
+            ],
+
+            'reset' => [
+                'label' => 'Réinitialiser les filtres',
             ],
 
         ],
+
+        'indicator' => 'Filtres actifs',
 
         'multi_select' => [
             'placeholder' => 'Tout',
@@ -83,6 +119,18 @@ return [
 
         'select' => [
             'placeholder' => 'Tout',
+        ],
+
+        'trashed' => [
+
+            'label' => 'Enregistrements supprimés',
+
+            'only_trashed' => 'Enregistrements supprimés uniquement',
+
+            'with_trashed' => 'Avec les enregistrements supprimés',
+
+            'without_trashed' => 'Sans les enregistrements supprimés',
+
         ],
 
     ],
@@ -101,6 +149,29 @@ return [
 
             'deselect_all' => [
                 'label' => 'Désélectionner tout',
+            ],
+
+        ],
+
+    ],
+
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Trier par',
+            ],
+
+            'direction' => [
+
+                'label' => 'Ordre',
+
+                'options' => [
+                    'asc' => 'Croissant',
+                    'desc' => 'Décroissant',
+                ],
+
             ],
 
         ],

@@ -6,4 +6,12 @@ return [
 
     'breadcrumb' => 'Megtekintés',
 
+    'form' => [
+
+        'tab' => [
+            'label' => 'Megtekintés',
+        ],
+
+    ],
+
 ];

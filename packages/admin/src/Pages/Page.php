@@ -7,7 +7,9 @@ use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Http\Livewire\Concerns\CanNotify;
 use Filament\Navigation\NavigationItem;
+use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Contracts\RendersFormComponentActionModal;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -34,6 +36,10 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
     protected static ?string $slug = null;
 
     protected static ?string $title = null;
+
+    protected ?string $heading = null;
+
+    protected ?string $subheading = null;
 
     protected static string $view;
 
@@ -95,9 +101,9 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
             ->slug();
     }
 
-    public static function getUrl(array $parameters = [], bool $absolute = true): string
+    public static function getUrl(array $parameters = [], bool $isAbsolute = true): string
     {
-        return route(static::getRouteName(), $parameters, $absolute);
+        return route(static::getRouteName(), $parameters, $isAbsolute);
     }
 
     public function render(): View
@@ -169,14 +175,44 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
         return [];
     }
 
+    protected function getVisibleHeaderWidgets(): array
+    {
+        return $this->filterVisibleWidgets($this->getHeaderWidgets());
+    }
+
+    protected function getHeaderWidgetsColumns(): int | array
+    {
+        return 2;
+    }
+
     protected function getFooterWidgets(): array
     {
         return [];
     }
 
-    protected function getHeading(): string
+    protected function getVisibleFooterWidgets(): array
     {
-        return $this->getTitle();
+        return $this->filterVisibleWidgets($this->getFooterWidgets());
+    }
+
+    protected function filterVisibleWidgets(array $widgets): array
+    {
+        return array_filter($widgets, fn (string $widget): bool => $widget::canView());
+    }
+
+    protected function getFooterWidgetsColumns(): int | array
+    {
+        return 2;
+    }
+
+    protected function getHeading(): string | Htmlable
+    {
+        return $this->heading ?? $this->getTitle();
+    }
+
+    protected function getSubheading(): string | Htmlable | null
+    {
+        return $this->subheading;
     }
 
     protected function getTitle(): string
@@ -218,5 +254,10 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
         }
 
         (static::$reportValidationErrorUsing)($exception);
+    }
+
+    protected function halt(): void
+    {
+        throw new Halt();
     }
 }

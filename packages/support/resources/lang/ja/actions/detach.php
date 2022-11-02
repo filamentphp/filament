@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Detach',
+        'label' => '外す',
 
         'modal' => [
 
-            'heading' => 'Detach :label',
+            'heading' => ':labelを外す',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Detach',
+                    'label' => '外す',
                 ],
 
             ],
@@ -21,23 +21,23 @@ return [
         ],
 
         'messages' => [
-            'detached' => 'Detached',
+            'detached' => '外しました',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Detach selected',
+        'label' => '外す対象を選択',
 
         'modal' => [
 
-            'heading' => 'Detach selected :label',
+            'heading' => '選択した:labelを外す',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Detach selected',
+                    'label' => '選択を外す',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'detached' => 'Detached',
+            'detached' => '外しました',
         ],
 
     ],

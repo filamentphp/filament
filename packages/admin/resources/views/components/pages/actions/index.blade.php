@@ -1,6 +1,6 @@
 @props([
     'actions',
-    'align' => 'left',
+    'alignment' => 'left',
     'fullWidth' => false,
 ])
 
@@ -19,7 +19,7 @@
             {{ $attributes->class([
                 'filament-page-actions',
                 'flex flex-wrap items-center gap-4' => ! $fullWidth,
-                match ($align) {
+                match ($alignment) {
                     'center' => 'justify-center',
                     'right' => 'flex-row-reverse space-x-reverse',
                     default => 'justify-start',

@@ -2,6 +2,22 @@
 
 return [
 
+    'columns' => [
+
+        'color' => [
+
+            'messages' => [
+                'copied' => 'Disalin',
+            ],
+
+        ],
+
+        'tags' => [
+            'more' => 'dan :count lagi',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -20,7 +36,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'setiap halaman',
+
+                'options' => [
+                    'all' => 'Semua',
+                ],
+
             ],
 
         ],
@@ -45,12 +67,24 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Selesai menyusun semula rekod',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Menyusun semula rekod',
+        ],
+
         'filter' => [
             'label' => 'Penapis',
         ],
 
         'open_actions' => [
             'label' => 'Tindakan terbuka',
+        ],
+
+        'toggle_columns' => [
+            'label' => 'Togol lajur',
         ],
 
     ],
@@ -63,11 +97,22 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Buang penapis',
+            ],
+
+            'remove_all' => [
+                'label' => 'Buang semua penapis',
+                'tooltip' => 'Buang semua penapis',
+            ],
+
             'reset' => [
                 'label' => 'Tetapkan semula penapis',
             ],
 
         ],
+
+        'indicator' => 'Penapis aktif',
 
         'multi_select' => [
             'placeholder' => 'Semua',
@@ -77,7 +122,21 @@ return [
             'placeholder' => 'Semua',
         ],
 
+        'trashed' => [
+
+            'label' => 'Rekod telah dipadamkan',
+
+            'only_trashed' => 'Hanya rekod yang dipadamkan',
+
+            'with_trashed' => 'Dengan rekod yang dipadam',
+
+            'without_trashed' => 'Tanpa rekod yang dipadam',
+
+        ],
+
     ],
+
+    'reorder_indicator' => 'Seret dan lepaskan rekod mengikut susunan.',
 
     'selection_indicator' => [
 
@@ -91,6 +150,29 @@ return [
 
             'deselect_all' => [
                 'label' => 'Nyahpilih semua',
+            ],
+
+        ],
+
+    ],
+
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Disusun mengikut',
+            ],
+
+            'direction' => [
+
+                'label' => 'Arah susunan',
+
+                'options' => [
+                    'asc' => 'Menaik',
+                    'desc' => 'Menurun',
+                ],
+
             ],
 
         ],

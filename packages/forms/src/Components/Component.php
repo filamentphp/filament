@@ -35,6 +35,7 @@ class Component extends ViewComponent
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [
+            'context' => $this->getContainer()->getContext(),
             'get' => $this->getGetCallback(),
             'livewire' => $this->getLivewire(),
             'model' => $this->getModel(),

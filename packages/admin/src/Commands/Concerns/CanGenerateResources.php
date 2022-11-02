@@ -63,7 +63,7 @@ trait CanGenerateResources
                 $componentData['required'] = [];
             }
 
-            if ($length = $column->getLength()) {
+            if (in_array($type, [Forms\Components\TextInput::class, Forms\Components\Textarea::class]) && ($length = $column->getLength())) {
                 $componentData['maxLength'] = [$length];
             }
 
@@ -131,12 +131,12 @@ trait CanGenerateResources
 
             $columnData = [];
 
-            $columnData['type'] = $type = match ($column->getType()::class) {
-                Types\BooleanType::class => Tables\Columns\BooleanColumn::class,
-                default => Tables\Columns\TextColumn::class,
-            };
+            if ($column->getType() instanceof Types\BooleanType) {
+                $columnData['type'] = Tables\Columns\IconColumn::class;
+                $columnData['boolean'] = [];
+            } else {
+                $columnData['type'] = Tables\Columns\TextColumn::class;
 
-            if ($type === Tables\Columns\TextColumn::class) {
                 if ($column->getType()::class === Types\DateType::class) {
                     $columnData['date'] = [];
                 }

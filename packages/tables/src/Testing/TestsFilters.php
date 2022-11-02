@@ -5,7 +5,6 @@ namespace Filament\Tables\Testing;
 use Closure;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\BaseFilter;
-use Filament\Tables\Filters\MultiSelectFilter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Illuminate\Database\Eloquent\Model;
@@ -23,16 +22,14 @@ class TestsFilters
     public function filterTable(): Closure
     {
         return function (string $name, $data = null): static {
-            /**
-             * @var string $name
-             * @phpstan-ignore-next-line
-             */
-            $name = $this->parseFilterName($name);
+            $livewire = $this->instance();
+
+            $name = $livewire->parseFilterName($name);
 
             /** @phpstan-ignore-next-line */
             $this->assertTableFilterExists($name);
 
-            $filter = $this->instance()->getCachedTableFilter($name);
+            $filter = $livewire->getCachedTableFilter($name);
 
             if ($filter instanceof TernaryFilter) {
                 if ($data === true || ($data === null && func_num_args() === 1)) {
@@ -40,14 +37,16 @@ class TestsFilters
                 } else {
                     $data = ['value' => $data];
                 }
-            } elseif ($filter instanceof MultiSelectFilter) {
-                $data = ['values' => array_map(
-                    fn ($record) => $record instanceof Model ? $record->getKey() : $record,
-                    Arr::wrap($data ?? []),
-                )];
             } elseif ($filter instanceof SelectFilter) {
-                $data = ['value' => $data instanceof Model ? $data->getKey() : $data];
-            } else {
+                if ($filter->isMultiple()) {
+                    $data = ['values' => array_map(
+                        fn ($record) => $record instanceof Model ? $record->getKey() : $record,
+                        Arr::wrap($data ?? []),
+                    )];
+                } else {
+                    $data = ['value' => $data instanceof Model ? $data->getKey() : $data];
+                }
+            } elseif (! is_array($data)) {
                 $data = ['isActive' => $data === true || $data === null];
             }
 
@@ -66,42 +65,41 @@ class TestsFilters
         };
     }
 
-    public function assertTableFilterExists(): Closure
+    public function removeTableFilter(): Closure
     {
-        return function (string $name): static {
-            /**
-             * @var string $name
-             * @phpstan-ignore-next-line
-             */
-            $name = $this->parseFilterName($name);
-
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
-
-            $action = $livewire->getCachedTableFilter($name);
-
-            Assert::assertInstanceOf(
-                BaseFilter::class,
-                $action,
-                message: "Failed asserting that a table filter with name [{$name}] exists on the [{$livewireClass}] component.",
-            );
+        return function (string $filter, ?string $field = null): static {
+            $this->call('removeTableFilter', $this->instance()->parseFilterName($filter), $field);
 
             return $this;
         };
     }
 
-    public function parseFilterName(): Closure
+    public function removeTableFilters(): Closure
     {
-        return function (string $name): string {
-            if (! class_exists($name)) {
-                return $name;
-            }
+        return function (): static {
+            $this->call('removeTableFilters');
 
-            if (! is_subclass_of($name, BaseFilter::class)) {
-                return $name;
-            }
+            return $this;
+        };
+    }
 
-            return $name::getDefaultName();
+    public function assertTableFilterExists(): Closure
+    {
+        return function (string $name): static {
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $name = $livewire->parseFilterName($name);
+
+            $filter = $livewire->getCachedTableFilter($name);
+
+            Assert::assertInstanceOf(
+                BaseFilter::class,
+                $filter,
+                message: "Failed asserting that a table filter with name [{$name}] exists on the [{$livewireClass}] component.",
+            );
+
+            return $this;
         };
     }
 }

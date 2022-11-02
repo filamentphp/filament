@@ -2,22 +2,30 @@
 
 return [
 
-    'file_upload' => [
-        'filepond_locale' => 'fa_ir',
-    ],
-
     'builder' => [
 
         'collapsed' => 'محتوا جمع شد',
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'همسان‌سازی',
+            ],
+
             'create_item' => [
                 'label' => 'افزودن به :label',
             ],
 
+            'create_item_between' => [
+                'label' => 'قرار دادن',
+            ],
+
             'delete_item' => [
                 'label' => 'حذف',
+            ],
+
+            'move_item' => [
+                'label' => 'جابه‌جایی',
             ],
 
             'move_item_down' => [
@@ -58,6 +66,10 @@ return [
 
             'delete' => [
                 'label' => 'حذف ردیف',
+            ],
+
+            'reorder' => [
+                'label' => 'بازچینش ردیف',
             ],
 
         ],
@@ -105,6 +117,14 @@ return [
 
             'delete_item' => [
                 'label' => 'حذف',
+            ],
+
+            'clone_item' => [
+                'label' => 'همسان‌سازی',
+            ],
+
+            'move_item' => [
+                'label' => 'جابه‌جایی',
             ],
 
             'move_item_down' => [
@@ -204,7 +224,9 @@ return [
 
         'loading_message' => 'درحال بارگذاری...',
 
-        'no_search_results_message' => 'هیچ گزینه ای با جستجوی شما مطابقت ندارد',
+        'max_items_message' => 'تنها :count مورد می‌تواند انتخاب شود.',
+
+        'no_search_results_message' => 'هیچ گزینه‌ای با جستجوی شما مطابقت ندارد.',
 
         'placeholder' => 'یک گزینه را انتخاب کنید',
 

@@ -7,7 +7,7 @@
     'url',
 ])
 
-<li @class(['filament-sidebar-item', 'filament-sidebar-item-active' => $active])>
+<li @class(['filament-sidebar-item overflow-hidden', 'filament-sidebar-item-active' => $active])>
     <a
         href="{{ $url }}"
         {!! $shouldOpenUrlInNewTab ? 'target="_blank"' : '' !!}

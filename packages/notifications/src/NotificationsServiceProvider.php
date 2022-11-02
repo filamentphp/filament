@@ -19,6 +19,7 @@ class NotificationsServiceProvider extends PackageServiceProvider
             ->name('notifications')
             ->hasCommands(Commands\InstallCommand::class)
             ->hasConfigFile()
+            ->hasTranslations()
             ->hasViews();
     }
 
@@ -35,7 +36,7 @@ class NotificationsServiceProvider extends PackageServiceProvider
                 return $response;
             }
 
-            if (count(session()->get('filament.notifications', [])) > 0) {
+            if (count(session()->get('filament.notifications') ?? []) > 0) {
                 $component->emit('notificationsSent');
             }
 

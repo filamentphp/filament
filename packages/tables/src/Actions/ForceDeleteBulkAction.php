@@ -3,6 +3,8 @@
 namespace Filament\Tables\Actions;
 
 use Filament\Support\Actions\Concerns\CanCustomizeProcess;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,7 +27,7 @@ class ForceDeleteBulkAction extends BulkAction
 
         $this->modalButton(__('filament-support::actions/force-delete.multiple.modal.actions.delete.label'));
 
-        $this->successNotificationMessage(__('filament-support::actions/force-delete.multiple.messages.deleted'));
+        $this->successNotificationTitle(__('filament-support::actions/force-delete.multiple.messages.deleted'));
 
         $this->color('danger');
 
@@ -42,5 +44,15 @@ class ForceDeleteBulkAction extends BulkAction
         });
 
         $this->deselectRecordsAfterCompletion();
+
+        $this->hidden(function (HasTable $livewire): bool {
+            $trashedFilterState = $livewire->getTableFilterState(TrashedFilter::class) ?? [];
+
+            if (! array_key_exists('value', $trashedFilterState)) {
+                return false;
+            }
+
+            return blank($trashedFilterState['value']);
+        });
     }
 }

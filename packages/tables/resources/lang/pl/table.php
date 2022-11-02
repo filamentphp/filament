@@ -2,6 +2,22 @@
 
 return [
 
+    'columns' => [
+
+        'color' => [
+
+            'messages' => [
+                'copied' => 'Skopiowano',
+            ],
+
+        ],
+
+        'tags' => [
+            'more' => 'i :count więcej',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -20,7 +36,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'na stronę',
+
+                'options' => [
+                    'all' => 'Wszystkie',
+                ],
+
             ],
 
         ],
@@ -45,6 +67,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Zakończ zmienianie kolejności',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Zmień kolejność',
+        ],
+
         'filter' => [
             'label' => 'Filtr',
         ],
@@ -67,15 +97,22 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Usuń filtr',
+            ],
+
+            'remove_all' => [
+                'label' => 'Usuń wszystkie filtry',
+                'tooltip' => 'Usuń wszystkie filtry',
+            ],
+
             'reset' => [
                 'label' => 'Zresetuj filtry',
             ],
 
-            'close' => [
-                'label' => 'Zamknij',
-            ],
-
         ],
+
+        'indicator' => 'Aktywne filtry',
 
         'multi_select' => [
             'placeholder' => 'Wszystkie',
@@ -99,6 +136,8 @@ return [
 
     ],
 
+    'reorder_indicator' => 'Zmień kolejność przeciągając.',
+
     'selection_indicator' => [
 
         'selected_count' => '{1} 1 rekord zaznaczony.|[2,4]:count rekordy zaznaczone.|[5,*]:count rekordów zaznaczonych.',
@@ -111,6 +150,29 @@ return [
 
             'deselect_all' => [
                 'label' => 'Odznacz wszystkie',
+            ],
+
+        ],
+
+    ],
+
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Sortuj według',
+            ],
+
+            'direction' => [
+
+                'label' => 'Kierunek sortowania',
+
+                'options' => [
+                    'asc' => 'Rosnąco',
+                    'desc' => 'Malejąco',
+                ],
+
             ],
 
         ],

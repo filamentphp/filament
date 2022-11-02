@@ -13,6 +13,8 @@ trait CanOpenModal
 
     protected bool | Closure | null $isModalCentered = null;
 
+    protected bool | Closure $isModalSlideOver = false;
+
     protected array | Closure | null $modalActions = null;
 
     protected ModalAction | Closure | null $modalCancelAction = null;
@@ -23,15 +25,22 @@ trait CanOpenModal
 
     protected View | Htmlable | Closure | null $modalContent = null;
 
-    protected string | Closure | null $modalHeading = null;
+    protected string| Htmlable | Closure | null $modalHeading = null;
 
-    protected string | Closure | null $modalSubheading = null;
+    protected string| Htmlable | Closure | null $modalSubheading = null;
 
     protected string | Closure | null $modalWidth = null;
 
     public function centerModal(bool | Closure | null $condition = true): static
     {
         $this->isModalCentered = $condition;
+
+        return $this;
+    }
+
+    public function slideOver(bool | Closure $condition = true): static
+    {
+        $this->isModalSlideOver = $condition;
 
         return $this;
     }
@@ -78,14 +87,14 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalHeading(string | Closure | null $heading = null): static
+    public function modalHeading(string | Htmlable | Closure | null $heading = null): static
     {
         $this->modalHeading = $heading;
 
         return $this;
     }
 
-    public function modalSubheading(string | Closure | null $subheading = null): static
+    public function modalSubheading(string | Htmlable | Closure | null $subheading = null): static
     {
         $this->modalSubheading = $subheading;
 
@@ -108,7 +117,9 @@ trait CanOpenModal
         }
 
         if ($this->modalActions !== null) {
-            return $this->evaluate($this->modalActions);
+            return $this->filterHiddenModalActions(
+                $this->evaluate($this->modalActions),
+            );
         }
 
         $actions = array_merge(
@@ -121,7 +132,15 @@ trait CanOpenModal
             $actions = array_reverse($actions);
         }
 
-        return $actions;
+        return $this->filterHiddenModalActions($actions);
+    }
+
+    protected function filterHiddenModalActions(array $actions): array
+    {
+        return array_filter(
+            $actions,
+            fn (ModalAction $action): bool => ! $action->isHidden(),
+        );
     }
 
     public function getModalSubmitAction(): ModalAction
@@ -174,12 +193,12 @@ trait CanOpenModal
         return $this->evaluate($this->modalContent);
     }
 
-    public function getModalHeading(): string
+    public function getModalHeading(): string | Htmlable
     {
         return $this->evaluate($this->modalHeading) ?? $this->getLabel();
     }
 
-    public function getModalSubheading(): ?string
+    public function getModalSubheading(): string | Htmlable | null
     {
         if (filled($this->modalSubheading)) {
             return $this->evaluate($this->modalSubheading);
@@ -216,6 +235,11 @@ trait CanOpenModal
         }
 
         return $this->isConfirmationRequired();
+    }
+
+    public function isModalSlideOver(): bool
+    {
+        return $this->evaluate($this->isModalSlideOver);
     }
 
     public function shouldOpenModal(): bool

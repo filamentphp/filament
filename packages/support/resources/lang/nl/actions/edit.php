@@ -13,7 +13,7 @@ return [
             'actions' => [
 
                 'save' => [
-                    'label' => 'Opslaan',
+                    'label' => 'Wijzigingen opslaan',
                 ],
 
             ],

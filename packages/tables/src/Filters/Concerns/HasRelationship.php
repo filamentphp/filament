@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Filters\Concerns;
 
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -11,9 +12,13 @@ use Illuminate\Support\Str;
 
 trait HasRelationship
 {
-    public function relationship(string $relationshipName, string $titleColumnName = null): static
+    protected ?Closure $modifyRelationshipQueryUsing = null;
+
+    public function relationship(string $relationshipName, string $titleColumnName = null, Closure $callback = null): static
     {
-        $this->column("{$relationshipName}.{$titleColumnName}");
+        $this->attribute("{$relationshipName}.{$titleColumnName}");
+
+        $this->modifyRelationshipQueryUsing = $callback;
 
         return $this;
     }
@@ -26,6 +31,8 @@ trait HasRelationship
             $keyColumn = $relationship->getQualifiedRelatedKeyName();
         } elseif ($relationship instanceof HasOneThrough) {
             $keyColumn = $relationship->getQualifiedForeignKeyName();
+        } elseif ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
+            $keyColumn = $relationship->getRelated()->getQualifiedKeyName();
         } else {
             /** @var BelongsTo $relationship */
             $keyColumn = $relationship->getQualifiedOwnerKeyName();
@@ -42,6 +49,12 @@ trait HasRelationship
 
         $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleColumnName);
 
+        if ($this->modifyRelationshipQueryUsing) {
+            $relationshipQuery = $this->evaluate($this->modifyRelationshipQueryUsing, [
+                'query' => $relationshipQuery,
+            ]) ?? $relationshipQuery;
+        }
+
         return $relationshipQuery
             ->pluck($titleColumnName, $this->getRelationshipKey())
             ->toArray();
@@ -49,7 +62,7 @@ trait HasRelationship
 
     public function queriesRelationships(): bool
     {
-        return Str::of($this->getColumn())->contains('.');
+        return Str::of($this->getAttribute())->contains('.');
     }
 
     protected function getRelationship(): Relation | Builder
@@ -61,11 +74,11 @@ trait HasRelationship
 
     protected function getRelationshipName(): string
     {
-        return (string) Str::of($this->getColumn())->beforeLast('.');
+        return (string) Str::of($this->getAttribute())->beforeLast('.');
     }
 
     protected function getRelationshipTitleColumnName(): string
     {
-        return (string) Str::of($this->getColumn())->afterLast('.');
+        return (string) Str::of($this->getAttribute())->afterLast('.');
     }
 }

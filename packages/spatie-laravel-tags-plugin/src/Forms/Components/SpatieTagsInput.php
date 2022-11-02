@@ -21,7 +21,7 @@ class SpatieTagsInput extends TagsInput
             }
 
             $type = $component->getType();
-            $tags = $record->load('tags')->tagsWithType($type);
+            $tags = $record->loadMissing('tags')->tagsWithType($type);
 
             $component->state($tags->pluck('name')->toArray());
         });
@@ -56,9 +56,11 @@ class SpatieTagsInput extends TagsInput
             return parent::getSuggestions();
         }
 
+        $model = $this->getModel();
+        $tagClass = $model ? $model::getTagClassName() : config('tags.tag_model', Tag::class);
         $type = $this->getType();
 
-        return Tag::query()
+        return $tagClass::query()
             ->when(
                 filled($type),
                 fn (Builder $query) => $query->where('type', $type),

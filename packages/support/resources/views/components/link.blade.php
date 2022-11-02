@@ -2,6 +2,7 @@
     'color' => 'primary',
     'darkMode' => false,
     'disabled' => false,
+    'form' => null,
     'icon' => null,
     'iconPosition' => 'before',
     'keyBindings' => null,
@@ -13,7 +14,7 @@
 
 @php
     $linkClasses = [
-        'inline-flex items-center justify-center gap-0.5 font-medium hover:underline focus:outline-none focus:underline filament-link',
+        'filament-link inline-flex items-center justify-center gap-0.5 font-medium hover:underline focus:outline-none focus:underline',
         'opacity-70 cursor-not-allowed pointer-events-none' => $disabled,
         'text-sm' => $size === 'sm',
         'text-lg' => $size === 'lg',
@@ -30,13 +31,19 @@
     ];
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-button-icon',
-        'w-3 h-3' => $size === 'sm',
-        'w-4 h-4' => $size === 'md',
-        'w-5 h-5' => $size === 'lg',
+        'filament-link-icon',
+        'w-4 h-4' => $size === 'sm',
+        'w-5 h-5' => $size === 'md',
+        'w-6 h-6' => $size === 'lg',
         'mr-1 rtl:ml-1' => $iconPosition === 'before',
         'ml-1 rtl:mr-1' => $iconPosition === 'after'
     ]);
+
+    $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || (($type === 'submit') && filled($form));
+
+    if ($hasLoadingIndicator) {
+        $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click', $form)), ENT_QUOTES);
+    }
 @endphp
 
 @if ($tag === 'a')
@@ -77,14 +84,46 @@
         @endif
         {{ $attributes->class($linkClasses) }}
     >
-        @if ($icon && $iconPosition === 'before')
-            <x-dynamic-component :component="$icon" :class="$iconClasses"/>
+        @if ($iconPosition === 'before')
+            @if ($icon)
+                <x-dynamic-component
+                    :component="$icon"
+                    :wire:loading.remove.delay="$hasLoadingIndicator"
+                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+                    :class="$iconClasses"
+                />
+            @endif
+
+            @if ($hasLoadingIndicator)
+                <x-filament-support::loading-indicator
+                    x-cloak
+                    wire:loading.delay
+                    :wire:target="$loadingIndicatorTarget"
+                    :class="$iconClasses"
+                />
+            @endif
         @endif
 
         {{ $slot }}
 
-        @if ($icon && $iconPosition === 'after')
-            <x-dynamic-component :component="$icon" :class="$iconClasses" />
+        @if ($iconPosition === 'after')
+            @if ($icon)
+                <x-dynamic-component
+                    :component="$icon"
+                    :wire:loading.remove.delay="$hasLoadingIndicator"
+                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+                    :class="$iconClasses"
+                />
+            @endif
+
+            @if ($hasLoadingIndicator)
+                <x-filament-support::loading-indicator
+                    x-cloak
+                    wire:loading.delay
+                    :wire:target="$loadingIndicatorTarget"
+                    :class="$iconClasses"
+                />
+            @endif
         @endif
     </button>
 @endif

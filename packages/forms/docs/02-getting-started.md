@@ -377,9 +377,12 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
     protected function getFormSchema(): array
     {
         return [
-            Forms\Components\TextInput::make('title')->required(),
+            Forms\Components\TextInput::make('title')
+                ->required(),
             Forms\Components\MarkdownEditor::make('content'),
-            Forms\Components\MultiSelect::make('categories')->relationship('categories', 'name'),
+            Forms\Components\Select::make('categories')
+                ->multiple()
+                ->relationship('categories', 'name'),
         ];
     }
     
@@ -434,9 +437,12 @@ class EditPost extends Component implements Forms\Contracts\HasForms
     protected function getFormSchema(): array
     {
         return [
-            Forms\Components\TextInput::make('title')->required(),
+            Forms\Components\TextInput::make('title')
+                ->required(),
             Forms\Components\MarkdownEditor::make('content'),
-            Forms\Components\MultiSelect::make('categories')->relationship('categories', 'name'),
+            Forms\Components\Select::make('categories')
+                ->multiple()
+                ->relationship('categories', 'name'),
         ];
     }
     
@@ -515,6 +521,20 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
         return view('create-post');
     }
 }
+```
+
+### Saving relationships when the field is hidden
+
+By default, relationships will only be saved if the field is visible. For example, if you have a `Repeater` field that is only visible on a certain condition, the relationships will not be saved when it is hidden.
+
+This might cause unexpected behaviour if you still want to save the relationship, even when the field is hidden. To force relationships to be saved, you may call the `saveRelationshipsWhenHidden()` method on the form component:
+
+```php
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+
+SpatieMediaLibraryFileUpload::make('attachments')
+    ->visible(fn (Closure $get): bool => $get('has_attachments'))
+    ->saveRelationshipsWhenHidden();
 ```
 
 ## Using multiple forms

@@ -154,7 +154,7 @@ it('can close notifications', function () {
 
     $component
         ->emit('notificationsSent')
-        ->call('close', $notification->getId());
+        ->emit('notificationClosed', $notification->getId());
 
     expect($component->instance()->notifications)
         ->toBeInstanceOf(Collection::class)

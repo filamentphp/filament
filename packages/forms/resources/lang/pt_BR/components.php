@@ -4,18 +4,28 @@ return [
 
     'builder' => [
 
+        'collapsed' => 'Conteúdo recolhido',
+
         'buttons' => [
+
+            'clone_item' => [
+                'label' => 'Clonar',
+            ],
 
             'create_item' => [
                 'label' => 'Adicionar em :label',
             ],
 
             'create_item_between' => [
-                'label' => 'Adicionar entre',
+                'label' => 'Inserir',
             ],
 
             'delete_item' => [
-                'label' => 'Excluír',
+                'label' => 'Excluir',
+            ],
+
+            'move_item' => [
+                'label' => 'Mover',
             ],
 
             'move_item_down' => [
@@ -24,6 +34,22 @@ return [
 
             'move_item_up' => [
                 'label' => 'Mover para cima',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Recolher',
+            ],
+
+            'expand_item' => [
+                'label' => 'Expandir',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Recolher todos',
+            ],
+
+            'expand_all' => [
+                'label' => 'Expandir todos',
             ],
 
         ],
@@ -39,7 +65,11 @@ return [
             ],
 
             'delete' => [
-                'label' => 'Excluír linha',
+                'label' => 'Excluir linha',
+            ],
+
+            'reorder' => [
+                'label' => 'Reordenar linha',
             ],
 
         ],
@@ -77,6 +107,8 @@ return [
 
     'repeater' => [
 
+        'collapsed' => 'Conteúdo recolhido',
+
         'buttons' => [
 
             'create_item' => [
@@ -84,7 +116,15 @@ return [
             ],
 
             'delete_item' => [
-                'label' => 'Excluír',
+                'label' => 'Excluir',
+            ],
+
+            'clone_item' => [
+                'label' => 'Clonar',
+            ],
+
+            'move_item' => [
+                'label' => 'Mover',
             ],
 
             'move_item_down' => [
@@ -93,6 +133,14 @@ return [
 
             'move_item_up' => [
                 'label' => 'Mover para cima',
+            ],
+
+            'collapse_item' => [
+                'label' => 'Recolher',
+            ],
+
+            'expand_item' => [
+                'label' => 'Expandir',
             ],
 
             'collapse_all' => [
@@ -146,13 +194,65 @@ return [
     ],
 
     'select' => [
+
+        'actions' => [
+
+            'create_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Criar',
+
+                    'actions' => [
+
+                        'create' => [
+                            'label' => 'Criar',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+        'boolean' => [
+            'true' => 'Sim',
+            'false' => 'Não',
+        ],
+
+        'loading_message' => 'Carregando...',
+
+        'max_items_message' => 'Apenas :count item pode ser selecionado.|Apenas :count itens podem ser selecionados.',
+
         'no_search_results_message' => 'Nenhuma opção corresponde à sua pesquisa.',
+
         'placeholder' => 'Selecione uma opção',
+
+        'searching_message' => 'Buscando...',
+
         'search_prompt' => 'Comece a digitar para pesquisar...',
     ],
 
     'tags_input' => [
         'placeholder' => 'Novo rótulo',
+    ],
+
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => 'Voltar',
+            ],
+
+            'next_step' => [
+                'label' => 'Próximo',
+            ],
+
+        ],
+
     ],
 
 ];

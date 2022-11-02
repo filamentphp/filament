@@ -62,6 +62,8 @@ class Login extends Component implements HasForms
             ]);
         }
 
+        session()->regenerate();
+
         return app(LoginResponse::class);
     }
 

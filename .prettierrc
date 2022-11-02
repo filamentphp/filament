@@ -1,6 +1,6 @@
 {
-    "trailingComma": "es5",
-    "tabWidth": 4,
     "semi": false,
-    "singleQuote": true
+    "singleQuote": true,
+    "tailwindConfig": "./packages/admin/tailwind.config.js",
+    "trailingComma": "all"
 }

@@ -3,9 +3,9 @@
 namespace Filament\Notifications\Actions;
 
 use Filament\Notifications\Actions\Concerns\CanCloseNotification;
-use Filament\Notifications\Actions\Concerns\CanEmitEvent;
 use Filament\Support\Actions\BaseAction;
 use Filament\Support\Actions\Concerns\CanBeOutlined;
+use Filament\Support\Actions\Concerns\CanEmitEvent;
 use Filament\Support\Actions\Concerns\CanOpenUrl;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Str;
@@ -46,21 +46,23 @@ class Action extends BaseAction implements Arrayable
     {
         $static = static::make($data['name']);
 
-        if ($static->getView() !== $data['view'] && static::isViewSafe($data['view'])) {
+        $view = $data['view'] ?? null;
+
+        if (filled($view) && ($static->getView() !== $view) && static::isViewSafe($view)) {
             $static->view($data['view']);
         }
 
-        $static->close($data['shouldCloseNotification']);
-        $static->color($data['color']);
-        $static->disabled($data['isDisabled']);
-        $static->emit($data['event'], $data['eventData']);
-        $static->extraAttributes($data['extraAttributes']);
-        $static->icon($data['icon']);
-        $static->iconPosition($data['iconPosition']);
-        $static->label($data['label']);
-        $static->outlined($data['isOutlined']);
-        $static->size($data['size']);
-        $static->url($data['url'], $data['shouldOpenUrlInNewTab']);
+        $static->close($data['shouldCloseNotification'] ?? false);
+        $static->color($data['color'] ?? null);
+        $static->disabled($data['isDisabled'] ?? false);
+        $static->emit($data['event'] ?? null, $data['eventData'] ?? []);
+        $static->extraAttributes($data['extraAttributes'] ?? []);
+        $static->icon($data['icon'] ?? null);
+        $static->iconPosition($data['iconPosition'] ?? null);
+        $static->label($data['label'] ?? null);
+        $static->outlined($data['isOutlined'] ?? false);
+        $static->size($data['size'] ?? null);
+        $static->url($data['url'] ?? null, $data['shouldOpenUrlInNewTab'] ?? false);
 
         return $static;
     }
@@ -73,6 +75,13 @@ class Action extends BaseAction implements Arrayable
     public function button(): static
     {
         $this->view('notifications::actions.button-action');
+
+        return $this;
+    }
+
+    public function grouped(): static
+    {
+        $this->view('notifications::actions.grouped-action');
 
         return $this;
     }

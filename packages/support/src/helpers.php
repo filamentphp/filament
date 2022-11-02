@@ -24,7 +24,7 @@ if (! function_exists('Filament\Support\prepare_inherited_attributes')) {
                 ->filter(fn ($value, string $name): bool => ! Str::of($name)->startsWith('x-'))
                 ->mapWithKeys(fn ($value, string $name): array => [Str::camel($name) => $value])
                 ->merge($originalAttributes)
-                ->toArray(),
+                ->all(),
         );
 
         return $attributes;
