@@ -43,7 +43,7 @@
             class="shrink-0"
         />
 
-        <div
+        <div class="flex flex-1"
             @if (\Filament\Navigation\Sidebar::$isCollapsibleOnDesktop)
                 x-show="$store.sidebar.isOpen"
             @endif
