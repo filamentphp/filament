@@ -101,7 +101,9 @@ esbuild
                 ? `'production'`
                 : `'development'`,
         },
-        entryPoints: [`packages/widgets/resources/js/components/stats-overview/card/chart.js`],
+        entryPoints: [
+            `packages/widgets/resources/js/components/stats-overview/card/chart.js`,
+        ],
         outfile: `packages/widgets/dist/components/stats-overview/card/chart.js`,
         bundle: true,
         platform: 'neutral',
