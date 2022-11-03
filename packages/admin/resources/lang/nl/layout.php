@@ -23,7 +23,7 @@ return [
         ],
 
         'user_menu' => [
-            'label' => 'gebruikersmenu',
+            'label' => 'Gebruikersmenu',
         ],
 
     ],
