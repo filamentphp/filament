@@ -26,6 +26,11 @@ class TextColumn extends Column
     public function copyable(bool | Closure $condition = true): static
     {
         $this->isCopyable = $condition;
+        
+        if ($this->isCopyable) {
+            $this->icon = 'heroicon-o-clipboard';
+            $this->iconPosition = 'after';
+        }
 
         return $this;
     }
