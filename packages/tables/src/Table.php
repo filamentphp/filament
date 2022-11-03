@@ -692,6 +692,14 @@ class Table extends ViewComponent
         return $this->columns;
     }
 
+    public function getVisibleColumns(): array
+    {
+        return array_filter(
+            $this->getColumns(),
+            fn (Column $column): bool => (! $column->isHidden()) && (! $column->isToggledHidden()),
+        );
+    }
+
     public function getColumn(string $name): ?Column
     {
         return $this->getColumns()[$name] ?? null;
