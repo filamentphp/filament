@@ -1,20 +1,109 @@
 @php
     $url = $getUrl();
+    $tag = $url ? 'a' : 'div';
 @endphp
 
-<x-filament-widgets::stats.card
-    :tag="$url ? 'a' : 'div'"
-    :chart="$getChart()"
-    :chart-color="$getChartColor()"
-    :color="$getColor()"
-    :icon="$getIcon()"
-    :description="$getDescription()"
-    :description-color="$getDescriptionColor()"
-    :description-icon="$getDescriptionIcon()"
-    :href="$url"
-    :target="$shouldOpenUrlInNewTab() ? '_blank' : null"
-    :label="$getLabel()"
-    :value="$getValue()"
-    :extra-attributes="$getExtraAttributes()"
-    class="filament-stats-overview-widget-card"
-/>
+<{!! $tag !!}
+    @if ($url)
+        href="{{ $url }}"
+        @if ($shouldOpenUrlInNewTab()) target="_blank" @endif
+    @endif
+    {{ $getExtraAttributeBag()->class(['filament-stats-overview-widget-card relative rounded-xl bg-white p-6 shadow ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10']) }}
+>
+    <div @class([
+        'space-y-2',
+    ])>
+        <div class="flex items-center space-x-2 rtl:space-x-reverse text-sm font-medium">
+            @if ($icon = $getIcon())
+                <x-filament::icon
+                    :name="$icon"
+                    alias="widgets::stats-overview.card"
+                    color="text-gray-500 dark:text-gray-200"
+                    size="h-4 w-4"
+                />
+            @endif
+
+            <span>{{ $getLabel() }}</span>
+        </div>
+
+        <div class="text-3xl">
+            {{ $getValue() }}
+        </div>
+
+        @if ($description = $getDescription())
+            <div @class([
+                'flex items-center space-x-1 rtl:space-x-reverse text-sm font-medium',
+                match ($getDescriptionColor()) {
+                    'danger' => 'text-danger-600',
+                    'primary' => 'text-primary-600',
+                    'secondary' => 'text-secondary-600',
+                    'success' => 'text-success-600',
+                    'warning' => 'text-warning-600',
+                    default => 'text-gray-600',
+                },
+            ])>
+                <span>{{ $description }}</span>
+
+                @if ($descriptionIcon = $getDescriptionIcon())
+                    <x-filament::icon
+                        :name="$descriptionIcon"
+                        alias="widgets::stats-overview.card.description"
+                        size="h-4 w-4"
+                    />
+                @endif
+            </div>
+        @endif
+    </div>
+
+    @if ($chart = $getChart())
+        <div
+            x-ignore
+            ax-load
+            ax-load-src="/js/filament/widgets/components/stats-overview/card/chart.js?v={{ \Composer\InstalledVersions::getVersion('filament/support') }}"
+            x-data="statsOverviewCardChart({
+                labels: @js(array_keys($chart)),
+                values: @js(array_values($chart)),
+            })"
+            wire:ignore
+            class="absolute bottom-0 inset-x-0 rounded-b-xl overflow-hidden"
+        >
+            <canvas
+                x-ref="canvas"
+                class="h-6"
+            ></canvas>
+
+            @php
+                $chartColor = $getChartColor();
+            @endphp
+
+            <span
+                x-ref="backgroundColorElement"
+                @class([
+                    match ($chartColor) {
+                        'danger' => 'text-danger-50 dark:text-danger-700',
+                        'primary' => 'text-primary-50 dark:text-primary-700',
+                        'secondary' => 'text-secondary-50 dark:text-secondary-700',
+                        'success' => 'text-success-50 dark:text-success-700',
+                        'warning' => 'text-warning-50 dark:text-warning-700',
+                        default => 'text-gray-50 dark:text-gray-700',
+                    },
+                ])
+            ></span>
+
+            <span
+                x-ref="borderColorElement"
+                @class([
+                    match ($chartColor) {
+                        'danger' => 'text-danger-400',
+                        'primary' => 'text-primary-400',
+                        'secondary' => 'text-secondary-400',
+                        'success' => 'text-success-400',
+                        'warning' => 'text-warning-400',
+                        default => 'text-gray-400',
+                    },
+                ])
+            ></span>
+        </div>
+    @endif
+</{!! $tag !!}>
+

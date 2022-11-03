@@ -18,6 +18,7 @@ class WidgetsServiceProvider extends PluginServiceProvider
     {
         return [
             AlpineComponent::make('chart', __DIR__ . '/../dist/components/chart.js'),
+            AlpineComponent::make('stats-overview/card/chart', __DIR__ . '/../dist/components/stats-overview/card/chart.js'),
         ];
     }
 }

@@ -4,13 +4,13 @@
 @endphp
 
 <x-filament-widgets::widget class="filament-widgets-chart-widget">
-    <x-filament-widgets::card>
+    <x-filament::card>
         @if ($heading || $filters)
             <div class="flex items-center justify-between gap-8">
                 @if ($heading)
-                    <x-filament-widgets::card.heading>
+                    <x-filament::card.heading>
                         {{ $heading }}
-                    </x-filament-widgets::card.heading>
+                    </x-filament::card.heading>
                 @endif
 
                 @if ($filters)
@@ -59,5 +59,5 @@
                 ></span>
             </div>
         </div>
-    </x-filament-widgets::card>
+    </x-filament::card>
 </x-filament-widgets::widget>

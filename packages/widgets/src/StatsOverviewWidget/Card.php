@@ -6,6 +6,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
 use Illuminate\View\Component;
+use Illuminate\View\ComponentAttributeBag;
 
 class Card extends Component implements Htmlable
 {
@@ -176,6 +177,11 @@ class Card extends Component implements Htmlable
     public function getExtraAttributes(): array
     {
         return $this->extraAttributes;
+    }
+
+    public function getExtraAttributeBag(): ComponentAttributeBag
+    {
+        return new ComponentAttributeBag($this->getExtraAttributes());
     }
 
     public function getUrl(): ?string
