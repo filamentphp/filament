@@ -25,6 +25,9 @@
             'left' => 'text-left',
             'center' => 'text-center',
             'right' => 'text-right',
+            'start' => 'text-start',
+            'end' => 'text-end',
+            'justify' => 'text-justify',
             default => null,
         },
     ]) }}
@@ -62,9 +65,9 @@
             wire:click="{{ $wireClickAction }}"
             wire:target="{{ $wireClickAction }}"
             wire:loading.attr="disabled"
-            wire:loading.class="opacity-70 cursor-wait"
+            wire:loading.class="cursor-wait opacity-70"
             type="button"
-            class="block text-left rtl:text-right w-full"
+            class="block w-full text-start"
         >
             {{ $slot }}
         </button>

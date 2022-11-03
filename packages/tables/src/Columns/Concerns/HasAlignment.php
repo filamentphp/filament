@@ -30,6 +30,21 @@ trait HasAlignment
         return $this->alignment(static fn (): ?string => $condition ? 'right' : null);
     }
 
+    public function alignStart(bool | Closure $condition = true): static
+    {
+        return $this->alignment(static fn (): ?string => $condition ? 'start' : null);
+    }
+
+    public function alignEnd(bool | Closure $condition = true): static
+    {
+        return $this->alignment(static fn (): ?string => $condition ? 'end' : null);
+    }
+
+    public function alignJustify(bool | Closure $condition = true): static
+    {
+        return $this->alignment(static fn (): ?string => $condition ? 'justify' : null);
+    }
+
     public function getAlignment(): ?string
     {
         return $this->evaluate($this->alignment);
