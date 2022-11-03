@@ -424,6 +424,9 @@
                                 <div
                                     @if ($hasCollapsibleColumnsLayout)
                                         x-data="{ isCollapsed: true }"
+                                        x-init="$dispatch('init-collapsible-row')"
+                                        x-on:expand-all-rows.window="isCollapsed = false"
+                                        x-on:collapse-all-rows.window="isCollapsed = true"
                                     @endif
                                     wire:key="{{ $this->id }}.table.records.{{ $recordKey }}"
                                     @if ($isReordering)
