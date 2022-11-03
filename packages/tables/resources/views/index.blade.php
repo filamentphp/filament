@@ -666,7 +666,7 @@
                             @foreach ($columns as $column)
                                 <x-filament-tables::cell class="px-4 py-1">
                                     @if ($column->isIndividuallySearchable())
-                                        <x-filament-tables::search-input wire-model="tableColumnSearchQueries.{{ $column->getName() }}" />
+                                        <x-filament-tables::search-input wire-model="tableColumnSearches.{{ $column->getName() }}" />
                                     @endif
                                 </x-filament-tables::cell>
                             @endforeach

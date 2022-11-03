@@ -41,7 +41,7 @@ class Table extends ViewComponent
 
     protected string $evaluationIdentifier = 'table';
 
-    public const LOADING_TARGETS = ['previousPage', 'nextPage', 'gotoPage', 'sortTable', 'tableFilters', 'resetTableFiltersForm', 'tableSearch', 'tableColumnSearchQueries', 'tableRecordsPerPage', '$set'];
+    public const LOADING_TARGETS = ['previousPage', 'nextPage', 'gotoPage', 'sortTable', 'tableFilters', 'resetTableFiltersForm', 'tableSearch', 'tableColumnSearches', 'tableRecordsPerPage', '$set'];
 
     protected array $actions = [];
 
