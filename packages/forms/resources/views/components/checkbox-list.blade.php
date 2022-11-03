@@ -13,34 +13,32 @@
 >
     @if ($isBulkToggleable())
     <div x-data="{
-    
         checkboxes: $root.querySelectorAll('input[type=checkbox]'),
-        
+
         isAllSelected: false,
-        
+
         init: function () {
             this.updateIsAllSelected()
         },
-        
+
         updateIsAllSelected: function () {
             this.isAllSelected = this.checkboxes.length === this.$root.querySelectorAll('input[type=checkbox]:checked').length
         },
-        
+
         toggleAll: function () {
-            state = ! this.isAllSelected
+            state = !this.isAllSelected
 
             this.checkboxes.forEach((checkbox) => {
                 checkbox.checked = state
                 checkbox.dispatchEvent(new Event('change'))
             })
         },
-        
     }">
         <div class="mb-2">
             <x-forms::link
                 tag="button"
                 size="sm"
-                x-show="! isAllSelected"
+                x-show="!isAllSelected"
                 x-on:click="toggleAll"
             >
                 {{ __('forms::components.checkbox_list.buttons.select_all.label') }}
