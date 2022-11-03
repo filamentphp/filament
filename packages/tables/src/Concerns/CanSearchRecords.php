@@ -115,7 +115,7 @@ trait CanSearchRecords
     protected function castTableColumnSearches(array $searches): array
     {
         return array_map(
-            static fn ($search): array | string => is_array($search) ?
+            fn ($search): array | string => is_array($search) ?
                 $this->castTableColumnSearches($search) :
                 strval($search),
             $searches,
