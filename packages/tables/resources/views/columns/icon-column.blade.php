@@ -21,6 +21,7 @@
             :color="match ($color) {
                 'danger' => 'text-danger-500',
                 'primary' => 'text-primary-500',
+                'secondary' => 'text-secondary-500',
                 'success' => 'text-success-500',
                 'warning' => 'text-warning-500',
                 null => 'text-gray-500',

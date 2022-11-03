@@ -201,7 +201,7 @@
                 x-show="! isFirstStep()"
                 x-cloak
                 x-on:click="previousStep"
-                color="secondary"
+                color="gray"
                 size="sm"
             >
                 {{ __('filament-forms::components.wizard.buttons.previous_step.label') }}

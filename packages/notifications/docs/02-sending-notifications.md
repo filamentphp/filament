@@ -210,7 +210,7 @@ Notification::make()
         Action::make('view')
             ->button(),
         Action::make('undo')
-            ->color('secondary'),
+            ->color('gray'),
     ]) // [tl! focus:end]
     ->send();
 ```
@@ -226,7 +226,7 @@ new Notification()
         new NotificationAction('view')
             .button(),
         new NotificationAction('undo')
-            .color('secondary'),
+            .color('gray'),
     ]) // [tl! focus:end]
     .send()
 ```
@@ -250,7 +250,7 @@ Notification::make()
             ->button()
             ->url(route('posts.show', $post), shouldOpenInNewTab: true) // [tl! focus]
         Action::make('undo')
-            ->color('secondary'),
+            ->color('gray'),
     ])
     ->send();
 ```
@@ -268,7 +268,7 @@ new Notification()
             .url('/view') // [tl! focus:start]
             .openUrlInNewTab(), // [tl! focus:end]
         new NotificationAction('undo')
-            .color('secondary'),
+            .color('gray'),
     ])
     .send()
 ```
@@ -290,7 +290,7 @@ Notification::make()
             ->button()
             ->url(route('posts.show', $post), shouldOpenInNewTab: true),
         Action::make('undo')
-            ->color('secondary')
+            ->color('gray')
             ->emit('undoEditingPost', [$post->id]), // [tl! focus]
     ])
     ->send();
@@ -309,7 +309,7 @@ new Notification()
             .url('/view')
             .openUrlInNewTab(),
         new NotificationAction('undo')
-            .color('secondary')
+            .color('gray')
             .emit('undoEditingPost'), // [tl! focus]
     ])
     .send()
@@ -332,7 +332,7 @@ Notification::make()
             ->button()
             ->url(route('posts.show', $post), shouldOpenInNewTab: true),
         Action::make('undo')
-            ->color('secondary')
+            ->color('gray')
             ->emit('undoEditingPost', [$post->id])
             ->close(), // [tl! focus]
     ])
@@ -352,7 +352,7 @@ new Notification()
             .url('/view')
             .openUrlInNewTab(),
         new NotificationAction('undo')
-            .color('secondary')
+            .color('gray')
             .emit('undoEditingPost')
             .close(), // [tl! focus]
     ])

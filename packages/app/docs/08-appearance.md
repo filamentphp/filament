@@ -99,6 +99,7 @@ module.exports = {
             colors: { // [tl! focus:start]
                 danger: colors.rose,
                 primary: colors.blue,
+                secondary: colors.gray,
                 success: colors.green,
                 warning: colors.yellow,
             }, // [tl! focus:end]

@@ -22,7 +22,7 @@
     {{ filament()->renderHook('user-menu.account.before') }}
 
     <x-filament::dropdown.header
-        :color="$accountItem?->getColor() ?? 'secondary'"
+        :color="$accountItem?->getColor() ?? 'gray'"
         :icon="$accountItem?->getIcon() ?? 'heroicon-m-user-circle'"
         :href="$accountItemUrl"
         :tag="filled($accountItemUrl) ? 'a' : 'div'"
@@ -90,7 +90,7 @@
 
         @foreach ($items as $key => $item)
             <x-filament::dropdown.list.item
-                :color="$item->getColor() ?? 'secondary'"
+                :color="$item->getColor() ?? 'gray'"
                 :icon="$item->getIcon()"
                 :href="$item->getUrl()"
                 tag="a"
@@ -100,7 +100,7 @@
         @endforeach
 
         <x-filament::dropdown.list.item
-            :color="$logoutItem?->getColor() ?? 'secondary'"
+            :color="$logoutItem?->getColor() ?? 'gray'"
             :icon="$logoutItem?->getIcon() ?? 'heroicon-m-arrow-left-on-rectangle'"
             :action="$logoutItem?->getUrl() ?? filament()->getLogoutUrl()"
             method="post"

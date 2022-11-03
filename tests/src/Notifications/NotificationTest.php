@@ -23,7 +23,7 @@ it('can send notifications', function () {
     $icons = app(IconsManifest::class)->getManifest($iconSets);
 
     $getRandomColor = function (): string {
-        return Arr::random(['danger', 'primary', 'secondary', 'success', 'warning']);
+        return Arr::random(['danger', 'gray', 'primary', 'secondary', 'success', 'warning']);
     };
 
     $getRandomIcon = function () use ($icons): string {

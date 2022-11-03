@@ -13,16 +13,18 @@
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-dropdown-list-item group flex w-full items-center whitespace-nowrap rounded-md p-2 text-sm text-gray-900 dark:text-gray-100',
         'focus:outline-none hover:text-white focus:text-white' => $hasHoverAndFocusState,
-        'hover:bg-primary-500 focus:bg-primary-500' => ($color === 'primary' || $color === 'secondary') && $hasHoverAndFocusState,
+        'hover:bg-primary-500 focus:bg-primary-500' => ($color === 'primary' || $color === 'gray') && $hasHoverAndFocusState,
         'hover:bg-danger-500 focus:bg-danger-500' => $color === 'danger' && $hasHoverAndFocusState,
+        'hover:bg-secondary-500 focus:bg-secondary-500' => $color === 'secondary' && $hasHoverAndFocusState,
         'hover:bg-success-500 focus:bg-success-500' => $color === 'success' && $hasHoverAndFocusState,
         'hover:bg-warning-500 focus:bg-warning-500' => $color === 'warning' && $hasHoverAndFocusState,
     ]);
 
     $detailClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-dropdown-list-item-detail ml-auto text-xs text-gray-500',
-        'group-hover:text-primary-100 group-focus:text-primary-100' => ($color === 'primary' || $color === 'secondary') && $hasHoverAndFocusState,
+        'group-hover:text-primary-100 group-focus:text-primary-100' => ($color === 'primary' || $color === 'gray') && $hasHoverAndFocusState,
         'group-hover:text-danger-100 group-focus:text-danger-100' => $color === 'danger' && $hasHoverAndFocusState,
+        'group-hover:text-secondary-100 group-focus:text-secondary-100' => $color === 'secondary' && $hasHoverAndFocusState,
         'group-hover:text-success-100 group-focus:text-success-100' => $color === 'success' && $hasHoverAndFocusState,
         'group-hover:text-warning-100 group-focus:text-warning-100' => $color === 'warning' && $hasHoverAndFocusState,
     ]);
@@ -31,8 +33,9 @@
 
     $iconColor = match ($color) {
         'danger' => 'text-danger-500',
+        'gray' => 'text-gray-500',
         'primary' => 'text-primary-500',
-        'secondary' => 'text-gray-500',
+        'secondary' => 'text-secondary-500',
         'success' => 'text-success-500',
         'warning' => 'text-warning-500',
     };

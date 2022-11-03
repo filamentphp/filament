@@ -102,7 +102,7 @@ it('can have a label', function () {
 it('can have a color', function () {
     livewire(PostsTable::class)
         ->assertTableBulkActionHasColor('has-color', 'primary')
-        ->assertTableBulkActionDoesNotHaveColor('has-color', 'secondary');
+        ->assertTableBulkActionDoesNotHaveColor('has-color', 'gray');
 });
 
 it('can state whether a bulk action exists', function () {

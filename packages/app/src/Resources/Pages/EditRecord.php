@@ -264,7 +264,7 @@ class EditRecord extends Page
         return Action::make('cancel')
             ->label(__('filament::resources/pages/edit-record.form.actions.cancel.label'))
             ->url($this->previousUrl ?? static::getResource()::getUrl())
-            ->color('secondary');
+            ->color('gray');
     }
 
     public function form(Form $form): Form

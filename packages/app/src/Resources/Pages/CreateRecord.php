@@ -165,7 +165,7 @@ class CreateRecord extends Page
             ->label(__('filament::resources/pages/create-record.form.actions.create_another.label'))
             ->action('createAnother')
             ->keyBindings(['mod+shift+s'])
-            ->color('secondary');
+            ->color('gray');
     }
 
     protected function getCancelFormAction(): Action
@@ -173,7 +173,7 @@ class CreateRecord extends Page
         return Action::make('cancel')
             ->label(__('filament::resources/pages/create-record.form.actions.cancel.label'))
             ->url($this->previousUrl ?? static::getResource()::getUrl())
-            ->color('secondary');
+            ->color('gray');
     }
 
     public function getTitle(): string

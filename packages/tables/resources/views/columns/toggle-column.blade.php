@@ -21,7 +21,8 @@
         x-bind:class="{
             '{{ match ($getOnColor()) {
                 'danger' => 'bg-danger-500',
-                'secondary' => 'bg-gray-500',
+                'gray' => 'bg-gray-500',
+                'secondary' => 'bg-secondary-500',
                 'success' => 'bg-success-500',
                 'warning' => 'bg-warning-500',
                 default => 'bg-primary-600',
@@ -29,6 +30,7 @@
             '{{ match ($getOffColor()) {
                 'danger' => 'bg-danger-500',
                 'primary' => 'bg-primary-500',
+                'secondary' => 'bg-secondary-500',
                 'success' => 'bg-success-500',
                 'warning' => 'bg-warning-500',
                 default => 'bg-gray-200',
@@ -60,6 +62,7 @@
                         :color="match ($getOffColor()) {
                             'danger' => 'text-danger-500',
                             'primary' => 'text-primary-500',
+                            'secondary' => 'text-secondary-500',
                             'success' => 'text-success-500',
                             'warning' => 'text-warning-500',
                             default => 'text-gray-400',
@@ -83,7 +86,8 @@
                         alias="filament-tables::columns.toggle.on"
                         :color="match ($getOnColor()) {
                             'danger' => 'text-danger-500',
-                            'secondary' => 'text-gray-400',
+                            'gray' => 'text-gray-400',
+                            'secondary' => 'text-secondary-500',
                             'success' => 'text-success-500',
                             'warning' => 'text-warning-500',
                             default => 'text-primary-500',

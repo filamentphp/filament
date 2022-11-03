@@ -90,7 +90,7 @@ it('can have a label', function () {
 it('can have a color', function () {
     livewire(PostsTable::class)
         ->assertTableActionHasColor('has-color', 'primary')
-        ->assertTableActionDoesNotHaveColor('has-color', 'secondary');
+        ->assertTableActionDoesNotHaveColor('has-color', 'gray');
 });
 
 it('can have a URL', function () {

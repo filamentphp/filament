@@ -56,7 +56,7 @@ class AssociateAction extends Action
 
         $this->successNotificationTitle(__('filament-actions::associate.single.messages.associated'));
 
-        $this->color('secondary');
+        $this->color('gray');
 
         $this->button();
 
