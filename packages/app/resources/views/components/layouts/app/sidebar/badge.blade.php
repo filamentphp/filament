@@ -5,7 +5,9 @@
 ])
 
 <span
-    x-show="$store.sidebar.isOpen"
+    @if (\Filament\Navigation\Sidebar::$isCollapsibleOnDesktop)
+        x-show="$store.sidebar.isOpen"
+    @endif
     @class([
         'inline-flex items-center justify-center ml-auto rtl:ml-0 rtl:mr-auto min-h-4 px-2 py-0.5 text-xs font-medium tracking-tight rounded-xl whitespace-normal',
         match ($active) {

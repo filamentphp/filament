@@ -14,9 +14,8 @@
 >
     <header class="filament-sidebar-header border-b h-[4rem] shrink-0 flex items-center justify-center relative dark:border-gray-700">
         <div
-            x-cloak
             @class([
-                'flex items-center jusify-center px-6 w-full',
+                'flex items-center justify-center px-6 w-full',
                 'lg:px-4' => \Filament\Navigation\Sidebar::$isCollapsibleOnDesktop && (! \Filament\Navigation\Sidebar::$isFullyCollapsibleOnDesktop),
             ])
             x-show="$store.sidebar.isOpen || @js(! \Filament\Navigation\Sidebar::$isCollapsibleOnDesktop) || @js(\Filament\Navigation\Sidebar::$isFullyCollapsibleOnDesktop)"

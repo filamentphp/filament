@@ -45,7 +45,6 @@
 
         <div
             @if (\Filament\Navigation\Sidebar::$isCollapsibleOnDesktop)
-                x-data="{}"
                 x-show="$store.sidebar.isOpen"
             @endif
             class="flex flex-1"
