@@ -225,7 +225,7 @@
                         x-data="{
                             allCollapsed: true,
                             get label() {
-                                return this.allCollapsed ? '{{ __('tables::buttons.expand_all.label') }}' : '{{ __('tables::buttons.collapse_all.label') }}';
+                                return this.allCollapsed ? 'Expand all' : 'Collapse all';
                             },
                             handle() {
                                 if (this.allCollapsed) {

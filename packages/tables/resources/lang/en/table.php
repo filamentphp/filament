@@ -87,14 +87,6 @@ return [
             'label' => 'Toggle columns',
         ],
 
-        'expand_all' => [
-            'label' => 'Expand all',
-        ],
-
-        'collapse_all' => [
-            'label' => 'Collapse all',
-        ],
-
     ],
 
     'empty' => [
