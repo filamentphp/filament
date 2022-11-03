@@ -18,9 +18,8 @@
         'dark:border-gray-700' => config('filament.dark_mode'),
     ])>
         <div
-            x-cloak
             @class([
-                'flex items-center jusify-center px-6 w-full',
+                'flex items-center justify-center px-6 w-full',
                 'lg:px-4' => config('filament.layout.sidebar.is_collapsible_on_desktop') && (config('filament.layout.sidebar.collapsed_width') !== 0),
             ])
             x-show="$store.sidebar.isOpen || @js(! config('filament.layout.sidebar.is_collapsible_on_desktop')) || @js(config('filament.layout.sidebar.collapsed_width') === 0)"
