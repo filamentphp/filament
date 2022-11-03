@@ -8,7 +8,7 @@ use RecursiveIteratorIterator;
 
 trait CanSearchRecords
 {
-    public $tableColumnSearchQueries = [];
+    public $tableColumnSearches = [];
 
     public $tableSearch = '';
 
@@ -26,16 +26,16 @@ trait CanSearchRecords
         $this->resetPage();
     }
 
-    public function updatedTableColumnSearchQueries($value, $key): void
+    public function updatedTableColumnSearches($value, $key): void
     {
         if (blank($value)) {
-            unset($this->tableColumnSearchQueries[$key]);
+            unset($this->tableColumnSearches[$key]);
         }
 
         if ($this->getTable()->persistsColumnSearchInSession()) {
             session()->put(
                 $this->getTableColumnSearchSessionKey(),
-                $this->tableColumnSearchQueries,
+                $this->tableColumnSearches,
             );
         }
 
@@ -54,7 +54,7 @@ trait CanSearchRecords
 
     protected function applyColumnSearchToTableQuery(Builder $query): Builder
     {
-        foreach ($this->getTableColumnSearchQueries() as $column => $search) {
+        foreach ($this->getTableColumnSearches() as $column => $search) {
             if ($search === '') {
                 continue;
             }
@@ -112,9 +112,19 @@ trait CanSearchRecords
         return trim(strtolower($this->tableSearch));
     }
 
-    public function getTableColumnSearchQueries(): array
+    protected function castTableColumnSearches(array $searches): array
     {
-        // Example input of `$this->tableColumnSearchQueries`:
+        return array_map(
+            static fn ($search): array | string => is_array($search) ?
+                $this->castTableColumnSearches($search) :
+                strval($search),
+            $searches,
+        );
+    }
+
+    public function getTableColumnSearches(): array
+    {
+        // Example input of `$this->tableColumnSearches`:
         // [
         //     'number' => '12345 ',
         //     'customer' => [
@@ -122,14 +132,14 @@ trait CanSearchRecords
         //     ],
         // ]
 
-        // The `$this->tableColumnSearchQueries` array is potentially nested.
+        // The `$this->tableColumnSearches` array is potentially nested.
         // So, we iterate through it deeply:
         $iterator = new RecursiveIteratorIterator(
-            new RecursiveArrayIterator($this->tableColumnSearchQueries),
+            new RecursiveArrayIterator($this->tableColumnSearches),
             RecursiveIteratorIterator::SELF_FIRST
         );
 
-        $searchQueries = [];
+        $searches = [];
         $path = [];
 
         foreach ($iterator as $key => $value) {
@@ -140,12 +150,12 @@ trait CanSearchRecords
             }
 
             // Nested array keys are flattened into `dot.syntax`.
-            $searchQueries[
+            $searches[
                 implode('.', array_slice($path, 0, $iterator->getDepth() + 1))
             ] = trim(strtolower($value));
         }
 
-        return $searchQueries;
+        return $searches;
 
         // Example output:
         // [
