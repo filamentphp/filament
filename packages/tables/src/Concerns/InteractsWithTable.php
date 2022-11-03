@@ -52,14 +52,20 @@ trait InteractsWithTable
 
         $this->cacheForm('tableFiltersForm', $this->getTableFiltersForm());
 
-        $this->getTableColumnToggleForm()->fill(session()->get(
-            $this->getTableColumnToggleFormStateSessionKey(),
-            $this->getDefaultTableColumnToggleState()
-        ));
+        if (! $this->shouldMountInteractsWithTable) {
+            return;
+        }
+
+        if (blank($this->toggledTableColumns) || ($this->toggledTableColumns === [])) {
+            $this->getTableColumnToggleForm()->fill(session()->get(
+                $this->getTableColumnToggleFormStateSessionKey(),
+                $this->getDefaultTableColumnToggleState()
+            ));
+        }
 
         $filtersSessionKey = $this->getTableFiltersSessionKey();
 
-        if ($this->getTable()->persistsFiltersInSession() && session()->has($filtersSessionKey)) {
+        if ((blank($this->tableFilters) || ($this->tableFilters === [])) && $this->getTable()->persistsFiltersInSession() && session()->has($filtersSessionKey)) {
             $this->tableFilters = array_merge(
                 $this->tableFilters ?? [],
                 session()->get($filtersSessionKey) ?? [],
@@ -74,7 +80,7 @@ trait InteractsWithTable
 
         $searchSessionKey = $this->getTableSearchSessionKey();
 
-        if ($this->getTable()->persistsSearchInSession() && session()->has($searchSessionKey)) {
+        if (blank($this->tableSearch) && $this->getTable()->persistsSearchInSession() && session()->has($searchSessionKey)) {
             $this->tableSearch = session()->get($searchSessionKey);
         }
 
@@ -82,17 +88,13 @@ trait InteractsWithTable
 
         $columnSearchSessionKey = $this->getTableColumnSearchSessionKey();
 
-        if ($this->getTable()->persistsColumnSearchInSession() && session()->has($columnSearchSessionKey)) {
+        if ((blank($this->tableColumnSearches) || ($this->tableColumnSearches === [])) && $this->getTable()->persistsColumnSearchInSession() && session()->has($columnSearchSessionKey)) {
             $this->tableColumnSearches = session()->get($columnSearchSessionKey) ?? [];
         }
 
         $this->tableColumnSearches = $this->castTableColumnSearches(
             $this->tableColumnSearches ?? [],
         );
-
-        if (! $this->shouldMountInteractsWithTable) {
-            return;
-        }
 
         if ($this->getTable()->isPaginated()) {
             $this->tableRecordsPerPage = $this->getDefaultTableRecordsPerPageSelectOption();

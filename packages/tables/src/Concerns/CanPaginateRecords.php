@@ -13,7 +13,7 @@ trait CanPaginateRecords
         WithPagination::resetPage as livewireResetPage;
     }
 
-    public $tableRecordsPerPage;
+    public $tableRecordsPerPage = null;
 
     protected int | string | null $defaultTableRecordsPerPageSelectOption = null;
 
