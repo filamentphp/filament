@@ -52,6 +52,23 @@ CheckboxList::make('technologies')
 
 This method accepts the same options as the `columns()` method of the [grid](layout/grid). This allows you to responsively customize the number of columns at various breakpoints.
 
+## Bulk toggling checkboxes
+
+You may allow users to toggle all checkboxes at once using the `bulkToggleable()` method:
+
+ ```php
+ use Filament\Forms\Components\CheckboxList;
+ 
+ CheckboxList::make('technologies')
+     ->options([
+         'tailwind' => 'Tailwind CSS',
+         'alpine' => 'Alpine.js',
+         'laravel' => 'Laravel',
+         'livewire' => 'Laravel Livewire',
+     ])
+     ->bulkToggleable()
+ ```
+
 ## Populating automatically from a relationship
 
 You may employ the `relationship()` method to configure a relationship to automatically retrieve and save options from:
