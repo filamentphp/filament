@@ -82,14 +82,20 @@ trait InteractsWithTable
         $searchSessionKey = $this->getTableSearchSessionKey();
 
         if ($this->shouldPersistTableSearchInSession() && session()->has($searchSessionKey)) {
-            $this->tableSearchQuery = session()->get($searchSessionKey) ?? '';
+            $this->tableSearchQuery = session()->get($searchSessionKey);
         }
+
+        $this->tableSearchQuery = strval($this->tableSearchQuery);
 
         $columnSearchSessionKey = $this->getTableColumnSearchSessionKey();
 
         if ($this->shouldPersistTableColumnSearchInSession() && session()->has($columnSearchSessionKey)) {
-            $this->tableColumnSearchQueries = session()->get($columnSearchSessionKey) ?? [];
+            $this->tableColumnSearchQueries = session()->get($columnSearchSessionKey);
         }
+
+        $this->tableColumnSearchQueries = $this->castTableColumnSearchQueries(
+            $this->tableColumnSearchQueries ?? [],
+        );
 
         $this->hasMounted = true;
     }

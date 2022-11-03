@@ -138,6 +138,16 @@ trait CanSearchRecords
         return trim(strtolower($this->tableSearchQuery));
     }
 
+    protected function castTableColumnSearchQueries(array $searchQueries): array
+    {
+        return array_map(
+            static fn ($search): array | string => is_array($search) ?
+                $this->castTableColumnSearchQueries($search) :
+                strval($search),
+            $searchQueries,
+        );
+    }
+
     protected function getTableColumnSearchQueries(): array
     {
         // Example input of `$this->tableColumnSearchQueries`:
