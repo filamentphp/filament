@@ -46,7 +46,7 @@ class TextColumn extends Column
 
     public function getCopyMessage(): string
     {
-        return $this->evaluate($this->copyMessage) ?? __('tables::table.columns.text-column.messages.copied');
+        return $this->evaluate($this->copyMessage) ?? __('tables::table.columns.color.messages.copied');
     }
 
     public function getCopyMessageDuration(): int
