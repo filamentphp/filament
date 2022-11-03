@@ -5,11 +5,6 @@
     $icon = $getIcon();
     $iconPosition = $getIconPosition();
     $iconClasses = 'w-4 h-4';
-    
-    if ($isCopyable()) {
-        $icon = 'heroicon-o-clipboard';
-        $iconPosition = 'after';
-    }
 @endphp
 
 <div
