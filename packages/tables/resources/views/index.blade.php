@@ -221,7 +221,7 @@
                     @endif
 
                     <div
-                        x-show="@js(! $isReordering) || ! selectedRecords.length && hasCollapsibleColumnsLayout"
+                        x-show="@js($isReordering) || ! selectedRecords.length && hasCollapsibleColumnsLayout"
                         x-data="{
                             allCollapsed: true,
                             get label() {
