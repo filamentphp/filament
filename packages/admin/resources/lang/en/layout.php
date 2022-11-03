@@ -35,7 +35,7 @@ return [
         ],
 
         'user_menu' => [
-            'label' => 'User Menu',
+            'label' => 'User menu',
         ],
 
     ],

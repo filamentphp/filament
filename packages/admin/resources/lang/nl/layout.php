@@ -22,8 +22,20 @@ return [
             'label' => 'Uitloggen',
         ],
 
+        'sidebar' => [
+
+            'collapse' => [
+                'label' => 'Zijbalk inklappen',
+            ],
+
+            'expand' => [
+                'label' => 'Zijbalk uitklappen',
+            ],
+
+        ],
+
         'user_menu' => [
-            'label' => 'gebruikersmenu',
+            'label' => 'Gebruikersmenu',
         ],
 
     ],
