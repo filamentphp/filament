@@ -56,6 +56,22 @@ return [
 
     ],
 
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Alles deselecteren',
+            ],
+
+            'select_all' => [
+                'label' => 'Alles selecteren',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [
