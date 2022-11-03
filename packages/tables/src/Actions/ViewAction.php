@@ -28,7 +28,7 @@ class ViewAction extends Action
             [$this->getModalCancelAction()->label(__('filament-actions::view.single.modal.actions.close.label'))],
         ));
 
-        $this->color('secondary');
+        $this->color('gray');
 
         $this->icon('heroicon-m-eye');
 

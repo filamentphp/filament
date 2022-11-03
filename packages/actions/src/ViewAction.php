@@ -15,7 +15,7 @@ class ViewAction extends Action
 
         $this->label(__('filament-actions::view.single.label'));
 
-        $this->color('secondary');
+        $this->color('gray');
 
         $this->groupedIcon('heroicon-m-eye');
 

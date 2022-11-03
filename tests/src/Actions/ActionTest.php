@@ -85,7 +85,7 @@ it('can have a label', function () {
 it('can have a color', function () {
     livewire(Actions::class)
         ->assertActionHasColor('has-color', 'primary')
-        ->assertActionDoesNotHaveColor('has-color', 'secondary');
+        ->assertActionDoesNotHaveColor('has-color', 'gray');
 });
 
 it('can have a URL', function () {

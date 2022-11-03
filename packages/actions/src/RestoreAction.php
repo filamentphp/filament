@@ -26,7 +26,7 @@ class RestoreAction extends Action
 
         $this->successNotificationTitle(__('filament-actions::restore.single.messages.restored'));
 
-        $this->color('secondary');
+        $this->color('gray');
 
         $this->groupedIcon('heroicon-m-arrow-uturn-left');
 

@@ -56,7 +56,7 @@ class AttachAction extends Action
 
         $this->successNotificationTitle(__('filament-actions::attach.single.messages.attached'));
 
-        $this->color('secondary');
+        $this->color('gray');
 
         $this->button();
 

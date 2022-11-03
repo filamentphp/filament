@@ -9,7 +9,7 @@
             @if ($unreadNotificationsCount)
                 <x-filament::link
                     wire:click="markAllDatabaseNotificationsAsRead"
-                    color="secondary"
+                    color="gray"
                     tag="button"
                     tabindex="-1"
                     wire:target="markAllDatabaseNotificationsAsRead"
@@ -27,7 +27,7 @@
             <x-filament::link
                 wire:click="clearDatabaseNotifications"
                 x-on:click="isOpen = false"
-                color="secondary"
+                color="gray"
                 tag="button"
                 tabindex="-1"
                 wire:target="clearDatabaseNotifications"

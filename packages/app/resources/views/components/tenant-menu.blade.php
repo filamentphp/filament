@@ -74,7 +74,7 @@
         <x-filament::dropdown.list>
             @foreach ($items as $key => $item)
                 <x-filament::dropdown.list.item
-                    :color="$item->getColor() ?? 'secondary'"
+                    :color="$item->getColor() ?? 'gray'"
                     :icon="$item->getIcon()"
                     :href="$item->getUrl()"
                     tag="a"
@@ -87,7 +87,7 @@
                 <x-filament::dropdown.list.item
                     :href="$billingItemUrl ?? filament()->getTenantBillingUrl($currentTenant)"
                     :icon="$billingItem?->getIcon() ?? 'heroicon-m-credit-card'"
-                    :color="$billingItem?->getColor() ?? 'secondary'"
+                    :color="$billingItem?->getColor() ?? 'gray'"
                     tag="a"
                 >
                     {{ $billingItem?->getLabel() ?? __('filament::layout.buttons.billing.label') }}

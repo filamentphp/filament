@@ -25,7 +25,7 @@ use Filament\Tables\Columns\BadgeColumn;
 BadgeColumn::make('status')
     ->colors([
         'primary',
-        'secondary' => 'draft',
+        'gray' => 'draft',
         'warning' => 'reviewing',
         'success' => 'published',
         'danger' => 'rejected',
@@ -40,7 +40,7 @@ use Filament\Tables\Columns\BadgeColumn;
 BadgeColumn::make('status')
     ->colors([
         'primary',
-        'secondary' => static fn ($state): bool => $state === 'draft',
+        'gray' => static fn ($state): bool => $state === 'draft',
         'warning' => static fn ($state): bool => $state === 'reviewing',
         'success' => static fn ($state): bool => $state === 'published',
         'danger' => static fn ($state): bool => $state === 'rejected',
@@ -58,7 +58,7 @@ BadgeColumn::make('status')
             return 'success';
         }
         
-        return 'secondary';
+        return 'gray';
     })
 ```
 

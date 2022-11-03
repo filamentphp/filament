@@ -153,7 +153,7 @@ trait CanOpenModal
             ->label($this->getModalButtonLabel())
             ->submit($this->getLivewireCallActionName())
             ->color(match ($color = $this->getColor()) {
-                'secondary' => 'primary',
+                'gray' => 'primary',
                 default => $color,
             });
     }
@@ -167,7 +167,7 @@ trait CanOpenModal
         return static::makeModalAction('cancel')
             ->label(__('filament-actions::modal.actions.cancel.label'))
             ->cancel()
-            ->color('secondary');
+            ->color('gray');
     }
 
     public function getExtraModalActions(): array
@@ -246,7 +246,7 @@ trait CanOpenModal
     {
         return static::makeModalAction($name)
             ->action($this->getLivewireCallActionName(), $arguments)
-            ->color('secondary');
+            ->color('gray');
     }
 
     protected static function getModalActionClass(): string

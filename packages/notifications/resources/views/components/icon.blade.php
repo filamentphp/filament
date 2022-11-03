@@ -8,8 +8,9 @@
     alias="filament-notifications::notification"
     :color="match ($color) {
         'danger' => 'text-danger-400',
+        'gray' => 'text-gray-400',
         'primary' => 'text-primary-400',
-        'secondary' => 'text-gray-400',
+        'secondary' => 'text-secondary-400',
         'success' => 'text-success-400',
         'warning' => 'text-warning-400',
         default => $color,

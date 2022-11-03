@@ -62,7 +62,7 @@ use Filament\Actions\Action;
 protected function getHeaderActions(): array
 {
     return [
-        Action::make('settings')->color('secondary'),
+        Action::make('settings')->color('gray'),
     ];
 }
 ```

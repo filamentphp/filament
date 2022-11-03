@@ -19,7 +19,8 @@
         'text-lg' => $size === 'lg',
         'text-primary-600 hover:text-primary-500 dark:text-primary-500 dark:hover:text-primary-400' => $color === 'primary',
         'text-danger-600 hover:text-danger-500 dark:text-danger-500 dark:hover:text-danger-400' => $color === 'danger',
-        'text-gray-600 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200' => $color === 'secondary',
+        'text-gray-600 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200' => $color === 'gray',
+        'text-secondary-600 hover:text-secondary-500 dark:text-secondary-500 dark:hover:text-secondary-400' => $color === 'secondary',
         'text-success-600 hover:text-success-500 dark:text-success-500 dark:hover:text-success-400' => $color === 'success',
         'text-warning-600 hover:text-warning-500 dark:text-warning-500 dark:hover:text-warning-400' => $color === 'warning',
     ];

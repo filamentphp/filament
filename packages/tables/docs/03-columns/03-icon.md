@@ -45,7 +45,7 @@ IconColumn::make('is_featured')
         'heroicon-o-check-circle' => 'published',
     ])
     ->colors([
-        'secondary',
+        'gray',
         'danger' => 'draft',
         'warning' => 'reviewing',
         'success' => 'published',

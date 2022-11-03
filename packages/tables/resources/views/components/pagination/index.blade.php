@@ -52,7 +52,7 @@
                         :icon="$previousArrowIcon"
                         rel="prev"
                         size="sm"
-                        color="secondary"
+                        color="gray"
                     >
                         {{ __('filament-tables::table.pagination.buttons.previous.label') }}
                     </x-filament::button>
@@ -85,7 +85,7 @@
                         icon-position="after"
                         rel="next"
                         size="sm"
-                        color="secondary"
+                        color="gray"
                     >
                         {{ __('filament-tables::table.pagination.buttons.next.label') }}
                     </x-filament::button>
