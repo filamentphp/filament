@@ -29,6 +29,7 @@
                 <button
                     type="button"
                     class="filament-sidebar-collapse-button shrink-0 hidden lg:flex items-center justify-center w-10 h-10 text-primary-500 rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none"
+                    x-bind:aria-label="$store.sidebar.isOpen ? '{{ __('filament::layout.buttons.sidebar.collapse.label') }}' : '{{ __('filament::layout.buttons.sidebar.expand.label') }}'"
                     x-on:click.stop="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                     x-transition:enter="lg:transition delay-100"
                     x-transition:enter-start="opacity-0"
@@ -56,6 +57,7 @@
             <button
                 type="button"
                 class="filament-sidebar-close-button shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none"
+                x-bind:aria-label="$store.sidebar.isOpen ? '{{ __('filament::layout.buttons.sidebar.collapse.label') }}' : '{{ __('filament::layout.buttons.sidebar.expand.label') }}'"
                 x-on:click.stop="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                 x-show="(! $store.sidebar.isOpen) && @js(config('filament.layout.sidebar.collapsed_width') !== 0)"
                 x-transition:enter="lg:transition delay-100"
@@ -95,6 +97,7 @@
                         <x-filament::layouts.app.sidebar.item
                             :active="$item->isActive()"
                             :icon="$item->getIcon()"
+                            :active-icon="$item->getActiveIcon()"
                             :url="$item->getUrl()"
                             :badge="$item->getBadge()"
                             :badgeColor="$item->getBadgeColor()"

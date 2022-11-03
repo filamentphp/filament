@@ -27,6 +27,8 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
 
     protected static ?string $navigationIcon = null;
 
+    protected static ?string $activeNavigationIcon = null;
+
     protected static ?string $navigationLabel = null;
 
     protected static ?int $navigationSort = null;
@@ -64,6 +66,7 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
             NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
                 ->icon(static::getNavigationIcon())
+                ->activeIcon(static::getActiveNavigationIcon())
                 ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName()))
                 ->sort(static::getNavigationSort())
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
@@ -125,6 +128,11 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
     protected static function getNavigationIcon(): string
     {
         return static::$navigationIcon ?? 'heroicon-o-document-text';
+    }
+
+    protected static function getActiveNavigationIcon(): string
+    {
+        return static::$activeNavigationIcon ?? static::getNavigationIcon();
     }
 
     protected static function getNavigationLabel(): string

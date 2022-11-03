@@ -8,12 +8,24 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'Kloniraj',
+            ],
+
             'create_item' => [
                 'label' => 'Dodaj :label',
             ],
 
+            'create_item_between' => [
+                'label' => 'Ubaciti',
+            ],
+
             'delete_item' => [
                 'label' => 'Izbriši',
+            ],
+
+            'move_item' => [
+                'label' => 'Pomjeriti',
             ],
 
             'move_item_down' => [
@@ -54,6 +66,10 @@ return [
 
             'delete' => [
                 'label' => 'Izbriši red',
+            ],
+
+            'reorder' => [
+                'label' => 'Preuredi red',
             ],
 
         ],
@@ -101,6 +117,14 @@ return [
 
             'delete_item' => [
                 'label' => 'Izbriši',
+            ],
+
+            'clone_item' => [
+                'label' => 'Kloniraj',
+            ],
+
+            'move_item' => [
+                'label' => 'Pomjeriti',
             ],
 
             'move_item_down' => [
@@ -199,6 +223,8 @@ return [
         ],
 
         'loading_message' => 'Učitavanje ...',
+
+        'max_items_message' => 'Mogu se odabrati samo :count.',
 
         'no_search_results_message' => 'Nijedna opcija ne odgovara vašoj pretrazi.',
 
