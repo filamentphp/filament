@@ -14,6 +14,8 @@ Section::make('Heading')
     ])
 ```
 
+## Grid columns
+
 You may use the `columns()` method to easily create a [grid](grid) within the section:
 
 ```php
@@ -25,6 +27,8 @@ Section::make('Heading')
     ])
     ->columns(2)
 ```
+
+## Positioning the heading and description aside
 
 You may use the `aside()` to align heading & description on the left, and the form components inside a card on the right:
 
@@ -38,6 +42,8 @@ Section::make('Heading')
         // ...
     ])
 ```
+
+## Collapsing sections
 
 Sections may be `collapsible()` to optionally hide content in long forms:
 
@@ -62,6 +68,8 @@ Section::make('Heading')
     ])
     ->collapsed()
 ```
+
+## Compact section styling
 
 When nesting sections, you can use a more compact styling:
 

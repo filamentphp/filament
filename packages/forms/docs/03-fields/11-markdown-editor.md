@@ -12,6 +12,8 @@ MarkdownEditor::make('content')
 
 ![](https://user-images.githubusercontent.com/41773797/147613631-0f9254aa-0abb-4a2e-b9d7-bda1a01b8d57.png)
 
+## Toolbar buttons
+
 You may enable / disable toolbar buttons using a range of convenient methods:
 
 ```php
@@ -46,6 +48,8 @@ MarkdownEditor::make('content')
         'strike',
     ])
 ```
+
+## Image uploads
 
 You may customize how images are uploaded using configuration methods:
 

@@ -12,6 +12,8 @@ RichEditor::make('content')
 
 ![](https://user-images.githubusercontent.com/41773797/147613608-b1236c72-d5cf-40d5-aa73-70c37a5c7e4d.png)
 
+## Toolbar buttons
+
 You may enable / disable toolbar buttons using a range of convenient methods:
 
 ```php
@@ -47,6 +49,8 @@ RichEditor::make('content')
         'strike',
     ])
 ```
+
+## Image uploads
 
 You may customize how images are uploaded using configuration methods:
 

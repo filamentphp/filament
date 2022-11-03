@@ -33,7 +33,9 @@ class App extends Model
 }
 ```
 
-You may organize options into columns by using the `columns()` method:
+## Splitting options into columns
+
+You may split options into columns by using the `columns()` method:
 
 ```php
 use Filament\Forms\Components\CheckboxList;

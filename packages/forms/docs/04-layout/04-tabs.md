@@ -24,6 +24,8 @@ Tabs::make('Heading')
     ])
 ```
 
+## Setting the default active tab
+
 The first tab will be open by default. You can change the default open tab using the `activeTab()` method:
 
 ```php
@@ -46,6 +48,8 @@ Tabs::make('Heading')
     ])
     ->activeTab(2)
 ```
+
+## Setting a tab icon or badge
 
 Tabs may have an icon and badge, which you can set using the `icon()` and `badge()` methods:
 

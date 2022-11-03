@@ -13,6 +13,8 @@ Card::make()
     ])
 ```
 
+## Grid columns
+
 You may use the `columns()` method to easily create a [grid](grid) within the card:
 
 ```php

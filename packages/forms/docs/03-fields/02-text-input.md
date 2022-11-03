@@ -12,6 +12,8 @@ TextInput::make('name')
 
 ![](https://user-images.githubusercontent.com/41773797/147612753-1d4514ea-dba9-4f5c-9efc-08f09608e90d.png)
 
+## Setting the input type
+
 You may set the type of string using a set of methods. Some, such as `email()`, also provide validation:
 
 ```php
@@ -33,6 +35,10 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('backgroundColor')->type('color')
 ```
 
+## Validation
+
+### Length validation
+
 You may limit the length of the input by setting the `minLength()` and `maxLength()` methods. These methods add both frontend and backend validation:
 
 ```php
@@ -51,6 +57,8 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('code')->length(8)
 ```
 
+### Size validation
+
 In addition, you may validate the minimum and maximum value of the input by setting the `minValue()` and `maxValue()` methods:
 
 ```php
@@ -61,28 +69,6 @@ TextInput::make('number')
     ->minValue(1)
     ->maxValue(100)
 ```
-
-You may set the autocomplete configuration for the text field using the `autocomplete()` method:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('password')
-    ->password()
-    ->autocomplete('new-password')
-```
-
-As a shortcut for `autocomplete="off"`, you may `disableAutocomplete()`:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('password')
-    ->password()
-    ->disableAutocomplete()
-```
-
-For more complex autocomplete options, text inputs also support [datalists](#datalists).
 
 ### Phone number validation
 
@@ -107,6 +93,51 @@ TextInput::configureUsing(function (TextInput $component): void {
     $component->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/');
 });
 ```
+
+## Autocomplete
+
+You may set the autocomplete configuration for the text field using the `autocomplete()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('password')
+    ->password()
+    ->autocomplete('new-password')
+```
+
+As a shortcut for `autocomplete="off"`, you may `disableAutocomplete()`:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('password')
+    ->password()
+    ->disableAutocomplete()
+```
+
+For more complex autocomplete options, text inputs also support [datalists](#datalists).
+
+## Datalists
+
+You may specify [datalist](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist) options for a text input using the `datalist()` method:
+
+```php
+TextInput::make('manufacturer')
+    ->datalist([
+        'BWM',
+        'Ford',
+        'Mercedes-Benz',
+        'Porsche',
+        'Toyota',
+        'Tesla',
+        'Volkswagen',
+    ])
+```
+
+![](https://user-images.githubusercontent.com/41773797/147612844-f46e113f-82b3-4675-9097-4d64a4315082.png)
+
+Datalists provide autocomplete options to users when they use a text input. However, these are purely recommendations, and the user is still able to type any value into the input. If you're looking for strictly predefined options, check out [select fields](select).
 
 ## Affixes
 
@@ -239,24 +270,3 @@ use Filament\Forms\Components\TextInput;
 
 TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask->money(prefix: '$', thousandsSeparator: ',', decimalPlaces: 2, isSigned: false))
 ```
-
-## Datalists
-
-You may specify [datalist](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist) options for a text input using the `datalist()` method:
-
-```php
-TextInput::make('manufacturer')
-    ->datalist([
-        'BWM',
-        'Ford',
-        'Mercedes-Benz',
-        'Porsche',
-        'Toyota',
-        'Tesla',
-        'Volkswagen',
-    ])
-```
-
-![](https://user-images.githubusercontent.com/41773797/147612844-f46e113f-82b3-4675-9097-4d64a4315082.png)
-
-Datalists provide autocomplete options to users when they use a text input. However, these are purely recommendations, and the user is still able to type any value into the input. If you're looking for strictly predefined options, check out [select fields](select).

@@ -12,6 +12,23 @@ Toggle::make('is_admin')
 
 ![](https://user-images.githubusercontent.com/41773797/147613146-f5ebde21-f72d-44dd-b5c0-5d229fcd91ef.png)
 
+If you're saving the boolean value using Eloquent, you should be sure to add a `boolean` [cast](https://laravel.com/docs/eloquent-mutators#attribute-casting) to the model property:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+class User extends Model
+{
+    protected $casts = [
+        'is_admin' => 'boolean',
+    ];
+
+    // ...
+}
+```
+
+## Positioning the label above
+
 Toggle fields have two layout modes, inline and stacked. By default, they are inline.
 
 When the toggle is inline, its label is adjacent to it:
@@ -55,18 +72,3 @@ Toggle::make('is_admin')
 ```
 
 ![](https://user-images.githubusercontent.com/41773797/147613184-9086c102-ad71-4c4e-9170-9a4201a80c66.png)
-
-If you're saving the boolean value using Eloquent, you should be sure to add a `boolean` [cast](https://laravel.com/docs/eloquent-mutators#attribute-casting) to the model property:
-
-```php
-use Illuminate\Database\Eloquent\Model;
-
-class User extends Model
-{
-    protected $casts = [
-        'is_admin' => 'boolean',
-    ];
-
-    // ...
-}
-```

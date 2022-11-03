@@ -42,6 +42,8 @@ Repeater::make('members')
 
 If you wish to define a repeater with multiple schema blocks that can be repeated in any order, please use the [builder](builder).
 
+## Setting empty default items
+
 Repeaters may have a certain number of empty items created by default, using the `defaultItems()` method:
 
 ```php
@@ -53,6 +55,8 @@ Repeater::make('members')
     ])
     ->defaultItems(3)
 ```
+
+## Setting a create item button label
 
 You may set a label to customize the text that should be displayed in the button for adding a repeater item:
 
@@ -68,6 +72,8 @@ Repeater::make('members')
 
 ![](https://user-images.githubusercontent.com/41773797/147613748-6fdf2eff-de09-4ba0-8d01-68888802b152.png)
 
+## Disabling functionality
+
 You may also prevent the user from adding items, deleting items, or moving items inside the repeater:
 
 ```php
@@ -81,6 +87,8 @@ Repeater::make('members')
     ->disableItemDeletion()
     ->disableItemMovement()
 ```
+
+## Validation
 
 You may customize the number of items that may be created, using the `minItems()` and `maxItems()` methods:
 

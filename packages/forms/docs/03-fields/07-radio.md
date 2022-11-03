@@ -17,6 +17,8 @@ Radio::make('status')
 
 ![](https://user-images.githubusercontent.com/41773797/147613206-644bd6a4-4814-4a99-b398-d03625179bfa.png)
 
+## Setting option descriptions
+
 You can optionally provide descriptions to each option using the `descriptions()` method:
 
 ```php
@@ -39,6 +41,8 @@ Radio::make('status')
 
 Be sure to use the same `key` in the descriptions array as the `key` in the options array so the right description matches the right option.
 
+## Boolean options
+
 If you want a simple boolean radio button group, with "Yes" and "No" options, you can use the `boolean()` method:
 
 ```php
@@ -48,6 +52,8 @@ Radio::make('feedback')
 ```
 
 ![](https://user-images.githubusercontent.com/41773797/147613274-04745624-3ddd-46bb-b25c-1e756d6f4958.png)
+
+## Positioning the options inline with the label
 
 You may wish to display the options `inline()` with the label:
 

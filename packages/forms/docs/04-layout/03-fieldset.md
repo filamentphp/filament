@@ -13,6 +13,8 @@ Fieldset::make('Label')
     ])
 ```
 
+## Grid columns
+
 You may use the `columns()` method to customize the [grid](grid) within the fieldset:
 
 ```php

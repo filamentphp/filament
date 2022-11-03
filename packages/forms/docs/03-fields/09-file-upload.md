@@ -12,6 +12,10 @@ FileUpload::make('attachment')
 
 ![](https://user-images.githubusercontent.com/41773797/147613556-62c62153-4d21-4801-8a71-040d528d5757.png)
 
+> Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/docs/spatie-laravel-media-library-plugin) for more information.
+
+## Configuring the storage disk and directory
+
 By default, files will be uploaded publicly to your default storage disk.
 
 To change the disk and directory that files are saved in, and their visibility, use the `disk()`, `directory()` and `visibility` methods:
@@ -27,86 +31,7 @@ FileUpload::make('attachment')
 
 > Please note, it is the responsibility of the developer to delete these files from the disk if they are removed, as Filament is unaware if they are depended on elsewhere. One way to do this automatically is observing a [model event](https://laravel.com/docs/eloquent#events).
 
-By default, a random file name will be generated for newly-uploaded files. To instead preserve the original filenames of the uploaded files, use the `preserveFilenames()` method:
-
-```php
-use Filament\Forms\Components\FileUpload;
-
-FileUpload::make('attachment')->preserveFilenames()
-```
-
-You may completely customize how file names are generated using the `getUploadedFileNameForStorageUsing()` method, and returning a string from the callback:
-
-```php
-use Livewire\TemporaryUploadedFile;
-
-FileUpload::make('attachment')
-    ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
-        return (string) str($file->getClientOriginalName())->prepend('custom-prefix-');
-    })
-```
-
-You can keep the randomly generated file names, while still storing the original file name, using the `storeFileNamesIn()` method:
-
-```php
-use Filament\Forms\Components\FileUpload;
-
-FileUpload::make('attachments')
-    ->multiple()
-    ->storeFileNamesIn('attachment_file_names')
-```
-
-`attachment_file_names` will now store the original file name/s of your uploaded files.
-
-You may restrict the types of files that may be uploaded using the `acceptedFileTypes()` method, and passing an array of MIME types. You may also use the `image()` method as shorthand to allow all image MIME types.
-
-```php
-use Filament\Forms\Components\FileUpload;
-
-FileUpload::make('document')->acceptedFileTypes(['application/pdf'])
-FileUpload::make('image')->image()
-```
-
-You may also restrict the size of uploaded files, in kilobytes:
-
-```php
-use Filament\Forms\Components\FileUpload;
-
-FileUpload::make('attachment')
-    ->minSize(512)
-    ->maxSize(1024)
-```
-
-> To customize Livewire's default file upload validation rules, please refer to its [documentation](https://laravel-livewire.com/docs/file-uploads#global-validation).
-
-Filepond allows you to crop and resize images before they are uploaded. You can customize this behaviour using the `imageCropAspectRatio()`, `imageResizeTargetHeight()` and `imageResizeTargetWidth()` methods.
-
-```php
-use Filament\Forms\Components\FileUpload;
-
-FileUpload::make('image')
-    ->image()
-    ->imageCropAspectRatio('16:9')
-    ->imageResizeTargetWidth('1920')
-    ->imageResizeTargetHeight('1080')
-```
-
-You may also alter the general appearance of the Filepond component. Available options for these methods are available on the [Filepond website](https://pqina.nl/filepond/docs/api/instance/properties/#styles).
-
-```php
-use Filament\Forms\Components\FileUpload;
-
-FileUpload::make('attachment')
-    ->imagePreviewHeight('250')
-    ->loadingIndicatorPosition('left')
-    ->panelAspectRatio('2:1')
-    ->panelLayout('integrated')
-    ->removeUploadedFileButtonPosition('right')
-    ->uploadButtonPosition('left')
-    ->uploadProgressIndicatorPosition('left')
-```
-
-![](https://user-images.githubusercontent.com/41773797/147613590-9ee07ce7-a43e-46a0-bb40-7a21a3692aea.png)
+## Uploading multiple files
 
 You may also upload multiple files. This stores URLs in JSON:
 
@@ -131,6 +56,70 @@ class Message extends Model
 }
 ```
 
+## Customizing file names
+
+By default, a random file name will be generated for newly-uploaded files. To instead preserve the original filenames of the uploaded files, use the `preserveFilenames()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')->preserveFilenames()
+```
+
+You may completely customize how file names are generated using the `getUploadedFileNameForStorageUsing()` method, and returning a string from the callback:
+
+```php
+use Livewire\TemporaryUploadedFile;
+
+FileUpload::make('attachment')
+    ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
+        return (string) str($file->getClientOriginalName())->prepend('custom-prefix-');
+    })
+```
+
+### Storing original file names independently
+
+You can keep the randomly generated file names, while still storing the original file name, using the `storeFileNamesIn()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->multiple()
+    ->storeFileNamesIn('attachment_file_names')
+```
+
+`attachment_file_names` will now store the original file name/s of your uploaded files.
+
+## Validation
+
+> To customize Livewire's default file upload validation rules, please refer to its [documentation](https://laravel-livewire.com/docs/file-uploads#global-validation).
+
+### File type validation
+
+You may restrict the types of files that may be uploaded using the `acceptedFileTypes()` method, and passing an array of MIME types. You may also use the `image()` method as shorthand to allow all image MIME types.
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('document')->acceptedFileTypes(['application/pdf'])
+FileUpload::make('image')->image()
+```
+
+### File size validation
+
+You may also restrict the size of uploaded files, in kilobytes:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->minSize(512)
+    ->maxSize(1024)
+```
+
+### Number of files validation
+
 You may customize the number of files that may be uploaded, using the `minFiles()` and `maxFiles()` methods:
 
 ```php
@@ -142,6 +131,41 @@ FileUpload::make('attachments')
     ->maxFiles(5)
 ```
 
+## Manipulating images
+
+Filepond allows you to crop and resize images before they are uploaded. You can customize this behaviour using the `imageCropAspectRatio()`, `imageResizeTargetHeight()` and `imageResizeTargetWidth()` methods.
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('image')
+    ->image()
+    ->imageCropAspectRatio('16:9')
+    ->imageResizeTargetWidth('1920')
+    ->imageResizeTargetHeight('1080')
+```
+
+## Altering the appearance of the file upload area
+
+You may also alter the general appearance of the Filepond component. Available options for these methods are available on the [Filepond website](https://pqina.nl/filepond/docs/api/instance/properties/#styles).
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->imagePreviewHeight('250')
+    ->loadingIndicatorPosition('left')
+    ->panelAspectRatio('2:1')
+    ->panelLayout('integrated')
+    ->removeUploadedFileButtonPosition('right')
+    ->uploadButtonPosition('left')
+    ->uploadProgressIndicatorPosition('left')
+```
+
+![](https://user-images.githubusercontent.com/41773797/147613590-9ee07ce7-a43e-46a0-bb40-7a21a3692aea.png)
+
+## Reordering files
+
 You can also enable the re-ordering of uploaded files using the `enableReordering()` method:
 
 ```php
@@ -151,6 +175,8 @@ FileUpload::make('attachments')
     ->multiple()
     ->enableReordering()
 ```
+
+## Opening files in a new tab
 
 You can add a button to open each file in a new tab with the `enableOpen()` method:
 
@@ -162,6 +188,8 @@ FileUpload::make('attachments')
     ->enableOpen()
 ```
 
+## Downloading files
+
 If you wish to add a download button to each file instead, you can use the `enableDownload()` method:
 
 ```php
@@ -171,5 +199,3 @@ FileUpload::make('attachments')
     ->multiple()
     ->enableDownload()
 ```
-
-> Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/docs/spatie-laravel-media-library-plugin) for more information.

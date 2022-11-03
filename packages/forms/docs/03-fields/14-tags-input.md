@@ -29,6 +29,10 @@ class Post extends Model
 }
 ```
 
+> Filament also supports [`spatie/laravel-tags`](https://github.com/spatie/laravel-tags). See our [plugin documentation](/docs/spatie-laravel-tags-plugin) for more information.
+
+## Comma-separated tags
+
 You may allow the tags to be stored in a separated string, instead of JSON. To set this up, pass the separating character to the `separator()` method:
 
 ```php
@@ -36,6 +40,8 @@ use Filament\Forms\Components\TagsInput;
 
 TagsInput::make('tags')->separator(',')
 ```
+
+## Autocompleting tag suggestions
 
 Tags inputs may have autocomplete suggestions. To enable this, pass an array of suggestions to the `suggestions()` method:
 
@@ -52,5 +58,3 @@ TagsInput::make('tags')
 ```
 
 ![](https://user-images.githubusercontent.com/41773797/147614115-7570a6cb-dd91-4912-8adf-e54a51f1c567.png)
-
-> Filament also supports [`spatie/laravel-tags`](https://github.com/spatie/laravel-tags). See our [plugin documentation](/docs/spatie-laravel-tags-plugin) for more information.

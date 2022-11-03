@@ -37,6 +37,8 @@ Wizard\Step::make('Order')
     ]),
 ```
 
+## Setting up step icons
+
 Steps may also have an icon, which can be the name of any Blade icon component:
 
 ```php
@@ -48,6 +50,8 @@ Wizard\Step::make('Order')
         // ...
     ]),
 ```
+
+## Rendering a submit button on the last step
 
 You may use the `submitAction()` method to render submit button HTML or a view at the end of the wizard, on the last step. This provides a clearer UX than displaying a submit button below the wizard at all times:
 
@@ -64,6 +68,8 @@ Wizard::make([
 ])->submitAction(new HtmlString('<button type="submit">Submit</button>'))
 ```
 
+## Setting the default active step
+
 You may use the `startOnStep()` method to load a specific step in the wizard:
 
 ```php
@@ -73,6 +79,8 @@ Wizard::make([
     // ...
 ])->startOnStep(2)
 ```
+
+## Allowing steps to be skipped
 
 If you'd like to allow free navigation, so all steps are skippable, use the `skippable()` method:
 

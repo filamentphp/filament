@@ -71,6 +71,8 @@ Builder::make('content')
     ])
 ```
 
+## Setting a block label
+
 By default, the label of the block will be automatically determined based on its name. To override the block's label, you may use the `label()` method. Customizing the label in this way is useful if you wish to use a [translation string for localization](https://laravel.com/docs/localization#retrieving-translation-strings):
 
 ```php
@@ -78,6 +80,8 @@ use Filament\Forms\Components\Builder;
 
 Builder\Block::make('heading')->label(__('blocks.heading'))
 ```
+
+## Setting a block icon
 
 Blocks may also have an icon, which is displayed next to the label. The `icon()` method accepts the name of any Blade icon component:
 
@@ -88,6 +92,8 @@ Builder\Block::make('heading')->icon('heroicon-m-bookmark')
 ```
 
 ![](https://user-images.githubusercontent.com/41773797/147614039-d9aa43dd-acfe-43b6-9cd1-1fc322aa4526.png)
+
+## Validation
 
 You may customize the number of items that may be created, using the `minItems()` and `maxItems()` methods:
 

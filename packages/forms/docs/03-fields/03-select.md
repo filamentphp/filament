@@ -17,6 +17,8 @@ Select::make('status')
 
 ![](https://user-images.githubusercontent.com/41773797/147612885-888dfd64-6256-482d-b4bc-840191306d2d.png)
 
+## Searching options
+
 You may enable a search input to allow easier access to many options, using the `searchable()` method:
 
 ```php
@@ -42,6 +44,8 @@ Select::make('authorId')
     ->getSearchResultsUsing(fn (string $search) => User::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id'))
     ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name),
 ```
+
+## Disable placeholder selection
 
 You can prevent the placeholder from being selected using the `disablePlaceholderSelection()` method:
 
@@ -125,6 +129,8 @@ Select::make('technologies')
 
 > To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
 
+### Preloading relationship options
+
 If you'd like to populate the options from the database when the page is loaded, instead of when the user searches, you can use the `preload()` method:
 
 ```php
@@ -135,6 +141,8 @@ Select::make('authorId')
     ->preload()
 ```
 
+### Customizing the relationship query
+
 You may customize the database query that retrieves options using the third parameter of the `relationship()` method:
 
 ```php
@@ -144,6 +152,8 @@ use Illuminate\Database\Eloquent\Builder;
 Select::make('authorId')
     ->relationship('author', 'name', fn (Builder $query) => $query->withTrashed())
 ```
+
+### Customizing the relationship option labels
 
 If you'd like to customize the label of each option, maybe to be more descriptive, or to concatenate a first and last name, you should use a virtual column in your database migration:
 
@@ -167,6 +177,41 @@ use Illuminate\Database\Eloquent\Model;
 Select::make('authorId')
     ->relationship('author', 'first_name')
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
+```
+
+### Creating new records
+
+You may define a custom form that can be used to create a new record and attach it to the `BelongsTo` relationship:
+
+```php
+use Filament\Forms\Components\Select;
+use Illuminate\Database\Eloquent\Model;
+
+Select::make('authorId')
+    ->relationship('author', 'name')
+    ->createOptionForm([
+        Forms\Components\TextInput::make('name')
+            ->required(),
+        Forms\Components\TextInput::make('email')
+            ->required()
+            ->email(),
+    ]),
+```
+
+The form opens in a modal, where the user can fill it with data. Upon form submission, the new record is selected by the field.
+
+Since HTML does not support nested `<form>` elements, you must also render the modal outside the `<form>` in the view. If you're using the [admin panel](/docs/admin), this is included already:
+
+```blade
+<form wire:submit.prevent="submit">
+    {{ $this->form }}
+
+    <button type="submit">
+        Submit
+    </button>
+</form>
+
+{{ $this->formsModal }}
 ```
 
 ### Handling `MorphTo` relationships
@@ -216,38 +261,3 @@ MorphToSelect::make('commentable')
 ```
 
 > Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `allowHtml()`, and `optionsLimit()`.
-
-### Creating new records
-
-You may define a custom form that can be used to create a new record and attach it to the `BelongsTo` relationship:
-
-```php
-use Filament\Forms\Components\Select;
-use Illuminate\Database\Eloquent\Model;
-
-Select::make('authorId')
-    ->relationship('author', 'name')
-    ->createOptionForm([
-        Forms\Components\TextInput::make('name')
-            ->required(),
-        Forms\Components\TextInput::make('email')
-            ->required()
-            ->email(),
-    ]),
-```
-
-The form opens in a modal, where the user can fill it with data. Upon form submission, the new record is selected by the field.
-
-Since HTML does not support nested `<form>` elements, you must also render the modal outside the `<form>` in the view. If you're using the [admin panel](/docs/admin), this is included already:
-
-```blade
-<form wire:submit.prevent="submit">
-    {{ $this->form }}
-
-    <button type="submit">
-        Submit
-    </button>
-</form>
-
-{{ $this->formsModal }}
-```

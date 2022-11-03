@@ -11,6 +11,8 @@ Placeholder::make('Label')
     ->content('Content, displayed underneath the label')
 ```
 
+## Rendering HTML inside the placeholder
+
 You may even render custom HTML within placeholder content:
 
 ```php
