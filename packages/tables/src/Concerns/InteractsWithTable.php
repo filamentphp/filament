@@ -59,14 +59,16 @@ trait InteractsWithTable
             return;
         }
 
-        $this->getTableColumnToggleForm()->fill(session()->get(
-            $this->getTableColumnToggleFormStateSessionKey(),
-            $this->getDefaultTableColumnToggleState()
-        ));
+        if (blank($this->toggledTableColumns)) {
+            $this->getTableColumnToggleForm()->fill(session()->get(
+                $this->getTableColumnToggleFormStateSessionKey(),
+                $this->getDefaultTableColumnToggleState()
+            ));
+        }
 
         $filtersSessionKey = $this->getTableFiltersSessionKey();
 
-        if ($this->shouldPersistTableFiltersInSession() && session()->has($filtersSessionKey)) {
+        if (blank($this->tableFilters) && $this->shouldPersistTableFiltersInSession() && session()->has($filtersSessionKey)) {
             $this->tableFilters = array_merge(
                 $this->tableFilters ?? [],
                 session()->get($filtersSessionKey) ?? [],
@@ -81,7 +83,7 @@ trait InteractsWithTable
 
         $searchSessionKey = $this->getTableSearchSessionKey();
 
-        if ($this->shouldPersistTableSearchInSession() && session()->has($searchSessionKey)) {
+        if (blank($this->tableSearchQuery) && $this->shouldPersistTableSearchInSession() && session()->has($searchSessionKey)) {
             $this->tableSearchQuery = session()->get($searchSessionKey);
         }
 
@@ -89,7 +91,7 @@ trait InteractsWithTable
 
         $columnSearchSessionKey = $this->getTableColumnSearchSessionKey();
 
-        if ($this->shouldPersistTableColumnSearchInSession() && session()->has($columnSearchSessionKey)) {
+        if (blank($this->tableColumnSearchQueries) && $this->shouldPersistTableColumnSearchInSession() && session()->has($columnSearchSessionKey)) {
             $this->tableColumnSearchQueries = session()->get($columnSearchSessionKey);
         }
 
