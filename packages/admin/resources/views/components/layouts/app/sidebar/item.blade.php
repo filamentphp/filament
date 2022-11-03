@@ -44,7 +44,6 @@
 
         <div class="flex flex-1"
             @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
-                x-data="{}"
                 x-show="$store.sidebar.isOpen"
             @endif
         >
@@ -52,7 +51,7 @@
                 {{ $slot }}
             </span>
         </div>
-        
+
         @if (filled($badge))
             <x-filament::layouts.app.sidebar.badge
                 :badge="$badge"

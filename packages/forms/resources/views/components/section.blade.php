@@ -64,7 +64,7 @@
             </h3>
 
             @if ($description = $getDescription())
-                <p class="text-gray-500 text-base pointer-events-none">
+                <p class="text-gray-500 text-base">
                     {{ $description }}
                 </p>
             @endif
