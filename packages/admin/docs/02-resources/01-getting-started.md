@@ -49,7 +49,7 @@ If you'd like to save time, Filament can automatically generate the [form](#form
 The `doctrine/dbal` package is required to use this functionality:
 
 ```bash
-composer require doctrine/dbal
+composer require doctrine/dbal --dev
 ```
 
 When creating your resource, you may now use `--generate`:

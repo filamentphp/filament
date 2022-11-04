@@ -64,6 +64,10 @@ return [
                 'label' => 'Padam Baris',
             ],
 
+            'reorder' => [
+                'label' => 'Susun Baris',
+            ],
+
         ],
 
         'fields' => [

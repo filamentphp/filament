@@ -22,6 +22,10 @@ return [
             'label' => 'Abmelden',
         ],
 
+        'user_menu' => [
+            'label' => 'Benutzermenü',
+        ],
+
     ],
 
 ];

@@ -22,6 +22,10 @@ return [
             'label' => 'Log ud',
         ],
 
+        'user_menu' => [
+            'label' => 'Brugermenu',
+        ],
+
     ],
 
 ];

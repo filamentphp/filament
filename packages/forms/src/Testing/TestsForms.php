@@ -16,6 +16,106 @@ use Livewire\Testing\TestableLivewire;
  */
 class TestsForms
 {
+    public function fillForm(): Closure
+    {
+        return function (array $state = [], string $formName = 'form'): static {
+            /** @phpstan-ignore-next-line  */
+            $this->assertFormExists($formName);
+
+            $livewire = $this->instance();
+
+            /** @var ComponentContainer $form */
+            $form = $livewire->$formName;
+
+            $formStatePath = $form->getStatePath();
+
+            foreach ($state as $key => $value) {
+                $this->set("{$formStatePath}.{$key}", $value);
+            }
+
+            return $this;
+        };
+    }
+
+    public function assertFormSet(): Closure
+    {
+        return function (array $state, string $formName = 'form'): static {
+            /** @phpstan-ignore-next-line  */
+            $this->assertFormExists($formName);
+
+            $livewire = $this->instance();
+
+            /** @var ComponentContainer $form */
+            $form = $livewire->$formName;
+
+            $formStatePath = $form->getStatePath();
+
+            foreach ($state as $key => $value) {
+                $this->assertSet("{$formStatePath}.{$key}", $value);
+            }
+
+            return $this;
+        };
+    }
+
+    public function assertHasFormErrors(): Closure
+    {
+        return function (array $keys = [], string $formName = 'form'): static {
+            /** @phpstan-ignore-next-line  */
+            $this->assertFormExists($formName);
+
+            $livewire = $this->instance();
+
+            /** @var ComponentContainer $form */
+            $form = $livewire->$formName;
+
+            $formStatePath = $form->getStatePath();
+
+            $this->assertHasErrors(
+                collect($keys)
+                    ->mapWithKeys(function ($value, $key) use ($formStatePath): array {
+                        if (is_int($key)) {
+                            return [$key => "{$formStatePath}.{$value}"];
+                        }
+
+                        return ["{$formStatePath}.{$key}" => $value];
+                    })
+                    ->all(),
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertHasNoFormErrors(): Closure
+    {
+        return function (array $keys = [], string $formName = 'form'): static {
+            /** @phpstan-ignore-next-line  */
+            $this->assertFormExists($formName);
+
+            $livewire = $this->instance();
+
+            /** @var ComponentContainer $form */
+            $form = $livewire->$formName;
+
+            $formStatePath = $form->getStatePath();
+
+            $this->assertHasNoErrors(
+                collect($keys)
+                    ->mapWithKeys(function ($value, $key) use ($formStatePath): array {
+                        if (is_int($key)) {
+                            return [$key => "{$formStatePath}.{$value}"];
+                        }
+
+                        return ["{$formStatePath}.{$key}" => $value];
+                    })
+                    ->all(),
+            );
+
+            return $this;
+        };
+    }
+
     public function assertFormExists(): Closure
     {
         return function (string $name = 'form'): static {

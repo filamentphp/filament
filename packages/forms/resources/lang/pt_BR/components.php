@@ -16,6 +16,10 @@ return [
                 'label' => 'Adicionar em :label',
             ],
 
+            'create_item_between' => [
+                'label' => 'Inserir',
+            ],
+
             'delete_item' => [
                 'label' => 'Excluir',
             ],
@@ -46,6 +50,22 @@ return [
 
             'expand_all' => [
                 'label' => 'Expandir todos',
+            ],
+
+        ],
+
+    ],
+
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Desmarcar todos',
+            ],
+
+            'select_all' => [
+                'label' => 'Marcar todos',
             ],
 
         ],

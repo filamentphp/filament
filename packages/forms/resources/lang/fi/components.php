@@ -8,8 +8,16 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'Kloonaa',
+            ],
+
             'create_item' => [
                 'label' => 'Lisää :label',
+            ],
+
+            'create_item_between' => [
+                'label' => 'Sijoita',
             ],
 
             'delete_item' => [
@@ -42,6 +50,22 @@ return [
 
             'expand_all' => [
                 'label' => 'Avaa kaikki',
+            ],
+
+        ],
+
+    ],
+
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Poista valinta kaikista',
+            ],
+
+            'select_all' => [
+                'label' => 'Valitse kaikki',
             ],
 
         ],

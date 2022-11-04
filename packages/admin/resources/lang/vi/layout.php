@@ -22,6 +22,10 @@ return [
             'label' => 'Đăng xuất',
         ],
 
+        'user_menu' => [
+            'label' => 'Menu người dùng',
+        ],
+
     ],
 
 ];

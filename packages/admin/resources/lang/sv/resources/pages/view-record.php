@@ -6,4 +6,12 @@ return [
 
     'breadcrumb' => 'Visa',
 
+    'form' => [
+
+        'tab' => [
+            'label' => 'Visa',
+        ],
+
+    ],
+
 ];

@@ -22,6 +22,10 @@ return [
             'label' => 'Logout',
         ],
 
+        'user_menu' => [
+            'label' => 'menu do usuário',
+        ],
+
     ],
 
 ];
