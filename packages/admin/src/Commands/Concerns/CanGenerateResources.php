@@ -10,15 +10,22 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use ReflectionException;
 use Throwable;
 
 trait CanGenerateResources
 {
     protected function getResourceFormSchema(string $model): string
     {
+        $model = $this->getModel($model);
+
+        if (blank($model)) {
+            return $this->indentString('//', 4);
+        }
+
         $table = $this->getModelTable($model);
 
-        if (! $table) {
+        if (blank($table)) {
             return $this->indentString('//', 4);
         }
 
@@ -29,7 +36,9 @@ trait CanGenerateResources
                 continue;
             }
 
-            if (Str::of($column->getName())->is([
+            $columnName = $column->getName();
+
+            if (Str::of($columnName)->is([
                 'created_at',
                 'deleted_at',
                 'updated_at',
@@ -48,26 +57,27 @@ trait CanGenerateResources
                 default => Forms\Components\TextInput::class,
             };
 
-            $guessedRelationName = null;
-            if (Str::of($column->getName())->endsWith('_id')) {
-                $guessedRelationName = $this->guessBelongsToSelectRelationName($column, $model);
-                if (! empty($guessedRelationName)) {
-                    $titleColumnName = $this->guessBelongsToSelectRelationTitleColumnName($column, $model);
-                    $componentData['type'] = Forms\Components\Select::class;
-                    $componentData['relationship'] = ["'$guessedRelationName", $titleColumnName . "'"];
+            if (Str::of($columnName)->endsWith('_id')) {
+                $guessedRelationshipName = $this->guessBelongsToRelationshipName($column, $model);
+
+                if (filled($guessedRelationshipName)) {
+                    $guessedRelationshipTitleColumnName = $this->guessBelongsToRelationshipTitleColumnName($column, app($model)->{$guessedRelationshipName}()->getModel()::class);
+
+                    $componentData['type'] = $type = Forms\Components\Select::class;
+                    $componentData['relationship'] = ["'{$guessedRelationshipName}", "{$guessedRelationshipTitleColumnName}'"];
                 }
             }
 
             if ($type === Forms\Components\TextInput::class) {
-                if (Str::of($column->getName())->contains(['email'])) {
+                if (Str::of($columnName)->contains(['email'])) {
                     $componentData['email'] = [];
                 }
 
-                if (Str::of($column->getName())->contains(['password'])) {
+                if (Str::of($columnName)->contains(['password'])) {
                     $componentData['password'] = [];
                 }
 
-                if (Str::of($column->getName())->contains(['phone', 'tel'])) {
+                if (Str::of($columnName)->contains(['phone', 'tel'])) {
                     $componentData['tel'] = [];
                 }
             }
@@ -76,11 +86,11 @@ trait CanGenerateResources
                 $componentData['required'] = [];
             }
 
-            if (in_array($type, [Forms\Components\TextInput::class, Forms\Components\Textarea::class]) && ($length = $column->getLength()) && empty($guessedRelationName)) {
+            if (in_array($type, [Forms\Components\TextInput::class, Forms\Components\Textarea::class]) && ($length = $column->getLength())) {
                 $componentData['maxLength'] = [$length];
             }
 
-            $components[$column->getName()] = $componentData;
+            $components[$columnName] = $componentData;
         }
 
         $output = count($components) ? '' : '//';
@@ -117,9 +127,15 @@ trait CanGenerateResources
 
     protected function getResourceTableColumns(string $model): string
     {
+        $model = $this->getModel($model);
+
+        if (blank($model)) {
+            return $this->indentString('//', 4);
+        }
+
         $table = $this->getModelTable($model);
 
-        if (! $table) {
+        if (blank($table)) {
             return $this->indentString('//', 4);
         }
 
@@ -130,13 +146,15 @@ trait CanGenerateResources
                 continue;
             }
 
-            if (Str::of($column->getName())->endsWith([
+            $columnName = $column->getName();
+
+            if (Str::of($columnName)->endsWith([
                 '_token',
             ])) {
                 continue;
             }
 
-            if (Str::of($column->getName())->contains([
+            if (Str::of($columnName)->contains([
                 'password',
             ])) {
                 continue;
@@ -159,7 +177,17 @@ trait CanGenerateResources
                 }
             }
 
-            $columns[$column->getName()] = $columnData;
+            if (Str::of($columnName)->endsWith('_id')) {
+                $guessedRelationshipName = $this->guessBelongsToRelationshipName($column, $model);
+
+                if (filled($guessedRelationshipName)) {
+                    $guessedRelationshipTitleColumnName = $this->guessBelongsToRelationshipTitleColumnName($column, app($model)->{$guessedRelationshipName}()->getModel()::class);
+
+                    $columnName = "{$guessedRelationshipName}.{$guessedRelationshipTitleColumnName}";
+                }
+            }
+
+            $columns[$columnName] = $columnData;
         }
 
         $output = count($columns) ? '' : '//';
@@ -194,12 +222,17 @@ trait CanGenerateResources
         return $this->indentString($output, 4);
     }
 
-    protected function getModelTable(string $model): ?Table
+    protected function getModel(string $model): ?string
     {
-        if ((! class_exists($model)) && (! class_exists($model = "App\\Models\\{$model}"))) {
+        if (! class_exists($model)) {
             return null;
         }
 
+        return $model;
+    }
+
+    protected function getModelTable(string $model): ?Table
+    {
         $model = app($model);
 
         try {
@@ -212,79 +245,65 @@ trait CanGenerateResources
         }
     }
 
-    protected function getTableSchemaByTableName(string $model, $tableName): ?Table
+    protected function guessBelongsToRelationshipName(AbstractAsset $column, string $model): ?string
     {
-        if ((! class_exists($model)) && (! class_exists($model = "App\\Models\\{$model}"))) {
+        $modelReflection = invade(app($model));
+        $guessedRelationshipName = Str::of($column->getName())->beforeLast('_id');
+        $hasRelationship = $modelReflection->reflected->hasMethod($guessedRelationshipName);
+
+        if (! $hasRelationship) {
+            $guessedRelationshipName = $guessedRelationshipName->camel();
+            $hasRelationship = $modelReflection->reflected->hasMethod($guessedRelationshipName);
+        }
+
+        if (! $hasRelationship) {
             return null;
         }
 
-        $model = app($model);
-
         try {
-            return $model
-                ->getConnection()
-                ->getDoctrineSchemaManager()
-                ->listTableDetails($tableName);
-        } catch (Throwable $exception) {
+            if ($modelReflection->reflected->getMethod($guessedRelationshipName)->getReturnType()->getName() !== BelongsTo::class) {
+                return null;
+            }
+        } catch (ReflectionException $exception) {
             return null;
         }
+
+        return $guessedRelationshipName;
     }
 
-    protected function guessBelongsToSelectRelationName(AbstractAsset $column, string $model): string
+    protected function guessBelongsToRelationshipTableName(AbstractAsset $column): ?string
     {
-        $modelReflection = invade(new $model);
-        $hasRelation = false;
-        $guessedRelationName = Str::of($column->getName())->replaceLast('_id', '');
-        if ($modelReflection->reflected->hasMethod($guessedRelationName)) {
-            $hasRelation = true;
+        $tableName = Str::of($column->getName())->beforeLast('_id');
+
+        if (Schema::hasTable(Str::plural($tableName))) {
+            return Str::plural($tableName);
         }
 
-        if (! $hasRelation) {
-            $guessedRelationName = $guessedRelationName->camel();
-            if ($modelReflection->reflected->hasMethod($guessedRelationName)) {
-                $hasRelation = true;
-            }
-        }
-
-        try {
-            if ($modelReflection->reflected->getMethod($guessedRelationName)->getReturnType() == BelongsTo::class) {
-                $hasRelation = true;
-            }
-        } catch (\ReflectionException $e) {
-            $hasRelation = false;
-        }
-
-        return  $hasRelation ? $guessedRelationName : '';
-    }
-
-    protected function guessBelongsToSelectRelationTableName(AbstractAsset $column): string
-    {
-        $tempTableName = Str::of($column->getName())->replaceLast('_id', '');
-        $tableName = '';
-        if (Schema::hasTable(Str::of($tempTableName)->plural())) {
-            $tableName = Str::of($tempTableName)->plural();
-        } elseif (Schema::hasTable($tempTableName)) {
-            $tableName = $tempTableName;
+        if (! Schema::hasTable($tableName)) {
+            return null;
         }
 
         return $tableName;
     }
 
-    protected function guessBelongsToSelectRelationTitleColumnName(AbstractAsset $column, string $model): string
+    protected function guessBelongsToRelationshipTitleColumnName(AbstractAsset $column, string $model): string
     {
-        $tableName = $this->guessBelongsToSelectRelationTableName($column);
-        $titleKey = '';
-        $primaryKey = '';
-        if (empty($tableName)) {
-            $titleKey = 'id';
-        } else {
-            $schema = $this->getTableSchemaByTableName($model, $tableName);
-            $primaryKey = $schema->getPrimaryKey()->getColumns()[0];
-            $columns = collect(array_keys($schema->getColumns()));
-            $titleKey = $columns->contains('name')
-                ? 'name' : ($columns->contains('title') ? 'title' : '');
+        $schema = $this->getModelTable($model);
+
+        if ($schema === null) {
+            return 'id';
         }
 
-        return empty($titleKey) ? $primaryKey : $titleKey;
+        $columns = collect(array_keys($schema->getColumns()));
+
+        if ($columns->contains('name')) {
+            return 'name';
+        }
+
+        if ($columns->contains('title')) {
+            return 'title';
+        }
+
+        return $schema->getPrimaryKey()->getColumns()[0];
     }
 }
