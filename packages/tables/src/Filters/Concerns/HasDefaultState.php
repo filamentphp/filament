@@ -6,9 +6,9 @@ use Closure;
 
 trait HasDefaultState
 {
-    protected bool | Closure | null $defaultState = null;
+    protected Closure | null $defaultState = null;
 
-    public function default(bool | Closure | null $state = true): static
+    public function default(Closure | null $state ): static
     {
         $this->defaultState = $state;
 
