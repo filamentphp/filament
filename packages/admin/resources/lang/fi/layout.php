@@ -22,6 +22,18 @@ return [
             'label' => 'Kirjaudu ulos',
         ],
 
+        'sidebar' => [
+
+            'collapse' => [
+                'label' => 'Sulje sivupalkki',
+            ],
+
+            'expand' => [
+                'label' => 'Laajenna sivupalkki',
+            ],
+
+        ],
+
         'user_menu' => [
             'label' => 'Käyttäjävalikko',
         ],
