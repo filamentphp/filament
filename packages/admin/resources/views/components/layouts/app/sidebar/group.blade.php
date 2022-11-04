@@ -22,10 +22,10 @@
                 'dark:text-gray-300' => config('filament.dark_mode'),
             ])>
                 @if ($icon)
-                    <x-dynamic-component :component="$icon" class="w-5 h-5 flex-shrink-0" />
+                    <x-dynamic-component :component="$icon" class="ml-1 w-3 h-3 flex-shrink-0" />
                 @endif
 
-                <p class="flex-1 font-bold uppercase tracking-wider text-xs">
+                <p class="flex-1 font-bold uppercase text-xs tracking-wider">
                     {{ $label }}
                 </p>
             </div>
@@ -45,7 +45,6 @@
         @class([
             'text-sm space-y-1 -mx-3',
             'mt-2' => $label,
-            'pl-3'  => $parentGroup
         ])
     >
         @foreach ($items as $item)
