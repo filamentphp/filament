@@ -2,19 +2,30 @@
 
 namespace Filament\Commands\Concerns;
 
+use Doctrine\DBAL\Schema\AbstractAsset;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types;
 use Filament\Forms;
 use Filament\Tables;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
+use ReflectionException;
 use Throwable;
 
 trait CanGenerateResources
 {
     protected function getResourceFormSchema(string $model): string
     {
+        $model = $this->getModel($model);
+
+        if (blank($model)) {
+            return $this->indentString('//', 4);
+        }
+
         $table = $this->getModelTable($model);
 
-        if (! $table) {
+        if (blank($table)) {
             return $this->indentString('//', 4);
         }
 
@@ -25,7 +36,9 @@ trait CanGenerateResources
                 continue;
             }
 
-            if (str($column->getName())->is([
+            $columnName = $column->getName();
+
+            if (str($columnName)->is([
                 'created_at',
                 'deleted_at',
                 'updated_at',
@@ -44,16 +57,27 @@ trait CanGenerateResources
                 default => Forms\Components\TextInput::class,
             };
 
+            if (str($columnName)->endsWith('_id')) {
+                $guessedRelationshipName = $this->guessBelongsToRelationshipName($column, $model);
+
+                if (filled($guessedRelationshipName)) {
+                    $guessedRelationshipTitleColumnName = $this->guessBelongsToRelationshipTitleColumnName($column, app($model)->{$guessedRelationshipName}()->getModel()::class);
+
+                    $componentData['type'] = $type = Forms\Components\Select::class;
+                    $componentData['relationship'] = ["'{$guessedRelationshipName}", "{$guessedRelationshipTitleColumnName}'"];
+                }
+            }
+
             if ($type === Forms\Components\TextInput::class) {
-                if (str($column->getName())->contains(['email'])) {
+                if (str($columnName)->contains(['email'])) {
                     $componentData['email'] = [];
                 }
 
-                if (str($column->getName())->contains(['password'])) {
+                if (str($columnName)->contains(['password'])) {
                     $componentData['password'] = [];
                 }
 
-                if (str($column->getName())->contains(['phone', 'tel'])) {
+                if (str($columnName)->contains(['phone', 'tel'])) {
                     $componentData['tel'] = [];
                 }
             }
@@ -66,7 +90,7 @@ trait CanGenerateResources
                 $componentData['maxLength'] = [$length];
             }
 
-            $components[$column->getName()] = $componentData;
+            $components[$columnName] = $componentData;
         }
 
         $output = count($components) ? '' : '//';
@@ -103,9 +127,15 @@ trait CanGenerateResources
 
     protected function getResourceTableColumns(string $model): string
     {
+        $model = $this->getModel($model);
+
+        if (blank($model)) {
+            return $this->indentString('//', 4);
+        }
+
         $table = $this->getModelTable($model);
 
-        if (! $table) {
+        if (blank($table)) {
             return $this->indentString('//', 4);
         }
 
@@ -116,13 +146,15 @@ trait CanGenerateResources
                 continue;
             }
 
-            if (str($column->getName())->endsWith([
+            $columnName = $column->getName();
+
+            if (str($columnName)->endsWith([
                 '_token',
             ])) {
                 continue;
             }
 
-            if (str($column->getName())->contains([
+            if (str($columnName)->contains([
                 'password',
             ])) {
                 continue;
@@ -145,7 +177,17 @@ trait CanGenerateResources
                 }
             }
 
-            $columns[$column->getName()] = $columnData;
+            if (str($columnName)->endsWith('_id')) {
+                $guessedRelationshipName = $this->guessBelongsToRelationshipName($column, $model);
+
+                if (filled($guessedRelationshipName)) {
+                    $guessedRelationshipTitleColumnName = $this->guessBelongsToRelationshipTitleColumnName($column, app($model)->{$guessedRelationshipName}()->getModel()::class);
+
+                    $columnName = "{$guessedRelationshipName}.{$guessedRelationshipTitleColumnName}";
+                }
+            }
+
+            $columns[$columnName] = $columnData;
         }
 
         $output = count($columns) ? '' : '//';
@@ -180,12 +222,17 @@ trait CanGenerateResources
         return $this->indentString($output, 4);
     }
 
-    protected function getModelTable(string $model): ?Table
+    protected function getModel(string $model): ?string
     {
-        if ((! class_exists($model)) && (! class_exists($model = "App\\Models\\{$model}"))) {
+        if (! class_exists($model)) {
             return null;
         }
 
+        return $model;
+    }
+
+    protected function getModelTable(string $model): ?Table
+    {
         $model = app($model);
 
         try {
@@ -196,5 +243,67 @@ trait CanGenerateResources
         } catch (Throwable $exception) {
             return null;
         }
+    }
+
+    protected function guessBelongsToRelationshipName(AbstractAsset $column, string $model): ?string
+    {
+        $modelReflection = invade(app($model));
+        $guessedRelationshipName = str($column->getName())->beforeLast('_id');
+        $hasRelationship = $modelReflection->reflected->hasMethod($guessedRelationshipName);
+
+        if (! $hasRelationship) {
+            $guessedRelationshipName = $guessedRelationshipName->camel();
+            $hasRelationship = $modelReflection->reflected->hasMethod($guessedRelationshipName);
+        }
+
+        if (! $hasRelationship) {
+            return null;
+        }
+
+        try {
+            if ($modelReflection->reflected->getMethod($guessedRelationshipName)->getReturnType()->getName() !== BelongsTo::class) {
+                return null;
+            }
+        } catch (ReflectionException $exception) {
+            return null;
+        }
+
+        return $guessedRelationshipName;
+    }
+
+    protected function guessBelongsToRelationshipTableName(AbstractAsset $column): ?string
+    {
+        $tableName = str($column->getName())->beforeLast('_id');
+
+        if (Schema::hasTable(Str::plural($tableName))) {
+            return Str::plural($tableName);
+        }
+
+        if (! Schema::hasTable($tableName)) {
+            return null;
+        }
+
+        return $tableName;
+    }
+
+    protected function guessBelongsToRelationshipTitleColumnName(AbstractAsset $column, string $model): string
+    {
+        $schema = $this->getModelTable($model);
+
+        if ($schema === null) {
+            return 'id';
+        }
+
+        $columns = collect(array_keys($schema->getColumns()));
+
+        if ($columns->contains('name')) {
+            return 'name';
+        }
+
+        if ($columns->contains('title')) {
+            return 'title';
+        }
+
+        return $schema->getPrimaryKey()->getColumns()[0];
     }
 }
