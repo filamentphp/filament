@@ -41,6 +41,8 @@ class Resource
 
     protected static ?string $navigationIcon = null;
 
+    protected static ?string $activeNavigationIcon = null;
+
     protected static ?string $navigationLabel = null;
 
     protected static ?int $navigationSort = null;
@@ -63,6 +65,8 @@ class Resource
     protected static string | array $middlewares = [];
 
     protected static int $globalSearchResultsLimit = 50;
+
+    protected static bool $shouldIgnorePolicies = false;
 
     public static function form(Form $form): Form
     {
@@ -90,6 +94,7 @@ class Resource
             NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
                 ->icon(static::getNavigationIcon())
+                ->activeIcon(static::getActiveNavigationIcon())
                 ->isActiveWhen(fn () => request()->routeIs("{$routeBaseName}.*"))
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->sort(static::getNavigationSort())
@@ -111,6 +116,10 @@ class Resource
 
     public static function can(string $action, ?Model $record = null): bool
     {
+        if (static::shouldIgnorePolicies()) {
+            return true;
+        }
+
         $policy = Gate::getPolicyFor($model = static::getModel());
         $user = Filament::auth()->user();
 
@@ -123,6 +132,16 @@ class Resource
         }
 
         return Gate::forUser($user)->check($action, $record ?? $model);
+    }
+
+    public static function ignorePolicies(bool $condition = true): void
+    {
+        static::$shouldIgnorePolicies = $condition;
+    }
+
+    public static function shouldIgnorePolicies(): bool
+    {
+        return static::$shouldIgnorePolicies;
     }
 
     public static function canViewAny(): bool
@@ -483,6 +502,11 @@ class Resource
     public static function navigationIcon(?string $icon): void
     {
         static::$navigationIcon = $icon;
+    }
+
+    protected static function getActiveNavigationIcon(): string
+    {
+        return static::$activeNavigationIcon ?? static::getNavigationIcon();
     }
 
     protected static function getNavigationLabel(): string

@@ -56,6 +56,22 @@ return [
 
     ],
 
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Poista valinta kaikista',
+            ],
+
+            'select_all' => [
+                'label' => 'Valitse kaikki',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [

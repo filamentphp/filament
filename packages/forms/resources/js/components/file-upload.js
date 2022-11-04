@@ -175,10 +175,13 @@ export default (Alpine) => {
 
                         // We don't want to overwrite the files that are already in the input, if they haven't been saved yet.
                         if (
+                            this.state !== null &&
                             Object.values(this.state).filter((file) =>
                                 file.startsWith('livewire-file:'),
                             ).length
                         ) {
+                            this.lastState = null
+
                             return
                         }
 
