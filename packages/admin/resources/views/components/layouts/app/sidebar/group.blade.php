@@ -6,7 +6,13 @@
     'label' => null,
 ])
 
-<li x-data="{ label: {{ \Illuminate\Support\Js::from(($parentGroup ? "{$parentGroup}." : null) . $label) }} }" class="filament-sidebar-group">
+<li
+    x-data="{ label: {{ \Illuminate\Support\Js::from((filled($parentGroup) ? "{$parentGroup}." : null) . $label) }} }"
+    class="filament-sidebar-group"
+    @if (filled($parentGroup))
+        x-bind:class="{{ config('filament.layout.sidebar.is_collapsible_on_desktop') ? '$store.sidebar.isOpen' : 'true' }} ? 'ml-11 pr-3 pt-3' : 'hidden'"
+    @endif
+>
     @if ($label)
         <button
             @if ($collapsible)
@@ -65,7 +71,7 @@
                     :icon="$item->getIcon()"
                     :collapsible="$item->isCollapsible()"
                     :items="$item->getItems()"
-                    :parentGroup="$label"
+                    :parentGroup="(filled($parentGroup) ? ('$parentGroup' . '.') : null) . $label"
                 />
             @endif
         @endforeach
