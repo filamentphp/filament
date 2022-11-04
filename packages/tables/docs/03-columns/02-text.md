@@ -219,6 +219,6 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('title')
     ->copyable()
     ->copyIcon()
-    ->copyMessage('Color code copied')
+    ->copyMessage('Title copied')
     ->copyMessageDuration(1500)
 ```
