@@ -144,7 +144,7 @@ class MakeResourceCommand extends Command
         $this->copyStubToApp('Resource', $resourcePath, [
             'eloquentQuery' => $this->indentString($eloquentQuery, 1),
             'formSchema' => $this->option('generate') ? $this->getResourceFormSchema(
-                ($modelNamespace !== '' ? $modelNamespace : 'App\Models') . '\\' . $modelClass,
+                'App\Models' . ($modelNamespace !== '' ? "\\{$modelNamespace}" : '') . '\\' . $modelClass,
             ) : $this->indentString('//', 4),
             'model' => $model === 'Resource' ? 'Resource as ResourceModel' : $model,
             'modelClass' => $model === 'Resource' ? 'ResourceModel' : $modelClass,
@@ -156,7 +156,7 @@ class MakeResourceCommand extends Command
             'tableActions' => $this->indentString($tableActions, 4),
             'tableBulkActions' => $this->indentString($tableBulkActions, 4),
             'tableColumns' => $this->option('generate') ? $this->getResourceTableColumns(
-                ($modelNamespace !== '' ? $modelNamespace : 'App\Models') . '\\' . $modelClass
+                'App\Models' . ($modelNamespace !== '' ? "\\{$modelNamespace}" : '') . '\\' . $modelClass,
             ) : $this->indentString('//', 4),
             'tableFilters' => $this->indentString(
                 $this->option('soft-deletes') ? 'Tables\Filters\TrashedFilter::make(),' : '//',
