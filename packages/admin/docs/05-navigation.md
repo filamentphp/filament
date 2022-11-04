@@ -179,49 +179,6 @@ Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
 });
 ```
 
-If you want to make multilevel menu, you can call the `items()` method: with nested NavigationGroup
-
-```php
-use App\Filament\Pages\HomePageSettings;
-use App\Filament\Resources\CategoryResource;
-use App\Filament\Resources\PageResource;
-use Filament\Facades\Filament;
-use Filament\Navigation\NavigationBuilder;
-use Filament\Navigation\NavigationGroup;
-use Filament\Navigation\NavigationItem;
-
-Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
-    return $builder
-        ->items([
-            NavigationItem::make('Dashboard')
-                ->url(route('dashboard'))
-                ->icon('heroicon-o-home'),
-            ...ProductResource::getNavigationItems(),
-            NavigationGroup::make()
-                ->label('Reports')
-                ->icon('heroicon-o-view-grid')->items([
-                    NavigationItem::make('Stock')
-                        ->url(route('stock'))
-                        ->icon('heroicon-o-lightning-bolt'),
-                    NavigationItem::make('Order Report')
-                        ->url(route('reports.order'))
-                        ->icon('heroicon-o-shopping-bag'),
-                    NavigationGroup::make()
-                        ->label('Stats')
-                        ->icon('heroicon-o-presentation-chart-line')->items([
-                            NavigationItem::make('Pie Chart')
-                                ->url(route('charts.pie'))
-                                ->icon('heroicon-o-chart-pie'),
-                            NavigationItem::make('Bar Chart')
-                                ->url(route('charts.bar'))
-                                ->icon('heroicon-o-chart-bar'),
-                        ]),
-
-                ])
-        ]);
-    });
-```
-
 ## Customizing the user menu
 
 The user menu is featured in the top right corner of the admin layout. It's fully customizable.
