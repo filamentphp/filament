@@ -420,7 +420,7 @@ protected function getTableActionsPosition(): ?string
 
 Row actions are aligned to the right in their cell by default. To change the alignment, update the configuration value inside of the package config:
 
-```
+```php
 'actions' => [
     'cell' => [
         'alignment' => 'right', // `right`, `left` or `center`
