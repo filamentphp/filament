@@ -22,12 +22,9 @@
     {{ $attributes->class([
         'filament-tables-column-wrapper',
         match ($alignment) {
-            'left' => 'text-left',
+            'start', 'left' => 'text-start',
             'center' => 'text-center',
-            'right' => 'text-right',
-            'start' => 'text-start',
-            'end' => 'text-end',
-            'justify' => 'text-justify',
+            'end', 'right' => 'text-end',
             default => null,
         },
     ]) }}
