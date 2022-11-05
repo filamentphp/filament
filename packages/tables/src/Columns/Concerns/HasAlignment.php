@@ -15,24 +15,14 @@ trait HasAlignment
         return $this;
     }
 
-    public function alignLeft(bool | Closure $condition = true): static
+    public function alignStart(bool | Closure $condition = true): static
     {
-        return $this->alignment(static fn (): ?string => $condition ? 'left' : null);
+        return $this->alignment(static fn (): ?string => $condition ? 'start' : null);
     }
 
     public function alignCenter(bool | Closure $condition = true): static
     {
         return $this->alignment(static fn (): ?string => $condition ? 'center' : null);
-    }
-
-    public function alignRight(bool | Closure $condition = true): static
-    {
-        return $this->alignment(static fn (): ?string => $condition ? 'right' : null);
-    }
-
-    public function alignStart(bool | Closure $condition = true): static
-    {
-        return $this->alignment(static fn (): ?string => $condition ? 'start' : null);
     }
 
     public function alignEnd(bool | Closure $condition = true): static
@@ -43,6 +33,16 @@ trait HasAlignment
     public function alignJustify(bool | Closure $condition = true): static
     {
         return $this->alignment(static fn (): ?string => $condition ? 'justify' : null);
+    }
+
+    public function alignLeft(bool | Closure $condition = true): static
+    {
+        return $this->alignStart($condition);
+    }
+
+    public function alignRight(bool | Closure $condition = true): static
+    {
+        return $this->alignEnd($condition);
     }
 
     public function getAlignment(): ?string
