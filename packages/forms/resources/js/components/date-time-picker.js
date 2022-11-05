@@ -503,7 +503,7 @@ const locales = {
     hy: require('dayjs/locale/hy-am'),
     id: require('dayjs/locale/id'),
     it: require('dayjs/locale/it'),
-    js: require('dayjs/locale/ja'),
+    ja: require('dayjs/locale/ja'),
     ka: require('dayjs/locale/ka'),
     ku: require('dayjs/locale/ku'),
     ms: require('dayjs/locale/ms'),

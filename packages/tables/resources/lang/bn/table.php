@@ -4,16 +4,12 @@ return [
 
     'columns' => [
 
-        'color' => [
-
-            'messages' => [
-                'copied' => 'অনুকৃত',
-            ],
-
-        ],
-
         'tags' => [
             'more' => 'এবং আরো :count',
+        ],
+
+        'messages' => [
+            'copied' => 'অনুকৃত',
         ],
 
     ],
