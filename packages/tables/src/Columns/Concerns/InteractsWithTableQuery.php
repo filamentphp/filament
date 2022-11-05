@@ -88,10 +88,10 @@ trait InteractsWithTableQuery
                 method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchColumnName),
                 function (Builder $query) use ($searchColumnName, $searchOperator, $search, $whereClause, $databaseConnection): Builder {
                     $activeLocale = $this->getLivewire()->getActiveTableLocale() ?: app()->getLocale();
-                    
+
                     $searchColumn = match ($databaseConnection->getDriverName()) {
                         'pgsql' => "{$searchColumnName}->>'{$activeLocale}'",
-                         default => "json_extract({$searchColumnName}, \"$.{$activeLocale}\")",
+                        default => "json_extract({$searchColumnName}, \"$.{$activeLocale}\")",
                     };
 
                     return $query->{"{$whereClause}Raw"}(
