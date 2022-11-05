@@ -26,7 +26,7 @@ export default function fileUploadFormComponent({
     canPreview,
     canReorder,
     deleteUploadedFileUsing,
-    getUploadedFileUrlsUsing,
+    getUploadedFilesUsing,
     imageCropAspectRatio,
     imagePreviewHeight,
     imageResizeMode,
@@ -61,7 +61,7 @@ export default function fileUploadFormComponent({
 
         lastState: null,
 
-        uploadedFileUrlIndex: {},
+        uploadedFileIndex: {},
 
         init: async function () {
             FilePond.setOptions(locales[locale] ?? locales['en'])
@@ -135,7 +135,7 @@ export default function fileUploadFormComponent({
                         )
                     },
                     remove: async (source, load) => {
-                        let fileKey = this.uploadedFileUrlIndex[source] ?? null
+                        let fileKey = this.uploadedFileIndex[source] ?? null
 
                         if (!fileKey) {
                             return
@@ -185,7 +185,7 @@ export default function fileUploadFormComponent({
                     .map((file) =>
                         file.source instanceof File
                             ? file.serverId
-                            : this.uploadedFileUrlIndex[file.source] ?? null,
+                            : this.uploadedFileIndex[file.source] ?? null,
                     ) // file.serverId is null for a file that is not yet uploaded
                     .filter((fileKey) => fileKey)
 
@@ -254,12 +254,12 @@ export default function fileUploadFormComponent({
             )
         },
 
-        getUploadedFileUrls: async function () {
-            const uploadedFileUrls = await getUploadedFileUrlsUsing()
+        getUploadedFiles: async function () {
+            const uploadedFiles = await getUploadedFilesUsing()
 
-            this.fileKeyIndex = uploadedFileUrls ?? {}
+            this.fileKeyIndex = uploadedFiles ?? {}
 
-            this.uploadedFileUrlIndex = Object.entries(this.fileKeyIndex)
+            this.uploadedFileIndex = Object.entries(this.fileKeyIndex)
                 .filter((value) => value)
                 .reduce((obj, [key, value]) => {
                     obj[value] = key
@@ -269,19 +269,24 @@ export default function fileUploadFormComponent({
         },
 
         getFiles: async function () {
-            await this.getUploadedFileUrls()
+            await this.getUploadedFiles()
 
             let files = []
 
-            for (const uploadedFileUrl of Object.values(this.fileKeyIndex)) {
-                if (!uploadedFileUrl) {
+            for (const uploadedFile of Object.values(this.fileKeyIndex)) {
+                if (!uploadedFile) {
                     continue
                 }
 
                 files.push({
-                    source: uploadedFileUrl,
+                    source: uploadedFile.url,
                     options: {
                         type: 'local',
+                        file: {
+                            name: uploadedFile.name,
+                            size: uploadedFile.size,
+                            type: uploadedFile.type,
+                        },
                     },
                 })
             }

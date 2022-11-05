@@ -51,7 +51,7 @@ class BaseFileUpload extends Field
 
     protected ?Closure $getUploadedFileNameForStorageUsing = null;
 
-    protected ?Closure $getUploadedFileUrlUsing = null;
+    protected ?Closure $getUploadedFileUsing = null;
 
     protected ?Closure $reorderUploadedFilesUsing = null;
 
@@ -106,7 +106,7 @@ class BaseFileUpload extends Field
             return $files[0] ?? null;
         });
 
-        $this->getUploadedFileUrlUsing(static function (BaseFileUpload $component, string $file): ?string {
+        $this->getUploadedFileUsing(static function (BaseFileUpload $component, string $file, string | array | null $storedFileNames): ?array {
             /** @var FilesystemAdapter $storage */
             $storage = $component->getDisk();
 
@@ -114,9 +114,11 @@ class BaseFileUpload extends Field
                 return null;
             }
 
+            $url = null;
+
             if ($component->getVisibility() === 'private') {
                 try {
-                    return $storage->temporaryUrl(
+                    $url ??= $storage->temporaryUrl(
                         $file,
                         now()->addMinutes(5),
                     );
@@ -125,7 +127,14 @@ class BaseFileUpload extends Field
                 }
             }
 
-            return $storage->url($file);
+            $url ??= $storage->url($file);
+
+            return [
+                'name' => ($component->isMultiple() ? ($storedFileNames[$file] ?? null) : $storedFileNames) ?? basename($file),
+                'size' => $storage->size($file),
+                'type' => $storage->mimeType($file),
+                'url' => $url,
+            ];
         });
 
         $this->getUploadedFileNameForStorageUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file) {
@@ -290,9 +299,9 @@ class BaseFileUpload extends Field
         return $this;
     }
 
-    public function getUploadedFileUrlUsing(?Closure $callback): static
+    public function getUploadedFileUsing(?Closure $callback): static
     {
-        $this->getUploadedFileUrlUsing = $callback;
+        $this->getUploadedFileUsing = $callback;
 
         return $this;
     }
@@ -505,7 +514,7 @@ class BaseFileUpload extends Field
         $this->state($state);
     }
 
-    public function getUploadedFileUrls(): ?array
+    public function getUploadedFiles(): ?array
     {
         $urls = [];
 
@@ -516,7 +525,7 @@ class BaseFileUpload extends Field
                 continue;
             }
 
-            $callback = $this->getUploadedFileUrlUsing;
+            $callback = $this->getUploadedFileUsing;
 
             if (! $callback) {
                 return [$fileKey => null];
@@ -524,6 +533,7 @@ class BaseFileUpload extends Field
 
             $urls[$fileKey] = $this->evaluate($callback, [
                 'file' => $file,
+                'storedFileNames' => $this->getStoredFileNames(),
             ]) ?: null;
         }
 

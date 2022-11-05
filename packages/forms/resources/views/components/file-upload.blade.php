@@ -23,8 +23,8 @@
             deleteUploadedFileUsing: async (fileKey) => {
                 return await $wire.deleteUploadedFile('{{ $getStatePath() }}', fileKey)
             },
-            getUploadedFileUrlsUsing: async () => {
-                return await $wire.getUploadedFileUrls('{{ $getStatePath() }}')
+            getUploadedFilesUsing: async () => {
+                return await $wire.getUploadedFiles('{{ $getStatePath() }}')
             },
             imageCropAspectRatio: {{ $imageCropAspectRatio ? "'{$imageCropAspectRatio}'" : 'null' }},
             imagePreviewHeight: {{ ($height = $getImagePreviewHeight()) ? "'{$height}'" : 'null' }},

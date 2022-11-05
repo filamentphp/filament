@@ -63,7 +63,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
         $this->dehydrated(false);
 
-        $this->getUploadedFileUrlUsing(static function (SpatieMediaLibraryFileUpload $component, string $file): ?string {
+        $this->getUploadedFileUsing(static function (SpatieMediaLibraryFileUpload $component, string $file): ?array {
             if (! $component->getRecord()) {
                 return null;
             }
@@ -73,9 +73,11 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             /** @var ?Media $media */
             $media = $mediaClass::findByUuid($file);
 
+            $url = null;
+
             if ($component->getVisibility() === 'private') {
                 try {
-                    return $media?->getTemporaryUrl(
+                    $url ??= $media?->getTemporaryUrl(
                         now()->addMinutes(5),
                     );
                 } catch (Throwable $exception) {
@@ -84,10 +86,17 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             }
 
             if ($component->getConversion() && $media->hasGeneratedConversion($component->getConversion())) {
-                return $media?->getUrl($component->getConversion());
+                $url ??= $media?->getUrl($component->getConversion());
             }
 
-            return $media?->getUrl();
+            $url ??= $media?->getUrl();
+
+            return [
+                'name' => $media->name ?? $media->file_name,
+                'size' => $media->size,
+                'type' => $media->mime_time,
+                'url' => $url,
+            ];
         });
 
         $this->saveRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component) {
