@@ -16,6 +16,10 @@ return [
                 'label' => ':label এ যোগ করুন',
             ],
 
+            'create_item_between' => [
+                'label' => 'প্রবেশ করান',
+            ],
+
             'delete_item' => [
                 'label' => 'মুছে ফেলুন',
             ],
@@ -52,6 +56,22 @@ return [
 
     ],
 
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'select_all' => [
+                'label' => 'সব নির্বাচিত করুন',
+            ],
+
+            'deselect_all' => [
+                'label' => 'সব অনির্বাচিত করুন',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [
@@ -60,8 +80,12 @@ return [
                 'label' => 'সারি যোগ করুন',
             ],
 
-            'সরান' => [
+            'delete' => [
                 'label' => 'সারি মুছে ফেলুন',
+            ],
+
+            'reorder' => [
+                'label' => 'সারি পুনর্বিন্যাস করুন',
             ],
 
         ],
