@@ -1,10 +1,14 @@
 @php
+    $state = $getFormattedState();
+
     $descriptionAbove = $getDescriptionAbove();
     $descriptionBelow = $getDescriptionBelow();
 
     $icon = $getIcon();
     $iconPosition = $getIconPosition();
     $iconClasses = 'w-4 h-4';
+
+    $isCopyable = $isCopyable();
 @endphp
 
 <div
@@ -42,13 +46,6 @@
         },
         'whitespace-normal' => $canWrap(),
     ]) }}
-    
-    @if ($isCopyable())
-        x-on:click="
-            window.navigator.clipboard.writeText(@js($getState()))
-            $tooltip(@js($getCopyMessage()), { timeout: @js($getCopyMessageDuration()) })
-        "
-    @endif
 >
     @if (filled($descriptionAbove))
         <div class="text-sm text-gray-500">
@@ -61,8 +58,18 @@
             <x-dynamic-component :component="$icon" :class="$iconClasses" />
         @endif
 
-        <span>
-            {{ $getFormattedState() }}
+        <span
+            @if ($isCopyable)
+                x-on:click="
+                    window.navigator.clipboard.writeText(@js($state))
+                    $tooltip(@js($getCopyMessage()), { timeout: @js($getCopyMessageDuration()) })
+                "
+            @endif
+            @class([
+                'cursor-pointer' => $isCopyable,
+            ])
+        >
+            {{ $state }}
         </span>
 
         @if ($icon && $iconPosition === 'after')
