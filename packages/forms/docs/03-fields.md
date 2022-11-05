@@ -184,6 +184,24 @@ TextInput::make('slug')
     ->dehydrated(fn (Page $livewire) => $livewire instanceof CreateRecord)
 ```
 
+### Hiding
+
+You may hide a field:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')->hidden()
+```
+
+Optionally, you may pass a boolean value to control if the field should be hidden or not:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')->hidden(! auth()->user()->isAdmin())
+```
+
 ### Autofocusing
 
 Most fields will be autofocusable. Typically, you should aim for the first significant field in your form to be autofocused for the best user experience.
