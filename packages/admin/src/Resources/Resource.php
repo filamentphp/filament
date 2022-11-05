@@ -445,7 +445,6 @@ class Resource
             $query->when(
                 method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchAttribute),
                 function (Builder $query) use ($databaseConnection, $searchAttribute, $searchOperator, $searchQuery, $whereClause): Builder {
-
                     $searchColumn = match ($databaseConnection->getDriverName()) {
                         'pgsql' => "{$searchAttribute}::text",
                         default => "json_extract({$searchAttribute}, '$')",
