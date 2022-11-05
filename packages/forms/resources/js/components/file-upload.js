@@ -260,9 +260,9 @@ export default function fileUploadFormComponent({
             this.fileKeyIndex = uploadedFiles ?? {}
 
             this.uploadedFileIndex = Object.entries(this.fileKeyIndex)
-                .filter((value) => value)
+                .filter(([key, value]) => value?.url)
                 .reduce((obj, [key, value]) => {
-                    obj[value] = key
+                    obj[value.url] = key
 
                     return obj
                 }, {})
