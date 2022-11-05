@@ -25,6 +25,7 @@
             'start', 'left' => 'text-start',
             'center' => 'text-center',
             'end', 'right' => 'text-end',
+            'justify' => 'text-justify',
             default => null,
         },
     ]) }}
