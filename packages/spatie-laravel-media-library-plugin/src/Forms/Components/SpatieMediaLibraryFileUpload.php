@@ -94,7 +94,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             return [
                 'name' => $media->name ?? $media->file_name,
                 'size' => $media->size,
-                'type' => $media->mime_time,
+                'type' => $media->mime_type,
                 'url' => $url,
             ];
         });
