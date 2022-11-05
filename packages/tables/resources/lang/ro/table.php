@@ -4,19 +4,16 @@ return [
 
     'columns' => [
 
-        'color' => [
-
-            'messages' => [
-                'copied' => 'Copiat',
-            ],
-
-        ],
-
         'tags' => [
             'more' => 'si alte :count',
         ],
 
+        'messages' => [
+            'copied' => 'Copiat',
+        ],
+
     ],
+
     'fields' => [
 
         'search_query' => [

@@ -3,9 +3,11 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
+use Filament\Tables\Columns\Concerns\CanBeCopied;
 
 class TextColumn extends Column
 {
+    use Concerns\CanBeCopied;
     use Concerns\CanFormatState;
     use Concerns\HasColor;
     use Concerns\HasDescription;

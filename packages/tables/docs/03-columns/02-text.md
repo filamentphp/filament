@@ -208,3 +208,17 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('email')
     ->weight('bold')
 ```
+
+## Allowing the text to be copied to the transfer area
+
+You can cause the text to copy, so that by clicking on the view, copies the value to the transfer area and, optionally, specify a custom confirmation message, milesecond duration and add a standard copy icon. This feature works only when SSL is activated for the application.
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('title')
+    ->copyable()
+    ->copyIcon()
+    ->copyMessage('Title copied')
+    ->copyMessageDuration(1500)
+```
