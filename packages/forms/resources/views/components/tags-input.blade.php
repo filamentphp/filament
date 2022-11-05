@@ -71,7 +71,7 @@
             <div
                 x-show="state.length"
                 x-cloak
-                class="overflow-hidden relative w-full p-2"
+                class="relative w-full p-2 overflow-hidden"
             >
                 <div class="flex flex-wrap gap-1">
                     <template class="hidden" x-for="tag in state" x-bind:key="tag">
@@ -87,7 +87,7 @@
                                 'cursor-default' => $isDisabled(),
                             ])
                         >
-                            <span class="text-left" x-text="tag"></span>
+                            <span class="text-start" x-text="tag"></span>
 
                             @unless ($isDisabled())
                                 <x-heroicon-s-x class="w-3 h-3 shrink-0" />
