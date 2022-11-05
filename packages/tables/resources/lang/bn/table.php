@@ -141,7 +141,7 @@ return [
         'buttons' => [
 
             'select_all' => [
-                'label' => ':count টি নির্বাচন করুন',
+                'label' => 'সব নির্বাচিত করুন',
             ],
 
             'deselect_all' => [
