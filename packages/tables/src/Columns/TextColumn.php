@@ -3,7 +3,6 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
-use Filament\Tables\Columns\Concerns\CanBeCopied;
 
 class TextColumn extends Column
 {
