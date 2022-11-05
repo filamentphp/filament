@@ -4,16 +4,12 @@ return [
 
     'columns' => [
 
-        'color' => [
-
-            'messages' => [
-                'copied' => 'הועתק',
-            ],
-
-        ],
-
         'tags' => [
             'more' => 'ו :count נוספים',
+        ],
+
+        'messages' => [
+            'copied' => 'הועתק',
         ],
 
     ],

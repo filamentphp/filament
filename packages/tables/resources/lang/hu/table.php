@@ -4,16 +4,12 @@ return [
 
     'columns' => [
 
-        'color' => [
-
-            'messages' => [
-                'copied' => 'Kimásolva',
-            ],
-
-        ],
-
         'tags' => [
             'more' => 'és további :count',
+        ],
+
+        'messages' => [
+            'copied' => 'Kimásolva',
         ],
 
     ],

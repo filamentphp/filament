@@ -4,16 +4,12 @@ return [
 
     'columns' => [
 
-        'color' => [
-
-            'messages' => [
-                'copied' => 'Disalin',
-            ],
-
-        ],
-
         'tags' => [
             'more' => 'dan :count lainnya',
+        ],
+
+        'messages' => [
+            'copied' => 'Disalin',
         ],
 
     ],

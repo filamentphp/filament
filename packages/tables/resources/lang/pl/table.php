@@ -4,16 +4,12 @@ return [
 
     'columns' => [
 
-        'color' => [
-
-            'messages' => [
-                'copied' => 'Skopiowano',
-            ],
-
-        ],
-
         'tags' => [
             'more' => 'i :count więcej',
+        ],
+
+        'messages' => [
+            'copied' => 'Skopiowano',
         ],
 
     ],

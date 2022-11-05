@@ -4,16 +4,12 @@ return [
 
     'columns' => [
 
-        'color' => [
-
-            'messages' => [
-                'copied' => 'Zkopírováno',
-            ],
-
-        ],
-
         'tags' => [
             'more' => 'a 1 další|a :count další| a :count dalších',
+        ],
+
+        'messages' => [
+            'copied' => 'Zkopírováno',
         ],
 
     ],

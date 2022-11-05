@@ -4,16 +4,12 @@ return [
 
     'columns' => [
 
-        'color' => [
-
-            'messages' => [
-                'copied' => 'Đã sao chép',
-            ],
-
-        ],
-
         'tags' => [
             'more' => 'và còn :count',
+        ],
+
+        'messages' => [
+            'copied' => 'Đã sao chép',
         ],
 
     ],

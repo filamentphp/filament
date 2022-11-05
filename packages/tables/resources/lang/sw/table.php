@@ -4,16 +4,12 @@ return [
 
     'columns' => [
 
-        'color' => [
-
-            'messages' => [
-                'copied' => 'Imeigwa',
-            ],
-
-        ],
-
         'tags' => [
             'more' => 'na :count zaidi',
+        ],
+
+        'messages' => [
+            'copied' => 'Imeigwa',
         ],
 
     ],

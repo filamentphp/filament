@@ -9,6 +9,7 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class TextColumn extends Column
 {
+    use Concerns\CanBeCopied;
     use Concerns\CanFormatState;
     use Concerns\HasColor;
     use Concerns\HasDescription;
