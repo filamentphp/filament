@@ -13046,7 +13046,7 @@ var locales = {
   hy: require_hy_am(),
   id: require_id(),
   it: require_it(),
-  js: require_ja(),
+  ja: require_ja(),
   ka: require_ka(),
   ku: require_ku(),
   ms: require_ms(),

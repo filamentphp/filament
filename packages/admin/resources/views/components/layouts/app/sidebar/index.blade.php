@@ -91,21 +91,12 @@
 
         <ul class="px-6 space-y-6">
             @foreach ($navigation as $group)
-                <x-filament::layouts.app.sidebar.group :label="$group->getLabel()" :icon="$group->getIcon()" :collapsible="$group->isCollapsible()">
-                    @foreach ($group->getItems() as $item)
-                        <x-filament::layouts.app.sidebar.item
-                            :active="$item->isActive()"
-                            :icon="$item->getIcon()"
-                            :active-icon="$item->getActiveIcon()"
-                            :url="$item->getUrl()"
-                            :badge="$item->getBadge()"
-                            :badgeColor="$item->getBadgeColor()"
-                            :shouldOpenUrlInNewTab="$item->shouldOpenUrlInNewTab()"
-                        >
-                            {{ $item->getLabel() }}
-                        </x-filament::layouts.app.sidebar.item>
-                    @endforeach
-                </x-filament::layouts.app.sidebar.group>
+                <x-filament::layouts.app.sidebar.group
+                    :label="$group->getLabel()"
+                    :icon="$group->getIcon()"
+                    :collapsible="$group->isCollapsible()"
+                    :items="$group->getItems()"
+                />
 
                 @if (! $loop->last)
                     <li>

@@ -1,10 +1,18 @@
 @props([
+    'parentGroup' => null,
     'collapsible' => true,
     'icon' => null,
+    'items' => [],
     'label' => null,
 ])
 
-<li x-data="{ label: {{ \Illuminate\Support\Js::from($label) }} }" class="filament-sidebar-group">
+<li
+    x-data="{ label: {{ \Illuminate\Support\Js::from((filled($parentGroup) ? "{$parentGroup}." : null) . $label) }} }"
+    class="filament-sidebar-group"
+    @if (filled($parentGroup))
+        x-bind:class="{{ config('filament.layout.sidebar.is_collapsible_on_desktop') ? '$store.sidebar.isOpen' : 'true' }} ? 'ml-11 pr-3 pt-3' : 'hidden'"
+    @endif
+>
     @if ($label)
         <button
             @if ($collapsible)
@@ -45,6 +53,28 @@
             'mt-2' => $label,
         ])
     >
-        {{ $slot }}
+        @foreach ($items as $item)
+            @if ($item instanceof \Filament\Navigation\NavigationItem)
+                <x-filament::layouts.app.sidebar.item
+                    :active="$item->isActive()"
+                    :icon="$item->getIcon()"
+                    :active-icon="$item->getActiveIcon()"
+                    :url="$item->getUrl()"
+                    :badge="$item->getBadge()"
+                    :badgeColor="$item->getBadgeColor()"
+                    :shouldOpenUrlInNewTab="$item->shouldOpenUrlInNewTab()"
+                >
+                    {{ $item->getLabel() }}
+                </x-filament::layouts.app.sidebar.item>
+            @elseif ($item instanceof \Filament\Navigation\NavigationGroup)
+                <x-filament::layouts.app.sidebar.group
+                    :label="$item->getLabel()"
+                    :icon="$item->getIcon()"
+                    :collapsible="$item->isCollapsible()"
+                    :items="$item->getItems()"
+                    :parentGroup="(filled($parentGroup) ? ('$parentGroup' . '.') : null) . $label"
+                />
+            @endif
+        @endforeach
     </ul>
 </li>
