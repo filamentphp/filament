@@ -282,13 +282,15 @@ export default function fileUploadFormComponent({
                     source: uploadedFile.url,
                     options: {
                         type: 'local',
-                        ...(/^image/.test(uploadedFile.type) ? {} : {
-                            file: {
-                                name: uploadedFile.name,
-                                size: uploadedFile.size,
-                                type: uploadedFile.type,
-                            },
-                        }),
+                        ...(/^image/.test(uploadedFile.type)
+                            ? {}
+                            : {
+                                  file: {
+                                      name: uploadedFile.name,
+                                      size: uploadedFile.size,
+                                      type: uploadedFile.type,
+                                  },
+                              }),
                     },
                 })
             }
