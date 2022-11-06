@@ -774,6 +774,7 @@
                                 @foreach ($columns as $column)
                                     @php
                                         $column->record($record);
+                                        $column->loop($loop);
                                     @endphp
 
                                     <x-tables::cell

@@ -35,6 +35,10 @@
         $layoutComponent->record($record);
 
         $isColumn = $layoutComponent instanceof \Filament\Tables\Columns\Column;
+
+        if ($isColumn){
+            $layoutComponent->loop($loop);
+        }
     @endphp
 
     @if (! $layoutComponent->isHidden())
