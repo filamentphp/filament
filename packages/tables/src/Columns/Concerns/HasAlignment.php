@@ -37,12 +37,12 @@ trait HasAlignment
 
     public function alignLeft(bool | Closure $condition = true): static
     {
-        return $this->alignStart($condition);
+        return $this->alignment(static fn (): ?string => $condition ? 'left' : null);
     }
 
     public function alignRight(bool | Closure $condition = true): static
     {
-        return $this->alignEnd($condition);
+        return $this->alignment(static fn (): ?string => $condition ? 'right' : null);
     }
 
     public function getAlignment(): ?string
