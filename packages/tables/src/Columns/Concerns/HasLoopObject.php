@@ -9,6 +9,7 @@ trait HasLoopObject
     public function loop(?\stdClass $loop): static
     {
         $this->loop = $loop;
+
         return $this;
     }
 
