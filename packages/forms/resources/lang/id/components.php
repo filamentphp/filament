@@ -16,6 +16,10 @@ return [
                 'label' => 'Tambahkan :label',
             ],
 
+            'create_item_between' => [
+                'label' => 'Sisipkan',
+            ],
+
             'delete_item' => [
                 'label' => 'Hapus',
             ],
@@ -46,6 +50,22 @@ return [
 
             'expand_all' => [
                 'label' => 'Tampilkan semua',
+            ],
+
+        ],
+
+    ],
+
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Batalkan semua pilihan',
+            ],
+
+            'select_all' => [
+                'label' => 'Pilih semua',
             ],
 
         ],
