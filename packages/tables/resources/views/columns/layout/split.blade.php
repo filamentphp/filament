@@ -23,6 +23,6 @@
         :components="$getComponents()"
         :record="$getRecord()"
         :record-key="$recordKey"
-        :rowLoop="$rowLoop"
+        :row-loop="$rowLoop"
     />
 </div>
