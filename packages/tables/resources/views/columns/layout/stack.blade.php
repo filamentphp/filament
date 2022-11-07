@@ -1,7 +1,3 @@
-@props([
-    'rowLoop' => null
-])
-
 <div
     {{
         $attributes
@@ -29,6 +25,6 @@
         :components="$getComponents()"
         :record="$getRecord()"
         :record-key="$recordKey"
-        :row-loop="$rowLoop"
+        :row-loop="$getRowLoop()"
     />
 </div>
