@@ -34,12 +34,9 @@
 @foreach ($components as $layoutComponent)
     @php
         $layoutComponent->record($record);
+        $layoutComponent->rowLoop($rowLoop);
 
         $isColumn = $layoutComponent instanceof \Filament\Tables\Columns\Column;
-
-        if ($isColumn){
-            $layoutComponent->rowLoop($rowLoop);
-        }
     @endphp
 
     @if (! $layoutComponent->isHidden())
@@ -62,7 +59,7 @@
                     :record-key="$recordKey"
                 />
             @else
-                {{ $layoutComponent->viewData(['recordKey' => $recordKey, 'rowLoop' => $rowLoop]) }}
+                {{ $layoutComponent->viewData(['recordKey' => $recordKey]) }}
             @endif
         </x-filament-support::grid.column>
     @endif
