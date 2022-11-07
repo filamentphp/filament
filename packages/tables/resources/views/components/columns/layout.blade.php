@@ -2,7 +2,7 @@
     'components',
     'record',
     'recordKey' => null,
-    'rowLoop' => null
+    'rowLoop' => null,
 ])
 
 @php
@@ -59,7 +59,7 @@
                     :record-key="$recordKey"
                 />
             @else
-                {{ $layoutComponent->viewData(['recordKey' => $recordKey, 'rowLoop' => $rowLoop]) }}
+                {{ $layoutComponent->viewData(['recordKey' => $recordKey]) }}
             @endif
         </x-filament-support::grid.column>
     @endif
