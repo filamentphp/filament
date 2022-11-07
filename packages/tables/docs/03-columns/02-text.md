@@ -208,3 +208,16 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('email')
     ->weight('bold')
 ```
+
+## Allowing the text to be copied to the clipboard
+
+You may make the text copyable, such that clicking on the cell copies the text to the clipboard, and optionally specify a custom confirmation message and duration in milliseconds. This feature only works when SSL is enabled for the app.
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('email')
+    ->copyable()
+    ->copyMessage('Email address copied')
+    ->copyMessageDuration(1500)
+```

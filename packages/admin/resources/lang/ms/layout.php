@@ -22,6 +22,18 @@ return [
             'label' => 'Log keluar',
         ],
 
+        'sidebar' => [
+
+            'collapse' => [
+                'label' => 'Runtuhkan bar sisi',
+            ],
+
+            'expand' => [
+                'label' => 'Kembangkan bar sisi',
+            ],
+
+        ],
+
         'user_menu' => [
             'label' => 'Menu Pengguna',
         ],

@@ -4,16 +4,12 @@ return [
 
     'columns' => [
 
-        'color' => [
-
-            'messages' => [
-                'copied' => 'Nukopijuota',
-            ],
-
-        ],
-
         'tags' => [
             'more' => 'ir :count daugiau',
+        ],
+
+        'messages' => [
+            'copied' => 'Nukopijuota',
         ],
 
     ],
