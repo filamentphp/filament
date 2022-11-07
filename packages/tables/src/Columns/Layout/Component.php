@@ -12,6 +12,7 @@ use Filament\Tables\Columns\Concerns\CanBeHidden;
 use Filament\Tables\Columns\Concerns\CanGrow;
 use Filament\Tables\Columns\Concerns\CanSpanColumns;
 use Filament\Tables\Columns\Concerns\HasRecord;
+use Filament\Tables\Columns\Concerns\HasRowLoopObject;
 use Illuminate\Support\Traits\Conditionable;
 
 class Component extends ViewComponent
@@ -22,6 +23,7 @@ class Component extends ViewComponent
     use CanSpanColumns;
     use CanGrow;
     use HasRecord;
+    use HasRowLoopObject;
     use Conditionable;
     use HasExtraAttributes;
 
