@@ -56,7 +56,7 @@ class Column extends ViewComponent
         return array_merge(parent::getDefaultEvaluationParameters(), [
             'livewire' => $this->getLivewire(),
             'record' => $this->getRecord(),
-            'loop' => $this->getRowLoop(),
+            'rowLoop' => $this->getRowLoop(),
         ]);
     }
 }
