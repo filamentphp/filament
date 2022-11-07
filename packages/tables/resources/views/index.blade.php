@@ -507,7 +507,6 @@
                                                         :components="$getColumnsLayout()"
                                                         :record="$record"
                                                         :record-key="$recordKey"
-                                                        :rowLoop="$loop"
                                                     />
                                                 </a>
                                             @elseif ($recordAction)
@@ -531,7 +530,6 @@
                                                         :components="$getColumnsLayout()"
                                                         :record="$record"
                                                         :record-key="$recordKey"
-                                                        :rowLoop="$loop"
                                                     />
                                                 </button>
                                             @else
@@ -540,7 +538,6 @@
                                                         :components="$getColumnsLayout()"
                                                         :record="$record"
                                                         :record-key="$recordKey"
-                                                        :rowLoop="$loop"
                                                     />
                                                 </div>
                                             @endif
