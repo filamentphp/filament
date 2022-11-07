@@ -2,13 +2,11 @@
 
 namespace Filament\Tables\Filters\Concerns;
 
-use Closure;
-
 trait HasDefaultState
 {
-    protected Closure | null $defaultState = null;
+    protected $defaultState = null;
 
-    public function default(Closure | null $state ): static
+    public function default($state = true): static
     {
         $this->defaultState = $state;
 
