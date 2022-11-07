@@ -76,8 +76,8 @@ it('can have visible fields on multiple forms', function () {
 
 it('can fill fields on multiple forms', function () {
     livewire(TestComponentWithMultipleForms::class)
-        ->fillForm(['required', 'value'], 'fooForm')
-        ->assertSet('required', 'value');
+        ->fillForm(['title', 'value'], 'fooForm')
+        ->assertSet('title', 'value');
 });
 
 class TestComponentWithForm extends Livewire
@@ -132,9 +132,6 @@ class TestComponentWithMultipleForms extends Livewire
                 ->hidden(),
 
             TextInput::make('visible'),
-
-            TextInput::make('required')
-                ->required(),
         ];
     }
 
