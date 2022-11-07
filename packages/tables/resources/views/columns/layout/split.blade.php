@@ -1,4 +1,7 @@
-@props(['rowLoop' => null])
+@props([
+    'rowLoop' => null,
+])
+
 <div
     {{
         $attributes
