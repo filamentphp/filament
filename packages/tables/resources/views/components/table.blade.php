@@ -3,7 +3,7 @@
     'header' => null,
 ])
 
-<table {{ $attributes->class(['filament-tables-table w-full text-left rtl:text-right divide-y table-auto dark:divide-gray-700']) }}>
+<table {{ $attributes->class(['filament-tables-table w-full text-start divide-y table-auto dark:divide-gray-700']) }}>
     @if ($header)
         <thead>
             <tr class="bg-gray-500/5">

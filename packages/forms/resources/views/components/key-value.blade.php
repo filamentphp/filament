@@ -13,7 +13,7 @@
         {{ $getExtraAlpineAttributeBag() }}
     >
         <div class="border border-gray-300 divide-y shadow-sm bg-white rounded-xl overflow-hidden dark:bg-gray-700 dark:border-gray-600 dark:divide-gray-600">
-            <table class="w-full text-left rtl:text-right divide-y table-auto dark:divide-gray-700">
+            <table class="w-full text-start divide-y table-auto dark:divide-gray-700">
                 <thead>
                     <tr class="bg-gray-50 dark:bg-gray-800/60">
                         <th
@@ -55,7 +55,7 @@
                             @if ($isReorderable())
                                 x-bind:x-sortable-item="row.key"
                             @endif
-                            class="divide-x dark:divide-gray-600"
+                            class="divide-x rtl:divide-x-reverse dark:divide-gray-600"
                         >
                             <td>
                                 <input

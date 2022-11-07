@@ -16,6 +16,10 @@ return [
                 'label' => 'Zu :label hinzufügen',
             ],
 
+            'create_item_between' => [
+                'label' => 'Einfügen',
+            ],
+
             'delete_item' => [
                 'label' => 'Löschen',
             ],
@@ -25,7 +29,7 @@ return [
             ],
 
             'move_item_down' => [
-                'label' => 'Nach unter verschieben',
+                'label' => 'Nach unten verschieben',
             ],
 
             'move_item_up' => [
@@ -52,6 +56,22 @@ return [
 
     ],
 
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Alle deselektieren',
+            ],
+
+            'select_all' => [
+                'label' => 'Alle selektieren',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [
@@ -62,6 +82,10 @@ return [
 
             'delete' => [
                 'label' => 'Zeile löschen',
+            ],
+
+            'reorder' => [
+                'label' => 'Zeile neu sortieren',
             ],
 
         ],

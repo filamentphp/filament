@@ -92,7 +92,7 @@
         class="border border-gray-300 shadow-sm bg-white rounded-xl overflow-hidden divide-y divide-gray-300 md:flex md:divide-y-0 dark:bg-gray-800 dark:border-gray-700 dark:divide-gray-700"
     >
         @foreach ($getChildComponentContainer()->getComponents() as $step)
-            <li class="group relative overflow-hidden md:flex-1">
+            <li class="relative overflow-hidden group md:flex-1">
                 <button
                     type="button"
                     x-on:click="if (isStepClickable(step, {{ $loop->index }})) step = '{{ $step->getId() }}'"
@@ -101,7 +101,7 @@
                         'cursor-not-allowed pointer-events-none': ! isStepClickable(step, {{ $loop->index }}),
                     }"
                     role="step"
-                    class="flex items-center h-full text-left rtl:text-right w-full"
+                    class="flex items-center w-full h-full text-start"
                 >
                     <div
                         x-bind:class="{
@@ -112,7 +112,7 @@
                         aria-hidden="true"
                     ></div>
 
-                    <div class="px-5 py-4 flex gap-3 items-center text-sm font-medium">
+                    <div class="flex items-center gap-3 px-5 py-4 text-sm font-medium">
                         <div class="flex-shrink-0">
                             <div
                                 x-bind:class="{
@@ -121,7 +121,7 @@
                                     'border-primary-500': getStepIndex(step) === {{ $loop->index }},
                                     'border-gray-300 dark:border-gray-500': getStepIndex(step) < {{ $loop->index }},
                                 }"
-                                class="w-10 h-10 flex items-center justify-center rounded-full"
+                                class="flex items-center justify-center w-10 h-10 rounded-full"
                             >
                                 <x-filament::icon
                                     name="heroicon-m-check"

@@ -8,7 +8,7 @@
 >
     {{ $form }}
 
-    <div class="text-right">
+    <div class="text-end">
         <x-filament::link
             wire:click="resetTableFiltersForm"
             color="danger"

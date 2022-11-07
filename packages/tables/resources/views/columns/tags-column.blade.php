@@ -6,9 +6,12 @@
     'filament-tables-tags-column flex flex-wrap items-center gap-1',
     'px-4 py-3' => ! $isInline(),
     match ($getAlignment()) {
-        'left' => 'justify-start',
+        'start' => 'justify-start',
         'center' => 'justify-center',
-        'right' => 'justify-end',
+        'end' => 'justify-end',
+        'left' => 'justify-start rtl:flex-row-reverse',
+        'center' => 'justify-center',
+        'right' => 'justify-end rtl:flex-row-reverse',
         default => null,
     },
 ]) }}>
