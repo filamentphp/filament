@@ -2,18 +2,18 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
-trait HasLoopObject
+trait HasRowLoopObject
 {
     protected \stdClass|null $loop = null;
 
-    public function loop(?\stdClass $loop): static
+    public function rowLoop(?\stdClass $loop): static
     {
         $this->loop = $loop;
 
         return $this;
     }
 
-    public function getLoop(): ?\stdClass
+    public function getRowLoop(): ?\stdClass
     {
         return $this->loop;
     }

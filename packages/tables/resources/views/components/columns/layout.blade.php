@@ -2,6 +2,7 @@
     'components',
     'record',
     'recordKey' => null,
+    'rowLoop' => null
 ])
 
 @php
@@ -37,7 +38,7 @@
         $isColumn = $layoutComponent instanceof \Filament\Tables\Columns\Column;
 
         if ($isColumn){
-            $layoutComponent->loop($loop);
+            $layoutComponent->rowLoop($rowLoop);
         }
     @endphp
 
@@ -61,7 +62,7 @@
                     :record-key="$recordKey"
                 />
             @else
-                {{ $layoutComponent->viewData(['recordKey' => $recordKey]) }}
+                {{ $layoutComponent->viewData(['recordKey' => $recordKey, 'rowLoop' => $rowLoop]) }}
             @endif
         </x-filament-support::grid.column>
     @endif

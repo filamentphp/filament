@@ -507,6 +507,7 @@
                                                         :components="$getColumnsLayout()"
                                                         :record="$record"
                                                         :record-key="$recordKey"
+                                                        :rowLoop="$loop"
                                                     />
                                                 </a>
                                             @elseif ($recordAction)
@@ -530,6 +531,7 @@
                                                         :components="$getColumnsLayout()"
                                                         :record="$record"
                                                         :record-key="$recordKey"
+                                                        :rowLoop="$loop"
                                                     />
                                                 </button>
                                             @else
@@ -538,6 +540,7 @@
                                                         :components="$getColumnsLayout()"
                                                         :record="$record"
                                                         :record-key="$recordKey"
+                                                        :rowLoop="$loop"
                                                     />
                                                 </div>
                                             @endif
@@ -774,7 +777,7 @@
                                 @foreach ($columns as $column)
                                     @php
                                         $column->record($record);
-                                        $column->loop($loop);
+                                        $column->rowLoop($loop->parent);
                                     @endphp
 
                                     <x-tables::cell
