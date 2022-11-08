@@ -205,6 +205,7 @@ trait HasActions
         return $this->makeForm()
             ->schema($action->getFormSchema())
             ->statePath('mountedActionData')
+            ->livewireKey("action.{$this->mountedAction}")
             ->model($action->getModel() ?? $this->getMountedActionFormModel())
             ->context($this->mountedAction);
     }

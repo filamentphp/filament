@@ -25,4 +25,15 @@ trait BelongsToContainer
     {
         return $this->getContainer()->getLivewire();
     }
+
+    public function getLivewireKey(): string
+    {
+        $key = $this->getStatePath() . '.' . static::class;
+
+        if ($containerKey = $this->getContainer()->getLivewireKey()) {
+            $key = "{$containerKey}.{$key}";
+        }
+
+        return $key;
+    }
 }

@@ -71,7 +71,7 @@
                         x-on:mouseenter="isCreateButtonVisible = true"
                         x-on:click.away="isCreateButtonVisible = false"
                         x-on:mouseleave="isCreateButtonVisible = false"
-                        wire:key="{{ $this->id }}.{{ $item->getStatePath() }}.item"
+                        wire:key="{{ $item->getLivewireKey() }}.{{ $item->getStatePath() }}.item"
                         wire:sortable.item="{{ $uuid }}"
                         x-on:expand-concealing-component.window="
                             error = $el.querySelector('[data-validation-error]')

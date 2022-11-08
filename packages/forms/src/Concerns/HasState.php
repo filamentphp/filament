@@ -207,8 +207,8 @@ trait HasState
             $pathComponents[] = $parentComponentStatePath;
         }
 
-        if (($statePath = $this->statePath) !== null) {
-            $pathComponents[] = $statePath;
+        if ($this->statePath !== null) {
+            $pathComponents[] = $this->statePath;
         }
 
         return implode('.', $pathComponents);

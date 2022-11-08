@@ -40,6 +40,7 @@ trait HasFormComponentActions
             ->schema($action->getFormSchema())
             ->model($this->getMountedFormComponentActionComponent()->getActionFormModel())
             ->statePath('mountedFormComponentActionData')
+            ->livewireKey("formComponentAction.{$this->mountedFormComponentAction}.{$this->mountedFormComponentActionComponent}")
             ->context($this->mountedFormComponentAction);
     }
 

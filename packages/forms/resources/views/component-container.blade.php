@@ -23,7 +23,7 @@
         @endphp
 
         <x-filament-support::grid.column
-            :wire:key="$formComponent instanceof \Filament\Forms\Components\Field ? $this->id . '.' . $formComponent->getStatePath() . '.' . $formComponent::class : null"
+            :wire:key="$formComponent instanceof \Filament\Forms\Components\Field ? $formComponent->getLivewireKey() : null"
             :hidden="$isHidden"
             :default="$formComponent->getColumnSpan('default')"
             :sm="$formComponent->getColumnSpan('sm')"
