@@ -11,6 +11,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use stdClass;
+
 trait CanFormatState
 {
     protected ?Closure $formatStateUsing = null;
@@ -197,8 +198,8 @@ trait CanFormatState
 
     public function rowIndex(bool $fromZero = false): static
     {
-        $this->getStateUsing(static function (stdClass $rowLoop) use($fromZero): ?string {
-            return $rowLoop->{ $fromZero? "index":"iteration"};
+        $this->getStateUsing(static function (stdClass $rowLoop) use ($fromZero): ?string {
+            return $rowLoop->{ $fromZero ? 'index' : 'iteration'};
         });
 
         return $this;
