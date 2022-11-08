@@ -133,6 +133,31 @@ TextColumn::make('status')->enum([
 ])
 ```
 
+
+## Serial/RowIndex
+
+You may also want to show the serial/index number:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('Sl')->getStateUsing(function (stdClass $rowLoop){
+      return $rowLoop->iteration;
+})
+```
+As $rowLoop is Laravel's foreach $loop object,therefor every other properties of $loop object can be used.
+
+
+Or you may call `rowIndex()` method
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('Sl')->rowIndex()
+```
+
+Also you can pass `true` as rowIndex method parameter to start counting from zero.
+
 ## Custom formatting
 
 You may instead pass a custom formatting callback to `formatStateUsing()`, which accepts the `$state` of the cell, and optionally its `$record`:
