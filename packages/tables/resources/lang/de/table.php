@@ -8,6 +8,10 @@ return [
             'more' => 'und :count weitere',
         ],
 
+        'messages' => [
+            'copied' => 'Kopiert',
+        ],
+
     ],
 
     'fields' => [

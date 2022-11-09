@@ -22,6 +22,18 @@ return [
             'label' => 'Keluar',
         ],
 
+        'sidebar' => [
+
+            'collapse' => [
+                'label' => 'Persempit menu',
+            ],
+
+            'expand' => [
+                'label' => 'Perluas menu',
+            ],
+
+        ],
+
         'user_menu' => [
             'label' => 'Menu pengguna',
         ],

@@ -209,16 +209,15 @@ TextColumn::make('email')
     ->weight('bold')
 ```
 
-## Allowing the text to be copied to the transfer area
+## Allowing the text to be copied to the clipboard
 
-You can cause the text to copy, so that by clicking on the view, copies the value to the transfer area and, optionally, specify a custom confirmation message, milesecond duration and add a standard copy icon. This feature works only when SSL is activated for the application.
+You may make the text copyable, such that clicking on the cell copies the text to the clipboard, and optionally specify a custom confirmation message and duration in milliseconds. This feature only works when SSL is enabled for the app.
 
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')
+TextColumn::make('email')
     ->copyable()
-    ->copyIcon()
-    ->copyMessage('Title copied')
+    ->copyMessage('Email address copied')
     ->copyMessageDuration(1500)
 ```
