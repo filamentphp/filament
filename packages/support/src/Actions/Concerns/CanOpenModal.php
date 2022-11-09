@@ -23,7 +23,9 @@ trait CanOpenModal
 
     protected string | Closure | null $modalButtonLabel = null;
 
-    protected View | Htmlable | Closure | null $modalContent = null;
+    protected View | Htmlable | Closure | null $modalHeaderContent = null;
+
+    protected View | Htmlable | Closure | null $modalFooterContent = null;
 
     protected string| Htmlable | Closure | null $modalHeading = null;
 
@@ -80,9 +82,27 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalContent(View | Htmlable | Closure | null $content = null): static
+    public function modalContent(View | Htmlable | Closure | null $content = null, string | Closure | null $position = 'header'): static
     {
-        $this->modalContent = $content;
+        if ($position == 'header') {
+            $this->modalHeaderContent = $content;
+        } else {
+            $this->modalFooterContent = $content;
+        }
+
+        return $this;
+    }
+
+    public function modalHeaderContent(View | Htmlable | Closure | null $content = null): static
+    {
+        $this->modalHeaderContent = $content;
+
+        return $this;
+    }
+
+    public function modalFooterContent(View | Htmlable | Closure | null $content = null): static
+    {
+        $this->modalFooterContent = $content;
 
         return $this;
     }
@@ -190,7 +210,17 @@ trait CanOpenModal
 
     public function getModalContent(): View | Htmlable | null
     {
-        return $this->evaluate($this->modalContent);
+        return $this->getModalHeaderContent();
+    }
+
+    public function getModalHeaderContent(): View | Htmlable | null
+    {
+        return $this->evaluate($this->modalHeaderContent);
+    }
+
+    public function getModalFooterContent(): View | Htmlable | null
+    {
+        return $this->evaluate($this->modalFooterContent);
     }
 
     public function getModalHeading(): string | Htmlable
@@ -244,7 +274,7 @@ trait CanOpenModal
 
     public function shouldOpenModal(): bool
     {
-        return $this->isConfirmationRequired() || $this->hasFormSchema() || $this->getModalContent();
+        return $this->isConfirmationRequired() || $this->hasFormSchema() || $this->getModalHeaderContent() || $this->getModalFooterContent();
     }
 
     protected function makeExtraModalAction(string $name, ?array $arguments = null): ModalAction

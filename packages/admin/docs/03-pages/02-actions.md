@@ -203,6 +203,16 @@ Action::make('advance')
     ->modalContent(view('filament.pages.actions.advance'))
 ```
 
+By default, the custom content is displayed on header of modal, but you can move it to footer using the second parameter:
+
+```php
+use Filament\Pages\Actions\Action;
+
+Action::make('advance')
+    ->action(fn () => $this->record->advance())
+    ->modalContent(view('filament.pages.actions.advance'), position: 'footer')
+```
+
 ## Grouping
 
 You may use an `ActionGroup` object to group multiple actions together in a dropdown:

@@ -36,11 +36,13 @@
                 </x-slot>
             @endif
 
-            {{ $action->getModalContent() }}
+            {{ $action->getModalHeaderContent() }}
 
             @if ($action->hasFormSchema())
                 {{ $this->getMountedFormComponentActionForm() }}
             @endif
+
+            {{ $action->getModalFooterContent() }}
 
             @if (count($action->getModalActions()))
                 <x-slot name="footer">

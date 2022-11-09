@@ -308,6 +308,16 @@ BulkAction::make('advance')
     ->modalContent(view('filament.resources.event.actions.advance'))
 ```
 
+By default, the custom content is displayed on header of modal, but you can move it to footer using the second parameter:
+
+```php
+use Filament\Pages\Actions\BulkAction;
+
+BulkAction::make('advance')
+    ->action(fn () => $this->record->advance())
+    ->modalContent(view('filament.resources.event.actions.advance'), position: 'footer')
+```
+
 ## Authorization
 
 You may conditionally show or hide actions and bulk actions for certain users using either the `visible()` or `hidden()` methods, passing a closure:
