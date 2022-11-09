@@ -198,7 +198,7 @@ trait CanFormatState
 
     public function rowIndex(bool $isFromZero = false): static
     {
-        $this->getStateUsing(static function (stdClass $rowLoop) use ($fromZero): ?string {
+        $this->getStateUsing(static function (stdClass $rowLoop): ?string {
             return (string) $rowLoop->{$isFromZero ? 'index' : 'iteration'};
         });
 
