@@ -48,7 +48,7 @@
             <input
                 readonly
                 placeholder="{{ $getPlaceholder() }}"
-                wire:key="{{  $this->id }}.{{  $getStatePath() }}.{{  $field::class }}.display-text"
+                wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.display-text"
                 x-model="displayText"
                 {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
                 @class([

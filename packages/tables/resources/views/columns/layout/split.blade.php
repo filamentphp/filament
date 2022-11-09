@@ -19,5 +19,6 @@
         :components="$getComponents()"
         :record="$getRecord()"
         :record-key="$recordKey"
+        :row-loop="$getRowLoop()"
     />
 </div>

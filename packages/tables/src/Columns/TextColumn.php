@@ -6,6 +6,7 @@ use BackedEnum;
 use Closure;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Illuminate\Contracts\Support\Arrayable;
+use stdClass;
 
 class TextColumn extends Column
 {
@@ -42,6 +43,13 @@ class TextColumn extends Column
         ) {
             $this->formatStateUsing(static fn ($state): ?string => $enum::tryFrom($state)?->getLabel() ?? ($default ?? $state));
         }
+    }
+
+    public function rowIndex(bool $isFromZero = false): static
+    {
+        $this->getStateUsing(static function (stdClass $rowLoop) use ($isFromZero): string {
+            return (string) $rowLoop->{$isFromZero ? 'index' : 'iteration'};
+        });
 
         return $this;
     }

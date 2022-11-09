@@ -26,7 +26,7 @@
 
             <x-filament::link
                 wire:click="clearDatabaseNotifications"
-                x-on:click="isOpen = false"
+                x-on:click="close()"
                 color="gray"
                 tag="button"
                 tabindex="-1"

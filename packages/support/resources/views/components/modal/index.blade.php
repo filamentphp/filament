@@ -20,11 +20,27 @@
 ])
 
 <div
-    x-data="{ isOpen: false }"
+    x-data="{
+
+        isOpen: false,
+
+        close: function () {
+            this.isOpen = false
+
+            this.$refs.modalContainer.dispatchEvent(new CustomEvent('modal-closed', { id: '{{ $id }}' }))
+        },
+
+        open: function () {
+            this.isOpen = true
+
+            this.$refs.modalContainer.dispatchEvent(new CustomEvent('modal-opened', { id: '{{ $id }}' }))
+        },
+
+    }"
     x-trap.noscroll="isOpen"
     @if ($id)
-        x-on:{{ $closeEventName }}.window="if ($event.detail.id === '{{ $id }}') isOpen = false"
-        x-on:{{ $openEventName }}.window="if ($event.detail.id === '{{ $id }}') isOpen = true"
+        x-on:{{ $closeEventName }}.window="if ($event.detail.id === '{{ $id }}') close()"
+        x-on:{{ $openEventName }}.window="if ($event.detail.id === '{{ $id }}') open()"
     @endif
     @if ($ariaLabelledby)
         aria-labelledby="{{ $ariaLabelledby }}"
@@ -34,6 +50,7 @@
     role="dialog"
     aria-modal="true"
     class="filament-modal {{ $displayClasses }}"
+    wire:ignore.self
 >
     {{ $trigger }}
 
@@ -53,7 +70,7 @@
                 @if (filled($id))
                     x-on:click="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
                 @else
-                    x-on:click="isOpen = false"
+                    x-on:click="close()"
                 @endif
             @endif
             aria-hidden="true"
@@ -68,7 +85,7 @@
             @if (filled($id))
                 x-on:keydown.window.escape="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
             @else
-                x-on:keydown.window.escape="isOpen = false"
+                x-on:keydown.window.escape="close()"
             @endif
             x-transition:enter="ease duration-300"
             x-transition:leave="ease duration-300"
@@ -83,6 +100,7 @@
                 x-transition:leave-start="translate-y-0"
                 x-transition:leave-end="translate-y-8"
             @endif
+            x-ref="modalContainer"
             x-cloak
             {{ $attributes->class([
                 'relative w-full cursor-pointer pointer-events-none',
@@ -115,6 +133,11 @@
                         tabindex="-1"
                         type="button"
                         class="absolute top-2 right-2 rtl:right-auto rtl:left-2"
+                        @if (filled($id))
+                            x-on:click="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
+                        @else
+                            x-on:click="close()"
+                        @endif
                     >
                         <x-filament::icon
                             name="heroicon-m-x-mark"
@@ -123,7 +146,7 @@
                             size="h-4 w-4"
                             class="filament-modal-close-button cursor-pointer"
                             :title="__('filament::components/modal.actions.close.label')"
-                            x-on:click="isOpen = false"
+                            x-on:click="close()"
                             tabindex="-1"
                         />
 
