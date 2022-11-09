@@ -11,7 +11,7 @@
         :slide-over="$action?->isModalSlideOver()"
         display-classes="block"
         x-init="this.livewire = $wire.__instance"
-        x-on:modal-closed.stop="this.livewire.set('mountedFormComponentAction', null)"
+        x-on:modal-closed.stop="if ('mountedFormComponentAction' in this.livewire?.serverMemo.data) this.livewire.set('mountedFormComponentAction', null)"
     >
         @if ($action)
             @if ($action->isModalCentered())

@@ -888,7 +888,7 @@
             :slide-over="$action?->isModalSlideOver()"
             display-classes="block"
             x-init="this.livewire = $wire.__instance"
-            x-on:modal-closed.stop="this.livewire.set('mountedTableAction', null)"
+            x-on:modal-closed.stop="if ('mountedTableAction' in this.livewire?.serverMemo.data) this.livewire.set('mountedTableAction', null)"
         >
             @if ($action)
                 @if ($action->isModalCentered())
@@ -947,7 +947,7 @@
             :slide-over="$action?->isModalSlideOver()"
             display-classes="block"
             x-init="this.livewire = $wire.__instance"
-            x-on:modal-closed.stop="this.livewire.set('mountedTableBulkAction', null)"
+            x-on:modal-closed.stop="if ('mountedTableBulkAction' in this.livewire?.serverMemo.data) this.livewire.set('mountedTableBulkAction', null)"
         >
             @if ($action)
                 @if ($action->isModalCentered())
