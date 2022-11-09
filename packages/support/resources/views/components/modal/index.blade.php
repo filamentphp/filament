@@ -25,6 +25,8 @@
 
         isOpen: false,
 
+        livewire: null,
+
         close: function () {
             this.isOpen = false
 
