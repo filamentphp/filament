@@ -883,7 +883,8 @@
             :width="$action?->getModalWidth()"
             :slide-over="$action?->isModalSlideOver()"
             display-classes="block"
-            x-on:modal-closed.window="if ($event.detail.id === '{{ $this->id . '-table-action' }}'); $wire.set('mountedTableAction', null)"
+            x-init="this.wire = $wire.__instance"
+            x-on:modal-closed.window="if ($event.detail.id === '{{ $this->id . '-table-action' }}'); this.wire.set('mountedTableAction', null)"
         >
             @if ($action)
                 @if ($action->isModalCentered())
@@ -941,7 +942,8 @@
             :width="$action?->getModalWidth()"
             :slide-over="$action?->isModalSlideOver()"
             display-classes="block"
-            x-on:modal-closed.window="if ($event.detail.id === '{{ $this->id . '-table-bulk-action' }}'); $wire.set('mountedTableBulkAction', null)"
+            x-init="this.wire = $wire.__instance"
+            x-on:modal-closed.window="if ($event.detail.id === '{{ $this->id . '-table-bulk-action' }}'); this.wire.set('mountedTableBulkAction', null)"
         >
             @if ($action)
                 @if ($action->isModalCentered())
