@@ -195,13 +195,4 @@ trait CanFormatState
     {
         return $this->evaluate($this->timezone) ?? config('app.timezone');
     }
-
-    public function rowIndex(bool $isFromZero = false): static
-    {
-        $this->getStateUsing(static function (stdClass $rowLoop): ?string {
-            return (string) $rowLoop->{$isFromZero ? 'index' : 'iteration'};
-        });
-
-        return $this;
-    }
 }
