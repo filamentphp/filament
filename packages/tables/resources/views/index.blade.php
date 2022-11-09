@@ -888,7 +888,15 @@
             :slide-over="$action?->isModalSlideOver()"
             display-classes="block"
             x-init="this.livewire = $wire.__instance"
-            x-on:modal-closed.stop="if ('mountedTableAction' in this.livewire?.serverMemo.data) this.livewire.set('mountedTableAction', null)"
+            x-on:modal-closed.stop="
+                if ('mountedTableAction' in this.livewire?.serverMemo.data) {
+                    this.livewire.set('mountedTableAction', null)
+                }
+
+                if ('mountedTableActionRecord' in this.livewire?.serverMemo.data) {
+                    this.livewire.set('mountedTableActionRecord', null)
+                }
+            "
         >
             @if ($action)
                 @if ($action->isModalCentered())
