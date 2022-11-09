@@ -228,6 +228,7 @@ trait HasActions
             ->schema($action->getFormSchema())
             ->model($this->getMountedTableActionRecord() ?? $this->getTableQuery()->getModel()::class)
             ->statePath('mountedTableActionData')
+            ->livewireKey("tableAction.{$this->mountedTableAction}.{$this->mountedTableActionRecord}")
             ->context($this->mountedTableAction);
     }
 

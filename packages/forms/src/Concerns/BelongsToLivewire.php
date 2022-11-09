@@ -31,7 +31,11 @@ trait BelongsToLivewire
 
     public function getLivewireKey(): ?string
     {
-        $keyComponents = [$this->getLivewire()->id];
+        $keyComponents = [];
+
+        if (! $this->getParentComponent()) {
+            $keyComponents[] = $this->getLivewire()->id;
+        }
 
         if ($parentComponentLivewireKey = $this->getParentComponent()?->getContainer()->getLivewireKey()) {
             $keyComponents[] = $parentComponentLivewireKey;

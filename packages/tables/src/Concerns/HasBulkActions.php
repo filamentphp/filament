@@ -173,6 +173,7 @@ trait HasBulkActions
             ->schema($action->getFormSchema())
             ->model($this->getTableQuery()->getModel()::class)
             ->statePath('mountedTableBulkActionData')
+            ->livewireKey("tableBulkAction.{$this->mountedTableBulkAction}")
             ->context($this->mountedTableBulkAction);
     }
 
