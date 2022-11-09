@@ -24,7 +24,7 @@
     x-data="{ isOpen: false }"
     x-trap.noscroll="isOpen"
     @if ($id)
-        x-on:{{ $closeEventName }}.window="if ($event.detail.id === '{{ $id }}') isOpen = false"
+        x-on:{{ $closeEventName }}.window="if ($event.detail.id === '{{ $id }}') isOpen = false; $dispatch('modal-closed', {id: '{{ $id }}' });"
         x-on:{{ $openEventName }}.window="if ($event.detail.id === '{{ $id }}') isOpen = true"
     @endif
     @if ($ariaLabelledby)
@@ -35,6 +35,7 @@
     role="dialog"
     aria-modal="true"
     class="filament-modal {{ $displayClasses }}"
+    wire:ignore.self
 >
     {{ $trigger }}
 
@@ -54,7 +55,7 @@
                 @if (filled($id))
                     x-on:click="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
                 @else
-                    x-on:click="isOpen = false"
+                    x-on:click="isOpen = false;"
                 @endif
             @endif
             aria-hidden="true"
@@ -69,7 +70,7 @@
             @if (filled($id))
                 x-on:keydown.window.escape="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
             @else
-                x-on:keydown.window.escape="isOpen = false"
+                x-on:keydown.window.escape="isOpen = false;"
             @endif
             x-transition:enter="ease duration-300"
             x-transition:leave="ease duration-300"
@@ -117,11 +118,15 @@
                         tabindex="-1"
                         type="button"
                         class="absolute top-2 right-2 rtl:right-auto rtl:left-2"
+                        @if (filled($id))
+                            x-on:click="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
+                        @else
+                            x-on:click="isOpen = false;"
+                        @endif
                     >
                         <x-heroicon-s-x
                             class="filament-modal-close-button h-4 w-4 cursor-pointer text-gray-400"
                             title="__('filament-support::components/modal.actions.close.label')"
-                            x-on:click="isOpen = false"
                             tabindex="-1"
                         />
 

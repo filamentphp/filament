@@ -64,6 +64,7 @@
             :width="$action?->getModalWidth()"
             :slide-over="$action?->isModalSlideOver()"
             display-classes="block"
+            x-on:modal-closed.window="if ($event.detail.id === 'page-action'); $wire.set('mountedAction', null)"
         >
             @if ($action)
                 @if ($action->isModalCentered())
