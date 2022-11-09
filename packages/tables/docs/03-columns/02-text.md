@@ -133,30 +133,35 @@ TextColumn::make('status')->enum([
 ])
 ```
 
+## Displaying the row index
 
-## Serial/RowIndex
-
-You may also want to show the serial/index number:
-
-```php
-use Filament\Tables\Columns\TextColumn;
-
-TextColumn::make('Sl')->getStateUsing(function (stdClass $rowLoop){
-      return $rowLoop->iteration;
-})
-```
-As $rowLoop is Laravel's foreach $loop object,therefor every other properties of $loop object can be used.
-
-
-Or you may call `rowIndex()` method
+You may want a column to contain the number of the current row in the table:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('Sl')->rowIndex()
+TextColumn::make('index')->getStateUsing(static function (stdClass $rowLoop): string {
+    return (string) $rowLoop->iteration;
+});
 ```
 
-Also you can pass `true` as rowIndex method parameter to start counting from zero.
+As `$rowLoop` is Laravel's Blade `$loop` object, you can reference all other `$loop` properties.
+
+As a shortcut, you may use the `rowIndex()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('index')->rowIndex()
+```
+
+To start counting from 0 instead of 1, use `isFromZero: true`:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('index')->rowIndex(isFromZero: true)
+```
 
 ## Custom formatting
 
