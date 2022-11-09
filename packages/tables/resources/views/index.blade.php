@@ -909,11 +909,13 @@
                     </x-slot>
                 @endif
 
-                {{ $action->getModalContent() }}
+                {{ $action->getModalHeaderContent() }}
 
                 @if ($action->hasFormSchema())
                     {{ $getMountedActionForm() }}
                 @endif
+
+                {{ $action->getModalFooterContent() }}
 
                 @if (count($action->getModalActions()))
                     <x-slot name="footer">
@@ -966,11 +968,13 @@
                     </x-slot>
                 @endif
 
-                {{ $action->getModalContent() }}
+                {{ $action->getModalHeaderContent() }}
 
                 @if ($action->hasFormSchema())
                     {{ $getMountedBulkActionForm() }}
                 @endif
+
+                {{ $action->getModalFooterContent() }}
 
                 @if (count($action->getModalActions()))
                     <x-slot name="footer">
