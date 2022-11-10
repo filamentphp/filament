@@ -2,6 +2,18 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 'si alte :count',
+        ],
+
+        'messages' => [
+            'copied' => 'Copiat',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -21,6 +33,10 @@ return [
 
             'records_per_page' => [
                 'label' => 'pe pagină',
+            ],
+
+            'options' => [
+                'all' => 'Toate',
             ],
 
         ],
@@ -45,6 +61,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Dezactivați reordonarea',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Activați reordonarea',
+        ],
+
         'filter' => [
             'label' => 'Filtru',
         ],
@@ -67,11 +91,22 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Ştergere filtru',
+            ],
+
+            'remove_all' => [
+                'label' => 'Şterge toate filtrele',
+                'tooltip' => 'Ştergere toate filtrele',
+            ],
+
             'reset' => [
                 'label' => 'Resetare filtre',
             ],
 
         ],
+
+        'indicator' => 'Filtre active',
 
         'multi_select' => [
             'placeholder' => 'Toate',
@@ -95,6 +130,8 @@ return [
 
     ],
 
+    'reorder_indicator' => 'Trageți și plasați înregistrările în ordine.',
+
     'selection_indicator' => [
 
         'selected_count' => '1 element selectat.|:count elemente selectate.',
@@ -107,6 +144,29 @@ return [
 
             'deselect_all' => [
                 'label' => 'Deselectare toate',
+            ],
+
+        ],
+
+    ],
+
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Sortare după coloană',
+            ],
+
+            'direction' => [
+
+                'label' => 'Direcție sortare',
+
+                'options' => [
+                    'asc' => 'Ascendentă',
+                    'desc' => 'Descendentă',
+                ],
+
             ],
 
         ],

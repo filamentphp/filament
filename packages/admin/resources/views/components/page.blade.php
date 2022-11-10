@@ -12,10 +12,18 @@
                 <x-slot name="heading">
                     {{ $heading }}
                 </x-slot>
+
+                @if ($subheading = $this->getSubheading())
+                    <x-slot name="subheading">
+                        {{ $subheading }}
+                    </x-slot>
+                @endif
             </x-filament::header>
         @endif
 
-        @if ($headerWidgets = $this->getHeaderWidgets())
+        {{ \Filament\Facades\Filament::renderHook('page.header-widgets.start') }}
+
+        @if ($headerWidgets = $this->getVisibleHeaderWidgets())
             <x-filament::widgets
                 :widgets="$headerWidgets"
                 :columns="$this->getHeaderWidgetsColumns()"
@@ -23,15 +31,21 @@
             />
         @endif
 
+        {{ \Filament\Facades\Filament::renderHook('page.header-widgets.end') }}
+
         {{ $slot }}
 
-        @if ($footerWidgets = $this->getFooterWidgets())
+        {{ \Filament\Facades\Filament::renderHook('page.footer-widgets.start') }}
+
+        @if ($footerWidgets = $this->getVisibleFooterWidgets())
             <x-filament::widgets
                 :widgets="$footerWidgets"
                 :columns="$this->getFooterWidgetsColumns()"
                 :data="$widgetData"
             />
         @endif
+
+        {{ \Filament\Facades\Filament::renderHook('page.footer-widgets.end') }}
 
         @if ($footer = $this->getFooter())
             {{ $footer }}
@@ -50,6 +64,8 @@
             :width="$action?->getModalWidth()"
             :slide-over="$action?->isModalSlideOver()"
             display-classes="block"
+            x-init="this.livewire = $wire.__instance"
+            x-on:modal-closed.stop="if ('mountedAction' in this.livewire?.serverMemo.data) this.livewire.set('mountedAction', null)"
         >
             @if ($action)
                 @if ($action->isModalCentered())

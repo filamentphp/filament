@@ -19,6 +19,8 @@ class CheckboxList extends Field
 
     protected string | Closure | null $relationship = null;
 
+    protected bool | Closure $isBulkToggleable = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -89,6 +91,13 @@ class CheckboxList extends Field
         return $this;
     }
 
+    public function bulkToggleable(bool | Closure $condition = true): static
+    {
+        $this->isBulkToggleable = $condition;
+
+        return $this;
+    }
+
     public function getOptionLabelFromRecordUsing(?Closure $callback): static
     {
         $this->getOptionLabelFromRecordUsing = $callback;
@@ -138,5 +147,10 @@ class CheckboxList extends Field
     public function getRelationshipName(): ?string
     {
         return $this->evaluate($this->relationship);
+    }
+
+    public function isBulkToggleable(): bool
+    {
+        return (bool) $this->evaluate($this->isBulkToggleable);
     }
 }

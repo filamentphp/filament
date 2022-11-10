@@ -25,6 +25,7 @@ class Column extends ViewComponent
     use Concerns\HasAlignment;
     use Concerns\HasExtraHeaderAttributes;
     use Concerns\HasLabel;
+    use Concerns\HasRowLoopObject;
     use Concerns\HasName;
     use Concerns\HasRecord;
     use Concerns\HasState;
@@ -56,6 +57,7 @@ class Column extends ViewComponent
         return array_merge(parent::getDefaultEvaluationParameters(), [
             'livewire' => $this->getLivewire(),
             'record' => $this->getRecord(),
+            'rowLoop' => $this->getRowLoop(),
         ]);
     }
 }

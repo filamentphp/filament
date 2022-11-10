@@ -4,16 +4,12 @@ return [
 
     'columns' => [
 
-        'color' => [
-
-            'messages' => [
-                'copied' => 'Kopirano',
-            ],
-
-        ],
-
         'tags' => [
             'more' => 'i :count više',
+        ],
+
+        'messages' => [
+            'copied' => 'Kopirano',
         ],
 
     ],
@@ -178,4 +174,5 @@ return [
         ],
 
     ],
+
 ];

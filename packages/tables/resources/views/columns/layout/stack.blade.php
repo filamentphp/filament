@@ -5,7 +5,10 @@
             ->class([
                 'flex flex-col',
                 match ($getAlignment()) {
+                    'start' => 'items-start',
                     'center' => 'items-center',
+                    'end' => 'items-end',
+                    'left' => 'items-start',
                     'right' => 'items-end',
                     default => 'items-start',
                 },
@@ -22,5 +25,6 @@
         :components="$getComponents()"
         :record="$getRecord()"
         :record-key="$recordKey"
+        :row-loop="$getRowLoop()"
     />
 </div>

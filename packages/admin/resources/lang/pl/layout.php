@@ -22,6 +22,10 @@ return [
             'label' => 'Wyloguj się',
         ],
 
+        'user_menu' => [
+            'label' => 'Menu użytkownika',
+        ],
+
     ],
 
 ];

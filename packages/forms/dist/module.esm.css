@@ -1604,6 +1604,9 @@ trix-editor .attachment__metadata .attachment__size {
 .dark .trix-button-group {
   @apply border-gray-600;
 }
+trix-toolbar .filament-forms-rich-editor-component-toolbar-button.trix-active {
+  @apply bg-primary-600 text-white;
+}
 
 /* packages/forms/resources/css/components/select.css */
 .choices {
