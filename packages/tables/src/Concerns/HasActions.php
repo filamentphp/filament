@@ -90,6 +90,10 @@ trait HasActions
             return;
         }
 
+        if (filled($this->mountedTableActionRecord) && ($action->getRecord() === null)) {
+            return;
+        }
+
         if ($action->isDisabled()) {
             return;
         }
@@ -149,6 +153,10 @@ trait HasActions
         $action = $this->getMountedTableAction();
 
         if (! $action) {
+            return;
+        }
+
+        if (filled($record) && ($action->getRecord() === null)) {
             return;
         }
 
