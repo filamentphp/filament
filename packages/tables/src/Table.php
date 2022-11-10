@@ -185,7 +185,7 @@ class Table extends ViewComponent
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();
 
-        return invade($livewire)->getTableEmptyStateIcon() ?? 'heroicon-o-x';
+        return invade($livewire)->getTableEmptyStateIcon() ?? 'heroicon-o-x-mark';
     }
 
     public function getFilters(): array

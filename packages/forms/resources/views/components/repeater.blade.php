@@ -117,7 +117,7 @@
                                                 {{ __('forms::components.repeater.buttons.move_item.label') }}
                                             </span>
 
-                                            <x-heroicon-s-switch-vertical class="w-4 h-4"/>
+                                            <x-heroicon-s-arrows-up-down class="w-4 h-4"/>
                                         </button>
                                     @endunless
 
@@ -182,13 +182,13 @@
                                                     type="button"
                                                     class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500"
                                                 >
-                                                    <x-heroicon-s-minus-sm class="w-4 h-4" x-show="! isCollapsed"/>
+                                                    <x-heroicon-s-minus-small class="w-4 h-4" x-show="! isCollapsed"/>
 
                                                     <span class="sr-only" x-show="! isCollapsed">
                                                         {{ __('forms::components.repeater.buttons.collapse_item.label') }}
                                                     </span>
 
-                                                    <x-heroicon-s-plus-sm class="w-4 h-4" x-show="isCollapsed" x-cloak/>
+                                                    <x-heroicon-s-plus-small class="w-4 h-4" x-show="isCollapsed" x-cloak/>
 
                                                     <span class="sr-only" x-show="isCollapsed" x-cloak>
                                                         {{ __('forms::components.repeater.buttons.expand_item.label') }}

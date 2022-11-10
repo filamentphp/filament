@@ -494,7 +494,7 @@ class Resource
 
     protected static function getNavigationIcon(): string
     {
-        return static::$navigationIcon ?? 'heroicon-o-collection';
+        return static::$navigationIcon ?? 'heroicon-o-rectangle-stack';
     }
 
     public static function navigationIcon(?string $icon): void

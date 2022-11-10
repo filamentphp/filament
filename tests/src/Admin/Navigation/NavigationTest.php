@@ -23,7 +23,7 @@ it('can register navigation items from resources and pages', function () {
                             ->getIcon()->toBe('heroicon-o-user'),
                         fn ($item) => $item
                             ->getLabel()->toBe('Settings')
-                            ->getIcon()->toBe('heroicon-o-cog'),
+                            ->getIcon()->toBe('heroicon-o-cog-8-tooth'),
                     )
                     ->each->toBeInstanceOf(NavigationItem::class),
             fn ($group) => $group
@@ -36,7 +36,7 @@ it('can register navigation items from resources and pages', function () {
                             ->getIcon()->toBe('heroicon-o-document-text'),
                         fn ($item) => $item
                             ->getLabel()->toBe('Post Categories')
-                            ->getIcon()->toBe('heroicon-o-collection'),
+                            ->getIcon()->toBe('heroicon-o-rectangle-stack'),
                     )
                     ->each->toBeInstanceOf(NavigationItem::class),
             fn ($group) => $group

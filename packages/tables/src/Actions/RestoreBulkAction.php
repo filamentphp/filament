@@ -31,7 +31,7 @@ class RestoreBulkAction extends BulkAction
 
         $this->color('secondary');
 
-        $this->icon('heroicon-s-reply');
+        $this->icon('heroicon-s-arrow-uturn-left');
 
         $this->requiresConfirmation();
 

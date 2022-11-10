@@ -2,7 +2,7 @@
     'actions',
     'color' => null,
     'darkMode' => false,
-    'icon' => 'heroicon-o-dots-vertical',
+    'icon' => 'heroicon-o-ellipsis-vertical',
     'label' => __('filament-support::actions/group.trigger.label'),
     'size' => null,
     'tooltip' => null,

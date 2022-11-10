@@ -143,7 +143,7 @@
                             x-on:click="close()"
                         @endif
                     >
-                        <x-heroicon-s-x
+                        <x-heroicon-s-x-mark
                             class="filament-modal-close-button h-4 w-4 cursor-pointer text-gray-400"
                             title="__('filament-support::components/modal.actions.close.label')"
                             tabindex="-1"
