@@ -12,10 +12,15 @@ trait CanBeSummarized
 
     public function summarize(array | Summarizer $summarizers): static
     {
-        $this->summarizers = array_merge(
-            $this->summarizers,
-            Arr::wrap($summarizers),
-        );
+        foreach (Arr::wrap($summarizers) as $summarizer) {
+            $summarizer->column($this);
+
+            if (filled($id = $summarizer->getId())) {
+                $this->summarizers[$id] = $summarizer;
+            } else {
+                $this->summarizers[] = $summarizer;
+            }
+        }
 
         return $this;
     }
@@ -23,11 +28,15 @@ trait CanBeSummarized
     public function getSummary(Builder $query): array
     {
         return array_map(function (Summarizer $summarizer) use ($query): Summarizer {
-            $summarizer->column($this);
             $summarizer->query($query);
 
             return $summarizer;
         }, $this->getSummarizers());
+    }
+
+    public function getSummarizer(string $id): ?Summarizer
+    {
+        return $this->getSummarizers()[$id] ?? null;
     }
 
     public function getSummarizers(): array
@@ -37,6 +46,6 @@ trait CanBeSummarized
 
     public function hasSummary(): bool
     {
-        return count($this->summarizers);
+        return (bool) count($this->summarizers);
     }
 }

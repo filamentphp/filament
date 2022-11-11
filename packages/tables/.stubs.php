@@ -109,6 +109,12 @@ namespace Livewire\Testing {
 
         public function assertTableColumnStateNotSet(string $name, $value, $record): static {}
 
+        public function assertTableColumnSummarizerExists(string $columnName, string $summarizerId): static {}
+
+        public function assertTableColumnSummarySet(string $columnName, string $summarizerId, $state, bool $isCurrentPaginationPageOnly = false): static {}
+
+        public function assertTableColumnSummaryNotSet(string $columnName, string $summarizerId, $state, bool $isCurrentPaginationPageOnly = false): static {}
+
         public function sortTable(?string $name = null, ?string $direction = null): static {}
 
         public function searchTable(?string $search = null): static {}

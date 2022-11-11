@@ -8,7 +8,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tests\Models\Post;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder;
 use Livewire\Component;
 
 class PostsTable extends Component implements Tables\Contracts\HasTable
@@ -30,8 +31,31 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
                     ->action(
                         Tables\Actions\Action::make('column-action-object')
                             ->action(fn () => $this->emit('column-action-object-called')),
-                    ),
-                Tables\Columns\IconColumn::make('is_published')->boolean(),
+                    )
+                    ->summarize([
+                        Tables\Columns\Summarizers\Range::make('range'),
+                        Tables\Columns\Summarizers\Range::make('published_range')
+                            ->query(fn (Builder $query) => $query->where('is_published', true)),
+                    ]),
+                Tables\Columns\IconColumn::make('is_published')
+                    ->boolean()
+                    ->summarize([
+                        Tables\Columns\Summarizers\Count::make('published_count')
+                            ->query(fn (Builder $query) => $query->where('is_published', true)),
+                    ]),
+                Tables\Columns\TextColumn::make('rating')
+                    ->summarize([
+                        Tables\Columns\Summarizers\Average::make('average'),
+                        Tables\Columns\Summarizers\Average::make('published_average')
+                            ->query(fn (Builder $query) => $query->where('is_published', true)),
+                        Tables\Columns\Summarizers\Count::make('count'),
+                        Tables\Columns\Summarizers\Range::make('range'),
+                        Tables\Columns\Summarizers\Range::make('published_range')
+                            ->query(fn (Builder $query) => $query->where('is_published', true)),
+                        Tables\Columns\Summarizers\Sum::make('sum'),
+                        Tables\Columns\Summarizers\Sum::make('published_sum')
+                            ->query(fn (Builder $query) => $query->where('is_published', true)),
+                    ]),
                 Tables\Columns\TextColumn::make('visible'),
                 Tables\Columns\TextColumn::make('hidden')
                     ->hidden(),
@@ -40,7 +64,7 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
             ])
             ->filters([
                 Tables\Filters\Filter::make('is_published')
-                    ->query(fn (Builder $query) => $query->where('is_published', true)),
+                    ->query(fn (EloquentBuilder $query) => $query->where('is_published', true)),
                 Tables\Filters\SelectFilter::make('author')
                     ->relationship('author', 'name'),
                 Tables\Filters\SelectFilter::make('select_filter_attribute')

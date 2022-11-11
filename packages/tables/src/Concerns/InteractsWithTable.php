@@ -13,26 +13,27 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 trait InteractsWithTable
 {
-    use CanBeStriped;
     use CanPaginateRecords;
-    use CanPollRecords;
     use CanReorderRecords;
     use CanSearchRecords;
     use CanSelectRecords;
     use CanSortRecords;
+    use CanSummarizeRecords;
     use CanToggleColumns;
     use HasActions;
     use HasBulkActions;
     use HasColumns;
+    use HasFilters;
+    use HasRecords;
+    use Forms\Concerns\InteractsWithForms;
+    use CanBeStriped;
+    use CanPollRecords;
     use HasContent;
     use HasEmptyState;
-    use HasFilters;
     use HasHeader;
-    use HasRecords;
     use HasRecordAction;
     use HasRecordClasses;
     use HasRecordUrl;
-    use Forms\Concerns\InteractsWithForms;
 
     protected Table $table;
 

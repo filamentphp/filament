@@ -8,6 +8,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
@@ -50,6 +51,10 @@ interface HasTable extends HasForms
     public function getTableSortColumn(): ?string;
 
     public function getTableSortDirection(): ?string;
+
+    public function getAllTableSummaryQuery(): Builder;
+
+    public function getPageTableSummaryQuery(): Builder;
 
     public function isTableColumnToggledHidden(string $name): bool;
 

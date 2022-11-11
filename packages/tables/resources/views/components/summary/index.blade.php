@@ -50,12 +50,7 @@
         :columns="$columns"
         :heading="__('filament-tables::table.summary.subheadings.page', ['label' => $pluralModelLabel])"
         :is-selection-enabled="$isSelectionEnabled"
-        :query="$this->applySortingToTableQuery(
-            $this->getFilteredTableQuery()->forPage(
-                page: $records->currentPage(),
-                perPage: $records->perPage(),
-            ),
-        )"
+        :query="$this->getPageTableSummaryQuery()"
     />
 @endif
 
@@ -65,5 +60,5 @@
     :columns="$columns"
     :heading="__('filament-tables::table.summary.subheadings.all', ['label' => $pluralModelLabel])"
     :is-selection-enabled="$isSelectionEnabled"
-    :query="$this->getFilteredTableQuery()"
+    :query="$this->getAllTableSummaryQuery()"
 />

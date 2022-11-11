@@ -21,14 +21,28 @@ class Summarizer extends ViewComponent
 
     protected string $view = 'filament-tables::columns.summaries.text';
 
+    protected ?string $id = null;
+
     protected ?Closure $using = null;
 
-    public static function make(): static
+    final public function __construct(?string $id = null)
     {
-        $static = app(static::class);
+        $this->id($id);
+    }
+
+    public static function make(?string $id = null): static
+    {
+        $static = app(static::class, ['id' => $id]);
         $static->configure();
 
         return $static;
+    }
+
+    public function id(?string $id): static
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function using(?Closure $using): static
@@ -52,7 +66,7 @@ class Summarizer extends ViewComponent
                 ->plural()
                 ->camel();
 
-            $query = $relationship->getModel()->newQuery()
+            $query = $relationship->getQuery()->getModel()->newQuery()
                 ->whereHas(
                     $inverseRelationship,
                     fn (EloquentBuilder $relatedQuery): EloquentBuilder => $this->hasPaginatedQuery() ?
@@ -61,7 +75,7 @@ class Summarizer extends ViewComponent
                 );
         }
 
-        $query = DB::table($query);
+        $query = DB::table($query->getQuery());
 
         if ($this->hasQueryModificationCallback()) {
             $query = $this->evaluate($this->modifyQueryUsing, [
@@ -83,6 +97,11 @@ class Summarizer extends ViewComponent
     public function summarize(Builder $query, string $attribute)
     {
         return null;
+    }
+
+    public function getId(): ?string
+    {
+        return $this->id;
     }
 
     protected function hasPaginatedQuery(): bool

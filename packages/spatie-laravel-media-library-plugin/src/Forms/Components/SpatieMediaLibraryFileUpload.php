@@ -77,7 +77,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
             if ($component->getVisibility() === 'private') {
                 try {
-                    $url ??= $media?->getTemporaryUrl(
+                    $url = $media?->getTemporaryUrl(
                         now()->addMinutes(5),
                     );
                 } catch (Throwable $exception) {
@@ -92,9 +92,9 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             $url ??= $media?->getUrl();
 
             return [
-                'name' => $media->name ?? $media->file_name,
-                'size' => $media->size,
-                'type' => $media->mime_type,
+                'name' => $media->name ?? $media->getAttributeValue('file_name'),
+                'size' => $media->getAttributeValue('size'),
+                'type' => $media->getAttributeValue('mime_type'),
                 'url' => $url,
             ];
         });

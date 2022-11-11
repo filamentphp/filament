@@ -46,14 +46,17 @@ trait CanSortRecords
     protected function applySortingToTableQuery(Builder $query): Builder
     {
         if ($this->isTableReordering()) {
-            return $query->orderBy($this->getTableReorderColumn());
+            return $query->orderBy($this->getTable()->getReorderColumn());
         }
 
         $sortColumn = $this->tableSortColumn;
 
         if (! $sortColumn) {
+            /** @phpstan-ignore-next-line */
+            $orders = $query->getQuery()->orders ?? [];
+
             return $query->when(
-                count($query->getQuery()->orders ?? []) === 0,
+                count($orders) === 0,
                 fn (Builder $query) => $query->orderBy($query->getModel()->getQualifiedKeyName()),
             );
         }

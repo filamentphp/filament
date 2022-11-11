@@ -44,6 +44,8 @@ class TextColumn extends Column
         ) {
             $this->formatStateUsing(static fn ($state): ?string => $enum::tryFrom($state)?->getLabel() ?? ($default ?? $state));
         }
+
+        return $this;
     }
 
     public function rowIndex(bool $isFromZero = false): static
