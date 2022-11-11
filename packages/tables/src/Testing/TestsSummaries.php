@@ -3,10 +3,8 @@
 namespace Filament\Tables\Testing;
 
 use Closure;
-use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Contracts\HasTable;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Testing\Assert;
 use Livewire\Testing\TestableLivewire;
 
