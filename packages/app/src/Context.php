@@ -31,6 +31,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Foundation\Vite;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\URL;
@@ -313,6 +314,13 @@ class Context
     public function resources(array $resources): static
     {
         $this->resources = array_merge($this->resources, $resources);
+
+        return $this;
+    }
+
+    public function viteTheme(string | array $theme, ?string $buildDirectory = null): static
+    {
+        $this->theme(app(Vite::class)($theme, $buildDirectory));
 
         return $this;
     }
