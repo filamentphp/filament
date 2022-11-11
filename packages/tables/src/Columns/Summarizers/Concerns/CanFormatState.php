@@ -96,7 +96,7 @@ trait CanFormatState
             }, Arr::wrap($state));
 
             if (! $isArrayState) {
-                return $state[0];
+                return Arr::first($state);
             }
 
             return $state;
