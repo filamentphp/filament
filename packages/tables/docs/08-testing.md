@@ -301,3 +301,65 @@ it('can not publish posts', function () {
         ->assertTableBulkActionHidden('publish');
 });
 ```
+
+## Summaries
+
+To test that a summary calculation is working, you may use the `assertTableColumnSummarySet()` method:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can average values in a column', function () {
+    $posts = Post::factory()->count(10)->create();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertCanSeeTableRecords($posts)
+        ->assertTableColumnSummarySet('rating', 'average', $posts->avg('rating'));
+});
+```
+
+The first argument is the column name, the second is the summarizer ID and the third is the expected value.
+
+You may set a summarizer ID by passing it to the `make()` method:
+
+```php
+use Filament\Tables\Columns\Summarizers\Average;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('rating')
+    ->summarize(Average::make('average'))
+```
+
+The ID should be unique between summarizers in that column.
+
+### Summarizing only one pagination page
+
+To calculate the average for only one pagination page, use the `isCurrentPaginationPageOnly` argument:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can average values in a column', function () {
+    $posts = Post::factory()->count(20)->create();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertCanSeeTableRecords($posts->take(10))
+        ->assertTableColumnSummarySet('rating', 'average', $posts->take(10)->avg('rating'), isCurrentPaginationPageOnly: true);
+});
+```
+
+### Testing a range summarizer
+
+To test a range, pass the minimum and maximum value into a tuple-style `[$minimum, $maximum]` array:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can average values in a column', function () {
+    $posts = Post::factory()->count(10)->create();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertCanSeeTableRecords($posts)
+        ->assertTableColumnSummarySet('rating', 'range', [$posts->min('rating'), $posts->max('rating')]);
+});
+```

@@ -19,13 +19,6 @@ trait CanFormatState
         return $this;
     }
 
-    public function firstCharacter(): static
-    {
-        $this->limit(1, end: null);
-
-        return $this;
-    }
-
     public function limit(int $length = 100, ?string $end = '...'): static
     {
         $this->formatStateUsing(static function ($state) use ($end, $length) {
