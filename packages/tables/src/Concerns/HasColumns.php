@@ -68,7 +68,7 @@ trait HasColumns
 
         if ($columnRelationship = $column->getRelationship($record)) {
             $record = $columnRelationship->getResults();
-            $columnName = $column->getRelationshipTitleAttribute();
+            $columnName = $column->getRelationshipAttribute();
         } elseif (
             (($tableRelationship = $this->getTable()->getRelationship()) instanceof BelongsToMany) &&
             in_array($columnName, $tableRelationship->getPivotColumns())

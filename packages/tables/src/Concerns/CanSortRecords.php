@@ -52,7 +52,10 @@ trait CanSortRecords
         $sortColumn = $this->tableSortColumn;
 
         if (! $sortColumn) {
-            return $query;
+            return $query->when(
+                count($query->getQuery()->orders ?? []) === 0,
+                fn (Builder $query) => $query->orderBy($query->getModel()->getQualifiedKeyName()),
+            );
         }
 
         $sortDirection = $this->tableSortDirection === 'desc' ? 'desc' : 'asc';

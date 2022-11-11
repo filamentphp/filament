@@ -37,7 +37,7 @@ trait HasState
     public function getState()
     {
         if (! $this->getRecord()) {
-            return;
+            return null;
         }
 
         $state = $this->getStateUsing ?
@@ -93,7 +93,7 @@ trait HasState
             return null;
         }
 
-        $state = $record->getRelationValue($relationshipName)->pluck($this->getRelationshipTitleAttribute());
+        $state = $record->getRelationValue($relationshipName)->pluck($this->getRelationshipAttribute());
 
         if (! count($state)) {
             return null;

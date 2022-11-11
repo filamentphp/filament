@@ -50,6 +50,20 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('created_at')->since()
 ```
 
+## Number formatting
+
+The `numeric()` method allows you to format a column as a number, using PHP's `number_format()`:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('stock')->numeric(
+    decimalPlaces: 0,
+    decimalSeparator: '.',
+    thousandsSeparator: ',',
+)
+```
+
 ## Currency formatting
 
 The `money()` method allows you to easily format monetary values, in any currency. This functionality uses [`akaunting/laravel-money`](https://github.com/akaunting/laravel-money) internally:

@@ -5,14 +5,12 @@
 @endphp
 
 <div
-    {{
-        $attributes
-            ->merge($getExtraAttributes())
-            ->class([
-                'filament-tables-icon-column filament-tables-icon-column-size-' . str($size)->kebab(),
-                'px-4 py-3' => ! $isInline(),
-            ])
-    }}
+    {{ $attributes
+        ->merge($getExtraAttributes())
+        ->class([
+            'filament-tables-icon-column filament-tables-icon-column-size-' . str($size)->kebab(),
+            'px-4 py-3' => ! $isInline(),
+        ]) }}
 >
     @if ($icon)
         <x-filament::icon

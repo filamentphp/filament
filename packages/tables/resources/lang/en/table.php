@@ -61,6 +61,33 @@ return [
 
     ],
 
+    'summary' => [
+
+        'heading' => 'Summary',
+
+        'subheadings' => [
+            'page' => 'This page',
+            'all' => 'All :label',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Average',
+            ],
+
+            'count' => [
+                'label' => 'Count',
+            ],
+
+            'sum' => [
+                'label' => 'Sum',
+            ],
+
+        ],
+
+    ],
+
     'buttons' => [
 
         'disable_reordering' => [

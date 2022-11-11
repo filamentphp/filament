@@ -59,6 +59,8 @@ class Table extends ViewComponent
 
     protected array $columnActions = [];
 
+    protected array $columnSummaries = [];
+
     protected array $columns = [];
 
     protected array $columnsLayout = [];
@@ -100,6 +102,8 @@ class Table extends ViewComponent
     protected string | Closure | null $filtersLayout = null;
 
     protected bool $hasColumnsLayout = false;
+
+    protected bool $hasSummary = false;
 
     protected View | Htmlable | Closure | null $header = null;
 
@@ -251,6 +255,10 @@ class Table extends ViewComponent
         }
 
         foreach ($this->columns as $column) {
+            if ($column->hasSummary()) {
+                $this->hasSummary = true;
+            }
+
             $action = $column->getAction();
 
             if (! ($action instanceof Action)) {
@@ -723,6 +731,11 @@ class Table extends ViewComponent
     public function hasColumnsLayout(): bool
     {
         return $this->hasColumnsLayout;
+    }
+
+    public function hasSummary(): bool
+    {
+        return $this->hasSummary;
     }
 
     public function getContent(): View | Htmlable | null

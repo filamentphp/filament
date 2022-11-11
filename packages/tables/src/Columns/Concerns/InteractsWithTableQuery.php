@@ -9,6 +9,15 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 trait InteractsWithTableQuery
 {
+    protected ?string $inverseRelationshipName = null;
+
+    public function inverseRelationship(?string $name): static
+    {
+        $this->inverseRelationshipName = $name;
+
+        return $this;
+    }
+
     public function applyRelationshipAggregates(Builder $query): Builder
     {
         return $query->when(
@@ -190,9 +199,14 @@ trait InteractsWithTableQuery
         return $relationship;
     }
 
-    public function getRelationshipTitleAttribute(): string
+    public function getRelationshipAttribute(): string
     {
         return (string) str($this->getName())->afterLast('.');
+    }
+
+    public function getInverseRelationshipName(): ?string
+    {
+        return $this->inverseRelationshipName;
     }
 
     public function getRelationshipName(): string

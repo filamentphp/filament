@@ -16,6 +16,7 @@
         ->filter(fn (array $indicators): bool => count($indicators))
         ->all();
     $hasColumnsLayout = $hasColumnsLayout();
+    $hasSummary = $hasSummary();
     $header = $getHeader();
     $headerActions = $getHeaderActions();
     $heading = $getHeading();
@@ -31,6 +32,7 @@
     $hasFiltersAboveContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::AboveContent);
     $hasFiltersAfterContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::BelowContent);
     $isColumnToggleFormVisible = $hasToggleableColumns();
+    $pluralModelLabel = $getPluralModelLabel();
     $records = $getRecords();
 
     $columnsCount = count($columns);
@@ -277,7 +279,7 @@
                 wire:poll.{{ $pollingInterval }}
             @endif
             @class([
-                'filament-tables-table-container overflow-x-auto relative dark:border-gray-700',
+                'filament-tables-table-container overflow-x-auto dark:border-gray-700',
                 'overflow-x-auto' => $content || $hasColumnsLayout,
                 'rounded-t-xl' => ! $renderHeader,
                 'border-t' => $renderHeader,
@@ -562,6 +564,19 @@
                     @if (($content || $hasColumnsLayout) && $contentFooter)
                         {{ $contentFooter->with(['columns' => $columns, 'records' => $records]) }}
                     @endif
+
+                    @if ($hasSummary && (! $isReordering))
+                        <x-filament-tables::table class="border-t dark:border-gray-700">
+                            <x-filament-tables::summary
+                                :actions="count($actions)"
+                                :actions-position="$actionsPosition"
+                                :columns="$columns"
+                                :is-selection-enabled="$isSelectionEnabled"
+                                :plural-model-label="$pluralModelLabel"
+                                :records="$records"
+                            />
+                        </x-filament-tables::table>
+                    @endif
                 @else
                     @if ($emptyState = $getEmptyState())
                         {{ $emptyState }}
@@ -797,6 +812,17 @@
                             <x-slot name="footer">
                                 {{ $contentFooter->with(['columns' => $columns, 'records' => $records]) }}
                             </x-slot>
+                        @endif
+
+                        @if ($hasSummary && (! $isReordering))
+                            <x-filament-tables::summary
+                                :actions="count($actions)"
+                                :actions-position="$actionsPosition"
+                                :columns="$columns"
+                                :is-selection-enabled="$isSelectionEnabled"
+                                :plural-model-label="$pluralModelLabel"
+                                :records="$records"
+                            />
                         @endif
                     @else
                         @if ($emptyState = $getEmptyState())

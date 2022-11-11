@@ -5,6 +5,7 @@ namespace Filament\Tables\Columns\Concerns;
 use Akaunting\Money;
 use Closure;
 use Filament\Tables\Columns\Column;
+use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Carbon;
@@ -70,7 +71,7 @@ trait CanFormatState
     {
         $this->limit = $length;
 
-        $this->formatStateUsing(static function ($state) use ($length, $end): ?string {
+        $this->formatStateUsing(static function ($state) use ($end, $length): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -136,6 +137,28 @@ trait CanFormatState
                 (new Money\Currency(strtoupper($column->evaluate($currency)))),
                 $shouldConvert,
             ))->format();
+        });
+
+        return $this;
+    }
+
+    public function numeric(int | Closure $decimalPlaces = 0, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
+    {
+        $this->formatStateUsing(static function (Column $column, $state) use ($decimalPlaces, $decimalSeparator, $thousandsSeparator): ?string {
+            if (blank($state)) {
+                return null;
+            }
+
+            if (! is_numeric($state)) {
+                return $state;
+            }
+
+            return number_format(
+                $state,
+                $column->evaluate($decimalPlaces),
+                $column->evaluate($decimalSeparator),
+                $column->evaluate($thousandsSeparator),
+            );
         });
 
         return $this;

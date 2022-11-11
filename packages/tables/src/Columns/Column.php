@@ -17,6 +17,7 @@ class Column extends ViewComponent
     use Concerns\CanBeInline;
     use Concerns\CanBeSearchable;
     use Concerns\CanBeSortable;
+    use Concerns\CanBeSummarized;
     use Concerns\CanBeToggled;
     use Concerns\CanCallAction;
     use Concerns\CanGrow;
