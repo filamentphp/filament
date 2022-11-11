@@ -5,6 +5,7 @@
     'icon' => 'heroicon-o-dots-vertical',
     'label' => __('filament-support::actions/group.trigger.label'),
     'size' => null,
+    'type' => 'icon',
     'tooltip' => null,
 ])
 
@@ -15,17 +16,31 @@
     {{ $attributes }}
 >
     <x-slot name="trigger">
-        <x-filament-support::icon-button
-            :color="$color"
-            :dark-mode="$darkMode"
-            :icon="$icon"
-            :size="$size"
-            :tooltip="$tooltip"
-        >
-            <x-slot name="label">
-                {{ $label }}
-            </x-slot>
-        </x-filament-support::icon-button>
+        @if ($type === 'icon')
+            <x-filament-support::icon-button
+                :color="$color"
+                :dark-mode="$darkMode"
+                :icon="$icon"
+                :size="$size"
+                :tooltip="$tooltip"
+            >
+                <x-slot name="label">
+                    {{ $label }}
+                </x-slot>
+            </x-filament-support::icon-button>
+        @elseif ($type === 'button')
+            <x-filament-support::button
+                :color="$color"
+                :dark-mode="$darkMode"
+                :icon="$icon"
+                :size="$size"
+                :tooltip="$tooltip"
+            >
+                <x-slot name="label">
+                    {{ $label }}
+                </x-slot>
+            </x-filament-support::button>
+        @endif
     </x-slot>
 
     <x-filament-support::dropdown.list>
