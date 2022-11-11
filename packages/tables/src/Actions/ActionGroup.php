@@ -10,6 +10,8 @@ class ActionGroup extends BaseActionGroup
     use InteractsWithRecord;
 
     protected string $view = 'tables::actions.group';
+    
+    protected string $type = 'icon';
 
     public function getActions(): array
     {
@@ -24,7 +26,7 @@ class ActionGroup extends BaseActionGroup
     
     public function button(): static
     {
-        $this->view('tables::actions.group-button');
+        $this->type = 'button';
 
         return $this;
     }
