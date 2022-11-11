@@ -48,10 +48,6 @@ class FilamentManager
 
     protected string | Htmlable | null $theme = null;
 
-    protected string | array | null $viteTheme = null;
-
-    protected ?string $viteBuildDirectory = null;
-
     protected array $userMenuItems = [];
 
     protected array $widgets = [];
@@ -149,10 +145,9 @@ class FilamentManager
         $this->theme = $theme;
     }
 
-    public function registerThemeUsingVite(string | array $theme, string $buildDirectory = null): void
+    public function registerViteTheme(string | array $theme, string $buildDirectory = null): void
     {
-        $this->viteTheme = $theme;
-        $this->viteBuildDirectory = $buildDirectory;
+        $this->theme = app(\Illuminate\Foundation\Vite::class)($theme, $buildDirectory);
     }
 
     public function registerUserMenuItems(array $items): void
@@ -350,10 +345,6 @@ class FilamentManager
 
     public function getThemeLink(): Htmlable
     {
-        if ($this->viteTheme) {
-            return app(\Illuminate\Foundation\Vite::class)($this->viteTheme, $this->viteBuildDirectory);
-        }
-
         if (Str::of($this->theme)->contains('<link')) {
             return $this->theme instanceof Htmlable ? $this->theme : new HtmlString($this->theme);
         }
