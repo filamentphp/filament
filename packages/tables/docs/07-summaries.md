@@ -240,3 +240,20 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('sku')
     ->summarize(Range::make()->limit(5))
 ```
+
+## Custom
+
+You may create a custom summary by returning the value from the `using()` method:
+
+```php
+use Filament\Tables\Columns\Summarizers\Summarizer;
+use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Query\Builder;
+
+TextColumn::make('name')
+    ->summarize(Summarizer::make()
+        ->label('First last name')
+        ->using(fn (Builder $query): string => $query->min('last_name')))
+```
+
+The callback has access to the database `$query` builder instance to perform calculations with. It should return the value to display in the table.
