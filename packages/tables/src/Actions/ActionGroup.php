@@ -21,4 +21,11 @@ class ActionGroup extends BaseActionGroup
 
         return $actions;
     }
+    
+    public function button(): static
+    {
+        $this->view('tables::actions.group-button');
+
+        return $this;
+    }
 }
