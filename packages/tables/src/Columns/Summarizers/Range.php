@@ -5,8 +5,6 @@ namespace Filament\Tables\Columns\Summarizers;
 use Carbon\CarbonImmutable;
 use Filament\Tables\Table;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\DB;
 
 class Range extends Summarizer
 {

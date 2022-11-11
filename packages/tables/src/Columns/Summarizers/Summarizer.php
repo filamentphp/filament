@@ -3,11 +3,9 @@
 namespace Filament\Tables\Columns\Summarizers;
 
 use Closure;
-use Exception;
 use Filament\Support\Components\ViewComponent;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Database\Eloquent\RelationNotFoundException;
 use Illuminate\Support\Facades\DB;
 
 class Summarizer extends ViewComponent

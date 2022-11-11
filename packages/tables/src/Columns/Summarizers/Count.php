@@ -5,8 +5,6 @@ namespace Filament\Tables\Columns\Summarizers;
 use Exception;
 use Filament\Tables\Columns\IconColumn;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class Count extends Summarizer
 {

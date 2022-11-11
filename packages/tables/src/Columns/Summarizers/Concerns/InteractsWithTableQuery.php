@@ -13,11 +13,11 @@ trait InteractsWithTableQuery
 
     public function query(Builder | Closure | null $query): static
     {
-        if ($query instanceof Builder || ($query === null))  {
+        if ($query instanceof Builder || ($query === null)) {
             $this->query = $query;
         }
 
-        if ($query instanceof Closure || ($query === null))  {
+        if ($query instanceof Closure || ($query === null)) {
             $this->modifyQueryUsing = $query;
         }
 

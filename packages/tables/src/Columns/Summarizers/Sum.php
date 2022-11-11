@@ -3,7 +3,6 @@
 namespace Filament\Tables\Columns\Summarizers;
 
 use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Facades\DB;
 
 class Sum extends Summarizer
 {
