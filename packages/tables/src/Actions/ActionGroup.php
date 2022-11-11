@@ -30,4 +30,9 @@ class ActionGroup extends BaseActionGroup
 
         return $this;
     }
+    
+    public function getType(): string
+    {
+        return $this->evaluate($this->type);
+    }
 }
