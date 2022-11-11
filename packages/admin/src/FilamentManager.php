@@ -16,6 +16,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Vite;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
@@ -145,9 +146,9 @@ class FilamentManager
         $this->theme = $theme;
     }
 
-    public function registerViteTheme(string | array $theme, string $buildDirectory = null): void
+    public function registerViteTheme(string | array $theme, ?string $buildDirectory = null): void
     {
-        $this->theme = app(\Illuminate\Foundation\Vite::class)($theme, $buildDirectory);
+        $this->theme = app(Vite::class)($theme, $buildDirectory);
     }
 
     public function registerUserMenuItems(array $items): void
