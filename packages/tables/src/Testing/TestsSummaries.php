@@ -21,9 +21,13 @@ class TestsSummaries
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnSummarizerExists($columnName, $summarizerId);
 
+            $normalizeState = fn ($state): string => strval(
+                (is_float($state) || is_int($state)) ? round($state, 5) : $state,
+            );
+
             $state = is_array($state) ?
-                array_map(fn ($state): string => strval($state), $state) :
-                strval(is_float($state) ? round($state, 5) : $state);
+                array_map($normalizeState, $state) :
+                $normalizeState($state);
 
             $summarizer = $this->instance()->getTable()->getColumn($columnName)->getSummarizer($summarizerId);
 
@@ -34,8 +38,8 @@ class TestsSummaries
             $actualState = $summarizer->query($query)->getState();
 
             $actualState = is_array($actualState) ?
-                array_map(fn ($state): string => strval($state), $actualState) :
-                strval(is_float($actualState) ? round($actualState, 5) : $actualState);
+                array_map($normalizeState, $actualState) :
+                $normalizeState($actualState);
 
             $livewireClass = $this->instance()::class;
 
@@ -55,9 +59,13 @@ class TestsSummaries
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnSummarizerExists($columnName, $summarizerId);
 
+            $normalizeState = fn ($state): string => strval(
+                (is_float($state) || is_int($state)) ? round($state, 5) : $state,
+            );
+
             $state = is_array($state) ?
-                array_map(fn ($state): string => strval($state), $state) :
-                strval(is_float($state) ? round($state, 5) : $state);
+                array_map($normalizeState, $state) :
+                $normalizeState($state);
 
             $summarizer = $this->instance()->getTable()->getColumn($columnName)->getSummarizer($summarizerId);
 
@@ -68,8 +76,8 @@ class TestsSummaries
             $actualState = $summarizer->query($query)->getState();
 
             $actualState = is_array($actualState) ?
-                array_map(fn ($state): string => strval($state), $actualState) :
-                strval(is_float($actualState) ? round($actualState, 5) : $actualState);
+                array_map($normalizeState, $actualState) :
+                $normalizeState($actualState);
 
             $livewireClass = $this->instance()::class;
 
