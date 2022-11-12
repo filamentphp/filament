@@ -82,7 +82,6 @@ trait CanOpenModal
         return $this;
     }
 
-
     public function modalContent(View | Htmlable | Closure | null $content = null): static
     {
         $this->modalContent = $content;
