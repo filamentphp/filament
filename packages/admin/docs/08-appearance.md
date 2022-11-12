@@ -167,9 +167,7 @@ use Illuminate\Foundation\Vite;
 
 Filament::serving(function () {
     // Using Vite
-    Filament::registerTheme(
-        app(Vite::class)('resources/css/filament.css'),
-    );
+    Filament::registerViteTheme('resources/css/filament.css');
 
     // Using Laravel Mix
     Filament::registerTheme(
