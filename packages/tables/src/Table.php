@@ -77,9 +77,11 @@ class Table extends ViewComponent
 
     protected int | string | Closure | null $defaultPaginationPageOption = 10;
 
-    protected string | Closure | null $defaultSortColumn = null;
+    protected ?string $defaultSortColumn = null;
 
-    protected string | Closure | null $defaultSortDirection = null;
+    protected ?string $defaultSortDirection = null;
+
+    protected ?Closure $defaultSortQuery = null;
 
     protected string | Htmlable | Closure | null $description = null;
 
@@ -323,7 +325,12 @@ class Table extends ViewComponent
 
     public function defaultSort(string | Closure | null $column, string | Closure | null $direction = 'asc'): static
     {
-        $this->defaultSortColumn = $column;
+        if ($column instanceof Closure) {
+            $this->defaultSortQuery = $column;
+        } else {
+            $this->defaultSortColumn = $column;
+        }
+
         $this->defaultSortDirection = strtolower($direction);
 
         return $this;
@@ -765,7 +772,12 @@ class Table extends ViewComponent
 
     public function getDefaultSortDirection(): ?string
     {
-        return $this->defaultSortDirection;
+        return $this->evaluate($this->defaultSortDirection);
+    }
+
+    public function getDefaultSortQuery(): ?Closure
+    {
+        return $this->defaultSortQuery;
     }
 
     public function getDescription(): string | Htmlable | null

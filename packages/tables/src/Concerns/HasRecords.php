@@ -27,6 +27,10 @@ trait HasRecords
         $this->applySearchToTableQuery($query);
 
         foreach ($this->getTable()->getColumns() as $column) {
+            if ($column->isHidden()) {
+                continue;
+            }
+
             $column->applyEagerLoading($query);
             $column->applyRelationshipAggregates($query);
         }

@@ -43,31 +43,15 @@ trait InteractsWithTableQuery
 
     public function applyEagerLoading(Builder $query): Builder
     {
-        if ($this->isHidden()) {
+        if (! $this->queriesRelationships($query->getModel())) {
             return $query;
         }
 
-        if ($this->queriesRelationships($query->getModel())) {
-            $query->with([$this->getRelationshipName()]);
-        }
-
-        return $query;
+        return $query->with([$this->getRelationshipName()]);
     }
 
-    public function applySearchConstraint(Builder $query, string $search, bool &$isFirst, bool $isIndividual = false): Builder
+    public function applySearchConstraint(Builder $query, string $search, bool &$isFirst): Builder
     {
-        if ($this->isHidden()) {
-            return $query;
-        }
-
-        if ($isIndividual && (! $this->isIndividuallySearchable())) {
-            return $query;
-        }
-
-        if ((! $isIndividual) && (! $this->isGloballySearchable())) {
-            return $query;
-        }
-
         if ($this->searchQuery) {
             $this->evaluate($this->searchQuery, [
                 'query' => $query,
@@ -132,14 +116,6 @@ trait InteractsWithTableQuery
 
     public function applySort(Builder $query, string $direction = 'asc'): Builder
     {
-        if ($this->isHidden()) {
-            return $query;
-        }
-
-        if (! $this->isSortable()) {
-            return $query;
-        }
-
         if ($this->sortQuery) {
             $this->evaluate($this->sortQuery, [
                 'direction' => $direction,

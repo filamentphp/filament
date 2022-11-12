@@ -49,33 +49,55 @@ trait CanSortRecords
             return $query->orderBy($this->getTable()->getReorderColumn());
         }
 
-        $sortColumn = $this->tableSortColumn;
+        if (! $this->tableSortColumn) {
+            return $this->applyDefaultSortingToTableQuery($query);
+        }
 
-        if (! $sortColumn) {
-            /** @phpstan-ignore-next-line */
-            $orders = $query->getQuery()->orders ?? [];
+        $column = $this->getTable()->getColumn($this->tableSortColumn);
 
-            return $query->when(
-                count($orders) === 0,
-                fn (Builder $query) => $query->orderBy($query->getModel()->getQualifiedKeyName()),
-            );
+        if (! $column) {
+            return $this->applyDefaultSortingToTableQuery($query);
+        }
+
+        if ($column->isHidden()) {
+            return $this->applyDefaultSortingToTableQuery($query);
+        }
+
+        if (! $column->isSortable()) {
+            return $this->applyDefaultSortingToTableQuery($query);
         }
 
         $sortDirection = $this->tableSortDirection === 'desc' ? 'desc' : 'asc';
 
-        $column = $this->getTable()->getColumn($sortColumn);
+        $column->applySort($query, $sortDirection);
 
-        if ($column && (! $column->isHidden()) && $column->isSortable()) {
-            $column->applySort($query, $sortDirection);
+        return $query;
+    }
+
+    protected function applyDefaultSortingToTableQuery(Builder $query): Builder
+    {
+        $sortDirection = $this->tableSortDirection === 'desc' ? 'desc' : 'asc';
+
+        if ($sortColumn = $this->getTable()->getDefaultSortColumn()) {
+            return $query->orderBy($sortColumn, $sortDirection);
+        }
+
+        if ($sortQueryUsing = $this->getTable()->getDefaultSortQuery()) {
+            app()->call($sortQueryUsing, [
+                'direction' => $sortDirection,
+                'query' => $query,
+            ]);
 
             return $query;
         }
 
-        if ($sortColumn === $this->getDefaultTableSortColumn()) {
-            return $query->orderBy($sortColumn, $sortDirection);
-        }
+        /** @phpstan-ignore-next-line */
+        $orders = $query->getQuery()->orders ?? [];
 
-        return $query;
+        return $query->when(
+            count($orders) === 0,
+            fn (Builder $query) => $query->orderBy($query->getModel()->getQualifiedKeyName()),
+        );
     }
 
     /**

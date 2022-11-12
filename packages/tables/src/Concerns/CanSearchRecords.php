@@ -65,6 +65,14 @@ trait CanSearchRecords
                 continue;
             }
 
+            if ($column->isHidden()) {
+                continue;
+            }
+
+            if (! $column->isIndividuallySearchable()) {
+                continue;
+            }
+
             foreach (explode(' ', $search) as $searchWord) {
                 $query->where(function (Builder $query) use ($column, $searchWord) {
                     $isFirst = true;
@@ -73,7 +81,6 @@ trait CanSearchRecords
                         $query,
                         $searchWord,
                         $isFirst,
-                        isIndividual: true,
                     );
                 });
             }
@@ -95,6 +102,14 @@ trait CanSearchRecords
                 $isFirst = true;
 
                 foreach ($this->getTable()->getColumns() as $column) {
+                    if ($column->isHidden()) {
+                        continue;
+                    }
+
+                    if (! $column->isGloballySearchable()) {
+                        continue;
+                    }
+
                     $column->applySearchConstraint(
                         $query,
                         $searchWord,

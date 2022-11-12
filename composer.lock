@@ -127,16 +127,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.242.0",
+            "version": "3.242.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "cab6d4f830ce275a1742a3e35e2625917b006dd2"
+                "reference": "9bfd85f696fff6a9b7810f1361751ad33a9b23d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/cab6d4f830ce275a1742a3e35e2625917b006dd2",
-                "reference": "cab6d4f830ce275a1742a3e35e2625917b006dd2",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/9bfd85f696fff6a9b7810f1361751ad33a9b23d1",
+                "reference": "9bfd85f696fff6a9b7810f1361751ad33a9b23d1",
                 "shasum": ""
             },
             "require": {
@@ -215,9 +215,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.242.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.242.1"
             },
-            "time": "2022-11-10T19:15:37+00:00"
+            "time": "2022-11-11T19:59:24+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -1490,7 +1490,7 @@
         },
         {
             "name": "filament/support",
-            "version": "2.x-dev",
+            "version": "3.x-dev",
             "dist": {
                 "type": "path",
                 "url": "packages/support",
@@ -4436,23 +4436,23 @@
         },
         {
             "name": "orchestra/testbench",
-            "version": "v7.11.0",
+            "version": "v7.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/testbench.git",
-                "reference": "64a5ef91760ab62acdd4adb10ebb1e1ad68e9311"
+                "reference": "575053e4c36d1445d04b3c48618f58d0a7e6f286"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/testbench/zipball/64a5ef91760ab62acdd4adb10ebb1e1ad68e9311",
-                "reference": "64a5ef91760ab62acdd4adb10ebb1e1ad68e9311",
+                "url": "https://api.github.com/repos/orchestral/testbench/zipball/575053e4c36d1445d04b3c48618f58d0a7e6f286",
+                "reference": "575053e4c36d1445d04b3c48618f58d0a7e6f286",
                 "shasum": ""
             },
             "require": {
                 "fakerphp/faker": "^1.9.2",
                 "laravel/framework": "^9.36",
                 "mockery/mockery": "^1.5.1",
-                "orchestra/testbench-core": "^7.11",
+                "orchestra/testbench-core": "^7.12.1",
                 "php": "^8.0",
                 "phpunit/phpunit": "^9.5.10",
                 "spatie/laravel-ray": "^1.28",
@@ -4489,7 +4489,7 @@
             ],
             "support": {
                 "issues": "https://github.com/orchestral/testbench/issues",
-                "source": "https://github.com/orchestral/testbench/tree/v7.11.0"
+                "source": "https://github.com/orchestral/testbench/tree/v7.12.1"
             },
             "funding": [
                 {
@@ -4501,20 +4501,20 @@
                     "type": "liberapay"
                 }
             ],
-            "time": "2022-10-19T11:54:46+00:00"
+            "time": "2022-11-12T11:59:49+00:00"
         },
         {
             "name": "orchestra/testbench-core",
-            "version": "v7.11.2",
+            "version": "v7.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/testbench-core.git",
-                "reference": "2406f71150840be63673310b771dca233123876c"
+                "reference": "0bad7911de0af7e06ce4d030e84508ddad2b499c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/testbench-core/zipball/2406f71150840be63673310b771dca233123876c",
-                "reference": "2406f71150840be63673310b771dca233123876c",
+                "url": "https://api.github.com/repos/orchestral/testbench-core/zipball/0bad7911de0af7e06ce4d030e84508ddad2b499c",
+                "reference": "0bad7911de0af7e06ce4d030e84508ddad2b499c",
                 "shasum": ""
             },
             "require": {
@@ -4597,7 +4597,7 @@
                     "type": "liberapay"
                 }
             ],
-            "time": "2022-11-05T09:47:28+00:00"
+            "time": "2022-11-12T11:49:22+00:00"
         },
         {
             "name": "pestphp/pest",
