@@ -203,7 +203,7 @@ Action::make('advance')
     ->modalContent(view('filament.pages.actions.advance'))
 ```
 
-By default, the custom content is displayed on header of modal, but you can add custom content on footer using `modalFooter()`:
+By default, the custom content is displayed above the modal form is there is one, but you can add content below using `modalFooter()` if you wish:
 
 ```php
 use Filament\Pages\Actions\Action;
