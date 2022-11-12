@@ -22,7 +22,7 @@ class TestsSummaries
             $this->assertTableColumnSummarizerExists($columnName, $summarizerId);
 
             $normalizeState = fn ($state): string => strval(
-                (is_float($state) || is_int($state)) ? round($state, 5) : $state,
+                is_numeric($state) ? round(floatval($state), 5) : $state,
             );
 
             $state = is_array($state) ?
@@ -60,7 +60,7 @@ class TestsSummaries
             $this->assertTableColumnSummarizerExists($columnName, $summarizerId);
 
             $normalizeState = fn ($state): string => strval(
-                (is_float($state) || is_int($state)) ? round($state, 5) : $state,
+                is_numeric($state) ? round(floatval($state), 5) : $state,
             );
 
             $state = is_array($state) ?
