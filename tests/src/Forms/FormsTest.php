@@ -30,6 +30,12 @@ it('has fields on multiple forms', function () {
         ->assertFormFieldExists('title', 'barForm');
 });
 
+it('can fill fields on multiple forms', function () {
+    livewire(TestComponentWithMultipleForms::class)
+        ->fillForm(['title' => 'value'], 'fooForm')
+        ->assertFormSet(['title' => 'value'], 'fooForm');
+});
+
 it('can have disabled fields', function () {
     livewire(TestComponentWithForm::class)
         ->assertFormFieldIsDisabled('disabled');
@@ -74,12 +80,6 @@ it('can have visible fields on multiple forms', function () {
         ->assertFormFieldIsVisible('visible', 'barForm');
 });
 
-it('can fill fields on multiple forms', function () {
-    livewire(TestComponentWithMultipleForms::class)
-        ->fillForm(['title', 'value'], 'fooForm')
-        ->assertSet('title', 'value');
-});
-
 class TestComponentWithForm extends Livewire
 {
     public function getFormSchema(): array
@@ -111,10 +111,12 @@ class TestComponentWithMultipleForms extends Livewire
     {
         return [
             'fooForm' => $this->makeForm()
-                ->schema($this->getSchemaForForms()),
+                ->schema($this->getSchemaForForms())
+                ->statePath('data'),
 
             'barForm' => $this->makeForm()
-                ->schema($this->getSchemaForForms()),
+                ->schema($this->getSchemaForForms())
+                ->statePath('data'),
         ];
     }
 
