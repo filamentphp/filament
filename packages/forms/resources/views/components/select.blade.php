@@ -1,8 +1,7 @@
 @php
-    $affixLabelClasses = [
-        'whitespace-nowrap group-focus-within:text-primary-500',
-        'text-gray-400' => ! $errors->has($getStatePath()),
-        'text-danger-400' => $errors->has($getStatePath()),
+    $inputClasses = [
+        'has-prefix' => $getPrefixLabel() || $getPrefixIcon(),
+        'has-suffix' => $getSuffixLabel() || $getSuffixIcon(),
     ];
 @endphp
 
@@ -31,6 +30,8 @@
                 :attributes="$getExtraInputAttributeBag()->merge([
                     $applyStateBindingModifiers('wire:model') => $getStatePath(),
                 ])"
+                :prefix="$getPrefixLabel() || $getPrefixIcon() ? true : false"
+                :suffix="$getSuffixLabel() || $getSuffixIcon() ? true : false"
             >
                 @unless ($isPlaceholderSelectionDisabled())
                     <option value="">{{ $getPlaceholder() }}</option>
@@ -83,6 +84,7 @@
                 x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                 wire:ignore
                 {{ $attributes->merge($getExtraAttributes())->merge($getExtraAlpineAttributes()) }}
+                @class($inputClasses)
                 x-bind:class="{
                     'choices--error': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
                 }"

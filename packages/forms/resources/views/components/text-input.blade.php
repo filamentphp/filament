@@ -2,6 +2,11 @@
     $datalistOptions = $getDatalistOptions();
     $id = $getId();
     $statePath = $getStatePath();
+    $inputClasses = [
+        'block w-full transition duration-75 shadow-sm focus:border-primary-500 focus:relative focus:z-[1] focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
+        'rounded-l-lg' => ! ($getPrefixLabel() || $getPrefixIcon()),
+        'rounded-r-lg' => ! ($getSuffixLabel() || $getSuffixIcon()),
+    ];
 @endphp
 
 <x-dynamic-component
@@ -55,7 +60,7 @@
                 {!! filled($value = $getMinValue()) ? "min=\"{$value}\"" : null !!}
                 {!! $isRequired() ? 'required' : null !!}
             @endif
-            {{ $getExtraInputAttributeBag()->class(['block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500']) }}
+            {{ $getExtraInputAttributeBag()->class($inputClasses) }}
             x-bind:class="{
                 'border-gray-300 dark:border-gray-600': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
                 'border-danger-600 ring-danger-600': (@js($statePath) in $wire.__instance.serverMemo.errors),
