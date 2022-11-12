@@ -21,9 +21,9 @@ class TestsSummaries
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnSummarizerExists($columnName, $summarizerId);
 
-            if (is_float($state)) {
-                $state = round($state, 5);
-            }
+            $state = is_array($state) ?
+                array_map(fn ($state): string => strval($state), $state) :
+                strval(is_float($state) ? round($state, 5) : $state);
 
             $summarizer = $this->instance()->getTable()->getColumn($columnName)->getSummarizer($summarizerId);
 
@@ -33,9 +33,9 @@ class TestsSummaries
 
             $actualState = $summarizer->query($query)->getState();
 
-            if (is_float($actualState)) {
-                $actualState = round($actualState, 5);
-            }
+            $actualState = is_array($actualState) ?
+                array_map(fn ($state): string => strval($state), $actualState) :
+                strval(is_float($actualState) ? round($actualState, 5) : $actualState);
 
             $livewireClass = $this->instance()::class;
 
@@ -55,9 +55,9 @@ class TestsSummaries
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnSummarizerExists($columnName, $summarizerId);
 
-            if (is_float($state)) {
-                $state = round($state, 5);
-            }
+            $state = is_array($state) ?
+                array_map(fn ($state): string => strval($state), $state) :
+                strval(is_float($state) ? round($state, 5) : $state);
 
             $summarizer = $this->instance()->getTable()->getColumn($columnName)->getSummarizer($summarizerId);
 
@@ -67,9 +67,9 @@ class TestsSummaries
 
             $actualState = $summarizer->query($query)->getState();
 
-            if (is_float($actualState)) {
-                $actualState = round($actualState, 5);
-            }
+            $actualState = is_array($actualState) ?
+                array_map(fn ($state): string => strval($state), $actualState) :
+                strval(is_float($actualState) ? round($actualState, 5) : $actualState);
 
             $livewireClass = $this->instance()::class;
 
