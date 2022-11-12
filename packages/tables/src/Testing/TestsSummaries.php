@@ -21,17 +21,27 @@ class TestsSummaries
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnSummarizerExists($columnName, $summarizerId);
 
+            if (is_float($state)) {
+                $state = round($state, 5);
+            }
+
             $summarizer = $this->instance()->getTable()->getColumn($columnName)->getSummarizer($summarizerId);
 
             $query = $isCurrentPaginationPageOnly ?
                 $this->instance()->getPageTableSummaryQuery() :
                 $this->instance()->getAllTableSummaryQuery();
 
+            $actualState = $summarizer->query($query)->getState();
+
+            if (is_float($actualState)) {
+                $actualState = round($actualState, 5);
+            }
+
             $livewireClass = $this->instance()::class;
 
             Assert::assertEquals(
                 $state,
-                $summarizer->query($query)->getState(),
+                $actualState,
                 message: "Failed asserting that summarizer [$summarizerId], for column [{$columnName}], on the [{$livewireClass}] component, is set.",
             );
 
@@ -45,17 +55,27 @@ class TestsSummaries
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnSummarizerExists($columnName, $summarizerId);
 
+            if (is_float($state)) {
+                $state = round($state, 5);
+            }
+
             $summarizer = $this->instance()->getTable()->getColumn($columnName)->getSummarizer($summarizerId);
 
             $query = $isCurrentPaginationPageOnly ?
                 $this->instance()->getPageTableSummaryQuery() :
                 $this->instance()->getAllTableSummaryQuery();
 
+            $actualState = $summarizer->query($query)->getState();
+
+            if (is_float($actualState)) {
+                $actualState = round($actualState, 5);
+            }
+
             $livewireClass = $this->instance()::class;
 
             Assert::assertNotEquals(
                 $state,
-                $summarizer->query($query)->getState(),
+                $actualState,
                 message: "Failed asserting that summarizer [$summarizerId], for column [{$columnName}], on the [{$livewireClass}] component, is not set.",
             );
 
