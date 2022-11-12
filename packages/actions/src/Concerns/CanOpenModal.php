@@ -25,6 +25,8 @@ trait CanOpenModal
 
     protected View | Htmlable | Closure | null $modalContent = null;
 
+    protected View | Htmlable | Closure | null $modalFooter = null;
+
     protected string| Htmlable | Closure | null $modalHeading = null;
 
     protected string| Htmlable | Closure | null $modalSubheading = null;
@@ -83,6 +85,13 @@ trait CanOpenModal
     public function modalContent(View | Htmlable | Closure | null $content = null): static
     {
         $this->modalContent = $content;
+
+        return $this;
+    }
+
+    public function modalFooter(View | Htmlable | Closure | null $content = null): static
+    {
+        $this->modalFooter = $content;
 
         return $this;
     }
@@ -191,6 +200,11 @@ trait CanOpenModal
     public function getModalContent(): View | Htmlable | null
     {
         return $this->evaluate($this->modalContent);
+    }
+
+    public function getModalFooter(): View | Htmlable | null
+    {
+        return $this->evaluate($this->modalFooter);
     }
 
     public function getModalHeading(): string | Htmlable

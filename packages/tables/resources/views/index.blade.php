@@ -502,7 +502,7 @@
                                                     wire:click="{{ $recordWireClickAction }}"
                                                     wire:target="{{ $recordWireClickAction }}"
                                                     wire:loading.attr="disabled"
-                                                    wire:loading.class="opacity-70 cursor-wait"
+                                                    wire:loading.class="cursor-wait opacity-70"
                                                     type="button"
                                                     class="flex-1 block py-3"
                                                 >
@@ -830,7 +830,7 @@
                         @else
                             <tr>
                                 <td colspan="{{ $columnsCount }}">
-                                    <div class="flex items-center justify-center p-4 w-full">
+                                    <div class="flex items-center justify-center w-full p-4">
                                         <x-filament-tables::empty-state :icon="$getEmptyStateIcon()" :actions="$getEmptyStateActions()">
                                             <x-slot name="heading">
                                                 {{ $getEmptyStateHeading() }}
@@ -926,6 +926,8 @@
                     {{ $getMountedActionForm() }}
                 @endif
 
+                {{ $action->getModalFooter() }}
+
                 @if (count($action->getModalActions()))
                     <x-slot name="footer">
                         <x-filament::modal.actions :full-width="$action->isModalCentered()">
@@ -984,6 +986,8 @@
                 @if ($this->mountedTableBulkActionHasForm())
                     {{ $getMountedBulkActionForm() }}
                 @endif
+
+                {{ $action->getModalFooter() }}
 
                 @if (count($action->getModalActions()))
                     <x-slot name="footer">
