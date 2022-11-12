@@ -92,13 +92,13 @@
                     </x-slot>
                 @endif
 
-                {{ $action->getModalHeaderContent() }}
+                {{ $action->getModalContent() }}
 
                 @if ($action->hasFormSchema())
                     {{ $this->getMountedActionForm() }}
                 @endif
 
-                {{ $action->getModalFooterContent() }}
+                {{ $action->getModalFooter() }}
 
                 @if (count($action->getModalActions()))
                     <x-slot name="footer">

@@ -23,9 +23,9 @@ trait CanOpenModal
 
     protected string | Closure | null $modalButtonLabel = null;
 
-    protected View | Htmlable | Closure | null $modalHeaderContent = null;
+    protected View | Htmlable | Closure | null $modalContent = null;
 
-    protected View | Htmlable | Closure | null $modalFooterContent = null;
+    protected View | Htmlable | Closure | null $modalFooter = null;
 
     protected string| Htmlable | Closure | null $modalHeading = null;
 
@@ -82,27 +82,17 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalContent(View | Htmlable | Closure | null $content = null, string | Closure | null $position = 'header'): static
+
+    public function modalContent(View | Htmlable | Closure | null $content = null): static
     {
-        if ($position == 'header') {
-            $this->modalHeaderContent = $content;
-        } else {
-            $this->modalFooterContent = $content;
-        }
+        $this->modalContent = $content;
 
         return $this;
     }
 
-    public function modalHeaderContent(View | Htmlable | Closure | null $content = null): static
+    public function modalFooter(View | Htmlable | Closure | null $content = null): static
     {
-        $this->modalHeaderContent = $content;
-
-        return $this;
-    }
-
-    public function modalFooterContent(View | Htmlable | Closure | null $content = null): static
-    {
-        $this->modalFooterContent = $content;
+        $this->modalFooter = $content;
 
         return $this;
     }
@@ -210,17 +200,12 @@ trait CanOpenModal
 
     public function getModalContent(): View | Htmlable | null
     {
-        return $this->getModalHeaderContent();
+        return $this->evaluate($this->modalContent);
     }
 
-    public function getModalHeaderContent(): View | Htmlable | null
+    public function getModalFooter(): View | Htmlable | null
     {
-        return $this->evaluate($this->modalHeaderContent);
-    }
-
-    public function getModalFooterContent(): View | Htmlable | null
-    {
-        return $this->evaluate($this->modalFooterContent);
+        return $this->evaluate($this->modalFooter);
     }
 
     public function getModalHeading(): string | Htmlable
@@ -274,7 +259,7 @@ trait CanOpenModal
 
     public function shouldOpenModal(): bool
     {
-        return $this->isConfirmationRequired() || $this->hasFormSchema() || $this->getModalHeaderContent() || $this->getModalFooterContent();
+        return $this->isConfirmationRequired() || $this->hasFormSchema() || $this->getModalContent() || $this->getModalFooter();
     }
 
     protected function makeExtraModalAction(string $name, ?array $arguments = null): ModalAction

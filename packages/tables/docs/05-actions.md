@@ -308,14 +308,14 @@ BulkAction::make('advance')
     ->modalContent(view('filament.resources.event.actions.advance'))
 ```
 
-By default, the custom content is displayed on header of modal, but you can move it to footer using the second parameter:
+By default, the custom content is displayed on header of modal, but you can add custom content on footer using `modalFooter()`:
 
 ```php
 use Filament\Pages\Actions\BulkAction;
 
 BulkAction::make('advance')
     ->action(fn () => $this->record->advance())
-    ->modalContent(view('filament.resources.event.actions.advance'), position: 'footer')
+    ->modalFooter(view('filament.resources.event.actions.advance'))
 ```
 
 ## Authorization
