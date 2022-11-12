@@ -154,6 +154,7 @@ trait HasActions
 
         return $action->isConfirmationRequired() ||
             $action->getModalContent() ||
+            $action->getModalFooter() ||
             $this->mountedTableActionHasForm();
     }
 

@@ -89,9 +89,9 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalFooter(View | Htmlable | Closure | null $content = null): static
+    public function modalFooter(View | Htmlable | Closure | null $footer = null): static
     {
-        $this->modalFooter = $content;
+        $this->modalFooter = $footer;
 
         return $this;
     }

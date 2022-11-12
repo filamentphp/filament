@@ -44,6 +44,8 @@
                 {{ $this->getMountedActionForm() }}
             @endif
 
+            {{ $action->getModalFooter() }}
+
             @if (count($action->getModalActions()))
                 <x-slot name="footer">
                     <x-filament::modal.actions :full-width="$action->isModalCentered()">
