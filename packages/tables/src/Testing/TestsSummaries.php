@@ -39,7 +39,7 @@ class TestsSummaries
 
             $livewireClass = $this->instance()::class;
 
-            Assert::assertEquals(
+            Assert::assertSame(
                 $state,
                 $actualState,
                 message: "Failed asserting that summarizer [$summarizerId], for column [{$columnName}], on the [{$livewireClass}] component, is set.",
@@ -73,7 +73,7 @@ class TestsSummaries
 
             $livewireClass = $this->instance()::class;
 
-            Assert::assertNotEquals(
+            Assert::assertNotSame(
                 $state,
                 $actualState,
                 message: "Failed asserting that summarizer [$summarizerId], for column [{$columnName}], on the [{$livewireClass}] component, is not set.",
