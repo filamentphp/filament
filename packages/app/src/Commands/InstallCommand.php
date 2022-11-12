@@ -50,6 +50,8 @@ class InstallCommand extends Command
             return static::INVALID;
         }
 
+        $this->copyStubToApp('DefaultContextProvider', $path);
+
         if (! Str::contains($appConfig = file_get_contents(config_path('app.php')), 'App\\Providers\\Filament\\AdminFilamentProvider::class')) {
             file_put_contents(config_path('app.php'), str_replace(
                 'App\\Providers\\RouteServiceProvider::class,' . PHP_EOL,
