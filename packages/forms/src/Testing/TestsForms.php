@@ -7,6 +7,7 @@ use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Testing\Assert;
+use Livewire\Exceptions\PropertyNotFoundException;
 use Livewire\Testing\TestableLivewire;
 
 /**
@@ -25,12 +26,12 @@ class TestsForms
             $livewire = $this->instance();
 
             /** @var ComponentContainer $form */
-            $form = $livewire->$formName;
+            $form = $livewire->{$formName};
 
             $formStatePath = $form->getStatePath();
 
             foreach ($state as $key => $value) {
-                $this->set("{$formStatePath}.{$key}", $value);
+                $this->set((filled($formStatePath) ? "{$formStatePath}.{$key}" : $key), $value);
             }
 
             return $this;
@@ -46,12 +47,12 @@ class TestsForms
             $livewire = $this->instance();
 
             /** @var ComponentContainer $form */
-            $form = $livewire->$formName;
+            $form = $livewire->{$formName};
 
             $formStatePath = $form->getStatePath();
 
             foreach ($state as $key => $value) {
-                $this->assertSet("{$formStatePath}.{$key}", $value);
+                $this->assertSet((filled($formStatePath) ? "{$formStatePath}.{$key}" : $key), $value);
             }
 
             return $this;
@@ -67,7 +68,7 @@ class TestsForms
             $livewire = $this->instance();
 
             /** @var ComponentContainer $form */
-            $form = $livewire->$formName;
+            $form = $livewire->{$formName};
 
             $formStatePath = $form->getStatePath();
 
@@ -75,10 +76,10 @@ class TestsForms
                 collect($keys)
                     ->mapWithKeys(function ($value, $key) use ($formStatePath): array {
                         if (is_int($key)) {
-                            return [$key => "{$formStatePath}.{$value}"];
+                            return [$key => (filled($formStatePath) ? "{$formStatePath}.{$value}" : $value)];
                         }
 
-                        return ["{$formStatePath}.{$key}" => $value];
+                        return [(filled($formStatePath) ? "{$formStatePath}.{$key}" : $key) => $value];
                     })
                     ->all(),
             );
@@ -96,7 +97,7 @@ class TestsForms
             $livewire = $this->instance();
 
             /** @var ComponentContainer $form */
-            $form = $livewire->$formName;
+            $form = $livewire->{$formName};
 
             $formStatePath = $form->getStatePath();
 
@@ -104,10 +105,10 @@ class TestsForms
                 collect($keys)
                     ->mapWithKeys(function ($value, $key) use ($formStatePath): array {
                         if (is_int($key)) {
-                            return [$key => "{$formStatePath}.{$value}"];
+                            return [$key => (filled($formStatePath) ? "{$formStatePath}.{$value}" : $value)];
                         }
 
-                        return ["{$formStatePath}.{$key}" => $value];
+                        return [(filled($formStatePath) ? "{$formStatePath}.{$key}" : $key) => $value];
                     })
                     ->all(),
             );
