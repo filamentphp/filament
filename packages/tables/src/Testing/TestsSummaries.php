@@ -25,9 +25,7 @@ class TestsSummaries
                 is_numeric($state) ? round(floatval($state), 5) : $state,
             );
 
-            $state = is_array($state) ?
-                array_map($normalizeState, $state) :
-                $normalizeState($state);
+            $state = is_array($state) ? array_map($normalizeState, $state) : $normalizeState($state);
 
             $summarizer = $this->instance()->getTable()->getColumn($columnName)->getSummarizer($summarizerId);
 
@@ -37,9 +35,7 @@ class TestsSummaries
 
             $actualState = $summarizer->query($query)->getState();
 
-            $actualState = is_array($actualState) ?
-                array_map($normalizeState, $actualState) :
-                $normalizeState($actualState);
+            $actualState = is_array($actualState) ? array_map($normalizeState, $actualState) : $normalizeState($actualState);
 
             $livewireClass = $this->instance()::class;
 
@@ -63,9 +59,7 @@ class TestsSummaries
                 is_numeric($state) ? round(floatval($state), 5) : $state,
             );
 
-            $state = is_array($state) ?
-                array_map($normalizeState, $state) :
-                $normalizeState($state);
+            $state = is_array($state) ? array_map($normalizeState, $state) : $normalizeState($state);
 
             $summarizer = $this->instance()->getTable()->getColumn($columnName)->getSummarizer($summarizerId);
 
@@ -75,9 +69,7 @@ class TestsSummaries
 
             $actualState = $summarizer->query($query)->getState();
 
-            $actualState = is_array($actualState) ?
-                array_map($normalizeState, $actualState) :
-                $normalizeState($actualState);
+            $actualState = is_array($actualState) ? array_map($normalizeState, $actualState) : $normalizeState($actualState);
 
             $livewireClass = $this->instance()::class;
 
