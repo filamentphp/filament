@@ -7,7 +7,6 @@ use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Testing\Assert;
-use Livewire\Exceptions\PropertyNotFoundException;
 use Livewire\Testing\TestableLivewire;
 
 /**
