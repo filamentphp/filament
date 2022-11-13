@@ -159,7 +159,7 @@
                 <div
                     @class([
                         'space-y-2',
-                        'flex flex-col h-full' => $width === 'screen',
+                        'flex flex-col h-full' => ($width === 'screen') || $slideOver,
                     ])
                 >
                     @if ($header)
@@ -175,7 +175,7 @@
                     <div
                         @class([
                             'filament-modal-content space-y-2',
-                            'flex-1 overflow-y-auto' => $width === 'screen',
+                            'flex-1 overflow-y-auto' => ($width === 'screen') || $slideOver,
                         ])
                     >
                         @if ($heading || $subheading)
