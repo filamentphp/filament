@@ -22,6 +22,18 @@ return [
             'label' => 'Đăng xuất',
         ],
 
+        'sidebar' => [
+
+            'collapse' => [
+                'label' => 'Thu gọn thanh bên',
+            ],
+
+            'expand' => [
+                'label' => 'Mở rộng thanh bên',
+            ],
+
+        ],
+
         'user_menu' => [
             'label' => 'Menu người dùng',
         ],
