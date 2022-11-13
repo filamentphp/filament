@@ -53,6 +53,7 @@
                                     'border-gray-300' => ! $errors->has($getStatePath()),
                                     'dark:border-gray-500' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                                     'border-danger-600 ring-1 ring-inset ring-danger-600' => $errors->has($getStatePath()),
+                                    'dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
                                 ]) }}
                                 {!! ($isDisabled || $isOptionDisabled($value, $label)) ? 'disabled' : null !!}
                                 wire:loading.attr="disabled"
@@ -65,6 +66,7 @@
                                 'text-gray-700' => ! $errors->has($getStatePath()),
                                 'dark:text-gray-200' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                                 'text-danger-600' => $errors->has($getStatePath()),
+                                'dark:text-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
                             ])>
                                 {{ $label }}
                             </label>
