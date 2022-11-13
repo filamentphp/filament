@@ -54,6 +54,14 @@
     @apply border-gray-600 bg-gray-700 text-white;
 }
 
+.filament-select-input-with-prefix .choices__inner {
+    @apply rounded-l-none;
+}
+
+.filament-select-input-with-suffix .choices__inner {
+    @apply rounded-r-none;
+}
+
 .choices--error .choices__inner {
     @apply border-danger-600 ring-danger-600;
 }
