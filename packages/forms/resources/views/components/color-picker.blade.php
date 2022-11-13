@@ -2,7 +2,8 @@
     $affixLabelClasses = [
         'whitespace-nowrap group-focus-within:text-primary-500',
         'text-gray-400' => ! $errors->has($getStatePath()),
-        'text-danger-400 dark:text-danger-400' => $errors->has($getStatePath()),
+        'text-danger-400' => $errors->has($getStatePath()),
+        'dark:text-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
     ];
 @endphp
 
