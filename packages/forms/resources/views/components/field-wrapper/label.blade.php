@@ -17,7 +17,7 @@
         {{ $slot }}
 
         @if ($required)
-            <sup class="font-medium text-danger-700">*</sup>
+            <sup class="font-medium text-danger-700 dark:text-danger-500">*</sup>
         @endif
     </span>
 
