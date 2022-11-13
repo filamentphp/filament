@@ -1,7 +1,7 @@
 @php
     $inputClasses = [
-        'has-prefix' => $getPrefixLabel() || $getPrefixIcon(),
-        'has-suffix' => $getSuffixLabel() || $getSuffixIcon(),
+        'filament-select-input-with-prefix' => ($hasPrefix = $getPrefixLabel() || $getPrefixIcon()),
+        'filament-select-input-with-suffix' => ($hasSuffix = $getSuffixLabel() || $getSuffixIcon()),
     ];
 @endphp
 
@@ -30,8 +30,8 @@
                 :attributes="$getExtraInputAttributeBag()->merge([
                     $applyStateBindingModifiers('wire:model') => $getStatePath(),
                 ])"
-                :prefix="$getPrefixLabel() || $getPrefixIcon() ? true : false"
-                :suffix="$getSuffixLabel() || $getSuffixIcon() ? true : false"
+                :prefix="$hasPrefix"
+                :suffix="$hasSuffix"
             >
                 @unless ($isPlaceholderSelectionDisabled())
                     <option value="">{{ $getPlaceholder() }}</option>
