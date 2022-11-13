@@ -25,12 +25,12 @@ class TestsForms
             $livewire = $this->instance();
 
             /** @var ComponentContainer $form */
-            $form = $livewire->$formName;
+            $form = $livewire->{$formName};
 
             $formStatePath = $form->getStatePath();
 
             foreach ($state as $key => $value) {
-                $this->set("{$formStatePath}.{$key}", $value);
+                $this->set((filled($formStatePath) ? "{$formStatePath}.{$key}" : $key), $value);
             }
 
             return $this;
@@ -46,12 +46,12 @@ class TestsForms
             $livewire = $this->instance();
 
             /** @var ComponentContainer $form */
-            $form = $livewire->$formName;
+            $form = $livewire->{$formName};
 
             $formStatePath = $form->getStatePath();
 
             foreach ($state as $key => $value) {
-                $this->assertSet("{$formStatePath}.{$key}", $value);
+                $this->assertSet((filled($formStatePath) ? "{$formStatePath}.{$key}" : $key), $value);
             }
 
             return $this;
@@ -67,7 +67,7 @@ class TestsForms
             $livewire = $this->instance();
 
             /** @var ComponentContainer $form */
-            $form = $livewire->$formName;
+            $form = $livewire->{$formName};
 
             $formStatePath = $form->getStatePath();
 
@@ -75,10 +75,10 @@ class TestsForms
                 collect($keys)
                     ->mapWithKeys(function ($value, $key) use ($formStatePath): array {
                         if (is_int($key)) {
-                            return [$key => "{$formStatePath}.{$value}"];
+                            return [$key => (filled($formStatePath) ? "{$formStatePath}.{$value}" : $value)];
                         }
 
-                        return ["{$formStatePath}.{$key}" => $value];
+                        return [(filled($formStatePath) ? "{$formStatePath}.{$key}" : $key) => $value];
                     })
                     ->all(),
             );
@@ -96,7 +96,7 @@ class TestsForms
             $livewire = $this->instance();
 
             /** @var ComponentContainer $form */
-            $form = $livewire->$formName;
+            $form = $livewire->{$formName};
 
             $formStatePath = $form->getStatePath();
 
@@ -104,10 +104,10 @@ class TestsForms
                 collect($keys)
                     ->mapWithKeys(function ($value, $key) use ($formStatePath): array {
                         if (is_int($key)) {
-                            return [$key => "{$formStatePath}.{$value}"];
+                            return [$key => (filled($formStatePath) ? "{$formStatePath}.{$value}" : $value)];
                         }
 
-                        return ["{$formStatePath}.{$key}" => $value];
+                        return [(filled($formStatePath) ? "{$formStatePath}.{$key}" : $key) => $value];
                     })
                     ->all(),
             );
@@ -123,7 +123,7 @@ class TestsForms
             $livewireClass = $livewire::class;
 
             /** @var ComponentContainer $form */
-            $form = $livewire->$name;
+            $form = $livewire->{$name};
 
             Assert::assertInstanceOf(
                 ComponentContainer::class,
@@ -145,7 +145,7 @@ class TestsForms
             $livewireClass = $livewire::class;
 
             /** @var ComponentContainer $form */
-            $form = $livewire->$formName;
+            $form = $livewire->{$formName};
 
             /** @var ?Field $field */
             $field = data_get($form->getFlatFields(withHidden: true), $fieldName, null);
@@ -170,7 +170,7 @@ class TestsForms
             $livewireClass = $livewire::class;
 
             /** @var ComponentContainer $form */
-            $form = $livewire->$formName;
+            $form = $livewire->{$formName};
 
             /** @var Field $field */
             $field = $form->getFlatFields(withHidden: true)[$fieldName];
@@ -194,7 +194,7 @@ class TestsForms
             $livewireClass = $livewire::class;
 
             /** @var ComponentContainer $form */
-            $form = $livewire->$formName;
+            $form = $livewire->{$formName};
 
             /** @var Field $field */
             $field = $form->getFlatFields(withHidden: true)[$fieldName];
@@ -218,7 +218,7 @@ class TestsForms
             $livewireClass = $livewire::class;
 
             /** @var ComponentContainer $form */
-            $form = $livewire->$formName;
+            $form = $livewire->{$formName};
 
             $fields = $form->getFlatFields(withHidden: false);
 
@@ -242,7 +242,7 @@ class TestsForms
             $livewireClass = $livewire::class;
 
             /** @var ComponentContainer $form */
-            $form = $livewire->$formName;
+            $form = $livewire->{$formName};
 
             $fields = $form->getFlatFields(withHidden: false);
 

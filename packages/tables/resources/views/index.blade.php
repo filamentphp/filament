@@ -507,6 +507,7 @@
                                                         :components="$getColumnsLayout()"
                                                         :record="$record"
                                                         :record-key="$recordKey"
+                                                        :row-loop="$loop"
                                                     />
                                                 </a>
                                             @elseif ($recordAction)
@@ -522,7 +523,7 @@
                                                     wire:click="{{ $recordWireClickAction }}"
                                                     wire:target="{{ $recordWireClickAction }}"
                                                     wire:loading.attr="disabled"
-                                                    wire:loading.class="opacity-70 cursor-wait"
+                                                    wire:loading.class="cursor-wait opacity-70"
                                                     type="button"
                                                     class="flex-1 block py-3"
                                                 >
@@ -530,6 +531,7 @@
                                                         :components="$getColumnsLayout()"
                                                         :record="$record"
                                                         :record-key="$recordKey"
+                                                        :row-loop="$loop"
                                                     />
                                                 </button>
                                             @else
@@ -538,6 +540,7 @@
                                                         :components="$getColumnsLayout()"
                                                         :record="$record"
                                                         :record-key="$recordKey"
+                                                        :row-loop="$loop"
                                                     />
                                                 </div>
                                             @endif
@@ -774,6 +777,7 @@
                                 @foreach ($columns as $column)
                                     @php
                                         $column->record($record);
+                                        $column->rowLoop($loop->parent);
                                     @endphp
 
                                     <x-tables::cell
@@ -826,7 +830,7 @@
                         @else
                             <tr>
                                 <td colspan="{{ $columnsCount }}">
-                                    <div class="flex items-center justify-center p-4 w-full">
+                                    <div class="flex items-center justify-center w-full p-4">
                                         <x-tables::empty-state :icon="$getEmptyStateIcon()" :actions="$getEmptyStateActions()">
                                             <x-slot name="heading">
                                                 {{ $getEmptyStateHeading() }}
@@ -883,6 +887,16 @@
             :width="$action?->getModalWidth()"
             :slide-over="$action?->isModalSlideOver()"
             display-classes="block"
+            x-init="this.livewire = $wire.__instance"
+            x-on:modal-closed.stop="
+                if ('mountedTableAction' in this.livewire?.serverMemo.data) {
+                    this.livewire.set('mountedTableAction', null)
+                }
+
+                if ('mountedTableActionRecord' in this.livewire?.serverMemo.data) {
+                    this.livewire.set('mountedTableActionRecord', null)
+                }
+            "
         >
             @if ($action)
                 @if ($action->isModalCentered())
@@ -915,6 +929,8 @@
                     {{ $getMountedActionForm() }}
                 @endif
 
+                {{ $action->getModalFooter() }}
+
                 @if (count($action->getModalActions()))
                     <x-slot name="footer">
                         <x-tables::modal.actions :full-width="$action->isModalCentered()">
@@ -940,6 +956,8 @@
             :width="$action?->getModalWidth()"
             :slide-over="$action?->isModalSlideOver()"
             display-classes="block"
+            x-init="this.livewire = $wire.__instance"
+            x-on:modal-closed.stop="if ('mountedTableBulkAction' in this.livewire?.serverMemo.data) this.livewire.set('mountedTableBulkAction', null)"
         >
             @if ($action)
                 @if ($action->isModalCentered())
@@ -971,6 +989,8 @@
                 @if ($action->hasFormSchema())
                     {{ $getMountedBulkActionForm() }}
                 @endif
+
+                {{ $action->getModalFooter() }}
 
                 @if (count($action->getModalActions()))
                     <x-slot name="footer">

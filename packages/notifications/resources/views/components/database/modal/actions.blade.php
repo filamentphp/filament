@@ -26,7 +26,7 @@
 
             <x-notifications::link
                 wire:click="clearDatabaseNotifications"
-                x-on:click="isOpen = false"
+                x-on:click="close()"
                 color="secondary"
                 tag="button"
                 tabindex="-1"

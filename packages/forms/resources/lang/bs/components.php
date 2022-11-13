@@ -17,7 +17,7 @@ return [
             ],
 
             'create_item_between' => [
-                'label' => 'Ubaciti',
+                'label' => 'Ubaci',
             ],
 
             'delete_item' => [
@@ -25,7 +25,7 @@ return [
             ],
 
             'move_item' => [
-                'label' => 'Pomjeriti',
+                'label' => 'Pomjeri',
             ],
 
             'move_item_down' => [
@@ -50,6 +50,22 @@ return [
 
             'expand_all' => [
                 'label' => 'Proširi sve',
+            ],
+
+        ],
+
+    ],
+
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Odznači sve',
+            ],
+
+            'select_all' => [
+                'label' => 'Označi sve',
             ],
 
         ],
@@ -91,11 +107,11 @@ return [
     'markdown_editor' => [
 
         'toolbar_buttons' => [
-            'attach_files' => 'Priložite fajlove',
+            'attach_files' => 'Priloži fajlove',
             'bold' => 'Bold',
             'bullet_list' => 'Bullet list',
             'code_block' => 'Blok koda',
-            'edit' => 'Uredite',
+            'edit' => 'Uredi',
             'italic' => 'Kurziv',
             'link' => 'Link',
             'ordered_list' => 'Numerisana lista',
@@ -175,7 +191,7 @@ return [
         ],
 
         'toolbar_buttons' => [
-            'attach_files' => 'Priložite fajlove',
+            'attach_files' => 'Priloži fajlove',
             'blockquote' => 'Blok citat',
             'bold' => 'Bold',
             'bullet_list' => 'Bullet list',
@@ -188,7 +204,7 @@ return [
             'ordered_list' => 'Numerisana lista',
             'redo' => 'Ponovo uradite',
             'strike' => 'Precrtano',
-            'undo' => 'Poništite',
+            'undo' => 'Poništi',
         ],
 
     ],
@@ -228,11 +244,11 @@ return [
 
         'no_search_results_message' => 'Nijedna opcija ne odgovara vašoj pretrazi.',
 
-        'placeholder' => 'Izaberite opciju',
+        'placeholder' => 'Izaberi opciju',
 
         'searching_message' => 'Traženje ...',
 
-        'search_prompt' => 'Počnite da kucate da biste pretraživali ...',
+        'search_prompt' => 'Počni da kucate da biste pretraživali ...',
 
     ],
 

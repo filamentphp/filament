@@ -44,6 +44,12 @@
             'black' => 'font-black',
             default => null,
         },
+        match ($getFontFamily()) {
+            'sans' => 'font-sans',
+            'serif' => 'font-serif',
+            'mono' => 'font-mono',
+            default => null,
+        },
         'whitespace-normal' => $canWrap(),
     ]) }}
 >

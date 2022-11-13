@@ -133,6 +133,36 @@ TextColumn::make('status')->enum([
 ])
 ```
 
+## Displaying the row index
+
+You may want a column to contain the number of the current row in the table:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('index')->getStateUsing(static function (stdClass $rowLoop): string {
+    return (string) $rowLoop->iteration;
+});
+```
+
+As `$rowLoop` is Laravel's Blade `$loop` object, you can reference all other `$loop` properties.
+
+As a shortcut, you may use the `rowIndex()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('index')->rowIndex()
+```
+
+To start counting from 0 instead of 1, use `isFromZero: true`:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('index')->rowIndex(isFromZero: true)
+```
+
 ## Custom formatting
 
 You may instead pass a custom formatting callback to `formatStateUsing()`, which accepts the `$state` of the cell, and optionally its `$record`:
@@ -207,6 +237,19 @@ use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('email')
     ->weight('bold')
+```
+
+## Customizing the font family
+
+You can change the text font family to any of the following options: `sans`, `serif` or `mono`.
+
+For instance, you may make the font mono using `fontFamily('mono')`:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('text')
+    ->fontFamily('mono')
 ```
 
 ## Allowing the text to be copied to the clipboard

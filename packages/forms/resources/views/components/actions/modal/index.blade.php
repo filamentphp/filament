@@ -10,6 +10,8 @@
         :width="$action?->getModalWidth()"
         :slide-over="$action?->isModalSlideOver()"
         display-classes="block"
+        x-init="this.livewire = $wire.__instance"
+        x-on:modal-closed.stop="if ('mountedFormComponentAction' in this.livewire?.serverMemo.data) this.livewire.set('mountedFormComponentAction', null)"
     >
         @if ($action)
             @if ($action->isModalCentered())
@@ -41,6 +43,8 @@
             @if ($action->hasFormSchema())
                 {{ $this->getMountedFormComponentActionForm() }}
             @endif
+
+            {{ $action->getModalFooter() }}
 
             @if (count($action->getModalActions()))
                 <x-slot name="footer">
