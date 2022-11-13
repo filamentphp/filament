@@ -50,6 +50,7 @@
                 'border-gray-300' => ! $errors->has($getStatePath()),
                 'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                 'border-danger-600' => $errors->has($getStatePath()),
+                'dark:border-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
                 'opacity-70' => $isDisabled(),
                 'dark:text-gray-300' => $isDisabled() && config('forms.dark_mode'),
             ]) }}
