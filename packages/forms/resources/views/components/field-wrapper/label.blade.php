@@ -12,7 +12,7 @@
         'text-sm font-medium leading-4',
         'text-gray-700' => ! $error,
         'dark:text-gray-300' => (! $error) && config('forms.dark_mode'),
-        'text-danger-700' => $error,
+        'text-danger-700 dark:text-danger-500' => $error,
     ])>
         {{ $slot }}
 
