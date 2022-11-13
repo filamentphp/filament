@@ -1,5 +1,7 @@
 @php
-    $notifications = $this->getDatabaseNotifications();
+    $notifications = $this->getDatabaseNotifications()->groupBy(function ($item, $key) {
+        return $item->data['group'] ?? null;
+    })->sortDesc();
     $unreadNotificationsCount = $this->getUnreadDatabaseNotificationsCount();
 @endphp
 

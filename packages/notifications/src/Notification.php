@@ -9,6 +9,7 @@ use Filament\Notifications\Concerns\HasActions;
 use Filament\Notifications\Concerns\HasBody;
 use Filament\Notifications\Concerns\HasDate;
 use Filament\Notifications\Concerns\HasDuration;
+use Filament\Notifications\Concerns\HasGroup;
 use Filament\Notifications\Concerns\HasIcon;
 use Filament\Notifications\Concerns\HasId;
 use Filament\Notifications\Concerns\HasTitle;
@@ -31,6 +32,7 @@ class Notification extends ViewComponent implements Arrayable
     use HasIcon;
     use HasId;
     use HasTitle;
+    use HasGroup;
 
     protected string $view = 'notifications::notification';
 
@@ -59,6 +61,7 @@ class Notification extends ViewComponent implements Arrayable
             'icon' => $this->getIcon(),
             'iconColor' => $this->getIconColor(),
             'title' => $this->getTitle(),
+            'group' => $this->getGroup(),
         ];
     }
 
@@ -79,6 +82,7 @@ class Notification extends ViewComponent implements Arrayable
         $static->icon($data['icon'] ?? null);
         $static->iconColor($data['iconColor'] ?? $static->getIconColor());
         $static->title($data['title'] ?? null);
+        $static->group($data['group'] ?? $static->getGroup());
 
         return $static;
     }
