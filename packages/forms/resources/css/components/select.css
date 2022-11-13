@@ -54,11 +54,11 @@
     @apply border-gray-600 bg-gray-700 text-white;
 }
 
-.has-prefix .choices__inner {
+.filament-select-input-with-prefix .choices__inner {
     @apply rounded-l-none;
 }
 
-.has-suffix .choices__inner {
+.filament-select-input-with-suffix .choices__inner {
     @apply rounded-r-none;
 }
 
