@@ -66,8 +66,9 @@ return [
         'heading' => 'Summary',
 
         'subheadings' => [
-            'page' => 'This page',
             'all' => 'All :label',
+            'group' => ':group summary',
+            'page' => 'This page',
         ],
 
         'summarizers' => [

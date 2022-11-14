@@ -6,6 +6,7 @@
     $actionsAlignment = $getActionsAlignment();
     $actionsPosition = $getActionsPosition();
     $actionsColumnLabel = $getActionsColumnLabel();
+    $allRecordsCount = $getAllRecordsCount();
     $columns = $getVisibleColumns();
     $collapsibleColumnsLayout = $getCollapsibleColumnsLayout();
     $content = $getContent();
@@ -20,7 +21,9 @@
     $header = $getHeader();
     $headerActions = $getHeaderActions();
     $heading = $getHeading();
+    $group = $getGrouping();
     $description = $getDescription();
+    $isGroupsOnly = $isGroupsOnly() && $group;
     $isReorderable = $isReorderable();
     $isReordering = $isReordering();
     $isColumnSearchVisible = $isSearchableByColumn();
@@ -258,7 +261,7 @@
             />
         @elseif ($isSelectionEnabled)
             <x-filament-tables::selection-indicator
-                :all-records-count="$getAllRecordsCount()"
+                :all-records-count="$allRecordsCount"
                 :colspan="$columnsCount"
                 x-show="selectedRecords.length"
                 class="border-t dark:border-gray-700"
@@ -642,6 +645,12 @@
                             @endif
                         @endif
 
+                        @if ($isGroupsOnly)
+                            <th class="filament-tables-header-cell flex items-center w-full px-4 py-2 whitespace-nowrap font-medium text-sm text-gray-600 dark:text-gray-300">
+                                {{ $group->getLabel() }}
+                            </th>
+                        @endif
+
                         @foreach ($columns as $column)
                             <x-filament-tables::header-cell
                                 :extra-attributes="$column->getExtraHeaderAttributes()"
@@ -696,117 +705,184 @@
                     @endif
 
                     @if (count($records))
+                        @php
+                            $groupTitle = null;
+                        @endphp
+
                         @foreach ($records as $record)
                             @php
                                 $recordAction = $getRecordAction($record);
                                 $recordKey = $getRecordKey($record);
                                 $recordUrl = $getRecordUrl($record);
+                                $recordGroup = $group?->getTitleFromRecord($record);
                             @endphp
 
-                            <x-filament-tables::row
-                                :record-action="$recordAction"
-                                :record-url="$recordUrl"
-                                :wire:key="$this->id . '.table.records.' . $recordKey"
-                                :x-sortable-item="$isReordering ? $recordKey : null"
-                                :x-sortable-handle="$isReordering"
-                                :striped="$isStriped"
-                                x-bind:class="{
-                                    'bg-gray-50 dark:bg-gray-500/10': isRecordSelected('{{ $recordKey }}'),
-                                }"
-                                @class(array_merge(
-                                    [
-                                        'group cursor-move' => $isReordering,
-                                    ],
-                                    $getRecordClasses($record),
-                                ))
-                            >
-                                <x-filament-tables::reorder.cell @class([
-                                    'hidden' => ! $isReordering,
-                                ])>
-                                    @if ($isReordering)
-                                        <x-filament-tables::reorder.handle />
+                            @if ($recordGroup !== $groupTitle)
+                                @if ($hasSummary && (! $isReordering) && filled($groupTitle))
+                                    <x-filament-tables::summary.row
+                                        :actions="count($actions)"
+                                        :actions-position="$actionsPosition"
+                                        :columns="$columns"
+                                        :heading="$isGroupsOnly ? $groupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $groupTitle, 'label' => $pluralModelLabel])"
+                                        :is-groups-only="$isGroupsOnly"
+                                        :is-selection-enabled="$isSelectionEnabled"
+                                        :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $record)"
+                                    />
+                                @endif
+
+                                @php
+                                    $groupTitle = $recordGroup;
+                                @endphp
+
+                                @if (! $isGroupsOnly)
+                                    <x-filament-tables::row class="bg-gray-500/5">
+                                        @if (count($actions) && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
+                                            <td></td>
+                                        @endif
+
+                                        @if ($isSelectionEnabled)
+                                            <td></td>
+                                        @endif
+
+                                        @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
+                                            <td></td>
+                                        @endif
+
+                                        @foreach ($columns as $column)
+                                            <td>
+                                                @if ($loop->first)
+                                                    <div class="flex items-center w-full px-4 py-2 whitespace-nowrap space-x-1 rtl:space-x-reverse font-bold text-base text-gray-600 dark:text-gray-300">
+                                                        {{ $group->getLabel() }}: {{ $groupTitle }}
+                                                    </div>
+                                                @endif
+                                            </td>
+                                        @endforeach
+
+                                        @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
+                                            <td></td>
+                                        @endif
+                                    </x-filament-tables::row>
+                                @endif
+                            @endif
+
+                            @if (! $isGroupsOnly)
+                                <x-filament-tables::row
+                                    :record-action="$recordAction"
+                                    :record-url="$recordUrl"
+                                    :wire:key="$this->id . '.table.records.' . $recordKey"
+                                    :x-sortable-item="$isReordering ? $recordKey : null"
+                                    :x-sortable-handle="$isReordering"
+                                    :striped="$isStriped"
+                                    x-bind:class="{
+                                        'bg-gray-50 dark:bg-gray-500/10': isRecordSelected('{{ $recordKey }}'),
+                                    }"
+                                    @class(array_merge(
+                                        [
+                                            'group cursor-move' => $isReordering,
+                                        ],
+                                        $getRecordClasses($record),
+                                    ))
+                                >
+                                    <x-filament-tables::reorder.cell @class([
+                                        'hidden' => ! $isReordering,
+                                    ])>
+                                        @if ($isReordering)
+                                            <x-filament-tables::reorder.handle />
+                                        @endif
+                                    </x-filament-tables::reorder.cell>
+
+                                    @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)
+                                        <x-filament-tables::actions.cell @class([
+                                            'hidden' => $isReordering,
+                                        ])>
+                                            <x-filament-tables::actions
+                                                :actions="$actions"
+                                                :alignment="$actionsAlignment ?? 'left'"
+                                                :record="$record"
+                                            />
+                                        </x-filament-tables::actions.cell>
                                     @endif
-                                </x-filament-tables::reorder.cell>
 
-                                @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)
-                                    <x-filament-tables::actions.cell @class([
-                                        'hidden' => $isReordering,
-                                    ])>
-                                        <x-filament-tables::actions
-                                            :actions="$actions"
-                                            :alignment="$actionsAlignment ?? 'left'"
-                                            :record="$record"
-                                        />
-                                    </x-filament-tables::actions.cell>
-                                @endif
+                                    @if ($isSelectionEnabled)
+                                        <x-filament-tables::checkbox.cell @class([
+                                            'hidden' => $isReordering,
+                                        ])>
+                                            <x-filament-tables::checkbox
+                                                x-model="selectedRecords"
+                                                :value="$recordKey"
+                                                class="filament-tables-record-checkbox"
+                                            />
+                                        </x-filament-tables::checkbox.cell>
+                                    @endif
 
-                                @if ($isSelectionEnabled)
-                                    <x-filament-tables::checkbox.cell @class([
-                                        'hidden' => $isReordering,
-                                    ])>
-                                        <x-filament-tables::checkbox
-                                            x-model="selectedRecords"
-                                            :value="$recordKey"
-                                            class="filament-tables-record-checkbox"
-                                        />
-                                    </x-filament-tables::checkbox.cell>
-                                @endif
+                                    @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
+                                        <x-filament-tables::actions.cell @class([
+                                            'hidden' => $isReordering,
+                                        ])>
+                                            <x-filament-tables::actions
+                                                :actions="$actions"
+                                                :alignment="$actionsAlignment ?? 'left'"
+                                                :record="$record"
+                                            />
+                                        </x-filament-tables::actions.cell>
+                                    @endif
 
-                                @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
-                                    <x-filament-tables::actions.cell @class([
-                                        'hidden' => $isReordering,
-                                    ])>
-                                        <x-filament-tables::actions
-                                            :actions="$actions"
-                                            :alignment="$actionsAlignment ?? 'left'"
-                                            :record="$record"
-                                        />
-                                    </x-filament-tables::actions.cell>
-                                @endif
+                                    @foreach ($columns as $column)
+                                        @php
+                                            $column->record($record);
+                                            $column->rowLoop($loop->parent);
+                                        @endphp
 
-                                @foreach ($columns as $column)
-                                    @php
-                                        $column->record($record);
-                                        $column->rowLoop($loop->parent);
-                                    @endphp
+                                        <x-filament-tables::cell
+                                            :class="$getHiddenClasses($column)"
+                                            wire:loading.remove.delay
+                                            wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                        >
+                                            <x-filament-tables::columns.column
+                                                :column="$column"
+                                                :record="$record"
+                                                :record-action="$recordAction"
+                                                :record-key="$recordKey"
+                                                :record-url="$recordUrl"
+                                                :is-click-disabled="$column->isClickDisabled() || $isReordering"
+                                            />
+                                        </x-filament-tables::cell>
+                                    @endforeach
 
-                                    <x-filament-tables::cell
-                                        :class="$getHiddenClasses($column)"
-                                        wire:loading.remove.delay
+                                    @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
+                                        <x-filament-tables::actions.cell @class([
+                                            'hidden' => $isReordering,
+                                        ])>
+                                            <x-filament-tables::actions
+                                                :actions="$actions"
+                                                :alignment="$actionsAlignment ?? 'right'"
+                                                :record="$record"
+                                            />
+                                        </x-filament-tables::actions.cell>
+                                    @endif
+
+                                    <x-filament-tables::loading-cell
+                                        :colspan="$columnsCount"
+                                        wire:loading.class.remove.delay="hidden"
+                                        class="hidden"
+                                        :wire:key="$this->id . '.table.records.' . $recordKey . '.loading-cell'"
                                         wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
-                                    >
-                                        <x-filament-tables::columns.column
-                                            :column="$column"
-                                            :record="$record"
-                                            :record-action="$recordAction"
-                                            :record-key="$recordKey"
-                                            :record-url="$recordUrl"
-                                            :is-click-disabled="$column->isClickDisabled() || $isReordering"
-                                        />
-                                    </x-filament-tables::cell>
-                                @endforeach
-
-                                @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
-                                    <x-filament-tables::actions.cell @class([
-                                        'hidden' => $isReordering,
-                                    ])>
-                                        <x-filament-tables::actions
-                                            :actions="$actions"
-                                            :alignment="$actionsAlignment ?? 'right'"
-                                            :record="$record"
-                                        />
-                                    </x-filament-tables::actions.cell>
-                                @endif
-
-                                <x-filament-tables::loading-cell
-                                    :colspan="$columnsCount"
-                                    wire:loading.class.remove.delay="hidden"
-                                    class="hidden"
-                                    :wire:key="$this->id . '.table.records.' . $recordKey . '.loading-cell'"
-                                    wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
-                                />
-                            </x-filament-tables::row>
+                                    />
+                                </x-filament-tables::row>
+                            @endif
                         @endforeach
+
+                        @if ($hasSummary && (! $isReordering) && filled($groupTitle) && ((! $records instanceof \Illuminate\Contracts\Pagination\Paginator) || (! $records->hasMorePages())))
+                            <x-filament-tables::summary.row
+                                :actions="count($actions)"
+                                :actions-position="$actionsPosition"
+                                :columns="$columns"
+                                :heading="$isGroupsOnly ? $groupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $groupTitle, 'label' => $pluralModelLabel])"
+                                :is-groups-only="$isGroupsOnly"
+                                :is-selection-enabled="$isSelectionEnabled"
+                                :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $record)"
+                            />
+                        @endif
 
                         @if ($contentFooter)
                             <x-slot name="footer">
@@ -819,6 +895,7 @@
                                 :actions="count($actions)"
                                 :actions-position="$actionsPosition"
                                 :columns="$columns"
+                                :is-groups-only="$isGroupsOnly"
                                 :is-selection-enabled="$isSelectionEnabled"
                                 :plural-model-label="$pluralModelLabel"
                                 :records="$records"

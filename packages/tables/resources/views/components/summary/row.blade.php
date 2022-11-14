@@ -3,8 +3,10 @@
     'actionsPosition',
     'columns',
     'heading',
+    'isGroupsOnly' => false,
     'isSelectionEnabled',
     'query',
+    'strong' => false,
 ])
 
 @php
@@ -24,10 +26,24 @@
         <td></td>
     @endif
 
+    @if ($isGroupsOnly)
+        <td @class([
+            'align-top px-4 py-3 font-medium',
+            'text-sm' => ! $strong,
+            'text-base' => $strong,
+        ])>
+            {{ $heading }}
+        </td>
+    @endif
+
     @foreach ($columns as $column)
         <td class="-space-y-3 align-top">
-            @if ($loop->first)
-                <div class="px-4 py-3 text-sm font-medium">
+            @if ($loop->first && (! $isGroupsOnly))
+                <div @class([
+                    'px-4 py-3 font-medium',
+                    'text-sm' => ! $strong,
+                    'text-base' => $strong,
+                ])>
                     {{ $heading }}
                 </div>
             @elseif ($column->hasSummary())

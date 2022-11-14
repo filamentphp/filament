@@ -38,13 +38,17 @@ trait CanSortRecords
         return $this->tableSortDirection;
     }
 
-    public function updatedTableSort(): void
+    public function updatedTableSortColumn(): void
     {
         $this->resetPage();
     }
 
     protected function applySortingToTableQuery(Builder $query): Builder
     {
+        if ($this->getTable()->isGroupsOnly()) {
+            return $query;
+        }
+
         if ($this->isTableReordering()) {
             return $query->orderBy($this->getTable()->getReorderColumn());
         }
@@ -91,13 +95,7 @@ trait CanSortRecords
             return $query;
         }
 
-        /** @phpstan-ignore-next-line */
-        $orders = $query->getQuery()->orders ?? [];
-
-        return $query->when(
-            count($orders) === 0,
-            fn (Builder $query) => $query->orderBy($query->getModel()->getQualifiedKeyName()),
-        );
+        return $query->orderBy($query->getModel()->getQualifiedKeyName());
     }
 
     /**

@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use Filament\Forms\Form;
 use Filament\Support\Components\ViewComponent;
+use Filament\Tables\Grouping\Group;
 use function Filament\Support\get_model_label;
 use function Filament\Support\locale_has_pluralization;
 use Filament\Tables\Actions\Action;
@@ -59,8 +60,6 @@ class Table extends ViewComponent
 
     protected array $columnActions = [];
 
-    protected array $columnSummaries = [];
-
     protected array $columns = [];
 
     protected array $columnsLayout = [];
@@ -76,6 +75,8 @@ class Table extends ViewComponent
     protected array | Closure | null $contentGrid = null;
 
     protected int | string | Closure | null $defaultPaginationPageOption = 10;
+
+    protected string | Group | null $defaultGroup = null;
 
     protected ?string $defaultSortColumn = null;
 
@@ -103,6 +104,8 @@ class Table extends ViewComponent
 
     protected string | Closure | null $filtersLayout = null;
 
+    protected array $groups = [];
+
     protected bool $hasColumnsLayout = false;
 
     protected bool $hasSummary = false;
@@ -114,6 +117,8 @@ class Table extends ViewComponent
     protected array $headerActions = [];
 
     protected string | Closure | null $inverseRelationship = null;
+
+    protected bool | Closure $isGroupsOnly = false;
 
     protected bool | Closure $isPaginated = true;
 
@@ -323,6 +328,13 @@ class Table extends ViewComponent
         return $this;
     }
 
+    public function defaultGroup(string | Group | null $group): static
+    {
+        $this->defaultGroup = $group;
+
+        return $this;
+    }
+
     public function defaultSort(string | Closure | null $column, string | Closure | null $direction = 'asc'): static
     {
         if ($column instanceof Closure) {
@@ -416,6 +428,15 @@ class Table extends ViewComponent
         return $this;
     }
 
+    public function groups(array $groups): static
+    {
+        foreach ($groups as $group) {
+            $this->groups[$group->getId()] = $group;
+        }
+
+        return $this;
+    }
+
     public function header(View | Htmlable | Closure | null $header): static
     {
         $this->header = $header;
@@ -447,6 +468,13 @@ class Table extends ViewComponent
     public function heading(string | Htmlable | Closure | null $heading): static
     {
         $this->heading = $heading;
+
+        return $this;
+    }
+
+    public function groupsOnly(bool | Closure $condition = true): static
+    {
+        $this->isGroupsOnly = $condition;
 
         return $this;
     }
@@ -765,6 +793,25 @@ class Table extends ViewComponent
         return $this->evaluate($this->defaultPaginationPageOption) ?? Arr::first($this->getPaginationPageOptions());
     }
 
+    public function getDefaultGroup(): ?Group
+    {
+        if ($this->defaultGroup === null) {
+            return null;
+        }
+
+        if ($this->defaultGroup instanceof Group) {
+            return $this->defaultGroup;
+        }
+
+        $group = $this->getGroup($this->defaultGroup);
+
+        if ($group) {
+            return $group;
+        }
+
+        return Group::make($this->defaultGroup);
+    }
+
     public function getDefaultSortColumn(): ?string
     {
         return $this->defaultSortColumn;
@@ -859,6 +906,21 @@ class Table extends ViewComponent
     public function getFiltersLayout(): string
     {
         return $this->evaluate($this->filtersLayout) ?? Layout::Dropdown;
+    }
+
+    public function getGroups(): array
+    {
+        return $this->groups;
+    }
+
+    public function getGroup(string $id): ?Group
+    {
+        return $this->getGroups()[$id] ?? null;
+    }
+
+    public function getGrouping(): ?Group
+    {
+        return $this->getLivewire()->getTableGrouping();
     }
 
     public function getColumnToggleForm(): Form
@@ -1004,6 +1066,11 @@ class Table extends ViewComponent
         return $this->getLivewire()->getTableSortDirection();
     }
 
+    public function isGroupsOnly(): bool
+    {
+        return $this->isGroupsOnly;
+    }
+
     public function isFilterable(): bool
     {
         return (bool) count($this->getFilters());
@@ -1011,7 +1078,7 @@ class Table extends ViewComponent
 
     public function isPaginated(): bool
     {
-        return (bool) $this->evaluate($this->isPaginated);
+        return $this->evaluate($this->isPaginated) && (! $this->isGroupsOnly());
     }
 
     public function isPaginatedWhileReordering(): bool
