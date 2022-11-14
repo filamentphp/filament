@@ -380,7 +380,7 @@
                 {{ $getExtraInputAttributeBag()->class(['bg-white block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 prose max-w-none break-words dark:prose-invert dark:bg-gray-700 dark:focus:border-primary-500']) }}
                 x-bind:class="{
                     'border-gray-300 dark:border-gray-600': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
-                    'border-danger-600 ring-danger-600': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
+                    'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
                 }"
             ></trix-editor>
         @else

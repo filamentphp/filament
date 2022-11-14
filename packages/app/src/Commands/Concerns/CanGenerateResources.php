@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use ReflectionException;
-use ReflectionNamedType;
 use Throwable;
 
 trait CanGenerateResources
@@ -262,10 +261,13 @@ trait CanGenerateResources
         }
 
         try {
-            /** @var ReflectionNamedType $type */
             $type = $modelReflection->reflected->getMethod($guessedRelationshipName)->getReturnType();
 
-            if ($type->getName() !== BelongsTo::class) {
+            if (
+                (! $type) ||
+                (! method_exists($type, 'getName')) ||
+                ($type->getName() !== BelongsTo::class)
+            ) {
                 return null;
             }
         } catch (ReflectionException $exception) {

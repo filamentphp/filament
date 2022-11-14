@@ -13,12 +13,12 @@
     <span @class([
         'text-sm font-medium leading-4',
         'text-gray-700 dark:text-gray-300' => ! $error,
-        'text-danger-700' => $error,
+        'text-danger-700 dark:text-danger-400' => $error,
     ])>
         {{ $slot }}
 
         @if ($required && $isMarkedAsRequired && ! $isDisabled)
-            <sup class="font-medium text-danger-700">*</sup>
+            <sup class="font-medium text-danger-700 dark:text-danger-400">*</sup>
         @endif
     </span>
 

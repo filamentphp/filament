@@ -274,10 +274,10 @@ it('can load existing post data for editing', function () {
 
     livewire(PostResource\Pages\ListPosts::class)
         ->mountTableAction(EditAction::class, $post)
-        ->assertTableActionDataSet([[
+        ->assertTableActionDataSet([
             'title' => $post->title,
         ])
-        ->setTableActionData([[
+        ->setTableActionData([
             'title' => $title = fake()->words(asText: true),
         ])
         ->callMountedTableAction()

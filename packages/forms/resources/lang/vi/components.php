@@ -16,6 +16,10 @@ return [
                 'label' => 'Thêm :label mới',
             ],
 
+            'create_item_between' => [
+                'label' => 'Chèn',
+            ],
+
             'delete_item' => [
                 'label' => 'Xóa',
             ],
@@ -52,6 +56,22 @@ return [
 
     ],
 
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Bỏ chọn tất cả',
+            ],
+
+            'select_all' => [
+                'label' => 'Chọn tất cả',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [
@@ -62,6 +82,10 @@ return [
 
             'delete' => [
                 'label' => 'Xóa dòng',
+            ],
+
+            'reorder' => [
+                'label' => 'Xếp lại dòng',
             ],
 
         ],
