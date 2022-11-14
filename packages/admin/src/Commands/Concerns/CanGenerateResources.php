@@ -262,10 +262,13 @@ trait CanGenerateResources
         }
 
         try {
-            /** @var ReflectionNamedType $type */
             $type = $modelReflection->reflected->getMethod($guessedRelationshipName)->getReturnType();
 
-            if ($type?->getName() !== BelongsTo::class) {
+            if (
+                (! $type) ||
+                (! method_exists($type, 'getName')) ||
+                ($type->getName() !== BelongsTo::class)
+            ) {
                 return null;
             }
         } catch (ReflectionException $exception) {
