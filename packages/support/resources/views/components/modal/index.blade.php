@@ -116,7 +116,7 @@
         >
             <div
                 @class([
-                    'filament-modal-window w-full p-2 bg-white cursor-default pointer-events-auto',
+                    'filament-modal-window w-full py-2 bg-white cursor-default pointer-events-auto',
                     'dark:bg-gray-800' => $darkMode,
                     'relative' => $width !== 'screen',
                     'h-screen overflow-y-auto ml-auto mr-0 rtl:mr-auto rtl:ml-0' => $slideOver,
@@ -161,23 +161,24 @@
 
                 <div
                     @class([
-                        'space-y-2',
                         'flex flex-col h-full' => ($width === 'screen') || $slideOver,
                     ])
                 >
-                    @if ($header)
-                        <div class="filament-modal-header px-4 py-2">
-                            {{ $header }}
-                        </div>
-                    @endif
+                    <div class="space-y-2">
+                        @if ($header)
+                            <div class="filament-modal-header px-6 py-2">
+                                {{ $header }}
+                            </div>
+                        @endif
 
-                    @if ($header && ($actions || $heading || $slot->isNotEmpty() || $subheading))
-                        <x-dynamic-component :component="$hrComponent" />
-                    @endif
+                        @if ($header && ($actions || $heading || $slot->isNotEmpty() || $subheading))
+                            <x-dynamic-component :component="$hrComponent" class="px-2" />
+                        @endif
+                    </div>
 
                     <div
                         @class([
-                            'filament-modal-content space-y-2',
+                            'filament-modal-content space-y-2 p-2',
                             'flex-1 overflow-y-auto' => ($width === 'screen') || $slideOver,
                         ])
                     >
@@ -213,15 +214,17 @@
                         {{ $actions }}
                     </div>
 
-                    @if ($footer && ($actions || $heading || $slot->isNotEmpty() || $subheading))
-                        <x-dynamic-component :component="$hrComponent" />
-                    @endif
+                    <div class="space-y-2">
+                        @if ($footer && ($actions || $heading || $slot->isNotEmpty() || $subheading))
+                            <x-dynamic-component :component="$hrComponent" class="px-2" />
+                        @endif
 
-                    @if ($footer)
-                        <div class="filament-modal-footer px-4 py-2">
-                            {{ $footer }}
-                        </div>
-                    @endif
+                        @if ($footer)
+                            <div class="filament-modal-footer px-6 py-2">
+                                {{ $footer }}
+                            </div>
+                        @endif
+                    </div>
                 </div>
             </div>
         </div>
