@@ -706,7 +706,8 @@
 
                     @if (count($records))
                         @php
-                            $groupTitle = null;
+                            $previousRecord = null;
+                            $previousGroupTitle = null;
                         @endphp
 
                         @foreach ($records as $record)
@@ -714,25 +715,21 @@
                                 $recordAction = $getRecordAction($record);
                                 $recordKey = $getRecordKey($record);
                                 $recordUrl = $getRecordUrl($record);
-                                $recordGroup = $group?->getTitleFromRecord($record);
+                                $recordGroupTitle = $group?->getGroupTitleFromRecord($record);
                             @endphp
 
-                            @if ($recordGroup !== $groupTitle)
-                                @if ($hasSummary && (! $isReordering) && filled($groupTitle))
+                            @if ($recordGroupTitle !== $previousGroupTitle)
+                                @if ($hasSummary && (! $isReordering) && filled($previousGroupTitle))
                                     <x-filament-tables::summary.row
                                         :actions="count($actions)"
                                         :actions-position="$actionsPosition"
                                         :columns="$columns"
-                                        :heading="$isGroupsOnly ? $groupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $groupTitle, 'label' => $pluralModelLabel])"
+                                        :heading="$isGroupsOnly ? $previousGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousGroupTitle, 'label' => $pluralModelLabel])"
                                         :is-groups-only="$isGroupsOnly"
                                         :is-selection-enabled="$isSelectionEnabled"
-                                        :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $record)"
+                                        :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
                                     />
                                 @endif
-
-                                @php
-                                    $groupTitle = $recordGroup;
-                                @endphp
 
                                 @if (! $isGroupsOnly)
                                     <x-filament-tables::row class="bg-gray-500/5">
@@ -752,7 +749,7 @@
                                             <td>
                                                 @if ($loop->first)
                                                     <div class="flex items-center w-full px-4 py-2 whitespace-nowrap space-x-1 rtl:space-x-reverse font-bold text-base text-gray-600 dark:text-gray-300">
-                                                        {{ $group->getLabel() }}: {{ $groupTitle }}
+                                                        {{ $group->getLabel() }}: {{ $recordGroupTitle }}
                                                     </div>
                                                 @endif
                                             </td>
@@ -870,17 +867,22 @@
                                     />
                                 </x-filament-tables::row>
                             @endif
+
+                            @php
+                                $previousGroupTitle = $recordGroupTitle;
+                                $previousRecord = $record;
+                            @endphp
                         @endforeach
 
-                        @if ($hasSummary && (! $isReordering) && filled($groupTitle) && ((! $records instanceof \Illuminate\Contracts\Pagination\Paginator) || (! $records->hasMorePages())))
+                        @if ($hasSummary && (! $isReordering) && filled($previousGroupTitle) && ((! $records instanceof \Illuminate\Contracts\Pagination\Paginator) || (! $records->hasMorePages())))
                             <x-filament-tables::summary.row
                                 :actions="count($actions)"
                                 :actions-position="$actionsPosition"
                                 :columns="$columns"
-                                :heading="$isGroupsOnly ? $groupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $groupTitle, 'label' => $pluralModelLabel])"
+                                :heading="$isGroupsOnly ? $previousGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousGroupTitle, 'label' => $pluralModelLabel])"
                                 :is-groups-only="$isGroupsOnly"
                                 :is-selection-enabled="$isSelectionEnabled"
-                                :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $record)"
+                                :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
                             />
                         @endif
 

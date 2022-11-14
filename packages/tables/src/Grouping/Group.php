@@ -2,12 +2,19 @@
 
 namespace Filament\Tables\Grouping;
 
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Group
 {
     protected ?string $column;
+
+    protected ?Closure $getGroupTitleFromRecordUsing = null;
+
+    protected ?Closure $orderQueryUsing = null;
+
+    protected ?Closure $scopeQueryUsing = null;
 
     protected ?string $label;
 
@@ -44,6 +51,27 @@ class Group
         return $this;
     }
 
+    public function getGroupTitleFromRecordUsing(?Closure $callback): static
+    {
+        $this->getGroupTitleFromRecordUsing = $callback;
+
+        return $this;
+    }
+
+    public function orderQueryUsing(?Closure $callback): static
+    {
+        $this->orderQueryUsing = $callback;
+
+        return $this;
+    }
+
+    public function scopeQueryUsing(?Closure $callback): static
+    {
+        $this->scopeQueryUsing = $callback;
+
+        return $this;
+    }
+
     public function getColumn(): string
     {
         return $this->column ?? $this->getId();
@@ -64,19 +92,45 @@ class Group
             ->ucfirst();
     }
 
-    public function getTitleFromRecord(Model $record): string
+    public function getGroupTitleFromRecord(Model $record): string
     {
-        return $record->getAttribute($this->getColumn());
+        $column = $this->getColumn();
+
+        if ($this->getGroupTitleFromRecordUsing) {
+            return app()->call($this->getGroupTitleFromRecordUsing, [
+                'column' => $column,
+                'record' => $record,
+            ]);
+        }
+
+        return $record->getAttribute($column);
     }
 
     public function orderQuery(Builder $query): Builder
     {
-        return $query->orderBy($this->getColumn());
+        $column = $this->getColumn();
+
+        if ($this->orderQueryUsing) {
+            return app()->call($this->orderQueryUsing, [
+                'column' => $column,
+                'query' => $query,
+            ]) ?? $query;
+        }
+
+        return $query->orderBy($column);
     }
 
     public function scopeQuery(Builder $query, Model $record): Builder
     {
         $column = $this->getColumn();
+
+        if ($this->scopeQueryUsing) {
+            return app()->call($this->scopeQueryUsing, [
+                'column' => $column,
+                'query' => $query,
+                'record' => $record,
+            ]) ?? $query;
+        }
 
         return $query->where($column, $record->getAttribute($column));
     }
