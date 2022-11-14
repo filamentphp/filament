@@ -67,7 +67,10 @@
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
         x-cloak
-        class="fixed inset-0 z-40 flex items-center min-h-screen overflow-y-auto overflow-x-hidden transition"
+        @class([
+            'fixed inset-0 z-40 min-h-screen overflow-y-auto overflow-x-hidden transition',
+            'flex items-center' => ! $slideOver,
+        ])
     >
         <div
             @if (config('filament-support.modal.is_closed_by_clicking_away', true))
