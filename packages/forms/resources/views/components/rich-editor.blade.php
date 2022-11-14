@@ -381,6 +381,7 @@
                 x-bind:class="{
                     'border-gray-300 dark:border-gray-600': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
                     'border-danger-600 ring-danger-600': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
+                    'dark:border-danger-400 dark:ring-danger-400': (@js($getStatePath()) in $wire.__instance.serverMemo.errors) && @js(config('forms.dark_mode')),
                 }"
             ></trix-editor>
         @else

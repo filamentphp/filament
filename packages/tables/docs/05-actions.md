@@ -308,7 +308,7 @@ BulkAction::make('advance')
     ->modalContent(view('filament.resources.event.actions.advance'))
 ```
 
-By default, the custom content is displayed above the modal form is there is one, but you can add content below using `modalFooter()` if you wish:
+By default, the custom content is displayed above the modal form if there is one, but you can add content below using `modalFooter()` if you wish:
 
 ```php
 use Filament\Pages\Actions\BulkAction;
