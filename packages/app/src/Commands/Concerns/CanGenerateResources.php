@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use ReflectionException;
-use ReflectionNamedType;
 use Throwable;
 
 trait CanGenerateResources
