@@ -75,7 +75,7 @@ return [
             'label' => 'Фільтр',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'Відкрити дії',
         ],
 

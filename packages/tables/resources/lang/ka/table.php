@@ -49,7 +49,7 @@ return [
             'label' => 'ფილტრი',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'Open actions',
         ],
 

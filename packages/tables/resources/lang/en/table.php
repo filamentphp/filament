@@ -16,6 +16,11 @@ return [
 
     'fields' => [
 
+        'grouping' => [
+            'label' => 'Group by',
+            'placeholder' => 'Group by',
+        ],
+
         'search' => [
             'label' => 'Search',
             'placeholder' => 'Search',
@@ -103,8 +108,12 @@ return [
             'label' => 'Filter',
         ],
 
-        'open_actions' => [
-            'label' => 'Open actions',
+        'group' => [
+            'label' => 'Group',
+        ],
+
+        'open_bulk_actions' => [
+            'label' => 'Bulk actions',
         ],
 
         'toggle_columns' => [

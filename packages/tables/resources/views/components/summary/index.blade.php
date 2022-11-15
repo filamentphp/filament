@@ -32,7 +32,7 @@
             <td>
                 <div class="flex items-center w-full px-4 py-2 whitespace-nowrap space-x-1 rtl:space-x-reverse font-medium text-sm text-gray-600 dark:text-gray-300">
                     @if ($loop->first)
-                        <span class="text-base font-bold">
+                        <span class="text-base font-medium">
                             {{ __('filament-tables::table.summary.heading', ['label' => $pluralModelLabel]) }}
                         </span>
                     @elseif ($column->hasSummary())

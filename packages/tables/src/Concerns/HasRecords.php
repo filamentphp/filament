@@ -40,6 +40,17 @@ trait HasRecords
         return $query;
     }
 
+    public function getFilteredSortedTableQuery(): Builder
+    {
+        $query = $this->getFilteredTableQuery();
+
+        $this->applyGroupingToTableQuery($query);
+
+        $this->applySortingToTableQuery($query);
+
+        return $query;
+    }
+
     protected function hydratePivotRelationForTableRecords(Collection | Paginator $records): Collection | Paginator
     {
         $table = $this->getTable();
@@ -58,11 +69,7 @@ trait HasRecords
             return $this->records;
         }
 
-        $query = $this->getFilteredTableQuery();
-
-        $this->applyGroupingToTableQuery($query);
-
-        $this->applySortingToTableQuery($query);
+        $query = $this->getFilteredSortedTableQuery();
 
         if (
             (! $this->getTable()->isPaginated()) ||

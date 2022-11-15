@@ -75,7 +75,7 @@ return [
             'label' => 'Suodata',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'Avaa toiminnot',
         ],
 

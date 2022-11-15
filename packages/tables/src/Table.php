@@ -431,6 +431,10 @@ class Table extends ViewComponent
     public function groups(array $groups): static
     {
         foreach ($groups as $group) {
+            if (! $group instanceof Group) {
+                $group = Group::make($group);
+            }
+
             $this->groups[$group->getId()] = $group;
         }
 

@@ -32,6 +32,7 @@
                 ])"
                 :prefix="$hasPrefix"
                 :suffix="$hasSuffix"
+                class="w-full"
             >
                 @unless ($isPlaceholderSelectionDisabled())
                     <option value="">{{ $getPlaceholder() }}</option>

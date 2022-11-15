@@ -22,6 +22,7 @@
     $headerActions = $getHeaderActions();
     $heading = $getHeading();
     $group = $getGrouping();
+    $groups = $getGroups();
     $description = $getDescription();
     $isGroupsOnly = $isGroupsOnly() && $group;
     $isReorderable = $isReorderable();
@@ -168,7 +169,7 @@
     <x-filament-tables::container>
         <div
             class="filament-tables-header-container"
-            x-show="hasHeader = (@js($renderHeader = ($header || $heading || ($headerActions && (! $isReordering)) || $isReorderable || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible)) || selectedRecords.length)"
+            x-show="hasHeader = (@js($renderHeader = ($header || $heading || ($headerActions && (! $isReordering)) || $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible)) || selectedRecords.length)"
             {!! ! $renderHeader ? 'x-cloak' : null !!}
         >
             @if ($header)
@@ -188,7 +189,7 @@
                         </x-slot>
                     </x-filament-tables::header>
 
-                    <x-filament::hr :x-show="\Illuminate\Support\Js::from($isReorderable || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible) . ' || selectedRecords.length'" />
+                    <x-filament::hr :x-show="\Illuminate\Support\Js::from($isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible) . ' || selectedRecords.length'" />
                 </div>
             @endif
 
@@ -198,57 +199,64 @@
                         <x-filament-tables::filters :form="$getFiltersForm()" />
                     </div>
 
-                    <x-filament::hr :x-show="\Illuminate\Support\Js::from($isReorderable || $isGlobalSearchVisible || $isColumnToggleFormVisible) . ' || selectedRecords.length'" />
+                    <x-filament::hr :x-show="\Illuminate\Support\Js::from($isReorderable || count($groups) || $isGlobalSearchVisible || $isColumnToggleFormVisible) . ' || selectedRecords.length'" />
                 </div>
             @endif
 
             <div
-                x-show="@js($shouldRenderHeaderDiv = ($isReorderable || $isGlobalSearchVisible || $hasFiltersDropdown || $isColumnToggleFormVisible)) || selectedRecords.length"
+                x-show="@js($shouldRenderHeaderDiv = ($isReorderable || count($groups) || $isGlobalSearchVisible || $hasFiltersDropdown || $isColumnToggleFormVisible)) || selectedRecords.length"
                 {!! ! $shouldRenderHeaderDiv ? 'x-cloak' : null !!}
-                class="flex items-center justify-between p-2 h-14"
+                class="flex items-center justify-between py-2 px-3 h-14"
                 x-bind:class="{
-                    'gap-2': @js($isReorderable) || selectedRecords.length,
+                    'gap-3': @js($isReorderable) || @js(count($groups)) || selectedRecords.length,
                 }"
             >
-                <div class="flex items-center gap-2">
+                <div class="flex-shrink-0 flex items-center sm:gap-3">
                     @if ($isReorderable)
                         <x-filament-tables::reorder.trigger
                             :enabled="$isReordering"
                         />
                     @endif
 
+                    @if (count($groups))
+                        <x-filament-tables::groups :groups="$groups" />
+                    @endif
+
                     @if (! $isReordering)
                         <x-filament-tables::bulk-actions
                             x-show="selectedRecords.length"
+                            x-cloak
                             :actions="$getBulkActions()"
                         />
                     @endif
                 </div>
 
                 @if ($isGlobalSearchVisible || $hasFiltersDropdown || $isColumnToggleFormVisible)
-                    <div class="flex items-center justify-end w-full gap-2 md:max-w-md">
+                    <div class="flex-1 flex items-center justify-end gap-3 md:max-w-md">
                         @if ($isGlobalSearchVisible)
                             <div class="flex items-center justify-end flex-1">
                                 <x-filament-tables::search-input />
                             </div>
                         @endif
 
-                        @if ($hasFiltersDropdown)
-                            <x-filament-tables::filters.dropdown
-                                :form="$getFiltersForm()"
-                                :width="$getFiltersFormWidth()"
-                                :indicators-count="count(\Illuminate\Support\Arr::flatten($filterIndicators))"
-                                class="shrink-0"
-                            />
-                        @endif
+                        <div class="flex">
+                            @if ($hasFiltersDropdown)
+                                <x-filament-tables::filters.dropdown
+                                    :form="$getFiltersForm()"
+                                    :width="$getFiltersFormWidth()"
+                                    :indicators-count="count(\Illuminate\Support\Arr::flatten($filterIndicators))"
+                                    class="shrink-0"
+                                />
+                            @endif
 
-                        @if ($isColumnToggleFormVisible)
-                            <x-filament-tables::toggleable
-                                :form="$getColumnToggleForm()"
-                                :width="$getColumnToggleFormWidth()"
-                                class="shrink-0"
-                            />
-                        @endif
+                            @if ($isColumnToggleFormVisible)
+                                <x-filament-tables::toggleable
+                                    :form="$getColumnToggleForm()"
+                                    :width="$getColumnToggleFormWidth()"
+                                    class="shrink-0"
+                                />
+                            @endif
+                        </div>
                     </div>
                 @endif
             </div>
@@ -745,15 +753,11 @@
                                             <td></td>
                                         @endif
 
-                                        @foreach ($columns as $column)
-                                            <td>
-                                                @if ($loop->first)
-                                                    <div class="flex items-center w-full px-4 py-2 whitespace-nowrap space-x-1 rtl:space-x-reverse font-bold text-base text-gray-600 dark:text-gray-300">
-                                                        {{ $group->getLabel() }}: {{ $recordGroupTitle }}
-                                                    </div>
-                                                @endif
-                                            </td>
-                                        @endforeach
+                                        <td colspan="{{ count($columns) }}">
+                                            <div class="flex items-center w-full px-4 py-2 whitespace-nowrap space-x-1 rtl:space-x-reverse font-medium text-base text-gray-600 dark:text-gray-300">
+                                                {{ $group->getLabel() }}: {{ $recordGroupTitle }}
+                                            </div>
+                                        </td>
 
                                         @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
                                             <td></td>

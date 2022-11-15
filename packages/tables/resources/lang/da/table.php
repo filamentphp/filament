@@ -67,7 +67,7 @@ return [
             'label' => 'Filtrer',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'Åbn handlinger',
         ],
 

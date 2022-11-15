@@ -75,7 +75,7 @@ return [
             'label' => '絞り込み',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => '操作を開く',
         ],
 
