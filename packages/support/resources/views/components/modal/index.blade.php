@@ -54,7 +54,6 @@
     aria-modal="true"
     class="filament-modal {{ $displayClasses }}"
     wire:ignore.self
-    wire:key="{{ $this->id }}.modals.{{ $id }}.container"
 >
     {{ $trigger }}
 
