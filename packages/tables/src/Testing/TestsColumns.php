@@ -172,6 +172,178 @@ class TestsColumns
         };
     }
 
+    public function assertTableColumnFormattedStateSet(): Closure
+    {
+        return function (string $name, $value, $record): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableColumnExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $column = $livewire->getCachedTableColumn($name);
+
+            if (! ($record instanceof Model)) {
+                $record = $livewire->getTableRecord($record);
+            }
+
+            $column->record($record);
+
+            Assert::assertTrue(
+                /** @var \Filament\Tables\Columns\TextColumn $column */
+                $column->getFormattedState() == $value,
+                message: "Failed asserting that a table column with name [{$name}] has a formatted state of [{$value}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+
+        };
+    }
+
+    public function assertTableColumnFormattedStateNotSet(): Closure
+    {
+        return function (string $name, $value, $record): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableColumnExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $column = $livewire->getCachedTableColumn($name);
+
+            if (! ($record instanceof Model)) {
+                $record = $livewire->getTableRecord($record);
+            }
+
+            $column->record($record);
+
+            Assert::assertFalse(
+            /** @var \Filament\Tables\Columns\TextColumn $column */
+                $column->getFormattedState() == $value,
+                message: "Failed asserting that a table column with name [{$name}] does not have a formatted state of [{$value}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+
+        };
+    }
+
+    public function assertTableColumnHasExtraAttributes(): Closure
+    {
+        return function (string $name, array $attributes, $record) {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableColumnExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $column = $livewire->getCachedTableColumn($name);
+
+            if (! ($record instanceof Model)) {
+                $record = $livewire->getTableRecord($record);
+            }
+
+            $column->record($record);
+
+            $attributes_string = print_r($attributes, true);
+
+            Assert::assertTrue(
+            /** @var \Filament\Tables\Columns\TextColumn $column */
+                $column->getExtraAttributes() == $attributes,
+                message: "Failed asserting that a table column with name [{$name}] has extra attributes [{$attributes_string}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableColumnDoesNotHaveExtraAttributes(): Closure
+    {
+        return function (string $name, array $attributes, $record) {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableColumnExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $column = $livewire->getCachedTableColumn($name);
+
+            if (! ($record instanceof Model)) {
+                $record = $livewire->getTableRecord($record);
+            }
+
+            $column->record($record);
+
+            $attributes_string = print_r($attributes, true);
+
+            Assert::assertFalse(
+            /** @var \Filament\Tables\Columns\TextColumn $column */
+                $column->getExtraAttributes() == $attributes,
+                message: "Failed asserting that a table column with name [{$name}] does not have extra attributes [{$attributes_string}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableColumnHasDescription(): Closure
+    {
+        return function (string $name, $description, $record, string $position = 'below') {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableColumnExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $column = $livewire->getCachedTableColumn($name);
+
+            if (! ($record instanceof Model)) {
+                $record = $livewire->getTableRecord($record);
+            }
+
+            $column->record($record);
+
+            $description_to_test = $position == 'above' ? $column->getDescriptionAbove() : $column->getDescriptionBelow();
+
+            Assert::assertTrue(
+            /** @var \Filament\Tables\Columns\TextColumn $column */
+                $description_to_test == $description,
+                message: "Failed asserting that a table column with name [{$name}] has description [{$description}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableColumnDoesNotHaveDescription(): Closure
+    {
+        return function (string $name, $description, $record, string $position = 'below') {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableColumnExists($name);
+
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $column = $livewire->getCachedTableColumn($name);
+
+            if (! ($record instanceof Model)) {
+                $record = $livewire->getTableRecord($record);
+            }
+
+            $column->record($record);
+
+            $description_to_test = $position == 'above' ? $column->getDescriptionAbove() : $column->getDescriptionBelow();
+
+            Assert::assertFalse(
+            /** @var \Filament\Tables\Columns\TextColumn $column */
+                $description_to_test == $description,
+                message: "Failed asserting that a table column with name [{$name}] does not have description [{$description}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
     public function callTableColumnAction(): Closure
     {
         return function (string $name, $record = null): static {

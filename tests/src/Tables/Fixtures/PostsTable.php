@@ -34,6 +34,15 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
                 ->hidden(),
             Tables\Columns\TextColumn::make('with_state')
                 ->getStateUsing(fn () => 'correct state'),
+            Tables\Columns\TextColumn::make('formatted_state')
+                ->formatStateUsing(fn() => "formatted state"),
+            Tables\Columns\TextColumn::make('extra_attributes')
+                ->extraAttributes([
+                    'class' => 'text-danger-500'
+                ]),
+            Tables\Columns\TextColumn::make('with_description')
+                ->description('description below')
+                ->description('description above', 'above')
         ];
     }
 
