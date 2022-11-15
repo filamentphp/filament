@@ -179,7 +179,7 @@ You may optionally persist the search in the query string:
 
 ```php
 protected $queryString = [
-    ...,
+    // ...
     'tableColumnSearchQueries',
 ];
 ```
