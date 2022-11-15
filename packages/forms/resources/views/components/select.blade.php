@@ -76,6 +76,7 @@
                     options: @js($getOptionsForJs()),
                     optionsLimit: @js($getOptionsLimit()),
                     placeholder: @js($getPlaceholder()),
+                    position: @js($getPosition()),
                     searchDebounce: @js($getSearchDebounce()),
                     searchingMessage: @js($getSearchingMessage()),
                     searchPrompt: @js($getSearchPrompt()),
