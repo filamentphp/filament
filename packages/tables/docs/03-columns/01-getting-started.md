@@ -178,10 +178,10 @@ TextColumn::make('title')->searchable(isIndividual: true, isGlobal: false)
 You may optionally persist the search in the query string:
 
 ```php
-    protected $queryString = [
-        ...,
-        'tableColumnSearchQueries',
-    ];
+protected $queryString = [
+    ...,
+    'tableColumnSearchQueries',
+];
 ```
 
 ### Persist search in session
