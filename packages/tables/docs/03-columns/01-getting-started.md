@@ -175,6 +175,15 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('title')->searchable(isIndividual: true, isGlobal: false)
 ```
 
+If you want to have the search persisted in the query string, you have to add `tableColumnSearchQueries` to the `queryString` property :
+
+```php
+    protected $queryString = [
+        ...,
+        'tableColumnSearchQueries',
+    ];
+```
+
 ### Persist search in session
 
 To persist the table or individual column search in the user's session, override the `shouldPersistTableSearchInSession()` or `shouldPersistTableColumnSearchInSession()` method on the Livewire component:
