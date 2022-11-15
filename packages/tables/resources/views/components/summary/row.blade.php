@@ -1,10 +1,12 @@
 @props([
-    'actions',
-    'actionsPosition',
+    'actions' => false,
+    'actionsPosition' => null,
     'columns',
+    'extraHeadingColumn' => false,
     'heading',
     'isGroupsOnly' => false,
-    'isSelectionEnabled',
+    'isSelectionEnabled' => false,
+    'placeholderColumns' => true,
     'query',
     'strong' => false,
 ])
@@ -16,19 +18,19 @@
 <x-filament-tables::row {{ $attributes->class([
     'bg-gray-500/5' => $strong,
 ]) }}>
-    @if ($actions && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
+    @if ($placeholderColumns && $actions && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
         <td></td>
     @endif
 
-    @if ($isSelectionEnabled)
+    @if ($placeholderColumns && $isSelectionEnabled)
         <td></td>
     @endif
 
-    @if ($actions && $actionsPosition === ActionsPosition::BeforeColumns)
+    @if ($placeholderColumns && $actions && $actionsPosition === ActionsPosition::BeforeColumns)
         <td></td>
     @endif
 
-    @if ($isGroupsOnly)
+    @if ($extraHeadingColumn || $isGroupsOnly)
         <td @class([
             'align-top px-4 py-3 font-medium',
             'text-sm' => ! $strong,
@@ -36,33 +38,33 @@
         ])>
             {{ $heading }}
         </td>
+    @else
+        @php
+            $headingColumnSpan = 1;
+
+            foreach ($columns as $index => $column) {
+                if ($index === array_key_first($columns)) {
+                    continue;
+                }
+
+                if ($column->hasSummary()) {
+                    break;
+                }
+
+                $headingColumnSpan++;
+            }
+        @endphp
     @endif
 
-    @php
-        $headingColumnSpan = 1;
-
-        foreach ($columns as $index => $column) {
-            if ($index === array_key_first($columns)) {
-                continue;
-            }
-
-            if ($column->hasSummary()) {
-                break;
-            }
-
-            $headingColumnSpan++;
-        }
-    @endphp
-
     @foreach ($columns as $column)
-        @if ($loop->first || $isGroupsOnly || ($loop->iteration > $headingColumnSpan))
+        @if (($loop->first || $extraHeadingColumn || $isGroupsOnly || ($loop->iteration > $headingColumnSpan)) && ($placeholderColumns || $column->hasSummary()))
             <td
-                @if ($loop->first && (! $isGroupsOnly) && ($headingColumnSpan > 1))
+                @if ($loop->first && (! $extraHeadingColumn) && (! $isGroupsOnly) && ($headingColumnSpan > 1))
                     colspan="{{ $headingColumnSpan }}"
                 @endif
                 class="-space-y-3 align-top"
             >
-                @if ($loop->first && (! $isGroupsOnly))
+                @if ($loop->first && (! $extraHeadingColumn) && (! $isGroupsOnly))
                     <div @class([
                         'px-4 py-3 font-medium',
                         'text-sm' => ! $strong,
@@ -70,7 +72,7 @@
                     ])>
                         {{ $heading }}
                     </div>
-                @elseif ($column->hasSummary())
+                @elseif ((! $placeholderColumns) || $column->hasSummary())
                     @foreach ($column->getSummary($query) as $summary)
                         {{ $summary }}
                     @endforeach
@@ -79,7 +81,7 @@
         @endif
     @endforeach
 
-    @if ($actions && $actionsPosition === ActionsPosition::AfterCells)
+    @if ($placeholderColumns && $actions && $actionsPosition === ActionsPosition::AfterCells)
         <td></td>
     @endif
 </x-filament-tables::row>

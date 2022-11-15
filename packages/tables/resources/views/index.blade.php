@@ -409,15 +409,42 @@
                                 'p-2 gap-2' => $contentGrid,
                             ])
                         >
+                            @php
+                                $previousRecord = null;
+                                $previousGroupTitle = null;
+                            @endphp
+
                             @foreach ($records as $record)
                                 @php
                                     $recordAction = $getRecordAction($record);
                                     $recordKey = $getRecordKey($record);
                                     $recordUrl = $getRecordUrl($record);
+                                    $recordGroupTitle = $group?->getGroupTitleFromRecord($record);
 
                                     $collapsibleColumnsLayout?->record($record);
                                     $hasCollapsibleColumnsLayout = $collapsibleColumnsLayout && (! $collapsibleColumnsLayout->isHidden());
                                 @endphp
+
+                                @if ($recordGroupTitle !== $previousGroupTitle)
+                                    @if ($hasSummary && (! $isReordering) && filled($previousGroupTitle))
+                                        <x-filament-tables::table class="col-span-full">
+                                            <x-filament-tables::summary.row
+                                                :columns="$columns"
+                                                :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousGroupTitle, 'label' => $pluralModelLabel])"
+                                                :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
+                                                extra-heading-column
+                                                :placeholder-columns="false"
+                                            />
+                                        </x-filament-tables::table>
+                                    @endif
+
+                                    <div @class([
+                                        'col-span-full bg-gray-500/5 flex items-center w-full px-4 py-2 whitespace-nowrap space-x-1 rtl:space-x-reverse font-medium text-base text-gray-600 dark:text-gray-300',
+                                        'rounded-xl shadow-sm' => $contentGrid,
+                                    ])>
+                                        {{ $group->getLabel() }}: {{ $recordGroupTitle }}
+                                    </div>
+                                @endif
 
                                 <div
                                     @if ($hasCollapsibleColumnsLayout)
@@ -568,7 +595,24 @@
                                         @endif
                                     </div>
                                 </div>
+
+                                @php
+                                    $previousGroupTitle = $recordGroupTitle;
+                                    $previousRecord = $record;
+                                @endphp
                             @endforeach
+
+                            @if ($hasSummary && (! $isReordering) && filled($previousGroupTitle) && ((! $records instanceof \Illuminate\Contracts\Pagination\Paginator) || (! $records->hasMorePages())))
+                                <x-filament-tables::table class="col-span-full">
+                                    <x-filament-tables::summary.row
+                                        :columns="$columns"
+                                        :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousGroupTitle, 'label' => $pluralModelLabel])"
+                                        :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
+                                        extra-heading-column
+                                        :placeholder-columns="false"
+                                    />
+                                </x-filament-tables::table>
+                            @endif
                         </x-filament::grid>
                     @endif
 
@@ -579,12 +623,11 @@
                     @if ($hasSummary && (! $isReordering))
                         <x-filament-tables::table class="border-t dark:border-gray-700">
                             <x-filament-tables::summary
-                                :actions="count($actions)"
-                                :actions-position="$actionsPosition"
                                 :columns="$columns"
-                                :is-selection-enabled="$isSelectionEnabled"
                                 :plural-model-label="$pluralModelLabel"
                                 :records="$records"
+                                extra-heading-column
+                                :placeholder-columns="false"
                             />
                         </x-filament-tables::table>
                     @endif
@@ -654,7 +697,7 @@
                         @endif
 
                         @if ($isGroupsOnly)
-                            <th class="filament-tables-header-cell flex items-center w-full px-4 py-2 whitespace-nowrap font-medium text-sm text-gray-600 dark:text-gray-300">
+                            <th class="filament-tables-header-cell px-4 py-2 whitespace-nowrap font-medium text-sm text-gray-600 dark:text-gray-300">
                                 {{ $group->getLabel() }}
                             </th>
                         @endif
@@ -753,10 +796,11 @@
                                             <td></td>
                                         @endif
 
-                                        <td colspan="{{ count($columns) }}">
-                                            <div class="flex items-center w-full px-4 py-2 whitespace-nowrap space-x-1 rtl:space-x-reverse font-medium text-base text-gray-600 dark:text-gray-300">
-                                                {{ $group->getLabel() }}: {{ $recordGroupTitle }}
-                                            </div>
+                                        <td
+                                            colspan="{{ count($columns) }}"
+                                            class="px-4 py-2 whitespace-nowrap font-medium text-base text-gray-600 dark:text-gray-300"
+                                        >
+                                            {{ $group->getLabel() }}: {{ $recordGroupTitle }}
                                         </td>
 
                                         @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
