@@ -55,7 +55,7 @@ class Select extends Field
 
     protected string | Closure | null $maxItemsMessage = null;
 
-    protected string | Closure $position = 'auto';
+    protected string | Closure | null $position = null;
 
     protected string | Closure | null $relationshipTitleColumnName = null;
 
@@ -274,8 +274,9 @@ class Select extends Field
         return $this;
     }
 
-    public function position(string | Closure $condition = 'auto'): static {
-        $this->position = $condition;
+    public function position(string | Closure | null $position): static
+    {
+        $this->position = $position;
 
         return $this;
     }
