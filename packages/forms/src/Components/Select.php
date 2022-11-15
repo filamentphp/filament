@@ -55,6 +55,8 @@ class Select extends Field
 
     protected string | Closure | null $maxItemsMessage = null;
 
+    protected string | Closure $position = 'auto';
+
     protected string | Closure | null $relationshipTitleColumnName = null;
 
     protected ?Closure $getOptionLabelFromRecordUsing = null;
@@ -272,6 +274,12 @@ class Select extends Field
         return $this;
     }
 
+    public function position(string | Closure $condition = 'auto'): static {
+        $this->position = $condition;
+
+        return $this;
+    }
+
     public function maxItemsMessage(string | Closure | null $message): static
     {
         $this->maxItemsMessage = $message;
@@ -284,6 +292,10 @@ class Select extends Field
         $this->optionsLimit = $limit;
 
         return $this;
+    }
+
+    public function getPosition(): string {
+        return $this->evaluate($this->position);
     }
 
     public function getOptionLabel(): ?string
