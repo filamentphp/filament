@@ -196,7 +196,6 @@ class TestsColumns
             );
 
             return $this;
-
         };
     }
 
@@ -218,13 +217,12 @@ class TestsColumns
             $column->record($record);
 
             Assert::assertFalse(
-            /** @var \Filament\Tables\Columns\TextColumn $column */
+                /** @var \Filament\Tables\Columns\TextColumn $column */
                 $column->getFormattedState() == $value,
                 message: "Failed asserting that a table column with name [{$name}] does not have a formatted state of [{$value}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
 
             return $this;
-
         };
     }
 
@@ -248,7 +246,7 @@ class TestsColumns
             $attributes_string = print_r($attributes, true);
 
             Assert::assertTrue(
-            /** @var \Filament\Tables\Columns\TextColumn $column */
+                /** @var \Filament\Tables\Columns\TextColumn $column */
                 $column->getExtraAttributes() == $attributes,
                 message: "Failed asserting that a table column with name [{$name}] has extra attributes [{$attributes_string}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
@@ -277,7 +275,7 @@ class TestsColumns
             $attributes_string = print_r($attributes, true);
 
             Assert::assertFalse(
-            /** @var \Filament\Tables\Columns\TextColumn $column */
+                /** @var \Filament\Tables\Columns\TextColumn $column */
                 $column->getExtraAttributes() == $attributes,
                 message: "Failed asserting that a table column with name [{$name}] does not have extra attributes [{$attributes_string}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
@@ -306,7 +304,7 @@ class TestsColumns
             $description_to_test = $position == 'above' ? $column->getDescriptionAbove() : $column->getDescriptionBelow();
 
             Assert::assertTrue(
-            /** @var \Filament\Tables\Columns\TextColumn $column */
+                /** @var \Filament\Tables\Columns\TextColumn $column */
                 $description_to_test == $description,
                 message: "Failed asserting that a table column with name [{$name}] has description [{$description}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
@@ -335,7 +333,7 @@ class TestsColumns
             $description_to_test = $position == 'above' ? $column->getDescriptionAbove() : $column->getDescriptionBelow();
 
             Assert::assertFalse(
-            /** @var \Filament\Tables\Columns\TextColumn $column */
+                /** @var \Filament\Tables\Columns\TextColumn $column */
                 $description_to_test == $description,
                 message: "Failed asserting that a table column with name [{$name}] does not have description [{$description}] for record [{$record->getKey()}] on the [{$livewireClass}] component.",
             );
