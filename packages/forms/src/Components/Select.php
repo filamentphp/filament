@@ -295,7 +295,8 @@ class Select extends Field
         return $this;
     }
 
-    public function getPosition(): string {
+    public function getPosition(): ?string
+    {
         return $this->evaluate($this->position);
     }
 
