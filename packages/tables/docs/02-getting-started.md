@@ -441,7 +441,8 @@ protected $queryString = [
     'tableFilters',
     'tableSortColumn',
     'tableSortDirection',
-    'tableSearchQuery' => ['except' => ''],
+    'tableSearchQuery' => ['except' => ''], // For global search
+    'tableColumnSearchQueries',  // For individual search
 ];
 ```
 
