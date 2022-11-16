@@ -6,7 +6,6 @@ use Filament\Support\Actions\Concerns\CanCustomizeProcess;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\Concerns\CanDispatchAlpineEvents;
 use Filament\Tables\Actions\Concerns\InteractsWithRelationship;
-use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
 
 class DispatchTestAction extends Action
