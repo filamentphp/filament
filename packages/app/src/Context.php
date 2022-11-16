@@ -471,6 +471,7 @@ class Context
 
     public function plugin(Plugin $plugin): static
     {
+        $plugin->register($this);
         $this->plugins[$plugin->getId()] = $plugin;
 
         return $this;
