@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Edit',
+        'label' => 'Rediģēt',
 
         'modal' => [
 
-            'heading' => 'Edit :label',
+            'heading' => 'Rediģēt :label',
 
             'actions' => [
 
                 'save' => [
-                    'label' => 'Save changes',
+                    'label' => 'Saglabāt izmaiņas',
                 ],
 
             ],

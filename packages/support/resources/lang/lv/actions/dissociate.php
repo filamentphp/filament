@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Dissociate',
+        'label' => 'Atraut',
 
         'modal' => [
 
-            'heading' => 'Dissociate :label',
+            'heading' => 'Atraut :label',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Dissociate',
+                    'label' => 'Atraut',
                 ],
 
             ],
@@ -21,23 +21,23 @@ return [
         ],
 
         'messages' => [
-            'dissociated' => 'Dissociated',
+            'dissociated' => 'Atrauts',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Dissociate selected',
+        'label' => 'Atraut atzīmētos',
 
         'modal' => [
 
-            'heading' => 'Dissociate selected :label',
+            'heading' => 'Atraut atzīmēto :label',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Dissociate',
+                    'label' => 'Atraut',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'dissociated' => 'Dissociated',
+            'dissociated' => 'Atrauti',
         ],
 
     ],

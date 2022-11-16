@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Restore',
+        'label' => 'Atjaunot',
 
         'modal' => [
 
-            'heading' => 'Restore :label',
+            'heading' => 'Atjaunot :label',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'Restore',
+                    'label' => 'Atjaunot',
                 ],
 
             ],
@@ -21,23 +21,23 @@ return [
         ],
 
         'messages' => [
-            'restored' => 'Restored',
+            'restored' => 'Atjaunots',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Restore selected',
+        'label' => 'Atjaunot atzīmētos',
 
         'modal' => [
 
-            'heading' => 'Restore selected :label',
+            'heading' => 'Atjaunot atzīmēto :label',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'Restore',
+                    'label' => 'Atjaunot',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'restored' => 'Restored',
+            'restored' => 'Atjaunoti',
         ],
 
     ],

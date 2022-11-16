@@ -4,20 +4,20 @@ return [
 
     'single' => [
 
-        'label' => 'New :label',
+        'label' => 'Jauns :label',
 
         'modal' => [
 
-            'heading' => 'Create :label',
+            'heading' => 'Izveidot :label',
 
             'actions' => [
 
                 'create' => [
-                    'label' => 'Create',
+                    'label' => 'Izveidot',
                 ],
 
                 'create_another' => [
-                    'label' => 'Create & create another',
+                    'label' => 'Izveidot & izveidot citu',
                 ],
 
             ],
@@ -25,7 +25,7 @@ return [
         ],
 
         'messages' => [
-            'created' => 'Created',
+            'created' => 'Izveidots',
         ],
 
     ],

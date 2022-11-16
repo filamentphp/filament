@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Detach',
+        'label' => 'Noņemt',
 
         'modal' => [
 
-            'heading' => 'Detach :label',
+            'heading' => 'Noņemt :label',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Detach',
+                    'label' => 'Noņemt',
                 ],
 
             ],
@@ -21,23 +21,23 @@ return [
         ],
 
         'messages' => [
-            'detached' => 'Detached',
+            'detached' => 'Noņemts',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Detach selected',
+        'label' => 'Noņemt atzīmētos',
 
         'modal' => [
 
-            'heading' => 'Detach selected :label',
+            'heading' => 'Noņemt atzīmēto :label',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Detach',
+                    'label' => 'Noņemt',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'detached' => 'Detached',
+            'detached' => 'Noņemti',
         ],
 
     ],

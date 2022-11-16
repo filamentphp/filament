@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Delete',
+        'label' => 'Dzēst',
 
         'modal' => [
 
-            'heading' => 'Delete :label',
+            'heading' => 'Dzēst :label',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Delete',
+                    'label' => 'Dzēst',
                 ],
 
             ],
@@ -21,23 +21,23 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Deleted',
+            'deleted' => 'Dzēsts',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Delete selected',
+        'label' => 'Dzēst atzīmētos',
 
         'modal' => [
 
-            'heading' => 'Delete selected :label',
+            'heading' => 'Dzēst atzīmēto :label',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Delete',
+                    'label' => 'Dzēst',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Deleted',
+            'deleted' => 'Dzēsti',
         ],
 
     ],

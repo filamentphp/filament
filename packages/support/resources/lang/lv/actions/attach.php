@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Attach',
+        'label' => 'Piesaistīt',
 
         'modal' => [
 
-            'heading' => 'Attach :label',
+            'heading' => 'Piesaistīt :label',
 
             'fields' => [
 
                 'record_id' => [
-                    'label' => 'Record',
+                    'label' => 'Ieraksts',
                 ],
 
             ],
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'attach' => [
-                    'label' => 'Attach',
+                    'label' => 'Piesaistīt',
                 ],
 
                 'attach_another' => [
-                    'label' => 'Attach & attach another',
+                    'label' => 'Piesaistīt & piesaistīt citu',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'attached' => 'Attached',
+            'attached' => 'Piesaistīts',
         ],
 
     ],

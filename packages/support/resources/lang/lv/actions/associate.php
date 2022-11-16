@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Associate',
+        'label' => 'Saistīt',
 
         'modal' => [
 
-            'heading' => 'Associate :label',
+            'heading' => 'Saistīt :label',
 
             'fields' => [
 
                 'record_id' => [
-                    'label' => 'Record',
+                    'label' => 'Ieraksts',
                 ],
 
             ],
@@ -21,11 +21,11 @@ return [
             'actions' => [
 
                 'associate' => [
-                    'label' => 'Associate',
+                    'label' => 'Saistīt',
                 ],
 
                 'associate_another' => [
-                    'label' => 'Associate & associate another',
+                    'label' => 'Saistīt & saistīt citu',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'associated' => 'Associated',
+            'associated' => 'Sasaistīts',
         ],
 
     ],
