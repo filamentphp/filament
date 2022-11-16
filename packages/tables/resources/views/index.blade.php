@@ -204,7 +204,7 @@
                     'gap-2': @js($isReorderable) || selectedRecords.length,
                 }"
             >
-                <div class="flex items-center gap-2">
+                <div class="filament-tables-header-left flex items-center gap-2">
                     @if ($isReorderable)
                         <x-tables::reorder.trigger
                             :enabled="$isReordering"
@@ -220,9 +220,9 @@
                 </div>
 
                 @if ($isGlobalSearchVisible || $hasFiltersPopover || $isColumnToggleFormVisible)
-                    <div class="flex items-center justify-end w-full gap-2 md:max-w-md">
+                    <div class="filament-tables-header-right flex items-center justify-end w-full gap-2 md:max-w-md">
                         @if ($isGlobalSearchVisible)
-                            <div class="flex items-center justify-end flex-1">
+                            <div class="filament-tables-search flex items-center justify-end flex-1">
                                 <x-tables::search-input />
                             </div>
                         @endif
