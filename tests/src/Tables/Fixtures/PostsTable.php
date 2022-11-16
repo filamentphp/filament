@@ -103,8 +103,7 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
         return [
             Tables\Actions\EditAction::make(),
             Tables\Actions\DeleteAction::make(),
-            DispatchTestAction::make()
-                ->dispatch('test-event'),
+            DispatchTestAction::make(),
         ];
     }
 
