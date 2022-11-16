@@ -26,14 +26,27 @@ trait HasRecords
 
         $this->applySearchToTableQuery($query);
 
-        foreach ($this->getTable()->getColumns() as $column) {
-            if ($column->isHidden()) {
-                continue;
-            }
+        if (! $this->getTable()->isGroupsOnly()) {
+            foreach ($this->getTable()->getColumns() as $column) {
+                if ($column->isHidden()) {
+                    continue;
+                }
 
-            $column->applyEagerLoading($query);
-            $column->applyRelationshipAggregates($query);
+                $column->applyEagerLoading($query);
+                $column->applyRelationshipAggregates($query);
+            }
         }
+
+        return $query;
+    }
+
+    public function getFilteredSortedTableQuery(): Builder
+    {
+        $query = $this->getFilteredTableQuery();
+
+        $this->applyGroupingToTableQuery($query);
+
+        $this->applySortingToTableQuery($query);
 
         return $query;
     }
@@ -56,9 +69,7 @@ trait HasRecords
             return $this->records;
         }
 
-        $query = $this->getFilteredTableQuery();
-
-        $this->applySortingToTableQuery($query);
+        $query = $this->getFilteredSortedTableQuery();
 
         if (
             (! $this->getTable()->isPaginated()) ||

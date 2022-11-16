@@ -75,7 +75,7 @@ return [
             'label' => 'Filtrar',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'Abrir acciones',
         ],
 

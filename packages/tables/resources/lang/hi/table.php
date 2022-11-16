@@ -49,7 +49,7 @@ return [
             'label' => 'फ़िल्टर',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'क्रियाएँ खोलें',
         ],
 

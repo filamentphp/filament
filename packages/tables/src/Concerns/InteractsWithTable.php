@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 trait InteractsWithTable
 {
+    use CanGroupRecords;
     use CanPaginateRecords;
     use CanReorderRecords;
     use CanSearchRecords;
@@ -100,9 +101,6 @@ trait InteractsWithTable
         if ($this->getTable()->isPaginated()) {
             $this->tableRecordsPerPage = $this->getDefaultTableRecordsPerPageSelectOption();
         }
-
-        $this->tableSortColumn ??= $this->getTable()->getDefaultSortColumn();
-        $this->tableSortDirection ??= $this->getTable()->getDefaultSortDirection();
     }
 
     public function mountInteractsWithTable(): void

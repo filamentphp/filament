@@ -75,7 +75,7 @@ return [
             'label' => 'Filtras',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'Atidaryti veiksmus',
         ],
 

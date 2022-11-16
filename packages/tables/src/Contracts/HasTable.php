@@ -6,6 +6,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
@@ -29,6 +30,8 @@ interface HasTable extends HasForms
     public function getSelectedTableRecords(): Collection;
 
     public function parseFilterName(string $name): string;
+
+    public function getTableGrouping(): ?Group;
 
     public function getMountedTableAction(): ?Action;
 

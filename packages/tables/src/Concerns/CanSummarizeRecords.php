@@ -13,11 +13,9 @@ trait CanSummarizeRecords
 
     public function getPageTableSummaryQuery(): Builder
     {
-        return $this->applySortingToTableQuery(
-            $this->getFilteredTableQuery()->forPage(
-                page: $this->getTableRecords()->currentPage(),
-                perPage: $this->getTableRecords()->perPage(),
-            ),
+        return $this->getFilteredSortedTableQuery()->forPage(
+            page: $this->getTableRecords()->currentPage(),
+            perPage: $this->getTableRecords()->perPage(),
         );
     }
 }

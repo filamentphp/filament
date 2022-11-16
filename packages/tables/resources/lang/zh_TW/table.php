@@ -49,7 +49,7 @@ return [
             'label' => '篩選',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => '打開動作',
         ],
 

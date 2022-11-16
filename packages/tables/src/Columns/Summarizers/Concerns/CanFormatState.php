@@ -42,7 +42,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string | Closure | null $currency = null, bool $shouldConvert = false): static
+    public function money(string | Closure | null $currency = null, bool $shouldConvert = true): static
     {
         $this->formatStateUsing(static function ($state, Summarizer $summarizer) use ($currency, $shouldConvert) {
             $isArrayState = is_array($state);

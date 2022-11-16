@@ -49,7 +49,7 @@ return [
             'label' => 'Ֆիլտր',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'Բացել գործողություններ',
         ],
 
