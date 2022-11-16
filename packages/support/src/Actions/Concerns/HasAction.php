@@ -8,6 +8,8 @@ trait HasAction
 {
     protected Closure | string | null $action = null;
 
+    protected Closure | string | null $dispatch = null;
+
     public function action(Closure | string | null $action): static
     {
         $this->action = $action;
@@ -24,5 +26,17 @@ trait HasAction
         }
 
         return $action;
+    }
+
+    public function dispatch(string $event): static
+    {
+        $this->dispatch = $event;
+
+        return $this;
+    }
+
+    public function getDispatch(): string|null
+    {
+        return $this->dispatch;
     }
 }

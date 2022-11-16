@@ -110,3 +110,10 @@ it('can state whether a table action exists', function () {
         ->assertTableActionExists('exists')
         ->assertTableActionDoesNotExist('does_not_exist');
 });
+
+it('can see x-on:click with alpine dispatch with event name and data', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->assertSeeHtml('x-on:click="$dispatch(&#039;test-event&#039;, {&quot;id&quot;:1})"', true);
+});

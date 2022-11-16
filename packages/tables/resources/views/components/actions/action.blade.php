@@ -12,6 +12,14 @@
     } else {
         $wireClickAction = "mountTableAction('{$action->getName()}')";
     }
+
+	if ((! $action->getDispatch()) || $action->getUrl()) {
+        $alpineClickAction = null;
+    } elseif ($record = $action->getRecord()) {
+		$alpineClickAction = "\$dispatch('{$action->getDispatch()}', {$action->getDispatchData($record)})";
+    } else {
+        $alpineClickAction = "\$dispatch('{$action->getDispatch()}'";
+    }
 @endphp
 
 <x-dynamic-component
@@ -20,6 +28,7 @@
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes())"
     :tag="$action->getUrl() ? 'a' : 'button'"
     :wire:click="$wireClickAction"
+    x-on:click="{!! $alpineClickAction !!}"
     :href="$action->isEnabled() ? $action->getUrl() : null"
     :target="$action->shouldOpenUrlInNewTab() ? '_blank' : null"
     :disabled="$action->isDisabled()"
