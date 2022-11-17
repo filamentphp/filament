@@ -169,6 +169,7 @@
                         <input
                             max="23"
                             min="0"
+                            step="{{ $getHoursStep() }}"
                             type="number"
                             inputmode="numeric"
                             x-model.debounce="hour"
@@ -189,6 +190,7 @@
                         <input
                             max="59"
                             min="0"
+                            step="{{ $getMinutesStep() }}"
                             type="number"
                             inputmode="numeric"
                             x-model.debounce="minute"
@@ -211,6 +213,7 @@
                             <input
                                 max="59"
                                 min="0"
+                                step="{{ $getSecondsStep() }}"
                                 type="number"
                                 inputmode="numeric"
                                 x-model.debounce="second"
