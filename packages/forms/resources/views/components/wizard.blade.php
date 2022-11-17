@@ -10,6 +10,8 @@
         step: null,
 
         init: function () {
+            this.$watch('step', () => this.updateQueryString())
+        
             this.step = this.getSteps()[{{ $getStartStep() }} - 1]
         },
 
@@ -67,6 +69,17 @@
             return @js($isSkippable()) || (this.getStepIndex(step) > index)
         },
 
+        updateQueryString: function () {
+            if (! @js($isStepPersistedInQueryString())) {
+                return
+            }
+            
+            const url = new URL(window.location.href)
+            url.searchParams.set(@js($getStepQueryStringKey()), this.step)
+
+            history.pushState(null, document.title, url.toString())
+        },
+        
     }"
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $getStatePath() }}') nextStep()"
     x-cloak
