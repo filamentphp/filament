@@ -16,9 +16,7 @@ class Wizard extends Component
 
     protected bool | Closure $skippable = false;
 
-    protected bool | Closure $isStepPersistedInQueryString = false;
-
-    protected string $queryStringStepParamKey = 'step';
+    protected string | Closure | null $stepQueryStringKey = null;
 
     protected string | Htmlable | null $submitAction = null;
 
@@ -104,11 +102,9 @@ class Wizard extends Component
         return $this;
     }
 
-    public function persistStepInQueryString(bool | Closure $condition = true, string $queryStringStepParamKey = null): static
+    public function persistStepInQueryString(string | Closure | null $key = 'step'): static
     {
-        $this->isStepPersistedInQueryString = $condition;
-
-        $this->queryStringStepParamKey = $queryStringStepParamKey ?? $this->queryStringStepParamKey;
+        $this->stepQueryStringKey = $key;
 
         return $this;
     }
@@ -137,9 +133,9 @@ class Wizard extends Component
         return $this->evaluate($this->startStep);
     }
 
-    public function getQueryStringStepParamKey(): string
+    public function getStepQueryStringKey(): ?string
     {
-        return $this->queryStringStepParamKey;
+        return $this->evaluate($this->getStepQueryStringKey);
     }
 
     public function isSkippable(): bool
@@ -149,6 +145,6 @@ class Wizard extends Component
 
     public function isStepPersistedInQueryString(): bool
     {
-        return $this->evaluate($this->isStepPersistedInQueryString);
+        return filled($this->getStepQueryStringKey());
     }
 }
