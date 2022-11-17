@@ -323,19 +323,19 @@ class DateTimePicker extends Field
         return ! $this->isWithoutTime;
     }
 
-    public function getHoursStep(): ?int
+    public function getHoursStep(): int
     {
-        return $this->evaluate($this->hoursStep);
+        return $this->evaluate($this->hoursStep) ?? 1;
     }
 
-    public function getMinutesStep(): ?int
+    public function getMinutesStep(): int
     {
-        return $this->evaluate($this->minutesStep);
+        return $this->evaluate($this->minutesStep) ?? 1;
     }
 
-    public function getSecondsStep(): ?int
+    public function getSecondsStep(): int
     {
-        return $this->evaluate($this->secondsStep);
+        return $this->evaluate($this->secondsStep) ?? 1;
     }
 
     public function shouldCloseOnDateSelection(): bool
