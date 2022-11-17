@@ -3,11 +3,11 @@
     'actionsPosition' => null,
     'columns',
     'extraHeadingColumn' => false,
+    'groupsOnly' => false,
     'heading',
-    'isGroupsOnly' => false,
-    'isSelectionEnabled' => false,
     'placeholderColumns' => true,
     'query',
+    'selectionEnabled' => false,
     'strong' => false,
 ])
 
@@ -22,7 +22,7 @@
         <td></td>
     @endif
 
-    @if ($placeholderColumns && $isSelectionEnabled)
+    @if ($placeholderColumns && $selectionEnabled)
         <td></td>
     @endif
 
@@ -30,7 +30,7 @@
         <td></td>
     @endif
 
-    @if ($extraHeadingColumn || $isGroupsOnly)
+    @if ($extraHeadingColumn || $groupsOnly)
         <td @class([
             'align-top px-4 py-3 font-medium',
             'text-sm' => ! $strong,
@@ -57,14 +57,14 @@
     @endif
 
     @foreach ($columns as $column)
-        @if (($loop->first || $extraHeadingColumn || $isGroupsOnly || ($loop->iteration > $headingColumnSpan)) && ($placeholderColumns || $column->hasSummary()))
+        @if (($loop->first || $extraHeadingColumn || $groupsOnly || ($loop->iteration > $headingColumnSpan)) && ($placeholderColumns || $column->hasSummary()))
             <td
-                @if ($loop->first && (! $extraHeadingColumn) && (! $isGroupsOnly) && ($headingColumnSpan > 1))
+                @if ($loop->first && (! $extraHeadingColumn) && (! $groupsOnly) && ($headingColumnSpan > 1))
                     colspan="{{ $headingColumnSpan }}"
                 @endif
                 class="-space-y-3 align-top"
             >
-                @if ($loop->first && (! $extraHeadingColumn) && (! $isGroupsOnly))
+                @if ($loop->first && (! $extraHeadingColumn) && (! $groupsOnly))
                     <div @class([
                         'px-4 py-3 font-medium',
                         'text-sm' => ! $strong,

@@ -3,17 +3,17 @@
     'actionsPosition' => null,
     'columns',
     'extraHeadingColumn' => false,
-    'isSelectionEnabled' => false,
-    'isGroupsOnly' => false,
+    'groupsOnly' => false,
     'placeholderColumns' => true,
     'pluralModelLabel',
     'records',
+    'selectionEnabled' => false,
 ])
 
 @php
     use Filament\Tables\Actions\Position as ActionsPosition;
 
-    $hasPageSummary = (! $isGroupsOnly) && $records instanceof \Illuminate\Contracts\Pagination\Paginator && $records->hasPages();
+    $hasPageSummary = (! $groupsOnly) && $records instanceof \Illuminate\Contracts\Pagination\Paginator && $records->hasPages();
 @endphp
 
 @if ($hasPageSummary)
@@ -22,7 +22,7 @@
             <td></td>
         @endif
 
-        @if ($placeholderColumns && $isSelectionEnabled)
+        @if ($placeholderColumns && $selectionEnabled)
             <td></td>
         @endif
 
@@ -61,7 +61,7 @@
         :columns="$columns"
         :extra-heading-column="$extraHeadingColumn"
         :heading="__('filament-tables::table.summary.subheadings.page', ['label' => $pluralModelLabel])"
-        :is-selection-enabled="$isSelectionEnabled"
+        :selection-enabled="$selectionEnabled"
         :placeholder-columns="$placeholderColumns"
         :query="$this->getPageTableSummaryQuery()"
     />
@@ -73,8 +73,8 @@
     :columns="$columns"
     :extra-heading-column="$extraHeadingColumn"
     :heading="__(($hasPageSummary ? 'filament-tables::table.summary.subheadings.all' : 'filament-tables::table.summary.heading'), ['label' => $pluralModelLabel])"
-    :is-groups-only="$isGroupsOnly"
-    :is-selection-enabled="$isSelectionEnabled"
+    :groups-only="$groupsOnly"
+    :selection-enabled="$selectionEnabled"
     :query="$this->getAllTableSummaryQuery()"
     :placeholder-columns="$placeholderColumns"
     :strong="! $hasPageSummary"

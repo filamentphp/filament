@@ -777,8 +777,8 @@
                                         :actions-position="$actionsPosition"
                                         :columns="$columns"
                                         :heading="$isGroupsOnly ? $previousGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousGroupTitle, 'label' => $pluralModelLabel])"
-                                        :is-groups-only="$isGroupsOnly"
-                                        :is-selection-enabled="$isSelectionEnabled"
+                                        :groups-only="$isGroupsOnly"
+                                        :selection-enabled="$isSelectionEnabled"
                                         :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
                                     />
                                 @endif
@@ -929,8 +929,8 @@
                                 :actions-position="$actionsPosition"
                                 :columns="$columns"
                                 :heading="$isGroupsOnly ? $previousGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousGroupTitle, 'label' => $pluralModelLabel])"
-                                :is-groups-only="$isGroupsOnly"
-                                :is-selection-enabled="$isSelectionEnabled"
+                                :groups-only="$isGroupsOnly"
+                                :selection-enabled="$isSelectionEnabled"
                                 :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
                             />
                         @endif
@@ -946,8 +946,8 @@
                                 :actions="count($actions)"
                                 :actions-position="$actionsPosition"
                                 :columns="$columns"
-                                :is-groups-only="$isGroupsOnly"
-                                :is-selection-enabled="$isSelectionEnabled"
+                                :groups-only="$isGroupsOnly"
+                                :selection-enabled="$isSelectionEnabled"
                                 :plural-model-label="$pluralModelLabel"
                                 :records="$records"
                             />
