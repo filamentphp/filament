@@ -1,6 +1,5 @@
 @props([
     'activelySorted' => false,
-    'extraAttributes' => [],
     'name',
     'sortable' => false,
     'sortDirection',
