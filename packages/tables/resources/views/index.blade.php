@@ -199,7 +199,7 @@
             <div
                 x-show="@js($shouldRenderHeaderDiv = ($isReorderable || $isGlobalSearchVisible || $hasFiltersPopover || $isColumnToggleFormVisible)) || selectedRecords.length"
                 {!! ! $shouldRenderHeaderDiv ? 'x-cloak' : null !!}
-                class="flex items-center justify-between p-2 h-14"
+                class="filament-tables-header-toolbar flex items-center justify-between p-2 h-14"
                 x-bind:class="{
                     'gap-2': @js($isReorderable) || selectedRecords.length,
                 }"
@@ -222,7 +222,7 @@
                 @if ($isGlobalSearchVisible || $hasFiltersPopover || $isColumnToggleFormVisible)
                     <div class="flex items-center justify-end w-full gap-2 md:max-w-md">
                         @if ($isGlobalSearchVisible)
-                            <div class="flex items-center justify-end flex-1">
+                            <div class="filament-tables-search-container flex items-center justify-end flex-1">
                                 <x-tables::search-input />
                             </div>
                         @endif
