@@ -92,3 +92,29 @@ it('can state whether a column has the correct value', function () {
         ->assertTableColumnStateSet('with_state', 'correct state', $post)
         ->assertTableColumnStateNotSet('with_state', 'incorrect state', $post);
 });
+
+it('can state whether a column has the correct formatted value', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->assertTableColumnFormattedStateSet('formatted_state', 'formatted state', $post)
+        ->assertTableColumnFormattedStateNotSet('formatted_state', 'incorrect formatted state', $post);
+});
+
+it('can state whether a column has extra attributes', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->assertTableColumnHasExtraAttributes('extra_attributes', ['class' => 'text-danger-500'], $post)
+        ->assertTableColumnDoesNotHaveExtraAttributes('extra_attributes', ['class' => 'text-primary-500'], $post);
+});
+
+it('can state whether a column has a description', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->assertTableColumnHasDescription('with_description', 'description below', $post)
+        ->assertTableColumnHasDescription('with_description', 'description above', $post, 'above')
+        ->assertTableColumnDoesNotHaveDescription('with_description', 'incorrect description below', $post)
+        ->assertTableColumnDoesNotHaveDescription('with_description', 'incorrect description above', $post, 'above');
+});

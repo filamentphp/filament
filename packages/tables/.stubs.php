@@ -109,6 +109,18 @@ namespace Livewire\Testing {
 
         public function assertTableColumnStateNotSet(string $name, $value, $record): static {}
 
+        public function assertTableColumnFormattedStateSet(string $name, $value, $record): static {}
+
+        public function assertTableColumnFormattedStateNotSet(string $name, $value, $record): static {}
+
+        public function assertTableColumnHasExtraAttributes(string $name, $value, $record): static {}
+
+        public function assertTableColumnDoesNotHaveExtraAttributes(string $name, $value, $record): static {}
+
+        public function assertTableColumnHasDescription(string $name, $description, $record, $position = 'below'): static {}
+
+        public function assertTableColumnDoesNotHaveDescription(string $name, $description, $record, $position = 'below'): static {}
+
         public function sortTable(?string $name = null, ?string $direction = null): static {}
 
         public function searchTable(?string $search = null): static {}
