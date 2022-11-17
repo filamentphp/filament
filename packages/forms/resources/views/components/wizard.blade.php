@@ -69,13 +69,12 @@
         },
 
         updateQuerystring: function() {
-            if(@js($isStepAsQuerystring())) {
+            if(@js($isStepPersistedInQueryString())) {
                 const url = new URL(window.location.href);
-                url.searchParams.set('step', this.step);
+                url.searchParams.set(@js($getQueryStringStepParamKey()), this.step);
                 history.pushState(null, document.title, url.toString());
             }
         },
-
     }"
     x-init="$watch('step', (value) => {
         updateQuerystring()

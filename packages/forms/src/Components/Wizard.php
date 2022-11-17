@@ -16,13 +16,13 @@ class Wizard extends Component
 
     protected bool | Closure $skippable = false;
 
-    protected bool | Closure $stepAsQuerystring = false;
+    protected bool | Closure $isStepPersistedInQueryString = false;
+
+    protected string $queryStringStepParamKey = 'step';
 
     protected string | Htmlable | null $submitAction = null;
 
     public int | Closure $startStep = 1;
-
-    public ?int $currentStep = null;
 
     protected string $view = 'forms::components.wizard';
 
@@ -104,9 +104,11 @@ class Wizard extends Component
         return $this;
     }
 
-    public function setStepAsQuerystring(bool | Closure $condition = true): static
+    public function persistStepInQueryString(bool | Closure $condition = true, string $queryStringStepParamKey = null): static
     {
-        $this->stepAsQuerystring = $condition;
+        $this->isStepPersistedInQueryString = $condition;
+
+        $this->queryStringStepParamKey = $queryStringStepParamKey ?? $this->queryStringStepParamKey;
 
         return $this;
     }
@@ -123,7 +125,21 @@ class Wizard extends Component
 
     public function getStartStep(): int
     {
+        if($this->isStepPersistedInQueryString()) {
+            $queryStringParamValue = request()->query($this->getQueryStringStepParamKey(), null);
+            foreach ($this->getChildComponents() as $idx => $step) {
+                if ($step->getId() === $queryStringParamValue) {
+                    return $idx + 1;
+                }
+            }
+        }
+
         return $this->evaluate($this->startStep);
+    }
+
+    public function getQueryStringStepParamKey(): string
+    {
+        return $this->queryStringStepParamKey;
     }
 
     public function isSkippable(): bool
@@ -131,8 +147,8 @@ class Wizard extends Component
         return $this->evaluate($this->skippable);
     }
 
-    public function isStepAsQuerystring(): bool
+    public function isStepPersistedInQueryString(): bool
     {
-        return $this->evaluate($this->stepAsQuerystring);
+        return $this->evaluate($this->isStepPersistedInQueryString);
     }
 }
