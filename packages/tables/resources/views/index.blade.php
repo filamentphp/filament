@@ -222,7 +222,7 @@
                 @if ($isGlobalSearchVisible || $hasFiltersPopover || $isColumnToggleFormVisible)
                     <div class="flex items-center justify-end w-full gap-2 md:max-w-md">
                         @if ($isGlobalSearchVisible)
-                            <div class="filament-tables-search-input-container flex items-center justify-end flex-1">
+                            <div class="filament-tables-search-container flex items-center justify-end flex-1">
                                 <x-tables::search-input />
                             </div>
                         @endif
