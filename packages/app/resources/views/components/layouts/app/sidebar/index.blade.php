@@ -110,7 +110,7 @@
                 />
 
                 @if (! $loop->last)
-                    <li class="filament-sidebar-group-divider-wrapper">
+                    <li class="filament-sidebar-group-divider-container">
                         <div class="border-t -mr-6 rtl:-mr-auto rtl:-ml-6 dark:border-gray-700 filament-sidebar-group-divider"></div>
                     </li>
                 @endif
