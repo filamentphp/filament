@@ -70,9 +70,15 @@
     }"
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $getStatePath() }}') nextStep()"
     x-cloak
-    {!! $getId() ? "id=\"{$getId()}\"" : null !!}
-    {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-wizard-component grid gap-y-6']) }}
-    {{ $getExtraAlpineAttributeBag() }}
+    {{
+        $attributes
+            ->merge([
+                'id' => $getId(),
+            ], escape: true)
+            ->merge($getExtraAttributes(), escape: true)
+            ->merge($getExtraAlpineAttributes(), escape: true)
+            ->class(['filament-forms-wizard-component grid gap-y-6'])
+    }}
 >
     <input
         type="hidden"

@@ -3,7 +3,7 @@
     x-init="
         $watch('state', () => $refs.button.dispatchEvent(new Event('change')))
     "
-    {{ $attributes->merge($getExtraAttributes())->class([
+    {{ $attributes->merge($getExtraAttributes(), escape: true)->class([
         'filament-tables-toggle-column',
     ]) }}
 >

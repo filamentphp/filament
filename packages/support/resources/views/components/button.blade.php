@@ -69,11 +69,6 @@
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
         @endif
-        type="{{ $type }}"
-        wire:loading.attr="disabled"
-        {!! $hasLoadingIndicator ? 'wire:loading.class.delay="opacity-70 cursor-wait"' : '' !!}
-        {!! ($hasLoadingIndicator && $loadingIndicatorTarget) ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
-        {!! $disabled ? 'disabled' : '' !!}
         x-data="{
             form: null,
             isUploadingFile: false,
@@ -93,7 +88,17 @@
                 isUploadingFile = false
             })
         "
-        {{ $attributes->class($buttonClasses) }}
+        {{
+            $attributes
+                ->merge([
+                    'disabled' => $disabled,
+                    'type' => $type,
+                    'wire:loading.attr' => 'disabled',
+                    'wire:loading.class.delay' => $hasLoadingIndicator ? 'opacity-70 cursor-wait' : false,
+                    'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : false,
+                ], escape: true)
+                ->class($buttonClasses)
+        }}
     >
         @if ($iconPosition === 'before')
             @if ($icon)

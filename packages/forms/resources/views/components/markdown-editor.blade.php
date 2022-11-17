@@ -11,7 +11,7 @@
             tab: '{{ $isDisabled() ? 'preview' : 'edit' }}',
         })"
         wire:ignore
-        {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-markdown-editor-component']) }}
+        {{ $attributes->merge($getExtraAttributes(), escape: true)->class(['filament-forms-markdown-editor-component']) }}
         {{ $getExtraAlpineAttributeBag() }}
     >
         <div class="space-y-2">

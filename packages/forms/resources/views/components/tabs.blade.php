@@ -13,13 +13,15 @@
 
     }"
     x-cloak
-    {!! $getId() ? "id=\"{$getId()}\"" : null !!}
     {{
         $attributes
-            ->merge($getExtraAttributes())
+            ->merge([
+                'id' => $getId(),
+            ], escape: true)
+            ->merge($getExtraAttributes(), escape: true)
+            ->merge($getExtraAlpineAttributes(), escape: true)
             ->class(['filament-forms-tabs-component rounded-xl shadow-sm border border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-700'])
     }}
-    {{ $getExtraAlpineAttributeBag() }}
 >
     <input
         type="hidden"

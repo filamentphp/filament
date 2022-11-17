@@ -705,13 +705,13 @@
 
                         @foreach ($columns as $column)
                             <x-filament-tables::header-cell
-                                :extra-attributes="$column->getExtraHeaderAttributes()"
                                 :actively-sorted="$getSortColumn() === $column->getName()"
                                 :name="$column->getName()"
                                 :alignment="$column->getAlignment()"
                                 :sortable="$column->isSortable() && (! $isReordering)"
                                 :sort-direction="$getSortDirection()"
                                 :class="$getHiddenClasses($column)"
+                                :attributes="$column->getExtraHeaderAttributeBag()"
                             >
                                 {{ $column->getLabel() }}
                             </x-filament-tables::header-cell>

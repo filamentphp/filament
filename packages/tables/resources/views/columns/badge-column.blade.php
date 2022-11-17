@@ -17,7 +17,7 @@
     $iconSize = 'h-4 w-4';
 @endphp
 
-<div {{ $attributes->merge($getExtraAttributes())->class([
+<div {{ $attributes->merge($getExtraAttributes(), escape: true)->class([
     'filament-tables-badge-column flex',
     'px-4 py-3' => ! $isInline(),
     match ($getAlignment()) {

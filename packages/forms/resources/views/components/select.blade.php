@@ -29,7 +29,7 @@
                 :required="$isRequired() && (! ! $isConcealed())"
                 :attributes="$getExtraInputAttributeBag()->merge([
                     $applyStateBindingModifiers('wire:model') => $getStatePath(),
-                ])"
+                ], escape: true)"
                 :prefix="$hasPrefix"
                 :suffix="$hasSuffix"
                 class="w-full"
@@ -85,11 +85,15 @@
                 })"
                 x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                 wire:ignore
-                {{ $attributes->merge($getExtraAttributes())->merge($getExtraAlpineAttributes()) }}
-                @class($inputClasses)
                 x-bind:class="{
                     'choices--error': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
                 }"
+                {{
+                    $attributes
+                        ->merge($getExtraAttributes(), escape: true)
+                        ->merge($getExtraAlpineAttributes())
+                        ->class($inputClasses)
+                }}
             >
                 <select
                     x-ref="input"

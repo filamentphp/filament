@@ -29,8 +29,12 @@
 
             $event.preventDefault()
         "
-        {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-rich-editor-component space-y-2']) }}
-        {{ $getExtraAlpineAttributeBag() }}
+        {{
+            $attributes
+                ->merge($getExtraAttributes(), escape: true)
+                ->merge($getExtraAlpineAttributes(), escape: true)
+                ->class(['filament-forms-rich-editor-component space-y-2'])
+        }}
     >
         @unless ($isDisabled())
             <input id="trix-value-{{ $getId() }}" type="hidden" />

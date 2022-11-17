@@ -25,7 +25,7 @@ trait CanSortRecords
         $this->tableSortColumn = $direction ? $column : null;
         $this->tableSortDirection = $direction;
 
-        $this->updatedTableSort();
+        $this->updatedTableSortColumn();
     }
 
     public function getTableSortColumn(): ?string

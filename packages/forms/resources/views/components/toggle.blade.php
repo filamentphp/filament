@@ -7,8 +7,6 @@
     @endif
             <button
                 x-data="{ state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }} }"
-                role="switch"
-                aria-checked="false"
                 x-bind:aria-checked="state.toString()"
                 x-on:click="state = ! state"
                 x-bind:class="{
@@ -29,16 +27,22 @@
                         default => 'bg-gray-200',
                     } }} dark:bg-white/10': ! state,
                 }"
-                {!! $isAutofocused() ? 'autofocus' : null !!}
-                {!! $isDisabled() ? 'disabled' : null !!}
-                wire:loading.attr="disabled"
-                id="{{ $getId() }}"
-                dusk="filament.forms.{{ $getStatePath() }}"
-                type="button"
-                {{ $attributes->merge($getExtraAttributes())->class([
-                    'filament-forms-toggle-component relative inline-flex border-2 border-transparent shrink-0 h-6 w-11 rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none disabled:opacity-70 disabled:cursor-not-allowed disabled:pointer-events-none',
-                ]) }}
-                {{ $getExtraAlpineAttributeBag() }}
+                {{
+                    $attributes
+                        ->merge([
+                            'aria-checked' => 'false',
+                            'autofocus' => $isAutofocused(),
+                            'disabled' => $isDisabled(),
+                            'dusk' => "filament.forms.{$getStatePath()}",
+                            'id' => $getId(),
+                            'role' => 'switch',
+                            'type' => 'button',
+                            'wire:loading.attr' => 'disabled',
+                        ], escape: true)
+                        ->merge($getExtraAttributes(), escape: true)
+                        ->merge($getExtraAlpineAttributes(), escape: true)
+                        ->class(['filament-forms-toggle-component relative inline-flex border-2 border-transparent shrink-0 h-6 w-11 rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none disabled:opacity-70 disabled:cursor-not-allowed disabled:pointer-events-none'])
+                }}
             >
                 <span
                     class="pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 ease-in-out transition duration-200"

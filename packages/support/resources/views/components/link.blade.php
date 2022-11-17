@@ -85,12 +85,17 @@
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
         @endif
-        type="{{ $type }}"
-        {!! $disabled ? 'disabled' : '' !!}
         @if ($keyBindings || $tooltip)
             x-data="{}"
         @endif
-        {{ $attributes->class($linkClasses) }}
+        {{
+            $attributes
+                ->merge([
+                    'disabled' => $disabled,
+                    'type' => $type,
+                ], escape: true)
+                ->class($linkClasses)
+        }}
     >
         @if ($iconPosition === 'before')
             @if ($icon)

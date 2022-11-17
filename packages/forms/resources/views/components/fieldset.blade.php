@@ -1,11 +1,11 @@
-<fieldset
-    {!! $getId() ? "id=\"{$getId()}\"" : null !!}
-    {{
-        $attributes
-            ->merge($getExtraAttributes())
-            ->class(['filament-forms-fieldset-component rounded-xl shadow-sm border border-gray-300 p-6 dark:border-gray-600 dark:text-gray-200'])
-    }}
->
+<fieldset {{
+    $attributes
+        ->merge([
+            'id' => $getId(),
+        ], escape: true)
+        ->merge($getExtraAttributes(), escape: true)
+        ->class(['filament-forms-fieldset-component rounded-xl shadow-sm border border-gray-300 p-6 dark:border-gray-600 dark:text-gray-200'])
+}}>
     <legend class="text-sm leading-tight font-medium px-2 -ml-2">
         {{ $getLabel() }}
     </legend>

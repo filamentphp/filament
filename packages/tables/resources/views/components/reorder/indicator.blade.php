@@ -3,9 +3,14 @@
 ])
 
 <div
-    wire:key="{{ $this->id }}.table.reorder.indicator"
     x-cloak
-    {{ $attributes->class(['filament-tables-reorder-indicator bg-primary-500/10 px-4 py-2 whitespace-nowrap text-sm']) }}
+    {{
+        $attributes
+            ->merge([
+                'wire:key' => "{$this->id}.table.reorder.indicator",
+            ], escape: true)
+            ->class(['filament-tables-reorder-indicator bg-primary-500/10 px-4 py-2 whitespace-nowrap text-sm'])
+    }}
 >
     <x-filament::loading-indicator
         wire:loading.delay

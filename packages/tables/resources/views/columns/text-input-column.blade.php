@@ -2,7 +2,7 @@
     x-data="{ error: undefined }"
     {{
         $attributes
-            ->merge($getExtraAttributes())
+            ->merge($getExtraAttributes(), escape: true)
             ->class(['filament-tables-text-input-column'])
     }}
 >
@@ -24,8 +24,8 @@
         }"
         {{
             $attributes
-                ->merge($getExtraInputAttributes())
-                ->merge($getExtraAttributes())
+                ->merge($getExtraAttributes(), escape: true)
+                ->merge($getExtraInputAttributes(), escape: true)
                 ->class(['ml-0.5 text-gray-900 block transition duration-75 rounded-lg shadow-sm focus:ring-primary-500 focus:ring-1 focus:ring-inset focus:border-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500'])
         }}
     />

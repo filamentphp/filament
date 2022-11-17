@@ -9,9 +9,15 @@
         x-data="tagsInputFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
-        id="{{ $getId() }}"
-        {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-tags-input-component']) }}
-        {{ $getExtraAlpineAttributeBag() }}
+        {{
+            $attributes
+                ->merge([
+                    'id' => $getId(),
+                ], escape: true)
+                ->merge($getExtraAttributes(), escape: true)
+                ->merge($getExtraAlpineAttributes(), escape: true)
+                ->class(['filament-forms-tags-input-component'])
+        }}
     >
         <div
             x-show="state.length || {{ $isDisabled() ? 'false' : 'true' }}"

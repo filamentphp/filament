@@ -169,17 +169,16 @@ class TestsColumns
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
-
             /** @var \Filament\Tables\Columns\TextColumn $column */
-            $column = $livewire->getCachedTableColumn($name);
+            $column = $this->instance()->getTable()->getColumn($name);
 
             if (! ($record instanceof Model)) {
-                $record = $livewire->getTableRecord($record);
+                $record = $this->instance()->getTableRecord($record);
             }
 
             $column->record($record);
+
+            $livewireClass = $this->instance()::class;
 
             Assert::assertTrue(
                 $column->getFormattedState() == $value,
@@ -196,17 +195,16 @@ class TestsColumns
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
-
             /** @var \Filament\Tables\Columns\TextColumn $column */
-            $column = $livewire->getCachedTableColumn($name);
+            $column = $this->instance()->getTable()->getColumn($name);
 
             if (! ($record instanceof Model)) {
-                $record = $livewire->getTableRecord($record);
+                $record = $this->instance()->getTableRecord($record);
             }
 
             $column->record($record);
+
+            $livewireClass = $this->instance()::class;
 
             Assert::assertFalse(
                 $column->getFormattedState() == $value,
@@ -223,18 +221,17 @@ class TestsColumns
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
-
-            $column = $livewire->getCachedTableColumn($name);
+            $column = $this->instance()->getTable()->getColumn($name);
 
             if (! ($record instanceof Model)) {
-                $record = $livewire->getTableRecord($record);
+                $record = $this->instance()->getTableRecord($record);
             }
 
             $column->record($record);
 
             $attributesString = print_r($attributes, true);
+
+            $livewireClass = $this->instance()::class;
 
             Assert::assertTrue(
                 $column->getExtraAttributes() == $attributes,
@@ -251,18 +248,17 @@ class TestsColumns
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
-
-            $column = $livewire->getCachedTableColumn($name);
+            $column = $this->instance()->getTable()->getColumn($name);
 
             if (! ($record instanceof Model)) {
-                $record = $livewire->getTableRecord($record);
+                $record = $this->instance()->getTableRecord($record);
             }
 
             $column->record($record);
 
             $attributesString = print_r($attributes, true);
+
+            $livewireClass = $this->instance()::class;
 
             Assert::assertFalse(
                 $column->getExtraAttributes() == $attributes,
@@ -279,19 +275,18 @@ class TestsColumns
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
-
             /** @var \Filament\Tables\Columns\TextColumn $column */
-            $column = $livewire->getCachedTableColumn($name);
+            $column = $this->instance()->getTable()->getColumn($name);
 
             if (! ($record instanceof Model)) {
-                $record = $livewire->getTableRecord($record);
+                $record = $this->instance()->getTableRecord($record);
             }
 
             $column->record($record);
 
-            $actualDescription = $position == 'above' ? $column->getDescriptionAbove() : $column->getDescriptionBelow();
+            $actualDescription = $position === 'above' ? $column->getDescriptionAbove() : $column->getDescriptionBelow();
+
+            $livewireClass = $this->instance()::class;
 
             Assert::assertTrue(
                 $actualDescription == $description,
@@ -308,19 +303,18 @@ class TestsColumns
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
-
             /** @var \Filament\Tables\Columns\TextColumn $column */
-            $column = $livewire->getCachedTableColumn($name);
+            $column = $this->instance()->getTable()->getColumn($name);
 
             if (! ($record instanceof Model)) {
-                $record = $livewire->getTableRecord($record);
+                $record = $this->instance()->getTableRecord($record);
             }
 
             $column->record($record);
 
-            $actualDescription = $position == 'above' ? $column->getDescriptionAbove() : $column->getDescriptionBelow();
+            $actualDescription = $position === 'above' ? $column->getDescriptionAbove() : $column->getDescriptionBelow();
+
+            $livewireClass = $this->instance()::class;
 
             Assert::assertFalse(
                 $actualDescription == $description,

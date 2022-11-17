@@ -60,7 +60,7 @@
         wire:ignore
         {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
         style="min-height: {{ $isAvatar() ? '8em' : ($getPanelLayout() === 'compact' ? '2.625em' : '4.75em') }}"
-        {{ $attributes->merge($getExtraAttributes())->class([
+        {{ $attributes->merge($getExtraAttributes(), escape: true)->class([
             'filament-forms-file-upload-component',
             'w-32 mx-auto' => $isAvatar(),
         ]) }}

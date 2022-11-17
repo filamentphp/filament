@@ -13,7 +13,7 @@
         class="filament-forms-text-input-component"
         :attributes="$getExtraAttributeBag()"
     >
-        <div {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-color-picker-component flex items-center space-x-1 rtl:space-x-reverse group']) }}>
+        <div {{ $attributes->merge($getExtraAttributes(), escape: true)->class(['filament-forms-color-picker-component flex items-center space-x-1 rtl:space-x-reverse group']) }}>
             <div
                 x-ignore
                 ax-load

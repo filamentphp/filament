@@ -14,7 +14,7 @@
                 :two-xl="$getColumns('2xl')"
                 :is-grid="! $isInline()"
                 direction="column"
-                :attributes="$attributes->merge($getExtraAttributes())->class([
+                :attributes="$attributes->merge($getExtraAttributes(), escape: true)->class([
                     'filament-forms-radio-component',
                     'flex flex-wrap gap-3' => $isInline(),
                     'gap-2' => ! $isInline(),

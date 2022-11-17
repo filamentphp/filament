@@ -29,13 +29,18 @@
             setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
         "
     @endif
-    id="{{ $getId() }}"
-    {{ $attributes->merge($getExtraAttributes())->class([
-        'filament-forms-section-component',
-        'rounded-xl bg-white ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10' => ! $isAside,
-        'grid grid-cols-1 md:grid-cols-2' => $isAside,
-    ]) }}
-    {{ $getExtraAlpineAttributeBag() }}
+    {{ $attributes
+        ->merge([
+            'id' => $getId(),
+        ], escape: true)
+        ->merge($getExtraAttributes(), escape: true)
+        ->merge($getExtraAlpineAttributes(), escape: true)
+        ->class([
+            'filament-forms-section-component',
+            'rounded-xl bg-white ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10' => ! $isAside,
+            'grid grid-cols-1 md:grid-cols-2' => $isAside,
+        ])
+    }}
 >
     <div
         @class([

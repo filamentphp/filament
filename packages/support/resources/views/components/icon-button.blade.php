@@ -58,18 +58,21 @@
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
-        @if ($label)
-            title="{{ $label }}"
-        @endif
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
         @endif
-        type="{{ $type }}"
-        {!! $disabled ? 'disabled' : '' !!}
         @if ($keyBindings || $tooltip)
             x-data="{}"
         @endif
-        {{ $attributes->class($buttonClasses) }}
+        {{
+            $attributes
+                ->merge([
+                    'disabled' => $disabled,
+                    'title' => $label,
+                    'type' => $type,
+                ], escape: true)
+                ->class($buttonClasses)
+        }}
     >
         @if ($label)
             <span class="sr-only">
@@ -106,16 +109,19 @@
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
-        @if ($label)
-            title="{{ $label }}"
-        @endif
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
         @endif
         @if ($keyBindings || $tooltip)
             x-data="{}"
         @endif
-        {{ $attributes->class($buttonClasses) }}
+        {{
+            $attributes
+                ->merge([
+                    'title' => $label,
+                ], escape: true)
+                ->class($buttonClasses)
+        }}
     >
         @if ($label)
             <span class="sr-only">

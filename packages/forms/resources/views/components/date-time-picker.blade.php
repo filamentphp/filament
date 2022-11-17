@@ -26,7 +26,7 @@
                 state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
             })"
             x-on:keydown.esc="isOpen() && $event.stopPropagation()"
-            {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-date-time-picker-component relative']) }}
+            {{ $attributes->merge($getExtraAttributes(), escape: true)->class(['filament-forms-date-time-picker-component relative']) }}
             {{ $getExtraAlpineAttributeBag() }}
         >
             <input x-ref="maxDate" type="hidden" value="{{ $getMaxDate() }}" />

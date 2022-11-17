@@ -11,8 +11,9 @@
     $isCopyable = $isCopyable();
 @endphp
 
-<div
-    {{ $attributes->merge($getExtraAttributes())->class([
+<div {{ $attributes
+    ->merge($getExtraAttributes(), escape: true)
+    ->class([
         'filament-tables-text-column text-sm',
         'px-4 py-3' => ! $isInline(),
         'text-primary-600 transition hover:underline hover:text-primary-500 focus:underline focus:text-primary-500' => $getAction() || $getUrl(),
@@ -48,8 +49,8 @@
             default => null,
         },
         'whitespace-normal' => $canWrap(),
-    ]) }}
->
+    ])
+}}>
     @if (filled($descriptionAbove))
         <div class="text-sm text-gray-500">
             {{ $descriptionAbove instanceof \Illuminate\Support\HtmlString ? $descriptionAbove : str($descriptionAbove)->markdown()->sanitizeHtml()->toHtmlString() }}

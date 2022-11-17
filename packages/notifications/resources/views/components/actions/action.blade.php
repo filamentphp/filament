@@ -18,7 +18,7 @@
 
 <x-dynamic-component
     :component="$component"
-    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes())"
+    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes(), escape: true)"
     :tag="$action->getUrl() ? 'a' : 'button'"
     :wire:click="$action->isEnabled() ? $wireClickAction : null"
     :x-on:click="$action->isEnabled() && $action->shouldCloseNotification() ? 'close' : null"

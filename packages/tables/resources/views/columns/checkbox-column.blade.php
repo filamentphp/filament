@@ -1,6 +1,6 @@
 <div
     x-data="{ error: undefined }"
-    {{ $attributes->merge($getExtraAttributes())->class([
+    {{ $attributes->merge($getExtraAttributes(), escape: true)->class([
         'filament-tables-checkbox-column',
     ]) }}
 >
@@ -15,7 +15,7 @@
         x-tooltip="error"
         {{
             $attributes
-                ->merge($getExtraInputAttributeBag()->getAttributes())
+                ->merge($getExtraInputAttributes(), escape: true)
                 ->class(['ml-4 text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:checked:bg-primary-500'])
         }}
         x-bind:class="{

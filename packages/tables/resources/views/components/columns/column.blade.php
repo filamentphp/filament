@@ -19,6 +19,10 @@
 @endphp
 
 <div
+    @if ($tooltip)
+        x-data="{}"
+        x-tooltip.raw="{{ $tooltip }}"
+    @endif
     {{ $attributes->class([
         'filament-tables-column-wrapper',
         match ($alignment) {
@@ -31,10 +35,6 @@
             default => null,
         },
     ]) }}
-    @if ($tooltip)
-        x-data="{}"
-    x-tooltip.raw="{{ $tooltip }}"
-    @endif
 >
     @if ($isClickDisabled)
         {{ $slot }}

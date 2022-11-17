@@ -4,7 +4,7 @@
     'icon' => null,
 ])
 
-<div {{ $attributes->class(
+<div {{ $attributes->class([
     'filament-forms-field-wrapper-hint flex items-center space-x-2 rtl:space-x-reverse',
     match ($color) {
         'danger' => 'text-danger-500 dark:text-danger-300',
@@ -14,7 +14,7 @@
         'primary' => 'text-primary-500 dark:text-primary-300',
         default => 'text-gray-500 dark:text-gray-300',
     },
-) }}>
+]) }}>
     @if ($slot->isNotEmpty())
         <span class="text-xs leading-tight">
             {{ $slot }}

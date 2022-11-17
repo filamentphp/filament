@@ -2,10 +2,7 @@
     'form',
 ])
 
-<div
-    {{ $attributes->class(['filament-tables-filters-form space-y-6']) }}
-    x-data
->
+<div {{ $attributes->class(['filament-tables-filters-form space-y-6']) }}>
     {{ $form }}
 
     <div class="text-end">
