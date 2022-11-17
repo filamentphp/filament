@@ -297,7 +297,7 @@ class TestsColumns
             if (! ($record instanceof Model)) {
                 $record = $livewire->getTableRecord($record);
             }
-                
+
             $column->record($record);
 
             $actualDescription = $position == 'above' ? $column->getDescriptionAbove() : $column->getDescriptionBelow();
