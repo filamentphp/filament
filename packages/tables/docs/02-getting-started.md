@@ -440,6 +440,7 @@ protected $queryString = [
     'tableSortColumn' => ['except' => ''],
     'tableSortDirection' => ['except' => ''],
     'tableSearch' => ['except' => ''],
+    'tableColumnSearches',
 ];
 ```
 

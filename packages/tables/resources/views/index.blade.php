@@ -519,7 +519,7 @@
                                             @if ($recordUrl)
                                                 <a
                                                     href="{{ $recordUrl }}"
-                                                    class="flex-1 block py-3"
+                                                    class="filament-tables-record-url-link flex-1 block py-3"
                                                 >
                                                     <x-filament-tables::columns.layout
                                                         :components="$getColumnsLayout()"
@@ -543,7 +543,7 @@
                                                     wire:loading.attr="disabled"
                                                     wire:loading.class="cursor-wait opacity-70"
                                                     type="button"
-                                                    class="flex-1 block py-3"
+                                                    class="filament-tables-record-action-button flex-1 block py-3"
                                                 >
                                                     <x-filament-tables::columns.layout
                                                         :components="$getColumnsLayout()"
