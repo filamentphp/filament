@@ -93,7 +93,7 @@
                 ->merge([
                     'disabled' => $disabled,
                     'type' => $type,
-                ], escape: true)
+                ], escape: false)
                 ->class($linkClasses)
         }}
     >
@@ -105,7 +105,7 @@
                     :size="$iconSize"
                     :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
-                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
                 />
             @endif
 
@@ -129,7 +129,7 @@
                     :size="$iconSize"
                     :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
-                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
                 />
             @endif
 

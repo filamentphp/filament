@@ -26,8 +26,12 @@
                 state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
             })"
             x-on:keydown.esc="isOpen() && $event.stopPropagation()"
-            {{ $attributes->merge($getExtraAttributes(), escape: true)->class(['filament-forms-date-time-picker-component relative']) }}
-            {{ $getExtraAlpineAttributeBag() }}
+            {{
+                $attributes
+                    ->merge($getExtraAttributes(), escape: false)
+                    ->merge($getExtraAlpineAttributes(), escape: false)
+                    ->class(['filament-forms-date-time-picker-component relative'])
+            }}
         >
             <input x-ref="maxDate" type="hidden" value="{{ $getMaxDate() }}" />
             <input x-ref="minDate" type="hidden" value="{{ $getMinDate() }}" />
@@ -63,7 +67,7 @@
                     placeholder="{{ $getPlaceholder() }}"
                     wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.display-text"
                     x-model="displayText"
-                    {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
+                    @if ($id = $getId()) id="{{ $id }}" @endif
                     @class([
                         'w-full h-full p-0 placeholder-gray-400 bg-transparent border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none dark:bg-gray-700 dark:placeholder-gray-400',
                         'cursor-default' => $isDisabled(),

@@ -2,7 +2,7 @@
     $attributes
         ->merge([
             'type' => 'button',
-        ], escape: true)
+        ], escape: false)
         ->class(['filament-tables-reorder-handle text-gray-500 cursor-move transition group-hover:text-primary-500 dark:text-gray-400 dark:group-hover:text-primary-400'])
 }}>
     <x-filament::icon

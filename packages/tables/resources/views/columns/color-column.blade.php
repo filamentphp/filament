@@ -15,7 +15,7 @@
     @endif
     {{
         $attributes
-            ->merge($getExtraAttributes(), escape: true)
+            ->merge($getExtraAttributes(), escape: false)
             ->class([
                 'filament-tables-color-column relative ml-4 flex h-6 w-6 rounded-md',
                 'cursor-pointer' => $isCopyable,

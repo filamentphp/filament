@@ -1,4 +1,4 @@
-<div {{ $attributes->merge($getExtraAttributes(), escape: true) }}>
+<div {{ $attributes->merge($getExtraAttributes(), escape: false) }}>
     @php
         $columns = $getGridColumns();
     @endphp

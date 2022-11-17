@@ -57,13 +57,15 @@
 @endphp
 
 @if ($tag === 'button')
-    <button
-        type="button"
-        wire:loading.attr="disabled"
-        {!! $hasLoadingIndicator ? 'wire:loading.class.delay="opacity-70 cursor-wait"' : '' !!}
-        {!! ($hasLoadingIndicator && $loadingIndicatorTarget) ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
-        {{ $attributes->class([$buttonClasses]) }}
-    >
+    <button {{ $attributes
+        ->merge([
+            'type' => 'button',
+            'wire:loading.attr' => 'disabled',
+            'wire:loading.class.delay' => $hasLoadingIndicator ? 'opacity-70 cursor-wait' : null,
+            'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
+        ], escape: false)
+        ->class([$buttonClasses])
+    }}>
         @if ($icon)
             <x-filament::icon
                 :name="$icon"
@@ -72,7 +74,7 @@
                 :size="$iconSize"
                 :class="$iconClasses"
                 :wire:loading.remove.delay="$hasLoadingIndicator"
-                :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+                :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
             />
         @endif
 

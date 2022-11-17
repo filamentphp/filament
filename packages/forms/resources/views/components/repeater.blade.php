@@ -39,7 +39,7 @@
         x-data="{}"
         {{
             $attributes
-                ->merge($getExtraAttributes(), escape: true)
+                ->merge($getExtraAttributes(), escape: false)
                 ->class([
                     'filament-forms-repeater-component space-y-6 rounded-xl',
                     'bg-gray-50 p-6 dark:bg-gray-500/10' => $isInset(),

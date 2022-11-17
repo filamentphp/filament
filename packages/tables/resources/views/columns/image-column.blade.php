@@ -1,4 +1,4 @@
-<div {{ $attributes->merge($getExtraAttributes(), escape: true)->class([
+<div {{ $attributes->merge($getExtraAttributes(), escape: false)->class([
     'filament-tables-image-column',
     'px-4 py-3' => ! $isInline(),
 ]) }}>
@@ -9,8 +9,8 @@
 
     <div
         style="
-            {!! $height !== null ? "height: {$height};" : null !!}
-            {!! $width !== null ? "width: {$width};" : null !!}
+            @if ($height) height: {{ $height }}; @endif
+            @if ($width) width: {{ $width }}; @endif
         "
         @class([
             'overflow-hidden' => $isCircular() || $isSquare(),
@@ -21,8 +21,8 @@
             <img
                 src="{{ $path }}"
                 style="
-                    {!! $height !== null ? "height: {$height};" : null !!}
-                    {!! $width !== null ? "width: {$width};" : null !!}
+                    @if ($height) height: {{ $height }}; @endif
+                    @if ($width) width: {{ $width }}; @endif
                 "
                 {{ $getExtraImgAttributeBag()->class([
                     'object-cover object-center' => $isCircular() || $isSquare(),

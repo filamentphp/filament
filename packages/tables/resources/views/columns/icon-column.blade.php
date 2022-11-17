@@ -5,7 +5,7 @@
 @endphp
 
 <div {{ $attributes
-    ->merge($getExtraAttributes(), escape: true)
+    ->merge($getExtraAttributes(), escape: false)
     ->class([
         'filament-tables-icon-column filament-tables-icon-column-size-' . str($size)->kebab(),
         'px-4 py-3' => ! $isInline(),

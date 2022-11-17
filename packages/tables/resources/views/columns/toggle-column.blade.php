@@ -3,7 +3,7 @@
     x-init="
         $watch('state', () => $refs.button.dispatchEvent(new Event('change')))
     "
-    {{ $attributes->merge($getExtraAttributes(), escape: true)->class([
+    {{ $attributes->merge($getExtraAttributes(), escape: false)->class([
         'filament-tables-toggle-column',
     ]) }}
 >
@@ -36,7 +36,7 @@
                 default => 'bg-gray-200',
             } }} dark:bg-white/10': ! state,
         }"
-        {!! $isDisabled() ? 'disabled' : null !!}
+        @if ($isDisabled()) disabled @endif
         type="button"
         class="relative inline-flex shrink-0 ml-4 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none disabled:opacity-70 disabled:cursor-not-allowed disabled:pointer-events-none"
     >

@@ -170,7 +170,7 @@
         <div
             class="filament-tables-header-container"
             x-show="hasHeader = (@js($renderHeader = ($header || $heading || ($headerActions && (! $isReordering)) || $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible)) || selectedRecords.length)"
-            {!! ! $renderHeader ? 'x-cloak' : null !!}
+            @if (! $renderHeader) x-cloak @endif
         >
             @if ($header)
                 {{ $header }}
@@ -205,7 +205,7 @@
 
             <div
                 x-show="@js($shouldRenderHeaderDiv = ($isReorderable || count($groups) || $isGlobalSearchVisible || $hasFiltersDropdown || $isColumnToggleFormVisible)) || selectedRecords.length"
-                {!! ! $shouldRenderHeaderDiv ? 'x-cloak' : null !!}
+                @if (! $shouldRenderHeaderDiv) x-cloak @endif
                 class="flex items-center justify-between py-2 px-3 h-14"
                 x-bind:class="{
                     'gap-3': @js($isReorderable) || @js(count($groups)) || selectedRecords.length,

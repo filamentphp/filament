@@ -22,8 +22,8 @@
                 'id' => $getId(),
                 'role' => 'tabpanel',
                 'tabindex' => '0',
-            ], escape: true)
-            ->merge($getExtraAttributes(), escape: true)
+            ], escape: false)
+            ->merge($getExtraAttributes(), escape: false)
             ->class(['filament-forms-tabs-component-tab focus:outline-none'])
     }}
 >

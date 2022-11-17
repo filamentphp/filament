@@ -6,8 +6,8 @@
                 'id' => $getId(),
                 'type' => 'hidden',
                 $applyStateBindingModifiers('wire:model') => $getStatePath(),
-            ], escape: true)
-            ->merge($getExtraAttributes(), escape: true)
+            ], escape: false)
+            ->merge($getExtraAttributes(), escape: false)
             ->class(['filament-forms-hidden-component'])
     }}
 />

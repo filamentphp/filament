@@ -27,8 +27,8 @@
                 'id' => $getId(),
                 'role' => 'tabpanel',
                 'tabindex' => '0',
-            ], escape: true)
-            ->merge($getExtraAttributes(), escape: true)
+            ], escape: false)
+            ->merge($getExtraAttributes(), escape: false)
             ->class(['focus:outline-none filament-forms-wizard-component-step'])
     }}
 >

@@ -38,9 +38,9 @@
                             'role' => 'switch',
                             'type' => 'button',
                             'wire:loading.attr' => 'disabled',
-                        ], escape: true)
-                        ->merge($getExtraAttributes(), escape: true)
-                        ->merge($getExtraAlpineAttributes(), escape: true)
+                        ], escape: false)
+                        ->merge($getExtraAttributes(), escape: false)
+                        ->merge($getExtraAlpineAttributes(), escape: false)
                         ->class(['filament-forms-toggle-component relative inline-flex border-2 border-transparent shrink-0 h-6 w-11 rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none disabled:opacity-70 disabled:cursor-not-allowed disabled:pointer-events-none'])
                 }}
             >

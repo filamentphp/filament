@@ -74,9 +74,9 @@
         $attributes
             ->merge([
                 'id' => $getId(),
-            ], escape: true)
-            ->merge($getExtraAttributes(), escape: true)
-            ->merge($getExtraAlpineAttributes(), escape: true)
+            ], escape: false)
+            ->merge($getExtraAttributes(), escape: false)
+            ->merge($getExtraAlpineAttributes(), escape: false)
             ->class(['filament-forms-wizard-component grid gap-y-6'])
     }}
 >
@@ -93,7 +93,7 @@
     />
 
     <ol
-        {!! $getLabel() ? 'aria-label="' . $getLabel() . '"' : null !!}
+        @if ($label = $getLabel()) aria-label="{{ $label }}" @endif
         role="list"
         class="border border-gray-300 shadow-sm bg-white rounded-xl overflow-hidden divide-y divide-gray-300 md:flex md:divide-y-0 dark:bg-gray-800 dark:border-gray-700 dark:divide-gray-700"
     >

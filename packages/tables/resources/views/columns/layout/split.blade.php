@@ -1,5 +1,5 @@
 <div {{ $attributes
-    ->merge($getExtraAttributes(), escape: true)
+    ->merge($getExtraAttributes(), escape: false)
     ->class([
         'flex',
         match ($getFromBreakpoint()) {

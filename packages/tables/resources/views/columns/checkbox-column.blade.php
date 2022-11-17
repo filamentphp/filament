@@ -1,12 +1,12 @@
 <div
     x-data="{ error: undefined }"
-    {{ $attributes->merge($getExtraAttributes(), escape: true)->class([
+    {{ $attributes->merge($getExtraAttributes(), escape: false)->class([
         'filament-tables-checkbox-column',
     ]) }}
 >
     <input
         @checked($getState())
-        {!! $isDisabled() ? 'disabled' : null !!}
+        @if ($isDisabled()) disabled @endif
         type="checkbox"
         x-on:change="
             response = await $wire.setColumnValue(@js($getName()), @js($recordKey), $event.target.checked)
@@ -15,7 +15,7 @@
         x-tooltip="error"
         {{
             $attributes
-                ->merge($getExtraInputAttributes(), escape: true)
+                ->merge($getExtraInputAttributes(), escape: false)
                 ->class(['ml-4 text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:checked:bg-primary-500'])
         }}
         x-bind:class="{

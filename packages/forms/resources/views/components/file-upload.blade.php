@@ -58,21 +58,31 @@
             },
         })"
         wire:ignore
-        {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
         style="min-height: {{ $isAvatar() ? '8em' : ($getPanelLayout() === 'compact' ? '2.625em' : '4.75em') }}"
-        {{ $attributes->merge($getExtraAttributes(), escape: true)->class([
-            'filament-forms-file-upload-component',
-            'w-32 mx-auto' => $isAvatar(),
-        ]) }}
-        {{ $getExtraAlpineAttributeBag() }}
+        {{
+            $attributes
+                ->merge([
+                    'id' => $getId(),
+                ], escape: false)
+                ->merge($getExtraAttributes(), escape: false)
+                ->merge($getExtraAlpineAttributes(), escape: false)
+                ->class([
+                    'filament-forms-file-upload-component',
+                    'w-32 mx-auto' => $isAvatar(),
+                ])
+        }}
     >
         <input
             x-ref="input"
-            {{ $isDisabled() ? 'disabled' : '' }}
-            {{ $isMultiple() ? 'multiple' : '' }}
-            type="file"
-            {{ $getExtraInputAttributeBag() }}
-            dusk="filament.forms.{{ $getStatePath() }}"
+            {{
+                $getExtraInputAttributeBag()
+                    ->merge([
+                        'disabled' => $isDisabled(),
+                        'dusk' => "filament.forms.{$getStatePath()}",
+                        'multiple' => $isMultiple(),
+                        'type' => 'file',
+                    ], escape: false)
+            }}
         />
     </div>
 </x-dynamic-component>

@@ -8,7 +8,7 @@
         $attributes
             ->merge([
                 'wire:target' => implode(',', \Filament\Tables\Table::LOADING_TARGETS),
-            ], escape: true)
+            ], escape: false)
             ->class(['filament-tables-actions-cell px-4 py-3 whitespace-nowrap'])
     }}
 >

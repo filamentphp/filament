@@ -94,9 +94,9 @@
                     'disabled' => $disabled,
                     'type' => $type,
                     'wire:loading.attr' => 'disabled',
-                    'wire:loading.class.delay' => $hasLoadingIndicator ? 'opacity-70 cursor-wait' : false,
-                    'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : false,
-                ], escape: true)
+                    'wire:loading.class.delay' => $hasLoadingIndicator ? 'opacity-70 cursor-wait' : null,
+                    'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
+                ], escape: false)
                 ->class($buttonClasses)
         }}
     >
@@ -108,7 +108,7 @@
                     :size="$iconSize"
                     :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
-                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
                 />
             @endif
 
@@ -156,7 +156,7 @@
                     :size="$iconSize"
                     :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
-                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
                 />
             @endif
 

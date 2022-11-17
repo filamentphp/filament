@@ -17,9 +17,9 @@
         $attributes
             ->merge([
                 'id' => $getId(),
-            ], escape: true)
-            ->merge($getExtraAttributes(), escape: true)
-            ->merge($getExtraAlpineAttributes(), escape: true)
+            ], escape: false)
+            ->merge($getExtraAttributes(), escape: false)
+            ->merge($getExtraAlpineAttributes(), escape: false)
             ->class(['filament-forms-tabs-component rounded-xl shadow-sm border border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-700'])
     }}
 >
@@ -36,7 +36,7 @@
     />
 
     <div
-        {!! $getLabel() ? 'aria-label="' . $getLabel() . '"' : null !!}
+        @if ($label = $getLabel()) aria-label="{{ $label }}" @endif
         role="tablist"
         class="filament-forms-tabs-component-header rounded-t-xl flex overflow-y-auto bg-gray-100 dark:bg-gray-700"
     >

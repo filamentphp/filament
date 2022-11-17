@@ -11,8 +11,12 @@
             tab: '{{ $isDisabled() ? 'preview' : 'edit' }}',
         })"
         wire:ignore
-        {{ $attributes->merge($getExtraAttributes(), escape: true)->class(['filament-forms-markdown-editor-component']) }}
-        {{ $getExtraAlpineAttributeBag() }}
+        {{
+            $attributes
+                ->merge($getExtraAttributes(), escape: false)
+                ->merge($getExtraAlpineAttributes(), escape: false)
+                ->class(['filament-forms-markdown-editor-component'])
+        }}
     >
         <div class="space-y-2">
             @unless ($isDisabled())
@@ -234,9 +238,9 @@
             <div x-show="tab === 'edit'" class="relative w-full h-full" style="min-height: 150px;">
                 <file-attachment directory>
                     <textarea
-                        {!! $isAutofocused() ? 'autofocus' : null !!}
+                        @if ($isAutofocused()) autofocus @endif
                         id="{{ $getId() }}"
-                        {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
+                        @if ($placeholder = $getPlaceholder()) placeholder="{{ $placeholder }}" @endif
                         x-model="state"
                         dusk="filament.forms.{{ $getStatePath() }}"
                         x-on:keyup.enter="checkForAutoInsertion"
@@ -270,9 +274,7 @@
                             })
                         "
                         x-ref="textarea"
-                        @if (! $isConcealed())
-                            {!! $isRequired() ? 'required' : null !!}
-                        @endif
+                        @if ($isRequired() && (! $isConcealed())) required @endif
                         class="z-1 absolute top-0 left-0 block h-full min-h-full w-full resize-none overflow-y-hidden whitespace-pre-wrap rounded-lg bg-transparent font-mono text-sm tracking-normal caret-black shadow-sm transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 rtl:whitespace-normal dark:caret-white dark:focus:border-primary-500"
                         x-bind:class="{
                             'border-gray-300 dark:border-gray-600 dark:border-gray-600': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),

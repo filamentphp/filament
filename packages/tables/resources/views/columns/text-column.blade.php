@@ -12,7 +12,7 @@
 @endphp
 
 <div {{ $attributes
-    ->merge($getExtraAttributes(), escape: true)
+    ->merge($getExtraAttributes(), escape: false)
     ->class([
         'filament-tables-text-column text-sm',
         'px-4 py-3' => ! $isInline(),

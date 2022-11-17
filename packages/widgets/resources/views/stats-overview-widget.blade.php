@@ -1,5 +1,5 @@
 <x-filament-widgets::widget class="filament-stats-overview-widget">
-    <div {!! ($pollingInterval = $this->getPollingInterval()) ? "wire:poll.{$pollingInterval}" : '' !!}>
+    <div @if ($pollingInterval = $this->getPollingInterval()) wire:poll.{{ $pollingInterval }} @endif>
         @php
             $columns = $this->getColumns();
         @endphp

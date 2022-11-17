@@ -31,8 +31,8 @@
         "
         {{
             $attributes
-                ->merge($getExtraAttributes(), escape: true)
-                ->merge($getExtraAlpineAttributes(), escape: true)
+                ->merge($getExtraAttributes(), escape: false)
+                ->merge($getExtraAlpineAttributes(), escape: false)
                 ->class(['filament-forms-rich-editor-component space-y-2'])
         }}
     >
@@ -374,7 +374,7 @@
 
             <trix-editor
                 wire:ignore
-                {!! $isAutofocused() ? 'autofocus' : null !!}
+                @if ($isAutofocused()) autofocus @endif
                 id="{{ $getId() }}"
                 input="trix-value-{{ $getId() }}"
                 placeholder="{{ $getPlaceholder() }}"

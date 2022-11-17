@@ -28,7 +28,7 @@
 @endphp
 
 @if ($name)
-    @svg($name, \Illuminate\Support\Arr::toCssClasses($class), $attributes->getAttributes())
+    @svg($name, \Illuminate\Support\Arr::toCssClasses($class), array_filter($attributes->getAttributes()))
 @else
     <div {{ $attributes->class($class) }}>
         {{ $slot }}

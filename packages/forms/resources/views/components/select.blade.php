@@ -29,7 +29,7 @@
                 :required="$isRequired() && (! ! $isConcealed())"
                 :attributes="$getExtraInputAttributeBag()->merge([
                     $applyStateBindingModifiers('wire:model') => $getStatePath(),
-                ], escape: true)"
+                ], escape: false)"
                 :prefix="$hasPrefix"
                 :suffix="$hasSuffix"
                 class="w-full"
@@ -41,7 +41,7 @@
                 @foreach ($getOptions() as $value => $label)
                     <option
                         value="{{ $value }}"
-                        {!! $isOptionDisabled($value, $label) ? 'disabled' : null !!}
+                        @if ($isOptionDisabled($value, $label)) disabled @endif
                     >
                         {{ $label }}
                     </option>
@@ -90,17 +90,21 @@
                 }"
                 {{
                     $attributes
-                        ->merge($getExtraAttributes(), escape: true)
+                        ->merge($getExtraAttributes(), escape: false)
                         ->merge($getExtraAlpineAttributes())
                         ->class($inputClasses)
                 }}
             >
                 <select
                     x-ref="input"
-                    id="{{ $getId() }}"
-                    {!! $isDisabled() ? 'disabled' : null !!}
-                    {!! $isMultiple() ? 'multiple' : null !!}
-                    {{ $getExtraInputAttributeBag() }}
+                    {{
+                        $getExtraInputAttributeBag()
+                            ->merge([
+                                'disabled' => $isDisabled(),
+                                'id' => $getId(),
+                                'multiple' => $isMultiple(),
+                            ], escape: false)
+                    }}
                 ></select>
             </div>
         @endif

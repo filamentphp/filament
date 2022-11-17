@@ -13,7 +13,7 @@
         class="filament-forms-text-input-component"
         :attributes="$getExtraAttributeBag()"
     >
-        <div {{ $attributes->merge($getExtraAttributes(), escape: true)->class(['filament-forms-color-picker-component flex items-center space-x-1 rtl:space-x-reverse group']) }}>
+        <div {{ $attributes->merge($getExtraAttributes(), escape: false)->class(['filament-forms-color-picker-component flex items-center space-x-1 rtl:space-x-reverse group']) }}>
             <div
                 x-ignore
                 ax-load
@@ -28,25 +28,28 @@
             >
                 <input
                     x-ref="input"
-                    type="text"
-                    dusk="filament.forms.{{ $getStatePath() }}"
-                    id="{{ $getId() }}"
                     x-model="state"
                     x-on:click="togglePanelVisibility()"
                     x-on:keydown.enter.stop.prevent="togglePanelVisibility()"
-                    autocomplete="off"
-                    {!! $isDisabled() ? 'disabled' : null !!}
-                    {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
-                    @if (! $isConcealed())
-                        {!! $isRequired() ? 'required' : null !!}
-                    @endif
-                    {{ $getExtraInputAttributeBag()->class([
-                        'text-gray-900 block w-full transition duration-75 shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
-                        'border-gray-300 dark:border-gray-600' => ! $errors->has($getStatePath()),
-                        'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()),
-                        'rounded-l-lg' => ! ($getPrefixLabel() || $getPrefixIcon()),
-                        'rounded-r-lg' => ! ($getSuffixLabel() || $getSuffixIcon()),
-                    ]) }}
+                    {{
+                        $getExtraInputAttributeBag()
+                            ->merge([
+                                'autocomplete' => 'off',
+                                'disabled' => $isDisabled(),
+                                'dusk' => "filament.forms.{$getStatePath()}",
+                                'id' => $getId(),
+                                'placeholder' => $getPlaceholder(),
+                                'required' => $isRequired() && (! $isConcealed()),
+                                'type' => 'text',
+                            ], escape: false)
+                            ->class([
+                                'text-gray-900 block w-full transition duration-75 shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
+                                'border-gray-300 dark:border-gray-600' => ! $errors->has($getStatePath()),
+                                'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()),
+                                'rounded-l-lg' => ! ($getPrefixLabel() || $getPrefixIcon()),
+                                'rounded-r-lg' => ! ($getSuffixLabel() || $getSuffixIcon()),
+                            ])
+                    }}
                 />
 
                 <span

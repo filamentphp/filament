@@ -63,20 +63,25 @@
             @foreach ($getOptions() as $optionValue => $optionLabel)
                 <label class="flex items-center space-x-3 rtl:space-x-reverse">
                     <input
-                        {!! $isDisabled ? 'disabled' : null !!}
-                        wire:loading.attr="disabled"
-                        type="checkbox"
-                        value="{{ $optionValue }}"
-                        dusk="filament.forms.{{ $getStatePath() }}"
                         @if ($isBulkToggleable())
                             x-on:change="updateIsAllSelected"
                         @endif
-                        {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
-                        {{ $getExtraAttributeBag()->class([
-                            'text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:checked:bg-primary-500',
-                            'border-gray-300 dark:border-gray-600' => ! $errors->has($getStatePath()),
-                            'border-danger-300 ring-danger-500 dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()),
-                        ]) }}
+                        {{
+                            $getExtraAttributeBag()
+                                ->merge([
+                                    'disabled' => $isDisabled,
+                                    'dusk' => "filament.forms.{$getStatePath()}",
+                                    'type' => 'checkbox',
+                                    'value' => $optionValue,
+                                    'wire:loading.attr' => 'disabled',
+                                    $applyStateBindingModifiers('wire:model') => $getStatePath(),
+                                ], escape: false)
+                                ->class([
+                                    'text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:checked:bg-primary-500',
+                                    'border-gray-300 dark:border-gray-600' => ! $errors->has($getStatePath()),
+                                    'border-danger-300 ring-danger-500 dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()),
+                                ])
+                        }}
                     />
 
                     <span class="text-sm font-medium text-gray-700 dark:text-gray-200">

@@ -13,9 +13,9 @@
             $attributes
                 ->merge([
                     'id' => $getId(),
-                ], escape: true)
-                ->merge($getExtraAttributes(), escape: true)
-                ->merge($getExtraAlpineAttributes(), escape: true)
+                ], escape: false)
+                ->merge($getExtraAttributes(), escape: false)
+                ->merge($getExtraAlpineAttributes(), escape: false)
                 ->class(['filament-forms-tags-input-component'])
         }}
     >
@@ -31,10 +31,10 @@
                 <div>
                     <input
                         autocomplete="off"
-                        {!! $isAutofocused() ? 'autofocus' : null !!}
+                        @if ($isAutofocused()) autofocus @endif
                         id="{{ $getId() }}"
                         list="{{ $getId() }}-suggestions"
-                        {!! $getPlaceholder() ? 'placeholder="' . $getPlaceholder() . '"' : null !!}
+                        @if ($placeholder = $getPlaceholder()) placeholder="{{ $placeholder }}" @endif
                         type="text"
                         dusk="filament.forms.{{ $getStatePath() }}"
                         x-on:keydown.enter.stop.prevent="createTag()"

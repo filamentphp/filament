@@ -3,7 +3,7 @@
 @endphp
 
 <div {{ $attributes
-    ->merge($getExtraAttributes(), escape: true)
+    ->merge($getExtraAttributes(), escape: false)
     ->class([
         'filament-tables-tags-column flex flex-wrap items-center gap-1',
         'px-4 py-3' => ! $isInline(),

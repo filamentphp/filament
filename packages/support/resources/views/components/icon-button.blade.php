@@ -70,7 +70,7 @@
                     'disabled' => $disabled,
                     'title' => $label,
                     'type' => $type,
-                ], escape: true)
+                ], escape: false)
                 ->class($buttonClasses)
         }}
     >
@@ -86,7 +86,7 @@
             :size="$iconSize"
             :class="$iconClasses"
             :wire:loading.remove.delay="$hasLoadingIndicator"
-            :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+            :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
         />
 
         @if ($hasLoadingIndicator)
@@ -119,7 +119,7 @@
             $attributes
                 ->merge([
                     'title' => $label,
-                ], escape: true)
+                ], escape: false)
                 ->class($buttonClasses)
         }}
     >

@@ -1,6 +1,8 @@
 @php
     $datalistOptions = $getDatalistOptions();
+    $hasMask = $hasMask();
     $id = $getId();
+    $isConcealed = $isConcealed();
     $statePath = $getStatePath();
     $inputClasses = [
         'block w-full transition duration-75 shadow-sm focus:border-primary-500 focus:relative focus:z-[1] focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
@@ -25,46 +27,48 @@
         :attributes="$getExtraAttributeBag()"
     >
         <input
-            @unless ($hasMask())
-                x-data="{}"
-                {{ $applyStateBindingModifiers('wire:model') }}="{{ $statePath }}"
-                type="{{ $getType() }}"
-            @else
+            @if ($hasMask)
                 x-ignore
                 ax-load
                 ax-load-src="/js/filament/forms/components/text-input.js?v={{ \Composer\InstalledVersions::getVersion('filament/support') }}"
                 x-data="textInputFormComponent({
-                    {{ $hasMask() ? "getMaskOptionsUsing: (IMask) => ({$getJsonMaskConfiguration()})," : null }}
+                    getMaskOptionsUsing: (IMask) => ({{ $getJsonMaskConfiguration() }}),
                     state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')', lazilyEntangledModifiers: ['defer']) }},
                 })"
-                type="text"
                 wire:ignore
-                {!! $isLazy() ? "x-on:blur=\"\$wire.\$refresh\"" : null !!}
-                {!! $isDebounced() ? "x-on:input.debounce.{$getDebounce()}=\"\$wire.\$refresh\"" : null !!}
+                @if ($isDebounced()) x-on:input.debounce.{{ $getDebounce() }}="$wire.$refresh" @endif
+                @if ($isLazy()) x-on:blur="$wire.$refresh" @endif
                 {{ $getExtraAlpineAttributeBag() }}
+            @else
+                x-data="{}"
             @endunless
-            dusk="filament.forms.{{ $statePath }}"
-            {!! ($autocapitalize = $getAutocapitalize()) ? "autocapitalize=\"{$autocapitalize}\"" : null !!}
-            {!! ($autocomplete = $getAutocomplete()) ? "autocomplete=\"{$autocomplete}\"" : null !!}
-            {!! $isAutofocused() ? 'autofocus' : null !!}
-            {!! $isDisabled() ? 'disabled' : null !!}
-            id="{{ $id }}"
-            {!! ($inputMode = $getInputMode()) ? "inputmode=\"{$inputMode}\"" : null !!}
-            {!! $datalistOptions ? "list=\"{$id}-list\"" : null !!}
-            {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
-            {!! ($interval = $getStep()) ? "step=\"{$interval}\"" : null !!}
-            @if (! $isConcealed())
-                {!! filled($length = $getMaxLength()) ? "maxlength=\"{$length}\"" : null !!}
-                {!! filled($value = $getMaxValue()) ? "max=\"{$value}\"" : null !!}
-                {!! filled($length = $getMinLength()) ? "minlength=\"{$length}\"" : null !!}
-                {!! filled($value = $getMinValue()) ? "min=\"{$value}\"" : null !!}
-                {!! $isRequired() ? 'required' : null !!}
-            @endif
-            {{ $getExtraInputAttributeBag()->class($inputClasses) }}
             x-bind:class="{
                 'border-gray-300 dark:border-gray-600': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
                 'border-danger-600 ring-danger-600': (@js($statePath) in $wire.__instance.serverMemo.errors),
             }"
+            {{
+                $getExtraInputAttributeBag()
+                    ->merge([
+                        'autocapitalize' => $getAutocapitalize(),
+                        'autocomplete' => $getAutocomplete(),
+                        'autofocus' => $isAutofocused(),
+                        'disabled' => $isDisabled(),
+                        'dusk' => "filament.forms.{$getStatePath()}",
+                        'id' => $id,
+                        'inputmode' => $getInputMode(),
+                        'list' => $datalistOptions ? "{$id}-list" : null,
+                        'max' => (! $isConcealed) ? $getMaxValue() : null,
+                        'maxlength' => (! $isConcealed) ? $getMaxLength() : null,
+                        'min' => (! $isConcealed) ? $getMinValue() : null,
+                        'minlength' => (! $isConcealed) ? $getMinLength() : null,
+                        'placeholder' => $getPlaceholder(),
+                        'required' => $isRequired() && (! $isConcealed),
+                        'step' => $getStep(),
+                        'type' => $hasMask ? 'text' : $getType(),
+                        $applyStateBindingModifiers('wire:model') => (! $hasMask) ? $getStatePath() : null,
+                    ], escape: false)
+                    ->class($inputClasses)
+            }}
         />
     </x-filament::input.affixes>
 

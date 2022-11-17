@@ -11,7 +11,7 @@
 <li @class(['filament-sidebar-item overflow-hidden', 'filament-sidebar-item-active' => $active])>
     <a
         href="{{ $url }}"
-        {!! $shouldOpenUrlInNewTab ? 'target="_blank"' : '' !!}
+        @if ($shouldOpenUrlInNewTab) target="_blank" @endif
         x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
         @if (\Filament\Navigation\Sidebar::$isCollapsibleOnDesktop)
             x-data="{ tooltip: {} }"

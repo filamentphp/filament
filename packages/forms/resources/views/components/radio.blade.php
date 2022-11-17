@@ -14,7 +14,7 @@
                 :two-xl="$getColumns('2xl')"
                 :is-grid="! $isInline()"
                 direction="column"
-                :attributes="$attributes->merge($getExtraAttributes(), escape: true)->class([
+                :attributes="$attributes->merge($getExtraAttributes(), escape: false)->class([
                     'filament-forms-radio-component',
                     'flex flex-wrap gap-3' => $isInline(),
                     'gap-2' => ! $isInline(),
@@ -43,7 +43,7 @@
                                     'border-gray-300 dark:border-gray-500' => ! $errors->has($getStatePath()),
                                     'border-danger-600 ring-1 ring-inset ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()),
                                 ]) }}
-                                {!! ($isDisabled || $isOptionDisabled($value, $label)) ? 'disabled' : null !!}
+                                @disabled($isDisabled || $isOptionDisabled($value, $label))
                                 wire:loading.attr="disabled"
                             />
                         </div>

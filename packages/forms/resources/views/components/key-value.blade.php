@@ -11,8 +11,8 @@
         })"
         {{
             $attributes
-                ->merge($getExtraAttributes(), escape: true)
-                ->merge($getExtraAlpineAttributes(), escape: true)
+                ->merge($getExtraAttributes(), escape: false)
+                ->merge($getExtraAlpineAttributes(), escape: false)
                 ->class(['filament-forms-key-value-component'])
         }}
     >
@@ -66,7 +66,7 @@
                                     type="text"
                                     x-model="row.key"
                                     x-on:input.debounce.{{ $getDebounce() ?? '500ms' }}="updateState"
-                                    {!! ($placeholder = $getKeyPlaceholder()) ? "placeholder=\"{$placeholder}\"" : '' !!}
+                                    @if ($placeholder = $getKeyPlaceholder()) placeholder="{{ $placeholder }}" @endif
                                     @if ((! $canEditKeys()) || $isDisabled())
                                         disabled
                                     @endif
@@ -79,7 +79,7 @@
                                     type="text"
                                     x-model="row.value"
                                     x-on:input.debounce.{{ $getDebounce() ?? '500ms' }}="updateState"
-                                    {!! ($placeholder = $getValuePlaceholder()) ? "placeholder=\"{$placeholder}\"" : '' !!}
+                                    @if ($placeholder = $getValuePlaceholder()) placeholder="{{ $placeholder }}" @endif
                                     @if ((! $canEditValues()) || $isDisabled())
                                         disabled
                                     @endif
