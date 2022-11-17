@@ -525,7 +525,7 @@
                                                     wire:loading.attr="disabled"
                                                     wire:loading.class="cursor-wait opacity-70"
                                                     type="button"
-                                                    class="flex-1 block py-3"
+                                                    class="flex-1 block py-3 filament-tables-record-click-action"
                                                 >
                                                     <x-tables::columns.layout
                                                         :components="$getColumnsLayout()"
