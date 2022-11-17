@@ -42,6 +42,7 @@
             aria-label="{{ $getPlaceholder() }}"
             dusk="filament.forms.{{ $getStatePath() }}.open"
             type="button"
+            tabindex="-1"
             @if ($isDisabled()) disabled @endif
             {{ $getExtraTriggerAttributeBag()->class([
                 'bg-white relative w-full border py-2 pl-3 pr-10 rtl:pl-10 rtl:pr-3 text-start cursor-default rounded-lg shadow-sm',
