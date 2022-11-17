@@ -221,9 +221,7 @@ trait InteractsWithActions
 
     public function getAction(string $name): ?Action
     {
-        $actions = $this->cachedActions;
-
-        $action = $actions[$name] ?? null;
+        $action = $this->cachedActions[$name] ?? null;
 
         if ($action) {
             return $action;
