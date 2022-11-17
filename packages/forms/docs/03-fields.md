@@ -1102,15 +1102,15 @@ use Filament\Forms\Components\DateTimePicker;
 DateTimePicker::make('published_at')->withoutSeconds()
 ```
 
-You may also customize step increasing for hours / minutes / seconds using the `hoursStep()` , `minutesStep()` or `secondsStep()` methods:
+You may also customize the input interval for increasing the hours / minutes / seconds using the `hoursStep()` , `minutesStep()` or `secondsStep()` methods:
 
 ```php
 use Filament\Forms\Components\DateTimePicker;
 
 DateTimePicker::make('published_at')
-->hoursStep(2)
-->minutesStep(15)
-->secondsStep(10)
+    ->hoursStep(2)
+    ->minutesStep(15)
+    ->secondsStep(10)
 ```
 
 ![](https://user-images.githubusercontent.com/41773797/147613511-30d7b2d8-227a-42ff-a6c7-e080d22305ad.png)
