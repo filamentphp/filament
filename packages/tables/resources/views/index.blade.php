@@ -206,7 +206,7 @@
             <div
                 x-show="@js($shouldRenderHeaderDiv = ($isReorderable || count($groups) || $isGlobalSearchVisible || $hasFiltersDropdown || $isColumnToggleFormVisible)) || selectedRecords.length"
                 @if (! $shouldRenderHeaderDiv) x-cloak @endif
-                class="flex items-center justify-between py-2 px-3 h-14"
+                class="filament-tables-header-toolbar flex items-center justify-between py-2 px-3 h-14"
                 x-bind:class="{
                     'gap-3': @js($isReorderable) || @js(count($groups)) || selectedRecords.length,
                 }"
@@ -234,7 +234,7 @@
                 @if ($isGlobalSearchVisible || $hasFiltersDropdown || $isColumnToggleFormVisible)
                     <div class="flex-1 flex items-center justify-end gap-3 md:max-w-md">
                         @if ($isGlobalSearchVisible)
-                            <div class="flex items-center justify-end flex-1">
+                            <div class="filament-tables-search-container flex items-center justify-end flex-1">
                                 <x-filament-tables::search-input />
                             </div>
                         @endif

@@ -63,6 +63,9 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
+    /**
+     * @deprecated Use `placeholder()` instead.
+     */
     public function idleLabel(string | Closure | null $label): static
     {
         $this->placeholder($label);

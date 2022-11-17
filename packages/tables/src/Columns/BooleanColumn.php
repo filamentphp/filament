@@ -3,8 +3,7 @@
 namespace Filament\Tables\Columns;
 
 /**
- * @deprecated Use IconColumn with the `boolean()` method instead.
- * @see IconColumn
+ * @deprecated Use `IconColumn` with the `boolean()` method instead.
  */
 class BooleanColumn extends IconColumn
 {
