@@ -325,17 +325,17 @@ class DateTimePicker extends Field
 
     public function getHoursStep(): ?int
     {
-        return $this->hoursStep;
+        return $this->evaluate($this->hoursStep);
     }
 
     public function getMinutesStep(): ?int
     {
-        return $this->minutesStep;
+        return $this->evaluate($this->minutesStep);
     }
 
     public function getSecondsStep(): ?int
     {
-        return $this->secondsStep;
+        return $this->evaluate($this->secondsStep);
     }
 
     public function shouldCloseOnDateSelection(): bool
