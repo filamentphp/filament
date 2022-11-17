@@ -76,6 +76,19 @@ DateTimePicker::make('published_at')->withoutSeconds()
 
 ![](https://user-images.githubusercontent.com/41773797/147613511-30d7b2d8-227a-42ff-a6c7-e080d22305ad.png)
 
+## Configuring the time input intervals
+
+You may customize the input interval for increasing / decreasing the hours / minutes / seconds using the `hoursStep()` , `minutesStep()` or `secondsStep()` methods:
+
+ ```php
+ use Filament\Forms\Components\DateTimePicker;
+ 
+ DateTimePicker::make('published_at')
+     ->hoursStep(2)
+     ->minutesStep(15)
+     ->secondsStep(10)
+ ```
+
 ## Configuring the first day of the week
 
 In some countries, the first day of the week is not Monday. To customize the first day of the week in the date picker, use the `forms.components.date_time_picker.first_day_of_week` config option, or the `firstDayOfWeek()` method on the component. 0 to 7 are accepted values, with Monday as 1 and Sunday as 7 or 0:
