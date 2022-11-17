@@ -1,5 +1,7 @@
 @php
-    if ($getAction()) {
+    if ($getUrl()) {
+        $wireClickAction = null;
+    } elseif ($getAction()) {
         $wireClickAction = $getAction();
 
         if ($getActionArguments()) {
@@ -15,10 +17,10 @@
 <x-filament::button
     :form="$getFormToSubmit()"
     :type="$canSubmitForm() ? 'submit' : 'button'"
-    :tag="$action->getUrl() ? 'a' : 'button'"
+    :tag="$getUrl() ? 'a' : 'button'"
     :wire:click="$wireClickAction"
-    :href="$action->isEnabled() ? $action->getUrl() : null"
-    :target="$action->shouldOpenUrlInNewTab() ? '_blank' : null"
+    :href="$isEnabled() ? $getUrl() : null"
+    :target="$shouldOpenUrlInNewTab() ? '_blank' : null"
     :x-on:click="$canCancelAction() ? 'close()' : null"
     :color="$getColor()"
     :outlined="$isOutlined()"
