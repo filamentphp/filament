@@ -5,12 +5,10 @@
 ])
 
 @php
-    if ((! $action->getAction()) || $action->getUrl()) {
-        $wireClickAction = null;
-    } elseif (is_string($action->getAction())) {
-        $wireClickAction = $action->getAction();
-    } else {
+    if (! $action->getUrl()) {
         $wireClickAction = "mountAction('{$action->getName()}')";
+    } else {
+        $wireClickAction = null;
     }
 @endphp
 

@@ -14,13 +14,15 @@ trait HasWizard
 
     public function form(Form $form): Form
     {
-        return $form->schema([
-            Wizard::make($this->getSteps())
-                ->startOnStep($this->getStartStep())
-                ->cancelAction($this->getCancelFormAction())
-                ->submitAction($this->getSubmitFormAction())
-                ->skippable($this->hasSkippableSteps()),
-        ]);
+        return parent::form($form)
+            ->schema([
+                Wizard::make($this->getSteps())
+                    ->startOnStep($this->getStartStep())
+                    ->cancelAction($this->getCancelFormAction())
+                    ->submitAction($this->getSubmitFormAction())
+                    ->skippable($this->hasSkippableSteps()),
+            ])
+            ->columns(null);
     }
 
     public function getFormActions(): array

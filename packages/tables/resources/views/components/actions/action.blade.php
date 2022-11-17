@@ -5,12 +5,14 @@
 ])
 
 @php
-    if ((! $action->getAction()) || $action->getUrl()) {
-        $wireClickAction = null;
-    } elseif ($record = $action->getRecord()) {
-        $wireClickAction = "mountTableAction('{$action->getName()}', '{$this->getTableRecordKey($record)}')";
+    if (! $action->getUrl()) {
+        if ($record = $action->getRecord()) {
+            $wireClickAction = "mountTableAction('{$action->getName()}', '{$this->getTableRecordKey($record)}')";
+        } else {
+            $wireClickAction = "mountTableAction('{$action->getName()}')";
+        }
     } else {
-        $wireClickAction = "mountTableAction('{$action->getName()}')";
+        $wireClickAction = null;
     }
 @endphp
 

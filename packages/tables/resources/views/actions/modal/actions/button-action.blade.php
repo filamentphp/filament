@@ -1,7 +1,5 @@
 @php
-    if (! $getAction()) {
-        $wireClickAction = null;
-    } else {
+    if ($getAction()) {
         $wireClickAction = $getAction();
 
         if ($getActionArguments()) {
@@ -9,6 +7,8 @@
             $wireClickAction .= str(json_encode($getActionArguments()))->replace('"', '\\"');
             $wireClickAction .= '\')';
         }
+    } else {
+        $wireClickAction = null;
     }
 @endphp
 
