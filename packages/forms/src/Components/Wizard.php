@@ -125,7 +125,7 @@ class Wizard extends Component
 
     public function getStartStep(): int
     {
-        if($this->isStepPersistedInQueryString()) {
+        if ($this->isStepPersistedInQueryString()) {
             $queryStringParamValue = request()->query($this->getQueryStringStepParamKey(), null);
             foreach ($this->getChildComponents() as $idx => $step) {
                 if ($step->getId() === $queryStringParamValue) {
