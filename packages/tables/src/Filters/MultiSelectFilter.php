@@ -3,7 +3,7 @@
 namespace Filament\Tables\Filters;
 
 /**
- * @deprecated Use SelectFilter with the `multiple()` method instead.
+ * @deprecated Use `SelectFilter` with the `multiple()` method instead.
  */
 class MultiSelectFilter extends SelectFilter
 {
