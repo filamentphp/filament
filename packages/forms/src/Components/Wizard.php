@@ -123,10 +123,13 @@ class Wizard extends Component
     {
         if ($this->isStepPersistedInQueryString()) {
             $queryStringParamValue = request()->query($this->getQueryStringStepParamKey(), null);
-            foreach ($this->getChildComponents() as $idx => $step) {
-                if ($step->getId() === $queryStringParamValue) {
-                    return $idx + 1;
+            
+            foreach ($this->getChildComponents() as $index => $step) {
+                if ($step->getId() !== $queryStringParamValue) {
+                    continue;
                 }
+                
+                return $index + 1;
             }
         }
 
