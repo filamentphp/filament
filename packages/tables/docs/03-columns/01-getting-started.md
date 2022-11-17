@@ -175,7 +175,7 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('title')->searchable(isIndividual: true, isGlobal: false)
 ```
 
-You may optionally persist the search in the query string:
+You may optionally persist the searches in the query string:
 
 ```php
 protected $queryString = [
