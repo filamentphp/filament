@@ -138,7 +138,7 @@ class Wizard extends Component
 
     public function getStepQueryStringKey(): ?string
     {
-        return $this->evaluate($this->getStepQueryStringKey);
+        return $this->evaluate($this->getStepQueryStringKey());
     }
 
     public function isSkippable(): bool
