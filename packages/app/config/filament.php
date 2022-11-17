@@ -37,19 +37,4 @@ return [
 
     'default_filesystem_disk' => env('FILAMENT_FILESYSTEM_DISK', 'public'),
 
-    /*
-    |--------------------------------------------------------------------------
-    | Layout
-    |--------------------------------------------------------------------------
-    |
-    | This is the configuration for the general layout of the app.
-    |
-    */
-
-    'layout' => [
-        'footer' => [
-            'should_show_logo' => true,
-        ],
-    ],
-
 ];
