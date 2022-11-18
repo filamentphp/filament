@@ -11,9 +11,9 @@
 
 <x-dynamic-component
     :component="$component"
-    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes(), escape: false)"
     :form="$action->getFormToSubmit()"
     :tag="$url ? 'a' : 'button'"
+    :x-on:click="$action->getAlpineMountAction()"
     :wire:click="$action->getLivewireMountAction()"
     :href="$isDisabled ? null : $url"
     :target="($url && $action->shouldOpenUrlInNewTab()) ? '_blank' : null"
@@ -26,6 +26,7 @@
     :size="$action->getSize()"
     :label-sr-only="$action->isLabelHidden()"
     dusk="filament.actions.action.{{ $action->getName() }}"
+    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes(), escape: false)"
 >
     {{ $slot }}
 </x-dynamic-component>

@@ -106,6 +106,8 @@ class Table extends ViewComponent
 
     protected array $groups = [];
 
+    protected array $groupedBulkActions = [];
+
     protected bool $hasColumnsLayout = false;
 
     protected bool $hasSummary = false;
@@ -233,9 +235,16 @@ class Table extends ViewComponent
     {
         foreach ($actions as $action) {
             $action->table($this);
-
-            $this->bulkActions[$action->getName()] = $action;
+            $this->registerBulkAction($action);
+            $this->groupedBulkActions[$action->getName()] = $action;
         }
+
+        return $this;
+    }
+
+    public function registerBulkAction(BulkAction $action): static
+    {
+        $this->bulkActions[$action->getName()] = $action;
 
         return $this;
     }
@@ -454,6 +463,10 @@ class Table extends ViewComponent
             if ($action instanceof ActionGroup) {
                 foreach ($action->getActions() as $groupedAction) {
                     $groupedAction->table($this);
+
+                    if ($groupedAction instanceof BulkAction) {
+                        $this->registerBulkAction($groupedAction);
+                    }
                 }
 
                 $this->headerActions[$index] = $action;
@@ -462,6 +475,10 @@ class Table extends ViewComponent
             }
 
             $action->table($this);
+
+            if ($action instanceof BulkAction) {
+                $this->registerBulkAction($action);
+            }
 
             $this->headerActions[$action->getName()] = $action;
         }
@@ -719,6 +736,11 @@ class Table extends ViewComponent
     public function getAllRecordsCount(): int
     {
         return $this->getLivewire()->getAllTableRecordsCount();
+    }
+
+    public function getGroupedBulkActions(): array
+    {
+        return $this->groupedBulkActions;
     }
 
     public function getBulkActions(): array

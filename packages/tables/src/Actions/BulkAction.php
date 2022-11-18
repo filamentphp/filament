@@ -12,7 +12,16 @@ class BulkAction extends MountableAction
     use Concerns\CanDeselectRecordsAfterCompletion;
     use Concerns\InteractsWithRecords;
 
-    protected string $view = 'filament-tables::actions.bulk-action';
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->grouped();
+
+        $this->extraAttributes([
+            'x-bind:disabled' => '! selectedRecords.length',
+        ]);
+    }
 
     public function call(array $parameters = [])
     {
@@ -39,6 +48,11 @@ class BulkAction extends MountableAction
     public function getLivewireCallActionName(): string
     {
         return 'callMountedTableBulkAction';
+    }
+
+    public function getAlpineMountAction(): ?string
+    {
+        return "mountBulkAction('{$this->getName()}')";
     }
 
     protected function getDefaultEvaluationParameters(): array

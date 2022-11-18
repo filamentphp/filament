@@ -17,7 +17,13 @@
     },
 ]) }}>
     @foreach ($actions as $action)
-        @if (! $action->record($record)->isHidden())
+        @php
+            if (! $action instanceof \Filament\Tables\Actions\BulkAction) {
+                $action->record($record);
+            }
+        @endphp
+
+        @if (! $action->isHidden())
             {{ $action }}
         @endif
     @endforeach

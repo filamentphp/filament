@@ -107,6 +107,11 @@ abstract class MountableAction extends StaticAction
         return null;
     }
 
+    public function getAlpineMountAction(): ?string
+    {
+        return null;
+    }
+
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [

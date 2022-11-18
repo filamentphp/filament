@@ -14,7 +14,13 @@ class ActionGroup extends BaseActionGroup
         $actions = [];
 
         foreach ($this->actions as $action) {
-            $actions[$action->getName()] = $action->grouped()->record($this->getRecord());
+            $action->grouped();
+
+            if (! $action instanceof BulkAction) {
+                $action->record($this->getRecord());
+            }
+
+            $actions[$action->getName()] = $action;
         }
 
         return $actions;

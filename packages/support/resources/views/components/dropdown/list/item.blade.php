@@ -1,6 +1,7 @@
 @props([
     'color' => 'primary',
     'detail' => null,
+    'disabled' => false,
     'icon' => null,
     'image' => null,
     'keyBindings' => null,
@@ -11,7 +12,8 @@
     $hasHoverAndFocusState = ($tag !== 'a' || filled($attributes->get('href')));
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-list-item group flex w-full items-center whitespace-nowrap rounded-md p-2 text-sm text-gray-900 dark:text-gray-100',
+        'filament-dropdown-list-item group flex w-full items-center whitespace-nowrap rounded-md p-2 text-sm text-gray-900 dark:text-gray-100 disabled:opacity-70 disabled:pointer-events-none',
+        'opacity-70 pointer-events-none' => $disabled,
         'focus:outline-none hover:text-white focus:text-white' => $hasHoverAndFocusState,
         'hover:bg-primary-500 focus:bg-primary-500' => ($color === 'primary' || $color === 'gray') && $hasHoverAndFocusState,
         'hover:bg-danger-500 focus:bg-danger-500' => $color === 'danger' && $hasHoverAndFocusState,
@@ -59,6 +61,7 @@
 @if ($tag === 'button')
     <button {{ $attributes
         ->merge([
+            'disabled' => $disabled,
             'type' => 'button',
             'wire:loading.attr' => 'disabled',
             'wire:loading.class.delay' => $hasLoadingIndicator ? 'opacity-70 cursor-wait' : null,

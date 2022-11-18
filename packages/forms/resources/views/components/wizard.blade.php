@@ -11,7 +11,7 @@
 
         init: function () {
             this.$watch('step', () => this.updateQueryString())
-        
+
             this.step = this.getSteps()[{{ $getStartStep() }} - 1]
         },
 
@@ -73,13 +73,13 @@
             if (! @js($isStepPersistedInQueryString())) {
                 return
             }
-            
+
             const url = new URL(window.location.href)
             url.searchParams.set(@js($getStepQueryStringKey()), this.step)
 
             history.pushState(null, document.title, url.toString())
         },
-        
+
     }"
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $getStatePath() }}') nextStep()"
     x-cloak
@@ -117,7 +117,7 @@
                     x-on:click="if (isStepAccessible(step, {{ $loop->index }})) step = '{{ $step->getId() }}'"
                     x-bind:aria-current="getStepIndex(step) === {{ $loop->index }} ? 'step' : null"
                     x-bind:class="{
-                        'cursor-not-allowed pointer-events-none': ! isStepAccessible(step, {{ $loop->index }}),
+                        'pointer-events-none': ! isStepAccessible(step, {{ $loop->index }}),
                     }"
                     role="step"
                     class="flex items-center w-full h-full text-start"

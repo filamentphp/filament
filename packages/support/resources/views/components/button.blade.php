@@ -15,8 +15,8 @@
 
 @php
     $buttonClasses = array_merge([
-        "filament-button filament-button-size-{$size} inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset dark:focus:ring-offset-0",
-        'opacity-70 cursor-not-allowed pointer-events-none' => $disabled,
+        "filament-button filament-button-size-{$size} inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset dark:focus:ring-offset-0 disabled:opacity-70 disabled:pointer-events-none",
+        'opacity-70 pointer-events-none' => $disabled,
         'min-h-[2.25rem] px-4 text-sm' => $size === 'md',
         'min-h-[2rem] px-3 text-sm' => $size === 'sm',
         'min-h-[2.75rem] px-6 text-lg' => $size === 'lg',
@@ -76,7 +76,6 @@
         @unless ($disabled)
             x-bind:class="{ 'opacity-70 cursor-wait': isUploadingFile }"
         @endunless
-        x-bind:disabled="isUploadingFile"
         x-init="
             form = $el.closest('form')
 
@@ -96,6 +95,7 @@
                     'wire:loading.attr' => 'disabled',
                     'wire:loading.class.delay' => $hasLoadingIndicator ? 'opacity-70 cursor-wait' : null,
                     'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
+                    'x-bind:disabled' => 'isUploadingFile',
                 ], escape: false)
                 ->class($buttonClasses)
         }}

@@ -13,8 +13,8 @@
 
 @php
     $linkClasses = [
-        'filament-link inline-flex items-center justify-center gap-0.5 font-medium hover:underline focus:outline-none focus:underline',
-        'opacity-70 cursor-not-allowed pointer-events-none' => $disabled,
+        'filament-link inline-flex items-center justify-center gap-0.5 font-medium hover:underline focus:outline-none focus:underline disabled:opacity-70 disabled:pointer-events-none',
+        'opacity-70 pointer-events-none' => $disabled,
         'text-sm' => $size === 'sm',
         'text-lg' => $size === 'lg',
         'text-primary-600 hover:text-primary-500 dark:text-primary-500 dark:hover:text-primary-400' => $color === 'primary',

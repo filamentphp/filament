@@ -108,7 +108,7 @@
             x-ref="modalContainer"
             x-cloak
             {{ $attributes->class([
-                'relative w-full cursor-pointer pointer-events-none',
+                'relative w-full pointer-events-none',
                 'my-auto p-4' => ! $slideOver,
             ]) }}
         >

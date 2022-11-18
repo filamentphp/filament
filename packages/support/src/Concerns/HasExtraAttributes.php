@@ -11,7 +11,7 @@ trait HasExtraAttributes
 
     public function extraAttributes(array | Closure $attributes): static
     {
-        $this->extraAttributes = $attributes;
+        $this->extraAttributes = array_merge($this->extraAttributes, $attributes);
 
         return $this;
     }

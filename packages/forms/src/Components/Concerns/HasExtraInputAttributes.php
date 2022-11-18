@@ -11,7 +11,7 @@ trait HasExtraInputAttributes
 
     public function extraInputAttributes(array | Closure $attributes): static
     {
-        $this->extraInputAttributes = $attributes;
+        $this->extraInputAttributes = array_merge($this->extraInputAttributes, $attributes);
 
         return $this;
     }

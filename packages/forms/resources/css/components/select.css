@@ -20,7 +20,7 @@
 }
 
 .choices.is-disabled .choices__item {
-    @apply pointer-events-none cursor-not-allowed opacity-70;
+    @apply pointer-events-none opacity-70;
 }
 
 .choices [hidden] {
@@ -168,7 +168,7 @@
 }
 
 .choices__item--disabled {
-    @apply pointer-events-none cursor-not-allowed select-none opacity-70;
+    @apply pointer-events-none select-none opacity-70;
 }
 
 .choices__placeholder {
