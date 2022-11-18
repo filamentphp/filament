@@ -27,7 +27,7 @@ trait InteractsWithFormActions
                 foreach ($action->getActions() as $groupedAction) {
                     $groupedAction->livewire($this);
 
-                    $this->cachedFormActions[$groupedAction->getName()] = $groupedAction;
+                    $this->cacheAction($groupedAction);
                 }
 
                 $this->cachedActions[$index] = $action;

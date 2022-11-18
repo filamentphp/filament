@@ -11,17 +11,12 @@ use Filament\Forms\Components\Actions\Modal\Actions\Action as ModalAction;
 class Action extends MountableAction
 {
     use Concerns\BelongsToComponent;
-    use CanBeDisabled;
-    use CanOpenUrl;
-    use HasTooltip;
 
-    protected string $view = 'filament-forms::components.actions.icon-button-action';
-
-    public function iconButton(): static
+    protected function setUp(): void
     {
-        $this->view('filament-forms::components.actions.icon-button-action');
+        parent::setUp();
 
-        return $this;
+        $this->iconButton();
     }
 
     public function getLivewireCallActionName(): string

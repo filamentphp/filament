@@ -2,22 +2,32 @@
 
 namespace Filament\Actions;
 
+use Filament\Actions\Concerns\HasGroupedIcon;
 use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 
 abstract class MountableAction extends StaticAction
 {
+    use Concerns\CanBeDisabled;
     use Concerns\CanBeMounted;
+    use Concerns\CanBeOutlined;
     use Concerns\CanNotify;
     use Concerns\CanOpenModal;
+    use Concerns\CanOpenUrl;
     use Concerns\CanRedirect;
     use Concerns\CanRequireConfirmation;
+    use Concerns\CanSubmitForm;
     use Concerns\HasAction;
     use Concerns\HasArguments;
     use Concerns\HasForm;
+    use Concerns\HasGroupedIcon;
+    use Concerns\HasKeyBindings;
     use Concerns\HasLifecycleHooks;
+    use Concerns\HasTooltip;
     use Concerns\HasWizard;
+
+    protected string $view = 'filament-actions::button-action';
 
     protected function setUp(): void
     {
@@ -60,6 +70,34 @@ abstract class MountableAction extends StaticAction
     {
         $this->sendFailureNotification();
         $this->dispatchFailureRedirect();
+    }
+
+    public function button(): static
+    {
+        $this->view('filament-actions::button-action');
+
+        return $this;
+    }
+
+    public function grouped(): static
+    {
+        $this->view('filament-actions::grouped-action');
+
+        return $this;
+    }
+
+    public function iconButton(): static
+    {
+        $this->view('filament-actions::icon-button-action');
+
+        return $this;
+    }
+
+    public function link(): static
+    {
+        $this->view('filament-actions::link-action');
+
+        return $this;
     }
 
     abstract public function getLivewire();

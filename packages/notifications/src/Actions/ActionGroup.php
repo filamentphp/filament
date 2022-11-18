@@ -7,8 +7,6 @@ use Illuminate\Contracts\Support\Arrayable;
 
 class ActionGroup extends BaseActionGroup implements Arrayable
 {
-    protected string $view = 'filament-notifications::actions.group';
-
     public function toArray(): array
     {
         return [

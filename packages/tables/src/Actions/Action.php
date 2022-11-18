@@ -16,42 +16,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Action extends MountableAction implements Groupable, HasRecord
 {
-    use CanBeDisabled;
-    use CanBeOutlined;
-    use CanOpenUrl;
     use Concerns\BelongsToTable;
-    use HasGroupedIcon;
-    use HasTooltip;
     use InteractsWithRecord;
 
-    protected string $view = 'filament-tables::actions.link-action';
-
-    public function button(): static
+    protected function setUp(): void
     {
-        $this->view('filament-tables::actions.button-action');
+        parent::setUp();
 
-        return $this;
-    }
-
-    public function grouped(): static
-    {
-        $this->view('filament-tables::actions.grouped-action');
-
-        return $this;
-    }
-
-    public function link(): static
-    {
-        $this->view('filament-tables::actions.link-action');
-
-        return $this;
-    }
-
-    public function iconButton(): static
-    {
-        $this->view('filament-tables::actions.icon-button-action');
-
-        return $this;
+        $this->link();
+        $this->size('sm');
     }
 
     public function getLivewireCallActionName(): string

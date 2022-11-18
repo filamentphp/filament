@@ -27,7 +27,7 @@ trait InteractsWithHeaderActions
                 foreach ($action->getActions() as $groupedAction) {
                     $groupedAction->livewire($this);
 
-                    $this->cachedHeaderActions[$groupedAction->getName()] = $groupedAction;
+                    $this->cacheAction($groupedAction);
                 }
 
                 $this->cachedHeaderActions[$index] = $action;
