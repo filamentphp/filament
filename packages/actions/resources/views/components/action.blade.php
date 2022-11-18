@@ -11,13 +11,13 @@
 
 <x-dynamic-component
     :component="$component"
-    :form="$action->getFormToSubmit()"
+    :form="$action instanceof \Filament\Actions\Contracts\SubmitsForm ? $action->getFormToSubmit() : null"
     :tag="$url ? 'a' : 'button'"
     :x-on:click="$action->getAlpineMountAction()"
     :wire:click="$action->getLivewireMountAction()"
     :href="$isDisabled ? null : $url"
     :target="($url && $action->shouldOpenUrlInNewTab()) ? '_blank' : null"
-    :type="$action->canSubmitForm() ? 'submit' : 'button'"
+    :type="($action instanceof \Filament\Actions\Contracts\SubmitsForm && $action->canSubmitForm()) ? 'submit' : 'button'"
     :color="$action->getColor()"
     :key-bindings="$action->getKeybindings()"
     :tooltip="$action->getTooltip()"

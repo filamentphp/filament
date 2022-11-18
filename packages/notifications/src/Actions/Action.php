@@ -20,7 +20,6 @@ class Action extends StaticAction implements Arrayable
     use CanCloseNotification;
     use CanEmitEvent;
     use CanOpenUrl;
-    use CanSubmitForm;
     use HasKeyBindings;
     use HasTooltip;
 
@@ -112,6 +111,10 @@ class Action extends StaticAction implements Arrayable
 
     public function getLivewireMountAction(): ?string
     {
+        if ($this->shouldCloseNotification()) {
+            return null;
+        }
+
         if ($this->getUrl()) {
             return null;
         }
@@ -132,6 +135,10 @@ class Action extends StaticAction implements Arrayable
 
     public function getAlpineMountAction(): ?string
     {
-        return null;
+        if (! $this->shouldCloseNotification()) {
+            return null;
+        }
+
+        return 'close()';
     }
 }

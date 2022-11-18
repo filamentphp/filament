@@ -9,16 +9,13 @@ use Filament\Actions\Concerns\CanSubmitForm;
 use Filament\Actions\Concerns\HasKeyBindings;
 use Filament\Actions\Concerns\HasTooltip;
 use Filament\Actions\StaticAction;
-use Filament\Notifications\Actions\Concerns\CanCloseNotification;
 use Illuminate\Support\Js;
 
 class Action extends StaticAction
 {
     use CanBeOutlined;
-    use CanCloseNotification;
     use CanEmitEvent;
     use CanOpenUrl;
-    use CanSubmitForm;
     use HasKeyBindings;
     use HasTooltip;
 

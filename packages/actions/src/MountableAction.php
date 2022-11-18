@@ -16,7 +16,6 @@ abstract class MountableAction extends StaticAction
     use Concerns\CanOpenUrl;
     use Concerns\CanRedirect;
     use Concerns\CanRequireConfirmation;
-    use Concerns\CanSubmitForm;
     use Concerns\HasAction;
     use Concerns\HasArguments;
     use Concerns\HasForm;

@@ -5,9 +5,10 @@ namespace Filament\Actions\Modal\Actions;
 use Filament\Actions\Concerns\CanBeOutlined;
 use Filament\Actions\Concerns\CanOpenUrl;
 use Filament\Actions\Concerns\CanSubmitForm;
+use Filament\Actions\Contracts\SubmitsForm;
 use Filament\Actions\StaticAction;
 
-class Action extends StaticAction
+class Action extends StaticAction implements SubmitsForm
 {
     use CanBeOutlined;
     use CanOpenUrl;

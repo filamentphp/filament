@@ -4,11 +4,13 @@ namespace Filament\Actions;
 
 use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\Contracts\HasRecord;
+use Filament\Actions\Contracts\SubmitsForm;
 use Illuminate\Database\Eloquent\Model;
 
-class Action extends MountableAction implements Groupable, HasRecord
+class Action extends MountableAction implements Contracts\Groupable, Contracts\HasRecord, Contracts\SubmitsForm
 {
     use Concerns\BelongsToLivewire;
+    use Concerns\CanSubmitForm;
     use Concerns\InteractsWithRecord;
 
     public function getLivewireCallActionName(): string
