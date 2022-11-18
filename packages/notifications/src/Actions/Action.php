@@ -5,9 +5,13 @@ namespace Filament\Notifications\Actions;
 use Filament\Actions\Concerns\CanBeOutlined;
 use Filament\Actions\Concerns\CanEmitEvent;
 use Filament\Actions\Concerns\CanOpenUrl;
+use Filament\Actions\Concerns\CanSubmitForm;
+use Filament\Actions\Concerns\HasKeyBindings;
+use Filament\Actions\Concerns\HasTooltip;
 use Filament\Actions\StaticAction;
 use Filament\Notifications\Actions\Concerns\CanCloseNotification;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 
 class Action extends StaticAction implements Arrayable
@@ -16,10 +20,20 @@ class Action extends StaticAction implements Arrayable
     use CanCloseNotification;
     use CanEmitEvent;
     use CanOpenUrl;
+    use CanSubmitForm;
+    use HasKeyBindings;
+    use HasTooltip;
 
-    protected string $view = 'filament-notifications::actions.link-action';
+    protected string $view = 'filament-actions::link-action';
 
     protected string $viewIdentifier = 'action';
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->size('sm');
+    }
 
     public function toArray(): array
     {
@@ -49,7 +63,11 @@ class Action extends StaticAction implements Arrayable
         $view = $data['view'] ?? null;
 
         if (filled($view) && ($static->getView() !== $view) && static::isViewSafe($view)) {
-            $static->view($data['view']);
+            $static->view($view);
+        }
+
+        if (filled($size = $data['size'] ?? null)) {
+            $static->size($size);
         }
 
         $static->close($data['shouldCloseNotification'] ?? false);
@@ -61,7 +79,6 @@ class Action extends StaticAction implements Arrayable
         $static->iconPosition($data['iconPosition'] ?? null);
         $static->label($data['label'] ?? null);
         $static->outlined($data['isOutlined'] ?? false);
-        $static->size($data['size'] ?? null);
         $static->url($data['url'] ?? null, $data['shouldOpenUrlInNewTab'] ?? false);
 
         return $static;
@@ -69,27 +86,52 @@ class Action extends StaticAction implements Arrayable
 
     protected static function isViewSafe(string $view): bool
     {
-        return Str::startsWith($view, 'filament-notifications::actions.');
+        return Str::startsWith($view, 'filament-actions::');
     }
 
     public function button(): static
     {
-        $this->view('filament-notifications::actions.button-action');
+        $this->view('filament-actions::button-action');
 
         return $this;
     }
 
     public function grouped(): static
     {
-        $this->view('filament-notifications::actions.grouped-action');
+        $this->view('filament-actions::grouped-action');
 
         return $this;
     }
 
     public function link(): static
     {
-        $this->view('filament-notifications::actions.link-action');
+        $this->view('filament-actions::link-action');
 
         return $this;
+    }
+
+    public function getLivewireMountAction(): ?string
+    {
+        if ($this->getUrl()) {
+            return null;
+        }
+
+        $event = $this->getEvent();
+
+        if (! $event) {
+            return null;
+        }
+
+        $emitArguments = collect([$event])
+            ->merge($this->getEventData())
+            ->map(fn ($value): string => Js::from($value)->toHtml())
+            ->implode(', ');
+
+        return "\$emit({$emitArguments})";
+    }
+
+    public function getAlpineMountAction(): ?string
+    {
+        return null;
     }
 }
