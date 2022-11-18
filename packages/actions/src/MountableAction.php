@@ -2,7 +2,6 @@
 
 namespace Filament\Actions;
 
-use Filament\Actions\Concerns\HasGroupedIcon;
 use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
