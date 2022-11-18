@@ -5,7 +5,6 @@ namespace Filament\Notifications\Actions;
 use Filament\Actions\Concerns\CanBeOutlined;
 use Filament\Actions\Concerns\CanEmitEvent;
 use Filament\Actions\Concerns\CanOpenUrl;
-use Filament\Actions\Concerns\CanSubmitForm;
 use Filament\Actions\Concerns\HasKeyBindings;
 use Filament\Actions\Concerns\HasTooltip;
 use Filament\Actions\StaticAction;

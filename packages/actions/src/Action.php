@@ -2,9 +2,6 @@
 
 namespace Filament\Actions;
 
-use Filament\Actions\Contracts\Groupable;
-use Filament\Actions\Contracts\HasRecord;
-use Filament\Actions\Contracts\SubmitsForm;
 use Illuminate\Database\Eloquent\Model;
 
 class Action extends MountableAction implements Contracts\Groupable, Contracts\HasRecord, Contracts\SubmitsForm
