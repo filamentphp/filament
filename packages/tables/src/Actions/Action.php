@@ -11,7 +11,6 @@ use Filament\Actions\Concerns\InteractsWithRecord;
 use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\Contracts\HasRecord;
 use Filament\Actions\MountableAction;
-use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
 use Illuminate\Database\Eloquent\Model;
 
 class Action extends MountableAction implements Groupable, HasRecord
