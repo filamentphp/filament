@@ -14,6 +14,5 @@ Plugin::uses(InteractsWithFilamentNotifications::class);
  */
 function assertNotified(Notification | string $notification = null)
 {
-    // @phpstan-ignore-next-line
     return test()->assertNotified(...func_get_args());
 }

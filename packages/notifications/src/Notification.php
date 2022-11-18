@@ -18,8 +18,10 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\DatabaseNotification as DatabaseNotificationModel;
 use Illuminate\Notifications\Messages\BroadcastMessage;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Assert;
 
 class Notification extends ViewComponent implements Arrayable
 {
@@ -191,5 +193,22 @@ class Notification extends ViewComponent implements Arrayable
         $static->id($notification->getKey());
 
         return $static;
+    }
+
+    public static function assertNotified(Notification | string $notification = null): void
+    {
+        $notifications = session()->get('filament.notifications');
+
+        Assert::assertIsArray($notifications);
+
+        $expectedNotification = Arr::last($notifications);
+
+        Assert::assertIsArray($expectedNotification);
+
+        if ($notification instanceof Notification) {
+            Assert::assertSame($expectedNotification, $notification->toArray());
+        } elseif (filled($notification)) {
+            Assert::assertSame($expectedNotification['title'], $notification);
+        }
     }
 }

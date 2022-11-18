@@ -21,7 +21,10 @@
     "autoload": {
         "psr-4": {
             "Filament\\Notifications\\": "src"
-        }
+        },
+        "files": [
+            "src/Testing/Autoload.php"
+        ]
     },
     "extra": {
         "laravel": {

@@ -14,14 +14,12 @@ use Livewire\Testing\TestableLivewire;
  */
 class TestsNotifications
 {
-    use InteractsWithFilamentNotifications {
-        assertNotified as filamentAssertNotified;
-    }
-
     public function assertNotified(): Closure
     {
         return function (Notification | string $notification = null): static {
-            return $this->filamentAssertNotified(...func_get_args());
+            Notification::assertNotified($notification);
+
+            return $this;
         };
     }
 }
