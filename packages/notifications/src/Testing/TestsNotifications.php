@@ -16,24 +16,14 @@ use PHPUnit\Framework\Assert;
  */
 class TestsNotifications
 {
+    use InteractsWithFilamentNotifications {
+        assertNotified as filamentAssertNotified;
+    }
+
     public function assertNotified(): Closure
     {
         return function (Notification | string $notification = null): static {
-            $notifications = session()->get('filament.notifications');
-
-            Assert::assertIsArray($notifications);
-
-            $expectedNotification = Arr::last($notifications);
-
-            Assert::assertIsArray($expectedNotification);
-
-            if ($notification instanceof Notification) {
-                Assert::assertSame($expectedNotification, $notification->toArray());
-            } elseif (filled($notification)) {
-                Assert::assertSame($expectedNotification['title'], $notification);
-            }
-
-            return $this;
+            return $this->filamentAssertNotified(...func_get_args());
         };
     }
 }
