@@ -44,18 +44,15 @@ trait HasState
             interface_exists(BackedEnum::class) &&
             ($state instanceof BackedEnum) &&
             property_exists($state, 'value')
-        )
-        {
+        ) {
             $state = $state->value;
         }
 
-        if ($state === null)
-        {
+        if ($state === null) {
             $state = value($this->getDefaultState());
         }
 
-        if (is_array($state))
-        {
+        if (is_array($state)) {
             $state = $this->mutateArrayState($state);
         }
 
@@ -68,13 +65,11 @@ trait HasState
 
         $state = Arr::get($record, $this->getName());
 
-        if ($state !== null)
-        {
+        if ($state !== null) {
             return $state;
         }
 
-        if (!$this->queriesRelationships($record))
-        {
+        if (!$this->queriesRelationships($record)) {
             return null;
         }
 
@@ -90,23 +85,19 @@ trait HasState
         $relationshipName = (string) str($restOfName)->before('.');
         $restOfName       = (string) str($restOfName)->after('.');
 
-        if (!method_exists($record, $relationshipName))
-        {
+        if (!method_exists($record, $relationshipName)) {
             return [];
         }
 
-        if (!str($restOfName)->contains('.'))
-        {
+        if (!str($restOfName)->contains('.')) {
             $state = $record->{$relationshipName}()->pluck($restOfName);
 
             return $state->toArray();
         }
-        else
-        {
+        else {
             $related = $record->{$relationshipName}();
 
-            foreach ($related->get() as $relatedRecord)
-            {
+            foreach ($related->get() as $relatedRecord) {
                 $results = array_merge(
                     $results,
                     $this->collectRelationValues($relationshipName, $restOfName, $relatedRecord, $results)
