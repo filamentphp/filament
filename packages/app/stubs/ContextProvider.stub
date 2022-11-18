@@ -8,6 +8,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\MirrorConfigToSubpackages;
 use Filament\Pages;
+use Filament\Support\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -24,6 +25,7 @@ class {{ class }} extends ContextProvider
         return $context
             ->id('{{ id }}')
             ->path('{{ id }}')
+            ->primaryColor(Color::Amber)
             ->discoverResources(in: app_path('Filament/{{ directory }}/Resources'), for: 'App\\Filament\\{{ directory }}\\Resources')
             ->discoverPages(in: app_path('Filament/{{ directory }}/Pages'), for: 'App\\Filament\\{{ directory }}\\Pages')
             ->discoverWidgets(in: app_path('Filament/{{ directory }}/Widgets'), for: 'App\\Filament\\{{ directory }}\\Widgets')
