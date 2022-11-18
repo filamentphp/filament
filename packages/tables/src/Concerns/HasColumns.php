@@ -134,25 +134,12 @@ trait HasColumns
             ];
         }
 
-        if ($columnRelationship = $column->getRelationship($record)) {
-            $record = $columnRelationship->getResults();
-            $columnName = $column->getRelationshipTitleColumnName();
-        } elseif (
-            $this instanceof HasRelationshipTable &&
-            (($tableRelationship = $this->getRelationship()) instanceof BelongsToMany) &&
-            in_array($columnName, $tableRelationship->getPivotColumns())
-        ) {
-            $record = $record->{$tableRelationship->getPivotAccessor()};
-        } else {
-            $columnName = (string) Str::of($columnName)->replace('.', '->');
-        }
-
-        if (! ($record instanceof Model)) {
-            return null;
-        }
-
-        $record->setAttribute($columnName, $input);
-        $record->save();
+        $column->evaluate($column->getSaveStateUsing(), [
+            'columnName' => $columnName,
+            'record' => $record,
+            'table' => $this->getTable(),
+            'input' => $input,
+        ]);
 
         return null;
     }

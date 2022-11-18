@@ -8,6 +8,7 @@ use Filament\Tables\Columns\Contracts\Editable;
 class CheckboxColumn extends Column implements Editable
 {
     use Concerns\CanBeValidated;
+    use Concerns\CanSaveState;
     use HasExtraInputAttributes;
 
     protected string $view = 'tables::columns.checkbox-column';
