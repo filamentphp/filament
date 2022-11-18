@@ -7,7 +7,6 @@ use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Exceptions\PropertyNotFoundException;
 
