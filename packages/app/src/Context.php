@@ -58,15 +58,15 @@ class Context
 
     protected array $livewireComponents = [];
 
-    protected string | Closure | array | null $emailVerificationPromptPage = null;
+    protected string | Closure | array | null $emailVerificationRouteAction = null;
 
-    protected string | Closure | array | null $loginPage = null;
+    protected string | Closure | array | null $loginRouteAction = null;
 
-    protected string | Closure | array | null $registrationPage = null;
+    protected string | Closure | array | null $registrationRouteAction = null;
 
-    protected string | Closure | array | null $requestPasswordResetPage = null;
+    protected string | Closure | array | null $requestPasswordResetRouteAction = null;
 
-    protected string | Closure | array | null $resetPasswordPage = null;
+    protected string | Closure | array | null $resetPasswordRouteAction = null;
 
     protected array $navigationGroups = [];
 
@@ -215,9 +215,9 @@ class Context
         return $this;
     }
 
-    public function emailVerification(string | Closure | array | null $promptPage = EmailVerificationPrompt::class, bool $isRequired = true): static
+    public function emailVerification(string | Closure | array | null $promptAction = EmailVerificationPrompt::class, bool $isRequired = true): static
     {
-        $this->emailVerificationPromptPage = $promptPage;
+        $this->emailVerificationRouteAction = $promptAction;
         $this->requiresEmailVerification($isRequired);
 
         return $this;
@@ -230,24 +230,24 @@ class Context
         return $this;
     }
 
-    public function login(string | Closure | array | null $page = Login::class): static
+    public function login(string | Closure | array | null $action = Login::class): static
     {
-        $this->loginPage = $page;
+        $this->loginRouteAction = $action;
 
         return $this;
     }
 
-    public function passwordReset(string | Closure | array | null $requestPage = RequestPasswordReset::class, string | Closure | array | null $resetPage = ResetPassword::class): static
+    public function passwordReset(string | Closure | array | null $requestAction = RequestPasswordReset::class, string | Closure | array | null $resetAction = ResetPassword::class): static
     {
-        $this->requestPasswordResetPage = $requestPage;
-        $this->resetPasswordPage = $resetPage;
+        $this->requestPasswordResetRouteAction = $requestAction;
+        $this->resetPasswordRouteAction = $resetAction;
 
         return $this;
     }
 
-    public function registration(string | Closure | array | null $page = Register::class): static
+    public function registration(string | Closure | array | null $action = Register::class): static
     {
-        $this->registrationPage = $page;
+        $this->registrationRouteAction = $action;
 
         return $this;
     }
@@ -901,49 +901,49 @@ class Context
         return array_unique($this->meta);
     }
 
-    public function getEmailVerificationPromptPage(): string | Closure | array | null
+    public function getEmailVerificationPromptRouteAction(): string | Closure | array | null
     {
-        return $this->emailVerificationPromptPage;
+        return $this->emailVerificationRouteAction;
     }
 
-    public function getLoginPage(): string | Closure | array | null
+    public function getLoginRouteAction(): string | Closure | array | null
     {
-        return $this->loginPage;
+        return $this->loginRouteAction;
     }
 
-    public function getRegistrationPage(): string | Closure | array | null
+    public function getRegistrationRouteAction(): string | Closure | array | null
     {
-        return $this->registrationPage;
+        return $this->registrationRouteAction;
     }
 
-    public function getRequestPasswordResetPage(): string | Closure | array | null
+    public function getRequestPasswordResetRouteAction(): string | Closure | array | null
     {
-        return $this->requestPasswordResetPage;
+        return $this->requestPasswordResetRouteAction;
     }
 
-    public function getResetPasswordPage(): string | Closure | array | null
+    public function getResetPasswordRouteAction(): string | Closure | array | null
     {
-        return $this->resetPasswordPage;
+        return $this->resetPasswordRouteAction;
     }
 
     public function hasEmailVerification(): bool
     {
-        return filled($this->getEmailVerificationPromptPage());
+        return filled($this->getEmailVerificationPromptRouteAction());
     }
 
     public function hasLogin(): bool
     {
-        return filled($this->getLoginPage());
+        return filled($this->getLoginRouteAction());
     }
 
     public function hasPasswordReset(): bool
     {
-        return filled($this->getRequestPasswordResetPage());
+        return filled($this->getRequestPasswordResetRouteAction());
     }
 
     public function hasRegistration(): bool
     {
-        return filled($this->getRegistrationPage());
+        return filled($this->getRegistrationRouteAction());
     }
 
     public function discoverPages(string $in, string $for): static
@@ -1124,20 +1124,20 @@ class Context
         $this->queueLivewireComponentForRegistration(Notifications::class);
 
         if ($this->hasEmailVerification()) {
-            $this->queueLivewireComponentForRegistration($this->getEmailVerificationPromptPage());
+            $this->queueLivewireComponentForRegistration($this->getEmailVerificationPromptRouteAction());
         }
 
         if ($this->hasLogin()) {
-            $this->queueLivewireComponentForRegistration($this->getLoginPage());
+            $this->queueLivewireComponentForRegistration($this->getLoginRouteAction());
         }
 
         if ($this->hasPasswordReset()) {
-            $this->queueLivewireComponentForRegistration($this->getRequestPasswordResetPage());
-            $this->queueLivewireComponentForRegistration($this->getResetPasswordPage());
+            $this->queueLivewireComponentForRegistration($this->getRequestPasswordResetRouteAction());
+            $this->queueLivewireComponentForRegistration($this->getResetPasswordRouteAction());
         }
 
         if ($this->hasRegistration()) {
-            $this->queueLivewireComponentForRegistration($this->getRegistrationPage());
+            $this->queueLivewireComponentForRegistration($this->getRegistrationRouteAction());
         }
 
         foreach ($this->getResources() as $resource) {

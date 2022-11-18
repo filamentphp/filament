@@ -19,22 +19,22 @@ Route::name('filament.')
                 ->group(function () use ($context) {
                     Route::name('auth.')->group(function () use ($context) {
                         if ($context->hasLogin()) {
-                            Route::get('/login', $context->getLoginPage())->name('login');
+                            Route::get('/login', $context->getLoginRouteAction())->name('login');
                         }
 
                         if ($context->hasPasswordReset()) {
                             Route::name('password-reset.')
                                 ->prefix('/password-reset')
                                 ->group(function () use ($context) {
-                                    Route::get('/request', $context->getRequestPasswordResetPage())->name('request');
-                                    Route::get('/reset', $context->getResetPasswordPage())
+                                    Route::get('/request', $context->getRequestPasswordResetRouteAction())->name('request');
+                                    Route::get('/reset', $context->getResetPasswordRouteAction())
                                         ->middleware(['signed'])
                                         ->name('reset');
                                 });
                         }
 
                         if ($context->hasRegistration()) {
-                            Route::get('/register', $context->getRegistrationPage())->name('register');
+                            Route::get('/register', $context->getRegistrationRouteAction())->name('register');
                         }
 
                         Route::post('/logout', LogoutController::class)->name('logout');
@@ -66,7 +66,7 @@ Route::name('filament.')
                                 Route::name('auth.email-verification.')
                                     ->prefix('/email-verification')
                                     ->group(function () use ($context) {
-                                        Route::get('/prompt', $context->getEmailVerificationPromptPage())->name('prompt');
+                                        Route::get('/prompt', $context->getEmailVerificationPromptRouteAction())->name('prompt');
                                         Route::get('/verify', EmailVerificationController::class)->name('verify');
                                     });
                             }
