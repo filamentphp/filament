@@ -13,7 +13,7 @@ return [
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Șterger',
+                    'label' => 'Ștergere',
                 ],
 
             ],

@@ -22,6 +22,18 @@ return [
             'label' => 'Deconectare',
         ],
 
+        'sidebar' => [
+
+            'collapse' => [
+                'label' => 'Restrânge bara laterală',
+            ],
+
+            'expand' => [
+                'label' => 'Extinde bara laterală',
+            ],
+
+        ],
+
         'user_menu' => [
             'label' => 'meniul utilizatorului',
         ],
