@@ -16,6 +16,10 @@ return [
                 'label' => 'Adăugare la :label',
             ],
 
+            'create_item_between' => [
+                'label' => 'Inserează',
+            ],
+
             'delete_item' => [
                 'label' => 'Ștergere',
             ],
@@ -46,6 +50,22 @@ return [
 
             'expand_all' => [
                 'label' => 'Expandare toate',
+            ],
+
+        ],
+
+    ],
+
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Deselectează toate',
+            ],
+
+            'select_all' => [
+                'label' => 'Selectează toate',
             ],
 
         ],
