@@ -62,6 +62,7 @@
                         'min' => (! $isConcealed) ? $getMinValue() : null,
                         'minlength' => (! $isConcealed) ? $getMinLength() : null,
                         'placeholder' => $getPlaceholder(),
+                        'readonly' => $isReadonly(),
                         'required' => $isRequired() && (! $isConcealed),
                         'step' => $getStep(),
                         'type' => $hasMask ? 'text' : $getType(),

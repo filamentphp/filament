@@ -10,6 +10,7 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained
     use Concerns\CanBeAutocapitalized;
     use Concerns\CanBeAutocompleted;
     use Concerns\CanBeLengthConstrained;
+    use Concerns\CanBeReadonly;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;

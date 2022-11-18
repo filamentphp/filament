@@ -204,6 +204,29 @@ class TestsForms
         };
     }
 
+    public function assertFormFieldIsReadonly(): Closure
+    {
+        return function (string $fieldName, string $formName = 'form'): static {
+            /** @phpstan-ignore-next-line  */
+            $this->assertFormFieldExists($fieldName, $formName);
+
+            /** @var ComponentContainer $form */
+            $form = $this->instance()->{$formName};
+
+            /** @var Field $field */
+            $field = $form->getFlatFields(withHidden: true)[$fieldName];
+
+            $livewireClass = $this->instance()::class;
+
+            Assert::assertTrue(
+                $field->isReadonly(),
+                "Failed asserting that a field with the name [{$fieldName}] is readonly on the form named [{$formName}] on the [{$livewireClass}] component."
+            );
+
+            return $this;
+        };
+    }
+
     public function assertFormFieldIsHidden(): Closure
     {
         return function (string $fieldName, string $formName = 'form'): static {
