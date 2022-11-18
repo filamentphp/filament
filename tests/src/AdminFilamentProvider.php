@@ -8,7 +8,6 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Http\Middleware\MirrorConfigToSubpackages;
 use Filament\Pages;
-use Filament\Support\Color;
 use Filament\Tests\Actions\Fixtures\Pages\Actions;
 use Filament\Tests\App\Fixtures\Pages\Settings;
 use Filament\Tests\App\Fixtures\Resources\PostCategoryResource;
