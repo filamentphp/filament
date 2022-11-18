@@ -44,15 +44,18 @@ trait HasState
             interface_exists(BackedEnum::class) &&
             ($state instanceof BackedEnum) &&
             property_exists($state, 'value')
-        ) {
+        )
+        {
             $state = $state->value;
         }
 
-        if ($state === null) {
+        if ($state === null)
+        {
             $state = value($this->getDefaultState());
         }
 
-        if (is_array($state)) {
+        if (is_array($state))
+        {
             $state = $this->mutateArrayState($state);
         }
 
@@ -65,37 +68,53 @@ trait HasState
 
         $state = Arr::get($record, $this->getName());
 
-        if ($state !== null) {
+        if ($state !== null)
+        {
             return $state;
         }
 
-        if (! $this->queriesRelationships($record)) {
+        if (!$this->queriesRelationships($record))
+        {
             return null;
         }
 
-        $relationshipName = $this->getRelationshipName();
+        $state = [];
 
-        if (! method_exists($record, $relationshipName)) {
-            return null;
+        $state = $this->collectRelationValues('', $this->getName(), $record, $state);
+
+        return count($state) ? $state : null;
+    }
+
+    protected function collectRelationValues($relationshipName, $restOfName, $record, &$results)
+    {
+        $relationshipName = (string) str($restOfName)->before('.');
+        $restOfName       = (string) str($restOfName)->after('.');
+
+        if (!method_exists($record, $relationshipName))
+        {
+            return [];
         }
 
-        $relationship = $record->{$relationshipName}();
+        if (!str($restOfName)->contains('.'))
+        {
+            $state = $record->{$relationshipName}()->pluck($restOfName);
 
-        if (! (
-            $relationship instanceof HasMany ||
-            $relationship instanceof BelongsToMany ||
-            $relationship instanceof MorphMany
-        )) {
-            return null;
+            return $state->toArray();
+        }
+        else
+        {
+            $related = $record->{$relationshipName}();
+
+            foreach ($related->get() as $relatedRecord)
+            {
+                $results = array_merge(
+                    $results,
+                    $this->collectRelationValues($relationshipName, $restOfName, $relatedRecord, $results)
+                );
+            };
         }
 
-        $state = $record->getRelationValue($relationshipName)->pluck($this->getRelationshipTitleColumnName());
-
-        if (! count($state)) {
-            return null;
-        }
-
-        return $state->toArray();
+        return $results;
     }
 
     protected function mutateArrayState(array $state)
