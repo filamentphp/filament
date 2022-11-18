@@ -4,7 +4,6 @@ namespace Filament\Tables\Actions;
 
 use Closure;
 use Filament\Actions\MountableAction;
-use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
 use Illuminate\Database\Eloquent\Collection;
 
 class BulkAction extends MountableAction

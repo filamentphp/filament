@@ -4,7 +4,6 @@ namespace Filament\Actions;
 
 use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\Contracts\HasRecord;
-use Filament\Actions\Modal\Actions\Action as ModalAction;
 use Illuminate\Database\Eloquent\Model;
 
 class Action extends MountableAction implements Groupable, HasRecord

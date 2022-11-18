@@ -6,7 +6,6 @@ use Filament\Actions\Concerns\CanBeDisabled;
 use Filament\Actions\Concerns\CanOpenUrl;
 use Filament\Actions\Concerns\HasTooltip;
 use Filament\Actions\MountableAction;
-use Filament\Forms\Components\Actions\Modal\Actions\Action as ModalAction;
 
 class Action extends MountableAction
 {
