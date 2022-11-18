@@ -170,7 +170,7 @@
     <x-filament-tables::container>
         <div
             class="filament-tables-header-container"
-            x-show="hasHeader = (@js($renderHeader = ($header || $heading || ($headerActions && (! $isReordering)) || $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible)) || (selectedRecords.length && @js(count($groupedBulkActions)))"
+            x-show="hasHeader = (@js($renderHeader = ($header || $heading || ($headerActions && (! $isReordering)) || $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible)) || (selectedRecords.length && @js(count($groupedBulkActions))))"
             @if (! $renderHeader) x-cloak @endif
         >
             @if ($header)
@@ -211,7 +211,7 @@
                 @if (! $shouldRenderHeaderDiv) x-cloak @endif
                 class="filament-tables-header-toolbar flex items-center justify-between py-2 px-3 h-14"
                 x-bind:class="{
-                    'gap-3': @js($isReorderable) || @js(count($groups)) || (selectedRecords.length && @js(count($groupedBulkActions)),
+                    'gap-3': @js($isReorderable) || @js(count($groups)) || (selectedRecords.length && @js(count($groupedBulkActions))),
                 }"
             >
                 <div class="flex-shrink-0 flex items-center sm:gap-3">
