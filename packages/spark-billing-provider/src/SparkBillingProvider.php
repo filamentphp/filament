@@ -11,7 +11,7 @@ use Spark\Spark;
 
 class SparkBillingProvider implements Contracts\Provider
 {
-    public function getRouteAction(): string | array | Closure
+    public function getRouteAction(): string | Closure | array
     {
         return function (): RedirectResponse {
             // We cannot explicitly require Spark through Composer, as Stripe

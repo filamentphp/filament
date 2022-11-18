@@ -6,7 +6,7 @@ use Closure;
 
 interface Provider
 {
-    public function getRouteAction(): string | array | Closure;
+    public function getRouteAction(): string | Closure | array;
 
     public function getSubscribedMiddleware(): string;
 }
