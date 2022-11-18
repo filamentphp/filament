@@ -58,15 +58,15 @@ class Context
 
     protected array $livewireComponents = [];
 
-    protected ?string $emailVerificationPromptPage = null;
+    protected string | Closure | array | null $emailVerificationPromptPage = null;
 
-    protected ?string $loginPage = null;
+    protected string | Closure | array | null $loginPage = null;
 
-    protected ?string $registrationPage = null;
+    protected string | Closure | array | null $registrationPage = null;
 
-    protected ?string $requestPasswordResetPage = null;
+    protected string | Closure | array | null $requestPasswordResetPage = null;
 
-    protected ?string $resetPasswordPage = null;
+    protected string | Closure | array | null $resetPasswordPage = null;
 
     protected array $navigationGroups = [];
 
@@ -215,7 +215,7 @@ class Context
         return $this;
     }
 
-    public function emailVerification(?string $promptPage = EmailVerificationPrompt::class, bool $isRequired = true): static
+    public function emailVerification(string | Closure | array | null $promptPage = EmailVerificationPrompt::class, bool $isRequired = true): static
     {
         $this->emailVerificationPromptPage = $promptPage;
         $this->requiresEmailVerification($isRequired);
@@ -230,14 +230,14 @@ class Context
         return $this;
     }
 
-    public function login(?string $page = Login::class): static
+    public function login(string | Closure | array | null $page = Login::class): static
     {
         $this->loginPage = $page;
 
         return $this;
     }
 
-    public function passwordReset(?string $requestPage = RequestPasswordReset::class, ?string $resetPage = ResetPassword::class): static
+    public function passwordReset(string | Closure | array | null $requestPage = RequestPasswordReset::class, string | Closure | array | null $resetPage = ResetPassword::class): static
     {
         $this->requestPasswordResetPage = $requestPage;
         $this->resetPasswordPage = $resetPage;
@@ -245,7 +245,7 @@ class Context
         return $this;
     }
 
-    public function registration(?string $page = Register::class): static
+    public function registration(string | Closure | array | null $page = Register::class): static
     {
         $this->registrationPage = $page;
 
@@ -613,10 +613,6 @@ class Context
             return null;
         }
 
-        if (! class_exists($this->getLoginPage())) {
-            return $this->getLoginPage();
-        }
-
         return route("filament.{$this->getId()}.auth.login");
     }
 
@@ -905,27 +901,27 @@ class Context
         return array_unique($this->meta);
     }
 
-    public function getEmailVerificationPromptPage(): ?string
+    public function getEmailVerificationPromptPage(): string | Closure | array | null
     {
         return $this->emailVerificationPromptPage;
     }
 
-    public function getLoginPage(): ?string
+    public function getLoginPage(): string | Closure | array | null
     {
         return $this->loginPage;
     }
 
-    public function getRegistrationPage(): ?string
+    public function getRegistrationPage(): string | Closure | array | null
     {
         return $this->registrationPage;
     }
 
-    public function getRequestPasswordResetPage(): ?string
+    public function getRequestPasswordResetPage(): string | Closure | array | null
     {
         return $this->requestPasswordResetPage;
     }
 
-    public function getResetPasswordPage(): ?string
+    public function getResetPasswordPage(): string | Closure | array | null
     {
         return $this->resetPasswordPage;
     }
@@ -937,7 +933,7 @@ class Context
 
     public function hasLogin(): bool
     {
-        return filled($this->getLoginPage()) && class_exists($this->getLoginPage());
+        return filled($this->getLoginPage());
     }
 
     public function hasPasswordReset(): bool
