@@ -207,7 +207,7 @@
             @endif
 
             <div
-                x-show="@js($shouldRenderHeaderDiv = ($isReorderable || count($groups) || $isGlobalSearchVisible || $hasFiltersDropdown || $isColumnToggleFormVisible)) || (selectedRecords.length && @js(count($groupedBulkActions))"
+                x-show="@js($shouldRenderHeaderDiv = ($isReorderable || count($groups) || $isGlobalSearchVisible || $hasFiltersDropdown || $isColumnToggleFormVisible)) || (selectedRecords.length && @js(count($groupedBulkActions)))"
                 @if (! $shouldRenderHeaderDiv) x-cloak @endif
                 class="filament-tables-header-toolbar flex items-center justify-between py-2 px-3 h-14"
                 x-bind:class="{
