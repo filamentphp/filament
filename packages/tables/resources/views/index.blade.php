@@ -190,17 +190,19 @@
                         </x-slot>
                     </x-filament-tables::header>
 
-                    <x-filament::hr :x-show="\Illuminate\Support\Js::from($isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible) . ' || (selectedRecords.length && ' . \Illuminate\Support\Js::from(count($groupedBulkActions)) . ')'" />
+                    <x-filament::hr
+                        :x-show="\Illuminate\Support\Js::from($isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible) . ' || (selectedRecords.length && ' . \Illuminate\Support\Js::from(count($groupedBulkActions)) . ')'"/>
                 </div>
             @endif
 
             @if ($hasFiltersAboveContent)
                 <div class="px-2 pt-2">
                     <div class="p-4 mb-2">
-                        <x-filament-tables::filters :form="$getFiltersForm()" />
+                        <x-filament-tables::filters :form="$getFiltersForm()"/>
                     </div>
 
-                    <x-filament::hr :x-show="\Illuminate\Support\Js::from($isReorderable || count($groups) || $isGlobalSearchVisible || $isColumnToggleFormVisible) . ' || (selectedRecords.length && ' . \Illuminate\Support\Js::from(count($groupedBulkActions)) . ')'" />
+                    <x-filament::hr
+                        :x-show="\Illuminate\Support\Js::from($isReorderable || count($groups) || $isGlobalSearchVisible || $isColumnToggleFormVisible) . ' || (selectedRecords.length && ' . \Illuminate\Support\Js::from(count($groupedBulkActions)) . ')'"/>
                 </div>
             @endif
 
@@ -220,7 +222,7 @@
                     @endif
 
                     @if (count($groups))
-                        <x-filament-tables::groups :groups="$groups" />
+                        <x-filament-tables::groups :groups="$groups"/>
                     @endif
 
                     @if ((! $isReordering) && count($groupedBulkActions))
@@ -236,7 +238,7 @@
                     <div class="flex-1 flex items-center justify-end gap-3 md:max-w-md">
                         @if ($isGlobalSearchVisible)
                             <div class="filament-tables-search-container flex items-center justify-end flex-1">
-                                <x-filament-tables::search-input />
+                                <x-filament-tables::search-input/>
                             </div>
                         @endif
 
@@ -367,7 +369,8 @@
                                         >
                                             <option value="">-</option>
                                             @foreach ($sortableColumns as $column)
-                                                <option value="{{ $column->getName() }}">{{ $column->getLabel() }}</option>
+                                                <option
+                                                    value="{{ $column->getName() }}">{{ $column->getLabel() }}</option>
                                             @endforeach
                                         </select>
                                     </label>
@@ -384,8 +387,10 @@
                                             style="background-position: right 0.2rem center"
                                             class="text-xs pl-2 pr-6 py-1 font-medium border-0 bg-gray-500/5 rounded-lg border-gray-300 sm:text-sm focus:ring-0 focus:border-primary-500 focus:ring-primary-500 dark:text-white dark:bg-gray-700 dark:border-gray-600 dark:focus:border-primary-500"
                                         >
-                                            <option value="asc">{{ __('filament-tables::table.sorting.fields.direction.options.asc') }}</option>
-                                            <option value="desc">{{ __('filament-tables::table.sorting.fields.direction.options.desc') }}</option>
+                                            <option
+                                                value="asc">{{ __('filament-tables::table.sorting.fields.direction.options.asc') }}</option>
+                                            <option
+                                                value="desc">{{ __('filament-tables::table.sorting.fields.direction.options.desc') }}</option>
                                         </select>
                                     </label>
                                 </div>
@@ -451,14 +456,14 @@
                                 <div
                                     @if ($hasCollapsibleColumnsLayout)
                                         x-data="{ isCollapsed: true }"
-                                        x-init="$dispatch('collapsible-table-row-initialized')"
-                                        x-on:expand-all-table-rows.window="isCollapsed = false"
-                                        x-on:collapse-all-table-rows.window="isCollapsed = true"
+                                    x-init="$dispatch('collapsible-table-row-initialized')"
+                                    x-on:expand-all-table-rows.window="isCollapsed = false"
+                                    x-on:collapse-all-table-rows.window="isCollapsed = true"
                                     @endif
                                     wire:key="{{ $this->id }}.table.records.{{ $recordKey }}"
                                     @if ($isReordering)
                                         x-sortable-item="{{ $recordKey }}"
-                                        x-sortable-handle
+                                    x-sortable-handle
                                     @endif
                                 >
                                     <div
@@ -638,7 +643,8 @@
                         {{ $emptyState }}
                     @else
                         <div class="flex items-center justify-center p-4">
-                            <x-filament-tables::empty-state :icon="$getEmptyStateIcon()" :actions="$getEmptyStateActions()">
+                            <x-filament-tables::empty-state :icon="$getEmptyStateIcon()"
+                                                            :actions="$getEmptyStateActions()">
                                 <x-slot name="heading">
                                     {{ $getEmptyStateHeading() }}
                                 </x-slot>
@@ -746,7 +752,8 @@
                             @foreach ($columns as $column)
                                 <x-filament-tables::cell class="px-4 py-1">
                                     @if ($column->isIndividuallySearchable())
-                                        <x-filament-tables::search-input wire-model="tableColumnSearches.{{ $column->getName() }}" />
+                                        <x-filament-tables::search-input
+                                            wire-model="tableColumnSearches.{{ $column->getName() }}"/>
                                     @endif
                                 </x-filament-tables::cell>
                             @endforeach
@@ -834,7 +841,7 @@
                                         'hidden' => ! $isReordering,
                                     ])>
                                         @if ($isReordering)
-                                            <x-filament-tables::reorder.handle />
+                                            <x-filament-tables::reorder.handle/>
                                         @endif
                                     </x-filament-tables::reorder.cell>
 
@@ -960,7 +967,8 @@
                             <tr>
                                 <td colspan="{{ $columnsCount }}">
                                     <div class="flex items-center justify-center w-full p-4">
-                                        <x-filament-tables::empty-state :icon="$getEmptyStateIcon()" :actions="$getEmptyStateActions()">
+                                        <x-filament-tables::empty-state :icon="$getEmptyStateIcon()"
+                                                                        :actions="$getEmptyStateActions()">
                                             <x-slot name="heading">
                                                 {{ $getEmptyStateHeading() }}
                                             </x-slot>
@@ -992,146 +1000,14 @@
 
         @if ($hasFiltersAfterContent)
             <div class="px-2 pb-2">
-                <x-filament::hr />
+                <x-filament::hr/>
 
                 <div class="p-4 mt-2">
-                    <x-filament-tables::filters :form="$getFiltersForm()" />
+                    <x-filament-tables::filters :form="$getFiltersForm()"/>
                 </div>
             </div>
         @endif
     </x-filament-tables::container>
 
-    <form wire:submit.prevent="callMountedTableAction">
-        @php
-            $action = $getMountedAction();
-        @endphp
-
-        <x-filament::modal
-            :id="$this->id . '-table-action'"
-            :wire:key="$action ? $this->id . '.table.actions.' . $action->getName() . '.modal' : null"
-            :visible="filled($action)"
-            :width="$action?->getModalWidth()"
-            :slide-over="$action?->isModalSlideOver()"
-            display-classes="block"
-            x-init="this.livewire = $wire.__instance"
-            x-on:modal-closed.stop="
-                if ('mountedTableAction' in this.livewire?.serverMemo.data) {
-                    this.livewire.set('mountedTableAction', null)
-                }
-
-                if ('mountedTableActionRecord' in this.livewire?.serverMemo.data) {
-                    this.livewire.set('mountedTableActionRecord', null)
-                }
-            "
-        >
-            @if ($action)
-                @if ($action->isModalCentered())
-                    <x-slot name="heading">
-                        {{ $action->getModalHeading() }}
-                    </x-slot>
-
-                    @if ($subheading = $action->getModalSubheading())
-                        <x-slot name="subheading">
-                            {{ $subheading }}
-                        </x-slot>
-                    @endif
-                @else
-                    <x-slot name="header">
-                        <x-filament::modal.heading>
-                            {{ $action->getModalHeading() }}
-                        </x-filament::modal.heading>
-
-                        @if ($subheading = $action->getModalSubheading())
-                            <x-filament::modal.subheading>
-                                {{ $subheading }}
-                            </x-filament::modal.subheading>
-                        @endif
-                    </x-slot>
-                @endif
-
-                {{ $action->getModalContent() }}
-
-                @if ($this->mountedTableActionHasForm())
-                    {{ $getMountedActionForm() }}
-                @endif
-
-                {{ $action->getModalFooter() }}
-
-                @if (count($action->getModalActions()))
-                    <x-slot name="footer">
-                        <x-filament::modal.actions :full-width="$action->isModalCentered()">
-                            @foreach ($action->getModalActions() as $modalAction)
-                                {{ $modalAction }}
-                            @endforeach
-                        </x-filament::modal.actions>
-                    </x-slot>
-                @endif
-            @endif
-        </x-filament::modal>
-    </form>
-
-    <form wire:submit.prevent="callMountedTableBulkAction">
-        @php
-            $action = $getMountedBulkAction();
-        @endphp
-
-        <x-filament::modal
-            :id="$this->id . '-table-bulk-action'"
-            :wire:key="$action ? $this->id . '.table.bulk-actions.' . $action->getName() . '.modal' : null"
-            :visible="filled($action)"
-            :width="$action?->getModalWidth()"
-            :slide-over="$action?->isModalSlideOver()"
-            display-classes="block"
-            x-init="this.livewire = $wire.__instance"
-            x-on:modal-closed.stop="if ('mountedTableBulkAction' in this.livewire?.serverMemo.data) this.livewire.set('mountedTableBulkAction', null)"
-        >
-            @if ($action)
-                @if ($action->isModalCentered())
-                    <x-slot name="heading">
-                        {{ $action->getModalHeading() }}
-                    </x-slot>
-
-                    @if ($subheading = $action->getModalSubheading())
-                        <x-slot name="subheading">
-                            {{ $subheading }}
-                        </x-slot>
-                    @endif
-                @else
-                    <x-slot name="header">
-                        <x-filament::modal.heading>
-                            {{ $action->getModalHeading() }}
-                        </x-filament::modal.heading>
-
-                        @if ($subheading = $action->getModalSubheading())
-                            <x-filament::modal.subheading>
-                                {{ $subheading }}
-                            </x-filament::modal.subheading>
-                        @endif
-                    </x-slot>
-                @endif
-
-                {{ $action->getModalContent() }}
-
-                @if ($this->mountedTableBulkActionHasForm())
-                    {{ $getMountedBulkActionForm() }}
-                @endif
-
-                {{ $action->getModalFooter() }}
-
-                @if (count($action->getModalActions()))
-                    <x-slot name="footer">
-                        <x-filament::modal.actions :full-width="$action->isModalCentered()">
-                            @foreach ($action->getModalActions() as $modalAction)
-                                {{ $modalAction }}
-                            @endforeach
-                        </x-filament::modal.actions>
-                    </x-slot>
-                @endif
-            @endif
-        </x-filament::modal>
-    </form>
-
-    @if (! $this instanceof \Filament\Tables\Contracts\RendersFormComponentActionModal)
-        {{ $this->formsModal }}
-    @endif
+    <x-filament-actions::modals />
 </div>

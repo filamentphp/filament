@@ -25,7 +25,7 @@ trait InteractsWithForms
 
     protected bool $isCachingForms = false;
 
-    protected bool $hasFormsModalViewRendered = false;
+    protected bool $hasFormsModalRendered = false;
 
     public function __get($property)
     {
@@ -36,24 +36,7 @@ trait InteractsWithForms
                 return $form;
             }
 
-            if ($property === 'formsModal') {
-                return $this->getFormsModalViewOnce();
-            }
-
             throw $exception;
-        }
-    }
-
-    public function getFormsModalViewOnce(): ?View
-    {
-        if ($this->hasFormsModalViewRendered) {
-            return null;
-        }
-
-        try {
-            return view('filament-forms::components.actions.modal');
-        } finally {
-            $this->hasFormsModalViewRendered = true;
         }
     }
 

@@ -6,13 +6,13 @@ use Closure;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Support\Exceptions\Halt;
-use Filament\Tables\Contracts\RendersFormComponentActionModal;
+use Filament\Tables\Contracts\RendersActionModal;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
-abstract class BasePage extends Component implements HasActions, RendersFormComponentActionModal
+abstract class BasePage extends Component implements HasActions, RendersActionModal
 {
     use InteractsWithActions;
 

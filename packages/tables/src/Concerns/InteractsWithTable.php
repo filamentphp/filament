@@ -38,6 +38,8 @@ trait InteractsWithTable
 
     protected Table $table;
 
+    protected bool $hasTableModalRendered = false;
+
     protected bool $shouldMountInteractsWithTable = false;
 
     public function bootedInteractsWithTable(): void

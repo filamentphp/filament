@@ -211,7 +211,7 @@ Since HTML does not support nested `<form>` elements, you must also render the m
     </button>
 </form>
 
-{{ $this->formsModal }}
+<x-filament-actions::modals />
 ```
 
 ### Handling `MorphTo` relationships

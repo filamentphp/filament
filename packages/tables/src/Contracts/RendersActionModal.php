@@ -2,6 +2,6 @@
 
 namespace Filament\Tables\Contracts;
 
-interface RendersFormComponentActionModal
+interface RendersActionModal
 {
 }

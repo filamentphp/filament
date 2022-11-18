@@ -26,7 +26,7 @@ trait InteractsWithActions
 
     protected array $cachedActions = [];
 
-    protected bool $hasActionsModalViewRendered = false;
+    protected bool $hasActionsModalRendered = false;
 
     public function __get($property)
     {
@@ -35,10 +35,6 @@ trait InteractsWithActions
         } catch (PropertyNotFoundException $exception) {
             if ($action = $this->getAction($property)) {
                 return $action;
-            }
-
-            if ($property === 'actionsModal') {
-                return $this->getActionsModalViewOnce();
             }
 
             throw $exception;
@@ -239,18 +235,5 @@ trait InteractsWithActions
         }
 
         return null;
-    }
-
-    public function getActionsModalViewOnce(): ?View
-    {
-        if ($this->hasActionsModalViewRendered) {
-            return null;
-        }
-
-        try {
-            return view('filament-actions::modal.index');
-        } finally {
-            $this->hasActionsModalViewRendered = true;
-        }
     }
 }

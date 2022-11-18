@@ -1011,29 +1011,9 @@ class Table extends ViewComponent
         return $this->evaluate($this->heading);
     }
 
-    public function getMountedAction(): ?Action
-    {
-        return $this->getLivewire()->getMountedTableAction();
-    }
-
     public function getMountedActionRecordKey()
     {
         return $this->getLivewire()->getMountedTableActionRecordKey();
-    }
-
-    public function getMountedActionForm(): ?Form
-    {
-        return $this->getLivewire()->getMountedTableActionForm();
-    }
-
-    public function getMountedBulkAction(): ?BulkAction
-    {
-        return $this->getLivewire()->getMountedTableBulkAction();
-    }
-
-    public function getMountedBulkActionForm(): ?Form
-    {
-        return $this->getLivewire()->getMountedTableBulkActionForm();
     }
 
     public function getRecords(): Collection | Paginator
