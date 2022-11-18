@@ -8,6 +8,8 @@
     $iconPosition = $getIconPosition();
     $iconSize = 'h-4 w-4';
 
+    $isClickable = $getAction() || $getUrl();
+
     $isCopyable = $isCopyable();
 @endphp
 
@@ -16,7 +18,7 @@
     ->class([
         'filament-tables-text-column text-sm',
         'px-4 py-3' => ! $isInline(),
-        'text-primary-600 transition hover:underline hover:text-primary-500 focus:underline focus:text-primary-500' => $getAction() || $getUrl(),
+        'text-primary-600 transition hover:underline hover:text-primary-500 focus:underline focus:text-primary-500' => $isClickable,
         match ($color = $getColor()) {
             'danger' => 'text-danger-600',
             'gray' => 'text-gray-500 dark:text-gray-400',
@@ -25,7 +27,7 @@
             'success' => 'text-success-600',
             'warning' => 'text-warning-600',
             default => $color,
-        } => ! ($getAction() || $getUrl()),
+        } => ! $isClickable,
         match ($size = $getSize()) {
             'sm' => 'text-sm',
             'lg' => 'text-lg',

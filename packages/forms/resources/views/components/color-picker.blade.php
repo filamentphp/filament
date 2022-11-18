@@ -13,6 +13,11 @@
         class="filament-forms-text-input-component"
         :attributes="$getExtraAttributeBag()"
     >
+        @php
+            $isDisabled = $isDisabled();
+            $statePath = $getStatePath();
+        @endphp
+
         <div {{ $attributes->merge($getExtraAttributes(), escape: false)->class(['filament-forms-color-picker-component flex items-center space-x-1 rtl:space-x-reverse group']) }}>
             <div
                 x-ignore
@@ -20,8 +25,8 @@
                 ax-load-src="/js/filament/forms/components/color-picker.js?v={{ \Composer\InstalledVersions::getVersion('filament/support') }}"
                 x-data="colorPickerFormComponent({
                     isAutofocused: @js($isAutofocused()),
-                    isDisabled: @js($isDisabled()),
-                    state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }}
+                    isDisabled: @js($isDisabled),
+                    state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }}
                 })"
                 x-on:keydown.esc="isOpen() && $event.stopPropagation()"
                 {{ $getExtraAlpineAttributeBag()->class(['relative flex-1']) }}
@@ -35,8 +40,8 @@
                         $getExtraInputAttributeBag()
                             ->merge([
                                 'autocomplete' => 'off',
-                                'disabled' => $isDisabled(),
-                                'dusk' => "filament.forms.{$getStatePath()}",
+                                'disabled' => $isDisabled,
+                                'dusk' => "filament.forms.{$statePath}",
                                 'id' => $getId(),
                                 'placeholder' => $getPlaceholder(),
                                 'required' => $isRequired() && (! $isConcealed()),
@@ -44,8 +49,8 @@
                             ], escape: false)
                             ->class([
                                 'text-gray-900 block w-full transition duration-75 shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
-                                'border-gray-300 dark:border-gray-600' => ! $errors->has($getStatePath()),
-                                'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()),
+                                'border-gray-300 dark:border-gray-600' => ! $errors->has($statePath),
+                                'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($statePath),
                                 'rounded-l-lg' => ! ($getPrefixLabel() || $getPrefixIcon()),
                                 'rounded-r-lg' => ! ($getSuffixLabel() || $getSuffixIcon()),
                             ])
@@ -67,10 +72,10 @@
                     x-ref="panel"
                     x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                     wire:ignore.self
-                    wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.panel"
+                    wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.panel"
                     @class([
                         'hidden absolute z-10 shadow-lg',
-                        'opacity-70 pointer-events-none' => $isDisabled(),
+                        'opacity-70 pointer-events-none' => $isDisabled,
                     ])
                 >
                     @php

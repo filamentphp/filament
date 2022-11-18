@@ -53,7 +53,7 @@
                         'autocomplete' => $getAutocomplete(),
                         'autofocus' => $isAutofocused(),
                         'disabled' => $isDisabled(),
-                        'dusk' => "filament.forms.{$getStatePath()}",
+                        'dusk' => "filament.forms.{$statePath}",
                         'id' => $id,
                         'inputmode' => $getInputMode(),
                         'list' => $datalistOptions ? "{$id}-list" : null,
@@ -65,7 +65,7 @@
                         'required' => $isRequired() && (! $isConcealed),
                         'step' => $getStep(),
                         'type' => $hasMask ? 'text' : $getType(),
-                        $applyStateBindingModifiers('wire:model') => (! $hasMask) ? $getStatePath() : null,
+                        $applyStateBindingModifiers('wire:model') => (! $hasMask) ? $statePath : null,
                     ], escape: false)
                     ->class($inputClasses)
             }}

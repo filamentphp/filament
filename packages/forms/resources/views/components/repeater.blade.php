@@ -11,13 +11,15 @@
         $isItemDeletionDisabled = $isItemDeletionDisabled();
         $isItemMovementDisabled = $isItemMovementDisabled();
         $hasItemLabels = $hasItemLabels();
+
+        $statePath = $getStatePath();
     @endphp
 
     <div>
         @if ((count($containers) > 1) && $isCollapsible)
             <div class="space-x-2 rtl:space-x-reverse" x-data="{}">
                 <x-filament::link
-                    x-on:click="$dispatch('repeater-collapse', '{{ $getStatePath() }}')"
+                    x-on:click="$dispatch('repeater-collapse', '{{ $statePath }}')"
                     tag="button"
                     size="sm"
                 >
@@ -25,7 +27,7 @@
                 </x-filament::link>
 
                 <x-filament::link
-                    x-on:click="$dispatch('repeater-expand', '{{ $getStatePath() }}')"
+                    x-on:click="$dispatch('repeater-expand', '{{ $statePath }}')"
                     tag="button"
                     size="sm"
                 >
@@ -56,7 +58,7 @@
                     :xl="$getGridColumns('xl')"
                     :two-xl="$getGridColumns('2xl')"
                     x-sortable
-                    x-on:end.stop="$wire.dispatchFormEvent('repeater::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
+                    x-on:end.stop="$wire.dispatchFormEvent('repeater::moveItems', '{{ $statePath }}', $event.target.sortable.toArray())"
                     class="gap-6"
                 >
                     @foreach ($containers as $uuid => $item)
@@ -64,9 +66,9 @@
                             x-data="{
                                 isCollapsed: @js($isCollapsed()),
                             }"
-                            x-on:repeater-collapse.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = true)"
-                            x-on:repeater-expand.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = false)"
-                            wire:key="{{ $this->id }}.{{ $item->getStatePath() }}.item"
+                            x-on:repeater-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
+                            x-on:repeater-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
+                            wire:key="{{ $this->id }}.{{ $item->statePath }}.item"
                             x-sortable-item="{{ $uuid }}"
                             x-on:expand-concealing-component.window="
                                 error = $el.querySelector('[data-validation-error]')
@@ -98,8 +100,8 @@
                                             title="{{ __('filament-forms::components.repeater.buttons.move_item.label') }}"
                                             x-on:click.stop
                                             x-sortable-handle
-                                            wire:keydown.prevent.arrow-up="dispatchFormEvent('repeater::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
-                                            wire:keydown.prevent.arrow-down="dispatchFormEvent('repeater::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                            wire:keydown.prevent.arrow-up="dispatchFormEvent('repeater::moveItemUp', '{{ $statePath }}', '{{ $uuid }}')"
+                                            wire:keydown.prevent.arrow-down="dispatchFormEvent('repeater::moveItemDown', '{{ $statePath }}', '{{ $uuid }}')"
                                             type="button"
                                             class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-r transition hover:text-gray-500 dark:border-gray-700"
                                         >
@@ -126,7 +128,7 @@
                                             <li>
                                                 <button
                                                     title="{{ __('filament-forms::components.repeater.buttons.clone_item.label') }}"
-                                                    wire:click="dispatchFormEvent('repeater::cloneItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                    wire:click="dispatchFormEvent('repeater::cloneItem', '{{ $statePath }}', '{{ $uuid }}')"
                                                     type="button"
                                                     class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500 dark:border-gray-700"
                                                 >
@@ -147,7 +149,7 @@
                                             <li>
                                                 <button
                                                     title="{{ __('filament-forms::components.repeater.buttons.delete_item.label') }}"
-                                                    wire:click.stop="dispatchFormEvent('repeater::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                    wire:click.stop="dispatchFormEvent('repeater::deleteItem', '{{ $statePath }}', '{{ $uuid }}')"
                                                     type="button"
                                                     class="flex items-center justify-center flex-none w-10 h-10 text-danger-600 transition hover:text-danger-500 dark:text-danger-500 dark:hover:text-danger-400"
                                                 >
@@ -217,7 +219,7 @@
         @if (! $isItemCreationDisabled)
             <div class="relative flex justify-center">
                 <x-filament::button
-                    :wire:click="'dispatchFormEvent(\'repeater::createItem\', \'' . $getStatePath() . '\')'"
+                    :wire:click="'dispatchFormEvent(\'repeater::createItem\', \'' . $statePath . '\')'"
                     size="sm"
                     type="button"
                 >

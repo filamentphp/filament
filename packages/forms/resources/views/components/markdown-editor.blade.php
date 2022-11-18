@@ -2,13 +2,19 @@
     :component="$getFieldWrapperView()"
     :field="$field"
 >
+    @php
+        $id = $getId();
+        $isDisabled = $isDisabled();
+        $statePath = $getStatePath();
+    @endphp
+
     <div
         x-ignore
         ax-load
         ax-load-src="/js/filament/forms/components/markdown-editor.js?v={{ \Composer\InstalledVersions::getVersion('filament/support') }}"
         x-data="markdownEditorFormComponent({
-            state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
-            tab: '{{ $isDisabled() ? 'preview' : 'edit' }}',
+            state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
+            tab: '{{ $isDisabled ? 'preview' : 'edit' }}',
         })"
         wire:ignore
         {{
@@ -19,10 +25,10 @@
         }}
     >
         <div class="space-y-2">
-            @unless ($isDisabled())
+            @unless ($isDisabled)
                 <div class="flex justify-between space-x-4 rtl:space-x-reverse overflow-x-auto items-stretch overflow-y-hidden">
                     <markdown-toolbar
-                        for="{{ $getId() }}"
+                        for="{{ $id }}"
                         x-bind:class="{ 'pointer-events-none opacity-70': tab === 'preview' }"
                         class="flex items-stretch space-x-4 rtl:space-x-reverse focus:outline-none"
                     >
@@ -207,7 +213,7 @@
                         @endif
                     </markdown-toolbar>
 
-                    @if ($hasToolbarButton(['edit', 'preview']) && $isEnabled())
+                    @if ($hasToolbarButton(['edit', 'preview']) && (! $isDisabled))
                         <div class="flex items-center space-x-4 rtl:space-x-reverse">
                             @if ($hasToolbarButton('edit'))
                                 <button
@@ -239,18 +245,18 @@
                 <file-attachment directory>
                     <textarea
                         @if ($isAutofocused()) autofocus @endif
-                        id="{{ $getId() }}"
+                        id="{{ $id }}"
                         @if ($placeholder = $getPlaceholder()) placeholder="{{ $placeholder }}" @endif
                         x-model="state"
-                        dusk="filament.forms.{{ $getStatePath() }}"
+                        dusk="filament.forms.{{ $statePath }}"
                         x-on:keyup.enter="checkForAutoInsertion"
                         x-on:file-attachment-accepted.window="
                             attachment = $event.detail?.attachments?.[0]
 
                             if (! attachment || ! attachment.file) return
 
-                            $wire.upload(`componentFileAttachments.{{ $getStatePath() }}`, attachment.file, () => {
-                                $wire.getComponentFileAttachmentUrl('{{ $getStatePath() }}').then((url) => {
+                            $wire.upload(`componentFileAttachments.{{ $statePath }}`, attachment.file, () => {
+                                $wire.getComponentFileAttachmentUrl('{{ $statePath }}').then((url) => {
                                     if (! url) {
                                         return
                                     }
@@ -277,8 +283,8 @@
                         @if ($isRequired() && (! $isConcealed())) required @endif
                         class="z-1 absolute top-0 left-0 block h-full min-h-full w-full resize-none overflow-y-hidden whitespace-pre-wrap rounded-lg bg-transparent font-mono text-sm tracking-normal caret-black shadow-sm transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 rtl:whitespace-normal dark:caret-white dark:focus:border-primary-500"
                         x-bind:class="{
-                            'border-gray-300 dark:border-gray-600 dark:border-gray-600': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
-                            'border-danger-600 ring-1 ring-inset ring-danger-600 dark:border-danger-400 dark:ring-danger-400': @js($getStatePath()) in $wire.__instance.serverMemo.errors,
+                            'border-gray-300 dark:border-gray-600 dark:border-gray-600': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
+                            'border-danger-600 ring-1 ring-inset ring-danger-600 dark:border-danger-400 dark:ring-danger-400': @js($statePath) in $wire.__instance.serverMemo.errors,
                         }"
                     ></textarea>
                 </file-attachment>

@@ -5,7 +5,7 @@
     ]) }}
 >
     <select
-        @if ($isDisabled()) disabled @endif
+        @disabled($isDisabled())
         x-on:change="
             response = await $wire.setColumnValue(@js($getName()), @js($recordKey), $event.target.value)
             error = response?.error ?? undefined
@@ -33,7 +33,7 @@
         @foreach ($getOptions() as $value => $label)
             <option
                 value="{{ $value }}"
-                @if ($isOptionDisabled($value, $label)) disabled @endif
+                @disabled($isOptionDisabled($value, $label))
                 {{ $getState() === $value ? 'selected' : null }}
             >
                 {{ $label }}

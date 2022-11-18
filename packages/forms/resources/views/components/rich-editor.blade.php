@@ -2,12 +2,17 @@
     :component="$getFieldWrapperView()"
     :field="$field"
 >
+    @php
+        $id = $getId();
+        $statePath = $getStatePath();
+    @endphp
+
     <div
         x-ignore
         ax-load
         ax-load-src="/js/filament/forms/components/rich-editor.js?v={{ \Composer\InstalledVersions::getVersion('filament/support') }}"
         x-data="richEditorFormComponent({
-            state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
+            state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
         })"
         x-on:trix-change="state = $event.target.value"
         x-on:trix-attachment-add="
@@ -15,8 +20,8 @@
 
             let attachment = $event.attachment
 
-            $wire.upload(`componentFileAttachments.{{ $getStatePath() }}`, attachment.file, () => {
-                $wire.getComponentFileAttachmentUrl('{{ $getStatePath() }}').then((url) => {
+            $wire.upload(`componentFileAttachments.{{ $statePath }}`, attachment.file, () => {
+                $wire.getComponentFileAttachmentUrl('{{ $statePath }}').then((url) => {
                     attachment.setAttributes({
                         url: url,
                         href: url,
@@ -37,10 +42,10 @@
         }}
     >
         @unless ($isDisabled())
-            <input id="trix-value-{{ $getId() }}" type="hidden" />
+            <input id="trix-value-{{ $id }}" type="hidden" />
 
             <trix-toolbar
-                id="trix-toolbar-{{ $getId() }}"
+                id="trix-toolbar-{{ $id }}"
                 @class([
                     'hidden' => ! count($getToolbarButtons()),
                 ])
@@ -375,16 +380,16 @@
             <trix-editor
                 wire:ignore
                 @if ($isAutofocused()) autofocus @endif
-                id="{{ $getId() }}"
-                input="trix-value-{{ $getId() }}"
+                id="{{ $id }}"
+                input="trix-value-{{ $id }}"
                 placeholder="{{ $getPlaceholder() }}"
-                toolbar="trix-toolbar-{{ $getId() }}"
+                toolbar="trix-toolbar-{{ $id }}"
                 x-ref="trix"
-                dusk="filament.forms.{{ $getStatePath() }}"
+                dusk="filament.forms.{{ $statePath }}"
                 {{ $getExtraInputAttributeBag()->class(['bg-white block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 prose max-w-none break-words dark:prose-invert dark:bg-gray-700 dark:focus:border-primary-500']) }}
                 x-bind:class="{
-                    'border-gray-300 dark:border-gray-600': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
-                    'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
+                    'border-gray-300 dark:border-gray-600': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
+                    'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400': (@js($statePath) in $wire.__instance.serverMemo.errors),
                 }"
             ></trix-editor>
         @else

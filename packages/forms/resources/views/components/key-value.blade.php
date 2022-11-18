@@ -2,12 +2,19 @@
     :component="$getFieldWrapperView()"
     :field="$field"
 >
+    @php
+        $canDeleteRows = $canDeleteRows();
+        $debounce = $getDebounce();
+        $isDisabled = $isDisabled();
+        $statePath = $getStatePath();
+    @endphp
+
     <div
         x-ignore
         ax-load
         ax-load-src="/js/filament/forms/components/key-value.js?v={{ \Composer\InstalledVersions::getVersion('filament/support') }}"
         x-data="keyValueFormComponent({
-            state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
+            state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
         })"
         {{
             $attributes
@@ -34,11 +41,11 @@
                             {{ $getValueLabel() }}
                         </th>
 
-                        @if (($canDeleteRows() || $isReorderable()) && $isEnabled())
+                        @if (($canDeleteRows || $isReorderable()) && (! $isDisabled))
                             <th
                                 scope="col"
                                 x-show="rows.length > 1"
-                                class="{{ ($canDeleteRows() && $isReorderable()) ? 'w-16' : 'w-12' }}"
+                                class="{{ ($canDeleteRows && $isReorderable()) ? 'w-16' : 'w-12' }}"
                             >
                                 <span class="sr-only"></span>
                             </th>
@@ -65,9 +72,9 @@
                                 <input
                                     type="text"
                                     x-model="row.key"
-                                    x-on:input.debounce.{{ $getDebounce() ?? '500ms' }}="updateState"
+                                    x-on:input.debounce.{{ $debounce ?? '500ms' }}="updateState"
                                     @if ($placeholder = $getKeyPlaceholder()) placeholder="{{ $placeholder }}" @endif
-                                    @if ((! $canEditKeys()) || $isDisabled())
+                                    @if ((! $canEditKeys()) || $isDisabled)
                                         disabled
                                     @endif
                                     class="w-full px-4 py-3 font-mono text-sm bg-transparent border-0 focus:ring-0"
@@ -78,16 +85,16 @@
                                 <input
                                     type="text"
                                     x-model="row.value"
-                                    x-on:input.debounce.{{ $getDebounce() ?? '500ms' }}="updateState"
+                                    x-on:input.debounce.{{ $debounce ?? '500ms' }}="updateState"
                                     @if ($placeholder = $getValuePlaceholder()) placeholder="{{ $placeholder }}" @endif
-                                    @if ((! $canEditValues()) || $isDisabled())
+                                    @if ((! $canEditValues()) || $isDisabled)
                                         disabled
                                     @endif
                                     class="w-full px-4 py-3 font-mono text-sm bg-transparent border-0 focus:ring-0"
                                 >
                             </td>
 
-                            @if (($canDeleteRows() || $isReorderable()) && $isEnabled())
+                            @if (($canDeleteRows || $isReorderable()) && (! $isDisabled))
                                 <td x-show="rows.length > 1" class="whitespace-nowrap">
                                     <div class="flex items-center justify-center gap-2">
                                         @if ($isReorderable())
@@ -108,7 +115,7 @@
                                             </button>
                                         @endif
 
-                                        @if ($canDeleteRows())
+                                        @if ($canDeleteRows)
                                             <button
                                                 x-on:click="deleteRow(index)"
                                                 type="button"
@@ -133,7 +140,7 @@
                 </tbody>
             </table>
 
-            @if ($canAddRows() && $isEnabled())
+            @if ($canAddRows() && (! $isDisabled))
                 <button
                     x-on:click="addRow"
                     type="button"

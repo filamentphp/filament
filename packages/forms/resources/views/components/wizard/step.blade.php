@@ -1,6 +1,10 @@
+@php
+    $id = $getId();
+@endphp
+
 <div
-    x-ref="step-{{ $getId() }}"
-    x-bind:class="{ 'invisible h-0 overflow-y-hidden': step !== @js($getId()) }"
+    x-ref="step-{{ $id }}"
+    x-bind:class="{ 'invisible h-0 overflow-y-hidden': step !== @js($id) }"
     x-on:expand-concealing-component.window="
         error = $el.querySelector('[data-validation-error]')
 
@@ -8,11 +12,11 @@
             return
         }
 
-        if (! isStepAccessible(step, @js($getId()))) {
+        if (! isStepAccessible(step, @js($id))) {
             return
         }
 
-        step = @js($getId())
+        step = @js($id)
 
         if (document.body.querySelector('[data-validation-error]') !== error) {
             return
@@ -23,8 +27,8 @@
     {{
         $attributes
             ->merge([
-                'aria-labelledby' => $getId(),
-                'id' => $getId(),
+                'aria-labelledby' => $id,
+                'id' => $id,
                 'role' => 'tabpanel',
                 'tabindex' => '0',
             ], escape: false)

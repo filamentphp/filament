@@ -9,7 +9,7 @@
     <input
         value="{{ $getState() }}"
         type="{{ $getType() }}"
-        @if ($isDisabled()) disabled @endif
+        @disabled($isDisabled())
         @if ($inputMode = $getInputMode()) inputmode="{{ $inputMode }}" @endif
         @if ($placeholder = $getPlaceholder()) placeholder="{{ $placeholder }}" @endif
         @if ($interval = $getStep()) step="{{ $interval }}" @endif

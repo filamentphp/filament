@@ -10,13 +10,15 @@
         $isItemCreationDisabled = $isItemCreationDisabled();
         $isItemDeletionDisabled = $isItemDeletionDisabled();
         $isItemMovementDisabled = $isItemMovementDisabled();
+
+        $statePath = $getStatePath();
     @endphp
 
     <div>
         @if ((count($containers) > 1) && $isCollapsible)
             <div class="space-x-2 rtl:space-x-reverse" x-data="{}">
                 <x-filament::link
-                    x-on:click="$dispatch('builder-collapse', '{{ $getStatePath() }}')"
+                    x-on:click="$dispatch('builder-collapse', '{{ $statePath }}')"
                     tag="button"
                     size="sm"
                 >
@@ -24,7 +26,7 @@
                 </x-filament::link>
 
                 <x-filament::link
-                    x-on:click="$dispatch('builder-expand', '{{ $getStatePath() }}')"
+                    x-on:click="$dispatch('builder-expand', '{{ $statePath }}')"
                     tag="button"
                     size="sm"
                 >
@@ -49,7 +51,7 @@
             <ul
                 class="space-y-12"
                 x-sortable
-                x-on:end.stop="$wire.dispatchFormEvent('builder::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
+                x-on:end.stop="$wire.dispatchFormEvent('builder::moveItems', '{{ $statePath }}', $event.target.sortable.toArray())"
             >
                 @php
                     $hasBlockLabels = $hasBlockLabels();
@@ -62,13 +64,13 @@
                             isCreateButtonVisible: false,
                             isCollapsed: @js($isCollapsed()),
                         }"
-                        x-on:builder-collapse.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = true)"
-                        x-on:builder-expand.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = false)"
+                        x-on:builder-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
+                        x-on:builder-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
                         x-on:click="isCreateButtonVisible = true"
                         x-on:mouseenter="isCreateButtonVisible = true"
                         x-on:click.away="isCreateButtonVisible = false"
                         x-on:mouseleave="isCreateButtonVisible = false"
-                        wire:key="{{ $this->id }}.{{ $item->getStatePath() }}.item"
+                        wire:key="{{ $this->id }}.{{ $item->statePath }}.item"
                         x-sortable-item="{{ $uuid }}"
                         x-on:expand-concealing-component.window="
                             error = $el.querySelector('[data-validation-error]')
@@ -93,8 +95,8 @@
                                     <button
                                         title="{{ __('filament-forms::components.builder.buttons.move_item.label') }}"
                                         x-sortable-handle
-                                        wire:keydown.prevent.arrow-up="dispatchFormEvent('builder::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
-                                        wire:keydown.prevent.arrow-down="dispatchFormEvent('builder::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                        wire:keydown.prevent.arrow-up="dispatchFormEvent('builder::moveItemUp', '{{ $statePath }}', '{{ $uuid }}')"
+                                        wire:keydown.prevent.arrow-down="dispatchFormEvent('builder::moveItemDown', '{{ $statePath }}', '{{ $uuid }}')"
                                         type="button"
                                         class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-r rtl:border-l rtl:border-r-0 transition hover:text-gray-500 dark:border-gray-700"
                                     >
@@ -137,7 +139,7 @@
                                         <li>
                                             <button
                                                 title="{{ __('filament-forms::components.builder.buttons.clone_item.label') }}"
-                                                wire:click="dispatchFormEvent('builder::cloneItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                wire:click="dispatchFormEvent('builder::cloneItem', '{{ $statePath }}', '{{ $uuid }}')"
                                                 type="button"
                                                 class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500 dark:border-gray-700"
                                             >
@@ -158,7 +160,7 @@
                                         <li>
                                             <button
                                                 title="{{ __('filament-forms::components.builder.buttons.delete_item.label') }}"
-                                                wire:click="dispatchFormEvent('builder::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                wire:click="dispatchFormEvent('builder::deleteItem', '{{ $statePath }}', '{{ $uuid }}')"
                                                 type="button"
                                                 class="flex items-center justify-center flex-none w-10 h-10 text-danger-600 transition hover:text-danger-500 dark:text-danger-500 dark:hover:text-danger-400"
                                             >
@@ -237,7 +239,7 @@
                                     <x-filament-forms::builder.block-picker
                                         :blocks="$getBlocks()"
                                         :create-after-item="$uuid"
-                                        :state-path="$getStatePath()"
+                                        :state-path="$statePath"
                                     />
                                 </x-filament::dropdown>
                             </div>
@@ -257,7 +259,7 @@
 
                 <x-filament-forms::builder.block-picker
                     :blocks="$getBlocks()"
-                    :state-path="$getStatePath()"
+                    :state-path="$statePath"
                 />
             </x-filament::dropdown>
         @endif

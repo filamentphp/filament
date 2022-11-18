@@ -2,11 +2,16 @@
     :component="$getFieldWrapperView()"
     :field="$field"
 >
-    @if ($isInline())
+    @php
+        $isInline = $isInline();
+        $statePath = $getStatePath();
+    @endphp
+
+    @if ($isInline)
         <x-slot name="labelPrefix">
     @endif
             <button
-                x-data="{ state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }} }"
+                x-data="{ state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }} }"
                 x-bind:aria-checked="state.toString()"
                 x-on:click="state = ! state"
                 x-bind:class="{
@@ -33,7 +38,7 @@
                             'aria-checked' => 'false',
                             'autofocus' => $isAutofocused(),
                             'disabled' => $isDisabled(),
-                            'dusk' => "filament.forms.{$getStatePath()}",
+                            'dusk' => "filament.forms.{$statePath}",
                             'id' => $getId(),
                             'role' => 'switch',
                             'type' => 'button',
@@ -103,7 +108,7 @@
                     </span>
                 </span>
             </button>
-    @if ($isInline())
+    @if ($isInline)
         </x-slot>
     @endif
 </x-dynamic-component>

@@ -2,7 +2,13 @@
     :component="$getFieldWrapperView()"
     :field="$field"
 >
-    @if ($isBulkToggleable())
+    @php
+        $isBulkToggleable = $isBulkToggleable();
+        $isDisabled = $isDisabled();
+        $statePath = $getStatePath();
+    @endphp
+
+    @if ($isBulkToggleable)
     <div x-data="{
         checkboxes: $root.querySelectorAll('input[type=checkbox]'),
 
@@ -56,30 +62,26 @@
             direction="column"
             :attributes="$attributes->class(['filament-forms-checkbox-list-component gap-1 space-y-2'])"
         >
-            @php
-                $isDisabled = $isDisabled();
-            @endphp
-
             @foreach ($getOptions() as $optionValue => $optionLabel)
                 <label class="flex items-center space-x-3 rtl:space-x-reverse">
                     <input
-                        @if ($isBulkToggleable())
+                        @if ($isBulkToggleable)
                             x-on:change="updateIsAllSelected"
                         @endif
                         {{
                             $getExtraAttributeBag()
                                 ->merge([
                                     'disabled' => $isDisabled,
-                                    'dusk' => "filament.forms.{$getStatePath()}",
+                                    'dusk' => "filament.forms.{$statePath}",
                                     'type' => 'checkbox',
                                     'value' => $optionValue,
                                     'wire:loading.attr' => 'disabled',
-                                    $applyStateBindingModifiers('wire:model') => $getStatePath(),
+                                    $applyStateBindingModifiers('wire:model') => $statePath,
                                 ], escape: false)
                                 ->class([
                                     'text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:checked:bg-primary-500',
-                                    'border-gray-300 dark:border-gray-600' => ! $errors->has($getStatePath()),
-                                    'border-danger-300 ring-danger-500 dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()),
+                                    'border-gray-300 dark:border-gray-600' => ! $errors->has($statePath),
+                                    'border-danger-300 ring-danger-500 dark:border-danger-400 dark:ring-danger-400' => $errors->has($statePath),
                                 ])
                         }}
                     />
@@ -91,7 +93,7 @@
             @endforeach
         </x-filament::grid>
 
-    @if ($isBulkToggleable())
+    @if ($isBulkToggleable)
     </div>
     @endif
 </x-dynamic-component>

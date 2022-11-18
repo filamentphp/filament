@@ -36,7 +36,7 @@
                 default => 'bg-gray-200',
             } }} dark:bg-white/10': ! state,
         }"
-        @if ($isDisabled()) disabled @endif
+        @disabled($isDisabled())
         type="button"
         class="relative inline-flex shrink-0 ml-4 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none disabled:opacity-70 disabled:pointer-events-none"
     >

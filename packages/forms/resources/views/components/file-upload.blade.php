@@ -9,7 +9,9 @@
         $imageResizeTargetWidth = $getImageResizeTargetWidth();
         $imageResizeMode = $getImageResizeMode();
         $shouldTransformImage = $imageCropAspectRatio || $imageResizeTargetHeight || $imageResizeTargetWidth;
+        $statePath = $getStatePath();
     @endphp
+
     <div
         x-ignore
         ax-load
@@ -21,10 +23,10 @@
             canPreview: {{ $canPreview() ? 'true' : 'false' }},
             canReorder: {{ $canReorder() ? 'true' : 'false' }},
             deleteUploadedFileUsing: async (fileKey) => {
-                return await $wire.deleteUploadedFile('{{ $getStatePath() }}', fileKey)
+                return await $wire.deleteUploadedFile('{{ $statePath }}', fileKey)
             },
             getUploadedFilesUsing: async () => {
-                return await $wire.getUploadedFiles('{{ $getStatePath() }}')
+                return await $wire.getUploadedFiles('{{ $statePath }}')
             },
             imageCropAspectRatio: {{ $imageCropAspectRatio ? "'{$imageCropAspectRatio}'" : 'null' }},
             imagePreviewHeight: {{ ($height = $getImagePreviewHeight()) ? "'{$height}'" : 'null' }},
@@ -40,19 +42,19 @@
             maxSize: {{ ($size = $getMaxSize()) ? "'{$size} KB'" : 'null' }},
             minSize: {{ ($size = $getMinSize()) ? "'{$size} KB'" : 'null' }},
             removeUploadedFileUsing: async (fileKey) => {
-                return await $wire.removeUploadedFile('{{ $getStatePath() }}', fileKey)
+                return await $wire.removeUploadedFile('{{ $statePath }}', fileKey)
             },
             removeUploadedFileButtonPosition: '{{ $getRemoveUploadedFileButtonPosition() }}',
             reorderUploadedFilesUsing: async (files) => {
-                return await $wire.reorderUploadedFiles('{{ $getStatePath() }}', files)
+                return await $wire.reorderUploadedFiles('{{ $statePath }}', files)
             },
             shouldAppendFiles: {{ $shouldAppendFiles() ? 'true' : 'false' }},
             shouldTransformImage: {{ $shouldTransformImage ? 'true' : 'false' }},
-            state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
+            state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
             uploadButtonPosition: '{{ $getUploadButtonPosition() }}',
             uploadProgressIndicatorPosition: '{{ $getUploadProgressIndicatorPosition() }}',
             uploadUsing: (fileKey, file, success, error, progress) => {
-                $wire.upload(`{{ $getStatePath() }}.${fileKey}`, file, () => {
+                $wire.upload(`{{ $statePath }}.${fileKey}`, file, () => {
                     success(fileKey)
                 }, error, progress)
             },
@@ -78,7 +80,7 @@
                 $getExtraInputAttributeBag()
                     ->merge([
                         'disabled' => $isDisabled(),
-                        'dusk' => "filament.forms.{$getStatePath()}",
+                        'dusk' => "filament.forms.{$statePath}",
                         'multiple' => $isMultiple(),
                         'type' => 'file',
                     ], escape: false)

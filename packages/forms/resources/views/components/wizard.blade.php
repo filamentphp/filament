@@ -2,6 +2,7 @@
     $isRtl = __('filament::layout.direction') === 'rtl';
     $previousArrowIcon = $isRtl ? 'heroicon-m-chevron-right' : 'heroicon-m-chevron-left';
     $nextArrowIcon = $isRtl ? 'heroicon-m-chevron-left' : 'heroicon-m-chevron-right';
+    $statePath = $getStatePath;
 @endphp
 
 <div
@@ -81,7 +82,7 @@
         },
 
     }"
-    x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $getStatePath() }}') nextStep()"
+    x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $statePath }}') nextStep()"
     x-cloak
     {{
         $attributes
@@ -237,7 +238,7 @@
                 icon-position="after"
                 x-show="! isLastStep()"
                 x-cloak
-                x-on:click="$wire.dispatchFormEvent('wizard::nextStep', '{{ $getStatePath() }}', getStepIndex(step))"
+                x-on:click="$wire.dispatchFormEvent('wizard::nextStep', '{{ $statePath }}', getStepIndex(step))"
                 wire:loading.class.delay="opacity-70 cursor-wait"
                 size="sm"
             >

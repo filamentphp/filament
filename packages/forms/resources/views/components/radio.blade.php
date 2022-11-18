@@ -2,7 +2,14 @@
     :component="$getFieldWrapperView()"
     :field="$field"
 >
-    @if ($isInline())
+    @php
+        $id = $getId();
+        $isDisabled = $isDisabled();
+        $isInline = $isInline();
+        $statePath = $getStatePath();
+    @endphp
+
+    @if ($isInline)
         <x-slot name="labelSuffix">
     @endif
             <x-filament::grid
@@ -12,36 +19,32 @@
                 :lg="$getColumns('lg')"
                 :xl="$getColumns('xl')"
                 :two-xl="$getColumns('2xl')"
-                :is-grid="! $isInline()"
+                :is-grid="! $isInline"
                 direction="column"
                 :attributes="$attributes->merge($getExtraAttributes(), escape: false)->class([
                     'filament-forms-radio-component',
-                    'flex flex-wrap gap-3' => $isInline(),
-                    'gap-2' => ! $isInline(),
+                    'flex flex-wrap gap-3' => $isInline,
+                    'gap-2' => ! $isInline,
                 ])"
             >
-                @php
-                    $isDisabled = $isDisabled();
-                @endphp
-
                 @foreach ($getOptions() as $value => $label)
                     <div @class([
                         'flex items-start',
-                        'gap-3' => ! $isInline(),
-                        'gap-2' => $isInline(),
+                        'gap-3' => ! $isInline,
+                        'gap-2' => $isInline,
                     ])>
                         <div class="flex items-center h-5">
                             <input
-                                name="{{ $getId() }}"
-                                id="{{ $getId() }}-{{ $value }}"
+                                name="{{ $id }}"
+                                id="{{ $id }}-{{ $value }}"
                                 type="radio"
                                 value="{{ $value }}"
-                                dusk="filament.forms.{{ $getStatePath() }}"
-                                {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
+                                dusk="filament.forms.{{ $statePath }}"
+                                {{ $applyStateBindingModifiers('wire:model') }}="{{ $statePath }}"
                                 {{ $getExtraInputAttributeBag()->class([
                                     'focus:ring-primary-500 h-4 w-4 text-primary-600 disabled:opacity-70 dark:bg-gray-700 dark:checked:bg-primary-500',
-                                    'border-gray-300 dark:border-gray-500' => ! $errors->has($getStatePath()),
-                                    'border-danger-600 ring-1 ring-inset ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()),
+                                    'border-gray-300 dark:border-gray-500' => ! $errors->has($statePath),
+                                    'border-danger-600 ring-1 ring-inset ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($statePath),
                                 ]) }}
                                 @disabled($isDisabled || $isOptionDisabled($value, $label))
                                 wire:loading.attr="disabled"
@@ -49,10 +52,10 @@
                         </div>
 
                         <div class="text-sm">
-                            <label for="{{ $getId() }}-{{ $value }}" @class([
+                            <label for="{{ $id }}-{{ $value }}" @class([
                                 'font-medium',
-                                'text-gray-700 dark:text-gray-200' => ! $errors->has($getStatePath()),
-                                'text-danger-600 dark:text-danger-400' => $errors->has($getStatePath()),
+                                'text-gray-700 dark:text-gray-200' => ! $errors->has($statePath),
+                                'text-danger-600 dark:text-danger-400' => $errors->has($statePath),
                             ])>
                                 {{ $label }}
                             </label>
@@ -66,7 +69,7 @@
                     </div>
                 @endforeach
             </x-filament::grid>
-    @if ($isInline())
+    @if ($isInline)
         </x-slot>
     @endif
 </x-dynamic-component>

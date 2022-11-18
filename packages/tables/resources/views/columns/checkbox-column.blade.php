@@ -6,7 +6,7 @@
 >
     <input
         @checked($getState())
-        @if ($isDisabled()) disabled @endif
+        @disabled($isDisabled())
         type="checkbox"
         x-on:change="
             response = await $wire.setColumnValue(@js($getName()), @js($recordKey), $event.target.checked)
