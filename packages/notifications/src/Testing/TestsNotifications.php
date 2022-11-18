@@ -4,10 +4,8 @@ namespace Filament\Notifications\Testing;
 
 use Closure;
 use Filament\Notifications\Notification;
-use Illuminate\Support\Arr;
 use Livewire\Component;
 use Livewire\Testing\TestableLivewire;
-use PHPUnit\Framework\Assert;
 
 /**
  * @method Component instance()
