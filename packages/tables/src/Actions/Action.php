@@ -54,22 +54,24 @@ class Action extends MountableAction implements Groupable, HasRecord
         return $this;
     }
 
-    protected function getLivewireCallActionName(): string
+    public function getLivewireCallActionName(): string
     {
         return 'callMountedTableAction';
     }
 
-    protected static function getModalActionClass(): string
+    public function getLivewireMountAction(): ?string
     {
-        return ModalAction::class;
-    }
+        if ($this->getUrl()) {
+            return null;
+        }
 
-    public static function makeModalAction(string $name): ModalAction
-    {
-        /** @var ModalAction $action */
-        $action = parent::makeModalAction($name);
+        if ($record = $this->getRecord()) {
+            $recordKey = $this->getLivewire()->getTableRecordKey($record);
 
-        return $action;
+            return "mountTableAction('{$this->getName()}', '{$recordKey}')";
+        }
+
+        return "mountTableAction('{$this->getName()}')";
     }
 
     protected function getDefaultEvaluationParameters(): array

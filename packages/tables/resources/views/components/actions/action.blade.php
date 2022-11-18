@@ -5,25 +5,18 @@
 ])
 
 @php
-    if (! $action->getUrl()) {
-        if ($record = $action->getRecord()) {
-            $wireClickAction = "mountTableAction('{$action->getName()}', '{$this->getTableRecordKey($record)}')";
-        } else {
-            $wireClickAction = "mountTableAction('{$action->getName()}')";
-        }
-    } else {
-        $wireClickAction = null;
-    }
+    $isDisabled = $action->isDisabled();
+    $url = $action->getUrl();
 @endphp
 
 <x-dynamic-component
     :component="$component"
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes(), escape: false)"
-    :tag="$action->getUrl() ? 'a' : 'button'"
-    :wire:click="$wireClickAction"
-    :href="$action->isEnabled() ? $action->getUrl() : null"
-    :target="$action->shouldOpenUrlInNewTab() ? '_blank' : null"
-    :disabled="$action->isDisabled()"
+    :tag="$url ? 'a' : 'button'"
+    :wire:click="$action->getLivewireMountAction()"
+    :href="$isDisabled ? null : $url"
+    :target="($url && $action->shouldOpenUrlInNewTab()) ? '_blank' : null"
+    :disabled="$isDisabled"
     :color="$action->getColor()"
     :tooltip="$action->getTooltip()"
     :icon="$icon ?? $action->getIcon()"

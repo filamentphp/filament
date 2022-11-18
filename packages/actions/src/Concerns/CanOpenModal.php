@@ -117,7 +117,7 @@ trait CanOpenModal
         return $this;
     }
 
-    abstract protected function getLivewireCallActionName(): string;
+    abstract public function getLivewireCallActionName(): string;
 
     public function getModalActions(): array
     {
@@ -263,13 +263,8 @@ trait CanOpenModal
             ->color('gray');
     }
 
-    protected static function getModalActionClass(): string
-    {
-        return ModalAction::class;
-    }
-
     public static function makeModalAction(string $name): ModalAction
     {
-        return static::getModalActionClass()::make($name);
+        return ModalAction::make($name);
     }
 }

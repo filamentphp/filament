@@ -64,6 +64,11 @@ abstract class MountableAction extends StaticAction
 
     abstract public function getLivewire();
 
+    public function getLivewireMountAction(): ?string
+    {
+        return null;
+    }
+
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [

@@ -51,7 +51,7 @@ trait InteractsWithForms
         }
 
         try {
-            return view('filament-forms::components.actions.modal.index');
+            return view('filament-forms::components.actions.modal');
         } finally {
             $this->hasFormsModalViewRendered = true;
         }

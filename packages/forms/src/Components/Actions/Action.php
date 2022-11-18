@@ -24,22 +24,18 @@ class Action extends MountableAction
         return $this;
     }
 
-    protected function getLivewireCallActionName(): string
+    public function getLivewireCallActionName(): string
     {
         return 'callMountedFormComponentAction';
     }
 
-    protected static function getModalActionClass(): string
+    public function getLivewireMountAction(): ?string
     {
-        return ModalAction::class;
-    }
+        if ($this->getUrl()) {
+            return null;
+        }
 
-    public static function makeModalAction(string $name): ModalAction
-    {
-        /** @var ModalAction $action */
-        $action = parent::makeModalAction($name);
-
-        return $action;
+        return "mountFormComponentAction('{$this->getComponent()->getStatePath()}', '{$this->getName()}')";
     }
 
     protected function getDefaultEvaluationParameters(): array

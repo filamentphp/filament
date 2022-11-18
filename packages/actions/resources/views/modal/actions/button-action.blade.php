@@ -1,5 +1,8 @@
 @php
-    if ($getUrl()) {
+    $isDisabled = $isDisabled();
+    $url = $getUrl();
+
+    if ($url) {
         $wireClickAction = null;
     } elseif ($getAction()) {
         $wireClickAction = $getAction();
@@ -17,12 +20,13 @@
 <x-filament::button
     :form="$getFormToSubmit()"
     :type="$canSubmitForm() ? 'submit' : 'button'"
-    :tag="$getUrl() ? 'a' : 'button'"
+    :tag="$url ? 'a' : 'button'"
     :wire:click="$wireClickAction"
-    :href="$isEnabled() ? $getUrl() : null"
-    :target="$shouldOpenUrlInNewTab() ? '_blank' : null"
+    :href="$isDisabled ? null : $url"
+    :target="($url && $shouldOpenUrlInNewTab()) ? '_blank' : null"
     :x-on:click="$canCancelAction() ? 'close()' : null"
     :color="$getColor()"
+    :disabled="$isDisabled"
     :outlined="$isOutlined()"
     :icon="$getIcon()"
     :icon-position="$getIconPosition()"

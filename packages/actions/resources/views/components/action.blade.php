@@ -5,26 +5,23 @@
 ])
 
 @php
-    if (! $action->getUrl()) {
-        $wireClickAction = "mountAction('{$action->getName()}')";
-    } else {
-        $wireClickAction = null;
-    }
+    $isDisabled = $action->isDisabled();
+    $url = $action->getUrl();
 @endphp
 
 <x-dynamic-component
     :component="$component"
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes(), escape: false)"
     :form="$action->getFormToSubmit()"
-    :tag="$action->getUrl() ? 'a' : 'button'"
-    :wire:click="$wireClickAction"
-    :href="$action->isEnabled() ? $action->getUrl() : null"
-    :target="$action->shouldOpenUrlInNewTab() ? '_blank' : null"
+    :tag="$url ? 'a' : 'button'"
+    :wire:click="$action->getLivewireMountAction()"
+    :href="$isDisabled ? null : $url"
+    :target="($url && $action->shouldOpenUrlInNewTab()) ? '_blank' : null"
     :type="$action->canSubmitForm() ? 'submit' : 'button'"
     :color="$action->getColor()"
     :key-bindings="$action->getKeybindings()"
     :tooltip="$action->getTooltip()"
-    :disabled="$action->isDisabled()"
+    :disabled="$isDisabled"
     :icon="$icon ?? $action->getIcon()"
     :size="$action->getSize()"
     :label-sr-only="$action->isLabelHidden()"
