@@ -613,6 +613,10 @@ class Context
             return null;
         }
 
+        if (! class_exists($this->getLoginPage())) {
+            return $this->getLoginPage();
+        }
+
         return route("filament.{$this->getId()}.auth.login");
     }
 
@@ -933,7 +937,7 @@ class Context
 
     public function hasLogin(): bool
     {
-        return filled($this->getLoginPage());
+        return filled($this->getLoginPage()) && class_exists($this->getLoginPage());
     }
 
     public function hasPasswordReset(): bool
