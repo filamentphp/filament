@@ -43,6 +43,14 @@
 
         @filamentStyles
 
+        <style>
+            :root {
+                @foreach (filament()->getPrimaryColor() as $shade => $color)
+                    --primary-color-{{ $shade }}: {{ $color }};
+                @endforeach
+            }
+        </style>
+
         {{ filament()->renderHook('styles.end') }}
 
         @if (filament()->hasDarkMode())

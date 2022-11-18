@@ -268,6 +268,11 @@ class FilamentManager
         return $this->getCurrentContext()->getPages();
     }
 
+    public function getPrimaryColor(): array
+    {
+        return $this->getCurrentContext()->getPrimaryColor();
+    }
+
     public function getResources(): array
     {
         return $this->getCurrentContext()->getResources();

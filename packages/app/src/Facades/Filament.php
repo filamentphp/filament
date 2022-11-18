@@ -42,6 +42,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getNavigationItems()
  * @method static array getPages()
  * @method static Plugin getPlugin(string $id)
+ * @method static array getPrimaryColor()
  * @method static string | null getRequestPasswordResetUrl()
  * @method static string getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user)
  * @method static array getResources()

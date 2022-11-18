@@ -13,6 +13,7 @@
         "illuminate/contracts": "^9.0",
         "illuminate/support": "^9.0",
         "illuminate/view": "^9.0",
+        "spatie/color": "^1.5",
         "spatie/laravel-package-tools": "^1.9",
         "tgalopin/html-sanitizer": "^1.5"
     },

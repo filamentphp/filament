@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ebfeb5de6769776a1411d469f849fae6",
+    "content-hash": "9345c6ca17e5d26ba583c846cf18d1bc",
     "packages": [],
     "packages-dev": [
         {
@@ -127,16 +127,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.245.0",
+            "version": "3.245.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "8a561bf0eddee0b905153332cfcc899801d3722b"
+                "reference": "abe53c3bcf351ffe1d8fa8784f1bf1dfbf35b5ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/8a561bf0eddee0b905153332cfcc899801d3722b",
-                "reference": "8a561bf0eddee0b905153332cfcc899801d3722b",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/abe53c3bcf351ffe1d8fa8784f1bf1dfbf35b5ab",
+                "reference": "abe53c3bcf351ffe1d8fa8784f1bf1dfbf35b5ab",
                 "shasum": ""
             },
             "require": {
@@ -215,9 +215,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.245.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.245.1"
             },
-            "time": "2022-11-16T19:26:45+00:00"
+            "time": "2022-11-17T19:21:17+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -1494,7 +1494,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/support",
-                "reference": "4b871dceb7074da10b4ce0bd82978f05e8e6b1e6"
+                "reference": "ccbebd33835c34de720ba4690eb76adbd3bb49da"
             },
             "require": {
                 "blade-ui-kit/blade-icons": "^1.4",
@@ -1502,6 +1502,7 @@
                 "illuminate/support": "^9.0",
                 "illuminate/view": "^9.0",
                 "php": "^8.0",
+                "spatie/color": "^1.5",
                 "spatie/laravel-package-tools": "^1.9",
                 "tgalopin/html-sanitizer": "^1.5"
             },
@@ -3962,25 +3963,25 @@
         },
         {
             "name": "nette/schema",
-            "version": "v1.2.2",
+            "version": "v1.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nette/schema.git",
-                "reference": "9a39cef03a5b34c7de64f551538cbba05c2be5df"
+                "reference": "abbdbb70e0245d5f3bf77874cea1dfb0c930d06f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nette/schema/zipball/9a39cef03a5b34c7de64f551538cbba05c2be5df",
-                "reference": "9a39cef03a5b34c7de64f551538cbba05c2be5df",
+                "url": "https://api.github.com/repos/nette/schema/zipball/abbdbb70e0245d5f3bf77874cea1dfb0c930d06f",
+                "reference": "abbdbb70e0245d5f3bf77874cea1dfb0c930d06f",
                 "shasum": ""
             },
             "require": {
                 "nette/utils": "^2.5.7 || ^3.1.5 ||  ^4.0",
-                "php": ">=7.1 <8.2"
+                "php": ">=7.1 <8.3"
             },
             "require-dev": {
                 "nette/tester": "^2.3 || ^2.4",
-                "phpstan/phpstan-nette": "^0.12",
+                "phpstan/phpstan-nette": "^1.0",
                 "tracy/tracy": "^2.7"
             },
             "type": "library",
@@ -4018,9 +4019,9 @@
             ],
             "support": {
                 "issues": "https://github.com/nette/schema/issues",
-                "source": "https://github.com/nette/schema/tree/v1.2.2"
+                "source": "https://github.com/nette/schema/tree/v1.2.3"
             },
-            "time": "2021-10-15T11:40:02+00:00"
+            "time": "2022-10-13T01:24:26+00:00"
         },
         {
             "name": "nette/utils",
@@ -5434,16 +5435,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "9.2.18",
+            "version": "9.2.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "12fddc491826940cf9b7e88ad9664cf51f0f6d0a"
+                "reference": "c77b56b63e3d2031bd8997fcec43c1925ae46559"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/12fddc491826940cf9b7e88ad9664cf51f0f6d0a",
-                "reference": "12fddc491826940cf9b7e88ad9664cf51f0f6d0a",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/c77b56b63e3d2031bd8997fcec43c1925ae46559",
+                "reference": "c77b56b63e3d2031bd8997fcec43c1925ae46559",
                 "shasum": ""
             },
             "require": {
@@ -5499,7 +5500,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/9.2.18"
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/9.2.19"
             },
             "funding": [
                 {
@@ -5507,7 +5508,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-10-27T13:35:33+00:00"
+            "time": "2022-11-18T07:47:47+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -7638,6 +7639,64 @@
             "time": "2021-11-09T10:57:15+00:00"
         },
         {
+            "name": "spatie/color",
+            "version": "1.5.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/color.git",
+                "reference": "d6e9b2766d8e24aab835e414248728762bd63530"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/color/zipball/d6e9b2766d8e24aab835e414248728762bd63530",
+                "reference": "d6e9b2766d8e24aab835e414248728762bd63530",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.3|^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.5||^9.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\Color\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastian De Deyne",
+                    "email": "sebastian@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A little library to handle color conversions",
+            "homepage": "https://github.com/spatie/color",
+            "keywords": [
+                "color",
+                "conversion",
+                "rgb",
+                "spatie"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/color/issues",
+                "source": "https://github.com/spatie/color/tree/1.5.2"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/spatie",
+                    "type": "github"
+                }
+            ],
+            "time": "2022-06-24T21:50:06+00:00"
+        },
+        {
             "name": "spatie/eloquent-sortable",
             "version": "4.0.1",
             "source": {
@@ -8152,16 +8211,16 @@
         },
         {
             "name": "spatie/laravel-tags",
-            "version": "4.3.3",
+            "version": "4.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-tags.git",
-                "reference": "8a155c5b8840089f9af30c0350adfe1f19b3ad92"
+                "reference": "88d17ce5888b9db3fd19762b2860caa709005670"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-tags/zipball/8a155c5b8840089f9af30c0350adfe1f19b3ad92",
-                "reference": "8a155c5b8840089f9af30c0350adfe1f19b3ad92",
+                "url": "https://api.github.com/repos/spatie/laravel-tags/zipball/88d17ce5888b9db3fd19762b2860caa709005670",
+                "reference": "88d17ce5888b9db3fd19762b2860caa709005670",
                 "shasum": ""
             },
             "require": {
@@ -8173,6 +8232,7 @@
             },
             "require-dev": {
                 "orchestra/testbench": "^6.13|^7.0",
+                "pestphp/pest": "^1.22",
                 "phpunit/phpunit": "^9.5.2"
             },
             "type": "library",
@@ -8208,7 +8268,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-tags/issues",
-                "source": "https://github.com/spatie/laravel-tags/tree/4.3.3"
+                "source": "https://github.com/spatie/laravel-tags/tree/4.3.4"
             },
             "funding": [
                 {
@@ -8216,7 +8276,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-10-21T07:08:38+00:00"
+            "time": "2022-11-17T11:42:45+00:00"
         },
         {
             "name": "spatie/laravel-translatable",

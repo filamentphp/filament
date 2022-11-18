@@ -21,6 +21,7 @@ use Filament\Pages\Auth\Register;
 use Filament\Pages\Page;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
+use Filament\Support\Color;
 use Filament\Widgets\Widget;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -87,6 +88,8 @@ class Context
     protected array $meta = [];
 
     protected string $path = '';
+
+    protected ?array $primaryColor = null;
 
     protected bool $isEmailVerificationRequired = false;
 
@@ -484,6 +487,26 @@ class Context
         }
 
         return $this;
+    }
+
+    public function primaryColor(array | string | null $color): static
+    {
+        if (is_string($color) && str_starts_with($color, '#')) {
+            $color = Color::hex($color);
+        }
+
+        if (is_string($color) && str_starts_with($color, 'rgb')) {
+            $color = Color::rgb($color);
+        }
+
+        $this->primaryColor = $color;
+
+        return $this;
+    }
+
+    public function getPrimaryColor(): array
+    {
+        return $this->primaryColor ?? Color::Amber;
     }
 
     public function hasRoutableTenancy(): bool
