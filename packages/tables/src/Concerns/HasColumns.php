@@ -7,10 +7,6 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Columns\Layout\Component;
-use Filament\Tables\Contracts\HasRelationshipTable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 trait HasColumns
@@ -107,7 +103,6 @@ trait HasColumns
 
     public function setColumnValue(string $column, string $record, $input): ?array
     {
-        $columnName = $column;
         $column = $this->getCachedTableColumn($column);
 
         if (! ($column instanceof Editable)) {
@@ -135,10 +130,8 @@ trait HasColumns
         }
 
         $column->evaluate($column->getSaveStateUsing(), [
-            'columnName' => $columnName,
-            'record' => $record,
-            'table' => $this->getTable(),
-            'input' => $input,
+            'state' => $input,
+            'table' => $this->getCachedTable(),
         ]);
 
         return null;

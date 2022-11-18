@@ -5,7 +5,6 @@ namespace Filament\Tables\Columns\Concerns;
 use Closure;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Contracts\HasRelationshipTable;
-use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
@@ -14,9 +13,11 @@ trait CanSaveState
 {
     protected ?Closure $saveStateUsing = null;
 
-    public function bootCanSaveState()
+    public function setUp(): void
     {
-        $this->saveStateUsing(static function (Column $column, string $columnName, HasTable $table, Model $record, $input) {
+        $this->saveStateUsing(static function (Column $column, $table, Model $record, $state) {
+            $columnName = $column->getName();
+
             if ($columnRelationship = $column->getRelationship($record)) {
                 $record = $columnRelationship->getResults();
                 $columnName = $column->getRelationshipTitleColumnName();
@@ -34,7 +35,7 @@ trait CanSaveState
                 return null;
             }
 
-            $record->setAttribute($columnName, $input);
+            $record->setAttribute($columnName, $state);
             $record->save();
         });
     }
