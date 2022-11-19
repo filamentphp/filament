@@ -28,7 +28,7 @@
                 @endif
             @else
                 <x-slot name="header">
-                    @if($modalHeading = $action->getModalHeading())
+                    @if ($modalHeading = $action->getModalHeading())
                         <x-tables::modal.heading>
                             {{ $action->getModalHeading() }}
                         </x-tables::modal.heading>
