@@ -273,6 +273,26 @@ class FilamentManager
         return $this->getCurrentContext()->getPrimaryColor();
     }
 
+    public function getSecondaryColor(): array
+    {
+        return $this->getCurrentContext()->getSecondaryColor();
+    }
+
+    public function getDangerColor(): array
+    {
+        return $this->getCurrentContext()->getDangerColor();
+    }
+
+    public function getWarningColor(): array
+    {
+        return $this->getCurrentContext()->getWarningColor();
+    }
+
+    public function getSuccessColor(): array
+    {
+        return $this->getCurrentContext()->getSuccessColor();
+    }
+
     public function getResources(): array
     {
         return $this->getCurrentContext()->getResources();

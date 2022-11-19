@@ -16,7 +16,28 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                danger: colors.rose,
+                danger: {
+                    50: ({ opacityValue }) =>
+                        `rgba(var(--danger-color-50), ${opacityValue})`,
+                    100: ({ opacityValue }) =>
+                        `rgba(var(--danger-color-100), ${opacityValue})`,
+                    200: ({ opacityValue }) =>
+                        `rgba(var(--danger-color-200), ${opacityValue})`,
+                    300: ({ opacityValue }) =>
+                        `rgba(var(--danger-color-300), ${opacityValue})`,
+                    400: ({ opacityValue }) =>
+                        `rgba(var(--danger-color-400), ${opacityValue})`,
+                    500: ({ opacityValue }) =>
+                        `rgba(var(--danger-color-500), ${opacityValue})`,
+                    600: ({ opacityValue }) =>
+                        `rgba(var(--danger-color-600), ${opacityValue})`,
+                    700: ({ opacityValue }) =>
+                        `rgba(var(--danger-color-700), ${opacityValue})`,
+                    800: ({ opacityValue }) =>
+                        `rgba(var(--danger-color-800), ${opacityValue})`,
+                    900: ({ opacityValue }) =>
+                        `rgba(var(--danger-color-900), ${opacityValue})`,
+                },
                 primary: {
                     50: ({ opacityValue }) =>
                         `rgba(var(--primary-color-50), ${opacityValue})`,
@@ -39,12 +60,75 @@ module.exports = {
                     900: ({ opacityValue }) =>
                         `rgba(var(--primary-color-900), ${opacityValue})`,
                 },
-                secondary: colors.gray,
-                success: colors.green,
-                warning: colors.amber,
+                secondary: {
+                    50: ({ opacityValue }) =>
+                        `rgba(var(--secondary-color-50), ${opacityValue})`,
+                    100: ({ opacityValue }) =>
+                        `rgba(var(--secondary-color-100), ${opacityValue})`,
+                    200: ({ opacityValue }) =>
+                        `rgba(var(--secondary-color-200), ${opacityValue})`,
+                    300: ({ opacityValue }) =>
+                        `rgba(var(--secondary-color-300), ${opacityValue})`,
+                    400: ({ opacityValue }) =>
+                        `rgba(var(--secondary-color-400), ${opacityValue})`,
+                    500: ({ opacityValue }) =>
+                        `rgba(var(--secondary-color-500), ${opacityValue})`,
+                    600: ({ opacityValue }) =>
+                        `rgba(var(--secondary-color-600), ${opacityValue})`,
+                    700: ({ opacityValue }) =>
+                        `rgba(var(--secondary-color-700), ${opacityValue})`,
+                    800: ({ opacityValue }) =>
+                        `rgba(var(--secondary-color-800), ${opacityValue})`,
+                    900: ({ opacityValue }) =>
+                        `rgba(var(--secondary-color-900), ${opacityValue})`,
+                },
+                success: {
+                    50: ({ opacityValue }) =>
+                        `rgba(var(--success-color-50), ${opacityValue})`,
+                    100: ({ opacityValue }) =>
+                        `rgba(var(--success-color-100), ${opacityValue})`,
+                    200: ({ opacityValue }) =>
+                        `rgba(var(--success-color-200), ${opacityValue})`,
+                    300: ({ opacityValue }) =>
+                        `rgba(var(--success-color-300), ${opacityValue})`,
+                    400: ({ opacityValue }) =>
+                        `rgba(var(--success-color-400), ${opacityValue})`,
+                    500: ({ opacityValue }) =>
+                        `rgba(var(--success-color-500), ${opacityValue})`,
+                    600: ({ opacityValue }) =>
+                        `rgba(var(--success-color-600), ${opacityValue})`,
+                    700: ({ opacityValue }) =>
+                        `rgba(var(--success-color-700), ${opacityValue})`,
+                    800: ({ opacityValue }) =>
+                        `rgba(var(--success-color-800), ${opacityValue})`,
+                    900: ({ opacityValue }) =>
+                        `rgba(var(--success-color-900), ${opacityValue})`,
+                },
+                warning: {
+                    50: ({ opacityValue }) =>
+                        `rgba(var(--warning-color-50), ${opacityValue})`,
+                    100: ({ opacityValue }) =>
+                        `rgba(var(--warning-color-100), ${opacityValue})`,
+                    200: ({ opacityValue }) =>
+                        `rgba(var(--warning-color-200), ${opacityValue})`,
+                    300: ({ opacityValue }) =>
+                        `rgba(var(--warning-color-300), ${opacityValue})`,
+                    400: ({ opacityValue }) =>
+                        `rgba(var(--warning-color-400), ${opacityValue})`,
+                    500: ({ opacityValue }) =>
+                        `rgba(var(--warning-color-500), ${opacityValue})`,
+                    600: ({ opacityValue }) =>
+                        `rgba(var(--warning-color-600), ${opacityValue})`,
+                    700: ({ opacityValue }) =>
+                        `rgba(var(--warning-color-700), ${opacityValue})`,
+                    800: ({ opacityValue }) =>
+                        `rgba(var(--warning-color-800), ${opacityValue})`,
+                    900: ({ opacityValue }) =>
+                        `rgba(var(--warning-color-900), ${opacityValue})`,
+                },
             },
             fontFamily: {
-                sans: ['DM Sans', ...defaultTheme.fontFamily.sans],
+                sans: 'var(--font-family)',
             },
         },
     },

@@ -91,6 +91,14 @@ class Context
 
     protected ?array $primaryColor = null;
 
+    protected ?array $secondaryColor = null;
+
+    protected ?array $dangerColor = null;
+
+    protected ?array $warningColor = null;
+
+    protected ?array $successColor = null;
+
     protected bool $isEmailVerificationRequired = false;
 
     protected bool $isTenantSubscriptionRequired = false;
@@ -489,17 +497,22 @@ class Context
         return $this;
     }
 
-    public function primaryColor(array | string | null $color): static
+    public function processColor(array | string $color): array | string
     {
         if (is_string($color) && str_starts_with($color, '#')) {
-            $color = Color::hex($color);
+            return Color::hex($color);
         }
 
         if (is_string($color) && str_starts_with($color, 'rgb')) {
-            $color = Color::rgb($color);
+            return Color::rgb($color);
         }
 
-        $this->primaryColor = $color;
+        return $color;
+    }
+
+    public function primaryColor(array | string | null $color): static
+    {
+        $this->primaryColor = $this->processColor($color);
 
         return $this;
     }
@@ -507,6 +520,54 @@ class Context
     public function getPrimaryColor(): array
     {
         return $this->primaryColor ?? Color::Amber;
+    }
+
+    public function secondaryColor(array | string | null $color): static
+    {
+        $this->secondaryColor = $this->processColor($color);
+
+        return $this;
+    }
+
+    public function getSecondaryColor(): array
+    {
+        return $this->secondaryColor ?? Color::Gray;
+    }
+
+    public function dangerColor(array | string | null $color): static
+    {
+        $this->dangerColor = $this->processColor($color);
+
+        return $this;
+    }
+
+    public function getDangerColor(): array
+    {
+        return $this->dangerColor ?? Color::Red;
+    }
+
+    public function warningColor(array | string | null $color): static
+    {
+        $this->warningColor = $this->processColor($color);
+
+        return $this;
+    }
+
+    public function getWarningColor(): array
+    {
+        return $this->warningColor ?? Color::Amber;
+    }
+
+    public function successColor(array | string | null $color): static
+    {
+        $this->successColor = $this->processColor($color);
+
+        return $this;
+    }
+
+    public function getSuccessColor(): array
+    {
+        return $this->successColor ?? Color::Green;
     }
 
     public function hasRoutableTenancy(): bool

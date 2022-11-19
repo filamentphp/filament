@@ -41,15 +41,29 @@
             <link href="{{ $fontsUrl }}" rel="stylesheet" />
         @endif
 
-        @filamentStyles
-
         <style>
             :root {
+                --font-family: 'DM Sans', sans-serif;
+                --chart-font-family: var(--font-family);
                 @foreach (filament()->getPrimaryColor() as $shade => $color)
                     --primary-color-{{ $shade }}: {{ $color }};
                 @endforeach
+                @foreach (filament()->getSecondaryColor() as $shade => $color)
+                    --secondary-color-{{ $shade }}: {{ $color }};
+                @endforeach
+                @foreach (filament()->getDangerColor() as $shade => $color)
+                        --danger-color-{{ $shade }}: {{ $color }};
+                @endforeach
+                @foreach (filament()->getWarningColor() as $shade => $color)
+                        --warning-color-{{ $shade }}: {{ $color }};
+                @endforeach
+                @foreach (filament()->getSuccessColor() as $shade => $color)
+                        --success-color-{{ $shade }}: {{ $color }};
+                @endforeach
             }
         </style>
+
+        @filamentStyles
 
         {{ filament()->renderHook('styles.end') }}
 
