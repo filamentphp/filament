@@ -1146,8 +1146,8 @@ class Context
         $this->queueLivewireComponentForRegistration(GlobalSearch::class);
         $this->queueLivewireComponentForRegistration(Notifications::class);
 
-        if ($this->hasEmailVerification()) {
-            $this->queueLivewireComponentForRegistration($this->getEmailVerificationPromptRouteAction());
+        if ($this->hasEmailVerification() && is_subclass_of($emailVerificationRouteAction = $this->getEmailVerificationPromptRouteAction(), Component::class)) {
+            $this->queueLivewireComponentForRegistration($emailVerificationRouteAction);
         }
 
         if ($this->hasLogin() && is_subclass_of($loginRouteAction = $this->getLoginRouteAction(), Component::class)) {
