@@ -214,7 +214,7 @@ trait CanOpenModal
 
     public function getModalSubheading(): string | Htmlable | null
     {
-        if (filled($this->modalSubheading)) {
+        if ($this->modalSubheading !== null) {
             return $this->evaluate($this->modalSubheading);
         }
 
