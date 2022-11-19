@@ -43,6 +43,11 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
             Tables\Columns\TextColumn::make('with_description')
                 ->description('description below')
                 ->description('description above', 'above'),
+            Tables\Columns\SelectColumn::make('with_options')
+                ->options([
+                    'red' => 'Red',
+                    'blue' => 'Blue'
+                ])
         ];
     }
 
