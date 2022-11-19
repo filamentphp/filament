@@ -33,7 +33,6 @@
             'dark:border-gray-600': (! error) && @js(config('forms.dark_mode')),
             'border-danger-600 ring-1 ring-inset ring-danger-600': error,
         }"
-
         wire:loading.attr="readonly"
     />
 </div>
