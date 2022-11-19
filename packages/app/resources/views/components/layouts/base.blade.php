@@ -49,20 +49,10 @@
                 @if (filled($font))
                     --font-family:  {!! $font['name'] !!};
                 @endif
-                @foreach (filament()->getPrimaryColor() as $shade => $color)
-                    --primary-color-{{ $shade }}: {{ $color }};
-                @endforeach
-                @foreach (filament()->getSecondaryColor() as $shade => $color)
-                    --secondary-color-{{ $shade }}: {{ $color }};
-                @endforeach
-                @foreach (filament()->getDangerColor() as $shade => $color)
-                        --danger-color-{{ $shade }}: {{ $color }};
-                @endforeach
-                @foreach (filament()->getWarningColor() as $shade => $color)
-                        --warning-color-{{ $shade }}: {{ $color }};
-                @endforeach
-                @foreach (filament()->getSuccessColor() as $shade => $color)
-                        --success-color-{{ $shade }}: {{ $color }};
+                @foreach (filament()->getAllColors() as $key => $palette)
+                    @foreach ($palette as $shade => $color)
+                        --{{ $key }}-color-{{ $shade }}: {{ $color }};
+                    @endforeach
                 @endforeach
             }
         </style>

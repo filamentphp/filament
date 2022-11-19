@@ -47,6 +47,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getDangerColor()
  * @method static array getWarningColor()
  * @method static array getSuccessColor()
+ * @method static array getAllColors()
  * @method static string | null getRequestPasswordResetUrl()
  * @method static string getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user)
  * @method static array getResources()
