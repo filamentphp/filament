@@ -1150,16 +1150,16 @@ class Context
             $this->queueLivewireComponentForRegistration($this->getEmailVerificationPromptRouteAction());
         }
 
-        if ($this->hasLogin()) {
+        if ($this->hasLogin() && is_subclass_of($this->getLoginRouteAction(), Component::class)) {
             $this->queueLivewireComponentForRegistration($this->getLoginRouteAction());
         }
 
-        if ($this->hasPasswordReset()) {
+        if ($this->hasPasswordReset() && is_subclass_of($this->getLoginRouteAction(), Component::class)) {
             $this->queueLivewireComponentForRegistration($this->getRequestPasswordResetRouteAction());
             $this->queueLivewireComponentForRegistration($this->getResetPasswordRouteAction());
         }
 
-        if ($this->hasRegistration()) {
+        if ($this->hasRegistration() && is_subclass_of($this->getLoginRouteAction(), Component::class)) {
             $this->queueLivewireComponentForRegistration($this->getRegistrationRouteAction());
         }
 
