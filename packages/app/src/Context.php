@@ -1150,17 +1150,22 @@ class Context
             $this->queueLivewireComponentForRegistration($this->getEmailVerificationPromptRouteAction());
         }
 
-        if ($this->hasLogin() && is_subclass_of($this->getLoginRouteAction(), Component::class)) {
-            $this->queueLivewireComponentForRegistration($this->getLoginRouteAction());
+        if ($this->hasLogin() && is_subclass_of($loginRouteAction = $this->getLoginRouteAction(), Component::class)) {
+            $this->queueLivewireComponentForRegistration($loginRouteAction);
         }
 
-        if ($this->hasPasswordReset() && is_subclass_of($this->getLoginRouteAction(), Component::class)) {
-            $this->queueLivewireComponentForRegistration($this->getRequestPasswordResetRouteAction());
-            $this->queueLivewireComponentForRegistration($this->getResetPasswordRouteAction());
+        if ($this->hasPasswordReset()) {
+            if (is_subclass_of($requestPasswordResetRouteAction = $this->getRequestPasswordResetRouteAction(), Component::class)) {
+                $this->queueLivewireComponentForRegistration($requestPasswordResetRouteAction);
+            }
+
+            if (is_subclass_of($resetPasswordRouteAction = $this->getResetPasswordRouteAction(), Component::class)) {
+                $this->queueLivewireComponentForRegistration($resetPasswordRouteAction);
+            }
         }
 
-        if ($this->hasRegistration() && is_subclass_of($this->getLoginRouteAction(), Component::class)) {
-            $this->queueLivewireComponentForRegistration($this->getRegistrationRouteAction());
+        if ($this->hasRegistration() && is_subclass_of($registrationRouteAction = $this->getRegistrationRouteAction(), Component::class)) {
+            $this->queueLivewireComponentForRegistration($registrationRouteAction);
         }
 
         foreach ($this->getResources() as $resource) {
