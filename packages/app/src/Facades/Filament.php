@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string getEmailVerifiedMiddleware()
  * @method static string | null getFavicon()
  * @method static GlobalSearchProvider getGlobalSearchProvider()
- * @method static string | null getGoogleFonts()
+ * @method static array | null getFont()
  * @method static string getHomeUrl()
  * @method static string | null getLoginUrl()
  * @method static string getLogoutUrl()

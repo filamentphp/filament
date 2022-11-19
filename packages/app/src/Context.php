@@ -147,7 +147,7 @@ class Context
 
     protected ?string $databaseNotificationsPolling = '30s';
 
-    protected ?string $googleFonts = 'https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap';
+    protected ?array $font = [];
 
     protected array $plugins = [];
 
@@ -473,9 +473,13 @@ class Context
         return $this;
     }
 
-    public function googleFonts(?string $url): static
+    public function font(string $name, string $source, array $preconnect = [] ): static
     {
-        $this->googleFonts = $url;
+        $this->font = [
+            'name' => $name,
+            'source' => $source,
+            'preconnect' => $preconnect,
+        ];
 
         return $this;
     }
@@ -1135,9 +1139,17 @@ class Context
         return $this->databaseNotificationsPolling;
     }
 
-    public function getGoogleFonts(): ?string
+    public function getFont(): ?array
     {
-        return $this->googleFonts;
+        if ($this->font && blank($this->font['preconnect'])) {
+            $url = parse_url($this->font['source']);
+
+            $this->font['preconnect'] = [
+                "{$url['scheme']}://{$url['host']}"
+            ];
+        }
+
+        return $this->font;
     }
 
     public function getPlugins(): array

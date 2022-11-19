@@ -35,16 +35,20 @@
 
         @livewireStyles
 
-        @if (filled($fontsUrl = filament()->getGoogleFonts()))
-            <link rel="preconnect" href="https://fonts.googleapis.com">
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-            <link href="{{ $fontsUrl }}" rel="stylesheet" />
+        @if (filled($font = filament()->getFont()))
+            @foreach ($font['preconnect'] as $preconnect)
+                <link rel="preconnect" href="{{ $preconnect }}" crossorigin>
+            @endforeach
+            <link href="{{ $font['source'] }}" rel="stylesheet" />
         @endif
+
+        @filamentStyles
 
         <style>
             :root {
-                --font-family: 'DM Sans', sans-serif;
-                --chart-font-family: var(--font-family);
+                @if (filled($font))
+                    --font-family:  {!! $font['name'] !!};
+                @endif
                 @foreach (filament()->getPrimaryColor() as $shade => $color)
                     --primary-color-{{ $shade }}: {{ $color }};
                 @endforeach
@@ -62,8 +66,6 @@
                 @endforeach
             }
         </style>
-
-        @filamentStyles
 
         {{ filament()->renderHook('styles.end') }}
 

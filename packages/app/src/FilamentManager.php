@@ -433,9 +433,9 @@ class FilamentManager
         return $this->getCurrentContext()->getDatabaseNotificationsPollingInterval();
     }
 
-    public function getGoogleFonts(): ?string
+    public function getFont(): ?array
     {
-        return $this->getCurrentContext()->getGoogleFonts();
+        return $this->getCurrentContext()->getFont();
     }
 
     public function getDefaultAvatarProvider(): string
