@@ -120,7 +120,6 @@ it('can state whether a column has a description', function () {
 });
 
 it('can state whether a select column has options', function () {
-
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)

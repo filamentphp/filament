@@ -46,8 +46,8 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
             Tables\Columns\SelectColumn::make('with_options')
                 ->options([
                     'red' => 'Red',
-                    'blue' => 'Blue'
-                ])
+                    'blue' => 'Blue',
+                ]),
         ];
     }
 

@@ -342,7 +342,7 @@ class TestsColumns
 
     public function assertSelectColumnHasOptions(): Closure
     {
-        return function(string $name, array $options, $record) {
+        return function (string $name, array $options, $record) {
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
@@ -370,7 +370,7 @@ class TestsColumns
 
     public function assertSelectColumnDoesNotHaveOptions(): Closure
     {
-        return function(string $name, array $options, $record) {
+        return function (string $name, array $options, $record) {
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
