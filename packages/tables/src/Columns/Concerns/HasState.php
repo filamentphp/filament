@@ -84,24 +84,19 @@ trait HasState
     {
         $relationshipName = array_shift($relationships);
 
-        if (!method_exists($record, $relationshipName))
-        {
+        if (! method_exists($record, $relationshipName)) {
             return [];
         }
 
-        if (count($relationships) === 1)
-        {
+        if (count($relationships) === 1) {
             return $record->{$relationshipName}()->pluck(array_shift($relationships))->toArray();
-        }
-        else
-        {
-            foreach ($record->{$relationshipName}()->get() as $relatedRecord)
-            {
+        } else {
+            foreach ($record->{$relationshipName}()->get() as $relatedRecord) {
                 $results = array_merge(
                     $results,
                     $this->collectRelationValues($relationships, $relatedRecord, $results)
                 );
-            };
+            }
 
             return $results;
         }
