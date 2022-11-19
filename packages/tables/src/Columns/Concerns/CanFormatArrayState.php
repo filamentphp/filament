@@ -1,0 +1,53 @@
+<?php
+
+namespace Filament\Tables\Columns\Concerns;
+
+use Closure;
+use Illuminate\Support\HtmlString;
+
+trait CanFormatArrayState
+{
+    protected ?int $limit = null;
+
+    public function formatArrayStateUsing(?Closure $callback): static
+    {
+        $this->mutateArrayStateUsing = $callback;
+
+        return $this;
+    }
+
+    public function ul(): static
+    {
+        $this->mutateArrayStateUsing(function ($state) {
+            return new HtmlString(
+                '<ul><li>' . implode('</li><li>', $state) . '</li></ul>'
+            );
+        });
+
+        return $this;
+    }
+
+    public function ol(): static
+    {
+        $this->mutateArrayStateUsing(function ($state) {
+            return new HtmlString(
+                '<ol><li>' . implode('</li><li>', $state) . '</li></ol>'
+            );
+        });
+
+        return $this;
+    }
+
+    public function grid(int $columns = 1, $gap = 2): static
+    {
+        $this->mutateArrayStateUsing(function ($state) use ($columns, $gap) {
+            return new HtmlString(
+                "<div class='grid grid-cols-{$columns} gap-{$gap}'><div>" .
+                implode('</div><div>', $state) .
+                '</div></div>'
+            );
+        });
+
+        return $this;
+    }
+}

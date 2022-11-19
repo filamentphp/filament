@@ -9,6 +9,7 @@ class TextColumn extends Column
 {
     use Concerns\CanBeCopied;
     use Concerns\CanFormatState;
+    use Concerns\CanFormatArrayState;
     use Concerns\HasColor;
     use Concerns\HasDescription;
     use Concerns\HasFontFamily;

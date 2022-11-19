@@ -4,6 +4,7 @@ namespace Filament\Tables\Columns\Concerns;
 
 use BackedEnum;
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
 trait HasState
@@ -11,6 +12,8 @@ trait HasState
     protected $defaultState = null;
 
     protected ?Closure $getStateUsing = null;
+
+    protected ?Closure $mutateArrayStateUsing = null;
 
     public function getStateUsing(?Closure $callback): static
     {
@@ -50,7 +53,7 @@ trait HasState
         }
 
         if (is_array($state)) {
-            $state = $this->mutateArrayState($state);
+            $state = $this->getMutatedArrayState($state) ?? $this->mutateArrayState($state);
         }
 
         return $state;
@@ -72,40 +75,54 @@ trait HasState
 
         $state = [];
 
-        $state = $this->collectRelationValues('', $this->getName(), $record, $state);
+        $state = $this->collectRelationValues(explode('.', $this->getName()), $record, $state);
 
         return count($state) ? $state : null;
     }
 
-    protected function collectRelationValues($relationshipName, $restOfName, $record, &$results)
+    protected function collectRelationValues(array $relationships, Model $record, array &$results): array
     {
-        $relationshipName = (string) str($restOfName)->before('.');
-        $restOfName = (string) str($restOfName)->after('.');
+        $relationshipName = array_shift($relationships);
 
-        if (! method_exists($record, $relationshipName)) {
+        if (!method_exists($record, $relationshipName))
+        {
             return [];
         }
 
-        if (! str($restOfName)->contains('.')) {
-            $state = $record->{$relationshipName}()->pluck($restOfName);
-
-            return $state->toArray();
-        } else {
-            $related = $record->{$relationshipName}();
-
-            foreach ($related->get() as $relatedRecord) {
+        if (count($relationships) === 1)
+        {
+            return $record->{$relationshipName}()->pluck(array_shift($relationships))->toArray();
+        }
+        else
+        {
+            foreach ($record->{$relationshipName}()->get() as $relatedRecord)
+            {
                 $results = array_merge(
                     $results,
-                    $this->collectRelationValues($relationshipName, $restOfName, $relatedRecord, $results)
+                    $this->collectRelationValues($relationships, $relatedRecord, $results)
                 );
-            }
-        }
+            };
 
-        return $results;
+            return $results;
+        }
     }
 
     protected function mutateArrayState(array $state)
     {
         return $state;
+    }
+
+    public function mutateArrayStateUsing(?Closure $callback): static
+    {
+        $this->mutateArrayStateUsing = $callback;
+
+        return $this;
+    }
+
+    public function getMutatedArrayState(array $state)
+    {
+        return $this->evaluate($this->mutateArrayStateUsing, [
+            'state' => $state,
+        ]);
     }
 }
