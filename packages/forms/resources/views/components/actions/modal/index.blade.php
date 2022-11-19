@@ -15,7 +15,7 @@
     >
         @if ($action)
             @if ($action->isModalCentered())
-                @if($modalHeading = $action->getModalHeading())
+                @if ($modalHeading = $action->getModalHeading())
                     <x-tables::modal.heading>
                         {{ $action->getModalHeading() }}
                     </x-tables::modal.heading>
