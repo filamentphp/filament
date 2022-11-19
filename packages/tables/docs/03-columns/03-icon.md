@@ -82,7 +82,7 @@ IconColumn::make('is_featured')
 
 ### Customizing the boolean icons
 
-You may customize the icon representing each state. Icons are the name of a Blade component present. By default, [Heroicons](https://heroicons.com) are installed:
+You may customize the icon representing each state. Icons are the name of a Blade component present. By default, [Heroicons v1](https://v1.heroicons.com) are installed:
 
 ```php
 use Filament\Tables\Columns\IconColumn;
