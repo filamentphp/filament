@@ -1,3 +1,5 @@
+const defaultTheme = require('tailwindcss/defaultTheme')
+
 module.exports = {
     content: [
         './packages/actions/resources/**/*.blade.php',
@@ -75,7 +77,7 @@ module.exports = {
                 },
             },
             fontFamily: {
-                sans: 'var(--font-family)',
+                sans: ['var(--font-family)', ...defaultTheme.fontFamily.sans],
             },
         },
     },
