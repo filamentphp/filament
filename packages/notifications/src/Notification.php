@@ -204,17 +204,17 @@ class Notification extends ViewComponent implements Arrayable
         $expectedNotification = Arr::last($notifications);
 
         Assert::assertIsArray($expectedNotification);
-        
+
         if (blank($notification)) {
             return;
         }
 
         if ($notification instanceof Notification) {
             Assert::assertSame($expectedNotification, $notification->toArray());
-            
+
             return;
         }
-        
+
         Assert::assertSame($expectedNotification['title'], $notification);
     }
 }
