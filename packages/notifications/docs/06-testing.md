@@ -17,6 +17,22 @@ it('sends a notification', function () {
 });
 ```
 
+```php
+use Filament\Notifications\Notification
+
+it('sends a notification', function () {
+    Notification::assertNotified();
+});
+```
+
+```php
+use function Filament\Notifications\Testing\assetNotified;
+
+it('sends a notification', function () {
+    assertNotified();
+});
+```
+
 You may optionally pass a notification title to test for:
 
 ```php
