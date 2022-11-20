@@ -57,7 +57,8 @@
             "Filament\\Tables\\": "packages/tables/src",
             "Filament\\Tests\\": "tests/src",
             "Filament\\Tests\\Database\\Factories\\": "tests/database/factories",
-            "Filament\\Widgets\\": "packages/widgets/src"
+            "Filament\\Widgets\\": "packages/widgets/src",
+            "Filament\\Theme\\": "packages/theme/src"
         }
     },
     "config": {

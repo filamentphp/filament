@@ -8,6 +8,7 @@ use Filament\SpatieLaravelTranslatablePluginServiceProvider;
 use Filament\Support\SupportServiceProvider;
 use Filament\Tables\TablesServiceProvider;
 use Filament\Tests\AdminFilamentProvider;
+use Filament\Theme\ThemeServiceProvider;
 use Filament\Widgets\WidgetsServiceProvider;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\Concerns\CreatesApplication;
@@ -34,5 +35,6 @@ $app->register(SpatieLaravelTranslatablePluginServiceProvider::class);
 $app->register(SupportServiceProvider::class);
 $app->register(TablesServiceProvider::class);
 $app->register(WidgetsServiceProvider::class);
+$app->register(ThemeServiceProvider::class);
 
 return $app;

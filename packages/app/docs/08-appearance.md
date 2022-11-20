@@ -125,7 +125,7 @@ export default defineConfig({
         laravel({
             input: [
                 // ...
-                'resources/css/filament.css',
+                'resources/css/index.css',
             ],
             // ...
         }),
@@ -149,7 +149,7 @@ Or if you're using Laravel Mix instead of Vite, in your `webpack.mix.js` file, r
 ```js
 const mix = require('laravel-mix')
 
-mix.postCss('resources/css/filament.css', 'public/css', [
+mix.postCss('resources/css/index.css', 'public/css', [
     require('tailwindcss'), // [tl! focus]
 ])
 ```
@@ -168,11 +168,11 @@ use Illuminate\Foundation\Vite;
 
 Filament::serving(function () {
     // Using Vite
-    Filament::registerViteTheme('resources/css/filament.css');
+    Filament::registerViteTheme('resources/css/index.css');
 
     // Using Laravel Mix
     Filament::registerTheme(
-        mix('css/filament.css'),
+        mix('css/index.css'),
     );
 });
 ```

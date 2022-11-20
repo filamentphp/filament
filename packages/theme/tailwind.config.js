@@ -1,4 +1,4 @@
-const preset = require('./filament-preset')
+const preset = require('../app/filament-preset')
 
 module.exports = {
     presets: [

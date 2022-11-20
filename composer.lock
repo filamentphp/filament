@@ -127,16 +127,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.245.1",
+            "version": "3.246.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "abe53c3bcf351ffe1d8fa8784f1bf1dfbf35b5ab"
+                "reference": "90859d0b704d80a7f5b0743766562f956e43c79d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/abe53c3bcf351ffe1d8fa8784f1bf1dfbf35b5ab",
-                "reference": "abe53c3bcf351ffe1d8fa8784f1bf1dfbf35b5ab",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/90859d0b704d80a7f5b0743766562f956e43c79d",
+                "reference": "90859d0b704d80a7f5b0743766562f956e43c79d",
                 "shasum": ""
             },
             "require": {
@@ -215,9 +215,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.245.1"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.246.0"
             },
-            "time": "2022-11-17T19:21:17+00:00"
+            "time": "2022-11-18T19:56:22+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -8211,16 +8211,16 @@
         },
         {
             "name": "spatie/laravel-tags",
-            "version": "4.3.4",
+            "version": "4.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-tags.git",
-                "reference": "88d17ce5888b9db3fd19762b2860caa709005670"
+                "reference": "0f6b46f8af83dd9dac4df55f57009fd51d884d1c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-tags/zipball/88d17ce5888b9db3fd19762b2860caa709005670",
-                "reference": "88d17ce5888b9db3fd19762b2860caa709005670",
+                "url": "https://api.github.com/repos/spatie/laravel-tags/zipball/0f6b46f8af83dd9dac4df55f57009fd51d884d1c",
+                "reference": "0f6b46f8af83dd9dac4df55f57009fd51d884d1c",
                 "shasum": ""
             },
             "require": {
@@ -8268,7 +8268,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-tags/issues",
-                "source": "https://github.com/spatie/laravel-tags/tree/4.3.4"
+                "source": "https://github.com/spatie/laravel-tags/tree/4.3.5"
             },
             "funding": [
                 {
@@ -8276,7 +8276,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-11-17T11:42:45+00:00"
+            "time": "2022-11-19T20:16:17+00:00"
         },
         {
             "name": "spatie/laravel-translatable",
@@ -12713,5 +12713,5 @@
         "composer-runtime-api": "^2.1"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }
