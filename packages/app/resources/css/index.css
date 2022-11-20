@@ -1,7 +1,6 @@
 @import 'tippy.js/dist/tippy.css';
 @import 'tippy.js/themes/light.css';
 @import '../../../forms/dist/index.css';
-@import 'theme.css';
 
 @tailwind base;
 @tailwind components;

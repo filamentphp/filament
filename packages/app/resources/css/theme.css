@@ -1,3 +1,7 @@
+@import 'index.css';
+
+@tailwind components;
+
 @layer components {
     .filament-card-layout {
         @apply relative bg-no-repeat;
