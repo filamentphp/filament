@@ -77,7 +77,7 @@ class FilamentServiceProvider extends PluginServiceProvider
         return [
             Js::make('app', __DIR__ . '/../dist/index.js')->core(),
             Js::make('echo', __DIR__ . '/../dist/echo.js')->core(),
-            Theme::make('app', __DIR__ . '/../dist/index.css'),
+            Theme::make('app', __DIR__ . '/../dist/theme.css'),
         ];
     }
 

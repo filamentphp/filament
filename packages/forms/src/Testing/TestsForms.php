@@ -5,6 +5,7 @@ namespace Filament\Forms\Testing;
 use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Testing\Assert;
 use Livewire\Testing\TestableLivewire;
@@ -213,7 +214,7 @@ class TestsForms
             /** @var ComponentContainer $form */
             $form = $this->instance()->{$formName};
 
-            /** @var Field $field */
+            /** @var TextInput $field */
             $field = $form->getFlatFields(withHidden: true)[$fieldName];
 
             $livewireClass = $this->instance()::class;
