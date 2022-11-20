@@ -14,8 +14,8 @@
         background-image: radial-gradient(
             circle at top,
             theme('colors.primary.800'),
-            theme('colors.gray.800'),
-            theme('colors.gray.900') 100%
+            theme('colors.secondary.800'),
+            theme('colors.secondary.900') 100%
         );
     }
 
