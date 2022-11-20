@@ -10,7 +10,7 @@ use Pest\Plugin;
 Plugin::uses(InteractsWithFilamentNotifications::class);
 
 /**
- * @return TestCall|TestCase|mixed
+ * @return TestCall | TestCase | mixed
  */
 function assertNotified(Notification | string $notification = null)
 {
