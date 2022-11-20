@@ -16,7 +16,6 @@
         "filament/support": "self.version",
         "filament/tables": "self.version",
         "filament/widgets": "self.version",
-        "filament/theme": "self.version",
         "illuminate/auth": "^9.0",
         "illuminate/console": "^9.0",
         "illuminate/contracts": "^9.0",
