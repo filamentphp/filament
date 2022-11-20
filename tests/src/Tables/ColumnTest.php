@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Tests\Models\Comment;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Tables\Fixtures\PostsTable;
 use Filament\Tests\Tables\TestCase;
@@ -19,6 +20,19 @@ it('can render text column with relationship', function () {
 
     livewire(PostsTable::class)
         ->assertCanRenderTableColumn('author.name');
+});
+
+it('can render text column with deep relationship', function () {
+    $posts = Post::factory()->count(5)->create();
+
+    foreach ($posts as $post) {
+        $post->comments()->createMany(
+            Comment::factory()->count(10)->make()->toArray()
+        );
+    }
+
+    livewire(PostsTable::class)
+        ->assertCanRenderTableColumn('comments.author.name');
 });
 
 it('can sort records', function () {

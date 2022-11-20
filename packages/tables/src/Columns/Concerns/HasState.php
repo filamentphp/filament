@@ -4,9 +4,7 @@ namespace Filament\Tables\Columns\Concerns;
 
 use BackedEnum;
 use Closure;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
 trait HasState
@@ -14,6 +12,8 @@ trait HasState
     protected $defaultState = null;
 
     protected ?Closure $getStateUsing = null;
+
+    protected ?Closure $mutateArrayStateUsing = null;
 
     public function getStateUsing(?Closure $callback): static
     {
@@ -57,7 +57,7 @@ trait HasState
         }
 
         if (is_array($state)) {
-            $state = $this->mutateArrayState($state);
+            $state = $this->getMutatedArrayState($state) ?? $this->mutateArrayState($state);
         }
 
         return $state;
@@ -77,33 +77,51 @@ trait HasState
             return null;
         }
 
-        $relationshipName = $this->getRelationshipName();
+        $state = [];
+
+        $state = $this->collectRelationValues(explode('.', $this->getName()), $record, $state);
+
+        return count($state) ? $state : null;
+    }
+
+    protected function collectRelationValues(array $relationships, Model $record, array &$results): array
+    {
+        $relationshipName = array_shift($relationships);
 
         if (! method_exists($record, $relationshipName)) {
-            return null;
+            return [];
         }
 
-        $relationship = $record->{$relationshipName}();
+        if (count($relationships) === 1) {
+            return $record->{$relationshipName}()->pluck(array_shift($relationships))->toArray();
+        } else {
+            foreach ($record->{$relationshipName}()->get() as $relatedRecord) {
+                $results = array_merge(
+                    $results,
+                    $this->collectRelationValues($relationships, $relatedRecord, $results)
+                );
+            }
 
-        if (! (
-            $relationship instanceof HasMany ||
-            $relationship instanceof BelongsToMany ||
-            $relationship instanceof MorphMany
-        )) {
-            return null;
+            return $results;
         }
-
-        $state = $record->getRelationValue($relationshipName)->pluck($this->getRelationshipAttribute());
-
-        if (! count($state)) {
-            return null;
-        }
-
-        return $state->toArray();
     }
 
     protected function mutateArrayState(array $state)
     {
         return $state;
+    }
+
+    public function mutateArrayStateUsing(?Closure $callback): static
+    {
+        $this->mutateArrayStateUsing = $callback;
+
+        return $this;
+    }
+
+    public function getMutatedArrayState(array $state)
+    {
+        return $this->evaluate($this->mutateArrayStateUsing, [
+            'state' => $state,
+        ]);
     }
 }

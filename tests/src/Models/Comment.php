@@ -2,13 +2,12 @@
 
 namespace Filament\Tests\Models;
 
-use Filament\Tests\Database\Factories\PostFactory;
+use Filament\Tests\Database\Factories\CommentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Post extends Model
+class Comment extends Model
 {
     use HasFactory;
 
@@ -24,13 +23,13 @@ class Post extends Model
         return $this->belongsTo(User::class, 'author_id');
     }
 
-    public function comments(): HasMany
+    public function post(): BelongsTo
     {
-        return $this->hasMany(Comment::class, 'post_id');
+        return $this->belongsTo(Post::class, 'post_id');
     }
 
     protected static function newFactory()
     {
-        return PostFactory::new();
+        return CommentFactory::new();
     }
 }
