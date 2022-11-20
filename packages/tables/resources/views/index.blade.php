@@ -20,6 +20,7 @@
     $hasSummary = $hasSummary();
     $header = $getHeader();
     $headerActions = $getHeaderActions();
+    $headerActionsPosition = $getHeaderActionsPosition();
     $heading = $getHeading();
     $group = $getGrouping();
     $groupedBulkActions = $getGroupedBulkActions();
@@ -180,7 +181,7 @@
                     'px-2 pt-2',
                     'hidden' => ! $heading && $isReordering,
                 ])>
-                    <x-filament-tables::header :actions="$isReordering ? [] : $headerActions" class="mb-2">
+                    <x-filament-tables::header :actions="$isReordering ? [] : $headerActions" :actions-position="$headerActionsPosition" class="mb-2">
                         <x-slot name="heading">
                             {{ $heading }}
                         </x-slot>
@@ -572,7 +573,7 @@
                                             @if (count($actions))
                                                 <x-filament-tables::actions
                                                     :actions="$actions"
-                                                    :alignment="$actionsPosition === ActionsPosition::AfterContent ? 'left' : 'left md:right'"
+                                                    :alignment="$actionsPosition === ActionsPosition::AfterContent ? 'start' : 'start md:end'"
                                                     :record="$record"
                                                     wrap="-md"
                                                     @class([
@@ -726,7 +727,7 @@
 
                         @if (count($actions) && (! $isReordering) && $actionsPosition === ActionsPosition::AfterCells)
                             @if ($actionsColumnLabel)
-                                <x-filament-tables::header-cell alignment="right">
+                                <x-filament-tables::header-cell alignment="end">
                                     {{ $actionsColumnLabel }}
                                 </x-filament-tables::header-cell>
                             @else
@@ -851,7 +852,7 @@
                                         ])>
                                             <x-filament-tables::actions
                                                 :actions="$actions"
-                                                :alignment="$actionsAlignment ?? 'left'"
+                                                :alignment="$actionsAlignment ?? 'start'"
                                                 :record="$record"
                                             />
                                         </x-filament-tables::actions.cell>
@@ -875,7 +876,7 @@
                                         ])>
                                             <x-filament-tables::actions
                                                 :actions="$actions"
-                                                :alignment="$actionsAlignment ?? 'left'"
+                                                :alignment="$actionsAlignment ?? 'start'"
                                                 :record="$record"
                                             />
                                         </x-filament-tables::actions.cell>
@@ -909,7 +910,7 @@
                                         ])>
                                             <x-filament-tables::actions
                                                 :actions="$actions"
-                                                :alignment="$actionsAlignment ?? 'right'"
+                                                :alignment="$actionsAlignment ?? 'end'"
                                                 :record="$record"
                                             />
                                         </x-filament-tables::actions.cell>

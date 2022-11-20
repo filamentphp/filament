@@ -11,8 +11,8 @@
     'md:flex-nowrap' => $wrap === '-md',
     match ($alignment) {
         'center' => 'justify-center',
-        'left' => 'justify-start',
-        'left md:right' => 'justify-start md:justify-end',
+        'start', 'left' => 'justify-start',
+        'start md:end', 'left md:right' => 'justify-start md:justify-end',
         default => 'justify-end',
     },
 ]) }}>

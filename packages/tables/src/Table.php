@@ -118,6 +118,8 @@ class Table extends ViewComponent
 
     protected array $headerActions = [];
 
+    protected string | Closure | null $headerActionsPosition = null;
+
     protected string | Closure | null $inverseRelationship = null;
 
     protected bool | Closure $isGroupsOnly = false;
@@ -220,6 +222,13 @@ class Table extends ViewComponent
     public function actionsPosition(string | Closure | null $position = null): static
     {
         $this->actionsPosition = $position;
+
+        return $this;
+    }
+
+    public function headerActionsPosition(string | Closure | null $position = null): static
+    {
+        $this->headerActionsPosition = $position;
 
         return $this;
     }
@@ -457,7 +466,7 @@ class Table extends ViewComponent
         return $this;
     }
 
-    public function headerActions(array | ActionGroup | Closure $actions): static
+    public function headerActions(array | ActionGroup | Closure $actions, string | Closure | null $position = null): static
     {
         foreach (Arr::wrap($actions) as $index => $action) {
             if ($action instanceof ActionGroup) {
@@ -482,6 +491,8 @@ class Table extends ViewComponent
 
             $this->headerActions[$action->getName()] = $action;
         }
+
+        $this->headerActionsPosition($position);
 
         return $this;
     }
@@ -721,6 +732,17 @@ class Table extends ViewComponent
         }
 
         return Position::AfterContent;
+    }
+
+    public function getHeaderActionsPosition(): string
+    {
+        $position = $this->evaluate($this->headerActionsPosition);
+
+        if (filled($position)) {
+            return $position;
+        }
+
+        return Position::End;
     }
 
     public function getActionsAlignment(): ?string
