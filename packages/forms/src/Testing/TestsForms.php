@@ -204,7 +204,7 @@ class TestsForms
         };
     }
 
-    public function assertFormFieldIsReadonly(): Closure
+    public function assertFormFieldIsReadOnly(): Closure
     {
         return function (string $fieldName, string $formName = 'form'): static {
             /** @phpstan-ignore-next-line  */
@@ -219,8 +219,8 @@ class TestsForms
             $livewireClass = $this->instance()::class;
 
             Assert::assertTrue(
-                $field->isReadonly(),
-                "Failed asserting that a field with the name [{$fieldName}] is readonly on the form named [{$formName}] on the [{$livewireClass}] component."
+                $field->isReadOnly(),
+                "Failed asserting that a field with the name [{$fieldName}] is read-only on the form named [{$formName}] on the [{$livewireClass}] component."
             );
 
             return $this;

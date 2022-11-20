@@ -6,22 +6,22 @@ use Closure;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Support\Arr;
 
-trait CanBeReadonly
+trait CanBeReadOnly
 {
-    protected bool | Closure $isReadonly = false;
+    protected bool | Closure $isReadOnly = false;
 
-    public function readonly(bool | Closure $condition = true): static
+    public function readOnly(bool | Closure $condition = true): static
     {
-        $this->isReadonly = $condition;
+        $this->isReadOnly = $condition;
 
         return $this;
     }
 
-    public function readonlyOn(string | array $contexts): static
+    public function readOnlyOn(string | array $contexts): static
     {
-        $this->readonly(static function (string $context, HasForms $livewire) use ($contexts): bool {
-            foreach (Arr::wrap($contexts) as $readonlyContext) {
-                if ($readonlyContext === $context || $livewire instanceof $readonlyContext) {
+        $this->readOnly(static function (string $context, HasForms $livewire) use ($contexts): bool {
+            foreach (Arr::wrap($contexts) as $readOnlyContext) {
+                if ($readOnlyContext === $context || $livewire instanceof $readOnlyContext) {
                     return true;
                 }
             }
@@ -32,8 +32,8 @@ trait CanBeReadonly
         return $this;
     }
 
-    public function isReadonly(): bool
+    public function isReadOnly(): bool
     {
-        return $this->evaluate($this->isReadonly);
+        return $this->evaluate($this->isReadOnly);
     }
 }
