@@ -108,6 +108,11 @@ class AssetManager
         return $this->themes[$id] ?? null;
     }
 
+    public function getThemes(): array
+    {
+        return $this->themes;
+    }
+
     protected function getAssets(array $assets, ?array $packages = null): array
     {
         if ($packages === null) {
