@@ -16,9 +16,9 @@
         @if ($action)
             @if ($action->isModalCentered())
                 @if ($heading = $action->getModalHeading())
-                    <x-tables::modal.heading>
-                        {{ $heading }}
-                    </x-tables::modal.heading>
+                    <x-slot name="heading">
+                        {{ $action->getModalHeading() }}
+                    </x-slot>
                 @endif
 
                 @if ($subheading = $action->getModalSubheading())
@@ -29,9 +29,9 @@
             @else
                 <x-slot name="header">
                     @if ($heading = $action->getModalHeading())
-                        <x-tables::modal.heading>
-                            {{ $heading }}
-                        </x-tables::modal.heading>
+                        <x-forms::modal.heading>
+                            {{ $action->getModalHeading() }}
+                        </x-forms::modal.heading>
                     @endif
 
                     @if ($subheading = $action->getModalSubheading())
