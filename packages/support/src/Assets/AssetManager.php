@@ -14,6 +14,8 @@ class AssetManager
 
     protected array $styles = [];
 
+    protected array $themes = [];
+
     public function register(array $assets, ?string $package = null): void
     {
         foreach ($assets as $asset) {
@@ -23,6 +25,7 @@ class AssetManager
                 AlpineComponent::class => $this->alpineComponents[$package][] = $asset,
                 Css::class => $this->styles[$package][] = $asset,
                 Js::class => $this->scripts[$package][] = $asset,
+                Theme::class => $this->themes[$asset->getId()] = $asset,
                 default => null,
             };
         }
@@ -98,6 +101,11 @@ class AssetManager
         return view('filament::assets', [
             'assets' => $this->getStyles($packages),
         ])->render();
+    }
+
+    public function getTheme(?string $id): ?Theme
+    {
+        return $this->themes[$id] ?? null;
     }
 
     protected function getAssets(array $assets, ?array $packages = null): array

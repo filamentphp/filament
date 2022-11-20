@@ -21,7 +21,9 @@ use Filament\Pages\Auth\Register;
 use Filament\Pages\Page;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
+use Filament\Support\Assets\Theme;
 use Filament\Support\Color;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Widgets\Widget;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -103,7 +105,7 @@ class Context
 
     protected ?string $tenantSlugField = null;
 
-    protected string | Htmlable | null $theme = null;
+    protected string | Htmlable | Theme | null $theme = null;
 
     protected array $tenantMenuItems = [];
 
@@ -328,7 +330,7 @@ class Context
         return $this;
     }
 
-    public function theme(string | Htmlable | null $theme): static
+    public function theme(string | Htmlable | Theme $theme): static
     {
         $this->theme = $theme;
 
@@ -858,9 +860,28 @@ class Context
         return $this->path;
     }
 
-    public function getTheme(): string | Htmlable | null
+    public function getTheme(): Theme
     {
-        return $this->theme;
+        if (blank($this->theme)) {
+            return $this->getDefaultTheme();
+        }
+
+        if ($this->theme instanceof Theme) {
+            return $this->theme;
+        }
+
+        if ($this->theme instanceof Htmlable) {
+            return Theme::make('app')->html($this->theme);
+        }
+
+        $theme = FilamentAsset::getTheme($this->theme);
+
+        return $theme ?? Theme::make('app', path: $this->theme);
+    }
+
+    public function getDefaultTheme(): Theme
+    {
+        return FilamentAsset::getTheme('app');
     }
 
     public function getUrl(?Model $tenant = null): ?string

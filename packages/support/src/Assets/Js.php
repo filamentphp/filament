@@ -95,7 +95,7 @@ class Js extends Asset
             $src .= "{$package}/";
         }
 
-        $src .= "{$this->getName()}.js";
+        $src .= "{$this->getId()}.js";
 
         return asset($src) . '?v=' . InstalledVersions::getVersion('filament/support');
     }
@@ -111,7 +111,7 @@ class Js extends Asset
             $path .= DIRECTORY_SEPARATOR;
         }
 
-        $path .= "{$this->getName()}.js";
+        $path .= "{$this->getId()}.js";
 
         return public_path("js/filament/{$path}");
     }

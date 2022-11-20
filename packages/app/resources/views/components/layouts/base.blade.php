@@ -41,6 +41,8 @@
             <link href="{{ $fontsUrl }}" rel="stylesheet" />
         @endif
 
+        {{ filament()->getTheme()->getHtml() }}
+
         @filamentStyles
 
         <style>

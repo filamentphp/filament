@@ -1,32 +1,4 @@
-@import '../../../forms/dist/index.css';
-
-@import 'tippy.js/dist/tippy.css';
-@import 'tippy.js/themes/light.css';
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-    html {
-        -webkit-tap-highlight-color: transparent;
-    }
-
-    :root {
-        --sidebar-width: 20rem;
-        --collapsed-sidebar-width: 5.4rem;
-    }
-
-    :root.dark {
-        color-scheme: dark;
-    }
-
-    [dir='rtl'] select {
-        background-position: left 0.5rem center !important;
-        padding-left: 2.5rem;
-        padding-right: 0.75rem;
-    }
-}
+@import 'theme.css';
 
 @layer components {
     .filament-card-layout {

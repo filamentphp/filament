@@ -19,6 +19,7 @@ use Filament\Http\Responses\Auth\PasswordResetResponse;
 use Filament\Http\Responses\Auth\RegistrationResponse;
 use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
+use Filament\Support\Assets\Theme;
 use Filament\Support\PluginServiceProvider;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Filesystem\Filesystem;
@@ -77,9 +78,9 @@ class FilamentServiceProvider extends PluginServiceProvider
     protected function getAssets(): array
     {
         return [
-            Css::make('app', __DIR__ . '/../dist/index.css')->html(fn (): string | Htmlable | null => Filament::getTheme()),
             Js::make('app', __DIR__ . '/../dist/index.js')->core(),
             Js::make('echo', __DIR__ . '/../dist/echo.js')->core(),
+            Theme::make('app', __DIR__ . '/../dist/index.css'),
         ];
     }
 

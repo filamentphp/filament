@@ -4,26 +4,26 @@ namespace Filament\Support\Assets;
 
 abstract class Asset
 {
-    protected string $name;
+    protected string $id;
 
-    protected string $path;
+    protected ?string $path = null;
 
     protected ?string $package = null;
 
-    final public function __construct(string $name, string $path)
+    final public function __construct(string $id, ?string $path = null)
     {
-        $this->name = $name;
+        $this->id = $id;
         $this->path = $path;
     }
 
-    public static function make(string $name, string $path): static
+    public static function make(string $id, ?string $path = null): static
     {
-        return new static($name, $path);
+        return new static($id, $path);
     }
 
-    public function getName(): string
+    public function getId(): string
     {
-        return $this->name;
+        return $this->id;
     }
 
     public function package(?string $package): static
