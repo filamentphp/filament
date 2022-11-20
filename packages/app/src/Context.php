@@ -475,7 +475,7 @@ class Context
         return $this;
     }
 
-    public function font(string $name, string $source, array $preconnect = [] ): static
+    public function font(string $name, string $source, array $preconnect = []): static
     {
         $this->font = [
             'name' => $name,
@@ -1166,7 +1166,7 @@ class Context
             $url = parse_url($this->font['source']);
 
             $this->font['preconnect'] = [
-                "{$url['scheme']}://{$url['host']}"
+                "{$url['scheme']}://{$url['host']}",
             ];
         }
 
