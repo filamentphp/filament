@@ -69,9 +69,9 @@
         >
             @if ($action)
                 @if ($action->isModalCentered())
-                    @if ($modalHeading = $action->getModalHeading())
+                    @if ($heading = $action->getModalHeading())
                         <x-tables::modal.heading>
-                            {{ $modalHeading }}
+                            {{ $heading }}
                         </x-tables::modal.heading>
                     @endif
 
@@ -82,9 +82,9 @@
                     @endif
                 @else
                     <x-slot name="header">
-                        @if ($modalHeading = $action->getModalHeading())
+                        @if ($heading = $action->getModalHeading())
                             <x-tables::modal.heading>
-                                {{ $modalHeading }}
+                                {{ $heading }}
                             </x-tables::modal.heading>
                         @endif
 
