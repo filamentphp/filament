@@ -23,7 +23,6 @@ jobs:
           - support
           - tables
           - widgets
-          - theme
     steps:
       - uses: actions/checkout@v2
       - id: previous-tag
