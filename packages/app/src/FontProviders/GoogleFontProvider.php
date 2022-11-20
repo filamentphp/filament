@@ -2,10 +2,7 @@
 
 namespace Filament\FontProviders;
 
-use Filament\Facades\Filament;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\HtmlString;
 
 class GoogleFontProvider implements Contracts\FontProvider
