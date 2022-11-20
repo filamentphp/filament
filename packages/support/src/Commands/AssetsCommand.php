@@ -41,6 +41,14 @@ class AssetsCommand extends Command
             $this->copyAsset($asset->getPath(), $asset->getPublicPath());
         }
 
+        foreach (FilamentAsset::getThemes() as $asset) {
+            if ($asset->isRemote()) {
+                continue;
+            }
+
+            $this->copyAsset($asset->getPath(), $asset->getPublicPath());
+        }
+
         $this->components->info('Successfully published assets!');
 
         return static::SUCCESS;

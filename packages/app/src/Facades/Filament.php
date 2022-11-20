@@ -9,6 +9,7 @@ use Filament\Contracts\Plugin;
 use Filament\FilamentManager;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\Models\Contracts\HasTenants;
+use Filament\Support\Assets\Theme;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -61,7 +62,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string getTenantName(Model $tenant)
  * @method static string | null getTenantRegistrationPage()
  * @method static string | null getTenantRegistrationUrl()
- * @method static string | Htmlable | null getTheme()
+ * @method static Theme getTheme()
  * @method static string | null getUrl(Model | null $tenant = null)
  * @method static string | null getUserAvatarUrl(Model | Authenticatable $user)
  * @method static Model | null getUserDefaultTenant(HasTenants | Model | Authenticatable $user)

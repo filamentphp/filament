@@ -32,7 +32,7 @@ class Css extends Asset
             $href .= "{$package}/";
         }
 
-        $href .= "{$this->getName()}.css";
+        $href .= "{$this->getId()}.css";
 
         return asset($href) . '?v=' . InstalledVersions::getVersion('filament/support');
     }
@@ -61,7 +61,7 @@ class Css extends Asset
             $path .= DIRECTORY_SEPARATOR;
         }
 
-        $path .= "{$this->getName()}.css";
+        $path .= "{$this->getId()}.css";
 
         return public_path("css/filament/{$path}");
     }

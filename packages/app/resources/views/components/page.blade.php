@@ -3,6 +3,8 @@
 ])
 
 <div {{ $attributes->class(['filament-page']) }}>
+    {{ filament()->renderHook('page.start') }}
+
     <div class="space-y-6">
         @if ($header = $this->getHeader())
             {{ $header }}
@@ -54,4 +56,6 @@
     @if (! $this instanceof \Filament\Tables\Contracts\HasTable)
         <x-filament-actions::modals />
     @endif
+
+    {{ filament()->renderHook('page.end') }}
 </div>

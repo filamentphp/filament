@@ -21,7 +21,9 @@ use Filament\Pages\Auth\Register;
 use Filament\Pages\Page;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
+use Filament\Support\Assets\Theme;
 use Filament\Support\Color;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Widgets\Widget;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -111,7 +113,7 @@ class Context
 
     protected ?string $tenantSlugField = null;
 
-    protected string | Htmlable | null $theme = null;
+    protected string | Htmlable | Theme | null $theme = null;
 
     protected array $tenantMenuItems = [];
 
@@ -336,7 +338,7 @@ class Context
         return $this;
     }
 
-    public function theme(string | Htmlable | null $theme): static
+    public function theme(string | Htmlable | Theme $theme): static
     {
         $this->theme = $theme;
 
@@ -923,9 +925,28 @@ class Context
         return $this->path;
     }
 
-    public function getTheme(): string | Htmlable | null
+    public function getTheme(): Theme
     {
-        return $this->theme;
+        if (blank($this->theme)) {
+            return $this->getDefaultTheme();
+        }
+
+        if ($this->theme instanceof Theme) {
+            return $this->theme;
+        }
+
+        if ($this->theme instanceof Htmlable) {
+            return Theme::make('app')->html($this->theme);
+        }
+
+        $theme = FilamentAsset::getTheme($this->theme);
+
+        return $theme ?? Theme::make('app', path: $this->theme);
+    }
+
+    public function getDefaultTheme(): Theme
+    {
+        return FilamentAsset::getTheme('app');
     }
 
     public function getUrl(?Model $tenant = null): ?string
@@ -1219,21 +1240,26 @@ class Context
         $this->queueLivewireComponentForRegistration(GlobalSearch::class);
         $this->queueLivewireComponentForRegistration(Notifications::class);
 
-        if ($this->hasEmailVerification()) {
-            $this->queueLivewireComponentForRegistration($this->getEmailVerificationPromptRouteAction());
+        if ($this->hasEmailVerification() && is_subclass_of($emailVerificationRouteAction = $this->getEmailVerificationPromptRouteAction(), Component::class)) {
+            $this->queueLivewireComponentForRegistration($emailVerificationRouteAction);
         }
 
-        if ($this->hasLogin()) {
-            $this->queueLivewireComponentForRegistration($this->getLoginRouteAction());
+        if ($this->hasLogin() && is_subclass_of($loginRouteAction = $this->getLoginRouteAction(), Component::class)) {
+            $this->queueLivewireComponentForRegistration($loginRouteAction);
         }
 
         if ($this->hasPasswordReset()) {
-            $this->queueLivewireComponentForRegistration($this->getRequestPasswordResetRouteAction());
-            $this->queueLivewireComponentForRegistration($this->getResetPasswordRouteAction());
+            if (is_subclass_of($requestPasswordResetRouteAction = $this->getRequestPasswordResetRouteAction(), Component::class)) {
+                $this->queueLivewireComponentForRegistration($requestPasswordResetRouteAction);
+            }
+
+            if (is_subclass_of($resetPasswordRouteAction = $this->getResetPasswordRouteAction(), Component::class)) {
+                $this->queueLivewireComponentForRegistration($resetPasswordRouteAction);
+            }
         }
 
-        if ($this->hasRegistration()) {
-            $this->queueLivewireComponentForRegistration($this->getRegistrationRouteAction());
+        if ($this->hasRegistration() && is_subclass_of($registrationRouteAction = $this->getRegistrationRouteAction(), Component::class)) {
+            $this->queueLivewireComponentForRegistration($registrationRouteAction);
         }
 
         foreach ($this->getResources() as $resource) {

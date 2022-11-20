@@ -12,6 +12,7 @@ use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasDefaultTenant;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\HasTenants;
+use Filament\Support\Assets\Theme;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\Guard;
@@ -324,7 +325,7 @@ class FilamentManager
         return $this->getCurrentContext()->getModelResource($model);
     }
 
-    public function getTheme(): string | Htmlable | null
+    public function getTheme(): Theme
     {
         return $this->getCurrentContext()->getTheme();
     }

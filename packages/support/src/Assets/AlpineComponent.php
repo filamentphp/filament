@@ -17,7 +17,7 @@ class AlpineComponent extends Asset
 
         $path .= 'components';
         $path .= DIRECTORY_SEPARATOR;
-        $path .= "{$this->getName()}.js";
+        $path .= "{$this->getId()}.js";
 
         return public_path("js/filament/{$path}");
     }
