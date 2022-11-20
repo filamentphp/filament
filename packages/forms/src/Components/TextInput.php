@@ -13,6 +13,7 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     use Concerns\CanBeAutocapitalized;
     use Concerns\CanBeAutocompleted;
     use Concerns\CanBeLengthConstrained;
+    use Concerns\CanBeReadOnly;
     use Concerns\HasAffixes;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasInputMode;

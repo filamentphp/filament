@@ -30,6 +30,7 @@
                     'maxlength' => (! $isConcealed) ? $getMaxLength() : null,
                     'minlength' => (! $isConcealed) ? $getMinLength() : null,
                     'placeholder' => $getPlaceholder(),
+                    'readonly' => $isReadOnly(),
                     'required' => $isRequired() && (! $isConcealed),
                     'rows' => $getRows(),
                     $applyStateBindingModifiers('wire:model') => $statePath,
