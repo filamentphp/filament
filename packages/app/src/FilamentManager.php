@@ -294,15 +294,9 @@ class FilamentManager
         return $this->getCurrentContext()->getSuccessColor();
     }
 
-    public function getAllColors(): array
+    public function getColors(): array
     {
-        return [
-            'primary' => $this->getPrimaryColor(),
-            'secondary' => $this->getSecondaryColor(),
-            'warning' => $this->getWarningColor(),
-            'danger' => $this->getDangerColor(),
-            'success' => $this->getSuccessColor(),
-        ];
+        return $this->getCurrentContext()->getColors();
     }
 
     public function getResources(): array
@@ -445,9 +439,24 @@ class FilamentManager
         return $this->getCurrentContext()->getDatabaseNotificationsPollingInterval();
     }
 
-    public function getFont(): ?array
+    public function getFontHtml(): Htmlable
     {
-        return $this->getCurrentContext()->getFont();
+        return $this->getCurrentContext()->getFontHtml();
+    }
+
+    public function getFontName(): string
+    {
+        return $this->getCurrentContext()->getFontName();
+    }
+
+    public function getFontProvider(): string
+    {
+        return $this->getCurrentContext()->getFontProvider();
+    }
+
+    public function getFontUrl(): ?string
+    {
+        return $this->getCurrentContext()->getFontUrl();
     }
 
     public function getDefaultAvatarProvider(): string

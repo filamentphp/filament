@@ -35,12 +35,7 @@
 
         @livewireStyles
 
-        @if (filled($font = filament()->getFont()))
-            @foreach ($font['preconnect'] as $preconnect)
-                <link rel="preconnect" href="{{ $preconnect }}" crossorigin>
-            @endforeach
-            <link href="{{ $font['source'] }}" rel="stylesheet" />
-        @endif
+        {{ filament()->getFontHtml() }}
 
         {{ filament()->getTheme()->getHtml() }}
 
@@ -48,10 +43,10 @@
 
         <style>
             :root {
-                @if (filled($font))
-                    --font-family:  {!! $font['name'] !!};
-                @endif
-                @foreach (filament()->getAllColors() as $key => $palette)
+                --font-family: {!! filament()->getFontName() !!};
+                --filament-widgets-chart-font-family: var(--font-family);
+
+                @foreach (filament()->getColors() as $key => $palette)
                     @foreach ($palette as $shade => $color)
                         --{{ $key }}-color-{{ $shade }}: {{ $color }};
                     @endforeach

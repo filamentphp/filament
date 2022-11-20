@@ -1,6 +1,6 @@
 import Chart from 'chart.js/auto'
 
-Chart.defaults.font.family = `var(--chart-font-family)`
+Chart.defaults.font.family = `var(--filament-widgets-chart-font-family)`
 Chart.defaults.color = '#6b7280'
 
 export default function chart({ cachedData, options, type }) {

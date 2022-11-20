@@ -7,6 +7,7 @@ use Exception;
 use Filament\AvatarProviders\UiAvatarsProvider;
 use Filament\Contracts\Plugin;
 use Filament\Facades\Filament;
+use Filament\FontProviders\GoogleFontProvider;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 use Filament\Http\Livewire\GlobalSearch;
@@ -149,7 +150,11 @@ class Context
 
     protected ?string $databaseNotificationsPolling = '30s';
 
-    protected ?array $font = [];
+    protected string $fontName = 'DM Sans';
+
+    protected string $fontProvider = GoogleFontProvider::class;
+
+    protected ?string $fontUrl = 'https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap';
 
     protected array $plugins = [];
 
@@ -475,13 +480,14 @@ class Context
         return $this;
     }
 
-    public function font(string $name, string $source, array $preconnect = []): static
+    public function font(string $name, ?string $url = null, ?string $provider = null): static
     {
-        $this->font = [
-            'name' => $name,
-            'source' => $source,
-            'preconnect' => $preconnect,
-        ];
+        $this->fontName = $name;
+        $this->fontUrl = $url;
+
+        if (filled($provider)) {
+            $this->fontProvider = $provider;
+        }
 
         return $this;
     }
@@ -656,6 +662,17 @@ class Context
     public function getAuthGuard(): ?string
     {
         return $this->authGuard;
+    }
+
+    public function getColors(): array
+    {
+        return [
+            'primary' => $this->getPrimaryColor(),
+            'secondary' => $this->getSecondaryColor(),
+            'warning' => $this->getWarningColor(),
+            'danger' => $this->getDangerColor(),
+            'success' => $this->getSuccessColor(),
+        ];
     }
 
     public function getRenderHook(string $name): Htmlable
@@ -1145,6 +1162,11 @@ class Context
         return $this->defaultAvatarProvider;
     }
 
+    public function getFontProvider(): string
+    {
+        return $this->fontProvider;
+    }
+
     public function getBrandName(): string
     {
         return $this->brandName ?? config('app.name');
@@ -1160,17 +1182,19 @@ class Context
         return $this->databaseNotificationsPolling;
     }
 
-    public function getFont(): ?array
+    public function getFontHtml(): Htmlable
     {
-        if ($this->font && blank($this->font['preconnect'])) {
-            $url = parse_url($this->font['source']);
+        return app($this->getFontProvider())->getHtml($this->getFontUrl());
+    }
 
-            $this->font['preconnect'] = [
-                "{$url['scheme']}://{$url['host']}",
-            ];
-        }
+    public function getFontName(): string
+    {
+        return $this->fontName;
+    }
 
-        return $this->font;
+    public function getFontUrl(): ?string
+    {
+        return $this->fontUrl;
     }
 
     public function getPlugins(): array

@@ -12,8 +12,8 @@
     }
 
     :root {
-        --sidebar-width: 20rem;
         --collapsed-sidebar-width: 5.4rem;
+        --sidebar-width: 20rem;
     }
 
     :root.dark {
