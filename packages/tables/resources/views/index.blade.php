@@ -658,7 +658,7 @@
                                 :alignment="$column->getAlignment()"
                                 :sortable="$column->isSortable() && (! $isReordering)"
                                 :sort-direction="$getSortDirection()"
-                                :class="$getHiddenClasses($column)"
+                                class="filament-table-cell-{{ $column->getName() }} {{ $getHiddenClasses($column) }}"
                             >
                                 {{ $column->getLabel() }}
                             </x-tables::header-cell>
@@ -690,7 +690,7 @@
                             @endif
 
                             @foreach ($columns as $column)
-                                <x-tables::cell class="px-4 py-1">
+                                <x-tables::cell class="filament-table-cell-{{ $column->getName() }} px-4 py-1" >
                                     @if ($column->isIndividuallySearchable())
                                         <x-tables::search-input wire-model="tableColumnSearchQueries.{{ $column->getName() }}" />
                                     @endif
@@ -781,7 +781,7 @@
                                     @endphp
 
                                     <x-tables::cell
-                                        :class="$getHiddenClasses($column)"
+                                        class="filament-table-cell-{{ $column->getName() }} {{ $getHiddenClasses($column) }}"
                                         wire:key="{{ $this->id }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
                                         wire:loading.remove.delay
                                         wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
