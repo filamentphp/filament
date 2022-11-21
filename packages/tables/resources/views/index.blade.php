@@ -782,6 +782,7 @@
 
                                     <x-tables::cell
                                         :class="$getHiddenClasses($column)"
+                                        wire:key="{{ $this->id }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
                                         wire:loading.remove.delay
                                         wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
                                     >
