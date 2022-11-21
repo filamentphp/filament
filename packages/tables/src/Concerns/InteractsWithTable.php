@@ -104,10 +104,8 @@ trait InteractsWithTable
             $this->tableRecordsPerPage = $this->getDefaultTableRecordsPerPageSelectOption();
         }
 
-        if ($this->getTable()->hasGroups() && $this->getTable()->getDefaultGroup())
-        {
-            if (array_key_exists($this->getTable()->getDefaultGroup()->getId(), $this->getTable()->getGroups()))
-            {
+        if ($this->getTable()->hasGroups() && $this->getTable()->getDefaultGroup()) {
+            if (array_key_exists($this->getTable()->getDefaultGroup()->getId(), $this->getTable()->getGroups())) {
                 $this->tableGrouping = $this->getTable()->getDefaultGroup()->getId();
             }
         }
