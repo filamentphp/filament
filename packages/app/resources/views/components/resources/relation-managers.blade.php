@@ -39,7 +39,7 @@
                         ])
                     >
                         @if (filled($tabKey))
-                            {{ $manager instanceof \Filament\Resources\RelationManagers\RelationGroup ? $manager->getLabel() : $manager::getTitleForRecord($ownerRecord) }}
+                            {{ $manager instanceof \Filament\Resources\RelationManagers\RelationGroup ? $manager->getLabel() : $manager::getTitle($ownerRecord, static::class) }}
                         @elseif ($form)
                             {{ $formTabLabel }}
                         @endif

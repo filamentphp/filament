@@ -287,7 +287,7 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
         return static::$relationship;
     }
 
-    public static function getTitle(): string
+    public static function getTitle(Model $ownerRecord, string $pageClass): string
     {
         return static::$title ?? (string) str(static::getRelationshipName())
             ->kebab()
@@ -436,7 +436,7 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
             ->query($this->getTableQuery())
             ->relationship($this->getRelationship())
             ->inverseRelationship(static::getInverseRelationshipName())
-            ->heading($this->getTableHeading() ?? static::getTitle())
+            ->heading($this->getTableHeading() ?? static::getTitle($this->ownerRecord, $this->pageClass))
             ->modelLabel(static::getModelLabel())
             ->pluralModelLabel(static::getPluralModelLabel())
             ->queryStringIdentifier(Str::lcfirst(class_basename(static::class)))
