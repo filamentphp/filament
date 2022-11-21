@@ -109,6 +109,27 @@ protected function getActions(): array
 }
 ```
 
+You may call your actions defined in `getActions()` method anywhere by listening dispatched event or from custom function:
+
+```php
+use Filament\Pages\Actions\Action;
+
+protected $listeners = ['customListener'];
+
+protected function getActions(): array
+{
+    return [
+        Action::make('settings'),
+        //
+    ];
+}
+
+public function customListener()
+{
+    $this->mountAction('settings');
+}
+```
+
 ## Modals
 
 Actions may require additional confirmation or form information before they run. You may open a modal before an action is executed to do this.
