@@ -39,6 +39,6 @@ trait CanBeSortable
 
     public function getDefaultSortColumns(): array
     {
-        return [str($this->getName())->afterLast('.')];
+        return [str($this->getName())];
     }
 }
