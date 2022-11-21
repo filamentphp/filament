@@ -966,6 +966,11 @@ class Table extends ViewComponent
         return $this->getGroups()[$id] ?? null;
     }
 
+    public function hasGroups(): bool
+    {
+        return count($this->getGroups()) > 0;
+    }
+
     public function getGrouping(): ?Group
     {
         return $this->getLivewire()->getTableGrouping();

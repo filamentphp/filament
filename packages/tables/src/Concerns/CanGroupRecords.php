@@ -12,7 +12,7 @@ trait CanGroupRecords
     public function getTableGrouping(): ?Group
     {
         if (blank($this->tableGrouping)) {
-            return $this->getTable()->getDefaultGroup();
+            return $this->getTable()->hasGroups() ? null : $this->getTable()->getDefaultGroup();
         }
 
         return $this->getTable()->getGroup($this->tableGrouping) ?? $this->getTable()->getDefaultGroup();
