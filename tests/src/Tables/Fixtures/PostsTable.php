@@ -72,6 +72,11 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
                     ->description('description above', 'above'),
                 Tables\Columns\TextColumn::make('comments.author.name')
                     ->ul(),
+                Tables\Columns\SelectColumn::make('with_options')
+                    ->options([
+                        'red' => 'Red',
+                        'blue' => 'Blue',
+                    ]),
             ])
             ->filters([
                 Tables\Filters\Filter::make('is_published')

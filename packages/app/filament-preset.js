@@ -1,6 +1,3 @@
-const colors = require('tailwindcss/colors')
-const defaultTheme = require('tailwindcss/defaultTheme')
-
 module.exports = {
     content: [
         './packages/actions/resources/**/*.blade.php',
@@ -17,114 +14,64 @@ module.exports = {
         extend: {
             colors: {
                 danger: {
-                    50: ({ opacityValue }) =>
-                        `rgba(var(--danger-color-50), ${opacityValue})`,
-                    100: ({ opacityValue }) =>
-                        `rgba(var(--danger-color-100), ${opacityValue})`,
-                    200: ({ opacityValue }) =>
-                        `rgba(var(--danger-color-200), ${opacityValue})`,
-                    300: ({ opacityValue }) =>
-                        `rgba(var(--danger-color-300), ${opacityValue})`,
-                    400: ({ opacityValue }) =>
-                        `rgba(var(--danger-color-400), ${opacityValue})`,
-                    500: ({ opacityValue }) =>
-                        `rgba(var(--danger-color-500), ${opacityValue})`,
-                    600: ({ opacityValue }) =>
-                        `rgba(var(--danger-color-600), ${opacityValue})`,
-                    700: ({ opacityValue }) =>
-                        `rgba(var(--danger-color-700), ${opacityValue})`,
-                    800: ({ opacityValue }) =>
-                        `rgba(var(--danger-color-800), ${opacityValue})`,
-                    900: ({ opacityValue }) =>
-                        `rgba(var(--danger-color-900), ${opacityValue})`,
+                    50: 'rgba(var(--danger-color-50), <alpha-value>)',
+                    100: 'rgba(var(--danger-color-100), <alpha-value>)',
+                    200: 'rgba(var(--danger-color-200), <alpha-value>)',
+                    300: 'rgba(var(--danger-color-300), <alpha-value>)',
+                    400: 'rgba(var(--danger-color-400), <alpha-value>)',
+                    500: 'rgba(var(--danger-color-500), <alpha-value>)',
+                    600: 'rgba(var(--danger-color-600), <alpha-value>)',
+                    700: 'rgba(var(--danger-color-700), <alpha-value>)',
+                    800: 'rgba(var(--danger-color-800), <alpha-value>)',
+                    900: 'rgba(var(--danger-color-900), <alpha-value>)',
                 },
                 primary: {
-                    50: ({ opacityValue }) =>
-                        `rgba(var(--primary-color-50), ${opacityValue})`,
-                    100: ({ opacityValue }) =>
-                        `rgba(var(--primary-color-100), ${opacityValue})`,
-                    200: ({ opacityValue }) =>
-                        `rgba(var(--primary-color-200), ${opacityValue})`,
-                    300: ({ opacityValue }) =>
-                        `rgba(var(--primary-color-300), ${opacityValue})`,
-                    400: ({ opacityValue }) =>
-                        `rgba(var(--primary-color-400), ${opacityValue})`,
-                    500: ({ opacityValue }) =>
-                        `rgba(var(--primary-color-500), ${opacityValue})`,
-                    600: ({ opacityValue }) =>
-                        `rgba(var(--primary-color-600), ${opacityValue})`,
-                    700: ({ opacityValue }) =>
-                        `rgba(var(--primary-color-700), ${opacityValue})`,
-                    800: ({ opacityValue }) =>
-                        `rgba(var(--primary-color-800), ${opacityValue})`,
-                    900: ({ opacityValue }) =>
-                        `rgba(var(--primary-color-900), ${opacityValue})`,
+                    50: 'rgba(var(--primary-color-50), <alpha-value>)',
+                    100: 'rgba(var(--primary-color-100), <alpha-value>)',
+                    200: 'rgba(var(--primary-color-200), <alpha-value>)',
+                    300: 'rgba(var(--primary-color-300), <alpha-value>)',
+                    400: 'rgba(var(--primary-color-400), <alpha-value>)',
+                    500: 'rgba(var(--primary-color-500), <alpha-value>)',
+                    600: 'rgba(var(--primary-color-600), <alpha-value>)',
+                    700: 'rgba(var(--primary-color-700), <alpha-value>)',
+                    800: 'rgba(var(--primary-color-800), <alpha-value>)',
+                    900: 'rgba(var(--primary-color-900), <alpha-value>)',
                 },
                 secondary: {
-                    50: ({ opacityValue }) =>
-                        `rgba(var(--secondary-color-50), ${opacityValue})`,
-                    100: ({ opacityValue }) =>
-                        `rgba(var(--secondary-color-100), ${opacityValue})`,
-                    200: ({ opacityValue }) =>
-                        `rgba(var(--secondary-color-200), ${opacityValue})`,
-                    300: ({ opacityValue }) =>
-                        `rgba(var(--secondary-color-300), ${opacityValue})`,
-                    400: ({ opacityValue }) =>
-                        `rgba(var(--secondary-color-400), ${opacityValue})`,
-                    500: ({ opacityValue }) =>
-                        `rgba(var(--secondary-color-500), ${opacityValue})`,
-                    600: ({ opacityValue }) =>
-                        `rgba(var(--secondary-color-600), ${opacityValue})`,
-                    700: ({ opacityValue }) =>
-                        `rgba(var(--secondary-color-700), ${opacityValue})`,
-                    800: ({ opacityValue }) =>
-                        `rgba(var(--secondary-color-800), ${opacityValue})`,
-                    900: ({ opacityValue }) =>
-                        `rgba(var(--secondary-color-900), ${opacityValue})`,
+                    50: 'rgba(var(--secondary-color-50), <alpha-value>)',
+                    100: 'rgba(var(--secondary-color-100), <alpha-value>)',
+                    200: 'rgba(var(--secondary-color-200), <alpha-value>)',
+                    300: 'rgba(var(--secondary-color-300), <alpha-value>)',
+                    400: 'rgba(var(--secondary-color-400), <alpha-value>)',
+                    500: 'rgba(var(--secondary-color-500), <alpha-value>)',
+                    600: 'rgba(var(--secondary-color-600), <alpha-value>)',
+                    700: 'rgba(var(--secondary-color-700), <alpha-value>)',
+                    800: 'rgba(var(--secondary-color-800), <alpha-value>)',
+                    900: 'rgba(var(--secondary-color-900), <alpha-value>)',
                 },
                 success: {
-                    50: ({ opacityValue }) =>
-                        `rgba(var(--success-color-50), ${opacityValue})`,
-                    100: ({ opacityValue }) =>
-                        `rgba(var(--success-color-100), ${opacityValue})`,
-                    200: ({ opacityValue }) =>
-                        `rgba(var(--success-color-200), ${opacityValue})`,
-                    300: ({ opacityValue }) =>
-                        `rgba(var(--success-color-300), ${opacityValue})`,
-                    400: ({ opacityValue }) =>
-                        `rgba(var(--success-color-400), ${opacityValue})`,
-                    500: ({ opacityValue }) =>
-                        `rgba(var(--success-color-500), ${opacityValue})`,
-                    600: ({ opacityValue }) =>
-                        `rgba(var(--success-color-600), ${opacityValue})`,
-                    700: ({ opacityValue }) =>
-                        `rgba(var(--success-color-700), ${opacityValue})`,
-                    800: ({ opacityValue }) =>
-                        `rgba(var(--success-color-800), ${opacityValue})`,
-                    900: ({ opacityValue }) =>
-                        `rgba(var(--success-color-900), ${opacityValue})`,
+                    50: 'rgba(var(--success-color-50), <alpha-value>)',
+                    100: 'rgba(var(--success-color-100), <alpha-value>)',
+                    200: 'rgba(var(--success-color-200), <alpha-value>)',
+                    300: 'rgba(var(--success-color-300), <alpha-value>)',
+                    400: 'rgba(var(--success-color-400), <alpha-value>)',
+                    500: 'rgba(var(--success-color-500), <alpha-value>)',
+                    600: 'rgba(var(--success-color-600), <alpha-value>)',
+                    700: 'rgba(var(--success-color-700), <alpha-value>)',
+                    800: 'rgba(var(--success-color-800), <alpha-value>)',
+                    900: 'rgba(var(--success-color-900), <alpha-value>)',
                 },
                 warning: {
-                    50: ({ opacityValue }) =>
-                        `rgba(var(--warning-color-50), ${opacityValue})`,
-                    100: ({ opacityValue }) =>
-                        `rgba(var(--warning-color-100), ${opacityValue})`,
-                    200: ({ opacityValue }) =>
-                        `rgba(var(--warning-color-200), ${opacityValue})`,
-                    300: ({ opacityValue }) =>
-                        `rgba(var(--warning-color-300), ${opacityValue})`,
-                    400: ({ opacityValue }) =>
-                        `rgba(var(--warning-color-400), ${opacityValue})`,
-                    500: ({ opacityValue }) =>
-                        `rgba(var(--warning-color-500), ${opacityValue})`,
-                    600: ({ opacityValue }) =>
-                        `rgba(var(--warning-color-600), ${opacityValue})`,
-                    700: ({ opacityValue }) =>
-                        `rgba(var(--warning-color-700), ${opacityValue})`,
-                    800: ({ opacityValue }) =>
-                        `rgba(var(--warning-color-800), ${opacityValue})`,
-                    900: ({ opacityValue }) =>
-                        `rgba(var(--warning-color-900), ${opacityValue})`,
+                    50: 'rgba(var(--warning-color-50), <alpha-value>)',
+                    100: 'rgba(var(--warning-color-100), <alpha-value>)',
+                    200: 'rgba(var(--warning-color-200), <alpha-value>)',
+                    300: 'rgba(var(--warning-color-300), <alpha-value>)',
+                    400: 'rgba(var(--warning-color-400), <alpha-value>)',
+                    500: 'rgba(var(--warning-color-500), <alpha-value>)',
+                    600: 'rgba(var(--warning-color-600), <alpha-value>)',
+                    700: 'rgba(var(--warning-color-700), <alpha-value>)',
+                    800: 'rgba(var(--warning-color-800), <alpha-value>)',
+                    900: 'rgba(var(--warning-color-900), <alpha-value>)',
                 },
             },
             fontFamily: {

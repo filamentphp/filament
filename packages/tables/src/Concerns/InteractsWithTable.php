@@ -103,6 +103,14 @@ trait InteractsWithTable
         if ($this->getTable()->isPaginated()) {
             $this->tableRecordsPerPage = $this->getDefaultTableRecordsPerPageSelectOption();
         }
+
+        if ($this->getTable()->hasGroups() && $this->getTable()->getDefaultGroup())
+        {
+            if (array_key_exists($this->getTable()->getDefaultGroup()->getId(), $this->getTable()->getGroups()))
+            {
+                $this->tableGrouping = $this->getTable()->getDefaultGroup()->getId();
+            }
+        }
     }
 
     public function mountInteractsWithTable(): void

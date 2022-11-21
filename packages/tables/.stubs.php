@@ -127,6 +127,10 @@ namespace Livewire\Testing {
 
         public function assertTableColumnDoesNotHaveDescription(string $name, $description, $record, $position = 'below'): static {}
 
+        public function assertSelectColumnHasOptions(string $name, array $options, $record): static {}
+
+        public function assertSelectColumnDoesNotHaveOptions(string $name, array $options, $record): static {}
+
         public function sortTable(?string $name = null, ?string $direction = null): static {}
 
         public function searchTable(?string $search = null): static {}
