@@ -9,7 +9,8 @@ use Illuminate\Support\Str;
 
 class CheckboxList extends Field
 {
-    use Concerns\HasOptions, Concerns\CanBeSearchable;
+    use Concerns\HasOptions;
+    use Concerns\CanBeSearchable;
 
     protected string $view = 'forms::components.checkbox-list';
 
