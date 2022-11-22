@@ -15,12 +15,25 @@
     <div
         class="grid gap-y-2"
         x-data="{
+            options: @js($getOptions()),
+
             checkboxes: $root.querySelectorAll('input[type=checkbox]'),
+
+            visibleLabels: [],
 
             isAllSelected: false,
 
             init: function () {
+                this.updateVisibleLabels()
                 this.updateIsAllSelected()
+
+                $watch('search', () => this.updateVisibleLabels())
+            },
+
+            updateVisibleLabels: function () {
+                this.visibleLabels =  Object.values(this.options).filter((label) => {
+                    return label.toLowerCase().includes(this.search.toLowerCase())
+                })
             },
 
             updateIsAllSelected: function () {
@@ -37,8 +50,6 @@
             },
 
             search: '',
-
-            hiddenBySearchCount: 0,
         }"
     >
     @endif
@@ -92,7 +103,7 @@
                 <label
                     class="flex items-center space-x-3 rtl:space-x-reverse"
                     @if ($isSearchable())
-                        x-show="if( $el.querySelector('span').innerText.toLowerCase().includes(search.toLowerCase()) ) { return true } else {hiddenBySearchCount++; return false}"
+                        x-show="visibleLabels.includes(@js($optionLabel))"
                     @endif
                 >
                     <input
@@ -128,8 +139,8 @@
         @if ($isSearchable())
             <div
                 x-cloak
-                x-show="hiddenBySearchCount === checkboxes.length"
-                class="filament-forms-checkbox-list-component-no-results"
+                x-show="visibleLabels.length === 0"
+                class="filament-forms-checkbox-list-component-no-search-results-message text-sm"
             >
                 {{ $getNoSearchResultsMessage() }}
             </div>

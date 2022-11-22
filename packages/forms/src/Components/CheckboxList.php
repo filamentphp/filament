@@ -35,6 +35,8 @@ class CheckboxList extends Field
 
             $component->state([]);
         });
+
+        $this->searchDebounce(0);
     }
 
     public function relationship(string | Closure $relationshipName, string | Closure $titleColumnName, ?Closure $callback = null): static
