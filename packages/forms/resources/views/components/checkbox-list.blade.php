@@ -83,7 +83,8 @@
             :xl="$getColumns('xl')"
             :two-xl="$getColumns('2xl')"
             direction="column"
-            :attributes="$attributes->class(['filament-forms-checkbox-list-component gap-1 space-y-2'])">
+            :attributes="$attributes->class(['filament-forms-checkbox-list-component gap-1 space-y-2'])"
+        >
             @php
                 $isDisabled = $isDisabled();
             @endphp
@@ -91,7 +92,8 @@
             @foreach ($getOptions() as $optionValue => $optionLabel)
                 <label
                     class="flex items-center space-x-3 rtl:space-x-reverse"
-                    @if ($isSearchable()) x-show="if( $el.querySelector('span').innerText.toLowerCase().includes(searchText.toLowerCase()) ) { return true } else {hiddenBySearchCount++; return false}" @endif>
+                    @if ($isSearchable()) x-show="if( $el.querySelector('span').innerText.toLowerCase().includes(searchText.toLowerCase()) ) { return true } else {hiddenBySearchCount++; return false}" @endif
+                >
                     <input
                         {!! $isDisabled ? 'disabled' : null !!}
                         wire:loading.attr="disabled"
