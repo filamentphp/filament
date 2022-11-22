@@ -8,7 +8,7 @@
     <div class="filament-card-layout flex items-center justify-center min-h-screen bg-gray-100 text-gray-900 py-14 dark:bg-gray-900 dark:text-white">
         <div @class([
             'w-screen px-6 space-y-8 md:mt-0 md:px-2',
-            match($width = $livewire->getCardWidth()) {
+            match ($width = $livewire->getCardWidth()) {
                 'xs' => 'max-w-xs',
                 'sm' => 'max-w-sm',
                 'md' => 'max-w-md',
