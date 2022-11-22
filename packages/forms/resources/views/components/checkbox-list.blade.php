@@ -11,7 +11,6 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-
     @if ($isBulkToggleable() || $isSearchable())
     <div x-data="{
         checkboxes: $root.querySelectorAll('input[type=checkbox]'),
