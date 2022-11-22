@@ -64,71 +64,71 @@
     </div>
     @endif
 
-    @if ($isSearchable())
-        <div class="mb-4">
-            <input
-                class="block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 border-gray-300"
-                type="search"
-                placeholder="{{ $getSearchPrompt() }}"
-                x-model.debounce.{{ $getSearchDebounce() }}="searchText"
-            >
-        </div>
-    @endif
-
-    <x-filament-support::grid
-        :default="$getColumns('default')"
-        :sm="$getColumns('sm')"
-        :md="$getColumns('md')"
-        :lg="$getColumns('lg')"
-        :xl="$getColumns('xl')"
-        :two-xl="$getColumns('2xl')"
-        direction="column"
-        :attributes="$attributes->class(['filament-forms-checkbox-list-component gap-1 space-y-2'])">
-        @php
-            $isDisabled = $isDisabled();
-        @endphp
-
-        @foreach ($getOptions() as $optionValue => $optionLabel)
-            <label
-                class="flex items-center space-x-3 rtl:space-x-reverse"
-                @if ($isSearchable()) x-show="if( $el.querySelector('span').innerText.toLowerCase().includes(searchText.toLowerCase()) ) { return true } else {hiddenBySearchCount++; return false}" @endif>
+        @if ($isSearchable())
+            <div class="mb-4">
                 <input
-                    {!! $isDisabled ? 'disabled' : null !!}
-                    wire:loading.attr="disabled"
-                    type="checkbox"
-                    value="{{ $optionValue }}"
-                    dusk="filament.forms.{{ $getStatePath() }}"
-                    @if ($isBulkToggleable()) x-on:change="updateIsAllSelected" @endif
-                    {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
-                    {{ $getExtraAttributeBag()->class([
-                        'text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70',
-                        'dark:bg-gray-700 dark:checked:bg-primary-500' => config('forms.dark_mode'),
-                        'border-gray-300' => !$errors->has($getStatePath()),
-                        'dark:border-gray-600' => !$errors->has($getStatePath()) && config('forms.dark_mode'),
-                        'border-danger-300 ring-danger-500' => $errors->has($getStatePath()),
-                        'dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode')
-                        ]) }}
-                />
+                    class="block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 border-gray-300"
+                    type="search"
+                    placeholder="{{ $getSearchPrompt() }}"
+                    x-model.debounce.{{ $getSearchDebounce() }}="searchText"
+                >
+            </div>
+        @endif
 
-                <span @class([
-                    'text-sm font-medium text-gray-700',
-                    'dark:text-gray-200' => config('forms.dark_mode'),
-                ])>
-                    {{ $optionLabel }}
-                </span>
-            </label>
-        @endforeach
+        <x-filament-support::grid
+            :default="$getColumns('default')"
+            :sm="$getColumns('sm')"
+            :md="$getColumns('md')"
+            :lg="$getColumns('lg')"
+            :xl="$getColumns('xl')"
+            :two-xl="$getColumns('2xl')"
+            direction="column"
+            :attributes="$attributes->class(['filament-forms-checkbox-list-component gap-1 space-y-2'])">
+            @php
+                $isDisabled = $isDisabled();
+            @endphp
 
-    </x-filament-support::grid>
+            @foreach ($getOptions() as $optionValue => $optionLabel)
+                <label
+                    class="flex items-center space-x-3 rtl:space-x-reverse"
+                    @if ($isSearchable()) x-show="if( $el.querySelector('span').innerText.toLowerCase().includes(searchText.toLowerCase()) ) { return true } else {hiddenBySearchCount++; return false}" @endif>
+                    <input
+                        {!! $isDisabled ? 'disabled' : null !!}
+                        wire:loading.attr="disabled"
+                        type="checkbox"
+                        value="{{ $optionValue }}"
+                        dusk="filament.forms.{{ $getStatePath() }}"
+                        @if ($isBulkToggleable()) x-on:change="updateIsAllSelected" @endif
+                        {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
+                        {{ $getExtraAttributeBag()->class([
+                            'text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70',
+                            'dark:bg-gray-700 dark:checked:bg-primary-500' => config('forms.dark_mode'),
+                            'border-gray-300' => !$errors->has($getStatePath()),
+                            'dark:border-gray-600' => !$errors->has($getStatePath()) && config('forms.dark_mode'),
+                            'border-danger-300 ring-danger-500' => $errors->has($getStatePath()),
+                            'dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode')
+                            ]) }}
+                    />
 
-    @if ($isSearchable())
-        <div
-            x-cloak
-            x-show="hiddenBySearchCount === checkboxListItems.length"
-            class="filament-forms-checkbox-list-component-no-results">{{ $getNoSearchResultsMessage() }}</div>
-    @endif
+                    <span @class([
+                        'text-sm font-medium text-gray-700',
+                        'dark:text-gray-200' => config('forms.dark_mode'),
+                    ])>
+                        {{ $optionLabel }}
+                    </span>
+                </label>
+            @endforeach
+        </x-filament-support::grid>
+
+        @if ($isSearchable())
+            <div
+                x-cloak
+                x-show="hiddenBySearchCount === checkboxListItems.length"
+                class="filament-forms-checkbox-list-component-no-results">{{ $getNoSearchResultsMessage() }}
+            </div>
+        @endif
 
     @if ($isBulkToggleable() || $isSearchable())
-        </div>
+    </div>
     @endif
 </x-dynamic-component>
