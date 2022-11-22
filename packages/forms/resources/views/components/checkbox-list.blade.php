@@ -92,7 +92,7 @@
                 <label
                     class="flex items-center space-x-3 rtl:space-x-reverse"
                     @if ($isSearchable())
-                        x-show="if( $el.querySelector('span').innerText.toLowerCase().includes(searchText.toLowerCase()) ) { return true } else {hiddenBySearchCount++; return false}"
+                        x-show="if( $el.querySelector('span').innerText.toLowerCase().includes(search.toLowerCase()) ) { return true } else {hiddenBySearchCount++; return false}"
                     @endif
                 >
                     <input
