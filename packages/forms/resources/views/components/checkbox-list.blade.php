@@ -126,7 +126,9 @@
             <div
                 x-cloak
                 x-show="hiddenBySearchCount === checkboxListItems.length"
-                class="filament-forms-checkbox-list-component-no-results">{{ $getNoSearchResultsMessage() }}
+                class="filament-forms-checkbox-list-component-no-results"
+            >
+                {{ $getNoSearchResultsMessage() }}
             </div>
         @endif
 
