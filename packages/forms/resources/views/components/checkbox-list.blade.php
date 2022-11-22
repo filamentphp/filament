@@ -36,9 +36,7 @@
                 })
             },
 
-            checkboxListItems: $root.querySelectorAll('label'),
-
-            searchText: '',
+            search: '',
 
             hiddenBySearchCount: 0,
         }"
@@ -50,7 +48,7 @@
                 class="block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 border-gray-300"
                 type="search"
                 placeholder="{{ $getSearchPrompt() }}"
-                x-model.debounce.{{ $getSearchDebounce() }}="searchText"
+                x-model.debounce.{{ $getSearchDebounce() }}="search"
             >
         @endif
 
@@ -93,7 +91,9 @@
             @foreach ($getOptions() as $optionValue => $optionLabel)
                 <label
                     class="flex items-center space-x-3 rtl:space-x-reverse"
-                    @if ($isSearchable()) x-show="if( $el.querySelector('span').innerText.toLowerCase().includes(searchText.toLowerCase()) ) { return true } else {hiddenBySearchCount++; return false}" @endif
+                    @if ($isSearchable())
+                        x-show="if( $el.querySelector('span').innerText.toLowerCase().includes(searchText.toLowerCase()) ) { return true } else {hiddenBySearchCount++; return false}"
+                    @endif
                 >
                     <input
                         {!! $isDisabled ? 'disabled' : null !!}
@@ -128,7 +128,7 @@
         @if ($isSearchable())
             <div
                 x-cloak
-                x-show="hiddenBySearchCount === checkboxListItems.length"
+                x-show="hiddenBySearchCount === checkboxes.length"
                 class="filament-forms-checkbox-list-component-no-results"
             >
                 {{ $getNoSearchResultsMessage() }}
