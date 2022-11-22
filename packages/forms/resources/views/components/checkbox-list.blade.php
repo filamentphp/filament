@@ -43,25 +43,25 @@
     @endif
 
     @if ($isBulkToggleable())
-    <div class="mb-2">
-        <x-forms::link
-            tag="button"
-            size="sm"
-            x-show="!isAllSelected"
-            x-on:click="toggleAll"
-        >
-            {{ __('forms::components.checkbox_list.buttons.select_all.label') }}
-        </x-forms::link>
+        <div class="mb-2">
+            <x-forms::link
+                tag="button"
+                size="sm"
+                x-show="!isAllSelected"
+                x-on:click="toggleAll"
+            >
+                {{ __('forms::components.checkbox_list.buttons.select_all.label') }}
+            </x-forms::link>
 
-        <x-forms::link
-            tag="button"
-            size="sm"
-            x-show="isAllSelected"
-            x-on:click="toggleAll"
-        >
-            {{ __('forms::components.checkbox_list.buttons.deselect_all.label') }}
-        </x-forms::link>
-    </div>
+            <x-forms::link
+                tag="button"
+                size="sm"
+                x-show="isAllSelected"
+                x-on:click="toggleAll"
+            >
+                {{ __('forms::components.checkbox_list.buttons.deselect_all.label') }}
+            </x-forms::link>
+        </div>
     @endif
 
         @if ($isSearchable())
