@@ -12,7 +12,7 @@ To create a relation manager, you can use the `make:filament-relation-manager` c
 php artisan make:filament-relation-manager CategoryResource posts title
 ```
 
-- `CategoryResource` is the name of the resource class for the parent model.
+- `CategoryResource` is the name of the resource class for the owner (parent) model.
 - `posts` is the name of the relationship you want to manage.
 - `title` is the name of the attribute that will be used to identify posts.
 
@@ -24,7 +24,7 @@ use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Table;
 
-public static function form(Form $form): Form
+public function form(Form $form): Form
 {
     return $form
         ->schema([
@@ -115,7 +115,7 @@ For `BelongsToMany` and `MorphToMany` relationships, you may also add pivot tabl
 use Filament\Forms;
 use Filament\Forms\Form;
 
-public static function form(Form $form): Form
+public function form(Form $form): Form
 {
     return $form
         ->schema([
@@ -253,7 +253,7 @@ For `BelongsToMany` and `MorphToMany` relationships, you may also edit pivot tab
 use Filament\Forms;
 use Filament\Forms\Form;
 
-public static function form(Form $form): Form
+public function form(Form $form): Form
 {
     return $form
         ->schema([
@@ -688,7 +688,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 
-public static function form(Form $form): Form
+public function form(Form $form): Form
 {
     return $form
         ->schema([
@@ -729,12 +729,12 @@ public static function getRelations(): array
 
 By default, relation managers will be visible if the `viewAny()` method for the related model policy returns `true`.
 
-You may use the `canViewForRecord()` method to determine if the relation manager should be visible for a specific owner record:
+You may use the `canView()` method to determine if the relation manager should be visible for a specific owner record and page:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
 
-public static function canViewForRecord(Model $ownerRecord): bool
+public static function canView(Model $ownerRecord, string $pageClass): bool
 {
     return $ownerRecord->status === Status::Draft;
 }
