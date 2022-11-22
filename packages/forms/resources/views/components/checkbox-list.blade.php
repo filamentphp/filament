@@ -12,66 +12,67 @@
     :state-path="$getStatePath()"
 >
     @if ($isBulkToggleable() || $isSearchable())
-    <div x-data="{
-        checkboxes: $root.querySelectorAll('input[type=checkbox]'),
+    <div
+        class="grid gap-y-2"
+        x-data="{
+            checkboxes: $root.querySelectorAll('input[type=checkbox]'),
 
-        isAllSelected: false,
+            isAllSelected: false,
 
-        init: function () {
-            this.updateIsAllSelected()
-        },
+            init: function () {
+                this.updateIsAllSelected()
+            },
 
-        updateIsAllSelected: function () {
-            this.isAllSelected = this.checkboxes.length === this.$root.querySelectorAll('input[type=checkbox]:checked').length
-        },
+            updateIsAllSelected: function () {
+                this.isAllSelected = this.checkboxes.length === this.$root.querySelectorAll('input[type=checkbox]:checked').length
+            },
 
-        toggleAll: function () {
-            state = !this.isAllSelected
+            toggleAll: function () {
+                state = !this.isAllSelected
 
-            this.checkboxes.forEach((checkbox) => {
-                checkbox.checked = state
-                checkbox.dispatchEvent(new Event('change'))
-            })
-        },
+                this.checkboxes.forEach((checkbox) => {
+                    checkbox.checked = state
+                    checkbox.dispatchEvent(new Event('change'))
+                })
+            },
 
-        checkboxListItems: $root.querySelectorAll('label'),
+            checkboxListItems: $root.querySelectorAll('label'),
 
-        searchText: '',
+            searchText: '',
 
-        hiddenBySearchCount: 0,
-    }">
-    @endif
-
-    @if ($isBulkToggleable())
-        <div class="mb-2">
-            <x-forms::link
-                tag="button"
-                size="sm"
-                x-show="!isAllSelected"
-                x-on:click="toggleAll"
-            >
-                {{ __('forms::components.checkbox_list.buttons.select_all.label') }}
-            </x-forms::link>
-
-            <x-forms::link
-                tag="button"
-                size="sm"
-                x-show="isAllSelected"
-                x-on:click="toggleAll"
-            >
-                {{ __('forms::components.checkbox_list.buttons.deselect_all.label') }}
-            </x-forms::link>
-        </div>
+            hiddenBySearchCount: 0,
+        }"
+    >
     @endif
 
         @if ($isSearchable())
-            <div class="mb-4">
-                <input
-                    class="block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 border-gray-300"
-                    type="search"
-                    placeholder="{{ $getSearchPrompt() }}"
-                    x-model.debounce.{{ $getSearchDebounce() }}="searchText"
+            <input
+                class="block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 border-gray-300"
+                type="search"
+                placeholder="{{ $getSearchPrompt() }}"
+                x-model.debounce.{{ $getSearchDebounce() }}="searchText"
+            >
+        @endif
+
+        @if ($isBulkToggleable())
+            <div>
+                <x-forms::link
+                    tag="button"
+                    size="sm"
+                    x-show="!isAllSelected"
+                    x-on:click="toggleAll"
                 >
+                    {{ __('forms::components.checkbox_list.buttons.select_all.label') }}
+                </x-forms::link>
+
+                <x-forms::link
+                    tag="button"
+                    size="sm"
+                    x-show="isAllSelected"
+                    x-on:click="toggleAll"
+                >
+                    {{ __('forms::components.checkbox_list.buttons.deselect_all.label') }}
+                </x-forms::link>
             </div>
         @endif
 
