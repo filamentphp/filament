@@ -3,6 +3,8 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Tables\Contracts\HasRelationshipTable;
+use Filament\Tables\Events\TableSorted;
+use Filament\Tables\Events\TableSorting;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 trait CanReorderRecords
@@ -14,6 +16,8 @@ trait CanReorderRecords
         if (! $this->isTableReorderable()) {
             return;
         }
+
+        event(new TableSorting($this->ownerRecord));
 
         $orderColumn = $this->getTableReorderColumn();
 
@@ -28,6 +32,8 @@ trait CanReorderRecords
                 ]);
             }
 
+            event(new TableSorted($this->ownerRecord));
+
             return;
         }
 
@@ -36,6 +42,8 @@ trait CanReorderRecords
                 $orderColumn => $index + 1,
             ]);
         }
+
+        event(new TableSorted($this->ownerRecord));
     }
 
     public function toggleTableReordering(): void
