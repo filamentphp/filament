@@ -17,7 +17,7 @@ trait CanReorderRecords
             return;
         }
 
-        event(new TableSorting($this->ownerRecord));
+        event(new TableSorting($this->getOwnerRecord()));
 
         $orderColumn = $this->getTableReorderColumn();
 
@@ -32,7 +32,7 @@ trait CanReorderRecords
                 ]);
             }
 
-            event(new TableSorted($this->ownerRecord));
+            event(new TableSorted($this->getOwnerRecord()));
 
             return;
         }
