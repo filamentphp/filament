@@ -2,6 +2,7 @@
 
 use Filament\Tests\Models\Comment;
 use Filament\Tests\Models\Post;
+use Filament\Tests\Tables\Fixtures\CommentsTable;
 use Filament\Tests\Tables\Fixtures\PostsTable;
 use Filament\Tests\Tables\TestCase;
 use function Pest\Livewire\livewire;
@@ -53,6 +54,28 @@ it('can sort records with relationship', function () {
         ->assertCanSeeTableRecords($posts->sortBy('author.name'), inOrder: true)
         ->sortTable('author.name', 'desc')
         ->assertCanSeeTableRecords($posts->sortByDesc('author.name'), inOrder: true);
+});
+
+it('can sort records with deep relationship', function () {
+    $posts = Post::factory()->count(10)->create();
+
+    foreach ($posts as $post) {
+        $post->comments()->create(
+            Comment::factory()->make()->toArray()
+        );
+    }
+
+    $comments = Comment::all();
+
+    livewire(CommentsTable::class)
+        ->sortTable('post.author.name')
+        ->assertCanSeeTableRecords($comments->sortBy(function($comment) {
+            return $comment->post->author->name;
+        }), inOrder: true)
+        ->sortTable('post.author.name', 'desc')
+        ->assertCanSeeTableRecords($comments->sortByDesc(function($comment) {
+            return $comment->post->author->name;
+        }), inOrder: true);
 });
 
 it('can search records', function () {
@@ -139,4 +162,16 @@ it('can state whether a select column has options', function () {
     livewire(PostsTable::class)
         ->assertSelectColumnHasOptions('with_options', ['red' => 'Red', 'blue' => 'Blue'], $post)
         ->assertSelectColumnDoesNotHaveOptions('with_options', ['one' => 'One', 'two' => 'Two'], $post);
+});
+
+it('can set a select column value', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->assertSelectColumnHasOptions('with_options', ['red' => 'Red', 'blue' => 'Blue'], $post)
+        ->setColumnValue('with_options', $post, 'red')
+        ->assertTableColumnStateSet('with_options', 'red', $post)
+        ->setColumnValue('with_options', $post, 'blue')
+        ->assertTableColumnStateSet('with_options', 'blue', $post);
+
 });

@@ -135,6 +135,8 @@ namespace Livewire\Testing {
 
         public function searchTable(?string $search = null): static {}
 
+        public function setColumnValue(string $name, $record = null, $value = null): static {}
+
         public function filterTable(string $name, $data = null): static {}
 
         public function resetTableFilters(): static {}

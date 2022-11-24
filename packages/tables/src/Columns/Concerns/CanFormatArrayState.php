@@ -22,6 +22,10 @@ trait CanFormatArrayState
     public function ul(): static
     {
         $this->formatArrayStateUsing(function ($state) {
+            if (blank($state)) {
+                return null;
+            }
+
             return new HtmlString(
                 '<ul><li>' . implode('</li><li>', $state) . '</li></ul>'
             );
@@ -33,6 +37,10 @@ trait CanFormatArrayState
     public function ol(): static
     {
         $this->formatArrayStateUsing(function ($state) {
+            if (blank($state)) {
+                return null;
+            }
+
             return new HtmlString(
                 '<ol><li>' . implode('</li><li>', $state) . '</li></ol>'
             );
@@ -44,6 +52,10 @@ trait CanFormatArrayState
     public function grid(int $columns = 1, $gap = 2): static
     {
         $this->formatArrayStateUsing(function ($state) use ($columns, $gap) {
+            if (blank($state)) {
+                return null;
+            }
+
             return new HtmlString(
                 "<div class='grid grid-cols-{$columns} gap-{$gap}'><div>" .
                 implode('</div><div>', $state) .

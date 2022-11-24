@@ -414,4 +414,22 @@ class TestsColumns
             return $this;
         };
     }
+
+    public function setColumnValue(): Closure
+    {
+        // string $column, string $record, $input
+
+        return function (string $name, $record, $input): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableColumnExists($name);
+
+            if ($record instanceof Model) {
+                $record = $this->instance()->getTableRecordKey($record);
+            }
+
+            $this->call('setColumnValue', $name, $record, $input);
+
+            return $this;
+        };
+    }
 }
