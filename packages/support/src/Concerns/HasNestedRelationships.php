@@ -208,13 +208,15 @@ trait HasNestedRelationships
      * query potentially from a nested relationship, like 'post.author.name' on a Comments table.  Returns a nested
      * set of relationshipExistanceQueries, with each successive one being in the 'column' arg of the previous.
      *
-     * So calling as ...
+     * Called as ...
      *
      * $query->orderBy(
-     *     $this->getNestedRelationshipExistenceQueries($query, 'post.author.name')
+     *     $this->getNestedRelationshipExistenceQueries($query, 'post.author.name', 'asc'),
+     *     'asc'
      * );
      *
-     *
+     * Without doing this recursively, can't order on anything more than a single dot, so (say) 'post.title' works,
+     * but 'post.author.name' doesn't, because the first relationship isn't included in the query.
      *
      * @param Builder     $query
      * @param             $name
@@ -243,7 +245,14 @@ trait HasNestedRelationships
                     ->getRelationExistenceQuery(
                         $parentQuery,
                         $query,
-                        [$relationship->getRelationName() => $this->getNestedRelationshipExistenceQueries($parentQuery, $name, $direction, $relationships)],
+                        [
+                            $relationship->getRelationName() => $this->getNestedRelationshipExistenceQueries(
+                                $parentQuery,
+                                $name,
+                                $direction,
+                                $relationships
+                            )
+                        ],
                     )
                     ->applyScopes()
                     ->getQuery();
@@ -251,6 +260,13 @@ trait HasNestedRelationships
         }
     }
 
+    /**
+     * Legacy from InteractsWithTableQuery, changed to use new internal method
+     *
+     * @param Model $model
+     *
+     * @return bool
+     */
     public function queriesRelationships(Model $model): bool
     {
         return $this->getLastRelationship($model) !== null;
