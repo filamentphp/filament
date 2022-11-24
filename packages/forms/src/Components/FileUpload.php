@@ -23,6 +23,8 @@ class FileUpload extends BaseFileUpload
 
     protected string | Closure | null $imageResizeMode = null;
 
+    protected string | Closure | null $imageResizeUpscale = null;
+
     protected bool | Closure $isAvatar = false;
 
     protected string | Closure $loadingIndicatorPosition = 'right';
