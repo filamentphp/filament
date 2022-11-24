@@ -15,7 +15,7 @@ trait HasNestedRelationships
 
     /**
      * Gets a singular attribute from a chain of one-to-one relationships, like 'comments.post.author.name',
-     * will also work for non-nested, non relatational attributes like 'name'.
+     * will also work for non-nested, non-relational attributes like 'name'.
      *
      * @param string $name
      * @param Model  $record
@@ -39,7 +39,8 @@ trait HasNestedRelationships
     /**
      * Gets an array of attributes from a chain with any arbitrary mix of relations, including "manies",
      * like 'post.comments.author.name'.  Will work for all one-to-ones, but result will be an array with
-     * the single value.  Will also work for non-nested, non-relational attribute like 'name'.
+     * the single value (use getNestedAttribute if you know you are dealing with just belongsTo chains).
+     * Will also work for non-nested, non-relational attribute like 'name'.
      *
      * @param array|null $relationships
      * @param Model|null $record
@@ -122,8 +123,8 @@ trait HasNestedRelationships
 
     /**
      * Shifts the next reletionship name off a stack (array of dotted name components) and return the relationship
-     * method for that name.  The last entry in a stack is always the target attribute, so if only one left in the stack,
-     * it return null.
+     * method on the record for that named relationship.  The last entry in a stack is always the target attribute,
+     * so if only one left in the stack, it returns null.
      *
      * @param array $relationships
      * @param Model $record
@@ -202,6 +203,26 @@ trait HasNestedRelationships
         return count($relationships) === 1;
     }
 
+    /**
+     * This probably belongs somewhere else, wasn't sure where to put it.  Used from anywhere that builds am orderBy()
+     * query potentially from a nested relationship, like 'post.author.name' on a Comments table.  Returns a nested
+     * set of relationshipExistanceQueries, with each successive one being in the 'column' arg of the previous.
+     *
+     * So calling as ...
+     *
+     * $query->orderBy(
+     *     $this->getNestedRelationshipExistenceQueries($query, 'post.author.name')
+     * );
+     *
+     *
+     *
+     * @param Builder     $query
+     * @param             $name
+     * @param string|null $direction
+     * @param array|null  $relationships
+     *
+     * @return string|\Illuminate\Database\Query\Builder
+     */
     protected function getNestedRelationshipExistenceQueries(Builder $query, $name, ?string $direction = 'asc', ?array $relationships = null): string|\Illuminate\Database\Query\Builder
     {
         if (!isset($relationships)) {
@@ -237,7 +258,7 @@ trait HasNestedRelationships
 
     /**
      * Legacy from InteractsWithTableQuery, returns string before last dot
-     * 
+     *
      * @param string|null $name
      *
      * @return string
