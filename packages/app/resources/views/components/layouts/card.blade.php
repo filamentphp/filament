@@ -20,7 +20,7 @@
                 '5xl' => 'max-w-5xl',
                 '6xl' => 'max-w-6xl',
                 '7xl' => 'max-w-7xl',
-                default => $livewire->getCardWidth(),
+                default => $width,
             },
         ])>
             <div class="filament-card-layout-card relative space-y-4 rounded-xl bg-white/50 p-8 shadow-2xl ring-1 ring-gray-900/10 backdrop-blur-xl dark:bg-gray-900/50 dark:ring-gray-50/10">
