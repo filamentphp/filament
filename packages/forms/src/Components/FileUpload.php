@@ -195,7 +195,7 @@ class FileUpload extends BaseFileUpload
 
     public function getImageResizeUpscale(): ?string
     {
-      return $this->evaluate($this->imageResizeUpscale);
+        return $this->evaluate($this->imageResizeUpscale);
     }
 
     public function getLoadingIndicatorPosition(): string
