@@ -72,6 +72,6 @@ class TextColumn extends Column
 
     protected function mutateArrayState(array $state): string|array
     {
-       return $this->formatArrayStateUsing ? $state : implode(', ', $state);
+        return $this->formatArrayStateUsing ? $state : implode(', ', $state);
     }
 }

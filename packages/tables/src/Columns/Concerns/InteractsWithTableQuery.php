@@ -140,7 +140,6 @@ trait InteractsWithTableQuery
         return $this->getLastRelationship($record);
     }
 
-
     public function getInverseRelationshipName(): ?string
     {
         return $this->inverseRelationshipName;

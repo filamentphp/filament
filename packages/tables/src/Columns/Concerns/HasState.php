@@ -4,7 +4,6 @@ namespace Filament\Tables\Columns\Concerns;
 
 use BackedEnum;
 use Closure;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
 trait HasState

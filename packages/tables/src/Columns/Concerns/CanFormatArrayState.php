@@ -11,7 +11,6 @@ trait CanFormatArrayState
 
     protected ?Closure $formatArrayStateUsing = null;
 
-
     public function formatArrayStateUsing(?Closure $callback): static
     {
         $this->formatArrayStateUsing = $callback;
