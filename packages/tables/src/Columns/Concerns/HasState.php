@@ -57,7 +57,7 @@ trait HasState
         }
 
         if (is_array($state)) {
-            $state = $this->getMutatedArrayState($state) ?? $this->mutateArrayState($state);
+            $state = $this->mutateArrayState($state);
         }
 
         return $state;
@@ -77,51 +77,13 @@ trait HasState
             return null;
         }
 
-        $state = [];
-
-        $state = $this->collectRelationValues(explode('.', $this->getName()), $record, $state);
+        $state = $this->collectNestedAttributes();
 
         return count($state) ? $state : null;
-    }
-
-    protected function collectRelationValues(array $relationships, Model $record, array &$results): array
-    {
-        $relationshipName = array_shift($relationships);
-
-        if (! method_exists($record, $relationshipName)) {
-            return [];
-        }
-
-        if (count($relationships) === 1) {
-            return $record->{$relationshipName}()->pluck(array_shift($relationships))->toArray();
-        } else {
-            foreach ($record->{$relationshipName}()->get() as $relatedRecord) {
-                $results = array_merge(
-                    $results,
-                    $this->collectRelationValues($relationships, $relatedRecord, $results)
-                );
-            }
-
-            return $results;
-        }
     }
 
     protected function mutateArrayState(array $state)
     {
         return $state;
-    }
-
-    public function mutateArrayStateUsing(?Closure $callback): static
-    {
-        $this->mutateArrayStateUsing = $callback;
-
-        return $this;
-    }
-
-    public function getMutatedArrayState(array $state)
-    {
-        return $this->evaluate($this->mutateArrayStateUsing, [
-            'state' => $state,
-        ]);
     }
 }

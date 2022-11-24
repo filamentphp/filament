@@ -9,16 +9,19 @@ trait CanFormatArrayState
 {
     protected ?int $limit = null;
 
+    protected ?Closure $formatArrayStateUsing = null;
+
+
     public function formatArrayStateUsing(?Closure $callback): static
     {
-        $this->mutateArrayStateUsing = $callback;
+        $this->formatArrayStateUsing = $callback;
 
         return $this;
     }
 
     public function ul(): static
     {
-        $this->mutateArrayStateUsing(function ($state) {
+        $this->formatArrayStateUsing(function ($state) {
             return new HtmlString(
                 '<ul><li>' . implode('</li><li>', $state) . '</li></ul>'
             );
@@ -29,7 +32,7 @@ trait CanFormatArrayState
 
     public function ol(): static
     {
-        $this->mutateArrayStateUsing(function ($state) {
+        $this->formatArrayStateUsing(function ($state) {
             return new HtmlString(
                 '<ol><li>' . implode('</li><li>', $state) . '</li></ol>'
             );
@@ -40,7 +43,7 @@ trait CanFormatArrayState
 
     public function grid(int $columns = 1, $gap = 2): static
     {
-        $this->mutateArrayStateUsing(function ($state) use ($columns, $gap) {
+        $this->formatArrayStateUsing(function ($state) use ($columns, $gap) {
             return new HtmlString(
                 "<div class='grid grid-cols-{$columns} gap-{$gap}'><div>" .
                 implode('</div><div>', $state) .
@@ -49,5 +52,12 @@ trait CanFormatArrayState
         });
 
         return $this;
+    }
+
+    public function getFormattedArrayState()
+    {
+        $state = $this->evaluate($this->formatArrayStateUsing ?? fn ($state) => $state);
+
+        return $state;
     }
 }

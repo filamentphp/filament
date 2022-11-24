@@ -66,8 +66,11 @@ trait HasColumns
             ];
         }
 
-        if ($columnRelationship = $column->getRelationship($record)) {
-            $record = $columnRelationship->getResults();
+//        if ($columnRelationship = $column->getRelationship($record)) {
+//            $record = $columnRelationship->getResults();
+//            $columnName = $column->getRelationshipAttribute();
+        if ($relationshipRecord = $column->getNestedRecord()) {
+            $record = $relationshipRecord;
             $columnName = $column->getRelationshipAttribute();
         } elseif (
             (($tableRelationship = $this->getTable()->getRelationship()) instanceof BelongsToMany) &&

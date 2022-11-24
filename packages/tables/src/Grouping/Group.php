@@ -3,11 +3,14 @@
 namespace Filament\Tables\Grouping;
 
 use Closure;
+use Filament\Support\Concerns\HasNestedRelationships;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Group
 {
+    use HasNestedRelationships;
+
     protected ?string $column;
 
     protected ?Closure $getGroupTitleFromRecordUsing = null;
@@ -103,7 +106,8 @@ class Group
             ]);
         }
 
-        return $record->getAttribute($column);
+//        return $record->getAttribute($column);
+        return $this->getNestedAttribute($column, $record);
     }
 
     public function orderQuery(Builder $query): Builder
@@ -117,7 +121,9 @@ class Group
             ]) ?? $query;
         }
 
-        return $query->orderBy($column);
+        return $query->orderBy(
+            $this->getNestedRelationshipExistenceQueries($query, $column)
+        );
     }
 
     public function scopeQuery(Builder $query, Model $record): Builder

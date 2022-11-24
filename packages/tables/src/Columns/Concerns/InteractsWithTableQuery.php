@@ -127,7 +127,7 @@ trait InteractsWithTableQuery
 
         foreach (array_reverse($this->getSortColumns()) as $sortColumn) {
             $query->orderBy(
-                $this->collectOrderBy($query, explode('.', $sortColumn), $direction),
+                $this->getNestedRelationshipExistenceQueries($query, $sortColumn, $direction),
                 $direction
             );
         }
@@ -135,66 +135,14 @@ trait InteractsWithTableQuery
         return $query;
     }
 
-    protected function collectOrderBy(Builder $query, array $sortColumn, $direction): string|\Illuminate\Database\Query\Builder
-    {
-        if (count($sortColumn) === 1) {
-            return array_shift($sortColumn);
-        } else {
-            $relationshipName = array_shift($sortColumn);
-            $record = $query->getModel();
-            $relationship = $record->{$relationshipName}();
-            $parentQuery = $relationship->getRelated()::query();
-
-            return $relationship
-                ->getRelationExistenceQuery(
-                    $parentQuery,
-                    $query,
-                    [$relationshipName => $this->collectOrderBy($parentQuery, $sortColumn, $direction)],
-                )
-                ->applyScopes()
-                ->getQuery();
-        }
-    }
-
-    public function queriesRelationships(Model $record): bool
-    {
-        return $this->getRelationship($record) !== null;
-    }
-
     public function getRelationship(Model $record): ?Relation
     {
-        if (! str($this->getName())->contains('.')) {
-            return null;
-        }
-
-        $relationship = null;
-
-        foreach (explode('.', $this->getRelationshipName()) as $nestedRelationshipName) {
-            if (! $record->isRelation($nestedRelationshipName)) {
-                $relationship = null;
-
-                break;
-            }
-
-            $relationship = $record->{$nestedRelationshipName}();
-            $record = $relationship->getRelated();
-        }
-
-        return $relationship;
+        return $this->getLastRelationship($record);
     }
 
-    public function getRelationshipAttribute(): string
-    {
-        return (string) str($this->getName())->afterLast('.');
-    }
 
     public function getInverseRelationshipName(): ?string
     {
         return $this->inverseRelationshipName;
-    }
-
-    public function getRelationshipName(): string
-    {
-        return (string) str($this->getName())->beforeLast('.');
     }
 }

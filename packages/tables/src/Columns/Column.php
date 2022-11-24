@@ -4,6 +4,7 @@ namespace Filament\Tables\Columns;
 
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
+use Filament\Support\Concerns\HasNestedRelationships;
 use Filament\Tables\Columns\Concerns\BelongsToLayout;
 use Illuminate\Support\Traits\Conditionable;
 
@@ -34,6 +35,7 @@ class Column extends ViewComponent
     use Concerns\InteractsWithTableQuery;
     use Conditionable;
     use HasExtraAttributes;
+    use HasNestedRelationships;
 
     protected string $evaluationIdentifier = 'column';
 
