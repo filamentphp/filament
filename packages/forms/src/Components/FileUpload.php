@@ -117,6 +117,13 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
+    public function imageResizeUpscale(string | Closure | null $mode): static
+    {
+        $this->imageResizeUpscale = $mode;
+
+        return $this;
+    }
+
     public function loadingIndicatorPosition(string | Closure | null $position): static
     {
         $this->loadingIndicatorPosition = $position;
@@ -182,6 +189,11 @@ class FileUpload extends BaseFileUpload
     public function getImageResizeMode(): ?string
     {
         return $this->evaluate($this->imageResizeMode);
+    }
+
+    public function getImageResizeUpscale(): ?string
+    {
+      return $this->evaluate($this->imageResizeUpscale);
     }
 
     public function getLoadingIndicatorPosition(): string
