@@ -22,7 +22,7 @@ namespace App\Filament\Widgets;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Card;
 
-class StatsOverviewWidget extends BaseWidget
+class StatsOverview extends BaseWidget
 {
     protected function getCards(): array
     {

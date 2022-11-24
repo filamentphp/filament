@@ -88,7 +88,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
 
     protected function getTableColumns(): array // [tl! focus:start]
     {
-        return [ // [tl! collapse:start]
+        return [
             Tables\Columns\ImageColumn::make('author.avatar')
                 ->size(40)
                 ->circular(),
@@ -101,12 +101,12 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
                     'success' => 'published',
                 ]),
             Tables\Columns\IconColumn::make('is_featured')->boolean(),
-        ]; // [tl! collapse:end]
+        ];
     }
 
     protected function getTableFilters(): array
     {
-        return [ // [tl! collapse:start]
+        return [
             Tables\Filters\Filter::make('published')
                 ->query(fn (Builder $query): Builder => $query->where('is_published', true)),
             Tables\Filters\SelectFilter::make('status')
@@ -115,20 +115,20 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
                     'in_review' => 'In Review',
                     'approved' => 'Approved',
                 ]),
-        ]; // [tl! collapse:end]
+        ];
     }
 
     protected function getTableActions(): array
     {
-        return [ // [tl! collapse:start]
+        return [
             Tables\Actions\Action::make('edit')
                 ->url(fn (Post $record): string => route('posts.edit', $record)),
-        ]; // [tl! collapse:end]
+        ];
     }
 
     protected function getTableBulkActions(): array
     {
-        return [ // [tl! collapse:start]
+        return [
             Tables\Actions\BulkAction::make('delete')
                 ->label('Delete selected')
                 ->color('danger')
@@ -136,7 +136,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
                     $records->each->delete();
                 })
                 ->requiresConfirmation(),
-        ]; // [tl! collapse:end]
+        ];
     } // [tl! focus:end]
 
     public function render(): View
@@ -376,7 +376,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
 
     protected function getTableColumns(): array
     {
-        return [ // [tl! collapse:start]
+        return [
             Tables\Columns\ImageColumn::make('author.avatar')
                 ->size(40)
                 ->circular(),
@@ -389,7 +389,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
                     'success' => 'published',
                 ]),
             Tables\Columns\IconColumn::make('is_featured')->boolean(),
-        ]; // [tl! collapse:end]
+        ];
     }
 
     protected function getTableEmptyStateIcon(): ?string // [tl! focus:start]
@@ -522,7 +522,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
         ];
     }
 
-    protected function getTableQuery(): Builder // [tl! collapse:start]
+    protected function getTableQuery(): Builder
     {
         return Post::query();
     }
@@ -543,7 +543,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
                 ]),
             Tables\Columns\IconColumn::make('is_featured')->boolean(),
         ];
-    } // [tl! collapse:end]
+    }
 
     public function render(): View
     {
