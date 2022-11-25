@@ -11,11 +11,18 @@ trait CanGroupRecords
 
     public function getTableGrouping(): ?Group
     {
-        if (blank($this->tableGrouping)) {
-            return $this->getTable()->hasGroups() ? null : $this->getTable()->getDefaultGroup();
+        if (
+            filled($this->tableGrouping) &&
+            ($group = $this->getTable()->getGroup($this->tableGrouping))
+        ) {
+            return $group;
         }
 
-        return $this->getTable()->getGroup($this->tableGrouping) ?? $this->getTable()->getDefaultGroup();
+        if ($this->getTable()->isDefaultGroupSelectable()) {
+            return null;
+        }
+
+        return $this->getTable()->getDefaultGroup();
     }
 
     public function updatedTableGroupColumn(): void
