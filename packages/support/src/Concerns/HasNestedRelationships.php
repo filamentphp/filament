@@ -376,6 +376,45 @@ trait HasNestedRelationships
         }
     }
 
+    public function getNestedWhere(Builder $query, string $column, Model $record, ?array $relationships = null)
+    {
+        if (!isset($relationships))
+        {
+            $relationships = $this->getRelationshipStack($column);
+
+            if ($this->isNoMoreRelationships($relationships))
+            {
+                return $query->where(
+                    $this->getStackAttribute($relationships),
+                    '=',
+                    $record->getAttribute($this->getStackAttribute($relationships))
+                );
+            }
+            else {
+                return $this->getNestedWhere($query, $column, $record, $relationships);
+            }
+        }
+        else {
+            $relationship = $this->shiftNextRelationship($relationships, $record);
+            $record = $relationship->getResults();
+
+            if ($this->isNoMoreRelationships($relationships))
+            {
+                return $query->where(
+                    $this->getStackAttribute($relationships),
+                    '=',
+                    $record->getAttribute($this->getStackAttribute($relationships))
+                );
+            }
+            else {
+                return $query->whereHas(
+                    $relationship->getRelationName(),
+                    fn(Builder $nestedQuery) => $this->getNestedWhere($nestedQuery, $column, $record, $relationships)
+                );
+            }
+        }
+    }
+
     /**
      * Legacy from InteractsWithTableQuery, changed to use new internal method
      *

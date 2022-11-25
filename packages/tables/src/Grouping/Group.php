@@ -106,7 +106,6 @@ class Group
             ]);
         }
 
-//        return $record->getAttribute($column);
         return $this->getNestedAttribute($column, $record);
     }
 
@@ -117,7 +116,7 @@ class Group
         if ($this->orderQueryUsing) {
             return app()->call($this->orderQueryUsing, [
                 'column' => $column,
-                'query' => $query,
+                'query'  => $query,
             ]) ?? $query;
         }
 
@@ -133,11 +132,11 @@ class Group
         if ($this->scopeQueryUsing) {
             return app()->call($this->scopeQueryUsing, [
                 'column' => $column,
-                'query' => $query,
+                'query'  => $query,
                 'record' => $record,
             ]) ?? $query;
         }
-
-        return $query->where($column, $record->getAttribute($column));
+        
+        return $this->getNestedWhere($query, $column, $record);
     }
 }

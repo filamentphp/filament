@@ -334,7 +334,7 @@ class TestsColumns
             $livewire = $this->instance();
             $livewireClass = $livewire::class;
 
-            $column = $livewire->getCachedTableColumn($name);
+            $column = $this->instance()->getTable()->getColumn($name);
 
             if (! ($record instanceof Model)) {
                 $record = $livewire->getTableRecord($record);
@@ -362,7 +362,7 @@ class TestsColumns
             $livewire = $this->instance();
             $livewireClass = $livewire::class;
 
-            $column = $livewire->getCachedTableColumn($name);
+            $column = $this->instance()->getTable()->getColumn($name);
 
             if (! ($record instanceof Model)) {
                 $record = $livewire->getTableRecord($record);

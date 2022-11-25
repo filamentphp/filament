@@ -16,6 +16,7 @@ return new class() extends Migration
             $table->unsignedTinyInteger('rating')->default(0);
             $table->json('tags')->nullable();
             $table->string('title');
+            $table->string('with_options');
             $table->timestamps();
         });
     }

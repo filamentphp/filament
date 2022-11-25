@@ -2,6 +2,7 @@
 
 use Filament\Tests\Models\Comment;
 use Filament\Tests\Models\Post;
+use Filament\Tests\Models\User;
 use Filament\Tests\Tables\Fixtures\CommentsTable;
 use Filament\Tests\Tables\Fixtures\PostsTable;
 use Filament\Tests\Tables\TestCase;
@@ -165,13 +166,37 @@ it('can state whether a select column has options', function () {
 });
 
 it('can set a select column value', function () {
-    $post = Post::factory()->create();
+    $post = Post::factory()->create(['with_options' => 'blue']);
 
     livewire(PostsTable::class)
         ->assertSelectColumnHasOptions('with_options', ['red' => 'Red', 'blue' => 'Blue'], $post)
-        ->setColumnValue('with_options', $post, 'red')
-        ->assertTableColumnStateSet('with_options', 'red', $post)
-        ->setColumnValue('with_options', $post, 'blue')
-        ->assertTableColumnStateSet('with_options', 'blue', $post);
+        ->assertTableColumnStateSet('with_options', 'blue', $post)
+        ->setColumnValue('with_options', $post, 'red');
+
+    $post = Post::first();
+
+    livewire(PostsTable::class)
+        ->assertSelectColumnHasOptions('with_options', ['red' => 'Red', 'blue' => 'Blue'], $post)
+        ->assertTableColumnStateSet('with_options', 'red', $post);
+
+});
+
+it('can set a distant select column value', function () {
+    $post = Post::factory()->create();
+
+    $post->comments()->create(
+        Comment::factory()->make()->toArray()
+    );
+
+    $comment = $post->comments->first();
+    $user = User::factory()->create();
+
+    livewire(CommentsTable::class)
+        ->setColumnValue('post.author_id', $comment, $user->id);
+
+    $comment = Comment::first();
+
+    livewire(CommentsTable::class)
+        ->assertTableColumnStateSet('post.author_id', $user->id, $comment);
 
 });

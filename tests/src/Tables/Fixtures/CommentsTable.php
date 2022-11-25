@@ -4,6 +4,7 @@ namespace Filament\Tests\Tables\Fixtures;
 
 use Filament\Tables;
 use Filament\Tests\Models\Comment;
+use Filament\Tests\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
@@ -24,6 +25,10 @@ class CommentsTable extends Component implements Tables\Contracts\HasTable
             Tables\Columns\TextColumn::make('post.author.name')
                 ->sortable()
                 ->searchable(),
+            Tables\Columns\SelectColumn::make('post.author_id')
+                ->options(function () {
+                    return User::all()->pluck('name', 'id');
+                }),
             Tables\Columns\IconColumn::make('is_published')->boolean(),
 
         ];
