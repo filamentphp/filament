@@ -168,7 +168,8 @@ trait CanFormatState
         $state = $this->evaluate(
             $this->formatArrayStateUsing ??
             $this->formatStateUsing ??
-                fn ($state) => $state);
+                fn ($state) => $state
+        );
 
         if ($this->prefix) {
             $state = $this->evaluate($this->prefix) . $state;
