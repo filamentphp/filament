@@ -23,7 +23,7 @@ class FileUpload extends BaseFileUpload
 
     protected string | Closure | null $imageResizeMode = null;
 
-    protected string | Closure | null $imageResizeUpscale = null;
+    protected bool | Closure | null $imageResizeUpscale = true;
 
     protected bool | Closure $isAvatar = false;
 
@@ -119,9 +119,9 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
-    public function imageResizeUpscale(string | Closure | null $mode): static
+    public function imageResizeUpscale(bool | Closure | null $bool): static
     {
-        $this->imageResizeUpscale = $mode;
+        $this->imageResizeUpscale = $bool;
 
         return $this;
     }
