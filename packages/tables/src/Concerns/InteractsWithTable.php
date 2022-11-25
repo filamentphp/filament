@@ -82,6 +82,10 @@ trait InteractsWithTable
 
         $this->getTableFiltersForm()->fill($this->tableFilters);
 
+        if ($this->getTable()->isDefaultGroupSelectable()) {
+            $this->tableGrouping = $this->getTable()->getDefaultGroup()->getId();
+        }
+
         $searchSessionKey = $this->getTableSearchSessionKey();
 
         if (blank($this->tableSearch) && $this->getTable()->persistsSearchInSession() && session()->has($searchSessionKey)) {

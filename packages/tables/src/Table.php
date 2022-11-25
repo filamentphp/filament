@@ -841,6 +841,17 @@ class Table extends ViewComponent
         return $this->evaluate($this->defaultPaginationPageOption) ?? Arr::first($this->getPaginationPageOptions());
     }
 
+    public function isDefaultGroupSelectable(): bool
+    {
+        $defaultGroup = $this->getDefaultGroup();
+
+        if (! $defaultGroup) {
+            return false;
+        }
+
+        return $this->getGroup($defaultGroup->getId()) !== null;
+    }
+
     public function getDefaultGroup(): ?Group
     {
         if ($this->defaultGroup === null) {
