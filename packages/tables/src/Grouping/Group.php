@@ -116,7 +116,7 @@ class Group
         if ($this->orderQueryUsing) {
             return app()->call($this->orderQueryUsing, [
                 'column' => $column,
-                'query'  => $query,
+                'query' => $query,
             ]) ?? $query;
         }
 
@@ -132,11 +132,11 @@ class Group
         if ($this->scopeQueryUsing) {
             return app()->call($this->scopeQueryUsing, [
                 'column' => $column,
-                'query'  => $query,
+                'query' => $query,
                 'record' => $record,
             ]) ?? $query;
         }
-        
+
         return $this->getNestedWhere($query, $column, $record);
     }
 }
