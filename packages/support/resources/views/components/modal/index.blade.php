@@ -148,7 +148,7 @@
                             name="heroicon-m-x-mark"
                             alias="support::modal.close-button"
                             color="text-gray-400"
-                            size="h-4 w-4"
+                            size="h-5 w-5"
                             class="filament-modal-close-button cursor-pointer"
                             :title="__('filament::components/modal.actions.close.label')"
                             x-on:click="close()"
