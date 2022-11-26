@@ -37,13 +37,16 @@
     $iconClasses = 'filament-icon-button-icon';
 
     $indicatorClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-icon-button-indicator absolute rounded-full text-xs inline-block w-4 h-4 -top-0.5 -right-0.5',
-        'bg-primary-500/10' => $color === 'primary',
-        'bg-danger-500/10' => $color === 'danger',
-        'bg-gray-500/10' => $color === 'gray',
-        'bg-secondary-500/10' => $color === 'secondary',
-        'bg-success-500/10' => $color === 'success',
-        'bg-warning-500/10' => $color === 'warning',
+        'filament-icon-button-indicator absolute -top-0.5 -right-0.5 inline-block h-4 w-4 rounded-full text-xs font-medium text-white',
+        match ($color) {
+            'danger' => 'bg-danger-600',
+            'gray' => 'bg-gray-600',
+            'primary' => 'bg-primary-600',
+            'secondary' => 'bg-secondary-600',
+            'success' => 'bg-success-600',
+            'warning' => 'bg-warning-600',
+            default => $color,
+        },
     ]);
 
     $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || (($type === 'submit') && filled($form));
