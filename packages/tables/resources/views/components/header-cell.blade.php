@@ -20,7 +20,6 @@
                 'center' => 'justify-center',
                 'end' => 'justify-end',
                 'left' => 'justify-start rtl:flex-row-reverse',
-                'center' => 'justify-center',
                 'right' => 'justify-end rtl:flex-row-reverse',
                 default => null,
             },
@@ -35,7 +34,7 @@
                 :name="$activelySorted && $sortDirection === 'asc' ? 'heroicon-m-chevron-up' : 'heroicon-m-chevron-down'"
                 alias="filament-tables::header-cell.sort"
                 color="dark:text-gray-300"
-                size="h-3 w-3"
+                size="h-5 w-5"
                 :class="[
                     'filament-tables-header-cell-sort-icon',
                     'opacity-25' => ! $activelySorted,
