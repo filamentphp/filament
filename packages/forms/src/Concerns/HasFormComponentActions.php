@@ -163,7 +163,7 @@ trait HasFormComponentActions
     {
         $action = $this->getMountedFormComponentAction();
 
-        return $action->isConfirmationRequired() ||
+        return $action->getModalSubheading() ||
             $action->getModalContent() ||
             $action->getModalFooter() ||
             $this->mountedFormComponentActionHasForm();

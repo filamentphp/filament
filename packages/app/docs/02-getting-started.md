@@ -561,13 +561,13 @@ Inside the new `app/Casts/MoneyCast.php` file, update the `get()` and `set()` me
 public function get($model, string $key, $value, array $attributes): float
 {
     // Transform the integer stored in the database into a float.
-    return round($value / 100, precision: 2); // [tl! ++]
+    return round(floatval($value) / 100, precision: 2); // [tl! ++]
 }
 
-public function set($model, string $key, $value, array $attributes): int
+public function set($model, string $key, $value, array $attributes): float
 {
     // Transform the float into an integer for storage.
-    return round($value * 100); // [tl! ++]
+    return round(floatval($value) * 100); // [tl! ++]
 }
 ```
 

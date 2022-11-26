@@ -130,7 +130,7 @@ trait HasBulkActions
     {
         $action = $this->getMountedTableBulkAction();
 
-        return $action->isConfirmationRequired() ||
+        return $action->getModalSubheading() ||
             $action->getModalContent() ||
             $action->getModalFooter() ||
             $this->mountedTableBulkActionHasForm();

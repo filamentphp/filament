@@ -186,15 +186,7 @@ trait CanOpenModal
 
     public function getModalButtonLabel(): string
     {
-        if (filled($this->modalButtonLabel)) {
-            return $this->evaluate($this->modalButtonLabel);
-        }
-
-        if ($this->isConfirmationRequired()) {
-            return __('filament-actions::modal.actions.confirm.label');
-        }
-
-        return __('filament-actions::modal.actions.submit.label');
+        return $this->evaluate($this->modalButtonLabel) ?? __('filament-actions::modal.actions.submit.label');
     }
 
     public function getModalContent(): View | Htmlable | null
@@ -214,41 +206,17 @@ trait CanOpenModal
 
     public function getModalSubheading(): string | Htmlable | null
     {
-        if (filled($this->modalSubheading)) {
-            return $this->evaluate($this->modalSubheading);
-        }
-
-        if ($this->isConfirmationRequired()) {
-            return __('filament-actions::modal.confirmation');
-        }
-
-        return null;
+        return $this->evaluate($this->modalSubheading);
     }
 
     public function getModalWidth(): string
     {
-        if (filled($this->modalWidth)) {
-            return $this->evaluate($this->modalWidth);
-        }
-
-        if ($this->isConfirmationRequired()) {
-            return 'sm';
-        }
-
-        return '4xl';
+        return $this->evaluate($this->modalWidth) ?? '4xl';
     }
 
     public function isModalCentered(): bool
     {
-        if ($this->isModalCentered !== null) {
-            return $this->evaluate($this->isModalCentered);
-        }
-
-        if (in_array($this->getModalWidth(), ['xs', 'sm'])) {
-            return true;
-        }
-
-        return $this->isConfirmationRequired();
+        return $this->evaluate($this->isModalCentered) ?? in_array($this->getModalWidth(), ['xs', 'sm']);
     }
 
     public function isModalSlideOver(): bool
