@@ -152,7 +152,7 @@ trait HasActions
     {
         $action = $this->getMountedTableAction();
 
-        return $action->isConfirmationRequired() ||
+        return $action->getModalSubheading() ||
             $action->getModalContent() ||
             $action->getModalFooter() ||
             $this->mountedTableActionHasForm();
