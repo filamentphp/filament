@@ -24,6 +24,9 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
         return "mountAction('{$this->getName()}')";
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [

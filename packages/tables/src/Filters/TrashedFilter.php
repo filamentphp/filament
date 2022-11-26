@@ -43,6 +43,9 @@ class TrashedFilter extends TernaryFilter
         });
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function applyToBaseQuery(Builder $query, array $data = []): Builder
     {
         $query->withoutGlobalScopes([

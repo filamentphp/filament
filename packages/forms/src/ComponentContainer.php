@@ -28,10 +28,16 @@ class ComponentContainer extends ViewComponent
 
     protected array $meta = [];
 
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-forms::component-container';
 
     protected string $evaluationIdentifier = 'container';
 
+    /**
+     * @var view-string
+     */
     protected string $viewIdentifier = 'container';
 
     final public function __construct(HasForms $livewire)
@@ -44,6 +50,9 @@ class ComponentContainer extends ViewComponent
         return app(static::class, ['livewire' => $livewire]);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [

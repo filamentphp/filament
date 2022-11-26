@@ -9,6 +9,9 @@ class Tabs extends Component
 {
     use HasExtraAlpineAttributes;
 
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-forms::components.tabs';
 
     public int | Closure $activeTab = 1;

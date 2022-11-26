@@ -30,6 +30,9 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
 
     protected static ?string $title = null;
 
+    /**
+     * @var view-string
+     */
     protected static string $view = 'filament::resources.relation-manager';
 
     /**
@@ -425,6 +428,9 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
         return $this->can('view', $record);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getViewData(): array
     {
         return [];

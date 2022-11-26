@@ -7,20 +7,33 @@ use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\Action;
 use Illuminate\Database\Eloquent\Model;
+use phpDocumentor\Reflection\Types\Scalar;
 
 /**
  * @property Form $mountedTableActionForm
  */
 trait HasActions
 {
+    /**
+     * @var string
+     */
     public $mountedTableAction = null;
 
+    /**
+     * @var array<string, mixed>
+     */
     public $mountedTableActionData = [];
 
+    /**
+     * @var scalar
+     */
     public $mountedTableActionRecord = null;
 
     protected ?Model $cachedMountedTableActionRecord = null;
 
+    /**
+     * @var scalar
+     */
     protected $cachedMountedTableActionRecordKey = null;
 
     protected function configureTableAction(Action $action): void
@@ -85,6 +98,9 @@ trait HasActions
         return $result;
     }
 
+    /**
+     * @param  scalar  $record
+     */
     public function mountedTableActionRecord($record): void
     {
         $this->mountedTableActionRecord = $record;
@@ -152,7 +168,7 @@ trait HasActions
     {
         $action = $this->getMountedTableAction();
 
-        return $action->isConfirmationRequired() ||
+        return $action->getModalSubheading() ||
             $action->getModalContent() ||
             $action->getModalFooter() ||
             $this->mountedTableActionHasForm();

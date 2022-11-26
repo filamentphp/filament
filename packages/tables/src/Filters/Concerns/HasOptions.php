@@ -9,8 +9,14 @@ use Illuminate\Support\Collection;
 
 trait HasOptions
 {
+    /**
+     * @var array<scalar, string> | Arrayable | class-string | Closure | null
+     */
     protected array | Arrayable | string | Closure | null $options = null;
 
+    /**
+     * @param  array<scalar, string> | Arrayable | class-string | Closure | null  $options
+     */
     public function options(array | Arrayable | string | Closure | null $options): static
     {
         $this->options = $options;
@@ -18,6 +24,9 @@ trait HasOptions
         return $this;
     }
 
+    /**
+     * @return array<scalar, string>
+     */
     public function getOptions(): array
     {
         $options = $this->evaluate($this->options);

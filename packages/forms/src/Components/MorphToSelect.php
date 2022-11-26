@@ -17,6 +17,9 @@ class MorphToSelect extends Component
     use Concerns\HasLoadingMessage;
     use Concerns\HasName;
 
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-forms::components.fieldset';
 
     public bool | Closure $isRequired = false;

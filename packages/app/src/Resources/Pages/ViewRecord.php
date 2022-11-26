@@ -22,6 +22,9 @@ class ViewRecord extends Page
     use Concerns\InteractsWithRecord;
     use InteractsWithFormActions;
 
+    /**
+     * @var view-string
+     */
     protected static string $view = 'filament::resources.pages.view-record';
 
     public $data;

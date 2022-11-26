@@ -8,6 +8,9 @@ use Illuminate\Database\Query\Builder;
 
 class Range extends Summarizer
 {
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-tables::columns.summaries.range';
 
     public function summarize(Builder $query, string $attribute): array

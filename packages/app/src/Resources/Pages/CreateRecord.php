@@ -17,6 +17,9 @@ class CreateRecord extends Page
 {
     use InteractsWithFormActions;
 
+    /**
+     * @var view-string
+     */
     protected static string $view = 'filament::resources.pages.create-record';
 
     public $record;

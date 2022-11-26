@@ -15,6 +15,9 @@ class IconColumn extends Column
     }
     use Concerns\HasSize;
 
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-tables::columns.icon-column';
 
     protected ?string $enum = null;

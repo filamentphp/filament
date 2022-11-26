@@ -25,6 +25,9 @@ class TablesServiceProvider extends PackageServiceProvider
             ->hasViews();
     }
 
+    /**
+     * @return array<class-string>
+     */
     protected function getCommands(): array
     {
         $commands = [

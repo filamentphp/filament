@@ -4,6 +4,7 @@ namespace Filament\Forms;
 
 use Filament\Forms\Testing\TestsForms;
 use Filament\Support\Assets\AlpineComponent;
+use Filament\Support\Assets\Asset;
 use Filament\Support\PluginServiceProvider;
 use Illuminate\Filesystem\Filesystem;
 use Livewire\Testing\TestableLivewire;
@@ -25,6 +26,9 @@ class FormsServiceProvider extends PluginServiceProvider
         TestableLivewire::mixin(new TestsForms());
     }
 
+    /**
+     * @return array<class-string>
+     */
     protected function getCommands(): array
     {
         $commands = [
@@ -53,6 +57,9 @@ class FormsServiceProvider extends PluginServiceProvider
         return 'forms';
     }
 
+    /**
+     * @return array<Asset>
+     */
     protected function getAssets(): array
     {
         return [

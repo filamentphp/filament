@@ -22,6 +22,9 @@ class Action extends StaticAction implements Arrayable
     use HasKeyBindings;
     use HasTooltip;
 
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-actions::link-action';
 
     protected string $viewIdentifier = 'action';
@@ -82,6 +85,9 @@ class Action extends StaticAction implements Arrayable
         return $static;
     }
 
+    /**
+     * @param  view-string  $view
+     */
     protected static function isViewSafe(string $view): bool
     {
         return Str::startsWith($view, 'filament-actions::');

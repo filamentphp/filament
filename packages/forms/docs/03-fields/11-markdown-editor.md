@@ -2,7 +2,7 @@
 title: Markdown editor
 ---
 
-The markdown editor allows you to edit and preview markdown content, as well as upload images.
+The markdown editor allows you to edit and preview markdown content, as well as upload images using drag and drop.
 
 ```php
 use Filament\Forms\Components\MarkdownEditor;

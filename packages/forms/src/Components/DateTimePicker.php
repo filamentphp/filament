@@ -15,6 +15,9 @@ class DateTimePicker extends Field
     use Concerns\HasAffixes;
     use HasExtraAlpineAttributes;
 
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-forms::components.date-time-picker';
 
     protected string | Closure | null $displayFormat = null;

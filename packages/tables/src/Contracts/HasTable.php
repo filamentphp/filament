@@ -15,16 +15,25 @@ use Illuminate\Database\Eloquent\Model;
 
 interface HasTable extends HasForms
 {
+    /**
+     * @return mixed
+     */
     public function callTableColumnAction(string $name, string $recordKey);
 
     public function deselectAllTableRecords(): void;
 
     public function getActiveTableLocale(): ?string;
 
+    /**
+     * @return array<scalar>
+     */
     public function getAllTableRecordKeys(): array;
 
     public function getAllTableRecordsCount(): int;
 
+    /**
+     * @return array<string, mixed> | null
+     */
     public function getTableFilterState(string $name): ?array;
 
     public function getSelectedTableRecords(): Collection;
@@ -39,6 +48,9 @@ interface HasTable extends HasForms
 
     public function getMountedTableActionRecord(): ?Model;
 
+    /**
+     * @return scalar
+     */
     public function getMountedTableActionRecordKey();
 
     public function getMountedTableBulkAction(): ?BulkAction;
@@ -67,6 +79,9 @@ interface HasTable extends HasForms
 
     public function getTableRecordKey(Model $record): string;
 
+    /**
+     * @param  scalar  $record
+     */
     public function mountedTableActionRecord($record): void;
 
     public function toggleTableReordering(): void;

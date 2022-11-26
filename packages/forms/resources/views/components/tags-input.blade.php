@@ -25,7 +25,7 @@
         <div
             x-show="state.length || {{ $isDisabled ? 'false' : 'true' }}"
             @class([
-                'block w-full transition duration-75 divide-y rounded-lg shadow-sm border overflow-hidden focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500 dark:divide-gray-600',
+                'block w-full transition duration-75 divide-y rounded-lg shadow-sm sm:text-sm border overflow-hidden focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500 dark:divide-gray-600',
                 'border-gray-300 dark:border-gray-600' => ! $errors->has($statePath),
                 'border-danger-600 ring-1 ring-inset ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($statePath),
             ])
@@ -53,7 +53,7 @@
                             }
                         })"
                         x-model="newTag"
-                        {{ $getExtraInputAttributeBag()->class(['webkit-calendar-picker-indicator:opacity-0 block w-full border-0 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400']) }}
+                        {{ $getExtraInputAttributeBag()->class(['webkit-calendar-picker-indicator:opacity-0 block w-full border-0 sm:text-sm dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400']) }}
                     />
 
                     <datalist id="{{ $id }}-suggestions">

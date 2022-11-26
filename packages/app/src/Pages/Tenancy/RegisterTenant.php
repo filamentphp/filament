@@ -18,6 +18,9 @@ abstract class RegisterTenant extends CardPage
 {
     use Concerns\HasRoutes;
 
+    /**
+     * @var view-string
+     */
     protected static string $view = 'filament::pages.tenancy.register-tenant';
 
     public $data;

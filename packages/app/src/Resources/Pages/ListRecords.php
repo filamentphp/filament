@@ -17,6 +17,9 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         makeTable as makeBaseTable;
     }
 
+    /**
+     * @var view-string
+     */
     protected static string $view = 'filament::resources.pages.list-records';
 
     protected $queryString = [

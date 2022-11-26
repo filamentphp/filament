@@ -17,7 +17,7 @@
         "laravel/cashier": "^14.2",
         "laravel/pint": "^1.0",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "nunomaduro/larastan": "^2.0",
+        "nunomaduro/larastan": "^2.2",
         "orchestra/testbench": "^7.0",
         "pestphp/pest": "^1.17",
         "pestphp/pest-plugin-laravel": "^1.0",

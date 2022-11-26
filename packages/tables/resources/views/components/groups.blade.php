@@ -22,7 +22,7 @@
             </span>
 
             <x-filament::input.select wire:model="tableGrouping" class="w-full">
-                <option>-</option>
+                <option value="">-</option>
                 @foreach ($groups as $group)
                     <option value="{{ $group->getId() }}">{{ $group->getLabel() }}</option>
                 @endforeach
@@ -37,7 +37,7 @@
     </span>
 
     <x-filament::input.select wire:model="tableGrouping" size="sm" class="text-sm">
-        <option>{{ __('filament-tables::table.fields.grouping.placeholder') }}</option>
+        <option value="">{{ __('filament-tables::table.fields.grouping.placeholder') }}</option>
         @foreach ($groups as $group)
             <option value="{{ $group->getId() }}">{{ $group->getLabel() }}</option>
         @endforeach

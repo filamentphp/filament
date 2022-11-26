@@ -24,6 +24,9 @@ abstract class BasePage extends Component implements HasActions, RendersActionMo
 
     protected ?string $subheading = null;
 
+    /**
+     * @var view-string
+     */
     protected static string $view;
 
     public static ?Closure $reportValidationErrorUsing = null;
@@ -57,6 +60,9 @@ abstract class BasePage extends Component implements HasActions, RendersActionMo
         return [];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getViewData(): array
     {
         return [];

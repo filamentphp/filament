@@ -13,7 +13,6 @@ use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\Position;
 use Filament\Tables\Columns\Column;
-use Filament\Tables\Columns\Layout\Component;
 use Filament\Tables\Columns\Layout\Component as ColumnLayoutComponent;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\BaseFilter;
@@ -36,14 +35,20 @@ class Table extends ViewComponent
 {
     use Concerns\BelongsToLivewire;
 
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-tables::index';
 
     protected string $viewIdentifier = 'table';
 
     protected string $evaluationIdentifier = 'table';
 
-    public const LOADING_TARGETS = ['previousPage', 'nextPage', 'gotoPage', 'sortTable', 'tableFilters', 'resetTableFiltersForm', 'tableSearch', 'tableColumnSearches', 'tableRecordsPerPage', '$set'];
+    public const LOADING_TARGETS = ['previousPage', 'nextPage', 'gotoPage', 'sortTable', 'tableFilters', 'resetTableFiltersForm', 'tableSearch', 'tableColumnSearches', 'tableRecordsPerPage'];
 
+    /**
+     * @var array<string, Action | ActionGroup>
+     */
     protected array $actions = [];
 
     protected string | Closure | null $actionsColumnLabel = null;
@@ -54,16 +59,31 @@ class Table extends ViewComponent
 
     protected bool | Closure $allowsDuplicates = false;
 
+    /**
+     * @var array<string, BulkAction>
+     */
     protected array $bulkActions = [];
 
     protected ?ColumnLayoutComponent $collapsibleColumnsLayout = null;
 
+    /**
+     * @var array<string, Action>
+     */
     protected array $columnActions = [];
 
+    /**
+     * @var array<string, Column>
+     */
     protected array $columns = [];
 
+    /**
+     * @var array<Column | ColumnLayoutComponent>
+     */
     protected array $columnsLayout = [];
 
+    /**
+     * @var int | array<string, int | null> | Closure
+     */
     protected int | array | Closure $columnToggleFormColumns = 1;
 
     protected string | Closure | null $columnToggleFormWidth = null;
@@ -72,6 +92,9 @@ class Table extends ViewComponent
 
     protected View | Htmlable | Closure | null $contentFooter = null;
 
+    /**
+     * @var array<string, int | null> | Closure | null
+     */
     protected array | Closure | null $contentGrid = null;
 
     protected int | string | Closure | null $defaultPaginationPageOption = 10;
@@ -94,18 +117,33 @@ class Table extends ViewComponent
 
     protected string | Closure | null $emptyStateIcon = null;
 
+    /**
+     * @var array<string, Action | ActionGroup>
+     */
     protected array $emptyStateActions = [];
 
+    /**
+     * @var array<string, BaseFilter>
+     */
     protected array $filters = [];
 
+    /**
+     * @var int | array<string, int | null> | Closure
+     */
     protected int | array | Closure $filtersFormColumns = 1;
 
     protected string | Closure | null $filtersFormWidth = null;
 
     protected string | Closure | null $filtersLayout = null;
 
+    /**
+     * @var array<string, Group>
+     */
     protected array $groups = [];
 
+    /**
+     * @var array<string, BulkAction>
+     */
     protected array $groupedBulkActions = [];
 
     protected bool $hasColumnsLayout = false;
@@ -116,6 +154,9 @@ class Table extends ViewComponent
 
     protected string | Htmlable | Closure | null $heading = null;
 
+    /**
+     * @var array<string, Action | ActionGroup>
+     */
     protected array $headerActions = [];
 
     protected string | Closure | null $headerActionsPosition = null;
@@ -134,6 +175,9 @@ class Table extends ViewComponent
 
     protected string | Closure | null $modelLabel = null;
 
+    /**
+     * @var array<int | string> | Closure | null
+     */
     protected array | Closure | null $paginationPageOptions = null;
 
     protected bool | Closure | null $persistsFiltersInSession = false;
@@ -152,6 +196,9 @@ class Table extends ViewComponent
 
     protected string | Closure | null $recordAction = null;
 
+    /**
+     * @var array<string | int, bool | string> | string | Closure | null
+     */
     protected array | string | Closure | null $recordClasses = null;
 
     protected string | Closure | null $recordTitle = null;
@@ -182,7 +229,10 @@ class Table extends ViewComponent
         return app(static::class, ['livewire' => $livewire]);
     }
 
-    public function actions(array | ActionGroup | Closure $actions, string | Closure | null $position = null): static
+    /**
+     * @param  array<Action | ActionGroup> | ActionGroup  $actions
+     */
+    public function actions(array | ActionGroup $actions, string | Closure | null $position = null): static
     {
         foreach (Arr::wrap($actions) as $index => $action) {
             if ($action instanceof ActionGroup) {
@@ -240,6 +290,9 @@ class Table extends ViewComponent
         return $this;
     }
 
+    /**
+     * @param  array<BulkAction>  $actions
+     */
     public function bulkActions(array $actions): static
     {
         foreach ($actions as $action) {
@@ -258,12 +311,15 @@ class Table extends ViewComponent
         return $this;
     }
 
+    /**
+     * @param  array<Column | ColumnLayoutComponent>  $components
+     */
     public function columns(array $components): static
     {
         foreach ($components as $component) {
             $component->table($this);
 
-            if ($component instanceof Component && $component->isCollapsible()) {
+            if ($component instanceof ColumnLayoutComponent && $component->isCollapsible()) {
                 $this->collapsibleColumnsLayout = $component;
             } else {
                 $this->columnsLayout[] = $component;
@@ -304,6 +360,9 @@ class Table extends ViewComponent
         return $this;
     }
 
+    /**
+     * @param  int | array<string, int | null> | Closure  $columns
+     */
     public function columnToggleFormColumns(int | array | Closure $columns): static
     {
         $this->columnToggleFormColumns = $columns;
@@ -332,6 +391,9 @@ class Table extends ViewComponent
         return $this;
     }
 
+    /**
+     * @param  array<string, int | null> | Closure | null  $grid
+     */
     public function contentGrid(array | Closure | null $grid): static
     {
         $this->contentGrid = $grid;
@@ -387,6 +449,9 @@ class Table extends ViewComponent
         return $this;
     }
 
+    /**
+     * @param  array<Action | ActionGroup> | ActionGroup | Closure  $actions
+     */
     public function emptyStateActions(array | ActionGroup | Closure $actions): static
     {
         foreach ($actions as $action) {
@@ -412,6 +477,9 @@ class Table extends ViewComponent
         return $this;
     }
 
+    /**
+     * @param  array<BaseFilter>  $filters
+     */
     public function filters(array $filters, string | Closure | null $layout = null): static
     {
         foreach ($filters as $filter) {
@@ -425,6 +493,9 @@ class Table extends ViewComponent
         return $this;
     }
 
+    /**
+     * @param  int | array<string, int | null> | Closure  $columns
+     */
     public function filtersFormColumns(int | array | Closure $columns): static
     {
         $this->filtersFormColumns = $columns;
@@ -446,6 +517,9 @@ class Table extends ViewComponent
         return $this;
     }
 
+    /**
+     * @param  array<Group>  $groups
+     */
     public function groups(array $groups): static
     {
         foreach ($groups as $group) {
@@ -466,6 +540,9 @@ class Table extends ViewComponent
         return $this;
     }
 
+    /**
+     * @param  array<Action | ActionGroup> | ActionGroup | Closure  $actions
+     */
     public function headerActions(array | ActionGroup | Closure $actions, string | Closure | null $position = null): static
     {
         foreach (Arr::wrap($actions) as $index => $action) {
@@ -525,6 +602,9 @@ class Table extends ViewComponent
         return $this;
     }
 
+    /**
+     * @param  bool | array<int, string> | Closure  $condition
+     */
     public function paginated(bool | array | Closure $condition = true): static
     {
         if (is_array($condition)) {
@@ -544,6 +624,9 @@ class Table extends ViewComponent
         return $this;
     }
 
+    /**
+     * @param  array<int, string> | Closure | null  $options
+     */
     public function paginationPageOptions(array | Closure | null $options): static
     {
         $this->paginationPageOptions = $options;
@@ -607,6 +690,9 @@ class Table extends ViewComponent
         return $this;
     }
 
+    /**
+     * @param  array<string | int, bool | string> | string | Closure | null  $classes
+     */
     public function recordClasses(array | string | Closure | null $classes): static
     {
         $this->recordClasses = $classes;
@@ -667,6 +753,9 @@ class Table extends ViewComponent
         return $this;
     }
 
+    /**
+     * @return array<Action | ActionGroup>
+     */
     public function getActions(): array
     {
         return $this->actions;
@@ -760,11 +849,17 @@ class Table extends ViewComponent
         return $this->getLivewire()->getAllTableRecordsCount();
     }
 
+    /**
+     * @return array<string, BulkAction>
+     */
     public function getGroupedBulkActions(): array
     {
         return $this->groupedBulkActions;
     }
 
+    /**
+     * @return array<string, BulkAction>
+     */
     public function getBulkActions(): array
     {
         return $this->bulkActions;
@@ -778,11 +873,17 @@ class Table extends ViewComponent
         return $action;
     }
 
+    /**
+     * @return array<string, Column>
+     */
     public function getColumns(): array
     {
         return $this->columns;
     }
 
+    /**
+     * @return array<string, Column>
+     */
     public function getVisibleColumns(): array
     {
         return array_filter(
@@ -796,11 +897,17 @@ class Table extends ViewComponent
         return $this->getColumns()[$name] ?? null;
     }
 
+    /**
+     * @return array<string, Action>
+     */
     public function getColumnActions(): array
     {
         return $this->columnActions;
     }
 
+    /**
+     * @return array<Column | ColumnLayoutComponent>
+     */
     public function getColumnsLayout(): array
     {
         return $this->columnsLayout;
@@ -826,6 +933,9 @@ class Table extends ViewComponent
         return $this->evaluate($this->content);
     }
 
+    /**
+     * @return array<string, int | null> | null
+     */
     public function getContentGrid(): ?array
     {
         return $this->evaluate($this->contentGrid);
@@ -839,6 +949,17 @@ class Table extends ViewComponent
     public function getDefaultPaginationPageOption(): int | string | null
     {
         return $this->evaluate($this->defaultPaginationPageOption) ?? Arr::first($this->getPaginationPageOptions());
+    }
+
+    public function isDefaultGroupSelectable(): bool
+    {
+        $defaultGroup = $this->getDefaultGroup();
+
+        if (! $defaultGroup) {
+            return false;
+        }
+
+        return $this->getGroup($defaultGroup->getId()) !== null;
     }
 
     public function getDefaultGroup(): ?Group
@@ -885,6 +1006,9 @@ class Table extends ViewComponent
         return $this->evaluate($this->emptyState);
     }
 
+    /**
+     * @return array<string, Action | ActionGroup>
+     */
     public function getEmptyStateActions(): array
     {
         return $this->emptyStateActions;
@@ -910,6 +1034,9 @@ class Table extends ViewComponent
         return $this->evaluate($this->emptyStateIcon) ?? 'heroicon-o-x-mark';
     }
 
+    /**
+     * @return array<string, BaseFilter>
+     */
     public function getFilters(): array
     {
         return array_filter(
@@ -928,6 +1055,9 @@ class Table extends ViewComponent
         return $this->getLivewire()->getTableFiltersForm();
     }
 
+    /**
+     * @return int | array<string, int | null>
+     */
     public function getFiltersFormColumns(): int | array
     {
         return $this->evaluate($this->filtersFormColumns) ?? match ($this->getFiltersLayout()) {
@@ -956,6 +1086,9 @@ class Table extends ViewComponent
         return $this->evaluate($this->filtersLayout) ?? Layout::Dropdown;
     }
 
+    /**
+     * @return array<string, Group>
+     */
     public function getGroups(): array
     {
         return $this->groups;
@@ -976,6 +1109,9 @@ class Table extends ViewComponent
         return $this->getLivewire()->getTableColumnToggleForm();
     }
 
+    /**
+     * @return int | array<string, int | null>
+     */
     public function getColumnToggleFormColumns(): int | array
     {
         return $this->evaluate($this->columnToggleFormColumns) ?? 1;
@@ -996,6 +1132,9 @@ class Table extends ViewComponent
         return $this->evaluate($this->header);
     }
 
+    /**
+     * @return array<string, Action | ActionGroup>
+     */
     public function getHeaderActions(): array
     {
         return $this->headerActions;
@@ -1033,16 +1172,14 @@ class Table extends ViewComponent
         return $this->evaluate($this->heading);
     }
 
-    public function getMountedActionRecordKey()
-    {
-        return $this->getLivewire()->getMountedTableActionRecordKey();
-    }
-
     public function getRecords(): Collection | Paginator
     {
         return $this->getLivewire()->getTableRecords();
     }
 
+    /**
+     * @return array<int | string>
+     */
     public function getPaginationPageOptions(): array
     {
         return $this->evaluate($this->paginationPageOptions) ?? [5, 10, 25, 50, 'all'];
@@ -1055,6 +1192,9 @@ class Table extends ViewComponent
         ]);
     }
 
+    /**
+     * @return array<string | int, bool | string>
+     */
     public function getRecordClasses(Model $record): array
     {
         return Arr::wrap($this->evaluate($this->recordClasses, [

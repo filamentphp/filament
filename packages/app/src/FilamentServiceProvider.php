@@ -16,6 +16,7 @@ use Filament\Http\Responses\Auth\LoginResponse;
 use Filament\Http\Responses\Auth\LogoutResponse;
 use Filament\Http\Responses\Auth\PasswordResetResponse;
 use Filament\Http\Responses\Auth\RegistrationResponse;
+use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Theme;
 use Filament\Support\PluginServiceProvider;
@@ -72,6 +73,9 @@ class FilamentServiceProvider extends PluginServiceProvider
         return null;
     }
 
+    /**
+     * @return array<Asset>
+     */
     protected function getAssets(): array
     {
         return [
@@ -86,6 +90,9 @@ class FilamentServiceProvider extends PluginServiceProvider
         return ['web'];
     }
 
+    /**
+     * @return array<class-string>
+     */
     protected function getCommands(): array
     {
         $commands = [

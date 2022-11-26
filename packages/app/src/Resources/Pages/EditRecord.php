@@ -24,6 +24,9 @@ class EditRecord extends Page
     use Concerns\InteractsWithRecord;
     use InteractsWithFormActions;
 
+    /**
+     * @var view-string
+     */
     protected static string $view = 'filament::resources.pages.edit-record';
 
     public $data;

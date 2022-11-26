@@ -13,6 +13,9 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
     use Concerns\InteractsWithToolbarButtons;
     use HasExtraAlpineAttributes;
 
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-forms::components.markdown-editor';
 
     protected array | Closure $toolbarButtons = [

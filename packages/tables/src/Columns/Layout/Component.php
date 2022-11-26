@@ -85,6 +85,9 @@ class Component extends ViewComponent
         return $this->isCollapsible;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [

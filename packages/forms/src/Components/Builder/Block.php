@@ -10,6 +10,9 @@ class Block extends Component
 {
     use Concerns\HasName;
 
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-forms::components.builder.block';
 
     protected string | Closure | null $icon = null;

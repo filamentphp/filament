@@ -40,6 +40,9 @@ trait HasRelationship
         return $keyColumn;
     }
 
+    /**
+     * @return array<scalar, string>
+     */
     protected function getRelationshipOptions(): array
     {
         $relationship = $this->getRelationship();

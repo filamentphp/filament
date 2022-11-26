@@ -11,6 +11,9 @@ class FileUpload extends BaseFileUpload
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
 
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-forms::components.file-upload';
 
     protected string | Closure | null $imageCropAspectRatio = null;

@@ -12,6 +12,9 @@ class Dashboard extends Page
 
     protected static ?int $navigationSort = -2;
 
+    /**
+     * @var view-string
+     */
     protected static string $view = 'filament::pages.dashboard';
 
     public static function getNavigationLabel(): string

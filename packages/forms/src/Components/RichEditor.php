@@ -14,6 +14,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     use Concerns\InteractsWithToolbarButtons;
     use HasExtraAlpineAttributes;
 
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-forms::components.rich-editor';
 
     protected array | Closure $toolbarButtons = [
