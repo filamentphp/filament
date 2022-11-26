@@ -156,8 +156,8 @@ trait HasNestedRelationships
      * ... from anywhere in column-land would return an array of the author names of all comments on a post.
      *
      * @param array|string|null $relationships
-     * @param Model|null $record
-     * @param array|null $results
+     * @param Model|null        $record
+     * @param array|null        $results
      *
      * @return array
      */
@@ -169,7 +169,7 @@ trait HasNestedRelationships
             // a record.  Record will default to $this->getRecord(), relationships will default to exploding $this->getName()
             $results = [];
             $record  ??= $this->getRecord();
-            $name = $relationships ?? $this->getName();
+            $name    = $relationships ?? $this->getName();
 
             if (!$this->queriesRelationships($record)) {
                 // if no relationships, just an attribute, it wasn't really nested, just return it
@@ -223,7 +223,7 @@ trait HasNestedRelationships
      * related Post.
      *
      * @param array|string|null $relationships
-     * @param Model|null $record
+     * @param Model|null        $record
      *
      * @return Model|null
      */
@@ -234,7 +234,7 @@ trait HasNestedRelationships
             // Allow calling with either no args, or specifying the $relationships as a dotted string, with or without
             // a record.  Record will default to $this->getRecord(), relationships will default to exploding $this->getName()
             $record ??= $this->getRecord();
-            $name = $relationships ?? $this->getName();
+            $name   = $relationships ?? $this->getName();
 
             // if it's not really nested, just an attribute, return null
             if (!$this->queriesRelationships($record, $name)) {
@@ -382,12 +382,10 @@ trait HasNestedRelationships
 
     public function getNestedWhere(Builder $query, string $column, Model $record, ?array $relationships = null)
     {
-        if (!isset($relationships))
-        {
+        if (!isset($relationships)) {
             $relationships = $this->getRelationshipStack($column);
 
-            if ($this->isNoMoreRelationships($relationships))
-            {
+            if ($this->isNoMoreRelationships($relationships)) {
                 return $query->where(
                     $this->getStackAttribute($relationships),
                     '=',
@@ -400,10 +398,9 @@ trait HasNestedRelationships
         }
         else {
             $relationship = $this->shiftNextRelationship($relationships, $record);
-            $record = $relationship->getResults();
+            $record       = $relationship->getResults();
 
-            if ($this->isNoMoreRelationships($relationships))
-            {
+            if ($this->isNoMoreRelationships($relationships)) {
                 return $query->where(
                     $this->getStackAttribute($relationships),
                     '=',
@@ -422,7 +419,7 @@ trait HasNestedRelationships
     /**
      * Legacy from InteractsWithTableQuery, changed to use new internal method
      *
-     * @param Model $model
+     * @param Model   $model
      * @param ?String $name
      *
      * @return bool
