@@ -565,7 +565,7 @@ More information about removing global scopes may be found in the [Laravel docum
 
 ## Customizing the URL slug
 
-By default, Filament will generate a resource URL based on the name of the model. You can customize this by setting the `$slug` property on the resource:
+By default, Filament will generate a URL based on the name of the resource. You can customize this by setting the `$slug` property on the resource:
 
 ```php
 protected static ?string $slug = 'pending-orders';
