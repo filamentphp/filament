@@ -12,16 +12,26 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  * This trait provides all the logic needed to handle distant relationship 'chains' (dotted names) in columns, either
  * from the column names themselves, or as things like Ordering or Grouping ID's / attributes.
  *
- * In this PR, the consumers of this trait (where I have changed code to use this trait) are:
+ * I wound up putting this trait in the ./support package, rather than folding it all in to the existing table columns
+ * HasRelationships trait, because (while it replaces most stuff in that trait) it isn't just a column trait, it needs
+ * to be used in things like Groups as well. There is no doubt a better place to put it.
  *
- * ==== HasState:
+ * In this PR, the consumers of this trait (where I have changed code to use it) are:
  *
- * In getStateFromRecord, after the simple Arr:get(), if nothing found it will then try
- * $this->collectNestedAttributes() from this trait, which returns a collected array of attributes from an arbitrary
- * length dotted relationship chain, of any arbitrary mix of relationship types (one and many).
+ * ========================
+ * = HasState:
+ * ========================
+ *
+ * ./packages/tables/src/Columns/Concerns/HasState.php
+ *
+ * In getStateFromRecord, after the simple Arr:get() check (which will find any non-dotted or simple belongsTo dotted
+ * chains), if no value is found, it will then try $this->collectNestedAttributes() from this trait, which returns
+ * a collected (merged) array of attributes from any arbitrary length dotted relationship chain, of any arbitrary mix of
+ * relationship types (one and many).
  *
  * Additionally, this PR adds a CanFormatArrayState trait, with ul(), ol() and grid() methods, for formatting
- * arrays of data returned by collectNestedAttributes().
+ * arrays of data returned by collectNestedAttributes().  Should probably be merged into the CanFormatState trait, I
+ * just kept it separate while developing.
  *
  * So, a column like ...
  *
@@ -31,7 +41,11 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  * ... on a Post table, where Post HasMany 'comments', and 'comments' belongsTo 'author', would render all author's
  * names who have commented on a post as a <ul>...</ul>
  *
- * ==== InteractsWithTableQuery:
+ * =============================
+ * = InteractsWithTableQuery:
+ * =============================
+ *
+ * ./packages/tables/src/Columns/Concerns/InteractsWithTableQuery.php
  *
  * In ApplySort, it uses $this->getNestedRelationshipExistenceQueries() from this trait in building the orderBy
  * query, like this ...
@@ -43,22 +57,35 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  *
  * ... where the original code had a binary When() approach that just checked the final relationship in a chain,
  * and used nestedRelationshipQuery if there was a relationship.  This doesn't work for any chains longer than one,
- * because the relationships at the start of the chain are not in included in the query.  Hence this method,
+ * because the relationships at the start of the chain are not included in the query.  Hence this method,
  * which walks down the chain recursively nesting the existence queries.
  *
- * ==== Grouping
+ * =============
+ * = Grouping
+ * =============
+ *
+ * ./packages/tables/src/Grouping/Group.php
+ *
+ * This PR modifies Group.php to support grouping on an arbitrary length chain of one-to-one relationships.
  *
  * The orderQuery method in the Group class uses $this->getNestedRelationshipExistenceQueries() from this class,
  * in the same way as InteractsWithTableQuery.
  *
- * The getGroupTitleFromRecord method in the Group class returns $this->getnestedAttribute() from this class.
+ * The getGroupTitleFromRecord method in the Group class returns $this->getNestedAttribute() from this class, which
+ * returns the attribute at the end of a one-to-one chain.
  *
- * The scopeQuery method in the Group class returns $this->getNestedWhere() from this class.
+ * The scopeQuery method in the Group class returns $this->getNestedWhere() from this class, which nests arbitrary
+ * length one-to-one chains (included simple non-nested attributes), wrapping them in nested whereHas() clauses.
  *
- * ==== HasColumns
+ * ===============
+ * = HasColumns
+ * ===============
+ *
+ * ./packages/tables/src/Concerns/HasColumns.php
  *
  * The setColumnValue() method in HasColumns uses $column->getNestedRecord() from this trait, when updating
- * records from Editable columns.  This allows an Editable column to set values on distant relationships.
+ * records from Editable columns.  This allows an Editable column to set values on distant relationships, as arbitrary
+ * length one-to-one chains.
  *
  */
 trait HasNestedRelationships
@@ -66,7 +93,8 @@ trait HasNestedRelationships
 
     /**
      * Explode the (maybe) dotted name into an array, leaving attribute in as the last array entry.  So
-     * 'post.author.name' becomes ['post', 'author', 'name']
+     * 'post.author.name' becomes ['post', 'author', 'name'].  I experimented with using a Collection, but that
+     * doesn't play well with recursion and shifting off a stack.
      *
      * @param string $name
      *
@@ -78,9 +106,9 @@ trait HasNestedRelationships
     }
 
     /**
-     * Shifts the next relationship name off a stack (array of dotted name components) and return the relationship
-     * method on the record for that named relationship.  The last entry in a stack is always the target attribute,
-     * so if only one left in the stack, it returns null.
+     * Shifts the next relationship name off a stack and return the relationship method on the record for that
+     * named relationship.  The last entry in a stack is always the target attribute, so if only one left in the stack,
+     * it returns null.
      *
      * @param array $relationships
      * @param Model $record
@@ -186,7 +214,7 @@ trait HasNestedRelationships
         }
         else {
             // at this point we've taken care of any first time checks and are somewhere in our recursion stack, so
-            // shift the next relationship off the stackk ...
+            // shift the next relationship off the stack ...
             $relationship = $this->shiftNextRelationship($relationships, $record);
 
             if ($this->isNoMoreRelationships($relationships)) {
@@ -277,7 +305,7 @@ trait HasNestedRelationships
     }
 
     /**
-     * Returns false if there are no more relationships in the stack, e.g. if the stack count > 1 (as the target
+     * Returns true if there are no more relationships in the stack, e.g. if the stack count === 1 (as the target
      * attribute is always the last item in the stack)
      *
      * @param array $relationships
@@ -325,7 +353,7 @@ trait HasNestedRelationships
     /**
      * This probably belongs somewhere else, wasn't sure where to put it.  Used from anywhere that builds am orderBy()
      * query potentially from a nested relationship, like 'post.author.name' on a Comments table.  Returns a nested
-     * set of relationshipExistanceQueries, with each successive one being in the 'column' arg of the previous.
+     * set of relationshipExistenceQueries, with each successive one being in the 'column' arg of the previous.
      *
      * Called as ...
      *
@@ -380,6 +408,37 @@ trait HasNestedRelationships
         }
     }
 
+    /**
+     * Builds a simple '=' where clause for an attribute, but nests inside successive whereHas() clauses if it's a
+     * relationship chain.  So calling this on just an attribute would yield a simple where() clause ...
+     *
+     * $this->getNestedQuery($query, 'name', $record)
+     *
+     * ... yields ...
+     *
+     * $query->where('name', '=', $record->getAttribute('name'))
+     *
+     * ... but calling it on a dotted chain ...
+     *
+     * $this->getNestedQuery($query, 'post.author.name', $record)
+     *
+     * ... yields ...
+     *
+     * $query->whereHas(
+     *     'post',
+     *     fn (Builder $query) => $query->whereHas(
+     *         'author',
+     *          fn (Builder $query) => $query->where('name', '=', $record->getAttribute('name'))
+     *     )
+     *  )
+     *
+     * @param Builder    $query
+     * @param string     $column
+     * @param Model      $record
+     * @param array|null $relationships
+     *
+     * @return Builder
+     */
     public function getNestedWhere(Builder $query, string $column, Model $record, ?array $relationships = null)
     {
         if (!isset($relationships)) {
