@@ -49,7 +49,11 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  * ==== Grouping
  *
  * The orderQuery method in the Group class uses $this->getNestedRelationshipExistenceQueries() from this class,
- * in the same way as InteractsWithTableQuery
+ * in the same way as InteractsWithTableQuery.
+ *
+ * The getGroupTitleFromRecord method in the Group class returns $this->getnestedAttribute() from this class.
+ *
+ * The scopeQuery method in the Group class returns $this->getNestedWhere() from this class.
  *
  * ==== HasColumns
  *
