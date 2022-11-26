@@ -25,14 +25,13 @@
         'center' => 'justify-center',
         'end' => 'justify-end',
         'left' => 'justify-start rtl:flex-row-reverse',
-        'center' => 'justify-center',
         'right' => 'justify-end rtl:flex-row-reverse',
         default => null,
     },
 ]) }}>
     @if (filled($state))
         <div @class([
-            'inline-flex items-center justify-center space-x-1 rtl:space-x-reverse min-h-6 px-2 py-0.5 text-sm font-medium tracking-tight rounded-xl whitespace-nowrap',
+            'inline-flex items-center justify-center space-x-1 rtl:space-x-reverse min-h-6 px-2 py-0.5 text-xs font-medium rounded-xl whitespace-nowrap',
             $colorClasses,
         ])>
             @if ($icon && $iconPosition === 'before')
