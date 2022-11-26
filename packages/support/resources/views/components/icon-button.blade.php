@@ -24,10 +24,13 @@
             'warning' => 'text-warning-500 focus:bg-warning-500/10',
             default => $color,
         },
-        'w-10 h-10' => $size === 'md',
-        'w-8 h-8' => $size === 'sm',
-        'w-8 h-8 md:w-10 md:h-10' => $size === 'sm md:md',
-        'w-12 h-12' => $size === 'lg',
+        match ($size) {
+            'lg' => 'w-12 h-12',
+            'md' => 'w-10 h-10',
+            'sm md:md' => 'w-8 h-8 md:w-10 md:h-10',
+            'sm' => 'w-8 h-8',
+            default => $size,
+        },
     ];
 
     $iconSize = match ($size) {
