@@ -70,11 +70,11 @@ it('can sort records with deep relationship', function () {
 
     livewire(CommentsTable::class)
         ->sortTable('post.author.name')
-        ->assertCanSeeTableRecords($comments->sortBy(function($comment) {
+        ->assertCanSeeTableRecords($comments->sortBy(function ($comment) {
             return $comment->post->author->name;
         }), inOrder: true)
         ->sortTable('post.author.name', 'desc')
-        ->assertCanSeeTableRecords($comments->sortByDesc(function($comment) {
+        ->assertCanSeeTableRecords($comments->sortByDesc(function ($comment) {
             return $comment->post->author->name;
         }), inOrder: true);
 });
@@ -178,7 +178,6 @@ it('can set a select column value', function () {
     livewire(PostsTable::class)
         ->assertSelectColumnHasOptions('with_options', ['red' => 'Red', 'blue' => 'Blue'], $post)
         ->assertTableColumnStateSet('with_options', 'red', $post);
-
 });
 
 it('can set a distant select column value', function () {
@@ -198,5 +197,4 @@ it('can set a distant select column value', function () {
 
     livewire(CommentsTable::class)
         ->assertTableColumnStateSet('post.author_id', $user->id, $comment);
-
 });

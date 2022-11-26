@@ -19,7 +19,7 @@ class PostFactory extends Factory
             'tags' => $this->faker->words(),
             'title' => $this->faker->sentence(),
             'rating' => $this->faker->numberBetween(1, 10),
-            'with_options' => $this->faker->randomElement(['red','blue']),
+            'with_options' => $this->faker->randomElement(['red', 'blue']),
         ];
     }
 }
