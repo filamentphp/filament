@@ -4,6 +4,8 @@
 >
     @php
         $isInline = $isInline();
+        $offColor = $getOffColor();
+        $onColor = $getOnColor();
         $statePath = $getStatePath();
     @endphp
 
@@ -14,24 +16,28 @@
                 x-data="{ state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }} }"
                 x-bind:aria-checked="state.toString()"
                 x-on:click="state = ! state"
-                x-bind:class="{
-                    '{{ match ($getOnColor()) {
-                        'danger' => 'bg-danger-500',
-                        'gray' => 'bg-gray-500',
-                        'secondary' => 'bg-secondary-500',
-                        'success' => 'bg-success-500',
-                        'warning' => 'bg-warning-500',
-                        default => 'bg-primary-600',
-                    } }}': state,
-                    '{{ match ($getOffColor()) {
-                        'danger' => 'bg-danger-500',
-                        'primary' => 'bg-primary-500',
-                        'secondary' => 'bg-secondary-500',
-                        'success' => 'bg-success-500',
-                        'warning' => 'bg-warning-500',
-                        default => 'bg-gray-200',
-                    } }} dark:bg-white/10': ! state,
-                }"
+                x-bind:class="
+                    state
+                        ? '{{ match ($onColor) {
+                            'danger' => 'bg-danger-600',
+                            'gray' => 'bg-gray-600',
+                            'primary', null => 'bg-primary-600',
+                            'secondary' => 'bg-secondary-600',
+                            'success' => 'bg-success-600',
+                            'warning' => 'bg-warning-600',
+                            default => $onColor,
+                        } }}'
+                        : '{{ match ($offColor) {
+                            'danger' => 'bg-danger-600',
+                            'gray' => 'bg-gray-600',
+                            'primary' => 'bg-primary-600',
+                            'secondary' => 'bg-secondary-600',
+                            'success' => 'bg-success-600',
+                            'warning' => 'bg-warning-600',
+                            null => 'bg-gray-200 dark:bg-gray-700',
+                            default => $offColor,
+                        } }}'
+                "
                 {{
                     $attributes
                         ->merge([
@@ -68,13 +74,15 @@
                             <x-filament::icon
                                 :name="$getOffIcon()"
                                 alias="filament-forms::components.toggle.off"
-                                :color="match ($getOffColor()) {
-                                    'danger' => 'text-danger-500',
-                                    'primary' => 'text-primary-500',
-                                    'secondary' => 'text-secondary-500',
-                                    'success' => 'text-success-500',
-                                    'warning' => 'text-warning-500',
-                                    default => 'text-gray-400',
+                                :color="match ($offColor) {
+                                    'danger' => 'text-danger-600',
+                                    'gray' => 'text-gray-600',
+                                    'primary' => 'text-primary-600',
+                                    'secondary' => 'text-secondary-600',
+                                    'success' => 'text-success-600',
+                                    'warning' => 'text-warning-600',
+                                    null => 'text-gray-400 dark:text-gray-700',
+                                    default => $offColor,
                                 }"
                                 size="h-3 w-3"
                             />
@@ -93,13 +101,14 @@
                             <x-filament::icon
                                 :name="$getOnIcon()"
                                 alias="filament-forms::components.toggle.on"
-                                :color="match ($getOnColor()) {
-                                    'danger' => 'text-danger-500',
-                                    'gray' => 'text-gray-400',
-                                    'secondary' => 'text-secondary-500',
-                                    'success' => 'text-success-500',
-                                    'warning' => 'text-warning-500',
-                                    default => 'text-primary-500',
+                                :color="match ($onColor) {
+                                    'danger' => 'text-danger-600',
+                                    'gray' => 'text-gray-600',
+                                    'primary', null => 'text-primary-600',
+                                    'secondary' => 'text-secondary-600',
+                                    'success' => 'text-success-600',
+                                    'warning' => 'text-warning-600',
+                                    default => $onColor,
                                 }"
                                 size="h-3 w-3"
                                 x-cloak
