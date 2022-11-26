@@ -15,12 +15,15 @@
 @php
     $buttonClasses = [
         'filament-icon-button flex items-center justify-center rounded-full relative hover:bg-gray-500/5 focus:outline-none disabled:opacity-70 disabled:pointer-events-none dark:hover:bg-gray-300/5',
-        'text-primary-500 focus:bg-primary-500/10' => $color === 'primary',
-        'text-danger-500 focus:bg-danger-500/10' => $color === 'danger',
-        'text-gray-500 focus:bg-gray-500/10' => $color === 'gray',
-        'text-secondary-500 focus:bg-secondary-500/10' => $color === 'secondary',
-        'text-success-500 focus:bg-success-500/10' => $color === 'success',
-        'text-warning-500 focus:bg-warning-500/10' => $color === 'warning',
+        match ($color) {
+            'danger' => 'text-danger-500 focus:bg-danger-500/10',
+            'gray' => 'text-gray-500 focus:bg-gray-500/10',
+            'primary' => 'text-primary-500 focus:bg-primary-500/10',
+            'secondary' => 'text-secondary-500 focus:bg-secondary-500/10',
+            'success' => 'text-success-500 focus:bg-success-500/10',
+            'warning' => 'text-warning-500 focus:bg-warning-500/10',
+            default => $color,
+        },
         'w-10 h-10' => $size === 'md',
         'w-8 h-8' => $size === 'sm',
         'w-8 h-8 md:w-10 md:h-10' => $size === 'sm md:md',
