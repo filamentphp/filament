@@ -9,6 +9,9 @@ trait InteractsWithTableQuery
 {
     protected ?Closure $modifyQueryUsing = null;
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function apply(Builder $query, array $data = []): Builder
     {
         if ($this->isHidden()) {
@@ -32,6 +35,9 @@ trait InteractsWithTableQuery
         return $query;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public function applyToBaseQuery(Builder $query, array $data = []): Builder
     {
         return $query;

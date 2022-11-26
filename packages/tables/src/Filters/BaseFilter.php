@@ -48,6 +48,9 @@ class BaseFilter extends Component
         return null;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [

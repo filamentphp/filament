@@ -11,6 +11,9 @@ use Throwable;
 
 class ImageColumn extends Column
 {
+    /**
+     * @var view-string $view
+     */
     protected string $view = 'filament-tables::columns.image-column';
 
     protected string | Closure | null $disk = null;

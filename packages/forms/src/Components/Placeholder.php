@@ -10,6 +10,9 @@ class Placeholder extends Component
     use Concerns\HasHint;
     use Concerns\HasName;
 
+    /**
+     * @var view-string $view
+     */
     protected string $view = 'filament-forms::components.placeholder';
 
     protected $content = null;

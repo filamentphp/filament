@@ -15,6 +15,9 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
 
+    /**
+     * @var view-string $view
+     */
     protected string $view = 'filament-forms::components.textarea';
 
     protected int | Closure | null $cols = null;

@@ -22,6 +22,9 @@ class Wizard extends Component
 
     public int | Closure $startStep = 1;
 
+    /**
+     * @var view-string $view
+     */
     protected string $view = 'filament-forms::components.wizard';
 
     final public function __construct(array | Closure $steps = [])

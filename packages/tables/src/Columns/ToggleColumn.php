@@ -12,6 +12,9 @@ class ToggleColumn extends Column implements Editable
     use HasToggleColors;
     use HasToggleIcons;
 
+    /**
+     * @var view-string $view
+     */
     protected string $view = 'filament-tables::columns.toggle-column';
 
     protected function setUp(): void

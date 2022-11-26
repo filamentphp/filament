@@ -5,6 +5,7 @@ namespace Filament\Resources\Pages;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Form;
+use Filament\Pages\Auth\Register;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
@@ -17,6 +18,9 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         makeTable as makeBaseTable;
     }
 
+    /**
+     * @var view-string $view
+     */
     protected static string $view = 'filament::resources.pages.list-records';
 
     protected $queryString = [

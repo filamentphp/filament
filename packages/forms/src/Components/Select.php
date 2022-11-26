@@ -34,6 +34,9 @@ class Select extends Field
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
 
+    /**
+     * @var view-string $view
+     */
     protected string $view = 'filament-forms::components.select';
 
     protected array | Closure | null $createOptionActionFormSchema = null;

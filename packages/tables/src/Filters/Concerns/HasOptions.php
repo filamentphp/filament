@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Filters\Concerns;
 
+use BackedEnum;
 use Closure;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Illuminate\Contracts\Support\Arrayable;
@@ -9,8 +10,14 @@ use Illuminate\Support\Collection;
 
 trait HasOptions
 {
+    /**
+     * @var array<scalar, string> | Arrayable | class-string | Closure | null $options
+     */
     protected array | Arrayable | string | Closure | null $options = null;
 
+    /**
+     * @param array<scalar, string> | Arrayable | class-string | Closure | null $options
+     */
     public function options(array | Arrayable | string | Closure | null $options): static
     {
         $this->options = $options;
@@ -18,6 +25,9 @@ trait HasOptions
         return $this;
     }
 
+    /**
+     * @return array<scalar, string>
+     */
     public function getOptions(): array
     {
         $options = $this->evaluate($this->options);

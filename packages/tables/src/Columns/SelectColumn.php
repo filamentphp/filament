@@ -21,6 +21,9 @@ class SelectColumn extends Column implements Editable
     use HasOptions;
     use HasPlaceholder;
 
+    /**
+     * @var view-string $view
+     */
     protected string $view = 'filament-tables::columns.select-column';
 
     protected function setUp(): void

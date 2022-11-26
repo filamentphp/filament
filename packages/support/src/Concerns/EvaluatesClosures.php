@@ -28,11 +28,17 @@ trait EvaluatesClosures
         return $value;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getDefaultEvaluationParameters(): array
     {
         return [];
     }
 
+    /**
+     * @return mixed
+     */
     protected function resolveEvaluationParameter(string $parameter, Closure $value)
     {
         if ($this->isEvaluationParameterRemoved($parameter)) {

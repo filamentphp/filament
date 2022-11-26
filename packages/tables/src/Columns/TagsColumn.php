@@ -6,6 +6,9 @@ use Closure;
 
 class TagsColumn extends Column
 {
+    /**
+     * @var view-string $view
+     */
     protected string $view = 'filament-tables::columns.tags-column';
 
     protected string | Closure | null $separator = null;

@@ -23,6 +23,9 @@ class Register extends CardPage
 {
     use WithRateLimiting;
 
+    /**
+     * @var view-string $view
+     */
     protected static string $view = 'filament::pages.auth.register';
 
     public $email = '';

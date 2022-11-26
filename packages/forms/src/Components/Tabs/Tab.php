@@ -9,6 +9,9 @@ use Illuminate\Support\Str;
 
 class Tab extends Component implements CanConcealComponents
 {
+    /**
+     * @var view-string $view
+     */
     protected string $view = 'filament-forms::components.tabs.tab';
 
     protected string | Closure | null $badge = null;

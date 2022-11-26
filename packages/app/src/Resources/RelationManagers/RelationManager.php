@@ -4,6 +4,7 @@ namespace Filament\Resources\RelationManagers;
 
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
+use Filament\Pages\Auth\Register;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
@@ -30,6 +31,9 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
 
     protected static ?string $title = null;
 
+    /**
+     * @var view-string $view
+     */
     protected static string $view = 'filament::resources.relation-manager';
 
     /**
@@ -425,6 +429,9 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
         return $this->can('view', $record);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getViewData(): array
     {
         return [];

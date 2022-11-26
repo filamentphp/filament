@@ -34,6 +34,9 @@ class Notification extends ViewComponent implements Arrayable
     use HasId;
     use HasTitle;
 
+    /**
+     * @var view-string $view
+     */
     protected string $view = 'filament-notifications::notification';
 
     protected string $viewIdentifier = 'notification';

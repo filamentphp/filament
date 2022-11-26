@@ -16,6 +16,9 @@ class Builder extends Field implements Contracts\CanConcealComponents
     use Concerns\CanLimitItemsLength;
     use Concerns\CanBeCloned;
 
+    /**
+     * @var view-string $view
+     */
     protected string $view = 'filament-forms::components.builder';
 
     protected string | Closure | null $createItemBetweenButtonLabel = null;

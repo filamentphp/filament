@@ -11,6 +11,9 @@ class Stack extends Component
     use HasAlignment;
     use HasSpace;
 
+    /**
+     * @var view-string $view
+     */
     protected string $view = 'filament-tables::columns.layout.stack';
 
     final public function __construct(array | Closure $schema)

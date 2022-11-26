@@ -10,6 +10,7 @@ use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Pages\Auth\Register;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
@@ -24,6 +25,9 @@ class EditRecord extends Page
     use Concerns\InteractsWithRecord;
     use InteractsWithFormActions;
 
+    /**
+     * @var view-string $view
+     */
     protected static string $view = 'filament::resources.pages.edit-record';
 
     public $data;

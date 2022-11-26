@@ -4,6 +4,7 @@ namespace Filament\Pages;
 
 use Filament\Context;
 use Filament\Facades\Filament;
+use Filament\Pages\Auth\Register;
 use Illuminate\Support\Facades\Route;
 
 class Dashboard extends Page
@@ -12,6 +13,9 @@ class Dashboard extends Page
 
     protected static ?int $navigationSort = -2;
 
+    /**
+     * @var view-string $view
+     */
     protected static string $view = 'filament::pages.dashboard';
 
     public static function getNavigationLabel(): string

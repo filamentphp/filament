@@ -9,6 +9,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\PasswordResetResponse;
 use Filament\Notifications\Notification;
+use Filament\Pages\Auth\Login;
 use Filament\Pages\CardPage;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -27,6 +28,9 @@ class ResetPassword extends CardPage
 {
     use WithRateLimiting;
 
+    /**
+     * @var view-string $view
+     */
     protected static string $view = 'filament::pages.auth.password-reset.reset-password';
 
     public $email;

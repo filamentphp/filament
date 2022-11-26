@@ -8,6 +8,9 @@ class Grid extends Component implements CanEntangleWithSingularRelationships
 {
     use Concerns\EntanglesStateWithSingularRelationship;
 
+    /**
+     * @var view-string $view
+     */
     protected string $view = 'filament-forms::components.grid';
 
     final public function __construct(array | int | null $columns)

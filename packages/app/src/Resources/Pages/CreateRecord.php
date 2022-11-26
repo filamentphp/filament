@@ -5,6 +5,7 @@ namespace Filament\Resources\Pages;
 use Filament\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Pages\Auth\Register;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +18,9 @@ class CreateRecord extends Page
 {
     use InteractsWithFormActions;
 
+    /**
+     * @var view-string $view
+     */
     protected static string $view = 'filament::resources.pages.create-record';
 
     public $record;

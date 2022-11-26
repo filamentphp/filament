@@ -3,6 +3,7 @@
 namespace Filament\Forms;
 
 use Filament\Forms\Contracts\HasForms;
+use Filament\Pages\Auth\Register;
 use Filament\Support\Components\ViewComponent;
 
 class ComponentContainer extends ViewComponent
@@ -28,10 +29,16 @@ class ComponentContainer extends ViewComponent
 
     protected array $meta = [];
 
+    /**
+     * @var view-string $view
+     */
     protected string $view = 'filament-forms::component-container';
 
     protected string $evaluationIdentifier = 'container';
 
+    /**
+     * @var view-string $view
+     */
     protected string $viewIdentifier = 'container';
 
     final public function __construct(HasForms $livewire)
@@ -44,6 +51,9 @@ class ComponentContainer extends ViewComponent
         return app(static::class, ['livewire' => $livewire]);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [

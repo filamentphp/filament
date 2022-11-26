@@ -12,6 +12,9 @@ class TagsInput extends Field
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
 
+    /**
+     * @var view-string $view
+     */
     protected string $view = 'filament-forms::components.tags-input';
 
     protected string | Closure | null $separator = null;

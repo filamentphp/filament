@@ -19,6 +19,9 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     use Concerns\HasContainerGridLayout;
     use Concerns\CanBeCloned;
 
+    /**
+     * @var view-string $view
+     */
     protected string $view = 'filament-forms::components.repeater';
 
     protected string | Closure | null $createItemButtonLabel = null;

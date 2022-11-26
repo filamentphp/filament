@@ -9,6 +9,9 @@ class KeyValue extends Field
 {
     use HasExtraAlpineAttributes;
 
+    /**
+     * @var view-string $view
+     */
     protected string $view = 'filament-forms::components.key-value';
 
     protected string | Closure | null $addButtonLabel = null;
