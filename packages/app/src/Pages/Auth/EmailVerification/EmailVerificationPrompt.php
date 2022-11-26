@@ -21,7 +21,7 @@ class EmailVerificationPrompt extends CardPage
     use WithRateLimiting;
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected static string $view = 'filament::pages.auth.email-verification.email-verification-prompt';
 

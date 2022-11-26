@@ -15,7 +15,7 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
     use HasExtraAlpineAttributes;
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected string $view = 'filament-forms::components.section';
 

@@ -12,7 +12,7 @@ class Stack extends Component
     use HasSpace;
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected string $view = 'filament-tables::columns.layout.stack';
 

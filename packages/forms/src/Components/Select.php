@@ -35,7 +35,7 @@ class Select extends Field
     use HasExtraAlpineAttributes;
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected string $view = 'filament-forms::components.select';
 

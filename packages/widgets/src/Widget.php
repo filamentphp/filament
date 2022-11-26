@@ -12,12 +12,12 @@ abstract class Widget extends Component
     protected static ?int $sort = null;
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected static string $view;
 
     /**
-     * @var int | string | array<string, int | null> $columnSpan
+     * @var int | string | array<string, int | null>
      */
     protected int | string | array $columnSpan = 1;
 

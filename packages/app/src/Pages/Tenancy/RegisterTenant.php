@@ -5,7 +5,6 @@ namespace Filament\Pages\Tenancy;
 use Filament\Context;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
-use Filament\Pages\Auth\Register;
 use Filament\Pages\CardPage;
 use Filament\Pages\Concerns;
 use Filament\Support\Exceptions\Halt;
@@ -20,7 +19,7 @@ abstract class RegisterTenant extends CardPage
     use Concerns\HasRoutes;
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected static string $view = 'filament::pages.tenancy.register-tenant';
 

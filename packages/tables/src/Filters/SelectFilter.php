@@ -65,7 +65,7 @@ class SelectFilter extends BaseFilter
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function apply(Builder $query, array $data = []): Builder
     {

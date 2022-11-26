@@ -15,7 +15,7 @@ class TableWidget extends Widget implements Tables\Contracts\HasTable
     }
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected static string $view = 'filament-widgets::table-widget';
 

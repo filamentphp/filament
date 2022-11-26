@@ -7,7 +7,7 @@ use Closure;
 class TagsColumn extends Column
 {
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected string $view = 'filament-tables::columns.tags-column';
 

@@ -23,7 +23,7 @@ class Wizard extends Component
     public int | Closure $startStep = 1;
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected string $view = 'filament-forms::components.wizard';
 

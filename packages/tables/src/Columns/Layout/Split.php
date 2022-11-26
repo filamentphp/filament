@@ -7,7 +7,7 @@ use Closure;
 class Split extends Component
 {
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected string $view = 'filament-tables::columns.layout.split';
 

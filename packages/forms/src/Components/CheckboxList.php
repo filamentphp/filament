@@ -12,7 +12,7 @@ class CheckboxList extends Field
     use Concerns\HasOptions;
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected string $view = 'filament-forms::components.checkbox-list';
 

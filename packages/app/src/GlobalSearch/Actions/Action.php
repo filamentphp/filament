@@ -19,7 +19,7 @@ class Action extends StaticAction
     use HasTooltip;
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected string $view = 'filament-actions::link-action';
 

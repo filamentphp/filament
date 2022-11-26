@@ -6,8 +6,6 @@ use Closure;
 use Exception;
 use Filament\Forms\Form;
 use Filament\Support\Components\ViewComponent;
-use Filament\Tables\Filters\Filter;
-use phpDocumentor\Reflection\Types\Scalar;
 use function Filament\Support\get_model_label;
 use function Filament\Support\locale_has_pluralization;
 use Filament\Tables\Actions\Action;
@@ -38,7 +36,7 @@ class Table extends ViewComponent
     use Concerns\BelongsToLivewire;
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected string $view = 'filament-tables::index';
 
@@ -49,7 +47,7 @@ class Table extends ViewComponent
     public const LOADING_TARGETS = ['previousPage', 'nextPage', 'gotoPage', 'sortTable', 'tableFilters', 'resetTableFiltersForm', 'tableSearch', 'tableColumnSearches', 'tableRecordsPerPage'];
 
     /**
-     * @var array<string, Action | ActionGroup> $actions
+     * @var array<string, Action | ActionGroup>
      */
     protected array $actions = [];
 
@@ -62,29 +60,29 @@ class Table extends ViewComponent
     protected bool | Closure $allowsDuplicates = false;
 
     /**
-     * @var array<string, BulkAction> $bulkActions
+     * @var array<string, BulkAction>
      */
     protected array $bulkActions = [];
 
     protected ?ColumnLayoutComponent $collapsibleColumnsLayout = null;
 
     /**
-     * @var array<string, Action> $columnActions
+     * @var array<string, Action>
      */
     protected array $columnActions = [];
 
     /**
-     * @var array<string, Column> $columns
+     * @var array<string, Column>
      */
     protected array $columns = [];
 
     /**
-     * @var array<Column | ColumnLayoutComponent> $columnsLayout
+     * @var array<Column | ColumnLayoutComponent>
      */
     protected array $columnsLayout = [];
 
     /**
-     * @var int | array<string, int | null> | Closure $columnToggleFormColumns
+     * @var int | array<string, int | null> | Closure
      */
     protected int | array | Closure $columnToggleFormColumns = 1;
 
@@ -95,7 +93,7 @@ class Table extends ViewComponent
     protected View | Htmlable | Closure | null $contentFooter = null;
 
     /**
-     * @var array<string, int | null> | Closure | null $contentGrid
+     * @var array<string, int | null> | Closure | null
      */
     protected array | Closure | null $contentGrid = null;
 
@@ -120,17 +118,17 @@ class Table extends ViewComponent
     protected string | Closure | null $emptyStateIcon = null;
 
     /**
-     * @var array<string, Action | ActionGroup> $emptyStateActions
+     * @var array<string, Action | ActionGroup>
      */
     protected array $emptyStateActions = [];
 
     /**
-     * @var array<string, BaseFilter> $filters
+     * @var array<string, BaseFilter>
      */
     protected array $filters = [];
 
     /**
-     * @var int | array<string, int | null> | Closure $filtersFormColumns
+     * @var int | array<string, int | null> | Closure
      */
     protected int | array | Closure $filtersFormColumns = 1;
 
@@ -139,12 +137,12 @@ class Table extends ViewComponent
     protected string | Closure | null $filtersLayout = null;
 
     /**
-     * @var array<string, Group> $groups
+     * @var array<string, Group>
      */
     protected array $groups = [];
 
     /**
-     * @var array<string, BulkAction> $groupedBulkActions
+     * @var array<string, BulkAction>
      */
     protected array $groupedBulkActions = [];
 
@@ -157,7 +155,7 @@ class Table extends ViewComponent
     protected string | Htmlable | Closure | null $heading = null;
 
     /**
-     * @var array<string, Action | ActionGroup> $headerActions
+     * @var array<string, Action | ActionGroup>
      */
     protected array $headerActions = [];
 
@@ -178,7 +176,7 @@ class Table extends ViewComponent
     protected string | Closure | null $modelLabel = null;
 
     /**
-     * @var array<int | string> | Closure | null $paginationPageOptions
+     * @var array<int | string> | Closure | null
      */
     protected array | Closure | null $paginationPageOptions = null;
 
@@ -199,7 +197,7 @@ class Table extends ViewComponent
     protected string | Closure | null $recordAction = null;
 
     /**
-     * @var array<string | int, bool | string> | string | Closure | null $recordClasses
+     * @var array<string | int, bool | string> | string | Closure | null
      */
     protected array | string | Closure | null $recordClasses = null;
 
@@ -232,7 +230,7 @@ class Table extends ViewComponent
     }
 
     /**
-     * @param array<Action | ActionGroup> | ActionGroup $actions
+     * @param  array<Action | ActionGroup> | ActionGroup  $actions
      */
     public function actions(array | ActionGroup $actions, string | Closure | null $position = null): static
     {
@@ -293,7 +291,7 @@ class Table extends ViewComponent
     }
 
     /**
-     * @param array<BulkAction> $actions
+     * @param  array<BulkAction>  $actions
      */
     public function bulkActions(array $actions): static
     {
@@ -314,7 +312,7 @@ class Table extends ViewComponent
     }
 
     /**
-     * @param array<Column | ColumnLayoutComponent> $components
+     * @param  array<Column | ColumnLayoutComponent>  $components
      */
     public function columns(array $components): static
     {
@@ -363,7 +361,7 @@ class Table extends ViewComponent
     }
 
     /**
-     * @param int | array<string, int | null> | Closure $columns
+     * @param  int | array<string, int | null> | Closure  $columns
      */
     public function columnToggleFormColumns(int | array | Closure $columns): static
     {
@@ -394,7 +392,7 @@ class Table extends ViewComponent
     }
 
     /**
-     * @param array<string, int | null> | Closure | null $grid
+     * @param  array<string, int | null> | Closure | null  $grid
      */
     public function contentGrid(array | Closure | null $grid): static
     {
@@ -452,7 +450,7 @@ class Table extends ViewComponent
     }
 
     /**
-     * @param array<Action | ActionGroup> | ActionGroup | Closure $actions
+     * @param  array<Action | ActionGroup> | ActionGroup | Closure  $actions
      */
     public function emptyStateActions(array | ActionGroup | Closure $actions): static
     {
@@ -480,7 +478,7 @@ class Table extends ViewComponent
     }
 
     /**
-     * @param array<BaseFilter> $filters
+     * @param  array<BaseFilter>  $filters
      */
     public function filters(array $filters, string | Closure | null $layout = null): static
     {
@@ -496,7 +494,7 @@ class Table extends ViewComponent
     }
 
     /**
-     * @param int | array<string, int | null> | Closure $columns
+     * @param  int | array<string, int | null> | Closure  $columns
      */
     public function filtersFormColumns(int | array | Closure $columns): static
     {
@@ -520,7 +518,7 @@ class Table extends ViewComponent
     }
 
     /**
-     * @param array<Group> $groups
+     * @param  array<Group>  $groups
      */
     public function groups(array $groups): static
     {
@@ -543,7 +541,7 @@ class Table extends ViewComponent
     }
 
     /**
-     * @param array<Action | ActionGroup> | ActionGroup | Closure $actions
+     * @param  array<Action | ActionGroup> | ActionGroup | Closure  $actions
      */
     public function headerActions(array | ActionGroup | Closure $actions, string | Closure | null $position = null): static
     {
@@ -605,7 +603,7 @@ class Table extends ViewComponent
     }
 
     /**
-     * @param bool | array<int, string> | Closure $condition
+     * @param  bool | array<int, string> | Closure  $condition
      */
     public function paginated(bool | array | Closure $condition = true): static
     {
@@ -627,7 +625,7 @@ class Table extends ViewComponent
     }
 
     /**
-     * @param array<int, string> | Closure | null $options
+     * @param  array<int, string> | Closure | null  $options
      */
     public function paginationPageOptions(array | Closure | null $options): static
     {
@@ -693,7 +691,7 @@ class Table extends ViewComponent
     }
 
     /**
-     * @param array<string | int, bool | string> | string | Closure | null $classes
+     * @param  array<string | int, bool | string> | string | Closure | null  $classes
      */
     public function recordClasses(array | string | Closure | null $classes): static
     {

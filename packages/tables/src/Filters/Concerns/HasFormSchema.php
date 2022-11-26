@@ -9,12 +9,12 @@ use Filament\Forms\Components\Field;
 trait HasFormSchema
 {
     /**
-     * @var array<Component> | Closure | null $formSchema
+     * @var array<Component> | Closure | null
      */
     protected array | Closure | null $formSchema = null;
 
     /**
-     * @param array<Component> | Closure | null $schema
+     * @param  array<Component> | Closure | null  $schema
      */
     public function form(array | Closure | null $schema): static
     {

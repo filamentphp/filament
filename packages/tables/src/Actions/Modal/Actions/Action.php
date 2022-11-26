@@ -7,7 +7,7 @@ use Filament\Actions\Modal\Actions\Action as BaseAction;
 class Action extends BaseAction
 {
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected string $view = 'filament-tables::actions.modal.actions.button-action';
 

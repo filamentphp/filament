@@ -11,7 +11,7 @@ class CheckboxColumn extends Column implements Editable
     use HasExtraInputAttributes;
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected string $view = 'filament-tables::columns.checkbox-column';
 

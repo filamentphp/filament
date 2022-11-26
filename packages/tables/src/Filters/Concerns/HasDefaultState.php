@@ -5,12 +5,12 @@ namespace Filament\Tables\Filters\Concerns;
 trait HasDefaultState
 {
     /**
-     * @var mixed $defaultState
+     * @var mixed
      */
     protected $defaultState = null;
 
     /**
-     * @param mixed $state
+     * @param  mixed  $state
      */
     public function default($state = true): static
     {

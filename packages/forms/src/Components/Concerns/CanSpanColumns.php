@@ -7,7 +7,7 @@ use Closure;
 trait CanSpanColumns
 {
     /**
-     * @var array<string, int | string | Closure | null> $columnSpan
+     * @var array<string, int | string | Closure | null>
      */
     protected array $columnSpan = [
         'default' => 1,
@@ -19,7 +19,7 @@ trait CanSpanColumns
     ];
 
     /**
-     * @param array<string, int | string | Closure | null> | int | string | Closure | null $span
+     * @param  array<string, int | string | Closure | null> | int | string | Closure | null  $span
      */
     public function columnSpan(array | int | string | Closure | null $span): static
     {

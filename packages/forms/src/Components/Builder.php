@@ -17,7 +17,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
     use Concerns\CanBeCloned;
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected string $view = 'filament-forms::components.builder';
 

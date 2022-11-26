@@ -5,7 +5,6 @@ namespace Filament\Widgets\StatsOverviewWidget;
 use Closure;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\View\Component;
 use Illuminate\View\ComponentAttributeBag;
@@ -13,7 +12,7 @@ use Illuminate\View\ComponentAttributeBag;
 class Card extends Component implements Htmlable
 {
     /**
-     * @var array<string, mixed> | null $chart
+     * @var array<string, mixed> | null
      */
     protected ?array $chart = null;
 
@@ -30,7 +29,7 @@ class Card extends Component implements Htmlable
     protected ?string $descriptionColor = null;
 
     /**
-     * @var array<string, scalar> $extraAttributes
+     * @var array<string, scalar>
      */
     protected array $extraAttributes = [];
 
@@ -43,12 +42,12 @@ class Card extends Component implements Htmlable
     protected string | Htmlable $label;
 
     /**
-     * @var scalar | Htmlable | Closure $value
+     * @var scalar | Htmlable | Closure
      */
     protected $value;
 
     /**
-     * @param scalar | Htmlable | Closure $value
+     * @param  scalar | Htmlable | Closure  $value
      */
     final public function __construct(string $label, $value)
     {
@@ -57,7 +56,7 @@ class Card extends Component implements Htmlable
     }
 
     /**
-     * @param scalar | Htmlable | Closure $value
+     * @param  scalar | Htmlable | Closure  $value
      */
     public static function make(string $label, $value): static
     {
@@ -107,7 +106,7 @@ class Card extends Component implements Htmlable
     }
 
     /**
-     * @param array<string, scalar> $attributes
+     * @param  array<string, scalar>  $attributes
      */
     public function extraAttributes(array $attributes): static
     {
@@ -132,7 +131,7 @@ class Card extends Component implements Htmlable
     }
 
     /**
-     * @param array<string, mixed> | null $chart
+     * @param  array<string, mixed> | null  $chart
      */
     public function chart(?array $chart): static
     {
@@ -156,7 +155,7 @@ class Card extends Component implements Htmlable
     }
 
     /**
-     * @param scalar | Htmlable | Closure $value
+     * @param  scalar | Htmlable | Closure  $value
      */
     public function value($value): static
     {

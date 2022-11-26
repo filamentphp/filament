@@ -5,7 +5,7 @@ namespace Filament\Forms\Components;
 class Hidden extends Field
 {
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected string $view = 'filament-forms::components.hidden';
 

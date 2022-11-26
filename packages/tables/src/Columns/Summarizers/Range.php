@@ -9,7 +9,7 @@ use Illuminate\Database\Query\Builder;
 class Range extends Summarizer
 {
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected string $view = 'filament-tables::columns.summaries.range';
 

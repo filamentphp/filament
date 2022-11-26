@@ -15,7 +15,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     use HasExtraAlpineAttributes;
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected string $view = 'filament-forms::components.rich-editor';
 

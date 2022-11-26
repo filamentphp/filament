@@ -20,7 +20,7 @@ class Summarizer extends ViewComponent
     protected string $viewIdentifier = 'summarizer';
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected string $view = 'filament-tables::columns.summaries.text';
 

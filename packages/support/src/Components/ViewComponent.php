@@ -23,7 +23,7 @@ abstract class ViewComponent extends Component implements Htmlable
     use Tappable;
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected string $view;
 
@@ -36,7 +36,7 @@ abstract class ViewComponent extends Component implements Htmlable
     protected static array $methodCache = [];
 
     /**
-     * @param view-string $view
+     * @param  view-string  $view
      */
     public function view(string $view): static
     {

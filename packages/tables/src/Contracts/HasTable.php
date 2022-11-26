@@ -80,7 +80,7 @@ interface HasTable extends HasForms
     public function getTableRecordKey(Model $record): string;
 
     /**
-     * @param scalar $record
+     * @param  scalar  $record
      */
     public function mountedTableActionRecord($record): void;
 

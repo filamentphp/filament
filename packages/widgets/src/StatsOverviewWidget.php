@@ -9,14 +9,14 @@ class StatsOverviewWidget extends Widget
     use Concerns\CanPoll;
 
     /**
-     * @var array<Card> | null $cachedCards
+     * @var array<Card> | null
      */
     protected ?array $cachedCards = null;
 
     protected int | string | array $columnSpan = 'full';
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected static string $view = 'filament-widgets::stats-overview-widget';
 

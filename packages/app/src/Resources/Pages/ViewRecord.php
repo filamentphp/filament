@@ -9,7 +9,6 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Forms\Form;
-use Filament\Pages\Auth\Register;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Illuminate\Database\Eloquent\Model;
 
@@ -24,7 +23,7 @@ class ViewRecord extends Page
     use InteractsWithFormActions;
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected static string $view = 'filament::resources.pages.view-record';
 

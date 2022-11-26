@@ -5,7 +5,7 @@ namespace Filament\Forms\Components;
 class View extends Component
 {
     /**
-     * @param view-string $view
+     * @param  view-string  $view
      */
     final public function __construct(string $view)
     {
@@ -13,7 +13,7 @@ class View extends Component
     }
 
     /**
-     * @param view-string $view
+     * @param  view-string  $view
      */
     public static function make(string $view): static
     {

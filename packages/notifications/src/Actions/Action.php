@@ -23,7 +23,7 @@ class Action extends StaticAction implements Arrayable
     use HasTooltip;
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected string $view = 'filament-actions::link-action';
 
@@ -86,7 +86,7 @@ class Action extends StaticAction implements Arrayable
     }
 
     /**
-     * @param view-string $view
+     * @param  view-string  $view
      */
     protected static function isViewSafe(string $view): bool
     {

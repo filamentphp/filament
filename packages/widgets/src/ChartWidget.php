@@ -7,7 +7,7 @@ class ChartWidget extends Widget
     use Concerns\CanPoll;
 
     /**
-     * @var array<string, mixed> | null $cachedData
+     * @var array<string, mixed> | null
      */
     protected ?array $cachedData = null;
 
@@ -20,12 +20,12 @@ class ChartWidget extends Widget
     protected static ?string $maxHeight = null;
 
     /**
-     * @var array<string, mixed> | null $options
+     * @var array<string, mixed> | null
      */
     protected static ?array $options = null;
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected static string $view = 'filament-widgets::chart-widget';
 

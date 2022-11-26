@@ -3,7 +3,6 @@
 namespace Filament\Forms;
 
 use Filament\Forms\Contracts\HasForms;
-use Filament\Pages\Auth\Register;
 use Filament\Support\Components\ViewComponent;
 
 class ComponentContainer extends ViewComponent
@@ -30,14 +29,14 @@ class ComponentContainer extends ViewComponent
     protected array $meta = [];
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected string $view = 'filament-forms::component-container';
 
     protected string $evaluationIdentifier = 'container';
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected string $viewIdentifier = 'container';
 

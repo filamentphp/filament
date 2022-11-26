@@ -9,7 +9,7 @@ class Card extends Component implements CanEntangleWithSingularRelationships
     use Concerns\EntanglesStateWithSingularRelationship;
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected string $view = 'filament-forms::components.card';
 

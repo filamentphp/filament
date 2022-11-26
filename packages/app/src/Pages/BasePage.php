@@ -5,7 +5,6 @@ namespace Filament\Pages;
 use Closure;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
-use Filament\Pages\Auth\Register;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Contracts\RendersActionModal;
 use Illuminate\Contracts\Support\Htmlable;
@@ -26,7 +25,7 @@ abstract class BasePage extends Component implements HasActions, RendersActionMo
     protected ?string $subheading = null;
 
     /**
-     * @var view-string $view
+     * @var view-string
      */
     protected static string $view;
 
