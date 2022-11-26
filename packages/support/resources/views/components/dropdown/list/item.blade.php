@@ -14,21 +14,36 @@
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-dropdown-list-item group flex w-full items-center whitespace-nowrap rounded-md p-2 text-sm text-gray-900 dark:text-gray-100 disabled:opacity-70 disabled:pointer-events-none',
         'opacity-70 pointer-events-none' => $disabled,
-        'focus:outline-none hover:text-white focus:text-white' => $hasHoverAndFocusState,
-        'hover:bg-primary-500 focus:bg-primary-500' => ($color === 'primary' || $color === 'gray') && $hasHoverAndFocusState,
-        'hover:bg-danger-500 focus:bg-danger-500' => $color === 'danger' && $hasHoverAndFocusState,
-        'hover:bg-secondary-500 focus:bg-secondary-500' => $color === 'secondary' && $hasHoverAndFocusState,
-        'hover:bg-success-500 focus:bg-success-500' => $color === 'success' && $hasHoverAndFocusState,
-        'hover:bg-warning-500 focus:bg-warning-500' => $color === 'warning' && $hasHoverAndFocusState,
+        ...$hasHoverAndFocusState
+            ? [
+                'focus:outline-none hover:text-white focus:text-white',
+                match ($color) {
+                    'danger' => 'hover:bg-danger-500 focus:bg-danger-500',
+                    'gray', null => 'hover:bg-gray-500 focus:bg-gray-500',
+                    'primary' => 'hover:bg-primary-500 focus:bg-primary-500',
+                    'secondary' => 'hover:bg-secondary-500 focus:bg-secondary-500',
+                    'success' => 'hover:bg-success-500 focus:bg-success-500',
+                    'warning' => 'hover:bg-warning-500 focus:bg-warning-500',
+                    default => $color,
+                },
+            ]
+            : [],
     ]);
 
     $detailClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-dropdown-list-item-detail ml-auto text-xs text-gray-500',
-        'group-hover:text-primary-100 group-focus:text-primary-100' => ($color === 'primary' || $color === 'gray') && $hasHoverAndFocusState,
-        'group-hover:text-danger-100 group-focus:text-danger-100' => $color === 'danger' && $hasHoverAndFocusState,
-        'group-hover:text-secondary-100 group-focus:text-secondary-100' => $color === 'secondary' && $hasHoverAndFocusState,
-        'group-hover:text-success-100 group-focus:text-success-100' => $color === 'success' && $hasHoverAndFocusState,
-        'group-hover:text-warning-100 group-focus:text-warning-100' => $color === 'warning' && $hasHoverAndFocusState,
+        match ($hasHoverAndFocusState) {
+            true => match ($color) {
+                'danger' => 'group-hover:text-danger-100 group-focus:text-danger-100',
+                'gray', null => 'group-hover:text-gray-100 group-focus:text-gray-100',
+                'primary' => 'group-hover:text-primary-100 group-focus:text-primary-100',
+                'secondary' => 'group-hover:text-secondary-100 group-focus:text-secondary-100',
+                'success' => 'group-hover:text-success-100 group-focus:text-success-100',
+                'warning' => 'group-hover:text-warning-100 group-focus:text-warning-100',
+                default => $color,
+            },
+            false => null,
+        },
     ]);
 
     $labelClasses = 'filament-dropdown-list-item-label truncate w-full text-start';
@@ -40,6 +55,7 @@
         'secondary' => 'text-secondary-500',
         'success' => 'text-success-500',
         'warning' => 'text-warning-500',
+        default => $color,
     };
 
     $iconSize = 'h-5 w-5';
