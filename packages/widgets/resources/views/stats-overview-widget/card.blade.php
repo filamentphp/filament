@@ -33,13 +33,14 @@
         @if ($description = $getDescription())
             <div @class([
                 'flex items-center space-x-1 rtl:space-x-reverse text-sm font-medium',
-                match ($getDescriptionColor()) {
+                match ($descriptionColor = $getDescriptionColor()) {
                     'danger' => 'text-danger-600',
+                    'gray', null => 'text-gray-600',
                     'primary' => 'text-primary-600',
                     'secondary' => 'text-secondary-600',
                     'success' => 'text-success-600',
                     'warning' => 'text-warning-600',
-                    default => 'text-gray-600',
+                    default => $descriptionColor,
                 },
             ])>
                 <span>{{ $description }}</span>
@@ -81,11 +82,12 @@
                 @class([
                     match ($chartColor) {
                         'danger' => 'text-danger-50 dark:text-danger-700',
+                        'gray', null => 'text-gray-50 dark:text-gray-700',
                         'primary' => 'text-primary-50 dark:text-primary-700',
                         'secondary' => 'text-secondary-50 dark:text-secondary-700',
                         'success' => 'text-success-50 dark:text-success-700',
                         'warning' => 'text-warning-50 dark:text-warning-700',
-                        default => 'text-gray-50 dark:text-gray-700',
+                        default => $chartColor,
                     },
                 ])
             ></span>
@@ -95,11 +97,12 @@
                 @class([
                     match ($chartColor) {
                         'danger' => 'text-danger-400',
+                        'gray', null => 'text-gray-400',
                         'primary' => 'text-primary-400',
                         'secondary' => 'text-secondary-400',
                         'success' => 'text-success-400',
                         'warning' => 'text-warning-400',
-                        default => 'text-gray-400',
+                        default => $chartColor,
                     },
                 ])
             ></span>
