@@ -901,9 +901,11 @@
         >
             @if ($action)
                 @if ($action->isModalCentered())
-                    <x-slot name="heading">
-                        {{ $action->getModalHeading() }}
-                    </x-slot>
+                    @if ($heading = $action->getModalHeading())
+                        <x-slot name="heading">
+                            {{ $heading }}
+                        </x-slot>
+                    @endif
 
                     @if ($subheading = $action->getModalSubheading())
                         <x-slot name="subheading">
@@ -912,9 +914,11 @@
                     @endif
                 @else
                     <x-slot name="header">
-                        <x-tables::modal.heading>
-                            {{ $action->getModalHeading() }}
-                        </x-tables::modal.heading>
+                        @if ($heading = $action->getModalHeading())
+                            <x-tables::modal.heading>
+                                {{ $heading }}
+                            </x-tables::modal.heading>
+                        @endif
 
                         @if ($subheading = $action->getModalSubheading())
                             <x-tables::modal.subheading>
@@ -962,9 +966,11 @@
         >
             @if ($action)
                 @if ($action->isModalCentered())
-                    <x-slot name="heading">
-                        {{ $action->getModalHeading() }}
-                    </x-slot>
+                    @if ($heading = $action->getModalHeading())
+                        <x-slot name="heading">
+                            {{ $heading }}
+                        </x-slot>
+                    @endif
 
                     @if ($subheading = $action->getModalSubheading())
                         <x-slot name="subheading">
@@ -973,9 +979,11 @@
                     @endif
                 @else
                     <x-slot name="header">
-                        <x-tables::modal.heading>
-                            {{ $action->getModalHeading() }}
-                        </x-tables::modal.heading>
+                        @if ($heading = $action->getModalHeading())
+                            <x-tables::modal.heading>
+                                {{ $heading }}
+                            </x-tables::modal.heading>
+                        @endif
 
                         @if ($subheading = $action->getModalSubheading())
                             <x-tables::modal.subheading>
