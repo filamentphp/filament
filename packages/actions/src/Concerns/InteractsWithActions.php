@@ -147,7 +147,7 @@ trait InteractsWithActions
     {
         $action = $this->getMountedAction();
 
-        return $action->isConfirmationRequired() ||
+        return $action->getModalSubheading() ||
             $action->getModalContent() ||
             $action->getModalFooter() ||
             $this->mountedActionHasForm();

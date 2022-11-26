@@ -325,24 +325,24 @@ class TestsColumns
         };
     }
 
-    public function assertSelectColumnHasOptions(): Closure
+    public function assertTableSelectColumnHasOptions(): Closure
     {
         return function (string $name, array $options, $record) {
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
-
-            $column = $livewire->getCachedTableColumn($name);
+            /** @var \Filament\Tables\Columns\SelectColumn $column */
+            $column = $this->instance()->getTable()->getColumn($name);
 
             if (! ($record instanceof Model)) {
-                $record = $livewire->getTableRecord($record);
+                $record = $this->instance()->getTableRecord($record);
             }
 
             $column->record($record);
 
             $optionsString = print_r($options, true);
+
+            $livewireClass = $this->instance()::class;
 
             Assert::assertTrue(
                 $column->getOptions() == $options,
@@ -353,24 +353,24 @@ class TestsColumns
         };
     }
 
-    public function assertSelectColumnDoesNotHaveOptions(): Closure
+    public function assertTableSelectColumnDoesNotHaveOptions(): Closure
     {
         return function (string $name, array $options, $record) {
             /** @phpstan-ignore-next-line */
             $this->assertTableColumnExists($name);
 
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
-
-            $column = $livewire->getCachedTableColumn($name);
+            /** @var \Filament\Tables\Columns\SelectColumn $column */
+            $column = $this->instance()->getTable()->getColumn($name);
 
             if (! ($record instanceof Model)) {
-                $record = $livewire->getTableRecord($record);
+                $record = $this->instance()->getTableRecord($record);
             }
 
             $column->record($record);
 
             $optionsString = print_r($options, true);
+
+            $livewireClass = $this->instance()::class;
 
             Assert::assertFalse(
                 $column->getOptions() == $options,
