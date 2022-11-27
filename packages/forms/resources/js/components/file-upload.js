@@ -32,7 +32,7 @@ export default function fileUploadFormComponent({
     imageResizeMode,
     imageResizeTargetHeight,
     imageResizeTargetWidth,
-        imageResizeUpscale,
+    imageResizeUpscale,
     isAvatar,
     loadingIndicatorPosition,
     locale,
