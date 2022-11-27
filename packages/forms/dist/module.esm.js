@@ -12892,7 +12892,7 @@ var date_time_picker_default = (Alpine) => {
         this.$nextTick(() => this.isClearingState = false);
       },
       dateIsDisabled: function(date) {
-        if (this.$refs?.disabledDates && JSON.parse(this.$refs.disabledDates?.value ?? []).some((disabledDate) => {
+        if (this.$refs?.disabledDates && JSON.parse(this.$refs.disabledDates.value ?? []).some((disabledDate) => {
           disabledDate = esm_default(disabledDate);
           if (!disabledDate.isValid()) {
             return false;
