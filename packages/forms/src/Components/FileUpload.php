@@ -193,7 +193,7 @@ class FileUpload extends BaseFileUpload
         return $this->evaluate($this->imageResizeMode);
     }
 
-    public function getImageResizeUpscale(): ?bool
+    public function getImageResizeUpscale(): bool
     {
         return $this->evaluate($this->imageResizeUpscale);
     }
