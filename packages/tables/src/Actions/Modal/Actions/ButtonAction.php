@@ -2,10 +2,11 @@
 
 namespace Filament\Tables\Actions\Modal\Actions;
 
+use Filament\Actions\Modal\Actions\Action as BaseAction;
+
 /**
- * @deprecated Use `\Filament\Tables\Actions\Modal\Actions\Action` instead.
- * @see Action
+ * @deprecated Use `\Filament\Actions\Modal\Actions\Action` instead.
  */
-class ButtonAction extends Action
+class ButtonAction extends BaseAction
 {
 }

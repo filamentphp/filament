@@ -16,9 +16,6 @@ class SettingsPage extends Page
 
     protected static string $settings;
 
-    /**
-     * @var view-string
-     */
     protected static string $view = 'filament-spatie-laravel-settings-plugin::pages.settings-page';
 
     public $data;

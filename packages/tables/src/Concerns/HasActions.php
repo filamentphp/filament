@@ -14,27 +14,18 @@ use phpDocumentor\Reflection\Types\Scalar;
  */
 trait HasActions
 {
-    /**
-     * @var string
-     */
-    public $mountedTableAction = null;
+    public ?string $mountedTableAction = null;
 
     /**
      * @var array<string, mixed>
      */
     public $mountedTableActionData = [];
 
-    /**
-     * @var scalar
-     */
-    public $mountedTableActionRecord = null;
+    public int | string | null $mountedTableActionRecord = null;
 
     protected ?Model $cachedMountedTableActionRecord = null;
 
-    /**
-     * @var scalar
-     */
-    protected $cachedMountedTableActionRecordKey = null;
+    protected int | string | null $cachedMountedTableActionRecordKey = null;
 
     protected function configureTableAction(Action $action): void
     {
@@ -98,10 +89,7 @@ trait HasActions
         return $result;
     }
 
-    /**
-     * @param  scalar  $record
-     */
-    public function mountedTableActionRecord($record): void
+    public function mountedTableActionRecord(int | string | null $record): void
     {
         $this->mountedTableActionRecord = $record;
     }
@@ -208,7 +196,7 @@ trait HasActions
         );
     }
 
-    public function getMountedTableActionRecordKey()
+    public function getMountedTableActionRecordKey(): int | string | null
     {
         return $this->mountedTableActionRecord;
     }
