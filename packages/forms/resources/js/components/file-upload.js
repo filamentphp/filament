@@ -40,6 +40,7 @@ export default (Alpine) => {
             imageResizeMode,
             imageResizeTargetHeight,
             imageResizeTargetWidth,
+            imageResizeUpscale,
             isAvatar,
             loadingIndicatorPosition,
             locale,
@@ -89,6 +90,7 @@ export default (Alpine) => {
                         imageResizeTargetHeight,
                         imageResizeTargetWidth,
                         imageResizeMode,
+                        imageResizeUpscale,
                         itemInsertLocation: shouldAppendFiles
                             ? 'after'
                             : 'before',
