@@ -266,7 +266,7 @@ export default (Alpine) => {
                 dateIsDisabled: function (date) {
                     if (
                         this.$refs?.disabledDates &&
-                        JSON.parse(this.$refs.disabledDates?.value ?? []).some(
+                        JSON.parse(this.$refs.disabledDates.value ?? []).some(
                             (disabledDate) => {
                                 disabledDate = dayjs(disabledDate)
 
