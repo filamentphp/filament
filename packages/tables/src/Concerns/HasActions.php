@@ -7,7 +7,6 @@ use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\Action;
 use Illuminate\Database\Eloquent\Model;
-use phpDocumentor\Reflection\Types\Scalar;
 
 /**
  * @property Form $mountedTableActionForm
