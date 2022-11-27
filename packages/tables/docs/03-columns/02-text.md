@@ -119,6 +119,9 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('description')->html()
 ```
 
+> Do not use `html()` with other formatters (like [Custom formatting](#custom-formatting)) on same TextColumn. `html()` internally uses the same `formatStateUsing()` API that these other formatters use, which may cause one overwriting another.
+
+
 ## Enum formatting
 
 You may also transform a set of known cell values using the `enum()` method:
