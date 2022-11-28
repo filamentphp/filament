@@ -19,6 +19,8 @@ trait CanBeValidated
 
     protected array $rules = [];
 
+    protected array $rulesForeachItem = [];
+
     protected string | Closure | null $validationAttribute = null;
 
     public function activeUrl(bool | Closure $condition = true): static
@@ -520,10 +522,28 @@ trait CanBeValidated
         return $rules;
     }
 
+    public function getValidationRulesForeachItem()
+    {
+        $rules = [];
+
+        foreach ($this->rulesForeachItem as [$rule, $condition]) {
+            if ($this->evaluate($condition)) {
+                $rules[] = $this->evaluate($rule);
+            }
+        }
+
+        return $rules;
+
+    }
+
     public function dehydrateValidationRules(array &$rules): void
     {
         if (count($componentRules = $this->getValidationRules())) {
             $rules[$this->getStatePath()] = $componentRules;
+        }
+
+        if (count($componentRulesForArrayFields = $this->getValidationRulesForeachItem())) {
+            $rules[$this->getStatePath().'.*'] = $componentRulesForArrayFields;
         }
     }
 

@@ -10,6 +10,7 @@ class TagsInput extends Field
 {
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;
+    use Concerns\HasRulesForeachItem;
     use HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.tags-input';

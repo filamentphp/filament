@@ -33,6 +33,7 @@ class Select extends Field
     use Concerns\HasLoadingMessage;
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
+    use Concerns\HasRulesForeachItem;
     use HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.select';

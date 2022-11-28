@@ -10,7 +10,8 @@ use Illuminate\Support\Str;
 class CheckboxList extends Field
 {
     use Concerns\HasOptions;
-
+    use Concerns\HasRulesForeachItem;
+    
     protected string $view = 'forms::components.checkbox-list';
 
     protected string | Closure | null $relationshipTitleColumnName = null;
