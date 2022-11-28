@@ -24,7 +24,7 @@
                 ])
         }}
         x-bind:class="{
-            'opacity-70': loading,
+            'opacity-70 pointer-events-none': loading,
             'border-gray-300': ! error,
             'dark:border-gray-600': (! error) && @js(config('forms.dark_mode')),
             'border-danger-600 ring-1 ring-inset ring-danger-600': error,
