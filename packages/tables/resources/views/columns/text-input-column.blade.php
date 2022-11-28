@@ -6,7 +6,6 @@
 >
     <input
         x-model="state"
-        value="{{ $getState() }}"
         type="{{ $getType() }}"
         {!! $isDisabled() ? 'disabled' : null !!}
         {!! ($inputMode = $getInputMode()) ? "inputmode=\"{$inputMode}\"" : null !!}
