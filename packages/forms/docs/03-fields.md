@@ -67,16 +67,6 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')->id('name-field')
 ```
 
-### Validation attributes
-
-When fields fail validation, their label is used in the error message. To customize the label used in field error messages, use the `validationAttribute()` method:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('name')->validationAttribute('full name')
-```
-
 ### Setting a default value
 
 Fields may have a default value. This will be filled if the [form's `fill()` method](getting-started#default-data) is called without any arguments. To define a default value, use the `default()` method:
@@ -86,6 +76,8 @@ use Filament\Forms\Components\TextInput;
 
 TextInput::make('name')->default('John')
 ```
+
+Note that inside the admin panel this only works on Create Pages, as Edit Pages will always fill the data from the model.
 
 ### Helper messages and hints
 
@@ -117,6 +109,16 @@ RichEditor::make('content')
     ->hintIcon('heroicon-s-translate')
 ```
 
+Hints may have a `color()`. By default it's gray, but you may use `primary`, `success`, `warning`, or `danger`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->hint('Translatable')
+    ->hintColor('primary')
+```
+
 ### Custom attributes
 
 The HTML attributes of the field's wrapper can be customized by passing an array of `extraAttributes()`:
@@ -130,11 +132,10 @@ TextInput::make('name')->extraAttributes(['title' => 'Text input'])
 To add additional HTML attributes to the input itself, use `extraInputAttributes()`:
 
 ```php
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
 
-TextInput::make('points')
-    ->numeric()
-    ->extraInputAttributes(['step' => '10'])
+Select::make('categories')
+    ->extraInputAttributes(['multiple' => true])
 ```
 
 ### Disabling
@@ -180,6 +181,24 @@ use Filament\Resources\Pages\Page;
 TextInput::make('slug')
     ->disabled()
     ->dehydrated(fn (Page $livewire) => $livewire instanceof CreateRecord)
+```
+
+### Hiding
+
+You may hide a field:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')->hidden()
+```
+
+Optionally, you may pass a boolean value to control if the field should be hidden or not:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')->hidden(! auth()->user()->isAdmin())
 ```
 
 ### Autofocusing
@@ -255,30 +274,6 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('backgroundColor')->type('color')
 ```
 
-You may place text before and after the input using the `prefix()` and `suffix()` methods:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('domain')
-    ->url()
-    ->prefix('https://')
-    ->suffix('.com')
-```
-
-![](https://user-images.githubusercontent.com/41773797/147612784-5eb58d0f-5111-4db8-8f54-3b5c3e2cc80a.png)
-
-You may place a icon before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('domain')
-    ->url()
-    ->prefixIcon('heroicon-o-external-link')
-    ->suffixIcon('heroicon-o-external-link')
-```
-
 You may limit the length of the input by setting the `minLength()` and `maxLength()` methods. These methods add both frontend and backend validation:
 
 ```php
@@ -329,6 +324,73 @@ TextInput::make('password')
 ```
 
 For more complex autocomplete options, text inputs also support [datalists](#datalists).
+
+#### Phone number validation
+
+When using a `tel()` field, the value will be validated using: `/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/`.
+
+If you wish to change that, then you can use the `telRegex()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('phone')
+    ->tel()
+    ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')
+```
+
+Alternatively, to customize the `telRegex()` across all fields, use a service provider:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::configureUsing(function (TextInput $component): void {
+    $component->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/');
+});
+```
+
+### Affixes
+
+You may place text before and after the input using the `prefix()` and `suffix()` methods:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('domain')
+    ->url()
+    ->prefix('https://')
+    ->suffix('.com')
+```
+
+![](https://user-images.githubusercontent.com/41773797/147612784-5eb58d0f-5111-4db8-8f54-3b5c3e2cc80a.png)
+
+You may place a icon before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('domain')
+    ->url()
+    ->prefixIcon('heroicon-s-external-link')
+    ->suffixIcon('heroicon-s-external-link')
+```
+
+You may render an action before and after the input using the `prefixAction()` and `suffixAction()` methods:
+
+```php
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('domain')
+    ->suffixAction(
+        Action::make('visit')
+            ->icon('heroicon-s-external-link')
+            ->url(
+                fn (?string $state): ?string => filled($state) ? "https://{$state}" : null,
+                shouldOpenInNewTab: true,
+            ),
+    )
+```
 
 ### Input masking
 
@@ -460,7 +522,6 @@ Select::make('status')
 You may enable a search input to allow easier access to many options, using the `searchable()` method:
 
 ```php
-use App\Models\User;
 use Filament\Forms\Components\Select;
 
 Select::make('authorId')
@@ -541,7 +602,7 @@ Commonly, you may desire "dependant" select inputs, which populate their options
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/W_eNyimRi3w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-Some of the techniques described in the [advanced forms](advanced) section are required to create dependant selects. These techniques can be applied across all form components for many dynamic customisation possibilities.
+Some of the techniques described in the [advanced forms](advanced) section are required to create dependant selects. These techniques can be applied across all form components for many dynamic customization possibilities.
 
 ### Populating automatically from a relationship
 
@@ -566,7 +627,17 @@ Select::make('technologies')
 
 > To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
 
-You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
+If you'd like to populate the options from the database when the page is loaded, instead of when the user searches, you can use the `preload()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('authorId')
+    ->relationship('author', 'name')
+    ->preload()
+```
+
+You may customize the database query that retrieves options using the third parameter of the `relationship()` method:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -599,6 +670,54 @@ Select::make('authorId')
     ->relationship('author', 'first_name')
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
+
+#### Handling `MorphTo` relationships
+
+`MorphTo` relationships are special, since they give the user the ability to select records from a range of different models. Because of this, we have a dedicated `MorphToSelect` component which is not actually a select field, rather 2 select fields inside a fieldset. The first select field allows you to select the type, and the second allows you to select the record of that type.
+
+To use the `MorphToSelect`, you must pass `types()` into the component, which tell it how to render options for different types:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)->titleColumnName('name'),
+        MorphToSelect\Type::make(Post::class)->titleColumnName('title'),
+    ])
+```
+
+The `titleColumnName()` is used to extract the titles out of each product or post. You can choose to extract the option labels using `getOptionLabelFromRecordUsing` instead if you wish:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->getOptionLabelFromRecordUsing(fn (Product $record): string => "{$record->name} - {$record->slug}"),
+        MorphToSelect\Type::make(Post::class)->titleColumnName('title'),
+    ])
+```
+
+You may customize the database query that retrieves options using the `modifyOptionsQueryUsing()` method:
+
+```php
+use Filament\Forms\Components\MorphToSelect;
+use Illuminate\Database\Eloquent\Builder;
+
+MorphToSelect::make('commentable')
+    ->types([
+        MorphToSelect\Type::make(Product::class)
+            ->titleColumnName('name')
+            ->modifyOptionsQueryUsing(fn (Builder $query) => $query->whereBelongsTo($this->team)),
+        MorphToSelect\Type::make(Post::class)
+            ->titleColumnName('title')
+            ->modifyOptionsQueryUsing(fn (Builder $query) => $query->whereBelongsTo($this->team)),
+    ])
+```
+
+> Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `allowHtml()`, and `optionsLimit()`.
 
 #### Creating new records
 
@@ -807,12 +926,26 @@ CheckboxList::make('technologies')
 
 This method accepts the same options as the `columns()` method of the [grid](layout#grid). This allows you to responsively customize the number of columns at various breakpoints.
 
+You may also allow users to toggle all checkboxes at once using the `bulkToggleable()` method:
+
+```php
+use Filament\Forms\Components\CheckboxList;
+
+CheckboxList::make('technologies')
+    ->options([
+        'tailwind' => 'Tailwind CSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+    ])
+    ->bulkToggleable()
+```
+
 ### Populating automatically from a relationship
 
 You may employ the `relationship()` method to configure a relationship to automatically retrieve and save options from:
 
 ```php
-use App\Models\App;
 use Filament\Forms\Components\CheckboxList;
 
 CheckboxList::make('technologies')
@@ -821,7 +954,7 @@ CheckboxList::make('technologies')
 
 > To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
 
-You may customise the database query that retrieves options using the third parameter of the `relationship()` method:
+You may customize the database query that retrieves options using the third parameter of the `relationship()` method:
 
 ```php
 use Filament\Forms\Components\CheckboxList;
@@ -969,6 +1102,17 @@ use Filament\Forms\Components\DateTimePicker;
 DateTimePicker::make('published_at')->withoutSeconds()
 ```
 
+You may also customize the input interval for increasing the hours / minutes / seconds using the `hoursStep()` , `minutesStep()` or `secondsStep()` methods:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::make('published_at')
+    ->hoursStep(2)
+    ->minutesStep(15)
+    ->secondsStep(10)
+```
+
 ![](https://user-images.githubusercontent.com/41773797/147613511-30d7b2d8-227a-42ff-a6c7-e080d22305ad.png)
 
 In some countries, the first day of the week is not Monday. To customize the first day of the week in the date picker, use the `forms.components.date_time_picker.first_day_of_week` config option, or the `firstDayOfWeek()` method on the component. 0 to 7 are accepted values, with Monday as 1 and Sunday as 7 or 0:
@@ -988,6 +1132,18 @@ use Filament\Forms\Components\DateTimePicker;
 
 DateTimePicker::make('published_at')->weekStartsOnMonday()
 DateTimePicker::make('published_at')->weekStartsOnSunday()
+```
+
+To disable specific dates:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::make('date')
+    ->label('Appointment date')
+    ->minDate(now())
+    ->maxDate(Carbon::now()->addDays(30))
+    ->disabledDates(['2022-10-02', '2022-10-05', '2022-10-15'])
 ```
 
 ### Timezones
@@ -1133,7 +1289,7 @@ class Message extends Model
 }
 ```
 
-You may customise the number of files that may be uploaded, using the `minFiles()` and `maxFiles()` methods:
+You may customize the number of files that may be uploaded, using the `minFiles()` and `maxFiles()` methods:
 
 ```php
 use Filament\Forms\Components\FileUpload;
@@ -1160,7 +1316,7 @@ You can add a button to open each file in a new tab with the `enableOpen()` meth
 use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('attachments')
-    ->multipe()
+    ->multiple()
     ->enableOpen()
 ```
 
@@ -1224,7 +1380,7 @@ RichEditor::make('content')
     ])
 ```
 
-You may customise how images are uploaded using configuration methods:
+You may customize how images are uploaded using configuration methods:
 
 ```php
 use Filament\Forms\Components\RichEditor;
@@ -1237,7 +1393,7 @@ RichEditor::make('content')
 
 ## Markdown editor
 
-The markdown editor allows you to edit and preview markdown content, as well as upload images.
+The markdown editor allows you to edit and preview markdown content, as well as upload images using drag and drop.
 
 ```php
 use Filament\Forms\Components\MarkdownEditor;
@@ -1282,7 +1438,7 @@ MarkdownEditor::make('content')
     ])
 ```
 
-You may customise how images are uploaded using configuration methods:
+You may customize how images are uploaded using configuration methods:
 
 ```php
 use Filament\Forms\Components\MarkdownEditor;
@@ -1385,7 +1541,7 @@ Repeater::make('members')
     ->disableItemMovement()
 ```
 
-You may customise the number of items that may be created, using the `minItems()` and `maxItems()` methods:
+You may customize the number of items that may be created, using the `minItems()` and `maxItems()` methods:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -1443,7 +1599,6 @@ Repeater::make('qualifications')
 You may employ the `relationship()` method of the repeater to configure a relationship to automatically retrieve and save repeater items:
 
 ```php
-use App\Models\App;
 use Filament\Forms\Components\Repeater;
 
 Repeater::make('qualifications')
@@ -1545,7 +1700,7 @@ You are trying to retrieve the value of `client_id` from inside the repeater ite
 
 `$get()` is relative to the current repeater item, so `$get('client_id')` is looking for `$get('repeater.item1.client_id')`.
 
-You can use `../` to go up a level in the data structure, so `$get('../client_id')` is $get('repeater.client_id') and `$get('../../client_id')` is `$get('client_id')`.
+You can use `../` to go up a level in the data structure, so `$get('../client_id')` is `$get('repeater.client_id')` and `$get('../../client_id')` is `$get('client_id')`.
 
 ## Builder
 
@@ -1636,7 +1791,7 @@ Builder\Block::make('heading')->icon('heroicon-o-bookmark')
 
 ![](https://user-images.githubusercontent.com/41773797/147614039-d9aa43dd-acfe-43b6-9cd1-1fc322aa4526.png)
 
-You may customise the number of items that may be created, using the `minItems()` and `maxItems()` methods:
+You may customize the number of items that may be created, using the `minItems()` and `maxItems()` methods:
 
 ```php
 use Filament\Forms\Components\Builder;
@@ -1860,12 +2015,15 @@ The `$getStatePath()` closure may be used by the view to retrieve the Livewire p
 Using [Livewire's entangle](https://laravel-livewire.com/docs/alpine-js#sharing-state) allows sharing state with Alpine.js:
 
 ```blade
-<x-forms::field-wrapper
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-action="$getHintAction()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
@@ -1873,24 +2031,27 @@ Using [Livewire's entangle](https://laravel-livewire.com/docs/alpine-js#sharing-
     <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}').defer }">
         <!-- Interact with the `state` property in Alpine.js -->
     </div>
-</x-forms::field-wrapper>
+</x-dynamic-component>
 ```
 
 Or, you may bind the value to a Livewire property using [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding):
 
-```
-<x-forms::field-wrapper
+```blade
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-action="$getHintAction()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
     <input wire:model.defer="{{ $getStatePath() }}" />
-</x-forms::field-wrapper>
+</x-dynamic-component>
 ```
 
 ## Building custom fields
@@ -1921,12 +2082,15 @@ Inside your view, you may interact with the state of the form component using Li
 The `$getStatePath()` closure may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
 
 ```blade
-<x-forms::field-wrapper
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-action="$getHintAction()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
@@ -1934,5 +2098,5 @@ The `$getStatePath()` closure may be used by the view to retrieve the Livewire p
     <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}').defer }">
         <!-- Interact with the `state` property in Alpine.js -->
     </div>
-</x-forms::field-wrapper>
+</x-dynamic-component>
 ```

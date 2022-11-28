@@ -175,7 +175,7 @@ By default, the field name will be used as the column to search. You may specify
 Field::make('invitation')->exists(column: 'id')
 ```
 
-You can further customize the rule by passing a [closure](advanced#closure-customisation) to the `callback` parameter:
+You can further customize the rule by passing a [closure](advanced#closure-customization) to the `callback` parameter:
 
 ```php
 use Illuminate\Validation\Rules\Exists;
@@ -291,6 +291,14 @@ The field value can be empty. This rule is applied by default if the `required` 
 Field::make('name')->nullable()
 ```
 
+### Prohibited
+
+The field value must be empty. [See the Laravel documentation](https://laravel.com/docs/validation#rule-prohibited)
+
+```php
+Field::make('name')->prohibited()
+```
+
 ### Required
 
 The field value must not be empty. [See the Laravel documentation](https://laravel.com/docs/validation#rule-required)
@@ -396,7 +404,7 @@ If you're using the [admin panel](/docs/admin), you can easily ignore the curren
 Field::make('email')->unique(ignoreRecord: true)
 ```
 
-You can further customize the rule by passing a [closure](advanced#closure-customisation) to the `callback` parameter:
+You can further customize the rule by passing a [closure](advanced#closure-customization) to the `callback` parameter:
 
 ```php
 use Illuminate\Validation\Rules\Unique;
@@ -447,7 +455,17 @@ TextInput::make('slug')->rules([
 ])
 ```
 
-## Sending validation notiications
+## Validation attributes
+
+When fields fail validation, their label is used in the error message. To customize the label used in field error messages, use the `validationAttribute()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')->validationAttribute('full name')
+```
+
+## Sending validation notifications
 
 If you want to send a notification when validation error occurs, you may do so by using the `onValidationError()` method on your Livewire component:
 

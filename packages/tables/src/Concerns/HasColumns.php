@@ -3,6 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Closure;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Columns\Layout\Component;
@@ -27,7 +28,12 @@ trait HasColumns
         $this->cachedTableColumns = [];
         $this->cachedTableColumnsLayout = [];
 
-        foreach ($this->getTableColumns() as $component) {
+        $components = Action::configureUsing(
+            Closure::fromCallable([$this, 'configureTableAction']),
+            fn (): array => $this->getTableColumns(),
+        );
+
+        foreach ($components as $component) {
             $component->table($this->getCachedTable());
 
             if ($component instanceof Component && $component->isCollapsible()) {

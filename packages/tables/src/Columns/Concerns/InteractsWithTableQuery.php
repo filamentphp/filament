@@ -66,6 +66,8 @@ trait InteractsWithTableQuery
                 'search' => $search,
             ]);
 
+            $isFirst = false;
+
             return $query;
         }
 

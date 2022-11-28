@@ -16,6 +16,10 @@ return [
                 'label' => 'Add to :label',
             ],
 
+            'create_item_between' => [
+                'label' => 'Insert',
+            ],
+
             'delete_item' => [
                 'label' => 'Delete',
             ],
@@ -52,16 +56,36 @@ return [
 
     ],
 
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Deselect all',
+            ],
+
+            'select_all' => [
+                'label' => 'Select all',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [
 
             'add' => [
-                'label' => 'Add Row',
+                'label' => 'Add row',
             ],
 
             'delete' => [
-                'label' => 'Delete Row',
+                'label' => 'Delete row',
+            ],
+
+            'reorder' => [
+                'label' => 'Reorder row',
             ],
 
         ],

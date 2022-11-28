@@ -25,6 +25,8 @@ trait CanOpenModal
 
     protected View | Htmlable | Closure | null $modalContent = null;
 
+    protected View | Htmlable | Closure | null $modalFooter = null;
+
     protected string| Htmlable | Closure | null $modalHeading = null;
 
     protected string| Htmlable | Closure | null $modalSubheading = null;
@@ -83,6 +85,13 @@ trait CanOpenModal
     public function modalContent(View | Htmlable | Closure | null $content = null): static
     {
         $this->modalContent = $content;
+
+        return $this;
+    }
+
+    public function modalFooter(View | Htmlable | Closure | null $content = null): static
+    {
+        $this->modalFooter = $content;
 
         return $this;
     }
@@ -177,20 +186,17 @@ trait CanOpenModal
 
     public function getModalButtonLabel(): string
     {
-        if (filled($this->modalButtonLabel)) {
-            return $this->evaluate($this->modalButtonLabel);
-        }
-
-        if ($this->isConfirmationRequired()) {
-            return __('filament-support::actions/modal.actions.confirm.label');
-        }
-
-        return __('filament-support::actions/modal.actions.submit.label');
+        return $this->evaluate($this->modalButtonLabel) ?? __('filament-support::actions/modal.actions.submit.label');
     }
 
     public function getModalContent(): View | Htmlable | null
     {
         return $this->evaluate($this->modalContent);
+    }
+
+    public function getModalFooter(): View | Htmlable | null
+    {
+        return $this->evaluate($this->modalFooter);
     }
 
     public function getModalHeading(): string | Htmlable
@@ -200,41 +206,17 @@ trait CanOpenModal
 
     public function getModalSubheading(): string | Htmlable | null
     {
-        if (filled($this->modalSubheading)) {
-            return $this->evaluate($this->modalSubheading);
-        }
-
-        if ($this->isConfirmationRequired()) {
-            return __('filament-support::actions/modal.confirmation');
-        }
-
-        return null;
+        return $this->evaluate($this->modalSubheading);
     }
 
     public function getModalWidth(): string
     {
-        if (filled($this->modalWidth)) {
-            return $this->evaluate($this->modalWidth);
-        }
-
-        if ($this->isConfirmationRequired()) {
-            return 'sm';
-        }
-
-        return '4xl';
+        return $this->evaluate($this->modalWidth) ?? '4xl';
     }
 
     public function isModalCentered(): bool
     {
-        if ($this->isModalCentered !== null) {
-            return $this->evaluate($this->isModalCentered);
-        }
-
-        if (in_array($this->getModalWidth(), ['xs', 'sm'])) {
-            return true;
-        }
-
-        return $this->isConfirmationRequired();
+        return $this->evaluate($this->isModalCentered) ?? in_array($this->getModalWidth(), ['xs', 'sm']);
     }
 
     public function isModalSlideOver(): bool
@@ -244,7 +226,7 @@ trait CanOpenModal
 
     public function shouldOpenModal(): bool
     {
-        return $this->isConfirmationRequired() || $this->hasFormSchema() || $this->getModalContent();
+        return $this->hasFormSchema() || $this->getModalSubheading() || $this->getModalContent() || $this->getModalFooter();
     }
 
     protected function makeExtraModalAction(string $name, ?array $arguments = null): ModalAction

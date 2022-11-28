@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Components;
 
+use Closure;
 use Exception;
 use Filament\Support\Concerns\Configurable;
 use Filament\Support\Concerns\EvaluatesClosures;
@@ -9,9 +10,12 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
-use Illuminate\View\Component as BaseComponent;
+use Illuminate\View\ComponentAttributeBag;
+use ReflectionClass;
+use ReflectionMethod;
+use ReflectionProperty;
 
-abstract class ViewComponent extends BaseComponent implements Htmlable
+abstract class ViewComponent extends Component implements Htmlable
 {
     use Configurable;
     use EvaluatesClosures;
@@ -24,11 +28,59 @@ abstract class ViewComponent extends BaseComponent implements Htmlable
 
     protected string $viewIdentifier;
 
+    protected static array $propertyCache = [];
+
+    protected static array $methodCache = [];
+
     public function view(string $view): static
     {
         $this->view = $view;
 
         return $this;
+    }
+
+    protected function extractPublicProperties(): array
+    {
+        $class = get_class($this);
+
+        if (! isset(static::$propertyCache[$class])) {
+            $reflection = new ReflectionClass($this);
+
+            static::$propertyCache[$class] = collect($reflection->getProperties(ReflectionProperty::IS_PUBLIC))
+                ->filter(fn (ReflectionProperty $property): bool => ! $property->isStatic())
+                ->map(fn (ReflectionProperty $property): string => $property->getName())
+                ->all();
+        }
+
+        $values = [];
+
+        foreach (static::$propertyCache[$class] as $property) {
+            $values[$property] = $this->{$property};
+        }
+
+        return $values;
+    }
+
+    protected function extractPublicMethods(): array
+    {
+        $class = get_class($this);
+
+        if (! isset(static::$methodCache[$class])) {
+            $reflection = new ReflectionClass($this);
+
+            static::$methodCache[$class] = array_map(
+                fn (ReflectionMethod $method): string => $method->getName(),
+                $reflection->getMethods(ReflectionMethod::IS_PUBLIC),
+            );
+        }
+
+        $values = [];
+
+        foreach (static::$methodCache[$class] as $method) {
+            $values[$method] = Closure::fromCallable([$this, $method]);
+        }
+
+        return $values;
     }
 
     public function viewData(array $data): static
@@ -57,7 +109,9 @@ abstract class ViewComponent extends BaseComponent implements Htmlable
         return view(
             $this->getView(),
             array_merge(
-                $this->data(),
+                ['attributes' => new ComponentAttributeBag()],
+                $this->extractPublicProperties(),
+                $this->extractPublicMethods(),
                 isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : [],
                 $this->viewData,
             ),

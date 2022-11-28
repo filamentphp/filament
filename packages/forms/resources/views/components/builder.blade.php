@@ -5,6 +5,8 @@
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-action="$getHintAction()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
@@ -223,7 +225,7 @@
                             <div
                                 x-show="isCreateButtonVisible"
                                 x-transition
-                                class="absolute inset-x-0 bottom-0 z-10 flex items-center justify-center h-12 -mb-12"
+                                class="absolute inset-x-0 bottom-0 flex items-center justify-center h-12 -mb-12"
                             >
                                 <x-forms::dropdown>
                                     <x-slot name="trigger">

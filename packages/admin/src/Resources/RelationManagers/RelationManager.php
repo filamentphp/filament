@@ -10,6 +10,7 @@ use Filament\Resources\Form;
 use Filament\Resources\Table;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -50,6 +51,8 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
     protected static ?string $pluralModelLabel = null;
 
     protected static ?string $title = null;
+
+    protected static bool $shouldIgnorePolicies = false;
 
     protected function getTableQueryStringIdentifier(): ?string
     {
@@ -230,27 +233,55 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     protected function can(string $action, ?Model $record = null): bool
     {
-        $policy = Gate::getPolicyFor($model = $this->getRelatedModel());
-
-        if ($policy === null || (! method_exists($policy, $action))) {
+        if (static::shouldIgnorePolicies()) {
             return true;
         }
 
-        return Gate::forUser(Filament::auth()->user())->check($action, $record ?? $model);
+        $policy = Gate::getPolicyFor($model = $this->getRelatedModel());
+        $user = Filament::auth()->user();
+
+        if ($policy === null) {
+            return true;
+        }
+
+        if (! method_exists($policy, $action)) {
+            return true;
+        }
+
+        return Gate::forUser($user)->check($action, $record ?? $model);
+    }
+
+    public static function ignorePolicies(bool $condition = true): void
+    {
+        static::$shouldIgnorePolicies = $condition;
+    }
+
+    public static function shouldIgnorePolicies(): bool
+    {
+        return static::$shouldIgnorePolicies;
     }
 
     public static function canViewForRecord(Model $ownerRecord): bool
     {
-        $model = $ownerRecord->{static::getRelationshipName()}()->getQuery()->getModel()::class;
-
-        $policy = Gate::getPolicyFor($model);
-        $action = 'viewAny';
-
-        if ($policy === null || (! method_exists($policy, $action))) {
+        if (static::shouldIgnorePolicies()) {
             return true;
         }
 
-        return Gate::forUser(Filament::auth()->user())->check($action, $model);
+        $model = $ownerRecord->{static::getRelationshipName()}()->getQuery()->getModel()::class;
+
+        $policy = Gate::getPolicyFor($model);
+        $user = Filament::auth()->user();
+        $action = 'viewAny';
+
+        if ($policy === null) {
+            return true;
+        }
+
+        if (! method_exists($policy, $action)) {
+            return true;
+        }
+
+        return Gate::forUser($user)->check($action, $model);
     }
 
     public static function form(Form $form): Form
@@ -414,6 +445,11 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return $this->getResourceTable()->getFilters();
     }
 
+    protected function getTableFiltersLayout(): ?string
+    {
+        return $this->getResourceTable()->getFiltersLayout();
+    }
+
     protected function getTableHeaderActions(): array
     {
         return $this->getResourceTable()->getHeaderActions();
@@ -434,7 +470,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return $this->getResourceTable()->getPollingInterval();
     }
 
-    protected function getTableHeading(): ?string
+    protected function getTableHeading(): string | Htmlable | Closure | null
     {
         return static::getTitle();
     }

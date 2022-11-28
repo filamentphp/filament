@@ -5,6 +5,8 @@
     :label-sr-only="$isAvatar() || $isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-action="$getHintAction()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
@@ -14,6 +16,7 @@
         $imageResizeTargetHeight = $getImageResizeTargetHeight();
         $imageResizeTargetWidth = $getImageResizeTargetWidth();
         $imageResizeMode = $getImageResizeMode();
+        $imageResizeUpscale = $getImageResizeUpscale();
         $shouldTransformImage = $imageCropAspectRatio || $imageResizeTargetHeight || $imageResizeTargetWidth;
     @endphp
     <div
@@ -34,6 +37,7 @@
             imageResizeMode: {{ $imageResizeMode ? "'{$imageResizeMode}'" : 'null' }},
             imageResizeTargetHeight: {{ $imageResizeTargetHeight ? "'{$imageResizeTargetHeight}'" : 'null' }},
             imageResizeTargetWidth: {{ $imageResizeTargetWidth ? "'{$imageResizeTargetWidth}'" : 'null' }},
+            imageResizeUpscale: {{ $imageResizeUpscale ? 'true' : 'false' }},
             isAvatar: {{ $isAvatar() ? 'true' : 'false' }},
             loadingIndicatorPosition: '{{ $getLoadingIndicatorPosition() }}',
             locale: @js(app()->getLocale()),

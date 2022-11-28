@@ -12,7 +12,7 @@ trait HasRecordBreadcrumb
             $resource::getUrl() => $resource::getBreadcrumb(),
         ];
 
-        if ($resource::hasRecordTitle()) {
+        if ($this->getRecord()->exists && $resource::hasRecordTitle()) {
             if ($resource::hasPage('view') && $resource::canView($this->getRecord())) {
                 $breadcrumbs[
                     $resource::getUrl('view', ['record' => $this->getRecord()])

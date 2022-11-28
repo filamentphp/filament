@@ -38,6 +38,14 @@ class DateTimePicker extends Field
 
     protected string | Closure | null $timezone = null;
 
+    protected array | Closure $disabledDates = [];
+
+    protected int | Closure | null $hoursStep = null;
+
+    protected int | Closure | null $minutesStep = null;
+
+    protected int | Closure | null $secondsStep = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -135,9 +143,37 @@ class DateTimePicker extends Field
         return $this;
     }
 
+    public function disabledDates(array | Closure $dates): static
+    {
+        $this->disabledDates = $dates;
+
+        return $this;
+    }
+
     public function resetFirstDayOfWeek(): static
     {
         $this->firstDayOfWeek(null);
+
+        return $this;
+    }
+
+    public function hoursStep(int | Closure | null $hoursStep): static
+    {
+        $this->hoursStep = $hoursStep;
+
+        return $this;
+    }
+
+    public function minutesStep(int | Closure | null $minutesStep): static
+    {
+        $this->minutesStep = $minutesStep;
+
+        return $this;
+    }
+
+    public function secondsStep(int | Closure | null $secondsStep): static
+    {
+        $this->secondsStep = $secondsStep;
 
         return $this;
     }
@@ -262,6 +298,11 @@ class DateTimePicker extends Field
         return $this->evaluate($this->minDate);
     }
 
+    public function getDisabledDates(): array
+    {
+        return $this->evaluate($this->disabledDates);
+    }
+
     public function getTimezone(): string
     {
         return $this->evaluate($this->timezone) ?? config('app.timezone');
@@ -280,6 +321,21 @@ class DateTimePicker extends Field
     public function hasTime(): bool
     {
         return ! $this->isWithoutTime;
+    }
+
+    public function getHoursStep(): int
+    {
+        return $this->evaluate($this->hoursStep) ?? 1;
+    }
+
+    public function getMinutesStep(): int
+    {
+        return $this->evaluate($this->minutesStep) ?? 1;
+    }
+
+    public function getSecondsStep(): int
+    {
+        return $this->evaluate($this->secondsStep) ?? 1;
     }
 
     public function shouldCloseOnDateSelection(): bool

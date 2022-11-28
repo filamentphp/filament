@@ -5,6 +5,8 @@
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-action="$getHintAction()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
@@ -25,6 +27,7 @@
                 'border-gray-300' => ! $errors->has($getStatePath()),
                 'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                 'border-danger-600 ring-1 ring-inset ring-danger-600' => $errors->has($getStatePath()),
+                'dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
             ])
         >
             @unless ($isDisabled())
@@ -58,7 +61,7 @@
 
                     <datalist id="{{ $getId() }}-suggestions">
                         @foreach ($getSuggestions() as $suggestion)
-                            <template x-if="! state.includes('{{ $suggestion }}')" x-bind:key="'{{ $suggestion }}'">
+                            <template x-if="! state.includes(@js($suggestion))" x-bind:key="@js($suggestion)">
                                 <option value="{{ $suggestion }}" />
                             </template>
                         @endforeach
@@ -69,7 +72,7 @@
             <div
                 x-show="state.length"
                 x-cloak
-                class="overflow-hidden relative w-full p-2"
+                class="relative w-full p-2 overflow-hidden"
             >
                 <div class="flex flex-wrap gap-1">
                     <template class="hidden" x-for="tag in state" x-bind:key="tag">
@@ -85,7 +88,7 @@
                                 'cursor-default' => $isDisabled(),
                             ])
                         >
-                            <span class="text-left" x-text="tag"></span>
+                            <span class="text-start" x-text="tag"></span>
 
                             @unless ($isDisabled())
                                 <x-heroicon-s-x class="w-3 h-3 shrink-0" />

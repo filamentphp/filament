@@ -16,6 +16,10 @@ return [
                 'label' => 'Toevoegen aan :label',
             ],
 
+            'create_item_between' => [
+                'label' => 'Invoegen',
+            ],
+
             'delete_item' => [
                 'label' => 'Verwijderen',
             ],
@@ -52,6 +56,22 @@ return [
 
     ],
 
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Alles deselecteren',
+            ],
+
+            'select_all' => [
+                'label' => 'Alles selecteren',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [
@@ -62,6 +82,10 @@ return [
 
             'delete' => [
                 'label' => 'Rij verwijderen',
+            ],
+
+            'reorder' => [
+                'label' => 'Rij herordenen',
             ],
 
         ],

@@ -21,6 +21,8 @@ class PostResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'title';
 
+    protected static int $globalSearchResultsLimit = 3;
+
     public static function form(Form $form): Form
     {
         return $form

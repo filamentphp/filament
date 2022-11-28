@@ -1,0 +1,32 @@
+name: translation-update
+
+on:
+  pull_request:
+    branches:
+      - 2.x
+    types:
+      - closed
+
+jobs:
+  translation_update:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v31
+        with:
+          files: |
+            packages/**/resources/lang/en/**
+
+      - name: Notify on Discord
+        if: steps.changed-files.outputs.any_changed == 'true'
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.TRANSLATION_BOT_DISCORD_WEBHOOK }}
+        uses: Ilshidur/action-discord@0.3.2
+        with:
+          args: '<@&1026513157142872185> PR [#${{ github.event.number }}](${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.number }}/files) introduced translation changes.'

@@ -16,6 +16,10 @@ return [
                 'label' => 'Добавить к :label',
             ],
 
+            'create_item_between' => [
+                'label' => 'Вставить',
+            ],
+
             'delete_item' => [
                 'label' => 'Удалить',
             ],
@@ -52,6 +56,22 @@ return [
 
     ],
 
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Снять выделение',
+            ],
+
+            'select_all' => [
+                'label' => 'Выделить все',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [
@@ -62,6 +82,9 @@ return [
 
             'delete' => [
                 'label' => 'Удалить строку',
+            ],
+            'reorder' => [
+                'label' => 'Переместить строку',
             ],
 
         ],

@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
@@ -17,6 +18,12 @@ trait EntanglesStateWithSingularRelationship
 
     protected string | null $relationship = null;
 
+    protected ?Closure $mutateRelationshipDataBeforeCreateUsing = null;
+
+    protected ?Closure $mutateRelationshipDataBeforeFillUsing = null;
+
+    protected ?Closure $mutateRelationshipDataBeforeSaveUsing = null;
+
     public function relationship(string $relationshipName): static
     {
         $this->relationship = $relationshipName;
@@ -29,19 +36,23 @@ trait EntanglesStateWithSingularRelationship
         });
 
         $this->saveRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component, HasForms $livewire): void {
-            $state = $component->getChildComponentContainer()->getState(shouldCallHooksBefore: false);
+            $data = $component->getChildComponentContainer()->getState(shouldCallHooksBefore: false);
 
             $record = $component->getCachedExistingRecord();
 
             $activeLocale = $livewire->getActiveFormLocale();
 
             if ($record) {
+                $data = $component->mutateRelationshipDataBeforeSave($data);
+
                 $activeLocale && method_exists($record, 'setLocale') && $record->setLocale($activeLocale);
 
-                $record->fill($state)->save();
+                $record->fill($data)->save();
 
                 return;
             }
+
+            $data = $component->mutateRelationshipDataBeforeCreate($data);
 
             $relatedModel = $component->getRelatedModel();
 
@@ -54,10 +65,10 @@ trait EntanglesStateWithSingularRelationship
             $relationship = $component->getRelationship();
 
             if ($relationship instanceof BelongsTo) {
-                $relationship->associate($record->create($state));
+                $relationship->associate($record->create($data));
                 $relationship->getParent()->save();
             } else {
-                $record->fill($state);
+                $record->fill($data);
                 $relationship->save($record);
             }
         });
@@ -77,9 +88,11 @@ trait EntanglesStateWithSingularRelationship
             return;
         }
 
-        $this->getChildComponentContainer()->fill(
+        $data = $this->mutateRelationshipDataBeforeFill(
             $this->getStateFromRelatedRecord($record),
         );
+
+        $this->getChildComponentContainer()->fill($data);
     }
 
     protected function getStateFromRelatedRecord(Model $record): array
@@ -151,5 +164,59 @@ trait EntanglesStateWithSingularRelationship
     public function clearCachedExistingRecord(): void
     {
         $this->cachedExistingRecord = null;
+    }
+
+    public function mutateRelationshipDataBeforeCreateUsing(?Closure $callback): static
+    {
+        $this->mutateRelationshipDataBeforeCreateUsing = $callback;
+
+        return $this;
+    }
+
+    public function mutateRelationshipDataBeforeCreate(array $data): array
+    {
+        if ($this->mutateRelationshipDataBeforeCreateUsing instanceof Closure) {
+            $data = $this->evaluate($this->mutateRelationshipDataBeforeCreateUsing, [
+                'data' => $data,
+            ]);
+        }
+
+        return $data;
+    }
+
+    public function mutateRelationshipDataBeforeSaveUsing(?Closure $callback): static
+    {
+        $this->mutateRelationshipDataBeforeSaveUsing = $callback;
+
+        return $this;
+    }
+
+    public function mutateRelationshipDataBeforeFill(array $data): array
+    {
+        if ($this->mutateRelationshipDataBeforeFillUsing instanceof Closure) {
+            $data = $this->evaluate($this->mutateRelationshipDataBeforeFillUsing, [
+                'data' => $data,
+            ]);
+        }
+
+        return $data;
+    }
+
+    public function mutateRelationshipDataBeforeFillUsing(?Closure $callback): static
+    {
+        $this->mutateRelationshipDataBeforeFillUsing = $callback;
+
+        return $this;
+    }
+
+    public function mutateRelationshipDataBeforeSave(array $data): array
+    {
+        if ($this->mutateRelationshipDataBeforeSaveUsing instanceof Closure) {
+            $data = $this->evaluate($this->mutateRelationshipDataBeforeSaveUsing, [
+                'data' => $data,
+            ]);
+        }
+
+        return $data;
     }
 }

@@ -21,6 +21,11 @@ return [
         'logout' => [
             'label' => 'Salir',
         ],
+
+        'user_menu' => [
+            'label' => 'Menú del Usuario',
+        ],
+
     ],
 
 ];

@@ -5,7 +5,6 @@ namespace Filament\Tables\Testing;
 use Closure;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\BaseFilter;
-use Filament\Tables\Filters\MultiSelectFilter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Illuminate\Database\Eloquent\Model;
@@ -38,13 +37,15 @@ class TestsFilters
                 } else {
                     $data = ['value' => $data];
                 }
-            } elseif ($filter instanceof MultiSelectFilter) {
-                $data = ['values' => array_map(
-                    fn ($record) => $record instanceof Model ? $record->getKey() : $record,
-                    Arr::wrap($data ?? []),
-                )];
             } elseif ($filter instanceof SelectFilter) {
-                $data = ['value' => $data instanceof Model ? $data->getKey() : $data];
+                if ($filter->isMultiple()) {
+                    $data = ['values' => array_map(
+                        fn ($record) => $record instanceof Model ? $record->getKey() : $record,
+                        Arr::wrap($data ?? []),
+                    )];
+                } else {
+                    $data = ['value' => $data instanceof Model ? $data->getKey() : $data];
+                }
             } elseif (! is_array($data)) {
                 $data = ['isActive' => $data === true || $data === null];
             }

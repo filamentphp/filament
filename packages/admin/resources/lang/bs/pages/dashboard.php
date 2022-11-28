@@ -2,6 +2,6 @@
 
 return [
 
-    'title' => 'Kontrolna ploča',
+    'title' => 'Nadzorna ploča',
 
 ];

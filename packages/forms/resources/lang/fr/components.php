@@ -8,6 +8,10 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'Cloner',
+            ],
+
             'create_item' => [
                 'label' => 'Ajouter à :label',
             ],
@@ -18,6 +22,10 @@ return [
 
             'delete_item' => [
                 'label' => 'Supprimer',
+            ],
+
+            'move_item' => [
+                'label' => 'Déplacer',
             ],
 
             'move_item_down' => [
@@ -48,6 +56,22 @@ return [
 
     ],
 
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Désélectionner tout',
+            ],
+
+            'select_all' => [
+                'label' => 'Sélectionner tout',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [
@@ -58,6 +82,10 @@ return [
 
             'delete' => [
                 'label' => 'Supprimer une ligne',
+            ],
+
+            'reorder' => [
+                'label' => 'Réorganiser une ligne',
             ],
 
         ],
@@ -104,6 +132,14 @@ return [
 
             'delete_item' => [
                 'label' => 'Supprimer',
+            ],
+
+            'clone_item' => [
+                'label' => 'Cloner',
+            ],
+
+            'move_item' => [
+                'label' => 'Déplacer',
             ],
 
             'move_item_down' => [
@@ -193,7 +229,15 @@ return [
             ],
 
         ],
+
+        'boolean' => [
+            'true' => 'Oui',
+            'false' => 'Non',
+        ],
+
         'loading_message' => 'En chargement...',
+
+        'max_items_message' => 'Uniquement :count peuvent être sélectionnés.',
 
         'no_search_results_message' => 'Aucune option ne correspond à votre recherche.',
 

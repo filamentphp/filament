@@ -4,16 +4,12 @@ return [
 
     'columns' => [
 
-        'color' => [
-
-            'messages' => [
-                'copied' => 'Скопировано',
-            ],
-
-        ],
-
         'tags' => [
             'more' => 'и :count еще',
+        ],
+
+        'messages' => [
+            'copied' => 'Скопировано',
         ],
 
     ],

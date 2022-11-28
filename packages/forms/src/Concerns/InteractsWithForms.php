@@ -7,6 +7,7 @@ use Filament\Forms\ComponentContainer;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
+use Livewire\Exceptions\PropertyNotFoundException;
 use Livewire\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
@@ -27,15 +28,19 @@ trait InteractsWithForms
 
     public function __get($property)
     {
-        if ((! $this->isCachingForms) && $form = $this->getCachedForm($property)) {
-            return $form;
-        }
+        try {
+            return parent::__get($property);
+        } catch (PropertyNotFoundException $exception) {
+            if ((! $this->isCachingForms) && $form = $this->getCachedForm($property)) {
+                return $form;
+            }
 
-        if ($property === 'modal') {
-            return $this->getModalViewOnce();
-        }
+            if ($property === 'modal') {
+                return $this->getModalViewOnce();
+            }
 
-        return parent::__get($property);
+            throw $exception;
+        }
     }
 
     protected function getModalViewOnce(): ?View
@@ -65,6 +70,8 @@ trait InteractsWithForms
 
     public function getComponentFileAttachmentUrl(string $statePath): ?string
     {
+        $this->skipRender();
+
         foreach ($this->getCachedForms() as $form) {
             if ($url = $form->getComponentFileAttachmentUrl($statePath)) {
                 return $url;
@@ -76,6 +83,8 @@ trait InteractsWithForms
 
     public function getSelectOptionLabels(string $statePath): array
     {
+        $this->skipRender();
+
         foreach ($this->getCachedForms() as $form) {
             if ($labels = $form->getSelectOptionLabels($statePath)) {
                 return $labels;
@@ -87,6 +96,8 @@ trait InteractsWithForms
 
     public function getSelectOptionLabel(string $statePath): ?string
     {
+        $this->skipRender();
+
         foreach ($this->getCachedForms() as $form) {
             if ($label = $form->getSelectOptionLabel($statePath)) {
                 return $label;
@@ -98,6 +109,8 @@ trait InteractsWithForms
 
     public function getSelectOptions(string $statePath): array
     {
+        $this->skipRender();
+
         foreach ($this->getCachedForms() as $form) {
             if ($results = $form->getSelectOptions($statePath)) {
                 return $results;
@@ -109,6 +122,8 @@ trait InteractsWithForms
 
     public function getSelectSearchResults(string $statePath, string $search): array
     {
+        $this->skipRender();
+
         foreach ($this->getCachedForms() as $form) {
             if ($results = $form->getSelectSearchResults($statePath, $search)) {
                 return $results;
@@ -120,6 +135,8 @@ trait InteractsWithForms
 
     public function deleteUploadedFile(string $statePath, string $fileKey): void
     {
+        $this->skipRender();
+
         foreach ($this->getCachedForms() as $form) {
             $form->deleteUploadedFile($statePath, $fileKey);
         }
@@ -127,6 +144,8 @@ trait InteractsWithForms
 
     public function getUploadedFileUrls(string $statePath): ?array
     {
+        $this->skipRender();
+
         foreach ($this->getCachedForms() as $form) {
             if ($url = $form->getUploadedFileUrls($statePath)) {
                 return $url;
@@ -138,6 +157,8 @@ trait InteractsWithForms
 
     public function removeUploadedFile(string $statePath, string $fileKey): void
     {
+        $this->skipRender();
+
         foreach ($this->getCachedForms() as $form) {
             $form->removeUploadedFile($statePath, $fileKey);
         }
@@ -145,6 +166,8 @@ trait InteractsWithForms
 
     public function reorderUploadedFiles(string $statePath, array $fileKeys): void
     {
+        $this->skipRender();
+
         foreach ($this->getCachedForms() as $form) {
             $form->reorderUploadedFiles($statePath, $fileKeys);
         }

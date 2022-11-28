@@ -112,7 +112,7 @@ class BaseFileUpload extends Field
                 return null;
             }
 
-            if ($storage->getVisibility($file) === 'private') {
+            if ($component->getVisibility() === 'private') {
                 try {
                     return $storage->temporaryUrl(
                         $file,

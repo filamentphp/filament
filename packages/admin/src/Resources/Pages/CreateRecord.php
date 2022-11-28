@@ -6,6 +6,7 @@ use Filament\Forms\ComponentContainer;
 use Filament\Notifications\Notification;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Contracts\HasFormActions;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -22,6 +23,8 @@ class CreateRecord extends Page implements HasFormActions
 
     public $data;
 
+    public ?string $previousUrl = null;
+
     protected static bool $canCreateAnother = true;
 
     public function getBreadcrumb(): string
@@ -34,6 +37,8 @@ class CreateRecord extends Page implements HasFormActions
         $this->authorizeAccess();
 
         $this->fillForm();
+
+        $this->previousUrl = url()->previous();
     }
 
     protected function authorizeAccess(): void
@@ -56,28 +61,27 @@ class CreateRecord extends Page implements HasFormActions
     {
         $this->authorizeAccess();
 
-        $this->callHook('beforeValidate');
+        try {
+            $this->callHook('beforeValidate');
 
-        $data = $this->form->getState();
+            $data = $this->form->getState();
 
-        $this->callHook('afterValidate');
+            $this->callHook('afterValidate');
 
-        $data = $this->mutateFormDataBeforeCreate($data);
+            $data = $this->mutateFormDataBeforeCreate($data);
 
-        $this->callHook('beforeCreate');
+            $this->callHook('beforeCreate');
 
-        $this->record = $this->handleRecordCreation($data);
+            $this->record = $this->handleRecordCreation($data);
 
-        $this->form->model($this->record)->saveRelationships();
+            $this->form->model($this->record)->saveRelationships();
 
-        $this->callHook('afterCreate');
-
-        if (filled($this->getCreatedNotificationMessage())) {
-            Notification::make()
-                ->title($this->getCreatedNotificationMessage())
-                ->success()
-                ->send();
+            $this->callHook('afterCreate');
+        } catch (Halt $exception) {
+            return;
         }
+
+        $this->getCreatedNotification()?->send();
 
         if ($another) {
             // Ensure that the form record is anonymized so that relationships aren't loaded.
@@ -92,9 +96,30 @@ class CreateRecord extends Page implements HasFormActions
         $this->redirect($this->getRedirectUrl());
     }
 
+    protected function getCreatedNotification(): ?Notification
+    {
+        $title = $this->getCreatedNotificationTitle();
+
+        if (blank($title)) {
+            return null;
+        }
+
+        return Notification::make()
+            ->success()
+            ->title($title);
+    }
+
+    protected function getCreatedNotificationTitle(): ?string
+    {
+        return $this->getCreatedNotificationMessage() ?? __('filament::resources/pages/create-record.messages.created');
+    }
+
+    /**
+     * @deprecated Use `getCreatedNotificationTitle()` instead.
+     */
     protected function getCreatedNotificationMessage(): ?string
     {
-        return __('filament::resources/pages/create-record.messages.created');
+        return null;
     }
 
     public function createAnother(): void
@@ -147,7 +172,7 @@ class CreateRecord extends Page implements HasFormActions
     {
         return Action::make('cancel')
             ->label(__('filament::resources/pages/create-record.form.actions.cancel.label'))
-            ->url(static::getResource()::getUrl())
+            ->url($this->previousUrl ?? static::getResource()::getUrl())
             ->color('secondary');
     }
 

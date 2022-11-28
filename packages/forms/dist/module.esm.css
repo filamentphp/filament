@@ -1604,6 +1604,9 @@ trix-editor .attachment__metadata .attachment__size {
 .dark .trix-button-group {
   @apply border-gray-600;
 }
+trix-toolbar .filament-forms-rich-editor-component-toolbar-button.trix-active {
+  @apply bg-primary-600 text-white;
+}
 
 /* packages/forms/resources/css/components/select.css */
 .choices {
@@ -1648,6 +1651,12 @@ trix-editor .attachment__metadata .attachment__size {
 }
 .dark .choices__inner {
   @apply border-gray-600 bg-gray-700 text-white;
+}
+.choices--error .choices__inner {
+  @apply border-danger-600 ring-danger-600;
+}
+.dark .choices--error .choices__inner {
+  @apply border-danger-400 ring-danger-400;
 }
 [dir=rtl] .choices__inner {
   background-position: left 0.5rem center;

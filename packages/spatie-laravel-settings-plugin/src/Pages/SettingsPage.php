@@ -63,21 +63,37 @@ class SettingsPage extends Page implements HasFormActions
 
         $this->callHook('afterSave');
 
+        $this->getSavedNotification()?->send();
+
         if ($redirectUrl = $this->getRedirectUrl()) {
             $this->redirect($redirectUrl);
         }
-
-        if (filled($this->getSavedNotificationMessage())) {
-            Notification::make()
-                ->title($this->getSavedNotificationMessage())
-                ->success()
-                ->send();
-        }
     }
 
+    protected function getSavedNotification(): ?Notification
+    {
+        $title = $this->getSavedNotificationTitle();
+
+        if (blank($title)) {
+            return null;
+        }
+
+        return Notification::make()
+            ->success()
+            ->title($title);
+    }
+
+    protected function getSavedNotificationTitle(): ?string
+    {
+        return $this->getSavedNotificationMessage() ?? __('filament-spatie-laravel-settings-plugin::pages/settings-page.messages.saved');
+    }
+
+    /**
+     * @deprecated Use `getSavedNotificationTitle()` instead.
+     */
     protected function getSavedNotificationMessage(): ?string
     {
-        return __('filament-spatie-laravel-settings-plugin::pages/settings-page.messages.saved');
+        return null;
     }
 
     protected function callHook(string $hook): void

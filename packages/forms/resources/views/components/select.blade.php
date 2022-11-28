@@ -13,6 +13,8 @@
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-action="$getHintAction()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
@@ -49,6 +51,7 @@
                         'border-gray-300' => ! $errors->has($getStatePath()),
                         'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                         'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
+                        'dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
                     ]) }}
                 >
                     @unless ($isPlaceholderSelectionDisabled())
@@ -91,13 +94,18 @@
                         options: @js($getOptionsForJs()),
                         optionsLimit: @js($getOptionsLimit()),
                         placeholder: @js($getPlaceholder()),
+                        position: @js($getPosition()),
                         searchDebounce: @js($getSearchDebounce()),
                         searchingMessage: @js($getSearchingMessage()),
                         searchPrompt: @js($getSearchPrompt()),
                         state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
                     })"
+                    x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                     wire:ignore
                     {{ $attributes->merge($getExtraAttributes())->merge($getExtraAlpineAttributes()) }}
+                    x-bind:class="{
+                        'choices--error': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
+                    }"
                 >
                     <select
                         x-ref="input"

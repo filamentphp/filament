@@ -396,10 +396,13 @@ var require_dayjs_min = __commonJS((exports, module) => {
     typeof exports == "object" && typeof module != "undefined" ? module.exports = e2() : typeof define == "function" && define.amd ? define(e2) : (t2 = typeof globalThis != "undefined" ? globalThis : t2 || self).dayjs = e2();
   }(exports, function() {
     "use strict";
-    var t2 = 1e3, e2 = 6e4, n2 = 36e5, r2 = "millisecond", i = "second", s2 = "minute", u = "hour", a2 = "day", o2 = "week", f = "month", h = "quarter", c2 = "year", d = "date", $ = "Invalid Date", l = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/, y = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g, M2 = {name: "en", weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"), months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_")}, m = function(t3, e3, n3) {
+    var t2 = 1e3, e2 = 6e4, n2 = 36e5, r2 = "millisecond", i = "second", s2 = "minute", u = "hour", a2 = "day", o2 = "week", f = "month", h = "quarter", c2 = "year", d = "date", l = "Invalid Date", $ = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/, y = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g, M2 = {name: "en", weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"), months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_"), ordinal: function(t3) {
+      var e3 = ["th", "st", "nd", "rd"], n3 = t3 % 100;
+      return "[" + t3 + (e3[(n3 - 20) % 10] || e3[n3] || e3[0]) + "]";
+    }}, m = function(t3, e3, n3) {
       var r3 = String(t3);
       return !r3 || r3.length >= e3 ? t3 : "" + Array(e3 + 1 - r3.length).join(n3) + t3;
-    }, g = {s: m, z: function(t3) {
+    }, v = {s: m, z: function(t3) {
       var e3 = -t3.utcOffset(), n3 = Math.abs(e3), r3 = Math.floor(n3 / 60), i2 = n3 % 60;
       return (e3 <= 0 ? "+" : "-") + m(r3, 2, "0") + ":" + m(i2, 2, "0");
     }, m: function t3(e3, n3) {
@@ -413,14 +416,14 @@ var require_dayjs_min = __commonJS((exports, module) => {
       return {M: f, y: c2, w: o2, d: a2, D: d, h: u, m: s2, s: i, ms: r2, Q: h}[t3] || String(t3 || "").toLowerCase().replace(/s$/, "");
     }, u: function(t3) {
       return t3 === void 0;
-    }}, v = "en", D2 = {};
-    D2[v] = M2;
+    }}, g = "en", D2 = {};
+    D2[g] = M2;
     var p2 = function(t3) {
       return t3 instanceof _;
     }, S2 = function t3(e3, n3, r3) {
       var i2;
       if (!e3)
-        return v;
+        return g;
       if (typeof e3 == "string") {
         var s3 = e3.toLowerCase();
         D2[s3] && (i2 = s3), n3 && (D2[s3] = n3, i2 = s3);
@@ -431,13 +434,13 @@ var require_dayjs_min = __commonJS((exports, module) => {
         var a3 = e3.name;
         D2[a3] = e3, i2 = a3;
       }
-      return !r3 && i2 && (v = i2), i2 || !r3 && v;
+      return !r3 && i2 && (g = i2), i2 || !r3 && g;
     }, w = function(t3, e3) {
       if (p2(t3))
         return t3.clone();
       var n3 = typeof e3 == "object" ? e3 : {};
       return n3.date = t3, n3.args = arguments, new _(n3);
-    }, O = g;
+    }, O = v;
     O.l = S2, O.i = p2, O.w = function(t3, e3) {
       return w(t3, {locale: e3.$L, utc: e3.$u, x: e3.$x, $offset: e3.$offset});
     };
@@ -456,7 +459,7 @@ var require_dayjs_min = __commonJS((exports, module) => {
           if (e3 instanceof Date)
             return new Date(e3);
           if (typeof e3 == "string" && !/Z$/i.test(e3)) {
-            var r3 = e3.match(l);
+            var r3 = e3.match($);
             if (r3) {
               var i2 = r3[2] - 1 || 0, s3 = (r3[7] || "0").substring(0, 3);
               return n3 ? new Date(Date.UTC(r3[1], i2, r3[3] || 1, r3[4] || 0, r3[5] || 0, r3[6] || 0, s3)) : new Date(r3[1], i2, r3[3] || 1, r3[4] || 0, r3[5] || 0, r3[6] || 0, s3);
@@ -470,7 +473,7 @@ var require_dayjs_min = __commonJS((exports, module) => {
       }, m2.$utils = function() {
         return O;
       }, m2.isValid = function() {
-        return !(this.$d.toString() === $);
+        return !(this.$d.toString() === l);
       }, m2.isSame = function(t3, e3) {
         var n3 = w(t3);
         return this.startOf(e3) <= n3 && n3 <= this.endOf(e3);
@@ -485,69 +488,69 @@ var require_dayjs_min = __commonJS((exports, module) => {
       }, m2.valueOf = function() {
         return this.$d.getTime();
       }, m2.startOf = function(t3, e3) {
-        var n3 = this, r3 = !!O.u(e3) || e3, h2 = O.p(t3), $2 = function(t4, e4) {
+        var n3 = this, r3 = !!O.u(e3) || e3, h2 = O.p(t3), l2 = function(t4, e4) {
           var i2 = O.w(n3.$u ? Date.UTC(n3.$y, e4, t4) : new Date(n3.$y, e4, t4), n3);
           return r3 ? i2 : i2.endOf(a2);
-        }, l2 = function(t4, e4) {
+        }, $2 = function(t4, e4) {
           return O.w(n3.toDate()[t4].apply(n3.toDate("s"), (r3 ? [0, 0, 0, 0] : [23, 59, 59, 999]).slice(e4)), n3);
-        }, y2 = this.$W, M4 = this.$M, m3 = this.$D, g2 = "set" + (this.$u ? "UTC" : "");
+        }, y2 = this.$W, M4 = this.$M, m3 = this.$D, v2 = "set" + (this.$u ? "UTC" : "");
         switch (h2) {
           case c2:
-            return r3 ? $2(1, 0) : $2(31, 11);
+            return r3 ? l2(1, 0) : l2(31, 11);
           case f:
-            return r3 ? $2(1, M4) : $2(0, M4 + 1);
+            return r3 ? l2(1, M4) : l2(0, M4 + 1);
           case o2:
-            var v2 = this.$locale().weekStart || 0, D3 = (y2 < v2 ? y2 + 7 : y2) - v2;
-            return $2(r3 ? m3 - D3 : m3 + (6 - D3), M4);
+            var g2 = this.$locale().weekStart || 0, D3 = (y2 < g2 ? y2 + 7 : y2) - g2;
+            return l2(r3 ? m3 - D3 : m3 + (6 - D3), M4);
           case a2:
           case d:
-            return l2(g2 + "Hours", 0);
+            return $2(v2 + "Hours", 0);
           case u:
-            return l2(g2 + "Minutes", 1);
+            return $2(v2 + "Minutes", 1);
           case s2:
-            return l2(g2 + "Seconds", 2);
+            return $2(v2 + "Seconds", 2);
           case i:
-            return l2(g2 + "Milliseconds", 3);
+            return $2(v2 + "Milliseconds", 3);
           default:
             return this.clone();
         }
       }, m2.endOf = function(t3) {
         return this.startOf(t3, false);
       }, m2.$set = function(t3, e3) {
-        var n3, o3 = O.p(t3), h2 = "set" + (this.$u ? "UTC" : ""), $2 = (n3 = {}, n3[a2] = h2 + "Date", n3[d] = h2 + "Date", n3[f] = h2 + "Month", n3[c2] = h2 + "FullYear", n3[u] = h2 + "Hours", n3[s2] = h2 + "Minutes", n3[i] = h2 + "Seconds", n3[r2] = h2 + "Milliseconds", n3)[o3], l2 = o3 === a2 ? this.$D + (e3 - this.$W) : e3;
+        var n3, o3 = O.p(t3), h2 = "set" + (this.$u ? "UTC" : ""), l2 = (n3 = {}, n3[a2] = h2 + "Date", n3[d] = h2 + "Date", n3[f] = h2 + "Month", n3[c2] = h2 + "FullYear", n3[u] = h2 + "Hours", n3[s2] = h2 + "Minutes", n3[i] = h2 + "Seconds", n3[r2] = h2 + "Milliseconds", n3)[o3], $2 = o3 === a2 ? this.$D + (e3 - this.$W) : e3;
         if (o3 === f || o3 === c2) {
           var y2 = this.clone().set(d, 1);
-          y2.$d[$2](l2), y2.init(), this.$d = y2.set(d, Math.min(this.$D, y2.daysInMonth())).$d;
+          y2.$d[l2]($2), y2.init(), this.$d = y2.set(d, Math.min(this.$D, y2.daysInMonth())).$d;
         } else
-          $2 && this.$d[$2](l2);
+          l2 && this.$d[l2]($2);
         return this.init(), this;
       }, m2.set = function(t3, e3) {
         return this.clone().$set(t3, e3);
       }, m2.get = function(t3) {
         return this[O.p(t3)]();
       }, m2.add = function(r3, h2) {
-        var d2, $2 = this;
+        var d2, l2 = this;
         r3 = Number(r3);
-        var l2 = O.p(h2), y2 = function(t3) {
-          var e3 = w($2);
-          return O.w(e3.date(e3.date() + Math.round(t3 * r3)), $2);
+        var $2 = O.p(h2), y2 = function(t3) {
+          var e3 = w(l2);
+          return O.w(e3.date(e3.date() + Math.round(t3 * r3)), l2);
         };
-        if (l2 === f)
+        if ($2 === f)
           return this.set(f, this.$M + r3);
-        if (l2 === c2)
+        if ($2 === c2)
           return this.set(c2, this.$y + r3);
-        if (l2 === a2)
+        if ($2 === a2)
           return y2(1);
-        if (l2 === o2)
+        if ($2 === o2)
           return y2(7);
-        var M4 = (d2 = {}, d2[s2] = e2, d2[u] = n2, d2[i] = t2, d2)[l2] || 1, m3 = this.$d.getTime() + r3 * M4;
+        var M4 = (d2 = {}, d2[s2] = e2, d2[u] = n2, d2[i] = t2, d2)[$2] || 1, m3 = this.$d.getTime() + r3 * M4;
         return O.w(m3, this);
       }, m2.subtract = function(t3, e3) {
         return this.add(-1 * t3, e3);
       }, m2.format = function(t3) {
         var e3 = this, n3 = this.$locale();
         if (!this.isValid())
-          return n3.invalidDate || $;
+          return n3.invalidDate || l;
         var r3 = t3 || "YYYY-MM-DDTHH:mm:ssZ", i2 = O.z(this), s3 = this.$H, u2 = this.$m, a3 = this.$M, o3 = n3.weekdays, f2 = n3.months, h2 = function(t4, n4, i3, s4) {
           return t4 && (t4[n4] || t4(e3, r3)) || i3[n4].slice(0, s4);
         }, c3 = function(t4) {
@@ -555,15 +558,15 @@ var require_dayjs_min = __commonJS((exports, module) => {
         }, d2 = n3.meridiem || function(t4, e4, n4) {
           var r4 = t4 < 12 ? "AM" : "PM";
           return n4 ? r4.toLowerCase() : r4;
-        }, l2 = {YY: String(this.$y).slice(-2), YYYY: this.$y, M: a3 + 1, MM: O.s(a3 + 1, 2, "0"), MMM: h2(n3.monthsShort, a3, f2, 3), MMMM: h2(f2, a3), D: this.$D, DD: O.s(this.$D, 2, "0"), d: String(this.$W), dd: h2(n3.weekdaysMin, this.$W, o3, 2), ddd: h2(n3.weekdaysShort, this.$W, o3, 3), dddd: o3[this.$W], H: String(s3), HH: O.s(s3, 2, "0"), h: c3(1), hh: c3(2), a: d2(s3, u2, true), A: d2(s3, u2, false), m: String(u2), mm: O.s(u2, 2, "0"), s: String(this.$s), ss: O.s(this.$s, 2, "0"), SSS: O.s(this.$ms, 3, "0"), Z: i2};
+        }, $2 = {YY: String(this.$y).slice(-2), YYYY: this.$y, M: a3 + 1, MM: O.s(a3 + 1, 2, "0"), MMM: h2(n3.monthsShort, a3, f2, 3), MMMM: h2(f2, a3), D: this.$D, DD: O.s(this.$D, 2, "0"), d: String(this.$W), dd: h2(n3.weekdaysMin, this.$W, o3, 2), ddd: h2(n3.weekdaysShort, this.$W, o3, 3), dddd: o3[this.$W], H: String(s3), HH: O.s(s3, 2, "0"), h: c3(1), hh: c3(2), a: d2(s3, u2, true), A: d2(s3, u2, false), m: String(u2), mm: O.s(u2, 2, "0"), s: String(this.$s), ss: O.s(this.$s, 2, "0"), SSS: O.s(this.$ms, 3, "0"), Z: i2};
         return r3.replace(y, function(t4, e4) {
-          return e4 || l2[t4] || i2.replace(":", "");
+          return e4 || $2[t4] || i2.replace(":", "");
         });
       }, m2.utcOffset = function() {
         return 15 * -Math.round(this.$d.getTimezoneOffset() / 15);
-      }, m2.diff = function(r3, d2, $2) {
-        var l2, y2 = O.p(d2), M4 = w(r3), m3 = (M4.utcOffset() - this.utcOffset()) * e2, g2 = this - M4, v2 = O.m(this, M4);
-        return v2 = (l2 = {}, l2[c2] = v2 / 12, l2[f] = v2, l2[h] = v2 / 3, l2[o2] = (g2 - m3) / 6048e5, l2[a2] = (g2 - m3) / 864e5, l2[u] = g2 / n2, l2[s2] = g2 / e2, l2[i] = g2 / t2, l2)[y2] || g2, $2 ? v2 : O.a(v2);
+      }, m2.diff = function(r3, d2, l2) {
+        var $2, y2 = O.p(d2), M4 = w(r3), m3 = (M4.utcOffset() - this.utcOffset()) * e2, v2 = this - M4, g2 = O.m(this, M4);
+        return g2 = ($2 = {}, $2[c2] = g2 / 12, $2[f] = g2, $2[h] = g2 / 3, $2[o2] = (v2 - m3) / 6048e5, $2[a2] = (v2 - m3) / 864e5, $2[u] = v2 / n2, $2[s2] = v2 / e2, $2[i] = v2 / t2, $2)[y2] || v2, l2 ? g2 : O.a(g2);
       }, m2.daysInMonth = function() {
         return this.endOf(f).$D;
       }, m2.$locale = function() {
@@ -593,7 +596,7 @@ var require_dayjs_min = __commonJS((exports, module) => {
       return t3.$i || (t3(e3, _, w), t3.$i = true), w;
     }, w.locale = S2, w.isDayjs = p2, w.unix = function(t3) {
       return w(1e3 * t3);
-    }, w.en = D2[v], w.Ls = D2, w.p = {}, w;
+    }, w.en = D2[g], w.Ls = D2, w.p = {}, w;
   });
 });
 
@@ -743,7 +746,10 @@ var require_en = __commonJS((exports, module) => {
     typeof exports == "object" && typeof module != "undefined" ? module.exports = n2() : typeof define == "function" && define.amd ? define(n2) : (e2 = typeof globalThis != "undefined" ? globalThis : e2 || self).dayjs_locale_en = n2();
   }(exports, function() {
     "use strict";
-    return {name: "en", weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"), months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_")};
+    return {name: "en", weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"), months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_"), ordinal: function(e2) {
+      var n2 = ["th", "st", "nd", "rd"], t2 = e2 % 100;
+      return "[" + e2 + (n2[(t2 - 20) % 10] || n2[t2] || n2[0]) + "]";
+    }};
   });
 });
 
@@ -776,6 +782,27 @@ var require_fa = __commonJS((exports, module) => {
       return _2;
     }, formats: {LT: "HH:mm", LTS: "HH:mm:ss", L: "DD/MM/YYYY", LL: "D MMMM YYYY", LLL: "D MMMM YYYY HH:mm", LLLL: "dddd, D MMMM YYYY HH:mm"}, relativeTime: {future: "\u062F\u0631 %s", past: "%s \u067E\u06CC\u0634", s: "\u0686\u0646\u062F \u062B\u0627\u0646\u06CC\u0647", m: "\u06CC\u06A9 \u062F\u0642\u06CC\u0642\u0647", mm: "%d \u062F\u0642\u06CC\u0642\u0647", h: "\u06CC\u06A9 \u0633\u0627\u0639\u062A", hh: "%d \u0633\u0627\u0639\u062A", d: "\u06CC\u06A9 \u0631\u0648\u0632", dd: "%d \u0631\u0648\u0632", M: "\u06CC\u06A9 \u0645\u0627\u0647", MM: "%d \u0645\u0627\u0647", y: "\u06CC\u06A9 \u0633\u0627\u0644", yy: "%d \u0633\u0627\u0644"}};
     return t2.default.locale(d, null, true), d;
+  });
+});
+
+// node_modules/dayjs/locale/fi.js
+var require_fi = __commonJS((exports, module) => {
+  !function(u, e2) {
+    typeof exports == "object" && typeof module != "undefined" ? module.exports = e2(require_dayjs_min()) : typeof define == "function" && define.amd ? define(["dayjs"], e2) : (u = typeof globalThis != "undefined" ? globalThis : u || self).dayjs_locale_fi = e2(u.dayjs);
+  }(exports, function(u) {
+    "use strict";
+    function e2(u2) {
+      return u2 && typeof u2 == "object" && "default" in u2 ? u2 : {default: u2};
+    }
+    var t2 = e2(u);
+    function n2(u2, e3, t3, n3) {
+      var i2 = {s: "muutama sekunti", m: "minuutti", mm: "%d minuuttia", h: "tunti", hh: "%d tuntia", d: "p\xE4iv\xE4", dd: "%d p\xE4iv\xE4\xE4", M: "kuukausi", MM: "%d kuukautta", y: "vuosi", yy: "%d vuotta", numbers: "nolla_yksi_kaksi_kolme_nelj\xE4_viisi_kuusi_seitsem\xE4n_kahdeksan_yhdeks\xE4n".split("_")}, a2 = {s: "muutaman sekunnin", m: "minuutin", mm: "%d minuutin", h: "tunnin", hh: "%d tunnin", d: "p\xE4iv\xE4n", dd: "%d p\xE4iv\xE4n", M: "kuukauden", MM: "%d kuukauden", y: "vuoden", yy: "%d vuoden", numbers: "nollan_yhden_kahden_kolmen_nelj\xE4n_viiden_kuuden_seitsem\xE4n_kahdeksan_yhdeks\xE4n".split("_")}, s2 = n3 && !e3 ? a2 : i2, _ = s2[t3];
+      return u2 < 10 ? _.replace("%d", s2.numbers[u2]) : _.replace("%d", u2);
+    }
+    var i = {name: "fi", weekdays: "sunnuntai_maanantai_tiistai_keskiviikko_torstai_perjantai_lauantai".split("_"), weekdaysShort: "su_ma_ti_ke_to_pe_la".split("_"), weekdaysMin: "su_ma_ti_ke_to_pe_la".split("_"), months: "tammikuu_helmikuu_maaliskuu_huhtikuu_toukokuu_kes\xE4kuu_hein\xE4kuu_elokuu_syyskuu_lokakuu_marraskuu_joulukuu".split("_"), monthsShort: "tammi_helmi_maalis_huhti_touko_kes\xE4_hein\xE4_elo_syys_loka_marras_joulu".split("_"), ordinal: function(u2) {
+      return u2 + ".";
+    }, weekStart: 1, yearStart: 4, relativeTime: {future: "%s p\xE4\xE4st\xE4", past: "%s sitten", s: n2, m: n2, mm: n2, h: n2, hh: n2, d: n2, dd: n2, M: n2, MM: n2, y: n2, yy: n2}, formats: {LT: "HH.mm", LTS: "HH.mm.ss", L: "DD.MM.YYYY", LL: "D. MMMM[ta] YYYY", LLL: "D. MMMM[ta] YYYY, [klo] HH.mm", LLLL: "dddd, D. MMMM[ta] YYYY, [klo] HH.mm", l: "D.M.YYYY", ll: "D. MMM YYYY", lll: "D. MMM YYYY, [klo] HH.mm", llll: "ddd, D. MMM YYYY, [klo] HH.mm"}};
+    return t2.default.locale(i, null, true), i;
   });
 });
 
@@ -12229,6 +12256,43 @@ var RgbaStringColorPicker = class extends RgbaStringBase {
 };
 customElements.define("rgba-string-color-picker", RgbaStringColorPicker);
 
+// packages/forms/resources/js/components/color-picker.js
+var color_picker_default2 = (Alpine) => {
+  Alpine.data("colorPickerFormComponent", ({isAutofocused, isDisabled, state: state2}) => {
+    return {
+      state: state2,
+      init: function() {
+        if (!(this.state === null || this.state === "")) {
+          this.setState(this.state);
+        }
+        if (isAutofocused) {
+          this.togglePanelVisibility(this.$refs.input);
+        }
+        this.$refs.input.addEventListener("change", (event) => {
+          this.setState(event.target.value);
+        });
+        this.$refs.panel.addEventListener("color-changed", (event) => {
+          this.setState(event.detail.value);
+        });
+      },
+      togglePanelVisibility: function() {
+        if (isDisabled) {
+          return;
+        }
+        this.$refs.panel.toggle(this.$refs.input);
+      },
+      setState: function(value) {
+        this.state = value;
+        this.$refs.input.value = value;
+        this.$refs.panel.color = value;
+      },
+      isOpen: function() {
+        return this.$refs.panel.style.display === "block";
+      }
+    };
+  });
+};
+
 // node_modules/dayjs/esm/constant.js
 var SECONDS_A_MINUTE = 60;
 var SECONDS_A_HOUR = SECONDS_A_MINUTE * 60;
@@ -12258,7 +12322,12 @@ var REGEX_FORMAT = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{
 var en_default = {
   name: "en",
   weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"),
-  months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_")
+  months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_"),
+  ordinal: function ordinal(n2) {
+    var s2 = ["th", "st", "nd", "rd"];
+    var v = n2 % 100;
+    return "[" + n2 + (s2[(v - 20) % 10] || s2[v] || s2[0]) + "]";
+  }
 };
 
 // node_modules/dayjs/esm/utils.js
@@ -12646,40 +12715,6 @@ dayjs.Ls = Ls;
 dayjs.p = {};
 var esm_default = dayjs;
 
-// packages/forms/resources/js/components/color-picker.js
-var color_picker_default2 = (Alpine) => {
-  Alpine.data("colorPickerFormComponent", ({isAutofocused, isDisabled, state: state2}) => {
-    return {
-      state: state2,
-      init: function() {
-        if (!(this.state === null || this.state === "")) {
-          this.setState(this.state);
-        }
-        if (isAutofocused) {
-          this.togglePanelVisibility(this.$refs.input);
-        }
-        this.$refs.input.addEventListener("change", (event) => {
-          this.setState(event.target.value);
-        });
-        this.$refs.panel.addEventListener("color-changed", (event) => {
-          this.setState(event.detail.value);
-        });
-      },
-      togglePanelVisibility: function() {
-        if (isDisabled) {
-          return;
-        }
-        this.$refs.panel.toggle(this.$refs.input);
-      },
-      setState: function(value) {
-        this.state = value;
-        this.$refs.input.value = value;
-        this.$refs.panel.color = value;
-      }
-    };
-  });
-};
-
 // packages/forms/resources/js/components/date-time-picker.js
 var import_customParseFormat = __toModule(require_customParseFormat());
 var import_localeData = __toModule(require_localeData());
@@ -12695,7 +12730,6 @@ var date_time_picker_default = (Alpine) => {
     displayFormat,
     firstDayOfWeek,
     isAutofocused,
-    isDisabled,
     locale,
     shouldCloseOnDateSelection,
     state: state2
@@ -12858,6 +12892,15 @@ var date_time_picker_default = (Alpine) => {
         this.$nextTick(() => this.isClearingState = false);
       },
       dateIsDisabled: function(date) {
+        if (this.$refs?.disabledDates && JSON.parse(this.$refs.disabledDates.value ?? []).some((disabledDate) => {
+          disabledDate = esm_default(disabledDate);
+          if (!disabledDate.isValid()) {
+            return false;
+          }
+          return disabledDate.isSame(date, "day");
+        })) {
+          return true;
+        }
         if (this.getMaxDate() && date.isAfter(this.getMaxDate())) {
           return true;
         }
@@ -12931,9 +12974,6 @@ var date_time_picker_default = (Alpine) => {
         return date;
       },
       togglePanelVisibility: function() {
-        if (isDisabled) {
-          return;
-        }
         if (!this.isOpen()) {
           this.focusedDate = this.getSelectedDate() ?? this.getMinDate() ?? esm_default().tz(timezone2);
           this.setupDaysGrid();
@@ -12984,7 +13024,7 @@ var date_time_picker_default = (Alpine) => {
         this.setDisplayText();
       },
       isOpen: function() {
-        return this.$refs.panel.style.display === "block";
+        return this.$refs.panel?.style.display === "block";
       }
     };
   });
@@ -12999,13 +13039,14 @@ var locales = {
   en: require_en(),
   es: require_es(),
   fa: require_fa(),
+  fi: require_fi(),
   fr: require_fr(),
   hi: require_hi(),
   hu: require_hu(),
   hy: require_hy_am(),
   id: require_id(),
   it: require_it(),
-  js: require_ja(),
+  ja: require_ja(),
   ka: require_ka(),
   ku: require_ku(),
   ms: require_ms(),
@@ -22999,6 +23040,47 @@ var fa_ir_default = {
   imageValidateSizeLabelExpectedMaxResolution: "\u062D\u062F\u0627\u06A9\u062B\u0631 \u0648\u0636\u0648\u062D \u062A\u0635\u0648\u06CC\u0631 {maxResolution} \u0627\u0633\u062A"
 };
 
+// node_modules/filepond/locale/fi-fi.js
+var fi_fi_default = {
+  labelIdle: 'Ved\xE4 ja pudota tiedostoja tai <span class="filepond--label-action"> Selaa </span>',
+  labelInvalidField: "Kent\xE4ss\xE4 on virheellisi\xE4 tiedostoja",
+  labelFileWaitingForSize: "Odotetaan kokoa",
+  labelFileSizeNotAvailable: "Kokoa ei saatavilla",
+  labelFileLoading: "Ladataan",
+  labelFileLoadError: "Virhe latauksessa",
+  labelFileProcessing: "L\xE4hetet\xE4\xE4n",
+  labelFileProcessingComplete: "L\xE4hetys valmis",
+  labelFileProcessingAborted: "L\xE4hetys peruttu",
+  labelFileProcessingError: "Virhe l\xE4hetyksess\xE4",
+  labelFileProcessingRevertError: "Virhe palautuksessa",
+  labelFileRemoveError: "Virhe poistamisessa",
+  labelTapToCancel: "peruuta napauttamalla",
+  labelTapToRetry: "yrit\xE4 uudelleen napauttamalla",
+  labelTapToUndo: "kumoa napauttamalla",
+  labelButtonRemoveItem: "Poista",
+  labelButtonAbortItemLoad: "Keskeyt\xE4",
+  labelButtonRetryItemLoad: "Yrit\xE4 uudelleen",
+  labelButtonAbortItemProcessing: "Peruuta",
+  labelButtonUndoItemProcessing: "Kumoa",
+  labelButtonRetryItemProcessing: "Yrit\xE4 uudelleen",
+  labelButtonProcessItem: "L\xE4het\xE4",
+  labelMaxFileSizeExceeded: "Tiedoston koko on liian suuri",
+  labelMaxFileSize: "Tiedoston maksimikoko on {filesize}",
+  labelMaxTotalFileSizeExceeded: "Tiedostojen yhdistetty maksimikoko ylitetty",
+  labelMaxTotalFileSize: "Tiedostojen yhdistetty maksimikoko on {filesize}",
+  labelFileTypeNotAllowed: "Tiedostotyyppi\xE4 ei sallita",
+  fileValidateTypeLabelExpectedTypes: "Sallitaan {allButLastType} tai {lastType}",
+  imageValidateSizeLabelFormatError: "Kuvatyyppi\xE4 ei tueta",
+  imageValidateSizeLabelImageSizeTooSmall: "Kuva on liian pieni",
+  imageValidateSizeLabelImageSizeTooBig: "Kuva on liian suuri",
+  imageValidateSizeLabelExpectedMinSize: "Minimikoko on {minWidth} \xD7 {minHeight}",
+  imageValidateSizeLabelExpectedMaxSize: "Maksimikoko on {maxWidth} \xD7 {maxHeight}",
+  imageValidateSizeLabelImageResolutionTooLow: "Resoluutio on liian pieni",
+  imageValidateSizeLabelImageResolutionTooHigh: "Resoluutio on liian suuri",
+  imageValidateSizeLabelExpectedMinResolution: "Minimiresoluutio on {minResolution}",
+  imageValidateSizeLabelExpectedMaxResolution: "Maksimiresoluutio on {maxResolution}"
+};
+
 // node_modules/filepond/locale/fr-fr.js
 var fr_fr_default = {
   labelIdle: 'Faites glisser vos fichiers ou <span class = "filepond--label-action"> Parcourir <span>',
@@ -23638,6 +23720,7 @@ var file_upload_default = (Alpine) => {
     imageResizeMode,
     imageResizeTargetHeight,
     imageResizeTargetWidth,
+    imageResizeUpscale,
     isAvatar,
     loadingIndicatorPosition,
     locale,
@@ -23680,6 +23763,7 @@ var file_upload_default = (Alpine) => {
           imageResizeTargetHeight,
           imageResizeTargetWidth,
           imageResizeMode,
+          imageResizeUpscale,
           itemInsertLocation: shouldAppendFiles ? "after" : "before",
           ...placeholder && {labelIdle: placeholder},
           maxFileSize: maxSize,
@@ -23722,7 +23806,8 @@ var file_upload_default = (Alpine) => {
           if (!this.shouldUpdateState) {
             return;
           }
-          if (Object.values(this.state).filter((file2) => file2.startsWith("livewire-file:")).length) {
+          if (this.state !== null && Object.values(this.state).filter((file2) => file2.startsWith("livewire-file:")).length) {
+            this.lastState = null;
             return;
           }
           if (JSON.stringify(this.state) === this.lastState) {
@@ -23855,6 +23940,7 @@ var locales2 = {
   en: en_en_default,
   es: es_es_default,
   fa: fa_ir_default,
+  fi: fi_fi_default,
   fr: fr_fr_default,
   hu: hu_hu_default,
   id: id_id_default,
@@ -24782,7 +24868,7 @@ function applyStyle(button, stylesToApply) {
 }
 
 // node_modules/dompurify/dist/purify.es.js
-/*! @license DOMPurify 2.4.0 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.4.0/LICENSE */
+/*! @license DOMPurify 2.4.1 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.4.1/LICENSE */
 function _typeof(obj) {
   "@babel/helpers - typeof";
   return _typeof = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? function(obj2) {
@@ -24898,6 +24984,7 @@ var arrayForEach = unapply(Array.prototype.forEach);
 var arrayPop = unapply(Array.prototype.pop);
 var arrayPush = unapply(Array.prototype.push);
 var stringToLowerCase = unapply(String.prototype.toLowerCase);
+var stringToString = unapply(String.prototype.toString);
 var stringMatch = unapply(String.prototype.match);
 var stringReplace = unapply(String.prototype.replace);
 var stringIndexOf = unapply(String.prototype.indexOf);
@@ -24983,6 +25070,7 @@ var mathMl = freeze(["accent", "accentunder", "align", "bevelled", "close", "col
 var xml = freeze(["xlink:href", "xml:id", "xlink:title", "xml:space", "xmlns:xlink"]);
 var MUSTACHE_EXPR = seal(/\{\{[\w\W]*|[\w\W]*\}\}/gm);
 var ERB_EXPR = seal(/<%[\w\W]*|[\w\W]*%>/gm);
+var TMPLIT_EXPR = seal(/\${[\w\W]*}/gm);
 var DATA_ATTR = seal(/^data-[\-\w.\u00B7-\uFFFF]/);
 var ARIA_ATTR = seal(/^aria-[\-\w]+$/);
 var IS_ALLOWED_URI = seal(/^(?:(?:(?:f|ht)tps?|mailto|tel|callto|cid|xmpp):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i);
@@ -25021,7 +25109,7 @@ function createDOMPurify() {
   var DOMPurify = function DOMPurify2(root2) {
     return createDOMPurify(root2);
   };
-  DOMPurify.version = "2.4.0";
+  DOMPurify.version = "2.4.1";
   DOMPurify.removed = [];
   if (!window2 || !window2.document || window2.document.nodeType !== 9) {
     DOMPurify.isSupported = false;
@@ -25052,7 +25140,7 @@ function createDOMPurify() {
   }
   var hooks = {};
   DOMPurify.isSupported = typeof getParentNode2 === "function" && implementation && typeof implementation.createHTMLDocument !== "undefined" && documentMode !== 9;
-  var MUSTACHE_EXPR$1 = MUSTACHE_EXPR, ERB_EXPR$1 = ERB_EXPR, DATA_ATTR$1 = DATA_ATTR, ARIA_ATTR$1 = ARIA_ATTR, IS_SCRIPT_OR_DATA$1 = IS_SCRIPT_OR_DATA, ATTR_WHITESPACE$1 = ATTR_WHITESPACE;
+  var MUSTACHE_EXPR$1 = MUSTACHE_EXPR, ERB_EXPR$1 = ERB_EXPR, TMPLIT_EXPR$1 = TMPLIT_EXPR, DATA_ATTR$1 = DATA_ATTR, ARIA_ATTR$1 = ARIA_ATTR, IS_SCRIPT_OR_DATA$1 = IS_SCRIPT_OR_DATA, ATTR_WHITESPACE$1 = ATTR_WHITESPACE;
   var IS_ALLOWED_URI$1 = IS_ALLOWED_URI;
   var ALLOWED_TAGS = null;
   var DEFAULT_ALLOWED_TAGS = addToSet({}, [].concat(_toConsumableArray(html$1), _toConsumableArray(svg$1), _toConsumableArray(svgFilters), _toConsumableArray(mathMl$1), _toConsumableArray(text2)));
@@ -25107,6 +25195,8 @@ function createDOMPurify() {
   var HTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
   var NAMESPACE = HTML_NAMESPACE;
   var IS_EMPTY_INPUT = false;
+  var ALLOWED_NAMESPACES = null;
+  var DEFAULT_ALLOWED_NAMESPACES = addToSet({}, [MATHML_NAMESPACE, SVG_NAMESPACE, HTML_NAMESPACE], stringToString);
   var PARSER_MEDIA_TYPE;
   var SUPPORTED_PARSER_MEDIA_TYPES = ["application/xhtml+xml", "text/html"];
   var DEFAULT_PARSER_MEDIA_TYPE = "text/html";
@@ -25125,11 +25215,10 @@ function createDOMPurify() {
     }
     cfg = clone(cfg);
     PARSER_MEDIA_TYPE = SUPPORTED_PARSER_MEDIA_TYPES.indexOf(cfg.PARSER_MEDIA_TYPE) === -1 ? PARSER_MEDIA_TYPE = DEFAULT_PARSER_MEDIA_TYPE : PARSER_MEDIA_TYPE = cfg.PARSER_MEDIA_TYPE;
-    transformCaseFunc = PARSER_MEDIA_TYPE === "application/xhtml+xml" ? function(x) {
-      return x;
-    } : stringToLowerCase;
+    transformCaseFunc = PARSER_MEDIA_TYPE === "application/xhtml+xml" ? stringToString : stringToLowerCase;
     ALLOWED_TAGS = "ALLOWED_TAGS" in cfg ? addToSet({}, cfg.ALLOWED_TAGS, transformCaseFunc) : DEFAULT_ALLOWED_TAGS;
     ALLOWED_ATTR = "ALLOWED_ATTR" in cfg ? addToSet({}, cfg.ALLOWED_ATTR, transformCaseFunc) : DEFAULT_ALLOWED_ATTR;
+    ALLOWED_NAMESPACES = "ALLOWED_NAMESPACES" in cfg ? addToSet({}, cfg.ALLOWED_NAMESPACES, stringToString) : DEFAULT_ALLOWED_NAMESPACES;
     URI_SAFE_ATTRIBUTES = "ADD_URI_SAFE_ATTR" in cfg ? addToSet(clone(DEFAULT_URI_SAFE_ATTRIBUTES), cfg.ADD_URI_SAFE_ATTR, transformCaseFunc) : DEFAULT_URI_SAFE_ATTRIBUTES;
     DATA_URI_TAGS = "ADD_DATA_URI_TAGS" in cfg ? addToSet(clone(DEFAULT_DATA_URI_TAGS), cfg.ADD_DATA_URI_TAGS, transformCaseFunc) : DEFAULT_DATA_URI_TAGS;
     FORBID_CONTENTS = "FORBID_CONTENTS" in cfg ? addToSet({}, cfg.FORBID_CONTENTS, transformCaseFunc) : DEFAULT_FORBID_CONTENTS;
@@ -25237,12 +25326,15 @@ function createDOMPurify() {
     var parent = getParentNode2(element);
     if (!parent || !parent.tagName) {
       parent = {
-        namespaceURI: HTML_NAMESPACE,
+        namespaceURI: NAMESPACE,
         tagName: "template"
       };
     }
     var tagName = stringToLowerCase(element.tagName);
     var parentTagName = stringToLowerCase(parent.tagName);
+    if (!ALLOWED_NAMESPACES[element.namespaceURI]) {
+      return false;
+    }
     if (element.namespaceURI === SVG_NAMESPACE) {
       if (parent.namespaceURI === HTML_NAMESPACE) {
         return tagName === "svg";
@@ -25269,6 +25361,9 @@ function createDOMPurify() {
         return false;
       }
       return !ALL_MATHML_TAGS[tagName] && (COMMON_SVG_AND_HTML_ELEMENTS[tagName] || !ALL_SVG_TAGS[tagName]);
+    }
+    if (PARSER_MEDIA_TYPE === "application/xhtml+xml" && ALLOWED_NAMESPACES[element.namespaceURI]) {
+      return true;
     }
     return false;
   };
@@ -25322,7 +25417,7 @@ function createDOMPurify() {
       var matches2 = stringMatch(dirty, /^[\r\n\t ]+/);
       leadingWhitespace = matches2 && matches2[0];
     }
-    if (PARSER_MEDIA_TYPE === "application/xhtml+xml") {
+    if (PARSER_MEDIA_TYPE === "application/xhtml+xml" && NAMESPACE === HTML_NAMESPACE) {
       dirty = '<html xmlns="http://www.w3.org/1999/xhtml"><head></head><body>' + dirty + "</body></html>";
     }
     var dirtyPayload = trustedTypesPolicy ? trustedTypesPolicy.createHTML(dirty) : dirty;
@@ -25352,7 +25447,7 @@ function createDOMPurify() {
     return createNodeIterator.call(root2.ownerDocument || root2, root2, NodeFilter2.SHOW_ELEMENT | NodeFilter2.SHOW_COMMENT | NodeFilter2.SHOW_TEXT, null, false);
   };
   var _isClobbered = function _isClobbered2(elm) {
-    return elm instanceof HTMLFormElement && (typeof elm.nodeName !== "string" || typeof elm.textContent !== "string" || typeof elm.removeChild !== "function" || !(elm.attributes instanceof NamedNodeMap) || typeof elm.removeAttribute !== "function" || typeof elm.setAttribute !== "function" || typeof elm.namespaceURI !== "string" || typeof elm.insertBefore !== "function");
+    return elm instanceof HTMLFormElement && (typeof elm.nodeName !== "string" || typeof elm.textContent !== "string" || typeof elm.removeChild !== "function" || !(elm.attributes instanceof NamedNodeMap) || typeof elm.removeAttribute !== "function" || typeof elm.setAttribute !== "function" || typeof elm.namespaceURI !== "string" || typeof elm.insertBefore !== "function" || typeof elm.hasChildNodes !== "function");
   };
   var _isNode = function _isNode2(object) {
     return _typeof(Node2) === "object" ? object instanceof Node2 : object && _typeof(object) === "object" && typeof object.nodeType === "number" && typeof object.nodeName === "string";
@@ -25421,6 +25516,7 @@ function createDOMPurify() {
       content = currentNode.textContent;
       content = stringReplace(content, MUSTACHE_EXPR$1, " ");
       content = stringReplace(content, ERB_EXPR$1, " ");
+      content = stringReplace(content, TMPLIT_EXPR$1, " ");
       if (currentNode.textContent !== content) {
         arrayPush(DOMPurify.removed, {
           element: currentNode.cloneNode()
@@ -25505,6 +25601,7 @@ function createDOMPurify() {
       if (SAFE_FOR_TEMPLATES) {
         value = stringReplace(value, MUSTACHE_EXPR$1, " ");
         value = stringReplace(value, ERB_EXPR$1, " ");
+        value = stringReplace(value, TMPLIT_EXPR$1, " ");
       }
       var lcTag = transformCaseFunc(currentNode.nodeName);
       if (!_isValidAttribute(lcTag, lcName, value)) {
@@ -25663,6 +25760,7 @@ function createDOMPurify() {
     if (SAFE_FOR_TEMPLATES) {
       serializedHTML = stringReplace(serializedHTML, MUSTACHE_EXPR$1, " ");
       serializedHTML = stringReplace(serializedHTML, ERB_EXPR$1, " ");
+      serializedHTML = stringReplace(serializedHTML, TMPLIT_EXPR$1, " ");
     }
     return trustedTypesPolicy && RETURN_TRUSTED_TYPE ? trustedTypesPolicy.createHTML(serializedHTML) : serializedHTML;
   };
@@ -25724,7 +25822,6 @@ function getDefaults() {
     sanitize: false,
     sanitizer: null,
     silent: false,
-    smartLists: false,
     smartypants: false,
     tokenizer: null,
     walkTokens: null,
@@ -26016,7 +26113,7 @@ var Tokenizer = class {
       return {
         type: "code",
         raw,
-        lang: cap[2] ? cap[2].trim() : cap[2],
+        lang: cap[2] ? cap[2].trim().replace(this.rules.inline._escapes, "$1") : cap[2],
         text: text3
       };
     }
@@ -26227,8 +26324,8 @@ var Tokenizer = class {
         type: "def",
         tag,
         raw: cap[0],
-        href: cap[2],
-        title: cap[3]
+        href: cap[2] ? cap[2].replace(this.rules.inline._escapes, "$1") : cap[2],
+        title: cap[3] ? cap[3].replace(this.rules.inline._escapes, "$1") : cap[3]
       };
     }
   }
@@ -26440,19 +26537,20 @@ var Tokenizer = class {
         if (delimTotal > 0)
           continue;
         rLength = Math.min(rLength, rLength + delimTotal + midDelimTotal);
+        const raw = src.slice(0, lLength + match.index + (match[0].length - rDelim.length) + rLength);
         if (Math.min(lLength, rLength) % 2) {
-          const text4 = src.slice(1, lLength + match.index + rLength);
+          const text4 = raw.slice(1, -1);
           return {
             type: "em",
-            raw: src.slice(0, lLength + match.index + rLength + 1),
+            raw,
             text: text4,
             tokens: this.lexer.inlineTokens(text4)
           };
         }
-        const text3 = src.slice(2, lLength + match.index + rLength - 1);
+        const text3 = raw.slice(2, -2);
         return {
           type: "strong",
-          raw: src.slice(0, lLength + match.index + rLength + 1),
+          raw,
           text: text3,
           tokens: this.lexer.inlineTokens(text3)
         };
@@ -26624,8 +26722,8 @@ var inline = {
   reflinkSearch: "reflink|nolink(?!\\()",
   emStrong: {
     lDelim: /^(?:\*+(?:([punct_])|[^\s*]))|^_+(?:([punct*])|([^\s_]))/,
-    rDelimAst: /^[^_*]*?\_\_[^_*]*?\*[^_*]*?(?=\_\_)|[^*]+(?=[^*])|[punct_](\*+)(?=[\s]|$)|[^punct*_\s](\*+)(?=[punct_\s]|$)|[punct_\s](\*+)(?=[^punct*_\s])|[\s](\*+)(?=[punct_])|[punct_](\*+)(?=[punct_])|[^punct*_\s](\*+)(?=[^punct*_\s])/,
-    rDelimUnd: /^[^_*]*?\*\*[^_*]*?\_[^_*]*?(?=\*\*)|[^_]+(?=[^_])|[punct*](\_+)(?=[\s]|$)|[^punct*_\s](\_+)(?=[punct*\s]|$)|[punct*\s](\_+)(?=[^punct*_\s])|[\s](\_+)(?=[punct*])|[punct*](\_+)(?=[punct*])/
+    rDelimAst: /^(?:[^_*\\]|\\.)*?\_\_(?:[^_*\\]|\\.)*?\*(?:[^_*\\]|\\.)*?(?=\_\_)|(?:[^*\\]|\\.)+(?=[^*])|[punct_](\*+)(?=[\s]|$)|(?:[^punct*_\s\\]|\\.)(\*+)(?=[punct_\s]|$)|[punct_\s](\*+)(?=[^punct*_\s])|[\s](\*+)(?=[punct_])|[punct_](\*+)(?=[punct_])|(?:[^punct*_\s\\]|\\.)(\*+)(?=[^punct*_\s])/,
+    rDelimUnd: /^(?:[^_*\\]|\\.)*?\*\*(?:[^_*\\]|\\.)*?\_(?:[^_*\\]|\\.)*?(?=\*\*)|(?:[^_\\]|\\.)+(?=[^_])|[punct*](\_+)(?=[\s]|$)|(?:[^punct*_\s\\]|\\.)(\_+)(?=[punct*\s]|$)|[punct*\s](\_+)(?=[^punct*_\s])|[\s](\_+)(?=[punct*])|[punct*](\_+)(?=[punct*])/
   },
   code: /^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,
   br: /^( {2,}|\\)\n(?!\s*$)/,
@@ -26636,7 +26734,7 @@ var inline = {
 inline._punctuation = "!\"#$%&'()+\\-.,/:;<=>?@\\[\\]`^{|}~";
 inline.punctuation = edit(inline.punctuation).replace(/punctuation/g, inline._punctuation).getRegex();
 inline.blockSkip = /\[[^\]]*?\]\([^\)]*?\)|`[^`]*?`|<[^>]*?>/g;
-inline.escapedEmSt = /\\\*|\\_/g;
+inline.escapedEmSt = /(?:^|[^\\])(?:\\\\)*\\[*_]/g;
 inline._comment = edit(block._comment).replace("(?:-->|$)", "-->").getRegex();
 inline.emStrong.lDelim = edit(inline.emStrong.lDelim).replace(/punct/g, inline._punctuation).getRegex();
 inline.emStrong.rDelimAst = edit(inline.emStrong.rDelimAst, "g").replace(/punct/g, inline._punctuation).getRegex();
@@ -26928,7 +27026,8 @@ var Lexer = class {
       maskedSrc = maskedSrc.slice(0, match.index) + "[" + repeatString("a", match[0].length - 2) + "]" + maskedSrc.slice(this.tokenizer.rules.inline.blockSkip.lastIndex);
     }
     while ((match = this.tokenizer.rules.inline.escapedEmSt.exec(maskedSrc)) != null) {
-      maskedSrc = maskedSrc.slice(0, match.index) + "++" + maskedSrc.slice(this.tokenizer.rules.inline.escapedEmSt.lastIndex);
+      maskedSrc = maskedSrc.slice(0, match.index + match[0].length - 2) + "++" + maskedSrc.slice(this.tokenizer.rules.inline.escapedEmSt.lastIndex);
+      this.tokenizer.rules.inline.escapedEmSt.lastIndex--;
     }
     while (src) {
       if (!keepPrevChar) {
@@ -27764,21 +27863,25 @@ var markdown_editor_default = (Alpine) => {
             this.render();
           });
         }
-        this.$watch("state", () => {
+        this.$watch("state", (value) => {
+          if (value === null) {
+            this.state = "";
+          }
           this.render();
         });
       },
       render: function() {
-        if (this.$refs.textarea.scrollHeight > 0) {
+        if ((this.$refs.textarea?.scrollHeight ?? 0) > 0) {
           this.$refs.overlay.style.height = "150px";
           this.$refs.overlay.style.height = this.$refs.textarea.scrollHeight + "px";
         }
+        this.state = this.state.replace("\r\n", "\n");
         this.overlay = null;
         this.overlay = a(this.state);
         this.preview = null;
         this.preview = purify.sanitize(marked(this.state));
       },
-      checkForAutoInsertion($event) {
+      checkForAutoInsertion: function() {
         const lines = this.$refs.textarea.value.split("\n");
         const currentLine = this.$refs.textarea.value.substring(0, this.$refs.textarea.value.selectionStart).split("\n").length;
         const previousLine = lines[currentLine - 2];
@@ -27878,6 +27981,7 @@ var select_default = (Alpine) => {
     options: options2,
     optionsLimit,
     placeholder,
+    position,
     searchDebounce,
     searchingMessage,
     searchPrompt,
@@ -27902,6 +28006,7 @@ var select_default = (Alpine) => {
           noChoicesText: searchPrompt,
           noResultsText: noSearchResultsMessage,
           placeholderValue: placeholder,
+          position: position ?? "auto",
           removeItemButton: true,
           renderChoiceLimit: optionsLimit,
           searchFields: ["label"],
@@ -28062,7 +28167,7 @@ var tags_input_default = (Alpine) => {
   });
 };
 
-// node_modules/imask/esm/_rollupPluginBabelHelpers-b054ecd2.js
+// node_modules/imask/esm/_rollupPluginBabelHelpers-67bba7fb.js
 function _typeof2(obj) {
   "@babel/helpers - typeof";
   return _typeof2 = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? function(obj2) {
@@ -28127,13 +28232,13 @@ function _inherits(subClass, superClass) {
     _setPrototypeOf2(subClass, superClass);
 }
 function _getPrototypeOf(o2) {
-  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf2(o3) {
+  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf2(o3) {
     return o3.__proto__ || Object.getPrototypeOf(o3);
   };
   return _getPrototypeOf(o2);
 }
 function _setPrototypeOf2(o2, p2) {
-  _setPrototypeOf2 = Object.setPrototypeOf || function _setPrototypeOf3(o3, p3) {
+  _setPrototypeOf2 = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf3(o3, p3) {
     o3.__proto__ = p3;
     return o3;
   };
@@ -28223,7 +28328,7 @@ function _superPropBase(object, property) {
 }
 function _get() {
   if (typeof Reflect !== "undefined" && Reflect.get) {
-    _get = Reflect.get;
+    _get = Reflect.get.bind();
   } else {
     _get = function _get2(target, property, receiver) {
       var base = _superPropBase(target, property);
@@ -28279,9 +28384,20 @@ function _set(target, property, value, receiver, isStrict) {
 function _slicedToArray(arr, i) {
   return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray2(arr, i) || _nonIterableRest();
 }
+function _toConsumableArray2(arr) {
+  return _arrayWithoutHoles2(arr) || _iterableToArray2(arr) || _unsupportedIterableToArray2(arr) || _nonIterableSpread2();
+}
+function _arrayWithoutHoles2(arr) {
+  if (Array.isArray(arr))
+    return _arrayLikeToArray2(arr);
+}
 function _arrayWithHoles(arr) {
   if (Array.isArray(arr))
     return arr;
+}
+function _iterableToArray2(iter) {
+  if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null)
+    return Array.from(iter);
 }
 function _iterableToArrayLimit(arr, i) {
   var _i = arr == null ? null : typeof Symbol !== "undefined" && arr[Symbol.iterator] || arr["@@iterator"];
@@ -28330,6 +28446,9 @@ function _arrayLikeToArray2(arr, len) {
   for (var i = 0, arr2 = new Array(len); i < len; i++)
     arr2[i] = arr[i];
   return arr2;
+}
+function _nonIterableSpread2() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 function _nonIterableRest() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
@@ -28750,7 +28869,7 @@ var Masked = /* @__PURE__ */ function() {
         throw new Error("value should be string");
       var details = new ChangeDetails();
       var checkTail = isString2(tail) ? new ContinuousTailDetails(String(tail)) : tail;
-      if (flags && flags.tail)
+      if (flags !== null && flags !== void 0 && flags.tail)
         flags._beforeTailState = this.state;
       for (var ci = 0; ci < str.length; ++ci) {
         details.aggregate(this._appendChar(str[ci], flags, checkTail));
@@ -28829,6 +28948,9 @@ var Masked = /* @__PURE__ */ function() {
   }, {
     key: "splice",
     value: function splice(start, deleteCount, inserted, removeDirection) {
+      var flags = arguments.length > 4 && arguments[4] !== void 0 ? arguments[4] : {
+        input: true
+      };
       var tailPos = start + deleteCount;
       var tail = this.extractTail(tailPos);
       var oldRawValue;
@@ -28854,14 +28976,18 @@ var Masked = /* @__PURE__ */ function() {
           tail.unshift();
         }
       }
-      return details.aggregate(this.append(inserted, {
-        input: true
-      }, tail));
+      return details.aggregate(this.append(inserted, flags, tail));
     }
   }, {
     key: "maskEquals",
     value: function maskEquals(mask) {
       return this.mask === mask;
+    }
+  }, {
+    key: "typedValueEquals",
+    value: function typedValueEquals(value) {
+      var tval = this.typedValue;
+      return value === tval || Masked2.EMPTY_VALUES.includes(value) && Masked2.EMPTY_VALUES.includes(tval) || this.doFormat(value) === this.doFormat(this.typedValue);
     }
   }]);
   return Masked2;
@@ -28874,6 +29000,7 @@ Masked.DEFAULTS = {
     return v;
   }
 };
+Masked.EMPTY_VALUES = [void 0, null, ""];
 IMask.Masked = Masked;
 
 // node_modules/imask/esm/masked/factory.js
@@ -29145,7 +29272,7 @@ var PatternFixedDefinition = /* @__PURE__ */ function() {
       if (this._value)
         return details;
       var appended = this.char === ch;
-      var isResolved = appended && (this.isUnmasking || flags.input || flags.raw) && !this.eager && !flags.tail;
+      var isResolved = appended && (this.isUnmasking || flags.input || flags.raw) && (!flags.raw || !this.eager) && !flags.tail;
       if (isResolved)
         details.rawInserted = this.char;
       this._value = details.inserted = this.char;
@@ -29155,7 +29282,9 @@ var PatternFixedDefinition = /* @__PURE__ */ function() {
   }, {
     key: "_appendEager",
     value: function _appendEager() {
-      return this._appendChar(this.char);
+      return this._appendChar(this.char, {
+        tail: true
+      });
     }
   }, {
     key: "_appendPlaceholder",
@@ -29749,12 +29878,12 @@ var MaskedPattern = /* @__PURE__ */ function(_Masked) {
       if (!blockIter)
         return details;
       for (var bi = blockIter.index; ; ++bi) {
-        var _flags$_beforeTailSta;
+        var _flags$_beforeTailSta, _flags$_beforeTailSta2;
         var _block = this._blocks[bi];
         if (!_block)
           break;
         var blockDetails = _block._appendChar(ch, Object.assign({}, flags, {
-          _beforeTailState: (_flags$_beforeTailSta = flags._beforeTailState) === null || _flags$_beforeTailSta === void 0 ? void 0 : _flags$_beforeTailSta._blocks[bi]
+          _beforeTailState: (_flags$_beforeTailSta = flags._beforeTailState) === null || _flags$_beforeTailSta === void 0 ? void 0 : (_flags$_beforeTailSta2 = _flags$_beforeTailSta._blocks) === null || _flags$_beforeTailSta2 === void 0 ? void 0 : _flags$_beforeTailSta2[bi]
         }));
         var skip = blockDetails.skip;
         details.aggregate(blockDetails);
@@ -30449,6 +30578,8 @@ var InputMask = /* @__PURE__ */ function() {
       return this._value;
     },
     set: function set2(str) {
+      if (this.value === str)
+        return;
       this.masked.value = str;
       this.updateControl();
       this.alignCursor();
@@ -30459,6 +30590,8 @@ var InputMask = /* @__PURE__ */ function() {
       return this._unmaskedValue;
     },
     set: function set2(str) {
+      if (this.unmaskedValue === str)
+        return;
       this.masked.unmaskedValue = str;
       this.updateControl();
       this.alignCursor();
@@ -30469,6 +30602,8 @@ var InputMask = /* @__PURE__ */ function() {
       return this.masked.typedValue;
     },
     set: function set2(val) {
+      if (this.masked.typedValueEquals(val))
+        return;
       this.masked.typedValue = val;
       this.updateControl();
       this.alignCursor();
@@ -30642,7 +30777,10 @@ var InputMask = /* @__PURE__ */ function() {
         return this.updateValue();
       var details = new ActionDetails(this.el.value, this.cursorPos, this.value, this._selection);
       var oldRawValue = this.masked.rawInputValue;
-      var offset2 = this.masked.splice(details.startChangePos, details.removed.length, details.inserted, details.removeDirection).offset;
+      var offset2 = this.masked.splice(details.startChangePos, details.removed.length, details.inserted, details.removeDirection, {
+        input: true,
+        raw: true
+      }).offset;
       var removeDirection = oldRawValue === this.masked.rawInputValue ? details.removeDirection : DIRECTION.NONE;
       var cursorPos = this.masked.nearestInputPos(details.startChangePos + offset2, removeDirection);
       if (removeDirection !== DIRECTION.NONE)
@@ -30977,6 +31115,11 @@ var MaskedNumber = /* @__PURE__ */ function(_Masked) {
     get: function get() {
       return this.signed || this.min != null && this.min < 0 || this.max != null && this.max < 0;
     }
+  }, {
+    key: "typedValueEquals",
+    value: function typedValueEquals(value) {
+      return (_get(_getPrototypeOf(MaskedNumber2.prototype), "typedValueEquals", this).call(this, value) || MaskedNumber2.EMPTY_VALUES.includes(value) && MaskedNumber2.EMPTY_VALUES.includes(this.typedValue)) && !(value === 0 && this.value === "");
+    }
   }]);
   return MaskedNumber2;
 }(Masked);
@@ -30989,6 +31132,7 @@ MaskedNumber.DEFAULTS = {
   normalizeZeros: true,
   padFractionalZeros: false
 };
+MaskedNumber.EMPTY_VALUES = [].concat(_toConsumableArray2(Masked.EMPTY_VALUES), [0]);
 IMask.MaskedNumber = MaskedNumber;
 
 // node_modules/imask/esm/masked/function.js
@@ -31039,7 +31183,7 @@ var MaskedDynamic = /* @__PURE__ */ function(_Masked) {
       var flags = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
       var details = this._applyDispatch(ch, flags);
       if (this.currentMask) {
-        details.aggregate(this.currentMask._appendChar(ch, flags));
+        details.aggregate(this.currentMask._appendChar(ch, this.currentMaskFlags(flags)));
       }
       return details;
     }
@@ -31054,7 +31198,7 @@ var MaskedDynamic = /* @__PURE__ */ function(_Masked) {
       var tailValue = inputValue.slice(insertValue.length);
       var prevMask = this.currentMask;
       var details = new ChangeDetails();
-      var prevMaskState = prevMask && prevMask.state;
+      var prevMaskState = prevMask === null || prevMask === void 0 ? void 0 : prevMask.state;
       this.currentMask = this.doDispatch(appended, Object.assign({}, flags));
       if (this.currentMask) {
         if (this.currentMask !== prevMask) {
@@ -31096,6 +31240,14 @@ var MaskedDynamic = /* @__PURE__ */ function(_Masked) {
       return details;
     }
   }, {
+    key: "currentMaskFlags",
+    value: function currentMaskFlags(flags) {
+      var _flags$_beforeTailSta, _flags$_beforeTailSta2;
+      return Object.assign({}, flags, {
+        _beforeTailState: ((_flags$_beforeTailSta = flags._beforeTailState) === null || _flags$_beforeTailSta === void 0 ? void 0 : _flags$_beforeTailSta.currentMaskRef) === this.currentMask && ((_flags$_beforeTailSta2 = flags._beforeTailState) === null || _flags$_beforeTailSta2 === void 0 ? void 0 : _flags$_beforeTailSta2.currentMask) || flags._beforeTailState
+      });
+    }
+  }, {
     key: "doDispatch",
     value: function doDispatch(appended) {
       var flags = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
@@ -31103,18 +31255,29 @@ var MaskedDynamic = /* @__PURE__ */ function(_Masked) {
     }
   }, {
     key: "doValidate",
-    value: function doValidate() {
-      var _get2, _this$currentMask;
-      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
+    value: function doValidate(flags) {
+      return _get(_getPrototypeOf(MaskedDynamic2.prototype), "doValidate", this).call(this, flags) && (!this.currentMask || this.currentMask.doValidate(this.currentMaskFlags(flags)));
+    }
+  }, {
+    key: "doPrepare",
+    value: function doPrepare(str) {
+      var flags = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
+      var _normalizePrepare = normalizePrepare(_get(_getPrototypeOf(MaskedDynamic2.prototype), "doPrepare", this).call(this, str, flags)), _normalizePrepare2 = _slicedToArray(_normalizePrepare, 2), s2 = _normalizePrepare2[0], details = _normalizePrepare2[1];
+      if (this.currentMask) {
+        var currentDetails;
+        var _normalizePrepare3 = normalizePrepare(_get(_getPrototypeOf(MaskedDynamic2.prototype), "doPrepare", this).call(this, s2, this.currentMaskFlags(flags)));
+        var _normalizePrepare4 = _slicedToArray(_normalizePrepare3, 2);
+        s2 = _normalizePrepare4[0];
+        currentDetails = _normalizePrepare4[1];
+        details = details.aggregate(currentDetails);
       }
-      return (_get2 = _get(_getPrototypeOf(MaskedDynamic2.prototype), "doValidate", this)).call.apply(_get2, [this].concat(args)) && (!this.currentMask || (_this$currentMask = this.currentMask).doValidate.apply(_this$currentMask, args));
+      return [s2, details];
     }
   }, {
     key: "reset",
     value: function reset() {
-      var _this$currentMask2;
-      (_this$currentMask2 = this.currentMask) === null || _this$currentMask2 === void 0 ? void 0 : _this$currentMask2.reset();
+      var _this$currentMask;
+      (_this$currentMask = this.currentMask) === null || _this$currentMask === void 0 ? void 0 : _this$currentMask.reset();
       this.compiledMasks.forEach(function(m) {
         return m.reset();
       });
@@ -31151,35 +31314,36 @@ var MaskedDynamic = /* @__PURE__ */ function(_Masked) {
   }, {
     key: "isComplete",
     get: function get() {
-      var _this$currentMask3;
-      return Boolean((_this$currentMask3 = this.currentMask) === null || _this$currentMask3 === void 0 ? void 0 : _this$currentMask3.isComplete);
+      var _this$currentMask2;
+      return Boolean((_this$currentMask2 = this.currentMask) === null || _this$currentMask2 === void 0 ? void 0 : _this$currentMask2.isComplete);
     }
   }, {
     key: "isFilled",
     get: function get() {
-      var _this$currentMask4;
-      return Boolean((_this$currentMask4 = this.currentMask) === null || _this$currentMask4 === void 0 ? void 0 : _this$currentMask4.isFilled);
+      var _this$currentMask3;
+      return Boolean((_this$currentMask3 = this.currentMask) === null || _this$currentMask3 === void 0 ? void 0 : _this$currentMask3.isFilled);
     }
   }, {
     key: "remove",
     value: function remove() {
       var details = new ChangeDetails();
       if (this.currentMask) {
-        var _this$currentMask5;
-        details.aggregate((_this$currentMask5 = this.currentMask).remove.apply(_this$currentMask5, arguments)).aggregate(this._applyDispatch());
+        var _this$currentMask4;
+        details.aggregate((_this$currentMask4 = this.currentMask).remove.apply(_this$currentMask4, arguments)).aggregate(this._applyDispatch());
       }
       return details;
     }
   }, {
     key: "state",
     get: function get() {
+      var _this$currentMask5;
       return Object.assign({}, _get(_getPrototypeOf(MaskedDynamic2.prototype), "state", this), {
         _rawInputValue: this.rawInputValue,
         compiledMasks: this.compiledMasks.map(function(m) {
           return m.state;
         }),
         currentMaskRef: this.currentMask,
-        currentMask: this.currentMask && this.currentMask.state
+        currentMask: (_this$currentMask5 = this.currentMask) === null || _this$currentMask5 === void 0 ? void 0 : _this$currentMask5.state
       });
     },
     set: function set2(state2) {
@@ -31202,11 +31366,11 @@ var MaskedDynamic = /* @__PURE__ */ function(_Masked) {
   }, {
     key: "extractTail",
     value: function extractTail() {
-      var _this$currentMask7, _get3;
-      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
+      var _this$currentMask7, _get2;
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
       }
-      return this.currentMask ? (_this$currentMask7 = this.currentMask).extractTail.apply(_this$currentMask7, args) : (_get3 = _get(_getPrototypeOf(MaskedDynamic2.prototype), "extractTail", this)).call.apply(_get3, [this].concat(args));
+      return this.currentMask ? (_this$currentMask7 = this.currentMask).extractTail.apply(_this$currentMask7, args) : (_get2 = _get(_getPrototypeOf(MaskedDynamic2.prototype), "extractTail", this)).call.apply(_get2, [this].concat(args));
     }
   }, {
     key: "doCommit",
@@ -31218,11 +31382,11 @@ var MaskedDynamic = /* @__PURE__ */ function(_Masked) {
   }, {
     key: "nearestInputPos",
     value: function nearestInputPos() {
-      var _this$currentMask8, _get4;
-      for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-        args[_key3] = arguments[_key3];
+      var _this$currentMask8, _get3;
+      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
       }
-      return this.currentMask ? (_this$currentMask8 = this.currentMask).nearestInputPos.apply(_this$currentMask8, args) : (_get4 = _get(_getPrototypeOf(MaskedDynamic2.prototype), "nearestInputPos", this)).call.apply(_get4, [this].concat(args));
+      return this.currentMask ? (_this$currentMask8 = this.currentMask).nearestInputPos.apply(_this$currentMask8, args) : (_get3 = _get(_getPrototypeOf(MaskedDynamic2.prototype), "nearestInputPos", this)).call.apply(_get3, [this].concat(args));
     }
   }, {
     key: "overwrite",
@@ -31248,6 +31412,12 @@ var MaskedDynamic = /* @__PURE__ */ function(_Masked) {
         return m.maskEquals((_mask$mi = mask[mi]) === null || _mask$mi === void 0 ? void 0 : _mask$mi.mask);
       });
     }
+  }, {
+    key: "typedValueEquals",
+    value: function typedValueEquals(value) {
+      var _this$currentMask9;
+      return Boolean((_this$currentMask9 = this.currentMask) === null || _this$currentMask9 === void 0 ? void 0 : _this$currentMask9.typedValueEquals(value));
+    }
   }]);
   return MaskedDynamic2;
 }(Masked);
@@ -31261,7 +31431,7 @@ MaskedDynamic.DEFAULTS = {
       m.append(inputValue, {
         raw: true
       });
-      m.append(appended, flags);
+      m.append(appended, masked.currentMaskFlags(flags));
       var weight = m.rawInputValue.length;
       return {
         weight,

@@ -423,7 +423,7 @@ class TestsPageActions
         };
     }
 
-    public function assertPageActionHeld(): Closure
+    public function assertPageActionHalted(): Closure
     {
         return function (string $name): static {
             $name = $this->parseActionName($name);
@@ -435,6 +435,14 @@ class TestsPageActions
 
             return $this;
         };
+    }
+
+    /**
+     * @deprecated Use `->assertPageActionHalted()` instead.
+     */
+    public function assertPageActionHeld(): Closure
+    {
+        return $this->assertPageActionHalted();
     }
 
     public function assertHasPageActionErrors(): Closure

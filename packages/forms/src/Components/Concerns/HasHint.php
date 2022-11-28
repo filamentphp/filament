@@ -8,13 +8,24 @@ use Illuminate\Support\HtmlString;
 
 trait HasHint
 {
-    protected string | HtmlString | Action | Closure | null $hint = null;
+    protected string | HtmlString | Closure | null $hint = null;
+
+    protected Action | Closure | null $hintAction = null;
+
+    protected string | Closure | null $hintColor = null;
 
     protected string | Closure | null $hintIcon = null;
 
-    public function hint(string | HtmlString | Action | Closure | null $hint): static
+    public function hint(string | HtmlString | Closure | null $hint): static
     {
         $this->hint = $hint;
+
+        return $this;
+    }
+
+    public function hintColor(string | Closure | null $hintColor): static
+    {
+        $this->hintColor = $hintColor;
 
         return $this;
     }
@@ -26,11 +37,21 @@ trait HasHint
         return $this;
     }
 
-    public function getHint(): string | HtmlString | Action | null
+    public function hintAction(Action | Closure | null $action): static
     {
-        $value = $this->evaluate($this->hint);
+        $this->hintAction = $action;
 
-        return $value instanceof Action ? $value->component($this) : $value;
+        return $this;
+    }
+
+    public function getHint(): string | HtmlString | null
+    {
+        return $this->evaluate($this->hint);
+    }
+
+    public function getHintColor(): ?string
+    {
+        return $this->evaluate($this->hintColor);
     }
 
     public function getHintIcon(): ?string
@@ -38,13 +59,18 @@ trait HasHint
         return $this->evaluate($this->hintIcon);
     }
 
+    public function getHintAction(): ?Action
+    {
+        return $this->evaluate($this->hintAction)?->component($this);
+    }
+
     public function getActions(): array
     {
-        $hint = $this->getHint();
+        $hintAction = $this->getHintAction();
 
         return array_merge(
             parent::getActions(),
-            $hint instanceof Action ? [$hint->getName() => $hint->component($this)] : [],
+            $hintAction ? [$hintAction->getName() => $hintAction->component($this)] : [],
         );
     }
 }

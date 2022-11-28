@@ -6,18 +6,18 @@ use Closure;
 
 trait HasDuration
 {
-    protected int | Closure | null $duration = 6000;
+    protected int | string | Closure $duration = 6000;
 
-    public function duration(int | Closure | null $duration): static
+    public function duration(int | string | Closure | null $duration): static
     {
-        $this->duration = $duration;
+        $this->duration = $duration ?? 'persistent';
 
         return $this;
     }
 
-    public function getDuration(): ?int
+    public function getDuration(): int | string
     {
-        return $this->evaluate($this->duration);
+        return $this->evaluate($this->duration) ?? 'persistent';
     }
 
     public function seconds(float $seconds): static
@@ -29,7 +29,7 @@ trait HasDuration
 
     public function persistent(): static
     {
-        $this->duration(null);
+        $this->duration('persistent');
 
         return $this;
     }

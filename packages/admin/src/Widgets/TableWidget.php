@@ -5,6 +5,7 @@ namespace Filament\Widgets;
 use Closure;
 use Filament\Tables;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
@@ -16,7 +17,7 @@ class TableWidget extends Widget implements Tables\Contracts\HasTable
 
     protected static ?string $heading = null;
 
-    protected function getTableHeading(): string | Closure | null
+    protected function getTableHeading(): string | Htmlable | Closure | null
     {
         return static::$heading ?? (string) Str::of(class_basename(static::class))
             ->beforeLast('Widget')

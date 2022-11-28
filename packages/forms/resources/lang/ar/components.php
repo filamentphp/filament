@@ -16,6 +16,10 @@ return [
                 'label' => 'إضافة إلى :label',
             ],
 
+            'create_item_between' => [
+                'label' => 'إدراج',
+            ],
+
             'delete_item' => [
                 'label' => 'حذف',
             ],
@@ -52,6 +56,22 @@ return [
 
     ],
 
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'إلغاء تحديد الكل',
+            ],
+
+            'select_all' => [
+                'label' => 'تحديد الكل',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [
@@ -62,6 +82,10 @@ return [
 
             'delete' => [
                 'label' => 'حذف صف',
+            ],
+
+            'reorder' => [
+                'label' => 'إعادة ترتيب الصف',
             ],
 
         ],

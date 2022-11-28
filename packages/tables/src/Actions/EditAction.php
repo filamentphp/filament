@@ -31,7 +31,7 @@ class EditAction extends Action
 
         $this->modalButton(__('filament-support::actions/edit.single.modal.actions.save.label'));
 
-        $this->successNotificationMessage(__('filament-support::actions/edit.single.messages.saved'));
+        $this->successNotificationTitle(__('filament-support::actions/edit.single.messages.saved'));
 
         $this->icon('heroicon-s-pencil');
 

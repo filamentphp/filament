@@ -71,7 +71,7 @@ trait CanDissociateRecords
     }
 
     /**
-     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     * @deprecated Use `->successNotificationTitle()` on the action instead.
      */
     protected function getDissociatedNotificationMessage(): ?string
     {
@@ -104,7 +104,7 @@ trait CanDissociateRecords
     }
 
     /**
-     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     * @deprecated Use `->successNotificationTitle()` on the action instead.
      */
     protected function getBulkDissociatedNotificationMessage(): ?string
     {
