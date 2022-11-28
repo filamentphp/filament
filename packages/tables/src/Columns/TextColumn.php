@@ -29,8 +29,8 @@ class TextColumn extends Column
     protected ?string $enum = null;
 
     /**
-     * @param string | array<scalar, scalar> | Arrayable $enum
-     * @param mixed $default
+     * @param  string | array<scalar, scalar> | Arrayable  $enum
+     * @param  mixed  $default
      */
     public function enum(string | array | Arrayable $enum, $default = null): static
     {
@@ -77,7 +77,7 @@ class TextColumn extends Column
     }
 
     /**
-     * @param array<scalar> $state
+     * @param  array<scalar>  $state
      */
     protected function mutateArrayState(array $state): string
     {

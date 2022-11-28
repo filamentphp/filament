@@ -13,7 +13,7 @@ trait HasExtraAttributes
     protected array | Closure $extraAttributes = [];
 
     /**
-     * @param array<array-key, mixed> | Closure $attributes
+     * @param  array<array-key, mixed> | Closure  $attributes
      */
     public function extraAttributes(array | Closure $attributes): static
     {

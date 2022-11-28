@@ -62,7 +62,7 @@ class Action extends StaticAction implements Arrayable, Groupable
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public static function fromArray(array $data): static
     {

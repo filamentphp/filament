@@ -26,7 +26,7 @@ trait HasState
     }
 
     /**
-     * @param mixed $state
+     * @param  mixed  $state
      */
     public function default($state): static
     {
@@ -118,7 +118,7 @@ trait HasState
     }
 
     /**
-     * @param array<array-key> $state
+     * @param  array<array-key>  $state
      * @return mixed
      */
     protected function mutateArrayState(array $state)

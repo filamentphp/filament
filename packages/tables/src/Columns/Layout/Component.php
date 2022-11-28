@@ -39,7 +39,7 @@ class Component extends ViewComponent
     protected bool $isCollapsible = false;
 
     /**
-     * @param array<Column | Component> | Closure $schema
+     * @param  array<Column | Component> | Closure  $schema
      */
     public function schema(array | Closure $schema): static
     {
@@ -49,7 +49,7 @@ class Component extends ViewComponent
     }
 
     /**
-     * @param array<Column | Component> | Closure $components
+     * @param  array<Column | Component> | Closure  $components
      */
     public function components(array | Closure $components): static
     {

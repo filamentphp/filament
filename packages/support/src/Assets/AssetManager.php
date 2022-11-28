@@ -32,7 +32,7 @@ class AssetManager
     protected array $themes = [];
 
     /**
-     * @param array<Asset> $assets
+     * @param  array<Asset>  $assets
      */
     public function register(array $assets, ?string $package = null): void
     {
@@ -51,7 +51,7 @@ class AssetManager
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function registerScriptData(array $data, ?string $package = null): void
     {
@@ -59,7 +59,7 @@ class AssetManager
     }
 
     /**
-     * @param array<string> | null $packages
+     * @param  array<string> | null  $packages
      * @return array<Asset>
      */
     public function getAlpineComponents(?array $packages = null): array
@@ -68,7 +68,7 @@ class AssetManager
     }
 
     /**
-     * @param array<string> | null $packages
+     * @param  array<string> | null  $packages
      * @return array<string, mixed>
      */
     public function getScriptData(?array $packages = null): array
@@ -91,7 +91,7 @@ class AssetManager
     }
 
     /**
-     * @param array<string> | null $packages
+     * @param  array<string> | null  $packages
      * @return array<Asset>
      */
     public function getScripts(?array $packages = null, bool $withCore = true): array
@@ -110,7 +110,7 @@ class AssetManager
     }
 
     /**
-     * @param array<string> | null $packages
+     * @param  array<string> | null  $packages
      */
     public function renderScripts(?array $packages = null, bool $withCore = false): string
     {
@@ -131,7 +131,7 @@ class AssetManager
     }
 
     /**
-     * @param array<string> | null $packages
+     * @param  array<string> | null  $packages
      * @return array<Asset>
      */
     public function getStyles(?array $packages = null): array
@@ -140,7 +140,7 @@ class AssetManager
     }
 
     /**
-     * @param array<string> | null $packages
+     * @param  array<string> | null  $packages
      */
     public function renderStyles(?array $packages = null): string
     {
@@ -163,8 +163,8 @@ class AssetManager
     }
 
     /**
-     * @param array<string, array<Asset>> $assets
-     * @param array<string> | null $packages
+     * @param  array<string, array<Asset>>  $assets
+     * @param  array<string> | null  $packages
      * @return array<Asset>
      */
     protected function getAssets(array $assets, ?array $packages = null): array

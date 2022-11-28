@@ -15,7 +15,7 @@ class Grid extends Component
     protected ?array $columns = null;
 
     /**
-     * @param array<string, int | null> | int | null $columns
+     * @param  array<string, int | null> | int | null  $columns
      */
     final public function __construct(array | int | null $columns = 2)
     {
@@ -23,7 +23,7 @@ class Grid extends Component
     }
 
     /**
-     * @param array<string, int | null> | int | null $columns
+     * @param  array<string, int | null> | int | null  $columns
      */
     public static function make(array | int | null $columns = 2): static
     {
@@ -34,7 +34,7 @@ class Grid extends Component
     }
 
     /**
-     * @param array<string, int | null> | int | null $columns
+     * @param  array<string, int | null> | int | null  $columns
      */
     public function columns(array | int | null $columns = 2): static
     {

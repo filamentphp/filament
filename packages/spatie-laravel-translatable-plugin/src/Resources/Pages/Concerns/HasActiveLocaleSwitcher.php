@@ -2,8 +2,6 @@
 
 namespace Filament\Resources\Pages\Concerns;
 
-use Filament\Actions\LocaleSwitcher;
-
 trait HasActiveLocaleSwitcher
 {
     public $activeLocale = null;

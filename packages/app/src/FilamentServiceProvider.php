@@ -121,8 +121,8 @@ class FilamentServiceProvider extends PluginServiceProvider
     }
 
     /**
-     * @param array<string, mixed> $original
-     * @param array<string, mixed> $merging
+     * @param  array<string, mixed>  $original
+     * @param  array<string, mixed>  $merging
      * @return array<string, mixed>
      */
     protected function mergeConfig(array $original, array $merging): array

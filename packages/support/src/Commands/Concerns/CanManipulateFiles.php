@@ -8,7 +8,7 @@ use ReflectionClass;
 trait CanManipulateFiles
 {
     /**
-     * @param array<string> $paths
+     * @param  array<string>  $paths
      */
     protected function checkForCollision(array $paths): bool
     {
@@ -24,7 +24,7 @@ trait CanManipulateFiles
     }
 
     /**
-     * @param array<string, string> $replacements
+     * @param  array<string, string>  $replacements
      */
     protected function copyStubToApp(string $stub, string $targetPath, array $replacements = []): void
     {

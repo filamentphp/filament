@@ -19,7 +19,7 @@ trait HasColor
     }
 
     /**
-     * @param array<array-key, mixed> | Closure $colors
+     * @param  array<array-key, mixed> | Closure  $colors
      */
     public function colors(array | Closure $colors): static
     {

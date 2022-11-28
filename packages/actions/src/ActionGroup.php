@@ -31,7 +31,7 @@ class ActionGroup extends ViewComponent
     protected string $viewIdentifier = 'group';
 
     /**
-     * @param array<Groupable&StaticAction> $actions
+     * @param  array<Groupable&StaticAction>  $actions
      */
     public function __construct(
         protected array $actions,
@@ -39,7 +39,7 @@ class ActionGroup extends ViewComponent
     }
 
     /**
-     * @param array<Groupable&StaticAction> $actions
+     * @param  array<Groupable&StaticAction>  $actions
      */
     public static function make(array $actions): static
     {

@@ -42,7 +42,7 @@ class Icon
     }
 
     /**
-     * @param string | array<string | int, bool | string> | null $class
+     * @param  string | array<string | int, bool | string> | null  $class
      */
     public function class(string | array | null $class): static
     {

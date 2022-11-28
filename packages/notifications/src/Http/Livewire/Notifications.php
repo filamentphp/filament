@@ -53,7 +53,7 @@ class Notifications extends Component
     }
 
     /**
-     * @param array<string, mixed> $notification
+     * @param  array<string, mixed>  $notification
      */
     public function pushNotificationFromEvent(array $notification): void
     {
@@ -111,7 +111,7 @@ class Notifications extends Component
     }
 
     /**
-     * @param array<string, mixed> $notification
+     * @param  array<string, mixed>  $notification
      */
     public function handleBroadcastNotification(array $notification): void
     {

@@ -21,7 +21,7 @@ trait HasIcon
     }
 
     /**
-     * @param array<array-key, mixed> | Closure $icons
+     * @param  array<array-key, mixed> | Closure  $icons
      */
     public function icons(array | Closure $icons): static
     {

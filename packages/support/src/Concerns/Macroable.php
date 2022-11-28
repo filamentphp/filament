@@ -40,7 +40,7 @@ trait Macroable
     }
 
     /**
-     * @param array<array-key> $parameters
+     * @param  array<array-key>  $parameters
      * @return mixed
      */
     public static function __callStatic(string $method, array $parameters)
@@ -63,7 +63,7 @@ trait Macroable
     }
 
     /**
-     * @param array<array-key> $parameters
+     * @param  array<array-key>  $parameters
      * @return mixed
      */
     public function __call(string $method, array $parameters)

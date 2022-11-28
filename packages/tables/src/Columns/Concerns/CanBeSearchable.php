@@ -20,7 +20,7 @@ trait CanBeSearchable
     protected ?Closure $searchQuery = null;
 
     /**
-     * @param bool | array<string> $condition
+     * @param  bool | array<string>  $condition
      */
     public function searchable(
         bool | array $condition = true,

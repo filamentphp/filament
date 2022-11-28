@@ -150,7 +150,7 @@ class AttachAction extends Action
     }
 
     /**
-     * @param array<string> | Closure | null $columns
+     * @param  array<string> | Closure | null  $columns
      */
     public function recordSelectSearchColumns(array | Closure | null $columns): static
     {

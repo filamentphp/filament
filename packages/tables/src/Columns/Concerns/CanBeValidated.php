@@ -16,7 +16,7 @@ trait CanBeValidated
     protected string | Closure | null $validationAttribute = null;
 
     /**
-     * @param array<array-key> | Closure $rules
+     * @param  array<array-key> | Closure  $rules
      */
     public function rules(array | Closure $rules): static
     {

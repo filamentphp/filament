@@ -14,7 +14,7 @@ trait CanSearchRecords
     public array $tableColumnSearches = [];
 
     /**
-     * @var string | null $tableSearch
+     * @var string | null
      */
     public $tableSearch = '';
 
@@ -33,7 +33,7 @@ trait CanSearchRecords
     }
 
     /**
-     * @param string | null $value
+     * @param  string | null  $value
      */
     public function updatedTableColumnSearches($value, string $key): void
     {
@@ -137,7 +137,7 @@ trait CanSearchRecords
     }
 
     /**
-     * @param array<string, string | array<string, string | null> | null> $searches
+     * @param  array<string, string | array<string, string | null> | null>  $searches
      * @return array<string, string | array<string, string | null> | null>
      */
     protected function castTableColumnSearches(array $searches): array

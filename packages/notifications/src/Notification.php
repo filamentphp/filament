@@ -68,7 +68,7 @@ class Notification extends ViewComponent implements Arrayable
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public static function fromArray(array $data): static
     {
@@ -102,7 +102,7 @@ class Notification extends ViewComponent implements Arrayable
     }
 
     /**
-     * @param Model | Authenticatable | Collection | array<Model | Authenticatable> $users
+     * @param  Model | Authenticatable | Collection | array<Model | Authenticatable>  $users
      */
     public function broadcast(Model | Authenticatable | Collection | array $users): static
     {
@@ -118,7 +118,7 @@ class Notification extends ViewComponent implements Arrayable
     }
 
     /**
-     * @param Model | Authenticatable | Collection | array<Model | Authenticatable> $users
+     * @param  Model | Authenticatable | Collection | array<Model | Authenticatable>  $users
      */
     public function sendToDatabase(Model | Authenticatable | Collection | array $users): static
     {

@@ -27,7 +27,6 @@ trait InteractsWithFormActions
             if ($action instanceof ActionGroup) {
                 foreach ($action->getActions() as $groupedAction) {
                     /** @var Action $groupedAction */
-
                     $groupedAction->livewire($this);
 
                     $this->cacheAction($groupedAction);

@@ -24,7 +24,7 @@ class BulkAction extends MountableAction
     }
 
     /**
-     * @param array<string, mixed> $parameters
+     * @param  array<string, mixed>  $parameters
      * @return mixed
      */
     public function call(array $parameters = [])
@@ -74,7 +74,7 @@ class BulkAction extends MountableAction
     }
 
     /**
-     * @param array<array-key, mixed> $arguments
+     * @param  array<array-key, mixed>  $arguments
      * @return array<array-key, mixed>
      */
     protected function parseAuthorizationArguments(array $arguments): array

@@ -195,7 +195,7 @@ class ImageColumn extends Column
     }
 
     /**
-     * @param array<array-key, mixed> | Closure $attributes
+     * @param  array<array-key, mixed> | Closure  $attributes
      */
     public function extraImgAttributes(array | Closure $attributes): static
     {
