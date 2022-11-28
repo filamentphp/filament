@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait CanGroupRecords
 {
-    public $tableGrouping = null;
+    public ?string $tableGrouping = null;
 
     public function getTableGrouping(): ?Group
     {

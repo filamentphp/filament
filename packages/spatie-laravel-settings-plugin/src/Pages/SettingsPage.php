@@ -3,7 +3,9 @@
 namespace Filament\Pages;
 
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Halt;
 
@@ -18,7 +20,10 @@ class SettingsPage extends Page
 
     protected static string $view = 'filament-spatie-laravel-settings-plugin::pages.settings-page';
 
-    public $data;
+    /**
+     * @var array<string, mixed>
+     */
+    public array $data;
 
     public function mount(): void
     {
@@ -38,6 +43,10 @@ class SettingsPage extends Page
         $this->callHook('afterFill');
     }
 
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     protected function mutateFormDataBeforeFill(array $data): array
     {
         return $data;
@@ -99,6 +108,10 @@ class SettingsPage extends Page
         return null;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     protected function mutateFormDataBeforeSave(array $data): array
     {
         return $data;
@@ -112,6 +125,9 @@ class SettingsPage extends Page
             ->append('Settings');
     }
 
+    /**
+     * @return array<Action | ActionGroup>
+     */
     public function getFormActions(): array
     {
         return [
@@ -132,6 +148,9 @@ class SettingsPage extends Page
         return $this->getSaveFormAction();
     }
 
+    /**
+     * @return array<int | string, string | Form>
+     */
     protected function getForms(): array
     {
         return [

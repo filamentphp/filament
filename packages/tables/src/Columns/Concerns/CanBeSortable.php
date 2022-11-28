@@ -3,15 +3,22 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
+use Psy\Util\Str;
 
 trait CanBeSortable
 {
     protected bool $isSortable = false;
 
+    /**
+     * @var array<string> | null
+     */
     protected ?array $sortColumns = [];
 
     protected ?Closure $sortQuery = null;
 
+    /**
+     * @param bool | array<string> $condition
+     */
     public function sortable(bool | array $condition = true, ?Closure $query = null): static
     {
         if (is_array($condition)) {
@@ -27,6 +34,9 @@ trait CanBeSortable
         return $this;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getSortColumns(): array
     {
         return $this->sortColumns ?? $this->getDefaultSortColumns();
@@ -37,6 +47,9 @@ trait CanBeSortable
         return $this->isSortable;
     }
 
+    /**
+     * @return array{0: string}
+     */
     public function getDefaultSortColumns(): array
     {
         return [str($this->getName())->afterLast('.')];

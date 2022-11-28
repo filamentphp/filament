@@ -17,6 +17,7 @@ trait InteractsWithFormActions
 
     protected function cacheFormActions(): void
     {
+        /** @var array<string, Action | ActionGroup> */
         $actions = Action::configureUsing(
             Closure::fromCallable([$this, 'configureAction']),
             fn (): array => $this->getFormActions(),
@@ -25,6 +26,8 @@ trait InteractsWithFormActions
         foreach ($actions as $index => $action) {
             if ($action instanceof ActionGroup) {
                 foreach ($action->getActions() as $groupedAction) {
+                    /** @var Action $groupedAction */
+
                     $groupedAction->livewire($this);
 
                     $this->cacheAction($groupedAction);
@@ -40,11 +43,17 @@ trait InteractsWithFormActions
         }
     }
 
+    /**
+     * @return array<string, Action | ActionGroup>
+     */
     public function getCachedFormActions(): array
     {
         return $this->cachedFormActions;
     }
 
+    /**
+     * @return array<Action | ActionGroup>
+     */
     public function getFormActions(): array
     {
         return [];

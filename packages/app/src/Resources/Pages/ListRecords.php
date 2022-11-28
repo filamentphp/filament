@@ -263,6 +263,9 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->reorderable(condition: static::getResource()::canReorder());
     }
 
+    /**
+     * @return array<int | string, string | Form>
+     */
     protected function getForms(): array
     {
         return [];

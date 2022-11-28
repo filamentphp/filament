@@ -18,7 +18,7 @@ class CheckTranslationsCommand extends Command
 
     protected $description = 'Checks for missing and removed translations.';
 
-    public function handle()
+    public function handle(): int
     {
         $this->scan('filament');
         $this->scan('forms');
@@ -29,7 +29,7 @@ class CheckTranslationsCommand extends Command
         return self::SUCCESS;
     }
 
-    protected function scan(string $package)
+    protected function scan(string $package): void
     {
         $localeRootDirectory = match ($source = $this->option('source')) {
             'app' => lang_path("vendor/{$package}"),

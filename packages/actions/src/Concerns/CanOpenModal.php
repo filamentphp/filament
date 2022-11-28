@@ -3,6 +3,7 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Filament\Actions\Modal\Actions\Action;
 use Filament\Actions\Modal\Actions\Action as ModalAction;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
@@ -119,6 +120,9 @@ trait CanOpenModal
 
     abstract public function getLivewireCallActionName(): string;
 
+    /**
+     * @return array<Action>
+     */
     public function getModalActions(): array
     {
         if ($this->isWizard()) {
@@ -179,6 +183,9 @@ trait CanOpenModal
             ->color('gray');
     }
 
+    /**
+     * @return array<Action>
+     */
     public function getExtraModalActions(): array
     {
         return $this->evaluate($this->extraModalActions);

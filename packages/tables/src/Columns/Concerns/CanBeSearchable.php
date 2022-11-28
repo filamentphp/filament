@@ -12,10 +12,16 @@ trait CanBeSearchable
 
     protected bool $isSearchable = false;
 
+    /**
+     * @var array<string> | null
+     */
     protected ?array $searchColumns = null;
 
     protected ?Closure $searchQuery = null;
 
+    /**
+     * @param bool | array<string> $condition
+     */
     public function searchable(
         bool | array $condition = true,
         ?Closure $query = null,
@@ -37,6 +43,9 @@ trait CanBeSearchable
         return $this;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getSearchColumns(): array
     {
         return $this->searchColumns ?? $this->getDefaultSearchColumns();
@@ -57,6 +66,9 @@ trait CanBeSearchable
         return $this->isSearchable() && $this->isIndividuallySearchable;
     }
 
+    /**
+     * @return array{0: string}
+     */
     public function getDefaultSearchColumns(): array
     {
         return [str($this->getName())->afterLast('.')];

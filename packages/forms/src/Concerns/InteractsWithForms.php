@@ -217,6 +217,9 @@ trait InteractsWithForms
         return $form;
     }
 
+    /**
+     * @return array<string, Form>
+     */
     protected function cacheForms(): array
     {
         $this->isCachingForms = true;
@@ -255,6 +258,9 @@ trait InteractsWithForms
         return $this->cachedForms;
     }
 
+    /**
+     * @return array<int | string, string | Form>
+     */
     public function getTraitForms(): array
     {
         $forms = [];
@@ -278,6 +284,9 @@ trait InteractsWithForms
         return $this->getCachedForms()[$name] ?? null;
     }
 
+    /**
+     * @return array<string, Form>
+     */
     public function getCachedForms(): array
     {
         if (! $this->hasCachedForms) {
@@ -287,6 +296,9 @@ trait InteractsWithForms
         return $this->cachedForms;
     }
 
+    /**
+     * @return array<int | string, string | Form>
+     */
     protected function getForms(): array
     {
         return [

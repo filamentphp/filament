@@ -50,6 +50,9 @@ class SpatieTagsInput extends TagsInput
         return $this;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getSuggestions(): array
     {
         if ($this->suggestions !== null) {

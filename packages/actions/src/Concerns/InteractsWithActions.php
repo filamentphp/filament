@@ -5,6 +5,7 @@ namespace Filament\Actions\Concerns;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Forms;
+use Filament\Forms\Form;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
@@ -182,6 +183,9 @@ trait InteractsWithActions
         return $this->getAction($this->mountedAction);
     }
 
+    /**
+     * @return array<int | string, string | Form>
+     */
     protected function getInteractsWithActionsForms(): array
     {
         return [

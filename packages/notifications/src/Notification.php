@@ -67,6 +67,9 @@ class Notification extends ViewComponent implements Arrayable
         ];
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function fromArray(array $data): static
     {
         $static = static::make($data['id'] ?? Str::random());
@@ -98,6 +101,9 @@ class Notification extends ViewComponent implements Arrayable
         return $this;
     }
 
+    /**
+     * @param Model | Authenticatable | Collection | array<Model | Authenticatable> $users
+     */
     public function broadcast(Model | Authenticatable | Collection | array $users): static
     {
         if (! is_iterable($users)) {
@@ -111,6 +117,9 @@ class Notification extends ViewComponent implements Arrayable
         return $this;
     }
 
+    /**
+     * @param Model | Authenticatable | Collection | array<Model | Authenticatable> $users
+     */
     public function sendToDatabase(Model | Authenticatable | Collection | array $users): static
     {
         if (! is_iterable($users)) {
@@ -145,6 +154,9 @@ class Notification extends ViewComponent implements Arrayable
         return new BroadcastMessage($data);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getDatabaseMessage(): array
     {
         $data = $this->toArray();

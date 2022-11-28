@@ -3,7 +3,9 @@
 namespace Filament\Tables\Concerns;
 
 use Closure;
+use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Contracts\Editable;
+use Filament\Tables\Columns\Layout\Component as ColumnLayoutComponent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Validation\ValidationException;
@@ -37,6 +39,10 @@ trait HasColumns
         return $column->record($record)->evaluate($action);
     }
 
+    /**
+     * @param mixed $input
+     * @return array{'error': string} | null
+     */
     public function setColumnValue(string $column, string $record, $input): ?array
     {
         $columnName = $column;
@@ -90,6 +96,8 @@ trait HasColumns
 
     /**
      * @deprecated Override the `table()` method to configure the table.
+     *
+     * @return array<Column | ColumnLayoutComponent>
      */
     protected function getTableColumns(): array
     {

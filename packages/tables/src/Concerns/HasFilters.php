@@ -13,7 +13,10 @@ use Illuminate\Database\Eloquent\Builder;
  */
 trait HasFilters
 {
-    public $tableFilters = null;
+    /**
+     * @var array<string, mixed> | null
+     */
+    public ?array $tableFilters = null;
 
     public function getTableFiltersForm(): Form
     {
@@ -125,6 +128,9 @@ trait HasFilters
         return $name::getDefaultName();
     }
 
+    /**
+     * @return array<string, Forms\Components\Group>
+     */
     public function getTableFiltersFormSchema(): array
     {
         $schema = [];
@@ -149,6 +155,8 @@ trait HasFilters
 
     /**
      * @deprecated Override the `table()` method to configure the table.
+     *
+     * @return array<BaseFilter>
      */
     protected function getTableFilters(): array
     {
@@ -157,6 +165,8 @@ trait HasFilters
 
     /**
      * @deprecated Override the `table()` method to configure the table.
+     *
+     * @return int | array<string, int | null>
      */
     protected function getTableFiltersFormColumns(): int | array
     {

@@ -192,9 +192,4 @@ trait HasFormComponentActions
 
         return null;
     }
-
-    protected function getFormComponentActions(): array
-    {
-        return [];
-    }
 }

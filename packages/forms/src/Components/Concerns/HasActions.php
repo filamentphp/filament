@@ -25,6 +25,9 @@ trait HasActions
         return $this->getActions()[$name] ?? null;
     }
 
+    /**
+     * @return array<string, Action>
+     */
     public function getActions(): array
     {
         return $this->actions;

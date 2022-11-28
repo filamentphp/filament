@@ -13,6 +13,9 @@ class Range extends Summarizer
      */
     protected string $view = 'filament-tables::columns.summaries.range';
 
+    /**
+     * @return array{0: mixed, 1: mixed}
+     */
     public function summarize(Builder $query, string $attribute): array
     {
         $query->whereNotNull($attribute);

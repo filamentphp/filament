@@ -60,12 +60,4 @@ trait Translatable
     {
         $this->save(shouldRedirect: false);
     }
-
-    protected function getActions(): array
-    {
-        return array_merge(
-            [$this->getActiveLocaleSwitcherAction()],
-            parent::getActions(),
-        );
-    }
 }

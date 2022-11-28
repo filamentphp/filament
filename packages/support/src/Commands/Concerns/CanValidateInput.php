@@ -12,6 +12,9 @@ trait CanValidateInput
         return $this->validateInput(fn () => $this->ask($question, $default), $field, ['required']);
     }
 
+    /**
+     * @param array<array-key> $rules
+     */
     protected function validateInput(Closure $callback, string $field, array $rules): string
     {
         $input = $callback();

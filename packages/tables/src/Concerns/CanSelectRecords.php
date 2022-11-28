@@ -8,6 +8,9 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 trait CanSelectRecords
 {
+    /**
+     * @var array<int | string>
+     */
     public array $selectedTableRecords = [];
 
     protected bool $shouldSelectCurrentPageOnly = false;

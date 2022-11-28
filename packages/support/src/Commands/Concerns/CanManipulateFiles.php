@@ -7,6 +7,9 @@ use ReflectionClass;
 
 trait CanManipulateFiles
 {
+    /**
+     * @param array<string> $paths
+     */
     protected function checkForCollision(array $paths): bool
     {
         foreach ($paths as $path) {
@@ -20,6 +23,9 @@ trait CanManipulateFiles
         return false;
     }
 
+    /**
+     * @param array<string, string> $replacements
+     */
     protected function copyStubToApp(string $stub, string $targetPath, array $replacements = []): void
     {
         $filesystem = app(Filesystem::class);

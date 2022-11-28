@@ -7,13 +7,14 @@ use Filament\Actions\Concerns\CanEmitEvent;
 use Filament\Actions\Concerns\CanOpenUrl;
 use Filament\Actions\Concerns\HasKeyBindings;
 use Filament\Actions\Concerns\HasTooltip;
+use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\StaticAction;
 use Filament\Notifications\Actions\Concerns\CanCloseNotification;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 
-class Action extends StaticAction implements Arrayable
+class Action extends StaticAction implements Arrayable, Groupable
 {
     use CanBeOutlined;
     use CanCloseNotification;
@@ -36,6 +37,9 @@ class Action extends StaticAction implements Arrayable
         $this->size('sm');
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [
@@ -57,6 +61,9 @@ class Action extends StaticAction implements Arrayable
         ];
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function fromArray(array $data): static
     {
         $static = static::make($data['name']);

@@ -6,6 +6,7 @@ use Filament\Forms\Form;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -30,6 +31,9 @@ trait HasActions
     {
     }
 
+    /**
+     * @return mixed
+     */
     public function callMountedTableAction(?string $arguments = null)
     {
         $action = $this->getMountedTableAction();
@@ -93,6 +97,9 @@ trait HasActions
         $this->mountedTableActionRecord = $record;
     }
 
+    /**
+     * @return mixed
+     */
     public function mountTableAction(string $name, ?string $record = null)
     {
         $this->mountedTableAction = $name;
@@ -215,6 +222,8 @@ trait HasActions
 
     /**
      * @deprecated Override the `table()` method to configure the table.
+     *
+     * @return array<Action | ActionGroup>
      */
     protected function getTableActions(): array
     {

@@ -151,6 +151,9 @@ class Select extends Field
         return $createOptionAction;
     }
 
+    /**
+     * @return array<string, Action>
+     */
     public function getActions(): array
     {
         $actions = $this->getBaseActions();

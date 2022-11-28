@@ -11,6 +11,9 @@ use Spark\Spark;
 
 class SparkBillingProvider implements Contracts\Provider
 {
+    /**
+     * @return string | Closure | array<string, string>
+     */
     public function getRouteAction(): string | Closure | array
     {
         return function (): RedirectResponse {

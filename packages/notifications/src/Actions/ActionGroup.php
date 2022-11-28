@@ -5,8 +5,14 @@ namespace Filament\Notifications\Actions;
 use Filament\Actions\ActionGroup as BaseActionGroup;
 use Illuminate\Contracts\Support\Arrayable;
 
+/**
+ * @property array<Action> $actions
+ */
 class ActionGroup extends BaseActionGroup implements Arrayable
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [
@@ -19,6 +25,9 @@ class ActionGroup extends BaseActionGroup implements Arrayable
         ];
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     public static function fromArray(array $data): static
     {
         $static = static::make(

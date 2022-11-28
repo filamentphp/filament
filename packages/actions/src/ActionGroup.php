@@ -9,6 +9,7 @@ use Filament\Actions\Concerns\HasIcon;
 use Filament\Actions\Concerns\HasLabel;
 use Filament\Actions\Concerns\HasSize;
 use Filament\Actions\Concerns\HasTooltip;
+use Filament\Actions\Contracts\Groupable;
 use Filament\Support\Components\ViewComponent;
 
 class ActionGroup extends ViewComponent
@@ -29,11 +30,17 @@ class ActionGroup extends ViewComponent
 
     protected string $viewIdentifier = 'group';
 
+    /**
+     * @param array<Groupable&StaticAction> $actions
+     */
     public function __construct(
         protected array $actions,
     ) {
     }
 
+    /**
+     * @param array<Groupable&StaticAction> $actions
+     */
     public static function make(array $actions): static
     {
         return app(static::class, ['actions' => $actions]);
@@ -46,6 +53,9 @@ class ActionGroup extends ViewComponent
         return $this->shouldTranslateLabel ? __($label) : $label;
     }
 
+    /**
+     * @return array<string, Groupable&StaticAction>
+     */
     public function getActions(): array
     {
         $actions = [];

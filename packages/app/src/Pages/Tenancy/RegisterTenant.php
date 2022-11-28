@@ -90,6 +90,9 @@ abstract class RegisterTenant extends CardPage
         return Filament::getUrl($this->tenant);
     }
 
+    /**
+     * @return array<int | string, string | Form>
+     */
     protected function getForms(): array
     {
         return [

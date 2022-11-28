@@ -101,6 +101,9 @@ trait HasAffixes
         return $this->evaluate($this->suffixIcon);
     }
 
+    /**
+     * @return array<string, Action>
+     */
     public function getActions(): array
     {
         $prefixAction = $this->getPrefixAction();

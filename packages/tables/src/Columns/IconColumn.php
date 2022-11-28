@@ -96,6 +96,8 @@ class IconColumn extends Column
 
     /**
      * @deprecated Use `icons()` instead.
+     *
+     * @param array<array-key, mixed> | Arrayable | Closure $options
      */
     public function options(array | Arrayable | Closure $options): static
     {

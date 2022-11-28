@@ -11,8 +11,14 @@ use Illuminate\Support\Arr;
  */
 trait CanToggleColumns
 {
+    /**
+     * @var array<string, bool | array<string, bool>>
+     */
     public array $toggledTableColumns = [];
 
+    /**
+     * @return array<string, bool | array<string, bool>>
+     */
     protected function getDefaultTableColumnToggleState(): array
     {
         $state = [];
@@ -48,6 +54,9 @@ trait CanToggleColumns
             ->reactive();
     }
 
+    /**
+     * @return array<Checkbox>
+     */
     protected function getTableColumnToggleFormSchema(): array
     {
         $schema = [];
@@ -78,6 +87,8 @@ trait CanToggleColumns
 
     /**
      * @deprecated Override the `table()` method to configure the table.
+     *
+     * @return int | array<string, int | null>
      */
     protected function getTableColumnToggleFormColumns(): int | array
     {
