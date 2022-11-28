@@ -129,12 +129,12 @@ trait HasColumns
             ];
         }
 
-        $column->evaluate($column->getSaveStateUsing(), [
+        $state = $column->evaluate($column->getSaveStateUsing(), [
             'state' => $input,
             'table' => $this->getCachedTable(),
         ]);
 
-        return null;
+        return $state;
     }
 
     protected function getTableColumns(): array

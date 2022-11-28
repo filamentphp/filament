@@ -37,6 +37,8 @@ trait CanSaveState
 
             $record->setAttribute($columnName, $state);
             $record->save();
+
+            return $state;
         });
     }
 
