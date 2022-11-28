@@ -134,7 +134,9 @@ trait HasColumns
             'table' => $this->getCachedTable(),
         ]);
 
-        return $state;
+        return [
+            'state' => $state
+        ];
     }
 
     protected function getTableColumns(): array

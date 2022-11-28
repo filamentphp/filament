@@ -11,7 +11,7 @@
         role="switch"
         aria-checked="false"
         x-bind:aria-checked="state.toString()"
-        x-on:click="state = ! state"
+        x-on:click="! loading && (state = ! state)"
         x-ref="button"
         x-on:change="
             loading = true
