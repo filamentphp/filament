@@ -8,12 +8,12 @@ use Illuminate\View\ComponentAttributeBag;
 trait HasExtraAlpineAttributes
 {
     /**
-     * @var array<array-key, mixed> | Closure
+     * @var array<mixed> | Closure
      */
     protected array | Closure $extraAlpineAttributes = [];
 
     /**
-     * @param array<array-key, mixed> | Closure $attributes
+     * @param array<mixed> | Closure $attributes
      */
     public function extraAlpineAttributes(array | Closure $attributes): static
     {
@@ -23,7 +23,7 @@ trait HasExtraAlpineAttributes
     }
 
     /**
-     * @return array<array-key, mixed>
+     * @return array<mixed>
      */
     public function getExtraAlpineAttributes(): array
     {

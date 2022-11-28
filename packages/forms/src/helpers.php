@@ -4,9 +4,9 @@ namespace Filament\Forms;
 
 if (! function_exists('Filament\Forms\array_move_after')) {
     /**
-     * @param array<array-key, mixed> $array
+     * @param array<mixed> $array
      * @param scalar $keyToMoveAfter
-     * @return array<array-key, mixed>
+     * @return array<mixed>
      */
     function array_move_after(array $array, $keyToMoveAfter): array
     {
@@ -34,9 +34,9 @@ if (! function_exists('Filament\Forms\array_move_after')) {
 
 if (! function_exists('Filament\Forms\array_move_before')) {
     /**
-     * @param array<array-key, mixed> $array
+     * @param array<mixed> $array
      * @param array-key $keyToMoveBefore
-     * @return array<array-key, mixed>
+     * @return array<mixed>
      */
     function array_move_before(array $array, $keyToMoveBefore): array
     {

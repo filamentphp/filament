@@ -14,6 +14,7 @@ use Filament\Http\Livewire\GlobalSearch;
 use Filament\Http\Livewire\Notifications;
 use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages\Auth\EmailVerification\EmailVerificationPrompt;
 use Filament\Pages\Auth\Login;
 use Filament\Pages\Auth\PasswordReset\RequestPasswordReset;
@@ -60,46 +61,94 @@ class Context
 
     protected bool $isNavigationMounted = false;
 
+    /**
+     * @var array<string, class-string>
+     */
     protected array $livewireComponents = [];
 
+    /**
+     * @var string | Closure | array<class-string, string> | null
+     */
     protected string | Closure | array | null $emailVerificationRouteAction = null;
 
+    /**
+     * @var string | Closure | array<class-string, string> | null
+     */
     protected string | Closure | array | null $loginRouteAction = null;
 
+    /**
+     * @var string | Closure | array<class-string, string> | null
+     */
     protected string | Closure | array | null $registrationRouteAction = null;
 
+    /**
+     * @var string | Closure | array<class-string, string> | null
+     */
     protected string | Closure | array | null $requestPasswordResetRouteAction = null;
 
+    /**
+     * @var string | Closure | array<class-string, string> | null
+     */
     protected string | Closure | array | null $resetPasswordRouteAction = null;
 
+    /**
+     * @var array<string | int, NavigationGroup | string>
+     */
     protected array $navigationGroups = [];
 
+    /**
+     * @var array<NavigationItem>
+     */
     protected array $navigationItems = [];
 
+    /**
+     * @var array<class-string>
+     */
     protected array $pages = [];
 
     protected ?string $pageDirectory = null;
 
     protected ?string $pageNamespace = null;
 
+    /**
+     * @var array<class-string>
+     */
     protected array $resources = [];
 
     protected ?string $resourceDirectory = null;
 
     protected ?string $resourceNamespace = null;
 
+    /**
+     * @var array<string, string>
+     */
     protected array $meta = [];
 
     protected string $path = '';
 
+    /**
+     * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null
+     */
     protected ?array $primaryColor = null;
 
+    /**
+     * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null
+     */
     protected ?array $secondaryColor = null;
 
+    /**
+     * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null
+     */
     protected ?array $dangerColor = null;
 
+    /**
+     * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null
+     */
     protected ?array $warningColor = null;
 
+    /**
+     * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null
+     */
     protected ?array $successColor = null;
 
     protected bool $isEmailVerificationRequired = false;
@@ -116,10 +165,19 @@ class Context
 
     protected string | Htmlable | Theme | null $theme = null;
 
+    /**
+     * @var array<MenuItem>
+     */
     protected array $tenantMenuItems = [];
 
+    /**
+     * @var array<MenuItem>
+     */
     protected array $userMenuItems = [];
 
+    /**
+     * @var array<class-string>
+     */
     protected array $widgets = [];
 
     protected ?string $widgetDirectory = null;
@@ -128,6 +186,9 @@ class Context
 
     protected ?Closure $navigationBuilder = null;
 
+    /**
+     * @var array<string, array<Closure>>
+     */
     protected array $renderHooks = [];
 
     protected ?Closure $routes = null;
@@ -136,8 +197,14 @@ class Context
 
     protected ?Closure $authenticatedTenantRoutes = null;
 
+    /**
+     * @var array<string>
+     */
     protected array $middleware = [];
 
+    /**
+     * @var array<string>
+     */
     protected array $authMiddleware = [];
 
     protected bool $hasDarkMode = true;
@@ -156,6 +223,9 @@ class Context
 
     protected ?string $fontUrl = 'https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap';
 
+    /**
+     * @var array<string, Plugin>
+     */
     protected array $plugins = [];
 
     public function default(bool $condition = true): static
@@ -193,6 +263,9 @@ class Context
         $this->registerLivewireComponents();
     }
 
+    /**
+     * @return array<NavigationGroup>
+     */
     public function buildNavigation(): array
     {
         /** @var \Filament\Navigation\NavigationBuilder $builder */
@@ -233,6 +306,9 @@ class Context
         return $this;
     }
 
+    /**
+     * @param string | Closure | array<class-string, string> | null $promptAction
+     */
     public function emailVerification(string | Closure | array | null $promptAction = EmailVerificationPrompt::class, bool $isRequired = true): static
     {
         $this->emailVerificationRouteAction = $promptAction;
@@ -248,6 +324,9 @@ class Context
         return $this;
     }
 
+    /**
+     * @param string | Closure | array<class-string, string> | null $action
+     */
     public function login(string | Closure | array | null $action = Login::class): static
     {
         $this->loginRouteAction = $action;
@@ -255,6 +334,10 @@ class Context
         return $this;
     }
 
+    /**
+     * @param string | Closure | array<class-string, string> | null $requestAction
+     * @param string | Closure | array<class-string, string> | null $resetAction
+     */
     public function passwordReset(string | Closure | array | null $requestAction = RequestPasswordReset::class, string | Closure | array | null $resetAction = ResetPassword::class): static
     {
         $this->requestPasswordResetRouteAction = $requestAction;
@@ -263,6 +346,9 @@ class Context
         return $this;
     }
 
+    /**
+     * @param string | Closure | array<class-string, string> | null $action
+     */
     public function registration(string | Closure | array | null $action = Register::class): static
     {
         $this->registrationRouteAction = $action;
@@ -283,6 +369,9 @@ class Context
         $this->isNavigationMounted = true;
     }
 
+    /**
+     * @param array<string | int, NavigationGroup | string> $groups
+     */
     public function navigationGroups(array $groups): static
     {
         $this->navigationGroups = array_merge($this->navigationGroups, $groups);
@@ -290,6 +379,9 @@ class Context
         return $this;
     }
 
+    /**
+     * @param array<NavigationItem> $items
+     */
     public function navigationItems(array $items): static
     {
         $this->navigationItems = array_merge($this->navigationItems, $items);
@@ -297,6 +389,9 @@ class Context
         return $this;
     }
 
+    /**
+     * @param array<class-string> $pages
+     */
     public function pages(array $pages): static
     {
         $this->pages = array_merge($this->pages, $pages);
@@ -329,6 +424,9 @@ class Context
         return $this;
     }
 
+    /**
+     * @param array<class-string> $resources
+     */
     public function resources(array $resources): static
     {
         $this->resources = array_merge($this->resources, $resources);
@@ -336,6 +434,9 @@ class Context
         return $this;
     }
 
+    /**
+     * @param string | array<string> $theme
+     */
     public function viteTheme(string | array $theme, ?string $buildDirectory = null): static
     {
         $this->theme(app(Vite::class)($theme, $buildDirectory));
@@ -350,6 +451,9 @@ class Context
         return $this;
     }
 
+    /**
+     * @param array<MenuItem> $items
+     */
     public function tenantMenuItems(array $items): static
     {
         $this->tenantMenuItems = array_merge($this->tenantMenuItems, $items);
@@ -357,6 +461,9 @@ class Context
         return $this;
     }
 
+    /**
+     * @param array<MenuItem> $items
+     */
     public function userMenuItems(array $items): static
     {
         $this->userMenuItems = array_merge($this->userMenuItems, $items);
@@ -364,6 +471,9 @@ class Context
         return $this;
     }
 
+    /**
+     * @param array<class-string> $widgets
+     */
     public function widgets(array $widgets): static
     {
         $this->widgets = array_merge($this->widgets, $widgets);
@@ -375,6 +485,9 @@ class Context
         return $this;
     }
 
+    /**
+     * @param array<string, string> $meta
+     */
     public function meta(array $meta): static
     {
         $this->meta = array_merge($this->meta, $meta);
@@ -403,6 +516,9 @@ class Context
         return $this;
     }
 
+    /**
+     * @param array<string> $middleware
+     */
     public function middleware(array $middleware): static
     {
         $this->middleware = array_merge(
@@ -413,6 +529,9 @@ class Context
         return $this;
     }
 
+    /**
+     * @param array<string> $middleware
+     */
     public function authMiddleware(array $middleware): static
     {
         $this->authMiddleware = array_merge(
@@ -500,6 +619,9 @@ class Context
         return $this;
     }
 
+    /**
+     * @param array<Plugin> $plugins
+     */
     public function plugins(array $plugins): static
     {
         foreach ($plugins as $plugin) {
@@ -509,6 +631,10 @@ class Context
         return $this;
     }
 
+    /**
+     * @param array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string $color
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string
+     */
     public function processColor(array | string $color): array | string
     {
         if (is_string($color) && str_starts_with($color, '#')) {
@@ -522,6 +648,9 @@ class Context
         return $color;
     }
 
+    /**
+     * @param array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null $color
+     */
     public function primaryColor(array | string | null $color): static
     {
         $this->primaryColor = $this->processColor($color);
@@ -529,11 +658,17 @@ class Context
         return $this;
     }
 
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     */
     public function getPrimaryColor(): array
     {
         return $this->primaryColor ?? Color::Amber;
     }
 
+    /**
+     * @param array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null $color
+     */
     public function secondaryColor(array | string | null $color): static
     {
         $this->secondaryColor = $this->processColor($color);
@@ -541,11 +676,17 @@ class Context
         return $this;
     }
 
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     */
     public function getSecondaryColor(): array
     {
         return $this->secondaryColor ?? Color::Gray;
     }
 
+    /**
+     * @param array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null $color
+     */
     public function dangerColor(array | string | null $color): static
     {
         $this->dangerColor = $this->processColor($color);
@@ -553,11 +694,17 @@ class Context
         return $this;
     }
 
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     */
     public function getDangerColor(): array
     {
         return $this->dangerColor ?? Color::Red;
     }
 
+    /**
+     * @param array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null $color
+     */
     public function warningColor(array | string | null $color): static
     {
         $this->warningColor = $this->processColor($color);
@@ -565,11 +712,17 @@ class Context
         return $this;
     }
 
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     */
     public function getWarningColor(): array
     {
         return $this->warningColor ?? Color::Amber;
     }
 
+    /**
+     * @param array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null $color
+     */
     public function successColor(array | string | null $color): static
     {
         $this->successColor = $this->processColor($color);
@@ -577,6 +730,9 @@ class Context
         return $this;
     }
 
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     */
     public function getSuccessColor(): array
     {
         return $this->successColor ?? Color::Green;
@@ -664,6 +820,15 @@ class Context
         return $this->authGuard;
     }
 
+    /**
+     * @return array{
+     *     'primary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
+     *     'secondary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
+     *     'danger': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
+     *     'warning': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
+     *     'success': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
+     * }
+     */
     public function getColors(): array
     {
         return [
@@ -786,6 +951,9 @@ class Context
         return route("filament.{$this->getId()}.auth.logout");
     }
 
+    /**
+     * @return array<string>
+     */
     public function getMiddleware(): array
     {
         return array_merge(
@@ -794,11 +962,17 @@ class Context
         );
     }
 
+    /**
+     * @return array<string>
+     */
     public function getAuthMiddleware(): array
     {
         return $this->authMiddleware;
     }
 
+    /**
+     * @return array<NavigationGroup>
+     */
     public function getNavigation(): array
     {
         if ($this->navigationBuilder !== null) {
@@ -810,8 +984,8 @@ class Context
         }
 
         return collect($this->getNavigationItems())
-            ->sortBy(fn (Navigation\NavigationItem $item): int => $item->getSort())
-            ->groupBy(fn (Navigation\NavigationItem $item): ?string => $item->getGroup())
+            ->sortBy(fn (NavigationItem $item): int => $item->getSort())
+            ->groupBy(fn (NavigationItem $item): ?string => $item->getGroup())
             ->map(function (Collection $items, ?string $groupIndex): NavigationGroup {
                 if (blank($groupIndex)) {
                     return NavigationGroup::make()->items($items);
@@ -871,21 +1045,33 @@ class Context
             ->all();
     }
 
+    /**
+     * @return array<string | int, NavigationGroup | string>
+     */
     public function getNavigationGroups(): array
     {
         return $this->navigationGroups;
     }
 
+    /**
+     * @return array<NavigationItem>
+     */
     public function getNavigationItems(): array
     {
         return $this->navigationItems;
     }
 
+    /**
+     * @return array<class-string>
+     */
     public function getPages(): array
     {
         return array_unique($this->pages);
     }
 
+    /**
+     * @return array<class-string>
+     */
     public function getResources(): array
     {
         return array_unique($this->resources);
@@ -906,6 +1092,9 @@ class Context
         return $this->authenticatedTenantRoutes;
     }
 
+    /**
+     * @return array<MenuItem>
+     */
     public function getTenantMenuItems(): array
     {
         return collect($this->tenantMenuItems)
@@ -913,6 +1102,9 @@ class Context
             ->all();
     }
 
+    /**
+     * @return array<MenuItem>
+     */
     public function getUserMenuItems(): array
     {
         return collect($this->userMenuItems)
@@ -1014,6 +1206,9 @@ class Context
         return $firstItem->getUrl();
     }
 
+    /**
+     * @return array<class-string>
+     */
     public function getWidgets(): array
     {
         return collect($this->widgets)
@@ -1022,31 +1217,49 @@ class Context
             ->all();
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getMeta(): array
     {
         return array_unique($this->meta);
     }
 
+    /**
+     * @return string | Closure | array<class-string, string> | null
+     */
     public function getEmailVerificationPromptRouteAction(): string | Closure | array | null
     {
         return $this->emailVerificationRouteAction;
     }
 
+    /**
+     * @return string | Closure | array<class-string, string> | null
+     */
     public function getLoginRouteAction(): string | Closure | array | null
     {
         return $this->loginRouteAction;
     }
 
+    /**
+     * @return string | Closure | array<class-string, string> | null
+     */
     public function getRegistrationRouteAction(): string | Closure | array | null
     {
         return $this->registrationRouteAction;
     }
 
+    /**
+     * @return string | Closure | array<class-string, string> | null
+     */
     public function getRequestPasswordResetRouteAction(): string | Closure | array | null
     {
         return $this->requestPasswordResetRouteAction;
     }
 
+    /**
+     * @return string | Closure | array<class-string, string> | null
+     */
     public function getResetPasswordRouteAction(): string | Closure | array | null
     {
         return $this->resetPasswordRouteAction;
@@ -1197,6 +1410,9 @@ class Context
         return $this->fontUrl;
     }
 
+    /**
+     * @return array<string, Plugin>
+     */
     public function getPlugins(): array
     {
         return $this->plugins;
@@ -1207,6 +1423,9 @@ class Context
         return $this->getPlugins()[$id] ?? throw new Exception("Plugin [{$id}] is not registered for context [{$this->getId()}].");
     }
 
+    /**
+     * @param array<string, class-string> $register
+     */
     protected function discoverComponents(string $baseClass, array &$register, ?string $directory, ?string $namespace): void
     {
         if (blank($directory) || blank($namespace)) {

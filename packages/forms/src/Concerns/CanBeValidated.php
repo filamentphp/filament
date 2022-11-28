@@ -6,6 +6,9 @@ use Filament\Forms\Components;
 
 trait CanBeValidated
 {
+    /**
+     * @return array<string, string>
+     */
     public function getValidationAttributes(): array
     {
         $attributes = [];
@@ -27,6 +30,9 @@ trait CanBeValidated
         return $attributes;
     }
 
+    /**
+     * @return array<string, array<mixed>>
+     */
     public function getValidationRules(): array
     {
         $rules = [];
@@ -48,6 +54,9 @@ trait CanBeValidated
         return $rules;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function validate(): array
     {
         if (! count($this->getComponents())) {

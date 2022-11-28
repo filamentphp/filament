@@ -6,7 +6,10 @@ use Filament\Forms\Components\Component;
 
 trait HasStateBindingModifiers
 {
-    protected $stateBindingModifiers = null;
+    /**
+     * @var array<string> | null
+     */
+    protected ?array $stateBindingModifiers = [];
 
     protected string | int | null $debounce = null;
 
@@ -31,6 +34,9 @@ trait HasStateBindingModifiers
         return $this;
     }
 
+    /**
+     * @param array<string> | null $modifiers
+     */
     public function stateBindingModifiers(?array $modifiers): static
     {
         $this->stateBindingModifiers = $modifiers;
@@ -38,6 +44,9 @@ trait HasStateBindingModifiers
         return $this;
     }
 
+    /**
+     * @param array<string> $lazilyEntangledModifiers
+     */
     public function applyStateBindingModifiers(string $expression, array $lazilyEntangledModifiers = []): string
     {
         $modifiers = $this->getStateBindingModifiers();
@@ -49,6 +58,9 @@ trait HasStateBindingModifiers
         return implode('.', array_merge([$expression], $modifiers));
     }
 
+    /**
+     * @return array<string>
+     */
     public function getStateBindingModifiers(): array
     {
         if ($this->stateBindingModifiers !== null) {

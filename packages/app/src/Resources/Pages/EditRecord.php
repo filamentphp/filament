@@ -30,10 +30,16 @@ class EditRecord extends Page
      */
     protected static string $view = 'filament::resources.pages.edit-record';
 
-    public $data;
+    /**
+     * @var array<string, mixed>
+     */
+    public array $data;
 
     public ?string $previousUrl = null;
 
+    /**
+     * @var array<int | string, string | array<mixed>>
+     */
     protected $queryString = [
         'activeRelationManager',
     ];
@@ -48,7 +54,7 @@ class EditRecord extends Page
         return __('filament::resources/pages/edit-record.form.tab.label');
     }
 
-    public function mount($record): void
+    public function mount(int | string $record): void
     {
         $this->record = $this->resolveRecord($record);
 
@@ -79,6 +85,9 @@ class EditRecord extends Page
         $this->callHook('afterFill');
     }
 
+    /**
+     * @param array<string> $attributes
+     */
     protected function refreshFormData(array $attributes): void
     {
         $this->data = array_merge(
@@ -87,6 +96,10 @@ class EditRecord extends Page
         );
     }
 
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     protected function mutateFormDataBeforeFill(array $data): array
     {
         return $data;
@@ -147,6 +160,9 @@ class EditRecord extends Page
         return null;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
         $record->update($data);
@@ -154,6 +170,10 @@ class EditRecord extends Page
         return $record;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     protected function mutateFormDataBeforeSave(array $data): array
     {
         return $data;

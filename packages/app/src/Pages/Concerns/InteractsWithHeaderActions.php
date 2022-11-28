@@ -8,6 +8,9 @@ use Filament\Actions\ActionGroup;
 
 trait InteractsWithHeaderActions
 {
+    /**
+     * @var array<string, Action | ActionGroup>
+     */
     protected array $cachedHeaderActions = [];
 
     public function bootedInteractsWithHeaderActions(): void

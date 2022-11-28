@@ -9,8 +9,14 @@ use Filament\Forms\Components\Field;
 
 trait HasComponents
 {
+    /**
+     * @var array<Component> | Closure
+     */
     protected array | Closure $components = [];
 
+    /**
+     * @param array<Component> | Closure $components
+     */
     public function components(array | Closure $components): static
     {
         $this->components = $components;
@@ -18,6 +24,9 @@ trait HasComponents
         return $this;
     }
 
+    /**
+     * @param array<Component> | Closure $components
+     */
     public function schema(array | Closure $components): static
     {
         $this->components($components);
@@ -34,6 +43,9 @@ trait HasComponents
         return collect($this->getFlatComponents($withHidden))->first($callback);
     }
 
+    /**
+     * @return array<Component>
+     */
     public function getFlatComponents(bool $withHidden = false): array
     {
         return collect($this->getComponents($withHidden))
@@ -48,6 +60,9 @@ trait HasComponents
             ->all();
     }
 
+    /**
+     * @return array<Field>
+     */
     public function getFlatFields(bool $withHidden = false, bool $withAbsolutePathKeys = false): array
     {
         $statePath = $this->getStatePath();
@@ -66,6 +81,9 @@ trait HasComponents
             ->all();
     }
 
+    /**
+     * @return array<Component>
+     */
     public function getComponents(bool $withHidden = false): array
     {
         $components = array_map(function (Component $component): Component {

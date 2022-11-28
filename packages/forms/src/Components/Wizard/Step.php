@@ -94,6 +94,9 @@ class Step extends Component implements CanConcealComponents
         return $this->evaluate($this->icon);
     }
 
+    /**
+     * @return array<string, int | null>
+     */
     public function getColumnsConfig(): array
     {
         return $this->columns ?? $this->getContainer()->getColumnsConfig();

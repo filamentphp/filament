@@ -12,6 +12,9 @@ class SelectAction extends StaticAction
     use Concerns\BelongsToLivewire;
     use Concerns\HasId;
 
+    /**
+     * @var array<string> | Arrayable | string | Closure
+     */
     protected array | Arrayable | string | Closure $options = [];
 
     protected ?string $placeholder = null;
@@ -23,6 +26,9 @@ class SelectAction extends StaticAction
         $this->view('filament-actions::select-action');
     }
 
+    /**
+     * @param array<string> | Arrayable | Closure $options
+     */
     public function options(array | Arrayable | Closure $options): static
     {
         $this->options = $options;
@@ -37,6 +43,9 @@ class SelectAction extends StaticAction
         return $this;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getOptions(): array
     {
         $options = $this->evaluate($this->options);

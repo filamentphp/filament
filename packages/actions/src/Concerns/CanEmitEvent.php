@@ -8,8 +8,14 @@ trait CanEmitEvent
 {
     protected string | Closure | null $event = null;
 
+    /**
+     * @var array<int, mixed> | Closure
+     */
     protected array | Closure $eventData = [];
 
+    /**
+     * @param array<int, mixed> | Closure $data
+     */
     public function emit(
         string | Closure | null $event,
         array | Closure $data = [],
@@ -25,6 +31,9 @@ trait CanEmitEvent
         return $this->evaluate($this->event);
     }
 
+    /**
+     * @param array<int, mixed> | Closure $data
+     */
     public function eventData(array | Closure $data): static
     {
         $this->eventData = $data;
@@ -32,6 +41,9 @@ trait CanEmitEvent
         return $this;
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public function getEventData(): array
     {
         return $this->evaluate($this->eventData);

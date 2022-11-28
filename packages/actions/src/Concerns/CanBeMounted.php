@@ -9,6 +9,10 @@ trait CanBeMounted
 {
     protected ?Closure $mountUsing = null;
 
+    /**
+     * @param array<string, mixed> $parameters
+     * @return mixed
+     */
     public function mount(array $parameters)
     {
         return $this->evaluate($this->getMountUsing(), $parameters);

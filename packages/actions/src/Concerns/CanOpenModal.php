@@ -10,12 +10,18 @@ use Illuminate\Contracts\View\View;
 
 trait CanOpenModal
 {
+    /**
+     * @var array<ModalAction> | Closure
+     */
     protected array | Closure $extraModalActions = [];
 
     protected bool | Closure | null $isModalCentered = null;
 
     protected bool | Closure $isModalSlideOver = false;
 
+    /**
+     * @var array<ModalAction> | Closure | null
+     */
     protected array | Closure | null $modalActions = null;
 
     protected ModalAction | Closure | null $modalCancelAction = null;
@@ -48,6 +54,9 @@ trait CanOpenModal
         return $this;
     }
 
+    /**
+     * @param array<ModalAction> | Closure | null $actions
+     */
     public function modalActions(array | Closure | null $actions = null): static
     {
         $this->modalActions = $actions;
@@ -55,6 +64,9 @@ trait CanOpenModal
         return $this;
     }
 
+    /**
+     * @param array<ModalAction> | Closure $actions
+     */
     public function extraModalActions(array | Closure $actions): static
     {
         $this->extraModalActions = $actions;
@@ -148,6 +160,10 @@ trait CanOpenModal
         return $this->filterHiddenModalActions($actions);
     }
 
+    /**
+     * @param array<ModalAction> $actions
+     * @return array<ModalAction>
+     */
     protected function filterHiddenModalActions(array $actions): array
     {
         return array_filter(
@@ -184,7 +200,7 @@ trait CanOpenModal
     }
 
     /**
-     * @return array<Action>
+     * @return array<ModalAction>
      */
     public function getExtraModalActions(): array
     {
@@ -231,6 +247,9 @@ trait CanOpenModal
         return $this->evaluate($this->isModalSlideOver);
     }
 
+    /**
+     * @param array<string, mixed> | null $arguments
+     */
     protected function makeExtraModalAction(string $name, ?array $arguments = null): ModalAction
     {
         return static::makeModalAction($name)

@@ -32,13 +32,13 @@ class ResetPassword extends CardPage
      */
     protected static string $view = 'filament::pages.auth.password-reset.reset-password';
 
-    public $email;
+    public ?string $email;
 
-    public $password = '';
+    public ?string $password = '';
 
-    public $passwordConfirmation = '';
+    public ?string $passwordConfirmation = '';
 
-    public $token;
+    public string $token;
 
     public function mount(): void
     {
@@ -124,6 +124,9 @@ class ResetPassword extends CardPage
             ]);
     }
 
+    /**
+     * @param string $propertyName
+     */
     public function propertyIsPublicAndNotDefinedOnBaseClass($propertyName): bool
     {
         if ((! app()->runningUnitTests()) && in_array($propertyName, [
@@ -136,6 +139,9 @@ class ResetPassword extends CardPage
         return parent::propertyIsPublicAndNotDefinedOnBaseClass($propertyName);
     }
 
+    /**
+     * @return array<string, string>
+     */
     protected function getMessages(): array
     {
         return [

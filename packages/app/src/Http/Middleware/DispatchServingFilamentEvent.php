@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 
 class DispatchServingFilamentEvent
 {
+    /**
+     * @return mixed
+     */
     public function handle(Request $request, Closure $next)
     {
         ServingFilament::dispatch();

@@ -9,7 +9,7 @@ use Livewire\Component;
 
 class GlobalSearch extends Component
 {
-    public $search = '';
+    public ?string $search = '';
 
     public function getResults(): ?GlobalSearchResults
     {

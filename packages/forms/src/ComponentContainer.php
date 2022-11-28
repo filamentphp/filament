@@ -26,6 +26,9 @@ class ComponentContainer extends ViewComponent
     use Concerns\SupportsFileUploadFields;
     use Concerns\SupportsSelectFields;
 
+    /**
+     * @var array<string, mixed>
+     */
     protected array $meta = [];
 
     protected string $view = 'filament-forms::component-container';

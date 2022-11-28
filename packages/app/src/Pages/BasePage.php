@@ -52,6 +52,9 @@ abstract class BasePage extends Component implements HasActions, RendersActionMo
                 ->title();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getLayoutData(): array
     {
         return [];

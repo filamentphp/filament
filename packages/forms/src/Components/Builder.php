@@ -192,6 +192,9 @@ class Builder extends Field implements Contracts\CanConcealComponents
         });
     }
 
+    /**
+     * @param array<Block> $blocks
+     */
     public function blocks(array $blocks): static
     {
         $this->childComponents($blocks);
@@ -265,14 +268,17 @@ class Builder extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
-    public function getBlock($name): ?Block
+    public function getBlock(string $name): ?Block
     {
         return Arr::first(
             $this->getBlocks(),
-            fn (Block $block) => $block->getName() === $name,
+            fn (Block $block): bool => $block->getName() === $name,
         );
     }
 
+    /**
+     * @return array<Component>
+     */
     public function getBlocks(): array
     {
         return $this->getChildComponentContainer()->getComponents();
@@ -303,7 +309,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
         return $this->evaluate($this->createItemButtonLabel);
     }
 
-    public function hasBlock($name): bool
+    public function hasBlock(string $name): bool
     {
         return (bool) $this->getBlock($name);
     }

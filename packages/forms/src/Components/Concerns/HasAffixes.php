@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Filament\Forms\Components\Actions\Action;
+use Illuminate\Contracts\Support\Htmlable;
 
 trait HasAffixes
 {
@@ -76,27 +77,27 @@ trait HasAffixes
         return $this->evaluate($this->suffixAction)?->component($this);
     }
 
-    public function getPrefixLabel()
+    public function getPrefixLabel(): ?string
     {
         return $this->evaluate($this->prefixLabel);
     }
 
-    public function getPostfixLabel()
+    public function getPostfixLabel(): ?string
     {
         return $this->getSuffixLabel();
     }
 
-    public function getSuffixLabel()
+    public function getSuffixLabel(): ?string
     {
         return $this->evaluate($this->suffixLabel);
     }
 
-    public function getPrefixIcon()
+    public function getPrefixIcon(): ?string
     {
         return $this->evaluate($this->prefixIcon);
     }
 
-    public function getSuffixIcon()
+    public function getSuffixIcon(): ?string
     {
         return $this->evaluate($this->suffixIcon);
     }

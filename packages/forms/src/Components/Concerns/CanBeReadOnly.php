@@ -17,6 +17,9 @@ trait CanBeReadOnly
         return $this;
     }
 
+    /**
+     * @param string | array<string> $contexts
+     */
     public function readOnlyOn(string | array $contexts): static
     {
         $this->readOnly(static function (string $context, HasForms $livewire) use ($contexts): bool {

@@ -8,12 +8,12 @@ use Illuminate\View\ComponentAttributeBag;
 trait HasExtraAttributes
 {
     /**
-     * @var array<array-key, mixed> | Closure
+     * @var array<mixed> | Closure
      */
     protected array | Closure $extraAttributes = [];
 
     /**
-     * @param array<array-key, mixed> | Closure $attributes
+     * @param array<mixed> | Closure $attributes
      */
     public function extraAttributes(array | Closure $attributes): static
     {
@@ -23,7 +23,7 @@ trait HasExtraAttributes
     }
 
     /**
-     * @return array<array-key, mixed>
+     * @return array<mixed>
      */
     public function getExtraAttributes(): array
     {

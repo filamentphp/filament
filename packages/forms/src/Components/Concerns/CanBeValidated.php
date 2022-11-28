@@ -17,6 +17,9 @@ trait CanBeValidated
 
     protected string | Closure | null $regexPattern = null;
 
+    /**
+     * @var array<mixed>
+     */
     protected array $rules = [];
 
     protected string | Closure | null $validationAttribute = null;
@@ -56,6 +59,9 @@ trait CanBeValidated
         return $this;
     }
 
+    /**
+     * @param array<scalar> | Arrayable | string | Closure $values
+     */
     public function doesntStartWith(array | Arrayable | string | Closure $values): static
     {
         $this->rule(static function (Field $component) use ($values) {
@@ -83,6 +89,9 @@ trait CanBeValidated
         return $this;
     }
 
+    /**
+     * @param array<scalar> | Arrayable | string | Closure $values
+     */
     public function doesntEndWith(array | Arrayable | string | Closure $values): static
     {
         $this->rule(static function (Field $component) use ($values) {
@@ -110,6 +119,9 @@ trait CanBeValidated
         return $this;
     }
 
+    /**
+     * @param array<scalar> | Arrayable | string | Closure $values
+     */
     public function endsWith(array | Arrayable | string | Closure $values): static
     {
         $this->rule(static function (Field $component) use ($values) {
@@ -175,6 +187,9 @@ trait CanBeValidated
         return $this;
     }
 
+    /**
+     * @param array<scalar> | Arrayable | string | Closure $values
+     */
     public function in(array | Arrayable | string | Closure $values): static
     {
         $this->rule(static function (Field $component) use ($values) {
@@ -246,6 +261,9 @@ trait CanBeValidated
         return $this;
     }
 
+    /**
+     * @param array<scalar> | Arrayable | string | Closure $values
+     */
     public function notIn(array | Arrayable | string | Closure $values): static
     {
         $this->rule(static function (Field $component) use ($values) {
@@ -305,21 +323,33 @@ trait CanBeValidated
         return $this;
     }
 
+    /**
+     * @param string | array<string> | Closure $statePaths
+     */
     public function requiredWith(string | array | Closure $statePaths, bool $isStatePathAbsolute = false): static
     {
         return $this->multiFieldComparisonRule('required_with', $statePaths, $isStatePathAbsolute);
     }
 
+    /**
+     * @param string | array<string> | Closure $statePaths
+     */
     public function requiredWithAll(string | array | Closure $statePaths, bool $isStatePathAbsolute = false): static
     {
         return $this->multiFieldComparisonRule('required_with_all', $statePaths, $isStatePathAbsolute);
     }
 
+    /**
+     * @param string | array<string> | Closure $statePaths
+     */
     public function requiredWithout(string | array | Closure $statePaths, bool $isStatePathAbsolute = false): static
     {
         return $this->multiFieldComparisonRule('required_without', $statePaths, $isStatePathAbsolute);
     }
 
+    /**
+     * @param string | array<string> | Closure $statePaths
+     */
     public function requiredWithoutAll(string | array | Closure $statePaths, bool $isStatePathAbsolute = false): static
     {
         return $this->multiFieldComparisonRule('required_without_all', $statePaths, $isStatePathAbsolute);
@@ -332,6 +362,9 @@ trait CanBeValidated
         return $this;
     }
 
+    /**
+     * @param array<scalar> | Arrayable | string | Closure $values
+     */
     public function startsWith(array | Arrayable | string | Closure $values): static
     {
         $this->rule(static function (Field $component) use ($values) {
@@ -373,7 +406,10 @@ trait CanBeValidated
         return $this;
     }
 
-    public function rule(string | object $rule, bool | Closure $condition = true): static
+    /**
+     * @param mixed $rule
+     */
+    public function rule($rule, bool | Closure $condition = true): static
     {
         $this->rules = array_merge(
             $this->rules,
@@ -383,6 +419,9 @@ trait CanBeValidated
         return $this;
     }
 
+    /**
+     * @param string | array<mixed> $rules
+     */
     public function rules(string | array $rules, bool | Closure $condition = true): static
     {
         if (is_string($rules)) {
@@ -499,6 +538,9 @@ trait CanBeValidated
         return $this->evaluate($this->validationAttribute) ?? Str::lcfirst($this->getLabel());
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getValidationRules(): array
     {
         $rules = [
@@ -520,6 +562,9 @@ trait CanBeValidated
         return $rules;
     }
 
+    /**
+     * @param array<string, array<mixed>> $rules
+     */
     public function dehydrateValidationRules(array &$rules): void
     {
         if (count($componentRules = $this->getValidationRules())) {
@@ -575,6 +620,9 @@ trait CanBeValidated
         return $this;
     }
 
+    /**
+     * @param array<string> | string | Closure $statePaths
+     */
     public function multiFieldComparisonRule(string $rule, array | string | Closure $statePaths, bool $isStatePathAbsolute = false): static
     {
         $this->rule(static function (Field $component) use ($isStatePathAbsolute, $rule, $statePaths): string {

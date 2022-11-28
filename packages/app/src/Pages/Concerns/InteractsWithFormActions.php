@@ -8,6 +8,9 @@ use Filament\Actions\ActionGroup;
 
 trait InteractsWithFormActions
 {
+    /**
+     * @var array<string, Action | ActionGroup>
+     */
     protected array $cachedFormActions = [];
 
     public function bootedInteractsWithFormActions(): void

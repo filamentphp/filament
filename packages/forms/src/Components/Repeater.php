@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Forms\ComponentContainer;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 use Filament\Forms\Contracts\HasForms;
@@ -232,6 +233,9 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
+    /**
+     * @return array<ComponentContainer>
+     */
     public function getChildComponentContainers(bool $withHidden = false): array
     {
         $relationship = $this->getRelationship();
@@ -386,6 +390,9 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         );
     }
 
+    /**
+     * @return array<array<string, mixed>>
+     */
     protected function getStateFromRelatedRecords(Collection $records): array
     {
         if (! $records->count()) {
@@ -502,6 +509,10 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
+    /**
+     * @param array<array<string, mixed>> $data
+     * @return array<array<string, mixed>>
+     */
     public function mutateRelationshipDataBeforeCreate(array $data): array
     {
         if ($this->mutateRelationshipDataBeforeCreateUsing instanceof Closure) {
@@ -520,6 +531,10 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
+    /**
+     * @param array<array<string, mixed>> $data
+     * @return array<array<string, mixed>>
+     */
     public function mutateRelationshipDataBeforeFill(array $data): array
     {
         if ($this->mutateRelationshipDataBeforeFillUsing instanceof Closure) {
@@ -538,6 +553,10 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
+    /**
+     * @param array<array<string, mixed>> $data
+     * @return array<array<string, mixed>>
+     */
     public function mutateRelationshipDataBeforeSave(array $data, Model $record): array
     {
         if ($this->mutateRelationshipDataBeforeSaveUsing instanceof Closure) {

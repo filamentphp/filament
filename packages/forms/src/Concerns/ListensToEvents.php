@@ -4,6 +4,9 @@ namespace Filament\Forms\Concerns;
 
 trait ListensToEvents
 {
+    /**
+     * @param mixed ...$parameters
+     */
     public function dispatchEvent(string $event, ...$parameters): static
     {
         foreach ($this->getComponents() as $component) {

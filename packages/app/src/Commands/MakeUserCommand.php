@@ -19,6 +19,9 @@ class MakeUserCommand extends Command
 
     protected $signature = 'make:filament-user';
 
+    /**
+     * @return array{'name': string, 'email': string, 'password': string}
+     */
     protected function getUserData(): array
     {
         return [

@@ -143,6 +143,10 @@ trait InteractsWithRecord
         return $this->evaluate($this->pluralModelLabel);
     }
 
+    /**
+     * @param array<mixed> $arguments
+     * @return array<mixed>
+     */
     protected function parseAuthorizationArguments(array $arguments): array
     {
         if ($record = $this->getRecord()) {

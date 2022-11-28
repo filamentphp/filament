@@ -10,5 +10,8 @@ interface HasTenants
 {
     public function canAccessTenant(Model $tenant): bool;
 
+    /**
+     * @return array<Model> | Collection
+     */
     public function getTenants(Context $context): array | Collection;
 }

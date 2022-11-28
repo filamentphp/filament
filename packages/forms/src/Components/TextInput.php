@@ -28,6 +28,9 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
 
     protected ?Closure $configureMaskUsing = null;
 
+    /**
+     * @var array<string> | Arrayable | Closure | null
+     */
     protected array | Arrayable | Closure | null $datalistOptions = null;
 
     protected bool | Closure $isEmail = false;
@@ -40,8 +43,14 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
 
     protected bool | Closure $isUrl = false;
 
+    /**
+     * @var scalar
+     */
     protected $maxValue = null;
 
+    /**
+     * @var scalar
+     */
     protected $minValue = null;
 
     protected string | Closure | null $telRegex = null;
@@ -55,6 +64,9 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
         return $this;
     }
 
+    /**
+     * @param array<string> | Arrayable | Closure | null $options
+     */
     public function datalist(array | Arrayable | Closure | null $options): static
     {
         $this->datalistOptions = $options;
@@ -87,6 +99,9 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
         return $this;
     }
 
+    /**
+     * @param scalar $value
+     */
     public function maxValue($value): static
     {
         $this->maxValue = $value;
@@ -100,6 +115,9 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
         return $this;
     }
 
+    /**
+     * @param scalar $value
+     */
     public function minValue($value): static
     {
         $this->minValue = $value;
@@ -163,6 +181,9 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
         return $this;
     }
 
+    /**
+     * @return array<string> | null
+     */
     public function getDatalistOptions(): ?array
     {
         $options = $this->evaluate($this->datalistOptions);
@@ -190,11 +211,17 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
         return $this->getMask()?->toJson();
     }
 
+    /**
+     * @return scalar
+     */
     public function getMaxValue()
     {
         return $this->evaluate($this->maxValue);
     }
 
+    /**
+     * @return scalar
+     */
     public function getMinValue()
     {
         return $this->evaluate($this->minValue);

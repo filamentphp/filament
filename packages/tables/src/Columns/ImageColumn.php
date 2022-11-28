@@ -29,7 +29,7 @@ class ImageColumn extends Column
     protected int | string | Closure | null $width = null;
 
     /**
-     * @var array<array-key, mixed> | Closure
+     * @var array<mixed> | Closure
      */
     protected array | Closure $extraImgAttributes = [];
 
@@ -195,7 +195,7 @@ class ImageColumn extends Column
     }
 
     /**
-     * @param array<array-key, mixed> | Closure $attributes
+     * @param array<mixed> | Closure $attributes
      */
     public function extraImgAttributes(array | Closure $attributes): static
     {
@@ -205,7 +205,7 @@ class ImageColumn extends Column
     }
 
     /**
-     * @return array<array-key, mixed>
+     * @return array<mixed>
      */
     public function getExtraImgAttributes(): array
     {

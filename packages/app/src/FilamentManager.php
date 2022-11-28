@@ -12,6 +12,9 @@ use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasDefaultTenant;
 use Filament\Models\Contracts\HasName;
 use Filament\Models\Contracts\HasTenants;
+use Filament\Navigation\MenuItem;
+use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Support\Assets\Theme;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
@@ -27,6 +30,9 @@ class FilamentManager
 {
     protected ?Context $currentContext = null;
 
+    /**
+     * @var array<string, Context>
+     */
     protected array $contexts = [];
 
     protected ?Model $tenant = null;
@@ -43,6 +49,9 @@ class FilamentManager
         $this->getCurrentContext()->boot();
     }
 
+    /**
+     * @return array<NavigationGroup>
+     */
     public function buildNavigation(): array
     {
         return $this->getCurrentContext()->buildNavigation();
@@ -101,6 +110,9 @@ class FilamentManager
         );
     }
 
+    /**
+     * @return array<string, Context>
+     */
     public function getContexts(): array
     {
         return $this->contexts;
@@ -249,66 +261,111 @@ class FilamentManager
         return $this->getCurrentContext()->getLogoutUrl();
     }
 
+    /**
+     * @return array<NavigationGroup>
+     */
     public function getNavigation(): array
     {
         return $this->getCurrentContext()->getNavigation();
     }
 
+    /**
+     * @return array<string | int, NavigationGroup | string>
+     */
     public function getNavigationGroups(): array
     {
         return $this->getCurrentContext()->getNavigationGroups();
     }
 
+    /**
+     * @return array<NavigationItem>
+     */
     public function getNavigationItems(): array
     {
         return $this->getCurrentContext()->getNavigationItems();
     }
 
+    /**
+     * @return array<class-string>
+     */
     public function getPages(): array
     {
         return $this->getCurrentContext()->getPages();
     }
 
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     */
     public function getPrimaryColor(): array
     {
         return $this->getCurrentContext()->getPrimaryColor();
     }
 
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     */
     public function getSecondaryColor(): array
     {
         return $this->getCurrentContext()->getSecondaryColor();
     }
 
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     */
     public function getDangerColor(): array
     {
         return $this->getCurrentContext()->getDangerColor();
     }
 
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     */
     public function getWarningColor(): array
     {
         return $this->getCurrentContext()->getWarningColor();
     }
 
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     */
     public function getSuccessColor(): array
     {
         return $this->getCurrentContext()->getSuccessColor();
     }
 
+    /**
+     * @return array{
+     *     'primary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
+     *     'secondary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
+     *     'danger': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
+     *     'warning': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
+     *     'success': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
+     * }
+     */
     public function getColors(): array
     {
         return $this->getCurrentContext()->getColors();
     }
 
+    /**
+     * @return array<class-string>
+     */
     public function getResources(): array
     {
         return $this->getCurrentContext()->getResources();
     }
 
+    /**
+     * @return array<MenuItem>
+     */
     public function getTenantMenuItems(): array
     {
         return $this->getCurrentContext()->getTenantMenuItems();
     }
 
+    /**
+     * @return array<MenuItem>
+     */
     public function getUserMenuItems(): array
     {
         return $this->getCurrentContext()->getUserMenuItems();
@@ -377,6 +434,9 @@ class FilamentManager
         return $user->getAttributeValue('name');
     }
 
+    /**
+     * @return array<Model>
+     */
     public function getUserTenants(HasTenants | Model | Authenticatable $user): array
     {
         $tenants = $user->getTenants($this->getCurrentContext());
@@ -404,11 +464,17 @@ class FilamentManager
         return $tenant;
     }
 
+    /**
+     * @return array<class-string>
+     */
     public function getWidgets(): array
     {
         return $this->getCurrentContext()->getWidgets();
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getMeta(): array
     {
         return $this->getCurrentContext()->getMeta();

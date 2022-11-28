@@ -19,6 +19,9 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
      */
     protected string $view = 'filament-forms::components.rich-editor';
 
+    /**
+     * @var array<string>
+     */
     protected array | Closure $toolbarButtons = [
         'attachFiles',
         'blockquote',

@@ -17,6 +17,9 @@ class Radio extends Field
 
     protected bool | Closure $isInline = false;
 
+    /**
+     * @var array<string> | Arrayable | Closure
+     */
     protected array | Arrayable | Closure $descriptions = [];
 
     protected bool | Closure | null $isOptionDisabled = null;
@@ -50,6 +53,9 @@ class Radio extends Field
         return $this;
     }
 
+    /**
+     * @param array<string> | Arrayable | Closure $descriptions
+     */
     public function descriptions(array | Arrayable | Closure $descriptions): static
     {
         $this->descriptions = $descriptions;
@@ -57,16 +63,25 @@ class Radio extends Field
         return $this;
     }
 
+    /**
+     * @param array-key $value
+     */
     public function hasDescription($value): bool
     {
         return array_key_exists($value, $this->getDescriptions());
     }
 
+    /**
+     * @param array-key $value
+     */
     public function getDescription($value): ?string
     {
         return $this->getDescriptions()[$value] ?? null;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getDescriptions(): array
     {
         $descriptions = $this->evaluate($this->descriptions);
@@ -83,6 +98,9 @@ class Radio extends Field
         return (bool) $this->evaluate($this->isInline);
     }
 
+    /**
+     * @param array-key $value
+     */
     public function isOptionDisabled($value, string $label): bool
     {
         if ($this->isOptionDisabled === null) {

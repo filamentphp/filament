@@ -7,6 +7,9 @@ use Illuminate\Http\Request;
 
 class MirrorConfigToSubpackages
 {
+    /**
+     * @return mixed
+     */
     public function handle(Request $request, Closure $next)
     {
         $config = config();

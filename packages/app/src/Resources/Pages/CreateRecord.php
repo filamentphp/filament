@@ -10,6 +10,7 @@ use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use PhpParser\Node\Expr\AssignOp\Mod;
 
 /**
  * @property Form $form
@@ -23,9 +24,12 @@ class CreateRecord extends Page
      */
     protected static string $view = 'filament::resources.pages.create-record';
 
-    public $record;
+    public ?Model $record = null;
 
-    public $data;
+    /**
+     * @var array<string, mixed>
+     */
+    public array $data;
 
     public ?string $previousUrl = null;
 
@@ -131,11 +135,18 @@ class CreateRecord extends Page
         $this->create(another: true);
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     protected function handleRecordCreation(array $data): Model
     {
         return $this->getModel()::create($data);
     }
 
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         return $data;

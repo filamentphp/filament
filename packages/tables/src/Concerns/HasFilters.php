@@ -47,8 +47,8 @@ trait HasFilters
 
     public function removeTableFilter(string $filter, ?string $field = null): void
     {
-        $filterGroup = $this->getTableFiltersForm()->getComponents()[$filter];
-        $fields = $filterGroup?->getChildComponentContainer()->getFlatFields() ?? [];
+        $filterGroup = $this->getTableFiltersForm()->getComponents()[$filter] ?? null;
+        $fields = $filterGroup?->getChildComponentContainer()->getFlatFields();
 
         if (filled($field) && array_key_exists($field, $fields)) {
             $fields = [$fields[$field]];

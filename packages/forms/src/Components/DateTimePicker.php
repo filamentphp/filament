@@ -5,6 +5,7 @@ namespace Filament\Forms\Components;
 use Carbon\CarbonInterface;
 use Carbon\Exceptions\InvalidFormatException;
 use Closure;
+use DateTime;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Support\Carbon;
 use Illuminate\View\ComponentAttributeBag;
@@ -22,6 +23,9 @@ class DateTimePicker extends Field
 
     protected string | Closure | null $displayFormat = null;
 
+    /**
+     * @var array<mixed> | Closure
+     */
     protected array | Closure $extraTriggerAttributes = [];
 
     protected int | null $firstDayOfWeek = null;
@@ -42,6 +46,9 @@ class DateTimePicker extends Field
 
     protected string | Closure | null $timezone = null;
 
+    /**
+     * @var array<DateTime | string> | Closure
+     */
     protected array | Closure $disabledDates = [];
 
     public static int $defaultFirstDayOfWeek = 1;
@@ -112,6 +119,9 @@ class DateTimePicker extends Field
         return $this;
     }
 
+    /**
+     * @param array<mixed> | Closure $attributes
+     */
     public function extraTriggerAttributes(array | Closure $attributes): static
     {
         $this->extraTriggerAttributes = $attributes;
@@ -159,6 +169,9 @@ class DateTimePicker extends Field
         return $this;
     }
 
+    /**
+     * @param array<DateTime | string> | Closure $dates
+     */
     public function disabledDates(array | Closure $dates): static
     {
         $this->disabledDates = $dates;
@@ -266,6 +279,9 @@ class DateTimePicker extends Field
             static::$defaultDateTimeDisplayFormat;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getExtraTriggerAttributes(): array
     {
         return $this->evaluate($this->extraTriggerAttributes);
@@ -314,6 +330,9 @@ class DateTimePicker extends Field
         return $this->evaluate($this->minDate);
     }
 
+    /**
+     * @return array<DateTime | string>
+     */
     public function getDisabledDates(): array
     {
         return $this->evaluate($this->disabledDates);

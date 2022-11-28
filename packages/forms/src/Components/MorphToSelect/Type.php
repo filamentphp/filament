@@ -23,6 +23,9 @@ class Type
 
     protected ?Closure $modifyOptionsQueryUsing = null;
 
+    /**
+     * @var array<string> | null
+     */
     protected ?array $searchColumns = null;
 
     protected ?string $titleAttribute = null;
@@ -201,6 +204,9 @@ class Type
         return $this;
     }
 
+    /**
+     * @param array<string> | null $columns
+     */
     public function searchColumns(?array $columns): static
     {
         $this->searchColumns = $columns;
@@ -268,6 +274,9 @@ class Type
         return app($this->getModel())->getMorphClass();
     }
 
+    /**
+     * @return array<string>
+     */
     public function getSearchColumns(): ?array
     {
         return $this->searchColumns ?? [$this->getTitleAttribute()];
