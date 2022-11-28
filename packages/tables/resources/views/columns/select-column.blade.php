@@ -1,14 +1,18 @@
 <div
-    x-data="{ error: undefined }"
+    x-data="{ error: undefined, state: '{{ $getState() }}', loading: false }"
     {{ $attributes->merge($getExtraAttributes())->class([
         'filament-tables-select-column',
     ]) }}
 >
     <select
         {!! $isDisabled() ? 'disabled' : null !!}
+        x-model="state"
         x-on:change="
+            loading = true
             response = await $wire.setColumnValue(@js($getName()), @js($recordKey), $event.target.value)
+            if (response.state) state = response.state
             error = response?.error ?? undefined
+            loading = false
         "
         x-tooltip="error"
         {{ $attributes->merge($getExtraInputAttributes())->merge($getExtraAttributes())->class([
@@ -31,9 +35,9 @@
 
         @foreach ($getOptions() as $value => $label)
             <option
+                :disabled="loading"
                 value="{{ $value }}"
                 {!! $isOptionDisabled($value, $label) ? 'disabled' : null !!}
-                {{ $getState() === $value ? 'selected' : null }}
             >
                 {{ $label }}
             </option>

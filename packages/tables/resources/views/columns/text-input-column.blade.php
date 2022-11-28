@@ -5,6 +5,7 @@
     ]) }}
 >
     <input
+        x-model="state"
         value="{{ $getState() }}"
         type="{{ $getType() }}"
         {!! $isDisabled() ? 'disabled' : null !!}
@@ -15,6 +16,7 @@
             response = await $wire.setColumnValue(@js($getName()), @js($recordKey), $event.target.value)
             error = response?.error ?? undefined
         "
+        :readonly="loading"
         x-tooltip="error"
         {{ $attributes->merge($getExtraInputAttributes())->merge($getExtraAttributes())->class([
             'ml-0.5 text-gray-900 block transition duration-75 rounded-lg shadow-sm focus:ring-primary-500 focus:ring-1 focus:ring-inset focus:border-primary-500 disabled:opacity-70',

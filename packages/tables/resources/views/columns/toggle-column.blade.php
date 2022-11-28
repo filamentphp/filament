@@ -1,5 +1,5 @@
 <div
-    x-data="{ error: undefined, state: @js($getState()) }"
+    x-data="{ error: undefined, state: @js($getState()), loading: false }"
     x-init="
         $watch('state', () => $refs.button.dispatchEvent(new Event('change')))
     "
@@ -14,11 +14,14 @@
         x-on:click="state = ! state"
         x-ref="button"
         x-on:change="
+            loading = true
             response = await $wire.setColumnValue(@js($getName()), @js($recordKey), state)
             error = response?.error ?? undefined
+            loading = false
         "
         x-tooltip="error"
         x-bind:class="{
+            'opacity-70 pointer-events-none': loading,
             '{{ match ($getOnColor()) {
                 'danger' => 'bg-danger-500',
                 'secondary' => 'bg-gray-500',
@@ -36,7 +39,7 @@
         }"
         {!! $isDisabled() ? 'disabled' : null !!}
         type="button"
-        class="relative inline-flex shrink-0 ml-4 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none disabled:opacity-70 disabled:cursor-not-allowed disabled:pointer-events-none"
+        class="relative inline-flex shrink-0 ml-4 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-primary-500 disabled:opacity-70 disabled:cursor-not-allowed disabled:pointer-events-none"
     >
         <span
             class="pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 ease-in-out transition duration-200"
