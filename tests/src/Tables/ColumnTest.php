@@ -118,3 +118,11 @@ it('can state whether a column has a description', function () {
         ->assertTableColumnDoesNotHaveDescription('with_description', 'incorrect description below', $post)
         ->assertTableColumnDoesNotHaveDescription('with_description', 'incorrect description above', $post, 'above');
 });
+
+it('can state whether a select column has options', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->assertSelectColumnHasOptions('with_options', ['red' => 'Red', 'blue' => 'Blue'], $post)
+        ->assertSelectColumnDoesNotHaveOptions('with_options', ['one' => 'One', 'two' => 'Two'], $post);
+});

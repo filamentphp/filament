@@ -69,9 +69,11 @@
         >
             @if ($action)
                 @if ($action->isModalCentered())
-                    <x-slot name="heading">
-                        {{ $action->getModalHeading() }}
-                    </x-slot>
+                    @if ($heading = $action->getModalHeading())
+                        <x-slot name="heading">
+                            {{ $heading }}
+                        </x-slot>
+                    @endif
 
                     @if ($subheading = $action->getModalSubheading())
                         <x-slot name="subheading">
@@ -80,9 +82,11 @@
                     @endif
                 @else
                     <x-slot name="header">
-                        <x-filament::modal.heading>
-                            {{ $action->getModalHeading() }}
-                        </x-filament::modal.heading>
+                        @if ($heading = $action->getModalHeading())
+                            <x-filament::modal.heading>
+                                {{ $heading }}
+                            </x-filament::modal.heading>
+                        @endif
 
                         @if ($subheading = $action->getModalSubheading())
                             <x-filament::modal.subheading>
