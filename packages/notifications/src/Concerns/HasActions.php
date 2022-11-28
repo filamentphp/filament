@@ -10,12 +10,12 @@ use Illuminate\Support\Arr;
 trait HasActions
 {
     /**
-     * @var array<Action | ActionGroup> | ActionGroup | Closure $actions
+     * @var array<Action | ActionGroup> | ActionGroup | Closure
      */
     protected array | ActionGroup | Closure $actions = [];
 
     /**
-     * @param array<Action | ActionGroup> | ActionGroup | Closure $actions
+     * @param  array<Action | ActionGroup> | ActionGroup | Closure  $actions
      */
     public function actions(array | ActionGroup | Closure $actions): static
     {

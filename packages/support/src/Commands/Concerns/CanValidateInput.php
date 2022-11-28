@@ -13,7 +13,7 @@ trait CanValidateInput
     }
 
     /**
-     * @param array<array-key> $rules
+     * @param  array<array-key>  $rules
      */
     protected function validateInput(Closure $callback, string $field, array $rules): string
     {

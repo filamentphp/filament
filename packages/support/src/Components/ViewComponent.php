@@ -101,7 +101,7 @@ abstract class ViewComponent extends Component implements Htmlable
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function viewData(array $data): static
     {

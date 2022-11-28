@@ -21,7 +21,7 @@ class Collection extends BaseCollection implements Wireable
     }
 
     /**
-     * @param array<array<string, mixed>> $value
+     * @param  array<array<string, mixed>>  $value
      */
     public static function fromLivewire($value): static
     {

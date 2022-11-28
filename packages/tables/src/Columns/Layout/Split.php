@@ -15,7 +15,7 @@ class Split extends Component
     protected string | Closure | null $fromBreakpoint = null;
 
     /**
-     * @param array<Column | Component> | Closure $schema
+     * @param  array<Column | Component> | Closure  $schema
      */
     final public function __construct(array | Closure $schema)
     {
@@ -23,7 +23,7 @@ class Split extends Component
     }
 
     /**
-     * @param array<Column | Component> | Closure $schema
+     * @param  array<Column | Component> | Closure  $schema
      */
     public static function make(array | Closure $schema): static
     {

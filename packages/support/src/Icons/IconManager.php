@@ -10,7 +10,7 @@ class IconManager
     protected array $icons = [];
 
     /**
-     * @param array<string, Icon> $icons
+     * @param  array<string, Icon>  $icons
      */
     public function register(array $icons): void
     {

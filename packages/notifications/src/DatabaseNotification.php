@@ -12,7 +12,7 @@ class DatabaseNotification extends BaseNotification implements ShouldQueue
     use Queueable;
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function __construct(
         public array $data,
@@ -20,7 +20,7 @@ class DatabaseNotification extends BaseNotification implements ShouldQueue
     }
 
     /**
-     * @param Model $notifiable
+     * @param  Model  $notifiable
      * @return array<string>
      */
     public function via($notifiable): array
@@ -29,7 +29,7 @@ class DatabaseNotification extends BaseNotification implements ShouldQueue
     }
 
     /**
-     * @param Model $notifiable
+     * @param  Model  $notifiable
      * @return array<string, mixed>
      */
     public function toDatabase($notifiable): array

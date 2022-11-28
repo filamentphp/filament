@@ -3,7 +3,6 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
-use Psy\Util\Str;
 
 trait CanBeSortable
 {
@@ -17,7 +16,7 @@ trait CanBeSortable
     protected ?Closure $sortQuery = null;
 
     /**
-     * @param bool | array<string> $condition
+     * @param  bool | array<string>  $condition
      */
     public function sortable(bool | array $condition = true, ?Closure $query = null): static
     {

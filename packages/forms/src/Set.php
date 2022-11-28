@@ -12,7 +12,7 @@ class Set
     }
 
     /**
-     * @param mixed $state
+     * @param  mixed  $state
      * @return mixed
      */
     public function __invoke(string | Component $path, $state, bool $isAbsolute = false)

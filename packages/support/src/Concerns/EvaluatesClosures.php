@@ -14,9 +14,9 @@ trait EvaluatesClosures
     protected array $evaluationParametersToRemove = [];
 
     /**
-     * @param mixed $value
-     * @param array<string, mixed> $parameters
-     * @param array<string> $exceptParameters
+     * @param  mixed  $value
+     * @param  array<string, mixed>  $parameters
+     * @param  array<string>  $exceptParameters
      * @return mixed
      */
     public function evaluate($value, array $parameters = [], array $exceptParameters = [])

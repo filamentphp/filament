@@ -181,7 +181,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
     }
 
     /**
-     * @param array<string, mixed> | Closure | null $properties
+     * @param  array<string, mixed> | Closure | null  $properties
      */
     public function customProperties(array | Closure | null $properties): static
     {
@@ -191,7 +191,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
     }
 
     /**
-     * @param array<string, array<string, string>> | Closure | null $manipulations
+     * @param  array<string, array<string, string>> | Closure | null  $manipulations
      */
     public function manipulations(array | Closure | null $manipulations): static
     {
@@ -201,7 +201,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
     }
 
     /**
-     * @param array<string, mixed> | Closure | null $properties
+     * @param  array<string, mixed> | Closure | null  $properties
      */
     public function properties(array | Closure | null $properties): static
     {

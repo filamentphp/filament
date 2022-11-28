@@ -13,7 +13,7 @@ class Panel extends Component
     protected string $view = 'filament-tables::columns.layout.panel';
 
     /**
-     * @param array<Column | Component> | Closure $schema
+     * @param  array<Column | Component> | Closure  $schema
      */
     final public function __construct(array | Closure $schema)
     {
@@ -21,7 +21,7 @@ class Panel extends Component
     }
 
     /**
-     * @param array<Column | Component> | Closure $schema
+     * @param  array<Column | Component> | Closure  $schema
      */
     public static function make(array | Closure $schema): static
     {

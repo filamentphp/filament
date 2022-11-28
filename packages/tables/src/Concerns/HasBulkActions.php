@@ -79,7 +79,7 @@ trait HasBulkActions
     }
 
     /**
-     * @param array<int | string> $selectedRecords
+     * @param  array<int | string>  $selectedRecords
      * @return mixed
      */
     public function mountTableBulkAction(string $name, array $selectedRecords)

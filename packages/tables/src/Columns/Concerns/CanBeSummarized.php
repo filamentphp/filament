@@ -14,7 +14,7 @@ trait CanBeSummarized
     protected array $summarizers = [];
 
     /**
-     * @param array<Summarizer> | Summarizer $summarizers
+     * @param  array<Summarizer> | Summarizer  $summarizers
      */
     public function summarize(array | Summarizer $summarizers): static
     {

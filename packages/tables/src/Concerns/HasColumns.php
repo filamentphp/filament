@@ -40,7 +40,7 @@ trait HasColumns
     }
 
     /**
-     * @param mixed $input
+     * @param  mixed  $input
      * @return array{'error': string} | null
      */
     public function setColumnValue(string $column, string $record, $input): ?array
