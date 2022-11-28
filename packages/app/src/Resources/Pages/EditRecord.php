@@ -86,7 +86,7 @@ class EditRecord extends Page
     }
 
     /**
-     * @param array<string> $attributes
+     * @param  array<string>  $attributes
      */
     protected function refreshFormData(array $attributes): void
     {
@@ -97,7 +97,7 @@ class EditRecord extends Page
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
     protected function mutateFormDataBeforeFill(array $data): array
@@ -161,7 +161,7 @@ class EditRecord extends Page
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
@@ -171,7 +171,7 @@ class EditRecord extends Page
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
     protected function mutateFormDataBeforeSave(array $data): array

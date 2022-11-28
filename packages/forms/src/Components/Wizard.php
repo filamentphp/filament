@@ -28,7 +28,7 @@ class Wizard extends Component
     protected string $view = 'filament-forms::components.wizard';
 
     /**
-     * @param array<Step> | Closure $steps
+     * @param  array<Step> | Closure  $steps
      */
     final public function __construct(array | Closure $steps = [])
     {
@@ -36,7 +36,7 @@ class Wizard extends Component
     }
 
     /**
-     * @param array<Step> | Closure $steps
+     * @param  array<Step> | Closure  $steps
      */
     public static function make(array | Closure $steps = []): static
     {
@@ -77,7 +77,7 @@ class Wizard extends Component
     }
 
     /**
-     * @param array<Step> | Closure $steps
+     * @param  array<Step> | Closure  $steps
      */
     public function steps(array | Closure $steps): static
     {

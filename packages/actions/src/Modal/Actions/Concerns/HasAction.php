@@ -12,7 +12,7 @@ trait HasAction
     protected ?array $actionArguments = null;
 
     /**
-     * @param array<string, mixed> | null $arguments
+     * @param  array<string, mixed> | null  $arguments
      */
     public function action(?string $action, ?array $arguments = []): static
     {

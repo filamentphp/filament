@@ -54,7 +54,7 @@ class Radio extends Field
     }
 
     /**
-     * @param array<string> | Arrayable | Closure $descriptions
+     * @param  array<string> | Arrayable | Closure  $descriptions
      */
     public function descriptions(array | Arrayable | Closure $descriptions): static
     {
@@ -64,7 +64,7 @@ class Radio extends Field
     }
 
     /**
-     * @param array-key $value
+     * @param  array-key  $value
      */
     public function hasDescription($value): bool
     {
@@ -72,7 +72,7 @@ class Radio extends Field
     }
 
     /**
-     * @param array-key $value
+     * @param  array-key  $value
      */
     public function getDescription($value): ?string
     {
@@ -99,7 +99,7 @@ class Radio extends Field
     }
 
     /**
-     * @param array-key $value
+     * @param  array-key  $value
      */
     public function isOptionDisabled($value, string $label): bool
     {

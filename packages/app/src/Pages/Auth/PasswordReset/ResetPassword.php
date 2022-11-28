@@ -125,7 +125,7 @@ class ResetPassword extends CardPage
     }
 
     /**
-     * @param string $propertyName
+     * @param  string  $propertyName
      */
     public function propertyIsPublicAndNotDefinedOnBaseClass($propertyName): bool
     {

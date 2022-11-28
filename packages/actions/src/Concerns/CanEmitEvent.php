@@ -14,7 +14,7 @@ trait CanEmitEvent
     protected array | Closure $eventData = [];
 
     /**
-     * @param array<int, mixed> | Closure $data
+     * @param  array<int, mixed> | Closure  $data
      */
     public function emit(
         string | Closure | null $event,
@@ -32,7 +32,7 @@ trait CanEmitEvent
     }
 
     /**
-     * @param array<int, mixed> | Closure $data
+     * @param  array<int, mixed> | Closure  $data
      */
     public function eventData(array | Closure $data): static
     {

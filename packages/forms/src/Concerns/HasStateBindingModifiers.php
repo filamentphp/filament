@@ -35,7 +35,7 @@ trait HasStateBindingModifiers
     }
 
     /**
-     * @param array<string> | null $modifiers
+     * @param  array<string> | null  $modifiers
      */
     public function stateBindingModifiers(?array $modifiers): static
     {
@@ -45,7 +45,7 @@ trait HasStateBindingModifiers
     }
 
     /**
-     * @param array<string> $lazilyEntangledModifiers
+     * @param  array<string>  $lazilyEntangledModifiers
      */
     public function applyStateBindingModifiers(string $expression, array $lazilyEntangledModifiers = []): string
     {

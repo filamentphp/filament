@@ -14,7 +14,7 @@ trait HasWizard
     public int | Closure $wizardStartStep = 1;
 
     /**
-     * @param array<Step> | Closure $steps
+     * @param  array<Step> | Closure  $steps
      */
     public function steps(array | Closure $steps): static
     {

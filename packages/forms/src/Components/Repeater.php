@@ -3,9 +3,9 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Filament\Forms\ComponentContainer;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -510,7 +510,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     }
 
     /**
-     * @param array<array<string, mixed>> $data
+     * @param  array<array<string, mixed>>  $data
      * @return array<array<string, mixed>>
      */
     public function mutateRelationshipDataBeforeCreate(array $data): array
@@ -532,7 +532,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     }
 
     /**
-     * @param array<array<string, mixed>> $data
+     * @param  array<array<string, mixed>>  $data
      * @return array<array<string, mixed>>
      */
     public function mutateRelationshipDataBeforeFill(array $data): array
@@ -554,7 +554,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     }
 
     /**
-     * @param array<array<string, mixed>> $data
+     * @param  array<array<string, mixed>>  $data
      * @return array<array<string, mixed>>
      */
     public function mutateRelationshipDataBeforeSave(array $data, Model $record): array

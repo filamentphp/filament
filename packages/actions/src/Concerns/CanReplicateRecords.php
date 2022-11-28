@@ -78,7 +78,7 @@ trait CanReplicateRecords
     }
 
     /**
-     * @param array<string> | Closure | null $attributes
+     * @param  array<string> | Closure | null  $attributes
      */
     public function excludeAttributes(array | Closure | null $attributes): static
     {

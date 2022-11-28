@@ -42,7 +42,7 @@ class Placeholder extends Component
     }
 
     /**
-     * @param mixed $content
+     * @param  mixed  $content
      */
     public function content($content): static
     {

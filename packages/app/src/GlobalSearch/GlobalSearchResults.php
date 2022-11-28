@@ -20,7 +20,7 @@ class GlobalSearchResults
     }
 
     /**
-     * @param array<GlobalSearchResult> | Arrayable $results
+     * @param  array<GlobalSearchResult> | Arrayable  $results
      */
     public function category(string $name, array | Arrayable $results = []): static
     {

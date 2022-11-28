@@ -13,7 +13,7 @@ trait HasKeyBindings
     protected string | array | Closure | null $keyBindings = null;
 
     /**
-     * @param string | array<string> | Closure | null $bindings
+     * @param  string | array<string> | Closure | null  $bindings
      */
     public function keyBindings(string | array | Closure | null $bindings): static
     {

@@ -5,7 +5,7 @@ namespace Filament\Forms\Concerns;
 trait ListensToEvents
 {
     /**
-     * @param mixed ...$parameters
+     * @param  mixed  ...$parameters
      */
     public function dispatchEvent(string $event, ...$parameters): static
     {

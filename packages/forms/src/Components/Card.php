@@ -14,7 +14,7 @@ class Card extends Component implements CanEntangleWithSingularRelationships
     protected string $view = 'filament-forms::components.card';
 
     /**
-     * @param array<Component> $schema
+     * @param  array<Component>  $schema
      */
     final public function __construct(array $schema = [])
     {
@@ -22,7 +22,7 @@ class Card extends Component implements CanEntangleWithSingularRelationships
     }
 
     /**
-     * @param array<Component> $schema
+     * @param  array<Component>  $schema
      */
     public static function make(array $schema = []): static
     {

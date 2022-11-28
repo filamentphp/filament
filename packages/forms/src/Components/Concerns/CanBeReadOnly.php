@@ -18,7 +18,7 @@ trait CanBeReadOnly
     }
 
     /**
-     * @param string | array<string> $contexts
+     * @param  string | array<string>  $contexts
      */
     public function readOnlyOn(string | array $contexts): static
     {

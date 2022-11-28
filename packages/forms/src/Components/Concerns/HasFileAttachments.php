@@ -107,7 +107,7 @@ trait HasFileAttachments
     }
 
     /**
-     * @param mixed $file
+     * @param  mixed  $file
      */
     protected function handleUploadedAttachmentUrlRetrieval($file): ?string
     {

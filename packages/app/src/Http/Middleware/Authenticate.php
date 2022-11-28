@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 class Authenticate extends Middleware
 {
     /**
-     * @param array<string> $guards
+     * @param  array<string>  $guards
      */
     protected function authenticate($request, array $guards): void
     {

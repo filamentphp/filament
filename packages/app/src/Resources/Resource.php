@@ -488,7 +488,7 @@ abstract class Resource
     }
 
     /**
-     * @param array<mixed> $parameters
+     * @param  array<mixed>  $parameters
      */
     public static function getUrl(string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?string $context = null, ?Model $tenant = null): string
     {
@@ -510,7 +510,7 @@ abstract class Resource
     }
 
     /**
-     * @param array<string> $searchAttributes
+     * @param  array<string>  $searchAttributes
      */
     protected static function applyGlobalSearchAttributeConstraint(Builder $query, string $search, array $searchAttributes, bool &$isFirst): Builder
     {

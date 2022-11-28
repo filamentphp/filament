@@ -15,7 +15,7 @@ class NavigationBuilder
     protected array $items = [];
 
     /**
-     * @param array<NavigationItem> $items
+     * @param  array<NavigationItem>  $items
      */
     public function group(NavigationGroup | string $group, array $items = [], ?bool $collapsible = null): static
     {

@@ -53,7 +53,7 @@ class NavigationGroup
     }
 
     /**
-     * @param array<NavigationItem> | Arrayable $items
+     * @param  array<NavigationItem> | Arrayable  $items
      */
     public function items(array | Arrayable $items): static
     {

@@ -55,7 +55,7 @@ abstract class RegisterTenant extends CardPage
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
     protected function mutateFormDataBeforeRegister(array $data): array
@@ -91,7 +91,7 @@ abstract class RegisterTenant extends CardPage
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     protected function handleRegistration(array $data): Model
     {

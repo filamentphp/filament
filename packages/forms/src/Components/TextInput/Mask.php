@@ -91,7 +91,7 @@ class Mask implements Jsonable
     }
 
     /**
-     * @param array<mixed> $values
+     * @param  array<mixed>  $values
      */
     public function enum(array $values): static
     {
@@ -129,7 +129,7 @@ class Mask implements Jsonable
     }
 
     /**
-     * @param array<string> $characters
+     * @param  array<string>  $characters
      */
     public function mapToDecimalSeparator(array $characters): static
     {
@@ -213,7 +213,7 @@ class Mask implements Jsonable
     }
 
     /**
-     * @param array<string, Closure> $blocks
+     * @param  array<string, Closure>  $blocks
      */
     public function patternBlocks(array $blocks): static
     {
@@ -223,7 +223,7 @@ class Mask implements Jsonable
     }
 
     /**
-     * @param array<string, array<mixed>> $definitions
+     * @param  array<string, array<mixed>>  $definitions
      */
     public function patternDefinitions(array $definitions): static
     {
@@ -371,7 +371,7 @@ class Mask implements Jsonable
     }
 
     /**
-     * @param int $options
+     * @param  int  $options
      */
     public function toJson($options = 0): string
     {

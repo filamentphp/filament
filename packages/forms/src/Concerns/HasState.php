@@ -66,7 +66,7 @@ trait HasState
     }
 
     /**
-     * @param array<string, mixed> $state
+     * @param  array<string, mixed>  $state
      * @return array<string, mixed>
      */
     public function dehydrateState(array &$state = []): array
@@ -83,7 +83,7 @@ trait HasState
     }
 
     /**
-     * @param array<string, mixed> $state
+     * @param  array<string, mixed>  $state
      * @return array<string, mixed>
      */
     public function mutateDehydratedState(array &$state = []): array
@@ -126,7 +126,7 @@ trait HasState
     }
 
     /**
-     * @param array<string, mixed> | null $state
+     * @param  array<string, mixed> | null  $state
      */
     public function fill(?array $state = null): static
     {
@@ -154,7 +154,7 @@ trait HasState
     }
 
     /**
-     * @param array<string, mixed> | null $hydratedDefaultState
+     * @param  array<string, mixed> | null  $hydratedDefaultState
      */
     public function hydrateState(?array &$hydratedDefaultState): void
     {
@@ -209,7 +209,7 @@ trait HasState
     }
 
     /**
-     * @param array<string> $keys
+     * @param  array<string>  $keys
      * @return array<string, mixed>
      */
     public function getStateOnly(array $keys): array
@@ -218,7 +218,7 @@ trait HasState
     }
 
     /**
-     * @param array<string> $keys
+     * @param  array<string>  $keys
      * @return array<string, mixed>
      */
     public function getStateExcept(array $keys): array

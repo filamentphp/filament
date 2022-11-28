@@ -15,7 +15,7 @@ trait HasOptions
     protected array | Arrayable | string | Closure | null $options = null;
 
     /**
-     * @param array<string> | Arrayable | string | Closure | null $options
+     * @param  array<string> | Arrayable | string | Closure | null  $options
      */
     public function options(array | Arrayable | string | Closure | null $options): static
     {

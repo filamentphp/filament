@@ -116,7 +116,7 @@ trait EntanglesStateWithSingularRelationship
     }
 
     /**
-     * @param array-key $key
+     * @param  array-key  $key
      */
     public function getChildComponentContainer($key = null): ComponentContainer
     {
@@ -180,7 +180,7 @@ trait EntanglesStateWithSingularRelationship
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
     public function mutateRelationshipDataBeforeCreate(array $data): array
@@ -202,7 +202,7 @@ trait EntanglesStateWithSingularRelationship
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
     public function mutateRelationshipDataBeforeFill(array $data): array
@@ -224,7 +224,7 @@ trait EntanglesStateWithSingularRelationship
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      * @return array<string, mixed>
      */
     public function mutateRelationshipDataBeforeSave(array $data): array

@@ -105,7 +105,7 @@ class MorphToSelect extends Component
     }
 
     /**
-     * @param array<Type> | Closure $types
+     * @param  array<Type> | Closure  $types
      */
     public function types(array | Closure $types): static
     {

@@ -35,7 +35,7 @@ trait InteractsWithActions
     protected bool $hasActionsModalRendered = false;
 
     /**
-     * @param string $property
+     * @param  string  $property
      * @return mixed
      */
     public function __get($property)

@@ -134,7 +134,7 @@ class Select extends Field
     }
 
     /**
-     * @param array<Component> | Closure | null $schema
+     * @param  array<Component> | Closure | null  $schema
      */
     public function createOptionForm(array | Closure | null $schema): static
     {
@@ -272,7 +272,7 @@ class Select extends Field
     }
 
     /**
-     * @param bool | array<string> | Closure $condition
+     * @param  bool | array<string> | Closure  $condition
      */
     public function searchable(bool | array | Closure $condition = true): static
     {
@@ -404,7 +404,7 @@ class Select extends Field
     }
 
     /**
-     * @param array<string> $options
+     * @param  array<string>  $options
      * @return array<array{'label': string, 'value': string}>
      */
     protected function transformOptionsForJs(array $options): array

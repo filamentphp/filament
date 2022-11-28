@@ -69,7 +69,7 @@ class TagsInput extends Field
     }
 
     /**
-     * @param array<string> | Arrayable | Closure $suggestions
+     * @param  array<string> | Arrayable | Closure  $suggestions
      */
     public function suggestions(array | Arrayable | Closure $suggestions): static
     {

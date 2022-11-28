@@ -77,7 +77,7 @@ trait SupportsFileUploadFields
     }
 
     /**
-     * @param array<array-key> $fileKeys
+     * @param  array<array-key>  $fileKeys
      */
     public function reorderUploadedFiles(string $statePath, array $fileKeys): bool
     {

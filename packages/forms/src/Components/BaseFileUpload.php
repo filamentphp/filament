@@ -173,7 +173,7 @@ class BaseFileUpload extends Field
     }
 
     /**
-     * @param array<string> | Arrayable | Closure $types
+     * @param  array<string> | Arrayable | Closure  $types
      */
     public function acceptedFileTypes(array | Arrayable | Closure $types): static
     {
@@ -512,7 +512,7 @@ class BaseFileUpload extends Field
     }
 
     /**
-     * @param array<array-key> $fileKeys
+     * @param  array<array-key>  $fileKeys
      */
     public function reorderUploadedFiles(array $fileKeys): void
     {
@@ -680,7 +680,7 @@ class BaseFileUpload extends Field
     }
 
     /**
-     * @param array<string, array<mixed>> $rules
+     * @param  array<string, array<mixed>>  $rules
      */
     public function dehydrateValidationRules(array &$rules): void
     {

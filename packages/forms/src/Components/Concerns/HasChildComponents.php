@@ -14,7 +14,7 @@ trait HasChildComponents
     protected array | Closure $childComponents = [];
 
     /**
-     * @param array<Component> | Closure $components
+     * @param  array<Component> | Closure  $components
      */
     public function childComponents(array | Closure $components): static
     {
@@ -24,7 +24,7 @@ trait HasChildComponents
     }
 
     /**
-     * @param array<Component> | Closure $components
+     * @param  array<Component> | Closure  $components
      */
     public function schema(array | Closure $components): static
     {
@@ -42,7 +42,7 @@ trait HasChildComponents
     }
 
     /**
-     * @param array-key $key
+     * @param  array-key  $key
      */
     public function getChildComponentContainer($key = null): ComponentContainer
     {

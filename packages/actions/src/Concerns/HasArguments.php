@@ -10,7 +10,7 @@ trait HasArguments
     protected array $arguments = [];
 
     /**
-     * @param array<string, mixed> $arguments
+     * @param  array<string, mixed>  $arguments
      */
     public function arguments(array $arguments): static
     {

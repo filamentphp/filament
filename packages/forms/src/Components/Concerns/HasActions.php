@@ -15,7 +15,7 @@ trait HasActions
     protected Model | string | null $actionFormModel = null;
 
     /**
-     * @param array<string, Action> $actions
+     * @param  array<string, Action>  $actions
      */
     public function registerActions(array $actions): static
     {

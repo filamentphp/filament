@@ -15,7 +15,7 @@ trait HasComponents
     protected array | Closure $components = [];
 
     /**
-     * @param array<Component> | Closure $components
+     * @param  array<Component> | Closure  $components
      */
     public function components(array | Closure $components): static
     {
@@ -25,7 +25,7 @@ trait HasComponents
     }
 
     /**
-     * @param array<Component> | Closure $components
+     * @param  array<Component> | Closure  $components
      */
     public function schema(array | Closure $components): static
     {

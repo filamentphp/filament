@@ -31,7 +31,7 @@ class Tabs extends Component
     }
 
     /**
-     * @param array<Tab> $tabs
+     * @param  array<Tab>  $tabs
      */
     public function tabs(array $tabs): static
     {

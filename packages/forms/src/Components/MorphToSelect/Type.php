@@ -205,7 +205,7 @@ class Type
     }
 
     /**
-     * @param array<string> | null $columns
+     * @param  array<string> | null  $columns
      */
     public function searchColumns(?array $columns): static
     {

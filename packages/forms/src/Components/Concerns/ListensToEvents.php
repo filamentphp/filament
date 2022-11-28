@@ -12,7 +12,7 @@ trait ListensToEvents
     protected array $listeners = [];
 
     /**
-     * @param mixed ...$parameters
+     * @param  mixed  ...$parameters
      */
     public function dispatchEvent(string $event, ...$parameters): static
     {
@@ -24,7 +24,7 @@ trait ListensToEvents
     }
 
     /**
-     * @param array<string, array<Closure>> $listeners
+     * @param  array<string, array<Closure>>  $listeners
      */
     public function registerListeners(array $listeners): static
     {

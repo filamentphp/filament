@@ -7,7 +7,7 @@ use Livewire\TemporaryUploadedFile;
 interface HasForms
 {
     /**
-     * @param mixed ...$args
+     * @param  mixed  ...$args
      */
     public function dispatchFormEvent(...$args): void;
 
@@ -42,14 +42,14 @@ interface HasForms
     public function removeUploadedFile(string $statePath, string $fileKey): void;
 
     /**
-     * @param array<array-key> $fileKeys
+     * @param  array<array-key>  $fileKeys
      */
     public function reorderUploadedFiles(string $statePath, array $fileKeys): void;
 
     /**
-     * @param array<string, array<mixed>> | null $rules
-     * @param array<string, string> $messages
-     * @param array<string, string> $attributes
+     * @param  array<string, array<mixed>> | null  $rules
+     * @param  array<string, string>  $messages
+     * @param  array<string, string>  $attributes
      * @return array<string, mixed>
      */
     public function validate(?array $rules = null, array $messages = [], array $attributes = []): array;

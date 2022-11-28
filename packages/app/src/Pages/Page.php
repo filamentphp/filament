@@ -33,7 +33,7 @@ abstract class Page extends BasePage
     public static bool $hasInlineFormLabels = false;
 
     /**
-     * @param array<mixed> $parameters
+     * @param  array<mixed>  $parameters
      */
     public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $context = null, ?Model $tenant = null): string
     {
@@ -179,7 +179,7 @@ abstract class Page extends BasePage
     }
 
     /**
-     * @param array<class-string> $widgets
+     * @param  array<class-string>  $widgets
      * @return array<class-string>
      */
     protected function filterVisibleWidgets(array $widgets): array

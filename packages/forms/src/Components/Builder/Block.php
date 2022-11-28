@@ -40,7 +40,7 @@ class Block extends Component
     }
 
     /**
-     * @param array<string, mixed> | null $state
+     * @param  array<string, mixed> | null  $state
      */
     public function labelState(?array $state): static
     {

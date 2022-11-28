@@ -65,7 +65,7 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     }
 
     /**
-     * @param array<string> | Arrayable | Closure | null $options
+     * @param  array<string> | Arrayable | Closure | null  $options
      */
     public function datalist(array | Arrayable | Closure | null $options): static
     {
@@ -100,7 +100,7 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     }
 
     /**
-     * @param scalar $value
+     * @param  scalar  $value
      */
     public function maxValue($value): static
     {
@@ -116,7 +116,7 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     }
 
     /**
-     * @param scalar $value
+     * @param  scalar  $value
      */
     public function minValue($value): static
     {

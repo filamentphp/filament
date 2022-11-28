@@ -34,7 +34,7 @@ trait InteractsWithForms
     protected bool $hasFormsModalRendered = false;
 
     /**
-     * @param string $property
+     * @param  string  $property
      * @return mixed
      */
     public function __get($property)
@@ -51,7 +51,7 @@ trait InteractsWithForms
     }
 
     /**
-     * @param mixed ...$args
+     * @param  mixed  ...$args
      */
     public function dispatchFormEvent(...$args): void
     {
@@ -183,9 +183,9 @@ trait InteractsWithForms
     }
 
     /**
-     * @param array<string, array<mixed>> | null $rules
-     * @param array<string, string> $messages
-     * @param array<string, string> $attributes
+     * @param  array<string, array<mixed>> | null  $rules
+     * @param  array<string, string>  $messages
+     * @param  array<string, string>  $attributes
      * @return array<string, mixed>
      */
     public function validate($rules = null, $messages = [], $attributes = []): array
@@ -206,10 +206,10 @@ trait InteractsWithForms
     }
 
     /**
-     * @param string $field
-     * @param array<string, array<mixed>> $rules
-     * @param array<string, string> $messages
-     * @param array<string, string> $attributes
+     * @param  string  $field
+     * @param  array<string, array<mixed>>  $rules
+     * @param  array<string, string>  $messages
+     * @param  array<string, string>  $attributes
      * @return array<string, mixed>
      */
     public function validateOnly($field, $rules = null, $messages = [], $attributes = [])
@@ -231,9 +231,9 @@ trait InteractsWithForms
     }
 
     /**
-     * @param string $name
-     * @param mixed $value
-     * @param Closure $callback
+     * @param  string  $name
+     * @param  mixed  $value
+     * @param  Closure  $callback
      */
     protected function callBeforeAndAfterSyncHooks($name, $value, $callback): void
     {

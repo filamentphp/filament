@@ -60,7 +60,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param array<scalar> | Arrayable | string | Closure $values
+     * @param  array<scalar> | Arrayable | string | Closure  $values
      */
     public function doesntStartWith(array | Arrayable | string | Closure $values): static
     {
@@ -90,7 +90,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param array<scalar> | Arrayable | string | Closure $values
+     * @param  array<scalar> | Arrayable | string | Closure  $values
      */
     public function doesntEndWith(array | Arrayable | string | Closure $values): static
     {
@@ -120,7 +120,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param array<scalar> | Arrayable | string | Closure $values
+     * @param  array<scalar> | Arrayable | string | Closure  $values
      */
     public function endsWith(array | Arrayable | string | Closure $values): static
     {
@@ -188,7 +188,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param array<scalar> | Arrayable | string | Closure $values
+     * @param  array<scalar> | Arrayable | string | Closure  $values
      */
     public function in(array | Arrayable | string | Closure $values): static
     {
@@ -262,7 +262,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param array<scalar> | Arrayable | string | Closure $values
+     * @param  array<scalar> | Arrayable | string | Closure  $values
      */
     public function notIn(array | Arrayable | string | Closure $values): static
     {
@@ -324,7 +324,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param string | array<string> | Closure $statePaths
+     * @param  string | array<string> | Closure  $statePaths
      */
     public function requiredWith(string | array | Closure $statePaths, bool $isStatePathAbsolute = false): static
     {
@@ -332,7 +332,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param string | array<string> | Closure $statePaths
+     * @param  string | array<string> | Closure  $statePaths
      */
     public function requiredWithAll(string | array | Closure $statePaths, bool $isStatePathAbsolute = false): static
     {
@@ -340,7 +340,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param string | array<string> | Closure $statePaths
+     * @param  string | array<string> | Closure  $statePaths
      */
     public function requiredWithout(string | array | Closure $statePaths, bool $isStatePathAbsolute = false): static
     {
@@ -348,7 +348,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param string | array<string> | Closure $statePaths
+     * @param  string | array<string> | Closure  $statePaths
      */
     public function requiredWithoutAll(string | array | Closure $statePaths, bool $isStatePathAbsolute = false): static
     {
@@ -363,7 +363,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param array<scalar> | Arrayable | string | Closure $values
+     * @param  array<scalar> | Arrayable | string | Closure  $values
      */
     public function startsWith(array | Arrayable | string | Closure $values): static
     {
@@ -407,7 +407,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param mixed $rule
+     * @param  mixed  $rule
      */
     public function rule($rule, bool | Closure $condition = true): static
     {
@@ -420,7 +420,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param string | array<mixed> $rules
+     * @param  string | array<mixed>  $rules
      */
     public function rules(string | array $rules, bool | Closure $condition = true): static
     {
@@ -563,7 +563,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param array<string, array<mixed>> $rules
+     * @param  array<string, array<mixed>>  $rules
      */
     public function dehydrateValidationRules(array &$rules): void
     {
@@ -621,7 +621,7 @@ trait CanBeValidated
     }
 
     /**
-     * @param array<string> | string | Closure $statePaths
+     * @param  array<string> | string | Closure  $statePaths
      */
     public function multiFieldComparisonRule(string $rule, array | string | Closure $statePaths, bool $isStatePathAbsolute = false): static
     {

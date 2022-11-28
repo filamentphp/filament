@@ -120,7 +120,7 @@ class DateTimePicker extends Field
     }
 
     /**
-     * @param array<mixed> | Closure $attributes
+     * @param  array<mixed> | Closure  $attributes
      */
     public function extraTriggerAttributes(array | Closure $attributes): static
     {
@@ -170,7 +170,7 @@ class DateTimePicker extends Field
     }
 
     /**
-     * @param array<DateTime | string> | Closure $dates
+     * @param  array<DateTime | string> | Closure  $dates
      */
     public function disabledDates(array | Closure $dates): static
     {

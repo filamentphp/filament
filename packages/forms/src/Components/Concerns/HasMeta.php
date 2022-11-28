@@ -12,7 +12,7 @@ trait HasMeta
     protected array $meta = [];
 
     /**
-     * @param mixed $value
+     * @param  mixed  $value
      */
     public function meta(string $key, $value): static
     {
@@ -22,7 +22,7 @@ trait HasMeta
     }
 
     /**
-     * @param string | array<string> | null $keys
+     * @param  string | array<string> | null  $keys
      * @return mixed
      */
     public function getMeta(string | array | null $keys = null)
@@ -39,7 +39,7 @@ trait HasMeta
     }
 
     /**
-     * @param string | array<string> $keys
+     * @param  string | array<string>  $keys
      */
     public function hasMeta(string | array $keys): bool
     {

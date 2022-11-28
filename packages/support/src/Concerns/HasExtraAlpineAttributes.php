@@ -13,7 +13,7 @@ trait HasExtraAlpineAttributes
     protected array | Closure $extraAlpineAttributes = [];
 
     /**
-     * @param array<mixed> | Closure $attributes
+     * @param  array<mixed> | Closure  $attributes
      */
     public function extraAlpineAttributes(array | Closure $attributes): static
     {

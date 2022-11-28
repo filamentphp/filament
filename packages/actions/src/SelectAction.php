@@ -27,7 +27,7 @@ class SelectAction extends StaticAction
     }
 
     /**
-     * @param array<string> | Arrayable | Closure $options
+     * @param  array<string> | Arrayable | Closure  $options
      */
     public function options(array | Arrayable | Closure $options): static
     {

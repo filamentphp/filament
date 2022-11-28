@@ -21,7 +21,7 @@ trait CanBeHidden
     }
 
     /**
-     * @param string | array<string> $contexts
+     * @param  string | array<string>  $contexts
      */
     public function hiddenOn(string | array $contexts): static
     {
@@ -46,7 +46,7 @@ trait CanBeHidden
     }
 
     /**
-     * @param string | array<string> $paths
+     * @param  string | array<string>  $paths
      */
     public function whenTruthy(string | array $paths): static
     {
@@ -66,7 +66,7 @@ trait CanBeHidden
     }
 
     /**
-     * @param string | array<string> $paths
+     * @param  string | array<string>  $paths
      */
     public function whenFalsy(string | array $paths): static
     {
@@ -93,7 +93,7 @@ trait CanBeHidden
     }
 
     /**
-     * @param string | array<string> $contexts
+     * @param  string | array<string>  $contexts
      */
     public function visibleOn(string | array $contexts): static
     {

@@ -193,7 +193,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
     }
 
     /**
-     * @param array<Block> $blocks
+     * @param  array<Block>  $blocks
      */
     public function blocks(array $blocks): static
     {

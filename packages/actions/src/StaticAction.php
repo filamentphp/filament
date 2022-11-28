@@ -45,7 +45,7 @@ abstract class StaticAction extends ViewComponent
     /**
      * @deprecated Use `->extraAttributes()` instead.
      *
-     * @param array<mixed> $attributes
+     * @param  array<mixed>  $attributes
      */
     public function withAttributes(array $attributes): static
     {

@@ -55,7 +55,7 @@ trait CanOpenModal
     }
 
     /**
-     * @param array<ModalAction> | Closure | null $actions
+     * @param  array<ModalAction> | Closure | null  $actions
      */
     public function modalActions(array | Closure | null $actions = null): static
     {
@@ -65,7 +65,7 @@ trait CanOpenModal
     }
 
     /**
-     * @param array<ModalAction> | Closure $actions
+     * @param  array<ModalAction> | Closure  $actions
      */
     public function extraModalActions(array | Closure $actions): static
     {
@@ -161,7 +161,7 @@ trait CanOpenModal
     }
 
     /**
-     * @param array<ModalAction> $actions
+     * @param  array<ModalAction>  $actions
      * @return array<ModalAction>
      */
     protected function filterHiddenModalActions(array $actions): array
@@ -248,7 +248,7 @@ trait CanOpenModal
     }
 
     /**
-     * @param array<string, mixed> | null $arguments
+     * @param  array<string, mixed> | null  $arguments
      */
     protected function makeExtraModalAction(string $name, ?array $arguments = null): ModalAction
     {

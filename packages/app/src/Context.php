@@ -307,7 +307,7 @@ class Context
     }
 
     /**
-     * @param string | Closure | array<class-string, string> | null $promptAction
+     * @param  string | Closure | array<class-string, string> | null  $promptAction
      */
     public function emailVerification(string | Closure | array | null $promptAction = EmailVerificationPrompt::class, bool $isRequired = true): static
     {
@@ -325,7 +325,7 @@ class Context
     }
 
     /**
-     * @param string | Closure | array<class-string, string> | null $action
+     * @param  string | Closure | array<class-string, string> | null  $action
      */
     public function login(string | Closure | array | null $action = Login::class): static
     {
@@ -335,8 +335,8 @@ class Context
     }
 
     /**
-     * @param string | Closure | array<class-string, string> | null $requestAction
-     * @param string | Closure | array<class-string, string> | null $resetAction
+     * @param  string | Closure | array<class-string, string> | null  $requestAction
+     * @param  string | Closure | array<class-string, string> | null  $resetAction
      */
     public function passwordReset(string | Closure | array | null $requestAction = RequestPasswordReset::class, string | Closure | array | null $resetAction = ResetPassword::class): static
     {
@@ -347,7 +347,7 @@ class Context
     }
 
     /**
-     * @param string | Closure | array<class-string, string> | null $action
+     * @param  string | Closure | array<class-string, string> | null  $action
      */
     public function registration(string | Closure | array | null $action = Register::class): static
     {
@@ -370,7 +370,7 @@ class Context
     }
 
     /**
-     * @param array<string | int, NavigationGroup | string> $groups
+     * @param  array<string | int, NavigationGroup | string>  $groups
      */
     public function navigationGroups(array $groups): static
     {
@@ -380,7 +380,7 @@ class Context
     }
 
     /**
-     * @param array<NavigationItem> $items
+     * @param  array<NavigationItem>  $items
      */
     public function navigationItems(array $items): static
     {
@@ -390,7 +390,7 @@ class Context
     }
 
     /**
-     * @param array<class-string> $pages
+     * @param  array<class-string>  $pages
      */
     public function pages(array $pages): static
     {
@@ -425,7 +425,7 @@ class Context
     }
 
     /**
-     * @param array<class-string> $resources
+     * @param  array<class-string>  $resources
      */
     public function resources(array $resources): static
     {
@@ -435,7 +435,7 @@ class Context
     }
 
     /**
-     * @param string | array<string> $theme
+     * @param  string | array<string>  $theme
      */
     public function viteTheme(string | array $theme, ?string $buildDirectory = null): static
     {
@@ -452,7 +452,7 @@ class Context
     }
 
     /**
-     * @param array<MenuItem> $items
+     * @param  array<MenuItem>  $items
      */
     public function tenantMenuItems(array $items): static
     {
@@ -462,7 +462,7 @@ class Context
     }
 
     /**
-     * @param array<MenuItem> $items
+     * @param  array<MenuItem>  $items
      */
     public function userMenuItems(array $items): static
     {
@@ -472,7 +472,7 @@ class Context
     }
 
     /**
-     * @param array<class-string> $widgets
+     * @param  array<class-string>  $widgets
      */
     public function widgets(array $widgets): static
     {
@@ -486,7 +486,7 @@ class Context
     }
 
     /**
-     * @param array<string, string> $meta
+     * @param  array<string, string>  $meta
      */
     public function meta(array $meta): static
     {
@@ -517,7 +517,7 @@ class Context
     }
 
     /**
-     * @param array<string> $middleware
+     * @param  array<string>  $middleware
      */
     public function middleware(array $middleware): static
     {
@@ -530,7 +530,7 @@ class Context
     }
 
     /**
-     * @param array<string> $middleware
+     * @param  array<string>  $middleware
      */
     public function authMiddleware(array $middleware): static
     {
@@ -620,7 +620,7 @@ class Context
     }
 
     /**
-     * @param array<Plugin> $plugins
+     * @param  array<Plugin>  $plugins
      */
     public function plugins(array $plugins): static
     {
@@ -632,7 +632,7 @@ class Context
     }
 
     /**
-     * @param array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string $color
+     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string  $color
      * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string
      */
     public function processColor(array | string $color): array | string
@@ -649,7 +649,7 @@ class Context
     }
 
     /**
-     * @param array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null $color
+     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null  $color
      */
     public function primaryColor(array | string | null $color): static
     {
@@ -667,7 +667,7 @@ class Context
     }
 
     /**
-     * @param array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null $color
+     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null  $color
      */
     public function secondaryColor(array | string | null $color): static
     {
@@ -685,7 +685,7 @@ class Context
     }
 
     /**
-     * @param array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null $color
+     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null  $color
      */
     public function dangerColor(array | string | null $color): static
     {
@@ -703,7 +703,7 @@ class Context
     }
 
     /**
-     * @param array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null $color
+     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null  $color
      */
     public function warningColor(array | string | null $color): static
     {
@@ -721,7 +721,7 @@ class Context
     }
 
     /**
-     * @param array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null $color
+     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null  $color
      */
     public function successColor(array | string | null $color): static
     {
@@ -1424,7 +1424,7 @@ class Context
     }
 
     /**
-     * @param array<string, class-string> $register
+     * @param  array<string, class-string>  $register
      */
     protected function discoverComponents(string $baseClass, array &$register, ?string $directory, ?string $namespace): void
     {

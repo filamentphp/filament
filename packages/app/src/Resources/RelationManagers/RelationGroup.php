@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class RelationGroup
 {
     /**
-     * @param array<class-string> $managers
+     * @param  array<class-string>  $managers
      */
     public function __construct(
         protected string $label,
@@ -16,7 +16,7 @@ class RelationGroup
     }
 
     /**
-     * @param array<class-string> $managers
+     * @param  array<class-string>  $managers
      */
     public static function make(string $label, array $managers): static
     {

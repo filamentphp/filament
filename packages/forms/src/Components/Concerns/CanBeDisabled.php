@@ -20,7 +20,7 @@ trait CanBeDisabled
     }
 
     /**
-     * @param string | array<string> $contexts
+     * @param  string | array<string>  $contexts
      */
     public function disabledOn(string | array $contexts): static
     {

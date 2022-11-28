@@ -31,7 +31,7 @@ trait HasForm
     }
 
     /**
-     * @param array<Component> | Closure | null $form
+     * @param  array<Component> | Closure | null  $form
      */
     public function form(array | Closure | null $form): static
     {
@@ -84,7 +84,7 @@ trait HasForm
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function formData(array $data, bool $shouldMutate = true): static
     {

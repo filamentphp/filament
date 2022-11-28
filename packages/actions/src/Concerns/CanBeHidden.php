@@ -18,8 +18,8 @@ trait CanBeHidden
     protected bool | Closure $isVisible = true;
 
     /**
-     * @param mixed $abilities
-     * @param Model | array<mixed> | null $arguments
+     * @param  mixed  $abilities
+     * @param  Model | array<mixed> | null  $arguments
      */
     public function authorize($abilities, Model | array | null $arguments = null): static
     {
@@ -37,8 +37,8 @@ trait CanBeHidden
     }
 
     /**
-     * @param string | array<string> $abilities
-     * @param Model | array<mixed> | null $arguments
+     * @param  string | array<string>  $abilities
+     * @param  Model | array<mixed> | null  $arguments
      */
     public function authorizeAny(string | array $abilities, Model | array | null $arguments = null): static
     {
@@ -52,7 +52,7 @@ trait CanBeHidden
     }
 
     /**
-     * @param array<mixed> $arguments
+     * @param  array<mixed>  $arguments
      * @return array<mixed>
      */
     protected function parseAuthorizationArguments(array $arguments): array
