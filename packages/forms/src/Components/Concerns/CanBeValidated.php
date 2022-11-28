@@ -533,7 +533,6 @@ trait CanBeValidated
         }
 
         return $rules;
-
     }
 
     public function dehydrateValidationRules(array &$rules): void
@@ -543,7 +542,7 @@ trait CanBeValidated
         }
 
         if (count($componentRulesForArrayFields = $this->getValidationRulesForeachItem())) {
-            $rules[$this->getStatePath().'.*'] = $componentRulesForArrayFields;
+            $rules[$this->getStatePath() . '.*'] = $componentRulesForArrayFields;
         }
     }
 

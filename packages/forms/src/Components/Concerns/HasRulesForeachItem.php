@@ -4,8 +4,8 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 
-trait HasRulesForeachItem {
-
+trait HasRulesForeachItem
+{
     public function rulesForeachItem(string | array $rules, bool | Closure $condition = true): static
     {
         if (is_string($rules)) {
