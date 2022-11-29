@@ -26,7 +26,7 @@
                 :attributes="$attributes->merge($getExtraAttributes())->class([
                     'filament-forms-radio-component',
                     'flex flex-wrap gap-3' => $isInline(),
-                    'gap-2' => ! $isInline(),
+                    'space-y-2' => ! $isInline(),
                 ])"
             >
                 @php
