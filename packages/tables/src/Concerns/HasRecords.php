@@ -28,7 +28,9 @@ trait HasRecords
 
         if (! $this->getTable()->isGroupsOnly()) {
             foreach ($this->getTable()->getColumns() as $column) {
-                if ($column->isHidden()) {
+                if ($column->isHidden() ||
+                    ($this->getTable()->isGroupsOnly() && ! ($column->hasSummary() && $column->hasAggregate()))
+                ) {
                     continue;
                 }
 
