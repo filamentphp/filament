@@ -9,7 +9,7 @@ trait HasStateBindingModifiers
     /**
      * @var array<string> | null
      */
-    protected ?array $stateBindingModifiers = [];
+    protected ?array $stateBindingModifiers = null;
 
     protected string | int | null $debounce = null;
 
