@@ -121,10 +121,4 @@ trait CanAggregateRelatedModels
     {
         return $this->evaluate($this->relationshipToSum);
     }
-
-    public function hasAggregate(): bool
-    {
-        return $this->relationshipToCount || $this->relationshipToAvg ||
-            $this->relationshipToMax || $this->relationshipToMin || $this->relationshipToSum;
-    }
 }
