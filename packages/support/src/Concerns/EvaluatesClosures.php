@@ -15,6 +15,7 @@ trait EvaluatesClosures
 
     /**
      * @template T
+     *
      * @param  T | callable(): T  $value
      * @param  array<string, mixed>  $parameters
      * @param  array<string>  $exceptParameters
