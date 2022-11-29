@@ -53,10 +53,10 @@ trait HasRecords
 
     protected function hydratePivotRelationForTableRecords(Collection|Paginator $records): Collection|Paginator
     {
-        $table        = $this->getTable();
+        $table = $this->getTable();
         $relationship = $table->getRelationship();
 
-        if ($table->getRelationship() instanceof BelongsToMany && !$table->allowsDuplicates()) {
+        if ($table->getRelationship() instanceof BelongsToMany && ! $table->allowsDuplicates()) {
             invade($relationship)->hydratePivotRelation($records->all());
         }
 
@@ -72,8 +72,8 @@ trait HasRecords
         $query = $this->getFilteredSortedTableQuery();
 
         if (
-            (!$this->getTable()->isPaginated()) ||
-            ($this->isTableReordering() && (!$this->getTable()->isPaginatedWhileReordering()))
+            (! $this->getTable()->isPaginated()) ||
+            ($this->isTableReordering() && (! $this->getTable()->isPaginatedWhileReordering()))
         ) {
             return $this->records = $this->hydratePivotRelationForTableRecords($query->get());
         }
@@ -87,14 +87,14 @@ trait HasRecords
             return null;
         }
 
-        if (!($this->getTable()->getRelationship() instanceof BelongsToMany)) {
+        if (! ($this->getTable()->getRelationship() instanceof BelongsToMany)) {
             return $this->getTable()->getQuery()->find($key);
         }
 
         /** @var BelongsToMany $relationship */
         $relationship = $this->getTable()->getRelationship();
 
-        $pivotClass   = $relationship->getPivotClass();
+        $pivotClass = $relationship->getPivotClass();
         $pivotKeyName = app($pivotClass)->getKeyName();
 
         $table = $this->getTable();
@@ -117,14 +117,14 @@ trait HasRecords
     {
         $table = $this->getTable();
 
-        if (!($table->getRelationship() instanceof BelongsToMany && $table->allowsDuplicates())) {
+        if (! ($table->getRelationship() instanceof BelongsToMany && $table->allowsDuplicates())) {
             return $record->getKey();
         }
 
         /** @var BelongsToMany $relationship */
         $relationship = $table->getRelationship();
 
-        $pivotClass   = $relationship->getPivotClass();
+        $pivotClass = $relationship->getPivotClass();
         $pivotKeyName = app($pivotClass)->getKeyName();
 
         return $record->getAttributeValue($pivotKeyName);
