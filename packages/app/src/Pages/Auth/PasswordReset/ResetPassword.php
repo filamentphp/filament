@@ -38,7 +38,7 @@ class ResetPassword extends CardPage
 
     public ?string $passwordConfirmation = '';
 
-    public string $token;
+    public ?string $token;
 
     public function mount(): void
     {
