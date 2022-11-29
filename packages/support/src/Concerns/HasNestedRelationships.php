@@ -435,7 +435,7 @@ trait HasNestedRelationships
      * @param  array|null  $reverse
      * @return array|null
      */
-    public function getInverseRelationships(string $name, Model &$record, ?array $relationships = null, ?array $reverse = null): ?array
+    public function getInverseRelationships(string $name, Model &$record, ?array $relationships = null, ?array $reverse = null, ?string $previousRelationshipName = null): ?array
     {
         if (! isset($relationships)) {
             $relationships = is_array($name) ? $name : $this->getRelationshipStack($name);
@@ -451,7 +451,8 @@ trait HasNestedRelationships
             if ($this->isNoMoreRelationships($relationships)) {
                 return $reverse;
             } else {
-                $relationship = $this->shiftNextRelationship($relationships, $record);
+                $relationshipName = '';
+                $relationship = $this->shiftNextRelationship($relationships, $record, $relationshipName);
                 $record = $relationship->getRelated();
 
                 $inverseRelationship = (string) str(class_basename($relationship->getParent()::class))
@@ -464,13 +465,28 @@ trait HasNestedRelationships
                         ->camel();
 
                     if (! method_exists($record, $inverseRelationship)) {
-                        return null;
+                        // Hail Mary, if it's a HasMany relationship, good chance the inverse is the same name
+                        // as the previous relationship on the forward chain, like dailyLog.pilots.personnel.name
+                        // would have a personnel.pilots...
+                        $inverseRelationship = $previousRelationshipName;
+
+                        if (! method_exists($record, $inverseRelationship)) {
+                            // ... or if it's a BelongsToMany with a pivot, like dailyLog.pilots.name (though a
+                            // personnel<->dailyLog pivot), then the reverse would be the same as the current forward
+                            // name.
+                            $inverseRelationship = $relationshipName;
+
+                            if (! method_exists($record, $inverseRelationship)) {
+                                // hey ho, oh well, give up and go home
+                                return null;
+                            }
+                        }
                     }
                 }
 
                 $reverse[] = $inverseRelationship;
 
-                return $this->getInverseRelationships($name, $record, $relationships, $reverse);
+                return $this->getInverseRelationships($name, $record, $relationships, $reverse, $relationshipName);
             }
         }
     }
