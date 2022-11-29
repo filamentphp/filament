@@ -127,7 +127,7 @@ trait InteractsWithTableQuery
 
         foreach (array_reverse($this->getSortColumns()) as $sortColumn) {
             $query->orderBy(
-                $this->getNestedRelationshipExistenceQueries($query, $sortColumn, $direction),
+                $this->getNestedRelationExistenceQuery($query, $sortColumn, $direction),
                 $direction
             );
         }

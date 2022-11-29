@@ -121,7 +121,7 @@ class Group
         }
 
         return $query->orderBy(
-            $this->getNestedRelationshipExistenceQueries($query, $column)
+            $this->getNestedRelationExistenceQuery($query, $column)
         );
     }
 
