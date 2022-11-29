@@ -106,19 +106,19 @@ trait HasColumns
         $column = $this->getCachedTableColumn($column);
 
         if (! ($column instanceof Editable)) {
-            return null;
+            return ['state' => null];
         }
 
         $record = $this->getTableRecord($record);
 
         if (! $record) {
-            return null;
+            return ['state' => null];
         }
 
         $column->record($record);
 
         if ($column->isDisabled()) {
-            return null;
+            return ['state' => null];
         }
 
         try {
