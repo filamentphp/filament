@@ -16,7 +16,7 @@ trait EvaluatesClosures
     /**
      * @template T
      *
-     * @param  T | callable(): T  $value
+     * @param  T | Closure(): T  $value
      * @param  array<string, mixed>  $parameters
      * @param  array<string>  $exceptParameters
      * @return T
@@ -25,7 +25,7 @@ trait EvaluatesClosures
     {
         $this->evaluationParametersToRemove = $exceptParameters;
 
-        if (is_callable($value)) {
+        if ($value instanceof Closure) {
             return app()->call(
                 $value,
                 array_merge(
