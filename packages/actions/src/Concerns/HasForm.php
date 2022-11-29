@@ -3,13 +3,20 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
 
 trait HasForm
 {
+    /**
+     * @var array<string, mixed>
+     */
     protected array $formData = [];
 
+    /**
+     * @var array<Component> | Closure | null
+     */
     protected array | Closure | null $form = null;
 
     protected bool | Closure $isFormDisabled = false;
@@ -23,6 +30,9 @@ trait HasForm
         return $this;
     }
 
+    /**
+     * @param  array<Component> | Closure | null  $form
+     */
     public function form(array | Closure | null $form): static
     {
         $this->form = $form;
@@ -73,6 +83,9 @@ trait HasForm
         return $this;
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function formData(array $data, bool $shouldMutate = true): static
     {
         if ($shouldMutate && $this->mutateFormDataUsing) {
@@ -93,6 +106,9 @@ trait HasForm
         return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getFormData(): array
     {
         return $this->formData;

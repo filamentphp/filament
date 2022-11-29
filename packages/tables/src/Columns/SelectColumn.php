@@ -21,6 +21,9 @@ class SelectColumn extends Column implements Editable
     use HasOptions;
     use HasPlaceholder;
 
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-tables::columns.select-column';
 
     protected function setUp(): void
@@ -32,6 +35,9 @@ class SelectColumn extends Column implements Editable
         $this->placeholder(__('filament-forms::components.select.placeholder'));
     }
 
+    /**
+     * @return array<array-key>
+     */
     public function getRules(): array
     {
         return array_merge(

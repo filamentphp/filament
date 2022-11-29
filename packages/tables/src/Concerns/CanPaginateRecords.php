@@ -13,7 +13,7 @@ trait CanPaginateRecords
         WithPagination::resetPage as livewireResetPage;
     }
 
-    public $tableRecordsPerPage = null;
+    public int | string | null $tableRecordsPerPage = null;
 
     protected int | string | null $defaultTableRecordsPerPageSelectOption = null;
 
@@ -82,6 +82,8 @@ trait CanPaginateRecords
 
     /**
      * @deprecated Override the `table()` method to configure the table.
+     *
+     * @return array<int | string> | null
      */
     protected function getTableRecordsPerPageSelectOptions(): ?array
     {

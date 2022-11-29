@@ -12,14 +12,20 @@ use Filament\Tables\Actions\BulkAction;
  */
 trait HasBulkActions
 {
-    public $mountedTableBulkAction = null;
+    public ?string $mountedTableBulkAction = null;
 
-    public $mountedTableBulkActionData = [];
+    /**
+     * @var array<string, mixed>
+     */
+    public array $mountedTableBulkActionData = [];
 
     protected function configureTableBulkAction(BulkAction $action): void
     {
     }
 
+    /**
+     * @return mixed
+     */
     public function callMountedTableBulkAction(?string $arguments = null)
     {
         $action = $this->getMountedTableBulkAction();
@@ -72,6 +78,10 @@ trait HasBulkActions
         return $result;
     }
 
+    /**
+     * @param  array<int | string>  $selectedRecords
+     * @return mixed
+     */
     public function mountTableBulkAction(string $name, array $selectedRecords)
     {
         $this->mountedTableBulkAction = $name;
@@ -172,6 +182,8 @@ trait HasBulkActions
 
     /**
      * @deprecated Override the `table()` method to configure the table.
+     *
+     * @return array<BulkAction>
      */
     protected function getTableBulkActions(): array
     {

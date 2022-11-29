@@ -60,31 +60,49 @@ trait HasLifecycleHooks
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function callBefore()
     {
         return $this->evaluate($this->before);
     }
 
+    /**
+     * @return mixed
+     */
     public function callAfter()
     {
         return $this->evaluate($this->after);
     }
 
+    /**
+     * @return mixed
+     */
     public function callBeforeFormFilled()
     {
         return $this->evaluate($this->beforeFormFilled);
     }
 
+    /**
+     * @return mixed
+     */
     public function callAfterFormFilled()
     {
         return $this->evaluate($this->afterFormFilled);
     }
 
+    /**
+     * @return mixed
+     */
     public function callBeforeFormValidated()
     {
         return $this->evaluate($this->beforeFormValidated);
     }
 
+    /**
+     * @return mixed
+     */
     public function callAfterFormValidated()
     {
         return $this->evaluate($this->afterFormValidated);

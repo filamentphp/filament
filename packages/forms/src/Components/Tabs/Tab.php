@@ -9,6 +9,9 @@ use Illuminate\Support\Str;
 
 class Tab extends Component implements CanConcealComponents
 {
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-forms::components.tabs.tab';
 
     protected string | Closure | null $badge = null;
@@ -48,6 +51,9 @@ class Tab extends Component implements CanConcealComponents
         return $this->getContainer()->getParentComponent()->getId() . '-' . parent::getId() . '-tab';
     }
 
+    /**
+     * @return array<string, int | null>
+     */
     public function getColumnsConfig(): array
     {
         return $this->columns ?? $this->getContainer()->getColumnsConfig();

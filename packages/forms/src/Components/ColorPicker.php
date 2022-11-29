@@ -12,6 +12,9 @@ class ColorPicker extends Field
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
 
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-forms::components.color-picker';
 
     protected string | Closure $format = 'hex';

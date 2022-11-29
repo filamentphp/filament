@@ -20,6 +20,9 @@ class Summarizer extends ViewComponent
 
     protected string $viewIdentifier = 'summarizer';
 
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-tables::columns.summaries.text';
 
     protected ?string $id = null;
@@ -53,6 +56,9 @@ class Summarizer extends ViewComponent
         return $this;
     }
 
+    /**
+     * @return mixed
+     */
     public function getState()
     {
         $column    = $this->getColumn();
@@ -130,6 +136,9 @@ class Summarizer extends ViewComponent
         return $this->summarize($query, $attribute);
     }
 
+    /**
+     * @return mixed
+     */
     public function summarize(Builder $query, string $attribute)
     {
         return null;
@@ -145,6 +154,9 @@ class Summarizer extends ViewComponent
         return $this->getQuery()->getQuery()->limit !== null;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [

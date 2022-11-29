@@ -32,6 +32,9 @@ abstract class Page extends BasePage
 
     public static bool $hasInlineFormLabels = false;
 
+    /**
+     * @param  array<mixed>  $parameters
+     */
     public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $context = null, ?Model $tenant = null): string
     {
         $parameters['tenant'] ??= ($tenant ?? Filament::getRoutableTenant());
@@ -49,6 +52,9 @@ abstract class Page extends BasePage
             ->navigationItems(static::getNavigationItems());
     }
 
+    /**
+     * @return array<NavigationItem>
+     */
     public static function getNavigationItems(): array
     {
         return [
@@ -71,6 +77,9 @@ abstract class Page extends BasePage
         return "filament.{$context}.pages.{$slug}";
     }
 
+    /**
+     * @return array<string>
+     */
     public function getBreadcrumbs(): array
     {
         return [];
@@ -129,36 +138,58 @@ abstract class Page extends BasePage
         return null;
     }
 
+    /**
+     * @return array<class-string>
+     */
     protected function getHeaderWidgets(): array
     {
         return [];
     }
 
+    /**
+     * @return array<class-string>
+     */
     public function getVisibleHeaderWidgets(): array
     {
         return $this->filterVisibleWidgets($this->getHeaderWidgets());
     }
 
+    /**
+     * @return int | array<string, int | null>
+     */
     public function getHeaderWidgetsColumns(): int | array
     {
         return 2;
     }
 
+    /**
+     * @return array<class-string>
+     */
     protected function getFooterWidgets(): array
     {
         return [];
     }
 
+    /**
+     * @return array<class-string>
+     */
     public function getVisibleFooterWidgets(): array
     {
         return $this->filterVisibleWidgets($this->getFooterWidgets());
     }
 
+    /**
+     * @param  array<class-string>  $widgets
+     * @return array<class-string>
+     */
     protected function filterVisibleWidgets(array $widgets): array
     {
         return array_filter($widgets, fn (string $widget): bool => $widget::canView());
     }
 
+    /**
+     * @return int | array<string, int | null>
+     */
     public function getFooterWidgetsColumns(): int | array
     {
         return 2;

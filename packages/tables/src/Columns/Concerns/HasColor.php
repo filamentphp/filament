@@ -18,6 +18,9 @@ trait HasColor
         return $this;
     }
 
+    /**
+     * @param  array<mixed> | Closure  $colors
+     */
     public function colors(array | Closure $colors): static
     {
         $this->color(function (Column $column, $state) use ($colors) {

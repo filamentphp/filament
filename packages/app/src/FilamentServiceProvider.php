@@ -16,6 +16,7 @@ use Filament\Http\Responses\Auth\LoginResponse;
 use Filament\Http\Responses\Auth\LogoutResponse;
 use Filament\Http\Responses\Auth\PasswordResetResponse;
 use Filament\Http\Responses\Auth\RegistrationResponse;
+use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Theme;
 use Filament\Support\PluginServiceProvider;
@@ -72,6 +73,9 @@ class FilamentServiceProvider extends PluginServiceProvider
         return null;
     }
 
+    /**
+     * @return array<Asset>
+     */
     protected function getAssets(): array
     {
         return [
@@ -86,6 +90,9 @@ class FilamentServiceProvider extends PluginServiceProvider
         return ['web'];
     }
 
+    /**
+     * @return array<class-string>
+     */
     protected function getCommands(): array
     {
         $commands = [
@@ -113,6 +120,11 @@ class FilamentServiceProvider extends PluginServiceProvider
         return array_merge($commands, $aliases);
     }
 
+    /**
+     * @param  array<string, mixed>  $original
+     * @param  array<string, mixed>  $merging
+     * @return array<string, mixed>
+     */
     protected function mergeConfig(array $original, array $merging): array
     {
         $array = array_merge($original, $merging);

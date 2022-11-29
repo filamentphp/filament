@@ -23,6 +23,10 @@ class BulkAction extends MountableAction
         ]);
     }
 
+    /**
+     * @param  array<string, mixed>  $parameters
+     * @return mixed
+     */
     public function call(array $parameters = [])
     {
         try {
@@ -55,6 +59,9 @@ class BulkAction extends MountableAction
         return "mountBulkAction('{$this->getName()}')";
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [
@@ -66,6 +73,10 @@ class BulkAction extends MountableAction
         ]);
     }
 
+    /**
+     * @param  array<mixed>  $arguments
+     * @return array<mixed>
+     */
     protected function parseAuthorizationArguments(array $arguments): array
     {
         array_unshift($arguments, $this->getTable()->getModel());

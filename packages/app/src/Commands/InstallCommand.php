@@ -42,12 +42,12 @@ class InstallCommand extends Command
         return static::SUCCESS;
     }
 
-    protected function installDefaultContext()
+    protected function installDefaultContext(): void
     {
         $path = app_path('Providers/Filament/AdminFilamentProvider.php');
 
         if (! $this->option('force') && $this->checkForCollision([$path])) {
-            return static::INVALID;
+            return;
         }
 
         $this->copyStubToApp('DefaultContextProvider', $path);

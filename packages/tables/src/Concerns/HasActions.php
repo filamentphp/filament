@@ -6,6 +6,7 @@ use Filament\Forms\Form;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -13,20 +14,26 @@ use Illuminate\Database\Eloquent\Model;
  */
 trait HasActions
 {
-    public $mountedTableAction = null;
+    public ?string $mountedTableAction = null;
 
+    /**
+     * @var array<string, mixed>
+     */
     public $mountedTableActionData = [];
 
-    public $mountedTableActionRecord = null;
+    public int | string | null $mountedTableActionRecord = null;
 
     protected ?Model $cachedMountedTableActionRecord = null;
 
-    protected $cachedMountedTableActionRecordKey = null;
+    protected int | string | null $cachedMountedTableActionRecordKey = null;
 
     protected function configureTableAction(Action $action): void
     {
     }
 
+    /**
+     * @return mixed
+     */
     public function callMountedTableAction(?string $arguments = null)
     {
         $action = $this->getMountedTableAction();
@@ -85,11 +92,14 @@ trait HasActions
         return $result;
     }
 
-    public function mountedTableActionRecord($record): void
+    public function mountedTableActionRecord(int | string | null $record): void
     {
         $this->mountedTableActionRecord = $record;
     }
 
+    /**
+     * @return mixed
+     */
     public function mountTableAction(string $name, ?string $record = null)
     {
         $this->mountedTableAction = $name;
@@ -192,7 +202,7 @@ trait HasActions
         );
     }
 
-    public function getMountedTableActionRecordKey()
+    public function getMountedTableActionRecordKey(): int | string | null
     {
         return $this->mountedTableActionRecord;
     }
@@ -212,6 +222,8 @@ trait HasActions
 
     /**
      * @deprecated Override the `table()` method to configure the table.
+     *
+     * @return array<Action | ActionGroup>
      */
     protected function getTableActions(): array
     {

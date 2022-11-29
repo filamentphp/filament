@@ -3,6 +3,7 @@
 namespace Filament\Widgets;
 
 use Filament\Support\Assets\AlpineComponent;
+use Filament\Support\Assets\Asset;
 use Filament\Support\PluginServiceProvider;
 
 class WidgetsServiceProvider extends PluginServiceProvider
@@ -14,6 +15,9 @@ class WidgetsServiceProvider extends PluginServiceProvider
         return 'widgets';
     }
 
+    /**
+     * @return array<Asset>
+     */
     protected function getAssets(): array
     {
         return [

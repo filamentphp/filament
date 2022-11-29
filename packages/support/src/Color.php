@@ -293,16 +293,25 @@ class Color
         900 => '136, 19, 55',
     ];
 
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     */
     public static function hex(string $color): array
     {
         return static::generateShades(Hex::fromString($color)->toRgb());
     }
 
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     */
     public static function rgb(string $color): array
     {
         return static::generateShades(Rgb::fromString($color));
     }
 
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     */
     protected static function generateShades(Rgb $color): array
     {
         $colors = [];

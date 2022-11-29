@@ -23,13 +23,16 @@ class Login extends CardPage
 {
     use WithRateLimiting;
 
+    /**
+     * @var view-string
+     */
     protected static string $view = 'filament::pages.auth.login';
 
-    public $email = '';
+    public ?string $email = '';
 
-    public $password = '';
+    public ?string $password = '';
 
-    public $remember = false;
+    public bool $remember = false;
 
     public function mount(): void
     {

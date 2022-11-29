@@ -6,6 +6,9 @@ use Closure;
 
 trait CanSpanColumns
 {
+    /**
+     * @var array<string, int | string | Closure | null>
+     */
     protected array $columnSpan = [
         'default' => 1,
         'sm' => null,
@@ -15,6 +18,9 @@ trait CanSpanColumns
         '2xl' => null,
     ];
 
+    /**
+     * @param  array<string, int | string | Closure | null> | int | string | Closure | null  $span
+     */
     public function columnSpan(array | int | string | Closure | null $span): static
     {
         if (! is_array($span)) {
@@ -35,6 +41,9 @@ trait CanSpanColumns
         return $this;
     }
 
+    /**
+     * @return array<string, int | string | Closure | null> | int | string | null
+     */
     public function getColumnSpan(int | string | null $breakpoint = null): array | int | string | null
     {
         $span = $this->columnSpan;

@@ -5,8 +5,11 @@ namespace Filament\Resources;
 use Filament\Context;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
+use Filament\GlobalSearch\Actions\Action;
 use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\Navigation\NavigationItem;
+use Filament\Resources\Pages\PageRegistration;
+use Filament\Resources\RelationManagers\RelationGroup;
 use function Filament\Support\get_model_label;
 use function Filament\Support\locale_has_pluralization;
 use Filament\Tables\Table;
@@ -67,6 +70,9 @@ abstract class Resource
 
     protected static ?string $slug = null;
 
+    /**
+     * @var string | array<string>
+     */
     protected static string | array $routeMiddleware = [];
 
     protected static int $globalSearchResultsLimit = 50;
@@ -92,6 +98,9 @@ abstract class Resource
             ->navigationItems(static::getNavigationItems());
     }
 
+    /**
+     * @return array<NavigationItem>
+     */
     public static function getNavigationItems(): array
     {
         $routeBaseName = static::getRouteBaseName();
@@ -113,7 +122,7 @@ abstract class Resource
         return $table;
     }
 
-    public static function resolveRecordRouteBinding($key): ?Model
+    public static function resolveRecordRouteBinding(int | string $key): ?Model
     {
         return app(static::getModel())
             ->resolveRouteBindingQuery(static::getEloquentQuery(), $key, static::getRecordRouteKeyName())
@@ -236,6 +245,9 @@ abstract class Resource
         return $query->whereBelongsTo($tenant);
     }
 
+    /**
+     * @return array<string>
+     */
     public static function getGloballySearchableAttributes(): array
     {
         $titleAttribute = static::getRecordTitleAttribute();
@@ -247,11 +259,17 @@ abstract class Resource
         return [$titleAttribute];
     }
 
+    /**
+     * @return array<Action>
+     */
     public static function getGlobalSearchResultActions(Model $record): array
     {
         return [];
     }
 
+    /**
+     * @return array<string, string>
+     */
     public static function getGlobalSearchResultDetails(Model $record): array
     {
         return [];
@@ -339,6 +357,9 @@ abstract class Resource
             ->prepend('App\\Models\\');
     }
 
+    /**
+     * @return array<string, PageRegistration>
+     */
     public static function getPages(): array
     {
         return [];
@@ -375,11 +396,17 @@ abstract class Resource
         return $record?->getAttribute(static::getRecordTitleAttribute()) ?? static::getModelLabel();
     }
 
+    /**
+     * @return array<class-string, RelationGroup>
+     */
     public static function getRelations(): array
     {
         return [];
     }
 
+    /**
+     * @return array<class-string>
+     */
     public static function getWidgets(): array
     {
         return [];
@@ -413,6 +440,9 @@ abstract class Resource
             });
     }
 
+    /**
+     * @return string | array<string>
+     */
     public static function getRouteMiddleware(Context $context): string | array
     {
         return static::$routeMiddleware;
@@ -457,7 +487,10 @@ abstract class Resource
             ->implode('/');
     }
 
-    public static function getUrl($name = 'index', $parameters = [], $isAbsolute = true, ?string $context = null, ?Model $tenant = null): string
+    /**
+     * @param  array<mixed>  $parameters
+     */
+    public static function getUrl(string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?string $context = null, ?Model $tenant = null): string
     {
         $parameters['tenant'] ??= ($tenant ?? Filament::getRoutableTenant());
 
@@ -466,7 +499,7 @@ abstract class Resource
         return route("{$routeBaseName}.{$name}", $parameters, $isAbsolute);
     }
 
-    public static function hasPage($page): bool
+    public static function hasPage(string $page): bool
     {
         return array_key_exists($page, static::getPages());
     }
@@ -476,6 +509,9 @@ abstract class Resource
         return static::getRecordTitleAttribute() !== null;
     }
 
+    /**
+     * @param  array<string>  $searchAttributes
+     */
     protected static function applyGlobalSearchAttributeConstraint(Builder $query, string $search, array $searchAttributes, bool &$isFirst): Builder
     {
         /** @var Connection $databaseConnection */

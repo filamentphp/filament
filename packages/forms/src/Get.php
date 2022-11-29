@@ -11,6 +11,9 @@ class Get
     ) {
     }
 
+    /**
+     * @return mixed
+     */
     public function __invoke(string | Component $path, bool $isAbsolute = false)
     {
         $livewire = $this->component->getLivewire();

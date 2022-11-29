@@ -3,12 +3,19 @@
 namespace Filament\Tables\Filters\Concerns;
 
 use Closure;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Field;
 
 trait HasFormSchema
 {
+    /**
+     * @var array<Component> | Closure | null
+     */
     protected array | Closure | null $formSchema = null;
 
+    /**
+     * @param  array<Component> | Closure | null  $schema
+     */
     public function form(array | Closure | null $schema): static
     {
         $this->formSchema = $schema;
@@ -16,6 +23,9 @@ trait HasFormSchema
         return $this;
     }
 
+    /**
+     * @return array<Component>
+     */
     public function getFormSchema(): array
     {
         $schema = $this->evaluate($this->formSchema);

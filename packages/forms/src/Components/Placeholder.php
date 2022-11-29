@@ -10,8 +10,14 @@ class Placeholder extends Component
     use Concerns\HasHint;
     use Concerns\HasName;
 
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-forms::components.placeholder';
 
+    /**
+     * @var mixed
+     */
     protected $content = null;
 
     final public function __construct(string $name)
@@ -35,6 +41,9 @@ class Placeholder extends Component
         $this->dehydrated(false);
     }
 
+    /**
+     * @param  mixed  $content
+     */
     public function content($content): static
     {
         $this->content = $content;
@@ -60,6 +69,9 @@ class Placeholder extends Component
             ->ucfirst();
     }
 
+    /**
+     * @return mixed
+     */
     public function getContent()
     {
         return $this->evaluate($this->content);

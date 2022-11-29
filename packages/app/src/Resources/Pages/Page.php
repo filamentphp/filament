@@ -48,6 +48,9 @@ abstract class Page extends BasePage
         return static::$breadcrumb ?? static::getTitle();
     }
 
+    /**
+     * @return array<string>
+     */
     public function getBreadcrumbs(): array
     {
         $resource = static::getResource();

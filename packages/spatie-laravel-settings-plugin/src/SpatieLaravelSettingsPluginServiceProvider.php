@@ -27,6 +27,9 @@ class SpatieLaravelSettingsPluginServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'filament-spatie-laravel-settings-plugin');
     }
 
+    /**
+     * @return array<class-string>
+     */
     protected function getCommands(): array
     {
         $commands = [

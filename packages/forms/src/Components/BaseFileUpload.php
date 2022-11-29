@@ -17,6 +17,9 @@ use Throwable;
 
 class BaseFileUpload extends Field
 {
+    /**
+     * @var array<string> | Arrayable | Closure | null
+     */
     protected array | Arrayable | Closure | null $acceptedFileTypes = null;
 
     protected bool | Closure $canDownload = false;
@@ -169,6 +172,9 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    /**
+     * @param  array<string> | Arrayable | Closure  $types
+     */
     public function acceptedFileTypes(array | Arrayable | Closure $types): static
     {
         $this->acceptedFileTypes = $types;
@@ -189,7 +195,7 @@ class BaseFileUpload extends Field
         return $this;
     }
 
-    public function disk($name): static
+    public function disk(string | Closure | null $name): static
     {
         $this->diskName = $name;
 
@@ -340,6 +346,9 @@ class BaseFileUpload extends Field
         return $this->evaluate($this->canReorder);
     }
 
+    /**
+     * @return array<string> | null
+     */
     public function getAcceptedFileTypes(): ?array
     {
         $types = $this->evaluate($this->acceptedFileTypes);
@@ -395,6 +404,9 @@ class BaseFileUpload extends Field
         return $this->generateRelativeStatePath($this->fileNamesStatePath);
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getValidationRules(): array
     {
         $rules = [
@@ -499,6 +511,9 @@ class BaseFileUpload extends Field
         });
     }
 
+    /**
+     * @param  array<array-key>  $fileKeys
+     */
     public function reorderUploadedFiles(array $fileKeys): void
     {
         if (! $this->canReorder) {
@@ -514,6 +529,9 @@ class BaseFileUpload extends Field
         $this->state($state);
     }
 
+    /**
+     * @return array<array{name: string, size: int, type: string, url: string} | null> | null
+     */
     public function getUploadedFiles(): ?array
     {
         $urls = [];
@@ -607,6 +625,9 @@ class BaseFileUpload extends Field
         });
     }
 
+    /**
+     * @return string | array<string, string> | null
+     */
     public function getStoredFileNames(): string | array | null
     {
         $state = null;
@@ -642,6 +663,9 @@ class BaseFileUpload extends Field
         ]);
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getStateToDehydrate(): array
     {
         $state = parent::getStateToDehydrate();
@@ -655,6 +679,9 @@ class BaseFileUpload extends Field
         return $state;
     }
 
+    /**
+     * @param  array<string, array<mixed>>  $rules
+     */
     public function dehydrateValidationRules(array &$rules): void
     {
         parent::dehydrateValidationRules($rules);

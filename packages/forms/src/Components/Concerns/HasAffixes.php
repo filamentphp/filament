@@ -76,31 +76,34 @@ trait HasAffixes
         return $this->evaluate($this->suffixAction)?->component($this);
     }
 
-    public function getPrefixLabel()
+    public function getPrefixLabel(): ?string
     {
         return $this->evaluate($this->prefixLabel);
     }
 
-    public function getPostfixLabel()
+    public function getPostfixLabel(): ?string
     {
         return $this->getSuffixLabel();
     }
 
-    public function getSuffixLabel()
+    public function getSuffixLabel(): ?string
     {
         return $this->evaluate($this->suffixLabel);
     }
 
-    public function getPrefixIcon()
+    public function getPrefixIcon(): ?string
     {
         return $this->evaluate($this->prefixIcon);
     }
 
-    public function getSuffixIcon()
+    public function getSuffixIcon(): ?string
     {
         return $this->evaluate($this->suffixIcon);
     }
 
+    /**
+     * @return array<string, Action>
+     */
     public function getActions(): array
     {
         $prefixAction = $this->getPrefixAction();

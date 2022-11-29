@@ -2,6 +2,7 @@
 
 namespace Filament\Widgets\StatsOverviewWidget;
 
+use Closure;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
@@ -10,6 +11,9 @@ use Illuminate\View\ComponentAttributeBag;
 
 class Card extends Component implements Htmlable
 {
+    /**
+     * @var array<string, mixed> | null
+     */
     protected ?array $chart = null;
 
     protected ?string $chartColor = null;
@@ -24,6 +28,9 @@ class Card extends Component implements Htmlable
 
     protected ?string $descriptionColor = null;
 
+    /**
+     * @var array<string, scalar>
+     */
     protected array $extraAttributes = [];
 
     protected bool $shouldOpenUrlInNewTab = false;
@@ -34,14 +41,23 @@ class Card extends Component implements Htmlable
 
     protected string | Htmlable $label;
 
+    /**
+     * @var scalar | Htmlable | Closure
+     */
     protected $value;
 
+    /**
+     * @param  scalar | Htmlable | Closure  $value
+     */
     final public function __construct(string $label, $value)
     {
         $this->label($label);
         $this->value($value);
     }
 
+    /**
+     * @param  scalar | Htmlable | Closure  $value
+     */
     public static function make(string $label, $value): static
     {
         return app(static::class, ['label' => $label, 'value' => $value]);
@@ -89,6 +105,9 @@ class Card extends Component implements Htmlable
         return $this;
     }
 
+    /**
+     * @param  array<string, scalar>  $attributes
+     */
     public function extraAttributes(array $attributes): static
     {
         $this->extraAttributes = $attributes;
@@ -111,6 +130,9 @@ class Card extends Component implements Htmlable
         return $this;
     }
 
+    /**
+     * @param  array<string, mixed> | null  $chart
+     */
     public function chart(?array $chart): static
     {
         $this->chart = $chart;
@@ -132,6 +154,9 @@ class Card extends Component implements Htmlable
         return $this;
     }
 
+    /**
+     * @param  scalar | Htmlable | Closure  $value
+     */
     public function value($value): static
     {
         $this->value = $value;
@@ -139,6 +164,9 @@ class Card extends Component implements Htmlable
         return $this;
     }
 
+    /**
+     * @return array<string, mixed> | null
+     */
     public function getChart(): ?array
     {
         return $this->chart;
@@ -174,6 +202,9 @@ class Card extends Component implements Htmlable
         return $this->descriptionIcon;
     }
 
+    /**
+     * @return array<string, scalar>
+     */
     public function getExtraAttributes(): array
     {
         return $this->extraAttributes;
@@ -204,6 +235,9 @@ class Card extends Component implements Htmlable
         return $this->id ?? Str::slug($this->getLabel());
     }
 
+    /**
+     * @return scalar | Htmlable | Closure
+     */
     public function getValue()
     {
         return value($this->value);

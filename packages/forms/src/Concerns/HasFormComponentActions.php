@@ -14,11 +14,14 @@ use Filament\Support\Exceptions\Halt;
  */
 trait HasFormComponentActions
 {
-    public $mountedFormComponentAction = null;
+    public ?string $mountedFormComponentAction = null;
 
-    public $mountedFormComponentActionData = [];
+    /**
+     * @var array<string, mixed>
+     */
+    public array $mountedFormComponentActionData = [];
 
-    public $mountedFormComponentActionComponent = null;
+    public ?string $mountedFormComponentActionComponent = null;
 
     protected function hasMountedFormComponentAction(): bool
     {
@@ -45,6 +48,9 @@ trait HasFormComponentActions
         );
     }
 
+    /**
+     * @return mixed
+     */
     public function callMountedFormComponentAction(?string $arguments = null)
     {
         $action = $this->getMountedFormComponentAction();
@@ -105,6 +111,9 @@ trait HasFormComponentActions
         return $this->getMountedFormComponentActionComponent()?->getAction($this->mountedFormComponentAction);
     }
 
+    /**
+     * @return mixed
+     */
     public function mountFormComponentAction(string $component, string $name)
     {
         $this->mountedFormComponentActionComponent = $component;
@@ -191,10 +200,5 @@ trait HasFormComponentActions
         }
 
         return null;
-    }
-
-    protected function getFormComponentActions(): array
-    {
-        return [];
     }
 }

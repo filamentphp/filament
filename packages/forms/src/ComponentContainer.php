@@ -26,6 +26,9 @@ class ComponentContainer extends ViewComponent
     use Concerns\SupportsFileUploadFields;
     use Concerns\SupportsSelectFields;
 
+    /**
+     * @var array<string, mixed>
+     */
     protected array $meta = [];
 
     protected string $view = 'filament-forms::component-container';
@@ -44,6 +47,9 @@ class ComponentContainer extends ViewComponent
         return app(static::class, ['livewire' => $livewire]);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [

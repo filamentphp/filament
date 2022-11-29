@@ -19,6 +19,8 @@ trait HasContent
 
     /**
      * @deprecated Override the `table()` method to configure the table.
+     *
+     * @return array<string, int | null> | null
      */
     protected function getTableContentGrid(): ?array
     {

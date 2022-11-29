@@ -7,8 +7,14 @@ use Illuminate\View\ComponentAttributeBag;
 
 trait HasExtraAttributes
 {
+    /**
+     * @var array<mixed> | Closure
+     */
     protected array | Closure $extraAttributes = [];
 
+    /**
+     * @param  array<mixed> | Closure  $attributes
+     */
     public function extraAttributes(array | Closure $attributes): static
     {
         $this->extraAttributes = array_merge($this->extraAttributes, $attributes);
@@ -16,6 +22,9 @@ trait HasExtraAttributes
         return $this;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getExtraAttributes(): array
     {
         return $this->evaluate($this->extraAttributes);

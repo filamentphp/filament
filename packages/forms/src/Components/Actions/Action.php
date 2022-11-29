@@ -29,6 +29,9 @@ class Action extends MountableAction
         return "mountFormComponentAction('{$this->getComponent()->getStatePath()}', '{$this->getName()}')";
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [

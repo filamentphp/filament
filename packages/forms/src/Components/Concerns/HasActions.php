@@ -7,10 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 
 trait HasActions
 {
+    /**
+     * @var array<string, Action>
+     */
     protected array $actions = [];
 
     protected Model | string | null $actionFormModel = null;
 
+    /**
+     * @param  array<string, Action>  $actions
+     */
     public function registerActions(array $actions): static
     {
         foreach ($actions as $action) {
@@ -25,6 +31,9 @@ trait HasActions
         return $this->getActions()[$name] ?? null;
     }
 
+    /**
+     * @return array<string, Action>
+     */
     public function getActions(): array
     {
         return $this->actions;

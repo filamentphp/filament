@@ -8,8 +8,14 @@ use RecursiveIteratorIterator;
 
 trait CanSearchRecords
 {
-    public $tableColumnSearches = [];
+    /**
+     * @var array<string, string | array<string, string | null> | null>
+     */
+    public array $tableColumnSearches = [];
 
+    /**
+     * @var string | null
+     */
     public $tableSearch = '';
 
     public function updatedTableSearch(): void
@@ -26,7 +32,10 @@ trait CanSearchRecords
         $this->resetPage();
     }
 
-    public function updatedTableColumnSearches($value, $key): void
+    /**
+     * @param  string | null  $value
+     */
+    public function updatedTableColumnSearches($value, string $key): void
     {
         if (blank($value)) {
             unset($this->tableColumnSearches[$key]);
@@ -127,6 +136,10 @@ trait CanSearchRecords
         return trim(strtolower($this->tableSearch));
     }
 
+    /**
+     * @param  array<string, string | array<string, string | null> | null>  $searches
+     * @return array<string, string | array<string, string | null> | null>
+     */
     protected function castTableColumnSearches(array $searches): array
     {
         return array_map(
@@ -137,6 +150,9 @@ trait CanSearchRecords
         );
     }
 
+    /**
+     * @return array<string, string | null>
+     */
     public function getTableColumnSearches(): array
     {
         // Example input of `$this->tableColumnSearches`:

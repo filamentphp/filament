@@ -6,12 +6,18 @@ use Closure;
 
 class TagsColumn extends Column
 {
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-tables::columns.tags-column';
 
     protected string | Closure | null $separator = null;
 
     protected int | Closure | null $limit = null;
 
+    /**
+     * @return array<string>
+     */
     public function getTags(): array
     {
         $tags = $this->getState();
@@ -64,6 +70,9 @@ class TagsColumn extends Column
         return $limit && count($this->getTags()) > $limit;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getMoreTags(): array
     {
         return array_slice($this->getTags(), $this->getLimit());

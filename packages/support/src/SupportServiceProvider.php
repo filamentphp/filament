@@ -3,6 +3,7 @@
 namespace Filament\Support;
 
 use Composer\InstalledVersions;
+use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\AssetManager;
 use Filament\Support\Assets\Js;
 use Filament\Support\Commands\AssetsCommand;
@@ -106,6 +107,9 @@ class SupportServiceProvider extends PluginServiceProvider
         return null;
     }
 
+    /**
+     * @return array<Asset>
+     */
     protected function getAssets(): array
     {
         return [
@@ -114,6 +118,9 @@ class SupportServiceProvider extends PluginServiceProvider
         ];
     }
 
+    /**
+     * @return array<class-string>
+     */
     protected function getCommands(): array
     {
         return [

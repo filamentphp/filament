@@ -12,7 +12,7 @@
     @endif
             <button
                 x-data="{ state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }} }"
-                x-bind:aria-checked="state.toString()"
+                x-bind:aria-checked="state?.toString()"
                 x-on:click="state = ! state"
                 x-bind:class="{
                     '{{ match ($getOnColor()) {

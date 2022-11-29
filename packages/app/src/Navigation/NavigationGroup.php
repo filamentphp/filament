@@ -12,6 +12,9 @@ class NavigationGroup
 
     protected ?string $icon = null;
 
+    /**
+     * @var array<NavigationItem> | Arrayable
+     */
     protected array | Arrayable $items = [];
 
     protected ?string $label = null;
@@ -49,6 +52,9 @@ class NavigationGroup
         return $this;
     }
 
+    /**
+     * @param  array<NavigationItem> | Arrayable  $items
+     */
     public function items(array | Arrayable $items): static
     {
         $this->items = $items;
@@ -68,6 +74,9 @@ class NavigationGroup
         return $this->icon;
     }
 
+    /**
+     * @return array<NavigationItem> | Arrayable
+     */
     public function getItems(): array | Arrayable
     {
         return $this->items;

@@ -254,7 +254,8 @@ export default function dateTimePickerFormComponent({
 
         dateIsDisabled: function (date) {
             if (
-                JSON.parse(this.$refs.disabledDates?.value ?? []).some(
+                this.$refs?.disabledDates &&
+                JSON.parse(this.$refs.disabledDates.value ?? []).some(
                     (disabledDate) => {
                         disabledDate = dayjs(disabledDate)
 

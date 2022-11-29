@@ -36,12 +36,4 @@ trait Translatable
 
         return $this->records;
     }
-
-    protected function getActions(): array
-    {
-        return array_merge(
-            [$this->getActiveLocaleSwitcherAction()],
-            parent::getActions(),
-        );
-    }
 }

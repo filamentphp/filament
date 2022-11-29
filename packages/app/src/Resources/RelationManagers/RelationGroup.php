@@ -6,12 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class RelationGroup
 {
+    /**
+     * @param  array<class-string>  $managers
+     */
     public function __construct(
         protected string $label,
         protected array $managers,
     ) {
     }
 
+    /**
+     * @param  array<class-string>  $managers
+     */
     public static function make(string $label, array $managers): static
     {
         return app(static::class, ['label' => $label, 'managers' => $managers]);
@@ -22,6 +28,9 @@ class RelationGroup
         return $this->label;
     }
 
+    /**
+     * @return array<class-string>
+     */
     public function getManagers(?Model $ownerRecord = null): array
     {
         if (! $ownerRecord) {

@@ -22,13 +22,22 @@ class Wizard extends Component
 
     public int | Closure $startStep = 1;
 
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-forms::components.wizard';
 
+    /**
+     * @param  array<Step> | Closure  $steps
+     */
     final public function __construct(array | Closure $steps = [])
     {
         $this->steps($steps);
     }
 
+    /**
+     * @param  array<Step> | Closure  $steps
+     */
     public static function make(array | Closure $steps = []): static
     {
         $static = app(static::class, ['steps' => $steps]);
@@ -67,6 +76,9 @@ class Wizard extends Component
         ]);
     }
 
+    /**
+     * @param  array<Step> | Closure  $steps
+     */
     public function steps(array | Closure $steps): static
     {
         $this->childComponents($steps);

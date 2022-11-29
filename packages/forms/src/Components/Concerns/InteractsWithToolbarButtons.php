@@ -15,6 +15,9 @@ trait InteractsWithToolbarButtons
         return $this;
     }
 
+    /**
+     * @param  array<string>  $buttonsToDisable
+     */
     public function disableToolbarButtons(array $buttonsToDisable = []): static
     {
         $this->toolbarButtons = array_filter(
@@ -25,6 +28,9 @@ trait InteractsWithToolbarButtons
         return $this;
     }
 
+    /**
+     * @param  array<string>  $buttonsToEnable
+     */
     public function enableToolbarButtons(array $buttonsToEnable = []): static
     {
         $this->toolbarButtons = array_merge($this->getToolbarButtons(), $buttonsToEnable);
@@ -32,6 +38,9 @@ trait InteractsWithToolbarButtons
         return $this;
     }
 
+    /**
+     * @param  array<string> | Closure  $buttons
+     */
     public function toolbarButtons(array | Closure $buttons = []): static
     {
         $this->toolbarButtons = $buttons;
@@ -39,11 +48,17 @@ trait InteractsWithToolbarButtons
         return $this;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getToolbarButtons(): array
     {
         return $this->evaluate($this->toolbarButtons);
     }
 
+    /**
+     * @param  string | array<string>  $button
+     */
     public function hasToolbarButton(string | array $button): bool
     {
         if (is_array($button)) {

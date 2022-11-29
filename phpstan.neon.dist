@@ -1,4 +1,11 @@
 parameters:
-    level: 5
+    level: 6
+
     paths:
         - packages
+
+    ignoreErrors:
+        - '#Unable to resolve the template type TKey in call to function collect#'
+        - '#Unable to resolve the template type TValue in call to function collect#'
+
+    checkGenericClassInNonGenericObjectType: false

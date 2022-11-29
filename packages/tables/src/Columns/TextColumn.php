@@ -20,12 +20,19 @@ class TextColumn extends Column
     use Concerns\HasSize;
     use Concerns\HasWeight;
 
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-tables::columns.text-column';
 
     protected bool | Closure $canWrap = false;
 
     protected ?string $enum = null;
 
+    /**
+     * @param  string | array<scalar, scalar> | Arrayable  $enum
+     * @param  mixed  $default
+     */
     public function enum(string | array | Arrayable $enum, $default = null): static
     {
         if (is_array($enum) || $enum instanceof Arrayable) {
@@ -70,6 +77,9 @@ class TextColumn extends Column
         return $this->evaluate($this->canWrap);
     }
 
+    /**
+     * @param  array<scalar>  $state
+     */
     protected function mutateArrayState(array $state): string|array
     {
         return $this->formatArrayStateUsing ? $state : implode(', ', $state);

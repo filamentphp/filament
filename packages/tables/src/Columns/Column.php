@@ -54,6 +54,9 @@ class Column extends ViewComponent
         return $static;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getDefaultEvaluationParameters(): array
     {
         $record = $this->getRecord();

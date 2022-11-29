@@ -23,15 +23,18 @@ class Register extends CardPage
 {
     use WithRateLimiting;
 
+    /**
+     * @var view-string
+     */
     protected static string $view = 'filament::pages.auth.register';
 
-    public $email = '';
+    public ?string $email = '';
 
-    public $name = '';
+    public ?string $name = '';
 
-    public $password = '';
+    public ?string $password = '';
 
-    public $passwordConfirmation = '';
+    public ?string $passwordConfirmation = '';
 
     protected string $userModel;
 
@@ -118,6 +121,9 @@ class Register extends CardPage
         return $this->userModel = $provider->getModel();
     }
 
+    /**
+     * @return array<string, string>
+     */
     protected function getMessages(): array
     {
         return [

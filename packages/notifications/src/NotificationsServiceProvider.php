@@ -4,6 +4,7 @@ namespace Filament\Notifications;
 
 use Filament\Notifications\Http\Livewire\Notifications;
 use Filament\Notifications\Testing\TestsNotifications;
+use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\Js;
 use Filament\Support\PluginServiceProvider;
 use Livewire\Component;
@@ -45,6 +46,9 @@ class NotificationsServiceProvider extends PluginServiceProvider
         return 'notifications';
     }
 
+    /**
+     * @return array<Asset>
+     */
     protected function getAssets(): array
     {
         return [
@@ -52,6 +56,9 @@ class NotificationsServiceProvider extends PluginServiceProvider
         ];
     }
 
+    /**
+     * @return array<class-string>
+     */
     protected function getCommands(): array
     {
         return [

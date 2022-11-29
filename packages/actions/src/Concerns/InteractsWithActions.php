@@ -5,6 +5,7 @@ namespace Filament\Actions\Concerns;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Forms;
+use Filament\Forms\Form;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
@@ -19,14 +20,24 @@ trait InteractsWithActions
         __get as __getForm;
     }
 
-    public $mountedAction = null;
+    public ?string $mountedAction = null;
 
-    public $mountedActionData = [];
+    /**
+     * @var array<string, mixed>
+     */
+    public array $mountedActionData = [];
 
+    /**
+     * @var array<string, Action>
+     */
     protected array $cachedActions = [];
 
     protected bool $hasActionsModalRendered = false;
 
+    /**
+     * @param  string  $property
+     * @return mixed
+     */
     public function __get($property)
     {
         try {
@@ -40,6 +51,9 @@ trait InteractsWithActions
         }
     }
 
+    /**
+     * @return mixed
+     */
     public function callMountedAction(?string $arguments = null)
     {
         $action = $this->getMountedAction();
@@ -91,6 +105,9 @@ trait InteractsWithActions
         return $result;
     }
 
+    /**
+     * @return mixed
+     */
     public function mountAction(string $name)
     {
         $this->mountedAction = $name;
@@ -182,6 +199,9 @@ trait InteractsWithActions
         return $this->getAction($this->mountedAction);
     }
 
+    /**
+     * @return array<int | string, string | Form>
+     */
     protected function getInteractsWithActionsForms(): array
     {
         return [

@@ -18,9 +18,15 @@ abstract class RegisterTenant extends CardPage
 {
     use Concerns\HasRoutes;
 
+    /**
+     * @var view-string
+     */
     protected static string $view = 'filament::pages.tenancy.register-tenant';
 
-    public $data;
+    /**
+     * @var array<string, mixed>
+     */
+    public array $data;
 
     public ?Model $tenant = null;
 
@@ -35,6 +41,9 @@ abstract class RegisterTenant extends CardPage
             ->name('registration');
     }
 
+    /**
+     * @return string | array<string>
+     */
     public static function getRouteMiddleware(Context $context): string | array
     {
         return static::$routeMiddleware;
@@ -45,6 +54,10 @@ abstract class RegisterTenant extends CardPage
         $this->form->fill();
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     protected function mutateFormDataBeforeRegister(array $data): array
     {
         return $data;
@@ -77,6 +90,9 @@ abstract class RegisterTenant extends CardPage
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     protected function handleRegistration(array $data): Model
     {
         return $this->getModel()::create($data);
@@ -87,6 +103,9 @@ abstract class RegisterTenant extends CardPage
         return Filament::getUrl($this->tenant);
     }
 
+    /**
+     * @return array<int | string, string | Form>
+     */
     protected function getForms(): array
     {
         return [

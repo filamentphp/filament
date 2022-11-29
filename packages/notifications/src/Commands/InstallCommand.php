@@ -68,6 +68,10 @@ class InstallCommand extends Command
         );
     }
 
+    /**
+     * @param  array<string, string>  $packages
+     * @return array<string, string>
+     */
     protected static function updateNpmPackageArray(array $packages): array
     {
         return array_merge(

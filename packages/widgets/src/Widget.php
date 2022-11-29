@@ -11,8 +11,14 @@ abstract class Widget extends Component
 
     protected static ?int $sort = null;
 
+    /**
+     * @var view-string
+     */
     protected static string $view;
 
+    /**
+     * @var int | string | array<string, int | null>
+     */
     protected int | string | array $columnSpan = 1;
 
     public static function canView(): bool
@@ -25,11 +31,17 @@ abstract class Widget extends Component
         return static::$sort ?? -1;
     }
 
+    /**
+     * @return int | string | array<string, int | null>
+     */
     public function getColumnSpan(): int | string | array
     {
         return $this->columnSpan;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getViewData(): array
     {
         return [];

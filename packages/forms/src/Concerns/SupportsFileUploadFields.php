@@ -29,6 +29,9 @@ trait SupportsFileUploadFields
         return false;
     }
 
+    /**
+     * @return array<array{name: string, size: int, type: string, url: string} | null> | null
+     */
     public function getUploadedFiles(string $statePath): ?array
     {
         foreach ($this->getComponents() as $component) {
@@ -73,6 +76,9 @@ trait SupportsFileUploadFields
         return false;
     }
 
+    /**
+     * @param  array<array-key>  $fileKeys
+     */
     public function reorderUploadedFiles(string $statePath, array $fileKeys): bool
     {
         foreach ($this->getComponents() as $component) {

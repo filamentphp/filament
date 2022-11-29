@@ -24,10 +24,19 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
     protected string | Closure | null $mediaName = null;
 
+    /**
+     * @var array<string, mixed> | Closure | null
+     */
     protected array | Closure | null $customProperties = null;
 
+    /**
+     * @var array<string, array<string, string>> | Closure | null
+     */
     protected array | Closure | null $manipulations = null;
 
+    /**
+     * @var array<string, mixed> | Closure | null
+     */
     protected array | Closure | null $properties = null;
 
     protected function setUp(): void
@@ -171,6 +180,9 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this;
     }
 
+    /**
+     * @param  array<string, mixed> | Closure | null  $properties
+     */
     public function customProperties(array | Closure | null $properties): static
     {
         $this->customProperties = $properties;
@@ -178,6 +190,9 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this;
     }
 
+    /**
+     * @param  array<string, array<string, string>> | Closure | null  $manipulations
+     */
     public function manipulations(array | Closure | null $manipulations): static
     {
         $this->manipulations = $manipulations;
@@ -185,6 +200,9 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this;
     }
 
+    /**
+     * @param  array<string, mixed> | Closure | null  $properties
+     */
     public function properties(array | Closure | null $properties): static
     {
         $this->properties = $properties;
@@ -214,16 +232,25 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this->evaluate($this->conversionsDisk);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getCustomProperties(): array
     {
         return $this->evaluate($this->customProperties) ?? [];
     }
 
+    /**
+     * @return array<string, array<string, string>>
+     */
     public function getManipulations(): array
     {
         return $this->evaluate($this->manipulations) ?? [];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getProperties(): array
     {
         return $this->evaluate($this->properties) ?? [];

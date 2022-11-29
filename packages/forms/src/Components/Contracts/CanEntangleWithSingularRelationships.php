@@ -19,9 +19,21 @@ interface CanEntangleWithSingularRelationships
 
     public function getRelationship(): BelongsTo | HasOne | MorphOne | null;
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     public function mutateRelationshipDataBeforeFill(array $data): array;
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     public function mutateRelationshipDataBeforeCreate(array $data): array;
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     public function mutateRelationshipDataBeforeSave(array $data): array;
 }

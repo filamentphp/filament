@@ -8,9 +8,9 @@ use Illuminate\Support\Str;
 
 trait InteractsWithRecord
 {
-    public $record;
+    public Model $record;
 
-    protected function resolveRecord($key): Model
+    protected function resolveRecord(int | string $key): Model
     {
         $record = static::getResource()::resolveRecordRouteBinding($key);
 

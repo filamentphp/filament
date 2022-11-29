@@ -12,10 +12,16 @@ class TagsInput extends Field
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
 
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-forms::components.tags-input';
 
     protected string | Closure | null $separator = null;
 
+    /**
+     * @var array<string> | Arrayable | Closure | null
+     */
     protected array | Arrayable | Closure | null $suggestions = null;
 
     protected function setUp(): void
@@ -62,6 +68,9 @@ class TagsInput extends Field
         return $this;
     }
 
+    /**
+     * @param  array<string> | Arrayable | Closure  $suggestions
+     */
     public function suggestions(array | Arrayable | Closure $suggestions): static
     {
         $this->suggestions = $suggestions;
@@ -74,6 +83,9 @@ class TagsInput extends Field
         return $this->evaluate($this->separator);
     }
 
+    /**
+     * @return array<string>
+     */
     public function getSuggestions(): array
     {
         $suggestions = $this->evaluate($this->suggestions ?? []);

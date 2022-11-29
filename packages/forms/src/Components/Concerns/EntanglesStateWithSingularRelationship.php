@@ -95,6 +95,9 @@ trait EntanglesStateWithSingularRelationship
         $this->getChildComponentContainer()->fill($data);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getStateFromRelatedRecord(Model $record): array
     {
         $state = $record->attributesToArray();
@@ -112,6 +115,9 @@ trait EntanglesStateWithSingularRelationship
         return $state;
     }
 
+    /**
+     * @param  array-key  $key
+     */
     public function getChildComponentContainer($key = null): ComponentContainer
     {
         $container = parent::getChildComponentContainer($key);
@@ -173,6 +179,10 @@ trait EntanglesStateWithSingularRelationship
         return $this;
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     public function mutateRelationshipDataBeforeCreate(array $data): array
     {
         if ($this->mutateRelationshipDataBeforeCreateUsing instanceof Closure) {
@@ -191,6 +201,10 @@ trait EntanglesStateWithSingularRelationship
         return $this;
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     public function mutateRelationshipDataBeforeFill(array $data): array
     {
         if ($this->mutateRelationshipDataBeforeFillUsing instanceof Closure) {
@@ -209,6 +223,10 @@ trait EntanglesStateWithSingularRelationship
         return $this;
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     public function mutateRelationshipDataBeforeSave(array $data): array
     {
         if ($this->mutateRelationshipDataBeforeSaveUsing instanceof Closure) {

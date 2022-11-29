@@ -34,8 +34,14 @@ class Select extends Field
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
 
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-forms::components.select';
 
+    /**
+     * @var array<Component> | Closure | null
+     */
     protected array | Closure | null $createOptionActionFormSchema = null;
 
     protected ?Closure $createOptionUsing = null;
@@ -50,6 +56,9 @@ class Select extends Field
 
     protected ?Closure $getSearchResultsUsing = null;
 
+    /**
+     * @var array<string> | null
+     */
     protected ?array $searchColumns = null;
 
     protected string | Closure | null $maxItemsMessage = null;
@@ -124,6 +133,9 @@ class Select extends Field
         return $this;
     }
 
+    /**
+     * @param  array<Component> | Closure | null  $schema
+     */
     public function createOptionForm(array | Closure | null $schema): static
     {
         $this->createOptionActionFormSchema = $schema;
@@ -148,6 +160,9 @@ class Select extends Field
         return $createOptionAction;
     }
 
+    /**
+     * @return array<string, Action>
+     */
     public function getActions(): array
     {
         $actions = $this->getBaseActions();
@@ -227,6 +242,9 @@ class Select extends Field
         return $action;
     }
 
+    /**
+     * @return array<Component> | null
+     */
     public function getCreateOptionActionFormSchema(): ?array
     {
         return $this->evaluate($this->createOptionActionFormSchema);
@@ -253,6 +271,9 @@ class Select extends Field
         return $this;
     }
 
+    /**
+     * @param  bool | array<string> | Closure  $condition
+     */
     public function searchable(bool | array | Closure $condition = true): static
     {
         if (is_array($condition)) {
@@ -306,6 +327,9 @@ class Select extends Field
         ]);
     }
 
+    /**
+     * @return array<string>
+     */
     public function getOptionLabels(): array
     {
         $labels = $this->evaluate($this->getOptionLabelsUsing, [
@@ -319,6 +343,9 @@ class Select extends Field
         return $labels;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getSearchColumns(): ?array
     {
         $columns = $this->searchColumns;
@@ -330,6 +357,9 @@ class Select extends Field
         return $columns;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getSearchResults(string $search): array
     {
         if (! $this->getSearchResultsUsing) {
@@ -349,21 +379,34 @@ class Select extends Field
         return $results;
     }
 
+    /**
+     * @return array<array{'label': string, 'value': string}>
+     */
     public function getSearchResultsForJs(string $search): array
     {
         return $this->transformOptionsForJs($this->getSearchResults($search));
     }
 
+    /**
+     * @return array<array{'label': string, 'value': string}>
+     */
     public function getOptionsForJs(): array
     {
         return $this->transformOptionsForJs($this->getOptions());
     }
 
+    /**
+     * @return array<array{'label': string, 'value': string}>
+     */
     public function getOptionLabelsForJs(): array
     {
         return $this->transformOptionsForJs($this->getOptionLabels());
     }
 
+    /**
+     * @param  array<string>  $options
+     * @return array<array{'label': string, 'value': string}>
+     */
     protected function transformOptionsForJs(array $options): array
     {
         return collect($options)

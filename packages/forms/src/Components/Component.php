@@ -32,6 +32,9 @@ class Component extends ViewComponent
 
     protected string $evaluationIdentifier = 'component';
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [

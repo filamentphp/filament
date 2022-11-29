@@ -2,10 +2,18 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
+
 trait ListensToEvents
 {
+    /**
+     * @var array<string, array<Closure>>
+     */
     protected array $listeners = [];
 
+    /**
+     * @param  mixed  ...$parameters
+     */
     public function dispatchEvent(string $event, ...$parameters): static
     {
         foreach ($this->getListeners($event) as $callback) {
@@ -15,6 +23,9 @@ trait ListensToEvents
         return $this;
     }
 
+    /**
+     * @param  array<string, array<Closure>>  $listeners
+     */
     public function registerListeners(array $listeners): static
     {
         foreach ($listeners as $event => $callbacks) {
@@ -24,6 +35,9 @@ trait ListensToEvents
         return $this;
     }
 
+    /**
+     * @return array<string | int, array<Closure> | Closure>
+     */
     public function getListeners(string $event = null): array
     {
         $listeners = $this->listeners;

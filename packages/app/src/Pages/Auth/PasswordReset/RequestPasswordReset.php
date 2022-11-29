@@ -22,9 +22,12 @@ class RequestPasswordReset extends CardPage
 {
     use WithRateLimiting;
 
+    /**
+     * @var view-string
+     */
     protected static string $view = 'filament::pages.auth.password-reset.request-password-reset';
 
-    public $email = '';
+    public ?string $email = '';
 
     public function mount(): void
     {

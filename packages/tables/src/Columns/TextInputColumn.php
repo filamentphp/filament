@@ -17,6 +17,9 @@ class TextInputColumn extends Column implements Editable
     use HasPlaceholder;
     use HasStep;
 
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-tables::columns.text-input-column';
 
     protected string | Closure | null $type = null;

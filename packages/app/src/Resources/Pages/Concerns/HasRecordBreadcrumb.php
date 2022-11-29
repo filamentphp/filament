@@ -4,6 +4,9 @@ namespace Filament\Resources\Pages\Concerns;
 
 trait HasRecordBreadcrumb
 {
+    /**
+     * @return array<string>
+     */
     public function getBreadcrumbs(): array
     {
         $resource = static::getResource();

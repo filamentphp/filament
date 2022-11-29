@@ -4,15 +4,27 @@ namespace Filament\Tables\Columns\Layout;
 
 class Grid extends Component
 {
+    /**
+     * @var view-string
+     */
     protected string $view = 'filament-tables::columns.layout.grid';
 
+    /**
+     * @var array<string, int | null> | null
+     */
     protected ?array $columns = null;
 
-    final public function __construct(array | int | null $columns)
+    /**
+     * @param  array<string, int | null> | int | null  $columns
+     */
+    final public function __construct(array | int | null $columns = 2)
     {
         $this->columns($columns);
     }
 
+    /**
+     * @param  array<string, int | null> | int | null  $columns
+     */
     public static function make(array | int | null $columns = 2): static
     {
         $static = app(static::class, ['columns' => $columns]);
@@ -21,6 +33,9 @@ class Grid extends Component
         return $static;
     }
 
+    /**
+     * @param  array<string, int | null> | int | null  $columns
+     */
     public function columns(array | int | null $columns = 2): static
     {
         if (! is_array($columns)) {
@@ -34,6 +49,9 @@ class Grid extends Component
         return $this;
     }
 
+    /**
+     * @return array<string, int | null> | null
+     */
     public function getGridColumns(): ?array
     {
         return $this->columns;
