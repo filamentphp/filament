@@ -27,9 +27,9 @@ trait CanOpenModal
 
     protected View | Htmlable | Closure | null $modalFooter = null;
 
-    protected string| Htmlable | Closure | null $modalHeading = null;
+    protected string | Htmlable | Closure | null $modalHeading = null;
 
-    protected string| Htmlable | Closure | null $modalSubheading = null;
+    protected string | Htmlable | Closure | null $modalSubheading = null;
 
     protected string | Closure | null $modalWidth = null;
 
