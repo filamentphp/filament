@@ -13,6 +13,11 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  * This trait provides all the logic needed to handle distant relationship 'chains' (dotted names) in columns, either
  * from the column names themselves, or as things like Ordering or Grouping ID's / attributes.
  *
+ * I'm expecting Dan to rewrite most of this code, and it's intended as a proof of concept for a "stack" based
+ * approach to relationship handling.  As such, it's a "black box" - however the internals are written, the API
+ * it provides would probably remain intact, as whatever way you slice it, the places detailed below where I've
+ * changed code elsewhere in Filament to use these methods would need changing regardless, to call similar methods.
+ *
  * I wound up putting this trait in the ./support package, rather than folding it all in to the existing table columns
  * HasRelationships trait, because (while it replaces most stuff in that trait) it isn't just a column trait, it needs
  * to be used in things like Groups as well. There is no doubt a better place to put it.
@@ -48,11 +53,11 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  *
  * ./packages/tables/src/Columns/Concerns/InteractsWithTableQuery.php
  *
- * In ApplySort, it uses $this->getNestedRelationshipExistenceQueries() from this trait in building the orderBy
+ * In ApplySort, it uses $this->getNestedRelationExistenceQuery() from this trait in building the orderBy
  * query, like this ...
  *
  * $query->orderBy(
- *     $this->getNestedRelationshipExistenceQueries($query, $sortColumn, $direction),
+ *     $this->getNestedRelationExistenceQuery($query, $sortColumn, $direction),
  *     $direction
  * );
  *
@@ -70,7 +75,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  * This PR modifies Group.php to support grouping on an arbitrary length chain of one-to-one relationships.
  *
  * The orderQuery method in the Group class uses $this->getNestedRelationshipExistenceQueries() from this class,
- * in the same way as InteractsWithTableQuery.
+ * in the same way as InteractsWithTableQuery above.
  *
  * The getGroupTitleFromRecord method in the Group class returns $this->getNestedAttribute() from this class, which
  * returns the attribute at the end of a one-to-one chain.
@@ -87,6 +92,24 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  * The setColumnValue() method in HasColumns uses $column->getNestedRecord() from this trait, when updating
  * records from Editable columns.  This allows an Editable column to set values on distant relationships, as arbitrary
  * length one-to-one chains.
+ *
+ * ===============
+ * = Summarizer
+ * ===============
+ *
+ * ./packages/tables/src/Columns/Summarizers/Summarizer.php
+ *
+ * In getState(), the handling of relationships has been updated to use two methods from this trait:
+ *
+ * It uses $column->getInverseRelationships() to build the inverse relationship path, which uses the original
+ * logic, with some added guesswork (see comments in that method).  If people have used standard Laravel naming
+ * conventions, and have all their model relationships in place, the new code should work for most combinations,
+ * including BelongsToMany and HasMany.  If not, they'll have to use the inverseRelationshipName() method to
+ * provide their reverse path.
+ *
+ * It uses $column->getNestedWhereHas() to apply the necessary where clause for selecting the parent table ID's,
+ * depending on the kind of summary being built.  Again, it's the original code, but applied through a nested
+ * method with a Closure, so it can handle distant relationships.
  */
 trait HasNestedRelationships
 {
@@ -128,7 +151,7 @@ trait HasNestedRelationships
     }
 
     /**
-     * Gets a singular attribute from a chain of one-to-one relationships, like 'comments.post.author.name',
+     * Gets a singular attribute from a chain of one-to-one relationships, like 'post.author.name' on a Comments table,
      * will also work for non-nested, non-relational attributes like 'name'.  So on a Comments table ...
      *
      * $this->getNestedAttribute()
@@ -165,7 +188,7 @@ trait HasNestedRelationships
      * Called from getStateFromRecord() in HasState.
      *
      * Will work for all one-to-ones, but result will be an array with the single value (use getNestedAttribute if
-     * you know you are dealing with just belongsTo chains). Will also work for non-nested, non-relational attribute
+     * you know you are dealing with one-ro-one chains). Will also work for non-nested, non-relational attribute
      * like 'name'.
      *
      * So ...
@@ -188,51 +211,48 @@ trait HasNestedRelationships
         // perform "first time" checks, see if we need to provide default values
         if (! isset($relationships) || is_string($relationships)) {
             // Allow calling with either no args, or specifying the $relationships as a dotted string, with or without
-            // a record.  Record will default to $this->getRecord(), relationships will default to exploding $this->getName()
+            // a record.  Record defaults to $this->getRecord(), relationships defaults to exploding $this->getName()
             $results = [];
             $record ??= $this->getRecord();
             $name = $relationships ?? $this->getName();
+            $relationships = $this->getRelationshipStack($name);
 
-            if (! $this->queriesRelationships($record)) {
-                // if no relationships, just an attribute, it wasn't really nested, just return it
-                // via Laravel's getAttribute(), wrapped in an array
-
-                return (array) $record->getAttribute($name);
-            } else {
-                // if we have actual relationships, get the relationship stack and start recursing, using either
-                // the provided dotted name in $relationships, or defaulting to getName(), to build the stack
-
-                return $this->collectNestedAttributes($this->getRelationshipStack($name), $record, $results);
-            }
-        } else {
-            // at this point we've taken care of any first time checks and are somewhere in our recursion stack, so
-            // shift the next relationship off the stack ...
-            $relationship = $this->shiftNextRelationship($relationships, $record);
-
+            // if it wasn't actually relationship, just return the attribute wrapped in an array
             if ($this->isNoMoreRelationships($relationships)) {
-                // if it was the last relationship in the stack, get the records from it, push the attribute from
-                // each one via Laravel's getAttribute() into an array, and return the array
-                $attributes = [];
-
-                foreach ($relationship->get() as $relatedRecord) {
-                    $attributes[] = $relatedRecord->getAttribute($this->getStackAttribute($relationships));
-                }
-
-                return $attributes;
-            } else {
-                // if we haven't reached the end of the relationship stack, iterate through the records of the current
-                // relationship, recursing on each one, merging the returned results into our results array
-                foreach ($relationship->get() as $relatedRecord) {
-                    $results = array_merge(
-                        $results,
-                        $this->collectNestedAttributes($relationships, $relatedRecord, $results)
-                    );
-                }
-
-                // and finally, return the merged results from the downstream recursions, which will either get
-                // returned as the final result of the method, or merged into results upstream in the recursion stack
-                return $results;
+                return (array) $record->getAttribute($name);
             }
+        }
+
+        // at this point we've taken care of any first time checks and are somewhere in our recursion stack, so
+        // shift the next relationship off the stack ...
+
+        $relationship = $this->shiftNextRelationship($relationships, $record);
+
+        if ($this->isNoMoreRelationships($relationships)) {
+            // if it was the last relationship in the stack, get the record(s) from it, push the attribute from
+            // each one via Laravel's getAttribute() into an array, and return the array
+            $attributes = [];
+
+            foreach ($relationship->get() as $relatedRecord) {
+                $attributes[] = $relatedRecord->getAttribute($this->getStackAttribute($relationships));
+            }
+
+            return $attributes;
+        } else {
+            // We haven't reached the end of the relationship stack, so shift the next relationship off the stack
+            // then iterate through the related records for that relationship, recursing on each one, merging the
+            // returned results into our results array
+
+            foreach ($relationship->get() as $relatedRecord) {
+                $results = array_merge(
+                    $results,
+                    $this->collectNestedAttributes($relationships, $relatedRecord, $results)
+                );
+            }
+
+            // and finally, return the merged results from the downstream recursions, which will either get
+            // returned as the final result of the method, or merged into results upstream in the recursion stack
+            return $results;
         }
     }
 
@@ -253,29 +273,25 @@ trait HasNestedRelationships
             // a record.  Record will default to $this->getRecord(), relationships will default to exploding $this->getName()
             $record ??= $this->getRecord();
             $name = $relationships ?? $this->getName();
+            $relationships = $this->getRelationshipStack($name);
 
             // if it's not really nested, just an attribute, return null
-            if (! $this->queriesRelationships($record, $name)) {
+            if (! $this->isNoMoreRelationships($relationships)) {
                 return null;
-            } else {
-                // it's a ralationship, so build the stack and start recursing
-                $relationships = $this->getRelationshipStack($name);
-
-                return $this->getNestedRecord($relationships, $record);
             }
+        }
+
+        // first time checks are done, so we're into the recursion.
+        // shift the next relationship off the stack ...
+        $relationship = $this->shiftNextRelationship($relationships, $record);
+
+        if ($this->isNoMoreRelationships($relationships)) {
+            // if this was the last relationship, return the record
+            return $relationship->getResults();
         } else {
-            // first time checks are done, so we're into the recursion.
-            // shift the next relationship off the stack ...
-            $relationship = $this->shiftNextRelationship($relationships, $record);
-
-            if ($this->isNoMoreRelationships($relationships)) {
-                // if this was the last relationship, return the record
-                return $relationship->getResults();
-            } else {
-                // if we haven't reached the end of the relationship chain, just recurse, passing the results of
-                // this relationship
-                return $this->getNestedRecord($relationships, $relationship->getResults());
-            }
+            // if we haven't reached the end of the relationship chain, just recurse, passing the results of
+            // this relationship
+            return $this->getNestedRecord($relationships, $relationship->getResults());
         }
     }
 
@@ -305,30 +321,34 @@ trait HasNestedRelationships
     /**
      * Returns the last relationship in the stack (before the attribute), null if no relationships (only attribute)
      *
-     * (really only here to provide backward compat for InteractsWithTableQuery's getRelationship())
-     *
      * @param  Model  $record
      * @param  array|string|null  $relationships
      * @return Relation|null
      */
     public function getLastRelationship(Model $record, array|string|null $relationships = null): ?Relation
     {
+        // first time checks ...
         if (! isset($relationships) || is_string($relationships)) {
             $relationships = $this->getRelationshipStack($relationships ?? $this->getName());
+
+            // it wasn't a dotted relationship, so bail with null
+            if ($this->isNoMoreRelationships($relationships)) {
+                return null;
+            }
         }
 
+        // shift the next relationship off the stack ...
+        $relationship = $this->shiftNextRelationship($relationships, $record);
+
         if ($this->isNoMoreRelationships($relationships)) {
-            return null;
+            // if it's the last relationship, we're done, return it
+
+            return $relationship;
         } else {
-            $relationship = $this->shiftNextRelationship($relationships, $record);
+            // if it's not the last one, get the related model, and recurse
+            $record = $relationship->getRelated();
 
-            if ($this->isNoMoreRelationships($relationships)) {
-                return $relationship;
-            } else {
-                $record = $relationship->getRelated();
-
-                return $this->getLastRelationship($record, $relationships);
-            }
+            return $this->getLastRelationship($record, $relationships);
         }
     }
 
@@ -342,29 +362,36 @@ trait HasNestedRelationships
      */
     public function getLastRelationshipRecord(Model $record, array|string|null $relationships = null): ?Model
     {
+        // first time checks ...
         if (! isset($relationships) || is_string($relationships)) {
             $relationships = $this->getRelationshipStack($relationships ?? $this->getName());
+
+            // it wasn't a dotted relationship, so bail with null
+            if ($this->isNoMoreRelationships($relationships)) {
+                return null;
+            }
         }
 
+        // shift the next relationship off the stack ...
+        $relationship = $this->shiftNextRelationship($relationships, $record);
+
         if ($this->isNoMoreRelationships($relationships)) {
-            return null;
+            // if it's the last relationship, we're done, return the model
+
+            return $record;
         } else {
-            $relationship = $this->shiftNextRelationship($relationships, $record);
+            // if it's not the last one, get the related model, and recurse
+            $record = $relationship->getRelated();
 
-            if ($this->isNoMoreRelationships($relationships)) {
-                return $record;
-            } else {
-                $record = $relationship->getRelated();
-
-                return $this->getLastRelationship($record, $relationships);
-            }
+            return $this->getLastRelationship($record, $relationships);
         }
     }
 
     /**
      * This probably belongs somewhere else, wasn't sure where to put it.  Used from anywhere that builds am orderBy()
      * query potentially from a nested relationship, like 'post.author.name' on a Comments table.  Returns a nested
-     * set of relationshipExistenceQueries, with each successive one being in the 'column' arg of the previous.
+     * set of relationshipExistenceQueries, with each successive one being in the 'column' arg of the previous.  Works
+     * for non nested names as well.
      *
      * Called as ...
      *
@@ -382,37 +409,43 @@ trait HasNestedRelationships
      * @param  array|null  $relationships
      * @return string|\Illuminate\Database\Query\Builder
      */
-    protected function getNestedRelationshipExistenceQueries(Builder $query, $name, ?string $direction = 'asc', ?array $relationships = null): string|\Illuminate\Database\Query\Builder
+    protected function getNestedRelationExistenceQuery(Builder $query, $name, ?string $direction = 'asc', ?array $relationships = null): string|\Illuminate\Database\Query\Builder
     {
+        // first time check, build the relationship stack
         if (! isset($relationships)) {
             $relationships = $this->getRelationshipStack($name);
+        }
 
-            return $this->getNestedRelationshipExistenceQueries($query, $name, $direction, $relationships);
+        if ($this->isNoMoreRelationships($relationships)) {
+            // if no more relationships, return the attribute itself
+            return $this->getStackAttribute($relationships);
         } else {
-            if ($this->isNoMoreRelationships($relationships)) {
-                return $this->getStackAttribute($relationships);
-            } else {
-                $record = $query->getModel();
-                $relationship = $this->shiftNextRelationship($relationships, $record);
-                $parentQuery = $relationship->getRelated()::query();
+            // if there are relationships, get the model from the current query, and shift the next
+            // relationship off the stack
+            $record = $query->getModel();
+            $relationship = $this->shiftNextRelationship($relationships, $record);
 
-                /** @noinspection PhpPossiblePolymorphicInvocationInspection */
-                return $relationship
-                    ->getRelationExistenceQuery(
-                        $parentQuery,
-                        $query,
-                        [
-                            $relationship->getRelationName() => $this->getNestedRelationshipExistenceQueries(
-                                $parentQuery,
-                                $name,
-                                $direction,
-                                $relationships
-                            ),
-                        ],
-                    )
-                    ->applyScopes()
-                    ->getQuery();
-            }
+            // get the parent query for the relationship ...
+            $parentQuery = $relationship->getRelated()::query();
+
+            // now call getRelationExistenceQuery, with a recursive call to ourselves as the column, which will then
+            // either be the attribute itself, or another recursive getRelationExistenceQuery.
+            /** @noinspection PhpPossiblePolymorphicInvocationInspection */
+            return $relationship
+                ->getRelationExistenceQuery(
+                    $parentQuery,
+                    $query,
+                    [
+                        $relationship->getRelationName() => $this->getNestedRelationExistenceQuery(
+                            $parentQuery,
+                            $name,
+                            $direction,
+                            $relationships
+                        ),
+                    ],
+                )
+                ->applyScopes()
+                ->getQuery();
         }
     }
 
