@@ -32,13 +32,13 @@ class ResetPassword extends CardPage
      */
     protected static string $view = 'filament::pages.auth.password-reset.reset-password';
 
-    public ?string $email;
+    public ?string $email = null;
 
     public ?string $password = '';
 
     public ?string $passwordConfirmation = '';
 
-    public ?string $token;
+    public ?string $token = null;
 
     public function mount(): void
     {
