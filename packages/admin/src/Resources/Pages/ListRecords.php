@@ -217,7 +217,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->authorize($resource::canCreate())
             ->model($this->getModel())
             ->modelLabel($this->getModelLabel())
-            ->form($this->getCreateFormSchema());
+            ->form(fn (): array => $this->getCreateFormSchema());
 
         if ($resource::hasPage('create')) {
             $action->url(fn (): string => $resource::getUrl('create'));
@@ -254,7 +254,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
         $action
             ->authorize(fn (Model $record): bool => $resource::canEdit($record))
-            ->form($this->getEditFormSchema());
+            ->form(fn (): array => $this->getEditFormSchema());
 
         if ($resource::hasPage('edit')) {
             $action->url(fn (Model $record): string => $resource::getUrl('edit', ['record' => $record]));
@@ -290,7 +290,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
         $action
             ->authorize(fn (Model $record): bool => $resource::canView($record))
-            ->form($this->getViewFormSchema());
+            ->form(fn (): array => $this->getViewFormSchema());
 
         if ($resource::hasPage('view')) {
             $action->url(fn (Model $record): string => $resource::getUrl('view', ['record' => $record]));

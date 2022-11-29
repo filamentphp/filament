@@ -12892,7 +12892,7 @@ var date_time_picker_default = (Alpine) => {
         this.$nextTick(() => this.isClearingState = false);
       },
       dateIsDisabled: function(date) {
-        if (JSON.parse(this.$refs.disabledDates?.value ?? []).some((disabledDate) => {
+        if (this.$refs?.disabledDates && JSON.parse(this.$refs.disabledDates.value ?? []).some((disabledDate) => {
           disabledDate = esm_default(disabledDate);
           if (!disabledDate.isValid()) {
             return false;
@@ -23720,6 +23720,7 @@ var file_upload_default = (Alpine) => {
     imageResizeMode,
     imageResizeTargetHeight,
     imageResizeTargetWidth,
+    imageResizeUpscale,
     isAvatar,
     loadingIndicatorPosition,
     locale,
@@ -23762,6 +23763,7 @@ var file_upload_default = (Alpine) => {
           imageResizeTargetHeight,
           imageResizeTargetWidth,
           imageResizeMode,
+          imageResizeUpscale,
           itemInsertLocation: shouldAppendFiles ? "after" : "before",
           ...placeholder && {labelIdle: placeholder},
           maxFileSize: maxSize,

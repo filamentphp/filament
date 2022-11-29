@@ -135,7 +135,7 @@ trait HasColumns
         ]);
 
         return [
-            'state' => $state
+            'state' => $state,
         ];
     }
 
