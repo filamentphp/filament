@@ -16,7 +16,7 @@ trait HasRecords
      */
     protected bool $allowsDuplicates = false;
 
-    protected Collection | Paginator | null $records = null;
+    protected Collection|Paginator|null $records = null;
 
     public function getFilteredTableQuery(): Builder
     {
@@ -26,17 +26,15 @@ trait HasRecords
 
         $this->applySearchToTableQuery($query);
 
-        if (! $this->getTable()->isGroupsOnly()) {
-            foreach ($this->getTable()->getColumns() as $column) {
-                if ($column->isHidden() ||
-                    ($this->getTable()->isGroupsOnly() && ! ($column->hasSummary() && $column->hasAggregate()))
-                ) {
-                    continue;
-                }
-
-                $column->applyEagerLoading($query);
-                $column->applyRelationshipAggregates($query);
+        foreach ($this->getTable()->getColumns() as $column) {
+            if ($column->isHidden() ||
+                ($this->getTable()->isGroupsOnly() && ! ($column->hasSummary() && $column->hasAggregate()))
+            ) {
+                continue;
             }
+
+            $column->applyEagerLoading($query);
+            $column->applyRelationshipAggregates($query);
         }
 
         return $query;
@@ -53,19 +51,19 @@ trait HasRecords
         return $query;
     }
 
-    protected function hydratePivotRelationForTableRecords(Collection | Paginator $records): Collection | Paginator
+    protected function hydratePivotRelationForTableRecords(Collection|Paginator $records): Collection|Paginator
     {
-        $table = $this->getTable();
+        $table        = $this->getTable();
         $relationship = $table->getRelationship();
 
-        if ($table->getRelationship() instanceof BelongsToMany && ! $table->allowsDuplicates()) {
+        if ($table->getRelationship() instanceof BelongsToMany && !$table->allowsDuplicates()) {
             invade($relationship)->hydratePivotRelation($records->all());
         }
 
         return $records;
     }
 
-    public function getTableRecords(): Collection | Paginator
+    public function getTableRecords(): Collection|Paginator
     {
         if ($this->records) {
             return $this->records;
@@ -74,8 +72,8 @@ trait HasRecords
         $query = $this->getFilteredSortedTableQuery();
 
         if (
-            (! $this->getTable()->isPaginated()) ||
-            ($this->isTableReordering() && (! $this->getTable()->isPaginatedWhileReordering()))
+            (!$this->getTable()->isPaginated()) ||
+            ($this->isTableReordering() && (!$this->getTable()->isPaginatedWhileReordering()))
         ) {
             return $this->records = $this->hydratePivotRelationForTableRecords($query->get());
         }
@@ -89,14 +87,14 @@ trait HasRecords
             return null;
         }
 
-        if (! ($this->getTable()->getRelationship() instanceof BelongsToMany)) {
+        if (!($this->getTable()->getRelationship() instanceof BelongsToMany)) {
             return $this->getTable()->getQuery()->find($key);
         }
 
         /** @var BelongsToMany $relationship */
         $relationship = $this->getTable()->getRelationship();
 
-        $pivotClass = $relationship->getPivotClass();
+        $pivotClass   = $relationship->getPivotClass();
         $pivotKeyName = app($pivotClass)->getKeyName();
 
         $table = $this->getTable();
@@ -119,14 +117,14 @@ trait HasRecords
     {
         $table = $this->getTable();
 
-        if (! ($table->getRelationship() instanceof BelongsToMany && $table->allowsDuplicates())) {
+        if (!($table->getRelationship() instanceof BelongsToMany && $table->allowsDuplicates())) {
             return $record->getKey();
         }
 
         /** @var BelongsToMany $relationship */
         $relationship = $table->getRelationship();
 
-        $pivotClass = $relationship->getPivotClass();
+        $pivotClass   = $relationship->getPivotClass();
         $pivotKeyName = app($pivotClass)->getKeyName();
 
         return $record->getAttributeValue($pivotKeyName);
