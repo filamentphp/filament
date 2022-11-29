@@ -94,10 +94,7 @@ trait CanReplicateRecords
         ]);
     }
 
-    /**
-     * @return mixed
-     */
-    public function callAfterReplicaSaved(Model $replica)
+    public function callAfterReplicaSaved(Model $replica): mixed
     {
         return $this->evaluate($this->afterReplicaSavedCallback, [
             'replica' => $replica,

@@ -41,9 +41,8 @@ trait Macroable
 
     /**
      * @param  array<array-key>  $parameters
-     * @return mixed
      */
-    public static function __callStatic(string $method, array $parameters)
+    public static function __callStatic(string $method, array $parameters): mixed
     {
         $macro = static::getMacro($method);
 
@@ -64,9 +63,8 @@ trait Macroable
 
     /**
      * @param  array<array-key>  $parameters
-     * @return mixed
      */
-    public function __call(string $method, array $parameters)
+    public function __call(string $method, array $parameters): mixed
     {
         $macro = static::getMacro($method);
 

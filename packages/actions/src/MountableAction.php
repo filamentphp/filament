@@ -38,9 +38,8 @@ abstract class MountableAction extends StaticAction
 
     /**
      * @param  array<string, mixed>  $parameters
-     * @return mixed
      */
-    public function call(array $parameters = [])
+    public function call(array $parameters = []): mixed
     {
         return $this->evaluate($this->getAction(), $parameters);
     }

@@ -11,10 +11,7 @@ trait ListensToEvents
      */
     protected array $listeners = [];
 
-    /**
-     * @param  mixed  ...$parameters
-     */
-    public function dispatchEvent(string $event, ...$parameters): static
+    public function dispatchEvent(string $event, mixed ...$parameters): static
     {
         foreach ($this->getListeners($event) as $callback) {
             $callback($this, ...$parameters);

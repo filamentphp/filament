@@ -36,9 +36,8 @@ trait InteractsWithActions
 
     /**
      * @param  string  $property
-     * @return mixed
      */
-    public function __get($property)
+    public function __get($property): mixed
     {
         try {
             return $this->__getForm($property);
@@ -51,19 +50,16 @@ trait InteractsWithActions
         }
     }
 
-    /**
-     * @return mixed
-     */
-    public function callMountedAction(?string $arguments = null)
+    public function callMountedAction(?string $arguments = null): mixed
     {
         $action = $this->getMountedAction();
 
         if (! $action) {
-            return;
+            return null;
         }
 
         if ($action->isDisabled()) {
-            return;
+            return null;
         }
 
         $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
@@ -89,7 +85,7 @@ trait InteractsWithActions
 
             $result = $action->callAfter() ?? $result;
         } catch (Halt $exception) {
-            return;
+            return null;
         } catch (Cancel $exception) {
         }
 
@@ -105,21 +101,18 @@ trait InteractsWithActions
         return $result;
     }
 
-    /**
-     * @return mixed
-     */
-    public function mountAction(string $name)
+    public function mountAction(string $name): mixed
     {
         $this->mountedAction = $name;
 
         $action = $this->getMountedAction();
 
         if (! $action) {
-            return;
+            return null;
         }
 
         if ($action->isDisabled()) {
-            return;
+            return null;
         }
 
         $this->cacheForm(
@@ -142,11 +135,11 @@ trait InteractsWithActions
                 $action->callAfterFormFilled();
             }
         } catch (Halt $exception) {
-            return;
+            return null;
         } catch (Cancel $exception) {
             $this->mountedAction = null;
 
-            return;
+            return null;
         }
 
         if (! $this->mountedActionShouldOpenModal()) {
@@ -158,6 +151,8 @@ trait InteractsWithActions
         $this->dispatchBrowserEvent('open-modal', [
             'id' => 'page-action',
         ]);
+
+        return null;
     }
 
     public function mountedActionShouldOpenModal(): bool

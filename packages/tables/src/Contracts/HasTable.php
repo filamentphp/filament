@@ -15,10 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 
 interface HasTable extends HasForms
 {
-    /**
-     * @return mixed
-     */
-    public function callTableColumnAction(string $name, string $recordKey);
+    public function callTableColumnAction(string $name, string $recordKey): mixed;
 
     public function deselectAllTableRecords(): void;
 

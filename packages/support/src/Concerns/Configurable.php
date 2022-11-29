@@ -16,10 +16,7 @@ trait Configurable
      */
     protected static array $importantConfigurations = [];
 
-    /**
-     * @return mixed
-     */
-    public static function configureUsing(Closure $callback, ?Closure $during = null, bool $isImportant = false)
+    public static function configureUsing(Closure $callback, ?Closure $during = null, bool $isImportant = false): mixed
     {
         if ($isImportant) {
             static::$importantConfigurations[static::class] ??= [];
@@ -30,7 +27,7 @@ trait Configurable
         }
 
         if (! $during) {
-            return;
+            return null;
         }
 
         try {

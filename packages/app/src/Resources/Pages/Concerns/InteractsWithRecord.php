@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 
 trait InteractsWithRecord
 {
-    public Model $record;
+    public Model | int | string $record;
 
     protected function resolveRecord(int | string $key): Model
     {

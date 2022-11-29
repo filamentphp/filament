@@ -8,10 +8,7 @@ use Illuminate\Http\Request;
 
 class SetUpContext
 {
-    /**
-     * @return mixed
-     */
-    public function handle(Request $request, Closure $next, string $context)
+    public function handle(Request $request, Closure $next, string $context): mixed
     {
         $context = Filament::getContext($context);
 
