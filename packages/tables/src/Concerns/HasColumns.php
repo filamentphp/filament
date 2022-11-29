@@ -40,10 +40,9 @@ trait HasColumns
     }
 
     /**
-     * @param  mixed  $input
      * @return array{'error': string} | null
      */
-    public function setColumnValue(string $column, string $record, $input): ?array
+    public function setColumnValue(string $column, string $record, mixed $input): ?array
     {
         $columnName = $column;
         $column = $this->getTable()->getColumn($column);

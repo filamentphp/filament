@@ -103,10 +103,7 @@ trait HasFileAttachments
         return $file->{$storeMethod}($this->getFileAttachmentsDirectory(), $this->getFileAttachmentsDiskName());
     }
 
-    /**
-     * @param  mixed  $file
-     */
-    protected function handleUploadedAttachmentUrlRetrieval($file): ?string
+    protected function handleUploadedAttachmentUrlRetrieval(mixed $file): ?string
     {
         /** @var FilesystemAdapter $storage */
         $storage = $this->getFileAttachmentsDisk();

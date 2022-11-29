@@ -6,10 +6,7 @@ use Livewire\TemporaryUploadedFile;
 
 interface HasForms
 {
-    /**
-     * @param  mixed  ...$args
-     */
-    public function dispatchFormEvent(...$args): void;
+    public function dispatchFormEvent(mixed ...$args): void;
 
     public function getActiveFormLocale(): ?string;
 

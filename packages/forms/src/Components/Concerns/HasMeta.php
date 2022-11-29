@@ -11,10 +11,7 @@ trait HasMeta
      */
     protected array $meta = [];
 
-    /**
-     * @param  mixed  $value
-     */
-    public function meta(string $key, $value): static
+    public function meta(string $key, mixed $value): static
     {
         $this->meta[$key] = $value;
 

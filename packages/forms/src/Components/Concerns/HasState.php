@@ -19,10 +19,7 @@ trait HasState
 
     protected ?Closure $beforeStateDehydrated = null;
 
-    /**
-     * @var mixed
-     */
-    protected $defaultState = null;
+    protected mixed $defaultState = null;
 
     protected ?Closure $dehydrateStateUsing = null;
 
@@ -84,10 +81,7 @@ trait HasState
         return $this;
     }
 
-    /**
-     * @param  mixed  $state
-     */
-    public function default($state): static
+    public function default(mixed $state): static
     {
         $this->defaultState = $state;
         $this->hasDefaultState = true;
@@ -217,10 +211,7 @@ trait HasState
         }
     }
 
-    /**
-     * @param  mixed  $state
-     */
-    public function mutateDehydratedState($state): mixed
+    public function mutateDehydratedState(mixed $state): mixed
     {
         return $this->evaluate(
             $this->mutateDehydratedStateUsing,
@@ -240,10 +231,7 @@ trait HasState
         return $this;
     }
 
-    /**
-     * @param  mixed  $state
-     */
-    public function state($state): static
+    public function state(mixed $state): static
     {
         $livewire = $this->getLivewire();
 

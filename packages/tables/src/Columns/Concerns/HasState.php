@@ -11,10 +11,7 @@ use Illuminate\Support\Arr;
 
 trait HasState
 {
-    /**
-     * @var mixed
-     */
-    protected $defaultState = null;
+    protected mixed $defaultState = null;
 
     protected ?Closure $getStateUsing = null;
 
@@ -25,10 +22,7 @@ trait HasState
         return $this;
     }
 
-    /**
-     * @param  mixed  $state
-     */
-    public function default($state): static
+    public function default(mixed $state): static
     {
         $this->defaultState = $state;
 

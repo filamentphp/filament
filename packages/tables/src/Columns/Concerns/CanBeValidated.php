@@ -46,7 +46,7 @@ trait CanBeValidated
         return $rules;
     }
 
-    public function validate($input): void
+    public function validate(mixed $input): void
     {
         Validator::make(
             ['input' => $input],

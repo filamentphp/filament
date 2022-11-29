@@ -49,10 +49,7 @@ trait InteractsWithForms
         }
     }
 
-    /**
-     * @param  mixed  ...$args
-     */
-    public function dispatchFormEvent(...$args): void
+    public function dispatchFormEvent(mixed ...$args): void
     {
         foreach ($this->getCachedForms() as $form) {
             $form->dispatchEvent(...$args);
