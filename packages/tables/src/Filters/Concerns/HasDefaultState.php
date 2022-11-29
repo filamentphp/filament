@@ -19,10 +19,7 @@ trait HasDefaultState
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getDefaultState()
+    public function getDefaultState(): mixed
     {
         return $this->evaluate($this->defaultState);
     }

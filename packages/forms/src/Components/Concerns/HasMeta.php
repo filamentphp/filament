@@ -23,9 +23,8 @@ trait HasMeta
 
     /**
      * @param  string | array<string> | null  $keys
-     * @return mixed
      */
-    public function getMeta(string | array | null $keys = null)
+    public function getMeta(string | array | null $keys = null): mixed
     {
         if (is_array($keys)) {
             return Arr::only($this->meta, $keys);

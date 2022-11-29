@@ -96,10 +96,7 @@ trait HasFileAttachments
         return $this->evaluate($this->fileAttachmentsVisibility);
     }
 
-    /**
-     * @return mixed
-     */
-    protected function handleFileAttachmentUpload(SplFileInfo $file)
+    protected function handleFileAttachmentUpload(SplFileInfo $file): mixed
     {
         $storeMethod = $this->getFileAttachmentsVisibility() === 'public' ? 'storePublicly' : 'store';
 

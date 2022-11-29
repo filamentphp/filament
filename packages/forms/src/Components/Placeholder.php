@@ -69,10 +69,7 @@ class Placeholder extends Component
             ->ucfirst();
     }
 
-    /**
-     * @return mixed
-     */
-    public function getContent()
+    public function getContent(): mixed
     {
         return $this->evaluate($this->content);
     }

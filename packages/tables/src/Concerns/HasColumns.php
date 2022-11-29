@@ -12,28 +12,28 @@ use Illuminate\Validation\ValidationException;
 
 trait HasColumns
 {
-    public function callTableColumnAction(string $name, string $recordKey)
+    public function callTableColumnAction(string $name, string $recordKey): mixed
     {
         $record = $this->getTableRecord($recordKey);
 
         if (! $record) {
-            return;
+            return null;
         }
 
         $column = $this->getTable()->getColumn($name);
 
         if (! $column) {
-            return;
+            return null;
         }
 
         if ($column->isHidden()) {
-            return;
+            return null;
         }
 
         $action = $column->getAction();
 
         if (! ($action instanceof Closure)) {
-            return;
+            return null;
         }
 
         return $column->record($record)->evaluate($action);

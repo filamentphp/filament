@@ -11,9 +11,8 @@ trait CanBeMounted
 
     /**
      * @param  array<string, mixed>  $parameters
-     * @return mixed
      */
-    public function mount(array $parameters)
+    public function mount(array $parameters): mixed
     {
         return $this->evaluate($this->getMountUsing(), $parameters);
     }

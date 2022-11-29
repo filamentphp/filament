@@ -20,7 +20,7 @@ trait EvaluatesClosures
      * @param  array<string>  $exceptParameters
      * @return T
      */
-    public function evaluate(mixed $value, array $parameters = [], array $exceptParameters = [])
+    public function evaluate(mixed $value, array $parameters = [], array $exceptParameters = []): mixed
     {
         $this->evaluationParametersToRemove = $exceptParameters;
 
@@ -46,10 +46,7 @@ trait EvaluatesClosures
         return [];
     }
 
-    /**
-     * @return mixed
-     */
-    protected function resolveEvaluationParameter(string $parameter, Closure $value)
+    protected function resolveEvaluationParameter(string $parameter, Closure $value): mixed
     {
         if ($this->isEvaluationParameterRemoved($parameter)) {
             return null;

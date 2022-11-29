@@ -35,9 +35,8 @@ trait InteractsWithForms
 
     /**
      * @param  string  $property
-     * @return mixed
      */
-    public function __get($property)
+    public function __get($property): mixed
     {
         try {
             return parent::__get($property);
