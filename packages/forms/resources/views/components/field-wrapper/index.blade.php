@@ -49,9 +49,9 @@
 
         {{ $slot }}
 
-        @if ($errors->has($statePath))
+        @if ($errors->has($statePath) || $errors->has($statePath.'.*'))
             <x-forms::field-wrapper.error-message>
-                {{ $errors->first($statePath) }}
+                {{ $errors->first($statePath) ?: $errors->first($statePath.'.*') }}
             </x-forms::field-wrapper.error-message>
         @endif
 
