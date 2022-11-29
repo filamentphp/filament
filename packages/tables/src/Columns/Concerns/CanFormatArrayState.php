@@ -25,6 +25,10 @@ trait CanFormatArrayState
                 return null;
             }
 
+            if (!is_array($state)) {
+                $state = [$state];
+            }
+
             return new HtmlString(
                 '<ul><li>' . implode('</li><li>', $state) . '</li></ul>'
             );
@@ -40,6 +44,10 @@ trait CanFormatArrayState
                 return null;
             }
 
+            if (!is_array($state)) {
+                $state = [$state];
+            }
+
             return new HtmlString(
                 '<ol><li>' . implode('</li><li>', $state) . '</li></ol>'
             );
@@ -53,6 +61,10 @@ trait CanFormatArrayState
         $this->formatArrayStateUsing(function ($state) use ($columns, $gap) {
             if (blank($state)) {
                 return null;
+            }
+
+            if (!is_array($state)) {
+                $state = [$state];
             }
 
             return new HtmlString(

@@ -4,6 +4,7 @@ namespace Filament\Tables\Columns\Summarizers;
 
 use Closure;
 use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\HasNestedRelationships;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -54,25 +55,60 @@ class Summarizer extends ViewComponent
 
     public function getState()
     {
-        $column = $this->getColumn();
+        $column    = $this->getColumn();
         $attribute = $column->getName();
-        $query = $this->getQuery()->clone();
+        $query     = $this->getQuery()->clone();
 
         if ($column->queriesRelationships($query->getModel())) {
-            $relationship = $column->getRelationship($query->getModel());
-            $attribute = $column->getRelationshipAttribute();
+            // if the column being summarized is a dotted relationship, we need to invert the main query so it
+            // selects records from the last relationship in the chain, based on the ID's of the main table
+            // rows currently being summarized.  This involves building an inverse relationship chain, and nesting
+            // a whereHas with it that constrains the inverse query to just the main table ID's.
 
-            $inverseRelationship = $column->getInverseRelationshipName ?? (string) str(class_basename($relationship->getParent()::class))
-                ->plural()
-                ->camel();
+            $record       = $query->getModel();
+            $relationship = $column->getLastRelationship($record);
+            $attribute    = $column->getRelationshipAttribute();
 
-            $query = $relationship->getQuery()->getModel()->newQuery()
-                ->whereHas(
-                    $inverseRelationship,
-                    fn (EloquentBuilder $relatedQuery): EloquentBuilder => $this->hasPaginatedQuery() ?
-                        $relatedQuery->whereKey($this->getTable()->getRecords()->modelKeys()) :
-                        $query,
+            if ($column->getInverseRelationshipName() )
+            {
+                // if an inverse chain was provided, use it
+                $inverseRelationship = $column->getInverseRelationshipName();
+                // ... and reset $record to the last in the column's chain, hence first in inverse chain
+                $record = $column->getLastRelationshipRecord($record);
+            }
+            else {
+                // if no inverse chain give, attempt to derive it with a call to getInverseRelationships,
+                // which will also reset $record to the first relationship in the inverse chain
+                $inverseRelationship = $column->getInverseRelationships(
+                    $column->getName(),
+                    $record
                 );
+            }
+
+            if ($inverseRelationship) {
+                // if we got a valid inverse, nest the relevant query to get the related records from the end of the
+                // chain.
+                //
+                // $relationship is the last relationship in the column's chain, and hence first in the inverse chain.
+                // $record is the record from the last column relationship chain, and hence first in the inverse chain.
+                // $query is the original column query which we will use to get all the id's of the queried records.
+                $query = $column->getNestedWhereHas(
+                    $inverseRelationship,
+                    $relationship->getQuery()->getModel()->newQuery(),
+                    $record,
+                    function (EloquentBuilder $relatedQuery) use ($query, $relationship) {
+                        if ($this->hasPaginatedQuery()) {
+                            $relatedQuery->whereKey($this->getTable()->getRecords()->modelKeys());
+                        }
+                        else {
+                            $relatedQuery->whereIn(
+                                $relationship->getModel()->getKeyName(),
+                                $query->select($relationship->getModel()->getKeyName())
+                            );
+                        }
+                    }
+                );
+            }
         }
 
         $query = DB::table($query->getQuery());
@@ -80,14 +116,14 @@ class Summarizer extends ViewComponent
         if ($this->hasQueryModificationCallback()) {
             $query = $this->evaluate($this->modifyQueryUsing, [
                 'attribute' => $attribute,
-                'query' => $query,
+                'query'     => $query,
             ]) ?? $query;
         }
 
         if ($this->using !== null) {
             return $this->evaluate($this->using, [
                 'attribute' => $attribute,
-                'query' => $query,
+                'query'     => $query,
             ]);
         }
 
@@ -113,7 +149,7 @@ class Summarizer extends ViewComponent
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [
             'livewire' => $this->getLivewire(),
-            'table' => $this->getTable(),
+            'table'    => $this->getTable(),
         ]);
     }
 }
