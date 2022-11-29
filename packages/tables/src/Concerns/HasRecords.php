@@ -16,7 +16,7 @@ trait HasRecords
      */
     protected bool $allowsDuplicates = false;
 
-    protected Collection|Paginator|null $records = null;
+    protected Collection | Paginator | null $records = null;
 
     public function getFilteredTableQuery(): Builder
     {
@@ -51,7 +51,7 @@ trait HasRecords
         return $query;
     }
 
-    protected function hydratePivotRelationForTableRecords(Collection|Paginator $records): Collection|Paginator
+    protected function hydratePivotRelationForTableRecords(Collection | Paginator $records): Collection | Paginator
     {
         $table = $this->getTable();
         $relationship = $table->getRelationship();
@@ -63,7 +63,7 @@ trait HasRecords
         return $records;
     }
 
-    public function getTableRecords(): Collection|Paginator
+    public function getTableRecords(): Collection | Paginator
     {
         if ($this->records) {
             return $this->records;

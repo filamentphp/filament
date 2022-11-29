@@ -6,27 +6,27 @@ use Closure;
 
 trait CanAggregateRelatedModels
 {
-    protected string|Closure|null $columnToAvg = null;
+    protected string | Closure | null $columnToAvg = null;
 
-    protected string|Closure|null $relationshipToAvg = null;
+    protected string | Closure | null $relationshipToAvg = null;
 
-    protected string|Closure|null $relationshipToCount = null;
+    protected string | Closure | null $relationshipToCount = null;
 
-    protected string|Closure|null $relationshipToExistenceCheck = null;
+    protected string | Closure | null $relationshipToExistenceCheck = null;
 
-    protected string|Closure|null $columnToMax = null;
+    protected string | Closure | null $columnToMax = null;
 
-    protected string|Closure|null $relationshipToMax = null;
+    protected string | Closure | null $relationshipToMax = null;
 
-    protected string|Closure|null $columnToMin = null;
+    protected string | Closure | null $columnToMin = null;
 
-    protected string|Closure|null $relationshipToMin = null;
+    protected string | Closure | null $relationshipToMin = null;
 
-    protected string|Closure|null $columnToSum = null;
+    protected string | Closure | null $columnToSum = null;
 
-    protected string|Closure|null $relationshipToSum = null;
+    protected string | Closure | null $relationshipToSum = null;
 
-    public function avg(string|Closure|null $relationship, string|Closure|null $column): static
+    public function avg(string | Closure | null $relationship, string | Closure | null $column): static
     {
         $this->columnToAvg = $column;
         $this->relationshipToAvg = $relationship;
@@ -34,21 +34,21 @@ trait CanAggregateRelatedModels
         return $this;
     }
 
-    public function counts(string|Closure|null $relationship): static
+    public function counts(string | Closure | null $relationship): static
     {
         $this->relationshipToCount = $relationship;
 
         return $this;
     }
 
-    public function exists(string|Closure|null $relationship): static
+    public function exists(string | Closure | null $relationship): static
     {
         $this->relationshipToExistenceCheck = $relationship;
 
         return $this;
     }
 
-    public function max(string|Closure|null $relationship, string|Closure|null $column): static
+    public function max(string | Closure | null $relationship, string | Closure | null $column): static
     {
         $this->columnToMax = $column;
         $this->relationshipToMax = $relationship;
@@ -56,7 +56,7 @@ trait CanAggregateRelatedModels
         return $this;
     }
 
-    public function min(string|Closure|null $relationship, string|Closure|null $column): static
+    public function min(string | Closure | null $relationship, string | Closure | null $column): static
     {
         $this->columnToMin = $column;
         $this->relationshipToMin = $relationship;
@@ -64,7 +64,7 @@ trait CanAggregateRelatedModels
         return $this;
     }
 
-    public function sum(string|Closure|null $relationship, string|Closure|null $column): static
+    public function sum(string | Closure | null $relationship, string | Closure | null $column): static
     {
         $this->columnToSum = $column;
         $this->relationshipToSum = $relationship;
