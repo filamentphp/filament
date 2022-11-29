@@ -206,7 +206,7 @@ trait HasNestedRelationships
      * @param  array|null  $results
      * @return array
      */
-    public function collectNestedAttributes(array|string|null $relationships = null, ?Model $record = null, ?array &$results = null): array
+    public function collectNestedAttributes(array | string | null $relationships = null, ?Model $record = null, ?array &$results = null): array
     {
         // perform "first time" checks, see if we need to provide default values
         if (! isset($relationships) || is_string($relationships)) {
@@ -265,7 +265,7 @@ trait HasNestedRelationships
      * @param  Model|null  $record
      * @return Model|null
      */
-    public function getNestedRecord(array|string|null &$relationships = null, ?Model $record = null): ?Model
+    public function getNestedRecord(array | string | null &$relationships = null, ?Model $record = null): ?Model
     {
         // first time checks, see if we need to set defaults
         if (! isset($relationships) || is_string($relationships)) {
@@ -325,7 +325,7 @@ trait HasNestedRelationships
      * @param  array|string|null  $relationships
      * @return Relation|null
      */
-    public function getLastRelationship(Model $record, array|string|null $relationships = null): ?Relation
+    public function getLastRelationship(Model $record, array | string | null $relationships = null): ?Relation
     {
         // first time checks ...
         if (! isset($relationships) || is_string($relationships)) {
@@ -360,7 +360,7 @@ trait HasNestedRelationships
      * @param  array|string|null  $relationships
      * @return Relation|null
      */
-    public function getLastRelationshipRecord(Model $record, array|string|null $relationships = null): ?Model
+    public function getLastRelationshipRecord(Model $record, array | string | null $relationships = null): ?Model
     {
         // first time checks ...
         if (! isset($relationships) || is_string($relationships)) {
@@ -409,7 +409,7 @@ trait HasNestedRelationships
      * @param  array|null  $relationships
      * @return string|\Illuminate\Database\Query\Builder
      */
-    protected function getNestedRelationExistenceQuery(Builder $query, $name, ?string $direction = 'asc', ?array $relationships = null): string|\Illuminate\Database\Query\Builder
+    protected function getNestedRelationExistenceQuery(Builder $query, $name, ?string $direction = 'asc', ?array $relationships = null): string | \Illuminate\Database\Query\Builder
     {
         // first time check, build the relationship stack
         if (! isset($relationships)) {
@@ -538,7 +538,7 @@ trait HasNestedRelationships
      * @param  array|null  $relationships
      * @return Builder
      */
-    public function getNestedWhereHas(array|string $name, Builder $query, Model $record, Closure $has, ?array $relationships = null)
+    public function getNestedWhereHas(array | string $name, Builder $query, Model $record, Closure $has, ?array $relationships = null)
     {
         if (is_null($relationships)) {
             $relationships = is_array($name) ? $name : $this->getRelationshipStack($name);

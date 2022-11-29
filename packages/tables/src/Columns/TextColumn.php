@@ -80,7 +80,7 @@ class TextColumn extends Column
     /**
      * @param  array<scalar>  $state
      */
-    protected function mutateArrayState(array $state): string|array
+    protected function mutateArrayState(array $state): string | array
     {
         return $this->formatArrayStateUsing ? $state : implode(', ', $state);
     }
