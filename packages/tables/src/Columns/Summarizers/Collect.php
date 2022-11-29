@@ -3,7 +3,6 @@
 namespace Filament\Tables\Columns\Summarizers;
 
 use Illuminate\Database\Query\Builder;
-use Illuminate\Support\HtmlString;
 
 class Collect extends Summarizer
 {
@@ -17,8 +16,7 @@ class Collect extends Summarizer
         $column = $this->getColumn();
         $state = [];
 
-        foreach ($query->clone()->distinct()->get() as $record)
-        {
+        foreach ($query->clone()->distinct()->get() as $record) {
             $state[] = $record->{$attribute};
         }
 

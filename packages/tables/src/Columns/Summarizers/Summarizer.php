@@ -4,7 +4,6 @@ namespace Filament\Tables\Columns\Summarizers;
 
 use Closure;
 use Filament\Support\Components\ViewComponent;
-use Filament\Support\Concerns\HasNestedRelationships;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -55,9 +54,9 @@ class Summarizer extends ViewComponent
 
     public function getState()
     {
-        $column    = $this->getColumn();
+        $column = $this->getColumn();
         $attribute = $column->getName();
-        $query     = $this->getQuery()->clone();
+        $query = $this->getQuery()->clone();
 
         if ($column->queriesRelationships($query->getModel())) {
             // if the column being summarized is a dotted relationship, we need to invert the main query so it
@@ -65,18 +64,16 @@ class Summarizer extends ViewComponent
             // rows currently being summarized.  This involves building an inverse relationship chain, and nesting
             // a whereHas with it that constrains the inverse query to just the main table ID's.
 
-            $record       = $query->getModel();
+            $record = $query->getModel();
             $relationship = $column->getLastRelationship($record);
-            $attribute    = $column->getRelationshipAttribute();
+            $attribute = $column->getRelationshipAttribute();
 
-            if ($column->getInverseRelationshipName() )
-            {
+            if ($column->getInverseRelationshipName()) {
                 // if an inverse chain was provided, use it
                 $inverseRelationship = $column->getInverseRelationshipName();
                 // ... and reset $record to the last in the column's chain, hence first in inverse chain
                 $record = $column->getLastRelationshipRecord($record);
-            }
-            else {
+            } else {
                 // if no inverse chain give, attempt to derive it with a call to getInverseRelationships,
                 // which will also reset $record to the first relationship in the inverse chain
                 $inverseRelationship = $column->getInverseRelationships(
@@ -99,8 +96,7 @@ class Summarizer extends ViewComponent
                     function (EloquentBuilder $relatedQuery) use ($query, $relationship) {
                         if ($this->hasPaginatedQuery()) {
                             $relatedQuery->whereKey($this->getTable()->getRecords()->modelKeys());
-                        }
-                        else {
+                        } else {
                             $relatedQuery->whereIn(
                                 $relationship->getModel()->getKeyName(),
                                 $query->select($relationship->getModel()->getKeyName())
@@ -116,14 +112,14 @@ class Summarizer extends ViewComponent
         if ($this->hasQueryModificationCallback()) {
             $query = $this->evaluate($this->modifyQueryUsing, [
                 'attribute' => $attribute,
-                'query'     => $query,
+                'query' => $query,
             ]) ?? $query;
         }
 
         if ($this->using !== null) {
             return $this->evaluate($this->using, [
                 'attribute' => $attribute,
-                'query'     => $query,
+                'query' => $query,
             ]);
         }
 
@@ -149,7 +145,7 @@ class Summarizer extends ViewComponent
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [
             'livewire' => $this->getLivewire(),
-            'table'    => $this->getTable(),
+            'table' => $this->getTable(),
         ]);
     }
 }

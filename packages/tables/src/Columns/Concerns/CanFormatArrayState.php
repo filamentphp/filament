@@ -25,7 +25,7 @@ trait CanFormatArrayState
                 return null;
             }
 
-            if (!is_array($state)) {
+            if (! is_array($state)) {
                 $state = [$state];
             }
 
@@ -44,7 +44,7 @@ trait CanFormatArrayState
                 return null;
             }
 
-            if (!is_array($state)) {
+            if (! is_array($state)) {
                 $state = [$state];
             }
 
@@ -63,7 +63,7 @@ trait CanFormatArrayState
                 return null;
             }
 
-            if (!is_array($state)) {
+            if (! is_array($state)) {
                 $state = [$state];
             }
 
