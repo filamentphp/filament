@@ -39,11 +39,8 @@
         <x-filament::icon
             :name="($active && $activeIcon) ? $activeIcon : $icon"
             alias="app::sidebar.item"
+            :color="(! $active) ? 'text-gray-600 dark:text-gray-500' : null"
             size="h-6 w-6"
-            @class([
-                'shrink-0',
-                'text-gray-400 dark:text-gray-500' => ! $active,
-            ])
         />
 
         <div class="flex flex-1"
