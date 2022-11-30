@@ -4,6 +4,7 @@
     'sortable' => false,
     'sortDirection',
     'alignment' => null,
+    'wrap' => false,
 ])
 
 <th {{ $attributes->class(['filament-tables-header-cell p-0']) }}>
@@ -13,8 +14,10 @@
         @endif
         type="button"
         @class([
-            'flex items-center w-full px-4 py-2 whitespace-nowrap space-x-1 rtl:space-x-reverse font-medium text-sm text-gray-600 dark:text-gray-300',
+            'flex items-center w-full px-4 py-2 space-x-1 rtl:space-x-reverse font-medium text-sm text-gray-600 dark:text-gray-300',
             'cursor-default' => ! $sortable,
+            'whitespace-nowrap' => ! $wrap,
+            'whitespace-normal' => $wrap,
             match ($alignment) {
                 'start' => 'justify-start',
                 'center' => 'justify-center',
