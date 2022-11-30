@@ -24,9 +24,8 @@
                 :is-grid="! $isInline()"
                 direction="column"
                 :attributes="$attributes->merge($getExtraAttributes())->class([
-                    'filament-forms-radio-component',
-                    'flex flex-wrap gap-3' => $isInline(),
-                    'space-y-2' => ! $isInline(),
+                    'filament-forms-radio-component flex flex-wrap gap-x-3 gap-y-2',
+                    'flex-col' => ! $isInline(),
                 ])"
             >
                 @php
