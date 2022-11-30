@@ -792,7 +792,7 @@
                                 @endif
 
                                 @if (! $isGroupsOnly)
-                                    <x-filament-tables::row class="bg-gray-500/5">
+                                    <x-filament-tables::row class="filament-tables-group-header-row bg-gray-500/5">
                                         @if (count($actions) && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
                                             <td></td>
                                         @endif
