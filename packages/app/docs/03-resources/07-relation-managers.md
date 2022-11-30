@@ -1,10 +1,57 @@
 ---
-title: Relation managers
+title: Managing relationships
 ---
 
-## Getting started
+## Choosing the right tool for the job
 
-"Relation managers" in Filament allow administrators to list, create, attach, associate, edit, detach, dissociate and delete related records without leaving the resource's Edit page. Resource classes contain a static `getRelations()` method that is used to register relation managers for your resource.
+Filament provides many ways to manage relationships in the admin panel. Which feature you should use depends on the type of relationship you are managing, and which UI you are looking for.
+
+### Relation managers - interactive tables underneath your resource forms
+
+> These are compatible with `HasMany`, `HasManyThrough`, `BelongsToMany`, `MorphMany` and `MorphToMany` relationships.
+
+(Relation managers)[#creating-a-relation-manager] are interactive tables that allow administrators to list, create, attach, associate, edit, detach, dissociate and delete related records without leaving the resource's Edit or View page.
+
+### Select & checkbox list - choose from existing records or create a new one
+
+> These are compatible with `BelongsTo`, `MorphTo` and `BelongsToMany` relationships.
+
+Using a [select](../../forms/fields/select#populating-automatically-from-a-relationship), users will be able to choose from a list of existing records. You may also [add a button that allows you to create a new record inside a modal](../../forms/fields/select#creating-new-records), without leaving the page.
+
+When using a `BelongsToMany` relationship with a select, you'll be able to select multiple options, not just one. Records will be automatically added to your pivot table when you submit the form. If you wish, you can swap out the multi-select dropdown with a simple [checkbox list](../../forms/fields/checkbox-list#populating-automatically-from-a-relationship). Both components work in the same way.
+
+### Repeaters - CRUD multiple related records inside the owner's form
+
+> These are compatible with `HasMany` and `MorphMany` relationships.
+
+[Repeaters](../../forms/fields/repeater#populating-automatically-from-a-relationship) are standard form components, which can render a repeatable set of fields infinitely. They can be hooked up to a relationship, so records are automatically read, created, updated, and deleted from the related table. They live inside the main form schema, and can be used inside resource pages, as well as nesting within action modals.
+
+From a UX perspective, this solution is only suitable if your related model only has a few fields. Otherwise, the form can get very long.
+
+### Layout form components - saving form fields to a single relationship
+
+> These are compatible with `BelongsTo`, `HasOne` and `MorphOne` relationships.
+
+All layout form components ([Grid](../../forms/layout/grid#grid-component), [Section](../../forms/layout/section), [Fieldset](../../forms/layout/fieldset), [Card](../../forms/layout/card), etc) have a `relationship()` method. When you use this, all fields within that layout are saved to the related model instead of the owner's model:
+
+```php
+use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+
+Fieldset::make('Metadata')
+    ->relationship('metadata')
+    ->schema([
+        TextInput::make('title'),
+        Textarea::make('description'),
+        FileUpload::make('image'),
+    ])
+```
+
+In this example, the `title`, `description` and `image` are automatically loaded from the `metadata` relationship, and saved again when the form is submitted. If the `metadata` record does not exist, it is automatically created.
+
+## Creating a relation manager
 
 To create a relation manager, you can use the `make:filament-relation-manager` command:
 
@@ -73,7 +120,7 @@ php artisan make:filament-relation-manager CategoryResource posts title --soft-d
 
 You can find out more about soft deleting [here](#deleting-records).
 
-## Listing records
+## Listing related records
 
 Related records will be listed in a table. The entire relation manager is based around this table, which contains actions to [create](#creating-records), [edit](#editing-records), [attach / detach](#attaching-and-detaching-records), [associate / dissociate](#associating-and-dissociating-records), and delete records.
 
@@ -105,7 +152,7 @@ public function table(Table $table): Table
 
 Please ensure that any pivot attributes are listed in the `withPivot()` method of the relationship *and* inverse relationship.
 
-## Creating records
+## Creating related records
 
 ### Creating with pivot attributes
 
@@ -243,7 +290,7 @@ If you'd like the action modal to close too, you can completely `cancel()` the a
 $action->cancel();
 ```
 
-## Editing records
+## Editing related records
 
 ### Editing with pivot attributes
 
@@ -573,7 +620,7 @@ public function table(Table $table): Table
 }
 ```
 
-## Deleting records
+## Deleting related records
 
 By default, you will not be able to interact with deleted records in the relation manager. If you'd like to add functionality to restore, force delete and filter trashed records in your relation manager, use the `--soft-deletes` flag when generating the relation manager:
 
@@ -673,7 +720,7 @@ If you'd like the action modal to close too, you can completely `cancel()` the a
 $action->cancel();
 ```
 
-## Accessing the owner record
+## Accessing the relationship's owner record
 
 Relation managers are Livewire components. When they are first loaded, the owner record (the Eloquent record which serves as a parent - the main resource model) is mounted in a public `$ownerRecord` property. Thus, you may access the owner record using:
 
@@ -725,7 +772,7 @@ public static function getRelations(): array
 }
 ```
 
-## Conditional visibility
+## Conditionally showing relation managers
 
 By default, relation managers will be visible if the `viewAny()` method for the related model policy returns `true`.
 
@@ -740,7 +787,7 @@ public static function canView(Model $ownerRecord, string $pageClass): bool
 }
 ```
 
-## Moving the resource form to tabs
+## Combining the relation manager tabs with the form
 
 On the Edit or View page class, override the `hasCombinedRelationManagerTabsWithForm()` method:
 
