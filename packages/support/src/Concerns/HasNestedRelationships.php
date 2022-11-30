@@ -552,7 +552,7 @@ trait HasNestedRelationships
             if ($this->isNoMoreRelationships($relationships)) {
                 return $query->whereHas(
                     $relationshipName,
-                    fn (Builder $nestedQuery) => $this->evaluate($has, ['relatedQuery' => $nestedQuery])
+                    fn (Builder $nestedQuery) => $this->evaluate($has, ['query' => $nestedQuery])
                 );
             } else {
                 return $query->whereHas(

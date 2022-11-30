@@ -92,17 +92,20 @@ class Summarizer extends ViewComponent
                 // $relationship is the last relationship in the column's chain, and hence first in the inverse chain.
                 // $record is the record from the last column relationship chain, and hence first in the inverse chain.
                 // $query is the original column query which we will use to get all the id's of the queried records.
+
+                $parentQuery = $query;
+
                 $query = $column->getNestedWhereHas(
                     $inverseRelationship,
                     $relationship->getQuery()->getModel()->newQuery(),
                     $record,
-                    function (EloquentBuilder $relatedQuery) use ($query, $relationship) {
+                    function (EloquentBuilder $query) use ($parentQuery, $relationship) {
                         if ($this->hasPaginatedQuery()) {
-                            $relatedQuery->whereKey($this->getTable()->getRecords()->modelKeys());
+                            $query->whereKey($this->getTable()->getRecords()->modelKeys());
                         } else {
-                            $relatedQuery->whereIn(
+                            $query->whereIn(
                                 $relationship->getModel()->getKeyName(),
-                                $query->select($relationship->getModel()->getKeyName())
+                                $parentQuery->select($relationship->getModel()->getKeyName())
                             );
                         }
                     }
