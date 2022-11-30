@@ -406,10 +406,7 @@ trait CanBeValidated
         return $this;
     }
 
-    /**
-     * @param  mixed  $rule
-     */
-    public function rule($rule, bool | Closure $condition = true): static
+    public function rule(mixed $rule, bool | Closure $condition = true): static
     {
         $this->rules = array_merge(
             $this->rules,

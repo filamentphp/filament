@@ -25,9 +25,8 @@ class BulkAction extends MountableAction
 
     /**
      * @param  array<string, mixed>  $parameters
-     * @return mixed
      */
-    public function call(array $parameters = [])
+    public function call(array $parameters = []): mixed
     {
         try {
             return $this->evaluate($this->getAction(), $parameters);

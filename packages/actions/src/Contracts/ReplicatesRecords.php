@@ -8,10 +8,7 @@ interface ReplicatesRecords
 {
     public function callBeforeReplicaSaved(Model $replica): void;
 
-    /**
-     * @return mixed
-     */
-    public function callAfterReplicaSaved(Model $replica);
+    public function callAfterReplicaSaved(Model $replica): mixed;
 
     /**
      * @return array<string> | null

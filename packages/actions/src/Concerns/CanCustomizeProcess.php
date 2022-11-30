@@ -17,9 +17,8 @@ trait CanCustomizeProcess
 
     /**
      * @param  array<string, mixed>  $parameters
-     * @return mixed
      */
-    public function process(?Closure $default, array $parameters = [])
+    public function process(?Closure $default, array $parameters = []): mixed
     {
         return $this->evaluate($this->using ?? $default, $parameters);
     }

@@ -31,23 +31,20 @@ trait HasActions
     {
     }
 
-    /**
-     * @return mixed
-     */
-    public function callMountedTableAction(?string $arguments = null)
+    public function callMountedTableAction(?string $arguments = null): mixed
     {
         $action = $this->getMountedTableAction();
 
         if (! $action) {
-            return;
+            return null;
         }
 
         if (filled($this->mountedTableActionRecord) && ($action->getRecord() === null)) {
-            return;
+            return null;
         }
 
         if ($action->isDisabled()) {
-            return;
+            return null;
         }
 
         $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
@@ -73,7 +70,7 @@ trait HasActions
 
             $result = $action->callAfter() ?? $result;
         } catch (Halt $exception) {
-            return;
+            return null;
         } catch (Cancel $exception) {
         }
 
@@ -97,10 +94,7 @@ trait HasActions
         $this->mountedTableActionRecord = $record;
     }
 
-    /**
-     * @return mixed
-     */
-    public function mountTableAction(string $name, ?string $record = null)
+    public function mountTableAction(string $name, ?string $record = null): mixed
     {
         $this->mountedTableAction = $name;
         $this->mountedTableActionRecord($record);
@@ -108,15 +102,15 @@ trait HasActions
         $action = $this->getMountedTableAction();
 
         if (! $action) {
-            return;
+            return null;
         }
 
         if (filled($record) && ($action->getRecord() === null)) {
-            return;
+            return null;
         }
 
         if ($action->isDisabled()) {
-            return;
+            return null;
         }
 
         $this->cacheForm(
@@ -139,12 +133,12 @@ trait HasActions
                 $action->callAfterFormFilled();
             }
         } catch (Halt $exception) {
-            return;
+            return null;
         } catch (Cancel $exception) {
             $this->mountedTableAction = null;
             $this->mountedTableActionRecord(null);
 
-            return;
+            return null;
         }
 
         if (! $this->mountedTableActionShouldOpenModal()) {
@@ -156,6 +150,8 @@ trait HasActions
         $this->dispatchBrowserEvent('open-modal', [
             'id' => "{$this->id}-table-action",
         ]);
+
+        return null;
     }
 
     public function mountedTableActionShouldOpenModal(): bool

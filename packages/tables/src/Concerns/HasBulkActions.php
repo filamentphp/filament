@@ -23,19 +23,16 @@ trait HasBulkActions
     {
     }
 
-    /**
-     * @return mixed
-     */
-    public function callMountedTableBulkAction(?string $arguments = null)
+    public function callMountedTableBulkAction(?string $arguments = null): mixed
     {
         $action = $this->getMountedTableBulkAction();
 
         if (! $action) {
-            return;
+            return null;
         }
 
         if ($action->isDisabled()) {
-            return;
+            return null;
         }
 
         $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
@@ -61,7 +58,7 @@ trait HasBulkActions
 
             $result = $action->callAfter() ?? $result;
         } catch (Halt $exception) {
-            return;
+            return null;
         } catch (Cancel $exception) {
         }
 
@@ -80,9 +77,8 @@ trait HasBulkActions
 
     /**
      * @param  array<int | string>  $selectedRecords
-     * @return mixed
      */
-    public function mountTableBulkAction(string $name, array $selectedRecords)
+    public function mountTableBulkAction(string $name, array $selectedRecords): mixed
     {
         $this->mountedTableBulkAction = $name;
         $this->selectedTableRecords = $selectedRecords;
@@ -90,11 +86,11 @@ trait HasBulkActions
         $action = $this->getMountedTableBulkAction();
 
         if (! $action) {
-            return;
+            return null;
         }
 
         if ($action->isDisabled()) {
-            return;
+            return null;
         }
 
         $this->cacheForm(
@@ -117,12 +113,12 @@ trait HasBulkActions
                 $action->callAfterFormFilled();
             }
         } catch (Halt $exception) {
-            return;
+            return null;
         } catch (Cancel $exception) {
             $this->mountedTableBulkAction = null;
             $this->selectedTableRecords = [];
 
-            return;
+            return null;
         }
 
         if (! $this->mountedTableBulkActionShouldOpenModal()) {
@@ -134,6 +130,8 @@ trait HasBulkActions
         $this->dispatchBrowserEvent('open-modal', [
             'id' => "{$this->id}-table-bulk-action",
         ]);
+
+        return null;
     }
 
     public function mountedTableBulkActionShouldOpenModal(): bool

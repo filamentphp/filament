@@ -163,10 +163,7 @@ trait CanFormatState
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getFormattedState()
+    public function getFormattedState(): mixed
     {
         $state = $this->evaluate(
             $this->formatArrayStateUsing ??

@@ -31,9 +31,8 @@ class TextColumn extends Column
 
     /**
      * @param  string | array<scalar, scalar> | Arrayable  $enum
-     * @param  mixed  $default
      */
-    public function enum(string | array | Arrayable $enum, $default = null): static
+    public function enum(string | array | Arrayable $enum, mixed $default = null): static
     {
         if (is_array($enum) || $enum instanceof Arrayable) {
             $this->formatStateUsing(static fn ($state): ?string => $enum[$state] ?? ($default ?? $state));
