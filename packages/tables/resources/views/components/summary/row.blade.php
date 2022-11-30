@@ -62,7 +62,18 @@
                 @if ($loop->first && (! $extraHeadingColumn) && (! $groupsOnly) && ($headingColumnSpan > 1))
                     colspan="{{ $headingColumnSpan }}"
                 @endif
-                class="-space-y-3 align-top"
+                @class([
+                    "-space-y-3 align-top",
+                    match ($column->getAlignment()) {
+                        'start' => 'text-start',
+                        'center' => 'text-center',
+                        'end' => 'text-end',
+                        'left' => 'text-left',
+                        'right' => 'text-right',
+                        'justify' => 'text-justify',
+                        default => null,
+                    },
+                ])
             >
                 @if ($loop->first && (! $extraHeadingColumn) && (! $groupsOnly))
                     <div @class([
