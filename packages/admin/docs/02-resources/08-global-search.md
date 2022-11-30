@@ -42,8 +42,8 @@ Search results can display "details" below their title, which gives the user mor
 public static function getGlobalSearchResultDetails(Model $record): array
 {
     return [
-        'Author' => $record->author->name,
-        'Category' => $record->category->name,
+        'Author' => $record->author?->name,
+        'Category' => $record->category?->name,
     ];
 }
 ```
