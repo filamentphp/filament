@@ -16,6 +16,7 @@
 @endphp
 
 <x-filament-tables::row {{ $attributes->class([
+    'filament-tables-summary-row',
     'bg-gray-500/5' => $strong,
 ]) }}>
     @if ($placeholderColumns && $actions && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
