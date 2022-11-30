@@ -517,6 +517,8 @@ Select::make('status')
     ])
 ```
 
+> In the array passed to `->options()` like above, the array element key will be persisted into the database, while the array element value will be the  displayed value
+
 ![](https://user-images.githubusercontent.com/41773797/147612885-888dfd64-6256-482d-b4bc-840191306d2d.png)
 
 You may enable a search input to allow easier access to many options, using the `searchable()` method:
