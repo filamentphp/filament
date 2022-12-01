@@ -3,6 +3,7 @@
     'disabled' => false,
     'form' => null,
     'icon' => null,
+    'iconSize' => null,
     'indicator' => null,
     'indicatorColor' => 'primary',
     'keyBindings' => null,
@@ -14,6 +15,8 @@
 ])
 
 @php
+    $iconSize ??= $size;
+
     $buttonClasses = [
         'filament-icon-button flex items-center justify-center rounded-full relative hover:bg-gray-500/5 focus:outline-none disabled:opacity-70 disabled:pointer-events-none dark:hover:bg-gray-300/5',
         match ($color) {
@@ -26,19 +29,20 @@
             default => $color,
         },
         match ($size) {
-            'lg' => 'w-12 h-12',
-            'md' => 'w-10 h-10',
-            'sm md:md' => 'w-8 h-8 md:w-10 md:h-10',
             'sm' => 'w-8 h-8',
+            'sm md:md' => 'w-8 h-8 md:w-10 md:h-10',
+            'md' => 'w-10 h-10',
+            'lg' => 'w-12 h-12',
             default => $size,
         },
     ];
 
-    $iconSize = match ($size) {
-        'md' => 'h-5 w-5',
+    $iconSize = match ($iconSize) {
         'sm' => 'h-4 w-4',
         'sm md:md' => 'h-4 w-4 md:h-5 md:w-5',
+        'md' => 'h-5 w-5',
         'lg' => 'h-6 w-6',
+        default => $iconSize,
     };
 
     $iconClasses = 'filament-icon-button-icon';
