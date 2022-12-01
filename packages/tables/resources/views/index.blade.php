@@ -690,7 +690,7 @@
                             @endif
 
                             @foreach ($columns as $column)
-                                <x-tables::cell class="filament-table-cell-{{ \Illuminate\Support\Str::of($column->getName())->camel()->kebab() }} px-4 py-1">
+                                <x-tables::cell class="filament-table-individual-search-cell-{{ \Illuminate\Support\Str::of($column->getName())->camel()->kebab() }} px-4 py-1">
                                     @if ($column->isIndividuallySearchable())
                                         <x-tables::search-input wire-model="tableColumnSearchQueries.{{ $column->getName() }}" />
                                     @endif
