@@ -155,7 +155,7 @@ class Table extends ViewComponent
     protected string | Htmlable | Closure | null $heading = null;
 
     /**
-     * @var array<string, Action | ActionGroup>
+     * @var array<string, Action | BulkAction | ActionGroup>
      */
     protected array $headerActions = [];
 
@@ -541,7 +541,7 @@ class Table extends ViewComponent
     }
 
     /**
-     * @param  array<Action | ActionGroup> | ActionGroup | Closure  $actions
+     * @param  array<Action | BulkAction | ActionGroup> | ActionGroup | Closure  $actions
      */
     public function headerActions(array | ActionGroup | Closure $actions, string | Closure | null $position = null): static
     {
@@ -1133,7 +1133,7 @@ class Table extends ViewComponent
     }
 
     /**
-     * @return array<string, Action | ActionGroup>
+     * @return array<string, Action | BulkAction | ActionGroup>
      */
     public function getHeaderActions(): array
     {

@@ -5,6 +5,7 @@ namespace Filament\Actions\Concerns;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Forms;
+use Filament\Forms\Form;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
@@ -19,15 +20,24 @@ trait InteractsWithActions
         __get as __getForm;
     }
 
-    public $mountedAction = null;
+    public ?string $mountedAction = null;
 
-    public $mountedActionData = [];
+    /**
+     * @var array<string, mixed>
+     */
+    public array $mountedActionData = [];
 
+    /**
+     * @var array<string, Action>
+     */
     protected array $cachedActions = [];
 
     protected bool $hasActionsModalRendered = false;
 
-    public function __get($property)
+    /**
+     * @param  string  $property
+     */
+    public function __get($property): mixed
     {
         try {
             return $this->__getForm($property);
@@ -40,16 +50,16 @@ trait InteractsWithActions
         }
     }
 
-    public function callMountedAction(?string $arguments = null)
+    public function callMountedAction(?string $arguments = null): mixed
     {
         $action = $this->getMountedAction();
 
         if (! $action) {
-            return;
+            return null;
         }
 
         if ($action->isDisabled()) {
-            return;
+            return null;
         }
 
         $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
@@ -75,7 +85,7 @@ trait InteractsWithActions
 
             $result = $action->callAfter() ?? $result;
         } catch (Halt $exception) {
-            return;
+            return null;
         } catch (Cancel $exception) {
         }
 
@@ -91,18 +101,18 @@ trait InteractsWithActions
         return $result;
     }
 
-    public function mountAction(string $name)
+    public function mountAction(string $name): mixed
     {
         $this->mountedAction = $name;
 
         $action = $this->getMountedAction();
 
         if (! $action) {
-            return;
+            return null;
         }
 
         if ($action->isDisabled()) {
-            return;
+            return null;
         }
 
         $this->cacheForm(
@@ -125,11 +135,11 @@ trait InteractsWithActions
                 $action->callAfterFormFilled();
             }
         } catch (Halt $exception) {
-            return;
+            return null;
         } catch (Cancel $exception) {
             $this->mountedAction = null;
 
-            return;
+            return null;
         }
 
         if (! $this->mountedActionShouldOpenModal()) {
@@ -141,6 +151,8 @@ trait InteractsWithActions
         $this->dispatchBrowserEvent('open-modal', [
             'id' => 'page-action',
         ]);
+
+        return null;
     }
 
     public function mountedActionShouldOpenModal(): bool
@@ -182,6 +194,9 @@ trait InteractsWithActions
         return $this->getAction($this->mountedAction);
     }
 
+    /**
+     * @return array<int | string, string | Form>
+     */
     protected function getInteractsWithActionsForms(): array
     {
         return [

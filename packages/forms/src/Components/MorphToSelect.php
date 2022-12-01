@@ -26,6 +26,9 @@ class MorphToSelect extends Component
 
     protected int | Closure $optionsLimit = 50;
 
+    /**
+     * @var array<Type> | Closure
+     */
     public array | Closure $types = [];
 
     final public function __construct(string $name)
@@ -41,6 +44,9 @@ class MorphToSelect extends Component
         return $static;
     }
 
+    /**
+     * @return array<Component>
+     */
     public function getChildComponents(): array
     {
         $relationship = $this->getRelationship();
@@ -98,6 +104,9 @@ class MorphToSelect extends Component
         return $this;
     }
 
+    /**
+     * @param  array<Type> | Closure  $types
+     */
     public function types(array | Closure $types): static
     {
         $this->types = $types;
@@ -123,6 +132,9 @@ class MorphToSelect extends Component
         return $this->getModelInstance()->{$this->getName()}();
     }
 
+    /**
+     * @return array<string, Type>
+     */
     public function getTypes(): array
     {
         $types = [];

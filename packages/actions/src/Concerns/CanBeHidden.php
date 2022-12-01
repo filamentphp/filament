@@ -8,13 +8,16 @@ use Illuminate\Support\Arr;
 
 trait CanBeHidden
 {
-    protected $authorization = null;
+    protected mixed $authorization = null;
 
     protected bool | Closure $isHidden = false;
 
     protected bool | Closure $isVisible = true;
 
-    public function authorize($abilities, Model | array | null $arguments = null): static
+    /**
+     * @param  Model | array<mixed> | null  $arguments
+     */
+    public function authorize(mixed $abilities, Model | array | null $arguments = null): static
     {
         if (is_string($abilities) || is_array($abilities)) {
             $this->authorization = [
@@ -29,6 +32,10 @@ trait CanBeHidden
         return $this;
     }
 
+    /**
+     * @param  string | array<string>  $abilities
+     * @param  Model | array<mixed> | null  $arguments
+     */
     public function authorizeAny(string | array $abilities, Model | array | null $arguments = null): static
     {
         $this->authorization = [
@@ -40,6 +47,10 @@ trait CanBeHidden
         return $this;
     }
 
+    /**
+     * @param  array<mixed>  $arguments
+     * @return array<mixed>
+     */
     protected function parseAuthorizationArguments(array $arguments): array
     {
         return $arguments;

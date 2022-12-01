@@ -3,18 +3,25 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Filament\Actions\Modal\Actions\Action;
 use Filament\Actions\Modal\Actions\Action as ModalAction;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 
 trait CanOpenModal
 {
+    /**
+     * @var array<ModalAction> | Closure
+     */
     protected array | Closure $extraModalActions = [];
 
     protected bool | Closure | null $isModalCentered = null;
 
     protected bool | Closure $isModalSlideOver = false;
 
+    /**
+     * @var array<ModalAction> | Closure | null
+     */
     protected array | Closure | null $modalActions = null;
 
     protected ModalAction | Closure | null $modalCancelAction = null;
@@ -27,9 +34,9 @@ trait CanOpenModal
 
     protected View | Htmlable | Closure | null $modalFooter = null;
 
-    protected string| Htmlable | Closure | null $modalHeading = null;
+    protected string | Htmlable | Closure | null $modalHeading = null;
 
-    protected string| Htmlable | Closure | null $modalSubheading = null;
+    protected string | Htmlable | Closure | null $modalSubheading = null;
 
     protected string | Closure | null $modalWidth = null;
 
@@ -47,6 +54,9 @@ trait CanOpenModal
         return $this;
     }
 
+    /**
+     * @param  array<ModalAction> | Closure | null  $actions
+     */
     public function modalActions(array | Closure | null $actions = null): static
     {
         $this->modalActions = $actions;
@@ -54,6 +64,9 @@ trait CanOpenModal
         return $this;
     }
 
+    /**
+     * @param  array<ModalAction> | Closure  $actions
+     */
     public function extraModalActions(array | Closure $actions): static
     {
         $this->extraModalActions = $actions;
@@ -119,6 +132,9 @@ trait CanOpenModal
 
     abstract public function getLivewireCallActionName(): string;
 
+    /**
+     * @return array<Action>
+     */
     public function getModalActions(): array
     {
         if ($this->isWizard()) {
@@ -144,6 +160,10 @@ trait CanOpenModal
         return $this->filterHiddenModalActions($actions);
     }
 
+    /**
+     * @param  array<ModalAction>  $actions
+     * @return array<ModalAction>
+     */
     protected function filterHiddenModalActions(array $actions): array
     {
         return array_filter(
@@ -179,6 +199,9 @@ trait CanOpenModal
             ->color('gray');
     }
 
+    /**
+     * @return array<ModalAction>
+     */
     public function getExtraModalActions(): array
     {
         return $this->evaluate($this->extraModalActions);
@@ -224,6 +247,9 @@ trait CanOpenModal
         return $this->evaluate($this->isModalSlideOver);
     }
 
+    /**
+     * @param  array<string, mixed> | null  $arguments
+     */
     protected function makeExtraModalAction(string $name, ?array $arguments = null): ModalAction
     {
         return static::makeModalAction($name)

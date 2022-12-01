@@ -12,6 +12,9 @@ class Icon
 
     public ?string $color = null;
 
+    /**
+     * @var array<string | int, bool | string>
+     */
     public array $class = [];
 
     final public function __construct(?string $name = null)
@@ -38,6 +41,9 @@ class Icon
         return $this;
     }
 
+    /**
+     * @param  string | array<string | int, bool | string> | null  $class
+     */
     public function class(string | array | null $class): static
     {
         $this->class = ($class === null) ? [] : Arr::wrap($class);

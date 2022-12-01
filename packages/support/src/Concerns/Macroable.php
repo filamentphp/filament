@@ -9,7 +9,10 @@ use ReflectionMethod;
 
 trait Macroable
 {
-    protected static $macros = [];
+    /**
+     * @var array<string, array<class-string, Closure>>
+     */
+    protected static array $macros = [];
 
     public static function macro(string $name, callable $macro): void
     {
@@ -36,7 +39,10 @@ trait Macroable
         static::$macros = [];
     }
 
-    public static function __callStatic(string $method, array $parameters)
+    /**
+     * @param  array<array-key>  $parameters
+     */
+    public static function __callStatic(string $method, array $parameters): mixed
     {
         $macro = static::getMacro($method);
 
@@ -55,7 +61,10 @@ trait Macroable
         return $macro(...$parameters);
     }
 
-    public function __call(string $method, array $parameters)
+    /**
+     * @param  array<array-key>  $parameters
+     */
+    public function __call(string $method, array $parameters): mixed
     {
         $macro = static::getMacro($method);
 

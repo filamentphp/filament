@@ -15,7 +15,7 @@ class Placeholder extends Component
      */
     protected string $view = 'filament-forms::components.placeholder';
 
-    protected $content = null;
+    protected mixed $content = null;
 
     final public function __construct(string $name)
     {
@@ -38,7 +38,7 @@ class Placeholder extends Component
         $this->dehydrated(false);
     }
 
-    public function content($content): static
+    public function content(mixed $content): static
     {
         $this->content = $content;
 
@@ -63,7 +63,7 @@ class Placeholder extends Component
             ->ucfirst();
     }
 
-    public function getContent()
+    public function getContent(): mixed
     {
         return $this->evaluate($this->content);
     }

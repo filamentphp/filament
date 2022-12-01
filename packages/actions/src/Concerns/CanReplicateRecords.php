@@ -14,6 +14,9 @@ trait CanReplicateRecords
 
     protected ?Closure $beforeReplicaSavedCallback = null;
 
+    /**
+     * @var array<string> | Closure | null
+     */
     protected array | Closure | null $excludedAttributes = null;
 
     public static function getDefaultName(): ?string
@@ -74,6 +77,9 @@ trait CanReplicateRecords
         return $this;
     }
 
+    /**
+     * @param  array<string> | Closure | null  $attributes
+     */
     public function excludeAttributes(array | Closure | null $attributes): static
     {
         $this->excludedAttributes = $attributes;
@@ -88,13 +94,16 @@ trait CanReplicateRecords
         ]);
     }
 
-    public function callAfterReplicaSaved(Model $replica)
+    public function callAfterReplicaSaved(Model $replica): mixed
     {
         return $this->evaluate($this->afterReplicaSavedCallback, [
             'replica' => $replica,
         ]);
     }
 
+    /**
+     * @return array<string> | null
+     */
     public function getExcludedAttributes(): ?array
     {
         return $this->evaluate($this->excludedAttributes);

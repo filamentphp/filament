@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 trait CanSortRecords
 {
-    public $tableSortColumn = null;
+    public ?string $tableSortColumn = null;
 
-    public $tableSortDirection = null;
+    public ?string $tableSortDirection = null;
 
     public function sortTable(?string $column = null, ?string $direction = null): void
     {

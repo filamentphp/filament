@@ -10,12 +10,12 @@ use Illuminate\Support\Collection;
 trait HasOptions
 {
     /**
-     * @var array<scalar, string> | Arrayable | class-string | Closure | null
+     * @var array<string> | Arrayable | class-string | Closure | null
      */
     protected array | Arrayable | string | Closure | null $options = null;
 
     /**
-     * @param  array<scalar, string> | Arrayable | class-string | Closure | null  $options
+     * @param  array<string> | Arrayable | class-string | Closure | null  $options
      */
     public function options(array | Arrayable | string | Closure | null $options): static
     {
@@ -25,7 +25,7 @@ trait HasOptions
     }
 
     /**
-     * @return array<scalar, string>
+     * @return array<string>
      */
     public function getOptions(): array
     {

@@ -12,24 +12,27 @@ use Filament\Tables\Actions\BulkAction;
  */
 trait HasBulkActions
 {
-    public $mountedTableBulkAction = null;
+    public ?string $mountedTableBulkAction = null;
 
-    public $mountedTableBulkActionData = [];
+    /**
+     * @var array<string, mixed>
+     */
+    public array $mountedTableBulkActionData = [];
 
     protected function configureTableBulkAction(BulkAction $action): void
     {
     }
 
-    public function callMountedTableBulkAction(?string $arguments = null)
+    public function callMountedTableBulkAction(?string $arguments = null): mixed
     {
         $action = $this->getMountedTableBulkAction();
 
         if (! $action) {
-            return;
+            return null;
         }
 
         if ($action->isDisabled()) {
-            return;
+            return null;
         }
 
         $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
@@ -55,7 +58,7 @@ trait HasBulkActions
 
             $result = $action->callAfter() ?? $result;
         } catch (Halt $exception) {
-            return;
+            return null;
         } catch (Cancel $exception) {
         }
 
@@ -72,7 +75,10 @@ trait HasBulkActions
         return $result;
     }
 
-    public function mountTableBulkAction(string $name, array $selectedRecords)
+    /**
+     * @param  array<int | string>  $selectedRecords
+     */
+    public function mountTableBulkAction(string $name, array $selectedRecords): mixed
     {
         $this->mountedTableBulkAction = $name;
         $this->selectedTableRecords = $selectedRecords;
@@ -80,11 +86,11 @@ trait HasBulkActions
         $action = $this->getMountedTableBulkAction();
 
         if (! $action) {
-            return;
+            return null;
         }
 
         if ($action->isDisabled()) {
-            return;
+            return null;
         }
 
         $this->cacheForm(
@@ -107,12 +113,12 @@ trait HasBulkActions
                 $action->callAfterFormFilled();
             }
         } catch (Halt $exception) {
-            return;
+            return null;
         } catch (Cancel $exception) {
             $this->mountedTableBulkAction = null;
             $this->selectedTableRecords = [];
 
-            return;
+            return null;
         }
 
         if (! $this->mountedTableBulkActionShouldOpenModal()) {
@@ -124,6 +130,8 @@ trait HasBulkActions
         $this->dispatchBrowserEvent('open-modal', [
             'id' => "{$this->id}-table-bulk-action",
         ]);
+
+        return null;
     }
 
     public function mountedTableBulkActionShouldOpenModal(): bool
@@ -172,6 +180,8 @@ trait HasBulkActions
 
     /**
      * @deprecated Override the `table()` method to configure the table.
+     *
+     * @return array<BulkAction>
      */
     protected function getTableBulkActions(): array
     {

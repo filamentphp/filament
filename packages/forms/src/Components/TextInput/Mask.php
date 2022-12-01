@@ -11,6 +11,9 @@ class Mask implements Jsonable
 
     protected ?string $decimalSeparator = '.';
 
+    /**
+     * @var array<mixed>
+     */
     protected array $enum = [];
 
     protected ?int $fromValue = null;
@@ -25,6 +28,9 @@ class Mask implements Jsonable
 
     protected ?string $jsonOptions = null;
 
+    /**
+     * @var array<string>
+     */
     protected array $mapToDecimalSeparator = [','];
 
     protected ?int $maxLength = null;
@@ -33,10 +39,16 @@ class Mask implements Jsonable
 
     protected ?float $minValue = null;
 
-    protected $pattern = null;
+    protected ?string $pattern = null;
 
+    /**
+     * @var array<string, Closure>
+     */
     protected array $patternBlocks = [];
 
+    /**
+     * @var array<string, array<mixed>>
+     */
     protected array $patternDefinitions = [];
 
     protected string $placeholderCharacter = '_';
@@ -78,6 +90,9 @@ class Mask implements Jsonable
         return $this;
     }
 
+    /**
+     * @param  array<mixed>  $values
+     */
     public function enum(array $values): static
     {
         $this->enum = $values;
@@ -113,6 +128,9 @@ class Mask implements Jsonable
         return $this;
     }
 
+    /**
+     * @param  array<string>  $characters
+     */
     public function mapToDecimalSeparator(array $characters): static
     {
         $this->mapToDecimalSeparator = $characters;
@@ -187,13 +205,16 @@ class Mask implements Jsonable
         return $this;
     }
 
-    public function pattern($pattern): static
+    public function pattern(?string $pattern): static
     {
         $this->pattern = $pattern;
 
         return $this;
     }
 
+    /**
+     * @param  array<string, Closure>  $blocks
+     */
     public function patternBlocks(array $blocks): static
     {
         $this->patternBlocks = $blocks;
@@ -201,6 +222,9 @@ class Mask implements Jsonable
         return $this;
     }
 
+    /**
+     * @param  array<string, array<mixed>>  $definitions
+     */
     public function patternDefinitions(array $definitions): static
     {
         $this->patternDefinitions = $definitions;
@@ -250,6 +274,9 @@ class Mask implements Jsonable
         return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getArrayableConfiguration(): array
     {
         $configuration = [];
@@ -343,6 +370,9 @@ class Mask implements Jsonable
         return $configuration;
     }
 
+    /**
+     * @param  int  $options
+     */
     public function toJson($options = 0): string
     {
         if (filled($this->jsonOptions)) {

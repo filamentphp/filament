@@ -27,7 +27,7 @@ class RequestPasswordReset extends CardPage
      */
     protected static string $view = 'filament::pages.auth.password-reset.request-password-reset';
 
-    public $email = '';
+    public ?string $email = '';
 
     public function mount(): void
     {

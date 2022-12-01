@@ -4,8 +4,14 @@ namespace Filament\Forms\Components\Concerns;
 
 trait HasContainerGridLayout
 {
+    /**
+     * @var array<string, int | null> | null
+     */
     protected ?array $gridColumns = null;
 
+    /**
+     * @param  array<string, int | null> | int | null  $columns
+     */
     public function grid(array | int | null $columns = 2): static
     {
         if (! is_array($columns)) {
@@ -19,7 +25,10 @@ trait HasContainerGridLayout
         return $this;
     }
 
-    public function getGridColumns($breakpoint = null): array | int | null
+    /**
+     * @return array<string, int | null> | int | null
+     */
+    public function getGridColumns(?string $breakpoint = null): array | int | null
     {
         $columns = $this->gridColumns ?? [
             'default' => 1,

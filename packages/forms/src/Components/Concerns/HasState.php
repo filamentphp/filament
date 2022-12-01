@@ -19,7 +19,7 @@ trait HasState
 
     protected ?Closure $beforeStateDehydrated = null;
 
-    protected $defaultState = null;
+    protected mixed $defaultState = null;
 
     protected ?Closure $dehydrateStateUsing = null;
 
@@ -81,7 +81,7 @@ trait HasState
         return $this;
     }
 
-    public function default($state): static
+    public function default(mixed $state): static
     {
         $this->defaultState = $state;
         $this->hasDefaultState = true;
@@ -96,6 +96,9 @@ trait HasState
         return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getStateToDehydrate(): array
     {
         if ($callback = $this->dehydrateStateUsing) {
@@ -105,6 +108,9 @@ trait HasState
         return [$this->getStatePath() => $this->getState()];
     }
 
+    /**
+     * @param  array<string, mixed>  $state
+     */
     public function dehydrateState(array &$state): void
     {
         if (! $this->isDehydrated()) {
@@ -135,6 +141,9 @@ trait HasState
         return $this;
     }
 
+    /**
+     * @param  array<string, mixed> | null  $hydratedDefaultState
+     */
     public function hydrateState(?array &$hydratedDefaultState): void
     {
         $this->hydrateDefaultState($hydratedDefaultState);
@@ -153,6 +162,9 @@ trait HasState
         $this->hydrateDefaultState($defaults);
     }
 
+    /**
+     * @param  array<string, mixed> | null  $hydratedDefaultState
+     */
     public function hydrateDefaultState(?array &$hydratedDefaultState): void
     {
         if ($hydratedDefaultState === null) {
@@ -199,7 +211,7 @@ trait HasState
         }
     }
 
-    public function mutateDehydratedState($state)
+    public function mutateDehydratedState(mixed $state): mixed
     {
         return $this->evaluate(
             $this->mutateDehydratedStateUsing,
@@ -219,7 +231,7 @@ trait HasState
         return $this;
     }
 
-    public function state($state): static
+    public function state(mixed $state): static
     {
         $livewire = $this->getLivewire();
 
@@ -235,12 +247,12 @@ trait HasState
         return $this;
     }
 
-    public function getDefaultState()
+    public function getDefaultState(): mixed
     {
         return $this->evaluate($this->defaultState);
     }
 
-    public function getState()
+    public function getState(): mixed
     {
         $state = data_get($this->getLivewire(), $this->getStatePath());
 
@@ -255,7 +267,7 @@ trait HasState
         return $state;
     }
 
-    public function getOldState()
+    public function getOldState(): mixed
     {
         if (! Livewire::isLivewireRequest()) {
             return null;

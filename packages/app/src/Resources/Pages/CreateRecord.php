@@ -3,6 +3,7 @@
 namespace Filament\Resources\Pages;
 
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
@@ -22,9 +23,12 @@ class CreateRecord extends Page
      */
     protected static string $view = 'filament::resources.pages.create-record';
 
-    public $record;
+    public ?Model $record = null;
 
-    public $data;
+    /**
+     * @var array<string, mixed>
+     */
+    public array $data;
 
     public ?string $previousUrl = null;
 
@@ -130,16 +134,26 @@ class CreateRecord extends Page
         $this->create(another: true);
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     protected function handleRecordCreation(array $data): Model
     {
         return $this->getModel()::create($data);
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         return $data;
     }
 
+    /**
+     * @return array<Action | ActionGroup>
+     */
     protected function getFormActions(): array
     {
         return array_merge(

@@ -20,6 +20,9 @@ trait HasIcon
         return $this;
     }
 
+    /**
+     * @param  array<mixed> | Closure  $icons
+     */
     public function icons(array | Closure $icons): static
     {
         $this->icon(function (Column $column, $state) use ($icons) {

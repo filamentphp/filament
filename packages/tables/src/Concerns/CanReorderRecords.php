@@ -8,6 +8,9 @@ trait CanReorderRecords
 {
     public bool $isTableReordering = false;
 
+    /**
+     * @param  array<int | string>  $order
+     */
     public function reorderTable(array $order): void
     {
         if (! $this->getTable()->isReorderable()) {

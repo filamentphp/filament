@@ -23,7 +23,10 @@ class BulkAction extends MountableAction
         ]);
     }
 
-    public function call(array $parameters = [])
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    public function call(array $parameters = []): mixed
     {
         try {
             return $this->evaluate($this->getAction(), $parameters);
@@ -69,6 +72,10 @@ class BulkAction extends MountableAction
         ]);
     }
 
+    /**
+     * @param  array<mixed>  $arguments
+     * @return array<mixed>
+     */
     protected function parseAuthorizationArguments(array $arguments): array
     {
         array_unshift($arguments, $this->getTable()->getModel());

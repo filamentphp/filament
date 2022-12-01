@@ -5,6 +5,7 @@ namespace Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
+use Livewire\Component;
 
 abstract class MountableAction extends StaticAction
 {
@@ -35,7 +36,10 @@ abstract class MountableAction extends StaticAction
         $this->successNotification(fn (Notification $notification): Notification => $notification);
     }
 
-    public function call(array $parameters = [])
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    public function call(array $parameters = []): mixed
     {
         return $this->evaluate($this->getAction(), $parameters);
     }
@@ -98,6 +102,9 @@ abstract class MountableAction extends StaticAction
         return $this;
     }
 
+    /**
+     * @return Component
+     */
     abstract public function getLivewire();
 
     public function getLivewireMountAction(): ?string

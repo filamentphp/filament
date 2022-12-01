@@ -498,6 +498,9 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
             ->reorderable(condition: static fn (RelationManager $livewire): bool => $livewire->canReorder());
     }
 
+    /**
+     * @return array<int | string, string | Form>
+     */
     protected function getForms(): array
     {
         return [];

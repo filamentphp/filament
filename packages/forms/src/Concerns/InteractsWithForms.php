@@ -4,6 +4,7 @@ namespace Filament\Forms\Concerns;
 
 use Closure;
 use Exception;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
@@ -16,8 +17,14 @@ trait InteractsWithForms
     use WithFileUploads;
     use HasFormComponentActions;
 
+    /**
+     * @var array <string, TemporaryUploadedFile | null>
+     */
     public array $componentFileAttachments = [];
 
+    /**
+     * @var array<string, Form>
+     */
     protected ?array $cachedForms = null;
 
     protected bool $hasCachedForms = false;
@@ -26,7 +33,10 @@ trait InteractsWithForms
 
     protected bool $hasFormsModalRendered = false;
 
-    public function __get($property)
+    /**
+     * @param  string  $property
+     */
+    public function __get($property): mixed
     {
         try {
             return parent::__get($property);
@@ -39,7 +49,7 @@ trait InteractsWithForms
         }
     }
 
-    public function dispatchFormEvent(...$args): void
+    public function dispatchFormEvent(mixed ...$args): void
     {
         foreach ($this->getCachedForms() as $form) {
             $form->dispatchEvent(...$args);
@@ -64,6 +74,9 @@ trait InteractsWithForms
         return null;
     }
 
+    /**
+     * @return array<array{'label': string, 'value': string}>
+     */
     public function getSelectOptionLabels(string $statePath): array
     {
         $this->skipRender();
@@ -90,6 +103,9 @@ trait InteractsWithForms
         return null;
     }
 
+    /**
+     * @return array<array{'label': string, 'value': string}>
+     */
     public function getSelectOptions(string $statePath): array
     {
         $this->skipRender();
@@ -103,6 +119,9 @@ trait InteractsWithForms
         return [];
     }
 
+    /**
+     * @return array<array{'label': string, 'value': string}>
+     */
     public function getSelectSearchResults(string $statePath, string $search): array
     {
         $this->skipRender();
@@ -125,6 +144,9 @@ trait InteractsWithForms
         }
     }
 
+    /**
+     * @return array<array{name: string, size: int, type: string, url: string} | null> | null
+     */
     public function getUploadedFiles(string $statePath): ?array
     {
         $this->skipRender();
@@ -156,7 +178,13 @@ trait InteractsWithForms
         }
     }
 
-    public function validate($rules = null, $messages = [], $attributes = [])
+    /**
+     * @param  array<string, array<mixed>> | null  $rules
+     * @param  array<string, string>  $messages
+     * @param  array<string, string>  $attributes
+     * @return array<string, mixed>
+     */
+    public function validate($rules = null, $messages = [], $attributes = []): array
     {
         try {
             return parent::validate($rules, $messages, $attributes);
@@ -173,6 +201,13 @@ trait InteractsWithForms
     {
     }
 
+    /**
+     * @param  string  $field
+     * @param  array<string, array<mixed>>  $rules
+     * @param  array<string, string>  $messages
+     * @param  array<string, string>  $attributes
+     * @return array<string, mixed>
+     */
     public function validateOnly($field, $rules = null, $messages = [], $attributes = [])
     {
         try {
@@ -191,6 +226,11 @@ trait InteractsWithForms
         return null;
     }
 
+    /**
+     * @param  string  $name
+     * @param  mixed  $value
+     * @param  Closure  $callback
+     */
     protected function callBeforeAndAfterSyncHooks($name, $value, $callback): void
     {
         parent::callBeforeAndAfterSyncHooks($name, $value, $callback);
@@ -217,6 +257,9 @@ trait InteractsWithForms
         return $form;
     }
 
+    /**
+     * @return array<string, Form>
+     */
     protected function cacheForms(): array
     {
         $this->isCachingForms = true;
@@ -255,6 +298,9 @@ trait InteractsWithForms
         return $this->cachedForms;
     }
 
+    /**
+     * @return array<int | string, string | Form>
+     */
     public function getTraitForms(): array
     {
         $forms = [];
@@ -268,16 +314,19 @@ trait InteractsWithForms
         return $forms;
     }
 
-    protected function hasCachedForm($name): bool
+    protected function hasCachedForm(string $name): bool
     {
         return array_key_exists($name, $this->getCachedForms());
     }
 
-    public function getCachedForm($name): ?Form
+    public function getCachedForm(string $name): ?Form
     {
         return $this->getCachedForms()[$name] ?? null;
     }
 
+    /**
+     * @return array<string, Form>
+     */
     public function getCachedForms(): array
     {
         if (! $this->hasCachedForms) {
@@ -287,6 +336,9 @@ trait InteractsWithForms
         return $this->cachedForms;
     }
 
+    /**
+     * @return array<int | string, string | Form>
+     */
     protected function getForms(): array
     {
         return [
@@ -313,6 +365,8 @@ trait InteractsWithForms
 
     /**
      * @deprecated Override the `form()` method to configure the default form.
+     *
+     * @return array<Component>
      */
     protected function getFormSchema(): array
     {
@@ -335,6 +389,9 @@ trait InteractsWithForms
         return null;
     }
 
+    /**
+     * @return array<string, array<mixed>>
+     */
     protected function getRules(): array
     {
         $rules = parent::getRules();
@@ -346,6 +403,9 @@ trait InteractsWithForms
         return $rules;
     }
 
+    /**
+     * @return array<string, string>
+     */
     protected function getValidationAttributes(): array
     {
         $attributes = [];

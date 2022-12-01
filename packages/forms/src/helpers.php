@@ -3,6 +3,11 @@
 namespace Filament\Forms;
 
 if (! function_exists('Filament\Forms\array_move_after')) {
+    /**
+     * @param  array<mixed>  $array
+     * @param  scalar  $keyToMoveAfter
+     * @return array<mixed>
+     */
     function array_move_after(array $array, $keyToMoveAfter): array
     {
         $keys = array_keys($array);
@@ -28,6 +33,11 @@ if (! function_exists('Filament\Forms\array_move_after')) {
 }
 
 if (! function_exists('Filament\Forms\array_move_before')) {
+    /**
+     * @param  array<mixed>  $array
+     * @param  array-key  $keyToMoveBefore
+     * @return array<mixed>
+     */
     function array_move_before(array $array, $keyToMoveBefore): array
     {
         $keys = array_keys($array);

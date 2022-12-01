@@ -183,6 +183,9 @@ trait InteractsWithTable
         return $property;
     }
 
+    /**
+     * @return array<string, Forms\Form>
+     */
     protected function getInteractsWithTableForms(): array
     {
         return [

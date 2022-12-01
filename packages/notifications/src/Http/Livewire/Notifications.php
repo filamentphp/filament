@@ -18,6 +18,9 @@ class Notifications extends Component
 {
     public Collection $notifications;
 
+    /**
+     * @var array<string, string>
+     */
     protected $listeners = [
         'notificationSent' => 'pushNotificationFromEvent',
         'notificationsSent' => 'pullNotificationsFromSession',
@@ -49,6 +52,9 @@ class Notifications extends Component
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $notification
+     */
     public function pushNotificationFromEvent(array $notification): void
     {
         $notification = Notification::fromArray($notification);
@@ -104,12 +110,11 @@ class Notifications extends Component
         return $this->getUnreadDatabaseNotificationsQuery()->count();
     }
 
-    public function handleBroadcastNotification($notification): void
+    /**
+     * @param  array<string, mixed>  $notification
+     */
+    public function handleBroadcastNotification(array $notification): void
     {
-        if (! is_array($notification)) {
-            return;
-        }
-
         if (($notification['format'] ?? null) !== 'filament') {
             return;
         }

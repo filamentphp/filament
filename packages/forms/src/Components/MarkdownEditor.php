@@ -18,6 +18,9 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
      */
     protected string $view = 'filament-forms::components.markdown-editor';
 
+    /**
+     * @var array<string>
+     */
     protected array | Closure $toolbarButtons = [
         'attachFiles',
         'bold',

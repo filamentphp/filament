@@ -51,6 +51,9 @@ class Tab extends Component implements CanConcealComponents
         return $this->getContainer()->getParentComponent()->getId() . '-' . parent::getId() . '-tab';
     }
 
+    /**
+     * @return array<string, int | null>
+     */
     public function getColumnsConfig(): array
     {
         return $this->columns ?? $this->getContainer()->getColumnsConfig();

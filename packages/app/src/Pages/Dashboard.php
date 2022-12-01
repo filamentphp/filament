@@ -29,11 +29,17 @@ class Dashboard extends Page
             ->name(static::getSlug());
     }
 
+    /**
+     * @return array<class-string>
+     */
     public function getWidgets(): array
     {
         return Filament::getWidgets();
     }
 
+    /**
+     * @return int | array<string, int | null>
+     */
     public function getColumns(): int | array
     {
         return 2;

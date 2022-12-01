@@ -28,7 +28,10 @@ class TextColumn extends Column
 
     protected ?string $enum = null;
 
-    public function enum(string | array | Arrayable $enum, $default = null): static
+    /**
+     * @param  string | array<scalar, scalar> | Arrayable  $enum
+     */
+    public function enum(string | array | Arrayable $enum, mixed $default = null): static
     {
         if (is_array($enum) || $enum instanceof Arrayable) {
             $this->formatStateUsing(static fn ($state): ?string => $enum[$state] ?? ($default ?? $state));
@@ -72,6 +75,9 @@ class TextColumn extends Column
         return $this->evaluate($this->canWrap);
     }
 
+    /**
+     * @param  array<scalar>  $state
+     */
     protected function mutateArrayState(array $state): string
     {
         return implode(', ', $state);

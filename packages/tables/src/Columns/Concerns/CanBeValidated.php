@@ -8,10 +8,16 @@ use Illuminate\Support\Str;
 
 trait CanBeValidated
 {
+    /**
+     * @var array<array-key> | Closure
+     */
     protected array | Closure $rules = [];
 
     protected string | Closure | null $validationAttribute = null;
 
+    /**
+     * @param  array<array-key> | Closure  $rules
+     */
     public function rules(array | Closure $rules): static
     {
         $this->rules = $rules;
@@ -26,6 +32,9 @@ trait CanBeValidated
         return $this;
     }
 
+    /**
+     * @return array<array-key>
+     */
     public function getRules(): array
     {
         $rules = $this->evaluate($this->rules);
@@ -37,7 +46,7 @@ trait CanBeValidated
         return $rules;
     }
 
-    public function validate($input): void
+    public function validate(mixed $input): void
     {
         Validator::make(
             ['input' => $input],

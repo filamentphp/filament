@@ -55,7 +55,7 @@ class Summarizer extends ViewComponent
         return $this;
     }
 
-    public function getState()
+    public function getState(): mixed
     {
         $column = $this->getColumn();
         $attribute = $column->getName();
@@ -97,7 +97,7 @@ class Summarizer extends ViewComponent
         return $this->summarize($query, $attribute);
     }
 
-    public function summarize(Builder $query, string $attribute)
+    public function summarize(Builder $query, string $attribute): mixed
     {
         return null;
     }

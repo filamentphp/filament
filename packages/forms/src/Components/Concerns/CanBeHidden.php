@@ -20,6 +20,9 @@ trait CanBeHidden
         return $this;
     }
 
+    /**
+     * @param  string | array<string>  $contexts
+     */
     public function hiddenOn(string | array $contexts): static
     {
         $this->hidden(static function (string $context, HasForms $livewire) use ($contexts): bool {
@@ -42,6 +45,9 @@ trait CanBeHidden
         return $this;
     }
 
+    /**
+     * @param  string | array<string>  $paths
+     */
     public function whenTruthy(string | array $paths): static
     {
         $paths = Arr::wrap($paths);
@@ -59,6 +65,9 @@ trait CanBeHidden
         return $this;
     }
 
+    /**
+     * @param  string | array<string>  $paths
+     */
     public function whenFalsy(string | array $paths): static
     {
         $paths = Arr::wrap($paths);
@@ -83,6 +92,9 @@ trait CanBeHidden
         return $this;
     }
 
+    /**
+     * @param  string | array<string>  $contexts
+     */
     public function visibleOn(string | array $contexts): static
     {
         $this->visible(static function (string $context, HasForms $livewire) use ($contexts): bool {

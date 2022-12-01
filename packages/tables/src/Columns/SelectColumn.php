@@ -35,6 +35,9 @@ class SelectColumn extends Column implements Editable
         $this->placeholder(__('filament-forms::components.select.placeholder'));
     }
 
+    /**
+     * @return array<array-key>
+     */
     public function getRules(): array
     {
         return array_merge(

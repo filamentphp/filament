@@ -15,6 +15,9 @@ trait CanDisableOptions
         return $this;
     }
 
+    /**
+     * @param  array-key  $value
+     */
     public function isOptionDisabled($value, string $label): bool
     {
         if ($this->isOptionDisabled === null) {

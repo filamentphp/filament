@@ -19,6 +19,9 @@ trait CanBeDisabled
         return $this;
     }
 
+    /**
+     * @param  string | array<string>  $contexts
+     */
     public function disabledOn(string | array $contexts): static
     {
         $this->disabled(static function (string $context, HasForms $livewire) use ($contexts): bool {

@@ -6,16 +6,34 @@ use Illuminate\Support\Arr;
 
 class AssetManager
 {
+    /**
+     * @var array<string, array<AlpineComponent>>
+     */
     protected array $alpineComponents = [];
 
+    /**
+     * @var array<string, array<string, mixed>>
+     */
     protected array $scriptData = [];
 
+    /**
+     * @var array<string, array<Js>>
+     */
     protected array $scripts = [];
 
+    /**
+     * @var array<string, array<Css>>
+     */
     protected array $styles = [];
 
+    /**
+     * @var array<string, Theme>
+     */
     protected array $themes = [];
 
+    /**
+     * @param  array<Asset>  $assets
+     */
     public function register(array $assets, ?string $package = null): void
     {
         foreach ($assets as $asset) {
@@ -25,22 +43,34 @@ class AssetManager
                 AlpineComponent::class => $this->alpineComponents[$package][] = $asset,
                 Css::class => $this->styles[$package][] = $asset,
                 Js::class => $this->scripts[$package][] = $asset,
+                /** @phpstan-ignore-next-line */
                 Theme::class => $this->themes[$asset->getId()] = $asset,
                 default => null,
             };
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function registerScriptData(array $data, ?string $package = null): void
     {
         $this->scriptData[$package] = array_merge($this->scriptData[$package] ?? [], $data);
     }
 
+    /**
+     * @param  array<string> | null  $packages
+     * @return array<Asset>
+     */
     public function getAlpineComponents(?array $packages = null): array
     {
         return $this->getAssets($this->alpineComponents, $packages);
     }
 
+    /**
+     * @param  array<string> | null  $packages
+     * @return array<string, mixed>
+     */
     public function getScriptData(?array $packages = null): array
     {
         $data = [];
@@ -60,8 +90,13 @@ class AssetManager
         return $data;
     }
 
+    /**
+     * @param  array<string> | null  $packages
+     * @return array<Asset>
+     */
     public function getScripts(?array $packages = null, bool $withCore = true): array
     {
+        /** @var array<Js> $assets */
         $assets = $this->getAssets($this->scripts, $packages);
 
         if (! $withCore) {
@@ -74,8 +109,12 @@ class AssetManager
         return $assets;
     }
 
+    /**
+     * @param  array<string> | null  $packages
+     */
     public function renderScripts(?array $packages = null, bool $withCore = false): string
     {
+        /** @var array<Js> $assets */
         $assets = $this->getScripts($packages, $withCore);
 
         if ($withCore) {
@@ -91,11 +130,18 @@ class AssetManager
         ])->render();
     }
 
+    /**
+     * @param  array<string> | null  $packages
+     * @return array<Asset>
+     */
     public function getStyles(?array $packages = null): array
     {
         return $this->getAssets($this->styles, $packages);
     }
 
+    /**
+     * @param  array<string> | null  $packages
+     */
     public function renderStyles(?array $packages = null): string
     {
         return view('filament::assets', [
@@ -108,19 +154,27 @@ class AssetManager
         return $this->themes[$id] ?? null;
     }
 
+    /**
+     * @return array<string, Theme>
+     */
     public function getThemes(): array
     {
         return $this->themes;
     }
 
+    /**
+     * @param  array<string, array<Asset>>  $assets
+     * @param  array<string> | null  $packages
+     * @return array<Asset>
+     */
     protected function getAssets(array $assets, ?array $packages = null): array
     {
-        if ($packages === null) {
-            return Arr::flatten($assets);
+        if ($packages !== null) {
+            $packages[] = null;
+
+            $assets = Arr::only($assets, $packages);
         }
 
-        $packages[] = null;
-
-        return Arr::only($assets, $packages);
+        return Arr::flatten($assets);
     }
 }

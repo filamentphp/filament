@@ -19,6 +19,9 @@ class GlobalSearchResults
         return new static();
     }
 
+    /**
+     * @param  array<GlobalSearchResult> | Arrayable  $results
+     */
     public function category(string $name, array | Arrayable $results = []): static
     {
         $this->categories[$name] = $results;

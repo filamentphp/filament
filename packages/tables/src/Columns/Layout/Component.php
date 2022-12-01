@@ -31,10 +31,16 @@ class Component extends ViewComponent
 
     protected string $viewIdentifier = 'layout';
 
+    /**
+     * @var array<Column | Component> | Closure
+     */
     protected array | Closure $components = [];
 
     protected bool $isCollapsible = false;
 
+    /**
+     * @param  array<Column | Component> | Closure  $schema
+     */
     public function schema(array | Closure $schema): static
     {
         $this->components($schema);
@@ -42,6 +48,9 @@ class Component extends ViewComponent
         return $this;
     }
 
+    /**
+     * @param  array<Column | Component> | Closure  $components
+     */
     public function components(array | Closure $components): static
     {
         $this->components = $components;
@@ -56,6 +65,9 @@ class Component extends ViewComponent
         return $this;
     }
 
+    /**
+     * @return array<string, Column>
+     */
     public function getColumns(): array
     {
         $columns = [];
@@ -73,6 +85,9 @@ class Component extends ViewComponent
         return $columns;
     }
 
+    /**
+     * @return array<Column | Component>
+     */
     public function getComponents(): array
     {
         return array_map(function (Component | Column $component): Component | Column {

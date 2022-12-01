@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
 class Tabs extends Component
@@ -29,6 +30,9 @@ class Tabs extends Component
         return $static;
     }
 
+    /**
+     * @param  array<Tab>  $tabs
+     */
     public function tabs(array $tabs): static
     {
         $this->childComponents($tabs);

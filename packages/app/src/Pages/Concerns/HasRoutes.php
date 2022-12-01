@@ -9,6 +9,9 @@ trait HasRoutes
 {
     protected static ?string $slug = null;
 
+    /**
+     * @var string | array<string>
+     */
     protected static string | array $routeMiddleware = [];
 
     public static function routes(Context $context): void
@@ -27,6 +30,9 @@ trait HasRoutes
             ->slug();
     }
 
+    /**
+     * @return string | array<string>
+     */
     public static function getRouteMiddleware(Context $context): string | array
     {
         return array_merge(

@@ -31,6 +31,11 @@ class SpatieLaravelTranslatablePluginServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'filament-spatie-laravel-translatable-plugin');
     }
 
+    /**
+     * @param  array<string, mixed>  $original
+     * @param  array<string, mixed>  $merging
+     * @return array<string, mixed>
+     */
     protected function mergeConfig(array $original, array $merging): array
     {
         $array = array_merge($original, $merging);

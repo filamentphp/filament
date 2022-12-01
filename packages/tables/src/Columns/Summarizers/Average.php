@@ -13,7 +13,7 @@ class Average extends Summarizer
         $this->numeric();
     }
 
-    public function summarize(Builder $query, string $attribute)
+    public function summarize(Builder $query, string $attribute): int | float | null
     {
         return $query->avg($attribute);
     }

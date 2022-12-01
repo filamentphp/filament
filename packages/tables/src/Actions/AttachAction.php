@@ -28,6 +28,9 @@ class AttachAction extends Action
 
     protected string | Closure | null $recordTitleAttribute = null;
 
+    /**
+     * @var array<string> | Closure | null
+     */
     protected array | Closure | null $recordSelectSearchColumns = null;
 
     public static function getDefaultName(): ?string
@@ -146,6 +149,9 @@ class AttachAction extends Action
         return $attribute;
     }
 
+    /**
+     * @param  array<string> | Closure | null  $columns
+     */
     public function recordSelectSearchColumns(array | Closure | null $columns): static
     {
         $this->recordSelectSearchColumns = $columns;
@@ -153,6 +159,9 @@ class AttachAction extends Action
         return $this;
     }
 
+    /**
+     * @return array<string> | null
+     */
     public function getRecordSelectSearchColumns(): ?array
     {
         return $this->evaluate($this->recordSelectSearchColumns);

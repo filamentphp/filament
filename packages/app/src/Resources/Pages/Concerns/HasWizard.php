@@ -2,6 +2,8 @@
 
 namespace Filament\Resources\Pages\Concerns;
 
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
 
@@ -25,6 +27,9 @@ trait HasWizard
             ->columns(null);
     }
 
+    /**
+     * @return array<Action | ActionGroup>
+     */
     public function getFormActions(): array
     {
         return [];

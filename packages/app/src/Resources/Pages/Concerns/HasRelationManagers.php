@@ -6,8 +6,11 @@ use Filament\Resources\RelationManagers\RelationGroup;
 
 trait HasRelationManagers
 {
-    public $activeRelationManager = null;
+    public ?string $activeRelationManager = null;
 
+    /**
+     * @return array<string | RelationGroup>
+     */
     public function getRelationManagers(): array
     {
         $managers = $this->getResource()::getRelations();

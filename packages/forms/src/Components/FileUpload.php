@@ -26,6 +26,8 @@ class FileUpload extends BaseFileUpload
 
     protected string | Closure | null $imageResizeMode = null;
 
+    protected bool | Closure $imageResizeUpscale = true;
+
     protected bool | Closure $isAvatar = false;
 
     protected string | Closure $loadingIndicatorPosition = 'right';
@@ -120,6 +122,13 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
+    public function imageResizeUpscale(bool | Closure $condition = true): static
+    {
+        $this->imageResizeUpscale = $condition;
+
+        return $this;
+    }
+
     public function loadingIndicatorPosition(string | Closure | null $position): static
     {
         $this->loadingIndicatorPosition = $position;
@@ -185,6 +194,11 @@ class FileUpload extends BaseFileUpload
     public function getImageResizeMode(): ?string
     {
         return $this->evaluate($this->imageResizeMode);
+    }
+
+    public function getImageResizeUpscale(): bool
+    {
+        return $this->evaluate($this->imageResizeUpscale);
     }
 
     public function getLoadingIndicatorPosition(): string

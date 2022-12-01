@@ -26,18 +26,15 @@ class ComponentContainer extends ViewComponent
     use Concerns\SupportsFileUploadFields;
     use Concerns\SupportsSelectFields;
 
+    /**
+     * @var array<string, mixed>
+     */
     protected array $meta = [];
 
-    /**
-     * @var view-string
-     */
     protected string $view = 'filament-forms::component-container';
 
     protected string $evaluationIdentifier = 'container';
 
-    /**
-     * @var view-string
-     */
     protected string $viewIdentifier = 'container';
 
     final public function __construct(HasForms $livewire)

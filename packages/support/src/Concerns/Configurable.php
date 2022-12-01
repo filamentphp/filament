@@ -6,11 +6,17 @@ use Closure;
 
 trait Configurable
 {
+    /**
+     * @var array<class-string, array<Closure>>
+     */
     protected static array $configurations = [];
 
+    /**
+     * @var array<class-string, array<Closure>>
+     */
     protected static array $importantConfigurations = [];
 
-    public static function configureUsing(Closure $callback, ?Closure $during = null, bool $isImportant = false)
+    public static function configureUsing(Closure $callback, ?Closure $during = null, bool $isImportant = false): mixed
     {
         if ($isImportant) {
             static::$importantConfigurations[static::class] ??= [];
@@ -21,7 +27,7 @@ trait Configurable
         }
 
         if (! $during) {
-            return;
+            return null;
         }
 
         try {

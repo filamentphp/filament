@@ -17,7 +17,10 @@ class Count extends Summarizer
         $this->numeric();
     }
 
-    public function summarize(Builder $query, string $attribute)
+    /**
+     * @return int | float | array<string, array<string, int>> | null
+     */
+    public function summarize(Builder $query, string $attribute): int | float | array | null
     {
         if (! $this->hasIcons) {
             return $query->count();

@@ -11,7 +11,7 @@ use Illuminate\Support\Arr;
 
 trait HasState
 {
-    protected $defaultState = null;
+    protected mixed $defaultState = null;
 
     protected ?Closure $getStateUsing = null;
 
@@ -22,19 +22,19 @@ trait HasState
         return $this;
     }
 
-    public function default($state): static
+    public function default(mixed $state): static
     {
         $this->defaultState = $state;
 
         return $this;
     }
 
-    public function getDefaultState()
+    public function getDefaultState(): mixed
     {
         return $this->evaluate($this->defaultState, exceptParameters: ['state']);
     }
 
-    public function getState()
+    public function getState(): mixed
     {
         if (! $this->getRecord()) {
             return null;
@@ -63,7 +63,7 @@ trait HasState
         return $state;
     }
 
-    public function getStateFromRecord()
+    public function getStateFromRecord(): mixed
     {
         $record = $this->getRecord();
 
@@ -102,7 +102,10 @@ trait HasState
         return $state->toArray();
     }
 
-    protected function mutateArrayState(array $state)
+    /**
+     * @param  array<array-key>  $state
+     */
+    protected function mutateArrayState(array $state): mixed
     {
         return $state;
     }

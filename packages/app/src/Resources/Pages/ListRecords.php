@@ -22,6 +22,9 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
      */
     protected static string $view = 'filament::resources.pages.list-records';
 
+    /**
+     * @var array<int | string, string | array<mixed>>
+     */
     protected $queryString = [
         'isTableReordering' => ['except' => false],
         'tableFilters',
@@ -263,6 +266,9 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->reorderable(condition: static::getResource()::canReorder());
     }
 
+    /**
+     * @return array<int | string, string | Form>
+     */
     protected function getForms(): array
     {
         return [];

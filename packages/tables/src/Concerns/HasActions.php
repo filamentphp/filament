@@ -6,54 +6,45 @@ use Filament\Forms\Form;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Database\Eloquent\Model;
-use phpDocumentor\Reflection\Types\Scalar;
 
 /**
  * @property Form $mountedTableActionForm
  */
 trait HasActions
 {
-    /**
-     * @var string
-     */
-    public $mountedTableAction = null;
+    public ?string $mountedTableAction = null;
 
     /**
      * @var array<string, mixed>
      */
     public $mountedTableActionData = [];
 
-    /**
-     * @var scalar
-     */
-    public $mountedTableActionRecord = null;
+    public int | string | null $mountedTableActionRecord = null;
 
     protected ?Model $cachedMountedTableActionRecord = null;
 
-    /**
-     * @var scalar
-     */
-    protected $cachedMountedTableActionRecordKey = null;
+    protected int | string | null $cachedMountedTableActionRecordKey = null;
 
     protected function configureTableAction(Action $action): void
     {
     }
 
-    public function callMountedTableAction(?string $arguments = null)
+    public function callMountedTableAction(?string $arguments = null): mixed
     {
         $action = $this->getMountedTableAction();
 
         if (! $action) {
-            return;
+            return null;
         }
 
         if (filled($this->mountedTableActionRecord) && ($action->getRecord() === null)) {
-            return;
+            return null;
         }
 
         if ($action->isDisabled()) {
-            return;
+            return null;
         }
 
         $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
@@ -79,7 +70,7 @@ trait HasActions
 
             $result = $action->callAfter() ?? $result;
         } catch (Halt $exception) {
-            return;
+            return null;
         } catch (Cancel $exception) {
         }
 
@@ -98,15 +89,12 @@ trait HasActions
         return $result;
     }
 
-    /**
-     * @param  scalar  $record
-     */
-    public function mountedTableActionRecord($record): void
+    public function mountedTableActionRecord(int | string | null $record): void
     {
         $this->mountedTableActionRecord = $record;
     }
 
-    public function mountTableAction(string $name, ?string $record = null)
+    public function mountTableAction(string $name, ?string $record = null): mixed
     {
         $this->mountedTableAction = $name;
         $this->mountedTableActionRecord($record);
@@ -114,15 +102,15 @@ trait HasActions
         $action = $this->getMountedTableAction();
 
         if (! $action) {
-            return;
+            return null;
         }
 
         if (filled($record) && ($action->getRecord() === null)) {
-            return;
+            return null;
         }
 
         if ($action->isDisabled()) {
-            return;
+            return null;
         }
 
         $this->cacheForm(
@@ -145,12 +133,12 @@ trait HasActions
                 $action->callAfterFormFilled();
             }
         } catch (Halt $exception) {
-            return;
+            return null;
         } catch (Cancel $exception) {
             $this->mountedTableAction = null;
             $this->mountedTableActionRecord(null);
 
-            return;
+            return null;
         }
 
         if (! $this->mountedTableActionShouldOpenModal()) {
@@ -162,6 +150,8 @@ trait HasActions
         $this->dispatchBrowserEvent('open-modal', [
             'id' => "{$this->id}-table-action",
         ]);
+
+        return null;
     }
 
     public function mountedTableActionShouldOpenModal(): bool
@@ -208,7 +198,7 @@ trait HasActions
         );
     }
 
-    public function getMountedTableActionRecordKey()
+    public function getMountedTableActionRecordKey(): int | string | null
     {
         return $this->mountedTableActionRecord;
     }
@@ -228,6 +218,8 @@ trait HasActions
 
     /**
      * @deprecated Override the `table()` method to configure the table.
+     *
+     * @return array<Action | ActionGroup>
      */
     protected function getTableActions(): array
     {

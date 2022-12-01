@@ -27,8 +27,14 @@ class ViewRecord extends Page
      */
     protected static string $view = 'filament::resources.pages.view-record';
 
-    public $data;
+    /**
+     * @var array<string, mixed>
+     */
+    public array $data;
 
+    /**
+     * @var array<int | string, string | array<mixed>>
+     */
     protected $queryString = [
         'activeRelationManager',
     ];
@@ -43,7 +49,7 @@ class ViewRecord extends Page
         return __('filament::resources/pages/view-record.form.tab.label');
     }
 
-    public function mount($record): void
+    public function mount(int | string $record): void
     {
         static::authorizeResourceAccess();
 
@@ -67,6 +73,9 @@ class ViewRecord extends Page
         $this->callHook('afterFill');
     }
 
+    /**
+     * @param  array<string>  $attributes
+     */
     protected function refreshFormData(array $attributes): void
     {
         $this->data = array_merge(
@@ -75,6 +84,10 @@ class ViewRecord extends Page
         );
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     protected function mutateFormDataBeforeFill(array $data): array
     {
         return $data;

@@ -28,6 +28,9 @@ class ImageColumn extends Column
 
     protected int | string | Closure | null $width = null;
 
+    /**
+     * @var array<mixed> | Closure
+     */
     protected array | Closure $extraImgAttributes = [];
 
     protected function setUp(): void
@@ -191,6 +194,9 @@ class ImageColumn extends Column
         return $this->evaluate($this->isSquare);
     }
 
+    /**
+     * @param  array<mixed> | Closure  $attributes
+     */
     public function extraImgAttributes(array | Closure $attributes): static
     {
         $this->extraImgAttributes = $attributes;
@@ -198,6 +204,9 @@ class ImageColumn extends Column
         return $this;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getExtraImgAttributes(): array
     {
         return $this->evaluate($this->extraImgAttributes);

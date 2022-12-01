@@ -27,6 +27,9 @@ trait SupportsSelectFields
         return null;
     }
 
+    /**
+     * @return array<array{'label': string, 'value': string}>
+     */
     public function getSelectOptionLabels(string $statePath): array
     {
         foreach ($this->getComponents() as $component) {
@@ -48,6 +51,9 @@ trait SupportsSelectFields
         return [];
     }
 
+    /**
+     * @return array<array{'label': string, 'value': string}>
+     */
     public function getSelectOptions(string $statePath): array
     {
         foreach ($this->getComponents() as $component) {
@@ -69,6 +75,9 @@ trait SupportsSelectFields
         return [];
     }
 
+    /**
+     * @return array<array{'label': string, 'value': string}>
+     */
     public function getSelectSearchResults(string $statePath, string $search): array
     {
         foreach ($this->getComponents() as $component) {

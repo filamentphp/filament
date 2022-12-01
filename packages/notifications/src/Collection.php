@@ -12,11 +12,17 @@ class Collection extends BaseCollection implements Wireable
         parent::__construct($items);
     }
 
+    /**
+     * @return array<array<string, mixed>>
+     */
     public function toLivewire(): array
     {
         return $this->toArray();
     }
 
+    /**
+     * @param  array<array<string, mixed>>  $value
+     */
     public static function fromLivewire($value): static
     {
         return (new static($value))->transform(

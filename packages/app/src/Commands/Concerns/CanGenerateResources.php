@@ -10,6 +10,7 @@ use Filament\Tables;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use ReflectionClass;
 use ReflectionException;
 use Throwable;
 
@@ -247,13 +248,13 @@ trait CanGenerateResources
 
     protected function guessBelongsToRelationshipName(AbstractAsset $column, string $model): ?string
     {
-        $modelReflection = invade(app($model));
+        $modelReflection = new ReflectionClass(app($model));
         $guessedRelationshipName = str($column->getName())->beforeLast('_id');
-        $hasRelationship = $modelReflection->reflected->hasMethod($guessedRelationshipName);
+        $hasRelationship = $modelReflection->hasMethod($guessedRelationshipName);
 
         if (! $hasRelationship) {
             $guessedRelationshipName = $guessedRelationshipName->camel();
-            $hasRelationship = $modelReflection->reflected->hasMethod($guessedRelationshipName);
+            $hasRelationship = $modelReflection->hasMethod($guessedRelationshipName);
         }
 
         if (! $hasRelationship) {
@@ -261,7 +262,7 @@ trait CanGenerateResources
         }
 
         try {
-            $type = $modelReflection->reflected->getMethod($guessedRelationshipName)->getReturnType();
+            $type = $modelReflection->getMethod($guessedRelationshipName)->getReturnType();
 
             if (
                 (! $type) ||
