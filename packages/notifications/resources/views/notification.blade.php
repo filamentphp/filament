@@ -1,8 +1,12 @@
 <x-filament-notifications::notification
     :notification="$notification"
     @class([
-        'flex gap-3 w-full transition duration-300',
-        'max-w-sm rounded-xl bg-white p-4 shadow-lg ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10' => ! $isInline(),
+        'flex gap-3 w-full transition duration-300 rounded-xl bg-white p-4 ring-1 dark:bg-gray-800',
+        'max-w-sm shadow-lg' => ! $isInline(),
+        match ($isUnread()) {
+            true => 'ring-primary-500',
+            false => 'ring-gray-900/10 dark:ring-gray-50/10'
+        },
     ])
     :x-transition:enter-start="\Illuminate\Support\Arr::toCssClasses([
         'opacity-0',

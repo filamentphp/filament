@@ -5,6 +5,7 @@ namespace Filament\Notifications;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Actions\ActionGroup;
 use Filament\Notifications\Concerns\CanBeInline;
+use Filament\Notifications\Concerns\CanBeUnread;
 use Filament\Notifications\Concerns\HasActions;
 use Filament\Notifications\Concerns\HasBody;
 use Filament\Notifications\Concerns\HasDate;
@@ -26,6 +27,7 @@ use PHPUnit\Framework\Assert;
 class Notification extends ViewComponent implements Arrayable
 {
     use CanBeInline;
+    use CanBeUnread;
     use HasActions;
     use HasBody;
     use HasDate;
