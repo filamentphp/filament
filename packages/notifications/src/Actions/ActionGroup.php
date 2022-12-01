@@ -20,6 +20,7 @@ class ActionGroup extends BaseActionGroup implements Arrayable
             'color' => $this->getColor(),
             'icon' => $this->getIcon(),
             'iconPosition' => $this->getIconPosition(),
+            'iconSize' => $this->getIconSize(),
             'label' => $this->getLabel(),
             'tooltip' => $this->getTooltip(),
         ];
@@ -40,6 +41,7 @@ class ActionGroup extends BaseActionGroup implements Arrayable
         $static->color($data['color'] ?? null);
         $static->icon($data['icon'] ?? null);
         $static->iconPosition($data['iconPosition'] ?? null);
+        $static->iconSize($data['iconSize'] ?? null);
         $static->label($data['label'] ?? null);
         $static->tooltip($data['tooltip'] ?? null);
 

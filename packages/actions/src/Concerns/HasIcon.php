@@ -10,6 +10,8 @@ trait HasIcon
 
     protected string | Closure | null $iconPosition = null;
 
+    protected string | Closure | null $iconSize = null;
+
     public function icon(string | Closure | null $icon): static
     {
         $this->icon = $icon;
@@ -24,6 +26,13 @@ trait HasIcon
         return $this;
     }
 
+    public function iconSize(string | Closure | null $size): static
+    {
+        $this->iconSize = $size;
+
+        return $this;
+    }
+
     public function getIcon(): ?string
     {
         return $this->evaluate($this->icon);
@@ -32,5 +41,10 @@ trait HasIcon
     public function getIconPosition(): ?string
     {
         return $this->evaluate($this->iconPosition);
+    }
+
+    public function getIconSize(): ?string
+    {
+        return $this->evaluate($this->iconSize);
     }
 }
