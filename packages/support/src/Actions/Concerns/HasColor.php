@@ -17,27 +17,37 @@ trait HasColor
 
     public function colorDanger(): static
     {
-        return $this->color('danger');
+        $this->color('danger');
+        
+        return $this;
     }
 
     public function colorPrimary(): static
     {
-        return $this->color('primary');
+        $this->color('primary');
+        
+        return $this;
     }
 
     public function colorSecondary(): static
     {
-        return $this->color('secondary');
+        $this->color('secondary');
+        
+        return $this;
     }
 
     public function colorSuccess(): static
     {
-        return $this->color('success');
+        $this->color('success');
+        
+        return $this;
     }
 
     public function colorWarning(): static
     {
-        return $this->color('warning');
+        $this->color('warning');
+        
+        return $this;
     }
 
     public function getColor(): ?string
