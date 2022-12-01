@@ -109,11 +109,6 @@ class Summarizer extends ViewComponent
         return $this->id;
     }
 
-    public function getExtraAttributes(): array
-    {
-        return $this->getColumn()->getExtraAttributes();
-    }
-
     protected function hasPaginatedQuery(): bool
     {
         return $this->getQuery()->getQuery()->limit !== null;
