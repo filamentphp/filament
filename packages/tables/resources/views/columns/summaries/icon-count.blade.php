@@ -1,4 +1,4 @@
-<div {{ $attributes->class(['filament-tables-icon-count-summary text-sm space-y-1 px-4 py-3']) }}>
+<div {{ $attributes->merge($getExtraAttributes(), escape: false)->class(['filament-tables-icon-count-summary text-sm space-y-1 px-4 py-3']) }}>
     @if (filled($label = $getLabel()))
         <p class="text-gray-500 dark:text-gray-400">
             {{ $label }}:

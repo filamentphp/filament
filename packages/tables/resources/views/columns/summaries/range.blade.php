@@ -1,4 +1,4 @@
-<div {{ $attributes->class(['filament-tables-range-summary text-sm px-4 py-3']) }}>
+<div {{ $attributes->merge($getExtraAttributes(), escape: false)->class(['filament-tables-range-summary text-sm px-4 py-3']) }}>
     @php
         $state = $getFormattedState();
         $from = $state[0] ?? null;
