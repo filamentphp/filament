@@ -15,6 +15,31 @@ trait HasColor
         return $this;
     }
 
+    public function colorDanger(): static
+    {
+        return $this->color('danger');
+    }
+
+    public function colorPrimary(): static
+    {
+        return $this->color('primary');
+    }
+
+    public function colorSecondary(): static
+    {
+        return $this->color('secondary');
+    }
+
+    public function colorSuccess(): static
+    {
+        return $this->color('success');
+    }
+
+    public function colorWarning(): static
+    {
+        return $this->color('warning');
+    }
+
     public function getColor(): ?string
     {
         return $this->evaluate($this->color);
