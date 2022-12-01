@@ -22,9 +22,8 @@
                 :is-grid="! $isInline"
                 direction="column"
                 :attributes="$attributes->merge($getExtraAttributes(), escape: false)->class([
-                    'filament-forms-radio-component',
-                    'flex flex-wrap gap-3' => $isInline,
-                    'gap-2' => ! $isInline,
+                    'filament-forms-radio-component flex flex-wrap gap-3',
+                    'flex-col' => ! $isInline,
                 ])"
             >
                 @foreach ($getOptions() as $value => $label)
