@@ -18,35 +18,35 @@ trait HasColor
     public function colorDanger(): static
     {
         $this->color('danger');
-        
+
         return $this;
     }
 
     public function colorPrimary(): static
     {
         $this->color('primary');
-        
+
         return $this;
     }
 
     public function colorSecondary(): static
     {
         $this->color('secondary');
-        
+
         return $this;
     }
 
     public function colorSuccess(): static
     {
         $this->color('success');
-        
+
         return $this;
     }
 
     public function colorWarning(): static
     {
         $this->color('warning');
-        
+
         return $this;
     }
 
