@@ -8,7 +8,7 @@
 >
     {{ $form }}
 
-    <div class="text-end">
+    <div class="{{ $this->shouldApplyTableFiltersByButton() ? 'flex justify-between' : 'text-end' }}">
         <x-tables::link
             wire:click="resetTableFiltersForm"
             color="danger"
@@ -17,5 +17,14 @@
         >
             {{ __('tables::table.filters.buttons.reset.label') }}
         </x-tables::link>
+        @if($this->shouldApplyTableFiltersByButton())
+            <x-tables::button
+                wire:click="applyTableFiltersForm"
+                color="primary"
+                size="sm"
+            >
+                {{ __('tables::table.filters.buttons.apply.label') }}
+            </x-tables::button>
+        @endif
     </div>
 </div>

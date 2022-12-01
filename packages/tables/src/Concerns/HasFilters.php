@@ -47,11 +47,16 @@ trait HasFilters
             return $this->getCachedForm('tableFiltersForm');
         }
 
-        return $this->makeForm()
+        $tableFiltersForm = $this->makeForm()
             ->schema($this->getTableFiltersFormSchema())
             ->columns($this->getTableFiltersFormColumns())
-            ->statePath('tableFilters')
-            ->reactive();
+            ->statePath('tableFilters');
+
+        if (! $this->shouldApplyTableFiltersByButton()) {
+            $tableFiltersForm->reactive();
+        }
+
+        return $tableFiltersForm;
     }
 
     public function isTableFilterable(): bool
@@ -95,10 +100,14 @@ trait HasFilters
         $this->updatedTableFilters();
     }
 
-    public function removeTableFilters(): void
+    public function removeTableFilters(bool $removeOnlyEmptyFilters = false): void
     {
         foreach ($this->getTableFiltersForm()->getFlatFields(withAbsolutePathKeys: true) as $field) {
             $state = $field->getState();
+
+            if ($removeOnlyEmptyFilters && !is_null($state)) {
+                continue;
+            }
 
             $field->state(match (true) {
                 is_array($state) => [],
@@ -115,6 +124,11 @@ trait HasFilters
         $this->getTableFiltersForm()->fill();
 
         $this->updatedTableFilters();
+    }
+
+    public function applyTableFiltersForm(): void
+    {
+        $this->removeTableFilters(true);
     }
 
     protected function applyFiltersToTableQuery(Builder $query): Builder
@@ -212,6 +226,11 @@ trait HasFilters
     }
 
     protected function shouldPersistTableFiltersInSession(): bool
+    {
+        return false;
+    }
+
+    protected function shouldApplyTableFiltersByButton(): bool
     {
         return false;
     }
