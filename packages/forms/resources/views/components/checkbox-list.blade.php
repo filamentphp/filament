@@ -81,7 +81,6 @@
                             type="checkbox"
                             value="{{ $optionValue }}"
                             dusk="filament.forms.{{ $getStatePath() }}"
-                            x-on:change="updateIsAllSelected"
                         {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
                         {{ $getExtraAttributeBag()->class([
                             'text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70',
@@ -90,6 +89,8 @@
                             'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                             'border-danger-300 ring-danger-500' => $errors->has($getStatePath()),
                             'dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
+                        ])->merge([
+                            'x-on:change' => $isBulkToggleable() ? 'updateIsAllSelected' : null
                         ]) }}
                         />
 
