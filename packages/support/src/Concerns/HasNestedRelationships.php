@@ -388,9 +388,8 @@ trait HasNestedRelationships
     }
 
     /**
-     * @param Builder $query
-     * @param string  $column
-     *
+     * @param  Builder  $query
+     * @param  string  $column
      * @return Builder
      */
     public function getNestedOrderBy(Builder $query, string $column): Builder
@@ -561,9 +560,8 @@ trait HasNestedRelationships
      * @param  Builder  $query
      * @param  array | string  $column
      * @param  Model  $record
-     * @param  Closure $callback
+     * @param  Closure  $callback
      * @param  array | null  $relationships
-     *
      * @return Builder
      */
     public function getNestedQuery(Builder $query, array | string $column, Model $record, Closure $callback, ?array $relationships = null): Builder
