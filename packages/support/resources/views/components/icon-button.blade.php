@@ -3,8 +3,9 @@
     'disabled' => false,
     'form' => null,
     'icon' => null,
-    'keyBindings' => null,
     'indicator' => null,
+    'indicatorColor' => 'primary',
+    'keyBindings' => null,
     'label' => null,
     'size' => 'md',
     'tag' => 'button',
@@ -44,14 +45,14 @@
 
     $indicatorClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-icon-button-indicator absolute -top-0.5 -right-0.5 inline-block h-4 w-4 rounded-full text-xs font-medium text-white',
-        match ($color) {
+        match ($indicatorColor) {
             'danger' => 'bg-danger-600',
             'gray' => 'bg-gray-600',
             'primary' => 'bg-primary-600',
             'secondary' => 'bg-secondary-600',
             'success' => 'bg-success-600',
             'warning' => 'bg-warning-600',
-            default => $color,
+            default => $indicatorColor,
         },
     ]);
 
