@@ -355,3 +355,14 @@ protected function shouldPersistTableFiltersInSession(): bool
     return true;
 }
 ```
+
+## Apply filters by button
+
+To apply the table filters after press apply button, use the `shouldApplyTableFiltersByButton()` method:
+
+```php
+protected function shouldApplyTableFiltersByButton(): bool
+{
+    return true;
+}
+```
