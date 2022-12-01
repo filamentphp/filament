@@ -95,13 +95,12 @@
                         />
 
                         <span @class([
-                        'text-sm font-medium text-gray-700',
-                        'dark:text-gray-200' => config('forms.dark_mode'),
-                    ])>
-                        {{ $optionLabel }}
-                    </span>
+                            'text-sm font-medium text-gray-700',
+                            'dark:text-gray-200' => config('forms.dark_mode'),
+                        ])>
+                            {{ $optionLabel }}
+                        </span>
                     </label>
-
                 </div>
             @empty
                 <div wire:key="{{ $getId() }}-empty-options-div"></div>
