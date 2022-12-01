@@ -217,11 +217,11 @@ class Context
 
     protected ?string $databaseNotificationsPolling = '30s';
 
-    protected string $fontName = 'DM Sans';
+    protected string $fontName = 'Be Vietnam Pro';
 
     protected string $fontProvider = GoogleFontProvider::class;
 
-    protected ?string $fontUrl = 'https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap';
+    protected ?string $fontUrl = 'https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap';
 
     /**
      * @var array<string, Plugin>
