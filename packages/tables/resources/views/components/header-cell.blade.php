@@ -16,11 +16,11 @@
             'flex items-center w-full px-4 py-2 whitespace-nowrap space-x-1 rtl:space-x-reverse font-medium text-sm text-gray-600 dark:text-gray-300',
             'cursor-default' => ! $sortable,
             match ($alignment) {
-                'start' => 'justify-start',
                 'center' => 'justify-center',
                 'end' => 'justify-end',
                 'left' => 'justify-start rtl:flex-row-reverse',
                 'right' => 'justify-end rtl:flex-row-reverse',
+                'start' => 'justify-start',
                 default => null,
             },
         ])

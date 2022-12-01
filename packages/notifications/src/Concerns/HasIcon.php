@@ -8,7 +8,7 @@ trait HasIcon
 {
     protected string | Closure | null $icon = null;
 
-    protected string | Closure | null $iconColor = 'gray';
+    protected string | Closure | null $iconColor = null;
 
     public function icon(string | Closure | null $icon): static
     {

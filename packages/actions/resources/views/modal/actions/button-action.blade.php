@@ -30,6 +30,7 @@
     :outlined="$isOutlined()"
     :icon="$getIcon()"
     :icon-position="$getIconPosition()"
+    :icon-size="$getIconSize()"
     :size="$getSize()"
     :attributes="$getExtraAttributeBag()"
     class="filament-actions-modal-button-action"
