@@ -1,4 +1,4 @@
-<div {{ $attributes->class(['filament-tables-icon-count-summary text-sm space-y-1 px-4 py-3']) }}>
+<div {{ $attributes->merge($getExtraAttributes(), escape: false)->class(['filament-tables-icon-count-summary text-sm space-y-1 px-4 py-3']) }}>
     @if (filled($label = $getLabel()))
         <p class="text-gray-500 dark:text-gray-400">
             {{ $label }}:
@@ -22,11 +22,11 @@
                         alias="filament-tables::columns.summaries.icon-count"
                         :color="match ($color) {
                             'danger' => 'text-danger-500',
+                            'gray', null => 'text-gray-500',
                             'primary' => 'text-primary-500',
                             'secondary' => 'text-secondary-500',
                             'success' => 'text-success-500',
                             'warning' => 'text-warning-500',
-                            null => 'text-gray-500',
                             default => $color,
                         }"
                         size="h-4 w-4"

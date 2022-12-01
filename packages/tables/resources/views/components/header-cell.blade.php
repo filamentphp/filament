@@ -19,11 +19,11 @@
             'whitespace-nowrap' => ! $wrap,
             'whitespace-normal' => $wrap,
             match ($alignment) {
-                'start' => 'justify-start',
                 'center' => 'justify-center',
                 'end' => 'justify-end',
                 'left' => 'justify-start rtl:flex-row-reverse',
                 'right' => 'justify-end rtl:flex-row-reverse',
+                'start' => 'justify-start',
                 default => null,
             },
         ])

@@ -10,7 +10,7 @@ Filament provides many ways to manage relationships in the admin panel. Which fe
 
 > These are compatible with `HasMany`, `HasManyThrough`, `BelongsToMany`, `MorphMany` and `MorphToMany` relationships.
 
-(Relation managers)[#creating-a-relation-manager] are interactive tables that allow administrators to list, create, attach, associate, edit, detach, dissociate and delete related records without leaving the resource's Edit or View page.
+[Relation managers](#creating-a-relation-manager) are interactive tables that allow administrators to list, create, attach, associate, edit, detach, dissociate and delete related records without leaving the resource's Edit or View page.
 
 ### Select & checkbox list - choose from existing records or create a new one
 

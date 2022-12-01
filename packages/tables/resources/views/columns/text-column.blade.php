@@ -21,7 +21,7 @@
         'text-primary-600 transition hover:underline hover:text-primary-500 focus:underline focus:text-primary-500' => $isClickable,
         match ($color = $getColor()) {
             'danger' => 'text-danger-600',
-            'gray' => 'text-gray-500 dark:text-gray-400',
+            'gray' => 'text-gray-600 dark:text-gray-400',
             'primary' => 'text-primary-600',
             'secondary' => 'text-secondary-600',
             'success' => 'text-success-600',

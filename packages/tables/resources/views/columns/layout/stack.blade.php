@@ -3,18 +3,15 @@
     ->class([
         'flex flex-col',
         match ($getAlignment()) {
-            'start' => 'items-start',
             'center' => 'items-center',
-            'end' => 'items-end',
-            'left' => 'items-start',
-            'right' => 'items-end',
-            default => 'items-start',
+            'end', 'right' => 'items-end',
+            'start', 'left', null => 'items-start',
         },
-        match ($getSpace()) {
+        match ($space = $getSpace()) {
             1 => 'space-y-1',
             2 => 'space-y-2',
             3 => 'space-y-3',
-            default => null,
+            default => $space,
         },
     ])
 }}>

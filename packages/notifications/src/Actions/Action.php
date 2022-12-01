@@ -50,6 +50,7 @@ class Action extends StaticAction implements Arrayable, Groupable
             'extraAttributes' => $this->getExtraAttributes(),
             'icon' => $this->getIcon(),
             'iconPosition' => $this->getIconPosition(),
+            'iconSize' => $this->getIconSize(),
             'isOutlined' => $this->isOutlined(),
             'isDisabled' => $this->isDisabled(),
             'label' => $this->getLabel(),
@@ -85,6 +86,7 @@ class Action extends StaticAction implements Arrayable, Groupable
         $static->extraAttributes($data['extraAttributes'] ?? []);
         $static->icon($data['icon'] ?? null);
         $static->iconPosition($data['iconPosition'] ?? null);
+        $static->iconSize($data['iconSize'] ?? null);
         $static->label($data['label'] ?? null);
         $static->outlined($data['isOutlined'] ?? false);
         $static->url($data['url'] ?? null, $data['shouldOpenUrlInNewTab'] ?? false);
