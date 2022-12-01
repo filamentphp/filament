@@ -658,7 +658,7 @@
                                 :alignment="$column->getAlignment()"
                                 :sortable="$column->isSortable() && (! $isReordering)"
                                 :sort-direction="$getSortDirection()"
-                                class="filament-table-cell-{{ \Illuminate\Support\Str::of($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
+                                class="filament-table-header-cell-{{ \Illuminate\Support\Str::of($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
                             >
                                 {{ $column->getLabel() }}
                             </x-tables::header-cell>
