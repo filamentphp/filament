@@ -6,16 +6,16 @@ use Closure;
 
 trait HasSpace
 {
-    protected int | Closure | null $space = null;
+    protected int | string | Closure | null $space = null;
 
-    public function space(int | Closure | null $space = 1): static
+    public function space(int | string | Closure | null $space = 1): static
     {
         $this->space = $space;
 
         return $this;
     }
 
-    public function getSpace(): ?int
+    public function getSpace(): int | string | null
     {
         return $this->evaluate($this->space);
     }

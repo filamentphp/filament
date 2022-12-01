@@ -51,7 +51,8 @@
                 '5xl' => 'max-w-5xl',
                 '6xl' => 'max-w-6xl',
                 '7xl' => 'max-w-7xl',
-                default => 'max-w-[14rem]',
+                null => 'max-w-[14rem]',
+                default => $width,
             },
         ])
     >
