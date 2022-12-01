@@ -67,6 +67,10 @@ return [
 
         'buttons' => [
 
+            'apply' => [
+                'label' => '应用过滤器',
+            ],
+
             'reset' => [
                 'label' => '重置筛选条件',
             ],

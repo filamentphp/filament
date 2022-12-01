@@ -93,6 +93,10 @@ return [
 
         'buttons' => [
 
+            'apply' => [
+                'label' => 'Áp dụng các bộ lọc',
+            ],
+
             'remove' => [
                 'label' => 'Xóa bộ lọc',
             ],

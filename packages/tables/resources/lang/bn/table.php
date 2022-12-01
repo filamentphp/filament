@@ -93,6 +93,10 @@ return [
 
         'buttons' => [
 
+            'apply' => [
+                'label' => 'অনুসন্ধান',
+            ],
+
             'remove' => [
                 'label' => 'অনুসন্ধান সরান',
             ],

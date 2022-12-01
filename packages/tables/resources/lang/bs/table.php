@@ -93,6 +93,10 @@ return [
 
         'buttons' => [
 
+            'apply' => [
+                'label' => 'Primijenite filtere',
+            ],
+
             'remove' => [
                 'label' => 'Skloni filter',
             ],

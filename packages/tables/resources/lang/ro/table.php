@@ -93,6 +93,10 @@ return [
 
         'buttons' => [
 
+            'apply' => [
+                'label' => 'Aplicați filtre',
+            ],
+
             'remove' => [
                 'label' => 'Ştergere filtru',
             ],

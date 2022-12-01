@@ -93,6 +93,10 @@ return [
 
         'buttons' => [
 
+            'apply' => [
+                'label' => 'Pas filters toe',
+            ],
+
             'remove' => [
                 'label' => 'Filter verwijderen',
             ],

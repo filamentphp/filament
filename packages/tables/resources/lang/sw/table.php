@@ -93,6 +93,10 @@ return [
 
         'buttons' => [
 
+            'apply' => [
+                'label' => 'Weka upya michujo',
+            ],
+
             'remove' => [
                 'label' => 'Toa mchujo',
             ],

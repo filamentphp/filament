@@ -93,6 +93,10 @@ return [
 
         'buttons' => [
 
+            'apply' => [
+                'label' => 'Gunakan penapis',
+            ],
+
             'remove' => [
                 'label' => 'Buang penapis',
             ],

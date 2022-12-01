@@ -92,6 +92,10 @@ return [
 
         'buttons' => [
 
+            'apply' => [
+                'label' => 'szűrőket alkalmazni',
+            ],
+
             'remove' => [
                 'label' => 'Szűrés megszűntetése',
             ],

@@ -92,6 +92,10 @@ return [
 
         'buttons' => [
 
+            'apply' => [
+                'label' => 'Appliquer des filtres',
+            ],
+
             'remove' => [
                 'label' => 'Supprimer le filtre',
             ],

@@ -93,6 +93,10 @@ return [
 
         'buttons' => [
 
+            'apply' => [
+                'label' => 'تطبيق الفلاتر',
+            ],
+
             'remove' => [
                 'label' => 'إلغاء الفلاتر',
             ],

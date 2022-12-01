@@ -93,6 +93,10 @@ return [
 
         'buttons' => [
 
+            'apply' => [
+                'label' => 'החל מסננים',
+            ],
+
             'remove' => [
                 'label' => 'מחק סנן',
             ],

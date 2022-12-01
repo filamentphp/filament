@@ -91,6 +91,10 @@ return [
 
         'buttons' => [
 
+            'apply' => [
+                'label' => 'Použijte filtry',
+            ],
+
             'remove' => [
                 'label' => 'Odstranit filtr',
             ],

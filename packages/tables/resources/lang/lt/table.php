@@ -93,6 +93,10 @@ return [
 
         'buttons' => [
 
+            'apply' => [
+                'label' => 'Taikyti filtrus',
+            ],
+
             'remove' => [
                 'label' => 'Pašalinti filtrą',
             ],

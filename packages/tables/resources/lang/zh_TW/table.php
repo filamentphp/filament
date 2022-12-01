@@ -67,6 +67,10 @@ return [
 
         'buttons' => [
 
+            'apply' => [
+                'label' => '應用過濾器',
+            ],
+
             'reset' => [
                 'label' => '重設篩選',
             ],

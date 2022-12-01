@@ -75,6 +75,10 @@ return [
 
         'buttons' => [
 
+            'apply' => [
+                'label' => 'Filtrelemeleri uygulayın',
+            ],
+
             'reset' => [
                 'label' => 'Filtrelemeleri sıfırla',
             ],

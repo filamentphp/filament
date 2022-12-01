@@ -93,6 +93,10 @@ return [
 
         'buttons' => [
 
+            'apply' => [
+                'label' => 'フィルターを適用する',
+            ],
+
             'remove' => [
                 'label' => '絞り込みを解除',
             ],
