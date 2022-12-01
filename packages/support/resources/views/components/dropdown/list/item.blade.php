@@ -3,6 +3,7 @@
     'detail' => null,
     'disabled' => false,
     'icon' => null,
+    'iconSize' => 'md',
     'image' => null,
     'keyBindings' => null,
     'tag' => 'button',
@@ -58,7 +59,12 @@
         default => $color,
     };
 
-    $iconSize = 'h-5 w-5';
+    $iconSize = match ($iconSize) {
+        'sm' => 'h-4 w-4',
+        'md' => 'h-5 w-5',
+        'lg' => 'h-6 w-6',
+        default => $iconSize,
+    };
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-dropdown-list-item-icon flex-shrink-0 mr-2 rtl:ml-2 rtl:mr-0',
