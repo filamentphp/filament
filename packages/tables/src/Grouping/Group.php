@@ -3,6 +3,7 @@
 namespace Filament\Tables\Grouping;
 
 use Closure;
+use Filament\Support\Concerns\EvaluatesClosures;
 use Filament\Support\Concerns\HasNestedRelationships;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 class Group
 {
     use HasNestedRelationships;
+    use EvaluatesClosures;
 
     protected ?string $column;
 
@@ -120,9 +122,7 @@ class Group
             ]) ?? $query;
         }
 
-        return $query->orderBy(
-            $this->getNestedRelationExistenceQuery($query, $column)
-        );
+        return $this->getNestedOrderBy($query, $column);
     }
 
     public function scopeQuery(Builder $query, Model $record): Builder
@@ -137,6 +137,15 @@ class Group
             ]) ?? $query;
         }
 
-        return $this->getNestedWhere($query, $column, $record);
+        return $this->getNestedQuery(
+            $query,
+            $column,
+            $record,
+            fn (Builder $query) => $query->where(
+                $this->getRelationshipAttribute($column),
+                '=',
+                $this->getNestedAttribute($column, $record)
+            )
+        );
     }
 }

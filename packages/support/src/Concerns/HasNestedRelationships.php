@@ -275,9 +275,9 @@ trait HasNestedRelationships
             $name = $relationships ?? $this->getName();
             $relationships = $this->getRelationshipStack($name);
 
-            // if it's not really nested, just an attribute, return null
+            // if it's not really nested, just an attribute, return the original record
             if (! $this->isNoMoreRelationships($relationships)) {
-                return null;
+                return $record;
             }
         }
 
@@ -388,6 +388,19 @@ trait HasNestedRelationships
     }
 
     /**
+     * @param Builder $query
+     * @param string  $column
+     *
+     * @return Builder
+     */
+    public function getNestedOrderBy(Builder $query, string $column): Builder
+    {
+        return $query->orderBy(
+            $this->getNestedRelationExistenceQuery($query, $column)
+        );
+    }
+
+    /**
      * This probably belongs somewhere else, wasn't sure where to put it.  Used from anywhere that builds am orderBy()
      * query potentially from a nested relationship, like 'post.author.name' on a Comments table.  Returns a nested
      * set of relationshipExistenceQueries, with each successive one being in the 'column' arg of the previous.  Works
@@ -471,15 +484,12 @@ trait HasNestedRelationships
     public function getInverseRelationships(string $name, Model &$record, ?array $relationships = null, ?array $reverse = null, ?string $previousRelationshipName = null): ?array
     {
         if (! isset($relationships)) {
-            $relationships = is_array($name) ? $name : $this->getRelationshipStack($name);
-            $reverse = [$record->getKeyName()];
-            $reversed = $this->getInverseRelationships($name, $record, $relationships, $reverse);
-
-            if (! $reversed) {
-                return null;
-            }
-
-            return array_reverse($reversed);
+            return $this->getInverseRelationships(
+                $name,
+                $record,
+                $this->getRelationshipStack($name),
+                [$record->getKeyName()]
+            ) ?? null;
         } else {
             if ($this->isNoMoreRelationships($relationships)) {
                 return $reverse;
@@ -517,7 +527,7 @@ trait HasNestedRelationships
                     }
                 }
 
-                $reverse[] = $inverseRelationship;
+                array_unshift($reverse, $inverseRelationship);
 
                 return $this->getInverseRelationships($name, $record, $relationships, $reverse, $relationshipName);
             }
@@ -525,57 +535,18 @@ trait HasNestedRelationships
     }
 
     /**
-     * Create a nested whereHas clause, for any arbitrary depth of dotted relation.  See doc for getNestedWhere for
-     * the theory.  Main difference is this expects a Closure for applying the whereHas() at the end of the chain.
+     * Builds a nested query with a closure callback.  So calling this on just an attribute would just yield
+     * the given closure  ...
      *
-     * At time of writing, only called from Summarizer.php, as part of building the inverse relationship query for
-     * collecting the target table ID's for group summaries that use distant relationships..
-     *
-     * @param  array|string  $name
-     * @param  Builder  $query
-     * @param  Model  $record
-     * @param  Closure  $has
-     * @param  array|null  $relationships
-     * @return Builder
-     */
-    public function getNestedWhereHas(array | string $name, Builder $query, Model $record, Closure $has, ?array $relationships = null)
-    {
-        if (is_null($relationships)) {
-            $relationships = is_array($name) ? $name : $this->getRelationshipStack($name);
-
-            return $this->getNestedWhereHas($name, $query, $record, $has, $relationships);
-        } else {
-            $relationshipName = '';
-            $relationship = $this->shiftNextRelationship($relationships, $record, $relationshipName);
-            $record = $relationship->getRelated();
-
-            if ($this->isNoMoreRelationships($relationships)) {
-                return $query->whereHas(
-                    $relationshipName,
-                    fn (Builder $nestedQuery) => $this->evaluate($has, ['query' => $nestedQuery])
-                );
-            } else {
-                return $query->whereHas(
-                    $relationshipName,
-                    fn (Builder $nestedQuery) => $this->getNestedWhereHas($name, $nestedQuery, $record, $has, $relationships)
-                );
-            }
-        }
-    }
-
-    /**
-     * Builds a simple '=' where clause for an attribute, but nests inside successive whereHas() clauses if it's a
-     * relationship chain.  So calling this on just an attribute would yield a simple where() clause ...
-     *
-     * $this->getNestedQuery($query, 'name', $record)
+     * $this->getNestedQuery($query, 'name', $record, fn ($query) => $query->where(['name' => 'smith']))
      *
      * ... yields ...
      *
-     * $query->where('name', '=', $record->getAttribute('name'))
+     * $query->where(['name' => 'smith'])
      *
      * ... but calling it on a dotted chain ...
      *
-     * $this->getNestedQuery($query, 'post.author.name', $record)
+     * $this->getNestedQuery($query, 'post.author.name', $record, fn ($query) => $query->where(['name' => 'smith']))
      *
      * ... yields ...
      *
@@ -583,49 +554,48 @@ trait HasNestedRelationships
      *     'post',
      *     fn (Builder $query) => $query->whereHas(
      *         'author',
-     *          fn (Builder $query) => $query->where('name', '=', $record->getAttribute('name'))
+     *          fn ($query) => $query->where(['name' => 'smith'])
      *     )
      *  )
      *
      * @param  Builder  $query
-     * @param  string  $column
+     * @param  array | string  $column
      * @param  Model  $record
-     * @param  array|null  $relationships
+     * @param  Closure $callback
+     * @param  array | null  $relationships
+     *
      * @return Builder
      */
-    public function getNestedWhere(Builder $query, string $column, Model $record, ?array $relationships = null)
+    public function getNestedQuery(Builder $query, array | string $column, Model $record, Closure $callback, ?array $relationships = null): Builder
     {
+        // first time check
         if (! isset($relationships)) {
-            $relationships = $this->getRelationshipStack($column);
+            $relationships = is_array($column) ? $column : $this->getRelationshipStack($column);
 
+            // if it's not nested, just return the callback
             if ($this->isNoMoreRelationships($relationships)) {
-                return $query->where(
-                    $this->getStackAttribute($relationships),
-                    '=',
-                    $record->getAttribute($this->getStackAttribute($relationships))
-                );
-            } else {
-                return $this->getNestedWhere($query, $column, $record, $relationships);
+                return $this->evaluate($callback, ['query' => $query]);
             }
+
+            $relationshipName = '';
+        }
+
+        $relationship = $this->shiftNextRelationship($relationships, $record, $relationshipName);
+        $record = $relationship->getRelated();
+
+        if ($this->isNoMoreRelationships($relationships)) {
+            // we're at the end of the relationships, so return a whereHas with the closure callback,
+            // which will unwind up the recursion stack
+            return $query->whereHas(
+                $relationshipName,
+                fn (Builder $nestedQuery) => $this->evaluate($callback, ['query' => $nestedQuery])
+            );
         } else {
-            $relationship = $this->shiftNextRelationship($relationships, $record);
-            $record = $relationship->getResults();
-
-            if ($this->isNoMoreRelationships($relationships)) {
-                return $query->whereHas(
-                    $relationship->getRelationName(),
-                    fn (Builder $relatedQuery) => $relatedQuery->where(
-                        $this->getStackAttribute($relationships),
-                        '=',
-                        $record->getAttribute($this->getStackAttribute($relationships))
-                    )
-                );
-            } else {
-                return $query->whereHas(
-                    $relationship->getRelationName(),
-                    fn (Builder $nestedQuery) => $this->getNestedWhere($nestedQuery, $column, $record, $relationships)
-                );
-            }
+            // more relationships to go, so return a whereHas with a recursive call as the callback closure
+            return $query->whereHas(
+                $relationshipName,
+                fn (Builder $nestedQuery) => $this->getNestedQuery($nestedQuery, $column, $record, $callback, $relationships)
+            );
         }
     }
 

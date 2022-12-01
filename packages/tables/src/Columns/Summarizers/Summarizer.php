@@ -4,6 +4,7 @@ namespace Filament\Tables\Columns\Summarizers;
 
 use Closure;
 use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +15,7 @@ class Summarizer extends ViewComponent
     use Concerns\CanFormatState;
     use Concerns\HasLabel;
     use Concerns\InteractsWithTableQuery;
+    use HasExtraAttributes;
 
     protected string $evaluationIdentifier = 'summarizer';
 
@@ -89,26 +91,23 @@ class Summarizer extends ViewComponent
                 // if we got a valid inverse, nest the relevant query to get the related records from the end of the
                 // chain.
                 //
+                // At this point ...
                 // $relationship is the last relationship in the column's chain, and hence first in the inverse chain.
                 // $record is the record from the last column relationship chain, and hence first in the inverse chain.
                 // $query is the original column query which we will use to get all the id's of the queried records.
 
                 $parentQuery = $query;
 
-                $query = $column->getNestedWhereHas(
-                    $inverseRelationship,
+                $query = $column->getNestedQuery(
                     $relationship->getQuery()->getModel()->newQuery(),
+                    $inverseRelationship,
                     $record,
-                    function (EloquentBuilder $query) use ($parentQuery, $relationship) {
-                        if ($this->hasPaginatedQuery()) {
-                            $query->whereKey($this->getTable()->getRecords()->modelKeys());
-                        } else {
-                            $query->whereIn(
-                                $relationship->getModel()->getKeyName(),
-                                $parentQuery->select($relationship->getModel()->getKeyName())
-                            );
-                        }
-                    }
+                    fn (EloquentBuilder $query) => $this->hasPaginatedQuery() ?
+                        $query->whereKey($this->getTable()->getRecords()->modelKeys()) :
+                        $query->whereIn(
+                            $relationship->getModel()->getKeyName(),
+                            $parentQuery->select($relationship->getModel()->getKeyName())
+                        )
                 );
             }
         }
@@ -140,11 +139,6 @@ class Summarizer extends ViewComponent
     public function getId(): ?string
     {
         return $this->id;
-    }
-
-    public function getExtraAttributes(): array
-    {
-        return $this->getColumn()->getExtraAttributes();
     }
 
     protected function hasPaginatedQuery(): bool
