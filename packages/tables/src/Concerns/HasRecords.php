@@ -36,7 +36,7 @@ trait HasRecords
             if ($this->getTable()->isGroupsOnly()) {
                 continue;
             }
-            
+
             $column->applyEagerLoading($query);
         }
 
