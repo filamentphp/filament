@@ -11,7 +11,7 @@ trait CanReorderRecords
 
     public function reorderTable(array $order): void
     {
-        if (!$this->isTableReorderable()) {
+        if (! $this->isTableReorderable()) {
             return;
         }
 
