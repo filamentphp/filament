@@ -718,6 +718,7 @@
                                 :sort-direction="$getSortDirection()"
                                 class="filament-table-header-cell-{{ \Illuminate\Support\Str::of($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
                                 :attributes="$column->getExtraHeaderAttributeBag()"
+                                :wrap="$column->isHeaderWrapped()"
                             >
                                 {{ $column->getLabel() }}
                             </x-filament-tables::header-cell>
