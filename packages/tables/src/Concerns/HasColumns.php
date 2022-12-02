@@ -101,24 +101,24 @@ trait HasColumns
         return $this->getCachedTableColumns()[$name] ?? null;
     }
 
-    public function setColumnValue(string $column, string $record, $input): ?array
+    public function setColumnValue(string $column, string $record, $input): mixed
     {
         $column = $this->getCachedTableColumn($column);
 
         if (! ($column instanceof Editable)) {
-            return ['state' => null];
+            return null;
         }
 
         $record = $this->getTableRecord($record);
 
         if (! $record) {
-            return ['state' => null];
+            return null;
         }
 
         $column->record($record);
 
         if ($column->isDisabled()) {
-            return ['state' => null];
+            return null;
         }
 
         try {
@@ -129,14 +129,7 @@ trait HasColumns
             ];
         }
 
-        $state = $column->evaluate($column->getSaveStateUsing(), [
-            'state' => $input,
-            'table' => $this->getCachedTable(),
-        ]);
-
-        return [
-            'state' => $state,
-        ];
+        return $column->saveState($this, $input);
     }
 
     protected function getTableColumns(): array

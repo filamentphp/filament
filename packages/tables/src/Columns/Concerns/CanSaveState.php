@@ -8,6 +8,7 @@ use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
+use Livewire\Component;
 
 trait CanSaveState
 {
@@ -49,8 +50,11 @@ trait CanSaveState
         return $this;
     }
 
-    public function getSaveStateUsing(): ?Closure
+    public function saveState(Component $table, mixed $state): mixed
     {
-        return $this->saveStateUsing;
+        return $this->evaluate($this->saveStateUsing, [
+            'state' => $state,
+            'table' => $table,
+        ]);
     }
 }

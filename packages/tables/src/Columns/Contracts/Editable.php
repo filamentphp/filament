@@ -2,11 +2,11 @@
 
 namespace Filament\Tables\Columns\Contracts;
 
-use Closure;
+use Livewire\Component;
 
 interface Editable
 {
     public function validate($input): void;
 
-    public function getSaveStateUsing(): ?Closure;
+    public function saveState(Component $table, mixed $state): mixed;
 }

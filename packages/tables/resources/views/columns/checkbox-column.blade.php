@@ -1,5 +1,9 @@
 <div
-    x-data="{ error: undefined, state: @js($getState()), loading: false }"
+    x-data="{
+        error: undefined,
+        state: @js($getState()),
+        isLoading: false
+    }"
     {{ $attributes->merge($getExtraAttributes())->class([
         'filament-tables-checkbox-column',
     ]) }}
@@ -9,10 +13,10 @@
         {!! $isDisabled() ? 'disabled' : null !!}
         type="checkbox"
         x-on:change="
-            loading = true
+            isLoading = true
             response = await $wire.setColumnValue(@js($getName()), @js($recordKey), $event.target.checked)
             error = response?.error ?? undefined
-            loading = false
+            isLoading = false
         "
         x-tooltip="error"
         {{
@@ -24,7 +28,7 @@
                 ])
         }}
         x-bind:class="{
-            'opacity-70 pointer-events-none': loading,
+            'opacity-70 pointer-events-none': isLoading,
             'border-gray-300': ! error,
             'dark:border-gray-600': (! error) && @js(config('forms.dark_mode')),
             'border-danger-600 ring-1 ring-inset ring-danger-600': error,

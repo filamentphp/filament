@@ -15,11 +15,11 @@ class SelectColumn extends Column implements Editable
     use Concerns\CanBeValidated {
         getRules as baseGetRules;
     }
+    use CanDisableOptions;
+    use CanDisablePlaceholderSelection;
     use Concerns\CanSaveState {
         Concerns\CanSaveState::setUp as setUpSaveState;
     }
-    use CanDisableOptions;
-    use CanDisablePlaceholderSelection;
     use HasExtraInputAttributes;
     use HasOptions;
     use HasPlaceholder;

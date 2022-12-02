@@ -1,5 +1,9 @@
 <div
-    x-data="{ error: undefined, state: @js($getState()), loading: false }"
+    x-data="{
+        error: undefined,
+        state: @js($getState()),
+        isLoading: false
+    }"
     x-init="
         $watch('state', () => $refs.button.dispatchEvent(new Event('change')))
     "
@@ -11,17 +15,17 @@
         role="switch"
         aria-checked="false"
         x-bind:aria-checked="state.toString()"
-        x-on:click="! loading && (state = ! state)"
+        x-on:click="! isLoading && (state = ! state)"
         x-ref="button"
         x-on:change="
-            loading = true
+            isLoading = true
             response = await $wire.setColumnValue(@js($getName()), @js($recordKey), state)
             error = response?.error ?? undefined
-            loading = false
+            isLoading = false
         "
         x-tooltip="error"
         x-bind:class="{
-            'opacity-70 pointer-events-none': loading,
+            'opacity-70 pointer-events-none': isLoading,
             '{{ match ($getOnColor()) {
                 'danger' => 'bg-danger-500',
                 'secondary' => 'bg-gray-500',

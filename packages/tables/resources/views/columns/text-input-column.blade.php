@@ -6,7 +6,11 @@
     }
 @endphp
 <div
-    x-data="{ error: undefined, state: '{{ $getState() }}', loading: false }"
+    x-data="{
+        error: undefined,
+        state: '{{ $getState() }}',
+        isLoading: false
+    }"
     {{ $attributes->merge($getExtraAttributes())->class([
         'filament-tables-text-input-column',
     ]) }}
@@ -19,13 +23,13 @@
         {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
         {!! ($interval = $getStep()) ? "step=\"{$interval}\"" : null !!}
         x-on:change="
-            loading = true
+            isLoading = true
             response = await $wire.setColumnValue(@js($getName()), @js($recordKey), $event.target.value)
-            if (response.state) state = response.state
             error = response?.error ?? undefined
-            loading = false
+            if (! error) state = response
+            isLoading = false
         "
-        :readonly="loading"
+        :readonly="isLoading"
         x-tooltip="error"
         {{ $attributes->merge($getExtraInputAttributes())->merge($getExtraAttributes())->class([
             'ml-0.5 text-gray-900 inline-block transition duration-75 rounded-lg shadow-sm focus:ring-primary-500 focus:ring-1 focus:ring-inset focus:border-primary-500 disabled:opacity-70 read-only:opacity-50',
@@ -37,6 +41,5 @@
             'dark:border-gray-600': (! error) && @js(config('forms.dark_mode')),
             'border-danger-600 ring-1 ring-inset ring-danger-600': error,
         }"
-        wire:loading.attr="readonly"
     />
 </div>
