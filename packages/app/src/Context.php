@@ -7,7 +7,7 @@ use Exception;
 use Filament\AvatarProviders\UiAvatarsProvider;
 use Filament\Contracts\Plugin;
 use Filament\Facades\Filament;
-use Filament\FontProviders\GoogleFontProvider;
+use Filament\FontProviders\BunnyFontProvider;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 use Filament\Http\Livewire\GlobalSearch;
@@ -219,9 +219,9 @@ class Context
 
     protected string $fontName = 'Be Vietnam Pro';
 
-    protected string $fontProvider = GoogleFontProvider::class;
+    protected string $fontProvider = BunnyFontProvider::class;
 
-    protected ?string $fontUrl = 'https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap';
+    protected ?string $fontUrl = 'https://fonts.bunny.net/css?family=be-vietnam-pro:400,400i,500,500i,600,600i,700,700i&display=swap';
 
     /**
      * @var array<string, Plugin>

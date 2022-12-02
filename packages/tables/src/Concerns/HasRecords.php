@@ -27,15 +27,17 @@ trait HasRecords
         $this->applySearchToTableQuery($query);
 
         foreach ($this->getTable()->getColumns() as $column) {
-            if ($column->isHidden() || ($this->getTable()->isGroupsOnly() && ! $column->hasSummary())) {
+            if ($column->isHidden()) {
                 continue;
             }
 
-            if (! $this->getTable()->isGroupsOnly()) {
-                $column->applyEagerLoading($query);
+            $column->applyRelationshipAggregates($query);
+
+            if ($this->getTable()->isGroupsOnly()) {
+                continue;
             }
 
-            $column->applyRelationshipAggregates($query);
+            $column->applyEagerLoading($query);
         }
 
         return $query;
