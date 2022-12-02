@@ -4,8 +4,8 @@ namespace Livewire\Testing {
 
     use Illuminate\Support\Collection;
 
-    class TestableLivewire
-    {
+    class TestableLivewire {
+    
         public function mountTableAction(string $name, $record = null): static {}
 
         public function setTableActionData(array $data): static {}
@@ -36,13 +36,13 @@ namespace Livewire\Testing {
 
         public function assertHasNoTableActionErrors(array $keys = []): static {}
 
-        public function mountTableBulkAction(string $name, array|Collection $records): static {}
+        public function mountTableBulkAction(string $name, array | Collection $records): static {}
 
         public function setTableBulkActionData(array $data): static {}
 
         public function assertTableBulkActionDataSet(array $data): static {}
 
-        public function callTableBulkAction(string $name, array|Collection $records, array $data = [], array $arguments = []): static {}
+        public function callTableBulkAction(string $name, array | Collection $records, array $data = [], array $arguments = []): static {}
 
         public function callMountedTableBulkAction(array $arguments = []): static {}
 
@@ -144,10 +144,11 @@ namespace Livewire\Testing {
 
         public function removeTableFilters(): static {}
 
-        public function assertCanSeeTableRecords(array|Collection $records, bool $inOrder = false): static {}
+        public function assertCanSeeTableRecords(array | Collection $records, bool $inOrder = false): static {}
 
-        public function assertCanNotSeeTableRecords(array|Collection $records): static {}
+        public function assertCanNotSeeTableRecords(array | Collection $records): static {}
 
         public function assertCountTableRecords(int $count): static {}
+        
     }
 }
