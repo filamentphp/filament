@@ -96,7 +96,7 @@ trait HasState
 
     public function formatStateUsing(?Closure $callback): static
     {
-        $this->afterStateHydrated(fn ($component) => $component->state($component->evaluate($callback)));
+        $this->afterStateHydrated(fn (Component $component) => $component->state($component->evaluate($callback)));
 
         return $this;
     }
