@@ -17,7 +17,7 @@
 @endphp
 
 @if ($hasPageSummary)
-    <x-filament-tables::row class="bg-gray-500/5">
+    <x-filament-tables::row class="filament-tables-summary-header-row bg-gray-500/5">
         @if ($placeholderColumns && $actions && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
             <td></td>
         @endif
@@ -38,11 +38,11 @@
 
         @foreach ($columns as $column)
             @if ($placeholderColumns || $column->hasSummary())
-                <td @class([
+                <td {{ $column->getExtraHeaderAttributeBag()->class([
                     'px-4 py-2 font-medium text-sm text-gray-600 dark:text-gray-300',
                     'whitespace-nowrap' => ! $column->isHeaderWrapped(),
-                    'whitespace-normal' => $column->isHeaderWrapped()
-                ])>
+                    'whitespace-normal' => $column->isHeaderWrapped(),
+                ]) }}>
                     @if ($loop->first && (! $extraHeadingColumn))
                         <span class="text-base">
                             {{ __('filament-tables::table.summary.heading', ['label' => $pluralModelLabel]) }}
@@ -60,6 +60,7 @@
     </x-filament-tables::row>
 
     <x-filament-tables::summary.row
+        class="filament-tables-page-summary-row"
         :actions="$actions"
         :actions-position="$actionsPosition"
         :columns="$columns"
@@ -72,6 +73,7 @@
 @endif
 
 <x-filament-tables::summary.row
+    class="filament-tables-total-summary-row"
     :actions="$actions"
     :actions-position="$actionsPosition"
     :columns="$columns"
