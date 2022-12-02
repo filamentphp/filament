@@ -39,11 +39,10 @@
         @foreach ($columns as $column)
             @if ($placeholderColumns || $column->hasSummary())
                 <td @class([
-                        'px-4 py-2 font-medium text-sm text-gray-600 dark:text-gray-300',
-                        'whitespace-nowrap' => ! $column->isHeaderWrapped(),
-                        'whitespace-normal' => $column->isHeaderWrapped()
-                    ])
-                >
+                    'px-4 py-2 font-medium text-sm text-gray-600 dark:text-gray-300',
+                    'whitespace-nowrap' => ! $column->isHeaderWrapped(),
+                    'whitespace-normal' => $column->isHeaderWrapped()
+                ])>
                     @if ($loop->first && (! $extraHeadingColumn))
                         <span class="text-base">
                             {{ __('filament-tables::table.summary.heading', ['label' => $pluralModelLabel]) }}
