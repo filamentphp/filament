@@ -5,7 +5,6 @@ namespace Livewire\Testing {
     use Illuminate\Support\Collection;
 
     class TestableLivewire {
-    
         public function mountTableAction(string $name, $record = null): static {}
 
         public function setTableActionData(array $data): static {}
@@ -149,6 +148,6 @@ namespace Livewire\Testing {
         public function assertCanNotSeeTableRecords(array | Collection $records): static {}
 
         public function assertCountTableRecords(int $count): static {}
-        
     }
+    
 }
