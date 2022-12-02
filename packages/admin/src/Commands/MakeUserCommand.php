@@ -80,23 +80,6 @@ class MakeUserCommand extends Command
 
         $this->options = $this->options();
 
-        $validation = Validator::make($this->options, [
-            'name'=>'required',
-            'email'=>'required:email:unique:' . $this->getUserModel(),
-            'password'=>'required:min:8',
-        ]);
-
-        $validation->validate();
-
-        if($validation->fails())
-        {
-            dd($validation->failed);
-        }
-
-
-
-
-
         $user = $this->createUser();
 
         $this->sendSuccessMessage($user);
