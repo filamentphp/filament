@@ -5,7 +5,7 @@
         'max-w-sm shadow-lg' => ! $isInline(),
         match ($isUnread()) {
             true => 'ring-primary-500',
-            false => 'ring-gray-900/10 dark:ring-gray-50/10'
+            false => 'ring-gray-900/10 dark:ring-gray-50/10',
         },
     ])
     :x-transition:enter-start="\Illuminate\Support\Arr::toCssClasses([
