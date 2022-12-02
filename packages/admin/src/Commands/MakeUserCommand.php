@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class MakeUserCommand extends Command
 {
@@ -19,12 +20,16 @@ class MakeUserCommand extends Command
 
     protected $signature = 'make:filament-user {--name= : The name of the user} {--email= : A valid and unique email address} {--password= : The password for the user (min. 8 characters)}';
 
+    protected $options;
+
+
+
     protected function getUserData(): array
     {
         return [
-            'name' => $this->validateInput(fn () => $this->option('name')??$this->ask('Name'), 'name', ['required']),
-            'email' => $this->validateInput(fn () => $this->option('email')??$this->ask('Email address'), 'email', ['required', 'email', 'unique:' . $this->getUserModel()]),
-            'password' => Hash::make($this->validateInput(fn () => $this->option('password')??$this->secret('Password'), 'password', ['required', 'min:8'])),
+            'name' => $this->validateInput(fn () => $this->options['name']??$this->ask('Name'), 'name', ['required'], function () { unset($this->options['name']);}),
+            'email' => $this->validateInput(fn () => $this->options['email']??$this->ask('Email address'), 'email', ['required', 'email', 'unique:' . $this->getUserModel()], function () { unset($this->options['email']);}),
+            'password' => Hash::make($this->validateInput(fn () => $this->options['password']??$this->secret('Password'), 'password', ['required', 'min:8'], function () { unset($this->options['password']);})),
         ];
     }
 
@@ -73,6 +78,26 @@ class MakeUserCommand extends Command
 
     public function handle(): int
     {
+
+        $this->options = $this->options();
+
+        $validation = Validator::make($this->options, [
+            'name'=>'required',
+            'email'=>'required:email:unique:' . $this->getUserModel(),
+            'password'=>'required:min:8',
+        ]);
+
+        $validation->validate();
+
+        if($validation->fails())
+        {
+            dd($validation->failed);
+        }
+
+
+
+
+
         $user = $this->createUser();
 
         $this->sendSuccessMessage($user);
