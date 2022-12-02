@@ -517,7 +517,7 @@ Select::make('status')
     ])
 ```
 
-In the array passed to `->options()` like above, the array keys are saved, and the array values will be the label of each option in the dropdown.
+In the `options()` array, the array keys are saved, and the array values will be the label of each option in the dropdown.
 
 ![](https://user-images.githubusercontent.com/41773797/147612885-888dfd64-6256-482d-b4bc-840191306d2d.png)
 
