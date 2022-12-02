@@ -11,11 +11,12 @@ trait CanReorderRecords
 
     public function reorderTable(array $order): void
     {
-        if (! $this->isTableReorderable()) {
+        if (!$this->isTableReorderable()) {
             return;
         }
 
         $orderColumn = $this->getTableReorderColumn();
+        $maxOrderRecord = collect($order)->max();
 
         if (
             $this instanceof HasRelationshipTable &&
@@ -23,18 +24,18 @@ trait CanReorderRecords
             in_array($orderColumn, $relationship->getPivotColumns())
         ) {
             foreach ($order as $index => $recordKey) {
-                $this->getTableRecord($recordKey)->{$relationship->getPivotAccessor()}->update([
-                    $orderColumn => $index + 1,
-                ]);
+                $this->getTableRecord($recordKey)->{$relationship->getPivotAccessor()}->update(
+                    $this->newOrderPosition($index, $orderColumn, $maxOrderRecord)
+                );
             }
 
             return;
         }
 
         foreach ($order as $index => $recordKey) {
-            $this->getTableRecord($recordKey)->update([
-                $orderColumn => $index + 1,
-            ]);
+            $this->getTableRecord($recordKey)->update(
+                $this->newOrderPosition($index, $orderColumn, $maxOrderRecord)
+            );
         }
     }
 
@@ -61,5 +62,20 @@ trait CanReorderRecords
     protected function getTableReorderColumn(): ?string
     {
         return null;
+    }
+
+    protected function preserveTableOrderWhileReordering(): bool
+    {
+        return true;
+    }
+
+    private function newOrderPosition($index, $orderColumn, $maxOrderRecord): array
+    {
+        return [
+            $orderColumn => ($this->tableSortDirection === 'desc' &&
+                $this->preserveTableOrderWhileReordering())
+                ? $maxOrderRecord - $index
+                : $index + 1,
+        ];
     }
 }

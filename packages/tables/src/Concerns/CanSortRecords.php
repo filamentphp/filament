@@ -55,7 +55,7 @@ trait CanSortRecords
 
     protected function applySortingToTableQuery(Builder $query): Builder
     {
-        if ($this->isTableReordering()) {
+        if ($this->isTableReordering() && !$this->preserveTableOrderWhileReordering()) {
             return $query->orderBy($this->getTableReorderColumn());
         }
 

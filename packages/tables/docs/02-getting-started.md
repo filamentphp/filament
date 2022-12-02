@@ -479,6 +479,17 @@ protected function isTablePaginationEnabledWhileReordering(): bool
 }
 ```
 
+### Preserve order sort direction while reordering
+
+To sort always in ascending while reordering you can use:
+
+```php
+protected function preserveTableOrderWhileReordering(): bool
+{
+    return false;
+}
+```
+
 ## Polling content
 
 You may poll table content so that it refreshes at a set interval, using the `getTablePollingInterval()` method:
