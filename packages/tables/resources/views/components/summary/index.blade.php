@@ -39,7 +39,7 @@
         @foreach ($columns as $column)
             @if ($placeholderColumns || $column->hasSummary())
                 <td {{ $column->getExtraHeaderAttributeBag()->class([
-                    'text-center px-4 py-2 font-medium text-sm text-gray-600 dark:text-gray-300',
+                    'px-4 py-2 font-medium text-sm text-gray-600 dark:text-gray-300',
                     'whitespace-nowrap' => ! $column->isHeaderWrapped(),
                     'whitespace-normal' => $column->isHeaderWrapped(),
                 ]) }}>
