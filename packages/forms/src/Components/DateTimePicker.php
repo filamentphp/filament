@@ -99,7 +99,7 @@ class DateTimePicker extends Field
     public function extraTriggerAttributes(array | Closure $attributes, bool $merge = false): static
     {
         if ($merge) {
-            $attributes = array_merge($this->getExtraTriggerAttributes(), $attributes);
+            $attributes = $this->getExtraTriggerAttributeBag()->merge($this->evaluate($attributes))->getAttributes();
         }
 
         $this->extraTriggerAttributes = $attributes;

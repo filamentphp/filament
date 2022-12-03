@@ -12,7 +12,7 @@ trait HasExtraAlpineAttributes
     public function extraAlpineAttributes(array | Closure $attributes, bool $merge = false): static
     {
         if ($merge) {
-            $attributes = array_merge($this->getExtraAlpineAttributes(), $attributes);
+            $attributes = $this->getExtraAlpineAttributeBag()->merge($this->evaluate($attributes))->getAttributes();
         }
 
         $this->extraAlpineAttributes = $attributes;

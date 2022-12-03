@@ -12,7 +12,7 @@ trait HasExtraAttributes
     public function extraAttributes(array | Closure $attributes, bool $merge = false): static
     {
         if ($merge) {
-            $attributes = array_merge($this->getExtraAttributes(), $attributes);
+            $attributes = $this->getExtraAttributeBag()->merge($this->evaluate($attributes))->getAttributes();
         }
 
         $this->extraAttributes = $attributes;

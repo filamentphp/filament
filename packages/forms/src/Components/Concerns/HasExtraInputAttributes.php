@@ -12,7 +12,7 @@ trait HasExtraInputAttributes
     public function extraInputAttributes(array | Closure $attributes, bool $merge = false): static
     {
         if ($merge) {
-            $attributes = array_merge($this->getExtraInputAttributes(), $attributes);
+            $attributes = $this->getExtraInputAttributeBag()->merge($this->evaluate($attributes))->getAttributes();
         }
 
         $this->extraInputAttributes = $attributes;

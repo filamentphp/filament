@@ -191,7 +191,7 @@ class ImageColumn extends Column
     public function extraImgAttributes(array | Closure $attributes, bool $merge = false): static
     {
         if ($merge) {
-            $attributes = array_merge($this->getExtraImgAttributes(), $merge);
+            $attributes = $this->getExtraImgAttributeBag()->merge($this->evaluate($attributes))->getAttributes();
         }
 
         $this->extraImgAttributes = $attributes;

@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
+use Illuminate\View\ComponentAttributeBag;
 
 trait HasExtraHeaderAttributes
 {
@@ -11,7 +12,7 @@ trait HasExtraHeaderAttributes
     public function extraHeaderAttributes(array | Closure $attributes, bool $merge = false): static
     {
         if ($merge) {
-            $attributes = array_merge($this->getExtraHeaderAttributes(), $attributes);
+            $attributes = $this->getExtraHeaderAttributeBag()->merge($this->evaluate($attributes))->getAttributes();
         }
 
         $this->extraHeaderAttributes = $attributes;
@@ -22,5 +23,10 @@ trait HasExtraHeaderAttributes
     public function getExtraHeaderAttributes(): array
     {
         return $this->evaluate($this->extraHeaderAttributes);
+    }
+
+    public function getExtraHeaderAttributeBag(): ComponentAttributeBag
+    {
+        return new ComponentAttributeBag($this->getExtraHeaderAttributes());
     }
 }
