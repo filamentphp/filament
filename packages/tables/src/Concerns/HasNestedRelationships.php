@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Support\Concerns;
+namespace Filament\Tables\Concerns;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
@@ -295,6 +295,11 @@ trait HasNestedRelationships
         }
     }
 
+    public function getNestedRelationshipQuery(string $name, Model $model, ?Builder $query = null, array | null &$relationships = null)
+    {
+        return $model::with($name);
+    }
+
     /**
      * Non-destructively return the target attribute from a relationship stack, which is always the last array item.
      *
@@ -408,7 +413,7 @@ trait HasNestedRelationships
      * Called as ...
      *
      * $query->orderBy(
-     *     $this->getNestedRelationshipExistenceQueries($query, 'post.author.name', 'asc'),
+     *     $this->getNestedRelationExistenceQuery($query, 'post.author.name', 'asc'),
      *     'asc'
      * );
      *

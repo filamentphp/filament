@@ -4,7 +4,7 @@ namespace Filament\Tables\Grouping;
 
 use Closure;
 use Filament\Support\Concerns\EvaluatesClosures;
-use Filament\Support\Concerns\HasNestedRelationships;
+use Filament\Tables\Concerns\HasNestedRelationships;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 

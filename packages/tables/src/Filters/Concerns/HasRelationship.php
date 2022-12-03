@@ -3,6 +3,7 @@
 namespace Filament\Tables\Filters\Concerns;
 
 use Closure;
+use Filament\Tables\Concerns\HasNestedRelationships;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -11,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 trait HasRelationship
 {
+    use HasNestedRelationships;
+
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
     public function relationship(string $relationshipName, string $titleAttribute = null, Closure $callback = null): static

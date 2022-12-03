@@ -4,8 +4,8 @@ namespace Filament\Tables\Columns;
 
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
-use Filament\Support\Concerns\HasNestedRelationships;
 use Filament\Tables\Columns\Concerns\BelongsToLayout;
+use Filament\Tables\Concerns\HasNestedRelationships;
 use Illuminate\Support\Traits\Conditionable;
 
 class Column extends ViewComponent
