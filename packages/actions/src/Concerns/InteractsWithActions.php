@@ -23,9 +23,9 @@ trait InteractsWithActions
     public ?string $mountedAction = null;
 
     /**
-     * @var array<string, mixed>
+     * @var array<string, mixed> | null
      */
-    public array $mountedActionData = [];
+    public ?array $mountedActionData = [];
 
     /**
      * @var array<string, Action>

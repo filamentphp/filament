@@ -17,9 +17,9 @@ trait HasFormComponentActions
     public ?string $mountedFormComponentAction = null;
 
     /**
-     * @var array<string, mixed>
+     * @var array<string, mixed> | null
      */
-    public array $mountedFormComponentActionData = [];
+    public ?array $mountedFormComponentActionData = [];
 
     public ?string $mountedFormComponentActionComponent = null;
 

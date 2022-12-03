@@ -21,9 +21,9 @@ class SettingsPage extends Page
     protected static string $view = 'filament-spatie-laravel-settings-plugin::pages.settings-page';
 
     /**
-     * @var array<string, mixed>
+     * @var array<string, mixed> | null
      */
-    public array $data;
+    public ?array $data = [];
 
     public function mount(): void
     {

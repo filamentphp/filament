@@ -24,9 +24,9 @@ abstract class RegisterTenant extends CardPage
     protected static string $view = 'filament::pages.tenancy.register-tenant';
 
     /**
-     * @var array<string, mixed>
+     * @var array<string, mixed> | null
      */
-    public array $data;
+    public ?array $data = [];
 
     public ?Model $tenant = null;
 

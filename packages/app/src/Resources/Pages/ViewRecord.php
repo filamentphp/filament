@@ -28,9 +28,9 @@ class ViewRecord extends Page
     protected static string $view = 'filament::resources.pages.view-record';
 
     /**
-     * @var array<string, mixed>
+     * @var array<string, mixed> | null
      */
-    public array $data;
+    public ?array $data = [];
 
     /**
      * @var array<int | string, string | array<mixed>>
