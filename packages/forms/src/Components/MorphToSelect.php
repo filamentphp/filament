@@ -53,12 +53,13 @@ class MorphToSelect extends Component
         $relationship = $this->getRelationship();
         $typeColumn = $relationship->getMorphType();
         $keyColumn = $relationship->getForeignKeyName();
+        $typeField = $this->getName() . '.' . $typeColumn;
 
         $types = $this->getTypes();
         $isRequired = $this->isRequired();
 
         /** @var ?Type $selectedType */
-        $selectedType = $types[$this->evaluate(fn (Get $get): ?string => $get($typeColumn))] ?? null;
+        $selectedType = $types[$this->evaluate(fn (Get $get): ?string => $get($typeField))] ?? null;
 
         return [
             Select::make($typeColumn)
