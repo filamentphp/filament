@@ -26,6 +26,8 @@ use Filament\Resources\Resource;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Color;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Icon;
 use Filament\Widgets\Widget;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -58,6 +60,11 @@ class Context
     protected string $globalSearchProvider = DefaultGlobalSearchProvider::class;
 
     protected string $homeUrl = '';
+
+    /**
+     * @var array<string, Icon>
+     */
+    protected array $icons = [];
 
     protected bool $isNavigationMounted = false;
 
@@ -135,6 +142,11 @@ class Context
      * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null
      */
     protected ?array $secondaryColor = null;
+
+    /**
+     * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null
+     */
+    protected ?array $grayColor = null;
 
     /**
      * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null
@@ -221,7 +233,7 @@ class Context
 
     protected string $fontProvider = BunnyFontProvider::class;
 
-    protected ?string $fontUrl = 'https://fonts.bunny.net/css?family=be-vietnam-pro:400,400i,500,500i,600,600i,700,700i&display=swap';
+    protected ?string $fontUrl = 'https://fonts.bunny.net/css?family=be-vietnam-pro:400,500,700&display=swap';
 
     /**
      * @var array<string, Plugin>
@@ -260,6 +272,7 @@ class Context
             $plugin->boot($this);
         }
 
+        FilamentIcon::register($this->icons);
         $this->registerLivewireComponents();
     }
 
@@ -632,6 +645,16 @@ class Context
     }
 
     /**
+     * @param  array<string, Icon>  $icons
+     */
+    public function icons(array $icons): static
+    {
+        $this->icons = array_merge($this->icons, $icons);
+
+        return $this;
+    }
+
+    /**
      * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string  $color
      * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string
      */
@@ -682,6 +705,24 @@ class Context
     public function getSecondaryColor(): array
     {
         return $this->secondaryColor ?? Color::Gray;
+    }
+
+    /**
+     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null  $color
+     */
+    public function grayColor(array | string | null $color): static
+    {
+        $this->grayColor = $this->processColor($color);
+
+        return $this;
+    }
+
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     */
+    public function getGrayColor(): array
+    {
+        return $this->grayColor ?? Color::Gray;
     }
 
     /**
@@ -824,6 +865,7 @@ class Context
      * @return array{
      *     'primary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
      *     'secondary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
+     *     'gray': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
      *     'danger': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
      *     'warning': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
      *     'success': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
@@ -834,6 +876,7 @@ class Context
         return [
             'primary' => $this->getPrimaryColor(),
             'secondary' => $this->getSecondaryColor(),
+            'gray' => $this->getGrayColor(),
             'warning' => $this->getWarningColor(),
             'danger' => $this->getDangerColor(),
             'success' => $this->getSuccessColor(),
@@ -1168,6 +1211,10 @@ class Context
             $tenant = Filament::getUserDefaultTenant($this->auth()->user());
         }
 
+        if ((! $tenant) && $this->hasRoutableTenancy()) {
+            return $this->hasTenantRegistration() ? $this->getTenantRegistrationUrl() : null;
+        }
+
         if ($tenant && $this->hasRoutableTenancy()) {
             $originalTenant = Filament::getTenant();
             Filament::setTenant($tenant);
@@ -1397,7 +1444,7 @@ class Context
 
     public function getFontHtml(): Htmlable
     {
-        return app($this->getFontProvider())->getHtml($this->getFontUrl());
+        return app($this->getFontProvider())->getHtml($this->getFontUrl(), $this->getFontName());
     }
 
     public function getFontName(): string

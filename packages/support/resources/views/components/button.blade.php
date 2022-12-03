@@ -116,7 +116,7 @@
             @if ($icon)
                 <x-filament::icon
                     :name="$icon"
-                    alias="support::button.prefix"
+                    group="support::button.prefix"
                     :size="$iconSize"
                     :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
@@ -164,7 +164,7 @@
             @if ($icon)
                 <x-filament::icon
                     :name="$icon"
-                    alias="support::button.suffix"
+                    group="support::button.suffix"
                     :size="$iconSize"
                     :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
@@ -198,7 +198,7 @@
         @if ($icon && $iconPosition === 'before')
             <x-filament::icon
                 :name="$icon"
-                alias="support::button.prefix"
+                group="support::button.prefix"
                 :class="$iconClasses"
             />
         @endif
@@ -212,7 +212,7 @@
         @if ($icon && $iconPosition === 'after')
             <x-filament::icon
                 :name="$icon"
-                alias="support::button.suffix"
+                group="support::button.suffix"
                 :class="$iconClasses"
             />
         @endif

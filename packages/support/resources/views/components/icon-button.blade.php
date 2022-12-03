@@ -3,6 +3,7 @@
     'disabled' => false,
     'form' => null,
     'icon' => null,
+    'iconAlias' => null,
     'iconSize' => null,
     'indicator' => null,
     'indicatorColor' => 'primary',
@@ -96,7 +97,8 @@
 
         <x-filament::icon
             :name="$icon"
-            alias="support::icon-button"
+            :alias="$iconAlias"
+            group="support::icon-button"
             :size="$iconSize"
             :class="$iconClasses"
             :wire:loading.remove.delay="$hasLoadingIndicator"

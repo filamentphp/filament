@@ -16,6 +16,7 @@ jobs:
           - forms
           - notifications
           - spark-billing-provider
+          - spatie-laravel-google-fonts-plugin
           - spatie-laravel-media-library-plugin
           - spatie-laravel-settings-plugin
           - spatie-laravel-tags-plugin

@@ -1,14 +1,19 @@
 <?php
 
+
 namespace Filament\FontProviders;
 
+use Filament\FontProviders\Contracts;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
 
 class GoogleFontProvider implements Contracts\FontProvider
 {
-    public function getHtml(?string $url): Htmlable
+    public function getHtml(?string $url, string $name): Htmlable
     {
+        $name = urlencode($name);
+        $url ??= "https://fonts.googleapis.com/css2?family={$name}:wght@400;500;700&display=swap";
+
         return new HtmlString("
             <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">
             <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>
