@@ -179,7 +179,7 @@
                         </div>
 
                         <div class="flex flex-col items-start justify-center">
-                            <div class="text-sm font-semibold tracking-wide uppercase">
+                            <div class="text-sm font-medium">
                                 {{ $step->getLabel() }}
                             </div>
 
