@@ -8,8 +8,12 @@ trait HasExtraHeaderAttributes
 {
     protected array | Closure $extraHeaderAttributes = [];
 
-    public function extraHeaderAttributes(array | Closure $attributes): static
+    public function extraHeaderAttributes(array | Closure $attributes, bool $merge = false): static
     {
+        if ($merge) {
+            $attributes = array_merge($this->getExtraHeaderAttributes(), $attributes);
+        }
+
         $this->extraHeaderAttributes = $attributes;
 
         return $this;

@@ -9,8 +9,12 @@ trait HasExtraAlpineAttributes
 {
     protected array | Closure $extraAlpineAttributes = [];
 
-    public function extraAlpineAttributes(array | Closure $attributes): static
+    public function extraAlpineAttributes(array | Closure $attributes, bool $merge = false): static
     {
+        if ($merge) {
+            $attributes = array_merge($this->getExtraAlpineAttributes(), $attributes);
+        }
+
         $this->extraAlpineAttributes = $attributes;
 
         return $this;

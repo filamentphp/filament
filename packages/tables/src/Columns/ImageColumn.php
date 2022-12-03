@@ -188,8 +188,12 @@ class ImageColumn extends Column
         return $this->evaluate($this->isSquare);
     }
 
-    public function extraImgAttributes(array | Closure $attributes): static
+    public function extraImgAttributes(array | Closure $attributes, bool $merge = false): static
     {
+        if ($merge) {
+            $attributes = array_merge($this->getExtraImgAttributes(), $merge);
+        }
+
         $this->extraImgAttributes = $attributes;
 
         return $this;

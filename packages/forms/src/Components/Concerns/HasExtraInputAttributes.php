@@ -9,8 +9,12 @@ trait HasExtraInputAttributes
 {
     protected array | Closure $extraInputAttributes = [];
 
-    public function extraInputAttributes(array | Closure $attributes): static
+    public function extraInputAttributes(array | Closure $attributes, bool $merge = false): static
     {
+        if ($merge) {
+            $attributes = array_merge($this->getExtraInputAttributes(), $attributes);
+        }
+
         $this->extraInputAttributes = $attributes;
 
         return $this;
