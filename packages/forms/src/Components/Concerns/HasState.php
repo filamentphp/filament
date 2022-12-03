@@ -96,6 +96,13 @@ trait HasState
         return $this;
     }
 
+    public function formatStateUsing(?Closure $callback): static
+    {
+        $this->afterStateHydrated(fn (Component $component) => $component->state($component->evaluate($callback)));
+
+        return $this;
+    }
+
     /**
      * @return array<string, mixed>
      */
