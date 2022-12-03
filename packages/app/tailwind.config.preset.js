@@ -1,16 +1,7 @@
 const defaultTheme = require('tailwindcss/defaultTheme')
 
 module.exports = {
-    content: [
-        './packages/actions/resources/**/*.blade.php',
-        './packages/app/resources/**/*.blade.php',
-        './packages/forms/resources/**/*.blade.php',
-        './packages/navigation/resources/**/*.blade.php',
-        './packages/notifications/resources/**/*.blade.php',
-        './packages/support/resources/**/*.blade.php',
-        './packages/tables/resources/**/*.blade.php',
-        './packages/widgets/resources/**/*.blade.php',
-    ],
+    content: ['./vendor/filament/**/*.blade.php'],
     darkMode: 'class',
     theme: {
         extend: {
@@ -50,6 +41,18 @@ module.exports = {
                     700: 'rgba(var(--secondary-color-700), <alpha-value>)',
                     800: 'rgba(var(--secondary-color-800), <alpha-value>)',
                     900: 'rgba(var(--secondary-color-900), <alpha-value>)',
+                },
+                gray: {
+                    50: 'rgba(var(--gray-color-50), <alpha-value>)',
+                    100: 'rgba(var(--gray-color-100), <alpha-value>)',
+                    200: 'rgba(var(--gray-color-200), <alpha-value>)',
+                    300: 'rgba(var(--gray-color-300), <alpha-value>)',
+                    400: 'rgba(var(--gray-color-400), <alpha-value>)',
+                    500: 'rgba(var(--gray-color-500), <alpha-value>)',
+                    600: 'rgba(var(--gray-color-600), <alpha-value>)',
+                    700: 'rgba(var(--gray-color-700), <alpha-value>)',
+                    800: 'rgba(var(--gray-color-800), <alpha-value>)',
+                    900: 'rgba(var(--gray-color-900), <alpha-value>)',
                 },
                 success: {
                     50: 'rgba(var(--success-color-50), <alpha-value>)',

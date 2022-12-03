@@ -4,12 +4,11 @@ namespace Filament\Pages;
 
 use Filament\Context;
 use Filament\Facades\Filament;
+use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Support\Facades\Route;
 
 class Dashboard extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-home';
-
     protected static ?int $navigationSort = -2;
 
     /**
@@ -19,7 +18,16 @@ class Dashboard extends Page
 
     public static function getNavigationLabel(): string
     {
-        return static::$navigationLabel ?? static::$title ?? __('filament::pages/dashboard.title');
+        return static::$navigationLabel ??
+            static::$title ??
+            __('filament::pages/dashboard.title');
+    }
+
+    public static function getNavigationIcon(): string
+    {
+        return static::$navigationIcon ??
+            FilamentIcon::resolve('app::pages.dashboard.navigation')?->name ??
+            'heroicon-o-home';
     }
 
     public static function routes(Context $context): void

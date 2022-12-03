@@ -20,10 +20,14 @@ body:
         - filament/forms
         - filament/tables
         - filament/notifications
+        - filament/actions
+        - filament/widgets
+        - filament/spatie-laravel-google-fonts-plugin
         - filament/spatie-laravel-media-library-plugin
         - filament/spatie-laravel-settings-plugin
         - filament/spatie-laravel-tags-plugin
         - filament/spatie-laravel-translatable-plugin
+        - filament/spark-billing-provider
         - Other
     validations:
       required: true
