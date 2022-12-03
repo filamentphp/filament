@@ -73,7 +73,7 @@ trait HasHint
 
         return array_merge(
             parent::getActions(),
-            $hintAction ? [$hintAction->getName() => $hintAction->component($this)] : [],
+            $hintAction ? [$hintAction->getName() => $hintAction] : [],
         );
     }
 }
