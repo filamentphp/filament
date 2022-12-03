@@ -4,7 +4,6 @@ namespace Filament\FontProviders;
 
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
-use Illuminate\Support\Str;
 
 class LocalFontProvider implements Contracts\FontProvider
 {
