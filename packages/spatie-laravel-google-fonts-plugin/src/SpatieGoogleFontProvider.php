@@ -1,6 +1,5 @@
 <?php
 
-
 use Filament\FontProviders\Contracts;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Blade;

@@ -5,7 +5,6 @@ namespace Filament\Pages;
 use Filament\Context;
 use Filament\Facades\Filament;
 use Filament\Support\Facades\FilamentIcon;
-use Filament\Support\Icons\IconManager;
 use Illuminate\Support\Facades\Route;
 
 class Dashboard extends Page
