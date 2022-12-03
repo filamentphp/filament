@@ -1444,7 +1444,10 @@ class Context
 
     public function getFontHtml(): Htmlable
     {
-        return app($this->getFontProvider())->getHtml($this->getFontUrl(), $this->getFontName());
+        return app($this->getFontProvider())->getHtml(
+            $this->getFontName(),
+            $this->getFontUrl(),
+        );
     }
 
     public function getFontName(): string
