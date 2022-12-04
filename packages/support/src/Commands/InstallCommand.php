@@ -2,9 +2,7 @@
 
 namespace Filament\Support\Commands;
 
-use Filament\Support\Commands\Concerns\CanInstallUpgradeCommand;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
-use Filament\Support\Commands\UpgradeCommand;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
