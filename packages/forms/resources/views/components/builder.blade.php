@@ -233,6 +233,7 @@
                                         <x-filament::icon-button
                                             :label="$getCreateItemBetweenButtonLabel()"
                                             icon="heroicon-m-plus"
+                                            icon-alias="forms::builder.create-item-between.trigger"
                                         />
                                     </x-slot>
 

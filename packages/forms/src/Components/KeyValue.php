@@ -203,6 +203,6 @@ class KeyValue extends Field
 
     public function isReorderable(): bool
     {
-        return $this->evaluate($this->isReorderable);
+        return (bool) $this->evaluate($this->isReorderable);
     }
 }

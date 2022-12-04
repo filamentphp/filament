@@ -155,7 +155,7 @@ class Wizard extends Component
 
     public function isSkippable(): bool
     {
-        return $this->evaluate($this->skippable);
+        return (bool) $this->evaluate($this->skippable);
     }
 
     public function isStepPersistedInQueryString(): bool

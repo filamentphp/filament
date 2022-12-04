@@ -375,6 +375,6 @@ class DateTimePicker extends Field
 
     public function shouldCloseOnDateSelection(): bool
     {
-        return $this->evaluate($this->shouldCloseOnDateSelection);
+        return (bool) $this->evaluate($this->shouldCloseOnDateSelection);
     }
 }

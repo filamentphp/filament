@@ -2,7 +2,7 @@
     $isRtl = __('filament::layout.direction') === 'rtl';
     $previousArrowIcon = $isRtl ? 'heroicon-m-chevron-right' : 'heroicon-m-chevron-left';
     $nextArrowIcon = $isRtl ? 'heroicon-m-chevron-left' : 'heroicon-m-chevron-right';
-    $statePath = $getStatePath;
+    $statePath = $getStatePath();
 @endphp
 
 <div
@@ -179,7 +179,7 @@
                         </div>
 
                         <div class="flex flex-col items-start justify-center">
-                            <div class="text-sm font-semibold tracking-wide uppercase">
+                            <div class="text-sm font-medium">
                                 {{ $step->getLabel() }}
                             </div>
 

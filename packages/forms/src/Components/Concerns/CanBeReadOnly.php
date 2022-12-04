@@ -37,6 +37,6 @@ trait CanBeReadOnly
 
     public function isReadOnly(): bool
     {
-        return $this->evaluate($this->isReadOnly);
+        return (bool) $this->evaluate($this->isReadOnly);
     }
 }

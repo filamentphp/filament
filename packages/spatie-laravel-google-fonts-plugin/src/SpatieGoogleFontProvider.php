@@ -7,7 +7,7 @@ use Illuminate\Support\HtmlString;
 
 class SpatieGoogleFontProvider implements Contracts\FontProvider
 {
-    public function getHtml(?string $url, string $name): Htmlable
+    public function getHtml(string $name, ?string $url = null): Htmlable
     {
         return new HtmlString(Blade::render('@googlefonts'));
     }

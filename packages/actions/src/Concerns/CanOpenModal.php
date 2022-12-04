@@ -244,7 +244,7 @@ trait CanOpenModal
 
     public function isModalSlideOver(): bool
     {
-        return $this->evaluate($this->isModalSlideOver);
+        return (bool) $this->evaluate($this->isModalSlideOver);
     }
 
     /**

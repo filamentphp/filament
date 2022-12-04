@@ -15,9 +15,9 @@ trait HasBulkActions
     public ?string $mountedTableBulkAction = null;
 
     /**
-     * @var array<string, mixed>
+     * @var array<string, mixed> | null
      */
-    public array $mountedTableBulkActionData = [];
+    public ?array $mountedTableBulkActionData = [];
 
     protected function configureTableBulkAction(BulkAction $action): void
     {
