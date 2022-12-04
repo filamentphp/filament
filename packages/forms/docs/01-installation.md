@@ -10,90 +10,87 @@ Filament has a few requirements to run:
 - Laravel v8.0+
 - Livewire v2.0+
 
-The form builder comes pre-installed inside the [admin panel 2.x](/docs/admin/2.x), but you must still follow the installation instructions below if you're using it in the rest of your app.
+Actions come pre-installed inside the [admin panel 3.x](/docs/admin/3.x), but you must still follow the installation instructions below if you're using it in the rest of your app.
 
-First, require the form builder using Composer:
+First, require the actions package using Composer:
 
 ```bash
-composer require filament/forms:"^2.0"
+composer require filament/actions:"^3.0"
 ```
 
 ## New Laravel projects
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/iy1DO8JXRDQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
-To get started with the form builder quickly, you can set up [Livewire](https://laravel-livewire.com), [Alpine.js](https://alpinejs.dev) and [Tailwind CSS](https://tailwindcss.com) with these commands:
+To get started with Filament quickly, you can set up [Livewire](https://laravel-livewire.com), [Alpine.js](https://alpinejs.dev) and [Tailwind CSS](https://tailwindcss.com) with these commands:
 
 ```bash
-php artisan forms:install
+php artisan filament:install --scaffold --forms
 npm install
 npm run dev
 ```
 
 > These commands will ruthlessly overwrite existing files in your application, hence why we only recommend using this method for new projects.
 
-You're now ready to start [building forms](getting-started)!
-
 ## Existing Laravel projects
 
-The package uses the following dependencies:
-
-- [Alpine.js](https://alpinejs.dev)
-- [Tailwind CSS](https://tailwindcss.com)
-- [Tailwind CSS Forms plugin](https://github.com/tailwindlabs/tailwindcss-forms)
-- [Tailwind CSS Typography plugin](https://tailwindcss.com/docs/typography-plugin)
-
-You may install these through NPM:
+First, run the following command to install the package's assets:
 
 ```bash
-npm install alpinejs tailwindcss @tailwindcss/forms @tailwindcss/typography --save-dev
+php artisan filament:install --forms
 ```
 
-### Configuring Tailwind CSS
+### Installing Tailwind CSS
 
-To finish installing Tailwind, you must create a new `tailwind.config.js` file in the root of your project. The easiest way to do this is by running `npx tailwindcss init`.
+First, use NPM to install Tailwind CSS and its `forms` and `typography` plugins:
 
-In `tailwind.config.js`, register the plugins you installed, and add custom colors used by the form builder:
+```bash
+npm install tailwindcss @tailwindcss/forms @tailwindcss/typography --save-dev
+```
+
+Create a new `tailwind.config.js` file. Ensure that you add Filament's `content` path, custom `colors`, and the `plugins` you installed:
 
 ```js
-const colors = require('tailwindcss/colors') // [tl! focus]
+const colors = require('tailwindcss/colors')
 
 module.exports = {
     content: [
         './resources/**/*.blade.php',
-        './vendor/filament/**/*.blade.php', // [tl! focus]
+        './vendor/filament/**/*.blade.php',
     ],
     theme: {
         extend: {
-            colors: { // [tl! focus:start]
+            colors: {
                 danger: colors.rose,
                 primary: colors.blue,
                 secondary: colors.gray,
                 success: colors.green,
                 warning: colors.yellow,
-            }, // [tl! focus:end]
+            },
         },
     },
     plugins: [
-        require('@tailwindcss/forms'), // [tl! focus:start]
-        require('@tailwindcss/typography'), // [tl! focus:end]
+        require('@tailwindcss/forms'),
+        require('@tailwindcss/typography'),
     ],
 }
 ```
 
-Of course, you may specify your own custom `primary`, `success`, `warning` and `danger` colors, which will be used instead.
+Of course, you may specify your own custom `primary`, `secondary`, `success`, `warning` and `danger` colors, which will be used instead. But each color needs to be a [Tailwind CSS color](https://tailwindcss.com/docs/customizing-colors#color-palette-reference), or have all 50 - 900 variants specified - a single hex code or RGB value won't work here.
 
-### Bundling assets
+### Configuring styles
 
-New Laravel projects use Vite for bundling assets by default. However, your project may still use Laravel Mix. Read the steps below for the bundler used in your project.
+In `resources/css/app.css`, import Tailwind CSS, and the form components CSS:
+
+```css
+@import '../../vendor/filament/forms/dist/index.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+Most Laravel projects use Vite for bundling assets by default. However, your project may still use Laravel Mix. Read the steps below for the bundler used in your project.
 
 #### Vite
-
-If you're using Vite, you should manually install [Autoprefixer](https://github.com/postcss/autoprefixer) through NPM:
-
-```bash
-npm install autoprefixer --save-dev
-```
 
 Create a `postcss.config.js` file in the root of your project, and register Tailwind CSS and Autoprefixer as plugins:
 
@@ -106,32 +103,28 @@ module.exports = {
 }
 ```
 
-You may also want to update your `vite.config.js` file to refresh the page after Livewire components or custom form components have been updated:
+You may also want to update your `vite.config.js` file to refresh the page after Livewire components have been updated:
 
 ```js
-import { defineConfig } from 'vite'
-import laravel, { refreshPaths } from 'laravel-vite-plugin' // [tl! focus]
+import { defineConfig } from 'vite';
+import laravel, { refreshPaths } from 'laravel-vite-plugin'; // [tl! focus]
 
 export default defineConfig({
     plugins: [
         laravel({
-            input: [
-                'resources/css/app.css',
-                'resources/js/app.js',
-            ],
+            input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: [ // [tl! focus:start]
                 ...refreshPaths,
                 'app/Http/Livewire/**',
-                'app/Forms/Components/**',
             ], // [tl! focus:end]
         }),
     ],
-})
+});
 ```
 
-#### Laravel Mix
+Compile your new CSS and JS assets using `npm run dev`.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/XslPKxtMR70" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+#### Laravel Mix
 
 In your `webpack.mix.js` file, register Tailwind CSS as a PostCSS plugin:
 
@@ -143,37 +136,6 @@ mix.js('resources/js/app.js', 'public/js')
         require('tailwindcss'), // [tl! focus]
     ])
 ```
-
-### Configuring styles
-
-In `/resources/css/app.css`, import `filament/forms` vendor CSS and [Tailwind CSS](https://tailwindcss.com):
-
-```css
-@import '../../vendor/filament/forms/dist/module.esm.css';
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-```
-
-### Configuring scripts
-
-In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), the `filament/forms` and `filament/notifications` plugins, and register them:
-
-```js
-import Alpine from 'alpinejs'
-import FormsAlpinePlugin from '../../vendor/filament/forms/dist/module.esm'
-import NotificationsAlpinePlugin from '../../vendor/filament/notifications/dist/module.esm'
-
-Alpine.plugin(FormsAlpinePlugin)
-Alpine.plugin(NotificationsAlpinePlugin)
-
-window.Alpine = Alpine
-
-Alpine.start()
-```
-
-### Compiling assets
 
 Compile your new CSS and JS assets using `npm run dev`.
 
@@ -194,42 +156,29 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
         <title>{{ config('app.name') }}</title>
 
         <style>[x-cloak] { display: none !important; }</style>
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
+        @filamentStyles
+        @vite('resources/css/app.css')
+
         @livewireScripts
-        @stack('scripts')
+        @filamentScripts
+        <script src="//unpkg.com/@alpinejs/focus" defer></script>
+        <script src="//unpkg.com/alpinejs" defer></script>
+        @vite('resources/js/app.js')
     </head>
 
     <body class="antialiased">
         {{ $slot }}
-
-        @livewire('notifications')
     </body>
 </html>
 ```
-
-You're now ready to start [building forms](getting-started)!
 
 ## Publishing configuration
 
 If you wish, you may publish the configuration of the package using:
 
 ```bash
-php artisan vendor:publish --tag=forms-config
-```
-
-## Publishing translations
-
-If you wish to translate the package, you may publish the language files using:
-
-```bash
-php artisan vendor:publish --tag=forms-translations
-```
-
-Since this package depends on other Filament packages, you may wish to translate those as well:
-
-```bash
-php artisan vendor:publish --tag=filament-support-translations
+php artisan vendor:publish --tag=filament-forms-config
 ```
 
 ## Upgrading
@@ -249,3 +198,5 @@ We recommend adding the `filament:upgrade` command to your `composer.json`'s `po
     "@php artisan filament:upgrade"
 ],
 ```
+
+This should be done during the `filament:install` process, but double check it's been done.

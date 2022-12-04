@@ -10,14 +10,14 @@ Filament has a few requirements to run:
 - Laravel v8.0+
 - Livewire v2.0+
 
-This plugin is compatible with other Filament v2.x packages.
+This plugin is compatible with other Filament v3.x packages.
 
 ## Installation
 
 Install the plugin with Composer:
 
 ```bash
-composer require filament/spatie-laravel-tags-plugin:"^2.0"
+composer require filament/spatie-laravel-tags-plugin:"^3.0"
 ```
 
 If you haven't already done so, you need to publish the migration to create the tags table:

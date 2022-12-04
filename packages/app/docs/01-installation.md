@@ -10,23 +10,15 @@ Filament has a few requirements to run:
 - Laravel v8.0+
 - Livewire v2.0+
 
-This package is compatible with other Filament v2.x products. The [form builder](/docs/forms), [table builder](/docs/tables) and [notifications](/docs/notifications) come pre-installed with the package, and no other installation steps are required to use them within the admin panel.
+This package is compatible with other Filament v3.x products. The [form builder](/docs/forms), [table builder](/docs/tables) and [notifications](/docs/notifications) come pre-installed with the package, and no other installation steps are required to use them within the admin panel.
 
 ## Installation
 
-To get started with the admin panel, you can install it using the command:
+To get started with the admin panel, you can install it using the commands:
 
 ```bash
-composer require filament/filament:"^2.0"
-```
-
-Each time you upgrade Filament, you need to run the `filament:upgrade` command. We recommend adding this to your `composer.json`'s `post-update-cmd`:
-
-```json
-"post-update-cmd": [
-    // ...
-    "@php artisan filament:upgrade"
-],
+composer require filament/filament:"^3.0"
+php artisan filament:install --app
 ```
 
 If you don't have one, you may create a new user account using:
@@ -52,7 +44,7 @@ If you don't complete these steps, there will be a 403 error when you try to acc
 If you wish, you may publish the configuration of the package using:
 
 ```bash
-php artisan vendor:publish --tag=filament-config
+php artisan vendor:publish --tag=filament-actions-config
 ```
 
 ## Publishing translations
@@ -66,7 +58,9 @@ php artisan vendor:publish --tag=filament-translations
 Since this package depends on other Filament packages, you may wish to translate those as well:
 
 ```bash
+php artisan vendor:publish --tag=filament-actions-translations
 php artisan vendor:publish --tag=filament-forms-translations
+php artisan vendor:publish --tag=filament-notifications-translations
 php artisan vendor:publish --tag=filament-tables-translations
 php artisan vendor:publish --tag=filament-support-translations
 ```
@@ -88,3 +82,5 @@ We recommend adding the `filament:upgrade` command to your `composer.json`'s `po
     "@php artisan filament:upgrade"
 ],
 ```
+
+This should be done during the `filament:install` process, but double check it's been done.

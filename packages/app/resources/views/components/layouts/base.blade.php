@@ -82,8 +82,6 @@
 
         <script src="//unpkg.com/alpinejs" defer></script>
 
-        @stack('scripts')
-
         @if (config('filament.broadcasting.echo'))
             <script>
                 window.addEventListener('DOMContentLoaded', () => {

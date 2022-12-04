@@ -31,7 +31,6 @@ class TablesServiceProvider extends PackageServiceProvider
     protected function getCommands(): array
     {
         $commands = [
-            Commands\InstallCommand::class,
             Commands\MakeColumnCommand::class,
         ];
 

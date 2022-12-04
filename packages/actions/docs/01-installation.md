@@ -23,7 +23,7 @@ composer require filament/actions:"^3.0"
 To get started with Filament quickly, you can set up [Livewire](https://laravel-livewire.com), [Alpine.js](https://alpinejs.dev) and [Tailwind CSS](https://tailwindcss.com) with these commands:
 
 ```bash
-php artisan filament:install --scaffold --tables
+php artisan filament:install --scaffold --actions
 npm install
 npm run dev
 ```
@@ -35,7 +35,7 @@ npm run dev
 First, run the following command to install the package's assets:
 
 ```bash
-php artisan filament:install --tables
+php artisan filament:install --actions
 ```
 
 ### Installing Tailwind CSS
@@ -180,7 +180,7 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
 If you wish, you may publish the configuration of the package using:
 
 ```bash
-php artisan vendor:publish --tag=filament-tables-config
+php artisan vendor:publish --tag=filament-actions-config
 ```
 
 ## Upgrading

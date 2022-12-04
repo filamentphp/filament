@@ -10,85 +10,85 @@ Filament has a few requirements to run:
 - Laravel v8.0+
 - Livewire v2.0+
 
-Notifications come pre-installed inside the [admin panel 2.x](/docs/admin/2.x), but you must still follow the installation instructions below if you're using it in the rest of your app.
+Actions come pre-installed inside the [admin panel 3.x](/docs/admin/3.x), but you must still follow the installation instructions below if you're using it in the rest of your app.
 
-First, require the notifications package using Composer:
+First, require the actions package using Composer:
 
 ```bash
-composer require filament/notifications:"^2.0"
+composer require filament/actions:"^3.0"
 ```
 
 ## New Laravel projects
 
-To get started with notifications quickly, you can set up [Livewire](https://laravel-livewire.com), [Alpine.js](https://alpinejs.dev) and [Tailwind CSS](https://tailwindcss.com) with these commands:
+To get started with Filament quickly, you can set up [Livewire](https://laravel-livewire.com), [Alpine.js](https://alpinejs.dev) and [Tailwind CSS](https://tailwindcss.com) with these commands:
 
 ```bash
-php artisan notifications:install
+php artisan filament:install --scaffold --notifications
 npm install
 npm run dev
 ```
 
 > These commands will ruthlessly overwrite existing files in your application, hence why we only recommend using this method for new projects.
 
-You're now ready to start [sending notifications](sending-notifications)!
-
-![Filament Notifications](https://user-images.githubusercontent.com/44533235/180972526-da7ebb2f-24f6-4cf4-8e4c-d261574384ab.jpg)
-
 ## Existing Laravel projects
 
-The package uses the following dependencies:
-
-- [Alpine.js](https://alpinejs.dev)
-- [Alpine Floating UI](https://github.com/awcodes/alpine-floating-ui)
-- [Tailwind CSS](https://tailwindcss.com)
-
-You may install these through NPM:
+First, run the following command to install the package's assets:
 
 ```bash
-npm install alpinejs @awcodes/alpine-floating-ui tailwindcss --save-dev
+php artisan filament:install --notifications
 ```
 
-### Configuring Tailwind CSS
+### Installing Tailwind CSS
 
-To finish installing Tailwind, you must create a new `tailwind.config.js` file in the root of your project. The easiest way to do this is by running `npx tailwindcss init`.
+First, use NPM to install Tailwind CSS and its `forms` and `typography` plugins:
 
-In `tailwind.config.js`, add custom colors used by notifications:
+```bash
+npm install tailwindcss @tailwindcss/forms @tailwindcss/typography --save-dev
+```
+
+Create a new `tailwind.config.js` file. Ensure that you add Filament's `content` path, custom `colors`, and the `plugins` you installed:
 
 ```js
-const colors = require('tailwindcss/colors') // [tl! focus]
+const colors = require('tailwindcss/colors')
 
 module.exports = {
     content: [
         './resources/**/*.blade.php',
-        './vendor/filament/**/*.blade.php', // [tl! focus]
+        './vendor/filament/**/*.blade.php',
     ],
     theme: {
         extend: {
-            colors: { // [tl! focus:start]
+            colors: {
                 danger: colors.rose,
                 primary: colors.blue,
                 secondary: colors.gray,
                 success: colors.green,
                 warning: colors.yellow,
-            }, // [tl! focus:end]
+            },
         },
     },
+    plugins: [
+        require('@tailwindcss/forms'),
+        require('@tailwindcss/typography'),
+    ],
 }
 ```
 
-Of course, you may specify your own custom `primary`, `success`, `warning` and `danger` colors, which will be used instead.
+Of course, you may specify your own custom `primary`, `secondary`, `success`, `warning` and `danger` colors, which will be used instead. But each color needs to be a [Tailwind CSS color](https://tailwindcss.com/docs/customizing-colors#color-palette-reference), or have all 50 - 900 variants specified - a single hex code or RGB value won't work here.
 
-### Bundling assets
+### Configuring styles
 
-New Laravel projects use Vite for bundling assets by default. However, your project may still use Laravel Mix. Read the steps below for the bundler used in your project.
+In `resources/css/app.css`, import Tailwind CSS:
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+Most Laravel projects use Vite for bundling assets by default. However, your project may still use Laravel Mix. Read the steps below for the bundler used in your project.
 
 #### Vite
-
-If you're using Vite, you should manually install [Autoprefixer](https://github.com/postcss/autoprefixer) through NPM:
-
-```bash
-npm install autoprefixer --save-dev
-```
 
 Create a `postcss.config.js` file in the root of your project, and register Tailwind CSS and Autoprefixer as plugins:
 
@@ -110,10 +110,7 @@ import laravel, { refreshPaths } from 'laravel-vite-plugin'; // [tl! focus]
 export default defineConfig({
     plugins: [
         laravel({
-            input: [
-                'resources/css/app.css',
-                'resources/js/app.js',
-            ],
+            input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: [ // [tl! focus:start]
                 ...refreshPaths,
                 'app/Http/Livewire/**',
@@ -122,6 +119,8 @@ export default defineConfig({
     ],
 });
 ```
+
+Compile your new CSS and JS assets using `npm run dev`.
 
 #### Laravel Mix
 
@@ -135,35 +134,6 @@ mix.js('resources/js/app.js', 'public/js')
         require('tailwindcss'), // [tl! focus]
     ])
 ```
-
-### Configuring styles
-
-In `/resources/css/app.css`, import [Tailwind CSS](https://tailwindcss.com):
-
-```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-```
-
-### Configuring scripts
-
-In `/resources/js/app.js`, import [Alpine.js](https://alpinejs.dev), Alpine Floating UI and the `filament/notifications` plugin, and register them:
-
-```js
-import Alpine from 'alpinejs'
-import AlpineFloatingUI from '@awcodes/alpine-floating-ui'
-import NotificationsAlpinePlugin from '../../vendor/filament/notifications/dist/module.esm'
-
-Alpine.plugin(AlpineFloatingUI)
-Alpine.plugin(NotificationsAlpinePlugin)
-
-window.Alpine = Alpine
-
-Alpine.start()
-```
-
-### Compiling assets
 
 Compile your new CSS and JS assets using `npm run dev`.
 
@@ -184,28 +154,31 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
         <title>{{ config('app.name') }}</title>
 
         <style>[x-cloak] { display: none !important; }</style>
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
+        @filamentStyles
+        @vite('resources/css/app.css')
+
         @livewireScripts
-        @stack('scripts')
+        @filamentScripts
+        <script src="//unpkg.com/@alpinejs/focus" defer></script>
+        <script src="//unpkg.com/alpinejs" defer></script>
+        @vite('resources/js/app.js')
     </head>
 
     <body class="antialiased">
         {{ $slot }}
-
+        
         @livewire('notifications')
     </body>
 </html>
 ```
-
-You're now ready to start [sending notifications](sending-notifications)!
 
 ## Publishing configuration
 
 If you wish, you may publish the configuration of the package using:
 
 ```bash
-php artisan vendor:publish --tag=notifications-config
+php artisan vendor:publish --tag=filament-notifications-config
 ```
 
 ## Upgrading
@@ -225,3 +198,5 @@ We recommend adding the `filament:upgrade` command to your `composer.json`'s `po
     "@php artisan filament:upgrade"
 ],
 ```
+
+This should be done during the `filament:install` process, but double check it's been done.
