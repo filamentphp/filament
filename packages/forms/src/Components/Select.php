@@ -417,7 +417,7 @@ class Select extends Field
 
     public function isMultiple(): bool
     {
-        return $this->evaluate($this->isMultiple);
+        return (bool) $this->evaluate($this->isMultiple);
     }
 
     public function isSearchable(): bool

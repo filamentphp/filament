@@ -32,6 +32,6 @@ trait CanOpenUrl
 
     public function shouldOpenUrlInNewTab(): bool
     {
-        return $this->evaluate($this->shouldOpenUrlInNewTab);
+        return (bool) $this->evaluate($this->shouldOpenUrlInNewTab);
     }
 }

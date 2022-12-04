@@ -178,7 +178,7 @@ class ImageColumn extends Column
 
     public function isCircular(): bool
     {
-        return $this->evaluate($this->isCircular);
+        return (bool) $this->evaluate($this->isCircular);
     }
 
     /**
@@ -191,7 +191,7 @@ class ImageColumn extends Column
 
     public function isSquare(): bool
     {
-        return $this->evaluate($this->isSquare);
+        return (bool) $this->evaluate($this->isSquare);
     }
 
     /**

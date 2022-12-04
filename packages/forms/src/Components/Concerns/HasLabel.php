@@ -45,6 +45,6 @@ trait HasLabel
 
     public function isLabelHidden(): bool
     {
-        return $this->evaluate($this->isLabelHidden);
+        return (bool) $this->evaluate($this->isLabelHidden);
     }
 }

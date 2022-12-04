@@ -17,6 +17,6 @@ trait CanBePreloaded
 
     public function isPreloaded(): bool
     {
-        return $this->evaluate($this->isPreloaded);
+        return (bool) $this->evaluate($this->isPreloaded);
     }
 }

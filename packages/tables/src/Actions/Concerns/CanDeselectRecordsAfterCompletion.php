@@ -17,6 +17,6 @@ trait CanDeselectRecordsAfterCompletion
 
     public function shouldDeselectRecordsAfterCompletion(): bool
     {
-        return $this->evaluate($this->shouldDeselectRecordsAfterCompletion);
+        return (bool) $this->evaluate($this->shouldDeselectRecordsAfterCompletion);
     }
 }

@@ -17,6 +17,6 @@ trait CanCancelAction
 
     public function canCancelAction(): bool
     {
-        return $this->evaluate($this->canCancelAction);
+        return (bool) $this->evaluate($this->canCancelAction);
     }
 }

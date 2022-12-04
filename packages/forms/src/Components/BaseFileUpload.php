@@ -328,22 +328,22 @@ class BaseFileUpload extends Field
 
     public function canDownload(): bool
     {
-        return $this->evaluate($this->canDownload);
+        return (bool) $this->evaluate($this->canDownload);
     }
 
     public function canOpen(): bool
     {
-        return $this->evaluate($this->canOpen);
+        return (bool) $this->evaluate($this->canOpen);
     }
 
     public function canPreview(): bool
     {
-        return $this->evaluate($this->canPreview);
+        return (bool) $this->evaluate($this->canPreview);
     }
 
     public function canReorder(): bool
     {
-        return $this->evaluate($this->canReorder);
+        return (bool) $this->evaluate($this->canReorder);
     }
 
     /**
@@ -392,7 +392,7 @@ class BaseFileUpload extends Field
 
     public function shouldPreserveFilenames(): bool
     {
-        return $this->evaluate($this->shouldPreserveFilenames);
+        return (bool) $this->evaluate($this->shouldPreserveFilenames);
     }
 
     public function getFileNamesStatePath(): ?string
@@ -646,7 +646,7 @@ class BaseFileUpload extends Field
 
     public function isMultiple(): bool
     {
-        return $this->evaluate($this->isMultiple);
+        return (bool) $this->evaluate($this->isMultiple);
     }
 
     public function getUploadedFileNameForStorageUsing(Closure $callback): static

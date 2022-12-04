@@ -198,7 +198,7 @@ class FileUpload extends BaseFileUpload
 
     public function getImageResizeUpscale(): bool
     {
-        return $this->evaluate($this->imageResizeUpscale);
+        return (bool) $this->evaluate($this->imageResizeUpscale);
     }
 
     public function getLoadingIndicatorPosition(): string
@@ -238,6 +238,6 @@ class FileUpload extends BaseFileUpload
 
     public function shouldAppendFiles(): bool
     {
-        return $this->evaluate($this->shouldAppendFiles);
+        return (bool) $this->evaluate($this->shouldAppendFiles);
     }
 }

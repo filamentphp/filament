@@ -131,12 +131,12 @@ class AssociateAction extends Action
 
     public function isAssociateAnotherDisabled(): bool
     {
-        return $this->evaluate($this->isAssociateAnotherDisabled);
+        return (bool) $this->evaluate($this->isAssociateAnotherDisabled);
     }
 
     public function isRecordSelectPreloaded(): bool
     {
-        return $this->evaluate($this->isRecordSelectPreloaded);
+        return (bool) $this->evaluate($this->isRecordSelectPreloaded);
     }
 
     public function getRecordTitleAttribute(): string

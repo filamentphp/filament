@@ -116,6 +116,6 @@ trait HasForm
 
     public function isFormDisabled(): bool
     {
-        return $this->evaluate($this->isFormDisabled);
+        return (bool) $this->evaluate($this->isFormDisabled);
     }
 }
