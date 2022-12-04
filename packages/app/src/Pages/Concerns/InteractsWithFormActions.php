@@ -5,7 +5,6 @@ namespace Filament\Pages\Concerns;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Tables\Actions\BulkAction;
 use InvalidArgumentException;
 
 trait InteractsWithFormActions
