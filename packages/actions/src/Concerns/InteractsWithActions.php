@@ -3,12 +3,14 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
+use InvalidArgumentException;
 use Livewire\Exceptions\PropertyNotFoundException;
 
 /**
@@ -237,17 +239,19 @@ trait InteractsWithActions
             return $action;
         }
 
-        if (method_exists($this, $name)) {
-            $action = $this->cacheAction(Action::configureUsing(
-                Closure::fromCallable([$this, 'configureAction']),
-                fn () => $this->{$name}(),
-            ), name: $name);
+        if (! method_exists($this, $name)) {
+            throw new Exception("Action [$name] is not registered within a [$name()] method on the Livewire component.");
         }
 
-        if ($action instanceof Action) {
-            return $action;
+        $action = Action::configureUsing(
+            Closure::fromCallable([$this, 'configureAction']),
+            fn () => $this->{$name}(),
+        );
+
+        if (! $action instanceof Action) {
+            throw new InvalidArgumentException('Actions must be an instance of ' . Action::class . ". The [$name] method on the Livewire component returned an instance of [" . get_class($action) . '].');
         }
 
-        return null;
+        return $this->cacheAction($action, name: $name);
     }
 }

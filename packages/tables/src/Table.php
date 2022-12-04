@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use function Livewire\invade;
 
 class Table extends ViewComponent
@@ -237,12 +238,20 @@ class Table extends ViewComponent
         foreach (Arr::wrap($actions) as $index => $action) {
             if ($action instanceof ActionGroup) {
                 foreach ($action->getActions() as $groupedAction) {
+                    if (! $groupedAction instanceof Action) {
+                        throw new InvalidArgumentException('Table actions within a group must be an instance of ' . Action::class . '.');
+                    }
+
                     $groupedAction->table($this);
                 }
 
                 $this->actions[$index] = $action;
 
                 continue;
+            }
+
+            if (! $action instanceof Action) {
+                throw new InvalidArgumentException('Table actions must be an instance of ' . Action::class . ' or ' . ActionGroup::class . '.');
             }
 
             $action->table($this);
@@ -296,6 +305,10 @@ class Table extends ViewComponent
     public function bulkActions(array $actions): static
     {
         foreach ($actions as $action) {
+            if (! $action instanceof BulkAction) {
+                throw new InvalidArgumentException('Table bulk actions must be an instance of ' . BulkAction::class . '.');
+            }
+
             $action->table($this);
             $this->registerBulkAction($action);
             $this->groupedBulkActions[$action->getName()] = $action;
@@ -342,8 +355,12 @@ class Table extends ViewComponent
 
             $action = $column->getAction();
 
-            if (! ($action instanceof Action)) {
+            if (($action === null) || ($action instanceof Closure)) {
                 continue;
+            }
+
+            if (! $action instanceof Action) {
+                throw new InvalidArgumentException('Table column actions must be an instance of ' . Action::class . '.');
             }
 
             $actionName = $action->getName();
@@ -455,6 +472,10 @@ class Table extends ViewComponent
     public function emptyStateActions(array | ActionGroup | Closure $actions): static
     {
         foreach ($actions as $action) {
+            if (! $action instanceof Action) {
+                throw new InvalidArgumentException('Table empty state actions must be an instance of ' . Action::class . '.');
+            }
+
             $action->table($this);
 
             $this->emptyStateActions[$action->getName()] = $action;
@@ -548,6 +569,11 @@ class Table extends ViewComponent
         foreach (Arr::wrap($actions) as $index => $action) {
             if ($action instanceof ActionGroup) {
                 foreach ($action->getActions() as $groupedAction) {
+                    /** @phpstan-ignore-next-line */
+                    if ((! $groupedAction instanceof Action) && (! $groupedAction instanceof BulkAction)) {
+                        throw new InvalidArgumentException('Table header actions within a group must be an instance of ' . Action::class . ' or ' . BulkAction::class . '.');
+                    }
+
                     $groupedAction->table($this);
 
                     if ($groupedAction instanceof BulkAction) {
@@ -558,6 +584,10 @@ class Table extends ViewComponent
                 $this->headerActions[$index] = $action;
 
                 continue;
+            }
+
+            if ((! $action instanceof Action) && (! $action instanceof BulkAction)) {
+                throw new InvalidArgumentException('Table header actions must be an instance of ' . Action::class . ', ' . BulkAction::class . ', or ' . ActionGroup::class . '.');
             }
 
             $action->table($this);

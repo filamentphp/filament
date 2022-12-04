@@ -3,6 +3,7 @@
 namespace Filament\Actions\Testing;
 
 use Closure;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\MountableAction;
@@ -124,7 +125,11 @@ class TestsActions
     public function assertActionDoesNotExist(): Closure
     {
         return function (string $name): static {
-            $action = $this->instance()->getAction($name);
+            try {
+                $action = $this->instance()->getAction($name);
+            } catch (Exception $exception) {
+                $action = null;
+            }
 
             $livewireClass = $this->instance()::class;
 
