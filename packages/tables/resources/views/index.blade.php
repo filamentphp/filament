@@ -512,6 +512,7 @@
                                                 ])>
                                                     <x-filament::icon-button
                                                         icon="heroicon-m-chevron-down"
+                                                        icon-alias="tables::collapsible-column.trigger"
                                                         color="gray"
                                                         size="sm"
                                                         x-on:click="isCollapsed = ! isCollapsed"

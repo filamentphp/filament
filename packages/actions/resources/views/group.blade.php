@@ -7,6 +7,7 @@
         <x-filament::icon-button
             :color="$getColor()"
             :icon="$getIcon() ?? 'heroicon-m-ellipsis-vertical'"
+            icon-alias="actions::group.trigger"
             :size="$getSize()"
             :tooltip="$getTooltip()"
         >
