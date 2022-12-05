@@ -2,6 +2,8 @@
 title: Installation
 ---
 
+**Using forms inside the [App Framework](../app)**? You can skip this installation. This guide is for people who want to use the package inside their custom TALL-stack app.
+
 ## Requirements
 
 Filament has a few requirements to run:
@@ -9,8 +11,6 @@ Filament has a few requirements to run:
 - PHP 8.0+
 - Laravel v8.0+
 - Livewire v2.0+
-
-Actions come pre-installed inside the [admin panel 3.x](/docs/admin/3.x), but you must still follow the installation instructions below if you're using it in the rest of your app.
 
 First, require the actions package using Composer:
 

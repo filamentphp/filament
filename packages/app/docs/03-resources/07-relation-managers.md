@@ -4,7 +4,7 @@ title: Managing relationships
 
 ## Choosing the right tool for the job
 
-Filament provides many ways to manage relationships in the admin panel. Which feature you should use depends on the type of relationship you are managing, and which UI you are looking for.
+Filament provides many ways to manage relationships in the app. Which feature you should use depends on the type of relationship you are managing, and which UI you are looking for.
 
 ### Relation managers - interactive tables underneath your resource forms
 

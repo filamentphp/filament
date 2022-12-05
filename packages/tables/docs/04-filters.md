@@ -17,7 +17,7 @@ protected function getTableFilters(): array
 }
 ```
 
-If you're using them in admin panel resources or relation managers, you must put them in the `$table->filters()` method:
+If you're using them in App Framework resources or relation managers, you must put them in the `$table->filters()` method:
 
 ```php
 public static function table(Table $table): Table

@@ -96,7 +96,7 @@ function (Set $set) {
 }
 ```
 
-If you're writing a form for an admin panel resource or relation manager, and you wish to check if a form is `create`, `edit` or `view`, use the `$context` parameter:
+If you're writing a form for an App Framework resource or relation manager, and you wish to check if a form is `create`, `edit` or `view`, use the `$context` parameter:
 
 ```php
 function (string $context) {
@@ -104,7 +104,7 @@ function (string $context) {
 }
 ```
 
-> Outside of the admin panel, you can set a form's context by using the `context()` method on your `$form` definition.
+> Outside of the App Framework, you can set a form's context by using the `context()` method on your `$form` definition.
 
 Callbacks are evaluated using Laravel's `app()->call()` under the hood, so you are able to combine multiple parameters in any order:
 

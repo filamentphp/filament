@@ -26,7 +26,7 @@ This will create several files in the `app/Filament/Resources` directory:
 
 Your new resource class lives in `CustomerResource.php`.
 
-The classes in the `Pages` directory are used to customize the pages in the admin panel that interact with your resource. They're all full-page [Livewire](https://laravel-livewire.com) components that you can customize in any way you wish.
+The classes in the `Pages` directory are used to customize the pages in the app that interact with your resource. They're all full-page [Livewire](https://laravel-livewire.com) components that you can customize in any way you wish.
 
 > Have you created a resource, but it's not appearing in the navigation menu? If you have a [model policy](#authorization), make sure you return `true` from the `viewAny()` method.
 
@@ -62,7 +62,7 @@ php artisan make:filament-resource Customer --generate
 
 ### Handling soft deletes
 
-By default, you will not be able to interact with deleted records in the admin panel. If you'd like to add functionality to restore, force delete and filter trashed records in your resource, use the `--soft-deletes` flag when generating the resource:
+By default, you will not be able to interact with deleted records in the app. If you'd like to add functionality to restore, force delete and filter trashed records in your resource, use the `--soft-deletes` flag when generating the resource:
 
 ```bash
 php artisan make:filament-resource Customer --soft-deletes
@@ -299,7 +299,7 @@ protected static function getNavigationGroup(): ?string
 
 Within Filament, every query to your resource model will start with the `getEloquentQuery()` method.
 
-Because of this, it's very easy to apply your own [model scopes](https://laravel.com/docs/eloquent#query-scopes) that affect the entire resource. You can use this to implement [multi-tenancy](#multi-tenancy) easily within the admin panel.
+Because of this, it's very easy to apply your own [model scopes](https://laravel.com/docs/eloquent#query-scopes) that affect the entire resource. You can use this to implement [multi-tenancy](#multi-tenancy) easily within the app.
 
 ### Disabling global scopes
 

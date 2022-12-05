@@ -2,9 +2,9 @@
 title: Users
 ---
 
-By default, all `App\Models\User`s can access Filament locally. To allow them to access Filament in production, you must take a few extra steps to ensure that only the correct users have access to the admin panel.
+By default, all `App\Models\User`s can access Filament locally. To allow them to access Filament in production, you must take a few extra steps to ensure that only the correct users have access to the app.
 
-## Authorizing access to the admin panel
+## Authorizing access to the app
 
 To set up your `App\Models\User` to access Filament in non-local environments, you must implement the `FilamentUser` contract:
 
@@ -58,7 +58,7 @@ The `getFilamentAvatarUrl()` method is used to retrieve the avatar of the curren
 
 ## Configuring the name attribute
 
-By default, Filament will use the `name` attribute of the user to display their name in the admin panel. To change this, you can implement the `HasName` contract:
+By default, Filament will use the `name` attribute of the user to display their name in the app. To change this, you can implement the `HasName` contract:
 
 ```php
 <?php
