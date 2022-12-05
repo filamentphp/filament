@@ -217,11 +217,12 @@ You may fill the form with default data, using the `mountUsing()` method:
 ```php
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Form;
 use Filament\Tables\Actions\Action;
 use Illuminate\Database\Eloquent\Collection;
 
 Action::make('updateAuthor')
-    ->mountUsing(fn (Forms\Form $form, User $record) => $form->fill([
+    ->mountUsing(fn (Form $form, User $record) => $form->fill([
         'authorId' => $record->author->id,
     ]))
     ->action(function (User $record, array $data): void {

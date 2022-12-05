@@ -44,7 +44,7 @@ Additionally, your simple resource will have no `getRelations()` method, as [rel
 
 ### Automatically generating forms and tables
 
-If you'd like to save time, Filament can automatically generate the [form](#forms) and [table](#tables) for you, based on your model's database columns.
+If you'd like to save time, Filament can automatically generate the [form](#forms) and [table](#table) for you, based on your model's database columns.
 
 The `doctrine/dbal` package is required to use this functionality:
 
@@ -94,7 +94,7 @@ This is required for features like [global search](global-search) to work.
 
 ## Forms
 
-Resource classes contain a static `form()` method that is used to build the forms on the Create and Edit pages:
+Resource classes contain a `form()` method that is used to build the [forms](../../forms/getting-started) on the [Create](creating-records) and [Edit](editing-records) pages:
 
 ```php
 use Filament\Forms;
@@ -111,36 +111,9 @@ public static function form(Form $form): Form
 }
 ```
 
-### Fields
+The `schema()` method is used to define the structure of your form. It is an array of [fields](../../forms/fields) and [layout components](../../forms/layout), in the order they should appear in your form.
 
-The `schema()` method is used to define the structure of your form. It is an array of [fields](../../forms/fields), in the order they should appear in your form.
-
-We have many fields available for your forms, including:
-
-- [Text input](../../forms/fields/text-input)
-- [Select](../../forms/fields/select)
-- [Checkbox](../../forms/fields/checkbox)
-- [Date-time picker](../../forms/fields/date-time-picker)
-- [File upload](../../forms/fields/file-upload)
-- [Rich editor](../../forms/fields/rich-editor)
-- [Markdown editor](../../forms/fields/markdown-editor)
-- [Repeater](../../forms/fields/repeater)
-
-To view a full list of available form [fields](../../forms/fields), see the [Form Builder documentation](../../forms/fields).
-
-You may also build your own completely [custom form fields](../../forms/fields/custom).
-
-### Layout
-
-Form layouts are completely customizable. We have many layout components available, which can be used in any combination:
-
-- [Grid](../../forms/layout/grid)
-- [Card](../../forms/layout/card)
-- [Tabs](../../forms/layout/tabs)
-
-To view a full list of available [layout components](../../forms/layout), see the [Form Builder documentation](../../forms/layout).
-
-You may also build your own completely [custom layout components](../../forms/layout/custom).
+Check out the Forms docs for a [list of available fields](../../forms/fields/getting-started#available-fields), and a [list of form layout components use](../../forms/layout/getting-started#available-layout-components) you can use to structure those fields.
 
 ### Hiding components contextually
 
@@ -168,9 +141,9 @@ Forms\Components\TextInput::make('password')
     ->visibleOn('create'),
 ```
 
-## Tables
+## Table
 
-Resource classes contain a static `table()` method that is used to build the table on the [List page](listing-records):
+Resource classes contain a `table()` method that is used to build the [table](../../tables/getting-started) on the [List page](listing-records):
 
 ```php
 use Filament\Tables;

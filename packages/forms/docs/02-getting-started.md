@@ -40,7 +40,7 @@ In your Livewire component's view, render the form:
 </form>
 ```
 
-Finally, add any [fields](fields) and [layout components](layout) to the Livewire component's `getFormSchema()` method:
+Finally, add any [fields](fields) and [layout components](layout) to the Livewire component's `form()` method:
 
 ```php
 <?php
@@ -48,6 +48,7 @@ Finally, add any [fields](fields) and [layout components](layout) to the Livewir
 namespace App\Http\Livewire;
 
 use Filament\Forms;
+use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -68,13 +69,14 @@ class EditPost extends Component implements Forms\Contracts\HasForms
         ]);
     }
     
-    protected function getFormSchema(): array // [tl! focus:start]
+    protected function form(Form $form): Form // [tl! focus:start]
     {
-        return [
-            Forms\Components\TextInput::make('title')->required(),
-            Forms\Components\MarkdownEditor::make('content'),
-            // ...
-        ];
+        return $form
+            ->schema([
+                Forms\Components\TextInput::make('title')->required(),
+                Forms\Components\MarkdownEditor::make('content'),
+                // ...
+            ]);
     } // [tl! focus:end]
     
     public function submit(): void
@@ -89,7 +91,7 @@ class EditPost extends Component implements Forms\Contracts\HasForms
 }
 ```
 
-Visit your Livewire component in the browser, and you should see the form components from `getFormSchema()`.
+Visit your Livewire component in the browser, and you should see the form components from `schema()`.
 
 ![](https://user-images.githubusercontent.com/41773797/147614478-5b40c645-107e-40ac-ba41-f0feb99dd480.png)
 
@@ -106,6 +108,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Post;
 use Filament\Forms;
+use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -121,14 +124,16 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
         $this->form->fill();
     } // [tl! focus:end]
     
-    protected function getFormSchema(): array
+    protected function form(Form $form): Form
     {
-        return [
-            Forms\Components\TextInput::make('title')
-                ->default('Status Update') // [tl! focus]
-                ->required(),
-            Forms\Components\MarkdownEditor::make('content'),
-        ];
+        return $form
+            ->schema([
+                Forms\Components\TextInput::make('title')
+                    ->default('Status Update') // [tl! focus]
+                    ->required(),
+                Forms\Components\MarkdownEditor::make('content'),
+                // ...
+            ]);
     }
     
     public function render(): View
@@ -151,6 +156,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Post;
 use Filament\Forms;
+use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -171,12 +177,14 @@ class EditPost extends Component implements Forms\Contracts\HasForms
         ]);
     } // [tl! focus:end]
     
-    protected function getFormSchema(): array
+    protected function form(Form $form): Form
     {
-        return [
-            Forms\Components\TextInput::make('title')->required(),
-            Forms\Components\MarkdownEditor::make('content'),
-        ];
+        return $form
+            ->schema([
+                Forms\Components\TextInput::make('title')->required(),
+                Forms\Components\MarkdownEditor::make('content'),
+                // ...
+            ]);
     }
     
     public function render(): View
@@ -197,6 +205,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Post;
 use Filament\Forms;
+use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -212,12 +221,14 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
         $this->form->fill();
     }
     
-    protected function getFormSchema(): array
+    protected function form(Form $form): Form
     {
-        return [
-            Forms\Components\TextInput::make('title')->required(),
-            Forms\Components\MarkdownEditor::make('content'),
-        ];
+        return $form
+            ->schema([
+                Forms\Components\TextInput::make('title')->required(),
+                Forms\Components\MarkdownEditor::make('content'),
+                // ...
+            ]);
     }
     
     public function create(): void // [tl! focus:start]
@@ -246,7 +257,7 @@ You may register a model to a form. The form builder is able to use this model t
 - Automatically retrieving the database table name when using database validation rules like `exists` and `unique`.
 - Automatically attaching relationships to the model when the form is saved, when using fields such as the `Select`, `Repeater`, `SpatieMediaLibraryFileUpload`, or `SpatieTagsInput`.
 
-Pass a model instance to a form using the `getFormModel()` method:
+Pass a model instance to a form using the `model()` method:
 
 ```php
 <?php
@@ -255,6 +266,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Post;
 use Filament\Forms;
+use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -276,19 +288,16 @@ class EditPost extends Component implements Forms\Contracts\HasForms
         ]);
     }
     
-    protected function getFormSchema(): array
+    protected function form(Form $form): Form
     {
-        return [
-            Forms\Components\TextInput::make('title')->required(),
+        return $form
+            ->schema([
+                Forms\Components\TextInput::make('title')->required(),
             Forms\Components\MarkdownEditor::make('content'),
-            Forms\Components\SpatieTagsInput::make('tags'),
-        ];
+                // ...
+            ])
+            ->model($this->post); // [tl! focus]
     }
-    
-    protected function getFormModel(): Post // [tl! focus:start]
-    {
-        return $this->post;
-    } // [tl! focus:end]
     
     public function render(): View
     {
@@ -306,6 +315,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Post;
 use Filament\Forms;
+use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -327,13 +337,15 @@ class EditPost extends Component implements Forms\Contracts\HasForms
         ]);
     }
     
-    protected function getFormSchema(): array
+    protected function form(Form $form): Form
     {
-        return [
-            Forms\Components\TextInput::make('title')->required(),
-            Forms\Components\MarkdownEditor::make('content'),
-            Forms\Components\SpatieTagsInput::make('tags')->model($this->post), // [tl! focus]
-        ];
+        return $form
+            ->schema([
+                Forms\Components\TextInput::make('title')->required(),
+                Forms\Components\MarkdownEditor::make('content'),
+                Forms\Components\SpatieTagsInput::make('tags')->model($this->post), // [tl! focus]
+                // ...
+            ]);
     }
     
     public function render(): View
@@ -358,6 +370,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Post;
 use Filament\Forms;
+use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -374,22 +387,20 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
         $this->form->fill();
     }
     
-    protected function getFormSchema(): array
+    protected function form(Form $form): Form
     {
-        return [
-            Forms\Components\TextInput::make('title')
-                ->required(),
-            Forms\Components\MarkdownEditor::make('content'),
-            Forms\Components\Select::make('categories')
-                ->multiple()
-                ->relationship('categories', 'name'),
-        ];
+        return $form
+            ->schema([
+                Forms\Components\TextInput::make('title')
+                    ->required(),
+                Forms\Components\MarkdownEditor::make('content'),
+                Forms\Components\Select::make('categories')
+                    ->multiple()
+                    ->relationship('categories', 'name'),
+                // ...
+            ])
+            ->model(Post::class); // [tl! focus]
     }
-    
-    protected function getFormModel(): string // [tl! focus:start]
-    {
-        return Post::class;
-    } // [tl! focus:end]
     
     public function render(): View
     {
@@ -413,6 +424,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Post;
 use Filament\Forms;
+use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -434,24 +446,22 @@ class EditPost extends Component implements Forms\Contracts\HasForms
         ]);
     }
     
-    protected function getFormSchema(): array
+    protected function form(Form $form): Form
     {
-        return [
-            Forms\Components\TextInput::make('title')
-                ->required(),
-            Forms\Components\MarkdownEditor::make('content'),
-            Forms\Components\Select::make('categories')
-                ->multiple()
-                ->relationship('categories', 'name'),
-        ];
+        return $form
+            ->schema([
+                Forms\Components\TextInput::make('title')
+                    ->required(),
+                Forms\Components\MarkdownEditor::make('content'),
+                Forms\Components\Select::make('categories')
+                    ->multiple()
+                    ->relationship('categories', 'name'),
+                // ...
+            ])
+            ->model($this->post); // [tl! focus]
     }
     
-    protected function getFormModel(): Post // [tl! focus:start]
-    {
-        return $this->post;
-    }
-    
-    public function save(): void
+    public function save(): void // [tl! focus:start]
     {
         $this->post->update(
             $this->form->getState(),
@@ -478,6 +488,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Post;
 use Filament\Forms;
+use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;
@@ -495,18 +506,16 @@ class CreatePost extends Component implements Forms\Contracts\HasForms
         $this->form->fill();
     }
     
-    protected function getFormSchema(): array
+    protected function form(Form $form): Form
     {
-        return [
-            Forms\Components\TextInput::make('title')->required(),
-            Forms\Components\MarkdownEditor::make('content'),
-            Forms\Components\SpatieTagsInput::make('tags'),
-        ];
-    }
-    
-    protected function getFormModel(): string
-    {
-        return Post::class;
+        return $form
+            ->schema([
+                Forms\Components\TextInput::make('title')->required(),
+                Forms\Components\MarkdownEditor::make('content'),
+                Forms\Components\SpatieTagsInput::make('tags'),
+                // ...
+            ])
+            ->model(Post::class);
     }
     
     public function create(): void
@@ -550,6 +559,7 @@ namespace App\Http\Livewire;
 use App\Models\Author;
 use App\Models\Post;
 use Filament\Forms;
+use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -579,20 +589,26 @@ class EditPost extends Component implements Forms\Contracts\HasForms
         ]);
     }
     
-    protected function getPostFormSchema(): array
+    protected function postForm(Form $form): Form
     {
-        return [
-            Forms\Components\TextInput::make('title')->required(),
-            Forms\Components\MarkdownEditor::make('content'),
-        ];
+        return $form
+            ->schema([
+                Forms\Components\TextInput::make('title')->required(),
+                Forms\Components\MarkdownEditor::make('content'),
+                // ...
+            ])
+            ->model($this->post);
     }
     
-    protected function getAuthorFormSchema(): array
+    protected function authorForm(Form $form): Form
     {
-        return [
-            Forms\Components\TextInput::make('name')->required(),
-            Forms\Components\TextInput::make('email')->email()->required(),
-        ];
+        return $form
+            ->schema([
+                Forms\Components\TextInput::make('name')->required(),
+                Forms\Components\TextInput::make('email')->email()->required(),
+                // ...
+            ])
+            ->model($this->author);
     }
     
     public function savePost(): void
@@ -612,12 +628,8 @@ class EditPost extends Component implements Forms\Contracts\HasForms
     protected function getForms(): array // [tl! focus:start]
     {
         return [
-            'postForm' => $this->makeForm()
-                ->schema($this->getPostFormSchema())
-                ->model($this->post),
-            'authorForm' => $this->makeForm()
-                ->schema($this->getAuthorFormSchema())
-                ->model($this->author),
+            'postForm',
+            'authorForm',
         ];
     } // [tl! focus:end]
     
@@ -639,6 +651,7 @@ namespace App\Http\Livewire;
 
 use App\Models\Post;
 use Filament\Forms;
+use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -658,24 +671,18 @@ class EditPost extends Component implements Forms\Contracts\HasForms
         ]);
     }
     
-    protected function getFormSchema(): array
+    protected function form(Form $form): Form
     {
-        return [
-            Forms\Components\TextInput::make('title')->required(),
-            Forms\Components\MarkdownEditor::make('content'),
-            Forms\Components\SpatieTagsInput::make('tags'),
-        ];
+        return $form
+            ->schema([
+                Forms\Components\TextInput::make('title')->required(),
+                Forms\Components\MarkdownEditor::make('content'),
+                Forms\Components\SpatieTagsInput::make('tags'),
+                // ...
+            ])
+            ->model($this->post)
+            ->statePath('data'); // [tl! focus]
     }
-    
-    protected function getFormModel(): Post
-    {
-        return $this->post;
-    }
-    
-    protected function getFormStatePath(): string // [tl! focus:start]
-    {
-        return 'data';
-    } // [tl! focus:end]
     
     public function render(): View
     {

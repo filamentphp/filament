@@ -492,7 +492,7 @@ protected function getTablePollingInterval(): ?string
 
 Internally, the table builder uses the [form builder](/docs/forms) to implement filtering, actions, and bulk actions. Because of this, the form builder is already set up on your Livewire component and ready to use with your own custom forms.
 
-You may use the default `form` out of the box:
+You may use the default `form()` out of the box:
 
 ```php
 <?php
@@ -500,6 +500,8 @@ You may use the default `form` out of the box:
 namespace App\Http\Livewire;
 
 use App\Models\Post;
+use Filament\Forms;
+use Filament\Forms\Form;
 use Filament\Tables;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
@@ -515,11 +517,12 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
         $this->form->fill();
     }
 
-    protected function getFormSchema(): array
+    protected function form(Form $form): Form
     {
-        return [
-            // ...
-        ];
+        return $form
+            ->schema([
+                // ...
+            ]);
     }
 
     protected function getTableQuery(): Builder

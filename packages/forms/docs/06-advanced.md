@@ -104,7 +104,7 @@ function (string $context) {
 }
 ```
 
-> Outside of the admin panel, you can set a form's context by defining a `getFormContext()` method on your Livewire component.
+> Outside of the admin panel, you can set a form's context by using the `context()` method on your `$form` definition.
 
 Callbacks are evaluated using Laravel's `app()->call()` under the hood, so you are able to combine multiple parameters in any order:
 
