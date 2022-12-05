@@ -113,7 +113,7 @@ public static function form(Form $form): Form
 
 The `schema()` method is used to define the structure of your form. It is an array of [fields](../../forms/fields) and [layout components](../../forms/layout), in the order they should appear in your form.
 
-Check out the Forms docs for a [list of available fields](../../forms/fields/getting-started#available-fields), and a [list of form layout components use](../../forms/layout/getting-started#available-layout-components) you can use to structure those fields.
+Check out the Forms docs for a [list of fields](../../forms/fields/getting-started#available-fields), and a [list of form layout components](../../forms/layout/getting-started#available-layout-components) you can use to structure those fields.
 
 ### Hiding components contextually
 
