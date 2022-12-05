@@ -709,6 +709,7 @@
                                 $recordAction = $getRecordAction($record);
                                 $recordKey = $getRecordKey($record);
                                 $recordUrl = $getRecordUrl($record);
+                                $recordBulkActionEnabled = $getRecordBulkActionEnabled($record);
                             @endphp
 
                             <x-tables::row
@@ -749,7 +750,7 @@
                                     </x-tables::actions.cell>
                                 @endif
 
-                                @if ($isSelectionEnabled)
+                                @if ($isSelectionEnabled && $recordBulkActionEnabled)
                                     <x-tables::checkbox.cell :class="\Illuminate\Support\Arr::toCssClasses([
                                         'hidden' => $isReordering,
                                     ])">

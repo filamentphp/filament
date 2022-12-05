@@ -339,6 +339,19 @@ class Table extends ViewComponent
         return $callback($record);
     }
 
+    public function getRecordBulkActionEnabled(Model $record): bool {
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        $callback = invade($livewire)->getTableRecordBulkActionsEnabled();
+
+        if (! $callback) {
+            return true;
+        }
+
+        return $callback($record);
+    }
+
     public function getReorderColumn(): ?string
     {
         /** @var TableComponent $livewire */

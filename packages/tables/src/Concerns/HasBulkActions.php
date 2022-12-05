@@ -188,4 +188,9 @@ trait HasBulkActions
     {
         return [];
     }
+
+    protected function getTableRecordBulkActionsEnabled(): ?Closure
+    {
+        return null;
+    }
 }
