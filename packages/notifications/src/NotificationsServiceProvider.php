@@ -55,14 +55,4 @@ class NotificationsServiceProvider extends PluginServiceProvider
             Js::make('notifications', __DIR__ . '/../dist/index.js'),
         ];
     }
-
-    /**
-     * @return array<class-string>
-     */
-    protected function getCommands(): array
-    {
-        return [
-            Commands\InstallCommand::class,
-        ];
-    }
 }

@@ -4,7 +4,7 @@ title: Appearance
 
 ## Changing the brand logo
 
-By default, Filament will use your app's name as a brand logo in the admin panel.
+By default, Filament will use your app's name as a brand logo.
 
 You may create a `resources/views/vendor/filament/components/brand.blade.php` file to provide a custom logo:
 
@@ -20,11 +20,11 @@ By default, Filament only includes a light theme. However, you may allow the use
 'dark_mode' => true,
 ```
 
-When dark mode is enabled, the admin panel will automatically obey your system's dark / light mode preference. You may switch to dark / light mode permanently through the button in the user dropdown menu.
+When dark mode is enabled, the design will automatically obey your system's dark / light mode preference. You may switch to dark / light mode permanently through the button in the user dropdown menu.
 
 If you're using a [custom theme](#building-themes), make sure that you have the `darkMode: 'class'` setting in your `tailwind.config.js` file.
 
-> Please note: before enabling dark mode in production, please thoroughly test your admin panel - especially third party plugins, which may not be properly tested with dark mode.
+> Please note: before enabling dark mode in production, please thoroughly test your app - especially third party plugins, which may not be properly tested with dark mode.
 
 When the user toggles between dark or light mode, a browser event called **dark-mode-toggled** is dispatched. You can listen to it:
 
@@ -112,7 +112,7 @@ module.exports = {
 }
 ```
 
-You may specify your own colors, which will be used throughout the admin panel.
+You may specify your own colors, which will be used throughout the app.
 
 If you use Vite to compile assets, in your `vite.config.js` file, register the `filament.css` theme file:
 
@@ -244,7 +244,7 @@ In `config/filament.php`, set the `layouts.notifications.alignment` to any value
 
 ## Render hooks
 
-Filament allows you to render Blade content at various points in the admin panel layout. This is useful for integrations with packages like [`wire-elements/modal`](https://github.com/wire-elements/modal) which require you to add a Livewire component to your app.
+Filament allows you to render Blade content at various points in the app layout. This is useful for integrations with packages like [`wire-elements/modal`](https://github.com/wire-elements/modal) which require you to add a Livewire component to your app.
 
 Here's an example, integrating [`wire-elements/modal`](https://github.com/wire-elements/modal) with Filament in a service provider:
 

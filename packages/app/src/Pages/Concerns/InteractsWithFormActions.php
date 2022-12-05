@@ -5,6 +5,7 @@ namespace Filament\Pages\Concerns;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use InvalidArgumentException;
 
 trait InteractsWithFormActions
 {
@@ -29,6 +30,10 @@ trait InteractsWithFormActions
         foreach ($actions as $index => $action) {
             if ($action instanceof ActionGroup) {
                 foreach ($action->getActions() as $groupedAction) {
+                    if (! $groupedAction instanceof Action) {
+                        throw new InvalidArgumentException('Form actions within a group must be an instance of ' . Action::class . '.');
+                    }
+
                     /** @var Action $groupedAction */
                     $groupedAction->livewire($this);
 
@@ -38,6 +43,10 @@ trait InteractsWithFormActions
                 $this->cachedActions[$index] = $action;
 
                 continue;
+            }
+
+            if (! $action instanceof Action) {
+                throw new InvalidArgumentException('Form actions must be an instance of ' . Action::class . ', or ' . ActionGroup::class . '.');
             }
 
             $this->cacheAction($action);

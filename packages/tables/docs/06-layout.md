@@ -260,7 +260,7 @@ use Filament\Tables\Columns\TextColumn;
 
 ### Adding a collapse animation
 
-If you're not using the table builder within the admin panel, you may find that there is no animation when collapsing or expanding the content. You can enable this by installing the [Alpine.js Collapse Plugin](https://alpinejs.dev/plugins/collapse):
+If you're not using the table builder within the App Framework, you may find that there is no animation when collapsing or expanding the content. You can enable this by installing the [Alpine.js Collapse Plugin](https://alpinejs.dev/plugins/collapse):
 
 ```bash
 npm install @alpinejs/collapse --save-dev
@@ -291,7 +291,7 @@ protected function getTableContentGrid(): ?array
 }
 ```
 
-Or if you're using admin panel resources or relation managers, you must define a `$table->contentGrid()` method:
+Or if you're using App Framework resources or relation managers, you must define a `$table->contentGrid()` method:
 
 ```php
 public static function table(Table $table): Table

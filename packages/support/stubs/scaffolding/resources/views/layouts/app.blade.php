@@ -10,15 +10,18 @@
         <title>{{ config('app.name') }}</title>
 
         <style>[x-cloak] { display: none !important; }</style>
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
         @livewireStyles
+        @filamentStyles
+        @vite('resources/css/app.css')
+
         @livewireScripts
-        @stack('scripts')
+        @filamentScripts
+        <script src="//unpkg.com/@alpinejs/focus" defer></script>
+        <script src="//unpkg.com/alpinejs" defer></script>
+        @vite('resources/js/app.js')
     </head>
 
     <body class="antialiased">
         {{ $slot }}
-
-        @livewire('notifications')
     </body>
 </html>

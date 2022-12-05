@@ -120,7 +120,7 @@ class MakePageCommand extends Command
             $resourcePage === 'custom' ? [$viewPath] : [],
         );
 
-        if (! $this->option('force') && $this->checkForCollision($files)) {
+        if (! $this->hasOption('force') && $this->checkForCollision($files)) {
             return static::INVALID;
         }
 

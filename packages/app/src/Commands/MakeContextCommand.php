@@ -22,7 +22,7 @@ class MakeContextCommand extends Command
 
         $class = (string) str($id)
             ->ucfirst()
-            ->append('FilamentProvider');
+            ->append('ContextProvider');
 
         $path = app_path(
             (string) str($class)
@@ -31,7 +31,7 @@ class MakeContextCommand extends Command
                 ->append('.php'),
         );
 
-        if (! $this->option('force') && $this->checkForCollision([$path])) {
+        if (! $this->hasOption('force') && $this->checkForCollision([$path])) {
             return static::INVALID;
         }
 

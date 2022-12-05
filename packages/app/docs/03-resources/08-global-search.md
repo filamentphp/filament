@@ -2,7 +2,7 @@
 title: Global search
 ---
 
-Global search allows you to search across all of your resource records, from anywhere in the admin panel.
+Global search allows you to search across all of your resource records, from anywhere in the app.
 
 ## Title
 

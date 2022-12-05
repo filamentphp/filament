@@ -6,29 +6,6 @@ Field classes can be found in the `Filament\Form\Components` namespace.
 
 Fields reside within the schema of your form, alongside any [layout components](layout).
 
-If you're using the fields in a Livewire component, you can put them in the `getFormSchema()` method:
-
-```php
-protected function getFormSchema(): array
-{
-    return [
-        // ...
-    ];
-}
-```
-
-If you're using them in admin panel resources or relation managers, you must put them in the `$form->schema()` method:
-
-```php
-public static function form(Form $form): Form
-{
-    return $form
-        ->schema([
-            // ...
-        ]);
-}
-```
-
 Fields may be created using the static `make()` method, passing its name. The name of the field should correspond to a property on your Livewire component. You may use [Livewire's "dot syntax"](https://laravel-livewire.com/docs/properties#binding-nested-data) to bind fields to nested properties such as arrays and Eloquent models.
 
 ```php
@@ -99,7 +76,7 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')->default('John')
 ```
 
-Note that inside the admin panel this only works on Create Pages, as Edit Pages will always fill the data from the model.
+Note that inside the App Framework this only works on Create Pages, as Edit Pages will always fill the data from the model.
 
 ## Helper messages and hints
 
@@ -194,7 +171,7 @@ Toggle::make('is_admin')
     ->dehydrated(auth()->user()->isAdmin())
 ```
 
-If you're using the [admin panel](/docs/admin) and only want to save disabled fields on the [Create page of a resource](/docs/admin/resources):
+If you're using the [App Framework](../../app) and only want to save disabled fields on the [Create page of a resource](/docs/admin/resources):
 
 ```php
 use Filament\Resources\Pages\CreateRecord;

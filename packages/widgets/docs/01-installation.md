@@ -2,7 +2,7 @@
 title: Installation
 ---
 
-**Using tables inside the [App Framework](../app)**? You can skip this installation. This guide is for people who want to use the package inside their custom TALL-stack app.
+**Using widgets inside the [App Framework](../app)**? You can skip this installation. This guide is for people who want to use the package inside their custom TALL-stack app.
 
 ## Requirements
 
@@ -23,7 +23,7 @@ composer require filament/actions:"^3.0"
 To get started with Filament quickly, you can set up [Livewire](https://laravel-livewire.com), [Alpine.js](https://alpinejs.dev) and [Tailwind CSS](https://tailwindcss.com) with these commands:
 
 ```bash
-php artisan filament:install --scaffold --tables
+php artisan filament:install --scaffold --widgets
 npm install
 npm run dev
 ```
@@ -35,7 +35,7 @@ npm run dev
 First, run the following command to install the package's assets:
 
 ```bash
-php artisan filament:install --tables
+php artisan filament:install --widgets
 ```
 
 ### Installing Tailwind CSS
@@ -78,11 +78,9 @@ Of course, you may specify your own custom `primary`, `secondary`, `success`, `w
 
 ### Configuring styles
 
-In `resources/css/app.css`, import Tailwind CSS, and the Filament forms CSS, which is used for action modal forms:
+In `resources/css/app.css`, import Tailwind CSS:
 
 ```css
-@import '../../vendor/filament/forms/dist/index.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -169,8 +167,6 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
 
     <body class="antialiased">
         {{ $slot }}
-
-        @livewire('notifications')
     </body>
 </html>
 ```
@@ -180,7 +176,7 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
 If you wish, you may publish the configuration of the package using:
 
 ```bash
-php artisan vendor:publish --tag=filament-tables-config
+php artisan vendor:publish --tag=filament-widgets-config
 ```
 
 ## Upgrading

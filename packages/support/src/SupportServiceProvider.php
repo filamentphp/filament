@@ -8,6 +8,7 @@ use Filament\Support\Assets\AssetManager;
 use Filament\Support\Assets\Js;
 use Filament\Support\Commands\AssetsCommand;
 use Filament\Support\Commands\CheckTranslationsCommand;
+use Filament\Support\Commands\InstallCommand;
 use Filament\Support\Commands\UpgradeCommand;
 use Filament\Support\Icons\IconManager;
 use HtmlSanitizer\Sanitizer;
@@ -126,6 +127,7 @@ class SupportServiceProvider extends PluginServiceProvider
         return [
             AssetsCommand::class,
             CheckTranslationsCommand::class,
+            InstallCommand::class,
             UpgradeCommand::class,
         ];
     }

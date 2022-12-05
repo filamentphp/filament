@@ -1,4 +1,4 @@
-@import '../../vendor/filament/forms/dist/module.esm.css';
+@import '../../vendor/filament/forms/dist/index.css';
 
 @tailwind base;
 @tailwind components;

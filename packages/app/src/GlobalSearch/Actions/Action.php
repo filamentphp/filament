@@ -30,27 +30,6 @@ class Action extends StaticAction
         $this->size('sm');
     }
 
-    public function button(): static
-    {
-        $this->view('filament-actions::button-action');
-
-        return $this;
-    }
-
-    public function iconButton(): static
-    {
-        $this->view('filament-actions::icon-button-action');
-
-        return $this;
-    }
-
-    public function link(): static
-    {
-        $this->view('filament-actions::link-action');
-
-        return $this;
-    }
-
     public function getLivewireMountAction(): ?string
     {
         if ($this->getUrl()) {

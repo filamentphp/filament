@@ -1,6 +1,7 @@
 <?php
 
-use Filament\FontProviders\Contracts;
+namespace Filament\FontProviders;
+
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;

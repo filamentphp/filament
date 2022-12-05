@@ -32,7 +32,6 @@ class FormsServiceProvider extends PluginServiceProvider
     protected function getCommands(): array
     {
         $commands = [
-            Commands\InstallCommand::class,
             Commands\MakeFieldCommand::class,
             Commands\MakeLayoutComponentCommand::class,
         ];
