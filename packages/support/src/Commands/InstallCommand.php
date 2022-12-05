@@ -49,7 +49,7 @@ class InstallCommand extends Command
 
     protected function installDefaultAppContext(): void
     {
-        $path = app_path('Providers/Filament/AdminFilamentProvider.php');
+        $path = app_path('Providers/Filament/AdminContextProvider.php');
 
         if (! $this->hasOption('force') && $this->checkForCollision([$path])) {
             return;
@@ -57,10 +57,10 @@ class InstallCommand extends Command
 
         $this->copyStubToApp('DefaultContextProvider', $path);
 
-        if (! Str::contains($appConfig = file_get_contents(config_path('app.php')), 'App\\Providers\\Filament\\AdminFilamentProvider::class')) {
+        if (! Str::contains($appConfig = file_get_contents(config_path('app.php')), 'App\\Providers\\Filament\\AdminContextProvider::class')) {
             file_put_contents(config_path('app.php'), str_replace(
                 'App\\Providers\\RouteServiceProvider::class,' . PHP_EOL,
-                'App\\Providers\\RouteServiceProvider::class,' . PHP_EOL . '        App\\Providers\\Filament\\AdminFilamentProvider::class,' . PHP_EOL,
+                'App\\Providers\\RouteServiceProvider::class,' . PHP_EOL . '        App\\Providers\\Filament\\AdminContextProvider::class,' . PHP_EOL,
                 $appConfig,
             ));
         }
