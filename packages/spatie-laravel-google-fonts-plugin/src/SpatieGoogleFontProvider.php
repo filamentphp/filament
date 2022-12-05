@@ -2,7 +2,6 @@
 
 namespace Filament\FontProviders;
 
-use Filament\FontProviders\Contracts;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
