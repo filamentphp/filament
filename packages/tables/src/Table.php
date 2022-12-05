@@ -339,7 +339,7 @@ class Table extends ViewComponent
         return $callback($record);
     }
 
-    public function getRecordBulkActionEnabled(Model $record): bool {
+    public function isRecordBulkActionEnabled(Model $record): bool {
         if (!$this->isSelectionEnabled()) {
             return false;
         }
