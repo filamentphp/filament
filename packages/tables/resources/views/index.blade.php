@@ -761,7 +761,7 @@
                                         />
                                     </x-tables::checkbox.cell>
                                 @elseif ($isSelectionEnabled && (! $recordBulkActionEnabled))
-                                    <x-tables::cell></x-tables::cell>
+                                    <x-tables::cell />
                                 @endif
 
                                 @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
