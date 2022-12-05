@@ -106,8 +106,8 @@ module.exports = {
 You may also want to update your `vite.config.js` file to refresh the page after Livewire components have been updated:
 
 ```js
-import { defineConfig } from 'vite';
-import laravel, { refreshPaths } from 'laravel-vite-plugin'; // [tl! focus]
+import { defineConfig } from 'vite'
+import laravel, { refreshPaths } from 'laravel-vite-plugin' // [tl! focus]
 
 export default defineConfig({
     plugins: [
@@ -119,7 +119,7 @@ export default defineConfig({
             ], // [tl! focus:end]
         }),
     ],
-});
+})
 ```
 
 Compile your new CSS and JS assets using `npm run dev`.
@@ -169,7 +169,7 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
 
     <body class="antialiased">
         {{ $slot }}
-        
+
         @livewire('notifications')
     </body>
 </html>
