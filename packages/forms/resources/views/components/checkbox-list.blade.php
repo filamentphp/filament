@@ -56,14 +56,15 @@
 
         @if ($isSearchable())
             <input
-                class="block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 border-gray-300"
+                {!! $isDisabled() ? 'disabled' : null !!}
+                class="block w-full transition duration-75 border-gray-300 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70"
                 type="search"
                 placeholder="{{ $getSearchPrompt() }}"
                 x-model.debounce.{{ $getSearchDebounce() }}="search"
             >
         @endif
 
-        @if ($isBulkToggleable())
+        @if ($isBulkToggleable() && ! $isDisabled())
             <div>
                 <x-forms::link
                     tag="button"
@@ -140,7 +141,7 @@
             <div
                 x-cloak
                 x-show="visibleLabels.length === 0"
-                class="filament-forms-checkbox-list-component-no-search-results-message text-sm"
+                class="text-sm filament-forms-checkbox-list-component-no-search-results-message"
             >
                 {{ $getNoSearchResultsMessage() }}
             </div>
