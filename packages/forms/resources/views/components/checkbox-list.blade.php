@@ -153,7 +153,7 @@
             <div
                 x-cloak
                 x-show="visibleCheckboxListItems.length === 0"
-                class="text-sm filament-forms-checkbox-list-component-no-search-results-message"
+                class="filament-forms-checkbox-list-component-no-search-results-message text-sm"
             >
                 {{ $getNoSearchResultsMessage() }}
             </div>
