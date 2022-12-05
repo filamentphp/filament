@@ -760,7 +760,7 @@
                                             class="filament-tables-record-checkbox"
                                         />
                                     </x-tables::checkbox.cell>
-                                @elseif($isSelectionEnabled && !$recordBulkActionEnabled)
+                                @elseif ($isSelectionEnabled && (! $recordBulkActionEnabled))
                                     <x-tables::cell></x-tables::cell>
                                 @endif
 
