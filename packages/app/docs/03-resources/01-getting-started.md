@@ -94,7 +94,7 @@ This is required for features like [global search](global-search) to work.
 
 ## Forms
 
-Resource classes contain a `form()` method that is used to build the [forms](../../forms/getting-started) on the [Create](creating-records) and [Edit](editing-records) pages:
+Resource classes contain a `form()` method that is used to build the forms on the [Create](creating-records) and [Edit](editing-records) pages:
 
 ```php
 use Filament\Forms;
@@ -111,9 +111,9 @@ public static function form(Form $form): Form
 }
 ```
 
-The `schema()` method is used to define the structure of your form. It is an array of [fields](../../forms/fields) and [layout components](../../forms/layout), in the order they should appear in your form.
+The `schema()` method is used to define the structure of your form. It is an array of [fields](../../forms/fields/getting-started#available-fields) and [layout components](../../forms/layout/getting-started#available-layout-components), in the order they should appear in your form.
 
-Check out the Forms docs for a [list of fields](../../forms/fields/getting-started#available-fields), and a [list of form layout components](../../forms/layout/getting-started#available-layout-components) you can use to structure those fields.
+Check out the Forms docs for a [guide](../../forms/getting-started) on how to build forms with Filament.
 
 ### Hiding components contextually
 
@@ -143,7 +143,7 @@ Forms\Components\TextInput::make('password')
 
 ## Table
 
-Resource classes contain a `table()` method that is used to build the [table](../../tables/getting-started) on the [List page](listing-records):
+Resource classes contain a `table()` method that is used to build the table on the [List page](listing-records):
 
 ```php
 use Filament\Tables;
@@ -172,7 +172,7 @@ public static function table(Table $table): Table
 }
 ```
 
-Check out the [listing records](listing-records) docs to find out how to add table [columns](listing-records#columns), [filters](listing-records#filters), [actions](listing-records#actions), [bulk actions](listing-records#bulk-actions) and more.
+Check out the [tables](../../tables/getting-started) docs to find out how to add table [columns](listing-records#columns), [filters](listing-records#filters), [actions](listing-records#actions), [bulk actions](listing-records#bulk-actions) and more.
 
 ## Authorization
 

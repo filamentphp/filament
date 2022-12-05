@@ -517,7 +517,7 @@ class ListPosts extends Component implements Tables\Contracts\HasTable
         $this->form->fill();
     }
 
-    protected function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([

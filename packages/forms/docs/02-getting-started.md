@@ -2,693 +2,192 @@
 title: Getting started
 ---
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/Kab21689E5A" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+Filament's form package allows you to easily build dynamic forms in your app. You can use it to [add a form to any Livewire component](adding-a-form-to-a-livewire-component). Additionally, it's used within other Filament packages to render forms within [app resources](../app/resources), [action modals](../actions/modals), [table filters](../tables/filters), and more. Learning how to build forms is essentially to learning how to use these Filament packages.
 
-## Preparing your Livewire component
+This guide will walk you through the basics of building forms with Filament's form package. If you're planning to add a new form to your own Livewire component, you should [do that first](adding-a-form-to-a-livewire-component) and then come back. If you're adding a form to an [app resource](../app/resources), or another Filament package, you're already ready to go!
 
-Implement the `HasForms` interface and use the `InteractsWithForms` trait:
+## Form schemas
+
+All Filament forms have a "schema". This is an array, which contains [fields](fields/getting-started#available-fields) and [layout components](layout/getting-started#available-layout-components).
+
+Fields are the inputs that your user will fill their data into. For example, HTML's `<input>` or `<select>` elements. Each field has its own PHP class. For example, the [`TextInput`](fields/text-input) class is used to render a text input field, and the [`Select`](fields/select) class is used to render a select field. You can see a full [list of available fields here](fields/getting-started#available-fields).
+
+Layout components are used to group fields together, and to control how they are displayed. For example, you can use a [`Grid`](layout/grid#grid-component) component to display multiple fields side-by-side, or a [`Wizard`](layout/wizard) to separate fields into a multistep form. You can deeply nest layout components within each other, to create very complex responsive UIs. You can see a full [list of available layout components here](layout/getting-started#available-layout-components).
+
+### Adding fields to a form schema
+
+Initialise a field or layout component with the `make()` method, and build a schema array with multiple fields:
 
 ```php
-<?php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 
-namespace App\Http\Livewire;
-
-use Filament\Forms;
-use Illuminate\Contracts\View\View;
-use Livewire\Component;
-
-class EditPost extends Component implements Forms\Contracts\HasForms // [tl! focus]
+public function form(Form $form): Form
 {
-    use Forms\Concerns\InteractsWithForms; // [tl! focus]
-    
-    public function render(): View
-    {
-        return view('edit-post');
-    }
+    return $form
+        ->schema([ // [tl! focus:start]
+            TextInput::make('title'),
+            TextInput::make('slug'),
+            RichEditor::make('content'),
+        ]); // [tl! focus:end]
 }
 ```
 
-In your Livewire component's view, render the form:
-
-```blade
-<form wire:submit.prevent="submit">
-    {{ $this->form }}
-    
-    <button type="submit">
-        Submit
-    </button>
-</form>
-```
-
-Finally, add any [fields](fields) and [layout components](layout) to the Livewire component's `form()` method:
+Forms within the App Framework and other packages usually have 2 columns by default. For custom forms, you can use the `columns()` method to achieve the same effect:
 
 ```php
-<?php
-
-namespace App\Http\Livewire;
-
-use Filament\Forms;
-use Filament\Forms\Form;
-use Illuminate\Contracts\View\View;
-use Livewire\Component;
-
-class EditPost extends Component implements Forms\Contracts\HasForms
-{
-    use Forms\Concerns\InteractsWithForms;
-    
-    public Post $post;
-    
-    public $title;
-    public $content;
-    
-    public function mount(): void
-    {
-        $this->form->fill([
-            'title' => $this->post->title,
-            'content' => $this->post->content,
-        ]);
-    }
-    
-    protected function form(Form $form): Form // [tl! focus:start]
-    {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')->required(),
-                Forms\Components\MarkdownEditor::make('content'),
-                // ...
-            ]);
-    } // [tl! focus:end]
-    
-    public function submit(): void
-    {
+$form
+    ->schema([
         // ...
-    }
-    
-    public function render(): View
-    {
-        return view('edit-post');
-    }
-}
+    ])
+    ->columns(2);
 ```
 
-Visit your Livewire component in the browser, and you should see the form components from `schema()`.
-
-![](https://user-images.githubusercontent.com/41773797/147614478-5b40c645-107e-40ac-ba41-f0feb99dd480.png)
-
-## Initializing forms
-
-You must initialize forms when the Livewire component is first loaded. This is done with the `fill()` form method, often called in the `mount()` method of the Livewire component.
-
-For your fields to hold data, they should have a corresponding property on your Livewire component, just as in Livewire normally.
+Now, the `RichEditor` will only consume half of the available width. We can use the `columnSpan()` method to make it span the full width:
 
 ```php
-<?php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\TextInput;
 
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Illuminate\Contracts\View\View;
-use Livewire\Component;
-
-class CreatePost extends Component implements Forms\Contracts\HasForms
-{
-    use Forms\Concerns\InteractsWithForms;
-    
-    public $title = '';
-    public $content = '';
-    
-    public function mount(): void // [tl! focus:start]
-    {
-        $this->form->fill();
-    } // [tl! focus:end]
-    
-    protected function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->default('Status Update') // [tl! focus]
-                    ->required(),
-                Forms\Components\MarkdownEditor::make('content'),
-                // ...
-            ]);
-    }
-    
-    public function render(): View
-    {
-        return view('create-post');
-    }
-}
+[
+    TextInput::make('title'),
+    TextInput::make('slug'),
+    RichEditor::make('content')
+        ->columnSpan(2), // or `columnSpan('full')`
+]
 ```
 
-You may customize what happens after fields are filled [using the `afterStateHydrated()` method](advanced#hydration).
+You can learn more about columns and spans in the [layout section](layout/grid#columns). You can even make them responsive!
 
-## Filling forms with data
+### Adding layout components to a form schema
 
-To fill a form with data, call the `fill()` method on your form, and pass an array of data to fill it with:
+Let's add a new [`Section`](layout/section) to our form. `Section` is a layout component, and it allows you to add a heading and description to a set of fields. It can also allow fields inside it to collapse, which saves space in long forms.
 
 ```php
-<?php
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TextInput;
 
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Illuminate\Contracts\View\View;
-use Livewire\Component;
-
-class EditPost extends Component implements Forms\Contracts\HasForms
-{
-    use Forms\Concerns\InteractsWithForms;
-    
-    public Post $post;
-    
-    public $title;
-    public $content;
-    
-    public function mount(): void // [tl! focus:start]
-    {
-        $this->form->fill([
-            'title' => $this->post->title,
-            'content' => $this->post->content,
-        ]);
-    } // [tl! focus:end]
-    
-    protected function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')->required(),
-                Forms\Components\MarkdownEditor::make('content'),
-                // ...
-            ]);
-    }
-    
-    public function render(): View
-    {
-        return view('edit-post');
-    }
-}
+[
+    TextInput::make('title'),
+    TextInput::make('slug'),
+    RichEditor::make('content')
+        ->columnSpan(2),
+    Section::make('Publishing') // [tl! focus:start]
+        ->description('Settings for publishing this post.')
+        ->schema([
+            // ...
+        ]), // [tl! focus:end]
+]
 ```
 
-## Getting data from forms
-
-To get all form data in an array, call the `getState()` method on your form.
+In this example, you can see how the `Section` component has its own `schema()` method. You can use this to nest other fields and layout components inside:
 
 ```php
-<?php
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Illuminate\Contracts\View\View;
-use Livewire\Component;
-
-class CreatePost extends Component implements Forms\Contracts\HasForms
-{
-    use Forms\Concerns\InteractsWithForms;
-    
-    public $title = '';
-    public $content = '';
-    
-    public function mount(): void
-    {
-        $this->form->fill();
-    }
-    
-    protected function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')->required(),
-                Forms\Components\MarkdownEditor::make('content'),
-                // ...
-            ]);
-    }
-    
-    public function create(): void // [tl! focus:start]
-    {
-        Post::create($this->form->getState());
-    } // [tl! focus:end]
-    
-    public function render(): View
-    {
-        return view('create-post');
-    }
-}
+Section::make('Publishing')
+    ->description('Settings for publishing this post.')
+    ->schema([ // [tl! focus:start]
+        Select::make('status')
+            ->options([
+                'draft' => 'Draft',
+                'reviewing' => 'Reviewing',
+                'published' => 'Published',
+            ]),
+        DateTimePicker::make('published_at'),
+    ]) // [tl! focus:end]
 ```
 
-When `getState()` is run:
- 
-1) [Validation](validation) rules are checked, and if errors are present, the form is not submitted.
-2) Any pending file uploads are stored permanently in the filesystem.
-3) [Field relationships](#field-relationships), if they are defined, are saved.
+This section now contains a [`Select` field](fields/select) and a [`DateTimePicker` field](fields/date-time-picker). You can learn more about those fields and their functionalities on the respective docs pages.
 
-> You may transform the value that is dehydrated from a field [using the `dehydrateStateUsing()` method](advanced#dehydration).
+## Validating fields
 
-## Registering a model
+In Laravel, validation rules are usually defined in arrays like `['required', 'max:255']` or a combined string like `required|max:255`. This is fine if you're exclusively working in the backend with simple form requests. But Filament is also able to give your users frontend validation, so they can fix their mistakes before any backend requests are made.
 
-You may register a model to a form. The form builder is able to use this model to unlock DX features, such as:
-- Automatically retrieving the database table name when using database validation rules like `exists` and `unique`.
-- Automatically attaching relationships to the model when the form is saved, when using fields such as the `Select`, `Repeater`, `SpatieMediaLibraryFileUpload`, or `SpatieTagsInput`.
-
-Pass a model instance to a form using the `model()` method:
+In Filament, you can add validation rules to your fields by using methods like `required()` and `maxLength()`. This is also advantageous over Laravel's validation syntax, since your IDE can autocomplete these methods:
 
 ```php
-<?php
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Illuminate\Contracts\View\View;
-use Livewire\Component;
-
-class EditPost extends Component implements Forms\Contracts\HasForms
-{
-    use Forms\Concerns\InteractsWithForms;
-    
-    public Post $post;
-    
-    public $title;
-    public $content;
-    public $tags;
-    
-    public function mount(): void
-    {
-        $this->form->fill([
-            'title' => $this->post->title,
-            'content' => $this->post->content,
-        ]);
-    }
-    
-    protected function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')->required(),
-            Forms\Components\MarkdownEditor::make('content'),
-                // ...
-            ])
-            ->model($this->post); // [tl! focus]
-    }
-    
-    public function render(): View
-    {
-        return view('edit-post');
-    }
-}
+[
+    TextInput::make('title')
+        ->required()
+        ->maxLength(255),
+    TextInput::make('slug')
+        ->required()
+        ->maxLength(255),
+    RichEditor::make('content')
+        ->columnSpan(2)
+        ->maxLength(65535),
+    Section::make('Publishing')
+        ->description('Settings for publishing this post.')
+        ->schema([
+            Select::make('status')
+                ->options([
+                    'draft' => 'Draft',
+                'reviewing' => 'Reviewing',
+                    'published' => 'Published',
+                ])
+                ->required(),
+            DateTimePicker::make('published_at'),
+        ]),
+]
 ```
 
-Alternatively, you may pass the model instance to the field that requires it directly, using the `model()` method:
+In this example, some fields are `required()`, and some have a `maxLength()`. We have [methods for most of Laravel's validation rules](validation#available-rules), and you can even add your own [custom rules](validation#custom-rules).
+
+## Dependant fields
+
+Since all Filament forms are built on top of Livewire, form schemas are completely dynamic. There are so many possibilities, but here are a couple of examples of how you can use this to your advantage:
+
+Fields can hide or show based on other field's values. In our form, we can hide the `published_at` timestamp field until the `status` field is set to `published`. This is done by passing a closure to the `hidden()` method, which allows you to dynamically hide or show a field while the form is being used. Closures have access to many useful arguments like `$get`, and you can find a [full list here](advanced#using-closure-customization). The field that you depend on (the `status` in this case) needs to be set to `reactive()`, which tells the form to reload the schema each time it gets changed.
 
 ```php
-<?php
-
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Illuminate\Contracts\View\View;
-use Livewire\Component;
-
-class EditPost extends Component implements Forms\Contracts\HasForms
-{
-    use Forms\Concerns\InteractsWithForms;
-    
-    public Post $post;
-    
-    public $title;
-    public $content;
-    public $tags;
-    
-    public function mount(): void
-    {
-        $this->form->fill([
-            'title' => $this->post->title,
-            'content' => $this->post->content,
-        ]);
-    }
-    
-    protected function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')->required(),
-                Forms\Components\MarkdownEditor::make('content'),
-                Forms\Components\SpatieTagsInput::make('tags')->model($this->post), // [tl! focus]
-                // ...
-            ]);
-    }
-    
-    public function render(): View
-    {
-        return view('edit-post');
-    }
-}
-```
-
-You may now use [field relationships](#field-relationships);
-
-### Registering a model class
-
-In some cases, the model instance is not available until the form has been submitted. For example, in a form that creates a post, the post model instance cannot be passed to the form before it has been submitted.
-
-You may receive some of the same benefits of registering a model by registering its class instead:
-
-```php
-<?php
-
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Illuminate\Contracts\View\View;
-use Livewire\Component;
-
-class CreatePost extends Component implements Forms\Contracts\HasForms
-{
-    use Forms\Concerns\InteractsWithForms;
-    
-    public $title = '';
-    public $content = '';
-    public $categories = [];
-    
-    public function mount(): void
-    {
-        $this->form->fill();
-    }
-    
-    protected function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required(),
-                Forms\Components\MarkdownEditor::make('content'),
-                Forms\Components\Select::make('categories')
-                    ->multiple()
-                    ->relationship('categories', 'name'),
-                // ...
-            ])
-            ->model(Post::class); // [tl! focus]
-    }
-    
-    public function render(): View
-    {
-        return view('create-post');
-    }
-}
-```
-
-You may now use [field relationships](#field-relationships).
-
-## Field relationships
-
-Some fields, such as the `Select`, `Repeater`, `SpatieMediaLibraryFileUpload`, or `SpatieTagsInput` are able to interact with model relationships.
-
-For example, `Select` can be used to attach multiple records to a `BelongstoMany` relationship. When [registering a model](#registering-a-model) to the form or component, these relationships will be automatically saved to the pivot table [when `getState()` is called](#getting-data-from-forms):
-
-```php
-<?php
-
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Illuminate\Contracts\View\View;
-use Livewire\Component;
-
-class EditPost extends Component implements Forms\Contracts\HasForms
-{
-    use Forms\Concerns\InteractsWithForms;
-    
-    public Post $post;
-    
-    public $title;
-    public $content;
-    public $categories;
-    
-    public function mount(): void
-    {
-        $this->form->fill([
-            'title' => $this->post->title,
-            'content' => $this->post->content,
-        ]);
-    }
-    
-    protected function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required(),
-                Forms\Components\MarkdownEditor::make('content'),
-                Forms\Components\Select::make('categories')
-                    ->multiple()
-                    ->relationship('categories', 'name'),
-                // ...
-            ])
-            ->model($this->post); // [tl! focus]
-    }
-    
-    public function save(): void // [tl! focus:start]
-    {
-        $this->post->update(
-            $this->form->getState(),
-        );
-    } // [tl! focus:end]
-    
-    public function render(): View
-    {
-        return view('edit-post');
-    }
-}
-```
-
-### Saving field relationships manually
-
-In some cases, the model instance is not available until the form has been submitted. For example, in a form that creates a post, the post model instance cannot be passed to the form before it has been submitted. In this case, you will [pass the model class](#registering-a-model-class) instead, but any field relationships will need to be saved manually after.
-
-In this situation, you may call the `model()` and `saveRelationships()` methods on the form after the instance has been created:
-
-```php
-<?php
-
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Model;
-use Livewire\Component;
-
-class CreatePost extends Component implements Forms\Contracts\HasForms
-{
-    use Forms\Concerns\InteractsWithForms;
-    
-    public $title = '';
-    public $content = '';
-    public $tags = [];
-    
-    public function mount(): void
-    {
-        $this->form->fill();
-    }
-    
-    protected function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')->required(),
-                Forms\Components\MarkdownEditor::make('content'),
-                Forms\Components\SpatieTagsInput::make('tags'),
-                // ...
-            ])
-            ->model(Post::class);
-    }
-    
-    public function create(): void
-    {
-        $post = Post::create($this->form->getState());
-        
-        $this->form->model($post)->saveRelationships(); // [tl! focus]
-    }
-    
-    public function render(): View
-    {
-        return view('create-post');
-    }
-}
-```
-
-### Saving relationships when the field is hidden
-
-By default, relationships will only be saved if the field is visible. For example, if you have a `Repeater` field that is only visible on a certain condition, the relationships will not be saved when it is hidden.
-
-This might cause unexpected behaviour if you still want to save the relationship, even when the field is hidden. To force relationships to be saved, you may call the `saveRelationshipsWhenHidden()` method on the form component:
-
-```php
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Get;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
-SpatieMediaLibraryFileUpload::make('attachments')
-    ->visible(fn (Get $get): bool => $get('has_attachments'))
-    ->saveRelationshipsWhenHidden();
+[
+    Select::make('status')
+        ->options([
+            'draft' => 'Draft',
+            'reviewing' => 'Reviewing',
+            'published' => 'Published',
+        ])
+        ->required()
+        ->reactive(),
+    DateTimePicker::make('published_at')
+        ->hidden(fn (Get $get) => $get('status') !== 'published'),
+]
 ```
 
-## Using multiple forms
+It's not just `hidden()` - all Filament form methods support closures like this. You can use them to change the label, placeholder, or even the options of a field, based on another. You can even use them to add new fields to the form, or remove them. This is a powerful tool that allows you to create complex forms with minimal effort.
 
-By default, the `InteractsWithForms` trait only handles one form per Livewire component. To change this, you can override the `getForms()` method to return more than one form, each with a unique name:
+Fields can also write data to other fields. For example, we can set the title to automatically generate a slug when the title is changed. This is done by passing a closure to the `afterStateUpdated()` method, which gets run each time the title is changed. This closure has access to the title (`$state`) and a function (`$set`) to set the slug field's state. You can find a [full list of closure arguments here](advanced#using-closure-customization). The field that you  depend on (the `title` in this case) needs to be set to `reactive()`, which tells the form to reload and set the slug each time it gets changed.
 
 ```php
-<?php
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Set;
+use Illuminate\Support\Str;
 
-namespace App\Http\Livewire;
-
-use App\Models\Author;
-use App\Models\Post;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Illuminate\Contracts\View\View;
-use Livewire\Component;
-
-class EditPost extends Component implements Forms\Contracts\HasForms
-{
-    use Forms\Concerns\InteractsWithForms;
-    
-    public Author $author;
-    public Post $post;
-    
-    public $title;
-    public $content;
-    
-    public $name;
-    public $email;
-    
-    public function mount(): void
-    {
-        $this->postForm->fill([
-            'title' => $this->post->title,
-            'content' => $this->post->content,
-        ]);
-        
-        $this->authorForm->fill([
-            'name' => $this->author->name,
-            'email' => $this->author->email,
-        ]);
-    }
-    
-    protected function postForm(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')->required(),
-                Forms\Components\MarkdownEditor::make('content'),
-                // ...
-            ])
-            ->model($this->post);
-    }
-    
-    protected function authorForm(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')->required(),
-                Forms\Components\TextInput::make('email')->email()->required(),
-                // ...
-            ])
-            ->model($this->author);
-    }
-    
-    public function savePost(): void
-    {
-        $this->post->update(
-            $this->postForm->getState(),
-        );
-    }
-    
-    public function saveAuthor(): void
-    {
-        $this->author->update(
-            $this->authorForm->getState(),
-        );
-    }
-    
-    protected function getForms(): array // [tl! focus:start]
-    {
-        return [
-            'postForm',
-            'authorForm',
-        ];
-    } // [tl! focus:end]
-    
-    public function render(): View
-    {
-        return view('edit-post');
-    }
-}
+[
+    TextInput::make('title')
+        ->required()
+        ->maxLength(255)
+        ->reactive()
+        ->afterStateUpdated(function (Set $set, $state) {
+            $set('slug', Str::slug($state));
+        })
+    TextInput::make('slug')
+        ->required()
+        ->maxLength(255),
+]
 ```
-
-## Scoping form data to an array property
-
-You may scope the entire form data to a single array property on your Livewire component. This will allow you to avoid having to define a new property for each field:
-
-```php
-<?php
-
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Illuminate\Contracts\View\View;
-use Livewire\Component;
-
-class EditPost extends Component implements Forms\Contracts\HasForms
-{
-    use Forms\Concerns\InteractsWithForms;
-    
-    public Post $post;
-    
-    public $data; // [tl! focus]
-    
-    public function mount(): void
-    {
-        $this->form->fill([
-            'title' => $this->post->title,
-            'content' => $this->post->content,
-        ]);
-    }
-    
-    protected function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')->required(),
-                Forms\Components\MarkdownEditor::make('content'),
-                Forms\Components\SpatieTagsInput::make('tags'),
-                // ...
-            ])
-            ->model($this->post)
-            ->statePath('data'); // [tl! focus]
-    }
-    
-    public function render(): View
-    {
-        return view('edit-post');
-    }
-}
-```
-
-In this example, all data from your form will be stored in the `$data` array.
