@@ -131,15 +131,14 @@ BulkAction::make('delete')
 ```
 
 ## Disabling bulk per row
-It is possible to determine per row if it should render the bulk checkbox. You can add this on the table component.
+
+You may conditionally disable bulk actions for a specific row:
 
 ```php
 protected function getTableRecordBulkActionsEnabled(): ?Closure
 {
-    return fn(Model $record) => $record->id === StatusEnum::ENABLED;
+    return fn (Model $record): bool => $record->id === StatusEnum::Enabled;
 }
-```
-
 ## Setting a size
 
 The default size for table actions is `sm` but you may also change it to either `md` or `lg`:
