@@ -750,18 +750,20 @@
                                     </x-tables::actions.cell>
                                 @endif
 
-                                @if ($isSelectionEnabled && $recordBulkActionEnabled)
-                                    <x-tables::checkbox.cell :class="\Illuminate\Support\Arr::toCssClasses([
-                                        'hidden' => $isReordering,
-                                    ])">
-                                        <x-tables::checkbox
-                                            x-model="selectedRecords"
-                                            :value="$recordKey"
-                                            class="filament-tables-record-checkbox"
-                                        />
-                                    </x-tables::checkbox.cell>
-                                @elseif ($isSelectionEnabled && (! $recordBulkActionEnabled))
-                                    <x-tables::cell />
+                                @if($isSelectionEnabled)
+                                    @if($recordBulkActionEnabled)
+                                        <x-tables::checkbox.cell :class="\Illuminate\Support\Arr::toCssClasses([
+                                            'hidden' => $isReordering,
+                                        ])">
+                                            <x-tables::checkbox
+                                                x-model="selectedRecords"
+                                                :value="$recordKey"
+                                                class="filament-tables-record-checkbox"
+                                            />
+                                        </x-tables::checkbox.cell>
+                                    @else
+                                        <x-tables::cell />
+                                    @endif
                                 @endif
 
                                 @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
