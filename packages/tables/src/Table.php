@@ -340,6 +340,10 @@ class Table extends ViewComponent
     }
 
     public function getRecordBulkActionEnabled(Model $record): bool {
+        if (!$this->isSelectionEnabled()) {
+            return false;
+        }
+
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();
 
@@ -349,7 +353,7 @@ class Table extends ViewComponent
             return true;
         }
 
-        return $callback($record);
+        return $callback($record) ?? true;
     }
 
     public function getReorderColumn(): ?string
