@@ -17,35 +17,47 @@
         x-data="{
             options: @js($getOptions()),
 
-            checkboxes: $root.querySelectorAll('input[type=checkbox]'),
+            checkboxListItems: Array.from($root.querySelectorAll('label')),
 
-            visibleLabels: [],
+            visibleCheckboxListItems: [],
 
-            isAllSelected: false,
+            isAllVisibleSelected: false,
+
+            visibleCheckboxInputs: [],
 
             init: function () {
-                this.updateVisibleLabels()
-                this.updateIsAllSelected()
+                this.updateVisibleCheckboxListItems()
+                this.updateIsAllVisibleSelected()
 
-                $watch('search', () => this.updateVisibleLabels())
+                $watch('search', () => this.updateVisibleCheckboxListItems())
             },
 
-            updateVisibleLabels: function () {
-                this.visibleLabels =  Object.values(this.options).filter((label) => {
-                    return label.toLowerCase().includes(this.search.toLowerCase())
+            updateVisibleCheckboxListItems: function () {
+                this.visibleCheckboxListItems = this.checkboxListItems.filter((checkboxListItem) => {
+                    return checkboxListItem.querySelector('span').innerText.toLowerCase().includes(this.search.toLowerCase())
+                })
+
+                this.visibleCheckboxInputs = this.visibleCheckboxListItems.map((checkboxListItem) => {
+                    return checkboxListItem.querySelector('input[type=checkbox]')
                 })
             },
 
-            updateIsAllSelected: function () {
-                this.isAllSelected = this.checkboxes.length === this.$root.querySelectorAll('input[type=checkbox]:checked').length
+            updateIsAllVisibleSelected: function () {
+                let checkedVisibleCheckboxInputs = this.visibleCheckboxInputs.filter((checkboxInput) => {
+                    return checkboxInput.checked
+                })
+
+                this.isAllVisibleSelected = this.visibleCheckboxInputs.every((item) => checkedVisibleCheckboxInputs.includes(item))
             },
 
             toggleAll: function () {
-                state = !this.isAllSelected
+                state = !this.isAllVisibleSelected
 
-                this.checkboxes.forEach((checkbox) => {
-                    checkbox.checked = state
-                    checkbox.dispatchEvent(new Event('change'))
+                let checkboxListItems = this.visibleCheckboxListItems.length !== this.checkboxListItems.length ? this.visibleCheckboxListItems : this.checkboxListItems
+
+                Array.from(checkboxListItems).forEach((checkboxListItem) => {
+                    checkboxListItem.querySelector('input[type=checkbox]').checked = state
+                    checkboxListItem.querySelector('input[type=checkbox]').dispatchEvent(new Event('change'))
                 })
             },
 
@@ -69,7 +81,7 @@
                 <x-forms::link
                     tag="button"
                     size="sm"
-                    x-show="!isAllSelected"
+                    x-show="!isAllVisibleSelected"
                     x-on:click="toggleAll"
                 >
                     {{ __('forms::components.checkbox_list.buttons.select_all.label') }}
@@ -78,7 +90,7 @@
                 <x-forms::link
                     tag="button"
                     size="sm"
-                    x-show="isAllSelected"
+                    x-show="isAllVisibleSelected"
                     x-on:click="toggleAll"
                 >
                     {{ __('forms::components.checkbox_list.buttons.deselect_all.label') }}
@@ -104,7 +116,7 @@
                 <label
                     class="flex items-center space-x-3 rtl:space-x-reverse"
                     @if ($isSearchable())
-                        x-show="visibleLabels.includes(@js($optionLabel))"
+                        x-show="$el.querySelector('span').innerText.toLowerCase().includes(search.toLowerCase())"
                     @endif
                 >
                     <input
@@ -114,7 +126,7 @@
                         value="{{ $optionValue }}"
                         dusk="filament.forms.{{ $getStatePath() }}"
                         @if ($isBulkToggleable())
-                            x-on:change="updateIsAllSelected"
+                            x-on:change="updateIsAllVisibleSelected"
                         @endif
                         {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
                         {{ $getExtraAttributeBag()->class([
@@ -140,7 +152,7 @@
         @if ($isSearchable())
             <div
                 x-cloak
-                x-show="visibleLabels.length === 0"
+                x-show="visibleCheckboxListItems.length === 0"
                 class="text-sm filament-forms-checkbox-list-component-no-search-results-message"
             >
                 {{ $getNoSearchResultsMessage() }}
