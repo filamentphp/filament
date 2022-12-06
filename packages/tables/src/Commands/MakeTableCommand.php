@@ -59,7 +59,7 @@ class MakeTableCommand extends Command
                 ->append('.blade.php'),
         );
 
-        if (! $this->option('force') && $this->checkForCollision([$path, $viewPath])) {
+        if ((! $this->option('force')) && $this->checkForCollision([$path, $viewPath])) {
             return static::INVALID;
         }
 
