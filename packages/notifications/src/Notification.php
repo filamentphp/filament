@@ -12,6 +12,7 @@ use Filament\Notifications\Concerns\HasDuration;
 use Filament\Notifications\Concerns\HasIcon;
 use Filament\Notifications\Concerns\HasId;
 use Filament\Notifications\Concerns\HasTitle;
+use Filament\Notifications\Events\DatabaseNotificationsSent;
 use Filament\Support\Components\ViewComponent;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Arrayable;
