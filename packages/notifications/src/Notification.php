@@ -109,7 +109,7 @@ class Notification extends ViewComponent implements Arrayable
         return $this;
     }
 
-    public function sendToDatabase(Model | Authenticatable | Collection | array $users): static
+    public function sendToDatabase(Model | Authenticatable | Collection | array $users, bool isEventDispatched = false): static
     {
         if (! is_iterable($users)) {
             $users = [$users];
@@ -117,17 +117,10 @@ class Notification extends ViewComponent implements Arrayable
 
         foreach ($users as $user) {
             $user->notify($this->toDatabase());
-        }
-
-        return $this;
-    }
-
-    public function triggerDatabaseNotificationsSentEvent(Model | Authenticatable | Collection | array $users)
-    {
-        $users = Arr::wrap($users);
-
-        foreach ($users as $user) {
-            DatabaseNotificationsSent::dispatch($user);
+            
+            if ($isEventDispatched) {
+                DatabaseNotificationsSent::dispatch($user);
+            }
         }
 
         return $this;
