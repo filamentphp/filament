@@ -19,6 +19,9 @@
                 'lg:px-4' => \Filament\Navigation\Sidebar::$isCollapsibleOnDesktop && (! \Filament\Navigation\Sidebar::$isFullyCollapsibleOnDesktop),
             ])
             x-show="$store.sidebar.isOpen || @js(! \Filament\Navigation\Sidebar::$isCollapsibleOnDesktop) || @js(\Filament\Navigation\Sidebar::$isFullyCollapsibleOnDesktop)"
+            x-transition:enter="lg:transition delay-100"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
         >
             @if (\Filament\Navigation\Sidebar::$isCollapsibleOnDesktop && (! \Filament\Navigation\Sidebar::$isFullyCollapsibleOnDesktop))
                 <button

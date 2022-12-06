@@ -1,0 +1,53 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Models\{{ model }};
+use Filament\Forms;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Livewire\Component;
+use Illuminate\Contracts\View\View;
+
+class {{ class }} extends Component implements HasForms
+{
+    use InteractsWithForms;
+
+    public ?array $data = [];
+
+    public {{ modelClass }} $record;
+
+    public function mount(): void
+    {
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    protected function getFormSchema(): array
+    {
+        return [
+{{ schema }}
+        ];
+    }
+
+    public function edit(): void
+    {
+        $data = $this->form->getState();
+
+        $this->record->update($data);
+    }
+
+    protected function getFormModel(): {{ modelClass }}
+    {
+        return $this->record;
+    }
+
+    protected function getFormStatePath(): string
+    {
+        return 'data';
+    }
+
+    public function render(): View
+    {
+        return view('{{ view }}');
+    }
+}
