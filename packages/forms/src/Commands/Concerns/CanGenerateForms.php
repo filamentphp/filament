@@ -31,7 +31,7 @@ trait CanGenerateForms
 
             $columnName = $column->getName();
 
-            if (Str::of($columnName)->is([
+            if (str($columnName)->is([
                 'created_at',
                 'deleted_at',
                 'updated_at',
@@ -50,7 +50,7 @@ trait CanGenerateForms
                 default => Forms\Components\TextInput::class,
             };
 
-            if (Str::of($columnName)->endsWith('_id')) {
+            if (str($columnName)->endsWith('_id')) {
                 $guessedRelationshipName = $this->guessBelongsToRelationshipName($column, $model);
 
                 if (filled($guessedRelationshipName)) {
@@ -62,15 +62,15 @@ trait CanGenerateForms
             }
 
             if ($type === Forms\Components\TextInput::class) {
-                if (Str::of($columnName)->contains(['email'])) {
+                if (str($columnName)->contains(['email'])) {
                     $componentData['email'] = [];
                 }
 
-                if (Str::of($columnName)->contains(['password'])) {
+                if (str($columnName)->contains(['password'])) {
                     $componentData['password'] = [];
                 }
 
-                if (Str::of($columnName)->contains(['phone', 'tel'])) {
+                if (str($columnName)->contains(['phone', 'tel'])) {
                     $componentData['tel'] = [];
                 }
             }
@@ -90,7 +90,7 @@ trait CanGenerateForms
 
         foreach ($components as $componentName => $componentData) {
             // Constructor
-            $output .= (string) Str::of($componentData['type'])->after('Filament\\');
+            $output .= (string) str($componentData['type'])->after('Filament\\');
             $output .= '::make(\'';
             $output .= $componentName;
             $output .= '\')';

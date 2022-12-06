@@ -24,26 +24,26 @@ class MakeFormCommand extends Command
 
     public function handle(): int
     {
-        $component = (string) Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `Products/CreateProduct`)', 'name'))
+        $component = (string) str($this->argument('name') ?? $this->askRequired('Name (e.g. `Products/CreateProduct`)', 'name'))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
             ->replace('/', '\\');
-        $componentClass = (string) Str::of($component)->afterLast('\\');
-        $componentNamespace = Str::of($component)->contains('\\') ?
-            (string) Str::of($component)->beforeLast('\\') :
+        $componentClass = (string) str($component)->afterLast('\\');
+        $componentNamespace = str($component)->contains('\\') ?
+            (string) str($component)->beforeLast('\\') :
             '';
 
-        $view = Str::of($component)
+        $view = str($component)
             ->replace('\\', '/')
             ->prepend('Livewire/')
             ->explode('/')
             ->map(fn ($segment) => Str::lower(Str::kebab($segment)))
             ->implode('.');
 
-        $model = (string) Str::of($this->argument('model') ?? $this->ask('(Optional) Model (e.g. `Product`)'))
+        $model = (string) str($this->argument('model') ?? $this->ask('(Optional) Model (e.g. `Product`)'))
             ->replace('/', '\\');
-        $modelClass = (string) Str::of($model)->afterLast('\\');
+        $modelClass = (string) str($model)->afterLast('\\');
 
         if ($this->option('edit')) {
             $isEditForm = true;
@@ -56,7 +56,7 @@ class MakeFormCommand extends Command
             $isEditForm = false;
         }
 
-        $path = (string) Str::of($component)
+        $path = (string) str($component)
             ->prepend('/')
             ->prepend(app_path('Http/Livewire/'))
             ->replace('\\', '/')
@@ -64,7 +64,7 @@ class MakeFormCommand extends Command
             ->append('.php');
 
         $viewPath = resource_path(
-            (string) Str::of($view)
+            (string) str($view)
                 ->replace('.', '/')
                 ->prepend('views/')
                 ->append('.blade.php'),

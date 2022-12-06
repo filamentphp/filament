@@ -7,5 +7,5 @@
         </button>
     </form>
 
-    {{ $this->modal }}
+    <x-filament-actions::modals />
 </div>

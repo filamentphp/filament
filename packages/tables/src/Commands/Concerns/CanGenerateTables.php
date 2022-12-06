@@ -31,13 +31,13 @@ trait CanGenerateTables
 
             $columnName = $column->getName();
 
-            if (Str::of($columnName)->endsWith([
+            if (str($columnName)->endsWith([
                 '_token',
             ])) {
                 continue;
             }
 
-            if (Str::of($columnName)->contains([
+            if (str($columnName)->contains([
                 'password',
             ])) {
                 continue;
@@ -60,7 +60,7 @@ trait CanGenerateTables
                 }
             }
 
-            if (Str::of($columnName)->endsWith('_id')) {
+            if (str($columnName)->endsWith('_id')) {
                 $guessedRelationshipName = $this->guessBelongsToRelationshipName($column, $model);
 
                 if (filled($guessedRelationshipName)) {
@@ -77,7 +77,7 @@ trait CanGenerateTables
 
         foreach ($columns as $columnName => $columnData) {
             // Constructor
-            $output .= (string) Str::of($columnData['type'])->after('Filament\\');
+            $output .= (string) str($columnData['type'])->after('Filament\\');
             $output .= '::make(\'';
             $output .= $columnName;
             $output .= '\')';

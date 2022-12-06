@@ -41,7 +41,7 @@ trait CanReadModelSchemas
     protected function guessBelongsToRelationshipName(AbstractAsset $column, string $model): ?string
     {
         $modelReflection = invade(app($model));
-        $guessedRelationshipName = Str::of($column->getName())->beforeLast('_id');
+        $guessedRelationshipName = str($column->getName())->beforeLast('_id');
         $hasRelationship = $modelReflection->reflected->hasMethod($guessedRelationshipName);
 
         if (! $hasRelationship) {
@@ -72,7 +72,7 @@ trait CanReadModelSchemas
 
     protected function guessBelongsToRelationshipTableName(AbstractAsset $column): ?string
     {
-        $tableName = Str::of($column->getName())->beforeLast('_id');
+        $tableName = str($column->getName())->beforeLast('_id');
 
         if (Schema::hasTable(Str::plural($tableName))) {
             return Str::plural($tableName);
