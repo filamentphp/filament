@@ -117,7 +117,7 @@ class Notification extends ViewComponent implements Arrayable
 
         foreach ($users as $user) {
             $user->notify($this->toDatabase());
-            
+
             if ($isEventDispatched) {
                 DatabaseNotificationsSent::dispatch($user);
             }
