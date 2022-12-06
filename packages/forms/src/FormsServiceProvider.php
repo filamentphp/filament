@@ -25,6 +25,7 @@ class FormsServiceProvider extends PackageServiceProvider
         $commands = [
             Commands\InstallCommand::class,
             Commands\MakeFieldCommand::class,
+            Commands\MakeFormCommand::class,
             Commands\MakeLayoutComponentCommand::class,
         ];
 
