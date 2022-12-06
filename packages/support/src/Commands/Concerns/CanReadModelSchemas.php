@@ -4,9 +4,6 @@ namespace Filament\Support\Commands\Concerns;
 
 use Doctrine\DBAL\Schema\AbstractAsset;
 use Doctrine\DBAL\Schema\Table;
-use Doctrine\DBAL\Types;
-use Filament\Forms;
-use Filament\Tables;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
