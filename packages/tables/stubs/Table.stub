@@ -1,0 +1,54 @@
+<?php
+
+namespace {{ namespace }};
+
+use App\Models\{{ model }};
+use Filament\Tables;
+use Filament\Tables\Concerns\InteractsWithTable;
+use Filament\Tables\Contracts\HasTable;
+use Livewire\Component;
+use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+
+class {{ class }} extends Component implements HasTable
+{
+    use InteractsWithTable;
+
+    protected function getTableQuery(): Builder
+    {
+        return {{ modelClass }}::query();
+    }
+
+    protected function getTableColumns(): array
+    {
+        return [
+{{ columns }}
+        ];
+    }
+
+    protected function getTableFilters(): array
+    {
+        return [
+            // ...
+        ];
+    }
+
+    protected function getTableActions(): array
+    {
+        return [
+            // ...
+        ];
+    }
+
+    protected function getTableBulkActions(): array
+    {
+        return [
+            // ...
+        ];
+    }
+
+    public function render(): View
+    {
+        return view('{{ view }}');
+    }
+}
