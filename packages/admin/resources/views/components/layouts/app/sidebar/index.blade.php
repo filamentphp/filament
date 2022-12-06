@@ -23,6 +23,9 @@
                 'lg:px-4' => config('filament.layout.sidebar.is_collapsible_on_desktop') && (config('filament.layout.sidebar.collapsed_width') !== 0),
             ])
             x-show="$store.sidebar.isOpen || @js(! config('filament.layout.sidebar.is_collapsible_on_desktop')) || @js(config('filament.layout.sidebar.collapsed_width') === 0)"
+            x-transition:enter="lg:transition delay-100"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
         >
             @if (config('filament.layout.sidebar.is_collapsible_on_desktop') && (config('filament.layout.sidebar.collapsed_width') !== 0))
                 <button
