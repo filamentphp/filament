@@ -717,7 +717,7 @@
                                 :alignment="$column->getAlignment()"
                                 :sortable="$column->isSortable() && (! $isReordering)"
                                 :sort-direction="$getSortDirection()"
-                                class="filament-table-header-cell-{{ \Illuminate\Support\Str::of($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
+                                class="filament-table-header-cell-{{ str($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
                                 :attributes="$column->getExtraHeaderAttributeBag()"
                                 :wrap="$column->isHeaderWrapped()"
                             >
@@ -751,7 +751,7 @@
                             @endif
 
                             @foreach ($columns as $column)
-                                <x-filament-tables::cell class="filament-table-individual-search-cell-{{ \Illuminate\Support\Str::of($column->getName())->camel()->kebab() }} px-4 py-1">
+                                <x-filament-tables::cell class="filament-table-individual-search-cell-{{ str($column->getName())->camel()->kebab() }} px-4 py-1">
                                     @if ($column->isIndividuallySearchable())
                                         <x-filament-tables::search-input
                                             wire-model="tableColumnSearches.{{ $column->getName() }}"/>
@@ -889,7 +889,7 @@
                                         @endphp
 
                                         <x-filament-tables::cell
-                                            class="filament-table-cell-{{ \Illuminate\Support\Str::of($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
+                                            class="filament-table-cell-{{ str($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
                                             wire:key="{{ $this->id }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
                                             wire:loading.remove.delay
                                             wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"

@@ -33,6 +33,7 @@ class FormsServiceProvider extends PluginServiceProvider
     {
         $commands = [
             Commands\MakeFieldCommand::class,
+            Commands\MakeFormCommand::class,
             Commands\MakeLayoutComponentCommand::class,
         ];
 

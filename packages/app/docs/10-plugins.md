@@ -110,7 +110,9 @@ Filament will automatically register your `Page` and ensure that Livewire can di
 To register a custom widget, add the fully qualified class name to the `$widgets` property in your service provider:
 
 ```php
-use Filament\Support\PluginServiceProvider;use Spatie\LaravelPackageTools\Package;use Vendor\Package\Widgers\CustomWidget;
+use Filament\Support\PluginServiceProvider;
+use Spatie\LaravelPackageTools\Package;
+use Vendor\Package\Widgets\CustomWidget;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {

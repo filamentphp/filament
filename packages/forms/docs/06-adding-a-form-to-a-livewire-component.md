@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('posts/create', CreatePost::class);
 ```
 
-## Your first form
+### Adding the form
 
 There are 5 main tasks when adding a form to a Livewire component class. Each one is essential:
 
@@ -51,7 +51,7 @@ class CreatePost extends Component implements HasForms // [tl! focus]
 {
     use InteractsWithForms; // [tl! focus:start]
     
-    public ?array $data = []; // [tl! focus]
+    public ?array $data = [];
     
     public function mount(): void
     {
@@ -85,16 +85,22 @@ class CreatePost extends Component implements HasForms // [tl! focus]
 Finally, in your Livewire component's view, render the form:
 
 ```blade
-<form wire:submit.prevent="create">
-    {{ $this->form }}
+<div>
+    <form wire:submit.prevent="create">
+        {{ $this->form }}
+        
+        <button type="submit">
+            Submit
+        </button>
+    </form>
     
-    <button type="submit">
-        Submit
-    </button>
-</form>
+    <x-filament-actions::modals />
+</div>
 ```
 
-Visit your Livewire component in the browser, and you should see the form components from `schema()`.
+> Note: `<x-filament-actions::modals />` is used to render the modals output by some of the form components. The code can be put anywhere outside of the `<form>` element, as long as it's within the Livewire component.
+
+Visit your Livewire component in the browser, and you should see the form components from `schema()`:
 
 ![](https://user-images.githubusercontent.com/41773797/147614478-5b40c645-107e-40ac-ba41-f0feb99dd480.png)
 

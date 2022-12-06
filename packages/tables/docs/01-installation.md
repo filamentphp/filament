@@ -15,7 +15,7 @@ Filament has a few requirements to run:
 First, require the actions package using Composer:
 
 ```bash
-composer require filament/actions:"^3.0"
+composer require filament/tables:"^3.0"
 ```
 
 ## New Laravel projects
