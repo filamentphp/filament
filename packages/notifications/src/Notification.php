@@ -121,6 +121,17 @@ class Notification extends ViewComponent implements Arrayable
         return $this;
     }
 
+    public function triggerDatabaseNotificationsSentEvent(Model | Authenticatable | Collection | array $users)
+    {
+        $users = Arr::wrap($users);
+
+        foreach ($users as $user) {
+            DatabaseNotificationsSent::dispatch($user);
+        }
+
+        return $this;
+    }
+
     public function toBroadcast(): BroadcastNotification
     {
         $data = $this->toArray();
