@@ -109,7 +109,7 @@ class Notification extends ViewComponent implements Arrayable
         return $this;
     }
 
-    public function sendToDatabase(Model | Authenticatable | Collection | array $users, bool isEventDispatched = false): static
+    public function sendToDatabase(Model | Authenticatable | Collection | array $users, bool $isEventDispatched = false): static
     {
         if (! is_iterable($users)) {
             $users = [$users];
