@@ -2,23 +2,12 @@
 title: Getting started
 ---
 
-Column classes can be found in the `Filament\Tables\Columns` namespace.
-
-If you're using the columns in a Livewire component, you can put them in the `getTableColumns()` method:
+Column classes can be found in the `Filament\Tables\Columns` namespace. You can put them inside the `$table->columns()` method:
 
 ```php
-protected function getTableColumns(): array
-{
-    return [
-        // ...
-    ];
-}
-```
+use Filament\Tables\Table;
 
-If you're using them in App Framework resources or relation managers, you must put them in the `$table->columns()` method:
-
-```php
-public static function table(Table $table): Table
+public function table(Table $table): Table
 {
     return $table
         ->columns([
@@ -109,17 +98,20 @@ TextColumn::make('full_name')
     })
 ```
 
-If a column is `sortable()`, you may choose to sort it by default using the `getDefaultTableSortColumn()` and `getDefaultTableSortDirection()` methods:
+## Sorting by default
+
+You may choose to sort a table by default if no other sort is applied. You can use the `defaultSort()` method for this:
 
 ```php
-protected function getDefaultTableSortColumn(): ?string
-{
-    return 'full_name';
-}
+use Filament\Tables\Table;
 
-protected function getDefaultTableSortDirection(): ?string
+public function table(Table $table): Table
 {
-    return 'asc';
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->defaultSort('stock', 'desc');
 }
 ```
 
@@ -186,17 +178,19 @@ protected $queryString = [
 
 ### Persist search in session
 
-To persist the table or individual column search in the user's session, override the `shouldPersistTableSearchInSession()` or `shouldPersistTableColumnSearchInSession()` method on the Livewire component:
+To persist the table or individual column search in the user's session, use the `persistSearchInSession()` or `persistColumnSearchInSession()` method:
 
 ```php
-protected function shouldPersistTableSearchInSession(): bool
-{
-    return true;
-}
+use Filament\Tables\Table;
 
-protected function shouldPersistTableColumnSearchInSession(): bool
+public function table(Table $table): Table
 {
-    return true;
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->persistSearchInSession()
+        ->persistColumnSearchInSession();
 }
 ```
 
