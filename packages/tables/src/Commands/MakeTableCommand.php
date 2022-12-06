@@ -55,7 +55,7 @@ class MakeTableCommand extends Command
         $viewPath = resource_path(
             (string) str($view)
                 ->replace('.', '/')
-                ->prepend('views')
+                ->prepend('views/')
                 ->append('.blade.php'),
         );
 
