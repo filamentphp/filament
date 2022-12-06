@@ -293,3 +293,47 @@ public function createComment(): void
     $this->form->fill();
 }
 ```
+
+## Generating form Livewire components with the CLI
+
+It's advised that you learn how to set up a Livewire component with the form builder manually, but once you are confident, you can use the CLI to generate a form for you.
+
+```bash
+php artisan make:livewire-form RegistrationForm
+```
+
+This will generate a new `app/Http/Livewire/RegistrationForm.php` component, which you can customize.
+
+### Generating a form for an Eloquent model
+
+Filament is also able to generate forms for a specific Eloquent model. These are more powerful, as they will automatically save the data in the form for you, and [ensure the form fields are properly configured](#setting-a-form-model) to access that model.
+
+When generating a form with the `make:livewire-form` command, it will ask for the name of the model:
+
+```bash
+php artisan make:livewire-form Products/CreateProduct
+```
+
+#### Generating an edit form for an Eloquent record
+
+By default, passing a model to the `make:livewire-form` command will result in a form that creates a new record in your database. If you pass the `--edit` flag to the command, it will generate an edit form for a specific record. This will automatically fill the form with the data from the record, and save the data back to the model when the form is submitted.
+
+```bash
+php artisan make:livewire-form Products/EditProduct --edit
+```
+
+### Automatically generating form schemas
+
+Filament is also able to guess which form fields you want in the schema, based on the model's database columns. The `doctrine/dbal` package is required to use this functionality:
+
+```bash
+composer require doctrine/dbal --dev
+```
+
+Now, you can use the `--generate` flag when generating your form:
+
+```bash
+php artisan make:livewire-form Products/CreateProduct --generate
+```
+
+> Note: If your table contains ENUM columns, `doctrine/dbal` is unable to scan your table and will crash. Hence Filament is unable to generate the schema for your table if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
