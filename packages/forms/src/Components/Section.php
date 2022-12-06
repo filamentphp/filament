@@ -68,7 +68,7 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
         return $this->evaluate($this->description);
     }
 
-    public function getHeading(): string | Htmlable 
+    public function getHeading(): string | Htmlable
     {
         return $this->evaluate($this->heading);
     }

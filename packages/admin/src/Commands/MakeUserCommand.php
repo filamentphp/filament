@@ -24,7 +24,7 @@ class MakeUserCommand extends Command
         return [
             'name' => $this->validateInput(fn () => $this->argument('name') ?? $this->ask('Name'), 'name', ['required']),
             'email' => $this->validateInput(fn () => $this->argument('email') ?? $this->ask('Email address'), 'email', ['required', 'email', 'unique:' . $this->getUserModel()]),
-            'password' =>  Hash::make($this->validateInput(fn () => $this->argument('password') ?? $this->secret('Password'), 'password', ['required', 'min:8'])),
+            'password' => Hash::make($this->validateInput(fn () => $this->argument('password') ?? $this->secret('Password'), 'password', ['required', 'min:8'])),
         ];
     }
 
