@@ -17,7 +17,7 @@ class MakeUserCommand extends Command
 
     protected $description = 'Creates a Filament user.';
 
-    protected $signature = 'make:filament-user {name?} {email?} {password?}';
+    protected $signature = 'make:filament-user {name?} {email?} {password?} {--quiet}';
 
     protected function getUserData(): array
     {
@@ -38,7 +38,7 @@ class MakeUserCommand extends Command
         $loginUrl = route('filament.auth.login');
         $this->info('Success! ' . ($user->getAttribute('email') ?? $user->getAttribute('username') ?? 'You') . " may now log in at {$loginUrl}.");
 
-        if ($this->getUserModel()::count() === 1 && $this->confirm('Would you like to show some love by starring the repo?', true)) {
+        if ($this->getUserModel()::count() === 1 && ! $this->option('quiet') && $this->confirm('Would you like to show some love by starring the repo?', true)) {
             if (PHP_OS_FAMILY === 'Darwin') {
                 exec('open https://github.com/filamentphp/filament');
             }
