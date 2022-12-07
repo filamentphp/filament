@@ -13,7 +13,7 @@
 >
     @if ($isBulkToggleable() || $isSearchable())
     <div
-        class="grid gap-y-2"
+        class="gap-y-2 grid"
         x-data="{
             options: @js($getOptions()),
 
@@ -69,7 +69,7 @@
         @if ($isSearchable())
             <input
                 {!! $isDisabled() ? 'disabled' : null !!}
-                class="block w-full transition duration-75 border-gray-300 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70"
+                class="focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 block w-full transition duration-75 border-gray-300 rounded-lg shadow-sm"
                 type="search"
                 placeholder="{{ $getSearchPrompt() }}"
                 x-model.debounce.{{ $getSearchDebounce() }}="search"
@@ -81,7 +81,7 @@
                 <x-forms::link
                     tag="button"
                     size="sm"
-                    x-show="!isAllVisibleSelected"
+                    x-show="visibleCheckboxListItems.length && !isAllVisibleSelected"
                     x-on:click="toggleAll"
                 >
                     {{ __('forms::components.checkbox_list.buttons.select_all.label') }}
@@ -90,7 +90,7 @@
                 <x-forms::link
                     tag="button"
                     size="sm"
-                    x-show="isAllVisibleSelected"
+                    x-show="visibleCheckboxListItems.length && isAllVisibleSelected"
                     x-on:click="toggleAll"
                 >
                     {{ __('forms::components.checkbox_list.buttons.deselect_all.label') }}
@@ -114,7 +114,7 @@
 
             @foreach ($getOptions() as $optionValue => $optionLabel)
                 <label
-                    class="flex items-center space-x-3 rtl:space-x-reverse"
+                    class="rtl:space-x-reverse flex items-center space-x-3"
                     @if ($isSearchable())
                         x-show="$el.querySelector('span').innerText.toLowerCase().includes(search.toLowerCase())"
                     @endif
@@ -153,7 +153,7 @@
             <div
                 x-cloak
                 x-show="visibleCheckboxListItems.length === 0"
-                class="text-sm filament-forms-checkbox-list-component-no-search-results-message"
+                class="filament-forms-checkbox-list-component-no-search-results-message text-sm"
             >
                 {{ $getNoSearchResultsMessage() }}
             </div>
