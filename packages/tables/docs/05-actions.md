@@ -6,23 +6,12 @@ title: Actions
 
 ### Single actions
 
-Single action buttons are rendered at the end of each table row.
-
-If you're using the actions in a Livewire component, you can put them in the `getTableActions()` method.
+Single action buttons are rendered at the end of each table row. You can put them in the `$table->actions()` method:
 
 ```php
-protected function getTableActions(): array
-{
-    return [
-        // ...
-    ];
-}
-```
+use Filament\Tables\Table;
 
-If you're using them in App Framework resources or relation managers, you must put them on the `$table`:
-
-```php
-public static function table(Table $table): Table
+public function table(Table $table): Table
 {
     return $table
         ->actions([
@@ -46,23 +35,12 @@ Action::make('edit')
 
 ### Bulk actions
 
-Bulk action buttons are visible when the user selects at least one record.
-
-If you're using the actions in a Livewire component, you can put them in the `getTableBulkActions()` method.
+Bulk action buttons are visible when the user selects at least one record. You can put them in the `$table->bulkActions()` method:
 
 ```php
-protected function getTableBulkActions(): array
-{
-    return [
-        // ...
-    ];
-}
-```
+use Filament\Tables\Table;
 
-If you're using them in App Framework resources or relation managers, you must put them on the `$table`:
-
-```php
-public static function table(Table $table): Table
+public function table(Table $table): Table
 {
     return $table
         ->bulkActions([
@@ -400,30 +378,40 @@ ReplicateAction::make()
 You may use an `ActionGroup` object to group multiple table actions together in a dropdown:
 
 ```php
-use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Table;
 
-protected function getTableActions(): array
+public function table(Table $table): Table
 {
-    return [
-        Tables\Actions\ActionGroup::make([
-            Tables\Actions\ViewAction::make(),
-            Tables\Actions\EditAction::make(),
-            Tables\Actions\DeleteAction::make(),
-        ]),
-    ];
+    return $table
+        ->actions([
+            ActionGroup::make([
+                ViewAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
+            ]),
+            // ...
+        ]);
 }
 ```
 
 ## Position
 
-By default, the row actions in your table are rendered in the final cell. You may change the position by overriding the `getTableActionsPosition()` method:
+By default, the row actions in your table are rendered in the final cell. You may change the position by using the `position` argument:
 
 ```php
 use Filament\Tables\Actions\Position;
+use Filament\Tables\Table;
 
-protected function getTableActionsPosition(): ?string
+public function table(Table $table): Table
 {
-    return Position::BeforeCells;
+    return $table
+        ->actions([
+            // ...
+        ], position: Position::BeforeCells);
 }
 ```
 

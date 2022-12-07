@@ -12,6 +12,7 @@ use Filament\Notifications\Concerns\HasDuration;
 use Filament\Notifications\Concerns\HasIcon;
 use Filament\Notifications\Concerns\HasId;
 use Filament\Notifications\Concerns\HasTitle;
+use Filament\Notifications\Events\DatabaseNotificationsSent;
 use Filament\Support\Components\ViewComponent;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Arrayable;
@@ -120,7 +121,7 @@ class Notification extends ViewComponent implements Arrayable
     /**
      * @param  Model | Authenticatable | Collection | array<Model | Authenticatable>  $users
      */
-    public function sendToDatabase(Model | Authenticatable | Collection | array $users): static
+    public function sendToDatabase(Model | Authenticatable | Collection | array $users, bool $isEventDispatched = false): static
     {
         if (! is_iterable($users)) {
             $users = [$users];
@@ -128,6 +129,10 @@ class Notification extends ViewComponent implements Arrayable
 
         foreach ($users as $user) {
             $user->notify($this->toDatabase());
+
+            if ($isEventDispatched) {
+                DatabaseNotificationsSent::dispatch($user);
+            }
         }
 
         return $this;
