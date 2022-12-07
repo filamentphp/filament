@@ -62,12 +62,20 @@ class Notification extends ViewComponent implements Arrayable
             'icon' => $this->getIcon(),
             'iconColor' => $this->getIconColor(),
             'title' => $this->getTitle(),
+            'view' => $this->getView(),
         ];
     }
 
     public static function fromArray(array $data): static
     {
         $static = static::make($data['id'] ?? Str::random());
+
+        $view = $data['view'] ?? null;
+
+        if (filled($view) && ($static->getView() !== $view) && static::isViewSafe()) {
+            $static->view($data['view']);
+        }
+
         $static->actions(
             array_map(
                 fn (array $action): Action | ActionGroup => match (array_key_exists('actions', $action)) {
@@ -84,6 +92,11 @@ class Notification extends ViewComponent implements Arrayable
         $static->title($data['title'] ?? null);
 
         return $static;
+    }
+
+    protected static function isViewSafe(): bool
+    {
+        return false;
     }
 
     public function send(): static
