@@ -81,6 +81,7 @@ class TextColumn extends Column
      */
     protected function mutateArrayState(array $state): string | array
     {
+        // $$$ hugh
         return $this->formatArrayStateUsing ? $state : implode(', ', $state);
     }
 }

@@ -165,6 +165,7 @@ trait CanFormatState
 
     public function getFormattedState(): mixed
     {
+        // $$$ hugh
         $state = $this->evaluate(
             $this->formatArrayStateUsing ??
             $this->formatStateUsing ??
