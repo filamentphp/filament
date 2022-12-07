@@ -71,9 +71,8 @@ trait HasColumns
             ];
         }
 
-//        if ($columnRelationship = $column->getRelationship($record)) {
-//            $record = $columnRelationship->getResults();
-//            $columnName = $column->getRelationshipAttribute();
+
+        // $$$ hugh
         if ($relationshipRecord = $column->getNestedRecord()) {
             $record = $relationshipRecord;
             $columnName = $column->getRelationshipAttribute();

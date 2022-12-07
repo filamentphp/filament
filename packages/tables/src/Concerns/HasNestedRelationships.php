@@ -11,18 +11,25 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  * Heavily commented mostly for code review purposes, comments can be mostly stripped if PR is merged.
  *
  * This trait provides all the logic needed to handle distant relationship 'chains' (dotted names) in columns, either
- * from the column names themselves, or as things like Ordering or Grouping ID's / attributes.
+ * from the column names themselves, or as things like Ordering or Grouping ID's / attributes.  In general, methods
+ * in this trait will work with non-dotted, non nested attributes as well, so can be called without needing to
+ * check if the attribute queries relationships.
  *
  * I'm expecting Dan to rewrite most of this code, and it's intended as a proof of concept for a "stack" based
  * approach to relationship handling.  As such, it's a "black box" - however the internals are written, the API
  * it provides would probably remain intact, as whatever way you slice it, the places detailed below where I've
  * changed code elsewhere in Filament to use these methods would need changing regardless, to call similar methods.
  *
- * I wound up putting this trait in the ./support package, rather than folding it all in to the existing table columns
+ * I wound up putting this trait in its own concern, rather than folding it all in to the existing table columns
  * HasRelationships trait, because (while it replaces most stuff in that trait) it isn't just a column trait, it needs
- * to be used in things like Groups as well. There is no doubt a better place to put it.
+ * to be used in things like Groups as well.
  *
- * In this PR, the consumers of this trait (where I have changed code to use it) are:
+ * In this PR, the consumers of this trait (where I have changed code to use it) are as follows.  I've notated
+ * all these changes with ...
+ *
+ * // $$$ hugh
+ *
+ * ... so searching for that will find you everywhere I've made a change
  *
  * ========================
  * = HasState:
@@ -74,14 +81,15 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  *
  * This PR modifies Group.php to support grouping on an arbitrary length chain of one-to-one relationships.
  *
- * The orderQuery method in the Group class uses $this->getNestedRelationshipExistenceQueries() from this class,
- * in the same way as InteractsWithTableQuery above.
+ * The orderQuery method in the Group class uses $this->getNestedOrderBy() from this class, which is just a
+ * convenience method for returning the getNestedRelationExistenceQuery() order by explained above.
  *
  * The getGroupTitleFromRecord method in the Group class returns $this->getNestedAttribute() from this class, which
  * returns the attribute at the end of a one-to-one chain.
  *
- * The scopeQuery method in the Group class returns $this->getNestedWhere() from this class, which nests arbitrary
- * length one-to-one chains (included simple non-nested attributes), wrapping them in nested whereHas() clauses.
+ * The scopeQuery method in the Group class returns $this->getNestedQuery() from this class, which nests arbitrary
+ * length one-to-one chains (included simple non-nested attributes), wrapping them in nested whereHas() clauses,
+ * with a closure for the actual where clause.
  *
  * ===============
  * = HasColumns
@@ -107,7 +115,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  * including BelongsToMany and HasMany.  If not, they'll have to use the inverseRelationshipName() method to
  * provide their reverse path.
  *
- * It uses $column->getNestedWhereHas() to apply the necessary where clause for selecting the parent table ID's,
+ * It uses $column->getNestedQuery() to apply the necessary where clause for selecting the parent table ID's,
  * depending on the kind of summary being built.  Again, it's the original code, but applied through a nested
  * method with a Closure, so it can handle distant relationships.
  */

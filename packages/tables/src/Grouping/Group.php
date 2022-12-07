@@ -108,6 +108,7 @@ class Group
             ]);
         }
 
+        // $$$ hugh
         return $this->getNestedAttribute($column, $record);
     }
 
@@ -122,6 +123,7 @@ class Group
             ]) ?? $query;
         }
 
+        // $$$ hugh
         return $this->getNestedOrderBy($query, $column);
     }
 
@@ -137,6 +139,7 @@ class Group
             ]) ?? $query;
         }
 
+        // $$$ hugh
         return $this->getNestedQuery(
             $query,
             $column,

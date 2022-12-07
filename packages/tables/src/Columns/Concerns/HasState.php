@@ -76,6 +76,7 @@ trait HasState
             return null;
         }
 
+        // $$$ hugh
         $state = $this->collectNestedAttributes();
 
         return count($state) ? $state : null;

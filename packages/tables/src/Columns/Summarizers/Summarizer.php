@@ -63,6 +63,7 @@ class Summarizer extends ViewComponent
         $attribute = $column->getName();
         $query = $this->getQuery()->clone();
 
+        // $$$ hugh
         if ($column->queriesRelationships($query->getModel())) {
             // if the column being summarized is a dotted relationship, we need to invert the main query so it
             // selects records from the last relationship in the chain, based on the ID's of the main table

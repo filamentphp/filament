@@ -125,6 +125,7 @@ trait InteractsWithTableQuery
             return $query;
         }
 
+        // $$$ hugh
         foreach (array_reverse($this->getSortColumns()) as $sortColumn) {
             $query->orderBy(
                 $this->getNestedRelationExistenceQuery($query, $sortColumn, $direction),
