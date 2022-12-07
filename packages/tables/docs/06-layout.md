@@ -279,22 +279,12 @@ Alpine.plugin(Collapse)
 
 Sometimes, you may find that your data fits into a grid format better than a list. Filament can handle that too!
 
-Simply define a new `getTableContentGrid()` method on your Livewire component:
+Simply use the `$table->contentGrid()` method:
 
 ```php
-protected function getTableContentGrid(): ?array
-{
-    return [
-        'md' => 2,
-        'xl' => 3,
-    ];
-}
-```
+use Filament\Tables\Table;
 
-Or if you're using App Framework resources or relation managers, you must define a `$table->contentGrid()` method:
-
-```php
-public static function table(Table $table): Table
+public function table(Table $table): Table
 {
     return $table
         ->contentGrid([

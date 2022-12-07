@@ -4,104 +4,53 @@ title: Advanced
 
 ## Pagination
 
-By default, tables will be paginated. To disable this, you should override the `isTablePaginationEnabled()` method on your Livewire component:
+By default, tables will be paginated. To disable this, you should use the `$table->paginated(false)` method:
 
 ```php
-<?php
+use Filament\Tables\Table;
 
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Tables;
-use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
-use Livewire\Component;
-
-class ListPosts extends Component implements Tables\Contracts\HasTable
+public function table(Table $table): Table
 {
-    use Tables\Concerns\InteractsWithTable;
-
-    protected function getTableQuery(): Builder
-    {
-        return Post::query();
-    }
-
-    protected function getTableColumns(): array
-    {
-        return [
-            Tables\Columns\TextColumn::make('title'),
-            Tables\Columns\TextColumn::make('author.name'),
-        ];
-    }
-
-    protected function isTablePaginationEnabled(): bool // [tl! focus:start]
-    {
-        return false;
-    } // [tl! focus:end]
-
-    public function render(): View
-    {
-        return view('list-posts');
-    }
+    return $table
+        ->paginated(false);
 }
 ```
 
-You may customize the options for the paginated records per page select by overriding the `getTableRecordsPerPageSelectOptions()` method on your Livewire component:
+### Customizing the pagination options
+
+You may customize the options for the paginated records per page select by passing them to the `paginated()` method:
 
 ```php
-<?php
+use Filament\Tables\Table;
 
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Tables;
-use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
-use Livewire\Component;
-
-class ListPosts extends Component implements Tables\Contracts\HasTable
+public function table(Table $table): Table
 {
-    use Tables\Concerns\InteractsWithTable;
-
-    protected function getTableQuery(): Builder
-    {
-        return Post::query();
-    }
-
-    protected function getTableColumns(): array
-    {
-        return [
-            Tables\Columns\TextColumn::make('title'),
-            Tables\Columns\TextColumn::make('author.name'),
-        ];
-    }
-
-    protected function getTableRecordsPerPageSelectOptions(): array // [tl! focus:start]
-    {
-        return [10, 25, 50, 100];
-    } // [tl! focus:end]
-
-    public function render(): View
-    {
-        return view('list-posts');
-    }
+    return $table
+        ->paginated([10, 25, 50, 100, 'all']);
 }
 ```
+
+### Preventing query string conflicts with the pagination page
 
 By default, Livewire stores the pagination state in a `page` parameter of the URL query string. If you have multiple tables on the same page, this will mean that the pagination state of one table may be overwritten by the state of another table.
 
-To fix this, you may define a `getTableQueryStringIdentifier()` on your component, to return a unique query string identifier for that table:
+To fix this, you may define a `$table->queryStringIdentifier()`, to return a unique query string identifier for that table:
 
 ```php
-protected function getTableQueryStringIdentifier(): string
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
 {
-    return 'users';
+    return $table
+        ->queryStringIdentifier('users');
 }
 ```
 
-### Simple pagination
+### Using simple pagination
 
-You may use simple pagination by overriding `paginateTableQuery()` method on your Livewire component:
+You may use simple pagination by overriding `paginateTableQuery()` method.
+
+First, locate your Livewire component. If you're using a resource from the App Framework and you want to add simple pagination to the List page, you'll want to open the `Pages/List.php` file in the resource, not the resource class itself.
 
 ```php
 use Illuminate\Contracts\Pagination\Paginator;
@@ -115,9 +64,11 @@ protected function paginateTableQuery(Builder $query): Paginator
 
 ## Searching records with Laravel Scout
 
-While Filament doesn't provide a direct integration with [Laravel Scout](https://laravel.com/docs/scout), you may override methods to integrate it with your Livewire component.
+While Filament doesn't provide a direct integration with [Laravel Scout](https://laravel.com/docs/scout), you may override methods to integrate it.
 
-First, you must ensure that the table search input is visible:
+First, locate your Livewire component. If you're using a resource from the App Framework and you want to add Scout to the List page, you'll want to open the `Pages/List.php` file in the resource, not the resource class itself.
+
+You must ensure that the table search input is visible:
 
 ```php
 public function isTableSearchable(): bool
@@ -146,15 +97,18 @@ Scout uses this `whereIn()` method to retrieve results internally, so there is n
 
 ## Record URLs (clickable rows)
 
-You may allow table rows to be completely clickable by overriding the `getTableRecordUrlUsing()` method on your Livewire component:
+You may allow table rows to be completely clickable by using the `$table->recordUrl()` method:
 
 ```php
-use Closure;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
-protected function getTableRecordUrlUsing(): Closure
+public function table(Table $table): Table
 {
-    return fn (Model $record): string => route('posts.edit', ['record' => $record]);
+    return $table
+        ->recordUrl(
+            fn (Model $record): string => route('posts.edit', ['record' => $record]),
+        );
 }
 ```
 
@@ -164,20 +118,22 @@ If you'd like to [override the URL](columns/getting-started#opening-urls) for a 
 
 ## Record classes
 
-You may want to conditionally style rows based on the record data. This can be achieved by specifying a string or array of CSS classes to be applied to the row using the `getTableRecordClassesUsing()` method:
+You may want to conditionally style rows based on the record data. This can be achieved by specifying a string or array of CSS classes to be applied to the row using the `$table->recordClasses()` method:
 
 ```php
 use Closure;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
-protected function getTableRecordClassesUsing(): ?Closure
+public function table(Table $table): Table
 {
-    return fn (Model $record) => match ($record->status) {
-        'draft' => 'opacity-30',
-        'reviewing' => 'border-l-2 border-orange-600 dark:border-orange-300',
-        'published' => 'border-l-2 border-green-600 dark:border-green-300',
-        default => null,
-    };
+    return $table
+        ->recordClasses(fn (Model $record) => match ($record->status) {
+            'draft' => 'opacity-30',
+            'reviewing' => 'border-l-2 border-orange-600 dark:border-orange-300',
+            'published' => 'border-l-2 border-green-600 dark:border-green-300',
+            default => null,
+        });
 }
 ```
 
@@ -205,77 +161,25 @@ module.exports = {
 
 ## Empty state
 
-By default, an "empty state" card will be rendered when the table is empty. To customize this, you may define methods on your Livewire component:
+By default, an "empty state" card will be rendered when the table is empty. To customize this:
 
 ```php
-<?php
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Table;
 
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Tables;
-use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Livewire\Component;
-
-class ListPosts extends Component implements Tables\Contracts\HasTable
+public function table(Table $table): Table
 {
-    use Tables\Concerns\InteractsWithTable;
-
-    protected function getTableQuery(): Builder
-    {
-        return Post::query();
-    }
-
-    protected function getTableColumns(): array
-    {
-        return [
-            Tables\Columns\ImageColumn::make('author.avatar')
-                ->size(40)
-                ->circular(),
-            Tables\Columns\TextColumn::make('title'),
-            Tables\Columns\TextColumn::make('author.name'),
-            Tables\Columns\BadgeColumn::make('status')
-                ->colors([
-                    'danger' => 'draft',
-                    'warning' => 'reviewing',
-                    'success' => 'published',
-                ]),
-            Tables\Columns\IconColumn::make('is_featured')->boolean(),
-        ];
-    }
-
-    protected function getTableEmptyStateIcon(): ?string // [tl! focus:start]
-    {
-        return 'heroicon-o-bookmark';
-    }
-
-    protected function getTableEmptyStateHeading(): ?string
-    {
-        return 'No posts yet';
-    }
-
-    protected function getTableEmptyStateDescription(): ?string
-    {
-        return 'You may create a post using the button below.';
-    }
-
-    protected function getTableEmptyStateActions(): array
-    {
-        return [
-            Tables\Actions\Action::make('create')
+    return $table
+        ->emptyStateHeading('No posts yet')
+        ->emptyStateDescription('You may create a post using the button below.')
+        ->emptyStateIcon('heroicon-o-bookmark')
+        ->emptyStateActions([
+            Action::make('create')
                 ->label('Create post')
                 ->url(route('posts.create'))
                 ->icon('heroicon-m-plus')
                 ->button(),
-        ];
-    } // [tl! focus:end]
-
-    public function render(): View
-    {
-        return view('list-posts');
-    }
+        ]);
 }
 ```
 
@@ -300,44 +204,56 @@ protected $queryString = [
 
 ## Reordering records
 
-To allow the user to reorder records using drag and drop in your table, you can use the `getTableReorderColumn()` method:
+To allow the user to reorder records using drag and drop in your table, you can use the `$table->reorderable()` method:
 
 ```php
-protected function getTableReorderColumn(): ?string
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
 {
-    return 'sort';
+    return $table
+        ->reorderable('sort');
 }
 ```
 
 When making the table reorderable, a new button will be available on the table to toggle reordering.
 
-The `getTableReorderColumn()` method returns the name of a column to store the record order in. If you use something like [`spatie/eloquent-sortable`](https://github.com/spatie/eloquent-sortable) with an order column such as `order_column`, you may return this instead:
+The `reorderable()` method accepts the name of a column to store the record order in. If you use something like [`spatie/eloquent-sortable`](https://github.com/spatie/eloquent-sortable) with an order column such as `order_column`, you may use this instead:
 
 ```php
-protected function getTableReorderColumn(): ?string
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
 {
-    return 'order_column';
+    return $table
+        ->reorderable('order_column');
 }
 ```
 
 ### Enabling pagination while reordering
 
-Pagination will be disabled in reorder mode to allow you to move records between pages. It is generally bad UX to re-enable pagination while reordering, but if you are sure then you can use:
+Pagination will be disabled in reorder mode to allow you to move records between pages. It is generally bad UX to re-enable pagination while reordering, but if you are sure then you can use `$table->paginatedWhileReordering()`:
 
 ```php
-protected function isTablePaginationEnabledWhileReordering(): bool
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
 {
-    return true;
+    return $table
+        ->paginatedWhileReordering();
 }
 ```
 
 ## Polling content
 
-You may poll table content so that it refreshes at a set interval, using the `getTablePollingInterval()` method:
+You may poll table content so that it refreshes at a set interval, using the `$form->poll()` method:
 
 ```php
-protected function getTablePollingInterval(): ?string
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
 {
-    return '10s';
+    return $table
+        ->poll('10s');
 }
 ```
