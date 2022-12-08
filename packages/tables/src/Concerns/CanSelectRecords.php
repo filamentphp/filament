@@ -50,7 +50,7 @@ trait CanSelectRecords
         if (is_callable($this->getTableRecordBulkActionsEnabled())) {
             return $query
                 ->get()
-                ->reject(fn ($item) => ! $this->getTableRecordBulkActionsEnabled()($item))
+                ->filter(fn ($item): bool => $this->getTableRecordBulkActionsEnabled()($item))
                 ->count();
         }
 
