@@ -45,7 +45,7 @@ trait CanSelectRecords
             return $this->records->total();
         }
 
-        if ($this->isTableSelectionEnabled() && is_callable($this->getTableRecordBulkActionsEnabled())) {
+        if (is_callable($this->getTableRecordBulkActionsEnabled())) {
             return $this
                 ->getFilteredTableQuery()
                 ->get()
