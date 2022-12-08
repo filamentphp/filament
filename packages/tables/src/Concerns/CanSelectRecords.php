@@ -49,7 +49,7 @@ trait CanSelectRecords
             return $this
                 ->getFilteredTableQuery()
                 ->get()
-                ->reject(fn($item) => !$this->getTableRecordBulkActionsEnabled()($item))
+                ->reject(fn ($item) => ! $this->getTableRecordBulkActionsEnabled()($item))
                 ->count();
         }
 
