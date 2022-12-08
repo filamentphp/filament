@@ -339,7 +339,8 @@ class Table extends ViewComponent
         return $callback($record);
     }
 
-    public function isRecordBulkActionEnabled(Model $record): bool {
+    public function isRecordSelectable(Model $record): bool
+    {
 
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();
