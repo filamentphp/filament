@@ -45,15 +45,16 @@ trait CanSelectRecords
             return $this->records->total();
         }
 
+        $query = $this->getFilteredTableQuery();
+
         if (is_callable($this->getTableRecordBulkActionsEnabled())) {
-            return $this
-                ->getFilteredTableQuery()
+            return $query
                 ->get()
                 ->reject(fn ($item) => ! $this->getTableRecordBulkActionsEnabled()($item))
                 ->count();
         }
 
-        return $this->getFilteredTableQuery()->count();
+        return $query->count();
     }
 
     public function getSelectedTableRecords(): Collection
