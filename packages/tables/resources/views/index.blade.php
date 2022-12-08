@@ -709,7 +709,6 @@
                                 $recordAction = $getRecordAction($record);
                                 $recordKey = $getRecordKey($record);
                                 $recordUrl = $getRecordUrl($record);
-                                $recordBulkActionEnabled = $isRecordBulkActionEnabled($record);
                             @endphp
 
                             <x-tables::row
