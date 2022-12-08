@@ -345,7 +345,7 @@ class Table extends ViewComponent
         $livewire = $this->getLivewire();
 
         $callback = $livewire->getTableRecordBulkActionsEnabled();
-        
+
         if (! $callback) {
             return true;
         }
