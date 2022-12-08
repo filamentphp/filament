@@ -347,11 +347,7 @@ class Table extends ViewComponent
 
         $callback = $livewire->getTableRecordBulkActionsEnabled();
 
-        if (! $callback) {
-            return true;
-        }
-
-        return $callback($record) ?? true;
+        return $callback ? $callback($record) : true;
     }
 
     public function getReorderColumn(): ?string
