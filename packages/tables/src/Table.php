@@ -341,13 +341,16 @@ class Table extends ViewComponent
 
     public function isRecordSelectable(Model $record): bool
     {
-
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();
 
         $callback = $livewire->getTableRecordBulkActionsEnabled();
+        
+        if (! $callback) {
+            return true;
+        }
 
-        return $callback ? $callback($record) : true;
+        return $callback($record);
     }
 
     public function getReorderColumn(): ?string
