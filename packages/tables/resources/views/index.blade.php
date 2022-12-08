@@ -62,8 +62,6 @@
     };
 @endphp
 
-@dump($isSelectionEnabled, $selectRecordsLayout)
-
 <div
     x-data="{
 
