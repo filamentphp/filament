@@ -396,10 +396,7 @@ class Table extends ViewComponent
 
     public function getSelectRecordsLayout(): string
     {
-        /** @var TableComponent $livewire */
-        $livewire = $this->getLivewire();
-
-        return invade($livewire)->getTableSelectRecordsLayout() ?? SelectRecordsLayout::RowStart;
+        return $this->getLivewire()->getTableSelectRecordsLayout() ?? SelectRecordsLayout::RowStart;
     }
 
     public function isSearchableByColumn(): bool
