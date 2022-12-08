@@ -750,7 +750,7 @@
                                 @endif
 
                                 @if ($isSelectionEnabled)
-                                    @if ($recordBulkActionEnabled)
+                                    @if ($isRecordBulkActionEnabled($record))
                                         <x-tables::checkbox.cell :class="\Illuminate\Support\Arr::toCssClasses([
                                             'hidden' => $isReordering,
                                         ])">
