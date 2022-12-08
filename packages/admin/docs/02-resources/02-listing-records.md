@@ -162,6 +162,27 @@ public static function table(Table $table): Table
 }
 ```
 
+### Aligning bulk action checkboxes
+
+By default the checkboxes for bulk actions are aligned to the left of the table. If it is more desirable to position these at the end of the table the method `$table->selectRecordsLayout()` can be used:
+
+```php
+use Filament\Resources\Table;
+use Tables\Actions\SelectRecordsLayout;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->selectRecordsLayout(SelectRecordsLayout::RowEnd)
+        ->columns([
+            // ...
+        ])
+        ->bulkActions([
+            // ...
+        ]);
+}
+```
+
 ## Reordering records
 
 To allow the user to reorder records using drag and drop in your table, you can use the `reorderable()` method:

@@ -24,6 +24,7 @@
     $isColumnSearchVisible = $isSearchableByColumn();
     $isGlobalSearchVisible = $isSearchable();
     $isSelectionEnabled = $isSelectionEnabled();
+    $selectRecordsLayout = $getSelectRecordsLayout();
     $isStriped = $isStriped();
     $hasFilters = $isFilterable();
     $hasFiltersPopover = $hasFilters && ($getFiltersLayout() === FiltersLayout::Popover);
@@ -60,6 +61,8 @@
         return null;
     };
 @endphp
+
+@dump($isSelectionEnabled, $selectRecordsLayout)
 
 <div
     x-data="{
@@ -618,7 +621,7 @@
                                 @endif
                             @endif
 
-                            @if ($isSelectionEnabled)
+                            @if ($isSelectionEnabled && $selectRecordsLayout === \Filament\Tables\Actions\SelectRecordsLayout::RowStart)
                                 <x-tables::checkbox.cell>
                                     <x-tables::checkbox
                                         x-on:click="toggleSelectRecordsOnPage"
@@ -673,6 +676,27 @@
                                 <th class="w-5"></th>
                             @endif
                         @endif
+
+                            @if ($isSelectionEnabled && $selectRecordsLayout === \Filament\Tables\Actions\SelectRecordsLayout::RowEnd)
+                                <x-tables::checkbox.cell>
+                                    <x-tables::checkbox
+                                        x-on:click="toggleSelectRecordsOnPage"
+                                        x-bind:checked="
+                                            let recordsOnPage = getRecordsOnPage()
+
+                                            if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
+                                                $el.checked = true
+
+                                                return 'checked'
+                                            }
+
+                                            $el.checked = false
+
+                                            return null
+                                        "
+                                    />
+                                </x-tables::checkbox.cell>
+                            @endif
                     </x-slot>
 
                     @if ($isColumnSearchVisible)
@@ -749,7 +773,7 @@
                                     </x-tables::actions.cell>
                                 @endif
 
-                                @if ($isSelectionEnabled)
+                                @if ($isSelectionEnabled && $selectRecordsLayout === \Filament\Tables\Actions\SelectRecordsLayout::RowStart)
                                     <x-tables::checkbox.cell :class="\Illuminate\Support\Arr::toCssClasses([
                                         'hidden' => $isReordering,
                                     ])">
@@ -808,6 +832,18 @@
                                             :record="$record"
                                         />
                                     </x-tables::actions.cell>
+                                @endif
+
+                                @if ($isSelectionEnabled && $selectRecordsLayout === \Filament\Tables\Actions\SelectRecordsLayout::RowEnd)
+                                    <x-tables::checkbox.cell :class="\Illuminate\Support\Arr::toCssClasses([
+                                        'hidden' => $isReordering,
+                                    ])">
+                                        <x-tables::checkbox
+                                            x-model="selectedRecords"
+                                            :value="$recordKey"
+                                            class="filament-tables-record-checkbox"
+                                        />
+                                    </x-tables::checkbox.cell>
                                 @endif
 
                                 <x-tables::loading-cell

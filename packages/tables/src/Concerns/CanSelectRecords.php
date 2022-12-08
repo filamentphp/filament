@@ -3,6 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Actions\SelectRecordsLayout;
 use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -74,6 +75,11 @@ trait CanSelectRecords
             $this->getCachedTableBulkActions(),
             fn (BulkAction $action): bool => ! $action->isHidden(),
         ));
+    }
+
+    public function getTableSelectRecordsLayout(): ?string
+    {
+        return SelectRecordsLayout::RowStart;
     }
 
     public function shouldSelectCurrentPageOnly(): bool

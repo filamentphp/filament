@@ -18,6 +18,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Filament\Tables\Actions\SelectRecordsLayout;
 
 class Table extends ViewComponent
 {
@@ -391,6 +392,14 @@ class Table extends ViewComponent
     public function isSearchable(): bool
     {
         return $this->getLivewire()->isTableSearchable();
+    }
+
+    public function getSelectRecordsLayout(): string
+    {
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        return invade($livewire)->getTableSelectRecordsLayout() ?? SelectRecordsLayout::RowStart;
     }
 
     public function isSearchableByColumn(): bool

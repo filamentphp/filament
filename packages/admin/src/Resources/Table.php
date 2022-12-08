@@ -23,6 +23,8 @@ class Table
 
     protected ?string $filtersLayout = null;
 
+    protected ?string $selectRecordsLayout = null;
+
     protected array $headerActions = [];
 
     protected ?array $contentGrid = null;
@@ -95,6 +97,13 @@ class Table
     public function filtersLayout(?string $filtersLayout): static
     {
         $this->filtersLayout = $filtersLayout;
+
+        return $this;
+    }
+
+    public function selectRecordsLayout(?string $selectRecordsLayout): static
+    {
+        $this->selectRecordsLayout = $selectRecordsLayout;
 
         return $this;
     }
@@ -235,6 +244,11 @@ class Table
     public function getFiltersLayout(): ?string
     {
         return $this->filtersLayout;
+    }
+
+    public function getSelectRecordsLayout(): ?string
+    {
+        return $this->selectRecordsLayout;
     }
 
     public function getHeaderActions(): array
