@@ -340,9 +340,6 @@ class Table extends ViewComponent
     }
 
     public function isRecordBulkActionEnabled(Model $record): bool {
-        if (!$this->isSelectionEnabled()) {
-            return false;
-        }
 
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();
