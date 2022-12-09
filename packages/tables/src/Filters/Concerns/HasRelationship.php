@@ -47,12 +47,16 @@ trait HasRelationship
 
         $titleColumnName = $this->getRelationshipTitleColumnName();
 
-        $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleColumnName);
+        $relationshipQuery = $relationship->getRelated()->query();
 
         if ($this->modifyRelationshipQueryUsing) {
             $relationshipQuery = $this->evaluate($this->modifyRelationshipQueryUsing, [
                 'query' => $relationshipQuery,
             ]) ?? $relationshipQuery;
+        }
+
+        if(empty($relationshipQuery->getQuery()->orders)) {
+            $relationshipQuery->orderBy($titleColumnName);
         }
 
         return $relationshipQuery
