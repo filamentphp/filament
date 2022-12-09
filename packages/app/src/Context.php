@@ -795,9 +795,9 @@ class Context
         return $this->sidebarWidth;
     }
 
-    public function collapsedSidebarWidth(string $collapsedSidebarWidth): static
+    public function collapsedSidebarWidth(string $width): static
     {
-        $this->collapsedSidebarWidth = $collapsedSidebarWidth;
+        $this->collapsedSidebarWidth = $width;
 
         return $this;
     }
