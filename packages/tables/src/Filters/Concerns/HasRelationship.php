@@ -55,7 +55,7 @@ trait HasRelationship
             ]) ?? $relationshipQuery;
         }
 
-        if(empty($relationshipQuery->getQuery()->orders)) {
+        if (empty($relationshipQuery->getQuery()->orders)) {
             $relationshipQuery->orderBy($titleColumnName);
         }
 
