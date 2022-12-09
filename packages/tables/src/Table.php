@@ -55,7 +55,7 @@ class Table extends ViewComponent
             return $position;
         }
 
-        if (!($this->getContentGrid() || $this->hasColumnsLayout())) {
+        if (! ($this->getContentGrid() || $this->hasColumnsLayout())) {
             return Position::AfterCells;
         }
 
@@ -89,7 +89,7 @@ class Table extends ViewComponent
     {
         return array_filter(
             $this->getLivewire()->getCachedTableBulkActions(),
-            fn(BulkAction $action): bool => !$action->isHidden(),
+            fn (BulkAction $action): bool => ! $action->isHidden(),
         );
     }
 
@@ -97,7 +97,7 @@ class Table extends ViewComponent
     {
         return array_filter(
             $this->getLivewire()->getCachedTableColumns(),
-            fn(Column $column): bool => (!$column->isHidden()) && (!$column->isToggledHidden()),
+            fn (Column $column): bool => (! $column->isHidden()) && (! $column->isToggledHidden()),
         );
     }
 
@@ -140,7 +140,7 @@ class Table extends ViewComponent
         return invade($livewire)->getTableContentFooter();
     }
 
-    public function getDescription(): string|Htmlable|null
+    public function getDescription(): string | Htmlable | null
     {
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();
@@ -160,7 +160,7 @@ class Table extends ViewComponent
     {
         return array_filter(
             $this->getLivewire()->getCachedTableEmptyStateActions(),
-            fn(Action $action): bool => !$action->isHidden(),
+            fn (Action $action): bool => ! $action->isHidden(),
         );
     }
 
@@ -227,7 +227,7 @@ class Table extends ViewComponent
         return invade($livewire)->getTableColumnToggleFormWidth();
     }
 
-    public function getHeader(): View|Htmlable|null
+    public function getHeader(): View | Htmlable | null
     {
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();
@@ -239,11 +239,11 @@ class Table extends ViewComponent
     {
         return array_filter(
             $this->getLivewire()->getCachedTableHeaderActions(),
-            fn(Action|ActionGroup $action): bool => !$action->isHidden(),
+            fn (Action | ActionGroup $action): bool => ! $action->isHidden(),
         );
     }
 
-    public function getHeading(): string|Htmlable|null
+    public function getHeading(): string | Htmlable | null
     {
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();
@@ -284,7 +284,7 @@ class Table extends ViewComponent
         return $this->getLivewire()->getMountedTableBulkActionForm();
     }
 
-    public function getRecords(): Collection|Paginator
+    public function getRecords(): Collection | Paginator
     {
         return $this->getLivewire()->getTableRecords();
     }
@@ -304,7 +304,7 @@ class Table extends ViewComponent
 
         $callback = invade($livewire)->getTableRecordActionUsing();
 
-        if (!$callback) {
+        if (! $callback) {
             return null;
         }
 
@@ -318,7 +318,7 @@ class Table extends ViewComponent
 
         $callback = invade($livewire)->getTableRecordClassesUsing();
 
-        if (!$callback) {
+        if (! $callback) {
             return [];
         }
 
@@ -332,7 +332,7 @@ class Table extends ViewComponent
 
         $callback = invade($livewire)->getTableRecordUrlUsing();
 
-        if (!$callback) {
+        if (! $callback) {
             return null;
         }
 
@@ -344,9 +344,9 @@ class Table extends ViewComponent
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();
 
-        $callback = $livewire->isRecordSelectable();
+        $callback = $livewire->getTableRecordBulkActionsEnabled();
 
-        if (!$callback) {
+        if (! $callback) {
             return true;
         }
 

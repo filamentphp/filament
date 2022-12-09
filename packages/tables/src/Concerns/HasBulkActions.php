@@ -23,7 +23,7 @@ trait HasBulkActions
     {
         $actions = BulkAction::configureUsing(
             Closure::fromCallable([$this, 'configureTableBulkAction']),
-            fn(): array => $this->getTableBulkActions(),
+            fn (): array => $this->getTableBulkActions(),
         );
 
         $this->cachedTableBulkActions = [];
@@ -43,7 +43,7 @@ trait HasBulkActions
     {
         $action = $this->getMountedTableBulkAction();
 
-        if (!$action) {
+        if (! $action) {
             return;
         }
 
@@ -98,7 +98,7 @@ trait HasBulkActions
 
         $action = $this->getMountedTableBulkAction();
 
-        if (!$action) {
+        if (! $action) {
             return;
         }
 
@@ -108,7 +108,7 @@ trait HasBulkActions
 
         $this->cacheForm(
             'mountedTableBulkActionForm',
-            fn() => $this->getMountedTableBulkActionForm(),
+            fn () => $this->getMountedTableBulkActionForm(),
         );
 
         try {
@@ -132,7 +132,7 @@ trait HasBulkActions
             return;
         }
 
-        if (!$action->shouldOpenModal()) {
+        if (! $action->shouldOpenModal()) {
             return $this->callMountedTableBulkAction();
         }
 
@@ -150,7 +150,7 @@ trait HasBulkActions
 
     public function getMountedTableBulkAction(): ?BulkAction
     {
-        if (!$this->mountedTableBulkAction) {
+        if (! $this->mountedTableBulkAction) {
             return null;
         }
 
@@ -161,11 +161,11 @@ trait HasBulkActions
     {
         $action = $this->getMountedTableBulkAction();
 
-        if (!$action) {
+        if (! $action) {
             return null;
         }
 
-        if ((!$this->isCachingForms) && $this->hasCachedForm('mountedTableBulkActionForm')) {
+        if ((! $this->isCachingForms) && $this->hasCachedForm('mountedTableBulkActionForm')) {
             return $this->getCachedForm('mountedTableBulkActionForm');
         }
 
@@ -189,7 +189,7 @@ trait HasBulkActions
         return [];
     }
 
-    public function isRecordSelectable(): ?Closure
+    public function getTableRecordBulkActionsEnabled(): ?Closure
     {
         return null;
     }

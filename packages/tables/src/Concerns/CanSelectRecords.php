@@ -25,13 +25,13 @@ trait CanSelectRecords
 
         if ($this->shouldSelectCurrentPageOnly()) {
             return $this->getTableRecords()
-                ->map(fn($key): string => (string)$key->id)
+                ->map(fn ($key): string => (string) $key->id)
                 ->all();
         }
 
         return $query
             ->pluck($query->getModel()->getQualifiedKeyName())
-            ->map(fn($key): string => (string)$key)
+            ->map(fn ($key): string => (string) $key)
             ->all();
     }
 
@@ -47,10 +47,10 @@ trait CanSelectRecords
 
         $query = $this->getFilteredTableQuery();
 
-        if (is_callable($this->isRecordSelectable())) {
+        if (is_callable($this->getTableRecordBulkActionsEnabled())) {
             return $query
                 ->get()
-                ->filter(fn($item): bool => $this->isRecordSelectable()($item))
+                ->filter(fn ($item): bool => $this->getTableRecordBulkActionsEnabled()($item))
                 ->count();
         }
 
@@ -59,7 +59,7 @@ trait CanSelectRecords
 
     public function getSelectedTableRecords(): Collection
     {
-        if (!($this instanceof HasRelationshipTable && $this->getRelationship() instanceof BelongsToMany && $this->allowsDuplicates())) {
+        if (! ($this instanceof HasRelationshipTable && $this->getRelationship() instanceof BelongsToMany && $this->allowsDuplicates())) {
             $query = $this->getTableQuery()->whereIn(app($this->getTableModel())->getQualifiedKeyName(), $this->selectedTableRecords);
             $this->applySortingToTableQuery($query);
 
@@ -79,9 +79,9 @@ trait CanSelectRecords
 
     public function isTableSelectionEnabled(): bool
     {
-        return (bool)count(array_filter(
+        return (bool) count(array_filter(
             $this->getCachedTableBulkActions(),
-            fn(BulkAction $action): bool => !$action->isHidden(),
+            fn (BulkAction $action): bool => ! $action->isHidden(),
         ));
     }
 
