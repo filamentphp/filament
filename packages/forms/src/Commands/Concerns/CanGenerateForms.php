@@ -4,7 +4,6 @@ namespace Filament\Forms\Commands\Concerns;
 
 use Doctrine\DBAL\Types;
 use Filament\Forms;
-use Illuminate\Support\Str;
 
 trait CanGenerateForms
 {
