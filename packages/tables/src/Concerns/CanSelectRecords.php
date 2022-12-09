@@ -47,10 +47,10 @@ trait CanSelectRecords
 
         $query = $this->getFilteredTableQuery();
 
-        if (is_callable($this->getTableRecordBulkActionsEnabled())) {
+        if (is_callable($this->isRecordSelectable())) {
             return $query
                 ->get()
-                ->filter(fn ($item): bool => $this->getTableRecordBulkActionsEnabled()($item))
+                ->filter(fn ($item): bool => $this->isRecordSelectable()($item))
                 ->count();
         }
 

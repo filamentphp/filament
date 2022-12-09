@@ -344,7 +344,7 @@ class Table extends ViewComponent
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();
 
-        $callback = $livewire->getTableRecordBulkActionsEnabled();
+        $callback = $livewire->isRecordSelectable();
 
         if (! $callback) {
             return true;
