@@ -23,7 +23,7 @@ class Table
 
     protected ?string $filtersLayout = null;
 
-    protected ?string $selectRecordsLayout = null;
+    protected ?string $selectRecordsPosition = null;
 
     protected array $headerActions = [];
 
@@ -101,9 +101,9 @@ class Table
         return $this;
     }
 
-    public function selectRecordsLayout(?string $selectRecordsLayout): static
+    public function selectRecordsPosition(?string $selectRecordsPosition): static
     {
-        $this->selectRecordsLayout = $selectRecordsLayout;
+        $this->selectRecordsPosition = $selectRecordsPosition;
 
         return $this;
     }
@@ -246,9 +246,9 @@ class Table
         return $this->filtersLayout;
     }
 
-    public function getSelectRecordsLayout(): ?string
+    public function getSelectRecordsPosition(): ?string
     {
-        return $this->selectRecordsLayout;
+        return $this->selectRecordsPosition;
     }
 
     public function getHeaderActions(): array

@@ -75,7 +75,7 @@ interface HasTable extends HasForms
 
     public function isTableSelectionEnabled(): bool;
 
-    public function getTableSelectRecordsLayout(): ?string;
+    public function getTableSelectRecordsPosition(): ?string;
 
     public function hasToggleableTableColumns(): bool;
 
