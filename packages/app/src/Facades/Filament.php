@@ -63,6 +63,8 @@ use Illuminate\Support\Facades\Facade;
  *     'warning': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
  *     'success': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
  * } getColors()
+ * @method static string getSidebarWidth()
+ * @method static string getCollapsedSidebarWidth()
  * @method static string | null getRequestPasswordResetUrl()
  * @method static string getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user)
  * @method static array<class-string> getResources()

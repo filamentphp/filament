@@ -356,6 +356,16 @@ class FilamentManager
         return $this->getCurrentContext()->getColors();
     }
 
+    public function getSidebarWidth(): string
+    {
+        return $this->getCurrentContext()->getSidebarWidth();
+    }
+
+    public function getCollapsedSidebarWidth(): string
+    {
+        return $this->getCurrentContext()->getCollapsedSidebarWidth();
+    }
+
     /**
      * @return array<class-string>
      */
