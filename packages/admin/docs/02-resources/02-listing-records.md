@@ -162,7 +162,7 @@ public static function table(Table $table): Table
 }
 ```
 
-### Aligning bulk action checkboxes
+### Record select checkbox position
 
 By default, the record select checkboxes are rendered at the start of the row. You may change the position to row end:
 
