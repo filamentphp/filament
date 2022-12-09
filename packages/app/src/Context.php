@@ -783,9 +783,9 @@ class Context
         return $this->successColor ?? Color::Green;
     }
 
-    public function sidebarWidth(string $sidebarWidth): static
+    public function sidebarWidth(string $width): static
     {
-        $this->sidebarWidth = $sidebarWidth;
+        $this->sidebarWidth = $width;
 
         return $this;
     }
