@@ -164,7 +164,7 @@ public static function table(Table $table): Table
 
 ### Aligning bulk action checkboxes
 
-By default the checkboxes for bulk actions are aligned to the left of the table. If it is more desirable to position these at the end of the table the method `$table->selectRecordsLayout()` can be used:
+By default, the record select checkboxes are rendered at the start of the row. You may change the position to row end:
 
 ```php
 use Filament\Resources\Table;
