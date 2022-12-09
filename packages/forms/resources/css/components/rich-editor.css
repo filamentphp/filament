@@ -7,12 +7,12 @@
 }
 
 .dark trix-toolbar .trix-dialog {
-    @apply bg-gray-800 border-t-2 border-gray-900;
-    box-shadow: 0 .3em 1em theme('colors.gray.900');
+    @apply border-t-2 border-gray-900 bg-gray-800;
+    box-shadow: 0 0.3em 1em theme('colors.gray.900');
 }
 
 .dark trix-toolbar .trix-input {
-    @apply bg-gray-700 border-gray-600;
+    @apply border-gray-600 bg-gray-700;
 }
 
 .dark trix-toolbar .trix-button:not(:first-child) {
