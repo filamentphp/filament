@@ -135,7 +135,7 @@ BulkAction::make('delete')
 You may conditionally disable bulk actions for a specific record:
 
 ```php
-public function getTableRecordBulkActionsEnabled(): ?Closure
+public function isRecordSelectable(): ?Closure
 {
     return fn (Model $record): bool => $record->id === StatusEnum::Enabled;
 }
