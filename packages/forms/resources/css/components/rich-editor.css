@@ -6,6 +6,19 @@
     @apply border-gray-600;
 }
 
+.dark trix-toolbar .trix-dialog {
+    @apply border-t-2 border-gray-900 bg-gray-800;
+    box-shadow: 0 0.3em 1em theme('colors.gray.900');
+}
+
+.dark trix-toolbar .trix-input {
+    @apply border-gray-600 bg-gray-700;
+}
+
+.dark trix-toolbar .trix-button:not(:first-child) {
+    @apply border-l border-gray-600;
+}
+
 trix-toolbar .filament-forms-rich-editor-component-toolbar-button.trix-active {
     @apply bg-primary-600 text-white;
 }
