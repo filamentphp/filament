@@ -43,7 +43,7 @@
     }
 
     .filament-login-page form::before {
-        @apply absolute inset-x-0 mx-auto h-px w-2/3 bg-gradient-to-r from-gray-200 via-primary-400 to-gray-200 ;
+        @apply absolute inset-x-0 mx-auto h-px w-2/3 bg-gradient-to-r from-gray-200 via-primary-400 to-gray-200;
         content: '';
         z-index: 1;
         top: -1px;
@@ -56,7 +56,8 @@
         bottom: -1px;
     }
 
-    .dark .filament-sidebar-header::before, .dark .filament-login-page form::before {
+    .dark .filament-sidebar-header::before,
+    .dark .filament-login-page form::before {
         @apply from-gray-700 via-primary-400 to-gray-700;
     }
 }
