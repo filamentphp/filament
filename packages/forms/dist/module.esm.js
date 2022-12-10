@@ -6525,7 +6525,7 @@ var require_trix = __commonJS((exports, module) => {
 
 // node_modules/choices.js/public/assets/scripts/choices.js
 var require_choices = __commonJS((exports, module) => {
-  /*! choices.js v10.1.0 | © 2022 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
+  /*! choices.js v10.2.0 | © 2022 Josh Johnson | https://github.com/jshjohnson/Choices#readme */
   (function webpackUniversalModuleDefinition(root2, factory) {
     if (typeof exports === "object" && typeof module === "object")
       module.exports = factory();
@@ -6705,13 +6705,13 @@ var require_choices = __commonJS((exports, module) => {
           var USER_DEFAULTS = {};
           var Choices2 = function() {
             function Choices3(element, userConfig) {
-              var _this = this;
               if (element === void 0) {
                 element = "[data-choice]";
               }
               if (userConfig === void 0) {
                 userConfig = {};
               }
+              var _this = this;
               if (userConfig.allowHTML === void 0) {
                 console.warn("Deprecation warning: allowHTML will default to false in a future release. To render HTML in Choices, you will need to set it to true. Setting allowHTML will suppress this message.");
               }
@@ -6796,7 +6796,7 @@ var require_choices = __commonJS((exports, module) => {
                     selected: !!option3.selected,
                     disabled: option3.disabled || option3.parentNode.disabled,
                     placeholder: option3.value === "" || option3.hasAttribute("placeholder"),
-                    customProperties: option3.dataset["custom-properties"]
+                    customProperties: (0, utils_1.parseCustomProperties)(option3.dataset.customProperties)
                   });
                 });
               }
@@ -7585,12 +7585,12 @@ var require_choices = __commonJS((exports, module) => {
               var hasActiveDropdown = this.dropdown.isActive;
               var hasItems = this.itemList.hasChildren();
               var keyString = String.fromCharCode(keyCode);
-              var wasAlphaNumericChar = /[a-zA-Z0-9-_ ]/.test(keyString);
+              var wasPrintableChar = /[^\x00-\x1F]/.test(keyString);
               var BACK_KEY = constants_1.KEY_CODES.BACK_KEY, DELETE_KEY = constants_1.KEY_CODES.DELETE_KEY, ENTER_KEY = constants_1.KEY_CODES.ENTER_KEY, A_KEY = constants_1.KEY_CODES.A_KEY, ESC_KEY = constants_1.KEY_CODES.ESC_KEY, UP_KEY = constants_1.KEY_CODES.UP_KEY, DOWN_KEY = constants_1.KEY_CODES.DOWN_KEY, PAGE_UP_KEY = constants_1.KEY_CODES.PAGE_UP_KEY, PAGE_DOWN_KEY = constants_1.KEY_CODES.PAGE_DOWN_KEY;
-              if (!this._isTextElement && !hasActiveDropdown && wasAlphaNumericChar) {
+              if (!this._isTextElement && !hasActiveDropdown && wasPrintableChar) {
                 this.showDropdown();
                 if (!this.input.isFocussed) {
-                  this.input.value += keyString.toLowerCase();
+                  this.input.value += event.key.toLowerCase();
                 }
               }
               switch (keyCode) {
@@ -9055,12 +9055,16 @@ var require_choices = __commonJS((exports, module) => {
           var __createBinding = this && this.__createBinding || (Object.create ? function(o2, m, k, k2) {
             if (k2 === void 0)
               k2 = k;
-            Object.defineProperty(o2, k2, {
-              enumerable: true,
-              get: function() {
-                return m[k];
-              }
-            });
+            var desc = Object.getOwnPropertyDescriptor(m, k);
+            if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+              desc = {
+                enumerable: true,
+                get: function() {
+                  return m[k];
+                }
+              };
+            }
+            Object.defineProperty(o2, k2, desc);
           } : function(o2, m, k, k2) {
             if (k2 === void 0)
               k2 = k;
@@ -9139,7 +9143,7 @@ var require_choices = __commonJS((exports, module) => {
           Object.defineProperty(exports2, "__esModule", {
             value: true
           });
-          exports2.diff = exports2.cloneObject = exports2.existsInArray = exports2.dispatchEvent = exports2.sortByScore = exports2.sortByAlpha = exports2.strToEl = exports2.sanitise = exports2.isScrolledIntoView = exports2.getAdjacentEl = exports2.wrap = exports2.isType = exports2.getType = exports2.generateId = exports2.generateChars = exports2.getRandomNumber = void 0;
+          exports2.parseCustomProperties = exports2.diff = exports2.cloneObject = exports2.existsInArray = exports2.dispatchEvent = exports2.sortByScore = exports2.sortByAlpha = exports2.strToEl = exports2.sanitise = exports2.isScrolledIntoView = exports2.getAdjacentEl = exports2.wrap = exports2.isType = exports2.getType = exports2.generateId = exports2.generateChars = exports2.getRandomNumber = void 0;
           var getRandomNumber2 = function(min3, max3) {
             return Math.floor(Math.random() * (max3 - min3) + min3);
           };
@@ -9283,6 +9287,17 @@ var require_choices = __commonJS((exports, module) => {
             });
           };
           exports2.diff = diff;
+          var parseCustomProperties = function(customProperties) {
+            if (typeof customProperties !== "undefined") {
+              try {
+                return JSON.parse(customProperties);
+              } catch (e2) {
+                return customProperties;
+              }
+            }
+            return {};
+          };
+          exports2.parseCustomProperties = parseCustomProperties;
         },
         273: function(__unused_webpack_module, exports2) {
           var __spreadArray = this && this.__spreadArray || function(to, from, pack) {
@@ -9439,7 +9454,7 @@ var require_choices = __commonJS((exports, module) => {
             value: true
           });
           exports2.defaultState = void 0;
-          var redux_1 = __webpack_require__2(857);
+          var redux_1 = __webpack_require__2(791);
           var items_1 = __importDefault(__webpack_require__2(52));
           var groups_1 = __importDefault(__webpack_require__2(871));
           var choices_1 = __importDefault(__webpack_require__2(273));
@@ -9583,7 +9598,7 @@ var require_choices = __commonJS((exports, module) => {
           Object.defineProperty(exports2, "__esModule", {
             value: true
           });
-          var redux_1 = __webpack_require__2(857);
+          var redux_1 = __webpack_require__2(791);
           var index_1 = __importDefault(__webpack_require__2(655));
           var Store = function() {
             function Store2() {
@@ -9734,7 +9749,7 @@ var require_choices = __commonJS((exports, module) => {
               div.setAttribute("aria-haspopup", "true");
               div.setAttribute("aria-expanded", "false");
               if (labelId) {
-                div.setAttribute("aria-labeledby", labelId);
+                div.setAttribute("aria-labelledby", labelId);
               }
               return div;
             },
@@ -10087,6 +10102,7 @@ var require_choices = __commonJS((exports, module) => {
             let id = null;
             let src = null;
             let weight = 1;
+            let getFn = null;
             if (isString3(key) || isArray2(key)) {
               src = key;
               path = createKeyPath(key);
@@ -10105,8 +10121,9 @@ var require_choices = __commonJS((exports, module) => {
               }
               path = createKeyPath(name2);
               id = createKeyId(name2);
+              getFn = key.getFn;
             }
-            return {path, id, weight, src};
+            return {path, id, weight, src, getFn};
           }
           function createKeyPath(key) {
             return isArray2(key) ? key : key.split(".");
@@ -10267,7 +10284,7 @@ var require_choices = __commonJS((exports, module) => {
             _addObject(doc, docIndex) {
               let record = {i: docIndex, $: {}};
               this.keys.forEach((key, keyIndex) => {
-                let value = this.getFn(doc, key.path);
+                let value = key.getFn ? key.getFn(doc) : this.getFn(doc, key.path);
                 if (!isDefined4(value)) {
                   return;
                 }
@@ -10297,7 +10314,7 @@ var require_choices = __commonJS((exports, module) => {
                       ;
                   }
                   record.$[keyIndex] = subRecords;
-                } else if (!isBlank(value)) {
+                } else if (isString3(value) && !isBlank(value)) {
                   let subRecord = {
                     v: value,
                     n: this.norm.get(value)
@@ -10826,7 +10843,7 @@ var require_choices = __commonJS((exports, module) => {
             FuzzyMatch
           ];
           const searchersLen = searchers.length;
-          const SPACE_RE = / +(?=([^\"]*\"[^\"]*\")*[^\"]*$)/;
+          const SPACE_RE = / +(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)/;
           const OR_TOKEN = "|";
           function parseQuery(pattern, options2 = {}) {
             return pattern.split(OR_TOKEN).map((item2) => {
@@ -11269,7 +11286,7 @@ var require_choices = __commonJS((exports, module) => {
               return matches2;
             }
           }
-          Fuse.version = "6.5.3";
+          Fuse.version = "6.6.2";
           Fuse.createIndex = createIndex;
           Fuse.parseIndex = parseIndex;
           Fuse.config = Config;
@@ -11280,7 +11297,7 @@ var require_choices = __commonJS((exports, module) => {
             register(ExtendedSearch);
           }
         },
-        857: function(__unused_webpack_module, __webpack_exports__2, __webpack_require__2) {
+        791: function(__unused_webpack_module, __webpack_exports__2, __webpack_require__2) {
           __webpack_require__2.r(__webpack_exports__2);
           __webpack_require__2.d(__webpack_exports__2, {
             __DO_NOT_USE__ActionTypes: function() {
@@ -11300,10 +11317,41 @@ var require_choices = __commonJS((exports, module) => {
             },
             createStore: function() {
               return createStore2;
+            },
+            legacy_createStore: function() {
+              return legacy_createStore;
             }
           });
           ;
+          function _typeof4(obj) {
+            "@babel/helpers - typeof";
+            return _typeof4 = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? function(obj2) {
+              return typeof obj2;
+            } : function(obj2) {
+              return obj2 && typeof Symbol == "function" && obj2.constructor === Symbol && obj2 !== Symbol.prototype ? "symbol" : typeof obj2;
+            }, _typeof4(obj);
+          }
+          ;
+          function _toPrimitive(input, hint) {
+            if (_typeof4(input) !== "object" || input === null)
+              return input;
+            var prim = input[Symbol.toPrimitive];
+            if (prim !== void 0) {
+              var res2 = prim.call(input, hint || "default");
+              if (_typeof4(res2) !== "object")
+                return res2;
+              throw new TypeError("@@toPrimitive must return a primitive value.");
+            }
+            return (hint === "string" ? String : Number)(input);
+          }
+          ;
+          function _toPropertyKey(arg) {
+            var key = _toPrimitive(arg, "string");
+            return _typeof4(key) === "symbol" ? key : String(key);
+          }
+          ;
           function _defineProperty3(obj, key, value) {
+            key = _toPropertyKey(key);
             if (key in obj) {
               Object.defineProperty(obj, key, {
                 value,
@@ -11537,6 +11585,7 @@ var require_choices = __commonJS((exports, module) => {
               replaceReducer
             }, _ref2[$$observable] = observable, _ref2;
           }
+          var legacy_createStore = createStore2;
           function warning(message) {
             if (typeof console !== "undefined" && typeof console.error === "function") {
               console.error(message);
@@ -19384,7 +19433,7 @@ if (supported()) {
 
 // node_modules/filepond-plugin-file-validate-size/dist/filepond-plugin-file-validate-size.esm.js
 /*!
- * FilePondPluginFileValidateSize 2.2.7
+ * FilePondPluginFileValidateSize 2.2.8
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */
@@ -25833,9 +25882,9 @@ function changeDefaults(newDefaults) {
   defaults2 = newDefaults;
 }
 var escapeTest = /[&<>"']/;
-var escapeReplace = /[&<>"']/g;
-var escapeTestNoEncode = /[<>"']|&(?!#?\w+;)/;
-var escapeReplaceNoEncode = /[<>"']|&(?!#?\w+;)/g;
+var escapeReplace = new RegExp(escapeTest.source, "g");
+var escapeTestNoEncode = /[<>"']|&(?!(#\d{1,7}|#[Xx][a-fA-F0-9]{1,6}|\w+);)/;
+var escapeReplaceNoEncode = new RegExp(escapeTestNoEncode.source, "g");
 var escapeReplacements = {
   "&": "&amp;",
   "<": "&lt;",
@@ -26317,15 +26366,15 @@ var Tokenizer = class {
   def(src) {
     const cap = this.rules.block.def.exec(src);
     if (cap) {
-      if (cap[3])
-        cap[3] = cap[3].substring(1, cap[3].length - 1);
       const tag = cap[1].toLowerCase().replace(/\s+/g, " ");
+      const href = cap[2] ? cap[2].replace(/^<(.*)>$/, "$1").replace(this.rules.inline._escapes, "$1") : "";
+      const title = cap[3] ? cap[3].substring(1, cap[3].length - 1).replace(this.rules.inline._escapes, "$1") : cap[3];
       return {
         type: "def",
         tag,
         raw: cap[0],
-        href: cap[2] ? cap[2].replace(this.rules.inline._escapes, "$1") : cap[2],
-        title: cap[3] ? cap[3].replace(this.rules.inline._escapes, "$1") : cap[3]
+        href,
+        title
       };
     }
   }
@@ -26495,7 +26544,7 @@ var Tokenizer = class {
     if ((cap = this.rules.inline.reflink.exec(src)) || (cap = this.rules.inline.nolink.exec(src))) {
       let link = (cap[2] || cap[1]).replace(/\s+/g, " ");
       link = links[link.toLowerCase()];
-      if (!link || !link.href) {
+      if (!link) {
         const text3 = cap[0].charAt(0);
         return {
           type: "text",
@@ -26681,9 +26730,9 @@ var block = {
   blockquote: /^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/,
   list: /^( {0,3}bull)([ \t][^\n]+?)?(?:\n|$)/,
   html: "^ {0,3}(?:<(script|pre|style|textarea)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n+|$)|comment[^\\n]*(\\n+|$)|<\\?[\\s\\S]*?(?:\\?>\\n*|$)|<![A-Z][\\s\\S]*?(?:>\\n*|$)|<!\\[CDATA\\[[\\s\\S]*?(?:\\]\\]>\\n*|$)|</?(tag)(?: +|\\n|/?>)[\\s\\S]*?(?:(?:\\n *)+\\n|$)|<(?!script|pre|style|textarea)([a-z][\\w-]*)(?:attribute)*? */?>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n *)+\\n|$)|</(?!script|pre|style|textarea)[a-z][\\w-]*\\s*>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n *)+\\n|$))",
-  def: /^ {0,3}\[(label)\]: *(?:\n *)?<?([^\s>]+)>?(?:(?: +(?:\n *)?| *\n *)(title))? *(?:\n+|$)/,
+  def: /^ {0,3}\[(label)\]: *(?:\n *)?([^<\s][^\s]*|<.*?>)(?:(?: +(?:\n *)?| *\n *)(title))? *(?:\n+|$)/,
   table: noopTest,
-  lheading: /^([^\n]+)\n {0,3}(=+|-+) *(?:\n+|$)/,
+  lheading: /^((?:.|\n(?!\n))+?)\n {0,3}(=+|-+) *(?:\n+|$)/,
   _paragraph: /^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html|table| +\n)[^\n]+)*)/,
   text: /^[^\n]+/
 };
@@ -26709,6 +26758,7 @@ block.pedantic = merge({}, block.normal, {
   def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +(["(][^\n]+[")]))? *(?:\n+|$)/,
   heading: /^(#{1,6})(.*)(?:\n+|$)/,
   fences: noopTest,
+  lheading: /^(.+?)\n {0,3}(=+|-+) *(?:\n+|$)/,
   paragraph: edit(block.normal._paragraph).replace("hr", block.hr).replace("heading", " *#{1,6} *[^\n]").replace("lheading", block.lheading).replace("blockquote", " {0,3}>").replace("|fences", "").replace("|list", "").replace("|html", "").getRegex()
 });
 var inline = {
@@ -27166,7 +27216,7 @@ var Renderer = class {
     if (!lang) {
       return "<pre><code>" + (escaped ? code : escape(code, true)) + "</code></pre>\n";
     }
-    return '<pre><code class="' + this.options.langPrefix + escape(lang, true) + '">' + (escaped ? code : escape(code, true)) + "</code></pre>\n";
+    return '<pre><code class="' + this.options.langPrefix + escape(lang) + '">' + (escaped ? code : escape(code, true)) + "</code></pre>\n";
   }
   blockquote(quote) {
     return `<blockquote>
@@ -27239,7 +27289,7 @@ ${content}</tr>
     if (href === null) {
       return text3;
     }
-    let out = '<a href="' + escape(href) + '"';
+    let out = '<a href="' + href + '"';
     if (title) {
       out += ' title="' + title + '"';
     }
@@ -27622,18 +27672,17 @@ marked.options = marked.setOptions = function(opt) {
 marked.getDefaults = getDefaults;
 marked.defaults = defaults2;
 marked.use = function(...args) {
-  const opts = merge({}, ...args);
   const extensions = marked.defaults.extensions || {renderers: {}, childTokens: {}};
-  let hasExtensions;
   args.forEach((pack) => {
+    const opts = merge({}, pack);
+    opts.async = marked.defaults.async || opts.async;
     if (pack.extensions) {
-      hasExtensions = true;
       pack.extensions.forEach((ext) => {
         if (!ext.name) {
           throw new Error("extension name required");
         }
         if (ext.renderer) {
-          const prevRenderer = extensions.renderers ? extensions.renderers[ext.name] : null;
+          const prevRenderer = extensions.renderers[ext.name];
           if (prevRenderer) {
             extensions.renderers[ext.name] = function(...args2) {
               let ret = ext.renderer.apply(this, args2);
@@ -27675,6 +27724,7 @@ marked.use = function(...args) {
           extensions.childTokens[ext.name] = ext.childTokens;
         }
       });
+      opts.extensions = extensions;
     }
     if (pack.renderer) {
       const renderer = marked.defaults.renderer || new Renderer();
@@ -27714,9 +27764,6 @@ marked.use = function(...args) {
         }
         return values;
       };
-    }
-    if (hasExtensions) {
-      opts.extensions = extensions;
     }
     marked.setOptions(opts);
   });
