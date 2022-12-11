@@ -73,6 +73,8 @@
 <div
     x-data="{
 
+        collapsedGroups: [],
+
         hasHeader: true,
 
         isLoading: false,
@@ -163,6 +165,24 @@
 
         areRecordsSelected: function (keys) {
             return keys.every(key => this.isRecordSelected(key))
+        },
+
+        toggleCollapseGroup: function (group) {
+            if (this.isGroupCollapsed(group)) {
+                this.collapsedGroups.splice(this.collapsedGroups.indexOf(group), 1)
+
+                return
+            }
+
+            this.collapsedGroups.push(group)
+        },
+
+        isGroupCollapsed: function (group) {
+            return this.collapsedGroups.includes(group)
+        },
+
+        resetCollapsedGroups: function () {
+            this.collapsedGroups = []
         },
 
     }"
@@ -657,7 +677,7 @@
                     @endif
                 @endif
             @else
-                <x-filament-tables::table>
+                <x-filament-tables::table :reorderable="$isReorderable">
                     <x-slot name="header">
                         @if ($isReordering)
                             <th></th>
@@ -810,7 +830,27 @@
                                             colspan="{{ count($columns) }}"
                                             class="px-4 py-2 whitespace-nowrap font-medium text-base text-gray-600 dark:text-gray-300"
                                         >
-                                            {{ $group->getLabel() }}: {{ $recordGroupTitle }}
+                                            <div class="flex items-center space-x-2">
+                                                <span>
+                                                    {{ $group->getLabel() }}: {{ $recordGroupTitle }}
+                                                </span>
+
+                                                @if ($group->isCollapsible())
+                                                    <button
+                                                        x-on:click="toggleCollapseGroup(@js($recordGroupTitle))"
+                                                        x-bind:class="isGroupCollapsed(@js($recordGroupTitle)) || '-rotate-180'"
+                                                        type="button"
+                                                    >
+                                                        <x-filament::icon
+                                                            name="heroicon-m-chevron-down"
+                                                            alias="tables::grouping.collapse"
+                                                            size="h-4 w-4"
+                                                            class="text-gray-600 transition dark:text-gray-300"
+                                                            x-cloak
+                                                        />
+                                                    </button>
+                                                @endif
+                                            </div>
                                         </td>
 
                                         @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
@@ -829,6 +869,7 @@
                                     :x-sortable-handle="$isReordering"
                                     :striped="$isStriped"
                                     x-bind:class="{
+                                        'hidden': {{ $group->isCollapsible() ? 'true' : 'false' }} && isGroupCollapsed('{{ $recordGroupTitle }}'),
                                         'bg-gray-50 dark:bg-gray-500/10': isRecordSelected('{{ $recordKey }}'),
                                     }"
                                     @class(array_merge(

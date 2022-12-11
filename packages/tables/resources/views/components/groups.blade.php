@@ -22,7 +22,7 @@
                 {{ __('filament-tables::table.fields.grouping.label') }}
             </span>
 
-            <x-filament::input.select wire:model="tableGrouping" class="w-full">
+            <x-filament::input.select wire:model="tableGrouping" x-on:change="resetCollapsedGroups()" class="w-full">
                 <option value="">-</option>
                 @foreach ($groups as $group)
                     <option value="{{ $group->getId() }}">{{ $group->getLabel() }}</option>

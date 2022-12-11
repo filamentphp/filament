@@ -20,6 +20,8 @@ class Group
 
     protected string $id;
 
+    protected bool $isCollapsible = false;
+
     final public function __construct(string $id = null)
     {
         $this->id($id);
@@ -28,6 +30,13 @@ class Group
     public static function make(string $id = null): static
     {
         return app(static::class, ['id' => $id]);
+    }
+
+    public function collapsible(bool $condition = true): static
+    {
+        $this->isCollapsible = $condition;
+
+        return $this;
     }
 
     public function column(?string $column): static
@@ -70,6 +79,11 @@ class Group
         $this->scopeQueryUsing = $callback;
 
         return $this;
+    }
+
+    public function isCollapsible(): bool
+    {
+        return $this->isCollapsible;
     }
 
     public function getColumn(): string

@@ -1,6 +1,7 @@
 @props([
     'footer' => null,
     'header' => null,
+    'reorderable' => false,
 ])
 
 <table {{ $attributes->class(['filament-tables-table w-full text-start divide-y table-auto dark:divide-gray-700']) }}>
@@ -13,8 +14,10 @@
     @endif
 
     <tbody
-        x-sortable
-        x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
+        @if ($reorderable)
+            x-sortable
+            x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
+        @endif
         class="divide-y whitespace-nowrap dark:divide-gray-700"
     >
         {{ $slot }}
