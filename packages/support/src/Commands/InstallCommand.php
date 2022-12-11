@@ -55,7 +55,7 @@ class InstallCommand extends Command
             return;
         }
 
-        $this->copyStubToApp('DefaultContextProvider', $path);
+        $this->copyStubToApp('AdminContextProvider', $path);
 
         if (! Str::contains($appConfig = file_get_contents(config_path('app.php')), 'App\\Providers\\Filament\\AdminContextProvider::class')) {
             file_put_contents(config_path('app.php'), str_replace(
