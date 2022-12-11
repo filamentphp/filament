@@ -1,5 +1,5 @@
 ---
-title: Upgrading from v1.x
+title: Upgrading from v2.x
 ---
 
 > If you see anything missing from this guide, please do not hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/2.x/packages/admin/docs/09-upgrade-guide.md) to our repository! Any help is appreciated!

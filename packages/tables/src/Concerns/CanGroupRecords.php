@@ -9,6 +9,8 @@ trait CanGroupRecords
 {
     public ?string $tableGrouping = null;
 
+    public ?string $tableGroupingDirection = null;
+
     public function getTableGrouping(): ?Group
     {
         if (
@@ -42,6 +44,6 @@ trait CanGroupRecords
             return $query;
         }
 
-        return $group->orderQuery($query);
+        return $group->orderQuery($query, $this->tableGroupingDirection ?? 'asc');
     }
 }

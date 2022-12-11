@@ -7,7 +7,8 @@ Plugins can be used to extend Filament's default behaviour and create reusable m
 To create a new plugin, extend the `Filament\PluginServiceProvider` class provided by Filament:
 
 ```php
-use Filament\Support\PluginServiceProvider;use Spatie\LaravelPackageTools\Package;
+use Filament\Support\PluginServiceProvider;
+use Spatie\LaravelPackageTools\Package;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
@@ -66,7 +67,9 @@ This will ensure your service provider is automatically loaded by Laravel when t
 To register a custom resource, add the fully qualified class name to the `$resources` property in your service provider:
 
 ```php
-use Filament\Support\PluginServiceProvider;use Spatie\LaravelPackageTools\Package;use Vendor\Package\Resources\CustomResource;
+use Filament\Support\PluginServiceProvider;
+use Spatie\LaravelPackageTools\Package;
+use Vendor\Package\Resources\CustomResource;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
@@ -88,7 +91,9 @@ Filament will automatically register your `Resource` and ensure that Livewire ca
 To register a custom page, add the fully qualified class name to the `$pages` property in your service provider:
 
 ```php
-use Filament\Support\PluginServiceProvider;use Spatie\LaravelPackageTools\Package;use Vendor\Package\Pages\CustomPage;
+use Filament\Support\PluginServiceProvider;
+use Spatie\LaravelPackageTools\Package;
+use Vendor\Package\Pages\CustomPage;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
@@ -138,7 +143,8 @@ Filament plugins can also register their own frontend assets. These assets will 
 To include a custom stylesheet, add it to the `$styles` property in your service provider. You should use a unique name as the key and the URL to the stylesheet as the value.
 
 ```php
-use Filament\Support\PluginServiceProvider;use Spatie\LaravelPackageTools\Package;
+use Filament\Support\PluginServiceProvider;
+use Spatie\LaravelPackageTools\Package;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
@@ -164,7 +170,8 @@ After compilation, your Tailwind stylesheet may contain classes that are already
 To include a custom script, add it to the `$scripts` property in your service provider. You should use a unique name as the key and the URL to the script as the value. These scripts will be added after the core Filament script.
 
 ```php
-use Filament\Support\PluginServiceProvider;use Spatie\LaravelPackageTools\Package;
+use Filament\Support\PluginServiceProvider;
+use Spatie\LaravelPackageTools\Package;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
@@ -182,7 +189,8 @@ class ExampleServiceProvider extends PluginServiceProvider
 To add scripts before the core Filament script, use the `$beforeCoreScripts` property. This is useful if you want to hook into an Alpine event.
 
 ```php
-use Filament\Support\PluginServiceProvider;use Spatie\LaravelPackageTools\Package;
+use Filament\Support\PluginServiceProvider;
+use Spatie\LaravelPackageTools\Package;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
@@ -204,7 +212,9 @@ Whilst building your plugin, you might find the need to generate some data on th
 To do this, use the `getScriptData()` method on your service provider and return an array of `string` keys and values that can be passed to converted into JSON:
 
 ```php
-use Filament\Support\PluginServiceProvider;use Illuminate\Support\Facades\Auth;use Spatie\LaravelPackageTools\Package;
+use Filament\Support\PluginServiceProvider;
+use Illuminate\Support\Facades\Auth;
+use Spatie\LaravelPackageTools\Package;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {
@@ -269,7 +279,10 @@ Since the `PluginServiceProvider` extends the service provider from [Laravel Pac
 If you rely on data defined by Filament on `boot()` or through `Filament::serving()`, you can register listeners for the `Filament\Events\ServingFilament` event:
 
 ```php
-use Filament\Events\ServingFilament;use Filament\Support\PluginServiceProvider;use Illuminate\Support\Facades\Event;use Spatie\LaravelPackageTools\Package;
+use Filament\Events\ServingFilament;
+use Filament\Support\PluginServiceProvider;
+use Illuminate\Support\Facades\Event;
+use Spatie\LaravelPackageTools\Package;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {

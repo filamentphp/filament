@@ -73,6 +73,8 @@
 <div
     x-data="{
 
+        collapsedGroups: [],
+
         hasHeader: true,
 
         isLoading: false,
@@ -163,6 +165,24 @@
 
         areRecordsSelected: function (keys) {
             return keys.every(key => this.isRecordSelected(key))
+        },
+
+        toggleCollapseGroup: function (group) {
+            if (this.isGroupCollapsed(group)) {
+                this.collapsedGroups.splice(this.collapsedGroups.indexOf(group), 1)
+
+                return
+            }
+
+            this.collapsedGroups.push(group)
+        },
+
+        isGroupCollapsed: function (group) {
+            return this.collapsedGroups.includes(group)
+        },
+
+        resetCollapsedGroups: function () {
+            this.collapsedGroups = []
         },
 
     }"
@@ -370,20 +390,19 @@
                                         >
                                             <option value="">-</option>
                                             @foreach ($sortableColumns as $column)
-                                                <option
-                                                    value="{{ $column->getName() }}">{{ $column->getLabel() }}</option>
+                                                <option value="{{ $column->getName() }}">
+                                                    {{ $column->getLabel() }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </label>
 
-                                    <label>
+                                    <label x-show="column" x-cloak>
                                         <span class="sr-only">
                                             {{ __('filament-tables::table.sorting.fields.direction.label') }}
                                         </span>
 
                                         <select
-                                            x-show="column"
-                                            x-cloak
                                             x-model="direction"
                                             style="background-position: right 0.2rem center"
                                             class="text-xs pl-2 pr-6 py-1 font-medium border-0 bg-gray-500/5 rounded-lg border-gray-300 sm:text-sm focus:ring-0 focus:border-primary-500 focus:ring-primary-500 dark:text-white dark:bg-gray-700 dark:border-gray-600 dark:focus:border-primary-500"
@@ -425,7 +444,7 @@
                                     $recordAction = $getRecordAction($record);
                                     $recordKey = $getRecordKey($record);
                                     $recordUrl = $getRecordUrl($record);
-                                    $recordGroupTitle = $group?->getGroupTitleFromRecord($record);
+                                    $recordGroupTitle = $group?->getTitle($record);
 
                                     $collapsibleColumnsLayout?->record($record);
                                     $hasCollapsibleColumnsLayout = $collapsibleColumnsLayout && (! $collapsibleColumnsLayout->isHidden());
@@ -445,25 +464,54 @@
                                     @endif
 
                                     <div @class([
-                                        'col-span-full bg-gray-500/5 flex items-center w-full px-4 py-2 whitespace-nowrap space-x-1 rtl:space-x-reverse font-medium text-base text-gray-600 dark:text-gray-300',
+                                        'col-span-full bg-gray-500/5 flex items-center space-y-1 w-full px-4 py-2',
                                         'rounded-xl shadow-sm' => $contentGrid,
                                     ])>
-                                        {{ $group->getLabel() }}: {{ $recordGroupTitle }}
+                                        <div class="flex items-center space-x-2">
+                                            <span class="font-medium text-base text-gray-600 dark:text-gray-300">
+                                                {{ $group->getLabel() }}: {{ $recordGroupTitle }}
+                                            </span>
+
+                                            @if ($group->isCollapsible())
+                                                <button
+                                                    x-on:click="toggleCollapseGroup(@js($recordGroupTitle))"
+                                                    x-bind:class="isGroupCollapsed(@js($recordGroupTitle)) || '-rotate-180'"
+                                                    type="button"
+                                                >
+                                                    <x-filament::icon
+                                                        name="heroicon-m-chevron-down"
+                                                        alias="tables::grouping.collapse"
+                                                        size="h-4 w-4"
+                                                        class="text-gray-600 transition dark:text-gray-300"
+                                                        x-cloak
+                                                    />
+                                                </button>
+                                            @endif
+                                        </div>
+
+                                        @if (filled($recordGroupDescription = $group->getDescription($record, $recordGroupTitle)))
+                                            <div class="text-sm text-gray-500 dark:text-gray-400">
+                                                {{ $recordGroupDescription }}
+                                            </div>
+                                        @endif
                                     </div>
                                 @endif
 
                                 <div
                                     @if ($hasCollapsibleColumnsLayout)
                                         x-data="{ isCollapsed: true }"
-                                    x-init="$dispatch('collapsible-table-row-initialized')"
-                                    x-on:expand-all-table-rows.window="isCollapsed = false"
-                                    x-on:collapse-all-table-rows.window="isCollapsed = true"
+                                        x-init="$dispatch('collapsible-table-row-initialized')"
+                                        x-on:expand-all-table-rows.window="isCollapsed = false"
+                                        x-on:collapse-all-table-rows.window="isCollapsed = true"
                                     @endif
                                     wire:key="{{ $this->id }}.table.records.{{ $recordKey }}"
                                     @if ($isReordering)
                                         x-sortable-item="{{ $recordKey }}"
-                                    x-sortable-handle
+                                        x-sortable-handle
                                     @endif
+                                    x-bind:class="{
+                                        'hidden': {{ $group?->isCollapsible() ? 'true' : 'false' }} && isGroupCollapsed('{{ $recordGroupTitle }}'),
+                                    }"
                                 >
                                     <div
                                         x-bind:class="{
@@ -657,7 +705,7 @@
                     @endif
                 @endif
             @else
-                <x-filament-tables::table>
+                <x-filament-tables::table :reorderable="$isReorderable">
                     <x-slot name="header">
                         @if ($isReordering)
                             <th></th>
@@ -776,7 +824,7 @@
                                 $recordAction = $getRecordAction($record);
                                 $recordKey = $getRecordKey($record);
                                 $recordUrl = $getRecordUrl($record);
-                                $recordGroupTitle = $group?->getGroupTitleFromRecord($record);
+                                $recordGroupTitle = $group?->getTitle($record);
                             @endphp
 
                             @if ($recordGroupTitle !== $previousGroupTitle)
@@ -808,9 +856,35 @@
 
                                         <td
                                             colspan="{{ count($columns) }}"
-                                            class="px-4 py-2 whitespace-nowrap font-medium text-base text-gray-600 dark:text-gray-300"
+                                            class="px-4 py-2 space-y-1 whitespace-nowrap"
                                         >
-                                            {{ $group->getLabel() }}: {{ $recordGroupTitle }}
+                                            <div class="flex items-center space-x-2">
+                                                <span class="font-medium text-base text-gray-600 dark:text-gray-300">
+                                                    {{ $group->getLabel() }}: {{ $recordGroupTitle }}
+                                                </span>
+
+                                                @if ($group->isCollapsible())
+                                                    <button
+                                                        x-on:click="toggleCollapseGroup(@js($recordGroupTitle))"
+                                                        x-bind:class="isGroupCollapsed(@js($recordGroupTitle)) || '-rotate-180'"
+                                                        type="button"
+                                                    >
+                                                        <x-filament::icon
+                                                            name="heroicon-m-chevron-down"
+                                                            alias="tables::grouping.collapse"
+                                                            size="h-4 w-4"
+                                                            class="text-gray-600 transition dark:text-gray-300"
+                                                            x-cloak
+                                                        />
+                                                    </button>
+                                                @endif
+                                            </div>
+
+                                            @if (filled($recordGroupDescription = $group->getDescription($record, $recordGroupTitle)))
+                                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                                    {{ $recordGroupDescription }}
+                                                </div>
+                                            @endif
                                         </td>
 
                                         @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
@@ -829,6 +903,7 @@
                                     :x-sortable-handle="$isReordering"
                                     :striped="$isStriped"
                                     x-bind:class="{
+                                        'hidden': {{ $group?->isCollapsible() ? 'true' : 'false' }} && isGroupCollapsed('{{ $recordGroupTitle }}'),
                                         'bg-gray-50 dark:bg-gray-500/10': isRecordSelected('{{ $recordKey }}'),
                                     }"
                                     @class(array_merge(

@@ -4,6 +4,7 @@ namespace Filament\Support\Commands\Concerns;
 
 use Doctrine\DBAL\Schema\AbstractAsset;
 use Doctrine\DBAL\Schema\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -40,13 +41,15 @@ trait CanReadModelSchemas
 
     protected function guessBelongsToRelationshipName(AbstractAsset $column, string $model): ?string
     {
-        $modelReflection = invade(app($model));
+        /** @var Model $modelInstance */
+        $modelInstance = app($model);
+        $modelInstanceReflection = invade($modelInstance);
         $guessedRelationshipName = str($column->getName())->beforeLast('_id');
-        $hasRelationship = $modelReflection->reflected->hasMethod($guessedRelationshipName);
+        $hasRelationship = $modelInstanceReflection->reflected->hasMethod($guessedRelationshipName);
 
         if (! $hasRelationship) {
             $guessedRelationshipName = $guessedRelationshipName->camel();
-            $hasRelationship = $modelReflection->reflected->hasMethod($guessedRelationshipName);
+            $hasRelationship = $modelInstanceReflection->reflected->hasMethod($guessedRelationshipName);
         }
 
         if (! $hasRelationship) {
@@ -54,7 +57,7 @@ trait CanReadModelSchemas
         }
 
         try {
-            $type = $modelReflection->reflected->getMethod($guessedRelationshipName)->getReturnType();
+            $type = $modelInstanceReflection->reflected->getMethod($guessedRelationshipName)->getReturnType();
 
             if (
                 (! $type) ||

@@ -37,8 +37,6 @@ class FilamentManager
 
     protected ?Model $tenant = null;
 
-    protected ?string $favicon = null;
-
     public function auth(): Guard
     {
         return $this->getCurrentContext()->auth();
@@ -69,11 +67,6 @@ class FilamentManager
         if ($context->isDefault()) {
             $this->setCurrentContext($context);
         }
-    }
-
-    public function favicon(?string $url): void
-    {
-        $this->favicon = $url;
     }
 
     public function serving(Closure $callback): void
@@ -491,7 +484,7 @@ class FilamentManager
 
     public function getFavicon(): ?string
     {
-        return $this->favicon;
+        return $this->getCurrentContext()->getFavicon();
     }
 
     public function hasDarkMode(): bool

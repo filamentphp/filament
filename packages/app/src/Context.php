@@ -55,7 +55,11 @@ class Context
 
     protected string $authGuard = 'web';
 
+    protected ?Closure $bootUsing = null;
+
     protected ?string $domain = null;
+
+    protected ?string $favicon = null;
 
     protected string $globalSearchProvider = DefaultGlobalSearchProvider::class;
 
@@ -268,12 +272,23 @@ class Context
 
     public function boot(): void
     {
+        FilamentIcon::register($this->icons);
+        $this->registerLivewireComponents();
+
         foreach ($this->plugins as $plugin) {
             $plugin->boot($this);
         }
 
-        FilamentIcon::register($this->icons);
-        $this->registerLivewireComponents();
+        if ($callback = $this->bootUsing) {
+            $callback($this);
+        }
+    }
+
+    public function bootUsing(?Closure $callback): static
+    {
+        $this->bootUsing = $callback;
+
+        return $this;
     }
 
     /**
@@ -345,6 +360,11 @@ class Context
         $this->loginRouteAction = $action;
 
         return $this;
+    }
+
+    public function favicon(?string $url): void
+    {
+        $this->favicon = $url;
     }
 
     /**
@@ -584,7 +604,7 @@ class Context
         return $this;
     }
 
-    public function avatarProvider(string $provider): static
+    public function defaultAvatarProvider(string $provider): static
     {
         $this->defaultAvatarProvider = $provider;
 
@@ -1278,6 +1298,11 @@ class Context
     public function getEmailVerificationPromptRouteAction(): string | Closure | array | null
     {
         return $this->emailVerificationRouteAction;
+    }
+
+    public function getFavicon(): ?string
+    {
+        return $this->favicon;
     }
 
     /**

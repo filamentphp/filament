@@ -41,7 +41,8 @@ class MakeFormCommand extends Command
             ->map(fn ($segment) => Str::lower(Str::kebab($segment)))
             ->implode('.');
 
-        $model = (string) str($this->argument('model') ?? ($this->option('edit') ?
+        $model = (string) str($this->argument('model') ?? (
+            $this->option('edit') ?
             $this->askRequired('Model (e.g. `Product`)', 'model') :
             $this->ask('(Optional) Model (e.g. `Product`)')
         ))->replace('/', '\\');

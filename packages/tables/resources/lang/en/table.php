@@ -16,11 +16,6 @@ return [
 
     'fields' => [
 
-        'grouping' => [
-            'label' => 'Group by',
-            'placeholder' => 'Group by',
-        ],
-
         'search' => [
             'label' => 'Search',
             'placeholder' => 'Search',
@@ -164,6 +159,30 @@ return [
             'with_trashed' => 'With deleted records',
 
             'without_trashed' => 'Without deleted records',
+
+        ],
+
+    ],
+
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Group by',
+                'placeholder' => 'Group by',
+            ],
+
+            'direction' => [
+
+                'label' => 'Group direction',
+
+                'options' => [
+                    'asc' => 'Ascending',
+                    'desc' => 'Descending',
+                ],
+
+            ],
 
         ],
 
