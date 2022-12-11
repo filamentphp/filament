@@ -12,13 +12,13 @@
             alias="filament-tables::empty-state"
             size="h-6 w-6"
             wire:loading.remove.delay
-            :wire:target="implode(',', \Filament\Tables\Table::LOADING_TARGETS)"
+            :wire:target="implode(',', array_merge(\Filament\Tables\Table::LOADING_TARGETS, ['$set']))"
         />
 
         <x-filament::loading-indicator
             class="h-6 w-6"
             wire:loading.delay
-            wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+            wire:target="{{ implode(',', array_merge(\Filament\Tables\Table::LOADING_TARGETS, ['$set'])) }}"
         />
     </div>
 
