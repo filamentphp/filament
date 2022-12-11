@@ -390,8 +390,9 @@
                                         >
                                             <option value="">-</option>
                                             @foreach ($sortableColumns as $column)
-                                                <option
-                                                    value="{{ $column->getName() }}">{{ $column->getLabel() }}</option>
+                                                <option value="{{ $column->getName() }}">
+                                                    {{ $column->getLabel() }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </label>

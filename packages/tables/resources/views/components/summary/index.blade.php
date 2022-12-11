@@ -38,16 +38,29 @@
 
         @foreach ($columns as $column)
             @if ($placeholderColumns || $column->hasSummary())
+                @php
+                    $hasColumnHeaderLabel = (! $placeholderColumns) || $column->hasSummary();
+                @endphp
+
                 <td {{ $column->getExtraHeaderAttributeBag()->class([
                     'px-4 py-2 font-medium text-sm text-gray-600 dark:text-gray-300',
                     'whitespace-nowrap' => ! $column->isHeaderWrapped(),
                     'whitespace-normal' => $column->isHeaderWrapped(),
+                    match ($column->getAlignment()) {
+                        'start' => 'text-start',
+                        'center' => 'text-center',
+                        'end' => 'text-end',
+                        'left' => 'text-left',
+                        'right' => 'text-right',
+                        'justify' => 'text-justify',
+                        default => null,
+                    } => (! ($loop->first && (! $extraHeadingColumn))) && $hasColumnHeaderLabel,
                 ]) }}>
                     @if ($loop->first && (! $extraHeadingColumn))
                         <span class="text-base">
                             {{ __('filament-tables::table.summary.heading', ['label' => $pluralModelLabel]) }}
                         </span>
-                    @elseif ((! $placeholderColumns) || $column->hasSummary())
+                    @elseif ($hasColumnHeaderLabel)
                         {{ $column->getLabel() }}
                     @endif
                 </td>
