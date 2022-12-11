@@ -71,7 +71,6 @@ trait HasColumns
             ];
         }
 
-
         // $$$ hugh
         if ($relationshipRecord = $column->getNestedRecord()) {
             $record = $relationshipRecord;
