@@ -869,7 +869,7 @@
                                     :x-sortable-handle="$isReordering"
                                     :striped="$isStriped"
                                     x-bind:class="{
-                                        'hidden': {{ $group->isCollapsible() ? 'true' : 'false' }} && isGroupCollapsed('{{ $recordGroupTitle }}'),
+                                        'hidden': {{ $group?->isCollapsible() ? 'true' : 'false' }} && isGroupCollapsed('{{ $recordGroupTitle }}'),
                                         'bg-gray-50 dark:bg-gray-500/10': isRecordSelected('{{ $recordKey }}'),
                                     }"
                                     @class(array_merge(
