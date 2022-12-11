@@ -29,6 +29,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         'isTableReordering' => ['except' => false],
         'tableFilters',
         'tableGrouping' => ['except' => ''],
+        'tableGroupingDirection' => ['except' => ''],
         'tableSortColumn' => ['except' => ''],
         'tableSortDirection' => ['except' => ''],
         'tableSearch' => ['except' => ''],
