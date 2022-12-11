@@ -64,7 +64,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  * query, like this ...
  *
  * $query->orderBy(
- *     $this->getNestedRelationExistenceQuery($query, $sortColumn, $direction),
+ *     $this->getNestedRelationExistenceQuery($query, $sortColumn),
  *     $direction
  * );
  *
@@ -405,10 +405,11 @@ trait HasNestedRelationships
      * @param  string  $column
      * @return Builder
      */
-    public function getNestedOrderBy(Builder $query, string $column): Builder
+    public function getNestedOrderBy(Builder $query, string $column, string $direction = 'asc'): Builder
     {
         return $query->orderBy(
-            $this->getNestedRelationExistenceQuery($query, $column)
+            $this->getNestedRelationExistenceQuery($query, $column),
+            $direction
         );
     }
 
@@ -421,7 +422,7 @@ trait HasNestedRelationships
      * Called as ...
      *
      * $query->orderBy(
-     *     $this->getNestedRelationExistenceQuery($query, 'post.author.name', 'asc'),
+     *     $this->getNestedRelationExistenceQuery($query, 'post.author.name'),
      *     'asc'
      * );
      *
@@ -430,11 +431,10 @@ trait HasNestedRelationships
      *
      * @param  Builder  $query
      * @param    $name
-     * @param  string|null  $direction
      * @param  array|null  $relationships
      * @return string|\Illuminate\Database\Query\Builder
      */
-    protected function getNestedRelationExistenceQuery(Builder $query, $name, ?string $direction = 'asc', ?array $relationships = null): string | \Illuminate\Database\Query\Builder
+    protected function getNestedRelationExistenceQuery(Builder $query, $name, ?array $relationships = null): string | \Illuminate\Database\Query\Builder
     {
         // first time check, build the relationship stack
         if (! isset($relationships)) {
@@ -464,7 +464,6 @@ trait HasNestedRelationships
                         $relationship->getRelationName() => $this->getNestedRelationExistenceQuery(
                             $parentQuery,
                             $name,
-                            $direction,
                             $relationships
                         ),
                     ],
