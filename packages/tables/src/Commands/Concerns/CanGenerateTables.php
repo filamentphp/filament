@@ -4,7 +4,6 @@ namespace Filament\Tables\Commands\Concerns;
 
 use Doctrine\DBAL\Types;
 use Filament\Tables;
-use Illuminate\Support\Str;
 
 trait CanGenerateTables
 {
