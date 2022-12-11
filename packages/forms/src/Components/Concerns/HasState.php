@@ -121,7 +121,7 @@ trait HasState
     public function dehydrateState(array &$state): void
     {
         if (! $this->isDehydrated()) {
-            Arr::forget($state, $this->getStatePath());
+            if ($this->hasStatePath()) Arr::forget($state, $this->getStatePath());
 
             return;
         }
@@ -297,11 +297,16 @@ trait HasState
             $pathComponents[] = $containerStatePath;
         }
 
-        if (filled($statePath = $this->statePath)) {
-            $pathComponents[] = $statePath;
+        if ($this->hasStatePath()) {
+            $pathComponents[] = $this->statePath;
         }
 
         return implode('.', $pathComponents);
+    }
+
+    public function hasStatePath(): bool
+    {
+        return filled($statePath = $this->statePath);
     }
 
     protected function hasDefaultState(): bool
