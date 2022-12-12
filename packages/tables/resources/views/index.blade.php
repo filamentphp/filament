@@ -1,6 +1,7 @@
 @php
     use Filament\Tables\Actions\Position as ActionsPosition;
     use Filament\Tables\Filters\Layout as FiltersLayout;
+    use Filament\Tables\Actions\SelectRecordsPosition;
 
     $actions = $getActions();
     $actionsPosition = $getActionsPosition();
@@ -619,7 +620,7 @@
                                 @endif
                             @endif
 
-                            @if ($isSelectionEnabled && $selectRecordsPosition === \Filament\Tables\Actions\SelectRecordsPosition::RowStart)
+                            @if ($isSelectionEnabled && $selectRecordsPosition === SelectRecordsPosition::RowStart)
                                 <x-tables::checkbox.cell>
                                     <x-tables::checkbox
                                         x-on:click="toggleSelectRecordsOnPage"
@@ -675,7 +676,7 @@
                             @endif
                         @endif
 
-                            @if ($isSelectionEnabled && $selectRecordsPosition === \Filament\Tables\Actions\SelectRecordsPosition::RowEnd)
+                            @if ($isSelectionEnabled && $selectRecordsPosition === SelectRecordsPosition::RowEnd)
                                 <x-tables::checkbox.cell>
                                     <x-tables::checkbox
                                         x-on:click="toggleSelectRecordsOnPage"
@@ -771,7 +772,7 @@
                                     </x-tables::actions.cell>
                                 @endif
 
-                                @if ($isSelectionEnabled && $selectRecordsPosition === \Filament\Tables\Actions\SelectRecordsPosition::RowStart)
+                                @if ($isSelectionEnabled && $selectRecordsPosition === SelectRecordsPosition::RowStart)
                                     <x-tables::checkbox.cell :class="\Illuminate\Support\Arr::toCssClasses([
                                         'hidden' => $isReordering,
                                     ])">
@@ -832,7 +833,7 @@
                                     </x-tables::actions.cell>
                                 @endif
 
-                                @if ($isSelectionEnabled && $selectRecordsPosition === \Filament\Tables\Actions\SelectRecordsPosition::RowEnd)
+                                @if ($isSelectionEnabled && $selectRecordsPosition === SelectRecordsPosition::RowEnd)
                                     <x-tables::checkbox.cell :class="\Illuminate\Support\Arr::toCssClasses([
                                         'hidden' => $isReordering,
                                     ])">
