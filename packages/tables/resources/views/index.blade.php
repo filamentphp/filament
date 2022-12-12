@@ -183,19 +183,17 @@
                         </x-slot>
                     </x-tables::header>
 
-                    <x-tables::hr
-                        :x-show="\Illuminate\Support\Js::from($isReorderable || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible) . ' || selectedRecords.length'"/>
+                    <x-tables::hr :x-show="\Illuminate\Support\Js::from($isReorderable || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible) . ' || selectedRecords.length'" />
                 </div>
             @endif
 
             @if ($hasFiltersAboveContent)
                 <div class="px-2 pt-2">
                     <div class="p-4 mb-2">
-                        <x-tables::filters :form="$getFiltersForm()"/>
+                        <x-tables::filters :form="$getFiltersForm()" />
                     </div>
 
-                    <x-tables::hr
-                        :x-show="\Illuminate\Support\Js::from($isReorderable || $isGlobalSearchVisible || $isColumnToggleFormVisible) . ' || selectedRecords.length'"/>
+                    <x-tables::hr :x-show="\Illuminate\Support\Js::from($isReorderable || $isGlobalSearchVisible || $isColumnToggleFormVisible) . ' || selectedRecords.length'" />
                 </div>
             @endif
 
@@ -226,7 +224,7 @@
                     <div class="flex items-center justify-end w-full gap-2 md:max-w-md">
                         @if ($isGlobalSearchVisible)
                             <div class="filament-tables-search-container flex items-center justify-end flex-1">
-                                <x-tables::search-input/>
+                                <x-tables::search-input />
                             </div>
                         @endif
 
@@ -373,8 +371,7 @@
                                         >
                                             <option value="">-</option>
                                             @foreach ($sortableColumns as $column)
-                                                <option
-                                                    value="{{ $column->getName() }}">{{ $column->getLabel() }}</option>
+                                                <option value="{{ $column->getName() }}">{{ $column->getLabel() }}</option>
                                             @endforeach
                                         </select>
                                     </label>
@@ -393,10 +390,8 @@
                                                 'dark:text-white dark:bg-gray-700 dark:border-gray-600 dark:focus:border-primary-500' => config('tables.dark_mode'),
                                             ])
                                         >
-                                            <option
-                                                value="asc">{{ __('tables::table.sorting.fields.direction.options.asc') }}</option>
-                                            <option
-                                                value="desc">{{ __('tables::table.sorting.fields.direction.options.desc') }}</option>
+                                            <option value="asc">{{ __('tables::table.sorting.fields.direction.options.asc') }}</option>
+                                            <option value="desc">{{ __('tables::table.sorting.fields.direction.options.desc') }}</option>
                                         </select>
                                     </label>
                                 </div>
@@ -436,14 +431,14 @@
                                 <div
                                     @if ($hasCollapsibleColumnsLayout)
                                         x-data="{ isCollapsed: true }"
-                                    x-init="$dispatch('collapsible-table-row-initialized')"
-                                    x-on:expand-all-table-rows.window="isCollapsed = false"
-                                    x-on:collapse-all-table-rows.window="isCollapsed = true"
+                                        x-init="$dispatch('collapsible-table-row-initialized')"
+                                        x-on:expand-all-table-rows.window="isCollapsed = false"
+                                        x-on:collapse-all-table-rows.window="isCollapsed = true"
                                     @endif
                                     wire:key="{{ $this->id }}.table.records.{{ $recordKey }}"
                                     @if ($isReordering)
                                         wire:sortable.item="{{ $recordKey }}"
-                                    wire:sortable.handle
+                                        wire:sortable.handle
                                     @endif
                                 >
                                     <div
@@ -471,7 +466,7 @@
                                                 'absolute top-3 right-3 rtl:right-auto rtl:left-3',
                                                 'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
                                                 'hidden' => ! $isReordering,
-                                            ])"/>
+                                            ])" />
 
                                             @if ($isSelectionEnabled)
                                                 <x-tables::checkbox
@@ -680,11 +675,11 @@
                             @endif
                         @endif
 
-                        @if ($isSelectionEnabled && $selectRecordsPosition === \Filament\Tables\Actions\SelectRecordsPosition::RowEnd)
-                            <x-tables::checkbox.cell>
-                                <x-tables::checkbox
-                                    x-on:click="toggleSelectRecordsOnPage"
-                                    x-bind:checked="
+                            @if ($isSelectionEnabled && $selectRecordsPosition === \Filament\Tables\Actions\SelectRecordsPosition::RowEnd)
+                                <x-tables::checkbox.cell>
+                                    <x-tables::checkbox
+                                        x-on:click="toggleSelectRecordsOnPage"
+                                        x-bind:checked="
                                             let recordsOnPage = getRecordsOnPage()
 
                                             if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
@@ -697,9 +692,9 @@
 
                                             return null
                                         "
-                                />
-                            </x-tables::checkbox.cell>
-                        @endif
+                                    />
+                                </x-tables::checkbox.cell>
+                            @endif
                     </x-slot>
 
                     @if ($isColumnSearchVisible)
@@ -717,11 +712,9 @@
                             @endif
 
                             @foreach ($columns as $column)
-                                <x-tables::cell
-                                    class="filament-table-individual-search-cell-{{ \Illuminate\Support\Str::of($column->getName())->camel()->kebab() }} px-4 py-1">
+                                <x-tables::cell class="filament-table-individual-search-cell-{{ \Illuminate\Support\Str::of($column->getName())->camel()->kebab() }} px-4 py-1">
                                     @if ($column->isIndividuallySearchable())
-                                        <x-tables::search-input
-                                            wire-model="tableColumnSearchQueries.{{ $column->getName() }}"/>
+                                        <x-tables::search-input wire-model="tableColumnSearchQueries.{{ $column->getName() }}" />
                                     @endif
                                 </x-tables::cell>
                             @endforeach
@@ -761,7 +754,7 @@
                                     'hidden' => ! $isReordering,
                                 ])">
                                     @if ($isReordering)
-                                        <x-tables::reorder.handle/>
+                                        <x-tables::reorder.handle />
                                     @endif
                                 </x-tables::reorder.cell>
 
@@ -873,8 +866,7 @@
                             <tr>
                                 <td colspan="{{ $columnsCount }}">
                                     <div class="flex items-center justify-center w-full p-4">
-                                        <x-tables::empty-state :icon="$getEmptyStateIcon()"
-                                                               :actions="$getEmptyStateActions()">
+                                        <x-tables::empty-state :icon="$getEmptyStateIcon()" :actions="$getEmptyStateActions()">
                                             <x-slot name="heading">
                                                 {{ $getEmptyStateHeading() }}
                                             </x-slot>
@@ -909,10 +901,10 @@
 
         @if ($hasFiltersAfterContent)
             <div class="px-2 pb-2">
-                <x-tables::hr/>
+                <x-tables::hr />
 
                 <div class="p-4 mt-2">
-                    <x-tables::filters :form="$getFiltersForm()"/>
+                    <x-tables::filters :form="$getFiltersForm()" />
                 </div>
             </div>
         @endif
