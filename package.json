@@ -22,7 +22,7 @@
         "@tailwindcss/forms": "^0.5.2",
         "@tailwindcss/typography": "^0.5.0",
         "alpinejs": "^3.10.4",
-        "async-alpine": "^0.5.3",
+        "async-alpine": "^1.0.0",
         "autoprefixer": "^10.4.0",
         "chart.js": "^3.6.0",
         "choices.js": "^10.1.0",
