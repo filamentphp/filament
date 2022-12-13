@@ -41,6 +41,8 @@ class BaseFileUpload extends Field
 
     protected bool | Closure $shouldPreserveFilenames = false;
 
+    protected bool | Closure $shouldMoveFile = false;
+
     protected string | Closure | null $fileNamesStatePath = null;
 
     protected string | Closure $visibility = 'public';
@@ -136,7 +138,7 @@ class BaseFileUpload extends Field
             }
 
             /** @phpstan-ignore-next-line */
-            if ($component->getDiskName() == $file->disk) {
+            if ($component->shouldMoveFile() && $component->getDiskName() == $file->disk) {
                 $newPath = trim($component->getDirectory() . '/' . $component->getUploadedFileNameForStorage($file), '/');
 
                 $component->getDisk()->move($file->path(), $newPath);
@@ -232,6 +234,13 @@ class BaseFileUpload extends Field
     public function preserveFilenames(bool | Closure $condition = true): static
     {
         $this->shouldPreserveFilenames = $condition;
+
+        return $this;
+    }
+
+    public function moveFile(bool | Closure $condition = false): static
+    {
+        $this->shouldMoveFile = $condition;
 
         return $this;
     }
@@ -382,6 +391,11 @@ class BaseFileUpload extends Field
     public function shouldPreserveFilenames(): bool
     {
         return $this->evaluate($this->shouldPreserveFilenames);
+    }
+
+    public function shouldMoveFile(): bool
+    {
+        return $this->evaluate($this->shouldMoveFile);
     }
 
     public function getFileNamesStatePath(): ?string
