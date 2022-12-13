@@ -170,6 +170,8 @@ class AssetManager
     protected function getAssets(array $assets, ?array $packages = null): array
     {
         if ($packages !== null) {
+            $packages[] = '';
+
             $assets = Arr::only($assets, $packages);
         }
 
