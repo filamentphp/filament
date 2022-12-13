@@ -542,7 +542,7 @@ trait CanBeValidated
         $this->rule(static function (Field $component) use ($date, $isStatePathAbsolute, $rule): string {
             $date = $component->evaluate($date);
 
-            if (! (strtotime($date) && $isStatePathAbsolute)) {
+            if (! (strtotime($date) || $isStatePathAbsolute)) {
                 $containerStatePath = $component->getContainer()->getStatePath();
 
                 if ($containerStatePath) {
