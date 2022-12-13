@@ -153,7 +153,7 @@ class TestsForms
             Assert::assertInstanceOf(
                 Field::class,
                 $field,
-                "Failed asserting that a field with the name [{$fieldName}] exists on the form with the name [${formName}] on the [{$livewireClass}] component."
+                "Failed asserting that a field with the name [{$fieldName}] exists on the form with the name [{$formName}] on the [{$livewireClass}] component."
             );
 
             return $this;
