@@ -83,6 +83,24 @@ esbuild
                 ? `'production'`
                 : `'development'`,
         },
+        entryPoints: [`packages/support/resources/js/async-alpine.js`],
+        outfile: `packages/support/dist/async-alpine.js`,
+        bundle: true,
+        platform: 'neutral',
+        mainFields: ['module', 'main'],
+        watch: shouldWatch,
+        minifySyntax: true,
+        minifyWhitespace: true,
+    })
+    .catch(() => process.exit(1))
+
+esbuild
+    .build({
+        define: {
+            'process.env.NODE_ENV': shouldWatch
+                ? `'production'`
+                : `'development'`,
+        },
         entryPoints: [`packages/widgets/resources/js/components/chart.js`],
         outfile: `packages/widgets/dist/components/chart.js`,
         bundle: true,
