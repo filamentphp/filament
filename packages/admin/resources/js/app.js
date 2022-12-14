@@ -6,7 +6,7 @@ import FormsAlpinePlugin from '../../../forms/dist/module.esm'
 import Mousetrap from '@danharrin/alpine-mousetrap'
 import NotificationsAlpinePlugin from '../../../notifications/dist/module.esm'
 import Persist from '@alpinejs/persist'
-import Tooltip from '@ryangjchandler/alpine-tooltip'
+import Tooltip from './plugins/AlpineTooltip'
 
 Alpine.plugin(Collapse)
 Alpine.plugin(Focus)

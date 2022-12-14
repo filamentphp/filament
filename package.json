@@ -18,7 +18,6 @@
         "@danharrin/alpine-mousetrap": "^0.1.0",
         "@github/file-attachment-element": "^2.0.1",
         "@github/markdown-toolbar-element": "^1.5.1",
-        "@ryangjchandler/alpine-tooltip": "^1.2.0",
         "@tailwindcss/forms": "^0.5.2",
         "@tailwindcss/typography": "^0.5.0",
         "alpinejs": "^3.9.0",
