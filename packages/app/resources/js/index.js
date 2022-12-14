@@ -1,3 +1,4 @@
+import Alpine from 'alpinejs'
 import Mousetrap from '@danharrin/alpine-mousetrap'
 import Persist from '@alpinejs/persist'
 import Tooltip from '@ryangjchandler/alpine-tooltip'
@@ -58,3 +59,6 @@ document.addEventListener('alpine:init', () => {
             window.Alpine.store('theme', event.matches ? 'dark' : 'light')
         })
 })
+
+window.Alpine = Alpine
+Alpine.start()
