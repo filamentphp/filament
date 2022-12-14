@@ -1,7 +1,7 @@
 const esbuild = require('esbuild')
 const shouldWatch = process.argv.includes('--watch')
 
-const packages = ['app', 'forms', 'notifications', 'support']
+const packages = ['app', 'forms', 'notifications', 'support', 'tables']
 
 packages.forEach((package) => {
     esbuild

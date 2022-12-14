@@ -1,12 +1,8 @@
-import Collapse from '@alpinejs/collapse'
-import Focus from '@alpinejs/focus'
 import Mousetrap from '@danharrin/alpine-mousetrap'
 import Persist from '@alpinejs/persist'
 import Tooltip from '@ryangjchandler/alpine-tooltip'
 
 document.addEventListener('alpine:init', () => {
-    window.Alpine.plugin(Collapse)
-    window.Alpine.plugin(Focus)
     window.Alpine.plugin(Mousetrap)
     window.Alpine.plugin(Persist)
     window.Alpine.plugin(Tooltip)
