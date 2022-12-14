@@ -213,7 +213,7 @@ Action::make('advance')
     ->modalFooter(view('filament.pages.actions.advance'))
 ```
 
-### Conditional Rendering
+### Conditional rendering
 
 You may have a need to conditionally show a modal for confirmation reasons while falling back to the default action. This can be achieved using `modalHidden()`:
 
