@@ -1,6 +1,4 @@
-import Alpine from 'alpinejs'
 import AlpineFloatingUI from '@awcodes/alpine-floating-ui'
-import AsyncAlpine from 'async-alpine'
 import Focus from '@alpinejs/focus'
 import Sortable from './sortable'
 
@@ -9,11 +7,6 @@ document.addEventListener('alpine:init', () => {
     window.Alpine.plugin(Sortable)
     window.Alpine.plugin(AlpineFloatingUI)
 })
-
-AsyncAlpine.init(Alpine)
-AsyncAlpine.start()
-window.Alpine = Alpine
-Alpine.start()
 
 // https://github.com/laravel/framework/blob/5299c22321c0f1ea8ff770b84a6c6469c4d6edec/src/Illuminate/Translation/MessageSelector.php#L15
 const pluralize = function (text, number, variables) {

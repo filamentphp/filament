@@ -75,6 +75,7 @@
 
         @livewireScripts
         @filamentScripts(withCore: true)
+        <script src="//unpkg.com/alpinejs" defer></script>
 
         @if (config('filament.broadcasting.echo'))
             <script>

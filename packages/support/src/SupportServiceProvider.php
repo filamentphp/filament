@@ -115,6 +115,7 @@ class SupportServiceProvider extends PluginServiceProvider
     {
         return [
             Js::make('support', __DIR__ . '/../dist/index.js'),
+            Js::make('async-alpine', 'https://cdn.jsdelivr.net/npm/async-alpine@1.x.x/dist/async-alpine.script.js'),
         ];
     }
 
