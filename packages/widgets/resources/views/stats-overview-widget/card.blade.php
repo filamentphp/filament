@@ -1,4 +1,6 @@
 @php
+    $descriptionIcon = $getDescriptionIcon();
+    $descriptionIconPosition = $getDescriptionIconPosition();
     $url = $getUrl();
     $tag = $url ? 'a' : 'div';
 @endphp
@@ -43,9 +45,17 @@
                     default => $descriptionColor,
                 },
             ])>
+                @if ($descriptionIcon && ($descriptionIconPosition === 'before'))
+                    <x-filament::icon
+                        :name="$descriptionIcon"
+                        alias="widgets::stats-overview.card.description"
+                        size="h-4 w-4"
+                    />
+                @endif
+
                 <span>{{ $description }}</span>
 
-                @if ($descriptionIcon = $getDescriptionIcon())
+                @if ($descriptionIcon && ($descriptionIconPosition !== 'before'))
                     <x-filament::icon
                         :name="$descriptionIcon"
                         alias="widgets::stats-overview.card.description"
