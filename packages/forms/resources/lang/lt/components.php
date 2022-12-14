@@ -104,7 +104,7 @@ return [
         'buttons' => [
 
             'create_item' => [
-                'label' => 'Pridėėti prie :label',
+                'label' => 'Pridėti prie :label',
             ],
 
             'delete_item' => [
@@ -124,7 +124,7 @@ return [
             ],
 
             'move_item_up' => [
-                'label' => 'AUkštyn',
+                'label' => 'Aukštyn',
             ],
 
             'collapse_item' => [
