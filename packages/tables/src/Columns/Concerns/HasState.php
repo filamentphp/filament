@@ -77,29 +77,22 @@ trait HasState
             return null;
         }
 
-        $relationshipName = $this->getRelationshipName();
+        $relationship = $this->getRelationship($record);
 
-        if (! method_exists($record, $relationshipName)) {
+        if (! $relationship) {
             return null;
         }
 
-        $relationship = $record->{$relationshipName}();
+        $state = collect($this->getRelationshipResults($record))
+            ->pluck($this->getRelationshipAttribute())
+            ->unique()
+            ->values();
 
-        if (! (
-            $relationship instanceof HasMany ||
-            $relationship instanceof BelongsToMany ||
-            $relationship instanceof MorphMany
-        )) {
+        if (! $state->count()) {
             return null;
         }
 
-        $state = $record->getRelationValue($relationshipName)->pluck($this->getRelationshipAttribute());
-
-        if (! count($state)) {
-            return null;
-        }
-
-        return $state->toArray();
+        return $state->all();
     }
 
     /**

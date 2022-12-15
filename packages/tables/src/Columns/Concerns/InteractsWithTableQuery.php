@@ -6,6 +6,8 @@ use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 trait InteractsWithTableQuery
 {
@@ -173,6 +175,53 @@ trait InteractsWithTableQuery
         }
 
         return $relationship;
+    }
+
+    public function getRelationshipResults(Model $record, ?string $relationshipName = null): array
+    {
+        $results = [];
+
+        $relationshipName = explode('.', $relationshipName ?? $this->getRelationshipName());
+
+        while (count($relationshipName)) {
+            $currentRelationshipName = array_shift($relationshipName);
+
+            $currentRelationshipValue = $record->getRelationValue($currentRelationshipName);
+
+            if ($currentRelationshipValue instanceof Collection) {
+                if (! count($relationshipName)) {
+                    $results = array_merge($results, $currentRelationshipValue->all());
+
+                    continue;
+                }
+
+                foreach ($currentRelationshipValue as $valueRecord) {
+                    $results = array_merge(
+                        $results,
+                        $this->getRelationshipResults(
+                            $valueRecord,
+                            implode('.', $relationshipName),
+                        ),
+                    );
+                }
+
+                break;
+            }
+
+            if (! $currentRelationshipValue instanceof Model) {
+                break;
+            }
+
+            if (! count($relationshipName)) {
+                $results[] = $currentRelationshipValue;
+
+                break;
+            }
+
+            $record = $currentRelationshipValue;
+        }
+
+        return $results;
     }
 
     public function getRelationshipAttribute(): string
