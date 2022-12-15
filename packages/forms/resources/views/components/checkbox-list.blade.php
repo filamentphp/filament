@@ -12,26 +12,24 @@
     :state-path="$getStatePath()"
 >
     <div x-data="{
-        checkboxes: $root.querySelectorAll('input[type=checkbox]'),
-
-        isAllSelected: false,
-
-        options: @js($getOptions()),
+        areAllCheckboxesChecked: false,
 
         init: function () {
-            this.updateIsAllSelected()
+            this.checkIfAllCheckboxesAreChecked()
 
-            $watch('options', this.updateIsAllSelected())
+            Livewire.hook('message.processed', () => {
+                this.checkIfAllCheckboxesAreChecked()
+            })
         },
 
-        updateIsAllSelected: function () {
-            this.isAllSelected = this.checkboxes.length === this.$root.querySelectorAll('input[type=checkbox]:checked').length
+        checkIfAllCheckboxesAreChecked: function () {
+            this.areAllCheckboxesChecked = this.$root.querySelectorAll('input[type=checkbox]').length === this.$root.querySelectorAll('input[type=checkbox]:checked').length
         },
 
-        toggleAll: function () {
-            state = !this.isAllSelected
+        toggleAllCheckboxes: function () {
+            state = ! this.areAllCheckboxesChecked
 
-            this.checkboxes.forEach((checkbox) => {
+            this.$root.querySelectorAll('input[type=checkbox]').forEach((checkbox) => {
                 checkbox.checked = state
                 checkbox.dispatchEvent(new Event('change'))
             })
@@ -43,8 +41,8 @@
                     <x-forms::link
                         tag="button"
                         size="sm"
-                        x-show="!isAllSelected"
-                        x-on:click="toggleAll"
+                        x-show="! areAllCheckboxesChecked"
+                        x-on:click="toggleAllCheckboxes()"
                         wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.buttons.select_all"
                     >
                         {{ __('forms::components.checkbox_list.buttons.select_all.label') }}
@@ -53,8 +51,8 @@
                     <x-forms::link
                         tag="button"
                         size="sm"
-                        x-show="isAllSelected"
-                        x-on:click="toggleAll"
+                        x-show="areAllCheckboxesChecked"
+                        x-on:click="toggleAllCheckboxes()"
                         wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.buttons.deselect_all"
                     >
                         {{ __('forms::components.checkbox_list.buttons.deselect_all.label') }}
@@ -78,7 +76,7 @@
                     <label class="flex items-center space-x-3 rtl:space-x-reverse">
                         <input
                             @if ($isBulkToggleable())
-                                x-on:change="updateIsAllSelected"
+                                x-on:change="checkIfAllCheckboxesAreChecked()"
                             @endif
                             wire:loading.attr="disabled"
                             type="checkbox"
