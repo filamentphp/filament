@@ -43,7 +43,7 @@ ${originalNode.outerHTML}${markupSVG}
  * Please visit https://pqina.nl/filepond/ for details.
  */
 /*!
- * FilePondPluginFileValidateSize 2.2.7
+ * FilePondPluginFileValidateSize 2.2.8
  * Licensed under MIT, https://opensource.org/licenses/MIT/
  * Please visit https://pqina.nl/filepond/ for details.
  */

@@ -128,6 +128,7 @@ trait InteractsWithTable
             ->actionsColumnLabel($this->getTableActionsColumnLabel())
             ->actionsPosition($this->getTableActionsPosition())
             ->bulkActions($this->getTableBulkActions())
+            ->checkIfRecordIsSelectableUsing($this->isTableRecordSelectable())
             ->columns($this->getTableColumns())
             ->columnToggleFormColumns($this->getTableColumnToggleFormColumns())
             ->columnToggleFormWidth($this->getTableColumnToggleFormWidth())

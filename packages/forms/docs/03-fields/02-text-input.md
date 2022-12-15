@@ -172,11 +172,11 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('domain')
-    ->suffixAction(
+    ->suffixAction(fn (?string $state): Action => 
         Action::make('visit')
             ->icon('heroicon-m-arrow-top-right-on-square')
             ->url(
-                fn (?string $state): ?string => filled($state) ? "https://{$state}" : null,
+                filled($state) ? "https://{$state}" : null,
                 shouldOpenInNewTab: true,
             ),
     )

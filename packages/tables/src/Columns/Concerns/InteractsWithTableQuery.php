@@ -53,11 +53,15 @@ trait InteractsWithTableQuery
     public function applySearchConstraint(Builder $query, string $search, bool &$isFirst): Builder
     {
         if ($this->searchQuery) {
-            $this->evaluate($this->searchQuery, [
-                'query' => $query,
-                'search' => $search,
-                'searchQuery' => $search,
-            ]);
+            $whereClause = $isFirst ? 'where' : 'orWhere';
+
+            $query->{$whereClause}(
+                fn ($query) => $this->evaluate($this->searchQuery, [
+                    'query' => $query,
+                    'search' => $search,
+                    'searchQuery' => $search,
+                ]),
+            );
 
             $isFirst = false;
 

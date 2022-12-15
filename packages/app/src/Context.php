@@ -167,6 +167,10 @@ class Context
      */
     protected ?array $successColor = null;
 
+    protected string $sidebarWidth = '20rem';
+
+    protected string $collapsedSidebarWidth = '5.4rem';
+
     protected bool $isEmailVerificationRequired = false;
 
     protected bool $isTenantSubscriptionRequired = false;
@@ -797,6 +801,30 @@ class Context
     public function getSuccessColor(): array
     {
         return $this->successColor ?? Color::Green;
+    }
+
+    public function sidebarWidth(string $width): static
+    {
+        $this->sidebarWidth = $width;
+
+        return $this;
+    }
+
+    public function getSidebarWidth(): string
+    {
+        return $this->sidebarWidth;
+    }
+
+    public function collapsedSidebarWidth(string $width): static
+    {
+        $this->collapsedSidebarWidth = $width;
+
+        return $this;
+    }
+
+    public function getCollapsedSidebarWidth(): string
+    {
+        return $this->collapsedSidebarWidth;
     }
 
     public function hasRoutableTenancy(): bool

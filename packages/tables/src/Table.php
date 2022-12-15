@@ -65,6 +65,8 @@ class Table extends ViewComponent
      */
     protected array $bulkActions = [];
 
+    protected ?Closure $checkIfRecordIsSelectableUsing = null;
+
     protected ?ColumnLayoutComponent $collapsibleColumnsLayout = null;
 
     /**
@@ -320,6 +322,13 @@ class Table extends ViewComponent
     public function registerBulkAction(BulkAction $action): static
     {
         $this->bulkActions[$action->getName()] = $action;
+
+        return $this;
+    }
+
+    public function checkIfRecordIsSelectableUsing(?Closure $callback): static
+    {
+        $this->checkIfRecordIsSelectableUsing = $callback;
 
         return $this;
     }
@@ -1244,6 +1253,13 @@ class Table extends ViewComponent
         ]);
     }
 
+    public function isRecordSelectable(Model $record): bool
+    {
+        return $this->evaluate($this->checkIfRecordIsSelectableUsing, [
+            'record' => $record,
+        ]) ?? true;
+    }
+
     public function getReorderColumn(): ?string
     {
         return $this->evaluate($this->reorderColumn);
@@ -1510,5 +1526,10 @@ class Table extends ViewComponent
     public function selectsCurrentPageOnly(): bool
     {
         return (bool) $this->evaluate($this->selectsCurrentPageOnly);
+    }
+
+    public function checksIfRecordIsSelectable(): bool
+    {
+        return $this->checkIfRecordIsSelectableUsing !== null;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Closure;
 use Filament\Forms\Form;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
@@ -138,6 +139,10 @@ trait HasBulkActions
     {
         $action = $this->getMountedTableBulkAction();
 
+        if ($action->isModalHidden()) {
+            return false;
+        }
+
         return $action->getModalSubheading() ||
             $action->getModalContent() ||
             $action->getModalFooter() ||
@@ -186,5 +191,13 @@ trait HasBulkActions
     protected function getTableBulkActions(): array
     {
         return [];
+    }
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    public function isTableRecordSelectable(): ?Closure
+    {
+        return null;
     }
 }

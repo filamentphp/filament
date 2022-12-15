@@ -168,6 +168,10 @@ trait HasFormComponentActions
     {
         $action = $this->getMountedFormComponentAction();
 
+        if ($action->isModalHidden()) {
+            return false;
+        }
+
         return $action->getModalSubheading() ||
             $action->getModalContent() ||
             $action->getModalFooter() ||

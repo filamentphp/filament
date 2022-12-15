@@ -158,6 +158,10 @@ trait HasActions
     {
         $action = $this->getMountedTableAction();
 
+        if ($action->isModalHidden()) {
+            return false;
+        }
+
         return $action->getModalSubheading() ||
             $action->getModalContent() ||
             $action->getModalFooter() ||
