@@ -37,7 +37,7 @@
             })
         },
     }">
-        <div wire:key="{{ $getId() }}-toggleable-wrapper">
+        <div wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.wrapper">
             @if ($isBulkToggleable() && count($getOptions()))
                 <div x-cloak class="mb-2" wire:key="{{ $getId() }}-toggleable-buttons">
                     <x-forms::link
@@ -45,7 +45,7 @@
                         size="sm"
                         x-show="!isAllSelected"
                         x-on:click="toggleAll"
-                        wire:key="{{ $getId() }}-select-all"
+                        wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.buttons.select_all"
                     >
                         {{ __('forms::components.checkbox_list.buttons.select_all.label') }}
                     </x-forms::link>
@@ -55,7 +55,7 @@
                         size="sm"
                         x-show="isAllSelected"
                         x-on:click="toggleAll"
-                        wire:key="{{ $getId() }}-deselect-all"
+                        wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.buttons.deselect_all"
                     >
                         {{ __('forms::components.checkbox_list.buttons.deselect_all.label') }}
                     </x-forms::link>
@@ -74,7 +74,7 @@
             :attributes="$attributes->class(['filament-forms-checkbox-list-component gap-1 space-y-2'])"
         >
             @forelse ($getOptions() as $optionValue => $optionLabel)
-                <div wire:key="{{ $getId() }}-{{ $getStatePath() }}-{{ $optionValue }}">
+                <div wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.options.{{ $optionValue }}">
                     <label class="flex items-center space-x-3 rtl:space-x-reverse">
                         <input
                             @if ($isBulkToggleable())
@@ -106,7 +106,7 @@
                     </label>
                 </div>
             @empty
-                <div wire:key="{{ $getId() }}-{{ $getStatePath() }}-no-options"></div>
+                <div wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.empty"></div>
             @endforelse
         </x-filament-support::grid>
     </div>
