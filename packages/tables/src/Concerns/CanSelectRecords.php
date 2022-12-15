@@ -51,7 +51,7 @@ trait CanSelectRecords
         if ($this->isTableRecordSelectable() !== null) {
             return $query
                 ->get()
-                ->filter(fn (Model $record): bool => $this->isRecordSelectable()($record))
+                ->filter(fn (Model $record): bool => $this->isTableRecordSelectable()($record))
                 ->count();
         }
 
