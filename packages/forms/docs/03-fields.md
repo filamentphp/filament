@@ -382,7 +382,7 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('domain')
-    ->suffixAction(fn (?string $state) =>
+    ->suffixAction(fn (?string $state): Action =>
         Action::make('visit')
             ->icon('heroicon-s-external-link')
             ->url(
