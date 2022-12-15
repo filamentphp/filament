@@ -11,11 +11,6 @@
         -webkit-tap-highlight-color: transparent;
     }
 
-    :root {
-        --collapsed-sidebar-width: 5.4rem;
-        --sidebar-width: 20rem;
-    }
-
     :root.dark {
         color-scheme: dark;
     }

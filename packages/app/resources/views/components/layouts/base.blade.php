@@ -42,6 +42,8 @@
             :root {
                 --font-family: {!! filament()->getFontName() !!};
                 --filament-widgets-chart-font-family: var(--font-family);
+                --sidebar-width: {{ filament()->getSidebarWidth() }};
+                --collapsed-sidebar-width: {{ filament()->getCollapsedSidebarWidth() }};
 
                 @foreach (filament()->getColors() as $key => $palette)
                     @foreach ($palette as $shade => $color)
