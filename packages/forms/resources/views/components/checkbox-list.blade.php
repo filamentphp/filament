@@ -38,7 +38,7 @@
         },
     }">
         <div wire:key="{{ $getId() }}-toggleable-wrapper">
-            @if($isBulkToggleable() && count($getOptions()))
+            @if ($isBulkToggleable() && count($getOptions()))
                 <div x-cloak class="mb-2" wire:key="{{ $getId() }}-toggleable-buttons">
                     <x-forms::link
                         tag="button"
