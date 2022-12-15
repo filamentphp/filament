@@ -22,6 +22,9 @@ class MakeUserCommand extends Command
                             {--email= : A valid and unique email address}
                             {--password= : The password for the user (min. 8 characters)}';
 
+    /**
+     * @var array{'name': string | null, 'email': string | null, 'password': string | null}
+     */
     protected array $options;
 
     /**
