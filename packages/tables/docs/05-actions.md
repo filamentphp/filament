@@ -137,8 +137,9 @@ You may conditionally disable bulk actions for a specific record:
 ```php
 public function isTableRecordSelectable(): ?Closure
 {
-    return fn (Model $record): bool => $record->id === StatusEnum::Enabled;
+    return fn (Model $record): bool => $record->status === Status::Enabled;
 }
+```
 
 ## Setting a size
 
