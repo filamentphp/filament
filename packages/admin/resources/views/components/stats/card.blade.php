@@ -6,6 +6,7 @@
     'description' => null,
     'descriptionColor' => null,
     'descriptionIcon' => null,
+    'descriptionIconPosition' => 'after',
     'flat' => false,
     'label' => null,
     'tag' => 'div',
@@ -48,13 +49,13 @@
                     default => 'text-gray-600',
                 },
             ])>
-                @if ($descriptionIcon && ($descriptionIconPosition === 'before'))
+                @if ($descriptionIcon && $descriptionIconPosition === 'before')
                     <x-dynamic-component :component="$descriptionIcon" class="w-4 h-4" />
                 @endif
 
                 <span>{{ $description }}</span>
 
-                @if ($descriptionIcon && ($descriptionIconPosition !== 'before'))
+                @if ($descriptionIcon && $descriptionIconPosition === 'after')
                     <x-dynamic-component :component="$descriptionIcon" class="w-4 h-4" />
                 @endif
             </div>
