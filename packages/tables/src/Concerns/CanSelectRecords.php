@@ -48,7 +48,7 @@ trait CanSelectRecords
 
         $query = $this->getFilteredTableQuery();
 
-        if ($this->isRecordSelectable() !== null) {
+        if ($this->isTableRecordSelectable() !== null) {
             return $query
                 ->get()
                 ->filter(fn (Model $record): bool => $this->isRecordSelectable()($record))
