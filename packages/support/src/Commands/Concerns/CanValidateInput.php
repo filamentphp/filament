@@ -23,7 +23,7 @@ trait CanValidateInput
 
         if ($validator->fails()) {
             $this->error($validator->errors()->first());
-            
+
             if ($onError) {
                 $onError($validator);
             }
