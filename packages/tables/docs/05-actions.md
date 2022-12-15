@@ -113,9 +113,12 @@ BulkAction::make('delete')
 You may conditionally disable bulk actions for a specific record:
 
 ```php
-public function isTableRecordSelectable(): ?Closure
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
 {
-    return fn (Model $record): bool => $record->status === Status::Enabled;
+    return $table
+        ->checkIfRecordIsSelectableUsing(fn (Model $record): bool => $record->status === Status::Enabled);
 }
 ```
 
