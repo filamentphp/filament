@@ -538,7 +538,7 @@
                                                 'hidden' => ! $isReordering,
                                             ]) />
 
-                                            @if ($isSelectionEnabled)
+                                            @if ($isSelectionEnabled && $isRecordSelectable($record))
                                                 <x-filament-tables::checkbox
                                                     x-model="selectedRecords"
                                                     :value="$recordKey"
@@ -937,11 +937,13 @@
                                         <x-filament-tables::checkbox.cell @class([
                                             'hidden' => $isReordering,
                                         ])>
-                                            <x-filament-tables::checkbox
-                                                x-model="selectedRecords"
-                                                :value="$recordKey"
-                                                class="filament-tables-record-checkbox"
-                                            />
+                                            @if ($isRecordSelectable($record))
+                                                <x-filament-tables::checkbox
+                                                    x-model="selectedRecords"
+                                                    :value="$recordKey"
+                                                    class="filament-tables-record-checkbox"
+                                                />
+                                            @endif
                                         </x-filament-tables::checkbox.cell>
                                     @endif
 

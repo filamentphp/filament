@@ -187,4 +187,9 @@ trait HasBulkActions
     {
         return [];
     }
+
+    public function isTableRecordSelectable(): ?Closure
+    {
+        return null;
+    }
 }

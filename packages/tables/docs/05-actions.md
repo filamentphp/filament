@@ -108,6 +108,16 @@ BulkAction::make('delete')
     ->color('danger')
 ```
 
+## Disabling record bulk actions
+
+You may conditionally disable bulk actions for a specific record:
+
+```php
+public function isTableRecordSelectable(): ?Closure
+{
+    return fn (Model $record): bool => $record->id === StatusEnum::Enabled;
+}
+
 ## Setting a size
 
 The default size for table actions is `sm` but you may also change it to either `md` or `lg`:
