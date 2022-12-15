@@ -20,6 +20,7 @@
 
         init: function () {
             this.updateIsAllSelected()
+
             $watch('options', this.updateIsAllSelected())
         },
 
