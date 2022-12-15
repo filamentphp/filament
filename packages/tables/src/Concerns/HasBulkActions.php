@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Closure;
 use Filament\Forms\Form;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
@@ -188,6 +189,9 @@ trait HasBulkActions
         return [];
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     public function isTableRecordSelectable(): ?Closure
     {
         return null;
