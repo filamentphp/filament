@@ -12,7 +12,7 @@ trait CanValidateInput
         return $this->validateInput(fn () => $this->ask($question, $default), $field, ['required']);
     }
 
-    protected function validateInput(Closure $callback, string $field, array $rules, ?Closure $fallback = null): string
+    protected function validateInput(Closure $callback, string $field, array $rules, ?Closure $onError = null): string
     {
         $input = $callback();
 
@@ -23,9 +23,9 @@ trait CanValidateInput
 
         if ($validator->fails()) {
             $this->error($validator->errors()->first());
-            if($fallback !== null)
-            {
-                $fallback();
+            
+            if ($onError) {
+                $onError($validator);
             }
 
             $input = $this->validateInput($callback, $field, $rules);
