@@ -67,7 +67,7 @@ trait InteractsWithTableQuery
                 fn ($query) => $this->evaluate($this->searchQuery, [
                     'query' => $query,
                     'search' => $search,
-                ])
+                ]),
             );
 
             $isFirst = false;
