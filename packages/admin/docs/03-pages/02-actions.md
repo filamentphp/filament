@@ -222,7 +222,7 @@ use Filament\Pages\Actions\Action;
 
 Action::make('create')
     ->action('create')
-    ->modalHidden(fn ($livewire) => $livewire->data['role'] != 'admin')
+    ->modalHidden(fn (): bool => $this->role !== 'admin')
     ->modalContent(view('filament.pages.actions.create'))
 ```
 
