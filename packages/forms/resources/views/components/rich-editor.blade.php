@@ -15,7 +15,11 @@
         x-data="richEditorFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
         })"
-        x-on:trix-change="state = $event.target.value"
+        {!!
+            $isDebounced()
+                ? "x-on:trix-change.debounce.{$getDebounce()}=\"state = \$event.target.value\""
+                : 'x-on:trix-change="state = $event.target.value"'
+        !!}
         x-on:trix-attachment-add="
             if (! $event.attachment.file) return
 
