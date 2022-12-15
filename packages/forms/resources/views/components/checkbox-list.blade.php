@@ -37,7 +37,7 @@
     }">
         <div wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.wrapper">
             @if ($isBulkToggleable() && count($getOptions()))
-                <div x-cloak class="mb-2" wire:key="{{ $getId() }}-toggleable-buttons">
+                <div x-cloak class="mb-2" wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.buttons">
                     <x-forms::link
                         tag="button"
                         size="sm"
