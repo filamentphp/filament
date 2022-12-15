@@ -19,9 +19,7 @@ class MakeUserCommand extends Command
 
     protected $signature = 'make:filament-user {--name= : The name of the user} {--email= : A valid and unique email address} {--password= : The password for the user (min. 8 characters)}';
 
-    protected $options;
-
-
+    protected array $options;
 
     protected function getUserData(): array
     {
@@ -77,7 +75,6 @@ class MakeUserCommand extends Command
 
     public function handle(): int
     {
-
         $this->options = $this->options();
 
         $user = $this->createUser();
