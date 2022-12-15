@@ -1250,7 +1250,7 @@ class Table extends ViewComponent
 
     public function isRecordSelectable(Model $record): bool
     {
-       return $this->evaluate($this->checkIfRecordIsSelectableUsing, [
+        return $this->evaluate($this->checkIfRecordIsSelectableUsing, [
             'record' => $record,
         ]) ?? true;
     }

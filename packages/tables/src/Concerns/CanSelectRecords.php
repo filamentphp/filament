@@ -2,8 +2,6 @@
 
 namespace Filament\Tables\Concerns;
 
-use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
