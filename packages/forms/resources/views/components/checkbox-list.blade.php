@@ -91,7 +91,7 @@
                                 'border-danger-300 ring-danger-500' => $errors->has($getStatePath()),
                                 'dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
                             ])->merge([
-                                'x-on:change' => $isBulkToggleable() ? 'updateIsAllSelected' : null
+                                'x-on:change' => $isBulkToggleable() ? 'updateIsAllSelected' : null,
                             ]) }}
                         />
 
