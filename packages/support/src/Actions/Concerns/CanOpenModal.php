@@ -240,7 +240,7 @@ trait CanOpenModal
 
     public function shouldOpenModal(): bool
     {
-        return ! $this->isModalHidden() && ($this->hasFormSchema() || $this->getModalSubheading() || $this->getModalContent() || $this->getModalFooter());
+        return (! $this->isModalHidden()) && ($this->hasFormSchema() || $this->getModalSubheading() || $this->getModalContent() || $this->getModalFooter());
     }
 
     protected function makeExtraModalAction(string $name, ?array $arguments = null): ModalAction
