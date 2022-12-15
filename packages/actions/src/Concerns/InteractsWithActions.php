@@ -161,6 +161,10 @@ trait InteractsWithActions
     {
         $action = $this->getMountedAction();
 
+        if ($action->isModalHidden()) {
+            return false;
+        }
+
         return $action->getModalSubheading() ||
             $action->getModalContent() ||
             $action->getModalFooter() ||

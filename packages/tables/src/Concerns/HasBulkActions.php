@@ -139,6 +139,10 @@ trait HasBulkActions
     {
         $action = $this->getMountedTableBulkAction();
 
+        if ($action->isModalHidden()) {
+            return false;
+        }
+
         return $action->getModalSubheading() ||
             $action->getModalContent() ||
             $action->getModalFooter() ||
