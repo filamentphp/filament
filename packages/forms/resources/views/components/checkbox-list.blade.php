@@ -77,7 +77,9 @@
                 <div wire:key="{{ $getId() }}-{{ $getStatePath() }}-{{ $optionValue }}">
                     <label class="flex items-center space-x-3 rtl:space-x-reverse">
                         <input
-                            {!! $isDisabled() ? 'disabled' : null !!}
+                            @if ($isBulkToggleable())
+                                x-on:change="updateIsAllSelected"
+                            @endif
                             wire:loading.attr="disabled"
                             type="checkbox"
                             value="{{ $optionValue }}"
@@ -91,7 +93,7 @@
                                 'border-danger-300 ring-danger-500' => $errors->has($getStatePath()),
                                 'dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
                             ])->merge([
-                                'x-on:change' => $isBulkToggleable() ? 'updateIsAllSelected' : null,
+                                'disabled' => $isDisabled(),
                             ]) }}
                         />
 
@@ -104,7 +106,7 @@
                     </label>
                 </div>
             @empty
-                <div wire:key="{{ $getId() }}-empty-options-div"></div>
+                <div wire:key="{{ $getId() }}-{{ $getStatePath() }}-no-options"></div>
             @endforelse
         </x-filament-support::grid>
     </div>
