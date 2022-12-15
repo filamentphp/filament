@@ -3,6 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Tables\Actions\BulkAction;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -45,7 +46,16 @@ trait CanSelectRecords
             return $this->records->total();
         }
 
-        return $this->getFilteredTableQuery()->count();
+        $query = $this->getFilteredTableQuery();
+
+        if ($this->isTableRecordSelectable() !== null) {
+            return $query
+                ->get()
+                ->filter(fn (Model $record): bool => $this->isTableRecordSelectable()($record))
+                ->count();
+        }
+
+        return $query->count();
     }
 
     public function getSelectedTableRecords(): Collection
