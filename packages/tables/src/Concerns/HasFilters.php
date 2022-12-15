@@ -126,6 +126,26 @@ trait HasFilters
         $this->updatedTableFilters();
     }
 
+    protected function getCurrentTableFilters(): ?array
+    {
+        if ($this->shouldPersistTableFiltersInSession()) {
+            return session()->get($this->getTableFiltersSessionKey());
+        }
+
+        parse_str(parse_url(url()->previous(), PHP_URL_QUERY), $queryStringStates);
+
+        return \Arr::first($queryStringStates);
+    }
+
+    public function refreshTableFiltersForm(): void
+    {
+        if ($this->shouldApplyTableFiltersByButton()) {
+            $this->getTableFiltersForm()->fill(
+                $this->getCurrentTableFilters()
+            );
+        }
+    }
+
     public function applyTableFiltersForm(): void
     {
         $this->removeTableFilters(true);

@@ -11,15 +11,20 @@
     {{ $attributes->class(['filament-dropdown']) }}
     x-data="{
         toggle: function (event) {
+            $data.panelIsShown = !$data.panelIsShown
             $refs.panel.toggle(event)
         },
         open: function (event) {
+            $data.panelIsShown = true
             $refs.panel.open(event)
         },
         close: function (event) {
+            $data.panelIsShown = false
             $refs.panel.close(event)
         },
+        panelIsShown: $refs.panel._x_isShown,
     }"
+    x-on:click.away="$data.panelIsShown = false"
 >
     <div
         x-on:click="toggle"

@@ -4,6 +4,12 @@
     'indicatorsCount' => null,
 ])
 
+@php
+    if ($this->shouldApplyTableFiltersByButton()) {
+        $attributes->setAttributes(['x-init' => '$watch(\'panelIsShown\', state => { if (state === false) $wire.refreshTableFiltersForm() })']);
+    }
+@endphp
+
 <x-tables::dropdown
     {{ $attributes->class(['filament-tables-filters']) }}
     placement="bottom-end"
