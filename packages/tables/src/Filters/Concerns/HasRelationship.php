@@ -49,12 +49,16 @@ trait HasRelationship
 
         $titleAttribute = $this->getRelationshipTitleAttribute();
 
-        $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleAttribute);
+        $relationshipQuery = $relationship->getRelated()->query();
 
         if ($this->modifyRelationshipQueryUsing) {
             $relationshipQuery = $this->evaluate($this->modifyRelationshipQueryUsing, [
                 'query' => $relationshipQuery,
             ]) ?? $relationshipQuery;
+        }
+
+        if (empty($relationshipQuery->getQuery()->orders)) {
+            $relationshipQuery->orderBy($titleAttribute);
         }
 
         return $relationshipQuery
