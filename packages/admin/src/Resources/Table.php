@@ -23,7 +23,7 @@ class Table
 
     protected ?string $filtersLayout = null;
 
-    protected ?string $selectRecordsPosition = null;
+    protected ?string $recordCheckboxPosition = null;
 
     protected array $headerActions = [];
 
@@ -101,9 +101,9 @@ class Table
         return $this;
     }
 
-    public function selectRecordsPosition(?string $selectRecordsPosition): static
+    public function recordCheckboxPosition(?string $recordCheckboxPosition): static
     {
-        $this->selectRecordsPosition = $selectRecordsPosition;
+        $this->recordCheckboxPosition = $recordCheckboxPosition;
 
         return $this;
     }
@@ -246,9 +246,9 @@ class Table
         return $this->filtersLayout;
     }
 
-    public function getSelectRecordsPosition(): ?string
+    public function getRecordCheckboxPosition(): ?string
     {
-        return $this->selectRecordsPosition;
+        return $this->recordCheckboxPosition;
     }
 
     public function getHeaderActions(): array

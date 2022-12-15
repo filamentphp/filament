@@ -3,7 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Actions\SelectRecordsPosition;
+use Filament\Tables\Actions\RecordCheckboxPosition;
 use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -77,9 +77,9 @@ trait CanSelectRecords
         ));
     }
 
-    public function getTableSelectRecordsPosition(): ?string
+    public function getTableRecordCheckboxPosition(): ?string
     {
-        return SelectRecordsPosition::RowStart;
+        return RecordCheckboxPosition::RowStart;
     }
 
     public function shouldSelectCurrentPageOnly(): bool

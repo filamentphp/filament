@@ -2,7 +2,7 @@
 
 namespace Filament\Tables\Actions;
 
-class SelectRecordsPosition
+class RecordCheckboxPosition
 {
     public const RowStart = 'row_start';
 

@@ -370,9 +370,9 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return $this->getResourceTable()->getFiltersLayout();
     }
 
-    public function getTableSelectRecordsPosition(): ?string
+    public function getTableRecordCheckboxPosition(): ?string
     {
-        return $this->getResourceTable()->getSelectRecordsPosition();
+        return $this->getResourceTable()->getRecordCheckboxPosition();
     }
 
     protected function getTableHeaderActions(): array

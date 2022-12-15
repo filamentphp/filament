@@ -168,12 +168,12 @@ By default, the record select checkboxes are rendered at the start of the row. Y
 
 ```php
 use Filament\Resources\Table;
-use Tables\Actions\SelectRecordsPosition;
+use Tables\Actions\RecordCheckboxPosition;
 
 public static function table(Table $table): Table
 {
     return $table
-        ->selectRecordsPosition(SelectRecordsPosition::RowEnd)
+        ->recordCheckboxPosition(RecordCheckboxPosition::RowEnd)
         ->columns([
             // ...
         ])

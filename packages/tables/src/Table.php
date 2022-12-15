@@ -18,7 +18,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-use Filament\Tables\Actions\SelectRecordsPosition;
+use Filament\Tables\Actions\RecordCheckboxPosition;
 
 class Table extends ViewComponent
 {
@@ -394,9 +394,9 @@ class Table extends ViewComponent
         return $this->getLivewire()->isTableSearchable();
     }
 
-    public function getSelectRecordsPosition(): string
+    public function getRecordCheckboxPosition(): string
     {
-        return $this->getLivewire()->getTableSelectRecordsPosition() ?? SelectRecordsPosition::RowStart;
+        return $this->getLivewire()->getTableRecordCheckboxPosition() ?? RecordCheckboxPosition::RowStart;
     }
 
     public function isSearchableByColumn(): bool
