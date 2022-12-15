@@ -213,6 +213,19 @@ Action::make('advance')
     ->modalFooter(view('filament.pages.actions.advance'))
 ```
 
+### Conditionally hiding the modal
+
+You may have a need to conditionally show a modal for confirmation reasons while falling back to the default action. This can be achieved using `modalHidden()`:
+
+```php
+use Filament\Pages\Actions\Action;
+
+Action::make('create')
+    ->action('create')
+    ->modalHidden(fn (): bool => $this->role !== 'admin')
+    ->modalContent(view('filament.pages.actions.create'))
+```
+
 ## Grouping
 
 You may use an `ActionGroup` object to group multiple actions together in a dropdown:

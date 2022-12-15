@@ -340,6 +340,20 @@ class Table extends ViewComponent
         return $callback($record);
     }
 
+    public function isRecordSelectable(Model $record): bool
+    {
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        $callback = $livewire->isTableRecordSelectable();
+
+        if (! $callback) {
+            return true;
+        }
+
+        return $callback($record);
+    }
+
     public function getReorderColumn(): ?string
     {
         /** @var TableComponent $livewire */

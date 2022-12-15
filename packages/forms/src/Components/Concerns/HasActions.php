@@ -22,7 +22,7 @@ trait HasActions
 
     public function getAction(string $name): ?Action
     {
-        return $this->getActions()[$name] ?? null;
+        return ($this->getActions()[$name] ?? null)?->component($this);
     }
 
     public function getActions(): array
