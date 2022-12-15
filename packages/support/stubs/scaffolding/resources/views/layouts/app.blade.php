@@ -13,15 +13,13 @@
         @livewireStyles
         @filamentStyles
         @vite('resources/css/app.css')
-
-        @livewireScripts
-        @filamentScripts
-        <script src="//unpkg.com/@alpinejs/focus" defer></script>
-        <script src="//unpkg.com/alpinejs" defer></script>
-        @vite('resources/js/app.js')
     </head>
 
     <body class="antialiased">
         {{ $slot }}
+
+        @livewireScripts
+        @filamentScripts
+        @vite('resources/js/app.js')
     </body>
 </html>

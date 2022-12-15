@@ -34,12 +34,9 @@
         </style>
 
         @livewireStyles
-
-        {{ filament()->getFontHtml() }}
-
         {{ filament()->getTheme()->getHtml() }}
-
         @filamentStyles
+        {{ filament()->getFontHtml() }}
 
         <style>
             :root {
@@ -77,10 +74,7 @@
         {{ filament()->renderHook('scripts.start') }}
 
         @livewireScripts
-
         @filamentScripts(withCore: true)
-
-        <script src="//unpkg.com/alpinejs" defer></script>
 
         @if (config('filament.broadcasting.echo'))
             <script>
