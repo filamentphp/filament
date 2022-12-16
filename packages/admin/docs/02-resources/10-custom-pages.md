@@ -29,3 +29,10 @@ To generate a URL for a resource route, you may call the static `getUrl()` metho
 ```php
 UserResource::getUrl('sort');
 ```
+
+To use the new page in an action link in a table call the static `getUrl()` method on the resource class in a callback:
+
+```php
+Tables\Actions\Action::make('sort')
+    ->url(fn (User $record): string => UserResource::getUrl('sort', $record)),
+```
