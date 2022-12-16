@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 trait CanReorderRecords
 {
@@ -19,7 +20,8 @@ trait CanReorderRecords
 
         if (
             $this instanceof HasRelationshipTable &&
-            (($relationship = $this->getRelationship()) instanceof BelongsToMany) &&
+            ($relationship = $this->getRelationship()) &&
+            ($relationship instanceof BelongsToMany || $relationship instanceof MorphToMany) &&
             in_array($orderColumn, $relationship->getPivotColumns())
         ) {
             foreach ($order as $index => $recordKey) {
