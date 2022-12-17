@@ -6,6 +6,6 @@
     @foreach ($actions as $action)
         @unless ($action->isHidden())
             {{ $action }}
-        @endif
+        @endunless
     @endforeach
 </div>
