@@ -11,7 +11,7 @@ class Tabs extends Component
 
     protected string $view = 'forms::components.tabs';
 
-    public int | Closure $activeTab = 1;
+    public int|Closure $activeTab = 1;
 
     final public function __construct(string $label)
     {
@@ -26,14 +26,14 @@ class Tabs extends Component
         return $static;
     }
 
-    public function tabs(array $tabs): static
+    public function tabs(array|Closure $tabs): static
     {
         $this->childComponents($tabs);
 
         return $this;
     }
 
-    public function activeTab(int | Closure $activeTab): static
+    public function activeTab(int|Closure $activeTab): static
     {
         $this->activeTab = $activeTab;
 
