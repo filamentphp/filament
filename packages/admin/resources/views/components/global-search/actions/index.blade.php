@@ -4,6 +4,8 @@
 
 <div {{ $attributes->class('filament-global-search-actions mt-4 flex gap-3') }}>
     @foreach ($actions as $action)
-        {{ $action }}
+        @if(! $action->isHidden())
+            {{ $action }}
+        @endif
     @endforeach
 </div>
