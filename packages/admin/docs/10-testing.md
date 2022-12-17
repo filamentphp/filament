@@ -234,8 +234,6 @@ it('can not delete', function () {
         'record' => $post->getKey(),
     ])
         ->assertPageActionHidden(DeleteAction::class);
-
-    $this->assertModelMissing($post);
 });
 ```
 
