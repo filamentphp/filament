@@ -31,9 +31,9 @@ class Tabs extends Component
     }
 
     /**
-     * @param  array<Tab>  $tabs
+     * @param  array<Tab> | Closure  $tabs
      */
-    public function tabs(array $tabs): static
+    public function tabs(array | Closure $tabs): static
     {
         $this->childComponents($tabs);
 

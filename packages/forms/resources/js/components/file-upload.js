@@ -45,6 +45,7 @@ export default function fileUploadFormComponent({
     removeUploadedFileUsing,
     reorderUploadedFilesUsing,
     shouldAppendFiles,
+    shouldOrientImageFromExif,
     shouldTransformImage,
     state,
     uploadButtonPosition,
@@ -69,6 +70,7 @@ export default function fileUploadFormComponent({
 
             this.pond = FilePond.create(this.$refs.input, {
                 acceptedFileTypes,
+                allowImageExifOrientation: shouldOrientImageFromExif,
                 allowPaste: false,
                 allowReorder: canReorder,
                 allowImagePreview: canPreview,
