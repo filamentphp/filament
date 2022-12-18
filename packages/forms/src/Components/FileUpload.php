@@ -249,6 +249,6 @@ class FileUpload extends BaseFileUpload
 
     public function shouldOrientImageFromExif(): bool
     {
-        return $this->evaluate($this->shouldOrientImageFromExif);
+        return (bool) $this->evaluate($this->shouldOrientImageFromExif);
     }
 }
