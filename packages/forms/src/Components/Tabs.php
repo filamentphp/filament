@@ -26,7 +26,7 @@ class Tabs extends Component
         return $static;
     }
 
-    public function tabs(array $tabs): static
+    public function tabs(array | Closure $tabs): static
     {
         $this->childComponents($tabs);
 
