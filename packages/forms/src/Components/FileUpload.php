@@ -37,7 +37,7 @@ class FileUpload extends BaseFileUpload
 
     protected bool | Closure $shouldAppendFiles = false;
 
-    protected bool | Closure $shouldOrientImageFromExif = false;
+    protected bool | Closure $shouldOrientImageFromExif = true;
 
     protected string | Closure $uploadButtonPosition = 'right';
 
