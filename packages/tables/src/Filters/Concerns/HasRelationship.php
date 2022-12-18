@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
@@ -24,20 +25,7 @@ trait HasRelationship
 
     public function getRelationshipKey(): string
     {
-        $relationship = $this->getRelationship();
-
-        if ($relationship instanceof BelongsToMany) {
-            $keyColumn = $relationship->getQualifiedRelatedKeyName();
-        } elseif ($relationship instanceof HasOneThrough) {
-            $keyColumn = $relationship->getQualifiedForeignKeyName();
-        } elseif ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
-            $keyColumn = $relationship->getRelated()->getQualifiedKeyName();
-        } else {
-            /** @var BelongsTo $relationship */
-            $keyColumn = $relationship->getQualifiedOwnerKeyName();
-        }
-
-        return $keyColumn;
+        return $this->getRelationship()->getRelated()->getQualifiedKeyName();
     }
 
     /**
@@ -73,9 +61,22 @@ trait HasRelationship
 
     protected function getRelationship(): Relation | Builder
     {
-        $model = app($this->getTable()->getModel());
+        $record = app($this->getTable()->getModel());
 
-        return $model->{$this->getRelationshipName()}();
+        $relationship = null;
+
+        foreach (explode('.', $this->getRelationshipName()) as $nestedRelationshipName) {
+            if (! $record->isRelation($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
+            $relationship = $record->{$nestedRelationshipName}();
+            $record = $relationship->getRelated();
+        }
+
+        return $relationship;
     }
 
     protected function getRelationshipName(): string
