@@ -160,18 +160,16 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
         @livewireStyles
         @filamentStyles
         @vite('resources/css/app.css')
-
-        @livewireScripts
-        @filamentScripts
-        <script src="//unpkg.com/@alpinejs/focus" defer></script>
-        <script src="//unpkg.com/alpinejs" defer></script>
-        @vite('resources/js/app.js')
     </head>
 
     <body class="antialiased">
         {{ $slot }}
 
         @livewire('notifications')
+
+        @livewireScripts
+        @filamentScripts
+        @vite('resources/js/app.js')
     </body>
 </html>
 ```

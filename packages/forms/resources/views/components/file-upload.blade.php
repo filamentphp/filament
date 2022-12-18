@@ -51,6 +51,7 @@
                 return await $wire.reorderUploadedFiles('{{ $statePath }}', files)
             },
             shouldAppendFiles: {{ $shouldAppendFiles() ? 'true' : 'false' }},
+            shouldOrientImageFromExif: {{ $shouldOrientImageFromExif() ? 'true' : 'false' }},
             shouldTransformImage: {{ $shouldTransformImage ? 'true' : 'false' }},
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
             uploadButtonPosition: '{{ $getUploadButtonPosition() }}',

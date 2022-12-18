@@ -15,6 +15,8 @@ class FormsServiceProvider extends PluginServiceProvider
 
     public function packageBooted(): void
     {
+        parent::packageBooted();
+
         if ($this->app->runningInConsole()) {
             foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
                 $this->publishes([

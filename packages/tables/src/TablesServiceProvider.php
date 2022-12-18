@@ -2,6 +2,9 @@
 
 namespace Filament\Tables;
 
+use Filament\Support\Assets\Asset;
+use Filament\Support\Assets\Js;
+use Filament\Support\PluginServiceProvider;
 use Filament\Tables\Testing\TestsActions;
 use Filament\Tables\Testing\TestsBulkActions;
 use Filament\Tables\Testing\TestsColumns;
@@ -10,19 +13,29 @@ use Filament\Tables\Testing\TestsRecords;
 use Filament\Tables\Testing\TestsSummaries;
 use Illuminate\Filesystem\Filesystem;
 use Livewire\Testing\TestableLivewire;
-use Spatie\LaravelPackageTools\Package;
-use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class TablesServiceProvider extends PackageServiceProvider
+class TablesServiceProvider extends PluginServiceProvider
 {
-    public function configurePackage(Package $package): void
+    public static string $name = 'filament-tables';
+
+    public function packageBooted(): void
     {
-        $package
-            ->name('filament-tables')
-            ->hasCommands($this->getCommands())
-            ->hasConfigFile()
-            ->hasTranslations()
-            ->hasViews();
+        parent::packageBooted();
+
+        if ($this->app->runningInConsole()) {
+            foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
+                $this->publishes([
+                    $file->getRealPath() => base_path("stubs/filament/{$file->getFilename()}"),
+                ], 'tables-stubs');
+            }
+        }
+
+        TestableLivewire::mixin(new TestsActions());
+        TestableLivewire::mixin(new TestsBulkActions());
+        TestableLivewire::mixin(new TestsColumns());
+        TestableLivewire::mixin(new TestsFilters());
+        TestableLivewire::mixin(new TestsRecords());
+        TestableLivewire::mixin(new TestsSummaries());
     }
 
     /**
@@ -50,21 +63,18 @@ class TablesServiceProvider extends PackageServiceProvider
         return array_merge($commands, $aliases);
     }
 
-    public function packageBooted(): void
+    protected function getAssetPackage(): ?string
     {
-        if ($this->app->runningInConsole()) {
-            foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
-                $this->publishes([
-                    $file->getRealPath() => base_path("stubs/filament/{$file->getFilename()}"),
-                ], 'tables-stubs');
-            }
-        }
+        return 'tables';
+    }
 
-        TestableLivewire::mixin(new TestsActions());
-        TestableLivewire::mixin(new TestsBulkActions());
-        TestableLivewire::mixin(new TestsColumns());
-        TestableLivewire::mixin(new TestsFilters());
-        TestableLivewire::mixin(new TestsRecords());
-        TestableLivewire::mixin(new TestsSummaries());
+    /**
+     * @return array<Asset>
+     */
+    protected function getAssets(): array
+    {
+        return [
+            Js::make('tables', __DIR__ . '/../dist/index.js'),
+        ];
     }
 }

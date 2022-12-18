@@ -34,17 +34,16 @@
         </style>
 
         @livewireStyles
-
-        {{ filament()->getFontHtml() }}
-
         {{ filament()->getTheme()->getHtml() }}
-
         @filamentStyles
+        {{ filament()->getFontHtml() }}
 
         <style>
             :root {
                 --font-family: {!! filament()->getFontName() !!};
                 --filament-widgets-chart-font-family: var(--font-family);
+                --sidebar-width: {{ filament()->getSidebarWidth() }};
+                --collapsed-sidebar-width: {{ filament()->getCollapsedSidebarWidth() }};
 
                 @foreach (filament()->getColors() as $key => $palette)
                     @foreach ($palette as $shade => $color)
@@ -77,10 +76,7 @@
         {{ filament()->renderHook('scripts.start') }}
 
         @livewireScripts
-
         @filamentScripts(withCore: true)
-
-        <script src="//unpkg.com/alpinejs" defer></script>
 
         @if (config('filament.broadcasting.echo'))
             <script>
