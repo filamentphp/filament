@@ -1,8 +1,8 @@
 import * as FilePond from 'filepond'
-import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation'
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size'
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
 import FilePondPluginImageCrop from 'filepond-plugin-image-crop'
+import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation'
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import FilePondPluginImageResize from 'filepond-plugin-image-resize'
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform'
@@ -13,10 +13,10 @@ import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
 import 'filepond-plugin-media-preview/dist/filepond-plugin-media-preview.css'
 import '../../css/components/file-upload.css'
 
-FilePond.registerPlugin(FilePondPluginImageExifOrientation)
 FilePond.registerPlugin(FilePondPluginFileValidateSize)
 FilePond.registerPlugin(FilePondPluginFileValidateType)
 FilePond.registerPlugin(FilePondPluginImageCrop)
+FilePond.registerPlugin(FilePondPluginImageExifOrientation)
 FilePond.registerPlugin(FilePondPluginImagePreview)
 FilePond.registerPlugin(FilePondPluginImageResize)
 FilePond.registerPlugin(FilePondPluginImageTransform)
@@ -53,8 +53,8 @@ export default (Alpine) => {
             removeUploadedFileUsing,
             reorderUploadedFilesUsing,
             shouldAppendFiles,
-            shouldTransformImage,
             shouldOrientImageFromExif,
+            shouldTransformImage,
             state,
             uploadButtonPosition,
             uploadProgressIndicatorPosition,
@@ -80,11 +80,11 @@ export default (Alpine) => {
                         acceptedFileTypes,
                         allowPaste: false,
                         allowReorder: canReorder,
+                        allowImageExifOrientation: shouldOrientImageFromExif,
                         allowImagePreview: canPreview,
                         allowVideoPreview: canPreview,
                         allowAudioPreview: canPreview,
                         allowImageTransform: shouldTransformImage,
-                        allowImageExifOrientation: shouldOrientImageFromExif,
                         credits: false,
                         files: await this.getFiles(),
                         imageCropAspectRatio,
@@ -171,8 +171,6 @@ export default (Alpine) => {
                             },
                         },
                     })
-
-                    console.log(this.pond);
 
                     this.$watch('state', async () => {
                         if (!this.shouldUpdateState) {
