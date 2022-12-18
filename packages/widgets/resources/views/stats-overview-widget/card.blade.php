@@ -55,7 +55,7 @@
 
                 <span>{{ $description }}</span>
 
-                @if ($descriptionIcon && ($descriptionIconPosition !== 'before'))
+                @if ($descriptionIcon && ($descriptionIconPosition === 'after'))
                     <x-filament::icon
                         :name="$descriptionIcon"
                         alias="widgets::stats-overview.card.description"
