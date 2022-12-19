@@ -9,9 +9,7 @@ use Filament\Tables\Columns\Contracts\Editable;
 class ToggleColumn extends Column implements Editable
 {
     use Concerns\CanBeValidated;
-    use Concerns\CanSaveState {
-        Concerns\CanSaveState::setUp as setUpSaveState;
-    }
+    use Concerns\CanSaveState;
     use HasToggleColors;
     use HasToggleIcons;
 
@@ -20,8 +18,6 @@ class ToggleColumn extends Column implements Editable
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->setUpSaveState();
 
         $this->disableClick();
 

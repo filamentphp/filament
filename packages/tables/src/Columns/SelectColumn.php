@@ -17,9 +17,7 @@ class SelectColumn extends Column implements Editable
     }
     use CanDisableOptions;
     use CanDisablePlaceholderSelection;
-    use Concerns\CanSaveState {
-        Concerns\CanSaveState::setUp as setUpSaveState;
-    }
+    use Concerns\CanSaveState;
     use HasExtraInputAttributes;
     use HasOptions;
     use HasPlaceholder;
@@ -29,8 +27,6 @@ class SelectColumn extends Column implements Editable
     protected function setUp(): void
     {
         parent::setUp();
-
-        $this->setUpSaveState();
 
         $this->disableClick();
 
