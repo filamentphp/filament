@@ -4,7 +4,10 @@ namespace Filament\Tables\Grouping;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Arr;
 
 class Group
 {
@@ -127,7 +130,7 @@ class Group
         ]);
     }
 
-    public function getTitle(Model $record): string
+    public function getTitle(Model $record): ?string
     {
         $column = $this->getColumn();
 
@@ -138,22 +141,53 @@ class Group
             ]);
         }
 
-        return $record->getAttribute($column);
+        return Arr::get($record, $column);
     }
 
     public function orderQuery(Builder $query, string $direction): Builder
     {
-        $column = $this->getColumn();
-
         if ($this->orderQueryUsing) {
             return app()->call($this->orderQueryUsing, [
-                'column' => $column,
+                'column' => $this->getColumn(),
                 'direction' => $direction,
                 'query' => $query,
             ]) ?? $query;
         }
 
-        return $query->orderBy($column, $direction);
+        return $query->orderBy($this->getSortColumnForQuery($query, $this->getRelationshipAttribute()), $direction);
+    }
+
+    /**
+     * @param array<string> | null $relationships
+     */
+    protected function getSortColumnForQuery(EloquentBuilder $query, string $sortColumn, ?array $relationships = null): string | \Illuminate\Database\Query\Builder
+    {
+        $relationships ??= ($relationshipName = $this->getRelationshipName()) ?
+            explode('.', $relationshipName) :
+            [];
+
+        if (! count($relationships)) {
+            return $sortColumn;
+        }
+
+        $currentRelationshipName = array_shift($relationships);
+
+        $relationship = $this->getRelationship($query->getModel(), $currentRelationshipName);
+
+        $relatedQuery = $relationship->getRelated()::query();
+
+        return $relationship
+            ->getRelationExistenceQuery(
+                $relatedQuery,
+                $query,
+                [$currentRelationshipName => $this->getSortColumnForQuery(
+                    $relatedQuery,
+                    $sortColumn,
+                    $relationships,
+                )],
+            )
+            ->applyScopes()
+            ->getQuery();
     }
 
     public function scopeQuery(Builder $query, Model $record): Builder
@@ -168,6 +202,60 @@ class Group
             ]) ?? $query;
         }
 
-        return $query->where($column, $record->getAttribute($column));
+        $value = Arr::get($record, $column);
+
+        if ($relationship = $this->getRelationship($record)) {
+            return $query->whereRelation(
+                $this->getRelationshipName(),
+                $relationship->getRelated()->getQualifiedKeyName(),
+                $value,
+            );
+        }
+
+        return $query->where($column, $value);
+    }
+
+    public function getRelationship(Model $record, ?string $name = null): ?Relation
+    {
+        if (blank($name) && (! str($this->getColumn())->contains('.'))) {
+            return null;
+        }
+
+        $relationship = null;
+
+        foreach (explode('.', $name ?? $this->getRelationshipName()) as $nestedRelationshipName) {
+            if (! $record->isRelation($nestedRelationshipName)) {
+                $relationship = null;
+
+                break;
+            }
+
+            $relationship = $record->{$nestedRelationshipName}();
+            $record = $relationship->getRelated();
+        }
+
+        return $relationship;
+    }
+
+    public function getRelationshipAttribute(?string $name = null): string
+    {
+        $name ??= $this->getColumn();
+
+        if (! str($name)->contains('.')) {
+            return $name;
+        }
+
+        return (string) str($name)->afterLast('.');
+    }
+
+    public function getRelationshipName(?string $name = null): ?string
+    {
+        $name ??= $this->getColumn();
+
+        if (! str($name)->contains('.')) {
+            return null;
+        }
+
+        return (string) str($name)->beforeLast('.');
     }
 }
