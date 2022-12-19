@@ -139,7 +139,7 @@ trait InteractsWithTableQuery
     }
 
     /**
-     * @param array<string> | null $relationships
+     * @param  array<string> | null  $relationships
      */
     protected function getSortColumnForQuery(EloquentBuilder $query, string $sortColumn, ?array $relationships = null): string | Builder
     {
@@ -199,7 +199,7 @@ trait InteractsWithTableQuery
     }
 
     /**
-     * @param array<string> | null $relationships
+     * @param  array<string> | null  $relationships
      * @return array<Model>
      */
     public function getRelationshipResults(Model $record, ?array $relationships = null): array

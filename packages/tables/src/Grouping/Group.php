@@ -158,7 +158,7 @@ class Group
     }
 
     /**
-     * @param array<string> | null $relationships
+     * @param  array<string> | null  $relationships
      */
     protected function getSortColumnForQuery(EloquentBuilder $query, string $sortColumn, ?array $relationships = null): string | \Illuminate\Database\Query\Builder
     {
