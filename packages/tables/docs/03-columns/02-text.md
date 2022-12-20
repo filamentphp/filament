@@ -264,3 +264,5 @@ TextColumn::make('email')
     ->copyMessage('Email address copied')
     ->copyMessageDuration(1500)
 ```
+
+> Filament uses tooltips to display validation errors. If you want to use tooltips outside of the admin panel to display validation errors, make sure you have [`@ryangjchandler/alpine-tooltip` installed](https://github.com/ryangjchandler/alpine-tooltip#installation) in your app.
