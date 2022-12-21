@@ -87,7 +87,7 @@
         @endphp
 
         <script>
-            if (localStorage.getItem('collapsedGroups') === null) {
+            if (JSON.parse(localStorage.getItem('collapsedGroups')) === null) {
                 localStorage.setItem('collapsedGroups', JSON.stringify(@js($collapsedNavigationGroupLabels)))
             }
         </script>
