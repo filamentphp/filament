@@ -45,10 +45,10 @@ class Tabs extends Component
     public function getActiveTab(): int
     {
         if ($this->isTabPersistedInQueryString()) {
-            $queryStringStep = request()->query($this->getTabQueryStringKey());
+            $queryStringTab = request()->query($this->getTabQueryStringKey());
 
-            foreach ($this->getChildComponents() as $index => $step) {
-                if ($step->getId() !== $queryStringStep) {
+            foreach ($this->getChildComponents() as $index => $tab) {
+                if ($tab->getId() !== $queryStringTab) {
                     continue;
                 }
 
