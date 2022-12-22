@@ -13,6 +13,8 @@ class Tabs extends Component
 
     public int | Closure $activeTab = 1;
 
+    protected string | Closure | null $tabQueryStringKey = null;
+
     final public function __construct(string $label)
     {
         $this->label($label);
@@ -42,6 +44,35 @@ class Tabs extends Component
 
     public function getActiveTab(): int
     {
+        if ($this->isTabPersistedInQueryString()) {
+            $queryStringStep = request()->query($this->getTabQueryStringKey());
+
+            foreach ($this->getChildComponents() as $index => $step) {
+                if ($step->getId() !== $queryStringStep) {
+                    continue;
+                }
+
+                return $index + 1;
+            }
+        }
+
         return $this->evaluate($this->activeTab);
+    }
+
+    public function getTabQueryStringKey(): ?string
+    {
+        return $this->evaluate($this->tabQueryStringKey);
+    }
+
+    public function isTabPersistedInQueryString(): bool
+    {
+        return filled($this->getTabQueryStringKey());
+    }
+
+    public function persistTabInQueryString(string | Closure | null $key = 'tab'): static
+    {
+        $this->tabQueryStringKey = $key;
+
+        return $this;
     }
 }
