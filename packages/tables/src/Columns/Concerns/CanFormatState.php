@@ -164,7 +164,7 @@ trait CanFormatState
     }
 
     /**
-     * @param mixed $state
+     * @param  mixed  $state
      */
     public function formatState($state): mixed
     {
