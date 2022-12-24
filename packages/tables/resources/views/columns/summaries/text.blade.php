@@ -6,6 +6,6 @@
     @endif
 
     <span>
-        {{ $getFormattedState() }}
+        {{ $formatState($getState()) }}
     </span>
 </div>

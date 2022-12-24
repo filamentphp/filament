@@ -1,5 +1,5 @@
 @php
-    $state = $getFormattedState();
+    $state = $formatState($getState());
 
     $descriptionAbove = $getDescriptionAbove();
     $descriptionBelow = $getDescriptionBelow();

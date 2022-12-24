@@ -163,9 +163,14 @@ trait CanFormatState
         return $this;
     }
 
-    public function getFormattedState(): mixed
+    /**
+     * @param mixed $state
+     */
+    public function formatState($state): mixed
     {
-        $state = $this->evaluate($this->formatStateUsing ?? fn ($state) => $state);
+        $state = $this->evaluate($this->formatStateUsing, [
+            'state' => $state,
+        ]) ?? $state;
 
         if ($this->prefix) {
             $state = $this->evaluate($this->prefix) . $state;

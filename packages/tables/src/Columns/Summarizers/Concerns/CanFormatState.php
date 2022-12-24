@@ -105,12 +105,13 @@ trait CanFormatState
         return $this;
     }
 
-    public function getFormattedState(): mixed
+    /**
+     * @param mixed $state
+     */
+    public function formatState($state): mixed
     {
-        $state = $this->getState();
-
-        return $this->evaluate($this->formatStateUsing ?? $state, [
+        return $this->evaluate($this->formatStateUsing, [
             'state' => $state,
-        ]);
+        ]) ?? $state;
     }
 }

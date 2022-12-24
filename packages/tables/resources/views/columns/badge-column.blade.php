@@ -1,5 +1,5 @@
 @php
-    $state = $getFormattedState();
+    $state = $formatState($getState());
 
     $color = $getColor();
     $colorClasses = match ($color) {
