@@ -8,6 +8,7 @@ use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Columns\Layout\Component as ColumnLayoutComponent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
 
 trait HasColumns
@@ -71,9 +72,14 @@ trait HasColumns
             ];
         }
 
-        if ($columnRelationship = $column->getRelationship($record)) {
-            $record = $columnRelationship->getResults();
+        if ($column->getRelationship($record)) {
             $columnName = $column->getRelationshipAttribute();
+            $columnRelationshipName = $column->getRelationshipName();
+
+            $record = Arr::get(
+                $record->load($columnRelationshipName),
+                $columnRelationshipName,
+            );
         } elseif (
             (($tableRelationship = $this->getTable()->getRelationship()) instanceof BelongsToMany) &&
             in_array($columnName, $tableRelationship->getPivotColumns())
