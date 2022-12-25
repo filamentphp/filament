@@ -284,7 +284,7 @@ trait HasNestedRelationships
             $relationships = $this->getRelationshipStack($name);
 
             // if it's not really nested, just an attribute, return the original record
-            if (! $this->isNoMoreRelationships($relationships)) {
+            if ($this->isNoMoreRelationships($relationships)) {
                 return $record;
             }
         }
