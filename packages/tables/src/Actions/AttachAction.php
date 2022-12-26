@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 class AttachAction extends Action
 {
@@ -193,7 +194,7 @@ class AttachAction extends Action
                         $whereClause = $isFirst ? 'where' : 'orWhere';
 
                         $query->{$whereClause}(
-                            $searchColumnName,
+                            DB::raw("LOWER($searchColumnName)"),
                             $searchOperator,
                             "%{$search}%",
                         );
