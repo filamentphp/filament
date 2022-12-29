@@ -34,7 +34,7 @@
                     />
                 @endif
 
-                <p class="flex-1 font-bold uppercase text-xs tracking-wider">
+                <p class="flex-1 font-bold uppercase text-xs tracking-wider text-primary-600 dark:text-primary-500">
                     {{ $label }}
                 </p>
             </div>
