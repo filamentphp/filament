@@ -3,7 +3,6 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Filament\Tables\Columns\Summarizers\Summarizer;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
 trait CanBeSummarized

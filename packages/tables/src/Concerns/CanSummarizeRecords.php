@@ -24,7 +24,7 @@ trait CanSummarizeRecords
     }
 
     /**
-     * @param array<Column> $columns
+     * @param  array<Column>  $columns
      */
     public function getTableSummarySelectedState(Builder $query, ?Closure $modifyQueryUsing = null): array
     {

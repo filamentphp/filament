@@ -3,10 +3,7 @@
 namespace Filament\Tables\Columns\Summarizers;
 
 use Closure;
-use Exception;
-use Filament\Tables\Columns\IconColumn;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Str;
 
 class Values extends Summarizer
 {
