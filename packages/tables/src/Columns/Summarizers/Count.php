@@ -37,10 +37,8 @@ class Count extends Summarizer
 
         $state = [];
 
-        foreach ($query->clone()->distinct()->get($attribute) as $recordData) {
-            $value = $recordData->{$attribute};
-
-            $column->record($this->getQuery()->getModel()->setAttribute($attribute, $value));
+        foreach ($query->clone()->pluck($attribute) as $value) {
+            $column->record($query->getModel()->setAttribute($attribute, $value));
             $color = $column->getColor();
             $icon = $column->getIcon();
 

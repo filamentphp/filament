@@ -2,6 +2,8 @@
 
 namespace Filament\Tables\Columns;
 
+use Closure;
+
 class ListColumn extends Column
 {
     use Concerns\CanFormatState;
@@ -10,4 +12,18 @@ class ListColumn extends Column
      * @var view-string
      */
     protected string $view = 'filament-tables::columns.list-column';
+
+    protected bool | Closure $isBulleted = true;
+
+    public function bulleted(bool | Closure $condition = true): static
+    {
+        $this->isBulleted = $condition;
+
+        return $this;
+    }
+
+    public function isBulleted(): bool
+    {
+        return (bool) $this->evaluate($this->isBulleted);
+    }
 }
