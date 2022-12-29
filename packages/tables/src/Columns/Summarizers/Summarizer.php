@@ -28,6 +28,9 @@ class Summarizer extends ViewComponent
 
     protected ?string $id = null;
 
+    /**
+     * @var array<string, mixed>
+     */
     protected array $selectedState = [];
 
     protected ?Closure $using = null;
@@ -59,6 +62,9 @@ class Summarizer extends ViewComponent
         return $this;
     }
 
+    /**
+     * @param array<string, mixed> $state
+     */
     public function selectedState(array $state): static
     {
         $this->selectedState = $state;
@@ -120,6 +126,9 @@ class Summarizer extends ViewComponent
         return null;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getSelectStatements(string $column): array
     {
         return [];

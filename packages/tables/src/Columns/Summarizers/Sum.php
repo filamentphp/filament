@@ -21,6 +21,9 @@ class Sum extends Summarizer
         return $query->sum($attribute);
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getSelectStatements(string $column): array
     {
         return [

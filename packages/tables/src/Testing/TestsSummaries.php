@@ -33,7 +33,7 @@ class TestsSummaries
                 $this->instance()->getPageTableSummaryQuery() :
                 $this->instance()->getAllTableSummaryQuery();
 
-            $actualState = $summarizer->query($query)->getState();
+            $actualState = $summarizer->query($query)->selectedState([])->getState();
 
             $actualState = is_array($actualState) ? array_map($normalizeState, $actualState) : $normalizeState($actualState);
 

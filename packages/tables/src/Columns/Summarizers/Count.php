@@ -38,7 +38,7 @@ class Count extends Summarizer
         $state = [];
 
         foreach ($query->clone()->pluck($attribute) as $value) {
-            $column->record($query->getModel()->setAttribute($attribute, $value));
+            $column->record($this->getQuery()->getModel()->setAttribute($attribute, $value));
             $color = $column->getColor();
             $icon = $column->getIcon();
 
@@ -51,6 +51,9 @@ class Count extends Summarizer
         return $state;
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getSelectStatements(string $column): array
     {
         if ($this->hasIcons) {

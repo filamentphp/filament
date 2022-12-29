@@ -24,7 +24,7 @@ trait CanSummarizeRecords
     }
 
     /**
-     * @param  array<Column>  $columns
+     * @return array<string, mixed>
      */
     public function getTableSummarySelectedState(Builder $query, ?Closure $modifyQueryUsing = null): array
     {
@@ -49,7 +49,7 @@ trait CanSummarizeRecords
                     ->getSelectStatements($qualifiedAttribute);
 
                 foreach ($selectStatements as $alias => $statement) {
-                    $selects[] = "{$statement} as {$alias}";
+                    $selects[] = "{$statement} as '{$alias}'";
                 }
             }
         }

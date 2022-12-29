@@ -21,6 +21,9 @@ class Average extends Summarizer
         return $query->avg($attribute);
     }
 
+    /**
+     * @return array<string, string>
+     */
     public function getSelectStatements(string $column): array
     {
         return [
