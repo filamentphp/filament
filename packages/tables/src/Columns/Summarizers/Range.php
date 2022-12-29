@@ -87,6 +87,8 @@ class Range extends Summarizer
 
             $isFromLonger = (count($originalFromCharacters) > count($originalToCharacters));
 
+            $characterIndex = 0;
+
             foreach (($isFromLonger ? $originalToCharacters : $originalFromCharacters) as $characterIndex => $character) {
                 $from .= ($isFromLonger ? $originalFromCharacters[$characterIndex] : $character);
                 $to .= ($isFromLonger ? $character : $originalToCharacters[$characterIndex]);
