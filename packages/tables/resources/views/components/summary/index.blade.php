@@ -72,6 +72,11 @@
         @endif
     </x-filament-tables::row>
 
+    @php
+        $query = $this->getPageTableSummaryQuery();
+        $selectedState = $this->getTableSummarySelectedState($query)[0] ?? [];
+    @endphp
+
     <x-filament-tables::summary.row
         class="filament-tables-page-summary-row"
         :actions="$actions"
@@ -81,9 +86,15 @@
         :heading="__('filament-tables::table.summary.subheadings.page', ['label' => $pluralModelLabel])"
         :selection-enabled="$selectionEnabled"
         :placeholder-columns="$placeholderColumns"
-        :query="$this->getPageTableSummaryQuery()"
+        :query="$query"
+        :selected-state="$selectedState"
     />
 @endif
+
+@php
+    $query = $this->getAllTableSummaryQuery();
+    $selectedState = $this->getTableSummarySelectedState($query)[0] ?? [];
+@endphp
 
 <x-filament-tables::summary.row
     class="filament-tables-total-summary-row"
@@ -94,7 +105,8 @@
     :heading="__(($hasPageSummary ? 'filament-tables::table.summary.subheadings.all' : 'filament-tables::table.summary.heading'), ['label' => $pluralModelLabel])"
     :groups-only="$groupsOnly"
     :selection-enabled="$selectionEnabled"
-    :query="$this->getAllTableSummaryQuery()"
+    :query="$query"
     :placeholder-columns="$placeholderColumns"
+    :selected-state="$selectedState"
     :strong="! $hasPageSummary"
 />

@@ -2,12 +2,19 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
+use Exception;
+use Filament\Support\Eloquent\RelationshipJoiner;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\RelationNotFoundException;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Stringable;
+use Znck\Eloquent\Relations\BelongsToThrough;
 
 trait InteractsWithTableQuery
 {
@@ -260,9 +267,37 @@ trait InteractsWithTableQuery
         return (string) str($name)->afterLast('.');
     }
 
-    public function getInverseRelationshipName(): ?string
+    public function getInverseRelationshipName(Model $record): string
     {
-        return $this->inverseRelationshipName;
+        if (filled($this->inverseRelationshipName)) {
+            return $this->inverseRelationshipName;
+        }
+
+        $inverseRelationships = [];
+
+        foreach (explode('.', $this->getRelationshipName()) as $nestedRelationshipName) {
+            $relationship = $record->{$nestedRelationshipName}();
+            $record = $relationship->getRelated();
+
+            $inverseNestedRelationshipName = (string) str(class_basename($relationship->getParent()::class))
+                ->when(
+                    ($relationship instanceof BelongsTo ||
+                    $relationship instanceof BelongsToMany ||
+                    $relationship instanceof BelongsToThrough),
+                    fn (Stringable $name) => $name->plural(),
+                )
+                ->camel();
+
+            if (! $record->isRelation($inverseNestedRelationshipName)) {
+                $recordClass = $record::class;
+
+                throw new Exception("When trying to guess the inverse relationship for table column [{$this->getName()}], relationship [{$inverseNestedRelationshipName}] was not found on model [{$recordClass}]. Please define a custom [inverseRelationship()] for this column.");
+            }
+
+            array_unshift($inverseRelationships, $inverseNestedRelationshipName);
+        }
+
+        return implode('.', $inverseRelationships);
     }
 
     public function getRelationshipName(?string $name = null): ?string

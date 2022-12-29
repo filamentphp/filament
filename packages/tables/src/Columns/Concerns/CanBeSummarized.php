@@ -31,18 +31,6 @@ trait CanBeSummarized
         return $this;
     }
 
-    /**
-     * @return array<string | int, Summarizer>
-     */
-    public function getSummary(Builder $query): array
-    {
-        return array_map(function (Summarizer $summarizer) use ($query): Summarizer {
-            $summarizer->query($query);
-
-            return $summarizer;
-        }, $this->getSummarizers());
-    }
-
     public function getSummarizer(string $id): ?Summarizer
     {
         return $this->getSummarizers()[$id] ?? null;

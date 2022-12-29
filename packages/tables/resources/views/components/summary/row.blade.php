@@ -8,6 +8,7 @@
     'placeholderColumns' => true,
     'query',
     'selectionEnabled' => false,
+    'selectedState',
     'strong' => false,
 ])
 
@@ -85,8 +86,8 @@
                         {{ $heading }}
                     </div>
                 @elseif ((! $placeholderColumns) || $column->hasSummary())
-                    @foreach ($column->getSummary($query) as $summary)
-                        {{ $summary }}
+                    @foreach ($column->getSummarizers() as $summarizer)
+                        {{ $summarizer->query($query)->selectedState($selectedState) }}
                     @endforeach
                 @endif
             </td>

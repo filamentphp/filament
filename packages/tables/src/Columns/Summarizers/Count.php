@@ -5,10 +5,13 @@ namespace Filament\Tables\Columns\Summarizers;
 use Exception;
 use Filament\Tables\Columns\IconColumn;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Str;
 
 class Count extends Summarizer
 {
     protected bool $hasIcons = false;
+
+    protected ?string $selectAlias = null;
 
     protected function setUp(): void
     {
@@ -48,6 +51,31 @@ class Count extends Summarizer
         }
 
         return $state;
+    }
+
+    public function getSelectStatements(string $column): array
+    {
+        if ($this->hasIcons) {
+            return [];
+        }
+
+        return [
+            $this->getSelectAlias() => "count({$column})",
+        ];
+    }
+
+    public function getSelectedState(): int | float | null
+    {
+        if (! array_key_exists($this->selectAlias, $this->selectedState)) {
+            return null;
+        }
+
+        return $this->selectedState[$this->getSelectAlias()];
+    }
+
+    public function getSelectAlias(): string
+    {
+        return $this->selectAlias ??= Str::random();
     }
 
     public function icons(bool $condition = true): static

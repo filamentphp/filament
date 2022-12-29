@@ -3,10 +3,10 @@
 namespace Filament\Tables\Grouping;
 
 use Closure;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
 
 class Group
@@ -16,6 +16,8 @@ class Group
     protected ?Closure $getDescriptionUsing = null;
 
     protected ?Closure $getTitleFromRecordUsing = null;
+
+    protected ?Closure $groupQueryUsing = null;
 
     protected ?Closure $orderQueryUsing = null;
 
@@ -79,6 +81,13 @@ class Group
         return $this;
     }
 
+    public function groupQueryUsing(?Closure $callback): static
+    {
+        $this->groupQueryUsing = $callback;
+
+        return $this;
+    }
+
     public function orderQueryUsing(?Closure $callback): static
     {
         $this->orderQueryUsing = $callback;
@@ -130,6 +139,11 @@ class Group
         ]);
     }
 
+    public function getKey(Model $record): ?string
+    {
+        return Arr::get($record, $this->getColumn());
+    }
+
     public function getTitle(Model $record): ?string
     {
         $column = $this->getColumn();
@@ -144,7 +158,23 @@ class Group
         return Arr::get($record, $column);
     }
 
-    public function orderQuery(Builder $query, string $direction): Builder
+    public function groupQuery(Builder $query, Model $model): Builder
+    {
+        if ($this->groupQueryUsing) {
+            return app()->call($this->groupQueryUsing, [
+                'column' => $this->getColumn(),
+                'query' => $query,
+            ]) ?? $query;
+        }
+
+        if ($relationship = $this->getRelationship($model)) {
+            return $query->groupBy($relationship->getRelated()->qualifyColumn($this->getRelationshipAttribute()));
+        }
+
+        return $query->groupBy($this->getColumn());
+    }
+
+    public function orderQuery(EloquentBuilder $query, string $direction): EloquentBuilder
     {
         if ($this->orderQueryUsing) {
             return app()->call($this->orderQueryUsing, [
@@ -190,7 +220,7 @@ class Group
             ->getQuery();
     }
 
-    public function scopeQuery(Builder $query, Model $record): Builder
+    public function scopeQuery(EloquentBuilder $query, Model $record): EloquentBuilder
     {
         $column = $this->getColumn();
 

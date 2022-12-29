@@ -45,6 +45,10 @@
     if (count($actions) && (! $isReordering)) $columnsCount++;
     if ($isSelectionEnabled || $isReordering) $columnsCount++;
 
+    if ($group) {
+        $groupedSummarySelectedState = $this->getTableSummarySelectedState($this->getAllTableSummaryQuery(), modifyQueryUsing: fn (\Illuminate\Database\Query\Builder $query) => $group->groupQuery($query, model: $getQuery()->getModel()));
+    }
+
     $getHiddenClasses = function (\Filament\Tables\Columns\Column $column): ?string {
         if ($breakpoint = $column->getHiddenFrom()) {
             return match ($breakpoint) {
@@ -436,7 +440,8 @@
                         >
                             @php
                                 $previousRecord = null;
-                                $previousGroupTitle = null;
+                                $previousRecordGroupKey = null;
+                                $previousRecordGroupTitle = null;
                             @endphp
 
                             @foreach ($records as $record)
@@ -444,19 +449,21 @@
                                     $recordAction = $getRecordAction($record);
                                     $recordKey = $getRecordKey($record);
                                     $recordUrl = $getRecordUrl($record);
+                                    $recordGroupKey = $group?->getKey($record);
                                     $recordGroupTitle = $group?->getTitle($record);
 
                                     $collapsibleColumnsLayout?->record($record);
                                     $hasCollapsibleColumnsLayout = $collapsibleColumnsLayout && (! $collapsibleColumnsLayout->isHidden());
                                 @endphp
 
-                                @if ($recordGroupTitle !== $previousGroupTitle)
-                                    @if ($hasSummary && (! $isReordering) && filled($previousGroupTitle))
+                                @if ($recordGroupTitle !== $previousRecordGroupTitle)
+                                    @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
                                         <x-filament-tables::table class="col-span-full">
                                             <x-filament-tables::summary.row
                                                 :columns="$columns"
-                                                :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousGroupTitle, 'label' => $pluralModelLabel])"
+                                                :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
                                                 :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
+                                                :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
                                                 extra-heading-column
                                                 :placeholder-columns="false"
                                             />
@@ -652,17 +659,19 @@
                                 </div>
 
                                 @php
-                                    $previousGroupTitle = $recordGroupTitle;
+                                    $previousRecordGroupKey = $recordGroupKey;
+                                    $previousRecordGroupTitle = $recordGroupTitle;
                                     $previousRecord = $record;
                                 @endphp
                             @endforeach
 
-                            @if ($hasSummary && (! $isReordering) && filled($previousGroupTitle) && ((! $records instanceof \Illuminate\Contracts\Pagination\Paginator) || (! $records->hasMorePages())))
+                            @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle) && ((! $records instanceof \Illuminate\Contracts\Pagination\Paginator) || (! $records->hasMorePages())))
                                 <x-filament-tables::table class="col-span-full">
                                     <x-filament-tables::summary.row
                                         :columns="$columns"
-                                        :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousGroupTitle, 'label' => $pluralModelLabel])"
+                                        :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
                                         :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
+                                        :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
                                         extra-heading-column
                                         :placeholder-columns="false"
                                     />
@@ -816,7 +825,8 @@
                     @if (count($records))
                         @php
                             $previousRecord = null;
-                            $previousGroupTitle = null;
+                            $previousRecordGroupKey = null;
+                            $previousRecordGroupTitle = null;
                         @endphp
 
                         @foreach ($records as $record)
@@ -824,19 +834,21 @@
                                 $recordAction = $getRecordAction($record);
                                 $recordKey = $getRecordKey($record);
                                 $recordUrl = $getRecordUrl($record);
+                                $recordGroupKey = $group?->getKey($record);
                                 $recordGroupTitle = $group?->getTitle($record);
                             @endphp
 
-                            @if ($recordGroupTitle !== $previousGroupTitle)
-                                @if ($hasSummary && (! $isReordering) && filled($previousGroupTitle))
+                            @if ($recordGroupTitle !== $previousRecordGroupTitle)
+                                @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
                                     <x-filament-tables::summary.row
                                         :actions="count($actions)"
                                         :actions-position="$actionsPosition"
                                         :columns="$columns"
-                                        :heading="$isGroupsOnly ? $previousGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousGroupTitle, 'label' => $pluralModelLabel])"
+                                        :heading="$isGroupsOnly ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
                                         :groups-only="$isGroupsOnly"
                                         :selection-enabled="$isSelectionEnabled"
                                         :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
+                                        :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
                                     />
                                 @endif
 
@@ -1005,20 +1017,22 @@
                             @endif
 
                             @php
-                                $previousGroupTitle = $recordGroupTitle;
+                                $previousRecordGroupKey = $recordGroupKey;
+                                $previousRecordGroupTitle = $recordGroupTitle;
                                 $previousRecord = $record;
                             @endphp
                         @endforeach
 
-                        @if ($hasSummary && (! $isReordering) && filled($previousGroupTitle) && ((! $records instanceof \Illuminate\Contracts\Pagination\Paginator) || (! $records->hasMorePages())))
+                        @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle) && ((! $records instanceof \Illuminate\Contracts\Pagination\Paginator) || (! $records->hasMorePages())))
                             <x-filament-tables::summary.row
                                 :actions="count($actions)"
                                 :actions-position="$actionsPosition"
                                 :columns="$columns"
-                                :heading="$isGroupsOnly ? $previousGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousGroupTitle, 'label' => $pluralModelLabel])"
+                                :heading="$isGroupsOnly ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
                                 :groups-only="$isGroupsOnly"
                                 :selection-enabled="$isSelectionEnabled"
                                 :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
+                                :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
                             />
                         @endif
 

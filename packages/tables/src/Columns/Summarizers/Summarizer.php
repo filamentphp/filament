@@ -28,6 +28,8 @@ class Summarizer extends ViewComponent
 
     protected ?string $id = null;
 
+    protected array $selectedState = [];
+
     protected ?Closure $using = null;
 
     final public function __construct(?string $id = null)
@@ -57,8 +59,19 @@ class Summarizer extends ViewComponent
         return $this;
     }
 
+    public function selectedState(array $state): static
+    {
+        $this->selectedState = $state;
+
+        return $this;
+    }
+
     public function getState(): mixed
     {
+        if (filled($state = $this->getSelectedState())) {
+            return $state;
+        }
+
         $column = $this->getColumn();
         $attribute = $column->getName();
         $query = $this->getQuery()->clone();
@@ -67,9 +80,7 @@ class Summarizer extends ViewComponent
             $relationship = $column->getRelationship($query->getModel());
             $attribute = $column->getRelationshipAttribute();
 
-            $inverseRelationship = $column->getInverseRelationshipName ?? (string) str(class_basename($relationship->getParent()::class))
-                ->plural()
-                ->camel();
+            $inverseRelationship = $column->getInverseRelationshipName($query->getModel());
 
             $query = $relationship->getQuery()->getModel()->newQuery()
                 ->whereHas(
@@ -99,9 +110,19 @@ class Summarizer extends ViewComponent
         return $this->summarize($query, $attribute);
     }
 
+    public function getSelectedState(): mixed
+    {
+        return null;
+    }
+
     public function summarize(Builder $query, string $attribute): mixed
     {
         return null;
+    }
+
+    public function getSelectStatements(string $column): array
+    {
+        return [];
     }
 
     public function getId(): ?string
