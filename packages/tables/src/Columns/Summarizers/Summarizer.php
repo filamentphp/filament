@@ -63,7 +63,7 @@ class Summarizer extends ViewComponent
     }
 
     /**
-     * @param array<string, mixed> $state
+     * @param  array<string, mixed>  $state
      */
     public function selectedState(array $state): static
     {
