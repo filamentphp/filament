@@ -3,7 +3,6 @@
 namespace Filament\Tables\Concerns;
 
 use Closure;
-use Filament\Tables\Columns\Column;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use stdClass;
