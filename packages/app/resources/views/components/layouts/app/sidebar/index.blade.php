@@ -8,11 +8,11 @@
         x-bind:class="$store.sidebar.isOpen ? 'filament-sidebar-open translate-x-0' : '-translate-x-full lg:translate-x-0 rtl:lg:-translate-x-0 rtl:translate-x-full'"
     @endif
     @class([
-        'filament-sidebar fixed inset-y-0 left-0 z-20 flex h-screen w-[var(--sidebar-width)] flex-col overflow-hidden bg-white shadow-2xl transition-all rtl:left-auto rtl:right-0 dark:border-gray-700 dark:bg-gray-800 lg:z-0 lg:border-r rtl:lg:border-r-0 rtl:lg:border-l',
+        'filament-sidebar fixed inset-y-0 left-0 z-20 flex h-screen w-[var(--sidebar-width)] flex-col overflow-hidden bg-white transition-all rtl:left-auto rtl:right-0 dark:bg-gray-800 lg:bg-transparent lg:dark:bg-transparent lg:z-0',
         'lg:translate-x-0' => ! \Filament\Navigation\Sidebar::$isCollapsibleOnDesktop,
     ])
 >
-    <header class="filament-sidebar-header border-b h-[4rem] shrink-0 flex items-center justify-center relative dark:border-gray-700">
+    <header class="filament-sidebar-header border-b h-[4rem] shrink-0 flex items-center justify-center relative bg-white dark:bg-gray-800 dark:border-gray-700 lg:border-r rtl:lg:border-r-0 rtl:lg:border-l">
         <div
             @class([
                 'flex items-center justify-center px-6 w-full',
@@ -111,12 +111,6 @@
                     :collapsible="$group->isCollapsible()"
                     :items="$group->getItems()"
                 />
-
-                @if (! $loop->last)
-                    <li class="filament-sidebar-group-divider-container">
-                        <div class="border-t -mr-6 rtl:-mr-auto rtl:-ml-6 dark:border-gray-700 filament-sidebar-group-divider"></div>
-                    </li>
-                @endif
             @endforeach
         </ul>
 
