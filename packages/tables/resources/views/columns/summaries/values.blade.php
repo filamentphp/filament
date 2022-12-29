@@ -2,7 +2,7 @@
     ->merge($getExtraAttributes(), escape: false)
     ->class([
         'filament-tables-values-summary text-sm px-4 py-3 whitespace-normal',
-        'prose prose-sm max-w-none' => $isBulleted(),
+        'prose prose-sm max-w-none dark:prose-invert' => $isBulleted(),
     ])
 }}>
     @if (filled($label = $getLabel()))

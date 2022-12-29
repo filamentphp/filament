@@ -2,7 +2,7 @@
     ->merge($getExtraAttributes(), escape: false)
     ->class([
         'filament-tables-list-column whitespace-normal',
-        'prose prose-sm max-w-none' => $isBulleted(),
+        'prose prose-sm max-w-none dark:prose-invert' => $isBulleted(),
     ])
 }}>
     <ul>
