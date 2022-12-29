@@ -48,7 +48,7 @@ trait CanSummarizeRecords
                     ->getSelectStatements($qualifiedAttribute);
 
                 foreach ($selectStatements as $alias => $statement) {
-                    $selects[] = "{$statement} as '{$alias}'";
+                    $selects[] = "{$statement} as \"{$alias}\"";
                 }
             }
         }
