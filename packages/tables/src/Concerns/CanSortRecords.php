@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use Filament\Tables\Columns\Column;
 use Illuminate\Database\Eloquent\Builder;
 
 trait CanSortRecords
@@ -57,17 +58,9 @@ trait CanSortRecords
             return $this->applyDefaultSortingToTableQuery($query);
         }
 
-        $column = $this->getTable()->getColumn($this->tableSortColumn);
+        $column = $this->getTable()->getSortableVisibleColumn($this->tableSortColumn);
 
         if (! $column) {
-            return $this->applyDefaultSortingToTableQuery($query);
-        }
-
-        if ($column->isHidden()) {
-            return $this->applyDefaultSortingToTableQuery($query);
-        }
-
-        if (! $column->isSortable()) {
             return $this->applyDefaultSortingToTableQuery($query);
         }
 
@@ -80,10 +73,20 @@ trait CanSortRecords
 
     protected function applyDefaultSortingToTableQuery(Builder $query): Builder
     {
+        $sortColumnName = $this->getTable()->getDefaultSortColumn();
         $sortDirection = $this->tableSortDirection === 'desc' ? 'desc' : 'asc';
 
-        if ($sortColumn = $this->getTable()->getDefaultSortColumn()) {
-            return $query->orderBy($sortColumn, $sortDirection);
+        if (
+            $sortColumnName &&
+            ($sortColumn = $this->getTable()->getSortableVisibleColumn($sortColumnName))
+        ) {
+            $sortColumn->applySort($query, $sortDirection);
+
+            return $query;
+        }
+
+        if ($sortColumnName) {
+            return $query->orderBy($sortColumnName, $sortDirection);
         }
 
         if ($sortQueryUsing = $this->getTable()->getDefaultSortQuery()) {

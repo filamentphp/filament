@@ -936,6 +936,25 @@ class Table extends ViewComponent
         return $this->getColumns()[$name] ?? null;
     }
 
+    public function getSortableVisibleColumn(string $name): ?Column
+    {
+        $column = $this->getColumn($name);
+
+        if (! $column) {
+            return null;
+        }
+
+        if ($column->isHidden()) {
+            return null;
+        }
+
+        if (! $column->isSortable()) {
+            return null;
+        }
+
+        return $column;
+    }
+
     /**
      * @return array<string, Action>
      */
