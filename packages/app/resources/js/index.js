@@ -11,7 +11,7 @@ document.addEventListener('alpine:init', () => {
     window.Alpine.store('sidebar', {
         isOpen: window.Alpine.$persist(true).as('isOpen'),
 
-        collapsedGroups: window.Alpine.$persist([]).as('collapsedGroups'),
+        collapsedGroups: window.Alpine.$persist(null).as('collapsedGroups'),
 
         groupIsCollapsed: function (group) {
             return this.collapsedGroups.includes(group)
