@@ -62,7 +62,7 @@ trait InteractsWithTable
 
         $defaultSortColumnName = $this->getTable()->getDefaultSortColumn();
 
-        if ($this->getTable()->getSortableVisibleColumn($defaultSortColumnName)) {
+        if ($defaultSortColumnName && $this->getTable()->getSortableVisibleColumn($defaultSortColumnName)) {
             $this->tableSortColumn = $defaultSortColumnName;
             $this->tableSortDirection = $this->getTable()->getDefaultSortDirection();
         }
