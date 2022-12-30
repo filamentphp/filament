@@ -60,6 +60,13 @@ trait InteractsWithTable
             return;
         }
 
+        $defaultSortColumnName = $this->getTable()->getDefaultSortColumn();
+
+        if ($this->getTable()->getSortableVisibleColumn($defaultSortColumnName)) {
+            $this->tableSortColumn = $defaultSortColumnName;
+            $this->tableSortDirection = $this->getTable()->getDefaultSortDirection();
+        }
+
         if (blank($this->toggledTableColumns) || ($this->toggledTableColumns === [])) {
             $this->getTableColumnToggleForm()->fill(session()->get(
                 $this->getTableColumnToggleFormStateSessionKey(),
