@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ViewRecord extends Page
 {
-    use Concerns\HasRecordBreadcrumb;
     use Concerns\HasRelationManagers;
     use Concerns\InteractsWithRecord;
     use InteractsWithFormActions;

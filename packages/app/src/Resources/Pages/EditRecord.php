@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class EditRecord extends Page
 {
-    use Concerns\HasRecordBreadcrumb;
     use Concerns\HasRelationManagers;
     use Concerns\InteractsWithRecord;
     use InteractsWithFormActions;
