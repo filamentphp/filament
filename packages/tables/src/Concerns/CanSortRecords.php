@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Concerns;
 
-use Filament\Tables\Columns\Column;
 use Illuminate\Database\Eloquent\Builder;
 
 trait CanSortRecords
