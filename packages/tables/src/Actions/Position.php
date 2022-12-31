@@ -4,9 +4,6 @@ namespace Filament\Tables\Actions;
 
 class Position
 {
-    /**
-     * @deprecated Use `AfterColumns` instead.
-     */
     public const AfterCells = 'after_columns';
 
     public const AfterColumns = 'after_columns';

@@ -697,6 +697,16 @@
                                     />
                                 </x-tables::checkbox.cell>
                             @endif
+
+                            @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
+                                @if ($actionsColumnLabel)
+                                    <x-tables::header-cell alignment="right">
+                                        {{ $actionsColumnLabel }}
+                                    </x-tables::header-cell>
+                                @else
+                                    <th class="w-5"></th>
+                                @endif
+                            @endif
                         @endif
                     </x-slot>
 
@@ -723,7 +733,7 @@
                             @endforeach
 
                             @if (! $isReordering)
-                                @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns)
+                                @if (count($actions) && in_array($actionsPosition, [ActionsPosition::AfterColumns, ActionsPosition::AfterCells]))
                                     <td></td>
                                 @endif
 
@@ -859,6 +869,19 @@
                                     @else
                                         <x-tables::cell />
                                     @endif
+                                @endif
+
+                                @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
+                                    <x-tables::actions.cell
+                                        :class="\Illuminate\Support\Arr::toCssClasses([
+                                            'hidden' => $isReordering,
+                                        ])"
+                                    >
+                                        <x-tables::actions
+                                            :actions="$actions"
+                                            :record="$record"
+                                        />
+                                    </x-tables::actions.cell>
                                 @endif
 
                                 <x-tables::loading-cell
