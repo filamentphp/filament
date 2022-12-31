@@ -300,6 +300,8 @@ abstract class Resource
 
     public static function getGlobalSearchResults(string $search): Collection
     {
+        $search = strtolower($search);
+
         $query = static::getGlobalSearchEloquentQuery();
 
         foreach (explode(' ', $search) as $searchWord) {
@@ -536,7 +538,7 @@ abstract class Resource
                     };
 
                     return $query->{"{$whereClause}Raw"}(
-                        "lower({$searchColumn}) {$searchOperator} lower(?)",
+                        "lower({$searchColumn}) {$searchOperator} ?",
                         "%{$search}%",
                     );
                 },

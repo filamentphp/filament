@@ -205,9 +205,8 @@ class AssociateAction extends Action
                     foreach ($searchColumns as $searchColumn) {
                         $whereClause = $isFirst ? 'where' : 'orWhere';
 
-                        $query->{$whereClause}(
-                            $searchColumn,
-                            $searchOperator,
+                        $query->{"{$whereClause}Raw"}(
+                            "lower({$searchColumn}) {$searchOperator} ?",
                             "%{$search}%",
                         );
 
