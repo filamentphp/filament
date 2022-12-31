@@ -12,7 +12,7 @@ trait HasNestedRecursiveValidationRules
     protected array $nestedRecursiveValidationRules = [];
 
     /**
-     * @param string | array<mixed> $rules
+     * @param  string | array<mixed>  $rules
      */
     public function nestedRecursiveRules(string | array $rules, bool | Closure $condition = true): static
     {
