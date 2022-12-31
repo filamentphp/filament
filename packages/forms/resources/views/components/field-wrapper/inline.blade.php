@@ -50,9 +50,9 @@
         <div class="space-y-2 sm:space-y-1 sm:col-span-2">
             {{ $slot }}
 
-            @if ($errors->has($statePath))
+            @if ($errors->has($statePath) || $errors->has("{$statePath}.*"))
                 <x-forms::field-wrapper.error-message>
-                    {{ $errors->first($statePath) }}
+                    {{ $errors->first($statePath) ?? $errors->first("{$statePath}.*") }}
                 </x-forms::field-wrapper.error-message>
             @endif
 

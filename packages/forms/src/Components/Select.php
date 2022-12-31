@@ -17,7 +17,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
 
-class Select extends Field
+class Select extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
     use Concerns\CanAllowHtml;
     use Concerns\CanBePreloaded;
@@ -30,6 +30,7 @@ class Select extends Field
         getSuffixAction as getBaseSuffixAction;
     }
     use Concerns\HasExtraInputAttributes;
+    use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasLoadingMessage;
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
