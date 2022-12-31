@@ -17,6 +17,7 @@ class SelectColumn extends Column implements Editable
     }
     use CanDisableOptions;
     use CanDisablePlaceholderSelection;
+    use Concerns\CanUpdateState;
     use HasExtraInputAttributes;
     use HasOptions;
     use HasPlaceholder;
