@@ -888,11 +888,7 @@
                                             <td></td>
                                         @endif
 
-                                        @if ($isSelectionEnabled)
-                                            <td></td>
-                                        @endif
-
-                                        @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
+                                        @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                             <td></td>
                                         @endif
 
@@ -929,7 +925,11 @@
                                             @endif
                                         </td>
 
-                                        @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
+                                        @if (count($actions) && in_array($actionsPosition, [ActionsPosition::AfterColumns, ActionsPosition::AfterCells]))
+                                            <td></td>
+                                        @endif
+
+                                        @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
                                             <td></td>
                                         @endif
                                     </x-filament-tables::row>
