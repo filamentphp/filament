@@ -9,7 +9,7 @@ use Filament\Tables\Columns\Contracts\Editable;
 class ToggleColumn extends Column implements Editable
 {
     use Concerns\CanBeValidated;
-    use Concerns\CanSaveState;
+    use Concerns\CanUpdateState;
     use HasToggleColors;
     use HasToggleIcons;
 

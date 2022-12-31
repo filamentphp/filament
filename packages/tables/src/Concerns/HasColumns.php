@@ -129,7 +129,7 @@ trait HasColumns
             ];
         }
 
-        return $column->saveState($this, $input);
+        return $column->updateState($input);
     }
 
     protected function getTableColumns(): array

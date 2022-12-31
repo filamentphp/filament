@@ -9,26 +9,26 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
-trait CanSaveState
+trait CanUpdateState
 {
-    protected ?Closure $saveStateUsing = null;
+    protected ?Closure $updateStateUsing = null;
 
-    public function saveStateUsing(?Closure $callback): static
+    public function updateStateUsing(?Closure $callback): static
     {
-        $this->saveStateUsing = $callback;
+        $this->updateStateUsing = $callback;
 
         return $this;
     }
 
-    public function saveState(Component $table, mixed $state): mixed
+    public function updateState(mixed $state): mixed
     {
-        if ($this->saveStateUsing !== null) {
-            return $this->evaluate($this->saveStateUsing, [
+        if ($this->updateStateUsing !== null) {
+            return $this->evaluate($this->updateStateUsing, [
                 'state' => $state,
-                'table' => $table,
             ]);
         }
 
+        $livewire = $this->getLivewire();
         $record = $this->getRecord();
 
         $columnName = $this->getName();
@@ -37,8 +37,8 @@ trait CanSaveState
             $record = $columnRelationship->getResults();
             $columnName = $this->getRelationshipTitleColumnName();
         } elseif (
-            $table instanceof HasRelationshipTable &&
-            (($tableRelationship = $table->getRelationship()) instanceof BelongsToMany) &&
+            $livewire instanceof HasRelationshipTable &&
+            (($tableRelationship = $livewire->getRelationship()) instanceof BelongsToMany) &&
             in_array($columnName, $tableRelationship->getPivotColumns())
         ) {
             $record = $record->{$tableRelationship->getPivotAccessor()};

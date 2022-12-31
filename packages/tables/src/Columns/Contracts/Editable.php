@@ -8,5 +8,5 @@ interface Editable
 {
     public function validate($input): void;
 
-    public function saveState(Component $table, mixed $state): mixed;
+    public function updateState(mixed $state): mixed;
 }
