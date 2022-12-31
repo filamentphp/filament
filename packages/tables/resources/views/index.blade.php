@@ -1,6 +1,7 @@
 @php
     use Filament\Tables\Actions\Position as ActionsPosition;
     use Filament\Tables\Filters\Layout as FiltersLayout;
+    use Filament\Tables\Actions\RecordCheckboxPosition;
 
     $actions = $getActions();
     $actionsAlignment = $getActionsAlignment();
@@ -32,6 +33,7 @@
     $isColumnSearchVisible = $isSearchableByColumn();
     $isGlobalSearchVisible = $isSearchable();
     $isSelectionEnabled = $isSelectionEnabled();
+    $recordCheckboxPosition = $getRecordCheckboxPosition();
     $isStriped = $isStriped();
     $hasFilters = $isFilterable();
     $hasFiltersDropdown = $hasFilters && ($getFiltersLayout() === FiltersLayout::Dropdown);
@@ -729,7 +731,7 @@
                                 @endif
                             @endif
 
-                            @if ($isSelectionEnabled)
+                            @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                 <x-filament-tables::checkbox.cell>
                                     <x-filament-tables::checkbox
                                         x-on:click="toggleSelectRecordsOnPage"
@@ -782,13 +784,46 @@
                             </x-filament-tables::header-cell>
                         @endforeach
 
-                        @if (count($actions) && (! $isReordering) && $actionsPosition === ActionsPosition::AfterCells)
-                            @if ($actionsColumnLabel)
-                                <x-filament-tables::header-cell alignment="end">
-                                    {{ $actionsColumnLabel }}
-                                </x-filament-tables::header-cell>
-                            @else
-                                <th class="w-5"></th>
+                        @if (! $isReordering)
+                            @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns)
+                                @if ($actionsColumnLabel)
+                                    <x-filament-tables::header-cell alignment="right">
+                                        {{ $actionsColumnLabel }}
+                                    </x-filament-tables::header-cell>
+                                @else
+                                    <th class="w-5"></th>
+                                @endif
+                            @endif
+
+                            @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
+                                <x-filament-tables::checkbox.cell>
+                                    <x-filament-tables::checkbox
+                                        x-on:click="toggleSelectRecordsOnPage"
+                                        x-bind:checked="
+                                            let recordsOnPage = getRecordsOnPage()
+
+                                            if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
+                                                $el.checked = true
+
+                                                return 'checked'
+                                            }
+
+                                            $el.checked = false
+
+                                            return null
+                                        "
+                                    />
+                                </x-filament-tables::checkbox.cell>
+                            @endif
+
+                            @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
+                                @if ($actionsColumnLabel)
+                                    <x-filament-tables::header-cell alignment="right">
+                                        {{ $actionsColumnLabel }}
+                                    </x-filament-tables::header-cell>
+                                @else
+                                    <th class="w-5"></th>
+                                @endif
                             @endif
                         @endif
                     </x-slot>
@@ -802,7 +837,7 @@
                                     <td></td>
                                 @endif
 
-                                @if ($isSelectionEnabled)
+                                @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                     <td></td>
                                 @endif
                             @endif
@@ -816,8 +851,14 @@
                                 </x-filament-tables::cell>
                             @endforeach
 
-                            @if (count($actions) && (! $isReordering) && $actionsPosition === ActionsPosition::AfterCells)
-                                <td></td>
+                            @if (! $isReordering)
+                                @if (count($actions) && in_array($actionsPosition, [ActionsPosition::AfterColumns, ActionsPosition::AfterCells]))
+                                    <td></td>
+                                @endif
+
+                                @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
+                                    <td></td>
+                                @endif
                             @endif
                         </x-filament-tables::row>
                     @endif
@@ -849,6 +890,7 @@
                                         :selection-enabled="$isSelectionEnabled"
                                         :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
                                         :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
+                                        :record-checkbox-position="$recordCheckboxPosition"
                                     />
                                 @endif
 
@@ -858,11 +900,7 @@
                                             <td></td>
                                         @endif
 
-                                        @if ($isSelectionEnabled)
-                                            <td></td>
-                                        @endif
-
-                                        @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
+                                        @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                             <td></td>
                                         @endif
 
@@ -899,7 +937,11 @@
                                             @endif
                                         </td>
 
-                                        @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
+                                        @if (count($actions) && in_array($actionsPosition, [ActionsPosition::AfterColumns, ActionsPosition::AfterCells]))
+                                            <td></td>
+                                        @endif
+
+                                        @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
                                             <td></td>
                                         @endif
                                     </x-filament-tables::row>
@@ -945,7 +987,7 @@
                                         </x-filament-tables::actions.cell>
                                     @endif
 
-                                    @if ($isSelectionEnabled)
+                                    @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                         <x-filament-tables::checkbox.cell @class([
                                             'hidden' => $isReordering,
                                         ])>
@@ -994,6 +1036,32 @@
                                         </x-filament-tables::cell>
                                     @endforeach
 
+                                    @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns)
+                                        <x-filament-tables::actions.cell @class([
+                                            'hidden' => $isReordering,
+                                        ])>
+                                            <x-filament-tables::actions
+                                                :actions="$actions"
+                                                :alignment="$actionsAlignment ?? 'end'"
+                                                :record="$record"
+                                            />
+                                        </x-filament-tables::actions.cell>
+                                    @endif
+
+                                    @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
+                                        <x-filament-tables::checkbox.cell @class([
+                                            'hidden' => $isReordering,
+                                        ])>
+                                            @if ($isRecordSelectable($record))
+                                                <x-filament-tables::checkbox
+                                                        x-model="selectedRecords"
+                                                        :value="$recordKey"
+                                                        class="filament-tables-record-checkbox"
+                                                />
+                                            @endif
+                                        </x-filament-tables::checkbox.cell>
+                                    @endif
+
                                     @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
                                         <x-filament-tables::actions.cell @class([
                                             'hidden' => $isReordering,
@@ -1033,6 +1101,7 @@
                                 :selection-enabled="$isSelectionEnabled"
                                 :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
                                 :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
+                                :record-checkbox-position="$recordCheckboxPosition"
                             />
                         @endif
 
@@ -1051,6 +1120,7 @@
                                 :selection-enabled="$isSelectionEnabled"
                                 :plural-model-label="$pluralModelLabel"
                                 :records="$records"
+                                :record-checkbox-position="$recordCheckboxPosition"
                             />
                         @endif
                     @else

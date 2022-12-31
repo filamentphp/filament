@@ -7,11 +7,13 @@
     'placeholderColumns' => true,
     'pluralModelLabel',
     'records',
+    'recordCheckboxPosition' => null,
     'selectionEnabled' => false,
 ])
 
 @php
     use Filament\Tables\Actions\Position as ActionsPosition;
+    use Filament\Tables\Actions\RecordCheckboxPosition;
 
     $hasPageSummary = (! $groupsOnly) && $records instanceof \Illuminate\Contracts\Pagination\Paginator && $records->hasPages();
 @endphp
@@ -22,11 +24,7 @@
             <td></td>
         @endif
 
-        @if ($placeholderColumns && $selectionEnabled)
-            <td></td>
-        @endif
-
-        @if ($placeholderColumns && $actions && $actionsPosition === ActionsPosition::BeforeColumns)
+        @if ($placeholderColumns && $selectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
             <td></td>
         @endif
 
@@ -67,7 +65,11 @@
             @endif
         @endforeach
 
-        @if ($placeholderColumns && $actions && $actionsPosition === ActionsPosition::AfterCells)
+        @if ($placeholderColumns && $actions && in_array($actionsPosition, [ActionsPosition::AfterColumns, ActionsPosition::AfterCells]))
+            <td></td>
+        @endif
+
+        @if ($placeholderColumns && $selectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
             <td></td>
         @endif
     </x-filament-tables::row>
@@ -88,6 +90,7 @@
         :placeholder-columns="$placeholderColumns"
         :query="$query"
         :selected-state="$selectedState"
+        :record-checkbox-position="$recordCheckboxPosition"
     />
 @endif
 
@@ -109,4 +112,5 @@
     :placeholder-columns="$placeholderColumns"
     :selected-state="$selectedState"
     :strong="! $hasPageSummary"
+    :record-checkbox-position="$recordCheckboxPosition"
 />

@@ -12,6 +12,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\Position;
+use Filament\Tables\Actions\RecordCheckboxPosition;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Layout\Component as ColumnLayoutComponent;
 use Filament\Tables\Contracts\HasTable;
@@ -199,6 +200,8 @@ class Table extends ViewComponent
 
     protected string | Closure | null $recordAction = null;
 
+    protected string | Closure | null $recordCheckboxPosition = null;
+
     /**
      * @var array<string | int, bool | string> | string | Closure | null
      */
@@ -290,6 +293,13 @@ class Table extends ViewComponent
     public function headerActionsPosition(string | Closure | null $position = null): static
     {
         $this->headerActionsPosition = $position;
+
+        return $this;
+    }
+
+    public function recordCheckboxPosition(string | Closure | null $position = null): static
+    {
+        $this->recordCheckboxPosition = $position;
 
         return $this;
     }
@@ -846,7 +856,7 @@ class Table extends ViewComponent
         }
 
         if (! ($this->getContentGrid() || $this->hasColumnsLayout())) {
-            return Position::AfterCells;
+            return Position::AfterColumns;
         }
 
         $actions = $this->getActions();
@@ -860,6 +870,17 @@ class Table extends ViewComponent
         }
 
         return Position::AfterContent;
+    }
+
+    public function getRecordCheckboxPosition(): string
+    {
+        $position = $this->evaluate($this->recordCheckboxPosition);
+
+        if (filled($position)) {
+            return $position;
+        }
+
+        return RecordCheckboxPosition::BeforeCells;
     }
 
     public function getHeaderActionsPosition(): string

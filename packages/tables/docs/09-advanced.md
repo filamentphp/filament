@@ -66,18 +66,7 @@ protected function paginateTableQuery(Builder $query): Paginator
 
 While Filament doesn't provide a direct integration with [Laravel Scout](https://laravel.com/docs/scout), you may override methods to integrate it.
 
-First, locate your Livewire component. If you're using a resource from the App Framework and you want to add Scout to the List page, you'll want to open the `Pages/List.php` file in the resource, not the resource class itself.
-
-You must ensure that the table search input is visible:
-
-```php
-public function isTableSearchable(): bool
-{
-    return true;
-}
-```
-
-Now, use a `whereIn()` clause to filter the query for Scout results:
+Use a `whereIn()` clause to filter the query for Scout results:
 
 ```php
 use App\Models\Post;

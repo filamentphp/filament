@@ -81,9 +81,6 @@ trait CanSelectRecords
         )->get());
     }
 
-    /**
-     * @deprecated Override the `table()` method to configure the table.
-     */
     public function shouldSelectCurrentPageOnly(): bool
     {
         return $this->shouldSelectCurrentPageOnly;
