@@ -319,3 +319,5 @@ The available hooks are as follows:
 - `page.header-widgets.end` - after page header widgets
 - `page.footer-widgets.start` - before page footer widgets
 - `page.footer-widgets.end` - after page footer widgets
+- `page.actions.start` - before page actions
+- `page.actions.end` - after page actions

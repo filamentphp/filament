@@ -27,9 +27,14 @@
                 'grid gap-2 grid-cols-[repeat(auto-fit,minmax(0,1fr))]' => $fullWidth,
             ]) }}
         >
+            {{ \Filament\Facades\Filament::renderHook('page.actions.start') }}
+            
             @foreach ($actions as $action)
                 {{ $action }}
             @endforeach
+            
+            {{ \Filament\Facades\Filament::renderHook('page.actions.start') }}
+            
         </div>
     @endif
 @endif
