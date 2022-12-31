@@ -5,6 +5,7 @@ namespace Filament\Resources\Pages\Concerns;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
+use Throwable;
 
 trait InteractsWithRecord
 {
@@ -53,11 +54,11 @@ trait InteractsWithRecord
         if ($record->exists && $resource::hasRecordTitle()) {
             if ($resource::hasPage('view') && $resource::canView($record)) {
                 $breadcrumbs[
-                $resource::getUrl('view', ['record' => $record])
+                    $resource::getUrl('view', ['record' => $record])
                 ] = $this->getRecordTitle();
             } elseif ($resource::hasPage('edit') && $resource::canEdit($record)) {
                 $breadcrumbs[
-                $resource::getUrl('edit', ['record' => $record])
+                    $resource::getUrl('edit', ['record' => $record])
                 ] = $this->getRecordTitle();
             } else {
                 $breadcrumbs[] = $this->getRecordTitle();
