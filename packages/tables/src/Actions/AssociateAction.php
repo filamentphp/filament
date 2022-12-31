@@ -65,7 +65,7 @@ class AssociateAction extends Action
 
         $this->action(function (array $arguments, ComponentContainer $form): void {
             $this->process(function (array $data) {
-                /** @var HasMany|MorphMany $relationship */
+                /** @var HasMany | MorphMany $relationship */
                 $relationship = $this->getRelationship();
 
                 $record = $relationship->getRelated()->query()->find($data['recordId']);
@@ -163,7 +163,7 @@ class AssociateAction extends Action
     public function getRecordSelect(): Select
     {
         $getOptions = function (?string $search = null, ?array $searchColumns = []): array {
-            /** @var HasMany|MorphMany $relationship */
+            /** @var HasMany | MorphMany $relationship */
             $relationship = $this->getRelationship();
 
             $titleColumnName = $this->getRecordTitleAttribute();
@@ -213,7 +213,7 @@ class AssociateAction extends Action
                 ->whereDoesntHave($this->getInverseRelationshipName(), function (Builder $query) use ($relationship): Builder {
                     if ($relationship instanceof MorphMany) {
                         return $query->where($relationship->getMorphType(), $relationship->getMorphClass())
-                            ->where($relationship->getForeignKeyName(), $relationship->getParent()->getKey());
+                            ->where($relationship->getQualifiedForeignKeyName(), $relationship->getParent()->getKey());
                     }
 
                     return $query->where($relationship->getParent()->getQualifiedKeyName(), $relationship->getParent()->getKey());
