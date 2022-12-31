@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class AssociateAction extends Action
 {
@@ -210,6 +211,10 @@ class AssociateAction extends Action
 
             return $relationshipQuery
                 ->whereDoesntHave($this->getInverseRelationshipName(), function (Builder $query) use ($relationship): Builder {
+                    if ($relationship instanceof MorphMany) {
+                        return $query->where($relationship->getMorphType(), $relationship->getMorphClass())
+                            ->where($relationship->getForeignKeyName(), $relationship->getParent()->getKey());
+                    }
                     return $query->where($relationship->getParent()->getQualifiedKeyName(), $relationship->getParent()->getKey());
                 })
                 ->get()
