@@ -5,7 +5,6 @@ namespace Filament\Tables\Concerns;
 use Closure;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Contracts\Editable;
-use Filament\Tables\Columns\Layout\Component;
 use Filament\Tables\Columns\Layout\Component as ColumnLayoutComponent;
 use Illuminate\Validation\ValidationException;
 
