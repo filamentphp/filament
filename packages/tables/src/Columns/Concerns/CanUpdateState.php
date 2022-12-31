@@ -3,9 +3,9 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
-use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 trait CanUpdateState
@@ -31,9 +31,14 @@ trait CanUpdateState
 
         $columnName = $this->getName();
 
-        if ($columnRelationship = $this->getRelationship($record)) {
-            $record = $columnRelationship->getResults();
+        if ($this->getRelationship($record)) {
             $columnName = $this->getRelationshipAttribute();
+            $columnRelationshipName = $this->getRelationshipName();
+
+            $record = Arr::get(
+                $record->load($columnRelationshipName),
+                $columnRelationshipName,
+            );
         } elseif (
             (($tableRelationship = $this->getTable()->getRelationship()) instanceof BelongsToMany) &&
             in_array($columnName, $tableRelationship->getPivotColumns())
