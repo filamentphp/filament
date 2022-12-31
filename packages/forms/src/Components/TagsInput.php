@@ -6,11 +6,11 @@ use Closure;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Arrayable;
 
-class TagsInput extends Field
+class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
     use Concerns\HasExtraInputAttributes;
+    use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasPlaceholder;
-    use Concerns\HasRulesForeachItem;
     use HasExtraAlpineAttributes;
 
     protected string $view = 'forms::components.tags-input';

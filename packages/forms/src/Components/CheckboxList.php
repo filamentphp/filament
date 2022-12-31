@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
-class CheckboxList extends Field
+class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
+    use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasOptions;
-    use Concerns\HasRulesForeachItem;
 
     protected string $view = 'forms::components.checkbox-list';
 

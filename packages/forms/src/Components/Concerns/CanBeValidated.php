@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
 use Filament\Forms\Components\Field;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
@@ -18,8 +19,6 @@ trait CanBeValidated
     protected string | Closure | null $regexPattern = null;
 
     protected array $rules = [];
-
-    protected array $rulesForeachItem = [];
 
     protected string | Closure | null $validationAttribute = null;
 
@@ -522,28 +521,25 @@ trait CanBeValidated
         return $rules;
     }
 
-    public function getValidationRulesForeachItem()
-    {
-        $rules = [];
-
-        foreach ($this->rulesForeachItem as [$rule, $condition]) {
-            if ($this->evaluate($condition)) {
-                $rules[] = $this->evaluate($rule);
-            }
-        }
-
-        return $rules;
-    }
-
     public function dehydrateValidationRules(array &$rules): void
     {
+        $statePath = $this->getStatePath();
+
         if (count($componentRules = $this->getValidationRules())) {
-            $rules[$this->getStatePath()] = $componentRules;
+            $rules[$statePath] = $componentRules;
         }
 
-        if (count($componentRulesForArrayFields = $this->getValidationRulesForeachItem())) {
-            $rules[$this->getStatePath() . '.*'] = $componentRulesForArrayFields;
+        if (! $this instanceof HasNestedRecursiveValidationRules) {
+            return;
         }
+
+        $nestedRecursiveValidationRules = $this->getNestedRecursiveValidationRules();
+
+        if (! count($nestedRecursiveValidationRules)) {
+            return;
+        }
+
+        $rules["{$statePath}.*"] = $nestedRecursiveValidationRules;
     }
 
     public function dehydrateValidationAttributes(array &$attributes): void
