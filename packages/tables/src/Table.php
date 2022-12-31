@@ -57,7 +57,7 @@ class Table extends ViewComponent
         }
 
         if (! ($this->getContentGrid() || $this->hasColumnsLayout())) {
-            return Position::AfterCells;
+            return Position::AfterColumns;
         }
 
         $actions = $this->getActions();

@@ -372,7 +372,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     public function getTableRecordCheckboxPosition(): string
     {
-        return $this->getResourceTable()->getRecordCheckboxPosition() ?? Tables\Actions\RecordCheckboxPosition::RowStart;
+        return $this->getResourceTable()->getRecordCheckboxPosition() ?? Tables\Actions\RecordCheckboxPosition::BeforeCells;
     }
 
     protected function getTableHeaderActions(): array

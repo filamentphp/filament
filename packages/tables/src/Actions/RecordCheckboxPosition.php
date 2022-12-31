@@ -4,7 +4,7 @@ namespace Filament\Tables\Actions;
 
 class RecordCheckboxPosition
 {
-    public const RowStart = 'row_start';
+    public const BeforeCells = 'before_cells';
 
-    public const RowEnd = 'row_end';
+    public const AfterCells = 'after_cells';
 }

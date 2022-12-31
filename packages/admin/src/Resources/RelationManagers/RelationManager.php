@@ -422,7 +422,7 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
 
     public function getTableRecordCheckboxPosition(): string
     {
-        return $this->getResourceTable()->getRecordCheckboxPosition() ?? Tables\Actions\RecordCheckboxPosition::RowStart;
+        return $this->getResourceTable()->getRecordCheckboxPosition() ?? Tables\Actions\RecordCheckboxPosition::BeforeCells;
     }
 
     protected function getTableActionsPosition(): ?string

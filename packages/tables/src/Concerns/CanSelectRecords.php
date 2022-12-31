@@ -89,7 +89,7 @@ trait CanSelectRecords
 
     public function getTableRecordCheckboxPosition(): string
     {
-        return RecordCheckboxPosition::RowStart;
+        return RecordCheckboxPosition::BeforeCells;
     }
 
     public function shouldSelectCurrentPageOnly(): bool

@@ -620,7 +620,7 @@
                                 @endif
                             @endif
 
-                            @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::RowStart)
+                            @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                 <x-tables::checkbox.cell>
                                     <x-tables::checkbox
                                         x-on:click="toggleSelectRecordsOnPage"
@@ -666,21 +666,22 @@
                             </x-tables::header-cell>
                         @endforeach
 
-                        @if (count($actions) && (! $isReordering) && $actionsPosition === ActionsPosition::AfterCells)
-                            @if ($actionsColumnLabel)
-                                <x-tables::header-cell alignment="right">
-                                    {{ $actionsColumnLabel }}
-                                </x-tables::header-cell>
-                            @else
-                                <th class="w-5"></th>
+                        @if (! $isReordering)
+                            @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns)
+                                @if ($actionsColumnLabel)
+                                    <x-tables::header-cell alignment="right">
+                                        {{ $actionsColumnLabel }}
+                                    </x-tables::header-cell>
+                                @else
+                                    <th class="w-5"></th>
+                                @endif
                             @endif
-                        @endif
 
-                        @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::RowEnd)
-                            <x-tables::checkbox.cell>
-                                <x-tables::checkbox
-                                    x-on:click="toggleSelectRecordsOnPage"
-                                    x-bind:checked="
+                            @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
+                                <x-tables::checkbox.cell>
+                                    <x-tables::checkbox
+                                        x-on:click="toggleSelectRecordsOnPage"
+                                        x-bind:checked="
                                             let recordsOnPage = getRecordsOnPage()
 
                                             if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
@@ -693,8 +694,9 @@
 
                                             return null
                                         "
-                                />
-                            </x-tables::checkbox.cell>
+                                    />
+                                </x-tables::checkbox.cell>
+                            @endif
                         @endif
                     </x-slot>
 
@@ -707,7 +709,7 @@
                                     <td></td>
                                 @endif
 
-                                @if ($isSelectionEnabled)
+                                @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                     <td></td>
                                 @endif
                             @endif
@@ -720,8 +722,14 @@
                                 </x-tables::cell>
                             @endforeach
 
-                            @if (count($actions) && (! $isReordering) && $actionsPosition === ActionsPosition::AfterCells)
-                                <td></td>
+                            @if (! $isReordering)
+                                @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns)
+                                    <td></td>
+                                @endif
+
+                                @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
+                                    <td></td>
+                                @endif
                             @endif
                         </x-tables::row>
                     @endif
@@ -772,7 +780,7 @@
                                     </x-tables::actions.cell>
                                 @endif
 
-                                @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::RowStart)
+                                @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                     @if ($isRecordSelectable($record))
                                         <x-tables::checkbox.cell :class="\Illuminate\Support\Arr::toCssClasses([
                                             'hidden' => $isReordering,
@@ -824,7 +832,7 @@
                                     </x-tables::cell>
                                 @endforeach
 
-                                @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
+                                @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns)
                                     <x-tables::actions.cell
                                         :class="\Illuminate\Support\Arr::toCssClasses([
                                             'hidden' => $isReordering,
@@ -837,7 +845,7 @@
                                     </x-tables::actions.cell>
                                 @endif
 
-                                @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::RowEnd)
+                                @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
                                     @if ($isRecordSelectable($record))
                                         <x-tables::checkbox.cell :class="\Illuminate\Support\Arr::toCssClasses([
                                             'hidden' => $isReordering,
