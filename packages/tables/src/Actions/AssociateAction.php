@@ -215,6 +215,7 @@ class AssociateAction extends Action
                         return $query->where($relationship->getMorphType(), $relationship->getMorphClass())
                             ->where($relationship->getForeignKeyName(), $relationship->getParent()->getKey());
                     }
+
                     return $query->where($relationship->getParent()->getQualifiedKeyName(), $relationship->getParent()->getKey());
                 })
                 ->get()
