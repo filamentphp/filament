@@ -193,9 +193,8 @@ class AssociateAction extends Action
                     foreach ($searchColumns as $searchColumnName) {
                         $whereClause = $isFirst ? 'where' : 'orWhere';
 
-                        $query->{$whereClause}(
-                            $searchColumnName,
-                            $searchOperator,
+                        $query->{"{$whereClause}Raw"}(
+                            "lower({$searchColumnName}) {$searchOperator} ?",
                             "%{$search}%",
                         );
 
