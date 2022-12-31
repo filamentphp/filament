@@ -148,7 +148,7 @@ class TestsForms
             $form = $livewire->{$formName};
 
             /** @var ?Field $field */
-            $field = data_get($form->getFlatFields(withHidden: true), $fieldName, null);
+            $field = $form->getFlatFields(withHidden: true)[$fieldName] ?? null;
 
             Assert::assertInstanceOf(
                 Field::class,
