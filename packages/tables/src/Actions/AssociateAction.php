@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class AssociateAction extends Action
 {
@@ -67,7 +68,7 @@ class AssociateAction extends Action
 
         $this->action(function (array $arguments, Form $form): void {
             $this->process(function (array $data, Table $table) {
-                /** @var HasMany $relationship */
+                /** @var HasMany | MorphMany $relationship */
                 $relationship = $table->getRelationship();
 
                 $record = $relationship->getRelated()->query()->find($data['recordId']);
@@ -173,7 +174,7 @@ class AssociateAction extends Action
         $table = $this->getTable();
 
         $getOptions = function (?string $search = null, ?array $searchColumns = []) use ($table): array {
-            /** @var HasMany $relationship */
+            /** @var HasMany | MorphMany $relationship */
             $relationship = $table->getRelationship();
 
             $titleAttribute = $this->getRecordTitleAttribute();
@@ -221,6 +222,11 @@ class AssociateAction extends Action
 
             return $relationshipQuery
                 ->whereDoesntHave($table->getInverseRelationship(), function (Builder $query) use ($relationship): Builder {
+                    if ($relationship instanceof MorphMany) {
+                        return $query->where($relationship->getMorphType(), $relationship->getMorphClass())
+                            ->where($relationship->getQualifiedForeignKeyName(), $relationship->getParent()->getKey());
+                    }
+
                     return $query->where($relationship->getParent()->getQualifiedKeyName(), $relationship->getParent()->getKey());
                 })
                 ->get()
