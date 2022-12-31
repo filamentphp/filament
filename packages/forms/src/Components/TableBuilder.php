@@ -20,7 +20,7 @@ class TableBuilder extends Field
 
     protected int | Closure $defaultColumns = 1;
 
-    protected bool | Closure $shouldDisableAddingRows = false;
+    protected bool | Closure $canAddRows = false;
 
     protected bool | Closure $shouldDisableDeletingRows = false;
 

@@ -28056,10 +28056,10 @@ var table_builder_default = (Alpine) => {
     removeRow(row) {
       this.state = this.state.filter((_, i) => i !== row);
     },
-    removeColumn(column) {
+    removeColumn(columnToRemove) {
       this.columns--;
       this.state = this.state.map((row) => {
-        return row.filter((_, i) => i !== column - 1);
+        return row.filter((_, column) => column !== columnToRemove - 1);
       });
     }
   }));

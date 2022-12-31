@@ -30,15 +30,15 @@ export default (Alpine) => {
             }
         },
 
-        removeRow(row) {
-            this.state = this.state.filter((_, i) => i !== row)
+        removeRow(rowToRemove) {
+            this.state = this.state.filter((_, row) => row !== rowToRemove)
         },
 
-        removeColumn(column) {
+        removeColumn(columnToRemove) {
             this.columns--
 
             this.state = this.state.map((row) => {
-                return row.filter((_, i) => i !== column - 1)
+                return row.filter((_, column) => column !== columnToRemove - 1)
             })
         },
     }))
