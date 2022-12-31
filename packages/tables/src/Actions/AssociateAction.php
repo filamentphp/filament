@@ -65,7 +65,7 @@ class AssociateAction extends Action
 
         $this->action(function (array $arguments, ComponentContainer $form): void {
             $this->process(function (array $data) {
-                /** @var HasMany $relationship */
+                /** @var HasMany|MorphMany $relationship */
                 $relationship = $this->getRelationship();
 
                 $record = $relationship->getRelated()->query()->find($data['recordId']);
@@ -163,7 +163,7 @@ class AssociateAction extends Action
     public function getRecordSelect(): Select
     {
         $getOptions = function (?string $search = null, ?array $searchColumns = []): array {
-            /** @var HasMany $relationship */
+            /** @var HasMany|MorphMany $relationship */
             $relationship = $this->getRelationship();
 
             $titleColumnName = $this->getRecordTitleAttribute();
