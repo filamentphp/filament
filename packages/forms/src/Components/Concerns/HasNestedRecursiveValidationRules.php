@@ -6,8 +6,14 @@ use Closure;
 
 trait HasNestedRecursiveValidationRules
 {
+    /**
+     * @var array<mixed>
+     */
     protected array $nestedRecursiveValidationRules = [];
 
+    /**
+     * @param string | array<mixed> $rules
+     */
     public function nestedRecursiveRules(string | array $rules, bool | Closure $condition = true): static
     {
         if (is_string($rules)) {
@@ -22,6 +28,9 @@ trait HasNestedRecursiveValidationRules
         return $this;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getNestedRecursiveValidationRules(): array
     {
         $rules = [];

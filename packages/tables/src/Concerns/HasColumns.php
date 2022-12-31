@@ -38,32 +38,7 @@ trait HasColumns
         return $column->record($record)->evaluate($action);
     }
 
-    public function getCachedTableColumns(): array
-    {
-        return $this->cachedTableColumns;
-    }
-
-    public function getCachedTableColumnsLayout(): array
-    {
-        return $this->cachedTableColumnsLayout;
-    }
-
-    public function getCachedCollapsibleTableColumnsLayout(): ?Component
-    {
-        return $this->cachedTableCollapsibleColumnsLayout;
-    }
-
-    public function hasTableColumnsLayout(): bool
-    {
-        return $this->hasTableColumnsLayout || $this->getTableContentGrid();
-    }
-
-    public function getCachedTableColumn(string $name): ?Column
-    {
-        return $this->getCachedTableColumns()[$name] ?? null;
-    }
-
-    public function updateTableColumnState(string $column, string $record, $input): mixed
+    public function updateTableColumnState(string $column, string $record, mixed $input): mixed
     {
         $column = $this->getTable()->getColumn($column);
 
