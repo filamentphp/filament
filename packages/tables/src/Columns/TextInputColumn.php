@@ -12,6 +12,7 @@ use Filament\Tables\Columns\Contracts\Editable;
 class TextInputColumn extends Column implements Editable
 {
     use Concerns\CanBeValidated;
+    use Concerns\CanUpdateState;
     use HasExtraInputAttributes;
     use HasInputMode;
     use HasPlaceholder;
