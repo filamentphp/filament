@@ -3,6 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Actions\RecordCheckboxPosition;
 use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -84,6 +85,11 @@ trait CanSelectRecords
             $this->getCachedTableBulkActions(),
             fn (BulkAction $action): bool => ! $action->isHidden(),
         ));
+    }
+
+    public function getTableRecordCheckboxPosition(): string
+    {
+        return RecordCheckboxPosition::BeforeCells;
     }
 
     public function shouldSelectCurrentPageOnly(): bool

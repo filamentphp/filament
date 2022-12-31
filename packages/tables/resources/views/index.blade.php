@@ -1,6 +1,7 @@
 @php
     use Filament\Tables\Actions\Position as ActionsPosition;
     use Filament\Tables\Filters\Layout as FiltersLayout;
+    use Filament\Tables\Actions\RecordCheckboxPosition;
 
     $actions = $getActions();
     $actionsPosition = $getActionsPosition();
@@ -24,6 +25,7 @@
     $isColumnSearchVisible = $isSearchableByColumn();
     $isGlobalSearchVisible = $isSearchable();
     $isSelectionEnabled = $isSelectionEnabled();
+    $recordCheckboxPosition = $getRecordCheckboxPosition();
     $isStriped = $isStriped();
     $hasFilters = $isFilterable();
     $hasFiltersPopover = $hasFilters && ($getFiltersLayout() === FiltersLayout::Popover);
@@ -618,7 +620,7 @@
                                 @endif
                             @endif
 
-                            @if ($isSelectionEnabled)
+                            @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                 <x-tables::checkbox.cell>
                                     <x-tables::checkbox
                                         x-on:click="toggleSelectRecordsOnPage"
@@ -664,13 +666,46 @@
                             </x-tables::header-cell>
                         @endforeach
 
-                        @if (count($actions) && (! $isReordering) && $actionsPosition === ActionsPosition::AfterCells)
-                            @if ($actionsColumnLabel)
-                                <x-tables::header-cell alignment="right">
-                                    {{ $actionsColumnLabel }}
-                                </x-tables::header-cell>
-                            @else
-                                <th class="w-5"></th>
+                        @if (! $isReordering)
+                            @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns)
+                                @if ($actionsColumnLabel)
+                                    <x-tables::header-cell alignment="right">
+                                        {{ $actionsColumnLabel }}
+                                    </x-tables::header-cell>
+                                @else
+                                    <th class="w-5"></th>
+                                @endif
+                            @endif
+
+                            @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
+                                <x-tables::checkbox.cell>
+                                    <x-tables::checkbox
+                                        x-on:click="toggleSelectRecordsOnPage"
+                                        x-bind:checked="
+                                            let recordsOnPage = getRecordsOnPage()
+
+                                            if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
+                                                $el.checked = true
+
+                                                return 'checked'
+                                            }
+
+                                            $el.checked = false
+
+                                            return null
+                                        "
+                                    />
+                                </x-tables::checkbox.cell>
+                            @endif
+
+                            @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
+                                @if ($actionsColumnLabel)
+                                    <x-tables::header-cell alignment="right">
+                                        {{ $actionsColumnLabel }}
+                                    </x-tables::header-cell>
+                                @else
+                                    <th class="w-5"></th>
+                                @endif
                             @endif
                         @endif
                     </x-slot>
@@ -684,7 +719,7 @@
                                     <td></td>
                                 @endif
 
-                                @if ($isSelectionEnabled)
+                                @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                     <td></td>
                                 @endif
                             @endif
@@ -697,8 +732,14 @@
                                 </x-tables::cell>
                             @endforeach
 
-                            @if (count($actions) && (! $isReordering) && $actionsPosition === ActionsPosition::AfterCells)
-                                <td></td>
+                            @if (! $isReordering)
+                                @if (count($actions) && in_array($actionsPosition, [ActionsPosition::AfterColumns, ActionsPosition::AfterCells]))
+                                    <td></td>
+                                @endif
+
+                                @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
+                                    <td></td>
+                                @endif
                             @endif
                         </x-tables::row>
                     @endif
@@ -732,7 +773,7 @@
                                     'hidden' => ! $isReordering,
                                 ])">
                                     @if ($isReordering)
-                                        <x-tables::reorder.handle />
+                                        <x-tables::reorder.handle/>
                                     @endif
                                 </x-tables::reorder.cell>
 
@@ -749,7 +790,7 @@
                                     </x-tables::actions.cell>
                                 @endif
 
-                                @if ($isSelectionEnabled)
+                                @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                     @if ($isRecordSelectable($record))
                                         <x-tables::checkbox.cell :class="\Illuminate\Support\Arr::toCssClasses([
                                             'hidden' => $isReordering,
@@ -800,6 +841,35 @@
                                         />
                                     </x-tables::cell>
                                 @endforeach
+
+                                @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns)
+                                    <x-tables::actions.cell
+                                        :class="\Illuminate\Support\Arr::toCssClasses([
+                                            'hidden' => $isReordering,
+                                        ])"
+                                    >
+                                        <x-tables::actions
+                                            :actions="$actions"
+                                            :record="$record"
+                                        />
+                                    </x-tables::actions.cell>
+                                @endif
+
+                                @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
+                                    @if ($isRecordSelectable($record))
+                                        <x-tables::checkbox.cell :class="\Illuminate\Support\Arr::toCssClasses([
+                                            'hidden' => $isReordering,
+                                        ])">
+                                            <x-tables::checkbox
+                                                x-model="selectedRecords"
+                                                :value="$recordKey"
+                                                class="filament-tables-record-checkbox"
+                                            />
+                                        </x-tables::checkbox.cell>
+                                    @else
+                                        <x-tables::cell />
+                                    @endif
+                                @endif
 
                                 @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
                                     <x-tables::actions.cell

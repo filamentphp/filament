@@ -18,6 +18,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Filament\Tables\Actions\RecordCheckboxPosition;
 
 class Table extends ViewComponent
 {
@@ -56,7 +57,7 @@ class Table extends ViewComponent
         }
 
         if (! ($this->getContentGrid() || $this->hasColumnsLayout())) {
-            return Position::AfterCells;
+            return Position::AfterColumns;
         }
 
         $actions = $this->getActions();
@@ -405,6 +406,11 @@ class Table extends ViewComponent
     public function isSearchable(): bool
     {
         return $this->getLivewire()->isTableSearchable();
+    }
+
+    public function getRecordCheckboxPosition(): string
+    {
+        return $this->getLivewire()->getTableRecordCheckboxPosition();
     }
 
     public function isSearchableByColumn(): bool
