@@ -11,6 +11,7 @@
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isLabelHidden()"
+    has-nested-recursive-validation-rules
     :helper-text="$getHelperText()"
     :hint="$getHint()"
     :hint-action="$getHintAction()"
