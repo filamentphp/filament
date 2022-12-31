@@ -101,7 +101,7 @@ trait HasColumns
         return $this->getCachedTableColumns()[$name] ?? null;
     }
 
-    public function setColumnValue(string $column, string $record, $input): mixed
+    public function updateTableColumnState(string $column, string $record, $input): mixed
     {
         $column = $this->getCachedTableColumn($column);
 

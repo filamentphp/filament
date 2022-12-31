@@ -14,7 +14,7 @@
         type="checkbox"
         x-on:change="
             isLoading = true
-            response = await $wire.setColumnValue(@js($getName()), @js($recordKey), $event.target.checked)
+            response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), $event.target.checked)
             error = response?.error ?? undefined
             isLoading = false
         "

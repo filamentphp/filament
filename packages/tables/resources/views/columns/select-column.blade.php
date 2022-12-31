@@ -13,7 +13,7 @@
         x-model="state"
         x-on:change="
             isLoading = true
-            response = await $wire.setColumnValue(@js($getName()), @js($recordKey), $event.target.value)
+            response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), $event.target.value)
             error = response?.error ?? undefined
             if (! error) state = response
             isLoading = false
