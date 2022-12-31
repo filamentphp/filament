@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class CheckboxList extends Field
+class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
+    use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasOptions;
 
     /**

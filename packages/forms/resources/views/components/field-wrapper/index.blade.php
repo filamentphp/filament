@@ -5,6 +5,7 @@
     'labelPrefix' => null,
     'labelSrOnly' => null,
     'labelSuffix' => null,
+    'hasNestedRecursiveValidationRules' => false,
     'helperText' => null,
     'hint' => null,
     'hintAction' => null,
@@ -21,6 +22,7 @@
         $id ??= $field->getId();
         $label ??= $field->getLabel();
         $labelSrOnly ??= $field->isLabelHidden();
+        $hasNestedRecursiveValidationRules ??= $field instanceof \Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
         $helperText ??= $field->getHelperText();
         $hint ??= $field->getHint();
         $hintAction ??= $field->getHintAction();
@@ -71,9 +73,9 @@
 
         {{ $slot }}
 
-        @if ($errors->has($statePath))
+        @if ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")))
             <x-filament-forms::field-wrapper.error-message>
-                {{ $errors->first($statePath) }}
+                {{ $errors->first($statePath) ?? ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
             </x-filament-forms::field-wrapper.error-message>
         @endif
 
