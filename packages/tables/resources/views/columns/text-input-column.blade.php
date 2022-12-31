@@ -1,5 +1,9 @@
 <div
-    x-data="{ error: undefined }"
+    x-data="{
+        error: undefined,
+        state: '{{ $getState() }}',
+        isLoading: false
+    }"
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
@@ -7,16 +11,16 @@
     }}
 >
     <input
-        value="{{ $getState() }}"
-        type="{{ $getType() }}"
-        @disabled($isDisabled())
-        @if ($inputMode = $getInputMode()) inputmode="{{ $inputMode }}" @endif
-        @if ($placeholder = $getPlaceholder()) placeholder="{{ $placeholder }}" @endif
-        @if ($interval = $getStep()) step="{{ $interval }}" @endif
+        x-model="state"
         x-on:change="
-            response = await $wire.setColumnValue(@js($getName()), @js($recordKey), $event.target.value)
+            isLoading = true
+            response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), $event.target.value)
             error = response?.error ?? undefined
+            if (! error) state = response
+            isLoading = false
         "
+        x-bind:readonly="isLoading"
+        wire:loading.attr="readonly"
         x-tooltip="error"
         x-bind:class="{
             'border-gray-300 dark:border-gray-600': ! error,
@@ -26,6 +30,13 @@
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
                 ->merge($getExtraInputAttributes(), escape: false)
+                ->merge([
+                    'disabled' => $isDisabled(),
+                    'inputmode' => $getInputMode(),
+                    'placeholder' => $getPlaceholder(),
+                    'step' => $getStep(),
+                    'type' => $getType(),
+                ])
                 ->class([
                     'ml-0.5 text-gray-900 inline-block transition duration-75 rounded-lg shadow-sm sm:text-sm focus:ring-primary-500 focus:ring-1 focus:ring-inset focus:border-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
                     match ($getAlignment()) {
@@ -37,6 +48,5 @@
                     },
                 ])
         }}
-        wire:loading.attr="readonly"
     />
 </div>
