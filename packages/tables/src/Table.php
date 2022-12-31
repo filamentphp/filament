@@ -12,6 +12,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\Position;
+use Filament\Tables\Actions\RecordCheckboxPosition;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Layout\Component as ColumnLayoutComponent;
 use Filament\Tables\Contracts\HasTable;
@@ -31,7 +32,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use function Livewire\invade;
-use Filament\Tables\Actions\RecordCheckboxPosition;
 
 class Table extends ViewComponent
 {
