@@ -87,7 +87,7 @@ trait CanSelectRecords
         ));
     }
 
-    public function getTableRecordCheckboxPosition(): ?string
+    public function getTableRecordCheckboxPosition(): string
     {
         return RecordCheckboxPosition::RowStart;
     }

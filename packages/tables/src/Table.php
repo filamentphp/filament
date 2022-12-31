@@ -410,7 +410,7 @@ class Table extends ViewComponent
 
     public function getRecordCheckboxPosition(): string
     {
-        return $this->getLivewire()->getTableRecordCheckboxPosition() ?? RecordCheckboxPosition::RowStart;
+        return $this->getLivewire()->getTableRecordCheckboxPosition();
     }
 
     public function isSearchableByColumn(): bool
