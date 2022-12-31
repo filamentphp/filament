@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
 use Filament\Forms\Components\Field;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
@@ -564,9 +565,23 @@ trait CanBeValidated
      */
     public function dehydrateValidationRules(array &$rules): void
     {
+        $statePath = $this->getStatePath();
+
         if (count($componentRules = $this->getValidationRules())) {
-            $rules[$this->getStatePath()] = $componentRules;
+            $rules[$statePath] = $componentRules;
         }
+
+        if (! $this instanceof HasNestedRecursiveValidationRules) {
+            return;
+        }
+
+        $nestedRecursiveValidationRules = $this->getNestedRecursiveValidationRules();
+
+        if (! count($nestedRecursiveValidationRules)) {
+            return;
+        }
+
+        $rules["{$statePath}.*"] = $nestedRecursiveValidationRules;
     }
 
     public function dehydrateValidationAttributes(array &$attributes): void
