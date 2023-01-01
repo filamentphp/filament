@@ -32,7 +32,7 @@ trait HasActions
     }
 
     /**
-     * @param array<string, mixed> $arguments
+     * @param  array<string, mixed>  $arguments
      */
     public function callMountedTableAction(array $arguments = []): mixed
     {

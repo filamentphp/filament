@@ -58,7 +58,7 @@ trait InteractsWithActions
     }
 
     /**
-     * @param array<string, mixed> $arguments
+     * @param  array<string, mixed>  $arguments
      */
     public function callMountedAction(array $arguments = []): mixed
     {
@@ -115,7 +115,7 @@ trait InteractsWithActions
     }
 
     /**
-     * @param array<string, mixed> $arguments
+     * @param  array<string, mixed>  $arguments
      */
     public function mountAction(string $name, array $arguments = []): mixed
     {

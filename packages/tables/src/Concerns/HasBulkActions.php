@@ -25,7 +25,7 @@ trait HasBulkActions
     }
 
     /**
-     * @param array<string, mixed> $arguments
+     * @param  array<string, mixed>  $arguments
      */
     public function callMountedTableBulkAction(array $arguments = []): mixed
     {

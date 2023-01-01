@@ -54,7 +54,7 @@ trait HasFormComponentActions
     }
 
     /**
-     * @param array<string, mixed> $arguments
+     * @param  array<string, mixed>  $arguments
      */
     public function callMountedFormComponentAction(array $arguments = []): mixed
     {
@@ -120,7 +120,7 @@ trait HasFormComponentActions
     }
 
     /**
-     * @param array<string, mixed> $arguments
+     * @param  array<string, mixed>  $arguments
      */
     public function mountFormComponentAction(string $component, string $name, array $arguments = []): mixed
     {
