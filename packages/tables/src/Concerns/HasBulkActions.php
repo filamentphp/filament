@@ -24,7 +24,10 @@ trait HasBulkActions
     {
     }
 
-    public function callMountedTableBulkAction(?string $arguments = null): mixed
+    /**
+     * @param array<string, mixed> $arguments
+     */
+    public function callMountedTableBulkAction(array $arguments = []): mixed
     {
         $action = $this->getMountedTableBulkAction();
 
@@ -36,7 +39,7 @@ trait HasBulkActions
             return null;
         }
 
-        $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
+        $action->arguments($arguments);
 
         $form = $this->getMountedTableBulkActionForm();
 

@@ -3,6 +3,7 @@
 namespace Filament\Actions;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Js;
 
 class Action extends MountableAction implements Contracts\Groupable, Contracts\HasRecord, Contracts\SubmitsForm
 {
@@ -25,9 +26,8 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
         $argumentsParameter = '';
 
         if (count($arguments = $this->getArguments())) {
-            $argumentsParameter .= ', \'';
-            $argumentsParameter .= str(json_encode($arguments))->replace('"', '\\"');
-            $argumentsParameter .= '\'';
+            $argumentsParameter .= ', ';
+            $argumentsParameter .= Js::from($arguments);
         }
 
         return "mountAction('{$this->getName()}'{$argumentsParameter})";

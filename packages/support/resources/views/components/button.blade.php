@@ -66,7 +66,8 @@
         'ml-1 -mr-1.5 rtl:mr-1 rtl:-ml-1.5' => ($iconPosition === 'after') && ($size === 'sm') && (! $labelSrOnly),
     ]);
 
-    $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || (($type === 'submit') && filled($form));
+    $hasFileUploadLoadingIndicator = ($type === 'submit') && filled($form);
+    $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || $hasFileUploadLoadingIndicator;
 
     if ($hasLoadingIndicator) {
         $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click', $form)), ENT_QUOTES);
@@ -81,31 +82,32 @@
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
         @endif
-        x-data="{
-            form: null,
-            isUploadingFile: false,
-        }"
-        @unless ($disabled)
-            x-bind:class="{ 'opacity-70 cursor-wait': isUploadingFile }"
-        @endunless
-        x-init="
-            form = $el.closest('form')
+        @if ($hasFileUploadLoadingIndicator)
+            x-data="{
+                form: null,
+                isUploadingFile: false,
+            }"
+            @unless ($disabled)
+                x-bind:class="{ 'opacity-70 cursor-wait': isUploadingFile }"
+            @endunless
+            x-init="
+                form = $el.closest('form')
 
-            form?.addEventListener('file-upload-started', () => {
-                isUploadingFile = true
-            })
+                form?.addEventListener('file-upload-started', () => {
+                    isUploadingFile = true
+                })
 
-            form?.addEventListener('file-upload-finished', () => {
-                isUploadingFile = false
-            })
-        "
+                form?.addEventListener('file-upload-finished', () => {
+                    isUploadingFile = false
+                })
+            "
+        @endif
         {{
             $attributes
                 ->merge([
                     'disabled' => $disabled,
                     'type' => $type,
                     'wire:loading.attr' => 'disabled',
-                    'wire:loading.class.delay' => $hasLoadingIndicator ? 'opacity-70 cursor-wait' : null,
                     'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
                     'x-bind:disabled' => 'isUploadingFile',
                 ], escape: false)
@@ -126,8 +128,8 @@
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
-                    x-cloak
-                    wire:loading.delay
+                    x-cloak=""
+                    wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
                     :class="$iconClasses . ' ' . $iconSize"
                 />
@@ -135,10 +137,10 @@
         @endif
 
         <span class="flex items-center gap-1">
-            @if (($type === 'submit') && filled($form))
+            @if ($hasFileUploadLoadingIndicator)
                 <x-filament::loading-indicator
                     x-show="isUploadingFile"
-                    x-cloak
+                    x-cloak=""
                     :class="$iconClasses . ' ' . $iconSize"
                 />
 
@@ -174,8 +176,8 @@
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
-                    x-cloak
-                    wire:loading.delay
+                    x-cloak=""
+                    wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
                     :class="$iconClasses . ' ' . $iconSize"
                 />

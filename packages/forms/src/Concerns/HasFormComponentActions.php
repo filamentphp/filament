@@ -53,7 +53,10 @@ trait HasFormComponentActions
         );
     }
 
-    public function callMountedFormComponentAction(?string $arguments = null): mixed
+    /**
+     * @param array<string, mixed> $arguments
+     */
+    public function callMountedFormComponentAction(array $arguments = []): mixed
     {
         $action = $this->getMountedFormComponentAction();
 
@@ -67,7 +70,7 @@ trait HasFormComponentActions
 
         $action->arguments(array_merge(
             $this->mountedFormComponentActionArguments ?? [],
-            $arguments ? json_decode($arguments, associative: true) : [],
+            $arguments,
         ));
 
         $form = $this->getMountedFormComponentActionForm();
@@ -116,10 +119,13 @@ trait HasFormComponentActions
         return $this->getMountedFormComponentActionComponent()?->getAction($this->mountedFormComponentAction);
     }
 
-    public function mountFormComponentAction(string $component, string $name, ?string $arguments = null): mixed
+    /**
+     * @param array<string, mixed> $arguments
+     */
+    public function mountFormComponentAction(string $component, string $name, array $arguments = []): mixed
     {
         $this->mountedFormComponentAction = $name;
-        $this->mountedFormComponentActionArguments = $arguments ? json_decode($arguments, associative: true) : [];
+        $this->mountedFormComponentActionArguments = $arguments;
         $this->mountedFormComponentActionComponent = $component;
 
         $action = $this->getMountedFormComponentAction();

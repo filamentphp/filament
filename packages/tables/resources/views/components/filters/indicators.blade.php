@@ -21,7 +21,6 @@
                         <button
                             wire:click="removeTableFilter('{{ $filter }}'{{ $field ? ' , \'' . $field . '\'' : null }})"
                             wire:loading.attr="disabled"
-                            wire:loading.class="cursor-wait"
                             wire:target="removeTableFilter"
                             type="button"
                             class="ml-1 -mr-2 rtl:mr-1 rtl:-ml-2 p-1 -my-1 hover:bg-gray-500/10 rounded-full"
@@ -53,12 +52,12 @@
                         alias="filament-tables::filters.buttons.remove-all"
                         size="h-5 w-5"
                         :x-tooltip.raw="__('filament-tables::table.filters.buttons.remove_all.tooltip')"
-                        wire:loading.remove.delay
+                        wire:loading.remove.delay=""
                         wire:target="removeTableFilters,removeTableFilter"
                     />
 
                     <x-filament::loading-indicator
-                        wire:loading.delay
+                        wire:loading.delay=""
                         wire:target="removeTableFilters,removeTableFilter"
                         class="w-5 h-5"
                     />
