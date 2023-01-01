@@ -19,6 +19,11 @@ trait HasFormComponentActions
     /**
      * @var array<string, mixed> | null
      */
+    public ?array $mountedFormComponentActionArguments = [];
+
+    /**
+     * @var array<string, mixed> | null
+     */
     public ?array $mountedFormComponentActionData = [];
 
     public ?string $mountedFormComponentActionComponent = null;
@@ -60,7 +65,10 @@ trait HasFormComponentActions
             return null;
         }
 
-        $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
+        $action->arguments(array_merge(
+            $this->mountedFormComponentActionArguments ?? [],
+            $arguments ? json_decode($arguments, associative: true) : [],
+        ));
 
         $form = $this->getMountedFormComponentActionForm();
 
@@ -108,10 +116,11 @@ trait HasFormComponentActions
         return $this->getMountedFormComponentActionComponent()?->getAction($this->mountedFormComponentAction);
     }
 
-    public function mountFormComponentAction(string $component, string $name): mixed
+    public function mountFormComponentAction(string $component, string $name, ?string $arguments = null): mixed
     {
-        $this->mountedFormComponentActionComponent = $component;
         $this->mountedFormComponentAction = $name;
+        $this->mountedFormComponentActionArguments = $arguments ? json_decode($arguments, associative: true) : [];
+        $this->mountedFormComponentActionComponent = $component;
 
         $action = $this->getMountedFormComponentAction();
 
@@ -122,6 +131,8 @@ trait HasFormComponentActions
         if ($action->isDisabled()) {
             return null;
         }
+
+        $action->arguments($this->mountedFormComponentActionArguments);
 
         $this->cacheForm(
             'mountedFormComponentActionForm',

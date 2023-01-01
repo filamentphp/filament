@@ -19,14 +19,14 @@ class TestsActions
 {
     public function mountAction(): Closure
     {
-        return function (string $name): static {
+        return function (string $name, array $arguments = []): static {
             /** @phpstan-ignore-next-line */
             $name = $this->parseActionName($name);
 
             /** @phpstan-ignore-next-line */
             $this->assertActionVisible($name);
 
-            $this->call('mountAction', $name);
+            $this->call('mountAction', $name, count($arguments) ? json_encode($arguments) : null);
 
             if ($this->instance()->mountedAction === null) {
                 $this->assertNotDispatchedBrowserEvent('open-modal');
@@ -68,7 +68,7 @@ class TestsActions
     {
         return function (string $name, array $data = [], array $arguments = []): static {
             /** @phpstan-ignore-next-line */
-            $this->mountAction($name);
+            $this->mountAction($name, $arguments);
 
             if (! $this->instance()->getMountedAction()) {
                 return $this;
@@ -93,7 +93,7 @@ class TestsActions
                 return $this;
             }
 
-            $this->call('callMountedAction', json_encode($arguments));
+            $this->call('callMountedAction', count($arguments) ? json_encode($arguments) : null);
 
             if ($this->get('mountedAction') !== $action->getName()) {
                 $this->assertDispatchedBrowserEvent('close-modal', [

@@ -41,6 +41,17 @@ it('can set default action data when mounted', function () {
         ]);
 });
 
+it('can mount an action with arguments', function () {
+    livewire(Actions::class)
+        ->mountAction('arguments', arguments: [
+            'payload' => $payload = Str::random(),
+        ])
+        ->callMountedAction()
+        ->assertEmitted('arguments-called', [
+            'payload' => $payload,
+        ]);
+});
+
 it('can call an action with arguments', function () {
     livewire(Actions::class)
         ->callAction('arguments', arguments: [
