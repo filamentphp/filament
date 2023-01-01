@@ -26,7 +26,7 @@ trait CanBeMounted
     }
 
     /**
-     * @param array<string, mixed> | Closure $data
+     * @param  array<string, mixed> | Closure  $data
      */
     public function fillForm(array | Closure $data): static
     {

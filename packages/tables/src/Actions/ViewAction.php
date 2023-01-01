@@ -3,7 +3,6 @@
 namespace Filament\Tables\Actions;
 
 use Closure;
-use Filament\Forms\Form;
 use Illuminate\Database\Eloquent\Model;
 
 class ViewAction extends Action
