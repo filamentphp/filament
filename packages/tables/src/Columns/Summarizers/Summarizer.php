@@ -67,7 +67,7 @@ class Summarizer extends ViewComponent
             $relationship = $column->getRelationship($query->getModel());
             $attribute = $column->getRelationshipAttribute();
 
-            $inverseRelationship = $column->getInverseRelationshipName ?? (string) str(class_basename($relationship->getParent()::class))
+            $inverseRelationship = $column->getInverseRelationshipName() ?? (string) str(class_basename($relationship->getParent()::class))
                 ->plural()
                 ->camel();
 
