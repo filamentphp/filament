@@ -8,6 +8,7 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
 {
     use Concerns\BelongsToLivewire;
     use Concerns\CanSubmitForm;
+    use Concerns\HasMountableArguments;
     use Concerns\InteractsWithRecord;
 
     public function getLivewireCallActionName(): string
@@ -21,7 +22,15 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
             return null;
         }
 
-        return "mountAction('{$this->getName()}')";
+        $argumentsParameter = '';
+
+        if (count($arguments = $this->getArguments())) {
+            $argumentsParameter .= ', \'';
+            $argumentsParameter .= str(json_encode($arguments))->replace('"', '\\"');
+            $argumentsParameter .= '\'';
+        }
+
+        return "mountAction('{$this->getName()}'{$argumentsParameter})";
     }
 
     /**

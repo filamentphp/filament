@@ -195,7 +195,7 @@ public function table(Table $table): Table
 }
 ```
 
-## Cell actions and URLs
+## Column actions and URLs
 
 When a cell is clicked, you may run an "action", or open a URL.
 

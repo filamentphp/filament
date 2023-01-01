@@ -2,11 +2,13 @@
 
 namespace Filament\Forms\Components\Actions;
 
+use Filament\Actions\Concerns\HasMountableArguments;
 use Filament\Actions\MountableAction;
 
 class Action extends MountableAction
 {
     use Concerns\BelongsToComponent;
+    use HasMountableArguments;
 
     protected function setUp(): void
     {
@@ -26,7 +28,15 @@ class Action extends MountableAction
             return null;
         }
 
-        return "mountFormComponentAction('{$this->getComponent()->getStatePath()}', '{$this->getName()}')";
+        $argumentsParameter = '';
+
+        if (count($arguments = $this->getArguments())) {
+            $argumentsParameter .= ', \'';
+            $argumentsParameter .= str(json_encode($arguments))->replace('"', '\\"');
+            $argumentsParameter .= '\'';
+        }
+
+        return "mountFormComponentAction('{$this->getComponent()->getStatePath()}', '{$this->getName()}'{$argumentsParameter})";
     }
 
     /**

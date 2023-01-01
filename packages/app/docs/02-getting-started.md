@@ -107,7 +107,7 @@ class Treatment extends Model
 }
 ```
 
-## Managing patients with a resource
+## Introducing resources
 
 In Filament, resources are static classes that are used to build CRUD interfaces for your Eloquent models. They describe how administrators should be able to interact with data from your app - using tables and forms.
 
@@ -133,7 +133,7 @@ This will create several files in the `app/Filament/Resources` directory:
 
 Visit `/admin/patients` in your browser and observe that a new page has been added to the sidebar - "Patients".
 
-### Setting up the patient form
+### Setting up the resource form
 
 If you open the `PatientResource.php` file, you can see a `form()` method with an empty `schema([...])` array. You can add form fields to this schema, which will then be used when you add new patients to the system, or edit them.
 
@@ -424,7 +424,7 @@ public static function table(Table $table): Table
 
 Now, visit the patients list again. In the top right corner of the table, a new filter icon will open a dropdown which contains your filters. Try filtering your patients by type!
 
-## Managing treatments with a relation manager
+## Introducing relation managers
 
 At the moment, patients can be associated with their owners. This is as far as we've gone so far with managing relationships with Filament. But what happens if we want a third level? Patients come to the vet practice for treatment, and the system should be able to record these treatments and associate them with a patient.
 
@@ -629,7 +629,7 @@ public function table(Table $table): Table
 }
 ```
 
-## Adding patient statistics to your Dashboard
+## Introducing widgets
 
 Filament has "widgets" - which are components that you can use to display information, especially statistics. Widgets typically get added to the Dashboard of the app, but you can add them to any page you wish, including resource pages. Filament includes built-in widgets, like the [stats widget](../dashboard/stats) to render important statistics in a simple card, [chart widget](../dashboard/charts) which can render an interactive chart, and [table widget](../dashboard/tables) which allows you to easily embed the table builder.
 

@@ -3,7 +3,6 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Filament\Forms\ComponentContainer;
 use Illuminate\Database\Eloquent\Model;
 
 trait CanReplicateRecords
@@ -36,13 +35,7 @@ trait CanReplicateRecords
 
         $this->successNotificationTitle(__('filament-actions::replicate.single.messages.replicated'));
 
-        $this->mountUsing(function (Model $record, ?ComponentContainer $form = null): void {
-            if (! $form) {
-                return;
-            }
-
-            $form->fill($record->attributesToArray());
-        });
+        $this->fillForm(fn (Model $record): array => $record->attributesToArray());
 
         $this->action(function () {
             $result = $this->process(function (Model $record) {

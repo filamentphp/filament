@@ -27,6 +27,11 @@ trait InteractsWithActions
     /**
      * @var array<string, mixed> | null
      */
+    public ?array $mountedActionArguments = [];
+
+    /**
+     * @var array<string, mixed> | null
+     */
     public ?array $mountedActionData = [];
 
     /**
@@ -64,7 +69,10 @@ trait InteractsWithActions
             return null;
         }
 
-        $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
+        $action->arguments(array_merge(
+            $this->mountedActionArguments ?? [],
+            $arguments ? json_decode($arguments, associative: true) : [],
+        ));
 
         $form = $this->getMountedActionForm();
 
@@ -103,9 +111,10 @@ trait InteractsWithActions
         return $result;
     }
 
-    public function mountAction(string $name): mixed
+    public function mountAction(string $name, ?string $arguments = null): mixed
     {
         $this->mountedAction = $name;
+        $this->mountedActionArguments = $arguments ? json_decode($arguments, associative: true) : [];
 
         $action = $this->getMountedAction();
 
@@ -116,6 +125,8 @@ trait InteractsWithActions
         if ($action->isDisabled()) {
             return null;
         }
+
+        $action->arguments($this->mountedActionArguments);
 
         $this->cacheForm(
             'mountedActionForm',
