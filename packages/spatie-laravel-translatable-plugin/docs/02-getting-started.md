@@ -39,7 +39,7 @@ class ListBlogPosts extends ListRecords
 {
     use ListRecords\Concerns\Translatable;
     
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\LocaleSwitcher::make(),
@@ -59,7 +59,7 @@ class CreateBlogPost extends CreateRecord
 {
     use CreateRecord\Concerns\Translatable;
     
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\LocaleSwitcher::make(),
@@ -79,7 +79,7 @@ class EditBlogPost extends EditRecord
 {
     use EditRecord\Concerns\Translatable;
     
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\LocaleSwitcher::make(),
@@ -101,7 +101,7 @@ class ViewBlogPost extends ViewRecord
 {
     use ViewRecord\Concerns\Translatable;
     
-    protected function getActions(): array
+    protected function getHeaderActions(): array
     {
         return [
             Actions\LocaleSwitcher::make(),

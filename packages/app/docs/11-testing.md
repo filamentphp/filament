@@ -317,7 +317,7 @@ it('can list posts', function () {
 
 ## Page actions
 
-You can call a [page action](pages/actions) by passing its name or class to `callPageAction()`:
+You can call a [page action](pages#actions) by passing its name or class to `callPageAction()`:
 
 ```php
 use function Pest\Livewire\livewire;

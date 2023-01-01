@@ -2,6 +2,8 @@
 title: Adding a form to a Livewire component
 ---
 
+## Setting up the Livewire component
+
 First, generate a new Livewire component:
 
 ```bash
@@ -98,7 +100,7 @@ Finally, in your Livewire component's view, render the form:
 </div>
 ```
 
-> Note: `<x-filament-actions::modals />` is used to render the modals output by some of the form components. The code can be put anywhere outside of the `<form>` element, as long as it's within the Livewire component.
+> Note: `<x-filament-actions::modals />` is used to render form component [action modals](actions). The code can be put anywhere outside of the `<form>` element, as long as it's within the Livewire component.
 
 Visit your Livewire component in the browser, and you should see the form components from `schema()`:
 

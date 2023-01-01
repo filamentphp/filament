@@ -2,6 +2,8 @@
 title: Adding a table to a Livewire component
 ---
 
+## Setting up the Livewire component
+
 First, generate a new Livewire component:
 
 ```bash

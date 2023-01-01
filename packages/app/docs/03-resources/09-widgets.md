@@ -57,7 +57,7 @@ class ListCustomers extends ListRecords
 
 `getHeaderWidgets()` returns an array of widgets to display above the page content, whereas `getFooterWidgets()` are displayed below.
 
-If you'd like to customize the number of grid columns used to arrange widgets, check out the [Pages documentation](../pages/widgets#customizing-the-widgets-grid).
+If you'd like to customize the number of grid columns used to arrange widgets, check out the [Pages documentation](../pages#customizing-the-widgets-grid).
 
 ## Accessing the current record
 

@@ -187,14 +187,14 @@ TernaryFilter::make('trashed')
 You may use components from the [Form Builder](/docs/forms/fields) to create custom filter forms. The data from the custom filter form is available in the `$data` array of the `query()` callback:
 
 ```php
-use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 
 Filter::make('created_at')
     ->form([
-        Forms\Components\DatePicker::make('created_from'),
-        Forms\Components\DatePicker::make('created_until'),
+        DatePicker::make('created_from'),
+        DatePicker::make('created_until'),
     ])
     ->query(function (Builder $query, array $data): Builder {
         return $query
@@ -214,14 +214,14 @@ Filter::make('created_at')
 If you wish to set a default filter value, you may use the `default()` method on the form component:
 
 ```php
-use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 
 Filter::make('created_at')
     ->form([
-        Forms\Components\DatePicker::make('created_from'),
-        Forms\Components\DatePicker::make('created_until')->default(now()),
+        DatePicker::make('created_from'),
+        DatePicker::make('created_until')->default(now()),
     ])
 ```
 

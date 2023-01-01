@@ -391,7 +391,7 @@ class EditUser extends EditRecord
 }
 ```
 
-To view the entire actions API, please visit the [pages section](../pages/actions).
+To view the entire actions API, please visit the [pages section](../pages#actions).
 
 ## Custom views
 

@@ -34,14 +34,14 @@ class ViewAction extends Action
 
         $this->disableForm();
 
-        $this->mountUsing(function (Form $form, Model $record): void {
+        $this->fillForm(function (Model $record): array {
             $data = $record->attributesToArray();
 
             if ($this->mutateRecordDataUsing) {
                 $data = $this->evaluate($this->mutateRecordDataUsing, ['data' => $data]);
             }
 
-            $form->fill($data);
+            return $data;
         });
 
         $this->action(static function (): void {
