@@ -1,7 +1,7 @@
 <x-dynamic-component
-        :component="$getFieldWrapperView()"
-        :field="$field"
-        :label-sr-only="$isAvatar() || $isLabelHidden()"
+    :component="$getFieldWrapperView()"
+    :field="$field"
+    :label-sr-only="$isAvatar() || $isLabelHidden()"
 >
     @php
         $imageCropAspectRatio = $getImageCropAspectRatio();
@@ -14,10 +14,10 @@
     @endphp
 
     <div
-            x-ignore
-            ax-load
-            ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
-            x-data="fileUploadFormComponent({
+        x-ignore
+        ax-load
+        ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
+        x-data="fileUploadFormComponent({
             acceptedFileTypes: {{ json_encode($getAcceptedFileTypes()) }},
             canDownload: {{ $canDownload() ? 'true' : 'false' }},
             canOpen: {{ $canOpen() ? 'true' : 'false' }},
@@ -62,32 +62,32 @@
                 }, error, progress)
             },
         })"
-            wire:ignore
-            style="min-height: {{ $isAvatar() ? '8em' : ($getPanelLayout() === 'compact' ? '2.625em' : '4.75em') }}"
-            {{
-                $attributes
-                    ->merge([
-                        'id' => $getId(),
-                    ], escape: false)
-                    ->merge($getExtraAttributes(), escape: false)
-                    ->merge($getExtraAlpineAttributes(), escape: false)
-                    ->class([
-                        'filament-forms-file-upload-component',
-                        'w-32 mx-auto' => $isAvatar(),
-                    ])
-            }}
+        wire:ignore
+        style="min-height: {{ $isAvatar() ? '8em' : ($getPanelLayout() === 'compact' ? '2.625em' : '4.75em') }}"
+        {{
+            $attributes
+                ->merge([
+                    'id' => $getId(),
+                ], escape: false)
+                ->merge($getExtraAttributes(), escape: false)
+                ->merge($getExtraAlpineAttributes(), escape: false)
+                ->class([
+                    'filament-forms-file-upload-component',
+                    'w-32 mx-auto' => $isAvatar(),
+                ])
+        }}
     >
         <input
-                x-ref="input"
-                {{
-                    $getExtraInputAttributeBag()
-                        ->merge([
-                            'disabled' => $isDisabled(),
-                            'dusk' => "filament.forms.{$statePath}",
-                            'multiple' => $isMultiple(),
-                            'type' => 'file',
-                        ], escape: false)
-                }}
+            x-ref="input"
+            {{
+                $getExtraInputAttributeBag()
+                    ->merge([
+                        'disabled' => $isDisabled(),
+                        'dusk' => "filament.forms.{$statePath}",
+                        'multiple' => $isMultiple(),
+                        'type' => 'file',
+                    ], escape: false)
+            }}
         />
     </div>
 </x-dynamic-component>
