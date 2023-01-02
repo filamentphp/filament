@@ -3,6 +3,7 @@
 namespace Filament\Support\Assets;
 
 use Composer\InstalledVersions;
+use Throwable;
 
 abstract class Asset
 {
@@ -52,7 +53,11 @@ abstract class Asset
 
     public function getVersion(): string
     {
-        return InstalledVersions::getVersion($this->getPackage() ?? 'filament/support');
+        try {
+            return InstalledVersions::getVersion($this->getPackage());
+        } catch (Throwable $exception) {
+            return InstalledVersions::getVersion('filament/support');
+        }
     }
 
     abstract public function getPublicPath(): string;
