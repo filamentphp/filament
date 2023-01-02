@@ -79,7 +79,7 @@ class MakePageCommand extends Command
             $context = (count($contexts) > 1) ? $contexts[$this->choice(
                 'Which context would you like to create this in?',
                 array_map(
-                    fn (Context $context) => $context->getId(),
+                    fn (Context $context): string => $context->getId(),
                     $contexts,
                 ),
                 Filament::getDefaultContext()->getId(),
@@ -94,7 +94,7 @@ class MakePageCommand extends Command
         $view = str($page)
             ->prepend(
                 (string) str($resource === null ? "{$namespace}\\" : "{$resourceNamespace}\\{$resource}\\pages\\")
-                    ->replace('App\\', '')
+                    ->replaceFirst('App\\', '')
             )
             ->replace('\\', '/')
             ->explode('/')

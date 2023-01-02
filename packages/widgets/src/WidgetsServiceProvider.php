@@ -14,6 +14,7 @@ class WidgetsServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('filament-widgets')
+            ->hasCommands($this->getCommands())
             ->hasViews();
     }
 
@@ -25,5 +26,29 @@ class WidgetsServiceProvider extends PackageServiceProvider
                 AlpineComponent::make('stats-overview/card/chart', __DIR__ . '/../dist/components/stats-overview/card/chart.js'),
             ], 'filament/widgets');
         });
+    }
+
+    /**
+     * @return array<class-string>
+     */
+    protected function getCommands(): array
+    {
+        $commands = [
+            Commands\MakeWidgetCommand::class,
+        ];
+
+        $aliases = [];
+
+        foreach ($commands as $command) {
+            $class = 'Filament\\Widgets\\Commands\\Aliases\\' . class_basename($command);
+
+            if (! class_exists($class)) {
+                continue;
+            }
+
+            $aliases[] = $class;
+        }
+
+        return array_merge($commands, $aliases);
     }
 }

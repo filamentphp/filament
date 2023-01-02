@@ -1,10 +1,10 @@
 <?php
 
-namespace Filament\Commands;
+namespace Filament\Widgets\Commands;
 
-use Arr;
 use Filament\Context;
 use Filament\Facades\Filament;
+use Filament\Resources\Resource;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
@@ -34,52 +34,60 @@ class MakeWidgetCommand extends Command
         $resource = null;
         $resourceClass = null;
 
-        $resourceInput = $this->option('resource') ?? $this->ask('(Optional) Resource (e.g. `BlogPostResource`)');
+        if (class_exists(Resource::class)) {
+            $resourceInput = $this->option('resource') ?? $this->ask('(Optional) Resource (e.g. `BlogPostResource`)');
 
-        if ($resourceInput !== null) {
-            $resource = (string) str($resourceInput)
-                ->studly()
-                ->trim('/')
-                ->trim('\\')
-                ->trim(' ')
-                ->replace('/', '\\');
+            if ($resourceInput !== null) {
+                $resource = (string) str($resourceInput)
+                    ->studly()
+                    ->trim('/')
+                    ->trim('\\')
+                    ->trim(' ')
+                    ->replace('/', '\\');
 
-            if (! str($resource)->endsWith('Resource')) {
-                $resource .= 'Resource';
+                if (! str($resource)->endsWith('Resource')) {
+                    $resource .= 'Resource';
+                }
+
+                $resourceClass = (string) str($resource)
+                    ->afterLast('\\');
+            }
+        }
+
+        $context = null;
+
+        if (class_exists(Context::class)) {
+            $context = $this->option('context');
+
+            if ($context) {
+                $context = Filament::getContext($context);
             }
 
-            $resourceClass = (string) str($resource)
-                ->afterLast('\\');
+            if (! $context) {
+                $contexts = Filament::getContexts();
+
+                /** @var ?Context $context */
+                $context = $contexts[$this->choice(
+                    'Where would you like to create this widget?',
+                    array_unique(array_merge(
+                        array_map(
+                            fn (Context $context): string => $context->getWidgetNamespace() ?? 'App\\Filament\\Widgets',
+                            $contexts,
+                        ),
+                        ['' => 'App\\Http\\Livewire' . ($widgetNamespace ? '\\' . $widgetNamespace : '')],
+                    )),
+                )] ?? null;
+            }
         }
 
-        $context = $this->option('context');
-
-        if ($context) {
-            $context = Filament::getContext($context);
-        }
-
-        if (! $context) {
-            $contexts = Filament::getContexts();
-
-            /** @var Context $context */
-            $context = (count($contexts) > 1) ? $contexts[$this->choice(
-                'Which context would you like to create this in?',
-                array_map(
-                    fn (Context $context) => $context->getId(),
-                    $contexts,
-                ),
-                Filament::getDefaultContext()->getId(),
-            )] : Arr::first($contexts);
-        }
-
-        $path = $context->getWidgetDirectory() ?? app_path('Filament/Widgets/');
-        $namespace = $context->getWidgetNamespace() ?? 'App\\Filament\\Widgets';
-        $resourcePath = $context->getResourceDirectory() ?? app_path('Filament/Resources/');
-        $resourceNamespace = $context->getResourceNamespace() ?? 'App\\Filament\\Resources';
+        $path = $context ? ($context->getWidgetDirectory() ?? app_path('Filament/Widgets/')) : app_path('Http/Livewire/');
+        $namespace = $context ? ($context->getWidgetNamespace() ?? 'App\\Filament\\Widgets') : 'App\\Http\\Livewire';
+        $resourcePath = $context ? ($context->getResourceDirectory() ?? app_path('Filament/Resources/')) : null;
+        $resourceNamespace = $context ? ($context->getResourceNamespace() ?? 'App\\Filament\\Resources') : null;
 
         $view = str($widget)->prepend(
-            (string) str($resource === null ? "{$namespace}\\" : "{$resourceNamespace}\\{$resource}\\widgets\\")
-                ->replace('App\\', '')
+            (string) str($resource === null ? ($context ? "{$namespace}\\" : 'livewire\\') : "{$resourceNamespace}\\{$resource}\\widgets\\")
+                ->replaceFirst('App\\', '')
         )
             ->replace('\\', '/')
             ->explode('/')
