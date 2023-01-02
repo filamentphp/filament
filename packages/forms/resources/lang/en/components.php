@@ -219,7 +219,7 @@ return [
         'buttons' => [
 
             'add_row' => [
-                'label' => 'Add Row',
+                'label' => 'Add row',
             ],
 
             'add_column' => [
