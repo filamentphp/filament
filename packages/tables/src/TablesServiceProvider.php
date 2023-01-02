@@ -65,7 +65,7 @@ class TablesServiceProvider extends PluginServiceProvider
 
     protected function getAssetPackage(): ?string
     {
-        return 'tables';
+        return 'filament/tables';
     }
 
     /**

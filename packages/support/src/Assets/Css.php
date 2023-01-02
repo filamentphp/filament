@@ -24,7 +24,7 @@ class Css extends Asset
             return $this->getPath();
         }
 
-        $href = '/css/filament/';
+        $href = '/css/';
 
         $package = $this->getPackage();
 
@@ -63,6 +63,6 @@ class Css extends Asset
 
         $path .= "{$this->getId()}.css";
 
-        return public_path("css/filament/{$path}");
+        return public_path("css/{$path}");
     }
 }

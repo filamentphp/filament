@@ -109,7 +109,7 @@
                     'type' => $type,
                     'wire:loading.attr' => 'disabled',
                     'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
-                    'x-bind:disabled' => 'isUploadingFile',
+                    'x-bind:disabled' => $hasFileUploadLoadingIndicator ? 'isUploadingFile' : false,
                 ], escape: false)
                 ->class($buttonClasses)
         }}

@@ -56,7 +56,7 @@ class FormsServiceProvider extends PluginServiceProvider
 
     protected function getAssetPackage(): ?string
     {
-        return 'forms';
+        return 'filament/forms';
     }
 
     /**
