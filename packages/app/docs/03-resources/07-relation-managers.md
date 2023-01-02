@@ -4,13 +4,13 @@ title: Managing relationships
 
 ## Choosing the right tool for the job
 
-Filament provides many ways to manage relationships in the admin panel. Which feature you should use depends on the type of relationship you are managing, and which UI you are looking for.
+Filament provides many ways to manage relationships in the app. Which feature you should use depends on the type of relationship you are managing, and which UI you are looking for.
 
 ### Relation managers - interactive tables underneath your resource forms
 
 > These are compatible with `HasMany`, `HasManyThrough`, `BelongsToMany`, `MorphMany` and `MorphToMany` relationships.
 
-(Relation managers)[#creating-a-relation-manager] are interactive tables that allow administrators to list, create, attach, associate, edit, detach, dissociate and delete related records without leaving the resource's Edit or View page.
+[Relation managers](#creating-a-relation-manager) are interactive tables that allow administrators to list, create, attach, associate, edit, detach, dissociate and delete related records without leaving the resource's Edit or View page.
 
 ### Select & checkbox list - choose from existing records or create a new one
 
@@ -63,7 +63,7 @@ php artisan make:filament-relation-manager CategoryResource posts title
 - `posts` is the name of the relationship you want to manage.
 - `title` is the name of the attribute that will be used to identify posts.
 
-This will create a `CategoryResource/RelationManagers/PostsRelationManager.php` file. This contains a class where you are able to define a [form](getting-started#forms) and [table](getting-started#tables) for your relation manager:
+This will create a `CategoryResource/RelationManagers/PostsRelationManager.php` file. This contains a class where you are able to define a [form](getting-started#forms) and [table](getting-started#table) for your relation manager:
 
 ```php
 use Filament\Forms;
@@ -76,7 +76,6 @@ public function form(Form $form): Form
     return $form
         ->schema([
             Forms\Components\TextInput::make('title')->required(),
-            Forms\Components\MarkdownEditor::make('content'),
             // ...
         ]);
 }
@@ -102,13 +101,26 @@ public static function getRelations(): array
 }
 ```
 
-For relationships with unconventional naming conventions, you may wish to include the `$inverseRelationship` property on the relation manager:
+Once a table and form have been defined for the relation manager, visit the [Edit](editing-records) or [View](viewing-records) page of your resource to see it in action.
+
+### Unconventional inverse relationship names
+
+For inverse relationships that do not follow Laravel's naming guidelines, you may wish to use the `inverseRelationship()` method on the table:
 
 ```php
-protected static ?string $inverseRelationship = 'section'; // Since the inverse related model is `Category`, this is normally `category`, not `section`.
-```
+use Filament\Tables;
+use Filament\Tables\Table;
 
-Once a table and form have been defined for the relation manager, visit the [Edit](editing-records) or [View](viewing-records) page of your resource to see it in action.
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            Tables\Columns\TextColumn::make('title'),
+            // ...
+        ])
+        ->inverseRelationship('section'); // Since the inverse related model is `Category`, this is normally `category`, not `section`.
+}
+```
 
 ### Handling soft deletes
 

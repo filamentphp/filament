@@ -111,8 +111,8 @@ trait HasAffixes
 
         return array_merge(
             parent::getActions(),
-            $prefixAction ? [$prefixAction->getName() => $prefixAction->component($this)] : [],
-            $suffixAction ? [$suffixAction->getName() => $suffixAction->component($this)] : [],
+            $prefixAction ? [$prefixAction->getName() => $prefixAction] : [],
+            $suffixAction ? [$suffixAction->getName() => $suffixAction] : [],
         );
     }
 }

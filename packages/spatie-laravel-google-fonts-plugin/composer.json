@@ -1,0 +1,26 @@
+{
+    "name": "filament/spatie-laravel-google-fonts-plugin",
+    "description": "Filament support for `spatie/laravel-google-fonts`.",
+    "license": "MIT",
+    "homepage": "https://github.com/filamentphp/filament",
+    "support": {
+        "issues": "https://github.com/filamentphp/filament/issues",
+        "source": "https://github.com/filamentphp/filament"
+    },
+    "require": {
+        "php": "^8.0",
+        "illuminate/contracts": "^9.0",
+        "illuminate/support": "^9.0",
+        "spatie/laravel-google-fonts": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Filament\\FontProviders\\": "src"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

@@ -22,6 +22,7 @@
                     :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
                     rel="prev"
                     :icon="$previousArrowIcon"
+                    icon-alias="tables::pagination.buttons.previous"
                     :label="__('filament-tables::table.pagination.buttons.previous.label')"
                 />
             @endif
@@ -37,6 +38,7 @@
                     :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
                     rel="next"
                     :icon="$nextArrowIcon"
+                    icon-alias="tables::pagination.buttons.next"
                     :label="__('filament-tables::table.pagination.buttons.next.label')"
                 />
             @endif

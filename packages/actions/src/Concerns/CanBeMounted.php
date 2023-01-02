@@ -4,6 +4,7 @@ namespace Filament\Actions\Concerns;
 
 use Closure;
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Form;
 
 trait CanBeMounted
 {
@@ -20,6 +21,18 @@ trait CanBeMounted
     public function mountUsing(?Closure $callback): static
     {
         $this->mountUsing = $callback;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<string, mixed> | Closure  $data
+     */
+    public function fillForm(array | Closure $data): static
+    {
+        $this->mountUsing(function (Form $form) use ($data) {
+            $form->fill($this->evaluate($data));
+        });
 
         return $this;
     }

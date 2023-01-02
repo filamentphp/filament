@@ -201,7 +201,7 @@
                                                     alias="filament-forms::components.builder.buttons.expand-item"
                                                     size="h-4 w-4"
                                                     x-show="isCollapsed"
-                                                    x-cloak
+                                                    x-cloak=""
                                                 />
 
                                                 <span class="sr-only" x-show="isCollapsed" x-cloak>
@@ -233,6 +233,7 @@
                                         <x-filament::icon-button
                                             :label="$getCreateItemBetweenButtonLabel()"
                                             icon="heroicon-m-plus"
+                                            icon-alias="forms::builder.create-item-between.trigger"
                                         />
                                     </x-slot>
 

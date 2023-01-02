@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class EditRecord extends Page
 {
-    use Concerns\HasRecordBreadcrumb;
     use Concerns\HasRelationManagers;
     use Concerns\InteractsWithRecord;
     use InteractsWithFormActions;
@@ -31,9 +30,9 @@ class EditRecord extends Page
     protected static string $view = 'filament::resources.pages.edit-record';
 
     /**
-     * @var array<string, mixed>
+     * @var array<string, mixed> | null
      */
-    public array $data;
+    public ?array $data = [];
 
     public ?string $previousUrl = null;
 
@@ -298,7 +297,7 @@ class EditRecord extends Page
     {
         return static::getResource()::form(
             $form
-                ->context('edit')
+                ->operation('edit')
                 ->model($this->getRecord())
                 ->statePath('data')
                 ->columns($this->hasInlineFormLabels() ? 1 : 2)

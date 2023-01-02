@@ -21,7 +21,7 @@ return [
         ],
 
         'messages' => [
-            'saved' => 'Saved',
+            'saved' => 'Saglabāts',
         ],
 
     ],

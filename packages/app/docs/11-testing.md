@@ -4,11 +4,11 @@ title: Testing
 
 All examples in this guide will be written using [Pest](https://pestphp.com). However, you can easily adapt this to a PHPUnit.
 
-Since all pages in the admin panel are Livewire components, we're just using Livewire testing helpers everywhere. If you've never tested Livewire components before, please read [this guide](https://laravel-livewire.com/docs/testing) from the Livewire docs.
+Since all pages in the app are Livewire components, we're just using Livewire testing helpers everywhere. If you've never tested Livewire components before, please read [this guide](https://laravel-livewire.com/docs/testing) from the Livewire docs.
 
 ## Getting started
 
-Ensure that you are authenticated to access the admin panel in your `TestCase`:
+Ensure that you are authenticated to access the app in your `TestCase`:
 
 ```php
 protected function setUp(): void
@@ -234,8 +234,6 @@ it('can not delete', function () {
         'record' => $post->getKey(),
     ])
         ->assertPageActionHidden(DeleteAction::class);
-
-    $this->assertModelMissing($post);
 });
 ```
 
@@ -319,7 +317,7 @@ it('can list posts', function () {
 
 ## Page actions
 
-You can call a [page action](pages/actions) by passing its name or class to `callPageAction()`:
+You can call a [page action](pages#actions) by passing its name or class to `callPageAction()`:
 
 ```php
 use function Pest\Livewire\livewire;

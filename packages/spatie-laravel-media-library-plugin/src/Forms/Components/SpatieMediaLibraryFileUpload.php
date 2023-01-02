@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use Hoa\File\Temporary\Temporary;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Livewire\TemporaryUploadedFile;
@@ -101,7 +100,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             $url ??= $media?->getUrl();
 
             return [
-                'name' => $media->name ?? $media->getAttributeValue('file_name'),
+                'name' => $media->getAttributeValue('name') ?? $media->getAttributeValue('file_name'),
                 'size' => $media->getAttributeValue('size'),
                 'type' => $media->getAttributeValue('mime_type'),
                 'url' => $url,

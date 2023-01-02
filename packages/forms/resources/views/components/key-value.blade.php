@@ -12,7 +12,7 @@
     <div
         x-ignore
         ax-load
-        ax-load-src="/js/filament/forms/components/key-value.js?v={{ \Composer\InstalledVersions::getVersion('filament/support') }}"
+        ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('key-value', 'filament/forms') }}"
         x-data="keyValueFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
         })"

@@ -40,6 +40,8 @@ trait CanOpenModal
 
     protected string | Closure | null $modalWidth = null;
 
+    protected bool | Closure | null $isModalHidden = false;
+
     public function centerModal(bool | Closure | null $condition = true): static
     {
         $this->isModalCentered = $condition;
@@ -131,6 +133,13 @@ trait CanOpenModal
     }
 
     abstract public function getLivewireCallActionName(): string;
+
+    public function modalHidden(bool | Closure | null $condition = false): static
+    {
+        $this->isModalHidden = $condition;
+
+        return $this;
+    }
 
     /**
      * @return array<Action>
@@ -244,7 +253,12 @@ trait CanOpenModal
 
     public function isModalSlideOver(): bool
     {
-        return $this->evaluate($this->isModalSlideOver);
+        return (bool) $this->evaluate($this->isModalSlideOver);
+    }
+
+    public function isModalHidden(): bool
+    {
+        return $this->evaluate($this->isModalHidden);
     }
 
     /**

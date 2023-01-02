@@ -65,9 +65,8 @@
             wire:click="{{ $wireClickAction }}"
             wire:target="{{ $wireClickAction }}"
             wire:loading.attr="disabled"
-            wire:loading.class="cursor-wait opacity-70"
             type="button"
-            class="block w-full text-start"
+            class="block w-full text-start disabled:opacity-70 disabled:pointer-events-none"
         >
             {{ $slot }}
         </button>

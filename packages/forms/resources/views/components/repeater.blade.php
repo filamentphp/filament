@@ -128,7 +128,7 @@
                                             <li>
                                                 <button
                                                     title="{{ __('filament-forms::components.repeater.buttons.clone_item.label') }}"
-                                                    wire:click="dispatchFormEvent('repeater::cloneItem', '{{ $statePath }}', '{{ $uuid }}')"
+                                                    wire:click.stop="dispatchFormEvent('repeater::cloneItem', '{{ $statePath }}', '{{ $uuid }}')"
                                                     type="button"
                                                     class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500 dark:border-gray-700"
                                                 >
@@ -190,7 +190,7 @@
                                                         alias="filament-forms::components.repeater.buttons.expand-item"
                                                         size="h-4 w-4"
                                                         x-show="isCollapsed"
-                                                        x-cloak
+                                                        x-cloak=""
                                                     />
 
                                                     <span class="sr-only" x-show="isCollapsed" x-cloak>

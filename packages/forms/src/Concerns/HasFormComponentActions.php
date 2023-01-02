@@ -17,9 +17,14 @@ trait HasFormComponentActions
     public ?string $mountedFormComponentAction = null;
 
     /**
-     * @var array<string, mixed>
+     * @var array<string, mixed> | null
      */
-    public array $mountedFormComponentActionData = [];
+    public ?array $mountedFormComponentActionArguments = [];
+
+    /**
+     * @var array<string, mixed> | null
+     */
+    public ?array $mountedFormComponentActionData = [];
 
     public ?string $mountedFormComponentActionComponent = null;
 
@@ -44,11 +49,14 @@ trait HasFormComponentActions
             $this->makeForm()
                 ->model($this->getMountedFormComponentActionComponent()->getActionFormModel())
                 ->statePath('mountedFormComponentActionData')
-                ->context($this->mountedFormComponentAction),
+                ->operation($this->mountedFormComponentAction),
         );
     }
 
-    public function callMountedFormComponentAction(?string $arguments = null): mixed
+    /**
+     * @param  array<string, mixed>  $arguments
+     */
+    public function callMountedFormComponentAction(array $arguments = []): mixed
     {
         $action = $this->getMountedFormComponentAction();
 
@@ -60,7 +68,10 @@ trait HasFormComponentActions
             return null;
         }
 
-        $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
+        $action->arguments(array_merge(
+            $this->mountedFormComponentActionArguments ?? [],
+            $arguments,
+        ));
 
         $form = $this->getMountedFormComponentActionForm();
 
@@ -108,10 +119,14 @@ trait HasFormComponentActions
         return $this->getMountedFormComponentActionComponent()?->getAction($this->mountedFormComponentAction);
     }
 
-    public function mountFormComponentAction(string $component, string $name): mixed
+    /**
+     * @param  array<string, mixed>  $arguments
+     */
+    public function mountFormComponentAction(string $component, string $name, array $arguments = []): mixed
     {
-        $this->mountedFormComponentActionComponent = $component;
         $this->mountedFormComponentAction = $name;
+        $this->mountedFormComponentActionArguments = $arguments;
+        $this->mountedFormComponentActionComponent = $component;
 
         $action = $this->getMountedFormComponentAction();
 
@@ -122,6 +137,8 @@ trait HasFormComponentActions
         if ($action->isDisabled()) {
             return null;
         }
+
+        $action->arguments($this->mountedFormComponentActionArguments);
 
         $this->cacheForm(
             'mountedFormComponentActionForm',
@@ -167,6 +184,10 @@ trait HasFormComponentActions
     public function mountedFormComponentActionShouldOpenModal(): bool
     {
         $action = $this->getMountedFormComponentAction();
+
+        if ($action->isModalHidden()) {
+            return false;
+        }
 
         return $action->getModalSubheading() ||
             $action->getModalContent() ||

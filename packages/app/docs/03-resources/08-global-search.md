@@ -2,7 +2,7 @@
 title: Global search
 ---
 
-Global search allows you to search across all of your resource records, from anywhere in the admin panel.
+Global search allows you to search across all of your resource records, from anywhere in the app.
 
 ## Title
 
@@ -70,7 +70,7 @@ public static function getGlobalSearchResultUrl(Model $record): string
 
 ## Actions
 
-Global search support actions that render a button or link which may open a URL or emit a Livewire event. Actions will render as link by default, but you may configure it to render a button using the `button()` method. 
+Global search supports actions, which are buttons that render below each search result. They can open a URL or emit a Livewire event. 
 
 Actions can be defined as follows:
 
@@ -81,9 +81,31 @@ public static function getGlobalSearchResultActions(Model $record): array
 {
     return [
         Action::make('edit')
-            ->iconButton()
-            ->icon('heroicon-m-pencil')
             ->url(static::getUrl('edit', ['record' => $record])),
     ];
 }
+```
+
+You can learn more about how to style action buttons [here](../../actions/trigger-button).
+
+### Opening URLs from actions
+
+You can open a URL, optionally in a new tab, when clicking on an action:
+
+```php
+use Filament\GlobalSearch\Actions\Action;
+
+Action::make('view')
+    ->url(static::getUrl('view', ['record' => $record]), shouldOpenInNewTab: true)
+```
+
+### Emitting Livewire events from actions
+
+Sometimes you want to execute additional code when a global search result action is clicked. This can be achieved by setting a Livewire event which should be emitted on clicking the action. You may optionally pass an array of data, which will be available as parameters in the event listener on your Livewire component:
+
+```php
+use Filament\GlobalSearch\Actions\Action;
+
+Action::make('quickView')
+    ->emit('quickView', [$record->id])
 ```

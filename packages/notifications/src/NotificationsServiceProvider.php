@@ -4,22 +4,37 @@ namespace Filament\Notifications;
 
 use Filament\Notifications\Http\Livewire\Notifications;
 use Filament\Notifications\Testing\TestsNotifications;
-use Filament\Support\Assets\Asset;
+use Filament\Support\Assets\AssetManager;
 use Filament\Support\Assets\Js;
-use Filament\Support\PluginServiceProvider;
+use Filament\Support\Facades\FilamentAsset;
 use Livewire\Component;
 use Livewire\Livewire;
 use Livewire\Response;
 use Livewire\Testing\TestableLivewire;
+use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class NotificationsServiceProvider extends PluginServiceProvider
+class NotificationsServiceProvider extends PackageServiceProvider
 {
-    public static string $name = 'filament-notifications';
+    public function configurePackage(Package $package): void
+    {
+        $package
+            ->name('filament-notifications')
+            ->hasTranslations()
+            ->hasViews();
+    }
+
+    public function packageRegistered(): void
+    {
+        $this->app->resolving(AssetManager::class, function () {
+            FilamentAsset::register([
+                Js::make('notifications', __DIR__ . '/../dist/index.js'),
+            ], 'filament/notifications');
+        });
+    }
 
     public function packageBooted(): void
     {
-        parent::packageBooted();
-
         Livewire::component('notifications', Notifications::class);
 
         Livewire::listen('component.dehydrate', function (Component $component, Response $response): Response {
@@ -39,30 +54,5 @@ class NotificationsServiceProvider extends PluginServiceProvider
         });
 
         TestableLivewire::mixin(new TestsNotifications());
-    }
-
-    protected function getAssetPackage(): ?string
-    {
-        return 'notifications';
-    }
-
-    /**
-     * @return array<Asset>
-     */
-    protected function getAssets(): array
-    {
-        return [
-            Js::make('notifications', __DIR__ . '/../dist/index.js'),
-        ];
-    }
-
-    /**
-     * @return array<class-string>
-     */
-    protected function getCommands(): array
-    {
-        return [
-            Commands\InstallCommand::class,
-        ];
     }
 }

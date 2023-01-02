@@ -3,7 +3,7 @@
 ])
 
 <div {{ $attributes->class(['filament-breadcrumbs flex-1']) }}>
-    <ul class="hidden items-center gap-4 text-sm font-medium dark:text-white lg:flex">
+    <ul class="hidden items-center gap-3 text-sm font-medium dark:text-white lg:flex">
         @foreach ($breadcrumbs as $url => $label)
             <li>
                 <a

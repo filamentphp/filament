@@ -6,29 +6,6 @@ Layout component classes can be found in the `Filament\Form\Components` namespac
 
 They reside within the schema of your form, alongside any [fields](fields).
 
-If you're using the layout components in a Livewire component, you can put them in the `getFormSchema()` method:
-
-```php
-protected function getFormSchema(): array
-{
-    return [
-        // ...
-    ];
-}
-```
-
-If you're using them in admin panel resources or relation managers, you must put them in the `$form->schema()` method:
-
-```php
-public static function form(Form $form): Form
-{
-    return $form
-        ->schema([
-            // ...
-        ]);
-}
-```
-
 Components may be created using the static `make()` method. Usually, you will then define the child component `schema()` to display inside:
 
 ```php
@@ -115,4 +92,4 @@ Fieldset::make('Metadata')
 
 In this example, the `title`, `description` and `image` are automatically loaded from the `metadata` relationship, and saved again when the form is submitted. If the `metadata` record does not exist, it is automatically created.
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [App Framework](../../app), you can skip this step.

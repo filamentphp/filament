@@ -130,12 +130,12 @@ class AttachAction extends Action
 
     public function isAttachAnotherDisabled(): bool
     {
-        return $this->evaluate($this->isAttachAnotherDisabled);
+        return (bool) $this->evaluate($this->isAttachAnotherDisabled);
     }
 
     public function isRecordSelectPreloaded(): bool
     {
-        return $this->evaluate($this->isRecordSelectPreloaded);
+        return (bool) $this->evaluate($this->isRecordSelectPreloaded);
     }
 
     public function getRecordTitleAttribute(): string
@@ -203,9 +203,8 @@ class AttachAction extends Action
                     foreach ($searchColumns as $searchColumn) {
                         $whereClause = $isFirst ? 'where' : 'orWhere';
 
-                        $query->{$whereClause}(
-                            $searchColumn,
-                            $searchOperator,
+                        $query->{"{$whereClause}Raw"}(
+                            "lower({$searchColumn}) {$searchOperator} ?",
                             "%{$search}%",
                         );
 

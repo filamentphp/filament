@@ -16,7 +16,7 @@
     <div
         x-ignore
         ax-load
-        ax-load-src="/js/filament/forms/components/file-upload.js?v={{ \Composer\InstalledVersions::getVersion('filament/support') }}"
+        ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
         x-data="fileUploadFormComponent({
             acceptedFileTypes: {{ json_encode($getAcceptedFileTypes()) }},
             canDownload: {{ $canDownload() ? 'true' : 'false' }},
@@ -51,6 +51,7 @@
                 return await $wire.reorderUploadedFiles('{{ $statePath }}', files)
             },
             shouldAppendFiles: {{ $shouldAppendFiles() ? 'true' : 'false' }},
+            shouldOrientImageFromExif: {{ $shouldOrientImageFromExif() ? 'true' : 'false' }},
             shouldTransformImage: {{ $shouldTransformImage ? 'true' : 'false' }},
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
             uploadButtonPosition: '{{ $getUploadButtonPosition() }}',

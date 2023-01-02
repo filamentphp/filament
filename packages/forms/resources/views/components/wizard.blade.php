@@ -2,7 +2,7 @@
     $isRtl = __('filament::layout.direction') === 'rtl';
     $previousArrowIcon = $isRtl ? 'heroicon-m-chevron-right' : 'heroicon-m-chevron-left';
     $nextArrowIcon = $isRtl ? 'heroicon-m-chevron-left' : 'heroicon-m-chevron-right';
-    $statePath = $getStatePath;
+    $statePath = $getStatePath();
 @endphp
 
 <div
@@ -149,7 +149,7 @@
                                     color="text-white"
                                     size="h-5 w-5"
                                     x-show="getStepIndex(step) > {{ $loop->index }}"
-                                    x-cloak
+                                    x-cloak=""
                                 />
 
                                 @if ($icon = $step->getIcon())
@@ -158,7 +158,7 @@
                                         alias="filament-forms::components.wizard.current-step"
                                         size="h-5 w-5"
                                         x-show="getStepIndex(step) <= {{ $loop->index }}"
-                                        x-cloak
+                                        x-cloak=""
                                         x-bind:class="{
                                             'text-gray-500 dark:text-gray-400': getStepIndex(step) !== {{ $loop->index }},
                                             'text-primary-500': getStepIndex(step) === {{ $loop->index }},
@@ -179,7 +179,7 @@
                         </div>
 
                         <div class="flex flex-col items-start justify-center">
-                            <div class="text-sm font-semibold tracking-wide uppercase">
+                            <div class="text-sm font-medium">
                                 {{ $step->getLabel() }}
                             </div>
 
@@ -219,7 +219,7 @@
             <x-filament::button
                 :icon="$previousArrowIcon"
                 x-show="! isFirstStep()"
-                x-cloak
+                x-cloak=""
                 x-on:click="previousStep"
                 color="gray"
                 size="sm"
@@ -237,9 +237,8 @@
                 :icon="$nextArrowIcon"
                 icon-position="after"
                 x-show="! isLastStep()"
-                x-cloak
+                x-cloak=""
                 x-on:click="$wire.dispatchFormEvent('wizard::nextStep', '{{ $statePath }}', getStepIndex(step))"
-                wire:loading.class.delay="opacity-70 cursor-wait"
                 size="sm"
             >
                 {{ __('filament-forms::components.wizard.buttons.next_step.label') }}

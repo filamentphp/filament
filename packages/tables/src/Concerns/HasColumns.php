@@ -6,8 +6,6 @@ use Closure;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Columns\Layout\Component as ColumnLayoutComponent;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Validation\ValidationException;
 
 trait HasColumns
@@ -39,12 +37,8 @@ trait HasColumns
         return $column->record($record)->evaluate($action);
     }
 
-    /**
-     * @return array{'error': string} | null
-     */
-    public function setColumnValue(string $column, string $record, mixed $input): ?array
+    public function updateTableColumnState(string $column, string $record, mixed $input): mixed
     {
-        $columnName = $column;
         $column = $this->getTable()->getColumn($column);
 
         if (! ($column instanceof Editable)) {
@@ -71,26 +65,7 @@ trait HasColumns
             ];
         }
 
-        if ($columnRelationship = $column->getRelationship($record)) {
-            $record = $columnRelationship->getResults();
-            $columnName = $column->getRelationshipAttribute();
-        } elseif (
-            (($tableRelationship = $this->getTable()->getRelationship()) instanceof BelongsToMany) &&
-            in_array($columnName, $tableRelationship->getPivotColumns())
-        ) {
-            $record = $record->{$tableRelationship->getPivotAccessor()};
-        } else {
-            $columnName = (string) str($columnName)->replace('.', '->');
-        }
-
-        if (! ($record instanceof Model)) {
-            return null;
-        }
-
-        $record->setAttribute($columnName, $input);
-        $record->save();
-
-        return null;
+        return $column->updateState($input);
     }
 
     /**

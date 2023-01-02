@@ -4,7 +4,6 @@ namespace Filament\Tables\Actions;
 
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
-use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -35,14 +34,14 @@ class EditAction extends Action
 
         $this->icon('heroicon-m-pencil');
 
-        $this->mountUsing(function (Form $form, Model $record): void {
+        $this->fillForm(function (Model $record): array {
             $data = $record->attributesToArray();
 
             if ($this->mutateRecordDataUsing) {
                 $data = $this->evaluate($this->mutateRecordDataUsing, ['data' => $data]);
             }
 
-            $form->fill($data);
+            return $data;
         });
 
         $this->action(function (): void {

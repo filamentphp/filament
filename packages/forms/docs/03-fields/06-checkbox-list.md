@@ -82,7 +82,7 @@ CheckboxList::make('technologies')
     ->relationship('technologies', 'name')
 ```
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [admin panel](/docs/admin), you can skip this step.
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [App Framework](../../app), you can skip this step.
 
 You may customize the database query that retrieves options using the third parameter of the `relationship()` method:
 

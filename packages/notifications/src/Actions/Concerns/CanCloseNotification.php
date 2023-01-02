@@ -17,6 +17,6 @@ trait CanCloseNotification
 
     public function shouldCloseNotification(): bool
     {
-        return $this->evaluate($this->shouldCloseNotification);
+        return (bool) $this->evaluate($this->shouldCloseNotification);
     }
 }

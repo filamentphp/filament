@@ -11,7 +11,7 @@
     <div
         x-ignore
         ax-load
-        ax-load-src="/js/filament/forms/components/markdown-editor.js?v={{ \Composer\InstalledVersions::getVersion('filament/support') }}"
+        ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('markdown-editor', 'filament/forms') }}"
         x-data="markdownEditorFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
             tab: '{{ $isDisabled ? 'preview' : 'edit' }}',

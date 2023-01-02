@@ -45,7 +45,7 @@ trait HasWizard
 
     public function isWizardSkippable(): bool
     {
-        return $this->evaluate($this->isWizardSkippable);
+        return (bool) $this->evaluate($this->isWizardSkippable);
     }
 
     public function getWizardStartStep(): int

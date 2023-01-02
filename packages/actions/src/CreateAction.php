@@ -80,6 +80,6 @@ class CreateAction extends Action
 
     public function isCreateAnotherDisabled(): bool
     {
-        return $this->evaluate($this->isCreateAnotherDisabled);
+        return (bool) $this->evaluate($this->isCreateAnotherDisabled);
     }
 }

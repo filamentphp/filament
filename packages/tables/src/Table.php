@@ -12,6 +12,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\Position;
+use Filament\Tables\Actions\RecordCheckboxPosition;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Layout\Component as ColumnLayoutComponent;
 use Filament\Tables\Contracts\HasTable;
@@ -29,6 +30,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use function Livewire\invade;
 
 class Table extends ViewComponent
@@ -44,7 +46,7 @@ class Table extends ViewComponent
 
     protected string $evaluationIdentifier = 'table';
 
-    public const LOADING_TARGETS = ['previousPage', 'nextPage', 'gotoPage', 'sortTable', 'tableFilters', 'resetTableFiltersForm', 'tableSearch', 'tableColumnSearches', 'tableRecordsPerPage'];
+    public const LOADING_TARGETS = ['previousPage', 'nextPage', 'gotoPage', 'sortTable', 'tableSearch', 'tableColumnSearches', 'tableRecordsPerPage'];
 
     /**
      * @var array<string, Action | ActionGroup>
@@ -63,6 +65,8 @@ class Table extends ViewComponent
      * @var array<string, BulkAction>
      */
     protected array $bulkActions = [];
+
+    protected ?Closure $checkIfRecordIsSelectableUsing = null;
 
     protected ?ColumnLayoutComponent $collapsibleColumnsLayout = null;
 
@@ -196,6 +200,8 @@ class Table extends ViewComponent
 
     protected string | Closure | null $recordAction = null;
 
+    protected string | Closure | null $recordCheckboxPosition = null;
+
     /**
      * @var array<string | int, bool | string> | string | Closure | null
      */
@@ -237,12 +243,20 @@ class Table extends ViewComponent
         foreach (Arr::wrap($actions) as $index => $action) {
             if ($action instanceof ActionGroup) {
                 foreach ($action->getActions() as $groupedAction) {
+                    if (! $groupedAction instanceof Action) {
+                        throw new InvalidArgumentException('Table actions within a group must be an instance of ' . Action::class . '.');
+                    }
+
                     $groupedAction->table($this);
                 }
 
                 $this->actions[$index] = $action;
 
                 continue;
+            }
+
+            if (! $action instanceof Action) {
+                throw new InvalidArgumentException('Table actions must be an instance of ' . Action::class . ' or ' . ActionGroup::class . '.');
             }
 
             $action->table($this);
@@ -283,6 +297,13 @@ class Table extends ViewComponent
         return $this;
     }
 
+    public function recordCheckboxPosition(string | Closure | null $position = null): static
+    {
+        $this->recordCheckboxPosition = $position;
+
+        return $this;
+    }
+
     public function allowDuplicates(bool | Closure $condition = true): static
     {
         $this->allowsDuplicates = $condition;
@@ -296,6 +317,10 @@ class Table extends ViewComponent
     public function bulkActions(array $actions): static
     {
         foreach ($actions as $action) {
+            if (! $action instanceof BulkAction) {
+                throw new InvalidArgumentException('Table bulk actions must be an instance of ' . BulkAction::class . '.');
+            }
+
             $action->table($this);
             $this->registerBulkAction($action);
             $this->groupedBulkActions[$action->getName()] = $action;
@@ -307,6 +332,13 @@ class Table extends ViewComponent
     public function registerBulkAction(BulkAction $action): static
     {
         $this->bulkActions[$action->getName()] = $action;
+
+        return $this;
+    }
+
+    public function checkIfRecordIsSelectableUsing(?Closure $callback): static
+    {
+        $this->checkIfRecordIsSelectableUsing = $callback;
 
         return $this;
     }
@@ -342,8 +374,12 @@ class Table extends ViewComponent
 
             $action = $column->getAction();
 
-            if (! ($action instanceof Action)) {
+            if (($action === null) || ($action instanceof Closure)) {
                 continue;
+            }
+
+            if (! $action instanceof Action) {
+                throw new InvalidArgumentException('Table column actions must be an instance of ' . Action::class . '.');
             }
 
             $actionName = $action->getName();
@@ -455,6 +491,10 @@ class Table extends ViewComponent
     public function emptyStateActions(array | ActionGroup | Closure $actions): static
     {
         foreach ($actions as $action) {
+            if (! $action instanceof Action) {
+                throw new InvalidArgumentException('Table empty state actions must be an instance of ' . Action::class . '.');
+            }
+
             $action->table($this);
 
             $this->emptyStateActions[$action->getName()] = $action;
@@ -548,6 +588,11 @@ class Table extends ViewComponent
         foreach (Arr::wrap($actions) as $index => $action) {
             if ($action instanceof ActionGroup) {
                 foreach ($action->getActions() as $groupedAction) {
+                    /** @phpstan-ignore-next-line */
+                    if ((! $groupedAction instanceof Action) && (! $groupedAction instanceof BulkAction)) {
+                        throw new InvalidArgumentException('Table header actions within a group must be an instance of ' . Action::class . ' or ' . BulkAction::class . '.');
+                    }
+
                     $groupedAction->table($this);
 
                     if ($groupedAction instanceof BulkAction) {
@@ -558,6 +603,10 @@ class Table extends ViewComponent
                 $this->headerActions[$index] = $action;
 
                 continue;
+            }
+
+            if ((! $action instanceof Action) && (! $action instanceof BulkAction)) {
+                throw new InvalidArgumentException('Table header actions must be an instance of ' . Action::class . ', ' . BulkAction::class . ', or ' . ActionGroup::class . '.');
             }
 
             $action->table($this);
@@ -807,7 +856,7 @@ class Table extends ViewComponent
         }
 
         if (! ($this->getContentGrid() || $this->hasColumnsLayout())) {
-            return Position::AfterCells;
+            return Position::AfterColumns;
         }
 
         $actions = $this->getActions();
@@ -821,6 +870,17 @@ class Table extends ViewComponent
         }
 
         return Position::AfterContent;
+    }
+
+    public function getRecordCheckboxPosition(): string
+    {
+        $position = $this->evaluate($this->recordCheckboxPosition);
+
+        if (filled($position)) {
+            return $position;
+        }
+
+        return RecordCheckboxPosition::BeforeCells;
     }
 
     public function getHeaderActionsPosition(): string
@@ -895,6 +955,25 @@ class Table extends ViewComponent
     public function getColumn(string $name): ?Column
     {
         return $this->getColumns()[$name] ?? null;
+    }
+
+    public function getSortableVisibleColumn(string $name): ?Column
+    {
+        $column = $this->getColumn($name);
+
+        if (! $column) {
+            return null;
+        }
+
+        if ($column->isHidden()) {
+            return null;
+        }
+
+        if (! $column->isSortable()) {
+            return null;
+        }
+
+        return $column;
     }
 
     /**
@@ -1209,6 +1288,13 @@ class Table extends ViewComponent
         ]);
     }
 
+    public function isRecordSelectable(Model $record): bool
+    {
+        return $this->evaluate($this->checkIfRecordIsSelectableUsing, [
+            'record' => $record,
+        ]) ?? true;
+    }
+
     public function getReorderColumn(): ?string
     {
         return $this->evaluate($this->reorderColumn);
@@ -1475,5 +1561,10 @@ class Table extends ViewComponent
     public function selectsCurrentPageOnly(): bool
     {
         return (bool) $this->evaluate($this->selectsCurrentPageOnly);
+    }
+
+    public function checksIfRecordIsSelectable(): bool
+    {
+        return $this->checkIfRecordIsSelectableUsing !== null;
     }
 }

@@ -3,11 +3,13 @@
 namespace Filament\Actions;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Js;
 
 class Action extends MountableAction implements Contracts\Groupable, Contracts\HasRecord, Contracts\SubmitsForm
 {
     use Concerns\BelongsToLivewire;
     use Concerns\CanSubmitForm;
+    use Concerns\HasMountableArguments;
     use Concerns\InteractsWithRecord;
 
     public function getLivewireCallActionName(): string
@@ -21,7 +23,14 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
             return null;
         }
 
-        return "mountAction('{$this->getName()}')";
+        $argumentsParameter = '';
+
+        if (count($arguments = $this->getArguments())) {
+            $argumentsParameter .= ', ';
+            $argumentsParameter .= Js::from($arguments);
+        }
+
+        return "mountAction('{$this->getName()}'{$argumentsParameter})";
     }
 
     /**

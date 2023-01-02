@@ -102,27 +102,6 @@ class Action extends StaticAction implements Arrayable, Groupable
         return Str::startsWith($view, 'filament-actions::');
     }
 
-    public function button(): static
-    {
-        $this->view('filament-actions::button-action');
-
-        return $this;
-    }
-
-    public function grouped(): static
-    {
-        $this->view('filament-actions::grouped-action');
-
-        return $this;
-    }
-
-    public function link(): static
-    {
-        $this->view('filament-actions::link-action');
-
-        return $this;
-    }
-
     public function getLivewireMountAction(): ?string
     {
         if ($this->shouldCloseNotification()) {

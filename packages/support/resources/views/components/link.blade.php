@@ -70,7 +70,7 @@
         @if ($icon && $iconPosition === 'before')
             <x-filament::icon
                 :name="$icon"
-                alias="support::link.prefix"
+                group="support::link.prefix"
                 :size="$iconSize"
                 :class="$iconClasses"
             />
@@ -81,7 +81,7 @@
         @if ($icon && $iconPosition === 'after')
             <x-filament::icon
                 :name="$icon"
-                alias="support::link.suffix"
+                group="support::link.suffix"
                 :size="$iconSize"
                 :class="$iconClasses"
             />
@@ -111,7 +111,7 @@
             @if ($icon)
                 <x-filament::icon
                     :name="$icon"
-                    alias="support::link.prefix"
+                    group="support::link.prefix"
                     :size="$iconSize"
                     :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
@@ -121,8 +121,8 @@
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
-                    x-cloak
-                    wire:loading.delay
+                    x-cloak=""
+                    wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
                     :class="$iconClasses . ' ' . $iconSize"
                 />
@@ -135,7 +135,7 @@
             @if ($icon)
                 <x-filament::icon
                     :name="$icon"
-                    alias="support::link.suffix"
+                    group="support::link.suffix"
                     :size="$iconSize"
                     :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
@@ -145,8 +145,8 @@
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
-                    x-cloak
-                    wire:loading.delay
+                    x-cloak=""
+                    wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
                     :class="$iconClasses . ' ' . $iconSize"
                 />

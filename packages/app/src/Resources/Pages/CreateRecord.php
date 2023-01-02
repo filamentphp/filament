@@ -26,9 +26,9 @@ class CreateRecord extends Page
     public ?Model $record = null;
 
     /**
-     * @var array<string, mixed>
+     * @var array<string, mixed> | null
      */
-    public array $data;
+    public ?array $data = [];
 
     public ?string $previousUrl = null;
 
@@ -208,7 +208,7 @@ class CreateRecord extends Page
     {
         return static::getResource()::form(
             $form
-                ->context('create')
+                ->operation('create')
                 ->model($this->getModel())
                 ->statePath('data')
                 ->columns($this->hasInlineFormLabels() ? 1 : 2)

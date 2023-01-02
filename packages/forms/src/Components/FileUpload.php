@@ -40,6 +40,8 @@ class FileUpload extends BaseFileUpload
 
     protected bool | Closure $shouldAppendFiles = false;
 
+    protected bool | Closure $shouldOrientImageFromExif = true;
+
     protected string | Closure $uploadButtonPosition = 'right';
 
     protected string | Closure $uploadProgressIndicatorPosition = 'right';
@@ -136,6 +138,13 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
+    public function orientImageFromExif(bool | Closure $condition = true): static
+    {
+        $this->shouldOrientImageFromExif = $condition;
+
+        return $this;
+    }
+
     public function panelAspectRatio(string | Closure | null $ratio): static
     {
         $this->panelAspectRatio = $ratio;
@@ -198,7 +207,7 @@ class FileUpload extends BaseFileUpload
 
     public function getImageResizeUpscale(): bool
     {
-        return $this->evaluate($this->imageResizeUpscale);
+        return (bool) $this->evaluate($this->imageResizeUpscale);
     }
 
     public function getLoadingIndicatorPosition(): string
@@ -238,6 +247,11 @@ class FileUpload extends BaseFileUpload
 
     public function shouldAppendFiles(): bool
     {
-        return $this->evaluate($this->shouldAppendFiles);
+        return (bool) $this->evaluate($this->shouldAppendFiles);
+    }
+
+    public function shouldOrientImageFromExif(): bool
+    {
+        return (bool) $this->evaluate($this->shouldOrientImageFromExif);
     }
 }

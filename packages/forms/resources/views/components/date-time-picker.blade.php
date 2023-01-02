@@ -21,7 +21,7 @@
         <div
             x-ignore
             ax-load
-            ax-load-src="/js/filament/forms/components/date-time-picker.js?v={{ \Composer\InstalledVersions::getVersion('filament/support') }}"
+            ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('date-time-picker', 'filament/forms') }}"
             x-data="dateTimePickerFormComponent({
                 displayFormat: '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
                 firstDayOfWeek: {{ $getFirstDayOfWeek() }},

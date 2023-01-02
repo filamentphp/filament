@@ -6,7 +6,7 @@ title: Deleting records
 
 ## Creating a resource with soft deletes
 
-By default, you will not be able to interact with deleted records in the admin panel. If you'd like to add functionality to restore, force delete and filter trashed records in your resource, use the `--soft-deletes` flag when generating the resource:
+By default, you will not be able to interact with deleted records in the app. If you'd like to add functionality to restore, force delete and filter trashed records in your resource, use the `--soft-deletes` flag when generating the resource:
 
 ```bash
 php artisan make:filament-resource Customer --soft-deletes

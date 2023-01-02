@@ -3,6 +3,7 @@
 namespace Filament\Actions\Testing;
 
 use Closure;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\MountableAction;
@@ -18,14 +19,14 @@ class TestsActions
 {
     public function mountAction(): Closure
     {
-        return function (string $name): static {
+        return function (string $name, array $arguments = []): static {
             /** @phpstan-ignore-next-line */
             $name = $this->parseActionName($name);
 
             /** @phpstan-ignore-next-line */
             $this->assertActionVisible($name);
 
-            $this->call('mountAction', $name);
+            $this->call('mountAction', $name, $arguments);
 
             if ($this->instance()->mountedAction === null) {
                 $this->assertNotDispatchedBrowserEvent('open-modal');
@@ -67,7 +68,7 @@ class TestsActions
     {
         return function (string $name, array $data = [], array $arguments = []): static {
             /** @phpstan-ignore-next-line */
-            $this->mountAction($name);
+            $this->mountAction($name, $arguments);
 
             if (! $this->instance()->getMountedAction()) {
                 return $this;
@@ -92,7 +93,7 @@ class TestsActions
                 return $this;
             }
 
-            $this->call('callMountedAction', json_encode($arguments));
+            $this->call('callMountedAction', $arguments);
 
             if ($this->get('mountedAction') !== $action->getName()) {
                 $this->assertDispatchedBrowserEvent('close-modal', [
@@ -124,7 +125,11 @@ class TestsActions
     public function assertActionDoesNotExist(): Closure
     {
         return function (string $name): static {
-            $action = $this->instance()->getAction($name);
+            try {
+                $action = $this->instance()->getAction($name);
+            } catch (Exception $exception) {
+                $action = null;
+            }
 
             $livewireClass = $this->instance()::class;
 

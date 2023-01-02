@@ -53,7 +53,7 @@ trait CanFormatState
                 }
 
                 if (blank($currency)) {
-                    $currency = config('money.default_currency') ?? 'usd';
+                    $currency = env('DEFAULT_CURRENCY', 'USD');
                 }
 
                 return (new Money\Money(

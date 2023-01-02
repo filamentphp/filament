@@ -1,5 +1,9 @@
 <div
-    x-data="{ error: undefined, state: @js($getState()) }"
+    x-data="{
+        error: undefined,
+        state: @js($getState()),
+        isLoading: false
+    }"
     x-init="
         $watch('state', () => $refs.button.dispatchEvent(new Event('change')))
     "
@@ -16,35 +20,37 @@
         role="switch"
         aria-checked="false"
         x-bind:aria-checked="state.toString()"
-        x-on:click="state = ! state"
+        x-on:click="! isLoading && (state = ! state)"
         x-ref="button"
         x-on:change="
-            response = await $wire.setColumnValue(@js($getName()), @js($recordKey), state)
+            isLoading = true
+            response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), state)
             error = response?.error ?? undefined
+            isLoading = false
         "
         x-tooltip="error"
-        x-bind:class="
-            state
-                ? '{{ match ($onColor) {
-                    'danger' => 'bg-danger-600',
-                    'gray' => 'bg-gray-600',
-                    'primary', null => 'bg-primary-600',
-                    'secondary' => 'bg-secondary-600',
-                    'success' => 'bg-success-600',
-                    'warning' => 'bg-warning-600',
-                    default => $onColor,
-                } }}'
-                : '{{ match ($offColor) {
-                    'danger' => 'bg-danger-600',
-                    'gray' => 'bg-gray-600',
-                    'primary' => 'bg-primary-600',
-                    'secondary' => 'bg-secondary-600',
-                    'success' => 'bg-success-600',
-                    'warning' => 'bg-warning-600',
-                    null => 'bg-gray-200 dark:bg-gray-700',
-                    default => $offColor,
-                } }}'
-        "
+        x-bind:class="{
+            'opacity-70 pointer-events-none': isLoading,
+            '{{ match ($getOnColor()) {
+                'danger' => 'bg-danger-600',
+                'gray' => 'bg-gray-600',
+                'primary', null => 'bg-primary-600',
+                'secondary' => 'bg-secondary-600',
+                'success' => 'bg-success-600',
+                'warning' => 'bg-warning-600',
+                default => $onColor,
+            } }}': state,
+            '{{ match ($getOffColor()) {
+                'danger' => 'bg-danger-600',
+                'gray' => 'bg-gray-600',
+                'primary' => 'bg-primary-600',
+                'secondary' => 'bg-secondary-600',
+                'success' => 'bg-success-600',
+                'warning' => 'bg-warning-600',
+                null => 'bg-gray-200 dark:bg-gray-700',
+                default => $offColor,
+            } }}: ! state,
+        }"
         @disabled($isDisabled())
         type="button"
         class="relative inline-flex shrink-0 ml-4 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none disabled:opacity-70 disabled:pointer-events-none"
@@ -105,7 +111,7 @@
                             default => $onColor,
                         }"
                         size="h-3 w-3"
-                        x-cloak
+                        x-cloak=""
                     />
                 @endif
             </span>

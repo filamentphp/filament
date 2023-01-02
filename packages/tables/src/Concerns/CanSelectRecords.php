@@ -3,6 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -46,7 +47,16 @@ trait CanSelectRecords
             return $this->records->total();
         }
 
-        return $this->getFilteredTableQuery()->count();
+        $query = $this->getFilteredTableQuery();
+
+        if ($this->getTable()->checksIfRecordIsSelectable()) {
+            return $query
+                ->get()
+                ->filter(fn (Model $record): bool => $this->getTable()->isRecordSelectable($record))
+                ->count();
+        }
+
+        return $query->count();
     }
 
     public function getSelectedTableRecords(): Collection
@@ -71,9 +81,6 @@ trait CanSelectRecords
         )->get());
     }
 
-    /**
-     * @deprecated Override the `table()` method to configure the table.
-     */
     public function shouldSelectCurrentPageOnly(): bool
     {
         return $this->shouldSelectCurrentPageOnly;

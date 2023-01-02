@@ -22,7 +22,8 @@ it('can have forms with non-default names', function () {
 
 it('has fields', function () {
     livewire(TestComponentWithForm::class)
-        ->assertFormFieldExists('title');
+        ->assertFormFieldExists('title')
+        ->assertFormFieldExists('nested.input');
 });
 
 it('has fields on multiple forms', function () {
@@ -88,6 +89,8 @@ class TestComponentWithForm extends Livewire
         return $form
             ->schema([
                 TextInput::make('title'),
+
+                TextInput::make('nested.input'),
 
                 TextInput::make('disabled')
                     ->disabled(),

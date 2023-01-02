@@ -3,6 +3,7 @@
     'disabled' => false,
     'form' => null,
     'icon' => null,
+    'iconAlias' => null,
     'iconSize' => null,
     'indicator' => null,
     'indicatorColor' => 'primary',
@@ -48,7 +49,7 @@
     $iconClasses = 'filament-icon-button-icon';
 
     $indicatorClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-icon-button-indicator absolute -top-0.5 -right-0.5 inline-block h-4 w-4 rounded-full text-xs font-medium text-white',
+        'filament-icon-button-indicator absolute -top-0.5 -right-0.5 inline-flex items-center justify-center h-4 w-4 rounded-full text-[0.5rem] font-medium text-white',
         match ($indicatorColor) {
             'danger' => 'bg-danger-600',
             'gray' => 'bg-gray-600',
@@ -96,7 +97,8 @@
 
         <x-filament::icon
             :name="$icon"
-            alias="support::icon-button"
+            :alias="$iconAlias"
+            group="support::icon-button"
             :size="$iconSize"
             :class="$iconClasses"
             :wire:loading.remove.delay="$hasLoadingIndicator"
@@ -105,8 +107,8 @@
 
         @if ($hasLoadingIndicator)
             <x-filament::loading-indicator
-                x-cloak
-                wire:loading.delay
+                x-cloak=""
+                wire:loading.delay=""
                 :wire:target="$loadingIndicatorTarget"
                 :class="$iconClasses"
             />

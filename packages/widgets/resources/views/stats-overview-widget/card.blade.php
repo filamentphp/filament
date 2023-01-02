@@ -1,4 +1,6 @@
 @php
+    $descriptionIcon = $getDescriptionIcon();
+    $descriptionIconPosition = $getDescriptionIconPosition();
     $url = $getUrl();
     $tag = $url ? 'a' : 'div';
 @endphp
@@ -43,9 +45,17 @@
                     default => $descriptionColor,
                 },
             ])>
+                @if ($descriptionIcon && ($descriptionIconPosition === 'before'))
+                    <x-filament::icon
+                        :name="$descriptionIcon"
+                        alias="widgets::stats-overview.card.description"
+                        size="h-4 w-4"
+                    />
+                @endif
+
                 <span>{{ $description }}</span>
 
-                @if ($descriptionIcon = $getDescriptionIcon())
+                @if ($descriptionIcon && ($descriptionIconPosition === 'after'))
                     <x-filament::icon
                         :name="$descriptionIcon"
                         alias="widgets::stats-overview.card.description"
@@ -60,7 +70,7 @@
         <div
             x-ignore
             ax-load
-            ax-load-src="/js/filament/widgets/components/stats-overview/card/chart.js?v={{ \Composer\InstalledVersions::getVersion('filament/support') }}"
+            ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('stats-overview/card/chart', 'filament/widgets') }}"
             x-data="statsOverviewCardChart({
                 labels: @js(array_keys($chart)),
                 values: @js(array_values($chart)),

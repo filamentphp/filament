@@ -45,7 +45,7 @@ trait CanBeCopied
 
     public function isCopyable(): bool
     {
-        return $this->evaluate($this->isCopyable);
+        return (bool) $this->evaluate($this->isCopyable);
     }
 
     public function isClickDisabled(): bool

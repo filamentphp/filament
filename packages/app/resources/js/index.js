@@ -1,12 +1,9 @@
-import Collapse from '@alpinejs/collapse'
-import Focus from '@alpinejs/focus'
+import Alpine from 'alpinejs'
 import Mousetrap from '@danharrin/alpine-mousetrap'
 import Persist from '@alpinejs/persist'
 import Tooltip from '@ryangjchandler/alpine-tooltip'
 
 document.addEventListener('alpine:init', () => {
-    window.Alpine.plugin(Collapse)
-    window.Alpine.plugin(Focus)
     window.Alpine.plugin(Mousetrap)
     window.Alpine.plugin(Persist)
     window.Alpine.plugin(Tooltip)
@@ -14,7 +11,7 @@ document.addEventListener('alpine:init', () => {
     window.Alpine.store('sidebar', {
         isOpen: window.Alpine.$persist(true).as('isOpen'),
 
-        collapsedGroups: window.Alpine.$persist([]).as('collapsedGroups'),
+        collapsedGroups: window.Alpine.$persist(null).as('collapsedGroups'),
 
         groupIsCollapsed: function (group) {
             return this.collapsedGroups.includes(group)
@@ -62,3 +59,6 @@ document.addEventListener('alpine:init', () => {
             window.Alpine.store('theme', event.matches ? 'dark' : 'light')
         })
 })
+
+window.Alpine = Alpine
+Alpine.start()

@@ -9,24 +9,23 @@
     'query',
     'selectionEnabled' => false,
     'strong' => false,
+    'recordCheckboxPosition' => null,
 ])
 
 @php
     use Filament\Tables\Actions\Position as ActionsPosition;
+    use Filament\Tables\Actions\RecordCheckboxPosition;
 @endphp
 
 <x-filament-tables::row {{ $attributes->class([
+    'filament-tables-summary-row',
     'bg-gray-500/5' => $strong,
 ]) }}>
     @if ($placeholderColumns && $actions && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
         <td></td>
     @endif
 
-    @if ($placeholderColumns && $selectionEnabled)
-        <td></td>
-    @endif
-
-    @if ($placeholderColumns && $actions && $actionsPosition === ActionsPosition::BeforeColumns)
+    @if ($placeholderColumns && $selectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
         <td></td>
     @endif
 
@@ -62,7 +61,18 @@
                 @if ($loop->first && (! $extraHeadingColumn) && (! $groupsOnly) && ($headingColumnSpan > 1))
                     colspan="{{ $headingColumnSpan }}"
                 @endif
-                class="-space-y-3 align-top"
+                @class([
+                    "-space-y-3 align-top",
+                    match ($column->getAlignment()) {
+                        'start' => 'text-start',
+                        'center' => 'text-center',
+                        'end' => 'text-end',
+                        'left' => 'text-left',
+                        'right' => 'text-right',
+                        'justify' => 'text-justify',
+                        default => null,
+                    },
+                ])
             >
                 @if ($loop->first && (! $extraHeadingColumn) && (! $groupsOnly))
                     <div @class([
@@ -81,7 +91,11 @@
         @endif
     @endforeach
 
-    @if ($placeholderColumns && $actions && $actionsPosition === ActionsPosition::AfterCells)
+    @if ($placeholderColumns && $actions && in_array($actionsPosition, [ActionsPosition::AfterColumns, ActionsPosition::AfterCells]))
+        <td></td>
+    @endif
+
+    @if ($placeholderColumns && $selectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
         <td></td>
     @endif
 </x-filament-tables::row>

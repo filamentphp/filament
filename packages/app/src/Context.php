@@ -7,7 +7,7 @@ use Exception;
 use Filament\AvatarProviders\UiAvatarsProvider;
 use Filament\Contracts\Plugin;
 use Filament\Facades\Filament;
-use Filament\FontProviders\GoogleFontProvider;
+use Filament\FontProviders\BunnyFontProvider;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 use Filament\Http\Livewire\GlobalSearch;
@@ -26,6 +26,8 @@ use Filament\Resources\Resource;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Color;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Icons\Icon;
 use Filament\Widgets\Widget;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -53,11 +55,20 @@ class Context
 
     protected string $authGuard = 'web';
 
+    protected ?Closure $bootUsing = null;
+
     protected ?string $domain = null;
+
+    protected ?string $favicon = null;
 
     protected string $globalSearchProvider = DefaultGlobalSearchProvider::class;
 
     protected string $homeUrl = '';
+
+    /**
+     * @var array<string, Icon>
+     */
+    protected array $icons = [];
 
     protected bool $isNavigationMounted = false;
 
@@ -139,6 +150,11 @@ class Context
     /**
      * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null
      */
+    protected ?array $grayColor = null;
+
+    /**
+     * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null
+     */
     protected ?array $dangerColor = null;
 
     /**
@@ -150,6 +166,10 @@ class Context
      * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null
      */
     protected ?array $successColor = null;
+
+    protected string $sidebarWidth = '18rem';
+
+    protected string $collapsedSidebarWidth = '5.4rem';
 
     protected bool $isEmailVerificationRequired = false;
 
@@ -219,9 +239,9 @@ class Context
 
     protected string $fontName = 'Be Vietnam Pro';
 
-    protected string $fontProvider = GoogleFontProvider::class;
+    protected string $fontProvider = BunnyFontProvider::class;
 
-    protected ?string $fontUrl = 'https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap';
+    protected ?string $fontUrl = 'https://fonts.bunny.net/css?family=be-vietnam-pro:400,500,700&display=swap';
 
     /**
      * @var array<string, Plugin>
@@ -256,11 +276,23 @@ class Context
 
     public function boot(): void
     {
+        FilamentIcon::register($this->icons);
+        $this->registerLivewireComponents();
+
         foreach ($this->plugins as $plugin) {
             $plugin->boot($this);
         }
 
-        $this->registerLivewireComponents();
+        if ($callback = $this->bootUsing) {
+            $callback($this);
+        }
+    }
+
+    public function bootUsing(?Closure $callback): static
+    {
+        $this->bootUsing = $callback;
+
+        return $this;
     }
 
     /**
@@ -332,6 +364,11 @@ class Context
         $this->loginRouteAction = $action;
 
         return $this;
+    }
+
+    public function favicon(?string $url): void
+    {
+        $this->favicon = $url;
     }
 
     /**
@@ -571,7 +608,7 @@ class Context
         return $this;
     }
 
-    public function avatarProvider(string $provider): static
+    public function defaultAvatarProvider(string $provider): static
     {
         $this->defaultAvatarProvider = $provider;
 
@@ -632,6 +669,16 @@ class Context
     }
 
     /**
+     * @param  array<string, Icon>  $icons
+     */
+    public function icons(array $icons): static
+    {
+        $this->icons = array_merge($this->icons, $icons);
+
+        return $this;
+    }
+
+    /**
      * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string  $color
      * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string
      */
@@ -687,6 +734,24 @@ class Context
     /**
      * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null  $color
      */
+    public function grayColor(array | string | null $color): static
+    {
+        $this->grayColor = $this->processColor($color);
+
+        return $this;
+    }
+
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     */
+    public function getGrayColor(): array
+    {
+        return $this->grayColor ?? Color::Gray;
+    }
+
+    /**
+     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null  $color
+     */
     public function dangerColor(array | string | null $color): static
     {
         $this->dangerColor = $this->processColor($color);
@@ -736,6 +801,30 @@ class Context
     public function getSuccessColor(): array
     {
         return $this->successColor ?? Color::Green;
+    }
+
+    public function sidebarWidth(string $width): static
+    {
+        $this->sidebarWidth = $width;
+
+        return $this;
+    }
+
+    public function getSidebarWidth(): string
+    {
+        return $this->sidebarWidth;
+    }
+
+    public function collapsedSidebarWidth(string $width): static
+    {
+        $this->collapsedSidebarWidth = $width;
+
+        return $this;
+    }
+
+    public function getCollapsedSidebarWidth(): string
+    {
+        return $this->collapsedSidebarWidth;
     }
 
     public function hasRoutableTenancy(): bool
@@ -824,6 +913,7 @@ class Context
      * @return array{
      *     'primary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
      *     'secondary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
+     *     'gray': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
      *     'danger': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
      *     'warning': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
      *     'success': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
@@ -834,6 +924,7 @@ class Context
         return [
             'primary' => $this->getPrimaryColor(),
             'secondary' => $this->getSecondaryColor(),
+            'gray' => $this->getGrayColor(),
             'warning' => $this->getWarningColor(),
             'danger' => $this->getDangerColor(),
             'success' => $this->getSuccessColor(),
@@ -1168,6 +1259,10 @@ class Context
             $tenant = Filament::getUserDefaultTenant($this->auth()->user());
         }
 
+        if ((! $tenant) && $this->hasRoutableTenancy()) {
+            return $this->hasTenantRegistration() ? $this->getTenantRegistrationUrl() : null;
+        }
+
         if ($tenant && $this->hasRoutableTenancy()) {
             $originalTenant = Filament::getTenant();
             Filament::setTenant($tenant);
@@ -1231,6 +1326,11 @@ class Context
     public function getEmailVerificationPromptRouteAction(): string | Closure | array | null
     {
         return $this->emailVerificationRouteAction;
+    }
+
+    public function getFavicon(): ?string
+    {
+        return $this->favicon;
     }
 
     /**
@@ -1397,7 +1497,10 @@ class Context
 
     public function getFontHtml(): Htmlable
     {
-        return app($this->getFontProvider())->getHtml($this->getFontUrl());
+        return app($this->getFontProvider())->getHtml(
+            $this->getFontName(),
+            $this->getFontUrl(),
+        );
     }
 
     public function getFontName(): string

@@ -74,6 +74,6 @@ trait CanBeSearchable
 
     public function isSearchable(): bool
     {
-        return $this->evaluate($this->isSearchable);
+        return (bool) $this->evaluate($this->isSearchable);
     }
 }

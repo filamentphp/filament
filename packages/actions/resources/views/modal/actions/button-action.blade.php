@@ -8,9 +8,9 @@
         $wireClickAction = $getAction();
 
         if ($getActionArguments()) {
-            $wireClickAction .= '(\'';
-            $wireClickAction .= str(json_encode($getActionArguments()))->replace('"', '\\"');
-            $wireClickAction .= '\')';
+            $wireClickAction .= '(';
+            $wireClickAction .= \Illuminate\Support\Js::from($getActionArguments());
+            $wireClickAction .= ')';
         }
     } else {
         $wireClickAction = null;

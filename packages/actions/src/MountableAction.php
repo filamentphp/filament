@@ -74,34 +74,6 @@ abstract class MountableAction extends StaticAction
         $this->dispatchFailureRedirect();
     }
 
-    public function button(): static
-    {
-        $this->view('filament-actions::button-action');
-
-        return $this;
-    }
-
-    public function grouped(): static
-    {
-        $this->view('filament-actions::grouped-action');
-
-        return $this;
-    }
-
-    public function iconButton(): static
-    {
-        $this->view('filament-actions::icon-button-action');
-
-        return $this;
-    }
-
-    public function link(): static
-    {
-        $this->view('filament-actions::link-action');
-
-        return $this;
-    }
-
     /**
      * @return Component
      */

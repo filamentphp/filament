@@ -3,12 +3,14 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
+use InvalidArgumentException;
 use Livewire\Exceptions\PropertyNotFoundException;
 
 /**
@@ -23,9 +25,14 @@ trait InteractsWithActions
     public ?string $mountedAction = null;
 
     /**
-     * @var array<string, mixed>
+     * @var array<string, mixed> | null
      */
-    public array $mountedActionData = [];
+    public ?array $mountedActionArguments = [];
+
+    /**
+     * @var array<string, mixed> | null
+     */
+    public ?array $mountedActionData = [];
 
     /**
      * @var array<string, Action>
@@ -50,7 +57,10 @@ trait InteractsWithActions
         }
     }
 
-    public function callMountedAction(?string $arguments = null): mixed
+    /**
+     * @param  array<string, mixed>  $arguments
+     */
+    public function callMountedAction(array $arguments = []): mixed
     {
         $action = $this->getMountedAction();
 
@@ -62,7 +72,10 @@ trait InteractsWithActions
             return null;
         }
 
-        $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
+        $action->arguments(array_merge(
+            $this->mountedActionArguments ?? [],
+            $arguments,
+        ));
 
         $form = $this->getMountedActionForm();
 
@@ -101,9 +114,13 @@ trait InteractsWithActions
         return $result;
     }
 
-    public function mountAction(string $name): mixed
+    /**
+     * @param  array<string, mixed>  $arguments
+     */
+    public function mountAction(string $name, array $arguments = []): mixed
     {
         $this->mountedAction = $name;
+        $this->mountedActionArguments = $arguments;
 
         $action = $this->getMountedAction();
 
@@ -114,6 +131,8 @@ trait InteractsWithActions
         if ($action->isDisabled()) {
             return null;
         }
+
+        $action->arguments($this->mountedActionArguments);
 
         $this->cacheForm(
             'mountedActionForm',
@@ -158,6 +177,10 @@ trait InteractsWithActions
     public function mountedActionShouldOpenModal(): bool
     {
         $action = $this->getMountedAction();
+
+        if ($action->isModalHidden()) {
+            return false;
+        }
 
         return $action->getModalSubheading() ||
             $action->getModalContent() ||
@@ -220,7 +243,7 @@ trait InteractsWithActions
             $this->makeForm()
                 ->statePath('mountedActionData')
                 ->model($action->getModel() ?? $this->getMountedActionFormModel())
-                ->context($this->mountedAction),
+                ->operation($this->mountedAction),
         );
     }
 
@@ -237,17 +260,19 @@ trait InteractsWithActions
             return $action;
         }
 
-        if (method_exists($this, $name)) {
-            $action = $this->cacheAction(Action::configureUsing(
-                Closure::fromCallable([$this, 'configureAction']),
-                fn () => $this->{$name}(),
-            ), name: $name);
+        if (! method_exists($this, $name)) {
+            throw new Exception("Action [$name] is not registered within a [$name()] method on the Livewire component.");
         }
 
-        if ($action instanceof Action) {
-            return $action;
+        $action = Action::configureUsing(
+            Closure::fromCallable([$this, 'configureAction']),
+            fn () => $this->{$name}(),
+        );
+
+        if (! $action instanceof Action) {
+            throw new InvalidArgumentException('Actions must be an instance of ' . Action::class . ". The [$name] method on the Livewire component returned an instance of [" . get_class($action) . '].');
         }
 
-        return null;
+        return $this->cacheAction($action, name: $name);
     }
 }

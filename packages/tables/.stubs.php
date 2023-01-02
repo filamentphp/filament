@@ -149,5 +149,5 @@ namespace Livewire\Testing {
 
         public function assertCountTableRecords(int $count): static {}
     }
-
+    
 }

@@ -34,7 +34,7 @@
                     />
                 @endif
 
-                <p class="flex-1 font-bold uppercase text-xs tracking-wider">
+                <p class="flex-1 font-bold uppercase text-xs tracking-wider text-primary-600 dark:text-primary-500">
                     {{ $label }}
                 </p>
             </div>
@@ -42,11 +42,11 @@
             @if ($collapsible)
                 <x-filament::icon
                     name="heroicon-m-chevron-down"
-                    alias="app::sidebar.group.trigger"
+                    alias="app::sidebar.group.collapse"
                     size="h-3 w-3"
                     class="text-gray-600 transition dark:text-gray-300"
                     x-bind:class="$store.sidebar.groupIsCollapsed(label) || '-rotate-180'"
-                    x-cloak
+                    x-cloak=""
                 />
             @endif
         </button>

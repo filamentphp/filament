@@ -37,8 +37,6 @@ class FilamentManager
 
     protected ?Model $tenant = null;
 
-    protected ?string $favicon = null;
-
     public function auth(): Guard
     {
         return $this->getCurrentContext()->auth();
@@ -69,11 +67,6 @@ class FilamentManager
         if ($context->isDefault()) {
             $this->setCurrentContext($context);
         }
-    }
-
-    public function favicon(?string $url): void
-    {
-        $this->favicon = $url;
     }
 
     public function serving(Closure $callback): void
@@ -312,6 +305,14 @@ class FilamentManager
     /**
      * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
      */
+    public function getGrayColor(): array
+    {
+        return $this->getCurrentContext()->getGrayColor();
+    }
+
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     */
     public function getDangerColor(): array
     {
         return $this->getCurrentContext()->getDangerColor();
@@ -337,6 +338,7 @@ class FilamentManager
      * @return array{
      *     'primary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
      *     'secondary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
+     *     'gray': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
      *     'danger': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
      *     'warning': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
      *     'success': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
@@ -345,6 +347,16 @@ class FilamentManager
     public function getColors(): array
     {
         return $this->getCurrentContext()->getColors();
+    }
+
+    public function getSidebarWidth(): string
+    {
+        return $this->getCurrentContext()->getSidebarWidth();
+    }
+
+    public function getCollapsedSidebarWidth(): string
+    {
+        return $this->getCurrentContext()->getCollapsedSidebarWidth();
     }
 
     /**
@@ -482,7 +494,7 @@ class FilamentManager
 
     public function getFavicon(): ?string
     {
-        return $this->favicon;
+        return $this->getCurrentContext()->getFavicon();
     }
 
     public function hasDarkMode(): bool

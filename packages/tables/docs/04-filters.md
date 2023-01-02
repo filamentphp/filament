@@ -4,23 +4,12 @@ title: Filters
 
 ## Getting started
 
-Filters allow you to scope the Eloquent query as a way to reduce the number of records in a table.
-
-If you're using the filters in a Livewire component, you can put them in the `getTableFilters()` method:
+Filters allow you to scope the Eloquent query as a way to reduce the number of records in a table. You can put them in the `$table->filters()` method:
 
 ```php
-protected function getTableFilters(): array
-{
-    return [
-        // ...
-    ];
-}
-```
+use Filament\Tables\Table;
 
-If you're using them in admin panel resources or relation managers, you must put them in the `$table->filters()` method:
-
-```php
-public static function table(Table $table): Table
+public function table(Table $table): Table
 {
     return $table
         ->filters([
@@ -198,14 +187,14 @@ TernaryFilter::make('trashed')
 You may use components from the [Form Builder](/docs/forms/fields) to create custom filter forms. The data from the custom filter form is available in the `$data` array of the `query()` callback:
 
 ```php
-use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 
 Filter::make('created_at')
     ->form([
-        Forms\Components\DatePicker::make('created_from'),
-        Forms\Components\DatePicker::make('created_until'),
+        DatePicker::make('created_from'),
+        DatePicker::make('created_until'),
     ])
     ->query(function (Builder $query, array $data): Builder {
         return $query
@@ -225,14 +214,14 @@ Filter::make('created_at')
 If you wish to set a default filter value, you may use the `default()` method on the form component:
 
 ```php
-use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
 use Filament\Tables\Filters\Filter;
 use Illuminate\Database\Eloquent\Builder;
 
 Filter::make('created_at')
     ->form([
-        Forms\Components\DatePicker::make('created_from'),
-        Forms\Components\DatePicker::make('created_until')->default(now()),
+        DatePicker::make('created_from'),
+        DatePicker::make('created_until')->default(now()),
     ])
 ```
 
@@ -303,21 +292,33 @@ Filter::make('created_at')
 
 By default, filters are displayed in a thin dropdown on the right side of the table, in 1 column.
 
-To change the number of columns that filters may occupy, you may use the `getTableFiltersFormColumns()` method:
+To change the number of columns that filters may occupy, you may use the `filtersFormColumns()` method:
 
 ```php
-protected function getTableFiltersFormColumns(): int
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
 {
-    return 3;
+    return $table
+        ->filters([
+            // ...
+        ])
+        ->filtersFormColumns(3);
 }
 ```
 
-To customize the dropdown width, you may use the `getTableFiltersFormWidth()` method, and specify a width from `xs` to `7xl`:
+To customize the dropdown width, you may use the `filtersFormWidth()` method, and specify a width from `xs` to `7xl`:
 
 ```php
-protected function getTableFiltersFormWidth(): string
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
 {
-    return '4xl';
+    return $table
+        ->filters([
+            // ...
+        ])
+        ->filtersFormWidth('4xl');
 }
 ```
 
@@ -327,10 +328,14 @@ To render the filters above the table content instead of in a dropdown, you may 
 
 ```php
 use Filament\Tables\Filters\Layout;
+use Filament\Tables\Table;
 
-protected function getTableFiltersLayout(): ?string
+public function table(Table $table): Table
 {
-    return Layout::AboveContent;
+    return $table
+        ->filters([
+            // ...
+        ], layout: Layout::AboveContent);
 }
 ```
 
@@ -338,20 +343,30 @@ To render the filters below the table content instead of in a dropdown, you may 
 
 ```php
 use Filament\Tables\Filters\Layout;
+use Filament\Tables\Table;
 
-protected function getTableFiltersLayout(): ?string
+public function table(Table $table): Table
 {
-    return Layout::BelowContent;
+    return $table
+        ->filters([
+            // ...
+        ], layout: Layout::BelowContent);
 }
 ```
 
 ## Persist filters in session
 
-To persist the table filters in the user's session, use the `shouldPersistTableFiltersInSession()` method:
+To persist the table filters in the user's session, use the `persistFiltersInSession()` method:
 
 ```php
-protected function shouldPersistTableFiltersInSession(): bool
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
 {
-    return true;
+    return $table
+        ->filters([
+            // ...
+        ])
+        ->persistFiltersInSession();
 }
 ```

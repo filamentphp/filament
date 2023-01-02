@@ -7,26 +7,24 @@
     'placeholderColumns' => true,
     'pluralModelLabel',
     'records',
+    'recordCheckboxPosition' => null,
     'selectionEnabled' => false,
 ])
 
 @php
     use Filament\Tables\Actions\Position as ActionsPosition;
+    use Filament\Tables\Actions\RecordCheckboxPosition;
 
     $hasPageSummary = (! $groupsOnly) && $records instanceof \Illuminate\Contracts\Pagination\Paginator && $records->hasPages();
 @endphp
 
 @if ($hasPageSummary)
-    <x-filament-tables::row class="bg-gray-500/5">
+    <x-filament-tables::row class="filament-tables-summary-header-row bg-gray-500/5">
         @if ($placeholderColumns && $actions && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
             <td></td>
         @endif
 
-        @if ($placeholderColumns && $selectionEnabled)
-            <td></td>
-        @endif
-
-        @if ($placeholderColumns && $actions && $actionsPosition === ActionsPosition::BeforeColumns)
+        @if ($placeholderColumns && $selectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
             <td></td>
         @endif
 
@@ -38,24 +36,46 @@
 
         @foreach ($columns as $column)
             @if ($placeholderColumns || $column->hasSummary())
-                <td class="px-4 py-2 whitespace-nowrap font-medium text-sm text-gray-600 dark:text-gray-300">
+                @php
+                    $hasColumnHeaderLabel = (! $placeholderColumns) || $column->hasSummary();
+                @endphp
+
+                <td {{ $column->getExtraHeaderAttributeBag()->class([
+                    'px-4 py-2 font-medium text-sm text-gray-600 dark:text-gray-300',
+                    'whitespace-nowrap' => ! $column->isHeaderWrapped(),
+                    'whitespace-normal' => $column->isHeaderWrapped(),
+                    match ($column->getAlignment()) {
+                        'start' => 'text-start',
+                        'center' => 'text-center',
+                        'end' => 'text-end',
+                        'left' => 'text-left',
+                        'right' => 'text-right',
+                        'justify' => 'text-justify',
+                        default => null,
+                    } => (! ($loop->first && (! $extraHeadingColumn))) && $hasColumnHeaderLabel,
+                ]) }}>
                     @if ($loop->first && (! $extraHeadingColumn))
                         <span class="text-base">
                             {{ __('filament-tables::table.summary.heading', ['label' => $pluralModelLabel]) }}
                         </span>
-                    @elseif ((! $placeholderColumns) || $column->hasSummary())
+                    @elseif ($hasColumnHeaderLabel)
                         {{ $column->getLabel() }}
                     @endif
                 </td>
             @endif
         @endforeach
 
-        @if ($placeholderColumns && $actions && $actionsPosition === ActionsPosition::AfterCells)
+        @if ($placeholderColumns && $actions && in_array($actionsPosition, [ActionsPosition::AfterColumns, ActionsPosition::AfterCells]))
+            <td></td>
+        @endif
+
+        @if ($placeholderColumns && $selectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
             <td></td>
         @endif
     </x-filament-tables::row>
 
     <x-filament-tables::summary.row
+        class="filament-tables-page-summary-row"
         :actions="$actions"
         :actions-position="$actionsPosition"
         :columns="$columns"
@@ -64,10 +84,12 @@
         :selection-enabled="$selectionEnabled"
         :placeholder-columns="$placeholderColumns"
         :query="$this->getPageTableSummaryQuery()"
+        :record-checkbox-position="$recordCheckboxPosition"
     />
 @endif
 
 <x-filament-tables::summary.row
+    class="filament-tables-total-summary-row"
     :actions="$actions"
     :actions-position="$actionsPosition"
     :columns="$columns"
@@ -78,4 +100,5 @@
     :query="$this->getAllTableSummaryQuery()"
     :placeholder-columns="$placeholderColumns"
     :strong="! $hasPageSummary"
+    :record-checkbox-position="$recordCheckboxPosition"
 />

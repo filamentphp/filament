@@ -60,6 +60,13 @@ trait InteractsWithTable
             return;
         }
 
+        $defaultSortColumnName = $this->getTable()->getDefaultSortColumn();
+
+        if ($defaultSortColumnName && $this->getTable()->getSortableVisibleColumn($defaultSortColumnName)) {
+            $this->tableSortColumn = $defaultSortColumnName;
+            $this->tableSortDirection = $this->getTable()->getDefaultSortDirection();
+        }
+
         if (blank($this->toggledTableColumns) || ($this->toggledTableColumns === [])) {
             $this->getTableColumnToggleForm()->fill(session()->get(
                 $this->getTableColumnToggleFormStateSessionKey(),
@@ -122,6 +129,7 @@ trait InteractsWithTable
             ->actionsColumnLabel($this->getTableActionsColumnLabel())
             ->actionsPosition($this->getTableActionsPosition())
             ->bulkActions($this->getTableBulkActions())
+            ->checkIfRecordIsSelectableUsing($this->isTableRecordSelectable())
             ->columns($this->getTableColumns())
             ->columnToggleFormColumns($this->getTableColumnToggleFormColumns())
             ->columnToggleFormWidth($this->getTableColumnToggleFormWidth())

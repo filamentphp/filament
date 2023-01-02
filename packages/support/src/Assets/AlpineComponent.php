@@ -6,19 +6,16 @@ class AlpineComponent extends Asset
 {
     public function getPublicPath(): string
     {
-        $path = '';
+        return public_path($this->getRelativePublicPath());
+    }
 
-        $package = $this->getPackage();
+    public function getRelativePublicPath(): string
+    {
+        return "js/{$this->getPackage()}/components/{$this->getId()}.js";
+    }
 
-        if (filled($package)) {
-            $path .= $package;
-            $path .= DIRECTORY_SEPARATOR;
-        }
-
-        $path .= 'components';
-        $path .= DIRECTORY_SEPARATOR;
-        $path .= "{$this->getId()}.js";
-
-        return public_path("js/filament/{$path}");
+    public function getSrc(): string
+    {
+        return asset($this->getRelativePublicPath()) . '?v=' . $this->getVersion();
     }
 }

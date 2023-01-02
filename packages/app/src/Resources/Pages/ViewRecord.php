@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ViewRecord extends Page
 {
-    use Concerns\HasRecordBreadcrumb;
     use Concerns\HasRelationManagers;
     use Concerns\InteractsWithRecord;
     use InteractsWithFormActions;
@@ -28,9 +27,9 @@ class ViewRecord extends Page
     protected static string $view = 'filament::resources.pages.view-record';
 
     /**
-     * @var array<string, mixed>
+     * @var array<string, mixed> | null
      */
-    public array $data;
+    public ?array $data = [];
 
     /**
      * @var array<int | string, string | array<mixed>>
@@ -173,7 +172,7 @@ class ViewRecord extends Page
     {
         return static::getResource()::form(
             $form
-                ->context('view')
+                ->operation('view')
                 ->disabled()
                 ->model($this->getRecord())
                 ->statePath('data')

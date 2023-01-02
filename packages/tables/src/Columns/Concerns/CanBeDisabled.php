@@ -26,7 +26,7 @@ trait CanBeDisabled
 
     public function isDisabled(): bool
     {
-        return $this->evaluate($this->isDisabled);
+        return (bool) $this->evaluate($this->isDisabled);
     }
 
     public function isEnabled(): bool
@@ -36,6 +36,6 @@ trait CanBeDisabled
 
     public function isClickDisabled(): bool
     {
-        return $this->evaluate($this->isClickDisabled);
+        return (bool) $this->evaluate($this->isClickDisabled);
     }
 }

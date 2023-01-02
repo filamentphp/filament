@@ -6,7 +6,7 @@ Filament allows you to build dynamic dashboards, comprised of "widget" cards, ve
 
 Widgets are pure [Livewire](https://laravel-livewire.com) components, so may use any features of that package.
 
-Widgets may also be used on [resource pages](../resources/widgets) or other [custom pages](../pages/widgets).
+Widgets may also be used on [resource pages](../resources/widgets) or other [custom pages](../pages#widgets).
 
 ## Available widgets
 

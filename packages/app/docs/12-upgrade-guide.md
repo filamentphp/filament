@@ -1,5 +1,5 @@
 ---
-title: Upgrading from v1.x
+title: Upgrading from v2.x
 ---
 
 > If you see anything missing from this guide, please do not hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/2.x/packages/admin/docs/09-upgrade-guide.md) to our repository! Any help is appreciated!
@@ -186,7 +186,7 @@ If you had customized the `path`, `domain` or `default_filesystem_disk`, you sho
 
 ### Users
 
-Filament v2.x does not include a dedicated `filament_users` table as it did in v1.x. By default, all `App\Models\User`s can access the admin panel locally, and in production you must apply the `FilamentUser` interface to the model to control admin access. You can read more about this [here](users).
+Filament v2.x does not include a dedicated `filament_users` table as it did in v1.x. By default, all `App\Models\User`s can access the app locally, and in production you must apply the `FilamentUser` interface to the model to control admin access. You can read more about this [here](users).
 
 <details>
 <summary>

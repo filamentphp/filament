@@ -72,7 +72,7 @@ class TextColumn extends Column
 
     public function canWrap(): bool
     {
-        return $this->evaluate($this->canWrap);
+        return (bool) $this->evaluate($this->canWrap);
     }
 
     /**

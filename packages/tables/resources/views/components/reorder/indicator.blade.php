@@ -13,7 +13,7 @@
     }}
 >
     <x-filament::loading-indicator
-        wire:loading.delay
+        wire:loading.delay=""
         wire:target="reorderTable"
         class="w-4 h-4 mr-3 rtl:mr-0 rtl:ml-3 text-primary-500"
     />

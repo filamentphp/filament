@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Assets;
 
+use Exception;
 use Illuminate\Support\Arr;
 
 class AssetManager
@@ -34,7 +35,7 @@ class AssetManager
     /**
      * @param  array<Asset>  $assets
      */
-    public function register(array $assets, ?string $package = null): void
+    public function register(array $assets, string $package): void
     {
         foreach ($assets as $asset) {
             $asset->package($package);
@@ -53,7 +54,7 @@ class AssetManager
     /**
      * @param  array<string, mixed>  $data
      */
-    public function registerScriptData(array $data, ?string $package = null): void
+    public function registerScriptData(array $data, string $package): void
     {
         $this->scriptData[$package] = array_merge($this->scriptData[$package] ?? [], $data);
     }
@@ -65,6 +66,22 @@ class AssetManager
     public function getAlpineComponents(?array $packages = null): array
     {
         return $this->getAssets($this->alpineComponents, $packages);
+    }
+
+    public function getAlpineComponentSrc(string $id, string $package): string
+    {
+        /** @var array<AlpineComponent> $components */
+        $components = $this->getAlpineComponents([$package]);
+
+        foreach ($components as $component) {
+            if ($component->getId() !== $id) {
+                continue;
+            }
+
+            return $component->getSrc();
+        }
+
+        throw new Exception("Alpine component with ID [{$id}] not found for package [{$package}].");
     }
 
     /**
@@ -170,8 +187,6 @@ class AssetManager
     protected function getAssets(array $assets, ?array $packages = null): array
     {
         if ($packages !== null) {
-            $packages[] = null;
-
             $assets = Arr::only($assets, $packages);
         }
 

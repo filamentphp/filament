@@ -10,7 +10,9 @@ class Group
 {
     protected ?string $column;
 
-    protected ?Closure $getGroupTitleFromRecordUsing = null;
+    protected ?Closure $getDescriptionUsing = null;
+
+    protected ?Closure $getTitleFromRecordUsing = null;
 
     protected ?Closure $orderQueryUsing = null;
 
@@ -20,6 +22,8 @@ class Group
 
     protected string $id;
 
+    protected bool $isCollapsible = false;
+
     final public function __construct(string $id = null)
     {
         $this->id($id);
@@ -28,6 +32,13 @@ class Group
     public static function make(string $id = null): static
     {
         return app(static::class, ['id' => $id]);
+    }
+
+    public function collapsible(bool $condition = true): static
+    {
+        $this->isCollapsible = $condition;
+
+        return $this;
     }
 
     public function column(?string $column): static
@@ -51,9 +62,16 @@ class Group
         return $this;
     }
 
-    public function getGroupTitleFromRecordUsing(?Closure $callback): static
+    public function getDescriptionUsing(?Closure $callback): static
     {
-        $this->getGroupTitleFromRecordUsing = $callback;
+        $this->getDescriptionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getTitleFromRecordUsing(?Closure $callback): static
+    {
+        $this->getTitleFromRecordUsing = $callback;
 
         return $this;
     }
@@ -70,6 +88,11 @@ class Group
         $this->scopeQueryUsing = $callback;
 
         return $this;
+    }
+
+    public function isCollapsible(): bool
+    {
+        return $this->isCollapsible;
     }
 
     public function getColumn(): string
@@ -92,12 +115,24 @@ class Group
             ->ucfirst();
     }
 
-    public function getGroupTitleFromRecord(Model $record): string
+    public function getDescription(Model $record, string $title): ?string
+    {
+        if (! $this->getDescriptionUsing) {
+            return null;
+        }
+
+        return app()->call($this->getDescriptionUsing, [
+            'record' => $record,
+            'title' => $title,
+        ]);
+    }
+
+    public function getTitle(Model $record): string
     {
         $column = $this->getColumn();
 
-        if ($this->getGroupTitleFromRecordUsing) {
-            return app()->call($this->getGroupTitleFromRecordUsing, [
+        if ($this->getTitleFromRecordUsing) {
+            return app()->call($this->getTitleFromRecordUsing, [
                 'column' => $column,
                 'record' => $record,
             ]);
@@ -106,18 +141,19 @@ class Group
         return $record->getAttribute($column);
     }
 
-    public function orderQuery(Builder $query): Builder
+    public function orderQuery(Builder $query, string $direction): Builder
     {
         $column = $this->getColumn();
 
         if ($this->orderQueryUsing) {
             return app()->call($this->orderQueryUsing, [
                 'column' => $column,
+                'direction' => $direction,
                 'query' => $query,
             ]) ?? $query;
         }
 
-        return $query->orderBy($column);
+        return $query->orderBy($column, $direction);
     }
 
     public function scopeQuery(Builder $query, Model $record): Builder

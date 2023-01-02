@@ -1,30 +1,33 @@
 @props([
-    'alias',
+    'alias' => null,
     'class' => [],
     'color' => null,
+    'group' => null,
     'name' => null,
     'size',
 ])
 
 @php
-    $customIcon = \Filament\Support\Facades\FilamentIcon::resolve($alias);
+    $icon = $alias ? \Filament\Support\Facades\FilamentIcon::resolve($alias) : null;
+    $group = $group ? \Filament\Support\Facades\FilamentIcon::resolve($group) : null;
 
-    if ($customIcon) {
-        $name = $customIcon->name;
+    if ($icon?->name) {
+        $name = $icon->name;
     }
 
     $class = array_merge(
+        $group?->class ?? [],
+        $icon?->class ?? [],
         Arr::wrap($class),
-        $customIcon?->class ?? [],
     );
 
-    $color = $customIcon?->color ?? $color;
+    $color = $icon?->color ?? $group?->color ?? $color;
 
     if ($color !== null) {
         $class[] = $color;
     }
 
-    $class[] = $customIcon?->size ?? $size;
+    $class[] = $icon?->size ?? $group?->size ?? $size;
 @endphp
 
 @if ($name)

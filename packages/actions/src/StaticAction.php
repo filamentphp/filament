@@ -37,6 +37,34 @@ abstract class StaticAction extends ViewComponent
         return $static;
     }
 
+    public function button(): static
+    {
+        $this->view('filament-actions::button-action');
+
+        return $this;
+    }
+
+    public function grouped(): static
+    {
+        $this->view('filament-actions::grouped-action');
+
+        return $this;
+    }
+
+    public function iconButton(): static
+    {
+        $this->view('filament-actions::icon-button-action');
+
+        return $this;
+    }
+
+    public function link(): static
+    {
+        $this->view('filament-actions::link-action');
+
+        return $this;
+    }
+
     public static function getDefaultName(): ?string
     {
         return null;
