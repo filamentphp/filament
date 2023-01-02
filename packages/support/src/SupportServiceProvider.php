@@ -3,7 +3,6 @@
 namespace Filament\Support;
 
 use Composer\InstalledVersions;
-use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\AssetManager;
 use Filament\Support\Assets\Js;
 use Filament\Support\Commands\AssetsCommand;

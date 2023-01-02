@@ -3,7 +3,6 @@
 namespace Filament\Support\Assets;
 
 use Closure;
-use Composer\InstalledVersions;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
 

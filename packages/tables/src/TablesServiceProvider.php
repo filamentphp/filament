@@ -2,11 +2,9 @@
 
 namespace Filament\Tables;
 
-use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\AssetManager;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\PluginServiceProvider;
 use Filament\Tables\Testing\TestsActions;
 use Filament\Tables\Testing\TestsBulkActions;
 use Filament\Tables\Testing\TestsColumns;
