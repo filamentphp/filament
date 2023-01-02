@@ -93,7 +93,7 @@ $deleteRows = $canDeleteRows()
                                             type="button"
                                             class="text-gray-400 hover:text-gray-600 focus:text-gray-600"
                                         >
-                                            <x-heroicon-o-x class="w-4 h-4" />
+                                            <x-heroicon-s-x class="w-5 h-5" />
                                         </button>
                                     </div>
                                 </td>
