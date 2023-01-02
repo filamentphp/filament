@@ -22,12 +22,7 @@
         </x-slot>
 
         @foreach ($notifications as $notification)
-            {{
-                $this
-                    ->getNotificationFromDatabaseRecord($notification)
-                    ->inline()
-                    ->unread($notification->unread())
-            }}
+            {{ $this->getNotificationFromDatabaseRecord($notification) }}
         @endforeach
     @else
         <x-filament-notifications::database.modal.empty-state />
