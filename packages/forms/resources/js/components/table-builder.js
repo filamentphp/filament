@@ -30,8 +30,8 @@ export default (Alpine) => {
             }
         },
 
-        removeRow(row) {
-            this.state = this.state.filter((_, i) => i !== row)
+        removeRow(rowToRemove) {
+            this.state = this.state.filter((_, row) => row !== rowToRemove)
         },
 
         removeColumn(column) {
