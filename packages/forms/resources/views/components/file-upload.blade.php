@@ -16,7 +16,7 @@
     <div
         x-ignore
         ax-load
-        ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentUrl('file-upload', 'filament/forms') }}"
+        ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
         x-data="fileUploadFormComponent({
             acceptedFileTypes: {{ json_encode($getAcceptedFileTypes()) }},
             canDownload: {{ $canDownload() ? 'true' : 'false' }},

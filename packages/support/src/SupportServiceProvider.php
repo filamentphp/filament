@@ -3,13 +3,13 @@
 namespace Filament\Support;
 
 use Composer\InstalledVersions;
-use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\AssetManager;
 use Filament\Support\Assets\Js;
 use Filament\Support\Commands\AssetsCommand;
 use Filament\Support\Commands\CheckTranslationsCommand;
 use Filament\Support\Commands\InstallCommand;
 use Filament\Support\Commands\UpgradeCommand;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\IconManager;
 use HtmlSanitizer\Sanitizer;
 use HtmlSanitizer\SanitizerInterface;
@@ -17,17 +17,27 @@ use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
+use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class SupportServiceProvider extends PluginServiceProvider
+class SupportServiceProvider extends PackageServiceProvider
 {
-    public static string $name = 'filament-support';
-
-    public static ?string $viewNamespace = 'filament';
+    public function configurePackage(Package $package): void
+    {
+        $package
+            ->name('filament-support')
+            ->hasCommands([
+                AssetsCommand::class,
+                CheckTranslationsCommand::class,
+                InstallCommand::class,
+                UpgradeCommand::class,
+            ])
+            ->hasTranslations()
+            ->hasViews(namespace: 'filament');
+    }
 
     public function packageRegistered(): void
     {
-        parent::packageRegistered();
-
         $this->app->scoped(
             AssetManager::class,
             function () {
@@ -48,12 +58,17 @@ class SupportServiceProvider extends PluginServiceProvider
                 return Sanitizer::create(require __DIR__ . '/../config/html-sanitizer.php');
             },
         );
+
+        $this->app->resolving(AssetManager::class, function () {
+            FilamentAsset::register([
+                Js::make('support', __DIR__ . '/../dist/index.js'),
+                Js::make('async-alpine', __DIR__ . '/../dist/async-alpine.js'),
+            ], 'filament/support');
+        });
     }
 
     public function packageBooted(): void
     {
-        parent::packageBooted();
-
         Blade::directive('captureSlots', function (string $expression): string {
             return "<?php \$slotContents = get_defined_vars(); \$slots = collect({$expression})->mapWithKeys(fn (string \$slot): array => [\$slot => \$slotContents[\$slot] ?? null])->all(); unset(\$slotContents) ?>";
         });
@@ -101,34 +116,5 @@ class SupportServiceProvider extends PluginServiceProvider
                 },
             ]);
         }
-    }
-
-    protected function getAssetPackage(): ?string
-    {
-        return 'filament/support';
-    }
-
-    /**
-     * @return array<Asset>
-     */
-    protected function getAssets(): array
-    {
-        return [
-            Js::make('support', __DIR__ . '/../dist/index.js'),
-            Js::make('async-alpine', __DIR__ . '/../dist/async-alpine.js'),
-        ];
-    }
-
-    /**
-     * @return array<class-string>
-     */
-    protected function getCommands(): array
-    {
-        return [
-            AssetsCommand::class,
-            CheckTranslationsCommand::class,
-            InstallCommand::class,
-            UpgradeCommand::class,
-        ];
     }
 }

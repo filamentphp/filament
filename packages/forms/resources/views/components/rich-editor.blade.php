@@ -10,7 +10,7 @@
     <div
         x-ignore
         ax-load
-        ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentUrl('rich-editor', 'filament/forms') }}"
+        ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms') }}"
         x-data="richEditorFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
         })"

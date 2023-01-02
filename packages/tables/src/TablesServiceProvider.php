@@ -2,9 +2,9 @@
 
 namespace Filament\Tables;
 
-use Filament\Support\Assets\Asset;
+use Filament\Support\Assets\AssetManager;
 use Filament\Support\Assets\Js;
-use Filament\Support\PluginServiceProvider;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Tables\Testing\TestsActions;
 use Filament\Tables\Testing\TestsBulkActions;
 use Filament\Tables\Testing\TestsColumns;
@@ -13,15 +13,32 @@ use Filament\Tables\Testing\TestsRecords;
 use Filament\Tables\Testing\TestsSummaries;
 use Illuminate\Filesystem\Filesystem;
 use Livewire\Testing\TestableLivewire;
+use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class TablesServiceProvider extends PluginServiceProvider
+class TablesServiceProvider extends PackageServiceProvider
 {
-    public static string $name = 'filament-tables';
+    public function configurePackage(Package $package): void
+    {
+        $package
+            ->name('filament-tables')
+            ->hasCommands($this->getCommands())
+            ->hasConfigFile()
+            ->hasTranslations()
+            ->hasViews();
+    }
+
+    public function packageRegistered(): void
+    {
+        $this->app->resolving(AssetManager::class, function () {
+            FilamentAsset::register([
+                Js::make('tables', __DIR__ . '/../dist/index.js'),
+            ], 'filament/tables');
+        });
+    }
 
     public function packageBooted(): void
     {
-        parent::packageBooted();
-
         if ($this->app->runningInConsole()) {
             foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
                 $this->publishes([
@@ -61,20 +78,5 @@ class TablesServiceProvider extends PluginServiceProvider
         }
 
         return array_merge($commands, $aliases);
-    }
-
-    protected function getAssetPackage(): ?string
-    {
-        return 'filament/tables';
-    }
-
-    /**
-     * @return array<Asset>
-     */
-    protected function getAssets(): array
-    {
-        return [
-            Js::make('tables', __DIR__ . '/../dist/index.js'),
-        ];
     }
 }

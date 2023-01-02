@@ -53,7 +53,7 @@
             <div
                 x-ignore
                 ax-load
-                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentUrl('select', 'filament/forms') }}"
+                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('select', 'filament/forms') }}"
                 x-data="selectFormComponent({
                     isHtmlAllowed: @js($isHtmlAllowed()),
                     getOptionLabelUsing: async () => {

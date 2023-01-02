@@ -35,7 +35,7 @@ class AssetManager
     /**
      * @param  array<Asset>  $assets
      */
-    public function register(array $assets, ?string $package = null): void
+    public function register(array $assets, string $package): void
     {
         foreach ($assets as $asset) {
             $asset->package($package);
@@ -54,7 +54,7 @@ class AssetManager
     /**
      * @param  array<string, mixed>  $data
      */
-    public function registerScriptData(array $data, ?string $package = null): void
+    public function registerScriptData(array $data, string $package): void
     {
         $this->scriptData[$package] = array_merge($this->scriptData[$package] ?? [], $data);
     }
@@ -68,7 +68,7 @@ class AssetManager
         return $this->getAssets($this->alpineComponents, $packages);
     }
 
-    public function getAlpineComponentUrl(string $id, ?string $package = null): string
+    public function getAlpineComponentSrc(string $id, string $package): string
     {
         /** @var array<AlpineComponent> $components */
         $components = $this->getAlpineComponents([$package]);
@@ -78,7 +78,7 @@ class AssetManager
                 continue;
             }
 
-            return $component->getUrl();
+            return $component->getSrc();
         }
 
         throw new Exception("Alpine component with ID [{$id}] not found for package [{$package}].");
@@ -187,8 +187,6 @@ class AssetManager
     protected function getAssets(array $assets, ?array $packages = null): array
     {
         if ($packages !== null) {
-            $packages[] = '';
-
             $assets = Arr::only($assets, $packages);
         }
 

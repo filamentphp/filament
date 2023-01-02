@@ -16,23 +16,31 @@ use Filament\Http\Responses\Auth\LoginResponse;
 use Filament\Http\Responses\Auth\LogoutResponse;
 use Filament\Http\Responses\Auth\PasswordResetResponse;
 use Filament\Http\Responses\Auth\RegistrationResponse;
-use Filament\Support\Assets\Asset;
+use Filament\Support\Assets\AssetManager;
 use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Theme;
-use Filament\Support\PluginServiceProvider;
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Arr;
 use Livewire\Livewire;
+use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class FilamentServiceProvider extends PluginServiceProvider
+class FilamentServiceProvider extends PackageServiceProvider
 {
-    public static string $name = 'filament';
+    public function configurePackage(Package $package): void
+    {
+        $package
+            ->name('filament')
+            ->hasCommands($this->getCommands())
+            ->hasRoutes('web')
+            ->hasTranslations()
+            ->hasViews();
+    }
 
     public function packageRegistered(): void
     {
-        parent::packageRegistered();
-
         $this->app->scoped('filament', function (): FilamentManager {
             return new FilamentManager();
         });
@@ -43,6 +51,14 @@ class FilamentServiceProvider extends PluginServiceProvider
         $this->app->bind(PasswordResetResponseContract::class, PasswordResetResponse::class);
         $this->app->bind(RegistrationResponseContract::class, RegistrationResponse::class);
 
+        $this->app->resolving(AssetManager::class, function () {
+            FilamentAsset::register([
+                Js::make('app', __DIR__ . '/../dist/index.js')->core(),
+                Js::make('echo', __DIR__ . '/../dist/echo.js')->core(),
+                Theme::make('app', __DIR__ . '/../dist/theme.css'),
+            ], 'filament/filament');
+        });
+
         $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
 
         app(Router::class)->aliasMiddleware('context', SetUpContext::class);
@@ -50,8 +66,6 @@ class FilamentServiceProvider extends PluginServiceProvider
 
     public function packageBooted(): void
     {
-        parent::packageBooted();
-
         Livewire::addPersistentMiddleware([
             Authenticate::class,
             DispatchServingFilamentEvent::class,
@@ -66,28 +80,6 @@ class FilamentServiceProvider extends PluginServiceProvider
                 ], 'filament-stubs');
             }
         }
-    }
-
-    protected function getAssetPackage(): ?string
-    {
-        return 'filament/filament';
-    }
-
-    /**
-     * @return array<Asset>
-     */
-    protected function getAssets(): array
-    {
-        return [
-            Js::make('app', __DIR__ . '/../dist/index.js')->core(),
-            Js::make('echo', __DIR__ . '/../dist/echo.js')->core(),
-            Theme::make('app', __DIR__ . '/../dist/theme.css'),
-        ];
-    }
-
-    protected function getRoutes(): array
-    {
-        return ['web'];
     }
 
     /**

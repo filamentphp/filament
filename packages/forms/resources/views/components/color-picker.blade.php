@@ -22,7 +22,7 @@
             <div
                 x-ignore
                 ax-load
-                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentUrl('color-picker', 'filament/forms') }}"
+                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('color-picker', 'filament/forms') }}"
                 x-data="colorPickerFormComponent({
                     isAutofocused: @js($isAutofocused()),
                     isDisabled: @js($isDisabled),

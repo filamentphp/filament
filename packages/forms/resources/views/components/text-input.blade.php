@@ -30,7 +30,7 @@
             @if ($hasMask)
                 x-ignore
                 ax-load
-                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentUrl('text-input', 'filament/forms') }}"
+                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('text-input', 'filament/forms') }}"
                 x-data="textInputFormComponent({
                     getMaskOptionsUsing: (IMask) => ({{ $getJsonMaskConfiguration() }}),
                     state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')', lazilyEntangledModifiers: ['defer']) }},

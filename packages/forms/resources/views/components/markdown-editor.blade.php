@@ -11,7 +11,7 @@
     <div
         x-ignore
         ax-load
-        ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentUrl('markdown-editor', 'filament/forms') }}"
+        ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('markdown-editor', 'filament/forms') }}"
         x-data="markdownEditorFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
             tab: '{{ $isDisabled ? 'preview' : 'edit' }}',

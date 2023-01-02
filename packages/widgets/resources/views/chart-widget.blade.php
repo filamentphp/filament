@@ -33,7 +33,7 @@
             <div
                 x-ignore
                 ax-load
-                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentUrl('chart', 'filament/widgets') }}"
+                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
                 x-data="chart({
                     cachedData: @js($this->getCachedData()),
                     options: @js($this->getOptions()),

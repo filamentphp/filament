@@ -11,25 +11,11 @@ class AlpineComponent extends Asset
 
     public function getRelativePublicPath(): string
     {
-        $path = 'js';
-        $path .= DIRECTORY_SEPARATOR;
-
-        $package = $this->getPackage();
-
-        if (filled($package)) {
-            $path .= $package;
-            $path .= DIRECTORY_SEPARATOR;
-        }
-
-        $path .= 'components';
-        $path .= DIRECTORY_SEPARATOR;
-        $path .= "{$this->getId()}.js";
-
-        return $path;
+        return "js/{$this->getPackage()}/components/{$this->getId()}.js";
     }
 
-    public function getUrl(): string
+    public function getSrc(): string
     {
-        return asset("{$this->getRelativePublicPath()}?v={$this->getVersion()}");
+        return asset($this->getRelativePublicPath()) . '?v=' . $this->getVersion();
     }
 }

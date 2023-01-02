@@ -11,7 +11,7 @@
         @if ($shouldAutosize())
             x-ignore
             ax-load
-            ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentUrl('textarea', 'filament/forms') }}"
+            ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('textarea', 'filament/forms') }}"
             x-data="textareaFormComponent()"
             x-on:input="render()"
             style="height: 150px"
