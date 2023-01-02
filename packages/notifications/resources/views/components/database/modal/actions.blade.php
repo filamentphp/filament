@@ -14,7 +14,7 @@
                     tabindex="-1"
                     wire:target="markAllDatabaseNotificationsAsRead"
                     wire:loading.attr="disabled"
-                    wire:loading.class="opacity-70 cursor-wait"
+                    class="disabled:opacity-70 disabled:pointer-events-none"
                 >
                     {{ __('filament-notifications::database.modal.buttons.mark_all_as_read.label') }}
                 </x-filament::link>
@@ -32,7 +32,7 @@
                 tabindex="-1"
                 wire:target="clearDatabaseNotifications"
                 wire:loading.attr="disabled"
-                wire:loading.class="opacity-70 cursor-wait"
+                class="disabled:opacity-70 disabled:pointer-events-none"
             >
                 {{ __('filament-notifications::database.modal.buttons.clear.label') }}
             </x-filament::link>

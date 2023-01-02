@@ -96,10 +96,10 @@ function (Set $set) {
 }
 ```
 
-If you're writing a form for an App Framework resource or relation manager, and you wish to check if a form is `create`, `edit` or `view`, use the `$context` parameter:
+If you're writing a form for an App Framework resource or relation manager, and you wish to check if a form is `create`, `edit` or `view`, use the `$operation` parameter:
 
 ```php
-function (string $context) {
+function (string $operation) {
     // ...
 }
 ```

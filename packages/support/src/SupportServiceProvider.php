@@ -105,7 +105,7 @@ class SupportServiceProvider extends PluginServiceProvider
 
     protected function getAssetPackage(): ?string
     {
-        return null;
+        return 'filament/support';
     }
 
     /**

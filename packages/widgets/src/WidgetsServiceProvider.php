@@ -12,7 +12,7 @@ class WidgetsServiceProvider extends PluginServiceProvider
 
     protected function getAssetPackage(): ?string
     {
-        return 'widgets';
+        return 'filament/widgets';
     }
 
     /**

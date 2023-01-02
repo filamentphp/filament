@@ -105,7 +105,7 @@ class TestsBulkActions
                 return $this;
             }
 
-            $this->call('callMountedTableBulkAction', json_encode($arguments));
+            $this->call('callMountedTableBulkAction', $arguments);
 
             if ($this->get('mountedTableBulkAction') !== $action->getName()) {
                 $this->assertDispatchedBrowserEvent('close-modal', [

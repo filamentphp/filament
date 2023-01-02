@@ -86,7 +86,6 @@
             'disabled' => $disabled,
             'type' => 'button',
             'wire:loading.attr' => 'disabled',
-            'wire:loading.class.delay' => $hasLoadingIndicator ? 'opacity-70 cursor-wait' : null,
             'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
         ], escape: false)
         ->class([$buttonClasses])
@@ -112,8 +111,8 @@
 
         @if ($hasLoadingIndicator)
             <x-filament::loading-indicator
-                x-cloak
-                wire:loading.delay
+                x-cloak=""
+                wire:loading.delay=""
                 :wire:target="$loadingIndicatorTarget"
                 :class="$iconClasses . ' ' . $iconColor . ' ' . $iconSize"
             />

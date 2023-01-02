@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\Actions;
 
 use Filament\Actions\Concerns\HasMountableArguments;
 use Filament\Actions\MountableAction;
+use Illuminate\Support\Js;
 
 class Action extends MountableAction
 {
@@ -31,9 +32,9 @@ class Action extends MountableAction
         $argumentsParameter = '';
 
         if (count($arguments = $this->getArguments())) {
-            $argumentsParameter .= ', \'';
-            $argumentsParameter .= str(json_encode($arguments))->replace('"', '\\"');
-            $argumentsParameter .= '\'';
+            $argumentsParameter .= ', ';
+            $argumentsParameter .= Js::from($arguments);
+            $argumentsParameter .= '';
         }
 
         return "mountFormComponentAction('{$this->getComponent()->getStatePath()}', '{$this->getName()}'{$argumentsParameter})";

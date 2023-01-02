@@ -57,7 +57,10 @@ trait InteractsWithActions
         }
     }
 
-    public function callMountedAction(?string $arguments = null): mixed
+    /**
+     * @param  array<string, mixed>  $arguments
+     */
+    public function callMountedAction(array $arguments = []): mixed
     {
         $action = $this->getMountedAction();
 
@@ -71,7 +74,7 @@ trait InteractsWithActions
 
         $action->arguments(array_merge(
             $this->mountedActionArguments ?? [],
-            $arguments ? json_decode($arguments, associative: true) : [],
+            $arguments,
         ));
 
         $form = $this->getMountedActionForm();
@@ -111,10 +114,13 @@ trait InteractsWithActions
         return $result;
     }
 
-    public function mountAction(string $name, ?string $arguments = null): mixed
+    /**
+     * @param  array<string, mixed>  $arguments
+     */
+    public function mountAction(string $name, array $arguments = []): mixed
     {
         $this->mountedAction = $name;
-        $this->mountedActionArguments = $arguments ? json_decode($arguments, associative: true) : [];
+        $this->mountedActionArguments = $arguments;
 
         $action = $this->getMountedAction();
 
@@ -237,7 +243,7 @@ trait InteractsWithActions
             $this->makeForm()
                 ->statePath('mountedActionData')
                 ->model($action->getModel() ?? $this->getMountedActionFormModel())
-                ->context($this->mountedAction),
+                ->operation($this->mountedAction),
         );
     }
 

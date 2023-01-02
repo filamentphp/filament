@@ -10,13 +10,13 @@
                 alias="app::global-search.input.prefix"
                 color="text-gray-500 dark:text-gray-400"
                 size="h-5 w-5"
-                wire:loading.remove.delay
+                wire:loading.remove.delay=""
                 wire:target="search"
             />
 
             <x-filament::loading-indicator
                 class="h-5 w-5 text-gray-500 dark:text-gray-400"
-                wire:loading.delay
+                wire:loading.delay=""
                 wire:target="search"
             />
         </span>

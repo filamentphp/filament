@@ -346,7 +346,7 @@ trait InteractsWithForms
             ->schema($this->getFormSchema())
             ->model($this->getFormModel())
             ->statePath($this->getFormStatePath())
-            ->context($this->getFormContext());
+            ->operation($this->getFormContext());
     }
 
     /**

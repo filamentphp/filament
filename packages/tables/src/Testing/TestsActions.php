@@ -97,7 +97,7 @@ class TestsActions
                 return $this;
             }
 
-            $this->call('callMountedTableAction', json_encode($arguments));
+            $this->call('callMountedTableAction', $arguments);
 
             if ($this->get('mountedTableAction') !== $action->getName()) {
                 $this->assertDispatchedBrowserEvent('close-modal', [

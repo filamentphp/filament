@@ -70,7 +70,7 @@ class FilamentServiceProvider extends PluginServiceProvider
 
     protected function getAssetPackage(): ?string
     {
-        return null;
+        return 'filament/filament';
     }
 
     /**

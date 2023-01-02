@@ -26,7 +26,7 @@ class TestsActions
             /** @phpstan-ignore-next-line */
             $this->assertActionVisible($name);
 
-            $this->call('mountAction', $name, count($arguments) ? json_encode($arguments) : null);
+            $this->call('mountAction', $name, $arguments);
 
             if ($this->instance()->mountedAction === null) {
                 $this->assertNotDispatchedBrowserEvent('open-modal');
@@ -93,7 +93,7 @@ class TestsActions
                 return $this;
             }
 
-            $this->call('callMountedAction', count($arguments) ? json_encode($arguments) : null);
+            $this->call('callMountedAction', $arguments);
 
             if ($this->get('mountedAction') !== $action->getName()) {
                 $this->assertDispatchedBrowserEvent('close-modal', [

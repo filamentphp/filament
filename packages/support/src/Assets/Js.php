@@ -87,7 +87,7 @@ class Js extends Asset
             return $this->getPath();
         }
 
-        $src = '/js/filament/';
+        $src = '/js/';
 
         $package = $this->getPackage();
 
@@ -113,6 +113,6 @@ class Js extends Asset
 
         $path .= "{$this->getId()}.js";
 
-        return public_path("js/filament/{$path}");
+        return public_path("js/{$path}");
     }
 }

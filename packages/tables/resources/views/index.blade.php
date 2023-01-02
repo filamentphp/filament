@@ -255,7 +255,7 @@
                     @if ((! $isReordering) && count($groupedBulkActions))
                         <x-filament-tables::bulk-actions
                             x-show="selectedRecords.length"
-                            x-cloak
+                            x-cloak=""
                             :actions="$groupedBulkActions"
                         />
                     @endif
@@ -492,7 +492,7 @@
                                                         alias="tables::grouping.collapse"
                                                         size="h-4 w-4"
                                                         class="text-gray-600 transition dark:text-gray-300"
-                                                        x-cloak
+                                                        x-cloak=""
                                                     />
                                                 </button>
                                             @endif
@@ -604,9 +604,8 @@
                                                     wire:click="{{ $recordWireClickAction }}"
                                                     wire:target="{{ $recordWireClickAction }}"
                                                     wire:loading.attr="disabled"
-                                                    wire:loading.class="cursor-wait opacity-70"
                                                     type="button"
-                                                    class="filament-tables-record-action-button flex-1 block py-3"
+                                                    class="filament-tables-record-action-button flex-1 block py-3 disabled:opacity-70 disabled:pointer-events-none"
                                                 >
                                                     <x-filament-tables::columns.layout
                                                         :components="$getColumnsLayout()"
@@ -924,7 +923,7 @@
                                                             alias="tables::grouping.collapse"
                                                             size="h-4 w-4"
                                                             class="text-gray-600 transition dark:text-gray-300"
-                                                            x-cloak
+                                                            x-cloak=""
                                                         />
                                                     </button>
                                                 @endif
@@ -1022,7 +1021,7 @@
                                         <x-filament-tables::cell
                                             class="filament-table-cell-{{ str($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
                                             wire:key="{{ $this->id }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
-                                            wire:loading.remove.delay
+                                            wire:loading.remove.delay=""
                                             wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
                                         >
                                             <x-filament-tables::columns.column

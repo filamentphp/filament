@@ -31,7 +31,10 @@ trait HasActions
     {
     }
 
-    public function callMountedTableAction(?string $arguments = null): mixed
+    /**
+     * @param  array<string, mixed>  $arguments
+     */
+    public function callMountedTableAction(array $arguments = []): mixed
     {
         $action = $this->getMountedTableAction();
 
@@ -47,7 +50,7 @@ trait HasActions
             return null;
         }
 
-        $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
+        $action->arguments($arguments);
 
         $form = $this->getMountedTableActionForm();
 
@@ -198,7 +201,7 @@ trait HasActions
             $this->makeForm()
                 ->model($this->getMountedTableActionRecord() ?? $this->getTable()->getModel())
                 ->statePath('mountedTableActionData')
-                ->context($this->mountedTableAction),
+                ->operation($this->mountedTableAction),
         );
     }
 

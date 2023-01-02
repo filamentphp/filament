@@ -2,6 +2,8 @@
 
 namespace Filament\Support\Assets;
 
+use Composer\InstalledVersions;
+
 abstract class Asset
 {
     protected string $id;
@@ -46,6 +48,11 @@ abstract class Asset
     public function isRemote(): bool
     {
         return str($this->getPath())->startsWith(['http://', 'https://', '//']);
+    }
+
+    public function getVersion(): string
+    {
+        return InstalledVersions::getVersion($this->getPackage() ?? 'filament/support');
     }
 
     abstract public function getPublicPath(): string;

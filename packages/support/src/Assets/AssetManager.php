@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Assets;
 
+use Exception;
 use Illuminate\Support\Arr;
 
 class AssetManager
@@ -65,6 +66,21 @@ class AssetManager
     public function getAlpineComponents(?array $packages = null): array
     {
         return $this->getAssets($this->alpineComponents, $packages);
+    }
+
+    public function getAlpineComponentUrl(string $id, ?string $package = null): string
+    {
+        $components = $this->getAlpineComponents([$package]);
+
+        foreach ($components as $component) {
+            if ($component->getId() !== $id) {
+                continue;
+            }
+
+            return $component->getUrl();
+        }
+
+        throw new Exception("Alpine component with ID [{$id}] not found for package [{$package}].");
     }
 
     /**

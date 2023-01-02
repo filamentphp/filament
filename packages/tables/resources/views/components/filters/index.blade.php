@@ -9,7 +9,7 @@
         <div>
             <x-filament::loading-indicator
                 wire:target="$set,tableFilters,resetTableFiltersForm"
-                wire:loading.delay
+                wire:loading.delay=""
                 class="h-4 w-4 text-gray-700"
             />
         </div>

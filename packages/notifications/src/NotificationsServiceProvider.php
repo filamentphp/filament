@@ -43,7 +43,7 @@ class NotificationsServiceProvider extends PluginServiceProvider
 
     protected function getAssetPackage(): ?string
     {
-        return 'notifications';
+        return 'filament/notifications';
     }
 
     /**

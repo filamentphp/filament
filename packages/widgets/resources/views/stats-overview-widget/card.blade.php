@@ -70,7 +70,7 @@
         <div
             x-ignore
             ax-load
-            ax-load-src="/js/filament/widgets/components/stats-overview/card/chart.js?v={{ \Composer\InstalledVersions::getVersion('filament/support') }}"
+            ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentUrl('stats-overview/card/chart', 'filament/widgets') }}"
             x-data="statsOverviewCardChart({
                 labels: @js(array_keys($chart)),
                 values: @js(array_values($chart)),
