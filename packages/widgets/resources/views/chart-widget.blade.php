@@ -15,9 +15,9 @@
 
                 @if ($filters)
                     <select
-                        class="text-gray-900 border-gray-300 block h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:focus:border-primary-500"
-                        wire:model="filter"
-                        wire:loading.class="animate-pulse"
+                            class="text-gray-900 border-gray-300 block h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:focus:border-primary-500"
+                            wire:model="filter"
+                            wire:loading.class="animate-pulse"
                     >
                         @foreach ($filters as $value => $label)
                             <option value="{{ $value }}">
@@ -31,31 +31,31 @@
 
         <div @if ($pollingInterval = $this->getPollingInterval()) wire:poll.{{ $pollingInterval }}="updateChartData" @endif>
             <div
-                x-ignore
-                ax-load
-                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentUrl('chart', 'filament/widgets') }}"
-                x-data="chart({
+                    x-ignore
+                    ax-load
+                    ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
+                    x-data="chart({
                     cachedData: @js($this->getCachedData()),
                     options: @js($this->getOptions()),
                     type: @js($this->getType()),
                 })"
-                wire:ignore
+                    wire:ignore
             >
                 <canvas
-                    x-ref="canvas"
-                    @if ($maxHeight = $this->getMaxHeight())
-                        style="max-height: {{ $maxHeight }}"
-                    @endif
+                        x-ref="canvas"
+                        @if ($maxHeight = $this->getMaxHeight())
+                            style="max-height: {{ $maxHeight }}"
+                        @endif
                 ></canvas>
 
                 <span
-                    x-ref="backgroundColorElement"
-                    class="text-gray-50 dark:text-gray-300"
+                        x-ref="backgroundColorElement"
+                        class="text-gray-50 dark:text-gray-300"
                 ></span>
 
                 <span
-                    x-ref="borderColorElement"
-                    class="text-gray-500 dark:text-gray-200"
+                        x-ref="borderColorElement"
+                        class="text-gray-500 dark:text-gray-200"
                 ></span>
             </div>
         </div>

@@ -4,25 +4,29 @@ namespace Filament\Widgets;
 
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Asset;
+use Filament\Support\Assets\AssetManager;
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\PluginServiceProvider;
+use Spatie\LaravelPackageTools\Package;
+use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class WidgetsServiceProvider extends PluginServiceProvider
+class WidgetsServiceProvider extends PackageServiceProvider
 {
-    public static string $name = 'filament-widgets';
-
-    protected function getAssetPackage(): ?string
+    public function configurePackage(Package $package): void
     {
-        return 'filament/widgets';
+        $package
+            ->name('filament-widgets')
+            ->hasViews();
     }
 
-    /**
-     * @return array<Asset>
-     */
-    protected function getAssets(): array
+    public function packageRegistered(): void
     {
-        return [
-            AlpineComponent::make('chart', __DIR__ . '/../dist/components/chart.js'),
-            AlpineComponent::make('stats-overview/card/chart', __DIR__ . '/../dist/components/stats-overview/card/chart.js'),
-        ];
+        $this->app->resolving(AssetManager::class, function () {
+            FilamentAsset::register([
+                AlpineComponent::make('chart', __DIR__ . '/../dist/components/chart.js'),
+                AlpineComponent::make('stats-overview/card/chart', __DIR__ . '/../dist/components/stats-overview/card/chart.js'),
+            ], 'filament/widgets');
+        });
     }
 }

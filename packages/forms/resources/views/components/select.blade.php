@@ -8,33 +8,33 @@
 @endphp
 
 <x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
+        :component="$getFieldWrapperView()"
+        :field="$field"
 >
     <x-filament::input.affixes
-        :state-path="$statePath"
-        :prefix="$getPrefixLabel()"
-        :prefix-action="$getPrefixAction()"
-        :prefix-icon="$getPrefixIcon()"
-        :suffix="$getSuffixLabel()"
-        :suffix-action="$getSuffixAction()"
-        :suffix-icon="$getSuffixIcon()"
-        class="filament-forms-select-component"
-        :attributes="$getExtraAttributeBag()"
+            :state-path="$statePath"
+            :prefix="$getPrefixLabel()"
+            :prefix-action="$getPrefixAction()"
+            :prefix-icon="$getPrefixIcon()"
+            :suffix="$getSuffixLabel()"
+            :suffix-action="$getSuffixAction()"
+            :suffix-icon="$getSuffixIcon()"
+            class="filament-forms-select-component"
+            :attributes="$getExtraAttributeBag()"
     >
         @unless ($isSearchable() || $isMultiple())
             <x-filament::input.select
-                :autofocus="$isAutofocused()"
-                :disabled="$isDisabled()"
-                :id="$getId()"
-                dusk="filament.forms.{{ $statePath }}"
-                :required="$isRequired() && (! ! $isConcealed())"
-                :attributes="$getExtraInputAttributeBag()->merge([
+                    :autofocus="$isAutofocused()"
+                    :disabled="$isDisabled()"
+                    :id="$getId()"
+                    dusk="filament.forms.{{ $statePath }}"
+                    :required="$isRequired() && (! ! $isConcealed())"
+                    :attributes="$getExtraInputAttributeBag()->merge([
                     $applyStateBindingModifiers('wire:model') => $statePath,
                 ], escape: false)"
-                :prefix="$hasPrefix"
-                :suffix="$hasSuffix"
-                class="w-full"
+                    :prefix="$hasPrefix"
+                    :suffix="$hasSuffix"
+                    class="w-full"
             >
                 @unless ($isPlaceholderSelectionDisabled())
                     <option value="">{{ $getPlaceholder() }}</option>
@@ -42,8 +42,8 @@
 
                 @foreach ($getOptions() as $value => $label)
                     <option
-                        value="{{ $value }}"
-                        @disabled($isOptionDisabled($value, $label))
+                            value="{{ $value }}"
+                            @disabled($isOptionDisabled($value, $label))
                     >
                         {{ $label }}
                     </option>
@@ -51,10 +51,10 @@
             </x-filament::input.select>
         @else
             <div
-                x-ignore
-                ax-load
-                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentUrl('select', 'filament/forms') }}"
-                x-data="selectFormComponent({
+                    x-ignore
+                    ax-load
+                    ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('select', 'filament/forms') }}"
+                    x-data="selectFormComponent({
                     isHtmlAllowed: @js($isHtmlAllowed()),
                     getOptionLabelUsing: async () => {
                         return await $wire.getSelectOptionLabel(@js($statePath))
@@ -85,28 +85,28 @@
                     searchPrompt: @js($getSearchPrompt()),
                     state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
                 })"
-                x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
-                wire:ignore
-                x-bind:class="{
+                    x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
+                    wire:ignore
+                    x-bind:class="{
                     'choices--error': (@js($statePath) in $wire.__instance.serverMemo.errors),
                 }"
-                {{
-                    $attributes
-                        ->merge($getExtraAttributes(), escape: false)
-                        ->merge($getExtraAlpineAttributes())
-                        ->class($inputClasses)
-                }}
+                    {{
+                        $attributes
+                            ->merge($getExtraAttributes(), escape: false)
+                            ->merge($getExtraAlpineAttributes())
+                            ->class($inputClasses)
+                    }}
             >
                 <select
-                    x-ref="input"
-                    {{
-                        $getExtraInputAttributeBag()
-                            ->merge([
-                                'disabled' => $isDisabled(),
-                                'id' => $getId(),
-                                'multiple' => $isMultiple(),
-                            ], escape: false)
-                    }}
+                        x-ref="input"
+                        {{
+                            $getExtraInputAttributeBag()
+                                ->merge([
+                                    'disabled' => $isDisabled(),
+                                    'id' => $getId(),
+                                    'multiple' => $isMultiple(),
+                                ], escape: false)
+                        }}
                 ></select>
             </div>
         @endif

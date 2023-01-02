@@ -7,33 +7,35 @@
 
 <{!! $tag !!}
     @if ($url)
-        href="{{ $url }}"
-        @if ($shouldOpenUrlInNewTab()) target="_blank" @endif
-    @endif
-    {{ $getExtraAttributeBag()->class(['filament-stats-overview-widget-card relative rounded-xl bg-white p-6 shadow ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10']) }}
+    href="{{ $url }}"
+@if ($shouldOpenUrlInNewTab())
+    target="_blank"
+@endif
+@endif
+{{ $getExtraAttributeBag()->class(['filament-stats-overview-widget-card relative rounded-xl bg-white p-6 shadow ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10']) }}
 >
-    <div @class([
+<div @class([
         'space-y-2',
     ])>
-        <div class="flex items-center space-x-2 rtl:space-x-reverse text-sm font-medium">
-            @if ($icon = $getIcon())
-                <x-filament::icon
+    <div class="flex items-center space-x-2 rtl:space-x-reverse text-sm font-medium">
+        @if ($icon = $getIcon())
+            <x-filament::icon
                     :name="$icon"
                     alias="widgets::stats-overview.card"
                     color="text-gray-500 dark:text-gray-200"
                     size="h-4 w-4"
-                />
-            @endif
+            />
+        @endif
 
-            <span>{{ $getLabel() }}</span>
-        </div>
+        <span>{{ $getLabel() }}</span>
+    </div>
 
-        <div class="text-3xl">
-            {{ $getValue() }}
-        </div>
+    <div class="text-3xl">
+        {{ $getValue() }}
+    </div>
 
-        @if ($description = $getDescription())
-            <div @class([
+    @if ($description = $getDescription())
+        <div @class([
                 'flex items-center space-x-1 rtl:space-x-reverse text-sm font-medium',
                 match ($descriptionColor = $getDescriptionColor()) {
                     'danger' => 'text-danger-600',
@@ -45,49 +47,49 @@
                     default => $descriptionColor,
                 },
             ])>
-                @if ($descriptionIcon && ($descriptionIconPosition === 'before'))
-                    <x-filament::icon
+            @if ($descriptionIcon && ($descriptionIconPosition === 'before'))
+                <x-filament::icon
                         :name="$descriptionIcon"
                         alias="widgets::stats-overview.card.description"
                         size="h-4 w-4"
-                    />
-                @endif
+                />
+            @endif
 
-                <span>{{ $description }}</span>
+            <span>{{ $description }}</span>
 
-                @if ($descriptionIcon && ($descriptionIconPosition === 'after'))
-                    <x-filament::icon
+            @if ($descriptionIcon && ($descriptionIconPosition === 'after'))
+                <x-filament::icon
                         :name="$descriptionIcon"
                         alias="widgets::stats-overview.card.description"
                         size="h-4 w-4"
-                    />
-                @endif
-            </div>
-        @endif
-    </div>
+                />
+            @endif
+        </div>
+    @endif
+</div>
 
-    @if ($chart = $getChart())
-        <div
+@if ($chart = $getChart())
+    <div
             x-ignore
             ax-load
-            ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentUrl('stats-overview/card/chart', 'filament/widgets') }}"
+            ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('stats-overview/card/chart', 'filament/widgets') }}"
             x-data="statsOverviewCardChart({
                 labels: @js(array_keys($chart)),
                 values: @js(array_values($chart)),
             })"
             wire:ignore
             class="absolute bottom-0 inset-x-0 rounded-b-xl overflow-hidden"
-        >
-            <canvas
+    >
+        <canvas
                 x-ref="canvas"
                 class="h-6"
-            ></canvas>
+        ></canvas>
 
-            @php
-                $chartColor = $getChartColor();
-            @endphp
+        @php
+            $chartColor = $getChartColor();
+        @endphp
 
-            <span
+        <span
                 x-ref="backgroundColorElement"
                 @class([
                     match ($chartColor) {
@@ -102,7 +104,7 @@
                 ])
             ></span>
 
-            <span
+        <span
                 x-ref="borderColorElement"
                 @class([
                     match ($chartColor) {
@@ -116,7 +118,7 @@
                     },
                 ])
             ></span>
-        </div>
-    @endif
+    </div>
+@endif
 </{!! $tag !!}>
 

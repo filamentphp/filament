@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static array getAlpineComponents(array | null $packages = null)
- * @method static string getAlpineComponentUrl(string $id, string | null $package = null)
+ * @method static string getAlpineComponentSrc(string $id, string | null $package = null)
  * @method static array getScriptData(array | null $packages = null)
  * @method static array getScripts(array | null $packages = null, bool $withCore = true)
  * @method static array getStyles(array | null $packages = null)

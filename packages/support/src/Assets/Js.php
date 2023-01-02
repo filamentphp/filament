@@ -87,32 +87,16 @@ class Js extends Asset
             return $this->getPath();
         }
 
-        $src = '/js/';
+        return asset($this->getRelativePublicPath()) . '?v=' . $this->getVersion();
+    }
 
-        $package = $this->getPackage();
-
-        if (filled($package)) {
-            $src .= "{$package}/";
-        }
-
-        $src .= "{$this->getId()}.js";
-
-        return asset($src) . '?v=' . InstalledVersions::getVersion('filament/support');
+    public function getRelativePublicPath(): string
+    {
+        return "js/{$this->getPackage()}/{$this->getId()}.js";
     }
 
     public function getPublicPath(): string
     {
-        $path = '';
-
-        $package = $this->getPackage();
-
-        if (filled($package)) {
-            $path .= $package;
-            $path .= DIRECTORY_SEPARATOR;
-        }
-
-        $path .= "{$this->getId()}.js";
-
-        return public_path("js/{$path}");
+        return public_path($this->getRelativePublicPath());
     }
 }

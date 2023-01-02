@@ -24,17 +24,7 @@ class Css extends Asset
             return $this->getPath();
         }
 
-        $href = '/css/';
-
-        $package = $this->getPackage();
-
-        if (filled($package)) {
-            $href .= "{$package}/";
-        }
-
-        $href .= "{$this->getId()}.css";
-
-        return asset($href) . '?v=' . InstalledVersions::getVersion('filament/support');
+        return asset($this->getRelativePublicPath()) . '?v=' . $this->getVersion();
     }
 
     public function getHtml(): Htmlable
@@ -50,19 +40,13 @@ class Css extends Asset
         return new HtmlString("<link href=\"{$html}\" rel=\"stylesheet\" />");
     }
 
+    public function getRelativePublicPath(): string
+    {
+        return "css/{$this->getPackage()}/{$this->getId()}.css";
+    }
+
     public function getPublicPath(): string
     {
-        $path = '';
-
-        $package = $this->getPackage();
-
-        if (filled($package)) {
-            $path .= $package;
-            $path .= DIRECTORY_SEPARATOR;
-        }
-
-        $path .= "{$this->getId()}.css";
-
-        return public_path("css/{$path}");
+        return public_path($this->getRelativePublicPath());
     }
 }
