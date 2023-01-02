@@ -70,6 +70,7 @@ class AssetManager
 
     public function getAlpineComponentUrl(string $id, ?string $package = null): string
     {
+        /** @var array<AlpineComponent> $components */
         $components = $this->getAlpineComponents([$package]);
 
         foreach ($components as $component) {
