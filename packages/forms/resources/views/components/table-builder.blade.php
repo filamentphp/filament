@@ -57,7 +57,6 @@ $deleteRows = $canDeleteRows()
 
                         @if($deleteRows && ! $isDisabled())
                             <th x-show="state.length > 1" class="w-10">
-
                             </th>
                         @endif
                     </tr>
