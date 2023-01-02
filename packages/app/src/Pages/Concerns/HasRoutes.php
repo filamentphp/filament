@@ -25,7 +25,7 @@ trait HasRoutes
 
     public static function getSlug(): string
     {
-        return static::$slug ?? str(static::$title ?? class_basename(static::class))
+        return static::$slug ?? str(class_basename(static::class))
             ->kebab()
             ->slug();
     }
