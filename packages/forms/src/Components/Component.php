@@ -37,11 +37,14 @@ class Component extends ViewComponent
      */
     protected function getDefaultEvaluationParameters(): array
     {
+        $operation = $this->getContainer()->getOperation();
+
         return array_merge(parent::getDefaultEvaluationParameters(), [
-            'context' => $this->getContainer()->getContext(),
+            'context' => $operation,
             'get' => $this->getGetCallback(),
             'livewire' => $this->getLivewire(),
             'model' => $this->getModel(),
+            'operation' => $operation,
             'record' => $this->getRecord(),
             'set' => $this->getSetCallback(),
             'state' => $this->shouldEvaluateWithState() ? $this->getState() : null,

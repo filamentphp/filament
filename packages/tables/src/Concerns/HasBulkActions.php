@@ -182,7 +182,7 @@ trait HasBulkActions
             $this->makeForm()
                 ->model($this->getTable()->getModel())
                 ->statePath('mountedTableBulkActionData')
-                ->context($this->mountedTableBulkAction),
+                ->operation($this->mountedTableBulkAction),
         );
     }
 

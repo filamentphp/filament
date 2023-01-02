@@ -243,7 +243,7 @@ trait InteractsWithActions
             $this->makeForm()
                 ->statePath('mountedActionData')
                 ->model($action->getModel() ?? $this->getMountedActionFormModel())
-                ->context($this->mountedAction),
+                ->operation($this->mountedAction),
         );
     }
 

@@ -18,13 +18,13 @@ trait CanBeReadOnly
     }
 
     /**
-     * @param  string | array<string>  $contexts
+     * @param  string | array<string>  $operations
      */
-    public function readOnlyOn(string | array $contexts): static
+    public function readOnlyOn(string | array $operations): static
     {
-        $this->readOnly(static function (string $context, HasForms $livewire) use ($contexts): bool {
-            foreach (Arr::wrap($contexts) as $readOnlyContext) {
-                if ($readOnlyContext === $context || $livewire instanceof $readOnlyContext) {
+        $this->readOnly(static function (HasForms $livewire, string $operation) use ($operations): bool {
+            foreach (Arr::wrap($operations) as $readOnlyOperation) {
+                if ($readOnlyOperation === $operation || $livewire instanceof $readOnlyOperation) {
                     return true;
                 }
             }

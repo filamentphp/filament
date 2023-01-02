@@ -172,7 +172,7 @@ class ViewRecord extends Page
     {
         return static::getResource()::form(
             $form
-                ->context('view')
+                ->operation('view')
                 ->disabled()
                 ->model($this->getRecord())
                 ->statePath('data')

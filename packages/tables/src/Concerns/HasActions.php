@@ -201,7 +201,7 @@ trait HasActions
             $this->makeForm()
                 ->model($this->getMountedTableActionRecord() ?? $this->getTable()->getModel())
                 ->statePath('mountedTableActionData')
-                ->context($this->mountedTableAction),
+                ->operation($this->mountedTableAction),
         );
     }
 

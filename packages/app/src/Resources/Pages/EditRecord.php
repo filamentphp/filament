@@ -297,7 +297,7 @@ class EditRecord extends Page
     {
         return static::getResource()::form(
             $form
-                ->context('edit')
+                ->operation('edit')
                 ->model($this->getRecord())
                 ->statePath('data')
                 ->columns($this->hasInlineFormLabels() ? 1 : 2)

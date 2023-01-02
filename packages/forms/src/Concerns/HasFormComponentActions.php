@@ -49,7 +49,7 @@ trait HasFormComponentActions
             $this->makeForm()
                 ->model($this->getMountedFormComponentActionComponent()->getActionFormModel())
                 ->statePath('mountedFormComponentActionData')
-                ->context($this->mountedFormComponentAction),
+                ->operation($this->mountedFormComponentAction),
         );
     }
 

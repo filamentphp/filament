@@ -208,7 +208,7 @@ class CreateRecord extends Page
     {
         return static::getResource()::form(
             $form
-                ->context('create')
+                ->operation('create')
                 ->model($this->getModel())
                 ->statePath('data')
                 ->columns($this->hasInlineFormLabels() ? 1 : 2)

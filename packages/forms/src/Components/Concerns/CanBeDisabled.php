@@ -20,13 +20,13 @@ trait CanBeDisabled
     }
 
     /**
-     * @param  string | array<string>  $contexts
+     * @param  string | array<string>  $operations
      */
-    public function disabledOn(string | array $contexts): static
+    public function disabledOn(string | array $operations): static
     {
-        $this->disabled(static function (string $context, HasForms $livewire) use ($contexts): bool {
-            foreach (Arr::wrap($contexts) as $disabledContext) {
-                if ($disabledContext === $context || $livewire instanceof $disabledContext) {
+        $this->disabled(static function (HasForms $livewire, string $operation) use ($operations): bool {
+            foreach (Arr::wrap($operations) as $disabledOperation) {
+                if ($disabledOperation === $operation || $livewire instanceof $disabledOperation) {
                     return true;
                 }
             }

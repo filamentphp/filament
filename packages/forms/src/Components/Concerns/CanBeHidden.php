@@ -21,13 +21,13 @@ trait CanBeHidden
     }
 
     /**
-     * @param  string | array<string>  $contexts
+     * @param  string | array<string>  $operations
      */
-    public function hiddenOn(string | array $contexts): static
+    public function hiddenOn(string | array $operations): static
     {
-        $this->hidden(static function (string $context, HasForms $livewire) use ($contexts): bool {
-            foreach (Arr::wrap($contexts) as $hiddenContext) {
-                if ($hiddenContext === $context || $livewire instanceof $hiddenContext) {
+        $this->hidden(static function (HasForms $livewire, string $operation) use ($operations): bool {
+            foreach (Arr::wrap($operations) as $hiddenOperation) {
+                if ($hiddenOperation === $operation || $livewire instanceof $hiddenOperation) {
                     return true;
                 }
             }
@@ -93,13 +93,13 @@ trait CanBeHidden
     }
 
     /**
-     * @param  string | array<string>  $contexts
+     * @param  string | array<string>  $operations
      */
-    public function visibleOn(string | array $contexts): static
+    public function visibleOn(string | array $operations): static
     {
-        $this->visible(static function (string $context, HasForms $livewire) use ($contexts): bool {
-            foreach (Arr::wrap($contexts) as $visibleContext) {
-                if ($visibleContext === $context || $livewire instanceof $visibleContext) {
+        $this->visible(static function (string $operation, HasForms $livewire) use ($operations): bool {
+            foreach (Arr::wrap($operations) as $visibleOperation) {
+                if ($visibleOperation === $operation || $livewire instanceof $visibleOperation) {
                     return true;
                 }
             }
