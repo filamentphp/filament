@@ -223,7 +223,7 @@ return [
             ],
 
             'add_column' => [
-                'label' => 'Add Column',
+                'label' => 'Add column',
             ],
 
         ],
