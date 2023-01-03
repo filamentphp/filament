@@ -21,6 +21,10 @@
             Livewire.hook('message.processed', () => {
                 this.checkIfAllCheckboxesAreChecked()
             })
+
+            this.updateVisibleCheckboxListItems()
+
+            $watch('search', () => this.updateVisibleCheckboxListItems())
         },
 
         checkIfAllCheckboxesAreChecked: function () {
@@ -35,10 +39,28 @@
                 checkbox.dispatchEvent(new Event('change'))
             })
         },
+
+        search: '',
+
+        checkboxListItems: Array.from($root.querySelectorAll('label')),
+
+        visibleCheckboxListItems: [],
+
+        updateVisibleCheckboxListItems: function () {
+            this.visibleCheckboxListItems = this.checkboxListItems.filter((checkboxListItem) => {
+                return checkboxListItem.querySelector('span').innerText.toLowerCase().includes(this.search.toLowerCase())
+            })
+        }
+
     }">
         <div wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.wrapper">
             @if ($isBulkToggleable() && count($getOptions()))
-                <div x-cloak class="mb-2" wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.buttons">
+                <div
+                    x-cloak
+                    x-show="search == ''"
+                    class="mb-2"
+                    wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.buttons"
+                >
                     <x-forms::link
                         tag="button"
                         size="sm"
@@ -65,33 +87,11 @@
         @if ($isSearchable())
             <input
                 {!! $isDisabled() ? 'disabled' : null !!}
-                class="focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 block w-full transition duration-75 border-gray-300 rounded-lg shadow-sm"
+                class="focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 block w-full transition duration-75 border-gray-300 rounded-lg shadow-sm mb-2"
                 type="search"
                 placeholder="{{ $getSearchPrompt() }}"
                 x-model.debounce.{{ $getSearchDebounce() }}="search"
             >
-        @endif
-
-        @if ($isBulkToggleable() && ! $isDisabled())
-            <div>
-                <x-forms::link
-                    tag="button"
-                    size="sm"
-                    x-show="visibleCheckboxListItems.length && !isAllVisibleSelected"
-                    x-on:click="toggleAll"
-                >
-                    {{ __('forms::components.checkbox_list.buttons.select_all.label') }}
-                </x-forms::link>
-
-                <x-forms::link
-                    tag="button"
-                    size="sm"
-                    x-show="visibleCheckboxListItems.length && isAllVisibleSelected"
-                    x-on:click="toggleAll"
-                >
-                    {{ __('forms::components.checkbox_list.buttons.deselect_all.label') }}
-                </x-forms::link>
-            </div>
         @endif
 
         <x-filament-support::grid
@@ -106,7 +106,12 @@
         >
             @forelse ($getOptions() as $optionValue => $optionLabel)
                 <div wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.options.{{ $optionValue }}">
-                    <label class="rtl:space-x-reverse flex items-center space-x-3">
+                    <label
+                        class="rtl:space-x-reverse flex items-center space-x-3"
+                        @if ($isSearchable())
+                            x-show="$el.querySelector('span').innerText.toLowerCase().includes(search.toLowerCase())"
+                        @endif
+                    >
                         <input
                             @if ($isBulkToggleable())
                                 x-on:change="checkIfAllCheckboxesAreChecked()"
@@ -140,5 +145,16 @@
                 <div wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.empty"></div>
             @endforelse
         </x-filament-support::grid>
+
+        @if ($isSearchable())
+            <div
+                x-cloak
+                x-show="visibleCheckboxListItems.length === 0"
+                class="filament-forms-checkbox-list-component-no-search-results-message text-sm"
+            >
+                {{ $getNoSearchResultsMessage() }}
+            </div>
+        @endif
+
     </div>
 </x-dynamic-component>
