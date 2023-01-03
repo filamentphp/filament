@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
-use Filament\Support\Components\ViewComponent;
 
 trait CanSelectPlaceholder
 {
