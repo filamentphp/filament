@@ -5,7 +5,6 @@ namespace Filament\Actions;
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Form;
-use Filament\Tables\Actions\AssociateAction;
 use Illuminate\Database\Eloquent\Model;
 
 class CreateAction extends Action
