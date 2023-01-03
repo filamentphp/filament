@@ -8,27 +8,27 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => '添加 :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => '删除',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => '下移',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => '上移',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => '收起',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => '展开',
             ],
 
@@ -95,27 +95,27 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => '添加 :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => '删除',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => '下移',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => '上移',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => '收起',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => '展开',
             ],
 

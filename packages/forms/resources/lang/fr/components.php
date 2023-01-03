@@ -8,39 +8,39 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Cloner',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Ajouter à :label',
             ],
 
-            'create_item_between' => [
+            'createbetween' => [
                 'label' => 'Ajouter entre',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Supprimer',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Déplacer',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Déplacer vers le bas',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Déplacer vers le haut',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Plier',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Déplier',
             ],
 
@@ -126,35 +126,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Ajouter à :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Supprimer',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Cloner',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Déplacer',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Déplacer vers le bas',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Déplacer vers le haut',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Plier',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Déplier',
             ],
 

@@ -8,39 +8,39 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Iga',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Ongeza kwenye :label',
             ],
 
-            'create_item_between' => [
+            'createbetween' => [
                 'label' => 'Ingiza',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Futa',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Hamisha',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Sogeza chini',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Sogeza juu',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Kunja',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Kunjua',
             ],
 
@@ -111,35 +111,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Ongeza kwenye :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Futa',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Iga',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Hamisha',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Sogeza chini',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Sogeza juu',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Kunja',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Kunjua',
             ],
 

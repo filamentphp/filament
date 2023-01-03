@@ -8,35 +8,35 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klonuoti',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Pridėti prie :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Ištrinti',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Pastumti',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Žemyn',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Aukštyn',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Suskleisti',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Išskleisti',
             ],
 
@@ -103,35 +103,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Pridėti prie :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Ištrinti',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klonuoti',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Pastumti',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Žemyn',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Aukštyn',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Suskleisti',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Išskleisti',
             ],
 

@@ -8,39 +8,39 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'অনুলিপি করুন',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => ':label এ যোগ করুন',
             ],
 
-            'create_item_between' => [
+            'createbetween' => [
                 'label' => 'প্রবেশ করান',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'মুছে ফেলুন',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'সরান',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'নিচে সরান',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'উপরে সরান',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'ছোট করুন',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'বড় করুন',
             ],
 
@@ -127,35 +127,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => ':label এ যোগ করুন',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'মুছে ফেলুন',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'অনুলিপি করুন',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'সরান',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'নিচে সরান',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'উপরে সরান',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'ছোট করুন',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'বড় করুন',
             ],
 

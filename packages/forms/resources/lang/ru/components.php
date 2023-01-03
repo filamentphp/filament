@@ -8,39 +8,39 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Клонировать',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Добавить к :label',
             ],
 
-            'create_item_between' => [
+            'createbetween' => [
                 'label' => 'Вставить',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Удалить',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Переместить',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Переместить вниз',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Переместить вверх',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Свернуть',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Развернуть',
             ],
 
@@ -126,35 +126,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Добавить к :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Удалить',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Клонировать',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Переместить',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Переместить вниз',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Переместить вверх',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Свернуть',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Развернуть',
             ],
 

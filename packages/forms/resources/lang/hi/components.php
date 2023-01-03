@@ -6,23 +6,23 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => ':label में जोड़ें',
             ],
 
-            'create_item_between' => [
+            'createbetween' => [
                 'label' => 'के बीच जोड़ें',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'हटाएँ',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'नीचे करे',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'ऊपर करे',
             ],
 
@@ -79,19 +79,19 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => ':label में जोड़ें',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'हटाएँ',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'नीचे करे',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'ऊपर करे',
             ],
 

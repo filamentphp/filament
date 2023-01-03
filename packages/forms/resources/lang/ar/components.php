@@ -8,39 +8,39 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'نسخ',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'إضافة إلى :label',
             ],
 
-            'create_item_between' => [
+            'createbetween' => [
                 'label' => 'إدراج',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'حذف',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'نقل',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'تحريك لأسفل',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'تحريك لأعلى',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'طيّ',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'توسيع',
             ],
 
@@ -127,35 +127,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'إضافة إلى :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'حذف',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'نسخ',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'نقل',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'تحريك لأسفل',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'تحريك لأعلى',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'طيّ',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'توسيع',
             ],
 

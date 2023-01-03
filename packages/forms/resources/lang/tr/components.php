@@ -8,27 +8,27 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => ':label kaynağına ekle',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Sil',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Aşağı taşı',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Yukarı taşı',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Daralt',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Genişlet',
             ],
 
@@ -95,27 +95,27 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => ':label kaynağına ekle',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Sil',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Aşağı taşı',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Yukarı taşı',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Daralt',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Genişlet',
             ],
 

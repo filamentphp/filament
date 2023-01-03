@@ -8,39 +8,39 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Clonează',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Adăugare la :label',
             ],
 
-            'create_item_between' => [
+            'createbetween' => [
                 'label' => 'Inserează',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Ștergere',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Mutare',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Mutare în jos',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Mutare în sus',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Comprimare',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Expandare',
             ],
 
@@ -127,35 +127,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Adăugare la :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Ștergere',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Clonează',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Mutare',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Mutare în jos',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Mutare în sus',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Comprimare',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Expandare',
             ],
 

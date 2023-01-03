@@ -8,39 +8,39 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Clonar',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Añadir a :label',
             ],
 
-            'create_item_between' => [
+            'createbetween' => [
                 'label' => 'Insertar',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Borrar',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Mover',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Bajar',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Subir',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Contraer',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Expandir',
             ],
 
@@ -111,35 +111,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Añadir a :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Borrar',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Mover',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Clonar',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Bajar',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Subir',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Contraer',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Expandir',
             ],
 

@@ -8,35 +8,35 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Másolás',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Új :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Törlés',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Mozgatás',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Mozgatás lefelé',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Mozgatás felfelé',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Becsuk',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Kibont',
             ],
 
@@ -107,35 +107,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Új :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Törlés',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Másolás',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Mozgatás',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Mozgatás lefelé',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Mozgatás felfelé',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Becsuk',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Kibont',
             ],
 

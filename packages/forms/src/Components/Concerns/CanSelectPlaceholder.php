@@ -26,7 +26,7 @@ trait CanSelectPlaceholder
         return $this;
     }
 
-    public function isPlaceholderSelectionDisabled(): bool
+    public function canSelectPlaceholder(): bool
     {
         return (bool) $this->evaluate($this->canSelectPlaceholder);
     }

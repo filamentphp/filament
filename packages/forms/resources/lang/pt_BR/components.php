@@ -8,39 +8,39 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Clonar',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Adicionar em :label',
             ],
 
-            'create_item_between' => [
+            'createbetween' => [
                 'label' => 'Inserir',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Excluir',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Mover',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Mover para baixo',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Mover para cima',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Recolher',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Expandir',
             ],
 
@@ -127,35 +127,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Adicionar em :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Excluir',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Clonar',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Mover',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Mover para baixo',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Mover para cima',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Recolher',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Expandir',
             ],
 

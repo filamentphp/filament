@@ -5,11 +5,11 @@
     @php
         $containers = $getChildComponentContainers();
 
+        $isAddable = $isAddable();
         $isCloneable = $isCloneable();
         $isCollapsible = $isCollapsible();
-        $isItemCreationDisabled = $isItemCreationDisabled();
-        $isItemDeletionDisabled = $isItemDeletionDisabled();
-        $isItemMovementDisabled = $isItemMovementDisabled();
+        $isDeletable = $isDeletable();
+        $isReorderable = $isReorderable();
 
         $statePath = $getStatePath();
     @endphp
@@ -51,7 +51,7 @@
             <ul
                 class="space-y-12"
                 x-sortable
-                x-on:end.stop="$wire.dispatchFormEvent('builder::moveItems', '{{ $statePath }}', $event.target.sortable.toArray())"
+                x-on:end.stop="$wire.dispatchFormEvent('builder::reorder', '{{ $statePath }}', $event.target.sortable.toArray())"
             >
                 @php
                     $hasBlockLabels = $hasBlockLabels();
@@ -61,15 +61,15 @@
                 @foreach ($containers as $uuid => $item)
                     <li
                         x-data="{
-                            isCreateButtonVisible: false,
+                            isAddButtonVisible: false,
                             isCollapsed: @js($isCollapsed()),
                         }"
                         x-on:builder-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
                         x-on:builder-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
-                        x-on:click="isCreateButtonVisible = true"
-                        x-on:mouseenter="isCreateButtonVisible = true"
-                        x-on:click.away="isCreateButtonVisible = false"
-                        x-on:mouseleave="isCreateButtonVisible = false"
+                        x-on:click="isAddButtonVisible = true"
+                        x-on:mouseenter="isAddButtonVisible = true"
+                        x-on:click.away="isAddButtonVisible = false"
+                        x-on:mouseleave="isAddButtonVisible = false"
                         wire:key="{{ $this->id }}.{{ $item->getStatePath() }}.item"
                         x-sortable-item="{{ $uuid }}"
                         x-on:expand-concealing-component.window="
@@ -89,28 +89,28 @@
                         "
                         class="relative rounded-xl bg-white shadow ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10"
                     >
-                        @if ((! $isItemMovementDisabled) || $hasBlockLabels || (! $isItemDeletionDisabled) || $isCollapsible || $isCloneable)
+                        @if ($isReorderable || $hasBlockLabels || $isDeletable || $isCollapsible || $isCloneable)
                             <header class="flex items-center h-10 overflow-hidden border-b bg-gray-50 rounded-t-xl dark:bg-gray-800 dark:border-gray-700">
-                                @unless ($isItemMovementDisabled)
+                                @if ($isReorderable)
                                     <button
-                                        title="{{ __('filament-forms::components.builder.buttons.move_item.label') }}"
+                                        title="{{ __('filament-forms::components.builder.buttons.reorder.label') }}"
                                         x-sortable-handle
-                                        wire:keydown.prevent.arrow-up="dispatchFormEvent('builder::moveItemUp', '{{ $statePath }}', '{{ $uuid }}')"
-                                        wire:keydown.prevent.arrow-down="dispatchFormEvent('builder::moveItemDown', '{{ $statePath }}', '{{ $uuid }}')"
+                                        wire:keydown.prevent.arrow-up="dispatchFormEvent('builder::moveUp', '{{ $statePath }}', '{{ $uuid }}')"
+                                        wire:keydown.prevent.arrow-down="dispatchFormEvent('builder::moveDown', '{{ $statePath }}', '{{ $uuid }}')"
                                         type="button"
                                         class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-r rtl:border-l rtl:border-r-0 transition hover:text-gray-500 dark:border-gray-700"
                                     >
                                         <span class="sr-only">
-                                            {{ __('filament-forms::components.builder.buttons.move_item.label') }}
+                                            {{ __('filament-forms::components.builder.buttons.reorder.label') }}
                                         </span>
 
                                         <x-filament::icon
                                             name="heroicon-m-arrows-up-down"
-                                            alias="filament-forms::components.builder.buttons.move-item"
+                                            alias="filament-forms::components.builder.buttons.reorder"
                                             size="h-4 w-4"
                                         />
                                     </button>
-                                @endunless
+                                @endif
 
                                 @if ($hasBlockLabels)
                                     <p class="flex-none px-4 text-xs font-medium text-gray-600 truncate dark:text-gray-400">
@@ -138,74 +138,74 @@
                                     @if ($isCloneable)
                                         <li>
                                             <button
-                                                title="{{ __('filament-forms::components.builder.buttons.clone_item.label') }}"
+                                                title="{{ __('filament-forms::components.builder.buttons.clone.label') }}"
                                                 wire:click="dispatchFormEvent('builder::cloneItem', '{{ $statePath }}', '{{ $uuid }}')"
                                                 type="button"
                                                 class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500 dark:border-gray-700"
                                             >
                                                 <span class="sr-only">
-                                                    {{ __('filament-forms::components.builder.buttons.clone_item.label') }}
+                                                    {{ __('filament-forms::components.builder.buttons.clone.label') }}
                                                 </span>
 
                                                 <x-filament::icon
                                                     name="heroicon-m-square-2-stack"
-                                                    alias="filament-forms::components.builder.buttons.clone-item"
+                                                    alias="filament-forms::components.builder.buttons.clone"
                                                     size="h-4 w-4"
                                                 />
                                             </button>
                                         </li>
                                     @endif
 
-                                    @unless ($isItemDeletionDisabled)
+                                    @if ($isDeletable)
                                         <li>
                                             <button
-                                                title="{{ __('filament-forms::components.builder.buttons.delete_item.label') }}"
-                                                wire:click="dispatchFormEvent('builder::deleteItem', '{{ $statePath }}', '{{ $uuid }}')"
+                                                title="{{ __('filament-forms::components.builder.buttons.delete.label') }}"
+                                                wire:click="dispatchFormEvent('builder::delete', '{{ $statePath }}', '{{ $uuid }}')"
                                                 type="button"
                                                 class="flex items-center justify-center flex-none w-10 h-10 text-danger-600 transition hover:text-danger-500 dark:text-danger-500 dark:hover:text-danger-400"
                                             >
                                                 <span class="sr-only">
-                                                    {{ __('filament-forms::components.builder.buttons.delete_item.label') }}
+                                                    {{ __('filament-forms::components.builder.buttons.delete.label') }}
                                                 </span>
 
                                                 <x-filament::icon
                                                     name="heroicon-m-trash"
-                                                    alias="filament-forms::components.builder.buttons.delete-item"
+                                                    alias="filament-forms::components.builder.buttons.delete"
                                                     size="h-4 w-4"
                                                 />
                                             </button>
                                         </li>
-                                    @endunless
+                                    @endif
 
                                     @if ($isCollapsible)
                                         <li>
                                             <button
-                                                x-bind:title="(! isCollapsed) ? '{{ __('filament-forms::components.builder.buttons.collapse_item.label') }}' : '{{ __('filament-forms::components.builder.buttons.expand_item.label') }}'"
+                                                x-bind:title="(! isCollapsed) ? '{{ __('filament-forms::components.builder.buttons.collapse.label') }}' : '{{ __('filament-forms::components.builder.buttons.expand.label') }}'"
                                                 x-on:click="isCollapsed = ! isCollapsed"
                                                 type="button"
                                                 class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500"
                                             >
                                                 <x-filament::icon
                                                     name="heroicon-m-minus"
-                                                    alias="filament-forms::components.builder.buttons.collapse-item"
+                                                    alias="filament-forms::components.builder.buttons.collapse"
                                                     size="h-4 w-4"
                                                     x-show="!isCollapsed"
                                                 />
 
                                                 <span class="sr-only" x-show="! isCollapsed">
-                                                    {{ __('filament-forms::components.builder.buttons.collapse_item.label') }}
+                                                    {{ __('filament-forms::components.builder.buttons.collapse.label') }}
                                                 </span>
 
                                                 <x-filament::icon
                                                     name="heroicon-m-plus"
-                                                    alias="filament-forms::components.builder.buttons.expand-item"
+                                                    alias="filament-forms::components.builder.buttons.expand"
                                                     size="h-4 w-4"
                                                     x-show="isCollapsed"
                                                     x-cloak=""
                                                 />
 
                                                 <span class="sr-only" x-show="isCollapsed" x-cloak>
-                                                    {{ __('filament-forms::components.builder.buttons.expand_item.label') }}
+                                                    {{ __('filament-forms::components.builder.buttons.expand.label') }}
                                                 </span>
                                             </button>
                                         </li>
@@ -222,24 +222,24 @@
                             {{ __('filament-forms::components.builder.collapsed') }}
                         </div>
 
-                        @if ((! $loop->last) && (! $isItemCreationDisabled) && (! $isItemMovementDisabled))
+                        @if ((! $loop->last) && $isAddable && $isReorderable)
                             <div
-                                x-show="isCreateButtonVisible"
+                                x-show="isAddButtonVisible"
                                 x-transition
                                 class="absolute inset-x-0 bottom-0 flex items-center justify-center h-12 -mb-12"
                             >
                                 <x-filament::dropdown>
                                     <x-slot name="trigger">
                                         <x-filament::icon-button
-                                            :label="$getCreateItemBetweenButtonLabel()"
+                                            :label="$getAddBetweenButtonLabel()"
                                             icon="heroicon-m-plus"
-                                            icon-alias="forms::builder.create-item-between.trigger"
+                                            icon-alias="forms::builder.add-between.trigger"
                                         />
                                     </x-slot>
 
                                     <x-filament-forms::builder.block-picker
                                         :blocks="$getBlocks()"
-                                        :create-after-item="$uuid"
+                                        :after-item="$uuid"
                                         :state-path="$statePath"
                                     />
                                 </x-filament::dropdown>
@@ -250,11 +250,11 @@
             </ul>
         @endif
 
-        @if (! $isItemCreationDisabled)
+        @if ($isAddable)
             <x-filament::dropdown class="flex justify-center">
                 <x-slot name="trigger">
                     <x-filament::button size="sm">
-                        {{ $getCreateItemButtonLabel() }}
+                        {{ $getAddButtonLabel() }}
                     </x-filament::button>
                 </x-slot>
 

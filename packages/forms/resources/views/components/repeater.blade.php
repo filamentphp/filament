@@ -5,11 +5,11 @@
     @php
         $containers = $getChildComponentContainers();
 
+        $isAddable = $isAddable();
         $isCollapsible = $isCollapsible();
         $isCloneable = $isCloneable();
-        $isItemCreationDisabled = $isItemCreationDisabled();
-        $isItemDeletionDisabled = $isItemDeletionDisabled();
-        $isItemMovementDisabled = $isItemMovementDisabled();
+        $isDeletable = $isDeletable();
+        $isReorderable = $isReorderable();
         $hasItemLabels = $hasItemLabels();
 
         $statePath = $getStatePath();
@@ -58,7 +58,7 @@
                     :xl="$getGridColumns('xl')"
                     :two-xl="$getGridColumns('2xl')"
                     x-sortable
-                    x-on:end.stop="$wire.dispatchFormEvent('repeater::moveItems', '{{ $statePath }}', $event.target.sortable.toArray())"
+                    x-on:end.stop="$wire.dispatchFormEvent('repeater::reorder', '{{ $statePath }}', $event.target.sortable.toArray())"
                     class="gap-6"
                 >
                     @foreach ($containers as $uuid => $item)
@@ -87,7 +87,7 @@
                             "
                             class="relative rounded-xl bg-white shadow ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10"
                         >
-                            @if ((! $isItemMovementDisabled) || (! $isItemDeletionDisabled) || $isCloneable || $isCollapsible || $hasItemLabels)
+                            @if ($isReorderable || $isDeletable || $isCloneable || $isCollapsible || $hasItemLabels)
                                 <header
                                     @if ($isCollapsible) x-on:click.stop="isCollapsed = ! isCollapsed" @endif
                                     @class([
@@ -95,27 +95,27 @@
                                         'cursor-pointer' => $isCollapsible,
                                     ])
                                 >
-                                    @unless ($isItemMovementDisabled)
+                                    @if ($isReorderable)
                                         <button
-                                            title="{{ __('filament-forms::components.repeater.buttons.move_item.label') }}"
+                                            title="{{ __('filament-forms::components.repeater.buttons.reorder.label') }}"
                                             x-on:click.stop
                                             x-sortable-handle
-                                            wire:keydown.prevent.arrow-up="dispatchFormEvent('repeater::moveItemUp', '{{ $statePath }}', '{{ $uuid }}')"
-                                            wire:keydown.prevent.arrow-down="dispatchFormEvent('repeater::moveItemDown', '{{ $statePath }}', '{{ $uuid }}')"
+                                            wire:keydown.prevent.arrow-up="dispatchFormEvent('repeater::moveUp', '{{ $statePath }}', '{{ $uuid }}')"
+                                            wire:keydown.prevent.arrow-down="dispatchFormEvent('repeater::moveDown', '{{ $statePath }}', '{{ $uuid }}')"
                                             type="button"
                                             class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-r transition hover:text-gray-500 dark:border-gray-700"
                                         >
                                             <span class="sr-only">
-                                                {{ __('filament-forms::components.repeater.buttons.move_item.label') }}
+                                                {{ __('filament-forms::components.repeater.buttons.reorder.label') }}
                                             </span>
 
                                             <x-filament::icon
                                                 name="heroicon-m-arrows-up-down"
-                                                alias="filament-forms::components.repeater.buttons.move-item"
+                                                alias="filament-forms::components.repeater.buttons.reorder"
                                                 size="h-4 w-4"
                                             />
                                         </button>
-                                    @endunless
+                                    @endif
 
                                     <p class="flex-none px-4 text-xs font-medium text-gray-600 truncate dark:text-gray-400">
                                         {{ $getItemLabel($uuid) }}
@@ -127,74 +127,74 @@
                                         @if ($isCloneable)
                                             <li>
                                                 <button
-                                                    title="{{ __('filament-forms::components.repeater.buttons.clone_item.label') }}"
+                                                    title="{{ __('filament-forms::components.repeater.buttons.clone.label') }}"
                                                     wire:click.stop="dispatchFormEvent('repeater::cloneItem', '{{ $statePath }}', '{{ $uuid }}')"
                                                     type="button"
                                                     class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500 dark:border-gray-700"
                                                 >
                                                     <span class="sr-only">
-                                                        {{ __('filament-forms::components.repeater.buttons.clone_item.label') }}
+                                                        {{ __('filament-forms::components.repeater.buttons.clone.label') }}
                                                     </span>
 
                                                     <x-filament::icon
                                                         name="heroicon-m-square-2-stack"
-                                                        alias="filament-forms::components.repeater.buttons.clone-item"
+                                                        alias="filament-forms::components.repeater.buttons.clone"
                                                         size="h-4 w-4"
                                                     />
                                                 </button>
                                             </li>
-                                        @endunless
+                                        @endif
 
-                                        @unless ($isItemDeletionDisabled)
+                                        @if ($isDeletable)
                                             <li>
                                                 <button
-                                                    title="{{ __('filament-forms::components.repeater.buttons.delete_item.label') }}"
-                                                    wire:click.stop="dispatchFormEvent('repeater::deleteItem', '{{ $statePath }}', '{{ $uuid }}')"
+                                                    title="{{ __('filament-forms::components.repeater.buttons.delete.label') }}"
+                                                    wire:click.stop="dispatchFormEvent('repeater::delete', '{{ $statePath }}', '{{ $uuid }}')"
                                                     type="button"
                                                     class="flex items-center justify-center flex-none w-10 h-10 text-danger-600 transition hover:text-danger-500 dark:text-danger-500 dark:hover:text-danger-400"
                                                 >
                                                     <span class="sr-only">
-                                                        {{ __('filament-forms::components.repeater.buttons.delete_item.label') }}
+                                                        {{ __('filament-forms::components.repeater.buttons.delete.label') }}
                                                     </span>
 
                                                     <x-filament::icon
                                                         name="heroicon-m-trash"
-                                                        alias="filament-forms::components.repeater.buttons.delete-item"
+                                                        alias="filament-forms::components.repeater.buttons.delete"
                                                         size="h-4 w-4"
                                                     />
                                                 </button>
                                             </li>
-                                        @endunless
+                                        @endif
 
                                         @if ($isCollapsible)
                                             <li>
                                                 <button
-                                                    x-bind:title="(! isCollapsed) ? '{{ __('filament-forms::components.repeater.buttons.collapse_item.label') }}' : '{{ __('filament-forms::components.repeater.buttons.expand_item.label') }}'"
+                                                    x-bind:title="(! isCollapsed) ? '{{ __('filament-forms::components.repeater.buttons.collapse.label') }}' : '{{ __('filament-forms::components.repeater.buttons.expand.label') }}'"
                                                     x-on:click.stop="isCollapsed = ! isCollapsed"
                                                     type="button"
                                                     class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500"
                                                 >
                                                     <x-filament::icon
                                                         name="heroicon-m-minus"
-                                                        alias="filament-forms::components.repeater.buttons.collapse-item"
+                                                        alias="filament-forms::components.repeater.buttons.collapse"
                                                         size="h-4 w-4"
                                                         x-show="!isCollapsed"
                                                     />
 
                                                     <span class="sr-only" x-show="! isCollapsed">
-                                                        {{ __('filament-forms::components.repeater.buttons.collapse_item.label') }}
+                                                        {{ __('filament-forms::components.repeater.buttons.collapse.label') }}
                                                     </span>
 
                                                     <x-filament::icon
                                                         name="heroicon-m-plus"
-                                                        alias="filament-forms::components.repeater.buttons.expand-item"
+                                                        alias="filament-forms::components.repeater.buttons.expand"
                                                         size="h-4 w-4"
                                                         x-show="isCollapsed"
                                                         x-cloak=""
                                                     />
 
                                                     <span class="sr-only" x-show="isCollapsed" x-cloak>
-                                                        {{ __('filament-forms::components.repeater.buttons.expand_item.label') }}
+                                                        {{ __('filament-forms::components.repeater.buttons.expand.label') }}
                                                     </span>
                                                 </button>
                                             </li>
@@ -216,14 +216,14 @@
             </ul>
         @endif
 
-        @if (! $isItemCreationDisabled)
+        @if ($isAddable)
             <div class="relative flex justify-center">
                 <x-filament::button
-                    :wire:click="'dispatchFormEvent(\'repeater::createItem\', \'' . $statePath . '\')'"
+                    :wire:click="'dispatchFormEvent(\'repeater::add\', \'' . $statePath . '\')'"
                     size="sm"
                     type="button"
                 >
-                    {{ $getCreateItemButtonLabel() }}
+                    {{ $getAddButtonLabel() }}
                 </x-filament::button>
             </div>
         @endif

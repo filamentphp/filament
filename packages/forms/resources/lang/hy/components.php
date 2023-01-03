@@ -8,27 +8,27 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Ավելացնել :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Ջնջել',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Իջեցնել',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Բարձրացնել',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Ծալել',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Ընդարձակել',
             ],
 
@@ -95,27 +95,27 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Ավելացնել :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Ջնջել',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Իջեցնել',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Բարձրացնել',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Ծալել',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Ընդարձակել',
             ],
 

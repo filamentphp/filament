@@ -8,39 +8,39 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klonēt',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Izveidot :label',
             ],
 
-            'create_item_between' => [
+            'createbetween' => [
                 'label' => 'Ievietot',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Dzēst',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Pārkārtot',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Pārvietot uz leju',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Pārvietot uz augšu',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Sakļaut',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Izplest',
             ],
 
@@ -127,35 +127,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Pievienot :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Dzēst',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klonēt',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Pārvietot',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Pārvietot uz leju',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Pārvietot uz augšu',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Sakļaut',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Izplest',
             ],
 

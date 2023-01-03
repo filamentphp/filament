@@ -8,39 +8,39 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'همسان‌سازی',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'افزودن به :label',
             ],
 
-            'create_item_between' => [
+            'createbetween' => [
                 'label' => 'قرار دادن',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'حذف',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'جابه‌جایی',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'پایین آوردن',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'بالا بردن',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'جمع کردن',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'باز کردن',
             ],
 
@@ -127,35 +127,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'افزودن به :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'حذف',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'همسان‌سازی',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'جابه‌جایی',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'پایین آوردن',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'بالا بردن',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'جمع کردن',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'باز کردن',
             ],
 
