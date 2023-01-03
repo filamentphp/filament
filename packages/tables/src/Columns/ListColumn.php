@@ -15,6 +15,8 @@ class ListColumn extends Column
 
     protected bool | Closure $isBulleted = true;
 
+    protected mixed $defaultState = [];
+
     public function bulleted(bool | Closure $condition = true): static
     {
         $this->isBulleted = $condition;
