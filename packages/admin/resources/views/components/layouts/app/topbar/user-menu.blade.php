@@ -11,7 +11,7 @@
 {{ \Filament\Facades\Filament::renderHook('user-menu.start') }}
 
 <x-filament::dropdown placement="bottom-end">
-    <x-slot name="trigger" class="ml-4">
+    <x-slot name="trigger" class="ml-4 rtl:mr-4">
         <button class="block" aria-label="{{ __('filament::layout.buttons.user_menu.label') }}">
             <x-filament::user-avatar :user="$user" />
         </button>
