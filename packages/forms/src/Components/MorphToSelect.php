@@ -62,7 +62,7 @@ class MorphToSelect extends Component
         return [
             Select::make($typeColumn)
                 ->label($this->getLabel())
-                ->disableLabel()
+                ->hiddenLabel()
                 ->options(array_map(
                     fn (Type $type): string => $type->getLabel(),
                     $types,
@@ -72,7 +72,7 @@ class MorphToSelect extends Component
                 ->afterStateUpdated(fn (Set $set) => $set($keyColumn, null)),
             Select::make($keyColumn)
                 ->label($selectedType?->getLabel())
-                ->disableLabel()
+                ->hiddenLabel()
                 ->options($selectedType?->getOptionsUsing)
                 ->getSearchResultsUsing($selectedType?->getSearchResultsUsing)
                 ->getOptionLabelUsing($selectedType?->getOptionLabelUsing)

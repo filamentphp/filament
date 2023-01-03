@@ -25,13 +25,13 @@ class Repeater extends Field implements Contracts\CanConcealComponents
      */
     protected string $view = 'filament-forms::components.repeater';
 
-    protected string | Closure | null $createItemButtonLabel = null;
+    protected string | Closure | null $addButtonLabel = null;
 
-    protected bool | Closure $isItemCreationDisabled = false;
+    protected bool | Closure $isAddable = true;
 
-    protected bool | Closure $isItemDeletionDisabled = false;
+    protected bool | Closure $isDeletable = true;
 
-    protected bool | Closure $isItemMovementDisabled = false;
+    protected bool | Closure $isReorderable = true;
 
     protected bool | Closure $isInset = false;
 
@@ -45,7 +45,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
-    protected ?Closure $mutateRelationshipDataBeforeCreateUsing = null;
+    protected ?Closure $mutateRelationshipDataBeforeAddUsing = null;
 
     protected ?Closure $mutateRelationshipDataBeforeFillUsing = null;
 
@@ -68,8 +68,12 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         });
 
         $this->registerListeners([
-            'repeater::createItem' => [
+            'repeater::add' => [
                 function (Repeater $component, string $statePath): void {
+                    if (! $component->isAddable()) {
+                        return;
+                    }
+
                     if ($statePath !== $component->getStatePath()) {
                         return;
                     }
@@ -84,8 +88,12 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                     $component->collapsed(false, shouldMakeComponentCollapsible: false);
                 },
             ],
-            'repeater::deleteItem' => [
+            'repeater::delete' => [
                 function (Repeater $component, string $statePath, string $uuidToDelete): void {
+                    if (! $component->isDeletable()) {
+                        return;
+                    }
+
                     if ($statePath !== $component->getStatePath()) {
                         return;
                     }
@@ -100,6 +108,10 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             ],
             'repeater::cloneItem' => [
                 function (Repeater $component, string $statePath, string $uuidToDuplicate): void {
+                    if (! $component->isCloneable()) {
+                        return;
+                    }
+
                     if ($statePath !== $component->getStatePath()) {
                         return;
                     }
@@ -118,7 +130,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             ],
             'repeater::moveItemDown' => [
                 function (Repeater $component, string $statePath, string $uuidToMoveDown): void {
-                    if ($component->isItemMovementDisabled()) {
+                    if (! $component->isReorderable()) {
                         return;
                     }
 
@@ -132,9 +144,9 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                     data_set($livewire, $statePath, $items);
                 },
             ],
-            'repeater::moveItemUp' => [
+            'repeater::moveUp' => [
                 function (Repeater $component, string $statePath, string $uuidToMoveUp): void {
-                    if ($component->isItemMovementDisabled()) {
+                    if (! $component->isReorderable()) {
                         return;
                     }
 
@@ -148,9 +160,9 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                     data_set($livewire, $statePath, $items);
                 },
             ],
-            'repeater::moveItems' => [
+            'repeater::reorder' => [
                 function (Repeater $component, string $statePath, array $uuids): void {
-                    if ($component->isItemMovementDisabled()) {
+                    if (! $component->isReorderable()) {
                         return;
                     }
 
@@ -166,8 +178,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             ],
         ]);
 
-        $this->createItemButtonLabel(static function (Repeater $component) {
-            return __('filament-forms::components.repeater.buttons.create_item.label', [
+        $this->addButtonLabel(static function (Repeater $component) {
+            return __('filament-forms::components.repeater.buttons.add.label', [
                 'label' => Str::lcfirst($component->getLabel()),
             ]);
         });
@@ -177,9 +189,19 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         });
     }
 
+    public function addButtonLabel(string | Closure | null $label): static
+    {
+        $this->addButtonLabel = $label;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `addButtonLabel()` instead.
+     */
     public function createItemButtonLabel(string | Closure | null $label): static
     {
-        $this->createItemButtonLabel = $label;
+        $this->addButtonLabel($label);
 
         return $this;
     }
@@ -205,23 +227,53 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
+    public function addable(bool | Closure $condition = true): static
+    {
+        $this->isAddable = $condition;
+
+        return $this;
+    }
+
+    public function deletable(bool | Closure $condition = true): static
+    {
+        $this->isDeletable = $condition;
+
+        return $this;
+    }
+
+    public function reorderable(bool | Closure $condition = true): static
+    {
+        $this->isReorderable = $condition;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `addable()` instead.
+     */
     public function disableItemCreation(bool | Closure $condition = true): static
     {
-        $this->isItemCreationDisabled = $condition;
+        $this->addable(fn (Repeater $component): bool => ! $this->evaluate($condition));
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `deletable()` instead.
+     */
     public function disableItemDeletion(bool | Closure $condition = true): static
     {
-        $this->isItemDeletionDisabled = $condition;
+        $this->deletable(fn (Repeater $component): bool => ! $this->evaluate($condition));
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `reorderable()` instead.
+     */
     public function disableItemMovement(bool | Closure $condition = true): static
     {
-        $this->isItemMovementDisabled = $condition;
+        $this->reorderable(fn (Repeater $component): bool => ! $this->evaluate($condition));
 
         return $this;
     }
@@ -256,24 +308,40 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $containers;
     }
 
-    public function getCreateItemButtonLabel(): string
+    public function getAddButtonLabel(): string
     {
-        return $this->evaluate($this->createItemButtonLabel);
+        return $this->evaluate($this->addButtonLabel);
     }
 
-    public function isItemMovementDisabled(): bool
+    public function isReorderable(): bool
     {
-        return $this->evaluate($this->isItemMovementDisabled) || $this->isDisabled();
+        if ($this->isDisabled()) {
+            return false;
+        }
+
+        return $this->evaluate($this->isReorderable);
     }
 
-    public function isItemCreationDisabled(): bool
+    public function isAddable(): bool
     {
-        return $this->evaluate($this->isItemCreationDisabled) || $this->isDisabled() || (filled($this->getMaxItems()) && ($this->getMaxItems() <= $this->getItemsCount()));
+        if ($this->isDisabled()) {
+            return false;
+        }
+
+        if (filled($this->getMaxItems()) && ($this->getMaxItems() <= $this->getItemsCount())) {
+            return false;
+        }
+
+        return $this->evaluate($this->isAddable);
     }
 
-    public function isItemDeletionDisabled(): bool
+    public function isDeletable(): bool
     {
-        return $this->evaluate($this->isItemDeletionDisabled) || $this->isDisabled();
+        if ($this->isDisabled()) {
+            return false;
+        }
+
+        return $this->evaluate($this->isDeletable);
     }
 
     public function isInset(): bool
@@ -360,7 +428,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                     $record->setLocale($activeLocale);
                 }
 
-                $itemData = $component->mutateRelationshipDataBeforeCreate($itemData);
+                $itemData = $component->mutateRelationshipDataBeforeAdd($itemData);
 
                 $record->fill($itemData);
 
@@ -502,9 +570,9 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return filled($this->getRelationshipName());
     }
 
-    public function mutateRelationshipDataBeforeCreateUsing(?Closure $callback): static
+    public function mutateRelationshipDataBeforeAddUsing(?Closure $callback): static
     {
-        $this->mutateRelationshipDataBeforeCreateUsing = $callback;
+        $this->mutateRelationshipDataBeforeAddUsing = $callback;
 
         return $this;
     }
@@ -513,10 +581,10 @@ class Repeater extends Field implements Contracts\CanConcealComponents
      * @param  array<array<string, mixed>>  $data
      * @return array<array<string, mixed>>
      */
-    public function mutateRelationshipDataBeforeCreate(array $data): array
+    public function mutateRelationshipDataBeforeAdd(array $data): array
     {
-        if ($this->mutateRelationshipDataBeforeCreateUsing instanceof Closure) {
-            $data = $this->evaluate($this->mutateRelationshipDataBeforeCreateUsing, [
+        if ($this->mutateRelationshipDataBeforeAddUsing instanceof Closure) {
+            $data = $this->evaluate($this->mutateRelationshipDataBeforeAddUsing, [
                 'data' => $data,
             ]);
         }

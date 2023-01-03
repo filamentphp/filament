@@ -8,39 +8,39 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Nhân bản',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Thêm :label mới',
             ],
 
-            'create_item_between' => [
+            'createbetween' => [
                 'label' => 'Chèn',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Xóa',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Di chuyển',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Chuyển xuống',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Chuyển lên',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Thu gọn',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Mở rộng',
             ],
 
@@ -127,35 +127,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Thêm :label mới',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Xóa',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Di chuyển',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Nhân bản',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Chuyển xuống',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Chuyển lên',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Thu gọn',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Mở rộng',
             ],
 

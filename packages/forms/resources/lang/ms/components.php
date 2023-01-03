@@ -8,39 +8,39 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klon',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Tambah ke :label',
             ],
 
-            'create_item_between' => [
+            'createbetween' => [
                 'label' => 'Masukkan',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Padam',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Pindah',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Pindah ke bawah',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Pindah ke atas',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Tutup',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Buka',
             ],
 
@@ -127,35 +127,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Tambah ke :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Padam',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Pindah',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klon',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Pindah ke atas',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Pindah ke bawah',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Tutup',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Buka',
             ],
 

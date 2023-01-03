@@ -245,7 +245,7 @@ Usually, you will want to dispatch events for a specific component class. In thi
 You may also pass other parameters to the event:
 
 ```blade
-<button wire:click="dispatchFormEvent('repeater::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')">
+<button wire:click="dispatchFormEvent('repeater::delete', '{{ $getStatePath() }}', '{{ $uuid }}')">
     Delete item
 </button>
 ```
@@ -308,7 +308,7 @@ protected function setUp(): void
     parent::setUp();
 
     $this->registerListeners([
-        'repeater::deleteItem' => [
+        'repeater::delete' => [
             function (Component $component, string $statePath, string $uuidToDelete): void {
                 if ($component->isDisabled()) {
                     return;

@@ -21,15 +21,15 @@ class Builder extends Field implements Contracts\CanConcealComponents
      */
     protected string $view = 'filament-forms::components.builder';
 
-    protected string | Closure | null $createItemBetweenButtonLabel = null;
+    protected string | Closure | null $addBetweenButtonLabel = null;
 
-    protected string | Closure | null $createItemButtonLabel = null;
+    protected string | Closure | null $addButtonLabel = null;
 
-    protected bool | Closure $isItemMovementDisabled = false;
+    protected bool | Closure $isReorderable = true;
 
-    protected bool | Closure $isItemCreationDisabled = false;
+    protected bool | Closure $isAddable = true;
 
-    protected bool | Closure $isItemDeletionDisabled = false;
+    protected bool | Closure $isDeletable = true;
 
     protected bool | Closure $hasBlockLabels = true;
 
@@ -54,9 +54,9 @@ class Builder extends Field implements Contracts\CanConcealComponents
         });
 
         $this->registerListeners([
-            'builder::createItem' => [
+            'builder::add' => [
                 function (Builder $component, string $statePath, string $block, ?string $afterUuid = null): void {
-                    if ($component->isItemCreationDisabled()) {
+                    if (! $component->isAddable()) {
                         return;
                     }
 
@@ -93,9 +93,9 @@ class Builder extends Field implements Contracts\CanConcealComponents
                     $component->collapsed(false, shouldMakeComponentCollapsible: false);
                 },
             ],
-            'builder::deleteItem' => [
+            'builder::delete' => [
                 function (Builder $component, string $statePath, string $uuidToDelete): void {
-                    if ($component->isItemDeletionDisabled()) {
+                    if (! $component->isDeletable()) {
                         return;
                     }
 
@@ -113,6 +113,10 @@ class Builder extends Field implements Contracts\CanConcealComponents
             ],
             'builder::cloneItem' => [
                 function (Builder $component, string $statePath, string $uuidToDuplicate): void {
+                    if (! $component->isCloneable()) {
+                        return;
+                    }
+
                     if ($statePath !== $component->getStatePath()) {
                         return;
                     }
@@ -131,7 +135,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
             ],
             'builder::moveItemDown' => [
                 function (Builder $component, string $statePath, string $uuidToMoveDown): void {
-                    if ($component->isItemMovementDisabled()) {
+                    if (! $component->isReorderable()) {
                         return;
                     }
 
@@ -145,9 +149,9 @@ class Builder extends Field implements Contracts\CanConcealComponents
                     data_set($livewire, $statePath, $items);
                 },
             ],
-            'builder::moveItemUp' => [
+            'builder::moveUp' => [
                 function (Builder $component, string $statePath, string $uuidToMoveUp): void {
-                    if ($component->isItemMovementDisabled()) {
+                    if (! $component->isReorderable()) {
                         return;
                     }
 
@@ -161,9 +165,9 @@ class Builder extends Field implements Contracts\CanConcealComponents
                     data_set($livewire, $statePath, $items);
                 },
             ],
-            'builder::moveItems' => [
+            'builder::reorder' => [
                 function (Builder $component, string $statePath, array $uuids): void {
-                    if ($component->isItemMovementDisabled()) {
+                    if (! $component->isReorderable()) {
                         return;
                     }
 
@@ -179,10 +183,10 @@ class Builder extends Field implements Contracts\CanConcealComponents
             ],
         ]);
 
-        $this->createItemBetweenButtonLabel(__('filament-forms::components.builder.buttons.create_item_between.label'));
+        $this->addBetweenButtonLabel(__('filament-forms::components.builder.buttons.add_between.label'));
 
-        $this->createItemButtonLabel(static function (Builder $component) {
-            return __('filament-forms::components.builder.buttons.create_item.label', [
+        $this->addButtonLabel(static function (Builder $component) {
+            return __('filament-forms::components.builder.buttons.add.label', [
                 'label' => Str::lcfirst($component->getLabel()),
             ]);
         });
@@ -202,37 +206,87 @@ class Builder extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
+    public function addBetweenButtonLabel(string | Closure | null $label): static
+    {
+        $this->addBetweenButtonLabel = $label;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `addBetweenButtonLabel()` instead.
+     */
     public function createItemBetweenButtonLabel(string | Closure | null $label): static
     {
-        $this->createItemBetweenButtonLabel = $label;
+        $this->addBetweenButtonLabel($label);
 
         return $this;
     }
 
+    public function addButtonLabel(string | Closure | null $label): static
+    {
+        $this->addButtonLabel = $label;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `addButtonLabel()` instead.
+     */
     public function createItemButtonLabel(string | Closure | null $label): static
     {
-        $this->createItemButtonLabel = $label;
+        $this->addButtonLabel($label);
 
         return $this;
     }
 
-    public function disableItemMovement(bool | Closure $condition = true): static
+    public function addable(bool | Closure $condition = true): static
     {
-        $this->isItemMovementDisabled = $condition;
+        $this->isAddable = $condition;
 
         return $this;
     }
 
+    public function deletable(bool | Closure $condition = true): static
+    {
+        $this->isDeletable = $condition;
+
+        return $this;
+    }
+
+    public function reorderable(bool | Closure $condition = true): static
+    {
+        $this->isReorderable = $condition;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `addable()` instead.
+     */
     public function disableItemCreation(bool | Closure $condition = true): static
     {
-        $this->isItemCreationDisabled = $condition;
+        $this->addable(fn (Repeater $component): bool => ! $this->evaluate($condition));
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `deletable()` instead.
+     */
     public function disableItemDeletion(bool | Closure $condition = true): static
     {
-        $this->isItemDeletionDisabled = $condition;
+        $this->deletable(fn (Repeater $component): bool => ! $this->evaluate($condition));
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `reorderable()` instead.
+     */
+    public function disableItemMovement(bool | Closure $condition = true): static
+    {
+        $this->reorderable(fn (Repeater $component): bool => ! $this->evaluate($condition));
 
         return $this;
     }
@@ -245,7 +299,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
     }
 
     /**
-     * @deprecated Use `withBlockLabels()` instead.
+     * @deprecated Use `blockLabels()` instead.
      */
     public function showBlockLabels(bool | Closure $condition = true): static
     {
@@ -254,14 +308,34 @@ class Builder extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
+    /**
+     * @deprecated Use `blockLabels()` instead.
+     */
     public function withBlockLabels(bool | Closure $condition = true): static
+    {
+        $this->blockLabels($condition);
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `blockNumbers()` instead.
+     */
+    public function withBlockNumbers(bool | Closure $condition = true): static
+    {
+        $this->blockNumbers($condition);
+
+        return $this;
+    }
+
+    public function blockLabels(bool | Closure $condition = true): static
     {
         $this->hasBlockLabels = $condition;
 
         return $this;
     }
 
-    public function withBlockNumbers(bool | Closure $condition = true): static
+    public function blockNumbers(bool | Closure $condition = true): static
     {
         $this->hasBlockNumbers = $condition;
 
@@ -299,14 +373,14 @@ class Builder extends Field implements Contracts\CanConcealComponents
             ->all();
     }
 
-    public function getCreateItemBetweenButtonLabel(): string
+    public function getAddBetweenButtonLabel(): string
     {
-        return $this->evaluate($this->createItemBetweenButtonLabel);
+        return $this->evaluate($this->addBetweenButtonLabel);
     }
 
-    public function getCreateItemButtonLabel(): string
+    public function getAddButtonLabel(): string
     {
-        return $this->evaluate($this->createItemButtonLabel);
+        return $this->evaluate($this->addButtonLabel);
     }
 
     public function hasBlock(string $name): bool
@@ -314,19 +388,35 @@ class Builder extends Field implements Contracts\CanConcealComponents
         return (bool) $this->getBlock($name);
     }
 
-    public function isItemMovementDisabled(): bool
+    public function isReorderable(): bool
     {
-        return $this->evaluate($this->isItemMovementDisabled) || $this->isDisabled();
+        if ($this->isDisabled()) {
+            return false;
+        }
+
+        return $this->evaluate($this->isReorderable);
     }
 
-    public function isItemCreationDisabled(): bool
+    public function isAddable(): bool
     {
-        return $this->evaluate($this->isItemCreationDisabled) || $this->isDisabled() || (filled($this->getMaxItems()) && ($this->getMaxItems() <= $this->getItemsCount()));
+        if ($this->isDisabled()) {
+            return false;
+        }
+
+        if (filled($this->getMaxItems()) && ($this->getMaxItems() <= $this->getItemsCount())) {
+            return false;
+        }
+
+        return $this->evaluate($this->isAddable);
     }
 
-    public function isItemDeletionDisabled(): bool
+    public function isDeletable(): bool
     {
-        return $this->evaluate($this->isItemDeletionDisabled) || $this->isDisabled();
+        if ($this->isDisabled()) {
+            return false;
+        }
+
+        return $this->evaluate($this->isDeletable);
     }
 
     public function hasBlockLabels(): bool

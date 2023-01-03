@@ -3,7 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Filament\Forms\Components\Concerns\CanDisableOptions;
-use Filament\Forms\Components\Concerns\CanDisablePlaceholderSelection;
+use Filament\Forms\Components\Concerns\CanSelectPlaceholder;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Concerns\HasOptions;
 use Filament\Forms\Components\Concerns\HasPlaceholder;
@@ -16,7 +16,7 @@ class SelectColumn extends Column implements Editable
         getRules as baseGetRules;
     }
     use CanDisableOptions;
-    use CanDisablePlaceholderSelection;
+    use CanSelectPlaceholder;
     use Concerns\CanUpdateState;
     use HasExtraInputAttributes;
     use HasOptions;
@@ -31,7 +31,7 @@ class SelectColumn extends Column implements Editable
     {
         parent::setUp();
 
-        $this->disableClick();
+        $this->disabledClick();
 
         $this->placeholder(__('filament-forms::components.select.placeholder'));
     }

@@ -8,39 +8,39 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Clone',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Add to :label',
             ],
 
-            'create_item_between' => [
+            'createbetween' => [
                 'label' => 'Insert',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Delete',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Move',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Move down',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Move up',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Collapse',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Expand',
             ],
 
@@ -127,35 +127,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Add to :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Delete',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Clone',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Move',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Move down',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Move up',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Collapse',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Expand',
             ],
 

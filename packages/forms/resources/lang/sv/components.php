@@ -8,35 +8,35 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klona',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Lägg till i :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Radera',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Flytta',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Flytta ned',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Flytta upp',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Komprimera',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Expandera',
             ],
 
@@ -107,35 +107,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Lägg till i :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Radera',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klona',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Flytta',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Flytta ned',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Flytta upp',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Komprimera',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Expandera',
             ],
 

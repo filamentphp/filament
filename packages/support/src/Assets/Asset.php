@@ -9,9 +9,9 @@ abstract class Asset
 {
     protected string $id;
 
-    protected ?string $path = null;
+    protected string $package;
 
-    protected ?string $package = null;
+    protected ?string $path = null;
 
     final public function __construct(string $id, ?string $path = null)
     {
@@ -29,14 +29,14 @@ abstract class Asset
         return $this->id;
     }
 
-    public function package(?string $package): static
+    public function package(string $package): static
     {
         $this->package = $package;
 
         return $this;
     }
 
-    public function getPackage(): ?string
+    public function getPackage(): string
     {
         return $this->package;
     }

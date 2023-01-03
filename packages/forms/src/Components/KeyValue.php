@@ -20,13 +20,13 @@ class KeyValue extends Field
 
     protected string | Closure | null $reorderButtonLabel = null;
 
-    protected bool | Closure $shouldDisableAddingRows = false;
+    protected bool | Closure $isAddable = true;
 
-    protected bool | Closure $shouldDisableDeletingRows = false;
+    protected bool | Closure $isDeletable = true;
 
-    protected bool | Closure $shouldDisableEditingKeys = false;
+    protected bool | Closure $canEditKeys = true;
 
-    protected bool | Closure $shouldDisableEditingValues = false;
+    protected bool | Closure $canEditValues = true;
 
     protected string | Closure | null $keyLabel = null;
 
@@ -83,30 +83,70 @@ class KeyValue extends Field
         return $this;
     }
 
+    public function addable(bool | Closure $condition = true): static
+    {
+        $this->isAddable = $condition;
+
+        return $this;
+    }
+
+    public function deletable(bool | Closure $condition = true): static
+    {
+        $this->isDeletable = $condition;
+
+        return $this;
+    }
+
+    public function editableKeys(bool | Closure $condition = true): static
+    {
+        $this->canEditKeys = $condition;
+
+        return $this;
+    }
+
+    public function editableValues(bool | Closure $condition = true): static
+    {
+        $this->canEditValues = $condition;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `addable()` instead.
+     */
     public function disableAddingRows(bool | Closure $condition = true): static
     {
-        $this->shouldDisableAddingRows = $condition;
+        $this->addable(fn (KeyValue $component): bool => ! $component->evaluate($condition));
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `deletable()` instead.
+     */
     public function disableDeletingRows(bool | Closure $condition = true): static
     {
-        $this->shouldDisableDeletingRows = $condition;
+        $this->deletable(fn (KeyValue $component): bool => ! $component->evaluate($condition));
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `editableKeys()` instead.
+     */
     public function disableEditingKeys(bool | Closure $condition = true): static
     {
-        $this->shouldDisableEditingKeys = $condition;
+        $this->editableKeys(fn (KeyValue $component): bool => ! $component->evaluate($condition));
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `editableValues()` instead.
+     */
     public function disableEditingValues(bool | Closure $condition = true): static
     {
-        $this->shouldDisableEditingValues = $condition;
+        $this->editableValues(fn (KeyValue $component): bool => ! $component->evaluate($condition));
 
         return $this;
     }
@@ -146,24 +186,24 @@ class KeyValue extends Field
         return $this;
     }
 
-    public function canAddRows(): bool
+    public function isAddable(): bool
     {
-        return ! $this->evaluate($this->shouldDisableAddingRows);
+        return (bool) $this->evaluate($this->isAddable);
     }
 
-    public function canDeleteRows(): bool
+    public function isDeletable(): bool
     {
-        return ! $this->evaluate($this->shouldDisableDeletingRows);
+        return (bool) $this->evaluate($this->isDeletable);
     }
 
     public function canEditKeys(): bool
     {
-        return ! $this->evaluate($this->shouldDisableEditingKeys);
+        return (bool) $this->evaluate($this->canEditKeys);
     }
 
     public function canEditValues(): bool
     {
-        return ! $this->evaluate($this->shouldDisableEditingValues);
+        return (bool) $this->evaluate($this->canEditValues);
     }
 
     public function getAddButtonLabel(): string

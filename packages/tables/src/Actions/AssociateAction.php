@@ -23,7 +23,7 @@ class AssociateAction extends Action
 
     protected ?Closure $modifyRecordSelectOptionsQueryUsing = null;
 
-    protected bool | Closure $isAssociateAnotherDisabled = false;
+    protected bool | Closure $canAssociateAnother = true;
 
     protected bool | Closure $isRecordSelectPreloaded = false;
 
@@ -52,10 +52,10 @@ class AssociateAction extends Action
         $this->modalWidth('lg');
 
         $this->extraModalActions(function (): array {
-            return $this->isAssociateAnotherDisabled ? [] : [
+            return $this->canAssociateAnother ? [
                 $this->makeExtraModalAction('associateAnother', ['another' => true])
                     ->label(__('filament-actions::associate.single.modal.actions.associate_another.label')),
-            ];
+            ] : [];
         });
 
         $this->successNotificationTitle(__('filament-actions::associate.single.messages.associated'));
@@ -116,9 +116,19 @@ class AssociateAction extends Action
         return $this;
     }
 
+    public function associateAnother(bool | Closure $condition = true): static
+    {
+        $this->canAssociateAnother = $condition;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `associateAnother()` instead.
+     */
     public function disableAssociateAnother(bool | Closure $condition = true): static
     {
-        $this->isAssociateAnotherDisabled = $condition;
+        $this->associateAnother(fn (AssociateAction $action): bool => ! $action->evaluate($condition));
 
         return $this;
     }
@@ -130,9 +140,9 @@ class AssociateAction extends Action
         return $this;
     }
 
-    public function isAssociateAnotherDisabled(): bool
+    public function canAssociateAnother(): bool
     {
-        return (bool) $this->evaluate($this->isAssociateAnotherDisabled);
+        return (bool) $this->evaluate($this->canAssociateAnother);
     }
 
     public function isRecordSelectPreloaded(): bool
@@ -240,7 +250,7 @@ class AssociateAction extends Action
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(search: $search, searchColumns: $component->getSearchColumns()))
             ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle($table->getRelationship()->getRelated()->query()->find($value)))
             ->options(fn (): array => $this->isRecordSelectPreloaded() ? $getOptions() : [])
-            ->disableLabel();
+            ->hiddenLabel();
 
         if ($this->modifyRecordSelectUsing) {
             $select = $this->evaluate($this->modifyRecordSelectUsing, [

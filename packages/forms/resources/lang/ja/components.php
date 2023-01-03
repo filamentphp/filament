@@ -8,35 +8,35 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => '複製',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => ':labelを追加',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => '削除',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => '移動',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => '下に移動',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => '上に移動',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => '折り畳む',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => '展開',
             ],
 
@@ -103,35 +103,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => ':labelを追加',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => '削除',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => '複製',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => '移動',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => '下に移動',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => '上に移動',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => '折り畳む',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => '展開',
             ],
 

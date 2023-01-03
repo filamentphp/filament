@@ -8,27 +8,27 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Aggiungi a :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Elimina',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Muovi giù',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Muovi su',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Comprimi',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Espandi',
             ],
 
@@ -95,31 +95,31 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Aggiungi a :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Elimina',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Clona',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Muovi giù',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Muovi su',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Comprimi',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Espandi',
             ],
 

@@ -32,11 +32,11 @@ class DateTimePicker extends Field
 
     protected string | Closure | null $format = null;
 
-    protected bool | Closure $isWithoutDate = false;
+    protected bool | Closure $hasDate = true;
 
-    protected bool | Closure $isWithoutSeconds = false;
+    protected bool | Closure $hasSeconds = true;
 
-    protected bool | Closure $isWithoutTime = false;
+    protected bool | Closure $hasTime = true;
 
     protected bool | Closure $shouldCloseOnDateSelection = false;
 
@@ -228,23 +228,53 @@ class DateTimePicker extends Field
         return $this;
     }
 
+    public function date(bool | Closure $condition = true): static
+    {
+        $this->hasDate = $condition;
+
+        return $this;
+    }
+
+    public function seconds(bool | Closure $condition = true): static
+    {
+        $this->hasSeconds = $condition;
+
+        return $this;
+    }
+
+    public function time(bool | Closure $condition = true): static
+    {
+        $this->hasTime = $condition;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `date()` instead.
+     */
     public function withoutDate(bool | Closure $condition = true): static
     {
-        $this->isWithoutDate = $condition;
+        $this->date(fn (DateTimePicker $component): bool => ! $component->evaluate($condition));
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `seconds()` instead.
+     */
     public function withoutSeconds(bool | Closure $condition = true): static
     {
-        $this->isWithoutSeconds = $condition;
+        $this->seconds(fn (DateTimePicker $component): bool => ! $component->evaluate($condition));
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `time()` instead.
+     */
     public function withoutTime(bool | Closure $condition = true): static
     {
-        $this->isWithoutTime = $condition;
+        $this->time(fn (DateTimePicker $component): bool => ! $component->evaluate($condition));
 
         return $this;
     }
@@ -345,17 +375,17 @@ class DateTimePicker extends Field
 
     public function hasDate(): bool
     {
-        return ! $this->isWithoutDate;
+        return (bool) $this->evaluate($this->hasDate);
     }
 
     public function hasSeconds(): bool
     {
-        return ! $this->isWithoutSeconds;
+        return (bool) $this->evaluate($this->hasSeconds);
     }
 
     public function hasTime(): bool
     {
-        return ! $this->isWithoutTime;
+        return (bool) $this->evaluate($this->hasTime);
     }
 
     public function getHoursStep(): int

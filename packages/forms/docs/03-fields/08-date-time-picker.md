@@ -66,12 +66,12 @@ DatePicker::make('date_of_birth')->displayFormat('d/m/Y')
 
 ## Disabling the seconds input
 
-When using the time picker, you may disable the seconds input using the `withoutSeconds()` method:
+When using the time picker, you may disable the seconds input using the `seconds()` method:
 
 ```php
 use Filament\Forms\Components\DateTimePicker;
 
-DateTimePicker::make('published_at')->withoutSeconds()
+DateTimePicker::make('published_at')->seconds(false)
 ```
 
 ![](https://user-images.githubusercontent.com/41773797/147613511-30d7b2d8-227a-42ff-a6c7-e080d22305ad.png)

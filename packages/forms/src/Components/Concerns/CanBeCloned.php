@@ -17,6 +17,10 @@ trait CanBeCloned
 
     public function isCloneable(): bool
     {
-        return $this->evaluate($this->isCloneable) && (! $this->isDisabled());
+        if ($this->isDisabled()) {
+            return false;
+        }
+
+        return $this->evaluate($this->isCloneable);
     }
 }

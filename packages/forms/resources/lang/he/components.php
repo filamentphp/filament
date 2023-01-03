@@ -8,35 +8,35 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'שכפל',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'הוסף ל :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'מחק',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'העבר',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'הזז מטה',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'הזז מעלה',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'צמצם',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'הרחב',
             ],
 
@@ -103,35 +103,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'הוסף ל :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'מחק',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'שכפל',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'העבר',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'הזז מטה',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'הזז מעלה',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'צמצם',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'הרחב',
             ],
 

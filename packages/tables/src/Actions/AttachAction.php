@@ -22,7 +22,7 @@ class AttachAction extends Action
 
     protected ?Closure $modifyRecordSelectOptionsQueryUsing = null;
 
-    protected bool | Closure $isAttachAnotherDisabled = false;
+    protected bool | Closure $canAttachAnother = true;
 
     protected bool | Closure $isRecordSelectPreloaded = false;
 
@@ -51,10 +51,10 @@ class AttachAction extends Action
         $this->modalWidth('lg');
 
         $this->extraModalActions(function (): array {
-            return $this->isAttachAnotherDisabled() ? [] : [
+            return $this->canAttachAnother() ? [
                 $this->makeExtraModalAction('attachAnother', ['another' => true])
                     ->label(__('filament-actions::attach.single.modal.actions.attach_another.label')),
-            ];
+            ] : [];
         });
 
         $this->successNotificationTitle(__('filament-actions::attach.single.messages.attached'));
@@ -114,9 +114,19 @@ class AttachAction extends Action
         return $this;
     }
 
+    public function attachAnother(bool | Closure $condition = true): static
+    {
+        $this->canAttachAnother = $condition;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `attachAnother()` instead.
+     */
     public function disableAttachAnother(bool | Closure $condition = true): static
     {
-        $this->isAttachAnotherDisabled = $condition;
+        $this->attachAnother(fn (AttachAction $action): bool => ! $action->evaluate($condition));
 
         return $this;
     }
@@ -128,9 +138,9 @@ class AttachAction extends Action
         return $this;
     }
 
-    public function isAttachAnotherDisabled(): bool
+    public function canAttachAnother(): bool
     {
-        return (bool) $this->evaluate($this->isAttachAnotherDisabled);
+        return (bool) $this->evaluate($this->canAttachAnother);
     }
 
     public function isRecordSelectPreloaded(): bool
@@ -239,7 +249,7 @@ class AttachAction extends Action
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(search: $search, searchColumns: $component->getSearchColumns()))
             ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle($table->getRelationship()->getRelated()->query()->find($value)))
             ->options(fn (): array => $this->isRecordSelectPreloaded() ? $getOptions() : [])
-            ->disableLabel();
+            ->hiddenLabel();
 
         if ($this->modifyRecordSelectUsing) {
             $select = $this->evaluate($this->modifyRecordSelectUsing, [

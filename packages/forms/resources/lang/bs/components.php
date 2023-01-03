@@ -8,39 +8,39 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Kloniraj',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Dodaj :label',
             ],
 
-            'create_item_between' => [
+            'createbetween' => [
                 'label' => 'Ubaci',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Izbriši',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Pomjeri',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Dolje',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Gore',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Sažimanje',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Proširivanje',
             ],
 
@@ -127,35 +127,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Dodaj :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Izbriši',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Kloniraj',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Pomjeriti',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Dolje',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Gore',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Sažimanje',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Proširivanje',
             ],
 

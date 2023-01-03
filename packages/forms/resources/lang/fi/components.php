@@ -8,39 +8,39 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Kloonaa',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Lisää :label',
             ],
 
-            'create_item_between' => [
+            'createbetween' => [
                 'label' => 'Sijoita',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Poista',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Siirrä',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Siirrä alas',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Siirrä ylös',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Sulje',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Avaa',
             ],
 
@@ -127,35 +127,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Lisää :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Poista',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Siirrä',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Kloonaa',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Siirrä alas',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Siirrä ylös',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Sulje',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Avaa',
             ],
 

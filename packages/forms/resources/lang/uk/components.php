@@ -8,31 +8,31 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Додати до :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Видалити',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Перемістити',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Перемістити вниз',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Перемістити вгору',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Згорнути',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Розгорнути',
             ],
 
@@ -99,35 +99,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Додати до :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Видалити',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Перемістити',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Клонувати',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Перемістити вниз',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Перемістити вгору',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Згорнути',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Розгорнути',
             ],
 

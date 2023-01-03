@@ -150,13 +150,13 @@
                             color="text-gray-400"
                             size="h-5 w-5"
                             class="filament-modal-close-button cursor-pointer"
-                            :title="__('filament::components/modal.actions.close.label')"
+                            :title="__('filament-support::components/modal.actions.close.label')"
                             x-on:click="close()"
                             tabindex="-1"
                         />
 
                         <span class="sr-only">
-                            {{ __('filament::components/modal.actions.close.label') }}
+                            {{ __('filament-support::components/modal.actions.close.label') }}
                         </span>
                     </button>
                 @endif

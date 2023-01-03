@@ -8,39 +8,39 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Duplikat',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Tambahkan :label',
             ],
 
-            'create_item_between' => [
+            'createbetween' => [
                 'label' => 'Sisipkan',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Hapus',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Pindahkan',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Turunkan',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Naikkan',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Sembunyikan',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Tampilkan',
             ],
 
@@ -127,35 +127,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Tambahkan :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Hapus',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Duplikat',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Pindahkan',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Turunkan',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Naikkan',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Sembunyikan',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Tampilkan',
             ],
 

@@ -8,35 +8,35 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klonovat',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Přidat k :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Smazat',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Přesunout',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Posunout dolů',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Posunout nahoru',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Skrýt',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Zobrazit',
             ],
 
@@ -107,35 +107,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Přidat k :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Smazat',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klonovat',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Přesunout',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Posunout dolů',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Posunout nahoru',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Skrýt',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Zobrazit',
             ],
 

@@ -93,7 +93,6 @@ class FilamentServiceProvider extends PackageServiceProvider
             Commands\MakeRelationManagerCommand::class,
             Commands\MakeResourceCommand::class,
             Commands\MakeUserCommand::class,
-            Commands\MakeWidgetCommand::class,
         ];
 
         $aliases = [];

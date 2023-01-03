@@ -3,9 +3,10 @@
     :field="$field"
 >
     @php
-        $canDeleteRows = $canDeleteRows();
         $debounce = $getDebounce();
+        $isDeletable = $isDeletable();
         $isDisabled = $isDisabled();
+        $isReorderable = $isReorderable();
         $statePath = $getStatePath();
     @endphp
 
@@ -41,11 +42,11 @@
                             {{ $getValueLabel() }}
                         </th>
 
-                        @if (($canDeleteRows || $isReorderable()) && (! $isDisabled))
+                        @if (($isDeletable || $isReorderable) && (! $isDisabled))
                             <th
                                 scope="col"
                                 x-show="rows.length > 1"
-                                class="{{ ($canDeleteRows && $isReorderable()) ? 'w-16' : 'w-12' }}"
+                                class="{{ ($isDeletable && $isReorderable) ? 'w-16' : 'w-12' }}"
                             >
                                 <span class="sr-only"></span>
                             </th>
@@ -54,7 +55,7 @@
                 </thead>
 
                 <tbody
-                    @if ($isReorderable())
+                    @if ($isReorderable)
                         x-sortable
                         x-on:end="reorderRows($event)"
                     @endif
@@ -63,7 +64,7 @@
                 >
                     <template x-for="(row, index) in rows" x-bind:key="index" x-ref="rowTemplate">
                         <tr
-                            @if ($isReorderable())
+                            @if ($isReorderable)
                                 x-bind:x-sortable-item="row.key"
                             @endif
                             class="divide-x rtl:divide-x-reverse dark:divide-gray-600"
@@ -94,10 +95,10 @@
                                 >
                             </td>
 
-                            @if (($canDeleteRows || $isReorderable()) && (! $isDisabled))
+                            @if (($isDeletable || $isReorderable) && (! $isDisabled))
                                 <td x-show="rows.length > 1" class="whitespace-nowrap">
                                     <div class="flex items-center justify-center gap-2">
-                                        @if ($isReorderable())
+                                        @if ($isReorderable)
                                             <button
                                                 x-sortable-handle
                                                 type="button"
@@ -115,7 +116,7 @@
                                             </button>
                                         @endif
 
-                                        @if ($canDeleteRows)
+                                        @if ($isDeletable)
                                             <button
                                                 x-on:click="deleteRow(index)"
                                                 type="button"
@@ -140,7 +141,7 @@
                 </tbody>
             </table>
 
-            @if ($canAddRows() && (! $isDisabled))
+            @if ($isAddable() && (! $isDisabled))
                 <button
                     x-on:click="addRow"
                     type="button"

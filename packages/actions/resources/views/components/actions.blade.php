@@ -33,7 +33,7 @@
                 {{ $action }}
             @endforeach
             
-            {{ \Filament\Facades\Filament::renderHook('page.actions.start') }}
+            {{ \Filament\Facades\Filament::renderHook('page.actions.end') }}
             
         </div>
     @endif

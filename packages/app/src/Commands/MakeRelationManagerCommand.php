@@ -55,7 +55,7 @@ class MakeRelationManagerCommand extends Command
             $context = (count($contexts) > 1) ? $contexts[$this->choice(
                 'Which context would you like to create this in?',
                 array_map(
-                    fn (Context $context) => $context->getId(),
+                    fn (Context $context): string => $context->getId(),
                     $contexts,
                 ),
                 Filament::getDefaultContext()->getId(),

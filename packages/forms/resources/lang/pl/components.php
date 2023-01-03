@@ -8,39 +8,39 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Duplikuj',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Dodaj do :label',
             ],
 
-            'create_item_between' => [
+            'createbetween' => [
                 'label' => 'Wstaw',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Usuń',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Przesuń',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Przesuń w dół',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Przesuń w górę',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Zwiń',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Rozwiń',
             ],
 
@@ -111,35 +111,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Dodaj do :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Usuń',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Duplikuj',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Przesuń',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Przesuń w dół',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Przesuń w górę',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Zwiń',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Rozwiń',
             ],
 

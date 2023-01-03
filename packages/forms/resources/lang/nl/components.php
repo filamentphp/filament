@@ -8,39 +8,39 @@ return [
 
         'buttons' => [
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klonen',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Toevoegen aan :label',
             ],
 
-            'create_item_between' => [
+            'createbetween' => [
                 'label' => 'Invoegen',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Verwijderen',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Verplaatsen',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Naar beneden',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Naar boven',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Inklappen',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Uitklappen',
             ],
 
@@ -127,35 +127,35 @@ return [
 
         'buttons' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Toevoegen aan :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Verwijderen',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klonen',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Verplaatsen',
             ],
 
-            'move_item_down' => [
+            'movedown' => [
                 'label' => 'Naar beneden',
             ],
 
-            'move_item_up' => [
+            'moveup' => [
                 'label' => 'Naar boven',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Inklappen',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Uitklappen',
             ],
 
