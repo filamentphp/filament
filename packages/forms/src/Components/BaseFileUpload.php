@@ -22,13 +22,13 @@ class BaseFileUpload extends Field
      */
     protected array | Arrayable | Closure | null $acceptedFileTypes = null;
 
-    protected bool | Closure $canDownload = false;
+    protected bool | Closure $isDownloadable = false;
 
-    protected bool | Closure $canOpen = false;
+    protected bool | Closure $isOpenable = false;
 
-    protected bool | Closure $canPreview = true;
+    protected bool | Closure $isPreviewable = true;
 
-    protected bool | Closure $canReorder = false;
+    protected bool | Closure $isReorderable = false;
 
     protected string | Closure | null $directory = null;
 
@@ -213,30 +213,70 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function downloadable(bool | Closure $condition = true): static
+    {
+        $this->isDownloadable = $condition;
+
+        return $this;
+    }
+
+    public function openable(bool | Closure $condition = true): static
+    {
+        $this->isOpenable = $condition;
+
+        return $this;
+    }
+
+    public function reorderable(bool | Closure $condition = true): static
+    {
+        $this->isReorderable = $condition;
+
+        return $this;
+    }
+
+    public function previewable(bool | Closure $condition = true): static
+    {
+        $this->isPreviewable = $condition;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `downloadable()` instead.
+     */
     public function enableDownload(bool | Closure $condition = true): static
     {
-        $this->canDownload = $condition;
+        $this->downloadable($condition);
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `openable()` instead.
+     */
     public function enableOpen(bool | Closure $condition = true): static
     {
-        $this->canOpen = $condition;
+        $this->openable($condition);
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `reorderable()` instead.
+     */
     public function enableReordering(bool | Closure $condition = true): static
     {
-        $this->canReorder = $condition;
+        $this->reorderable($condition);
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `previewable()` instead.
+     */
     public function disablePreview(bool | Closure $condition = true): static
     {
-        $this->canPreview = fn (BaseFileUpload $component): bool => ! $component->evaluate($condition);
+        $this->previewable(fn (BaseFileUpload $component): bool => ! $component->evaluate($condition));
 
         return $this;
     }
@@ -344,24 +384,24 @@ class BaseFileUpload extends Field
         return $this;
     }
 
-    public function canDownload(): bool
+    public function isDownloadable(): bool
     {
-        return (bool) $this->evaluate($this->canDownload);
+        return (bool) $this->evaluate($this->isDownloadable);
     }
 
-    public function canOpen(): bool
+    public function isOpenable(): bool
     {
-        return (bool) $this->evaluate($this->canOpen);
+        return (bool) $this->evaluate($this->isOpenable);
     }
 
-    public function canPreview(): bool
+    public function isPreviewable(): bool
     {
-        return (bool) $this->evaluate($this->canPreview);
+        return (bool) $this->evaluate($this->isPreviewable);
     }
 
-    public function canReorder(): bool
+    public function isReorderable(): bool
     {
-        return (bool) $this->evaluate($this->canReorder);
+        return (bool) $this->evaluate($this->isReorderable);
     }
 
     /**
@@ -539,7 +579,7 @@ class BaseFileUpload extends Field
      */
     public function reorderUploadedFiles(array $fileKeys): void
     {
-        if (! $this->canReorder) {
+        if (! $this->isReorderable) {
             return;
         }
 
@@ -617,7 +657,7 @@ class BaseFileUpload extends Field
             return $storedFile;
         }, Arr::wrap($this->getState())));
 
-        if ($this->canReorder && ($callback = $this->reorderUploadedFilesUsing)) {
+        if ($this->isReorderable && ($callback = $this->reorderUploadedFilesUsing)) {
             $state = $this->evaluate($callback, [
                 'state' => $state,
             ]);

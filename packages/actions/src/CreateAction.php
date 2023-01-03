@@ -5,13 +5,14 @@ namespace Filament\Actions;
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Form;
+use Filament\Tables\Actions\AssociateAction;
 use Illuminate\Database\Eloquent\Model;
 
 class CreateAction extends Action
 {
     use CanCustomizeProcess;
 
-    protected bool | Closure $isCreateAnotherDisabled = false;
+    protected bool | Closure $canCreateAnother = true;
 
     public static function getDefaultName(): ?string
     {
@@ -29,10 +30,10 @@ class CreateAction extends Action
         $this->modalButton(__('filament-actions::create.single.modal.actions.create.label'));
 
         $this->extraModalActions(function (): array {
-            return $this->isCreateAnotherDisabled() ? [] : [
+            return $this->canCreateAnother() ? [
                 $this->makeExtraModalAction('createAnother', ['another' => true])
                     ->label(__('filament-actions::create.single.modal.actions.create_another.label')),
-            ];
+            ] : [];
         });
 
         $this->successNotificationTitle(__('filament-actions::create.single.messages.created'));
@@ -71,15 +72,25 @@ class CreateAction extends Action
         });
     }
 
-    public function disableCreateAnother(bool | Closure $condition = true): static
+    public function createAnother(bool | Closure $condition = true): static
     {
-        $this->isCreateAnotherDisabled = $condition;
+        $this->canCreateAnother = $condition;
 
         return $this;
     }
 
-    public function isCreateAnotherDisabled(): bool
+    /**
+     * @deprecated Use `createAnother()` instead.
+     */
+    public function disableCreateAnother(bool | Closure $condition = true): static
     {
-        return (bool) $this->evaluate($this->isCreateAnotherDisabled);
+        $this->createAnother(fn (CreateAction $action): bool => ! $action->evaluate($condition));
+
+        return $this;
+    }
+
+    public function canCreateAnother(): bool
+    {
+        return (bool) $this->evaluate($this->canCreateAnother);
     }
 }

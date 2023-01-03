@@ -7,19 +7,22 @@ use Filament\Forms\Components\Field;
 
 trait CanBeAutocapitalized
 {
-    protected string | Closure | null $autocapitalize = null;
+    protected bool | string | Closure | null $autocapitalize = null;
 
-    public function autocapitalize(string | Closure | null $autocapitalize = 'on'): static
+    public function autocapitalize(bool | string | Closure | null $autocapitalize = true): static
     {
         $this->autocapitalize = $autocapitalize;
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `autocapitalize()` instead.
+     */
     public function disableAutocapitalize(bool | Closure $condition = true): static
     {
-        $this->autocapitalize(static function (Field $component) use ($condition): ?string {
-            return $component->evaluate($condition) ? 'off' : null;
+        $this->autocapitalize(static function (Field $component) use ($condition): ?bool {
+            return $component->evaluate($condition) ? false : null;
         });
 
         return $this;
@@ -27,6 +30,10 @@ trait CanBeAutocapitalized
 
     public function getAutocapitalize(): ?string
     {
-        return $this->evaluate($this->autocapitalize);
+        return match ($autocapitalize = $this->evaluate($this->autocapitalize)) {
+            true => 'on',
+            false => 'off',
+            default => $autocapitalize,
+        };
     }
 }

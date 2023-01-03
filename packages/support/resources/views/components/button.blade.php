@@ -145,7 +145,7 @@
                 />
 
                 <span x-show="isUploadingFile" x-cloak>
-                    {{ __('filament::components/button.messages.uploading_file') }}
+                    {{ __('filament-support::components/button.messages.uploading_file') }}
                 </span>
 
                 <span x-show="! isUploadingFile" @class([

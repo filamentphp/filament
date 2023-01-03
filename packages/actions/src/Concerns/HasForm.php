@@ -23,7 +23,17 @@ trait HasForm
 
     protected ?Closure $mutateFormDataUsing = null;
 
+    /**
+     * @deprecated Use `disabledForm() instead.
+     */
     public function disableForm(bool | Closure $condition = true): static
+    {
+        $this->disabledForm($condition);
+
+        return $this;
+    }
+
+    public function disabledForm(bool | Closure $condition = true): static
     {
         $this->isFormDisabled = $condition;
 

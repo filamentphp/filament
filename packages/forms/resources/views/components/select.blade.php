@@ -36,7 +36,7 @@
                 :suffix="$hasSuffix"
                 class="w-full"
             >
-                @unless ($isPlaceholderSelectionDisabled())
+                @if ($canSelectPlaceholder())
                     <option value="">{{ $getPlaceholder() }}</option>
                 @endif
 

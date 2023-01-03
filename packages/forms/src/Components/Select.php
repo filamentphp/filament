@@ -22,7 +22,7 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
     use Concerns\CanBePreloaded;
     use Concerns\CanBeSearchable;
     use Concerns\CanDisableOptions;
-    use Concerns\CanDisablePlaceholderSelection;
+    use Concerns\CanSelectPlaceholder;
     use Concerns\CanLimitItemsLength;
     use Concerns\HasAffixes {
         getActions as getBaseActions;

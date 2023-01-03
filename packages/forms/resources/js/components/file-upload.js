@@ -21,10 +21,6 @@ window.FilePond = FilePond
 
 export default function fileUploadFormComponent({
     acceptedFileTypes,
-    canDownload,
-    canOpen,
-    canPreview,
-    canReorder,
     deleteUploadedFileUsing,
     getUploadedFilesUsing,
     imageCropAspectRatio,
@@ -34,6 +30,10 @@ export default function fileUploadFormComponent({
     imageResizeTargetWidth,
     imageResizeUpscale,
     isAvatar,
+    isDownloadable,
+    isOpenable,
+    isPreviewable,
+    isReorderable,
     loadingIndicatorPosition,
     locale,
     panelAspectRatio,
@@ -72,10 +72,10 @@ export default function fileUploadFormComponent({
                 acceptedFileTypes,
                 allowImageExifOrientation: shouldOrientImageFromExif,
                 allowPaste: false,
-                allowReorder: canReorder,
-                allowImagePreview: canPreview,
-                allowVideoPreview: canPreview,
-                allowAudioPreview: canPreview,
+                allowReorder: isReorderable,
+                allowImagePreview: isPreviewable,
+                allowVideoPreview: isPreviewable,
+                allowAudioPreview: isPreviewable,
                 allowImageTransform: shouldTransformImage,
                 credits: false,
                 files: await this.getFiles(),
@@ -201,7 +201,7 @@ export default function fileUploadFormComponent({
             })
 
             this.pond.on('initfile', async (fileItem) => {
-                if (!canDownload) {
+                if (!isDownloadable) {
                     return
                 }
 
@@ -213,7 +213,7 @@ export default function fileUploadFormComponent({
             })
 
             this.pond.on('initfile', async (fileItem) => {
-                if (!canOpen) {
+                if (!isOpenable) {
                     return
                 }
 

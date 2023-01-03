@@ -36,7 +36,7 @@
             $state = $getState();
         @endphp
 
-        @unless ($isPlaceholderSelectionDisabled())
+        @if ($canSelectPlaceholder())
             <option value="">{{ $getPlaceholder() }}</option>
         @endif
 
