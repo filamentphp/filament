@@ -123,7 +123,17 @@
                 })
             </script>
         @endif
-
+        <script>
+            window.addEventListener('load', () => {
+                const activeSidebarItem = document.querySelector('.filament-sidebar-item-active');
+                if (activeSidebarItem) {
+                    activeSidebarItem.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center',
+                    });
+                }
+            })
+        </script>
         @foreach (\Filament\Facades\Filament::getScripts() as $name => $path)
             @if (\Illuminate\Support\Str::of($path)->startsWith(['http://', 'https://']))
                 <script defer src="{{ $path }}"></script>
