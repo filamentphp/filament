@@ -31,7 +31,7 @@ class SelectColumn extends Column implements Editable
     {
         parent::setUp();
 
-        $this->disableClick();
+        $this->disabledClick();
 
         $this->placeholder(__('filament-forms::components.select.placeholder'));
     }

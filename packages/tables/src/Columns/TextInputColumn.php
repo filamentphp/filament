@@ -29,7 +29,7 @@ class TextInputColumn extends Column implements Editable
     {
         parent::setUp();
 
-        $this->disableClick();
+        $this->disabledClick();
     }
 
     public function type(string | Closure | null $type): static

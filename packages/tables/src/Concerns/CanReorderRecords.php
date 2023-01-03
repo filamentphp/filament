@@ -17,7 +17,7 @@ trait CanReorderRecords
             return;
         }
 
-        $orderColumn = $this->getTableReorderColumn();
+        $orderColumn = $this->getTable()->getReorderColumn();
 
         if (
             (($relationship = $this->getTable()->getRelationship()) instanceof BelongsToMany) &&

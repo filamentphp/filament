@@ -31,7 +31,7 @@ class ViewAction extends Action
 
         $this->icon('heroicon-m-eye');
 
-        $this->disableForm();
+        $this->disabledForm();
 
         $this->fillForm(function (Model $record): array {
             $data = $record->attributesToArray();

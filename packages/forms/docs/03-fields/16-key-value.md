@@ -43,15 +43,16 @@ KeyValue::make('meta')
 
 ## Disabling functionality
 
-You may also prevent the user from adding rows, deleting rows, or editing keys:
+You may also prevent the user from adding rows, deleting rows, editing keys, or editing values:
 
 ```php
 use Filament\Forms\Components\KeyValue;
 
 KeyValue::make('meta')
-    ->disableAddingRows()
-    ->disableDeletingRows()
-    ->disableEditingKeys()
+    ->addable(false)
+    ->deletable(false)
+    ->editableKeys(false)
+    ->editableValues(false)
 ```
 
 ## Reordering rows

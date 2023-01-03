@@ -67,7 +67,7 @@ Repeater::make('members')
     ->schema([
         // ...
     ])
-    ->createItemButtonLabel('Add member')
+    ->addButtonLabel('Add member')
 ```
 
 ![](https://user-images.githubusercontent.com/41773797/147613748-6fdf2eff-de09-4ba0-8d01-68888802b152.png)
@@ -83,9 +83,9 @@ Repeater::make('members')
     ->schema([
         // ...
     ])
-    ->disableItemCreation()
-    ->disableItemDeletion()
-    ->disableItemMovement()
+    ->addable(false)
+    ->deletable(false)
+    ->reorderable(false)
 ```
 
 ## Validation

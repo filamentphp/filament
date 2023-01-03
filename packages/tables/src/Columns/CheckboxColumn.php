@@ -20,7 +20,7 @@ class CheckboxColumn extends Column implements Editable
     {
         parent::setUp();
 
-        $this->disableClick();
+        $this->disabledClick();
 
         $this->rules(['boolean']);
     }
