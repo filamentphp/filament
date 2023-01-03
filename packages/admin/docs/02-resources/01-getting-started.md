@@ -564,6 +564,14 @@ public static function getEloquentQuery(): Builder
 
 More information about removing global scopes may be found in the [Laravel documentation](https://laravel.com/docs/eloquent#removing-global-scopes).
 
+## Customizing the URL slug
+
+By default, Filament will generate a resource URL based on the name of the model. You can customize this by setting the `$slug` property on the resource:
+
+```php
+protected static ?string $slug = 'pending-orders';
+```
+
 ## Multi-tenancy
 
 Multi-tenancy, simply, is the concept of users "owning" records, and only being able to access the records that they own within Filament.

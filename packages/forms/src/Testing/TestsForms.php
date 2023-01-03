@@ -148,12 +148,12 @@ class TestsForms
             $form = $livewire->{$formName};
 
             /** @var ?Field $field */
-            $field = data_get($form->getFlatFields(withHidden: true), $fieldName, null);
+            $field = $form->getFlatFields(withHidden: true)[$fieldName] ?? null;
 
             Assert::assertInstanceOf(
                 Field::class,
                 $field,
-                "Failed asserting that a field with the name [{$fieldName}] exists on the form with the name [${formName}] on the [{$livewireClass}] component."
+                "Failed asserting that a field with the name [{$fieldName}] exists on the form with the name [{$formName}] on the [{$livewireClass}] component."
             );
 
             return $this;

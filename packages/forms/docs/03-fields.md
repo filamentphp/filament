@@ -382,11 +382,11 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('domain')
-    ->suffixAction(
+    ->suffixAction(fn (?string $state): Action =>
         Action::make('visit')
             ->icon('heroicon-s-external-link')
             ->url(
-                fn (?string $state): ?string => filled($state) ? "https://{$state}" : null,
+                filled($state) ? "https://{$state}" : null,
                 shouldOpenInNewTab: true,
             ),
     )
@@ -516,6 +516,8 @@ Select::make('status')
         'published' => 'Published',
     ])
 ```
+
+In the `options()` array, the array keys are saved, and the array values will be the label of each option in the dropdown.
 
 ![](https://user-images.githubusercontent.com/41773797/147612885-888dfd64-6256-482d-b4bc-840191306d2d.png)
 
@@ -1393,7 +1395,7 @@ RichEditor::make('content')
 
 ## Markdown editor
 
-The markdown editor allows you to edit and preview markdown content, as well as upload images.
+The markdown editor allows you to edit and preview markdown content, as well as upload images using drag and drop.
 
 ```php
 use Filament\Forms\Components\MarkdownEditor;

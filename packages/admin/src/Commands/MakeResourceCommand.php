@@ -2,17 +2,22 @@
 
 namespace Filament\Commands;
 
+use Filament\Forms\Commands\Concerns\CanGenerateForms;
 use Filament\Support\Commands\Concerns\CanIndentStrings;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
+use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Support\Commands\Concerns\CanValidateInput;
+use Filament\Tables\Commands\Concerns\CanGenerateTables;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
 class MakeResourceCommand extends Command
 {
-    use Concerns\CanGenerateResources;
+    use CanGenerateForms;
+    use CanGenerateTables;
     use CanIndentStrings;
     use CanManipulateFiles;
+    use CanReadModelSchemas;
     use CanValidateInput;
 
     protected $description = 'Creates a Filament resource class and default page classes.';
@@ -143,9 +148,9 @@ class MakeResourceCommand extends Command
 
         $this->copyStubToApp('Resource', $resourcePath, [
             'eloquentQuery' => $this->indentString($eloquentQuery, 1),
-            'formSchema' => $this->option('generate') ? $this->getResourceFormSchema(
-                'App\Models' . ($modelNamespace !== '' ? "\\{$modelNamespace}" : '') . '\\' . $modelClass,
-            ) : $this->indentString('//', 4),
+            'formSchema' => $this->indentString($this->option('generate') ? $this->getResourceFormSchema(
+                'App\\Models' . ($modelNamespace !== '' ? "\\{$modelNamespace}" : '') . '\\' . $modelClass,
+            ) : '//', 4),
             'model' => $model === 'Resource' ? 'Resource as ResourceModel' : $model,
             'modelClass' => $model === 'Resource' ? 'ResourceModel' : $modelClass,
             'namespace' => $namespace,
@@ -155,9 +160,9 @@ class MakeResourceCommand extends Command
             'resourceClass' => $resourceClass,
             'tableActions' => $this->indentString($tableActions, 4),
             'tableBulkActions' => $this->indentString($tableBulkActions, 4),
-            'tableColumns' => $this->option('generate') ? $this->getResourceTableColumns(
+            'tableColumns' => $this->indentString($this->option('generate') ? $this->getResourceTableColumns(
                 'App\Models' . ($modelNamespace !== '' ? "\\{$modelNamespace}" : '') . '\\' . $modelClass,
-            ) : $this->indentString('//', 4),
+            ) : '//', 4),
             'tableFilters' => $this->indentString(
                 $this->option('soft-deletes') ? 'Tables\Filters\TrashedFilter::make(),' : '//',
                 4,

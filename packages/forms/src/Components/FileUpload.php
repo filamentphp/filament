@@ -23,6 +23,8 @@ class FileUpload extends BaseFileUpload
 
     protected string | Closure | null $imageResizeMode = null;
 
+    protected bool | Closure $imageResizeUpscale = true;
+
     protected bool | Closure $isAvatar = false;
 
     protected string | Closure $loadingIndicatorPosition = 'right';
@@ -34,6 +36,8 @@ class FileUpload extends BaseFileUpload
     protected string | Closure $removeUploadedFileButtonPosition = 'left';
 
     protected bool | Closure $shouldAppendFiles = false;
+
+    protected bool | Closure $shouldOrientImageFromExif = true;
 
     protected string | Closure $uploadButtonPosition = 'right';
 
@@ -117,9 +121,23 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
+    public function imageResizeUpscale(bool | Closure $condition = true): static
+    {
+        $this->imageResizeUpscale = $condition;
+
+        return $this;
+    }
+
     public function loadingIndicatorPosition(string | Closure | null $position): static
     {
         $this->loadingIndicatorPosition = $position;
+
+        return $this;
+    }
+
+    public function orientImageFromExif(bool | Closure $condition = true): static
+    {
+        $this->shouldOrientImageFromExif = $condition;
 
         return $this;
     }
@@ -184,6 +202,11 @@ class FileUpload extends BaseFileUpload
         return $this->evaluate($this->imageResizeMode);
     }
 
+    public function getImageResizeUpscale(): bool
+    {
+        return $this->evaluate($this->imageResizeUpscale);
+    }
+
     public function getLoadingIndicatorPosition(): string
     {
         return $this->evaluate($this->loadingIndicatorPosition);
@@ -222,5 +245,10 @@ class FileUpload extends BaseFileUpload
     public function shouldAppendFiles(): bool
     {
         return $this->evaluate($this->shouldAppendFiles);
+    }
+
+    public function shouldOrientImageFromExif(): bool
+    {
+        return (bool) $this->evaluate($this->shouldOrientImageFromExif);
     }
 }

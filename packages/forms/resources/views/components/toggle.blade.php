@@ -18,7 +18,7 @@
                 x-data="{ state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }} }"
                 role="switch"
                 aria-checked="false"
-                x-bind:aria-checked="state.toString()"
+                x-bind:aria-checked="state?.toString()"
                 x-on:click="state = ! state"
                 x-bind:class="{
                     '{{ match ($getOnColor()) {

@@ -40,6 +40,7 @@ export default (Alpine) => {
             imageResizeMode,
             imageResizeTargetHeight,
             imageResizeTargetWidth,
+            imageResizeUpscale,
             isAvatar,
             loadingIndicatorPosition,
             locale,
@@ -52,6 +53,7 @@ export default (Alpine) => {
             removeUploadedFileUsing,
             reorderUploadedFilesUsing,
             shouldAppendFiles,
+            shouldOrientImageFromExif,
             shouldTransformImage,
             state,
             uploadButtonPosition,
@@ -78,6 +80,7 @@ export default (Alpine) => {
                         acceptedFileTypes,
                         allowPaste: false,
                         allowReorder: canReorder,
+                        allowImageExifOrientation: shouldOrientImageFromExif,
                         allowImagePreview: canPreview,
                         allowVideoPreview: canPreview,
                         allowAudioPreview: canPreview,
@@ -89,6 +92,7 @@ export default (Alpine) => {
                         imageResizeTargetHeight,
                         imageResizeTargetWidth,
                         imageResizeMode,
+                        imageResizeUpscale,
                         itemInsertLocation: shouldAppendFiles
                             ? 'after'
                             : 'before',

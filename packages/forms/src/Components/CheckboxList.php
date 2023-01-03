@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
-class CheckboxList extends Field
+class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
+    use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasOptions;
     use Concerns\CanBeSearchable;
 
@@ -47,12 +48,16 @@ class CheckboxList extends Field
         $this->options(static function (CheckboxList $component) use ($callback): array {
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getRelationshipTitleColumnName());
+            $relationshipQuery = $relationship->getRelated()->query();
 
             if ($callback) {
                 $relationshipQuery = $component->evaluate($callback, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
+            }
+
+            if (empty($relationshipQuery->getQuery()->orders)) {
+                $relationshipQuery->orderBy($component->getRelationshipTitleColumnName());
             }
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
