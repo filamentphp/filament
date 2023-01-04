@@ -23,6 +23,8 @@ return [
     | The default is `admin` but you can change it to whatever works best and
     | doesn't conflict with the routing in your application.
     |
+    | You can generate url using route helper: `route('filament.pages.dashboard')`
+    |
     */
 
     'path' => env('FILAMENT_PATH', 'admin'),
