@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use stdClass;
-use Throwable;
 
 trait CanSummarizeRecords
 {
