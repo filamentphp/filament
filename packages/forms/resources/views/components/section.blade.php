@@ -67,7 +67,11 @@
             </h3>
 
             @if ($description = $getDescription())
-                <p class="text-gray-500 text-base">
+                <p @class([
+                    'text-gray-500',
+                    'text-sm' => $isCompact,
+                    'text-base' => ! $isCompact,
+                ])>
                     {{ $description }}
                 </p>
             @endif
