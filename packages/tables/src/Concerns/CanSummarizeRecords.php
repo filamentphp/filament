@@ -3,9 +3,12 @@
 namespace Filament\Tables\Concerns;
 
 use Closure;
+use Filament\Tables\Support\RelationshipJoiner;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use stdClass;
+use Throwable;
 
 trait CanSummarizeRecords
 {
@@ -57,6 +60,9 @@ trait CanSummarizeRecords
             return [];
         }
 
+        $queryToJoin = $query->clone();
+        $joins = [];
+
         $query = DB::table($query->toBase(), $query->getModel()->getTable());
 
         if ($modifyQueryUsing) {
@@ -64,19 +70,30 @@ trait CanSummarizeRecords
         }
 
         $group = $query->groups[0] ?? null;
+        $groupSelectAlias = null;
 
         if ($group !== null) {
-            $selects[] = $group;
+            $groupSelectAlias = Str::random();
+            $selects[] = "{$group} as \"{$groupSelectAlias}\"";
+
+            if (filled($groupingRelationshipName = $this->getTableGrouping()?->getRelationshipName())) {
+                $joins = (new RelationshipJoiner())->getLeftJoinsForRelationship(
+                    query: $queryToJoin,
+                    relationship: $groupingRelationshipName,
+                );
+            }
         }
+
+        $query->joins = array_merge($query->joins ?? [], $joins);
 
         return $query
             ->selectRaw(implode(', ', $selects))
             ->get()
-            ->mapWithKeys(function (stdClass $state, $key) use ($group): array {
-                if ($group !== null) {
-                    $key = $state->{$group};
+            ->mapWithKeys(function (stdClass $state, $key) use ($groupSelectAlias): array {
+                if ($groupSelectAlias !== null) {
+                    $key = $state->{$groupSelectAlias};
 
-                    unset($state->{$group});
+                    unset($state->{$groupSelectAlias});
                 }
 
                 return [$key => (array) $state];

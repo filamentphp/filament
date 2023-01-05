@@ -14,6 +14,7 @@
         "danharrin/livewire-rate-limiting": "^0.3|^1.0",
         "doctrine/dbal": "^3.2",
         "filament/support": "*",
+        "kirschbaum-development/eloquent-power-joins": "^2.6",
         "laravel/cashier": "^14.2",
         "laravel/pint": "^1.0",
         "league/flysystem-aws-s3-v3": "^3.0",

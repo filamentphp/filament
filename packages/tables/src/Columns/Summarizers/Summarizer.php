@@ -88,16 +88,24 @@ class Summarizer extends ViewComponent
 
             $inverseRelationship = $column->getInverseRelationshipName($query->getModel());
 
+            $baseQuery = $query->toBase();
+
             $query = $relationship->getQuery()->getModel()->newQuery()
                 ->whereHas(
                     $inverseRelationship,
-                    fn (EloquentBuilder $relatedQuery): EloquentBuilder => $this->hasPaginatedQuery() ?
-                        $relatedQuery->whereKey($this->getTable()->getRecords()->modelKeys()) :
-                        $query,
+                    function (EloquentBuilder $relatedQuery) use ($baseQuery): EloquentBuilder {
+                        if ($baseQuery->limit !== null) {
+                            $relatedQuery->whereKey($this->getTable()->getRecords()->modelKeys());
+                        }
+
+                        $relatedQuery->mergeWheres($baseQuery->wheres, $baseQuery->bindings);
+
+                        return $relatedQuery;
+                    },
                 );
         }
 
-        $query = DB::table($query->getQuery());
+        $query = DB::table($query->toBase());
 
         if ($this->hasQueryModificationCallback()) {
             $query = $this->evaluate($this->modifyQueryUsing, [
@@ -137,11 +145,6 @@ class Summarizer extends ViewComponent
     public function getId(): ?string
     {
         return $this->id;
-    }
-
-    protected function hasPaginatedQuery(): bool
-    {
-        return $this->getQuery()->getQuery()->limit !== null;
     }
 
     /**
