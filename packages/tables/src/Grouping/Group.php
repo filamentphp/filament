@@ -234,10 +234,10 @@ class Group
 
         $value = Arr::get($record, $column);
 
-        if ($relationship = $this->getRelationship($record)) {
+        if ($relationshipName = $this->getRelationshipName()) {
             return $query->whereRelation(
-                $this->getRelationshipName(),
-                $relationship->getRelated()->getQualifiedKeyName(),
+                $relationshipName,
+                $this->getRelationshipAttribute(),
                 $value,
             );
         }
