@@ -7,6 +7,7 @@
     'heading',
     'placeholderColumns' => true,
     'query',
+    'scopeQueryToGroupUsing' => null,
     'selectionEnabled' => false,
     'selectedState',
     'strong' => false,
@@ -85,7 +86,7 @@
                     </div>
                 @elseif ((! $placeholderColumns) || $column->hasSummary())
                     @foreach ($column->getSummarizers() as $summarizer)
-                        {{ $summarizer->query($query)->selectedState($selectedState) }}
+                        {{ $summarizer->query($query)->scopeQueryToGroupUsing($scopeQueryToGroupUsing)->selectedState($selectedState) }}
                     @endforeach
                 @endif
             </td>

@@ -11,6 +11,8 @@ trait InteractsWithTableQuery
 
     protected ?Builder $query = null;
 
+    protected ?Closure $scopeQueryToGroupUsing = null;
+
     public function query(Builder | Closure | null $query): static
     {
         if ($query instanceof Builder || ($query === null)) {
@@ -22,6 +24,20 @@ trait InteractsWithTableQuery
         }
 
         return $this;
+    }
+
+    public function scopeQueryToGroupUsing(?Closure $callback): static
+    {
+        $this->scopeQueryToGroupUsing = $callback;
+
+        return $this;
+    }
+
+    public function scopeQueryToGroup(Builder $query): Builder
+    {
+        return $this->evaluate($this->scopeQueryToGroupUsing, [
+            'query' => $query,
+        ]) ?? $query;
     }
 
     public function getQuery(): ?Builder
