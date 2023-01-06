@@ -39,7 +39,8 @@ There are 3 tasks when adding a table to a Livewire component class:
 namespace App\Http\Livewire;
 
 use App\Models\Post;
-use App\Models\Shop\Product;use Filament\Tables\Columns\TextColumn;
+use App\Models\Shop\Product;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
