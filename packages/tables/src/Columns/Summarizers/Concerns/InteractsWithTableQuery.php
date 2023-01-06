@@ -45,7 +45,7 @@ trait InteractsWithTableQuery
         return $this->query;
     }
 
-    protected function hasQueryModificationCallback(): bool
+    public function hasQueryModificationCallback(): bool
     {
         return $this->modifyQueryUsing instanceof Closure;
     }
