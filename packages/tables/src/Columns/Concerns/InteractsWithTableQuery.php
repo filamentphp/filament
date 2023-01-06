@@ -295,7 +295,7 @@ trait InteractsWithTableQuery
 
                     throw new Exception("When trying to guess the inverse relationship for table column [{$this->getName()}], relationship [{$inverseNestedRelationshipName}] was not found on model [{$recordClass}]. Please define a custom [inverseRelationship()] for this column.");
                 }
-                
+
                 $inverseNestedRelationshipName = $nestedRelationshipName;
             }
 
