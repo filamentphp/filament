@@ -93,7 +93,9 @@ class Summarizer extends ViewComponent
             $query = $relationship->getQuery()->getModel()->newQuery()
                 ->whereHas(
                     $inverseRelationship,
-                    function (EloquentBuilder $relatedQuery) use ($baseQuery): EloquentBuilder {
+                    function (EloquentBuilder $relatedQuery) use ($baseQuery, $query): EloquentBuilder {
+                        $relatedQuery->mergeConstraintsFrom($query);
+
                         if ($baseQuery->limit !== null) {
                             $relatedQuery->whereKey($this->getTable()->getRecords()->modelKeys());
                         }
