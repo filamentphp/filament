@@ -45,7 +45,7 @@ trait CanSummarizeRecords
             $qualifiedAttribute = $query->getModel()->qualifyColumn($column->getName());
 
             foreach ($summarizers as $summarizer) {
-                if ($summarizer->hasQueryModificationCallback()) {
+                if ($summarizer->hasQueryModification()) {
                     continue;
                 }
 

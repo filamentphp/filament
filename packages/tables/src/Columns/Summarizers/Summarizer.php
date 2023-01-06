@@ -109,7 +109,7 @@ class Summarizer extends ViewComponent
 
         $query = DB::table($query->toBase());
 
-        if ($this->hasQueryModificationCallback()) {
+        if ($this->hasQueryModification()) {
             $query = $this->evaluate($this->modifyQueryUsing, [
                 'attribute' => $attribute,
                 'query' => $query,
