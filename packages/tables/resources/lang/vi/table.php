@@ -61,6 +61,34 @@ return [
 
     ],
 
+    'summary' => [
+
+        'heading' => 'Tóm tắt',
+
+        'subheadings' => [
+            'all' => 'Tất cả :label',
+            'group' => 'Tóm tắt :group',
+            'page' => 'Trang này',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Trung bình',
+            ],
+
+            'count' => [
+                'label' => 'Đếm',
+            ],
+
+            'sum' => [
+                'label' => 'Tổng',
+            ],
+
+        ],
+
+    ],
+
     'buttons' => [
 
         'disable_reordering' => [
@@ -73,6 +101,10 @@ return [
 
         'filter' => [
             'label' => 'Lọc',
+        ],
+
+        'group' => [
+            'label' => 'Nhóm',
         ],
 
         'open_bulk_actions' => [
@@ -127,6 +159,30 @@ return [
             'with_trashed' => 'Bao gồm các bản ghi đã xóa',
 
             'without_trashed' => 'Không bao gồm các bản ghi bị xóa',
+
+        ],
+
+    ],
+
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Nhóm theo',
+                'placeholder' => 'Nhóm theo',
+            ],
+
+            'direction' => [
+
+                'label' => 'Hướng nhóm',
+
+                'options' => [
+                    'asc' => 'Tăng dần',
+                    'desc' => 'Giảm dần',
+                ],
+
+            ],
 
         ],
 

@@ -6,6 +6,10 @@ return [
 
     'buttons' => [
 
+        'billing' => [
+            'label' => 'Quản lý gói đăng ký',
+        ],
+
         'dark_mode' => [
             'label' => 'Chuyển chế độ tối',
         ],
