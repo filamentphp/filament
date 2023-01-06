@@ -464,8 +464,7 @@
                                             <x-filament-tables::summary.row
                                                 :columns="$columns"
                                                 :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
-                                                :query="$this->getAllTableSummaryQuery()"
-                                                :scope-query-to-group-using="fn (\Illuminate\Database\Eloquent\Builder $query) => $group->scopeQuery($query, $previousRecord)"
+                                                :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
                                                 :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
                                                 extra-heading-column
                                                 :placeholder-columns="false"
@@ -672,8 +671,7 @@
                                     <x-filament-tables::summary.row
                                         :columns="$columns"
                                         :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
-                                        :query="$this->getAllTableSummaryQuery()"
-                                        :scope-query-to-group-using="fn (\Illuminate\Database\Eloquent\Builder $query) => $group->scopeQuery($query, $previousRecord)"
+                                        :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
                                         :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
                                         extra-heading-column
                                         :placeholder-columns="false"
@@ -889,8 +887,7 @@
                                         :heading="$isGroupsOnly ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
                                         :groups-only="$isGroupsOnly"
                                         :selection-enabled="$isSelectionEnabled"
-                                        :query="$this->getAllTableSummaryQuery()"
-                                        :scope-query-to-group-using="fn (\Illuminate\Database\Eloquent\Builder $query) => $group->scopeQuery($query, $previousRecord)"
+                                        :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
                                         :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
                                         :record-checkbox-position="$recordCheckboxPosition"
                                     />
@@ -1101,8 +1098,7 @@
                                 :heading="$isGroupsOnly ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
                                 :groups-only="$isGroupsOnly"
                                 :selection-enabled="$isSelectionEnabled"
-                                :query="$this->getAllTableSummaryQuery()"
-                                :scope-query-to-group-using="fn (\Illuminate\Database\Eloquent\Builder $query) => $group->scopeQuery($query, $previousRecord)"
+                                :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
                                 :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
                                 :record-checkbox-position="$recordCheckboxPosition"
                             />

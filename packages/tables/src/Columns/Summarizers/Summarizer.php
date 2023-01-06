@@ -100,13 +100,9 @@ class Summarizer extends ViewComponent
                             $relatedQuery->whereKey($this->getTable()->getRecords()->modelKeys());
                         }
 
-                        $this->scopeQueryToGroup($relatedQuery);
-
                         return $relatedQuery;
                     },
                 );
-        } else {
-            $this->scopeQueryToGroup($query);
         }
 
         $query = DB::table($query->toBase());
