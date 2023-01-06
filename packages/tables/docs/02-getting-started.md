@@ -2,3 +2,140 @@
 title: Getting started
 ---
 
+Filament's table package allows you to [add an interactive datatable to any Livewire component](adding-a-table-to-a-livewire-component). It's also used within other Filament packages, such as the [App Framework](../app) for displaying [app resources](../app/resources) and [relation managers](../app/resources/relation-managers), as well as for the [table widget](../widgets/table). Learning the feature's of the table builder will be incredibly time-saving when both building your own custom Livewire tables and using Filament's other packages.
+
+This guide will walk you through the basics of building tables with Filament's table package. If you're planning to add a new table to your own Livewire component, you should [do that first](adding-a-table-to-a-livewire-component) and then come back. If you're adding a table to an [app resource](../app/resources), or another Filament package, you're ready to go!
+
+## Defining table columns
+
+The basis of any table are rows and columns. Filament uses Eloquent to get the data for rows in the table, and you are responsible for defining the columns that are used in that row.
+
+Filament includes many column types pre-built for you, and you can [view a full list here](columns/getting-started#available-columns). You can even [create your own custom column types](columns/custom) to display data however you need.
+
+Columns are stored in an array, as objects within the `$table->columns()` method:
+
+```php
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->schema([ // [tl! focus:start]
+            TextColumn::make('title'),
+            TextColumn::make('slug'),
+            IconColumn::make('is_featured')
+                ->boolean(),
+        ]); // [tl! focus:end]
+}
+```
+
+In this example, there are 3 columns in the table. The first two display [text](columns/text) - the title and slug of each row in the table. The third column displays an [icon](columns/icon), either a green check or a red cross depending on if the row is featured or not.
+
+### Making columns sortable and searchable
+
+You can easily modify columns by chaining methods onto them. For example, you can make a column [searchable](columns/getting-started#searching) using the `searchable()` method. Now, there will be a search input in the table, and you will be able to filter rows by the value of that column:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('title')
+    ->searchable()
+```
+
+You can make multiple columns searchable, and Filament will be able to search for matches within any of them, all at once.
+
+You can also make a column [sortable](columns/getting-started#sorting) using the `sortable()` method. This will add a sort button to the column header, and clicking it will sort the table by that column:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('title')
+    ->sortable()
+```
+
+### Accessing related data from columns
+
+You can also display data in a column that belongs to a relationship. For example, if you have a `Post` model that belongs to a `User` model (the author of the post), you can display the user's name in the table:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('author.name')
+```
+
+In this case, Filament will search for an `author` relationship on the `Post` model, and then display the `name` attribute of that relationship. We call this "dot notation" - you can use it to display any attribute of any relationship, even nested distant relationships. This dot notation is used by Filament to eager-load the results of that relationship for you.
+
+## Defining table filters
+
+As well as making columns `searchable()`, you can allow the users to filter rows in the table in other ways. We call these components "filters", and they are defined in the `$table->filters()` method:
+
+```php
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->schema([
+            // ...
+        ])
+        ->filters([ // [tl! focus:start]
+            Filter::make('is_featured'),
+            SelectFilter::make('status')
+                ->options([
+                    'draft' => 'Draft',
+                    'reviewing' => 'Reviewing',
+                    'published' => 'Published',
+                ]),
+        ]); // [tl! focus:end]
+}
+```
+
+In this example, we have defined 2 table filters. On the table, there is now a "filter" icon button in the top corner. Clicking it will open a dropdown with the 2 filters we have defined.
+
+The first filter is rendered as a checkbox. When it's checked, only featured rows in the table will be displayed. When it's unchecked, all rows will be displayed.
+
+The second filter is rendered as a select dropdown. When a user selects an option, only rows with that status will be displayed. When no option is selected, all rows will be displayed.
+
+It's possible to define as many filters as you need, and use any component from the [forms package](../forms) to create a UI. For example, you could create [a custom date range filter](../filters#custom-filter-forms).
+
+## Defining table actions
+
+Filament's tables can use [actions](../actions). They are buttons that can be added to the [end of any table row](actions#row-actions), or even in the [header](actions#header-actions) of a table. For instance, you may want an action to "create" a new record in the header, and then "edit" and "delete" actions on each row. [Bulk actions](actions#bulk-actions) can be used to execute code when records in the table are selected.
+
+```php
+use App\Models\Post;
+use Filament\Tables\Actions\Action;use Filament\Tables\Actions\DeleteBulkAction;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->schema([
+            // ...
+        ])
+        ->actions([ // [tl! focus:start]
+            Action::make('feature')
+                ->action(function (Post $record) {
+                    $record->is_featured = true;
+                    $record->save();
+                })
+                ->hidden(fn (Post $record): bool => $record->is_featured),,
+            Action::make('unfeature')
+                ->action(function (Post $record) {
+                    $record->is_featured = false;
+                    $record->save();
+                })
+                ->visible(fn (Post $record): bool => $record->is_featured),
+        ])
+        ->bulkActions([
+            DeleteBulkAction::make(),
+        ]); // [tl! focus:end]
+}
+```
+
+In this example, we define 2 actions for table rows. The first action is a "feature" action. When clicked, it will set the `is_featured` attribute on the record to `true` - which is written within the `action()` method. Using the `hidden()` method, the action will be hidden if the record is already featured. The second action is an "unfeature" action. When clicked, it will set the `is_featured` attribute on the record to `false`. Using the `visible()` method, the action will be hidden if the record is not featured.
+
+We also define a bulk action. When bulk actions are defined, each row in the table will have a checkbox. This bulk action is [built-in to Filament](../actions/prebuilt-actions/delete#bulk-delete), and it will delete all selected records. However, you can [write your own custom bulk actions](actions#bulk-actions) easily too.

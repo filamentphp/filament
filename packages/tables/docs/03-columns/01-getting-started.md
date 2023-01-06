@@ -16,7 +16,7 @@ public function table(Table $table): Table
 }
 ```
 
-Columns may be created using the static `make()` method, passing its name. The name of the column should correspond to a column or accessor on your model. You may use "dot syntax" to access columns within relationships.
+Columns may be created using the static `make()` method, passing its name. The name of the column should correspond to a column or accessor on your model. You may use "dot notation" to access columns within relationships.
 
 ```php
 use Filament\Tables\Columns\TextColumn;
