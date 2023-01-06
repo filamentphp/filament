@@ -20,7 +20,9 @@ class Range extends Summarizer
     {
         $query->whereNotNull($attribute);
 
-        return [$query->clone()->min($attribute), $query->clone()->max($attribute)];
+        $state = $query->selectRaw("min({$attribute}) as \"min\", max({$attribute}) as \"max\"")->get()[0];
+
+        return [$state->min, $state->max];
     }
 
     public function minimalDateTimeDifference(): static
