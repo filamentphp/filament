@@ -12,6 +12,15 @@ return [
             'label' => 'Đăng nhập',
         ],
 
+        'register' => [
+            'before' => 'hoặc',
+            'label' => 'đăng ký tài khoản',
+        ],
+
+        'request_password_reset' => [
+            'label' => 'Quên mật khẩu?',
+        ],
+
     ],
 
     'fields' => [
