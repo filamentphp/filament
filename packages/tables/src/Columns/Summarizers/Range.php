@@ -5,6 +5,7 @@ namespace Filament\Tables\Columns\Summarizers;
 use Carbon\CarbonImmutable;
 use Filament\Tables\Table;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Str;
 
 class Range extends Summarizer
 {
@@ -20,9 +21,12 @@ class Range extends Summarizer
     {
         $query->whereNotNull($attribute);
 
-        $state = $query->selectRaw("min({$attribute}) as \"min\", max({$attribute}) as \"max\"")->get()[0];
+        $minSelectAlias = Str::random();
+        $maxSelectAlias = Str::random();
 
-        return [$state->min, $state->max];
+        $state = $query->selectRaw("min({$attribute}) as \"{$minSelectAlias}\", max({$attribute}) as \"{$maxSelectAlias}\"")->get()[0];
+
+        return [$state->{$minSelectAlias}, $state->{$maxSelectAlias}];
     }
 
     public function minimalDateTimeDifference(): static
