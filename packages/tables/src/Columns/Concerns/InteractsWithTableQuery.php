@@ -287,9 +287,16 @@ trait InteractsWithTableQuery
                 ->camel();
 
             if (! $record->isRelation($inverseNestedRelationshipName)) {
-                $recordClass = $record::class;
+                // The conventional relationship doesn't exist, but we can
+                // attempt to use the original relationship name instead.
 
-                throw new Exception("When trying to guess the inverse relationship for table column [{$this->getName()}], relationship [{$inverseNestedRelationshipName}] was not found on model [{$recordClass}]. Please define a custom [inverseRelationship()] for this column.");
+                if (! $record->isRelation($nestedRelationshipName)) {
+                    $recordClass = $record::class;
+
+                    throw new Exception("When trying to guess the inverse relationship for table column [{$this->getName()}], relationship [{$inverseNestedRelationshipName}] was not found on model [{$recordClass}]. Please define a custom [inverseRelationship()] for this column.");
+                }
+                
+                $inverseNestedRelationshipName = $nestedRelationshipName;
             }
 
             array_unshift($inverseRelationships, $inverseNestedRelationshipName);
