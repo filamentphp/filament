@@ -27,10 +27,11 @@ Route::get('products', ListProducts::class);
 
 ### Adding the table
 
-There are 2 tasks when adding a table to a Livewire component class:
+There are 3 tasks when adding a table to a Livewire component class:
 
 1) Implement the `HasTable` interface and use the `InteractsWithTable` trait.
 2) Add a `table()` method, which is where you configure the table. [Add the table's columns, filters, and actions](getting-started#columns).
+3) Make sure to define the base query that will be used to fetch rows in the table. For example, if you're listing products from your `Product` model, you will want to return `Product::query()`.
 
 ```php
 <?php
@@ -38,7 +39,7 @@ There are 2 tasks when adding a table to a Livewire component class:
 namespace App\Http\Livewire;
 
 use App\Models\Post;
-use Filament\Tables\Columns\TextColumn;
+use App\Models\Shop\Product;use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
@@ -52,6 +53,7 @@ class ListProducts extends Component implements HasTable // [tl! focus]
     public function table(Table $table): Table
     {
         return $table
+            ->query(Product::query())
             ->columns([
                 TextColumn::make('name'),
             ])

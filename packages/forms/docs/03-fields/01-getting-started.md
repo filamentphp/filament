@@ -6,7 +6,7 @@ Field classes can be found in the `Filament\Form\Components` namespace.
 
 Fields reside within the schema of your form, alongside any [layout components](layout).
 
-Fields may be created using the static `make()` method, passing its name. The name of the field should correspond to a property on your Livewire component. You may use [Livewire's "dot syntax"](https://laravel-livewire.com/docs/properties#binding-nested-data) to bind fields to nested properties such as arrays and Eloquent models.
+Fields may be created using the static `make()` method, passing its name. The name of the field should correspond to a property on your Livewire component. You may use [Livewire's "dot notation"](https://laravel-livewire.com/docs/properties#binding-nested-data) to bind fields to nested properties such as arrays and Eloquent models.
 
 ```php
 use Filament\Forms\Components\TextInput;

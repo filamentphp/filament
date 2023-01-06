@@ -348,11 +348,11 @@ public static function table(Table $table): Table
 }
 ```
 
-Note that for the owner column, we don't use `owner_id` as the text column name. Instead, we use `owner.name`. This dot-syntax is used by Filament to eager-load the results of that relationship, and render a list of owner names, instead of their IDs. You could add additional columns for the owner's email address and phone number if you wish.
+Note that for the owner column, we don't use `owner_id` as the text column name. Instead, we use `owner.name`. This dot notation is used by Filament to eager-load the results of that relationship, and render a list of owner names, instead of their IDs. You could add additional columns for the owner's email address and phone number if you wish.
 
 ##### Making columns searchable
 
-Searching through patients in this table would be useful. Patient results should be found by searching for their name, or their owner's name. You can make these columns `searchable()`:
+[Searching](columns/getting-started#searching) through patients in this table would be useful. Patient results should be found by searching for their name, or their owner's name. You can make these columns `searchable()`:
 
 ```php
 use Filament\Tables;
@@ -372,9 +372,11 @@ public static function table(Table $table): Table
 }
 ```
 
+Now, there will be a search input in the table, and you will be able to filter rows by the value of that column.
+
 ##### Making the columns sortable
 
-Patients could be sorted by their age, by making the `date_of_birth` column `sortable()`:
+Patients could be [sorted](columns/getting-started#sorting) by their age, by making the `date_of_birth` column `sortable()`:
 
 ```php
 use Filament\Tables;
@@ -394,6 +396,8 @@ public static function table(Table $table): Table
         ]);
 }
 ```
+
+This will add a sort button to the column header, and clicking it will sort the table by that column.
 
 #### Filtering the table by patient type
 

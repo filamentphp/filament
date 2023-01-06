@@ -4,7 +4,7 @@ title: Column relationships
 
 ## Displaying data from relationships
 
-You may use "dot syntax" to access columns within relationships. The name of the relationship comes first, followed by a period, followed by the name of the column to display:
+You may use "dot notation" to access columns within relationships. The name of the relationship comes first, followed by a period, followed by the name of the column to display:
 
 ```php
 use Filament\Tables\Columns\TextColumn;

@@ -25,7 +25,7 @@ public static function getGlobalSearchResultTitle(Model $record): string
 
 ## Multi-column search
 
-If you would like to search across multiple columns of your resource, you may override the `getGloballySearchableAttributes()` method. "Dot-syntax" allows you to search inside of relationships:
+If you would like to search across multiple columns of your resource, you may override the `getGloballySearchableAttributes()` method. "Dot notation" allows you to search inside of relationships:
 
 ```php
 public static function getGloballySearchableAttributes(): array
