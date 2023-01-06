@@ -140,6 +140,18 @@ This method will present the minimal difference between the minimum and maximum.
 - If the minimum and maximum start with the same letter, more of the text will be rendered until a difference is found.
 - If the minimum and maximum are identical, they will only appear once.
 
+### Including null values in the range
+
+By default, we will exclude null values from the range. If you would like to include them, you may use the `excludeNull(false)` method:
+
+```php
+use Filament\Tables\Columns\Summarizers\Range;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('sku')
+    ->summarize(Range::make()->excludeNull(false))
+```
+
 ## Sum
 
 Sum can be used to calculate the total of all values in the dataset:

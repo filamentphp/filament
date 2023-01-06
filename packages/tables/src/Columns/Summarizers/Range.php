@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns\Summarizers;
 
 use Carbon\CarbonImmutable;
+use Closure;
 use Filament\Tables\Table;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Str;
@@ -14,12 +15,16 @@ class Range extends Summarizer
      */
     protected string $view = 'filament-tables::columns.summaries.range';
 
+    protected bool | Closure $shouldExcludeNull = true;
+
     /**
      * @return array{0: mixed, 1: mixed}
      */
     public function summarize(Builder $query, string $attribute): array
     {
-        $query->whereNotNull($attribute);
+        if ($this->shouldExcludeNull()) {
+            $query->whereNotNull($attribute);
+        }
 
         $minSelectAlias = Str::random();
         $maxSelectAlias = Str::random();
@@ -27,6 +32,13 @@ class Range extends Summarizer
         $state = $query->selectRaw("min({$attribute}) as \"{$minSelectAlias}\", max({$attribute}) as \"{$maxSelectAlias}\"")->get()[0];
 
         return [$state->{$minSelectAlias}, $state->{$maxSelectAlias}];
+    }
+
+    public function excludeNull(bool | Closure $condition = true): static
+    {
+        $this->shouldExcludeNull = $condition;
+
+        return $this;
     }
 
     public function minimalDateTimeDifference(): static
@@ -120,5 +132,10 @@ class Range extends Summarizer
         });
 
         return $this;
+    }
+
+    public function shouldExcludeNull(): bool
+    {
+        return (bool) $this->evaluate($this->shouldExcludeNull);
     }
 }
