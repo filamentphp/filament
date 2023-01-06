@@ -288,14 +288,14 @@ trait InteractsWithTableQuery
 
             if (! $record->isRelation($inverseNestedRelationshipName)) {
                 // check for non-standard but common many-to-many naming convention, with both ends using the same name
-	            $inverseNestedRelationshipName = $nestedRelationshipName;
+                $inverseNestedRelationshipName = $nestedRelationshipName;
 
-	            if (! $record->isRelation($inverseNestedRelationshipName)) {
-		            $recordClass = $record::class;
+                if (! $record->isRelation($inverseNestedRelationshipName)) {
+                    $recordClass = $record::class;
 
-		            throw new Exception("When trying to guess the inverse relationship for table column [{$this->getName()}], relationship [{$inverseNestedRelationshipName}] was not found on model [{$recordClass}]. Please define a custom [inverseRelationship()] for this column.");
-	            }
-             }
+                    throw new Exception("When trying to guess the inverse relationship for table column [{$this->getName()}], relationship [{$inverseNestedRelationshipName}] was not found on model [{$recordClass}]. Please define a custom [inverseRelationship()] for this column.");
+                }
+            }
 
             array_unshift($inverseRelationships, $inverseNestedRelationshipName);
         }
