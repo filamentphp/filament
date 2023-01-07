@@ -1,7 +1,7 @@
 @php
-    $isInline = $isInline();
-    $iconColor = $getIconColor();
     $color = $getColor();
+    $iconColor = $getIconColor();
+    $isInline = $isInline();
 @endphp
 
 <x-filament-notifications::notification
