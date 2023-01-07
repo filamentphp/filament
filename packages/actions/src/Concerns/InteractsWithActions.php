@@ -3,7 +3,6 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
