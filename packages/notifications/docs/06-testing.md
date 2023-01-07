@@ -26,7 +26,7 @@ it('sends a notification', function () {
 ```
 
 ```php
-use function Filament\Notifications\Testing\assetNotified;
+use function Filament\Notifications\Testing\assertNotified;
 
 it('sends a notification', function () {
     assertNotified();
