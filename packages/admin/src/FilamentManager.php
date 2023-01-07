@@ -172,7 +172,7 @@ class FilamentManager
     }
 
     /**
-     * @deprecated Use \Filament\Notifications\Notification::send() instead.
+     * @deprecated Use `\Filament\Notifications\Notification::send()` instead.
      */
     public function notify(string $status, string $message, bool $isAfterRedirect = false): void
     {

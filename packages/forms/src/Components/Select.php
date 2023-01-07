@@ -17,7 +17,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
 
-class Select extends Field
+class Select extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
     use Concerns\CanAllowHtml;
     use Concerns\CanBePreloaded;
@@ -30,6 +30,7 @@ class Select extends Field
         getSuffixAction as getBaseSuffixAction;
     }
     use Concerns\HasExtraInputAttributes;
+    use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasLoadingMessage;
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
@@ -54,6 +55,8 @@ class Select extends Field
     protected ?array $searchColumns = null;
 
     protected string | Closure | null $maxItemsMessage = null;
+
+    protected string | Closure | null $position = null;
 
     protected string | Closure | null $relationshipTitleColumnName = null;
 
@@ -272,6 +275,13 @@ class Select extends Field
         return $this;
     }
 
+    public function position(string | Closure | null $position): static
+    {
+        $this->position = $position;
+
+        return $this;
+    }
+
     public function maxItemsMessage(string | Closure | null $message): static
     {
         $this->maxItemsMessage = $message;
@@ -284,6 +294,11 @@ class Select extends Field
         $this->optionsLimit = $limit;
 
         return $this;
+    }
+
+    public function getPosition(): ?string
+    {
+        return $this->evaluate($this->position);
     }
 
     public function getOptionLabel(): ?string

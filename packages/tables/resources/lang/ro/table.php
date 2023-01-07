@@ -32,11 +32,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
-                'label' => 'pe pagină',
-            ],
 
-            'options' => [
-                'all' => 'Toate',
+                'label' => 'pe pagină',
+
+                'options' => [
+                    'all' => 'Toate',
+                ],
+
             ],
 
         ],

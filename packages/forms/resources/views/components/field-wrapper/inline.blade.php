@@ -4,6 +4,7 @@
     'labelPrefix' => null,
     'labelSrOnly' => false,
     'labelSuffix' => null,
+    'hasNestedRecursiveValidationRules' => false,
     'helperText' => null,
     'hint' => null,
     'hintColor' => null,
@@ -50,9 +51,9 @@
         <div class="space-y-2 sm:space-y-1 sm:col-span-2">
             {{ $slot }}
 
-            @if ($errors->has($statePath))
+            @if ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")))
                 <x-forms::field-wrapper.error-message>
-                    {{ $errors->first($statePath) }}
+                    {{ $errors->first($statePath) ?? ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
                 </x-forms::field-wrapper.error-message>
             @endif
 

@@ -10,6 +10,8 @@
         step: null,
 
         init: function () {
+            this.$watch('step', () => this.updateQueryString())
+        
             this.step = this.getSteps()[{{ $getStartStep() }} - 1]
         },
 
@@ -63,10 +65,21 @@
             return (this.getStepIndex(this.step) + 1) >= this.getSteps().length
         },
 
-        isStepClickable: function(step, index) {
+        isStepAccessible: function(step, index) {
             return @js($isSkippable()) || (this.getStepIndex(step) > index)
         },
 
+        updateQueryString: function () {
+            if (! @js($isStepPersistedInQueryString())) {
+                return
+            }
+            
+            const url = new URL(window.location.href)
+            url.searchParams.set(@js($getStepQueryStringKey()), this.step)
+
+            history.pushState(null, document.title, url.toString())
+        },
+        
     }"
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $getStatePath() }}') nextStep()"
     x-cloak
@@ -98,10 +111,10 @@
             <li class="relative overflow-hidden group md:flex-1">
                 <button
                     type="button"
-                    x-on:click="if (isStepClickable(step, {{ $loop->index }})) step = '{{ $step->getId() }}'"
+                    x-on:click="if (isStepAccessible(step, {{ $loop->index }})) step = '{{ $step->getId() }}'"
                     x-bind:aria-current="getStepIndex(step) === {{ $loop->index }} ? 'step' : null"
                     x-bind:class="{
-                        'cursor-not-allowed pointer-events-none': ! isStepClickable(step, {{ $loop->index }}),
+                        'cursor-not-allowed pointer-events-none': ! isStepAccessible(step, {{ $loop->index }}),
                     }"
                     role="step"
                     class="flex items-center w-full h-full text-start"

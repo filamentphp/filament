@@ -130,6 +130,17 @@ BulkAction::make('delete')
     ->color('danger')
 ```
 
+## Disabling record bulk actions
+
+You may conditionally disable bulk actions for a specific record:
+
+```php
+public function isTableRecordSelectable(): ?Closure
+{
+    return fn (Model $record): bool => $record->status === Status::Enabled;
+}
+```
+
 ## Setting a size
 
 The default size for table actions is `sm` but you may also change it to either `md` or `lg`:
@@ -306,6 +317,16 @@ use Filament\Tables\Actions\BulkAction;
 BulkAction::make('advance')
     ->action(fn () => $this->record->advance())
     ->modalContent(view('filament.resources.event.actions.advance'))
+```
+
+By default, the custom content is displayed above the modal form if there is one, but you can add content below using `modalFooter()` if you wish:
+
+```php
+use Filament\Pages\Actions\BulkAction;
+
+BulkAction::make('advance')
+    ->action(fn () => $this->record->advance())
+    ->modalFooter(view('filament.resources.event.actions.advance'))
 ```
 
 ## Authorization

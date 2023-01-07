@@ -29,6 +29,7 @@ class TablesServiceProvider extends PackageServiceProvider
         $commands = [
             Commands\InstallCommand::class,
             Commands\MakeColumnCommand::class,
+            Commands\MakeTableCommand::class,
         ];
 
         $aliases = [];

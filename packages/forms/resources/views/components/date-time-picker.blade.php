@@ -42,6 +42,7 @@
             aria-label="{{ $getPlaceholder() }}"
             dusk="filament.forms.{{ $getStatePath() }}.open"
             type="button"
+            tabindex="-1"
             @if ($isDisabled()) disabled @endif
             {{ $getExtraTriggerAttributeBag()->class([
                 'bg-white relative w-full border py-2 pl-3 pr-10 rtl:pl-10 rtl:pr-3 text-start cursor-default rounded-lg shadow-sm',
@@ -50,6 +51,7 @@
                 'border-gray-300' => ! $errors->has($getStatePath()),
                 'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                 'border-danger-600' => $errors->has($getStatePath()),
+                'dark:border-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
                 'opacity-70' => $isDisabled(),
                 'dark:text-gray-300' => $isDisabled() && config('forms.dark_mode'),
             ]) }}
@@ -167,6 +169,7 @@
                         <input
                             max="23"
                             min="0"
+                            step="{{ $getHoursStep() }}"
                             type="number"
                             inputmode="numeric"
                             x-model.debounce="hour"
@@ -187,6 +190,7 @@
                         <input
                             max="59"
                             min="0"
+                            step="{{ $getMinutesStep() }}"
                             type="number"
                             inputmode="numeric"
                             x-model.debounce="minute"
@@ -209,6 +213,7 @@
                             <input
                                 max="59"
                                 min="0"
+                                step="{{ $getSecondsStep() }}"
                                 type="number"
                                 inputmode="numeric"
                                 x-model.debounce="second"
