@@ -1,14 +1,20 @@
 ---
-title: Getting started
+title: Dashboard
 ---
 
 Filament allows you to build dynamic dashboards, comprised of "widget" cards, very easily.
 
-To learn how to use widgets, you should visit the [widgets documentation](../widgets/overview). There, you will find a list of [available widgets](../widgets/overview#available-widgets) that you can add to your app, and details on how to build custom widgets.
+The following document will explain how to use these widgets to assemble a dashboard using the app framework.
+
+## Available widgets
+
+Filament ships with these widgets:
+
+- [Stats overview](../widgets/stats-overview) widgets display any data, often numeric data, within cards in a row.
+- [Chart](../widgets/charts) widgets display numeric data in a visual chart.
+- [Table](#table-widgets) widgets which display a [table](../tables/getting-started) on your dashboard.
 
 You may also [create your own custom widgets](#custom-widgets) which can then have a consistent design with Filament's pre-built widgets.
-
-The following document will explain how to use these widgets to assemble a dashboard using the app framework.
 
 ## Sorting widgets
 
