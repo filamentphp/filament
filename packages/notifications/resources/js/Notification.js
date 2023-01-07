@@ -52,6 +52,12 @@ class Notification {
         return this
     }
 
+    color(color) {
+        this.color = color
+
+        return this
+    }
+
     icon(icon) {
         this.icon = icon
 

@@ -100,6 +100,28 @@ new Notification()
 
 ![Success, warning and danger notifications](https://user-images.githubusercontent.com/44533235/180995801-3e706ca6-773b-47a0-9fc6-3e28900a9ea9.png)
 
+## Color
+
+Optionally, a notification can have a background color to help with context.
+
+```php
+use Filament\Notifications\Notification;
+
+Notification::make()
+    ->title('Saved successfully')
+    ->color('success') // [tl! focus]
+    ->send();
+```
+
+Or with JavaScript:
+
+```js
+new Notification()
+    .title('Saved successfully')
+    .color('success') // [tl! focus]
+    .send()
+```
+
 ## Duration
 
 By default, notifications are shown for 6 seconds before they're automatically closed. You may specify a custom duration value in milliseconds as follows:
