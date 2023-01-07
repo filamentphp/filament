@@ -260,6 +260,10 @@ trait InteractsWithActions
             return $action;
         }
 
+        if (! method_exists($this, $name)) {
+            return null;
+        }
+
         $action = Action::configureUsing(
             Closure::fromCallable([$this, 'configureAction']),
             fn () => $this->{$name}(),
