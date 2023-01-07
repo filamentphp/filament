@@ -1,6 +1,12 @@
----
-title: Getting started
----
+# Filament Spatie Settings Plugin
+
+## Installation
+
+Install the plugin with Composer:
+
+```bash
+composer require filament/spatie-laravel-settings-plugin:"^3.0"
+```
 
 ## Preparing your page class
 
@@ -54,3 +60,11 @@ protected function getFormSchema(): array
 The name of each form field must correspond with the name of the property on your settings class.
 
 The form will automatically be filled with settings from the database, and saved without any extra work.
+
+## Publishing translations
+
+If you wish to translate the package, you may publish the language files using:
+
+```bash
+php artisan vendor:publish --tag=filament-spatie-laravel-settings-plugin-translations
+```

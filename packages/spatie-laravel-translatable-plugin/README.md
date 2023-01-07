@@ -1,8 +1,12 @@
----
-title: Getting started
----
+# Filament Spatie Translatable Plugin
 
-This guide assumes that you've already set up your model to be translatable as per [Spatie's documentation](https://github.com/spatie/laravel-translatable#making-a-model-translatable).
+## Installation
+
+Install the plugin with Composer:
+
+```bash
+composer require filament/spatie-laravel-translatable-plugin:"^3.0"
+```
 
 ## Preparing your resource class
 
@@ -24,8 +28,6 @@ class BlogPostResource extends Resource
     }
 }
 ```
-
-You may [publish the package's configuration file](installation#publishing-configuration) to set the `default_locales` for all resources at once.
 
 ## Making resource pages translatable
 
@@ -111,4 +113,12 @@ class ViewBlogPost extends ViewRecord
     
     // ...
 }
+```
+
+## Publishing translations
+
+If you wish to translate the package, you may publish the language files using:
+
+```bash
+php artisan vendor:publish --tag=filament-spatie-laravel-translatable-plugin-translations
 ```

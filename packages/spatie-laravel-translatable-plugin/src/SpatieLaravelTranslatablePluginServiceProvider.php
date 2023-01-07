@@ -7,15 +7,6 @@ use Illuminate\Support\ServiceProvider;
 
 class SpatieLaravelTranslatablePluginServiceProvider extends ServiceProvider
 {
-    public function register(): void
-    {
-        $this->app->scoped('filament-spatie-laravel-translatable-plugin', function (): SpatieLaravelTranslatablePluginManager {
-            return new SpatieLaravelTranslatablePluginManager();
-        });
-
-        $this->mergeConfigFrom(__DIR__ . '/../config/filament-spatie-laravel-translatable-plugin.php', 'filament-spatie-laravel-translatable-plugin');
-    }
-
     public function boot(): void
     {
         if ($this->app->runningInConsole()) {
@@ -29,44 +20,5 @@ class SpatieLaravelTranslatablePluginServiceProvider extends ServiceProvider
         }
 
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'filament-spatie-laravel-translatable-plugin');
-    }
-
-    /**
-     * @param  array<string, mixed>  $original
-     * @param  array<string, mixed>  $merging
-     * @return array<string, mixed>
-     */
-    protected function mergeConfig(array $original, array $merging): array
-    {
-        $array = array_merge($original, $merging);
-
-        foreach ($original as $key => $value) {
-            if (! is_array($value)) {
-                continue;
-            }
-
-            if (! Arr::exists($merging, $key)) {
-                continue;
-            }
-
-            if (is_numeric($key)) {
-                continue;
-            }
-
-            if ($key === 'middleware' || $key === 'register') {
-                continue;
-            }
-
-            $array[$key] = $this->mergeConfig($value, $merging[$key]);
-        }
-
-        return $array;
-    }
-
-    protected function mergeConfigFrom($path, $key): void
-    {
-        $config = $this->app['config']->get($key) ?? [];
-
-        $this->app['config']->set($key, $this->mergeConfig(require $path, $config));
     }
 }

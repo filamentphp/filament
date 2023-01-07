@@ -31,6 +31,6 @@ trait Translatable
 
     public static function getTranslatableLocales(): array
     {
-        return config('filament-spatie-laravel-translatable-plugin.default_locales');
+        return filament('spatie-laravel-translatable')->getDefaultLocales();
     }
 }

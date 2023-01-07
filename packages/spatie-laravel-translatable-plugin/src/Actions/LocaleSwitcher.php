@@ -2,8 +2,6 @@
 
 namespace Filament\Actions;
 
-use Filament\Facades\SpatieLaravelTranslatablePlugin;
-
 class LocaleSwitcher extends SelectAction
 {
     public static function getDefaultName(): ?string
@@ -27,7 +25,7 @@ class LocaleSwitcher extends SelectAction
             $locales = [];
 
             foreach ($livewire->getTranslatableLocales() as $locale) {
-                $locales[$locale] = SpatieLaravelTranslatablePlugin::getLocaleLabel($locale) ?? $locale;
+                $locales[$locale] = filament('spatie-laravel-translatable')->getLocaleLabel($locale) ?? $locale;
             }
 
             return $locales;
