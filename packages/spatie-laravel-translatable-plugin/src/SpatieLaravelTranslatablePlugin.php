@@ -43,7 +43,7 @@ class SpatieLaravelTranslatablePlugin implements Plugin
     }
 
     /**
-     * @param array<string> | null $defaultLocales
+     * @param  array<string> | null  $defaultLocales
      */
     public function defaultLocales(?array $defaultLocales = null): static
     {

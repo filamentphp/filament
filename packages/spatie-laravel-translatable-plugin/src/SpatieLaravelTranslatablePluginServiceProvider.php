@@ -2,7 +2,6 @@
 
 namespace Filament;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 
 class SpatieLaravelTranslatablePluginServiceProvider extends ServiceProvider
