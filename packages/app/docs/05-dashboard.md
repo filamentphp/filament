@@ -4,19 +4,11 @@ title: Getting started
 
 Filament allows you to build dynamic dashboards, comprised of "widget" cards, very easily.
 
-Widgets are pure [Livewire](https://laravel-livewire.com) components, so may use any features of that package.
+To learn how to use widgets, you should visit the [widgets documentation](../widgets/overview). There, you will find a list of [available widgets](../widgets/overview#available-widgets) that you can add to your app, and details on how to build custom widgets.
 
-Widgets may also be used on [resource pages](../resources/widgets) or other [custom pages](../pages#widgets).
+You may also [create your own custom widgets](#custom-widgets) which can then have a consistent design with Filament's pre-built widgets.
 
-## Available widgets
-
-Filament ships with a few pre-built widgets, as well as the ability to create [custom widgets](#custom-widgets):
-
-- [Stats](stats) widgets display any data, often numeric data, within cards in a row.
-- [Chart](charts) widgets display numeric data in a visual chart.
-- [Table](tables) widgets render data in a table, which supports sorting, searching, filtering, actions, and everything else included within the [table builder](../../tables).
-
-You may also [create your own custom widgets](#custom-widgets).
+The following document will explain how to use these widgets to assemble a dashboard using the app framework.
 
 ## Sorting widgets
 
@@ -89,16 +81,15 @@ public static function canView(): bool
 }
 ```
 
-## Disabling the default widgets
+## Table widgets
 
-By default, two widgets are displayed on the dashboard. These widgets can be disabled by updating the `widgets.register` property of the [configuration](installation#publishing-configuration) file:
+You may easily add tables to your dashboard. Start by creating a widget with the command:
 
-```php
-'widgets' => [
-    // ...
-    'register' => [],
-],
+```bash
+php artisan make:filament-widget LatestOrders --table
 ```
+
+You may now [customize the table](../tables/getting-started) by editing the widget file.
 
 ## Custom widgets
 
@@ -109,6 +100,17 @@ php artisan make:filament-widget BlogPostsOverview
 ```
 
 This command will create two files - a widget class in the `/Widgets` directory of the Filament directory, and a view in the `/widgets` directory of the Filament views directory.
+
+## Disabling the default widgets
+
+By default, two widgets are displayed on the dashboard. These widgets can be disabled by updating the `widgets.register` property of the [configuration](installation#publishing-configuration) file:
+
+```php
+'widgets' => [
+    // ...
+    'register' => [],
+],
+```
 
 ## Customizing the dashboard page
 
@@ -134,4 +136,14 @@ Finally, remove the original `Dashboard` class from the [configuration file](ins
     // ...
     'register' => [],
 ],
+```
+
+### Creating more than one dashboard
+
+If you want to create more than one dashboard, you can do so by repeating the process described above. Creating new pages that extend the `Dashboard` class will allow you to create as many dashboards as you need.
+
+You may change the title of the dashboard by overriding the `$title` property:
+
+```php
+protected static ?string $title = 'Finance dashboard';
 ```

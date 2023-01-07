@@ -128,7 +128,7 @@ protected function getHeaderWidgetsColumns(): int | array
 }
 ```
 
-This pairs well with [responsive widget widths](dashboard/getting-started#responsive-widget-widths).
+This pairs well with [responsive widget widths](dashboard#responsive-widget-widths).
 
 
 ## Customization

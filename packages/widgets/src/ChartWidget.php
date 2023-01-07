@@ -2,7 +2,7 @@
 
 namespace Filament\Widgets;
 
-class ChartWidget extends Widget
+abstract class ChartWidget extends Widget
 {
     use Concerns\CanPoll;
 
@@ -33,6 +33,8 @@ class ChartWidget extends Widget
     {
         $this->dataChecksum = $this->generateDataChecksum();
     }
+
+    abstract protected function getType(): string;
 
     protected function generateDataChecksum(): string
     {

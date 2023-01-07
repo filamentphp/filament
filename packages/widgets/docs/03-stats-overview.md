@@ -1,5 +1,5 @@
 ---
-title: Stats
+title: Stats overview widgets
 ---
 
 ## Getting started

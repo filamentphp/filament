@@ -2,9 +2,9 @@
 
 namespace {{ namespace }};
 
-use Filament\Widgets\{{ chart }}Widget;
+use Filament\Widgets\ChartWidget;
 
-class {{ class }} extends {{ chart }}Widget
+class {{ class }} extends ChartWidget
 {
     protected static ?string $heading = 'Chart';
 
@@ -13,5 +13,10 @@ class {{ class }} extends {{ chart }}Widget
         return [
             //
         ];
+    }
+
+    protected function getType(): string
+    {
+        return '{{ type }}';
     }
 }

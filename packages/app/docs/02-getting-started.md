@@ -635,13 +635,13 @@ public function table(Table $table): Table
 
 ## Introducing widgets
 
-Filament has "widgets" - which are components that you can use to display information, especially statistics. Widgets typically get added to the Dashboard of the app, but you can add them to any page you wish, including resource pages. Filament includes built-in widgets, like the [stats widget](../dashboard/stats) to render important statistics in a simple card, [chart widget](../dashboard/charts) which can render an interactive chart, and [table widget](../dashboard/tables) which allows you to easily embed the table builder.
+Filament has "widgets" - which are components that you can use to display information, especially statistics. Widgets typically get added to the Dashboard of the app, but you can add them to any page you wish, including resource pages. Filament includes built-in widgets, like the [stats widget](../widgets/stats) to render important statistics in a simple card, [chart widget](../dashboard/charts) which can render an interactive chart, and [table widget](../app/dashboard#table-widgets) which allows you to easily embed the table builder.
 
 In our system, we could add statistics for the type of patient, as well as treatments that are administered over time.
 
 ### Creating a stats widget
 
-Let's create a [stats widget](../dashboard/stats) to render patient types:
+Let's create a [stats widget](../widgets/stats) to render patient types:
 
 ```bash
 php artisan make:filament-widget PatientTypeOverview --stats-overview

@@ -1,5 +1,5 @@
 ---
-title: Charts
+title: Chart widgets
 ---
 
 ## Getting started

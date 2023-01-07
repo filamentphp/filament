@@ -133,7 +133,16 @@ class MakeWidgetCommand extends Command
             $this->copyStubToApp('ChartWidget', $path, [
                 'class' => $widgetClass,
                 'namespace' => filled($resource) ? "{$resourceNamespace}\\{$resource}\\Widgets" . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : '') : $namespace . ($widgetNamespace !== '' ? "\\{$widgetNamespace}" : ''),
-                'chart' => Str::studly($chart),
+                'type' => match ($chart) {
+                    'Bar chart' => 'bar',
+                    'Bubble chart' => 'bubble',
+                    'Doughnut chart' => 'doughnut',
+                    'Line chart' => 'line',
+                    'Pie chart' => 'pie',
+                    'Polar area chart' => 'polarArea',
+                    'Radar chart' => 'radar',
+                    'Scatter chart' => 'scatter',
+                },
             ]);
         } elseif ($this->option('table')) {
             $this->copyStubToApp('TableWidget', $path, [
