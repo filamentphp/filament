@@ -4,17 +4,17 @@ title: Notifications
 
 ## Sending notifications
 
-The App Framework uses the [Notifications](../notifications/sending-notifications) package to send messages to users.
+The app framework uses the [Notifications](../notifications/sending-notifications) package to send messages to users.
 
 Please read the [documentation](../notifications/sending-notifications) to discover how to send notifications easily.
 
-However, there are a few differences in configuration when using the App Framework.
+However, there are a few differences in configuration when using the app framework.
 
 ## Database notifications
 
-Instead of enabling database notifications inside the notifications package, you must enable it for the App Framework specifically.
+Instead of enabling database notifications inside the notifications package, you must enable it for the app framework specifically.
 
-First, you must [publish the configuration file](installation#publishing-configuration) for the App Framework.
+First, you must [publish the configuration file](installation#publishing-configuration) for the app framework.
 
 Now, enable database notifications:
 
@@ -41,7 +41,7 @@ Some features of the notifications package, including [receiving real-time datab
 
 Firstly, you must set up a [server-side websockets integration](https://laravel.com/docs/broadcasting#server-side-installation) like Pusher.
 
-Then, define your Echo configuration within the App Framework [configuration file](installation#publishing-configuration):
+Then, define your Echo configuration within the app framework [configuration file](installation#publishing-configuration):
 
 ```php
 'broadcasting' => [

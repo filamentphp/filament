@@ -10,11 +10,11 @@ Filament has a few requirements to run:
 - Laravel v8.0+
 - Livewire v2.0+
 
-This package is compatible with other Filament v3.x products. The [form builder](/docs/forms), [table builder](/docs/tables) and [notifications](/docs/notifications) come pre-installed with the package, and no other installation steps are required to use them within the App Framework.
+This package is compatible with other Filament v3.x products. The [form builder](/docs/forms), [table builder](/docs/tables) and [notifications](/docs/notifications) come pre-installed with the package, and no other installation steps are required to use them within the app framework.
 
 ## Installation
 
-To get started with the App Framework, you can install it using the commands:
+To get started with the app framework, you can install it using the commands:
 
 ```bash
 composer require filament/filament:"^3.0"

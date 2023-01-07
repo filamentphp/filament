@@ -2,7 +2,7 @@
 title: Installation
 ---
 
-**Using widgets inside the [App Framework](../app)**? You can skip this installation. This guide is for people who want to use the package inside their custom TALL-stack app.
+**Using widgets inside the [app framework](../app)**? You can skip this installation. This guide is for people who want to use the package inside their custom TALL-stack app.
 
 ## Requirements
 

@@ -76,7 +76,7 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')->default('John')
 ```
 
-Note that inside the App Framework this only works on Create Pages, as Edit Pages will always fill the data from the model.
+Note that inside the app framework this only works on Create Pages, as Edit Pages will always fill the data from the model.
 
 ## Helper messages and hints
 
@@ -171,7 +171,7 @@ Toggle::make('is_admin')
     ->dehydrated(auth()->user()->isAdmin())
 ```
 
-If you're using the [App Framework](../../app) and only want to save disabled fields on the [Create page of a resource](/docs/admin/resources):
+If you're using the [app framework](../../app) and only want to save disabled fields on the [Create page of a resource](/docs/admin/resources):
 
 ```php
 use Filament\Resources\Pages\CreateRecord;

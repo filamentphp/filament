@@ -157,7 +157,7 @@ Repeater::make('qualifications')
     ])
 ```
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [App Framework](../../app), you can skip this step.
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [app framework](../../app), you can skip this step.
 
 ### Ordering items
 

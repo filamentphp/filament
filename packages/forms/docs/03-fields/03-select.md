@@ -127,7 +127,7 @@ Select::make('technologies')
     ->relationship('technologies', 'name')
 ```
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [App Framework](../../app), you can skip this step.
+> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [app framework](../../app), you can skip this step.
 
 ### Preloading relationship options
 
@@ -200,7 +200,7 @@ Select::make('authorId')
 
 The form opens in a modal, where the user can fill it with data. Upon form submission, the new record is selected by the field.
 
-Since HTML does not support nested `<form>` elements, you must also render the modal outside the `<form>` in the view. If you're using the [App Framework](../../app), this is included already:
+Since HTML does not support nested `<form>` elements, you must also render the modal outside the `<form>` in the view. If you're using the [app framework](../../app), this is included already:
 
 ```blade
 <form wire:submit.prevent="submit">

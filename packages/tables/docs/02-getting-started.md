@@ -2,7 +2,7 @@
 title: Getting started
 ---
 
-Filament's table package allows you to [add an interactive datatable to any Livewire component](adding-a-table-to-a-livewire-component). It's also used within other Filament packages, such as the [App Framework](../app) for displaying [app resources](../app/resources) and [relation managers](../app/resources/relation-managers), as well as for the [table widget](../widgets/table). Learning the feature's of the table builder will be incredibly time-saving when both building your own custom Livewire tables and using Filament's other packages.
+Filament's table package allows you to [add an interactive datatable to any Livewire component](adding-a-table-to-a-livewire-component). It's also used within other Filament packages, such as the [app framework](../app) for displaying [app resources](../app/resources) and [relation managers](../app/resources/relation-managers), as well as for the [table widget](../widgets/table). Learning the feature's of the table builder will be incredibly time-saving when both building your own custom Livewire tables and using Filament's other packages.
 
 This guide will walk you through the basics of building tables with Filament's table package. If you're planning to add a new table to your own Livewire component, you should [do that first](adding-a-table-to-a-livewire-component) and then come back. If you're adding a table to an [app resource](../app/resources), or another Filament package, you're ready to go!
 
@@ -104,7 +104,7 @@ It's possible to define as many filters as you need, and use any component from 
 
 ## Defining table actions
 
-Filament's tables can use [actions](../actions). They are buttons that can be added to the [end of any table row](actions#row-actions), or even in the [header](actions#header-actions) of a table. For instance, you may want an action to "create" a new record in the header, and then "edit" and "delete" actions on each row. [Bulk actions](actions#bulk-actions) can be used to execute code when records in the table are selected.
+Filament's tables can use [actions](../actions/overview). They are buttons that can be added to the [end of any table row](actions#row-actions), or even in the [header](actions#header-actions) of a table. For instance, you may want an action to "create" a new record in the header, and then "edit" and "delete" actions on each row. [Bulk actions](actions#bulk-actions) can be used to execute code when records in the table are selected.
 
 ```php
 use App\Models\Post;
@@ -139,3 +139,16 @@ public function table(Table $table): Table
 In this example, we define 2 actions for table rows. The first action is a "feature" action. When clicked, it will set the `is_featured` attribute on the record to `true` - which is written within the `action()` method. Using the `hidden()` method, the action will be hidden if the record is already featured. The second action is an "unfeature" action. When clicked, it will set the `is_featured` attribute on the record to `false`. Using the `visible()` method, the action will be hidden if the record is not featured.
 
 We also define a bulk action. When bulk actions are defined, each row in the table will have a checkbox. This bulk action is [built-in to Filament](../actions/prebuilt-actions/delete#bulk-delete), and it will delete all selected records. However, you can [write your own custom bulk actions](actions#bulk-actions) easily too.
+
+Actions can also open modals to request confirmation from the user, as well as render forms inside to collect extra data. It's a good idea to read the [actions documentation](../actions/overview) to learn more about their extensive capabilities throughout Filament.
+
+## Next steps with the tables package
+
+Now you've finished reading this guide, where to next? Here are some suggestions:
+
+- [Explore the available columns to display data in your table.](columns/getting-started#available-columns)
+- [Deep dive into table actions and start using modals.](actions)
+- [Discover how to build complex, responsive table layouts without touching CSS.](layout)
+- [Add summaries to your tables, which give an overview of the data inside of them.](summaries)
+- [Find out about all advanced techniques that you can customize tables to your needs.](advanced)
+- [Write automated tests for your tables using our suite of helper methods.](testing)

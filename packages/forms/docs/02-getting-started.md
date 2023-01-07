@@ -34,7 +34,7 @@ public function form(Form $form): Form
 }
 ```
 
-Forms within the App Framework and other packages usually have 2 columns by default. For custom forms, you can use the `columns()` method to achieve the same effect:
+Forms within the app framework and other packages usually have 2 columns by default. For custom forms, you can use the `columns()` method to achieve the same effect:
 
 ```php
 $form
@@ -191,3 +191,12 @@ use Illuminate\Support\Str;
         ->maxLength(255),
 ]
 ```
+
+## Next steps with the forms package
+
+Now you've finished reading this guide, where to next? Here are some suggestions:
+
+- [Explore the available fields to collect input from your users.](fields/getting-started#available-fields)
+- [Check out the list of layout components to craft intuitive form structures with.](fields/getting-started#available-fields)
+- [Find out about all advanced techniques that you can customize forms to your needs.](advanced)
+- [Write automated tests for your forms using our suite of helper methods.](testing)

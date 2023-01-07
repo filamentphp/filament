@@ -723,3 +723,15 @@ protected function getData(): array
 ```
 
 Now, check out your widget in the dashboard.
+
+## Next steps with the app framework
+
+Now you've finished reading this guide, where to next? Here are some suggestions:
+
+- [Create custom pages in the app that don't belong to resources.](pages)
+- [Learn more about adding action buttons to pages and resources, with modals to get user input or confirmation.](../actions/overview)
+- [Explore the available fields to collect input from your users.](../forms/fields/getting-started#available-fields)
+- [Check out the list of layout components to craft intuitive form structures with.](../forms/fields/getting-started#available-fields)
+- [Discover how to build complex, responsive table layouts without touching CSS.](../tables/layout)
+- [Add summaries to your tables, which give an overview of the data inside of them.](../tables/summaries)
+- [Write automated tests for your app using our suite of helper methods.](testing)
