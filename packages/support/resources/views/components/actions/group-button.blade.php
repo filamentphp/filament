@@ -15,7 +15,7 @@
     {{ $attributes }}
 >
     <x-slot name="trigger">
-        <x-filament-support::icon-button
+        <x-filament-support::button
             :color="$color"
             :dark-mode="$darkMode"
             :icon="$icon"
@@ -25,7 +25,7 @@
             <x-slot name="label">
                 {{ $label }}
             </x-slot>
-        </x-filament-support::icon-button>
+        </x-filament-support::button>
     </x-slot>
 
     <x-filament-support::dropdown.list>
