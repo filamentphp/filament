@@ -107,7 +107,7 @@
             @forelse ($getOptions() as $optionValue => $optionLabel)
                 <div wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.options.{{ $optionValue }}">
                     <label
-                        class="rtl:space-x-reverse flex items-center space-x-3"
+                        class="flex items-center space-x-3 rtl:space-x-reverse"
                         @if ($isSearchable())
                             x-show="$el.querySelector('span').innerText.toLowerCase().includes(search.toLowerCase())"
                         @endif
