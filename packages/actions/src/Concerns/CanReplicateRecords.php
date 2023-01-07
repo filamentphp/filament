@@ -9,8 +9,6 @@ trait CanReplicateRecords
 {
     use CanCustomizeProcess;
 
-    protected ?Closure $afterReplicaSavedCallback = null;
-
     protected ?Closure $beforeReplicaSaved = null;
 
     /**
