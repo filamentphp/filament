@@ -4,7 +4,7 @@ title: Replicate action
 
 ## Overview
 
-Filament includes a pre-built action that is able to replicate Eloquent records. You may use it like so:
+Filament includes a pre-built action that is able to [replicate](https://laravel.com/docs/eloquent#replicating-models) Eloquent records. You may use it like so:
 
 ```php
 use Filament\Actions\ReplicateAction;
@@ -40,7 +40,7 @@ ReplicateAction::make()
 
 ## Lifecycle hooks
 
-The `beforeReplicaSaved()` method can be used to invoke a Closure before saving the replica:
+You can use the `beforeReplicaSaved()` and `afterReplicaSaved()` methods to execute code before and after a replica is saved:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -49,14 +49,6 @@ ReplicateAction::make()
     ->beforeReplicaSaved(function (Model $replica): void {
         // ...
     })
-```
-
-The `afterReplicaSaved()` method can be used to invoke a Closure after saving the replica:
-
-```php
-use Illuminate\Database\Eloquent\Model;
-
-ReplicateAction::make()
     ->afterReplicaSaved(function (Model $replica): void {
         // ...
     })

@@ -97,54 +97,6 @@ public static function table(Table $table): Table
 }
 ```
 
-## Lifecycle hooks
-
-You can use the `before()` and `after()` methods to execute code before and after a record is deleted:
-
-```php
-DeleteAction::make()
-    ->before(function () {
-        // ...
-    })
-    ->after(function () {
-        // ...
-    })
-```
-
-## Halting the deletion process
-
-At any time, you may call `$action->halt()` from inside a lifecycle hook or mutation method, which will halt the entire deletion process:
-
-```php
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification;
-
-DeleteAction::make()
-    ->before(function (DeleteAction $action) {
-        if (! $this->record->team->subscribed()) {
-            Notification::make()
-                ->warning()
-                ->title('You don\'t have an active subscription!')
-                ->body('Choose a plan to continue.')
-                ->persistent()
-                ->actions([
-                    Action::make('subscribe')
-                        ->button()
-                        ->url(route('subscribe'), shouldOpenInNewTab: true),
-                ])
-                ->send();
-        
-            $action->halt();
-        }
-    })
-```
-
-If you'd like the action modal to close too, you can completely `cancel()` the action instead of halting it:
-
-```php
-$action->cancel();
-```
-
 ## Authorization
 
 For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app.

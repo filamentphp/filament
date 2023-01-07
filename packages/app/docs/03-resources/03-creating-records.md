@@ -15,18 +15,7 @@ protected function mutateFormDataBeforeCreate(array $data): array
 }
 ```
 
-Alternatively, if you're creating records in a modal action:
-
-```php
-use Filament\Actions\CreateAction;
-
-CreateAction::make()
-    ->mutateFormDataUsing(function (array $data): array {
-        $data['user_id'] = auth()->id();
-
-        return $data;
-    })
-```
+Alternatively, if you're creating records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/create#customizing-data-before-saving).
 
 ## Customizing the creation process
 
@@ -41,19 +30,9 @@ protected function handleRecordCreation(array $data): Model
 }
 ```
 
-Alternatively, if you're creating records in a modal action:
+Alternatively, if you're creating records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/create#customizing-the-creation-process).
 
-```php
-use Filament\Actions\CreateAction;
-use Illuminate\Database\Eloquent\Model;
-
-CreateAction::make()
-    ->using(function (array $data): Model {
-        return static::getModel()::create($data);
-    })
-```
-
-## Customizing form redirects
+## Customizing redirects
 
 By default, after saving the form, the user will be redirected to the [Edit page](editing-records) of the resource, or the [View page](viewing-records) if it is present.
 
@@ -90,14 +69,7 @@ protected function getCreatedNotificationTitle(): ?string
 }
 ```
 
-Alternatively, if you're creating records in a modal action:
-
-```php
-use Filament\Actions\CreateAction;
-
-CreateAction::make()
-    ->successNotificationTitle('User registered')
-```
+Alternatively, if you're creating records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/create#customizing-the-save-notification).
 
 You may customize the entire notification by overriding the `getCreatedNotification()` method on the create page class:
 
@@ -113,21 +85,6 @@ protected function getCreatedNotification(): ?Notification
 }
 ```
 
-Alternatively, if you're creating records in a modal action:
-
-```php
-use Filament\Notifications\Notification;
-use Filament\Actions\CreateAction;
-
-CreateAction::make()
-    ->successNotification(
-       Notification::make()
-            ->success()
-            ->title('User registered')
-            ->body('The user has been created successfully.'),
-    )
-```
-
 To disable the notification altogether, return `null` from the `getCreatedNotification()` method on the create page class:
 
 ```php
@@ -137,15 +94,6 @@ protected function getCreatedNotification(): ?Notification
 {
     return null;
 }
-```
-
-Alternatively, if you're creating records in a modal action:
-
-```php
-use Filament\Actions\CreateAction;
-
-CreateAction::make()
-    ->successNotification(null)
 ```
 
 ## Lifecycle hooks
@@ -202,31 +150,7 @@ class CreateUser extends CreateRecord
 }
 ```
 
-Alternatively, if you're creating records in a modal action:
-
-```php
-use Filament\Actions\CreateAction;
-
-CreateAction::make()
-    ->beforeFormFilled(function () {
-        // Runs before the form fields are populated with their default values.
-    })
-    ->afterFormFilled(function () {
-        // Runs after the form fields are populated with their default values.
-    })
-    ->beforeFormValidated(function () {
-        // Runs before the form fields are validated when the form is submitted.
-    })
-    ->afterFormValidated(function () {
-        // Runs after the form fields are validated when the form is submitted.
-    })
-    ->before(function () {
-        // Runs before the form fields are saved to the database.
-    })
-    ->after(function () {
-        // Runs after the form fields are saved to the database.
-    })
-```
+Alternatively, if you're creating records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/create#lifecycle-hooks).
 
 ## Halting the creation process
 
@@ -256,38 +180,7 @@ protected function beforeCreate(): void
 }
 ```
 
-Alternatively, if you're creating records in a modal action:
-
-```php
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification;
-use Filament\Actions\CreateAction;
-
-CreateAction::make()
-    ->before(function (CreateAction $action) {
-        if (! $this->record->team->subscribed()) {
-            Notification::make()
-                ->warning()
-                ->title('You don\'t have an active subscription!')
-                ->body('Choose a plan to continue.')
-                ->persistent()
-                ->actions([
-                    Action::make('subscribe')
-                        ->button()
-                        ->url(route('subscribe'), shouldOpenInNewTab: true),
-                ])
-                ->send();
-        
-            $action->halt();
-        }
-    })
-```
-
-If you'd like the action modal to close too, you can completely `cancel()` the action instead of halting it:
-
-```php
-$action->cancel();
-```
+Alternatively, if you're creating records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/create#halting-the-creation-process).
 
 ## Authorization
 
@@ -297,7 +190,7 @@ Users may access the Create page if the `create()` method of the model policy re
 
 ## Wizards
 
-You may easily transform the creation process into a multistep wizards.
+You may easily transform the creation process into a multistep wizard.
 
 On the page class, add the corresponding `HasWizard` trait:
 
@@ -360,16 +253,7 @@ protected function getSteps(): array
 }
 ```
 
-Alternatively, if you're creating records in a modal action, simply define a `steps()` array and pass your `Step` objects:
-
-```php
-use Filament\Actions\CreateAction;
-
-CreateAction::make()
-    ->steps([
-        // ...
-    ])
-```
+Alternatively, if you're creating records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/create#wizards).
 
 Now, create a new record to see your wizard in action! Edit will still use the form defined within the resource class.
 
@@ -380,18 +264,6 @@ public function hasSkippableSteps(): bool
 {
     return true;
 }
-```
-
-Alternatively, if you're creating records in a modal action:
-
-```php
-use Filament\Actions\CreateAction;
-
-CreateAction::make()
-    ->steps([
-        // ...
-    ])
-    ->skippableSteps()
 ```
 
 ### Sharing fields between the resource form and wizards

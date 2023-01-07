@@ -95,3 +95,15 @@ In the app framework, there is a [global search](../app/resources/global-search)
 These actions use the `Filament\GlobalSearch\Actions\Action` class. They aren't able to open modals, but they can open a URL or emit a Livewire event.
 
 If you're looking to add an action to a global search result in the app framework, [visit this page](../app/resources/global-search#actions) in the docs.
+
+## Prebuilt actions
+
+Filament includes several pre-built actions that you can add to your app. Their aim is to simplify the most common Eloquent-related actions:
+
+- [Create](prebuilt-actions/create)
+- [Edit](prebuilt-actions/edit)
+- [View](prebuilt-actions/view)
+- [Delete](prebuilt-actions/delete)
+- [Replicate](prebuilt-actions/replicate)
+- [Force-delete](prebuilt-actions/force-delete)
+- [Restore](prebuilt-actions/restore)

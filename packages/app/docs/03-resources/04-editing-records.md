@@ -15,18 +15,7 @@ protected function mutateFormDataBeforeFill(array $data): array
 }
 ```
 
-Alternatively, if you're editing records in a modal action:
-
-```php
-use Filament\Tables\Actions\EditAction;
-
-EditAction::make()
-    ->mutateRecordDataUsing(function (array $data): array {
-        $data['user_id'] = auth()->id();
-
-        return $data;
-    })
-```
+Alternatively, if you're editing records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/edit#customizing-data-before-filling-the-form).
 
 ## Customizing data before saving
 
@@ -41,18 +30,7 @@ protected function mutateFormDataBeforeSave(array $data): array
 }
 ```
 
-Alternatively, if you're editing records in a modal action:
-
-```php
-use Filament\Tables\Actions\EditAction;
-
-EditAction::make()
-    ->mutateFormDataUsing(function (array $data): array {
-        $data['last_edited_by_id'] = auth()->id();
-
-        return $data;
-    })
-```
+Alternatively, if you're editing records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/edit#customizing-data-before-saving).
 
 ## Customizing the saving process
 
@@ -69,21 +47,9 @@ protected function handleRecordUpdate(Model $record, array $data): Model
 }
 ```
 
-Alternatively, if you're editing records in a modal action:
+Alternatively, if you're editing records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/edit#customizing-the-saving-process).
 
-```php
-use Filament\Tables\Actions\EditAction;
-use Illuminate\Database\Eloquent\Model;
-
-EditAction::make()
-    ->using(function (Model $record, array $data): Model {
-        $record->update($data);
-
-        return $record;
-    })
-```
-
-## Customizing form redirects
+## Customizing redirects
 
 By default, saving the form will not redirect the user to another page.
 
@@ -129,14 +95,7 @@ protected function getSavedNotificationTitle(): ?string
 }
 ```
 
-Alternatively, if you're editing records in a modal action:
-
-```php
-use Filament\Tables\Actions\EditAction;
-
-EditAction::make()
-    ->successNotificationTitle('User updated')
-```
+Alternatively, if you're editing records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/edit#customizing-the-save-notification).
 
 You may customize the entire notification by overriding the `getSavedNotification()` method on the edit page class:
 
@@ -152,21 +111,6 @@ protected function getSavedNotification(): ?Notification
 }
 ```
 
-Alternatively, if you're editing records in a modal action:
-
-```php
-use Filament\Notifications\Notification;
-use Filament\Tables\Actions\EditAction;
-
-EditAction::make()
-    ->successNotification(
-       Notification::make()
-            ->success()
-            ->title('User updated')
-            ->body('The user has been saved successfully.'),
-    )
-```
-
 To disable the notification altogether, return `null` from the `getSavedNotification()` method on the edit page class:
 
 ```php
@@ -176,15 +120,6 @@ protected function getSavedNotification(): ?Notification
 {
     return null;
 }
-```
-
-Alternatively, if you're editing records in a modal action:
-
-```php
-use Filament\Tables\Actions\EditAction;
-
-EditAction::make()
-    ->successNotification(null)
 ```
 
 ## Lifecycle hooks
@@ -241,31 +176,7 @@ class EditUser extends EditRecord
 }
 ```
 
-Alternatively, if you're editing records in a modal action:
-
-```php
-use Filament\Tables\Actions\EditAction;
-
-EditAction::make()
-    ->beforeFormFilled(function () {
-        // Runs before the form fields are populated from the database.
-    })
-    ->afterFormFilled(function () {
-        // Runs after the form fields are populated from the database.
-    })
-    ->beforeFormValidated(function () {
-        // Runs before the form fields are validated when the form is saved.
-    })
-    ->afterFormValidated(function () {
-        // Runs after the form fields are validated when the form is saved.
-    })
-    ->before(function () {
-        // Runs before the form fields are saved to the database.
-    })
-    ->after(function () {
-        // Runs after the form fields are saved to the database.
-    })
-```
+Alternatively, if you're editing records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/edit#lifecycle-hooks).
 
 ## Halting the saving process
 
@@ -295,38 +206,7 @@ protected function beforeSave(): void
 }
 ```
 
-Alternatively, if you're editing records in a modal action:
-
-```php
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification;
-use Filament\Tables\Actions\EditAction;
-
-EditAction::make()
-    ->before(function (EditAction $action) {
-        if (! $this->record->team->subscribed()) {
-            Notification::make()
-                ->warning()
-                ->title('You don\'t have an active subscription!')
-                ->body('Choose a plan to continue.')
-                ->persistent()
-                ->actions([
-                    Action::make('subscribe')
-                        ->button()
-                        ->url(route('subscribe'), shouldOpenInNewTab: true),
-                ])
-                ->send();
-        
-            $action->halt();
-        }
-    })
-```
-
-If you'd like the action modal to close too, you can completely `cancel()` the action instead of halting it:
-
-```php
-$action->cancel();
-```
+Alternatively, if you're editing records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/edit#halting-the-saving-process).
 
 ## Authorization
 

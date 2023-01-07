@@ -187,120 +187,9 @@ public function form(Form $form): Form
 
 Please ensure that any pivot attributes are listed in the `withPivot()` method of the relationship *and* inverse relationship.
 
-### Customizing data before saving
+### Customizing the `CreateAction`
 
-Sometimes, you may wish to modify form data before it is finally saved to the database. To do this, you may use the `mutateFormDataUsing()` method, which accepts the `$data` as an array, and returns the modified version:
-
-```php
-use Filament\Tables\Actions\CreateAction;
-
-CreateAction::make()
-    ->mutateFormDataUsing(function (array $data): array {
-        $data['user_id'] = auth()->id();
-    
-        return $data;
-    })
-```
-
-### Customizing the creation process
-
-You can tweak how the record is created using the `using()` method:
-
-```php
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
-
-CreateAction::make()
-    ->using(function (array $data, Table $table): Model {
-        return $table->getRelationship()->create($data);
-    })
-```
-
-### Customizing the save notification
-
-When the record is successfully created, a notification is dispatched to the user, which indicates the success of their action.
-
-To customize the text content of this notification:
-
-```php
-use Filament\Tables\Actions\CreateAction;
-
-CreateAction::make()
-    ->successNotificationTitle('User registered')
-```
-
-And to disable the notification altogether:
-
-```php
-use Filament\Tables\Actions\CreateAction;
-
-CreateAction::make()
-    ->successNotification(null)
-```
-
-### Lifecycle hooks
-
-Hooks may be used to execute code at various points within an action's lifecycle.
-
-```php
-use Filament\Tables\Actions\CreateAction;
-
-CreateAction::make()
-    ->beforeFormFilled(function () {
-        // Runs before the form fields are populated with their default values.
-    })
-    ->afterFormFilled(function () {
-        // Runs after the form fields are populated with their default values.
-    })
-    ->beforeFormValidated(function () {
-        // Runs before the form fields are validated when the form is submitted.
-    })
-    ->afterFormValidated(function () {
-        // Runs after the form fields are validated when the form is submitted.
-    })
-    ->before(function () {
-        // Runs before the form fields are saved to the database.
-    })
-    ->after(function () {
-        // Runs after the form fields are saved to the database.
-    })
-```
-
-### Halting the creation process
-
-At any time, you may call `$action->halt()` from inside a lifecycle hook or mutation method, which will halt the entire creation process:
-
-```php
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification;
-use Filament\Tables\Actions\CreateAction;
-
-CreateAction::make()
-    ->before(function (CreateAction $action) {
-        if (! $this->ownerRecord->team->subscribed()) {
-            Notification::make()
-                ->warning()
-                ->title('You don\'t have an active subscription!')
-                ->body('Choose a plan to continue.')
-                ->persistent()
-                ->actions([
-                    Action::make('subscribe')
-                        ->button()
-                        ->url(route('subscribe'), shouldOpenInNewTab: true),
-                ])
-                ->send();
-        
-            $action->halt();
-        }
-    })
-```
-
-If you'd like the action modal to close too, you can completely `cancel()` the action instead of halting it:
-
-```php
-$action->cancel();
-```
+To learn how to customize the `CreateAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [actions documentation](../../actions/prebuilt-actions/create).
 
 ## Editing related records
 
@@ -325,136 +214,9 @@ public function form(Form $form): Form
 
 Please ensure that any pivot attributes are listed in the `withPivot()` method of the relationship *and* inverse relationship.
 
-### Customizing data before filling the form
+### Customizing the `EditAction`
 
-You may wish to modify the data from a record before it is filled into the form. To do this, you may use the `mutateRecordDataUsing()` method to modify the `$data` array, and return the modified version before it is filled into the form:
-
-```php
-use Filament\Tables\Actions\EditAction;
-
-EditAction::make()
-    ->mutateRecordDataUsing(function (array $data): array {
-        $data['user_id'] = auth()->id();
-    
-        return $data;
-    })
-```
-
-### Customizing data before saving
-
-Sometimes, you may wish to modify form data before it is finally saved to the database. To do this, you may define a `mutateFormDataUsing()` method, which accepts the `$data` as an array, and returns it modified:
-
-```php
-use Filament\Tables\Actions\EditAction;
-
-EditAction::make()
-    ->mutateFormDataUsing(function (array $data): array {
-        $data['last_edited_by_id'] = auth()->id();
-    
-        return $data;
-    })
-```
-
-### Customizing the saving process
-
-You can tweak how the record is updated using the `using()` method:
-
-```php
-use Filament\Tables\Actions\EditAction;
-use Illuminate\Database\Eloquent\Model;
-
-EditAction::make()
-    ->using(function (Model $record, array $data): Model {
-        $record->update($data);
-
-        return $record;
-    })
-```
-
-### Customizing the save notification
-
-When the record is successfully updated, a notification is dispatched to the user, which indicates the success of their action.
-
-To customize the text content of this notification:
-
-```php
-use Filament\Tables\Actions\EditAction;
-
-EditAction::make()
-    ->successNotificationTitle('User updated')
-```
-
-And to disable the notification altogether:
-
-```php
-use Filament\Tables\Actions\EditAction;
-
-EditAction::make()
-    ->successNotification(null)
-```
-
-### Lifecycle hooks
-
-Hooks may be used to execute code at various points within an action's lifecycle.
-
-```php
-use Filament\Tables\Actions\EditAction;
-
-EditAction::make()
-    ->beforeFormFilled(function () {
-        // Runs before the form fields are populated from the database.
-    })
-    ->afterFormFilled(function () {
-        // Runs after the form fields are populated from the database.
-    })
-    ->beforeFormValidated(function () {
-        // Runs before the form fields are validated when the form is saved.
-    })
-    ->afterFormValidated(function () {
-        // Runs after the form fields are validated when the form is saved.
-    })
-    ->before(function () {
-        // Runs before the form fields are saved to the database.
-    })
-    ->after(function () {
-        // Runs after the form fields are saved to the database.
-    })
-```
-
-### Halting the saving process
-
-At any time, you may call `$action->halt()` from inside a lifecycle hook or mutation method, which will halt the entire saving process:
-
-```php
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification;
-use Filament\Tables\Actions\EditAction;
-
-EditAction::make()
-    ->before(function (EditAction $action) {
-        if (! $this->ownerRecord->team->subscribed()) {
-            Notification::make()
-                ->warning()
-                ->title('You don\'t have an active subscription!')
-                ->body('Choose a plan to continue.')
-                ->persistent()
-                ->actions([
-                    Action::make('subscribe')
-                        ->button()
-                        ->url(route('subscribe'), shouldOpenInNewTab: true),
-                ])
-                ->send();
-        
-            $action->halt();
-        }
-    })
-```
-
-If you'd like the action modal to close too, you can completely `cancel()` the action instead of halting it:
-
-```php
-$action->cancel();
-```
+To learn how to customize the `EditAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [actions documentation](../../actions/prebuilt-actions/edit).
 
 ## Attaching and detaching records
 
@@ -605,7 +367,7 @@ AssociateAction::make()
     ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
 ```
 
-## Viewing records
+## Viewing related records
 
 When generating your relation manager, you may pass the `--view` flag to also add a `ViewAction` to the table:
 
@@ -681,56 +443,9 @@ protected function getTableQuery(): Builder
 }
 ```
 
-### Lifecycle hooks
+### Customizing the `DeleteAction`
 
-You can use the `before()` and `after()` methods to execute code before and after a record is deleted:
-
-```php
-use Filament\Tables\Actions\DeleteAction;
-
-DeleteAction::make()
-    ->before(function () {
-        // ...
-    })
-    ->after(function () {
-        // ...
-    })
-```
-
-### Halting the deletion process
-
-At any time, you may call `$action->halt()` from inside a lifecycle hook or mutation method, which will halt the entire deletion process:
-
-```php
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification;
-use Filament\Tables\Actions\DeleteAction;
-
-DeleteAction::make()
-    ->before(function (DeleteAction $action) {
-        if (! $this->ownerRecord->team->subscribed()) {
-            Notification::make()
-                ->warning()
-                ->title('You don\'t have an active subscription!')
-                ->body('Choose a plan to continue.')
-                ->persistent()
-                ->actions([
-                    Action::make('subscribe')
-                        ->button()
-                        ->url(route('subscribe'), shouldOpenInNewTab: true),
-                ])
-                ->send();
-        
-            $action->halt();
-        }
-    })
-```
-
-If you'd like the action modal to close too, you can completely `cancel()` the action instead of halting it:
-
-```php
-$action->cancel();
-```
+To learn how to customize the `DeleteAction`, including changing the notification and adding lifecycle hooks, please see the [actions documentation](../../actions/prebuilt-actions/delete).
 
 ## Accessing the relationship's owner record
 

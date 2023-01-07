@@ -68,18 +68,7 @@ protected function mutateFormDataBeforeFill(array $data): array
 }
 ```
 
-Alternatively, if you're viewing records in a modal action:
-
-```php
-use Filament\Tables\Actions\ViewAction;
-
-ViewAction::make()
-    ->mutateRecordDataUsing(function (array $data): array {
-        $data['user_id'] = auth()->id();
-
-        return $data;
-    })
-```
+Alternatively, if you're viewing records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/view#customizing-data-before-filling-the-form).
 
 ## Authorization
 

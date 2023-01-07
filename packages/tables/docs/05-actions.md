@@ -141,6 +141,18 @@ This is useful for things like "create" actions, which are not related to any sp
 
 Actions can be added to columns, such that when a cell in that column is clicked, it acts as the trigger for an action. You can learn more about [column actions](columns/getting-started#running-actions) in the documentation.
 
+## Pre-built table actions
+
+Filament includes several pre-built actions and bulk actions that you can add to a table. Their aim is to simplify the most common Eloquent-related actions:
+
+- [Create](../actions/prebuilt-actions/create)
+- [Edit](../actions/prebuilt-actions/edit)
+- [View](../actions/prebuilt-actions/view)
+- [Delete](../actions/prebuilt-actions/delete)
+- [Replicate](../actions/prebuilt-actions/replicate)
+- [Force-delete](../actions/prebuilt-actions/force-delete)
+- [Restore](../actions/prebuilt-actions/restore)
+
 ## Grouping actions
 
 You may use an `ActionGroup` object to group multiple table actions together in a dropdown:
