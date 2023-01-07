@@ -155,6 +155,5 @@
                 {{ $getNoSearchResultsMessage() }}
             </div>
         @endif
-
     </div>
 </x-dynamic-component>
