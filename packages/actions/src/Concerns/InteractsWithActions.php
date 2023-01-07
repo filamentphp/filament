@@ -260,10 +260,6 @@ trait InteractsWithActions
             return $action;
         }
 
-        if (! method_exists($this, $name)) {
-            throw new Exception("Action [$name] is not registered within a [$name()] method on the Livewire component.");
-        }
-
         $action = Action::configureUsing(
             Closure::fromCallable([$this, 'configureAction']),
             fn () => $this->{$name}(),
