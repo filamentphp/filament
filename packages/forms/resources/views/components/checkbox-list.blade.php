@@ -87,7 +87,7 @@
         @if ($isSearchable())
             <input
                 {!! $isDisabled() ? 'disabled' : null !!}
-                class="focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 block w-full transition duration-75 border-gray-300 rounded-lg shadow-sm mb-2"
+                class="mb-2 block w-full rounded-lg border-gray-300 shadow-sm transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70"
                 type="search"
                 placeholder="{{ $getSearchPrompt() }}"
                 x-model.debounce.{{ $getSearchDebounce() }}="search"
