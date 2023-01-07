@@ -10,7 +10,7 @@ This guide will walk you through the basics of building tables with Filament's t
 
 The basis of any table are rows and columns. Filament uses Eloquent to get the data for rows in the table, and you are responsible for defining the columns that are used in that row.
 
-Filament includes many column types pre-built for you, and you can [view a full list here](columns/getting-started#available-columns). You can even [create your own custom column types](columns/custom) to display data however you need.
+Filament includes many column types prebuilt for you, and you can [view a full list here](columns/getting-started#available-columns). You can even [create your own custom column types](columns/custom) to display data however you need.
 
 Columns are stored in an array, as objects within the `$table->columns()` method:
 

@@ -403,7 +403,7 @@ This will add a sort button to the column header, and clicking it will sort the 
 
 The `type` field could be searchable, but it's probably much better UX to add a select to filter this column with.
 
-Filament tables can have [filters](../tables/filters), which are components that allow you to scope the Eloquent query as a way to reduce the number of records in a table. Filters can even contain custom form components, which make them incredibly powerful to build interfaces with. While you could use a custom filter to render a select field, Filament includes a pre-built [`SelectFilter`](../tables/filters#select-filters) that you can add to the `filters()` of the table:
+Filament tables can have [filters](../tables/filters), which are components that allow you to scope the Eloquent query as a way to reduce the number of records in a table. Filters can even contain custom form components, which make them incredibly powerful to build interfaces with. While you could use a custom filter to render a select field, Filament includes a prebuilt [`SelectFilter`](../tables/filters#select-filters) that you can add to the `filters()` of the table:
 
 ```php
 use Filament\Tables;

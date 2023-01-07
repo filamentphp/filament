@@ -96,7 +96,7 @@ It's advised that you learn how to set up a Livewire component with the table bu
 php artisan make:livewire-table Products/ListProducts
 ```
 
-This will ask you for the name of a pre-built model, for example `Product`. Finally, it will generate a new `app/Http/Livewire/Products/ListProducts.php` component, which you can customize.
+This will ask you for the name of a prebuilt model, for example `Product`. Finally, it will generate a new `app/Http/Livewire/Products/ListProducts.php` component, which you can customize.
 
 ### Automatically generating table columns
 

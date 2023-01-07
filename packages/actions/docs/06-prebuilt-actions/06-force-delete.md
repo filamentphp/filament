@@ -4,7 +4,7 @@ title: Force-delete action
 
 ## Overview
 
-Filament includes a pre-built action that is able to force-delete [soft deleted](https://laravel.com/docs/eloquent#soft-deleting) Eloquent records. When the trigger button is clicked, a modal asking the user for confirmation. You may use it like so:
+Filament includes a prebuilt action that is able to force-delete [soft deleted](https://laravel.com/docs/eloquent#soft-deleting) Eloquent records. When the trigger button is clicked, a modal asking the user for confirmation. You may use it like so:
 
 ```php
 use Filament\Actions\ForceDeleteAction;

@@ -14,7 +14,7 @@ Filament ships with these widgets:
 - [Chart](../widgets/charts) widgets display numeric data in a visual chart.
 - [Table](#table-widgets) widgets which display a [table](../tables/getting-started) on your dashboard.
 
-You may also [create your own custom widgets](#custom-widgets) which can then have a consistent design with Filament's pre-built widgets.
+You may also [create your own custom widgets](#custom-widgets) which can then have a consistent design with Filament's prebuilt widgets.
 
 ## Sorting widgets
 

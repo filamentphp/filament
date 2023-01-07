@@ -141,9 +141,9 @@ This is useful for things like "create" actions, which are not related to any sp
 
 Actions can be added to columns, such that when a cell in that column is clicked, it acts as the trigger for an action. You can learn more about [column actions](columns/getting-started#running-actions) in the documentation.
 
-## Pre-built table actions
+## Prebuilt table actions
 
-Filament includes several pre-built actions and bulk actions that you can add to a table. Their aim is to simplify the most common Eloquent-related actions:
+Filament includes several prebuilt actions and bulk actions that you can add to a table. Their aim is to simplify the most common Eloquent-related actions:
 
 - [Create](../actions/prebuilt-actions/create)
 - [Edit](../actions/prebuilt-actions/edit)

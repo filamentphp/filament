@@ -98,7 +98,7 @@ If you're looking to add an action to a global search result in the app framewor
 
 ## Prebuilt actions
 
-Filament includes several pre-built actions that you can add to your app. Their aim is to simplify the most common Eloquent-related actions:
+Filament includes several prebuilt actions that you can add to your app. Their aim is to simplify the most common Eloquent-related actions:
 
 - [Create](prebuilt-actions/create)
 - [Edit](prebuilt-actions/edit)
