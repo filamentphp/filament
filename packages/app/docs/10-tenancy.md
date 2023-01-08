@@ -316,21 +316,6 @@ The `getFilamentAvatarUrl()` method is used to retrieve the avatar of the curren
 
 You can easily swap out [ui-avatars.com](https://ui-avatars.com) for a different service, by creating a new avatar provider. [You can learn how to do this here.](users#using-a-different-avatar-provider)
 
-## Configuring the slug attribute
-
-When using a tenant like a team, you might want to add a slug field to the URL rather than the team's ID. You can do that with the `slugAttribute` argument on the `tenant()` configuration method:
-
-```php
-use Filament\Context;
-
-public function context(Context $context): Context
-{
-    return $context
-        // ...
-        ->tenant(Team::class, slugAttribute: 'slug');
-}
-```
-
 ## Configuring the ownership relationship
 
 When creating a new [resource record](resources/creating-records), it will attempt to associate it with the current tenant. It will use the tenant's model to guess which relationship exists on the resource model. For example, if the tenant model is `App\Models\Team`, it will look for a `team()` relationship on the resource model. You can customize this relationship using the `ownershipRelationship` argument on the `tenant()` configuration method:
@@ -359,6 +344,21 @@ class CreatePost extends CreateRecord
     {
         $record->owner()->associate($tenant);
     }
+}
+```
+
+## Configuring the slug attribute
+
+When using a tenant like a team, you might want to add a slug field to the URL rather than the team's ID. You can do that with the `slugAttribute` argument on the `tenant()` configuration method:
+
+```php
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->tenant(Team::class, slugAttribute: 'slug');
 }
 ```
 
