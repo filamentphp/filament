@@ -37,6 +37,7 @@
                 'success' => 'border-success-500/40 bg-success-500/10 dark:bg-success-500/20',
                 'warning' => 'border-warning-500/40 bg-warning-500/10 dark:bg-warning-500/20',
                 null => 'border-transparent',
+                default => $color,
             }
         ])
     >
