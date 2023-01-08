@@ -137,11 +137,11 @@ class MakeWidgetCommand extends Command
                     'Bar chart' => 'bar',
                     'Bubble chart' => 'bubble',
                     'Doughnut chart' => 'doughnut',
-                    'Line chart' => 'line',
                     'Pie chart' => 'pie',
                     'Polar area chart' => 'polarArea',
                     'Radar chart' => 'radar',
                     'Scatter chart' => 'scatter',
+                    default => 'line',
                 },
             ]);
         } elseif ($this->option('table')) {

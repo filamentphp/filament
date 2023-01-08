@@ -39,6 +39,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string getFontName()
  * @method static string getFontProvider()
  * @method static string | null getFontUrl()
+ * @method static array<string> getHeadTags()
  * @method static string getHomeUrl()
  * @method static string | null getLoginUrl()
  * @method static string getLogoutUrl()

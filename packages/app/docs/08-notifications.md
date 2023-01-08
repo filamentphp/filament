@@ -14,25 +14,31 @@ However, there are a few differences in configuration when using the app framewo
 
 Instead of enabling database notifications inside the notifications package, you must enable it for the app framework specifically.
 
-First, you must [publish the configuration file](installation#publishing-configuration) for the app framework.
-
-Now, enable database notifications:
+Inside the [configuration], enable database notifications:
 
 ```php
-'database_notifications' => [
-    'enabled' => true,
-    // ...
-],
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->databaseNotifications();
+}
 ```
 
 You may also control [polling](../notifications/database-notifications#polling):
 
 ```php
-'database' => [
-    'enabled' => true,
-    'polling_interval' => '30s',
-    // ...
-],
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->databaseNotifications()
+        ->databaseNotificationsPolling('30s');
+}
 ```
 
 ## Echo

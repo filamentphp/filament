@@ -41,9 +41,17 @@ class MakeContextCommand extends Command
             'id' => $id,
         ]);
 
-        $this->components->info("Successfully created {$class}!");
+        $appConfig = file_get_contents(config_path('app.php'));
 
-        $this->components->info('Make sure to register the service provider in `config/app.php`.');
+        if (! Str::contains($appConfig, "App\\Providers\\Filament\\{$class}::class")) {
+            file_put_contents(config_path('app.php'), str_replace(
+                'App\\Providers\\RouteServiceProvider::class,' . PHP_EOL,
+                "App\\Providers\\Filament\\{$class}::class," . PHP_EOL . '        App\\Providers\\RouteServiceProvider::class,' . PHP_EOL,
+                $appConfig,
+            ));
+        }
+
+        $this->components->info("Successfully created {$class}!");
 
         return static::SUCCESS;
     }

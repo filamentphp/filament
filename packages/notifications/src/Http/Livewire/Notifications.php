@@ -184,6 +184,31 @@ class Notifications extends Component
         return $date->diffForHumans();
     }
 
+    public static function databaseNotifications(bool $condition = true): void
+    {
+        static::$hasDatabaseNotifications = $condition;
+    }
+
+    public static function databaseNotificationsTrigger(?string $trigger): void
+    {
+        static::$databaseNotificationsTrigger = $trigger;
+    }
+
+    public static function databaseNotificationsPollingInterval(?string $interval): void
+    {
+        static::$databaseNotificationsPollingInterval = $interval;
+    }
+
+    public static function horizontalAlignment(string $alignment): void
+    {
+        static::$horizontalAlignment = $alignment;
+    }
+
+    public static function verticalAlignment(string $alignment): void
+    {
+        static::$verticalAlignment = $alignment;
+    }
+
     public function render(): View
     {
         return view('filament-notifications::notifications');

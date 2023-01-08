@@ -44,7 +44,7 @@ If you don't complete these steps, there will be a 403 error when you try to acc
 If you wish, you may publish the configuration of the package using:
 
 ```bash
-php artisan vendor:publish --tag=filament-actions-config
+php artisan vendor:publish --tag=filament-config
 ```
 
 ## Publishing translations

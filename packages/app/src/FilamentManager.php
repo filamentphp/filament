@@ -485,11 +485,11 @@ class FilamentManager
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string>
      */
-    public function getMeta(): array
+    public function getHeadTags(): array
     {
-        return $this->getCurrentContext()->getMeta();
+        return $this->getCurrentContext()->getHeadTags();
     }
 
     public function getFavicon(): ?string

@@ -14,6 +14,8 @@ class SpatieLaravelTranslatablePlugin implements Plugin
 
     protected ?Closure $getLocaleLabelUsing = null;
 
+    final public function __construct() {}
+
     public static function make(): static
     {
         return new static();

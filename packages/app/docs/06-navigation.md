@@ -21,7 +21,7 @@ The `$navigationIcon` supports the name of any Blade component, and passes a set
 To add a badge next to the navigation item, you can use the `getNavigationBadge()` method and return the content of the badge:
 
 ```php
-protected static function getNavigationBadge(): ?string
+public static function getNavigationBadge(): ?string
 {
     return static::getModel()::count();
 }
@@ -30,7 +30,7 @@ protected static function getNavigationBadge(): ?string
 If a badge value is returned by `getNavigationBadge()`, it will display using the primary Tailwind color by default. To style the badge contextually, return either `danger`, `warning`, `success` or `secondary` from the `getNavigationBadgeColor()` method:
 
 ```php
-protected static function getNavigationBadgeColor(): ?string
+public static function getNavigationBadgeColor(): ?string
 {
     return static::getModel()::count() > 10 ? 'warning' : 'primary';
 }
@@ -104,7 +104,7 @@ protected static ?string $activeNavigationIcon = 'heroicon-s-document-text';
 Alternatively, override the `getActiveNavigationIcon()` method:
 
 ```php
-protected static function getActiveNavigationIcon(): string
+public static function getActiveNavigationIcon(): string
 {
     return 'heroicon-s-document-text';
 }
