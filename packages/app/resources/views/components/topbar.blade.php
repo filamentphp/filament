@@ -12,7 +12,7 @@
             @class([
                 'filament-sidebar-open-button shrink-0 flex items-center justify-center w-10 h-10 rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none',
                 'lg:mr-4 rtl:lg:mr-0 rtl:lg:ml-4' => filament()->isSidebarCollapsibleOnDesktop(),
-                'lg:hidden' => ! (filament()->isSidebarCollapsibleOnDesktop() && filament()->isSidebarFullyCollapsibleOnDesktop()),
+                'lg:hidden' => ! (filament()->isSidebarFullyCollapsibleOnDesktop()),
             ])
         >
             <x-filament::icon
