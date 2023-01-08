@@ -2,6 +2,6 @@
 /* https://github.com/twbs/bootstrap/issues/34433 */
 
 input::-webkit-datetime-edit {
-     display: block;
-     padding: 0;
- }
+    display: block;
+    padding: 0;
+}
