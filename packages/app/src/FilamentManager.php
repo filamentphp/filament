@@ -546,4 +546,19 @@ class FilamentManager
     {
         return $this->getCurrentContext()->getPlugin($id);
     }
+
+    public function isSidebarCollapsibleOnDesktop(): bool
+    {
+        return $this->getCurrentContext()->isSidebarCollapsibleOnDesktop();
+    }
+
+    public function isSidebarFullyCollapsibleOnDesktop(): bool
+    {
+        return $this->getCurrentContext()->isSidebarFullyCollapsibleOnDesktop();
+    }
+
+    public function hasCollapsibleNavigationGroups(): bool
+    {
+        return $this->getCurrentContext()->hasCollapsibleNavigationGroups();
+    }
 }

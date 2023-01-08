@@ -5,7 +5,7 @@
 ])
 
 <span
-    @if (\Filament\Navigation\Sidebar::$isCollapsibleOnDesktop)
+    @if (filament()->isSidebarCollapsibleOnDesktop())
         x-show="$store.sidebar.isOpen"
     @endif
     @class([
