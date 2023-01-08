@@ -30,12 +30,14 @@
             'flex gap-3 w-full',
             'py-2 pl-6 pr-2' => $isInline,
             'p-4 rounded-xl border' => ! $isInline,
-            'border-primary-500/50 bg-primary-500/10 dark:bg-primary-500/20' => $color === 'primary',
-            'border-secondary-500/40 bg-secondary-500/10 dark:bg-secondary-500/20' => $color === 'secondary',
-            'border-danger-500/40 bg-danger-500/10 dark:bg-danger-500/20' => $color === 'danger',
-            'border-success-500/40 bg-success-500/10 dark:bg-success-500/20' => $color === 'success',
-            'border-warning-500/40 bg-warning-500/10 dark:bg-warning-500/20' => $color === 'warning',
-            'border-gray-300 dark:border-gray-700' => $color === null,
+            match ($color) {
+                'primary' => 'border-primary-500/50 bg-primary-500/10 dark:bg-primary-500/20',
+                'secondary' => 'border-secondary-500/40 bg-secondary-500/10 dark:bg-secondary-500/20',
+                'danger' => 'border-danger-500/40 bg-danger-500/10 dark:bg-danger-500/20',
+                'success' => 'border-success-500/40 bg-success-500/10 dark:bg-success-500/20',
+                'warning' => 'border-warning-500/40 bg-warning-500/10 dark:bg-warning-500/20',
+                null => 'border-transparent',
+            }
         ])
     >
         @if ($icon = $getIcon())
