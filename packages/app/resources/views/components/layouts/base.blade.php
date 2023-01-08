@@ -2,11 +2,11 @@
     'livewire',
 ])
 
-        <!DOCTYPE html>
+<!DOCTYPE html>
 <html
-        lang="{{ str_replace('_', '-', app()->getLocale()) }}"
-        dir="{{ __('filament::layout.direction') ?? 'ltr' }}"
-        class="antialiased bg-gray-100 filament js-focus-visible"
+    lang="{{ str_replace('_', '-', app()->getLocale()) }}"
+    dir="{{ __('filament::layout.direction') ?? 'ltr' }}"
+    class="antialiased bg-gray-100 filament js-focus-visible"
 >
 <head>
     {{ filament()->renderHook('head.start') }}
@@ -23,7 +23,9 @@
         <link rel="icon" href="{{ $favicon }}">
     @endif
 
-    <title>{{ filled($title = $livewire->getTitle()) ? "{$title} - " : null }} {{ filament()->getBrandName() }}</title>
+    <title>
+        {{ filled($title = $livewire->getTitle()) ? "{$title} - " : null }} {{ filament()->getBrandName() }}
+    </title>
 
     {{ filament()->renderHook('styles.start') }}
 
@@ -59,10 +61,9 @@
 
             @foreach (filament()->getColors() as $key => $palette)
                 @foreach ($palette as $shade => $color)
- -- {{ $key }} -color- {{ $shade }}: {{ $color }};
-        @endforeach
-    @endforeach
-
+                    --{{ $key }}-color-{{ $shade }}: {{ $color }};
+                @endforeach
+            @endforeach
         }
     </style>
 
@@ -82,27 +83,27 @@
 </head>
 
 <body class="filament-body bg-gray-100 text-gray-900 dark:text-gray-100 dark:bg-gray-900">
-{{ filament()->renderHook('body.start') }}
+    {{ filament()->renderHook('body.start') }}
 
-{{ $slot }}
+    {{ $slot }}
 
-{{ filament()->renderHook('scripts.start') }}
+    {{ filament()->renderHook('scripts.start') }}
 
-@livewireScripts
-@filamentScripts(withCore: true)
+    @livewireScripts
+    @filamentScripts(withCore: true)
 
-@if (config('filament.broadcasting.echo'))
-    <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            window.Echo = new window.EchoFactory(@js(config('filament.broadcasting.echo')))
+    @if (config('filament.broadcasting.echo'))
+        <script>
+            window.addEventListener('DOMContentLoaded', () => {
+                window.Echo = new window.EchoFactory(@js(config('filament.broadcasting.echo')))
 
-            window.dispatchEvent(new CustomEvent('EchoLoaded'))
-        })
-    </script>
-@endif
+                window.dispatchEvent(new CustomEvent('EchoLoaded'))
+            })
+        </script>
+    @endif
 
-{{ filament()->renderHook('scripts.end') }}
+    {{ filament()->renderHook('scripts.end') }}
 
-{{ filament()->renderHook('body.end') }}
+    {{ filament()->renderHook('body.end') }}
 </body>
 </html>

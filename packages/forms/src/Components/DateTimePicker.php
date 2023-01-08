@@ -12,8 +12,12 @@ use Illuminate\View\ComponentAttributeBag;
 
 class DateTimePicker extends Field
 {
-    use Concerns\HasPlaceholder;
+    use Concerns\CanBeReadOnly;
     use Concerns\HasAffixes;
+    use Concerns\HasDatalistOptions;
+    use Concerns\HasExtraInputAttributes;
+    use Concerns\HasPlaceholder;
+    use Concerns\HasStep;
     use HasExtraAlpineAttributes;
 
     /**
@@ -31,6 +35,8 @@ class DateTimePicker extends Field
     protected int | null $firstDayOfWeek = null;
 
     protected string | Closure | null $format = null;
+
+    protected bool | Closure $isNative = true;
 
     protected bool | Closure $hasDate = true;
 
@@ -88,7 +94,27 @@ class DateTimePicker extends Field
 
             $state->setTimezone($component->getTimezone());
 
-            $component->state((string) $state);
+            if (! $component->isNative()) {
+                $component->state((string) $state);
+
+                return;
+            }
+
+            if (! $component->hasTime()) {
+                $component->state($state->toDateString());
+
+                return;
+            }
+
+            $precision = $component->hasSeconds() ? 'second' : 'minute';
+
+            if (! $component->hasDate()) {
+                $component->state($state->toTimeString($precision));
+
+                return;
+            }
+
+            $component->state($state->toDateTimeString($precision));
         });
 
         $this->dehydrateStateUsing(static function (DateTimePicker $component, $state) {
@@ -224,6 +250,13 @@ class DateTimePicker extends Field
     public function weekStartsOnSunday(): static
     {
         $this->firstDayOfWeek(7);
+
+        return $this;
+    }
+
+    public function native(bool | Closure $condition = true): static
+    {
+        $this->isNative = $condition;
 
         return $this;
     }
@@ -406,5 +439,60 @@ class DateTimePicker extends Field
     public function shouldCloseOnDateSelection(): bool
     {
         return (bool) $this->evaluate($this->shouldCloseOnDateSelection);
+    }
+
+    public function isNative(): bool
+    {
+        return (bool) $this->evaluate($this->isNative);
+    }
+
+    public function getStep(): int | float | string | null
+    {
+        $step = $this->evaluate($this->step);
+
+        if (filled($step)) {
+            return $step;
+        }
+
+        if (! $this->hasTime()) {
+            return null;
+        }
+
+        $secondsStep = $this->getSecondsStep();
+
+        if ($secondsStep > 1) {
+            return $secondsStep;
+        }
+
+        $minutesStep = $this->getMinutesStep();
+
+        if ($minutesStep > 1) {
+            return $minutesStep * 60;
+        }
+
+        $hoursStep = $this->getHoursStep();
+
+        if ($hoursStep > 1) {
+            return $hoursStep * 3600;
+        }
+
+        if (! $this->hasSeconds()) {
+            return null;
+        }
+
+        return 1;
+    }
+
+    public function getType(): string
+    {
+        if (! $this->hasDate()) {
+            return 'time';
+        }
+
+        if (! $this->hasTime()) {
+            return 'date';
+        }
+
+        return 'datetime-local';
     }
 }
