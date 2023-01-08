@@ -568,6 +568,7 @@
                                             <div
                                                 x-show="! isCollapsed"
                                                 x-collapse
+                                                x-cloak
                                                 @class([
                                                     'pb-2 -mx-2',
                                                     'md:pl-20 rtl:md:pl-0 rtl:md:pr-20' => (! $contentGrid) && $isSelectionEnabled,
