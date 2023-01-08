@@ -422,6 +422,15 @@ class FilamentManager
         return $tenant->getAttributeValue('name');
     }
 
+    public function getNameForDefaultAvatar(Model | Authenticatable $record): string
+    {
+        if ($this->getTenantModel() === $record::class) {
+            return $this->getTenantName($record);
+        }
+
+        return $this->getUserName($record);
+    }
+
     public function getUserAvatarUrl(Model | Authenticatable $user): string
     {
         $avatar = null;
@@ -482,14 +491,6 @@ class FilamentManager
     public function getWidgets(): array
     {
         return $this->getCurrentContext()->getWidgets();
-    }
-
-    /**
-     * @return array<string>
-     */
-    public function getHeadTags(): array
-    {
-        return $this->getCurrentContext()->getHeadTags();
     }
 
     public function getFavicon(): ?string

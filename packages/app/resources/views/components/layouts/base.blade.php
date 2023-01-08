@@ -15,10 +15,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    @foreach (filament()->getHeadTags() as $tag)
-        {!! $tag !!}
-    @endforeach
-
     @if ($favicon = filament()->getFavicon())
         <link rel="icon" href="{{ $favicon }}">
     @endif

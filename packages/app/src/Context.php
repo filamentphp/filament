@@ -16,7 +16,6 @@ class Context
     use Concerns\HasFavicon;
     use Concerns\HasFont;
     use Concerns\HasGlobalSearch;
-    use Concerns\HasHeadTags;
     use Concerns\HasIcons;
     use Concerns\HasId;
     use Concerns\HasMiddleware;

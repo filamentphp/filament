@@ -56,6 +56,50 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
 The `getFilamentAvatarUrl()` method is used to retrieve the avatar of the current user. If `null` is returned from this method, Filament will fall back to [ui-avatars.com](https://ui-avatars.com).
 
+### Using a different avatar provider
+
+You can easily swap out [ui-avatars.com](https://ui-avatars.com) for a different service, by creating a new avatar provider.
+
+In this example, we create a new file at `app/Filament/AvatarProviders/BoringAvatarsProvider.php` for [boringavatars.com](https://boringavatars.com). The `get()` method accepts a user model instance and returns an avatar URL for that user:
+
+```php
+<?php
+
+namespace App\Filament\AvatarProviders;
+
+use Filament\Facades\Filament;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
+
+class BoringAvatarsProvider implements Contracts\AvatarProvider
+{
+    public function get(Model | Authenticatable $record): string
+    {
+        $name = str(Filament::getNameForDefaultAvatar($record))
+            ->trim()
+            ->explode(' ')
+            ->map(fn (string $segment): string => filled($segment) ? mb_substr($segment, 0, 1) : '')
+            ->join(' ');
+
+        return 'https://source.boringavatars.com/beam/120/' . urlencode($name);
+    }
+}
+```
+
+Now, register this new avatar provider in the [configuration](configuration):
+
+```php
+use App\Filament\AvatarProviders\BoringAvatarsProvider;
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->defaultAvatarProvider(BoringAvatarsProvider::class);
+}
+```
+
 ## Configuring the name attribute
 
 By default, Filament will use the `name` attribute of the user to display their name in the app. To change this, you can implement the `HasName` contract:

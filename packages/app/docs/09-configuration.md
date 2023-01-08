@@ -58,9 +58,9 @@ public function context(Context $context): Context
 }
 ```
 
-## Custom `<head>` tags
+## Authentication features
 
-You can add custom tags to the `<head>`, such as `<meta>` and `<link>`, using the `headTags()` method:
+You can easily enable authentication features for a context in the configuration file:
 
 ```php
 use Filament\Context;
@@ -69,9 +69,30 @@ public function context(Context $context): Context
 {
     return $context
         // ...
-        ->headTags([
-            '<link rel="manifest" href="/site.webmanifest" />',
-        ]);
+        ->login()
+        ->registration()
+        ->passwordReset()
+        ->emailVerification();
+}
+```
+
+### Customizing the authentication features
+
+If you'd like to replace these pages with your own, you can pass in a "route action" to any of these methods.
+
+A route action could be a callback function that gets executed when you visit the page, or the name of a controller, or a Livewire component - anything that works when using `Route::get()` in Laravel normally.
+
+Most people will be able to make their desired customizations by extending the default Livewire class from the Filament codebase, overriding methods like `form()`, and then passing the new Livewire class in as the route action:
+
+```php
+use App\Http\Livewire\Auth\Login;
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->login(Login::class);
 }
 ```
 
@@ -83,6 +104,7 @@ Here's an example, integrating [`wire-elements/modal`](https://github.com/wire-e
 
 ```php
 use Filament\Context;
+use Illuminate\Support\Facades\Blade;
 
 public function context(Context $context): Context
 {
@@ -136,3 +158,18 @@ The available hooks are as follows:
 - `page.footer-widgets.end` - after page footer widgets
 - `page.actions.start` - before page actions
 - `page.actions.end` - after page actions
+
+## Setting a domain
+
+By default, Filament will respond to requests from all domains. If you'd like to scope it to a specific domain, you can use the `domain()` method, similar to [`Route::domain()` in Laravel](https://laravel.com/docs/routing#route-group-subdomain-routing):
+
+```php
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->domain('admin.example.com');
+}
+```

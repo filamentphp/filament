@@ -194,3 +194,33 @@ You may create a `resources/views/vendor/filament/components/logo.blade.php` fil
 ```blade
 <img src="{{ asset('/images/logo.svg') }}" alt="Logo" class="h-10">
 ```
+
+## Disabling dark mode
+
+To disable dark mode switching, you can use the [configuration](configuration) file:
+
+```php
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->darkMode(false);
+}
+```
+
+## Adding a favicon
+
+To add a favicon, you can use the [configuration](configuration) file, passing the public URL of the favicon:
+
+```php
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->favicon(asset('images/favicon.png'));
+}
+```
