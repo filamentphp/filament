@@ -256,21 +256,24 @@ Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
 
 The user menu is featured in the top right corner of the admin layout. It's fully customizable.
 
-To register new items to the user menu, you should use a service provider:
+To register new items to the user menu, you can use the [configuration](configuration):
 
 ```php
-use Filament\Facades\Filament;
+use Filament\Context;
 use Filament\Navigation\MenuItem;
 
-Filament::serving(function () {
-    Filament::registerUserMenuItems([
-        MenuItem::make()
-            ->label('Settings')
-            ->url(route('filament.pages.settings'))
-            ->icon('heroicon-m-cog-6-tooth'),
+public function context(Context $context): Context
+{
+    return $context
         // ...
-    ]);
-});
+        ->userMenuItems([
+            MenuItem::make()
+                ->label('Settings')
+                ->url(route('filament.pages.settings'))
+                ->icon('heroicon-m-cog-6-tooth'),
+            // ...
+        ]);
+}
 ```
 
 ### Customizing the account link
@@ -278,15 +281,18 @@ Filament::serving(function () {
 To customize the user account link at the start of the user menu, register a new item with the `account` array key:
 
 ```php
-use Filament\Facades\Filament;
+use Filament\Context;
 use Filament\Navigation\MenuItem;
 
-Filament::serving(function () {
-    Filament::registerUserMenuItems([
-        'account' => MenuItem::make()->url(route('filament.pages.account')),
+public function context(Context $context): Context
+{
+    return $context
         // ...
-    ]);
-});
+        ->userMenuItems([
+            'account' => MenuItem::make()->url(route('filament.pages.account')),
+            // ...
+        ]);
+}
 ```
 
 ### Customizing the logout link
@@ -294,13 +300,16 @@ Filament::serving(function () {
 To customize the user account link at the end of the user menu, register a new item with the `logout` array key:
 
 ```php
-use Filament\Facades\Filament;
+use Filament\Context;
 use Filament\Navigation\MenuItem;
 
-Filament::serving(function () {
-    Filament::registerUserMenuItems([
+public function context(Context $context): Context
+{
+    return $context
         // ...
-        'logout' => MenuItem::make()->label('Log out'),
-    ]);
-});
+        ->userMenuItems([
+            'logout' => MenuItem::make()->label('Log out'),
+            // ...
+        ]);
+}
 ```

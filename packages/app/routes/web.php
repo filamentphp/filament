@@ -44,7 +44,7 @@ Route::name('filament.')
                         ->group(function () use ($context): void {
                             $hasRoutableTenancy = $context->hasRoutableTenancy();
                             $hasTenantRegistration = $context->hasTenantRegistration();
-                            $tenantSlugField = $context->getTenantSlugField();
+                            $tenantSlugAttribute = $context->getTenantSlugAttribute();
 
                             if ($hasRoutableTenancy) {
                                 Route::get('/', function () use ($context, $hasTenantRegistration): RedirectResponse {
@@ -78,7 +78,7 @@ Route::name('filament.')
                                     }
                                 });
 
-                            Route::prefix($hasRoutableTenancy ? ('{tenant' . (($tenantSlugField) ? ":{$tenantSlugField}" : '') . '}') : '')
+                            Route::prefix($hasRoutableTenancy ? ('{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
                                 ->group(function () use ($context): void {
                                     Route::get('/', function () use ($context): RedirectResponse {
                                         return redirect($context->getUrl(Filament::getTenant()));

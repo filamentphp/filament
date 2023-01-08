@@ -16,7 +16,9 @@ trait HasTenancy
 
     protected ?string $tenantRegistrationPage = null;
 
-    protected ?string $tenantSlugField = null;
+    protected ?string $tenantSlugAttribute = null;
+
+    protected ?string $tenantOwnershipRelationshipName = null;
 
     /**
      * @var array<MenuItem>
@@ -42,10 +44,11 @@ trait HasTenancy
         return $this;
     }
 
-    public function tenant(?string $model, ?string $slugField = null): static
+    public function tenant(?string $model, ?string $slugAttribute = null, ?string $ownershipRelationship): static
     {
         $this->tenantModel = $model;
-        $this->tenantSlugField = $slugField;
+        $this->tenantSlugAttribute = $slugAttribute;
+        $this->tenantOwnershipRelationshipName = $ownershipRelationship;
 
         return $this;
     }
@@ -107,7 +110,7 @@ trait HasTenancy
         $tenantModel = $this->getTenantModel();
 
         $record = app($tenantModel)
-            ->resolveRouteBinding($key, $this->getTenantSlugField());
+            ->resolveRouteBinding($key, $this->getTenantSlugAttribute());
 
         if ($record === null) {
             throw (new ModelNotFoundException())->setModel($tenantModel, [$key]);
@@ -121,9 +124,9 @@ trait HasTenancy
         return $this->tenantModel;
     }
 
-    public function getTenantSlugField(): ?string
+    public function getTenantSlugAttribute(): ?string
     {
-        return $this->tenantSlugField;
+        return $this->tenantSlugAttribute;
     }
 
     public function getTenantBillingUrl(Model $tenant): ?string
@@ -154,5 +157,14 @@ trait HasTenancy
         return collect($this->tenantMenuItems)
             ->sort(fn (MenuItem $item): int => $item->getSort())
             ->all();
+    }
+
+    public function getTenantOwnershipRelationshipName(): string
+    {
+        if (filled($this->tenantOwnershipRelationshipName)) {
+            return $this->tenantOwnershipRelationshipName;
+        }
+
+        return (string) str($this->getTenantModel())->camel();
     }
 }

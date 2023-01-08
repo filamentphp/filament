@@ -121,6 +121,11 @@ class FilamentManager
         return $this->getCurrentContext()->getTenantModel();
     }
 
+    public function getTenantOwnershipRelationshipName(): string
+    {
+        return $this->getCurrentContext()->getTenantOwnershipRelationshipName();
+    }
+
     public function getRoutableTenant(): ?Model
     {
         if (! $this->getCurrentContext()->hasRoutableTenancy()) {

@@ -76,6 +76,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array<MenuItem> getTenantMenuItems()
  * @method static string | null getTenantModel()
  * @method static string getTenantName(Model $tenant)
+ * @method static string getTenantOwnershipRelationshipName()
  * @method static string | null getTenantRegistrationPage()
  * @method static string | null getTenantRegistrationUrl()
  * @method static Theme getTheme()

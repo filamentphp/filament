@@ -30,7 +30,7 @@ class User extends Authenticatable implements FilamentUser
 
 The `canAccessFilament()` method returns `true` or `false` depending on whether the user is allowed to access Filament. In this example, we check if the user's email ends with `@yourdomain.com` and if they have verified their email address.
 
-## Setting up avatars
+## Setting up user avatars
 
 Out of the box, Filament uses [ui-avatars.com](https://ui-avatars.com) to generate avatars based on a user's name. To provide your own avatar URLs, you can implement the `HasAvatar` contract:
 
@@ -100,7 +100,7 @@ public function context(Context $context): Context
 }
 ```
 
-## Configuring the name attribute
+## Configuring the user name attribute
 
 By default, Filament will use the `name` attribute of the user to display their name in the app. To change this, you can implement the `HasName` contract:
 
@@ -125,3 +125,41 @@ class User extends Authenticatable implements FilamentUser, HasName
 ```
 
 The `getFilamentName()` method is used to retrieve the name of the current user.
+
+## Authentication features
+
+You can easily enable authentication features for a context in the configuration file:
+
+```php
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->login()
+        ->registration()
+        ->passwordReset()
+        ->emailVerification();
+}
+```
+
+### Customizing the authentication features
+
+If you'd like to replace these pages with your own, you can pass in a "route action" to any of these methods.
+
+A route action could be a callback function that gets executed when you visit the page, or the name of a controller, or a Livewire component - anything that works when using `Route::get()` in Laravel normally.
+
+Most people will be able to make their desired customizations by extending the default Livewire class from the Filament codebase, overriding methods like `form()`, and then passing the new Livewire class in as the route action:
+
+```php
+use App\Http\Livewire\Auth\Login;
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->login(Login::class);
+}
+```
