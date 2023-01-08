@@ -6,7 +6,6 @@ use Closure;
 use Filament\Forms\Components\Contracts\CanHaveNumericState;
 use Filament\Forms\Components\TextInput\Mask;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
-use Illuminate\Contracts\Support\Arrayable;
 
 class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHaveNumericState
 {
