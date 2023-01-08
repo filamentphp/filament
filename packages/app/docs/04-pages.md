@@ -21,7 +21,7 @@ Page classes are all full-page [Livewire](https://laravel-livewire.com) componen
 You can prevent pages from appearing in the menu by overriding the `shouldRegisterNavigation()` method in your Page class. This is useful if you want to control which users can see the page in the sidebar.
 
 ```php
-protected static function shouldRegisterNavigation(): bool
+public static function shouldRegisterNavigation(): bool
 {
     return auth()->user()->canManageSettings();
 }

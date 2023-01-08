@@ -6,7 +6,6 @@ use Closure;
 use Filament\Forms\Components\Contracts\CanHaveNumericState;
 use Filament\Forms\Components\TextInput\Mask;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
-use Illuminate\Contracts\Support\Arrayable;
 
 class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHaveNumericState
 {
@@ -15,6 +14,7 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     use Concerns\CanBeLengthConstrained;
     use Concerns\CanBeReadOnly;
     use Concerns\HasAffixes;
+    use Concerns\HasDatalistOptions;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasInputMode;
     use Concerns\HasPlaceholder;
@@ -27,11 +27,6 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     protected string $view = 'filament-forms::components.text-input';
 
     protected ?Closure $configureMaskUsing = null;
-
-    /**
-     * @var array<string> | Arrayable | Closure | null
-     */
-    protected array | Arrayable | Closure | null $datalistOptions = null;
 
     protected bool | Closure $isEmail = false;
 
@@ -60,16 +55,6 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     public function currentPassword(bool | Closure $condition = true): static
     {
         $this->rule('current_password', $condition);
-
-        return $this;
-    }
-
-    /**
-     * @param  array<string> | Arrayable | Closure | null  $options
-     */
-    public function datalist(array | Arrayable | Closure | null $options): static
-    {
-        $this->datalistOptions = $options;
 
         return $this;
     }
@@ -179,20 +164,6 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
         $this->rule('url', $condition);
 
         return $this;
-    }
-
-    /**
-     * @return array<string> | null
-     */
-    public function getDatalistOptions(): ?array
-    {
-        $options = $this->evaluate($this->datalistOptions);
-
-        if ($options instanceof Arrayable) {
-            $options = $options->toArray();
-        }
-
-        return $options;
     }
 
     public function getMask(): ?Mask

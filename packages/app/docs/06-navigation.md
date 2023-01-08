@@ -21,7 +21,7 @@ The `$navigationIcon` supports the name of any Blade component, and passes a set
 To add a badge next to the navigation item, you can use the `getNavigationBadge()` method and return the content of the badge:
 
 ```php
-protected static function getNavigationBadge(): ?string
+public static function getNavigationBadge(): ?string
 {
     return static::getModel()::count();
 }
@@ -30,7 +30,7 @@ protected static function getNavigationBadge(): ?string
 If a badge value is returned by `getNavigationBadge()`, it will display using the primary Tailwind color by default. To style the badge contextually, return either `danger`, `warning`, `success` or `secondary` from the `getNavigationBadgeColor()` method:
 
 ```php
-protected static function getNavigationBadgeColor(): ?string
+public static function getNavigationBadgeColor(): ?string
 {
     return static::getModel()::count() > 10 ? 'warning' : 'primary';
 }
@@ -93,6 +93,60 @@ Filament::registerNavigationGroups([
 ]);
 ```
 
+### Making navigation groups not collapsible
+
+By default, navigation groups are collapsible. You may disable this behavior by calling `collapsible(false)` on the `NavigationGroup` object:
+
+```php
+use Filament\Navigation\NavigationGroup;
+
+NavigationGroup::make()
+    ->label('Settings')
+    ->icon('heroicon-s-cog-6-tooth')
+    ->collapsible(false);
+```
+
+Or, you can do it globally for all groups in the [configuration](configuration):
+
+```php
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->collapsibleNavigationGroups(false);
+}
+```
+
+## Collapsible sidebar on desktop
+
+To make the sidebar collapsible on desktop as well as mobile, you can use the [configuration](configuration):
+
+```php
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->sidebarCollapsibleOnDesktop();
+}
+```
+
+By default, when you collapse the sidebar on desktop, the navigation icons still show. You can fully collapse the sidebar using the `sidebarFullyCollapsibleOnDesktop()` method:
+
+```php
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->sidebarFullyCollapsibleOnDesktop();
+}
+```
+
 ## Active icons
 
 You may assign a navigation icon which will be displayed for active items using the `$activeNavigationIcon` property:
@@ -104,7 +158,7 @@ protected static ?string $activeNavigationIcon = 'heroicon-s-document-text';
 Alternatively, override the `getActiveNavigationIcon()` method:
 
 ```php
-protected static function getActiveNavigationIcon(): string
+public static function getActiveNavigationIcon(): string
 {
     return 'heroicon-s-document-text';
 }

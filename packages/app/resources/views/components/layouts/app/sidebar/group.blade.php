@@ -18,7 +18,7 @@
             @if ($collapsible)
                 x-on:click.prevent="$store.sidebar.toggleCollapsedGroup(label)"
             @endif
-            @if (\Filament\Navigation\Sidebar::$isCollapsibleOnDesktop)
+            @if (filament()->isSidebarCollapsibleOnDesktop())
                 x-show="$store.sidebar.isOpen"
             @endif
             class="flex items-center justify-between w-full"
@@ -53,7 +53,7 @@
     @endif
 
     <ul
-        x-show="! ($store.sidebar.groupIsCollapsed(label) && {{ \Filament\Navigation\Sidebar::$isCollapsibleOnDesktop ? '$store.sidebar.isOpen' : 'true' }})"
+        x-show="! ($store.sidebar.groupIsCollapsed(label) && {{ filament()->isSidebarCollapsibleOnDesktop() ? '$store.sidebar.isOpen' : 'true' }})"
         x-collapse.duration.200ms
         @class([
             'text-sm space-y-1 -mx-3',

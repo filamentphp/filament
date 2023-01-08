@@ -51,7 +51,7 @@ public static function getGlobalSearchResultDetails(Model $record): array
 In this example, the category and author of the record will be displayed below its title in the search result. However, the `category` and `author` relationships will be lazy-loaded, which will result in poor results performance. To [eager-load](https://laravel.com/docs/eloquent-relationships#eager-loading) these relationships, we must override the `getGlobalSearchEloquentQuery()` method:
 
 ```php
-protected static function getGlobalSearchEloquentQuery(): Builder
+public static function getGlobalSearchEloquentQuery(): Builder
 {
     return parent::getGlobalSearchEloquentQuery()->with(['author', 'category']);
 }

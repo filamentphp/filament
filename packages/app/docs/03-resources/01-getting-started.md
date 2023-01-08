@@ -289,7 +289,7 @@ protected static ?string $navigationGroup = 'Shop';
 Alternatively, you may use the `getNavigationGroup()` method to set a dynamic group label:
 
 ```php
-protected static function getNavigationGroup(): ?string
+public static function getNavigationGroup(): ?string
 {
     return __('filament/navigation.groups.shop');
 }
@@ -373,18 +373,21 @@ AttachAction::make()
 
 ### `stancl/tenancy`
 
-To set up [`stancl/tenancy`](https://tenancyforlaravel.com/docs) to work with Filament, you just need to add the `InitializeTenancyByDomain::class` middleware to [Livewire](https://tenancyforlaravel.com/docs/v3/integrations/livewire) and the [Filament config file](../installation#publishing-configuration):
+To set up [`stancl/tenancy`](https://tenancyforlaravel.com/docs) to work with Filament, you just need to add the `InitializeTenancyByDomain::class` middleware to [Livewire](https://tenancyforlaravel.com/docs/v3/integrations/livewire) and the [configuration](../configuration):
 
 ```php
+use Filament\Context;
 use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
 
-'middleware' => [
-    // ...
-    'base' => [
+public function context(Context $context): Context
+{
+    return $context
         // ...
-        InitializeTenancyByDomain::class
-    ],
-],
+        ->middleware([
+            // ...
+            InitializeTenancyByDomain::class,
+        ]);
+}
 ```
 
 ## Deleting pages

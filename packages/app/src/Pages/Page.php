@@ -229,4 +229,14 @@ abstract class Page extends BasePage
     {
         return static::$isDiscovered;
     }
+
+    public static function formActionsAlignment(string $alignment): void
+    {
+        static::$formActionsAlignment = $alignment;
+    }
+
+    public static function inlineFormLabels(bool $condition = true): void
+    {
+        static::$hasInlineFormLabels = $condition;
+    }
 }

@@ -25,7 +25,7 @@
     <x-slot name="trigger">
         <div
             class="flex items-center space-x-3 -m-3 p-2 rounded-lg transition rtl:space-x-reverse hover:bg-gray-500/5 dark:hover:bg-gray-900/50"
-            @if (\Filament\Navigation\Sidebar::$isCollapsibleOnDesktop)
+            @if (filament()->isSidebarCollapsibleOnDesktop())
                 x-data="{ tooltip: {} }"
                 x-init="
                     Alpine.effect(() => {
@@ -52,7 +52,7 @@
             />
 
             <div
-                @if (\Filament\Navigation\Sidebar::$isCollapsibleOnDesktop)
+                @if (filament()->isSidebarCollapsibleOnDesktop())
                     x-data="{}"
                     x-show="$store.sidebar.isOpen"
                 @endif

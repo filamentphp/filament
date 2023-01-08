@@ -4,11 +4,10 @@
     $id = $getId();
     $isConcealed = $isConcealed();
     $statePath = $getStatePath();
-    $inputClasses = [
-        'block w-full transition duration-75 shadow-sm sm:text-sm focus:border-primary-500 focus:relative focus:z-[1] focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
-        'rounded-l-lg' => ! ($getPrefixLabel() || $getPrefixIcon()),
-        'rounded-r-lg' => ! ($getSuffixLabel() || $getSuffixIcon()),
-    ];
+    $prefixIcon = $getPrefixIcon();
+    $prefixLabel = $getPrefixLabel();
+    $suffixIcon = $getSuffixIcon();
+    $suffixLabel = $getSuffixLabel();
 @endphp
 
 <x-dynamic-component
@@ -17,12 +16,12 @@
 >
     <x-filament::input.affixes
         :state-path="$statePath"
-        :prefix="$getPrefixLabel()"
+        :prefix="$prefixLabel"
         :prefix-action="$getPrefixAction()"
-        :prefix-icon="$getPrefixIcon()"
-        :suffix="$getSuffixLabel()"
+        :prefix-icon="$prefixIcon"
+        :suffix="$suffixLabel"
         :suffix-action="$getSuffixAction()"
-        :suffix-icon="$getSuffixIcon()"
+        :suffix-icon="$suffixIcon"
         class="filament-forms-text-input-component"
         :attributes="$getExtraAttributeBag()"
     >
@@ -41,7 +40,7 @@
                 {{ $getExtraAlpineAttributeBag() }}
             @else
                 x-data="{}"
-            @endunless
+            @endif
             x-bind:class="{
                 'border-gray-300 dark:border-gray-600': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
                 'border-danger-600 ring-danger-600': (@js($statePath) in $wire.__instance.serverMemo.errors),
@@ -68,7 +67,11 @@
                         'type' => $hasMask ? 'text' : $getType(),
                         $applyStateBindingModifiers('wire:model') => (! $hasMask) ? $statePath : null,
                     ], escape: false)
-                    ->class($inputClasses)
+                    ->class([
+                        'block w-full transition duration-75 shadow-sm sm:text-sm focus:border-primary-500 focus:relative focus:z-[1] focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
+                        'rounded-l-lg' => ! ($prefixLabel || $prefixIcon),
+                        'rounded-r-lg' => ! ($suffixLabel || $suffixIcon),
+                    ])
             }}
         />
     </x-filament::input.affixes>

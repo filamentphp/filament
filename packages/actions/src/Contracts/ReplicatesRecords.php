@@ -2,13 +2,9 @@
 
 namespace Filament\Actions\Contracts;
 
-use Illuminate\Database\Eloquent\Model;
-
 interface ReplicatesRecords
 {
-    public function callBeforeReplicaSaved(Model $replica): void;
-
-    public function callAfterReplicaSaved(Model $replica): mixed;
+    public function callBeforeReplicaSaved(): void;
 
     /**
      * @return array<string> | null

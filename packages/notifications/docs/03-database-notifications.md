@@ -14,15 +14,12 @@ php artisan notifications:table
 
 > If you're using UUIDs for your `User` model, make sure that your `notifiable` column is using `uuidMorphs()`: `$table->uuidMorphs('notifiable')`.
 
-First, you must [publish the configuration file](installation#publishing-configuration) for the package.
-
-Inside the configuration file, there is a `database` key. To enable database notifications:
+To enable database notifications, add the following to a service provider:
 
 ```php
-'database' => [
-    'enabled' => true,
-    // ...
-],
+use Filament\Notifications\Http\Livewire\Notifications;
+
+Notifications::databaseNotifications();
 ```
 
 Database notifications will be rendered within a modal. To open this modal, you must have a "trigger" button in your view. Create a new trigger button component in your app, for instance at `/resources/views/notifications/database-notifications-trigger.blade.php`:
@@ -35,14 +32,13 @@ Database notifications will be rendered within a modal. To open this modal, you 
 
 `$unreadNotificationsCount` is a variable automatically passed to this view, which provides it with a real-time count of the number of unread notifications the user has.
 
-In the configuration file, point to this new trigger view:
+In the service provider, point to this new trigger view:
 
 ```php
-'database' => [
-    'enabled' => true,
-    'trigger' => 'filament-notifications.database-notifications-trigger',
-    // ...
-],
+use Filament\Notifications\Http\Livewire\Notifications;
+
+Notifications::databaseNotifications();
+Notifications::databaseNotificationsTrigger('filament-notifications.database-notifications-trigger');
 ```
 
 Now, simply move the `@livewire('notifications')` component to the position in your HTML that you wish to render the database notifications trigger button. It should appear, and open the database notifications modal when clicked!
@@ -93,30 +89,28 @@ public function toDatabase(User $notifiable): array
 
 ## Receiving notifications
 
-Without any configuration, new database notifications will only be received when the page is first loaded.
+Without any setup, new database notifications will only be received when the page is first loaded.
 
 ### Polling
 
 Polling is the practice of periodically making a request to the server to check for new notifications. This is a good approach as the setup is simple, but some may say that it is not a scalable solution as it increases server load.
 
-By default, the configuration file polls for new notifications every 30 seconds:
+By default, Livewire polls for new notifications every 30 seconds:
 
 ```php
-'database' => [
-    'enabled' => true,
-    'polling_interval' => '30s',
-    // ...
-],
+use Filament\Notifications\Http\Livewire\Notifications;
+
+Notifications::databaseNotifications();
+Notifications::databaseNotificationsPollingInterval('30s');
 ```
 
 You may completely disable polling if you wish:
 
 ```php
-'database' => [
-    'enabled' => true,
-    'polling_interval' => null,
-    // ...
-],
+use Filament\Notifications\Http\Livewire\Notifications;
+
+Notifications::databaseNotifications();
+Notifications::databaseNotificationsPollingInterval(null);
 ```
 
 ### Echo

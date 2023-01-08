@@ -422,6 +422,15 @@ class FilamentManager
         return $tenant->getAttributeValue('name');
     }
 
+    public function getNameForDefaultAvatar(Model | Authenticatable $record): string
+    {
+        if ($this->getTenantModel() === $record::class) {
+            return $this->getTenantName($record);
+        }
+
+        return $this->getUserName($record);
+    }
+
     public function getUserAvatarUrl(Model | Authenticatable $user): string
     {
         $avatar = null;
@@ -484,14 +493,6 @@ class FilamentManager
         return $this->getCurrentContext()->getWidgets();
     }
 
-    /**
-     * @return array<string, string>
-     */
-    public function getMeta(): array
-    {
-        return $this->getCurrentContext()->getMeta();
-    }
-
     public function getFavicon(): ?string
     {
         return $this->getCurrentContext()->getFavicon();
@@ -545,5 +546,20 @@ class FilamentManager
     public function getPlugin(string $id): Plugin
     {
         return $this->getCurrentContext()->getPlugin($id);
+    }
+
+    public function isSidebarCollapsibleOnDesktop(): bool
+    {
+        return $this->getCurrentContext()->isSidebarCollapsibleOnDesktop();
+    }
+
+    public function isSidebarFullyCollapsibleOnDesktop(): bool
+    {
+        return $this->getCurrentContext()->isSidebarFullyCollapsibleOnDesktop();
+    }
+
+    public function hasCollapsibleNavigationGroups(): bool
+    {
+        return $this->getCurrentContext()->hasCollapsibleNavigationGroups();
     }
 }

@@ -23,7 +23,7 @@
         }}
     >
         <div
-            x-show="state.length || {{ $isDisabled ? 'false' : 'true' }}"
+            x-show="state.length || @js(! $isDisabled)"
             @class([
                 'block w-full transition duration-75 divide-y rounded-lg shadow-sm sm:text-sm border overflow-hidden focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500 dark:divide-gray-600',
                 'border-gray-300 dark:border-gray-600' => ! $errors->has($statePath),
@@ -66,12 +66,11 @@
                 </div>
             @endunless
 
-            <div
-                x-show="state.length"
+            <template
+                x-if="state.length"
                 x-cloak
-                class="relative w-full p-2 overflow-hidden"
             >
-                <div class="flex flex-wrap gap-1">
+                <div class="relative w-full p-2 overflow-hidden flex flex-wrap gap-1">
                     <template class="hidden" x-for="tag in state" x-bind:key="tag">
                         <button
                             @unless ($isDisabled)
@@ -97,7 +96,7 @@
                         </button>
                     </template>
                 </div>
-            </div>
+            </template>
         </div>
     </div>
 </x-dynamic-component>

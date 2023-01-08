@@ -13,7 +13,7 @@
         href="{{ $url }}"
         @if ($shouldOpenUrlInNewTab) target="_blank" @endif
         x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
-        @if (\Filament\Navigation\Sidebar::$isCollapsibleOnDesktop)
+        @if (filament()->isSidebarCollapsibleOnDesktop())
             x-data="{ tooltip: {} }"
             x-init="
                 Alpine.effect(() => {
@@ -44,7 +44,7 @@
         />
 
         <div class="flex flex-1"
-            @if (\Filament\Navigation\Sidebar::$isCollapsibleOnDesktop)
+            @if (filament()->isSidebarCollapsibleOnDesktop())
                 x-show="$store.sidebar.isOpen"
             @endif
             class="flex flex-1"

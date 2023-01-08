@@ -109,13 +109,17 @@ This command will create two files - a widget class in the `/Widgets` directory 
 
 ## Disabling the default widgets
 
-By default, two widgets are displayed on the dashboard. These widgets can be disabled by updating the `widgets.register` property of the [configuration](installation#publishing-configuration) file:
+By default, two widgets are displayed on the dashboard. These widgets can be disabled by updating the `widgets()` array of the [configuration](configuration):
 
 ```php
-'widgets' => [
-    // ...
-    'register' => [],
-],
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->widgets([]);
+}
 ```
 
 ## Customizing the dashboard page
@@ -135,13 +139,17 @@ class Dashboard extends BasePage
 }
 ```
 
-Finally, remove the original `Dashboard` class from the [configuration file](installation#publishing-configuration):
+Finally, remove the original `Dashboard` class from [configuration file](configuration):
 
 ```php
-'pages' => [
-    // ...
-    'register' => [],
-],
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->pages([]);
+}
 ```
 
 ### Creating more than one dashboard

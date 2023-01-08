@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class UiAvatarsProvider implements Contracts\AvatarProvider
 {
-    public function get(Model | Authenticatable $user): string
+    public function get(Model | Authenticatable $record): string
     {
-        $name = str(Filament::getUserName($user))
+        $name = str(Filament::getNameForDefaultAvatar($record))
             ->trim()
             ->explode(' ')
             ->map(fn (string $segment): string => filled($segment) ? mb_substr($segment, 0, 1) : '')
