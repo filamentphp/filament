@@ -211,7 +211,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function makeTable(): Table
     {
         return $this->makeBaseTable()
-            ->query(fn () => $this->getTableQuery())
+            ->query(fn (): Builder => $this->getTableQuery())
             ->modelLabel($this->getModelLabel() ?? static::getResource()::getModelLabel())
             ->pluralModelLabel($this->getPluralModelLabel() ?? static::getResource()::getPluralModelLabel())
             ->recordAction(function (Model $record, Table $table): ?string {
