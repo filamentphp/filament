@@ -62,12 +62,23 @@
         @endphp
 
         <button
+            @class([
+                'block w-full',
+                match ($alignment) {
+                    'start' => 'text-start',
+                    'center' => 'text-center',
+                    'end' => 'text-end',
+                    'left' => 'text-left',
+                    'right' => 'text-right',
+                    'justify' => 'text-justify',
+                    default => 'text-start',
+                }
+            ])
             wire:click="{{ $wireClickAction }}"
             wire:target="{{ $wireClickAction }}"
             wire:loading.attr="disabled"
             wire:loading.class="cursor-wait opacity-70"
             type="button"
-            class="block w-full text-start"
         >
             {{ $slot }}
         </button>
