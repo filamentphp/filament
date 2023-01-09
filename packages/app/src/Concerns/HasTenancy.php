@@ -44,7 +44,7 @@ trait HasTenancy
         return $this;
     }
 
-    public function tenant(?string $model, ?string $slugAttribute = null, ?string $ownershipRelationship): static
+    public function tenant(?string $model, ?string $slugAttribute = null, ?string $ownershipRelationship = null): static
     {
         $this->tenantModel = $model;
         $this->tenantSlugAttribute = $slugAttribute;
