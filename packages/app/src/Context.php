@@ -27,6 +27,7 @@ class Context
     use Concerns\HasSidebar;
     use Concerns\HasTenancy;
     use Concerns\HasTheme;
+    use Concerns\HasTopNavigation;
     use Concerns\HasUserMenu;
 
     protected bool $isDefault = false;

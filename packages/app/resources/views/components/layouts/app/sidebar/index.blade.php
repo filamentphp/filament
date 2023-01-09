@@ -1,16 +1,23 @@
+@props([
+    'navigation',
+])
+
 <aside
     x-data="{}"
     @if (filament()->isSidebarCollapsibleOnDesktop())
         x-cloak
         x-bind:class="$store.sidebar.isOpen ? 'filament-sidebar-open translate-x-0 max-w-[20em] lg:max-w-[var(--sidebar-width)]' : '-translate-x-full lg:translate-x-0 lg:max-w-[var(--collapsed-sidebar-width)] rtl:lg:-translate-x-0 rtl:translate-x-full'"
     @else
-        x-cloak="-lg"
-        x-bind:class="$store.sidebar.isOpen ? 'filament-sidebar-open translate-x-0' : '-translate-x-full  rtl:translate-x-full'"
+        @if (filament()->hasTopNavigation())
+            x-cloak
+        @else
+            x-cloak="-lg"
+        @endif
+        x-bind:class="$store.sidebar.isOpen ? 'filament-sidebar-open translate-x-0' : '-translate-x-full rtl:translate-x-full'"
     @endif
     @class([
         'filament-sidebar fixed inset-y-0 left-0 z-20 flex h-screen w-[var(--sidebar-width)] flex-col overflow-hidden bg-white transition-all rtl:left-auto rtl:right-0 dark:bg-gray-800 lg:bg-transparent lg:dark:bg-transparent lg:z-0',
-        'lg:translate-x-0' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop()),
-        'lg:translate-x-0 rtl:lg:-translate-x-0' => ! filament()->isSidebarFullyCollapsibleOnDesktop(),
+        'lg:translate-x-0 rtl:lg:-translate-x-0' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
     ])
 >
     <header class="filament-sidebar-header border-b h-[4rem] shrink-0 flex items-center justify-center relative bg-white dark:bg-gray-800 dark:border-gray-700 lg:border-r rtl:lg:border-r-0 rtl:lg:border-l">
@@ -90,8 +97,6 @@
         @endif
 
         @php
-            $navigation = filament()->getNavigation();
-
             $collapsedNavigationGroupLabels = collect($navigation)
                 ->filter(fn (\Filament\Navigation\NavigationGroup $group): bool => $group->isCollapsed())
                 ->map(fn (\Filament\Navigation\NavigationGroup $group): string => $group->getLabel())

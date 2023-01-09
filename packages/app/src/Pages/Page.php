@@ -95,9 +95,10 @@ abstract class Page extends BasePage
         return static::$activeNavigationIcon ?? static::getNavigationIcon();
     }
 
-    public static function getNavigationIcon(): string
+    public static function getNavigationIcon(): ?string
     {
-        return static::$navigationIcon ?? 'heroicon-o-document-text';
+        return static::$navigationIcon ??
+            (filament()->hasTopNavigation() ? null : 'heroicon-o-document-text');
     }
 
     public static function getNavigationLabel(): string

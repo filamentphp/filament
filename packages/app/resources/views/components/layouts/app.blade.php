@@ -1,3 +1,7 @@
+@php
+    $navigation = filament()->getNavigation();
+@endphp
+
 <x-filament::layouts.base :livewire="$livewire">
     <div class="filament-app-layout flex w-full min-h-screen overflow-x-clip">
         <div
@@ -9,7 +13,7 @@
             class="filament-sidebar-close-overlay fixed inset-0 z-20 w-full h-full bg-gray-900/50 lg:hidden"
         ></div>
 
-        <x-filament::layouts.app.sidebar />
+        <x-filament::layouts.app.sidebar :navigation="$navigation" />
 
         <div
             @if (filament()->isSidebarCollapsibleOnDesktop())
@@ -27,12 +31,15 @@
                 x-bind:style="'display: flex'" {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
             @endif
             @class([
-                'filament-main flex-col gap-y-6 w-screen flex-1 rtl:lg:pl-0',
+                'filament-main flex-col space-y-6 w-screen flex-1 rtl:lg:pl-0',
                 'hidden h-full transition-all' => filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop(),
-                'flex lg:pl-[var(--sidebar-width)] rtl:lg:pr-[var(--sidebar-width)]' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop()),
+                'flex lg:pl-[var(--sidebar-width)] rtl:lg:pr-[var(--sidebar-width)]' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
             ])
         >
-            <x-filament::topbar :breadcrumbs="$livewire->getBreadcrumbs()" />
+            <x-filament::layouts.app.topbar
+                :breadcrumbs="$livewire->getBreadcrumbs()"
+                :navigation="$navigation"
+            />
 
             <div class="filament-main-content flex-1 w-full max-w-7xl px-4 mx-auto md:px-6 lg:px-8">
                 {{ filament()->renderHook('content.start') }}
