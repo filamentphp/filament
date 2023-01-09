@@ -15,6 +15,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
     use Concerns\CanBeCollapsed;
     use Concerns\CanLimitItemsLength;
     use Concerns\CanBeCloned;
+    use Concerns\HasContainerGridLayout;
 
     protected string $view = 'forms::components.builder';
 

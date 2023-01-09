@@ -5,6 +5,8 @@
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-action="$getHintAction()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
@@ -47,15 +49,22 @@
         'dark:bg-gray-500/10' => $isInset() && config('forms.dark_mode'),
     ]) }}>
         @if (count($containers))
-            <ul
-                class="space-y-12"
-                wire:sortable
-                wire:end.stop="dispatchFormEvent('builder::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
-            >
+            <ul>
                 @php
                     $hasBlockLabels = $hasBlockLabels();
                     $hasBlockNumbers = $hasBlockNumbers();
                 @endphp
+                <x-filament-support::grid
+                    :default="$getGridColumns('default')"
+                    :sm="$getGridColumns('sm')"
+                    :md="$getGridColumns('md')"
+                    :lg="$getGridColumns('lg')"
+                    :xl="$getGridColumns('xl')"
+                    :two-xl="$getGridColumns('2xl')"
+                    wire:sortable
+                    wire:end.stop="dispatchFormEvent('builder::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
+                    class="gap-6"
+                >
 
                 @foreach ($containers as $uuid => $item)
                     <li
@@ -223,7 +232,7 @@
                             <div
                                 x-show="isCreateButtonVisible"
                                 x-transition
-                                class="absolute inset-x-0 bottom-0 z-10 flex items-center justify-center h-12 -mb-12"
+                                class="absolute inset-x-0 bottom-0 flex items-center justify-center h-12 -mb-12"
                             >
                                 <x-forms::dropdown>
                                     <x-slot name="trigger">
@@ -243,6 +252,7 @@
                         @endif
                     </li>
                 @endforeach
+                </x-filament-support::grid>
             </ul>
         @endif
 
