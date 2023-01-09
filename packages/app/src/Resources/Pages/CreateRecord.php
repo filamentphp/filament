@@ -159,6 +159,7 @@ class CreateRecord extends Page
         if (! $record->isRelation($relationshipName)) {
             $pageClass = static::class;
             $recordClass = $record::class;
+
             throw new Exception("The model [{$recordClass}] does not have a relationship named [{$relationshipName}]. This relationship is required to associate the record with the tenant. You can change the relationship being used by passing it to the [ownershipRelationship] argument of the [tenant()] method in configuration. Alternatively, you can override the [associateRecordWithTenant()] method on the [{$pageClass}] class to associate the record with the tenant in a different way.");
         }
 
