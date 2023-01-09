@@ -19,11 +19,17 @@
                     'filament-main-sidebar-open lg:pl-[var(--sidebar-width)] rtl:lg:pr-[var(--sidebar-width)]': $store.sidebar.isOpen,
                 }"
                 x-bind:style="'display: flex'" {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
+            @elseif (filament()->isSidebarFullyCollapsibleOnDesktop())
+                x-data="{}"
+                x-bind:class="{
+                    'filament-main-sidebar-open lg:pl-[var(--sidebar-width)] rtl:lg:pr-[var(--sidebar-width)]': $store.sidebar.isOpen,
+                }"
+                x-bind:style="'display: flex'" {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
             @endif
             @class([
                 'filament-main flex-col gap-y-6 w-screen flex-1 rtl:lg:pl-0',
-                'hidden h-full transition-all' => filament()->isSidebarCollapsibleOnDesktop(),
-                'flex lg:pl-[var(--sidebar-width)] rtl:lg:pr-[var(--sidebar-width)]' => ! filament()->isSidebarCollapsibleOnDesktop(),
+                'hidden h-full transition-all' => filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop(),
+                'flex lg:pl-[var(--sidebar-width)] rtl:lg:pr-[var(--sidebar-width)]' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop()),
             ])
         >
             <x-filament::topbar :breadcrumbs="$livewire->getBreadcrumbs()" />
