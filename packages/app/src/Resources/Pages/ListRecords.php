@@ -2,13 +2,16 @@
 
 namespace Filament\Resources\Pages;
 
+use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Form;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 
 class ListRecords extends Page implements Tables\Contracts\HasTable
@@ -26,6 +29,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
      * @var array<int | string, string | array<mixed>>
      */
     protected $queryString = [
+        'activeQueryTab' => ['except' => ''],
         'isTableReordering' => ['except' => false],
         'tableFilters',
         'tableGrouping' => ['except' => ''],
@@ -35,9 +39,18 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         'tableSearch' => ['except' => ''],
     ];
 
+    public ?string $activeQueryTab = null;
+
     public function mount(): void
     {
         static::authorizeResourceAccess();
+
+        if (
+            blank($this->activeQueryTab) &&
+            count($queryTabs = $this->getQueryTabs())
+        ) {
+            $this->activeQueryTab = array_key_first($queryTabs);
+        }
     }
 
     public function getBreadcrumb(): ?string
@@ -198,7 +211,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function makeTable(): Table
     {
         return $this->makeBaseTable()
-            ->query($this->getTableQuery() ?? static::getResource()::getEloquentQuery())
+            ->query(fn () => $this->getTableQuery())
             ->modelLabel($this->getModelLabel() ?? static::getResource()::getModelLabel())
             ->pluralModelLabel($this->getPluralModelLabel() ?? static::getResource()::getPluralModelLabel())
             ->recordAction(function (Model $record, Table $table): ?string {
@@ -267,11 +280,44 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->reorderable(condition: static::getResource()::canReorder());
     }
 
+    protected function getTableQuery(): Builder
+    {
+        $query = static::getResource()::getEloquentQuery();
+        $tabs = $this->getQueryTabs();
+
+        if (filled($this->activeQueryTab) && array_key_exists($this->activeQueryTab, $tabs)) {
+            $callback = $tabs[$this->activeQueryTab];
+
+            if ($callback) {
+                $query = app()->call($callback, [
+                    'query' => $query,
+                ]) ?? $query;
+            }
+        }
+
+        return $query;
+    }
+
     /**
      * @return array<int | string, string | Form>
      */
     protected function getForms(): array
     {
         return [];
+    }
+
+    /**
+     * @return array<string, Closure | null>
+     */
+    public function getQueryTabs(): array
+    {
+        return [];
+    }
+
+    public function getLabelFromQueryTabKey(string $key): string
+    {
+        return (string) str($key)
+            ->replace(['_', '-'], ' ')
+            ->ucfirst();
     }
 }
