@@ -4,16 +4,12 @@ return [
 
     'columns' => [
 
-        'color' => [
-
-            'messages' => [
-                'copied' => 'コピーしました',
-            ],
-
-        ],
-
         'tags' => [
             'more' => 'あと:count個あります',
+        ],
+
+        'messages' => [
+            'copied' => 'コピーしました',
         ],
 
     ],

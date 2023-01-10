@@ -4,7 +4,7 @@ title: Sending notifications
 
 > To start, make sure the package is [installed](installation) - `@livewire('notifications')` should be in your Blade layout somewhere.
 
-Notifications are sent using a `Notification` object that's constructed through a fluent API. Calling the `send()` method on the `Notification` object will dispatch the notification and display it in your application. As the session is used to flash notifications, they can be sent from anywhere in your code, not just Livewire components.
+Notifications are sent using a `Notification` object that's constructed through a fluent API. Calling the `send()` method on the `Notification` object will dispatch the notification and display it in your application. As the session is used to flash notifications, they can be sent from anywhere in your code, including JavaScript, not just Livewire components.
 
 ```php
 <?php
@@ -19,7 +19,7 @@ class EditPost extends Component
     public function save(): void
     {
         // ...
-    
+
         Notification::make() // [tl! focus:start]
             ->title('Saved successfully')
             ->success()
@@ -42,11 +42,19 @@ Notification::make()
     ->send();
 ```
 
+Or with JavaScript:
+
+```js
+new Notification()
+    .title('Saved successfully') // [tl! focus]
+    .send()
+```
+
 Markdown text will automatically be rendered if passed to the title.
 
 ## Icon
 
-Optionally, a notification can have an icon that's displayed in front of its content. You may also set a color for the icon, which defaults to the `secondary` color specified in your `tailwind.config.js` file. The icon can be the name of any Blade component. By default, the [Blade Heroicons](https://github.com/blade-ui-kit/blade-heroicons) package is installed, so you may use the name of any [Heroicon](https://heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
+Optionally, a notification can have an icon that's displayed in front of its content. You may also set a color for the icon, which defaults to the `secondary` color specified in your `tailwind.config.js` file. The icon can be the name of any Blade component. By default, the [Blade Heroicons v1](https://github.com/blade-ui-kit/blade-heroicons/tree/1.3.1) package is installed, so you may use the name of any [Heroicons v1](https://v1.heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
 
 ```php
 use Filament\Notifications\Notification;
@@ -56,6 +64,16 @@ Notification::make()
     ->icon('heroicon-o-document-text') // [tl! focus:start]
     ->iconColor('success') // [tl! focus:end]
     ->send();
+```
+
+Or with JavaScript:
+
+```js
+new Notification()
+    .title('Saved successfully')
+    .icon('heroicon-o-document-text') // [tl! focus:start]
+    .iconColor('success') // [tl! focus:end]
+    .send()
 ```
 
 ![Notification with icon](https://user-images.githubusercontent.com/44533235/180996863-1eee77fb-2504-4d70-972d-d120bef631dc.png)
@@ -69,6 +87,15 @@ Notification::make()
     ->title('Saved successfully')
     ->success() // [tl! focus]
     ->send();
+```
+
+Or with JavaScript:
+
+```js
+new Notification()
+    .title('Saved successfully')
+    .success() // [tl! focus]
+    .send()
 ```
 
 ![Success, warning and danger notifications](https://user-images.githubusercontent.com/44533235/180995801-3e706ca6-773b-47a0-9fc6-3e28900a9ea9.png)
@@ -87,6 +114,16 @@ Notification::make()
     ->send();
 ```
 
+Or with JavaScript:
+
+```js
+new Notification()
+    .title('Saved successfully')
+    .success()
+    .duration(5000) // [tl! focus]
+    .send()
+```
+
 If you prefer setting a duration in seconds instead of milliseconds, you can do so:
 
 ```php
@@ -97,6 +134,16 @@ Notification::make()
     ->success()
     ->seconds(5) // [tl! focus]
     ->send();
+```
+
+Or with JavaScript:
+
+```js
+new Notification()
+    .title('Saved successfully')
+    .success()
+    .seconds(5) // [tl! focus]
+    .send()
 ```
 
 You might want some notifications to not automatically close and require the user to close them manually. This can be achieved by making the notification persistent:
@@ -111,6 +158,16 @@ Notification::make()
     ->send();
 ```
 
+Or with JavaScript:
+
+```js
+new Notification()
+    .title('Saved successfully')
+    .success()
+    .persistent() // [tl! focus]
+    .send()
+```
+
 ## Body
 
 Additional notification text can be shown in the body. Similar to the title, it supports Markdown:
@@ -123,6 +180,16 @@ Notification::make()
     ->success()
     ->body('Changes to the **post** have been saved.') // [tl! focus]
     ->send();
+```
+
+Or with JavaScript:
+
+```js
+new Notification()
+    .title('Saved successfully')
+    .success()
+    .body('Changes to the **post** have been saved.') // [tl! focus]
+    .send()
 ```
 
 ![Notification with Markdown body](https://user-images.githubusercontent.com/44533235/180995813-ce93e747-0f66-4fc5-becb-7e535fb80e46.png)
@@ -146,6 +213,22 @@ Notification::make()
             ->color('secondary'),
     ]) // [tl! focus:end]
     ->send();
+```
+
+Or with JavaScript:
+
+```js
+new Notification()
+    .title('Saved successfully')
+    .success()
+    .body('Changes to the **post** have been saved.')
+    .actions([ // [tl! focus:start]
+        new NotificationAction('view')
+            .button(),
+        new NotificationAction('undo')
+            .color('secondary'),
+    ]) // [tl! focus:end]
+    .send()
 ```
 
 ![Notification with actions](https://user-images.githubusercontent.com/44533235/180995819-ed5c78fa-b567-4bc6-9e5c-64fe615c4360.png)
@@ -172,6 +255,24 @@ Notification::make()
     ->send();
 ```
 
+Or with JavaScript:
+
+```js
+new Notification()
+    .title('Saved successfully')
+    .success()
+    .body('Changes to the **post** have been saved.')
+    .actions([
+        new NotificationAction('view')
+            .button()
+            .url('/view') // [tl! focus:start]
+            .openUrlInNewTab(), // [tl! focus:end]
+        new NotificationAction('undo')
+            .color('secondary'),
+    ])
+    .send()
+```
+
 ### Emitting events
 
 Sometimes you want to execute additional code when a notification action is clicked. This can be achieved by setting a Livewire event which should be emitted on clicking the action. You may optionally pass an array of data, which will be available as parameters in the event listener on your Livewire component:
@@ -193,6 +294,25 @@ Notification::make()
             ->emit('undoEditingPost', [$post->id]), // [tl! focus]
     ])
     ->send();
+```
+
+Or with JavaScript:
+
+```js
+new Notification()
+    .title('Saved successfully')
+    .success()
+    .body('Changes to the **post** have been saved.')
+    .actions([
+        new NotificationAction('view')
+            .button()
+            .url('/view')
+            .openUrlInNewTab(),
+        new NotificationAction('undo')
+            .color('secondary')
+            .emit('undoEditingPost'), // [tl! focus]
+    ])
+    .send()
 ```
 
 ### Closing notifications
@@ -217,4 +337,36 @@ Notification::make()
             ->close(), // [tl! focus]
     ])
     ->send();
+```
+
+Or with JavaScript:
+
+```js
+new Notification()
+    .title('Saved successfully')
+    .success()
+    .body('Changes to the **post** have been saved.')
+    .actions([
+        new NotificationAction('view')
+            .button()
+            .url('/view')
+            .openUrlInNewTab(),
+        new NotificationAction('undo')
+            .color('secondary')
+            .emit('undoEditingPost')
+            .close(), // [tl! focus]
+    ])
+    .send()
+```
+
+## Using the JavaScript objects
+
+The JavaScript objects (`Notification` and `NotificationAction`) are assigned to `window.Notification` and `window.NotificationAction`, so they are available in on-page scripts.
+
+You may also import them in a bundled JavaScript file:
+
+```js
+import { Notification, NotificationAction } from '../../vendor/filament/notifications/dist/module.esm'
+
+// ...
 ```

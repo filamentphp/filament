@@ -61,10 +61,16 @@ trait InteractsWithTableQuery
         }
 
         if ($this->searchQuery) {
-            $this->evaluate($this->searchQuery, [
-                'query' => $query,
-                'search' => $search,
-            ]);
+            $whereClause = $isFirst ? 'where' : 'orWhere';
+
+            $query->{$whereClause}(
+                fn ($query) => $this->evaluate($this->searchQuery, [
+                    'query' => $query,
+                    'search' => $search,
+                ]),
+            );
+
+            $isFirst = false;
 
             return $query;
         }

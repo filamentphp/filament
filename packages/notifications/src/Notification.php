@@ -12,14 +12,17 @@ use Filament\Notifications\Concerns\HasDuration;
 use Filament\Notifications\Concerns\HasIcon;
 use Filament\Notifications\Concerns\HasId;
 use Filament\Notifications\Concerns\HasTitle;
+use Filament\Notifications\Events\DatabaseNotificationsSent;
 use Filament\Support\Components\ViewComponent;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\DatabaseNotification as DatabaseNotificationModel;
 use Illuminate\Notifications\Messages\BroadcastMessage;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use PHPUnit\Framework\Assert;
 
 class Notification extends ViewComponent implements Arrayable
 {
@@ -77,7 +80,7 @@ class Notification extends ViewComponent implements Arrayable
         $static->body($data['body'] ?? null);
         $static->duration($data['duration'] ?? null);
         $static->icon($data['icon'] ?? null);
-        $static->iconColor($data['iconColor'] ?? null);
+        $static->iconColor($data['iconColor'] ?? $static->getIconColor());
         $static->title($data['title'] ?? null);
 
         return $static;
@@ -106,7 +109,7 @@ class Notification extends ViewComponent implements Arrayable
         return $this;
     }
 
-    public function sendToDatabase(Model | Authenticatable | Collection | array $users): static
+    public function sendToDatabase(Model | Authenticatable | Collection | array $users, bool $isEventDispatched = false): static
     {
         if (! is_iterable($users)) {
             $users = [$users];
@@ -114,6 +117,10 @@ class Notification extends ViewComponent implements Arrayable
 
         foreach ($users as $user) {
             $user->notify($this->toDatabase());
+
+            if ($isEventDispatched) {
+                DatabaseNotificationsSent::dispatch($user);
+            }
         }
 
         return $this;
@@ -143,7 +150,7 @@ class Notification extends ViewComponent implements Arrayable
     public function getDatabaseMessage(): array
     {
         $data = $this->toArray();
-        unset($data['duration']);
+        $data['duration'] = 'persistent';
         $data['format'] = 'filament';
         unset($data['id']);
 
@@ -191,5 +198,28 @@ class Notification extends ViewComponent implements Arrayable
         $static->id($notification->getKey());
 
         return $static;
+    }
+
+    public static function assertNotified(Notification | string $notification = null): void
+    {
+        $notifications = session()->get('filament.notifications');
+
+        Assert::assertIsArray($notifications);
+
+        $expectedNotification = Arr::last($notifications);
+
+        Assert::assertIsArray($expectedNotification);
+
+        if (blank($notification)) {
+            return;
+        }
+
+        if ($notification instanceof Notification) {
+            Assert::assertSame($expectedNotification, $notification->toArray());
+
+            return;
+        }
+
+        Assert::assertSame($expectedNotification['title'], $notification);
     }
 }

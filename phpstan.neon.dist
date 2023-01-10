@@ -2,8 +2,3 @@ parameters:
     level: 5
     paths:
         - packages
-    templatePaths:
-        - packages/admin/resources/views
-        - packages/forms/resources/views
-        - packages/spatie-laravel-settings-plugin/resources/views
-        - packages/tables/resources/views

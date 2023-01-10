@@ -5,6 +5,8 @@
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-action="$getHintAction()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
@@ -21,7 +23,7 @@
             'dark:bg-gray-700 dark:border-gray-600 dark:divide-gray-600' => config('forms.dark_mode'),
         ])>
             <table @class([
-                'w-full text-left rtl:text-right divide-y table-auto',
+                'w-full text-start divide-y table-auto',
                 'dark:divide-gray-700' => config('forms.dark_mode'),
             ])>
                 <thead>
@@ -30,14 +32,14 @@
                         'dark:bg-gray-800/60' => config('forms.dark_mode'),
                     ])>
                         <th @class([
-                            'px-4 py-2 whitespace-nowrap font-medium text-sm text-gray-600',
+                            'px-4 py-2 whitespace-nowrap font-medium text-start text-sm text-gray-600',
                             'dark:text-gray-300' => config('forms.dark_mode'),
                         ]) scope="col">
                             {{ $getKeyLabel() }}
                         </th>
 
                         <th @class([
-                            'px-4 py-2 whitespace-nowrap font-medium text-sm text-gray-600',
+                            'px-4 py-2 whitespace-nowrap font-medium text-start text-sm text-gray-600',
                             'dark:text-gray-300' => config('forms.dark_mode'),
                         ]) scope="col">
                             {{ $getValueLabel() }}
@@ -72,7 +74,7 @@
                                 x-bind:x-sortable-item="row.key"
                             @endif
                             @class([
-                                'divide-x',
+                                'divide-x rtl:divide-x-reverse',
                                 'dark:divide-gray-600' => config('forms.dark_mode'),
                             ])
                         >
@@ -109,12 +111,12 @@
                                             <button
                                                 x-sortable-handle
                                                 type="button"
-                                                class="text-gray-600 hover:text-gray-700"
+                                                class="text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                                             >
                                                 <x-heroicon-o-switch-vertical class="w-4 h-4" />
 
                                                 <span class="sr-only">
-                                                    {{ $getDeleteButtonLabel() }}
+                                                    {{ $getReorderButtonLabel() }}
                                                 </span>
                                             </button>
                                         @endif

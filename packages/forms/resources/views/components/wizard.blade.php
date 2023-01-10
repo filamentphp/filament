@@ -10,6 +10,8 @@
         step: null,
 
         init: function () {
+            this.$watch('step', () => this.updateQueryString())
+        
             this.step = this.getSteps()[{{ $getStartStep() }} - 1]
         },
 
@@ -22,6 +24,7 @@
 
             this.step = this.getSteps()[nextStepIndex]
 
+            this.autofocusFields()
             this.scrollToTop()
         },
 
@@ -34,11 +37,16 @@
 
             this.step = this.getSteps()[previousStepIndex]
 
+            this.autofocusFields()
             this.scrollToTop()
         },
 
         scrollToTop: function () {
             this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        },
+
+        autofocusFields: function () {
+            $nextTick(() => this.$refs[`step-${this.step}`].querySelector('[autofocus]')?.focus())
         },
 
         getStepIndex: function (step) {
@@ -57,10 +65,21 @@
             return (this.getStepIndex(this.step) + 1) >= this.getSteps().length
         },
 
-        isStepClickable: function(step, index) {
+        isStepAccessible: function(step, index) {
             return @js($isSkippable()) || (this.getStepIndex(step) > index)
         },
 
+        updateQueryString: function () {
+            if (! @js($isStepPersistedInQueryString())) {
+                return
+            }
+            
+            const url = new URL(window.location.href)
+            url.searchParams.set(@js($getStepQueryStringKey()), this.step)
+
+            history.pushState(null, document.title, url.toString())
+        },
+        
     }"
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $getStatePath() }}') nextStep()"
     x-cloak
@@ -89,16 +108,16 @@
         ])
     >
         @foreach ($getChildComponentContainer()->getComponents() as $step)
-            <li class="group relative overflow-hidden md:flex-1">
+            <li class="relative overflow-hidden group md:flex-1">
                 <button
                     type="button"
-                    x-on:click="if (isStepClickable(step, {{ $loop->index }})) step = '{{ $step->getId() }}'"
+                    x-on:click="if (isStepAccessible(step, {{ $loop->index }})) step = '{{ $step->getId() }}'"
                     x-bind:aria-current="getStepIndex(step) === {{ $loop->index }} ? 'step' : null"
                     x-bind:class="{
-                        'cursor-not-allowed pointer-events-none': ! isStepClickable(step, {{ $loop->index }}),
+                        'cursor-not-allowed pointer-events-none': ! isStepAccessible(step, {{ $loop->index }}),
                     }"
                     role="step"
-                    class="flex items-center h-full text-left rtl:text-right w-full"
+                    class="flex items-center w-full h-full text-start"
                 >
                     <div
                         x-bind:class="{
@@ -109,7 +128,7 @@
                         aria-hidden="true"
                     ></div>
 
-                    <div class="px-5 py-4 flex gap-3 items-center text-sm font-medium">
+                    <div class="flex items-center gap-3 px-5 py-4 text-sm font-medium">
                         <div class="flex-shrink-0">
                             <div
                                 x-bind:class="{
@@ -118,7 +137,7 @@
                                     'border-primary-500': getStepIndex(step) === {{ $loop->index }},
                                     'border-gray-300 @if (config('forms.dark_mode')) dark:border-gray-500 @endif': getStepIndex(step) < {{ $loop->index }},
                                 }"
-                                class="w-10 h-10 flex items-center justify-center rounded-full"
+                                class="flex items-center justify-center w-10 h-10 rounded-full"
                             >
                                 <x-heroicon-o-check
                                     x-show="getStepIndex(step) > {{ $loop->index }}"
@@ -169,7 +188,7 @@
                 </button>
 
                 @if (! $loop->first)
-                    <div class="hidden absolute top-0 left-0 w-3 inset-0 md:block" aria-hidden="true">
+                    <div class="absolute inset-0 top-0 left-0 hidden w-3 md:block" aria-hidden="true">
                         <svg @class([
                             'h-full w-full text-gray-300 rtl:rotate-180',
                             'dark:text-gray-700' => config('forms.dark_mode'),

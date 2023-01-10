@@ -4,10 +4,10 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Exception;
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -17,16 +17,21 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
 
-class Select extends Field
+class Select extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
+    use Concerns\CanAllowHtml;
+    use Concerns\CanBePreloaded;
+    use Concerns\CanBeSearchable;
     use Concerns\CanDisableOptions;
     use Concerns\CanDisablePlaceholderSelection;
+    use Concerns\CanLimitItemsLength;
     use Concerns\HasAffixes {
         getActions as getBaseActions;
         getSuffixAction as getBaseSuffixAction;
     }
     use Concerns\HasExtraInputAttributes;
-    use Concerns\CanLimitItemsLength;
+    use Concerns\HasNestedRecursiveValidationRules;
+    use Concerns\HasLoadingMessage;
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
@@ -47,27 +52,15 @@ class Select extends Field
 
     protected ?Closure $getSearchResultsUsing = null;
 
-    protected bool | Closure $isHtmlAllowed = false;
-
-    protected bool | Closure $isSearchable = false;
-
     protected ?array $searchColumns = null;
-
-    protected string | Closure | null $loadingMessage = null;
 
     protected string | Closure | null $maxItemsMessage = null;
 
-    protected string | Htmlable | Closure | null $noSearchResultsMessage = null;
-
-    protected string | Closure | null $searchingMessage = null;
-
-    protected string | Htmlable | Closure | null $searchPrompt = null;
+    protected string | Closure | null $position = null;
 
     protected string | Closure | null $relationshipTitleColumnName = null;
 
     protected ?Closure $getOptionLabelFromRecordUsing = null;
-
-    protected bool | Closure $isPreloaded = false;
 
     protected string | Closure | null $relationship = null;
 
@@ -111,20 +104,7 @@ class Select extends Field
             return $labels;
         });
 
-        $this->loadingMessage(__('forms::components.select.loading_message'));
-        $this->maxItemsMessage(__('forms::components.select.max_items_message'));
-        $this->noSearchResultsMessage(__('forms::components.select.no_search_results_message'));
-        $this->searchingMessage(__('forms::components.select.searching_message'));
-        $this->searchPrompt(__('forms::components.select.search_prompt'));
-
         $this->placeholder(__('forms::components.select.placeholder'));
-    }
-
-    public function allowHtml(bool | Closure $condition = true): static
-    {
-        $this->isHtmlAllowed = $condition;
-
-        return $this;
     }
 
     public function boolean(?string $trueLabel = null, ?string $falseLabel = null, ?string $placeholder = null): static
@@ -217,13 +197,14 @@ class Select extends Field
         $action = Action::make($this->getCreateOptionActionName())
             ->component($this)
             ->form($actionFormSchema)
-            ->action(static function (Select $component, $data) {
+            ->action(static function (Select $component, array $data, ComponentContainer $form) {
                 if (! $component->getCreateOptionUsing()) {
                     throw new Exception("Select field [{$component->getStatePath()}] must have a [createOptionUsing()] closure set.");
                 }
 
                 $createdOptionKey = $component->evaluate($component->getCreateOptionUsing(), [
                     'data' => $data,
+                    'form' => $form,
                 ]);
 
                 $state = $component->isMultiple() ?
@@ -294,9 +275,9 @@ class Select extends Field
         return $this;
     }
 
-    public function loadingMessage(string | Closure | null $message): static
+    public function position(string | Closure | null $position): static
     {
-        $this->loadingMessage = $message;
+        $this->position = $position;
 
         return $this;
     }
@@ -308,32 +289,16 @@ class Select extends Field
         return $this;
     }
 
-    public function noSearchResultsMessage(string | Htmlable | Closure | null $message): static
-    {
-        $this->noSearchResultsMessage = $message;
-
-        return $this;
-    }
-
-    public function searchingMessage(string | Closure | null $message): static
-    {
-        $this->searchingMessage = $message;
-
-        return $this;
-    }
-
-    public function searchPrompt(string | Htmlable | Closure | null $message): static
-    {
-        $this->searchPrompt = $message;
-
-        return $this;
-    }
-
     public function optionsLimit(int | Closure $limit): static
     {
         $this->optionsLimit = $limit;
 
         return $this;
+    }
+
+    public function getPosition(): ?string
+    {
+        return $this->evaluate($this->position);
     }
 
     public function getOptionLabel(): ?string
@@ -354,31 +319,6 @@ class Select extends Field
         }
 
         return $labels;
-    }
-
-    public function getNoSearchResultsMessage(): string | Htmlable
-    {
-        return $this->evaluate($this->noSearchResultsMessage);
-    }
-
-    public function getSearchPrompt(): string | Htmlable
-    {
-        return $this->evaluate($this->searchPrompt);
-    }
-
-    public function getLoadingMessage(): string
-    {
-        return $this->evaluate($this->loadingMessage);
-    }
-
-    public function getMaxItemsMessage(): string
-    {
-        return $this->evaluate($this->maxItemsMessage);
-    }
-
-    public function getSearchingMessage(): string
-    {
-        return $this->evaluate($this->searchingMessage);
     }
 
     public function getSearchColumns(): ?array
@@ -434,11 +374,6 @@ class Select extends Field
             ->all();
     }
 
-    public function isHtmlAllowed(): bool
-    {
-        return $this->evaluate($this->isHtmlAllowed);
-    }
-
     public function isMultiple(): bool
     {
         return $this->evaluate($this->isMultiple);
@@ -447,13 +382,6 @@ class Select extends Field
     public function isSearchable(): bool
     {
         return $this->evaluate($this->isSearchable) || $this->isMultiple();
-    }
-
-    public function preload(bool | Closure $condition = true): static
-    {
-        $this->isPreloaded = $condition;
-
-        return $this;
     }
 
     public function relationship(string | Closure $relationshipName, string | Closure $titleColumnName, ?Closure $callback = null): static
@@ -509,9 +437,9 @@ class Select extends Field
                 ->toArray();
         });
 
-        $this->options(static function (Select $component) use ($callback): array {
+        $this->options(static function (Select $component) use ($callback): ?array {
             if (($component->isSearchable()) && ! $component->isPreloaded()) {
-                return [];
+                return null;
             }
 
             $relationship = $component->getRelationship();
@@ -528,7 +456,11 @@ class Select extends Field
                 $relationshipQuery->orderBy($component->getRelationshipTitleColumnName());
             }
 
-            $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
+            if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
+                $keyName = $relationship->getRelated()->getKeyName();
+            } else {
+                $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
+            }
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
@@ -660,10 +592,12 @@ class Select extends Field
             $record->save();
         });
 
-        $this->createOptionUsing(static function (Select $component, array $data) {
+        $this->createOptionUsing(static function (Select $component, array $data, ComponentContainer $form) {
             $record = $component->getRelationship()->getRelated();
             $record->fill($data);
             $record->save();
+
+            $form->model($record)->saveRelationships();
 
             return $record->getKey();
         });
@@ -760,11 +694,6 @@ class Select extends Field
         return filled($this->getRelationshipName());
     }
 
-    public function isPreloaded(): bool
-    {
-        return $this->evaluate($this->isPreloaded);
-    }
-
     public function hasDynamicOptions(): bool
     {
         if ($this->hasRelationship()) {
@@ -795,5 +724,14 @@ class Select extends Field
     public function getOptionsLimit(): int
     {
         return $this->evaluate($this->optionsLimit);
+    }
+
+    public function getMaxItemsMessage(): string
+    {
+        $maxItems = $this->getMaxItems();
+
+        return $this->evaluate($this->maxItemsMessage) ?? trans_choice('forms::components.select.max_items_message', $maxItems, [
+            ':count' => $maxItems,
+        ]);
     }
 }

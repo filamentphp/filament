@@ -27,7 +27,7 @@ class ForceDeleteBulkAction extends BulkAction
 
         $this->modalButton(__('filament-support::actions/force-delete.multiple.modal.actions.delete.label'));
 
-        $this->successNotificationMessage(__('filament-support::actions/force-delete.multiple.messages.deleted'));
+        $this->successNotificationTitle(__('filament-support::actions/force-delete.multiple.messages.deleted'));
 
         $this->color('danger');
 

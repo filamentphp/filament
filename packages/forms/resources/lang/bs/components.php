@@ -8,12 +8,24 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'Kloniraj',
+            ],
+
             'create_item' => [
                 'label' => 'Dodaj :label',
             ],
 
+            'create_item_between' => [
+                'label' => 'Ubaci',
+            ],
+
             'delete_item' => [
                 'label' => 'Izbriši',
+            ],
+
+            'move_item' => [
+                'label' => 'Pomjeri',
             ],
 
             'move_item_down' => [
@@ -44,6 +56,22 @@ return [
 
     ],
 
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Odznači sve',
+            ],
+
+            'select_all' => [
+                'label' => 'Označi sve',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [
@@ -56,12 +84,16 @@ return [
                 'label' => 'Izbriši red',
             ],
 
+            'reorder' => [
+                'label' => 'Preuredi red',
+            ],
+
         ],
 
         'fields' => [
 
             'key' => [
-                'label' => 'Key',
+                'label' => 'Ključ',
             ],
 
             'value' => [
@@ -75,16 +107,16 @@ return [
     'markdown_editor' => [
 
         'toolbar_buttons' => [
-            'attach_files' => 'Attach files',
+            'attach_files' => 'Priloži fajlove',
             'bold' => 'Bold',
             'bullet_list' => 'Bullet list',
-            'code_block' => 'Code block',
-            'edit' => 'Edit',
-            'italic' => 'Italic',
+            'code_block' => 'Blok koda',
+            'edit' => 'Uredi',
+            'italic' => 'Kurziv',
             'link' => 'Link',
-            'ordered_list' => 'Numbered list',
-            'preview' => 'Preview',
-            'strike' => 'Strikethrough',
+            'ordered_list' => 'Numerisana lista',
+            'preview' => 'Prethodan pregled',
+            'strike' => 'Precrtano',
         ],
 
     ],
@@ -101,6 +133,14 @@ return [
 
             'delete_item' => [
                 'label' => 'Izbriši',
+            ],
+
+            'clone_item' => [
+                'label' => 'Kloniraj',
+            ],
+
+            'move_item' => [
+                'label' => 'Pomjeriti',
             ],
 
             'move_item_down' => [
@@ -139,7 +179,7 @@ return [
 
                 'buttons' => [
                     'link' => 'Link',
-                    'unlink' => 'Unlink',
+                    'unlink' => 'Otkačite link',
                 ],
 
                 'label' => 'URL',
@@ -151,20 +191,20 @@ return [
         ],
 
         'toolbar_buttons' => [
-            'attach_files' => 'Attach files',
-            'blockquote' => 'Blockquote',
+            'attach_files' => 'Priloži fajlove',
+            'blockquote' => 'Blok citat',
             'bold' => 'Bold',
             'bullet_list' => 'Bullet list',
-            'code_block' => 'Code block',
-            'h1' => 'Title',
-            'h2' => 'Heading',
-            'h3' => 'Subheading',
-            'italic' => 'Italic',
+            'code_block' => 'Blok koda',
+            'h1' => 'Titula',
+            'h2' => 'Naslov',
+            'h3' => 'Podnaslov',
+            'italic' => 'Kurziv',
             'link' => 'Link',
-            'ordered_list' => 'Numbered list',
-            'redo' => 'Redo',
-            'strike' => 'Strikethrough',
-            'undo' => 'Undo',
+            'ordered_list' => 'Numerisana lista',
+            'redo' => 'Ponovo uradite',
+            'strike' => 'Precrtano',
+            'undo' => 'Poništi',
         ],
 
     ],
@@ -200,13 +240,15 @@ return [
 
         'loading_message' => 'Učitavanje ...',
 
+        'max_items_message' => 'Mogu se odabrati samo :count.',
+
         'no_search_results_message' => 'Nijedna opcija ne odgovara vašoj pretrazi.',
 
-        'placeholder' => 'Izaberite opciju',
+        'placeholder' => 'Izaberi opciju',
 
         'searching_message' => 'Traženje ...',
 
-        'search_prompt' => 'Počnite da kucate da biste pretraživali ...',
+        'search_prompt' => 'Počni da kucate da biste pretraživali ...',
 
     ],
 

@@ -5,6 +5,8 @@
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
+    :hint-action="$getHintAction()"
+    :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :required="$isRequired()"
     :state-path="$getStatePath()"
@@ -16,7 +18,7 @@
                 x-data="{ state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }} }"
                 role="switch"
                 aria-checked="false"
-                x-bind:aria-checked="state.toString()"
+                x-bind:aria-checked="state?.toString()"
                 x-on:click="state = ! state"
                 x-bind:class="{
                     '{{ match ($getOnColor()) {

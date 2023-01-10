@@ -17,6 +17,6 @@ trait HasSize
 
     public function getSize(): ?string
     {
-        return $this->size;
+        return $this->evaluate($this->size);
     }
 }

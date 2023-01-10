@@ -17,4 +17,11 @@ class EditPost extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    public function refreshTitle()
+    {
+        $this->refreshFormData([
+            'title',
+        ]);
+    }
 }

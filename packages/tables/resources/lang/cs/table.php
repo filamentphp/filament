@@ -2,6 +2,18 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 'a 1 další|a :count další| a :count dalších',
+        ],
+
+        'messages' => [
+            'copied' => 'Zkopírováno',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -21,6 +33,10 @@ return [
 
             'records_per_page' => [
                 'label' => 'na stránku',
+
+                'options' => [
+                    'all' => 'Vše',
+                ],
             ],
 
         ],
@@ -45,6 +61,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Dokončit změnu pořadí položek',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Změnit pořadí položek',
+        ],
+
         'filter' => [
             'label' => 'Filtrovat',
         ],
@@ -67,11 +91,22 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Odstranit filtr',
+            ],
+
+            'remove_all' => [
+                'label' => 'Odstranit všechny filtry',
+                'tooltip' => 'Odstranit všechny filtry',
+            ],
+
             'reset' => [
                 'label' => 'Resetovat filtry',
             ],
 
         ],
+
+        'indicator' => 'Aktivní filtry',
 
         'multi_select' => [
             'placeholder' => 'Vše',
@@ -81,7 +116,21 @@ return [
             'placeholder' => 'Vše',
         ],
 
+        'trashed' => [
+
+            'label' => 'Smazané položky',
+
+            'only_trashed' => 'Pouze smazané položky',
+
+            'with_trashed' => 'Včetně smazaných položek',
+
+            'without_trashed' => 'Bez smazaných položek',
+
+        ],
+
     ],
+
+    'reorder_indicator' => 'Vyberte a přesuňte položky.',
 
     'selection_indicator' => [
 
@@ -95,6 +144,29 @@ return [
 
             'deselect_all' => [
                 'label' => 'Odznačit všechny',
+            ],
+
+        ],
+
+    ],
+
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Seřadit podle',
+            ],
+
+            'direction' => [
+
+                'label' => 'Směr řazení',
+
+                'options' => [
+                    'asc' => 'Vzestupně',
+                    'desc' => 'Sestupně',
+                ],
+
             ],
 
         ],

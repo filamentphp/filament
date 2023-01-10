@@ -48,7 +48,7 @@ trait CanDeleteRecords
     }
 
     /**
-     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     * @deprecated Use `->successNotificationTitle()` on the action instead.
      */
     protected function getDeletedNotificationMessage(): ?string
     {

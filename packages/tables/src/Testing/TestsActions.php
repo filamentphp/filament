@@ -530,7 +530,7 @@ class TestsActions
         };
     }
 
-    public function assertTableActionHeld(): Closure
+    public function assertTableActionHalted(): Closure
     {
         return function (string $name): static {
             $name = $this->parseActionName($name);
@@ -542,6 +542,14 @@ class TestsActions
 
             return $this;
         };
+    }
+
+    /**
+     * @deprecated Use `->assertTableActionHalted()` instead.
+     */
+    public function assertTableActionHeld(): Closure
+    {
+        return $this->assertTableActionHalted();
     }
 
     public function assertHasTableActionErrors(): Closure

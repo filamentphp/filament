@@ -7,6 +7,8 @@ use Filament\GlobalSearch\GlobalSearchResults;
 use Filament\Http\Livewire\GlobalSearch;
 use Filament\Tests\Admin\GlobalSearch\TestCase;
 use Filament\Tests\Models\Post;
+use Illuminate\Database\Eloquent\Factories\Sequence;
+use Illuminate\Support\Str;
 use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
@@ -23,6 +25,28 @@ it('can retrieve search results', function () {
         ->set('search', $post->title)
         ->assertDispatchedBrowserEvent('open-global-search-results')
         ->assertSee($post->title);
+});
+
+it('can retrieve limited search results', function () {
+    $title = Str::random();
+
+    $posts = Post::factory()
+        ->count(4)
+        ->state(new Sequence(
+            ['title' => "{$title} 0"],
+            ['title' => "{$title} 1"],
+            ['title' => "{$title} 2"],
+            ['title' => "{$title} 3"],
+        ))
+        ->create();
+
+    livewire(GlobalSearch::class)
+        ->set('search', $title)
+        ->assertDispatchedBrowserEvent('open-global-search-results')
+        ->assertSee($posts[0]->title)
+        ->assertSee($posts[1]->title)
+        ->assertSee($posts[2]->title)
+        ->assertDontSee($posts[3]->title);
 });
 
 it('can retrieve results via custom search provider', function () {

@@ -29,7 +29,7 @@ namespace Livewire\Testing {
 
         public function assertTableActionDisabled(string $name, $record = null): static {}
 
-        public function assertTableActionHeld(string $name): static {}
+        public function assertTableActionHalted(string $name): static {}
 
         public function assertHasTableActionErrors(array $keys = []): static {}
 
@@ -89,7 +89,7 @@ namespace Livewire\Testing {
 
         public function assertTableActionShouldNotOpenUrlInNewTab(string $name): static {}
 
-        public function assertTableBulkActionHeld(string $name): static {}
+        public function assertTableBulkActionHalted(string $name): static {}
 
         public function assertHasTableBulkActionErrors(array $keys = []): static {}
 
@@ -108,6 +108,22 @@ namespace Livewire\Testing {
         public function assertTableColumnStateSet(string $name, $value, $record): static {}
 
         public function assertTableColumnStateNotSet(string $name, $value, $record): static {}
+
+        public function assertTableColumnFormattedStateSet(string $name, $value, $record): static {}
+
+        public function assertTableColumnFormattedStateNotSet(string $name, $value, $record): static {}
+
+        public function assertTableColumnHasExtraAttributes(string $name, $value, $record): static {}
+
+        public function assertTableColumnDoesNotHaveExtraAttributes(string $name, $value, $record): static {}
+
+        public function assertTableColumnHasDescription(string $name, $description, $record, $position = 'below'): static {}
+
+        public function assertTableColumnDoesNotHaveDescription(string $name, $description, $record, $position = 'below'): static {}
+
+        public function assertSelectColumnHasOptions(string $name, array $options, $record): static {}
+
+        public function assertSelectColumnDoesNotHaveOptions(string $name, array $options, $record): static {}
 
         public function sortTable(?string $name = null, ?string $direction = null): static {}
 

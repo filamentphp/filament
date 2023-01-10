@@ -40,6 +40,7 @@ export default (Alpine) => {
             imageResizeMode,
             imageResizeTargetHeight,
             imageResizeTargetWidth,
+            imageResizeUpscale,
             isAvatar,
             loadingIndicatorPosition,
             locale,
@@ -52,6 +53,7 @@ export default (Alpine) => {
             removeUploadedFileUsing,
             reorderUploadedFilesUsing,
             shouldAppendFiles,
+            shouldOrientImageFromExif,
             shouldTransformImage,
             state,
             uploadButtonPosition,
@@ -78,6 +80,7 @@ export default (Alpine) => {
                         acceptedFileTypes,
                         allowPaste: false,
                         allowReorder: canReorder,
+                        allowImageExifOrientation: shouldOrientImageFromExif,
                         allowImagePreview: canPreview,
                         allowVideoPreview: canPreview,
                         allowAudioPreview: canPreview,
@@ -89,6 +92,7 @@ export default (Alpine) => {
                         imageResizeTargetHeight,
                         imageResizeTargetWidth,
                         imageResizeMode,
+                        imageResizeUpscale,
                         itemInsertLocation: shouldAppendFiles
                             ? 'after'
                             : 'before',
@@ -175,10 +179,13 @@ export default (Alpine) => {
 
                         // We don't want to overwrite the files that are already in the input, if they haven't been saved yet.
                         if (
+                            this.state !== null &&
                             Object.values(this.state).filter((file) =>
                                 file.startsWith('livewire-file:'),
                             ).length
                         ) {
+                            this.lastState = null
+
                             return
                         }
 
@@ -381,6 +388,7 @@ import de from 'filepond/locale/de-de'
 import en from 'filepond/locale/en-en'
 import es from 'filepond/locale/es-es'
 import fa from 'filepond/locale/fa_ir'
+import fi from 'filepond/locale/fi-fi'
 import fr from 'filepond/locale/fr-fr'
 import hu from 'filepond/locale/hu-hu'
 import id from 'filepond/locale/id-id'
@@ -406,6 +414,7 @@ const locales = {
     en,
     es,
     fa,
+    fi,
     fr,
     hu,
     id,

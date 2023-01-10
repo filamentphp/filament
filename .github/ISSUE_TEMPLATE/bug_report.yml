@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Before opening a bug report, please search the existing issues.
+        Before opening a bug report, please search the existing issues (both open and closed).
 
         ---
 
@@ -82,7 +82,7 @@ body:
     id: reproduction
     attributes:
       label: Reproduction repository
-      description: The URL of a public Git repository which contains the minimal amount of code to reproduce the problem. This allows us to fix the problem much quicker. **This issue will be automatically closed and not reviewed if this is missing. Please make sure to format the URL starting with `https://github.com`.**
+      description: The URL of a public GitHub repository which reproduces the problem. **Please do not link to your actual project**, what we need instead is a _minimal_ reproduction in a fresh project without any unnecessary code. This means it doesn\'t matter if your real project is private / confidential, since we want a link to a separate, isolated reproduction. This allows us to fix the problem much quicker. **This issue will be automatically closed and not reviewed if this is missing. Please make sure to format the URL starting with `https://github.com` - only repositories hosted on GitHub are accepted.**
     validations:
       required: true
   - type: textarea

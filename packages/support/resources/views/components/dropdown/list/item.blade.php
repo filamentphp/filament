@@ -28,7 +28,7 @@
         'group-hover:text-warning-100 group-focus:text-warning-100' => $color === 'warning' && $hasHoverAndFocusState,
     ]);
 
-    $labelClasses = 'filament-dropdown-list-item-label truncate';
+    $labelClasses = 'filament-dropdown-list-item-label truncate w-full text-start';
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-dropdown-list-item-icon mr-2 h-5 w-5 rtl:ml-2 rtl:mr-0',

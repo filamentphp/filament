@@ -26,15 +26,15 @@ class ActionGroup extends BaseActionGroup implements Arrayable
         $static = static::make(
             array_map(
                 fn (array $action): Action => Action::fromArray($action),
-                $data['actions'],
+                $data['actions'] ?? [],
             ),
         );
 
-        $static->color($data['color']);
-        $static->icon($data['icon']);
-        $static->iconPosition($data['iconPosition']);
-        $static->label($data['label']);
-        $static->tooltip($data['tooltip']);
+        $static->color($data['color'] ?? null);
+        $static->icon($data['icon'] ?? null);
+        $static->iconPosition($data['iconPosition'] ?? null);
+        $static->label($data['label'] ?? null);
+        $static->tooltip($data['tooltip'] ?? null);
 
         return $static;
     }

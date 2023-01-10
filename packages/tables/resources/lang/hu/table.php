@@ -8,6 +8,10 @@ return [
             'more' => 'és további :count',
         ],
 
+        'messages' => [
+            'copied' => 'Kimásolva',
+        ],
+
     ],
 
     'fields' => [
@@ -141,6 +145,29 @@ return [
 
             'deselect_all' => [
                 'label' => 'Kijelölés megszüntetése',
+            ],
+
+        ],
+
+    ],
+
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Rendezve',
+            ],
+
+            'direction' => [
+
+                'label' => 'Rendezési irány',
+
+                'options' => [
+                    'asc' => 'Növekvő',
+                    'desc' => 'Csökkenő',
+                ],
+
             ],
 
         ],

@@ -21,6 +21,22 @@ return [
         'logout' => [
             'label' => 'Déconnexion',
         ],
+
+        'sidebar' => [
+
+            'collapse' => [
+                'label' => 'Réduire la barre latérale',
+            ],
+
+            'expand' => [
+                'label' => 'Agrandir la barre latérale',
+            ],
+
+        ],
+
+        'user_menu' => [
+            'label' => 'Menu utilisateur',
+        ],
     ],
 
 ];

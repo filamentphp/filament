@@ -29,9 +29,6 @@
                         wire:click="$set('activeRelationManager', {{ filled($tabKey) ? "'{$tabKey}'" : 'null' }})"
                         @if ($activeManager === $tabKey)
                             aria-selected
-                            tabindex="0"
-                        @else
-                            tabindex="-1"
                         @endif
                         role="tab"
                         type="button"
@@ -54,7 +51,7 @@
         </div>
     @endif
 
-    @if (filled($activeManager))
+    @if (filled($activeManager) && isset($managers[$activeManager]))
         <div
             @if (count($managers) > 1)
                 id="relationManager{{ ucfirst($activeManager) }}"

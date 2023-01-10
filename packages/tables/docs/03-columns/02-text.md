@@ -89,6 +89,16 @@ TextColumn::make('description')
     })
 ```
 
+## Limiting word count
+
+You may limit the number of `words()` displayed in the cell:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('description')->words(10)
+```
+
 ## Wrapping content
 
 If you'd like your column's content to wrap if it's too long, you may use the `wrap()` method:
@@ -121,6 +131,36 @@ TextColumn::make('status')->enum([
     'reviewing' => 'Reviewing',
     'published' => 'Published',
 ])
+```
+
+## Displaying the row index
+
+You may want a column to contain the number of the current row in the table:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('index')->getStateUsing(static function (stdClass $rowLoop): string {
+    return (string) $rowLoop->iteration;
+});
+```
+
+As `$rowLoop` is Laravel's Blade `$loop` object, you can reference all other `$loop` properties.
+
+As a shortcut, you may use the `rowIndex()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('index')->rowIndex()
+```
+
+To start counting from 0 instead of 1, use `isFromZero: true`:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('index')->rowIndex(isFromZero: true)
 ```
 
 ## Custom formatting
@@ -188,22 +228,41 @@ TextColumn::make('title')
 
 ## Customizing the font weight
 
-Text columns have regular font weight by default.
+Text columns have regular font weight by default but you may change this to any of the the following options: `thin`, `extralight`, `light`, `medium`, `semibold`, `bold`, `extrabold` or `black`.
 
-You may make the font medium using `weight('medium')`:
+For instance, you may make the font bold using `weight('bold')`:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('email')
-    ->weight('medium')
+    ->weight('bold')
 ```
 
-Or you can make it bold using `weight('bold')`:
+## Customizing the font family
+
+You can change the text font family to any of the following options: `sans`, `serif` or `mono`.
+
+For instance, you may make the font mono using `fontFamily('mono')`:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')
-    ->weight('bold')
+TextColumn::make('text')
+    ->fontFamily('mono')
 ```
+
+## Allowing the text to be copied to the clipboard
+
+You may make the text copyable, such that clicking on the cell copies the text to the clipboard, and optionally specify a custom confirmation message and duration in milliseconds. This feature only works when SSL is enabled for the app.
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('email')
+    ->copyable()
+    ->copyMessage('Email address copied')
+    ->copyMessageDuration(1500)
+```
+
+> Filament uses tooltips to display the copy message in the admin panel. If you want to use the copyable feature outside of the admin panel, make sure you have [`@ryangjchandler/alpine-tooltip` installed](https://github.com/ryangjchandler/alpine-tooltip#installation) in your app.

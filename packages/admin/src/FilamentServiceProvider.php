@@ -20,7 +20,6 @@ use Filament\Tables\Actions\Action as TableAction;
 use Filament\Tables\Actions\ButtonAction;
 use Filament\Tables\Actions\IconButtonAction;
 use Filament\Testing\TestsPageActions;
-use Filament\Testing\TestsPages;
 use Filament\Widgets\Widget;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
@@ -112,7 +111,6 @@ class FilamentServiceProvider extends PluginServiceProvider
         }
 
         TestableLivewire::mixin(new TestsPageActions());
-        TestableLivewire::mixin(new TestsPages());
     }
 
     protected function registerComponents(): void
@@ -233,6 +231,10 @@ class FilamentServiceProvider extends PluginServiceProvider
                             ->after(base_path())
                             ->replace(['/'], ['\\']),
                     ) : null;
+
+                    if (is_string($variableNamespace)) {
+                        $variableNamespace = (string) Str::of($variableNamespace)->before('\\');
+                    }
 
                     return (string) $namespace
                         ->append('\\', $file->getRelativePathname())

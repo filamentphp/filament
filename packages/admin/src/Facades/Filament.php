@@ -42,6 +42,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void registerScriptData(array $data)
  * @method static void registerStyles(array $styles)
  * @method static void registerTheme(string | Htmlable | null $theme)
+ * @method static void registerViteTheme(string | array $theme, string | null $buildDirectory = null)
  * @method static void registerUserMenuItems(array $items)
  * @method static void registerWidgets(array $widgets)
  * @method static Htmlable renderHook(string $name)

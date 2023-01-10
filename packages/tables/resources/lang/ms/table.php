@@ -4,16 +4,12 @@ return [
 
     'columns' => [
 
-        'color' => [
-
-            'messages' => [
-                'copied' => 'Disalin',
-            ],
-
-        ],
-
         'tags' => [
             'more' => 'dan :count lagi',
+        ],
+
+        'messages' => [
+            'copied' => 'Disalin',
         ],
 
     ],
@@ -150,6 +146,29 @@ return [
 
             'deselect_all' => [
                 'label' => 'Nyahpilih semua',
+            ],
+
+        ],
+
+    ],
+
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Disusun mengikut',
+            ],
+
+            'direction' => [
+
+                'label' => 'Arah susunan',
+
+                'options' => [
+                    'asc' => 'Menaik',
+                    'desc' => 'Menurun',
+                ],
+
             ],
 
         ],

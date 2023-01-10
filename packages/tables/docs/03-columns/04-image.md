@@ -32,14 +32,24 @@ use Filament\Tables\Columns\ImageColumn;
 ImageColumn::make('header_image')->visibility('private')
 ```
 
-## Rounding the image
+## Square image
 
-You may make the image fully `rounded()`, which is useful for rendering avatars:
+You may display the image using a 1:1 aspect ratio:
 
 ```php
 use Filament\Tables\Columns\ImageColumn;
 
-ImageColumn::make('author.avatar')->rounded()
+ImageColumn::make('author.avatar')->square()
+```
+
+## Circular image
+
+You may make the image fully rounded, which is useful for rendering avatars:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('author.avatar')->circular()
 ```
 
 ## Customizing the size

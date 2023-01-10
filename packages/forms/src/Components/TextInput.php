@@ -40,6 +40,8 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
 
     protected $minValue = null;
 
+    protected string | Closure | null $telRegex = null;
+
     protected string | Closure | null $type = null;
 
     public function currentPassword(bool | Closure $condition = true): static
@@ -129,7 +131,14 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     {
         $this->isTel = $condition;
 
-        $this->regex(static fn (TextInput $component) => $component->evaluate($condition) ? '/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/' : null);
+        $this->regex(static fn (TextInput $component) => $component->evaluate($condition) ? $component->getTelRegex() : null);
+
+        return $this;
+    }
+
+    public function telRegex(string | Closure | null $regex): static
+    {
+        $this->telRegex = $regex;
 
         return $this;
     }
@@ -204,6 +213,11 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
         }
 
         return 'text';
+    }
+
+    public function getTelRegex(): string
+    {
+        return $this->evaluate($this->telRegex) ?? '/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/';
     }
 
     public function hasMask(): bool

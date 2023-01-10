@@ -2,6 +2,8 @@
 title: Notifications
 ---
 
+## Sending notifications
+
 The admin panel uses the [Notifications](../notifications/sending-notifications) package to send messages to users.
 
 Please read the [documentation](../notifications/sending-notifications) to discover how to send notifications easily.

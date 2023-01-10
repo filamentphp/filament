@@ -22,6 +22,22 @@ return [
             'label' => 'Abmelden',
         ],
 
+        'sidebar' => [
+
+            'collapse' => [
+                'label' => 'Seitenleiste einklappen',
+            ],
+
+            'expand' => [
+                'label' => 'Seitenleiste ausklappen',
+            ],
+
+        ],
+
+        'user_menu' => [
+            'label' => 'Benutzermenü',
+        ],
+
     ],
 
 ];

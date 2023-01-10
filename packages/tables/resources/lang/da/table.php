@@ -2,6 +2,18 @@
 
 return [
 
+    'columns' => [
+
+        'tags' => [
+            'more' => 'og :count flere',
+        ],
+
+        'messages' => [
+            'copied' => 'Kopieret',
+        ],
+
+    ],
+
     'fields' => [
 
         'search_query' => [
@@ -20,7 +32,13 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'per side',
+
+                'options' => [
+                    'all' => 'Alle',
+                ],
+
             ],
 
         ],
@@ -65,6 +83,29 @@ return [
 
             'select_all' => [
                 'label' => 'Vælg alle :count',
+            ],
+
+        ],
+
+    ],
+
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Sorter efter',
+            ],
+
+            'direction' => [
+
+                'label' => 'Sorteringsretning',
+
+                'options' => [
+                    'asc' => 'Stigende',
+                    'desc' => 'Faldende',
+                ],
+
             ],
 
         ],

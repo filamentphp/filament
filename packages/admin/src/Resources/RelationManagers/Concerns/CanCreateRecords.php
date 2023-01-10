@@ -86,12 +86,12 @@ trait CanCreateRecords
         }
 
         if ($another) {
-            $this->getMountedTableAction()->hold();
+            $this->getMountedTableAction()->halt();
         }
     }
 
     /**
-     * @deprecated Use `->successNotificationMessage()` on the action instead.
+     * @deprecated Use `->successNotificationTitle()` on the action instead.
      */
     protected function getCreatedNotificationMessage(): ?string
     {

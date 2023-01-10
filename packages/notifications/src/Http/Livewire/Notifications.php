@@ -19,6 +19,7 @@ class Notifications extends Component
     public Collection $notifications;
 
     protected $listeners = [
+        'notificationSent' => 'pushNotificationFromEvent',
         'notificationsSent' => 'pullNotificationsFromSession',
         'notificationClosed' => 'removeNotification',
     ];
@@ -36,6 +37,13 @@ class Notifications extends Component
 
             $this->pushNotification($notification);
         }
+    }
+
+    public function pushNotificationFromEvent(array $notification): void
+    {
+        $notification = Notification::fromArray($notification);
+
+        $this->pushNotification($notification);
     }
 
     public function removeNotification(string $id): void
