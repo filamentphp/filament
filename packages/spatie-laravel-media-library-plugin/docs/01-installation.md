@@ -38,6 +38,11 @@ You must also [prepare your Eloquent model](https://spatie.be/docs/laravel-media
 
 You're now ready to start using the [form components](form-components) and [table columns](table-columns)!
 
+## Configuration
+
+By default, the filesystem disk used is `public`. To change this, add a disk value to `config/filesystems.php`, then declare `FILAMENT_FILESYSTEM_DRIVER=<your-disk-key>` in .env.
+
+
 ## Upgrading
 
 To upgrade the package to the latest version, you must run:
