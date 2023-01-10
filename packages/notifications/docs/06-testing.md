@@ -18,7 +18,7 @@ it('sends a notification', function () {
 ```
 
 ```php
-use Filament\Notifications\Notification
+use Filament\Notifications\Notification;
 
 it('sends a notification', function () {
     Notification::assertNotified();
