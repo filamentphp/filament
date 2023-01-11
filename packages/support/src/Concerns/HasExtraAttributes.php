@@ -7,22 +7,28 @@ use Illuminate\View\ComponentAttributeBag;
 
 trait HasExtraAttributes
 {
-    protected array | Closure $extraAttributes = [];
+    protected array $extraAttributes = [];
 
-    public function extraAttributes(array | Closure $attributes, bool $merge = false): static
+    public function extraAttributes(array|Closure $attributes, bool $merge = false): static
     {
-        if ($merge) {
-            $attributes = $this->getExtraAttributeBag()->merge($this->evaluate($attributes))->getAttributes();
+        if ( $merge ) {
+            $this->extraAttributes[] = $attributes;
+        } else {
+            $this->extraAttributes = [$attributes];
         }
-
-        $this->extraAttributes = $attributes;
 
         return $this;
     }
 
     public function getExtraAttributes(): array
     {
-        return $this->evaluate($this->extraAttributes);
+        $temporaryAttributeBag = new ComponentAttributeBag();
+
+        foreach ($this->extraAttributes as $extraAttributes) {
+            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraAttributes));
+        }
+
+        return $temporaryAttributeBag->getAttributes();
     }
 
     public function getExtraAttributeBag(): ComponentAttributeBag
