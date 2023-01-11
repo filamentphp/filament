@@ -13,6 +13,7 @@
     'id' => null,
     'openEventName' => 'open-modal',
     'slideOver' => false,
+		'closesByClickingAway' => null,
     'subheading' => null,
     'subheadingComponent' => 'filament-support::modal.subheading',
     'trigger' => null,
@@ -72,7 +73,7 @@
         ])
     >
         <div
-            @if (config('filament-support.modal.is_closed_by_clicking_away', true))
+            @if ($closesByClickingAway)
                 @if (filled($id))
                     x-on:click="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
                 @else
@@ -82,7 +83,7 @@
             aria-hidden="true"
             @class([
                 'filament-modal-close-overlay fixed inset-0 w-full h-full bg-black/50',
-                'cursor-pointer' => config('filament-support.modal.is_closed_by_clicking_away', true)
+                'cursor-pointer' => $closesByClickingAway
             ])
         ></div>
 
