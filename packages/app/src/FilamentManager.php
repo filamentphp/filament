@@ -126,6 +126,11 @@ class FilamentManager
         return $this->getCurrentContext()->getTenantOwnershipRelationshipName();
     }
 
+    public function hasTopNavigation(): string
+    {
+        return $this->getCurrentContext()->hasTopNavigation();
+    }
+
     public function getRoutableTenant(): ?Model
     {
         if (! $this->getCurrentContext()->hasRoutableTenancy()) {

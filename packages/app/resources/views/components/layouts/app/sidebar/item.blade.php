@@ -43,7 +43,7 @@
             size="h-6 w-6"
         />
 
-        <div class="flex flex-1"
+        <div
             @if (filament()->isSidebarCollapsibleOnDesktop())
                 x-show="$store.sidebar.isOpen"
             @endif

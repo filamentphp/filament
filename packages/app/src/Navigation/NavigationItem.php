@@ -10,7 +10,7 @@ class NavigationItem
 
     protected ?Closure $isActiveWhen = null;
 
-    protected string $icon;
+    protected ?string $icon = null;
 
     protected ?string $activeIcon = null;
 
@@ -53,7 +53,7 @@ class NavigationItem
         return $this;
     }
 
-    public function icon(string $icon): static
+    public function icon(?string $icon): static
     {
         $this->icon = $icon;
 
@@ -118,7 +118,7 @@ class NavigationItem
         return $this->group;
     }
 
-    public function getIcon(): string
+    public function getIcon(): ?string
     {
         return $this->icon;
     }

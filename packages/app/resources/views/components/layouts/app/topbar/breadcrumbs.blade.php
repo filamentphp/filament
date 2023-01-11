@@ -2,8 +2,8 @@
     'breadcrumbs' => [],
 ])
 
-<div {{ $attributes->class(['filament-breadcrumbs flex-1']) }}>
-    <ul class="hidden items-center gap-3 text-sm font-medium dark:text-white lg:flex">
+<div {{ $attributes->class(['hidden filament-breadcrumbs flex-1 lg:block']) }}>
+    <ul class="flex items-center gap-3 text-sm font-medium dark:text-white">
         @foreach ($breadcrumbs as $url => $label)
             <li>
                 <a
