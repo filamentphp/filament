@@ -96,7 +96,7 @@ class DateTimePicker extends Field
         return $this;
     }
 
-    public function extraTriggerAttributes(array|Closure $attributes, bool $merge = false): static
+    public function extraTriggerAttributes(array | Closure $attributes, bool $merge = false): static
     {
         if ($merge) {
             $this->extraAttributes[] = $attributes;

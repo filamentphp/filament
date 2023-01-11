@@ -190,24 +190,24 @@ class ImageColumn extends Column
 
     public function extraImgAttributes(array | Closure $attributes, bool $merge = false): static
     {
-		if ($merge) {
-			$this->extraImgAttributes[] = $attributes;
-		} else {
-			$this->extraImgAttributes = [$attributes];
-		}
+        if ($merge) {
+            $this->extraImgAttributes[] = $attributes;
+        } else {
+            $this->extraImgAttributes = [$attributes];
+        }
 
         return $this;
     }
 
     public function getExtraImgAttributes(): array
     {
-	    $temporaryAttributeBag = new ComponentAttributeBag();
-	
-	    foreach ($this->extraImgAttributes as $extraImgAttributes) {
-		    $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraImgAttributes));
-	    }
-	
-	    return $temporaryAttributeBag->getAttributes();
+        $temporaryAttributeBag = new ComponentAttributeBag();
+
+        foreach ($this->extraImgAttributes as $extraImgAttributes) {
+            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraImgAttributes));
+        }
+
+        return $temporaryAttributeBag->getAttributes();
     }
 
     public function getExtraImgAttributeBag(): ComponentAttributeBag

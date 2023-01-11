@@ -9,7 +9,7 @@ trait HasExtraInputAttributes
 {
     protected array $extraInputAttributes = [];
 
-    public function extraInputAttributes(array|Closure $attributes, bool $merge = false): static
+    public function extraInputAttributes(array | Closure $attributes, bool $merge = false): static
     {
         if ($merge) {
             $this->extraInputAttributes[] = $attributes;

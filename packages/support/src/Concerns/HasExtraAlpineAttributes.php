@@ -11,24 +11,24 @@ trait HasExtraAlpineAttributes
 
     public function extraAlpineAttributes(array | Closure $attributes, bool $merge = false): static
     {
-		if ($merge) {
-			$this->extraAlpineAttributes[] = $attributes;
-		} else {
-			$this->extraAlpineAttributes = [$attributes];
-		}
+        if ($merge) {
+            $this->extraAlpineAttributes[] = $attributes;
+        } else {
+            $this->extraAlpineAttributes = [$attributes];
+        }
 
         return $this;
     }
 
     public function getExtraAlpineAttributes(): array
     {
-	    $temporaryAttributeBag = new ComponentAttributeBag();
-	
-	    foreach ($this->extraAlpineAttributes as $extraAlpineAttributes) {
-		    $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraAlpineAttributes));
-	    }
-	
-	    return $temporaryAttributeBag->getAttributes();
+        $temporaryAttributeBag = new ComponentAttributeBag();
+
+        foreach ($this->extraAlpineAttributes as $extraAlpineAttributes) {
+            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraAlpineAttributes));
+        }
+
+        return $temporaryAttributeBag->getAttributes();
     }
 
     public function getExtraAlpineAttributeBag(): ComponentAttributeBag

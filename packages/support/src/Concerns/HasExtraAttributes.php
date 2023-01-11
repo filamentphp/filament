@@ -9,9 +9,9 @@ trait HasExtraAttributes
 {
     protected array $extraAttributes = [];
 
-    public function extraAttributes(array|Closure $attributes, bool $merge = false): static
+    public function extraAttributes(array | Closure $attributes, bool $merge = false): static
     {
-        if ( $merge ) {
+        if ($merge) {
             $this->extraAttributes[] = $attributes;
         } else {
             $this->extraAttributes = [$attributes];
