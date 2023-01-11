@@ -107,7 +107,7 @@ trait InteractsWithActions
         $action->resetFormData();
 
         $this->dispatchBrowserEvent('close-modal', [
-            'id' => 'page-action',
+            'id' => 'action',
         ]);
 
         return $result;
@@ -167,7 +167,7 @@ trait InteractsWithActions
         $this->resetErrorBag();
 
         $this->dispatchBrowserEvent('open-modal', [
-            'id' => 'page-action',
+            'id' => 'action',
         ]);
 
         return null;
