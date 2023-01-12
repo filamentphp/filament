@@ -92,7 +92,7 @@ class MakeFormCommand extends Command
             'submitAction' => filled($model) ? ($isEditForm ? 'save' : 'create') : 'submit',
         ]);
 
-        $this->info("Successfully created {$component}!");
+        $this->components->info("Successfully created {$component}!");
 
         return static::SUCCESS;
     }

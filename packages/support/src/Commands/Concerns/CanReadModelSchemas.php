@@ -33,7 +33,7 @@ trait CanReadModelSchemas
                 ->getDoctrineSchemaManager()
                 ->listTableDetails($model->getTable());
         } catch (Throwable $exception) {
-            $this->warn("Unable to read table schema for model [{$modelClass}]: {$exception->getMessage()}");
+            $this->components->warn("Unable to read table schema for model [{$modelClass}]: {$exception->getMessage()}");
 
             return null;
         }
