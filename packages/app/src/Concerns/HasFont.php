@@ -7,15 +7,15 @@ use Illuminate\Contracts\Support\Htmlable;
 
 trait HasFont
 {
-    protected string $fontName = 'Be Vietnam Pro';
+    protected string $fontFamily = 'Be Vietnam Pro';
 
     protected string $fontProvider = BunnyFontProvider::class;
 
     protected ?string $fontUrl = null;
 
-    public function font(string $name, ?string $url = null, ?string $provider = null): static
+    public function font(string $family, ?string $url = null, ?string $provider = null): static
     {
-        $this->fontName = $name;
+        $this->fontFamily = $family;
         $this->fontUrl = $url;
 
         if (filled($provider)) {
@@ -33,14 +33,14 @@ trait HasFont
     public function getFontHtml(): Htmlable
     {
         return app($this->getFontProvider())->getHtml(
-            $this->getFontName(),
+            $this->getFontFamily(),
             $this->getFontUrl(),
         );
     }
 
-    public function getFontName(): string
+    public function getFontFamily(): string
     {
-        return $this->fontName;
+        return $this->fontFamily;
     }
 
     public function getFontUrl(): ?string

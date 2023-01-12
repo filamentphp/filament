@@ -533,9 +533,9 @@ class FilamentManager
         return $this->getCurrentContext()->getFontHtml();
     }
 
-    public function getFontName(): string
+    public function getFontFamily(): string
     {
-        return $this->getCurrentContext()->getFontName();
+        return $this->getCurrentContext()->getFontFamily();
     }
 
     public function getFontProvider(): string

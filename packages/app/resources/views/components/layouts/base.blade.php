@@ -50,7 +50,7 @@
 
     <style>
         :root {
-            --font-family: {!! filament()->getFontName() !!};
+            --font-family: {!! filament()->getFontFamily() !!};
             --filament-widgets-chart-font-family: var(--font-family);
             --sidebar-width: {{ filament()->getSidebarWidth() }};
             --collapsed-sidebar-width: {{ filament()->getCollapsedSidebarWidth() }};

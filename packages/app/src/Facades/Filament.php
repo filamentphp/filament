@@ -36,7 +36,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string | null getFavicon()
  * @method static GlobalSearchProvider getGlobalSearchProvider()
  * @method static Htmlable getFontHtml()
- * @method static string getFontName()
+ * @method static string getFontFamily()
  * @method static string getFontProvider()
  * @method static string | null getFontUrl()
  * @method static string getHomeUrl()
