@@ -30,8 +30,8 @@ trait CanBeMounted
      */
     public function fillForm(array | Closure $data): static
     {
-        $this->mountUsing(function (Form $form) use ($data) {
-            $form->fill($this->evaluate($data));
+        $this->mountUsing(function (?Form $form) use ($data) {
+            $form?->fill($this->evaluate($data));
         });
 
         return $this;

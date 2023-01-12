@@ -146,7 +146,7 @@ class Table extends ViewComponent
     protected array $groups = [];
 
     /**
-     * @var array<string, BulkAction>
+     * @var array<string, BulkAction | ActionGroup>
      */
     protected array $groupedBulkActions = [];
 
@@ -312,18 +312,36 @@ class Table extends ViewComponent
     }
 
     /**
-     * @param  array<BulkAction>  $actions
+     * @param  array<BulkAction | ActionGroup>  $actions
      */
-    public function bulkActions(array $actions): static
+    public function bulkActions(array | ActionGroup $actions): static
     {
-        foreach ($actions as $action) {
+        foreach (Arr::wrap($actions) as $index => $action) {
+            if ($action instanceof ActionGroup) {
+                foreach ($action->getActions() as $groupedAction) {
+                    if (! $groupedAction instanceof BulkAction) {
+                        throw new InvalidArgumentException('Table bulk actions must be an instance of ' . BulkAction::class . '.');
+                    }
+
+                    $groupedAction->table($this);
+                    $this->registerBulkAction($groupedAction);
+                }
+
+                $action->dropdownPlacement('right-top');
+                $action->grouped();
+                $this->groupedBulkActions[$index] = $action;
+
+                continue;
+            }
+
             if (! $action instanceof BulkAction) {
                 throw new InvalidArgumentException('Table bulk actions must be an instance of ' . BulkAction::class . '.');
             }
 
             $action->table($this);
+
             $this->registerBulkAction($action);
-            $this->groupedBulkActions[$action->getName()] = $action;
+            $this->groupedBulkActions[$index] = $action;
         }
 
         return $this;
@@ -910,7 +928,7 @@ class Table extends ViewComponent
     }
 
     /**
-     * @return array<string, BulkAction>
+     * @return array<string, BulkAction | ActionGroup>
      */
     public function getGroupedBulkActions(): array
     {

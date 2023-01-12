@@ -1,9 +1,9 @@
-<x-filament-actions::action
-    :action="$action"
+<x-filament-actions::group
+    :group="$group"
     dynamic-component="filament::link"
     :icon-position="$getIconPosition()"
     :icon-size="$getIconSize()"
-    class="filament-actions-link-action"
+    class="filament-actions-link-group"
 >
     {{ $getLabel() }}
-</x-filament-actions::action>
+</x-filament-actions::group>

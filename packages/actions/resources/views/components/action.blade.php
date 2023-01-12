@@ -1,6 +1,6 @@
 @props([
     'action',
-    'component',
+    'dynamicComponent',
     'icon' => null,
 ])
 
@@ -10,7 +10,7 @@
 @endphp
 
 <x-dynamic-component
-    :component="$component"
+    :component="$dynamicComponent"
     :form="$action instanceof \Filament\Actions\Contracts\SubmitsForm ? $action->getFormToSubmit() : null"
     :tag="$url ? 'a' : 'button'"
     :x-on:click="$action->getAlpineMountAction()"

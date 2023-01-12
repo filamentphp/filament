@@ -124,7 +124,7 @@ You can also pass in a `label`, `icon`, `color`, `size`, `tooltip`, and `dropdow
         color="primary"
         size="md"
         tooltip="More actions"
-        dropdown-placement="bottom-end"
+        dropdown-placement="bottom-start"
     />
     
     <x-filament-actions::modals />

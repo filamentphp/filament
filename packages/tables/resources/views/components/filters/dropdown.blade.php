@@ -6,7 +6,7 @@
 
 <x-filament::dropdown
     {{ $attributes->class(['filament-tables-filters']) }}
-    placement="bottom-end"
+    placement="bottom-start"
     shift
     :width="$width"
     wire:key="{{ $this->id }}.table.filters"
