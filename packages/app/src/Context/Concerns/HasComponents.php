@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Concerns;
+namespace Filament\Context\Concerns;
 
 use Filament\Http\Livewire\GlobalSearch;
 use Filament\Http\Livewire\Notifications;

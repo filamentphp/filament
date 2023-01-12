@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Concerns;
+namespace Filament\Context\Concerns;
 
 use Closure;
 use Filament\Facades\Filament;

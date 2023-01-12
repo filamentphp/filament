@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Concerns;
+namespace Filament\Context\Concerns;
 
 use Exception;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
