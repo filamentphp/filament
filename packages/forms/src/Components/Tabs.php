@@ -19,12 +19,12 @@ class Tabs extends Component
 
     protected string | Closure | null $tabQueryStringKey = null;
 
-    final public function __construct(string $label)
+    final public function __construct(?string $label = null)
     {
         $this->label($label);
     }
 
-    public static function make(string $label): static
+    public static function make(?string $label = null): static
     {
         $static = app(static::class, ['label' => $label]);
         $static->configure();

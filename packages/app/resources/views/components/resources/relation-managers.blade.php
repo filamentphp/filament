@@ -25,25 +25,16 @@
                         $tabKey = strval($tabKey);
                     @endphp
 
-                    <button
-                        wire:click="$set('activeRelationManager', {{ filled($tabKey) ? "'{$tabKey}'" : 'null' }})"
-                        @if ($activeManager === $tabKey)
-                            aria-selected
-                        @endif
-                        role="tab"
-                        type="button"
-                        @class([
-                            'flex whitespace-nowrap items-center h-8 px-5 font-medium rounded-lg whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-inset',
-                            'hover:text-gray-800 focus:text-primary-600 dark:text-gray-400 dark:hover:text-gray-300 dark:focus:text-gray-400' => $activeManager !== $tabKey,
-                            'text-primary-600 shadow bg-white dark:text-white dark:bg-primary-600' => $activeManager === $tabKey,
-                        ])
+                    <x-filament::tabs.item
+                        :wire:click="'$set(\'activeRelationManager\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
+                        :active="$activeManager === $tabKey"
                     >
                         @if (filled($tabKey))
                             {{ $manager instanceof \Filament\Resources\RelationManagers\RelationGroup ? $manager->getLabel() : $manager::getTitle($ownerRecord, static::class) }}
                         @elseif ($form)
                             {{ $formTabLabel }}
                         @endif
-                    </button>
+                    </x-filament::tabs.item>
                 @endforeach
             </x-filament::tabs>
         </div>

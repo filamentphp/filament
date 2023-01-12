@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Form;
+use Filament\Resources\Pages\ListRecords\Tab;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
@@ -28,7 +29,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
      * @var array<int | string, string | array<mixed>>
      */
     protected $queryString = [
-        'activeQueryTab' => ['except' => ''],
+        'activeTab' => ['except' => ''],
         'isTableReordering' => ['except' => false],
         'tableFilters',
         'tableGrouping' => ['except' => ''],
@@ -38,17 +39,17 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         'tableSearch' => ['except' => ''],
     ];
 
-    public ?string $activeQueryTab = null;
+    public ?string $activeTab = null;
 
     public function mount(): void
     {
         static::authorizeResourceAccess();
 
         if (
-            blank($this->activeQueryTab) &&
-            count($queryTabs = $this->getQueryTabs())
+            blank($this->activeTab) &&
+            count($tabs = $this->getTabs())
         ) {
-            $this->activeQueryTab = array_key_first($queryTabs);
+            $this->activeTab = array_key_first($tabs);
         }
     }
 
@@ -282,16 +283,14 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function getTableQuery(): Builder
     {
         $query = static::getResource()::getEloquentQuery();
-        $tabs = $this->getQueryTabs();
 
-        if (filled($this->activeQueryTab) && array_key_exists($this->activeQueryTab, $tabs)) {
-            $callback = $tabs[$this->activeQueryTab];
+        $tabs = $this->getTabs();
 
-            if ($callback) {
-                $query = app()->call($callback, [
-                    'query' => $query,
-                ]) ?? $query;
-            }
+        if (
+            filled($this->activeTab) &&
+            array_key_exists($this->activeTab, $tabs)
+        ) {
+            $tabs[$this->activeTab]->modifyQuery($query);
         }
 
         return $query;
@@ -306,14 +305,14 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     }
 
     /**
-     * @return array<string, Closure | null>
+     * @return array<string | int, Tab>
      */
-    public function getQueryTabs(): array
+    public function getTabs(): array
     {
         return [];
     }
 
-    public function getLabelFromQueryTabKey(string $key): string
+    public function generateTabLabel(string $key): string
     {
         return (string) str($key)
             ->replace(['_', '-'], ' ')
