@@ -2,7 +2,6 @@
 
 namespace Filament\Resources\Pages;
 
-use Closure;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Form;
