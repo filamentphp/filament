@@ -30,6 +30,10 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
 
     protected static ?string $title = null;
 
+    protected static ?string $icon = null;
+
+    protected static ?string $badge = null;
+
     /**
      * @var view-string
      */
@@ -237,7 +241,7 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
         return static::$shouldIgnorePolicies;
     }
 
-    public static function canViewForRecord(Model $ownerRecord): bool
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
         if (static::shouldIgnorePolicies()) {
             return true;
@@ -283,6 +287,16 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     public function table(Table $table): Table
     {
         return $table;
+    }
+
+    public static function getIcon(Model $ownerRecord, string $pageClass): ?string
+    {
+        return static::$icon;
+    }
+
+    public static function getBadge(Model $ownerRecord, string $pageClass): ?string
+    {
+        return static::$badge;
     }
 
     public static function getRelationshipName(): string

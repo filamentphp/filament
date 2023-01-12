@@ -23,14 +23,22 @@
                     @php
                         $activeManager = strval($activeManager);
                         $tabKey = strval($tabKey);
+                        $isGroup = $manager instanceof \Filament\Resources\RelationManagers\RelationGroup;
+
+                        if ($isGroup) {
+                            $manager->ownerRecord($ownerRecord);
+                            $manager->pageClass($pageClass);
+                        }
                     @endphp
 
                     <x-filament::tabs.item
                         :wire:click="'$set(\'activeRelationManager\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
                         :active="$activeManager === $tabKey"
+                        :badge="filled($tabKey) ? ($isGroup ? $manager->getBadge() : $manager::getBadge($ownerRecord, $pageClass)) : null"
+                        :icon="filled($tabKey) ? ($isGroup ? $manager->getIcon() : $manager::getIcon($ownerRecord, $pageClass)) : null"
                     >
                         @if (filled($tabKey))
-                            {{ $manager instanceof \Filament\Resources\RelationManagers\RelationGroup ? $manager->getLabel() : $manager::getTitle($ownerRecord, static::class) }}
+                            {{ $isGroup ? $manager->getLabel() : $manager::getTitle($ownerRecord, $pageClass) }}
                         @elseif ($form)
                             {{ $formTabLabel }}
                         @endif
@@ -50,8 +58,8 @@
             class="space-y-4 focus:outline-none"
         >
             @if ($managers[$activeManager] instanceof \Filament\Resources\RelationManagers\RelationGroup)
-                @foreach($managers[$activeManager]->getManagers(ownerRecord: $ownerRecord) as $groupedManager)
-                    @livewire(\Livewire\Livewire::getAlias($groupedManager, $groupedManager::getName()), ['ownerRecord' => $ownerRecord], key($groupedManager))
+                @foreach($managers[$activeManager]->ownerRecord($ownerRecord)->pageClass($pageClass)->getManagers() as $groupedManager)
+                    @livewire(\Livewire\Livewire::getAlias($groupedManager, $groupedManager::getName()), ['ownerRecord' => $ownerRecord, 'pageClass' => $pageClass], key($groupedManager))
                 @endforeach
             @else
                 @php
