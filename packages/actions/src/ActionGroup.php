@@ -14,7 +14,6 @@ use Filament\Actions\Concerns\HasTooltip;
 use Filament\Actions\Contracts\Groupable;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
-use Illuminate\Contracts\Support\Htmlable;
 
 class ActionGroup extends ViewComponent
 {
