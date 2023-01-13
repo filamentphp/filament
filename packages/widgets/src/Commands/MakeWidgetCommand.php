@@ -108,7 +108,7 @@ class MakeWidgetCommand extends Command
                 ->append('.blade.php'),
         );
 
-        if (! $this->hasOption('force') && $this->checkForCollision([
+        if (! $this->option('force') && $this->checkForCollision([
             $path,
             ($this->option('stats-overview') || $this->option('chart')) ?: $viewPath,
         ])) {

@@ -47,7 +47,7 @@ class MakeFieldCommand extends Command
                 ->append('.blade.php'),
         );
 
-        if (! $this->hasOption('force') && $this->checkForCollision([
+        if (! $this->option('force') && $this->checkForCollision([
             $path,
         ])) {
             return static::INVALID;

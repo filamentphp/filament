@@ -70,7 +70,7 @@ class MakeRelationManagerCommand extends Command
             ->replace('\\', '/')
             ->append('.php');
 
-        if (! $this->hasOption('force') && $this->checkForCollision([
+        if (! $this->option('force') && $this->checkForCollision([
             $path,
         ])) {
             return static::INVALID;

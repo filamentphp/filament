@@ -18,11 +18,11 @@ class InstallCommand extends Command
 
     public function __invoke(): int
     {
-        if ($this->hasOption('app')) {
+        if ($this->option('app')) {
             $this->installDefaultAppContext();
         }
 
-        if ($this->hasOption('scaffold')) {
+        if ($this->option('scaffold')) {
             $this->installScaffolding();
         }
 
@@ -51,7 +51,7 @@ class InstallCommand extends Command
     {
         $path = app_path('Providers/Filament/AdminContextProvider.php');
 
-        if (! $this->hasOption('force') && $this->checkForCollision([$path])) {
+        if (! $this->option('force') && $this->checkForCollision([$path])) {
             return;
         }
 
@@ -78,9 +78,9 @@ class InstallCommand extends Command
 
         // Uninstall the filament/forms CSS
         if (
-            (! $this->hasOption('actions')) &&
-            (! $this->hasOption('forms')) &&
-            (! $this->hasOption('tables'))
+            (! $this->option('actions')) &&
+            (! $this->option('forms')) &&
+            (! $this->option('tables'))
         ) {
             $css = $filesystem->get(resource_path('css/app.css'));
             $css = (string) str($css)
@@ -91,9 +91,9 @@ class InstallCommand extends Command
 
         // Install filament/notifications into the layout Blade file
         if (
-            $this->hasOption('actions') ||
-            $this->hasOption('notifications') ||
-            $this->hasOption('tables')
+            $this->option('actions') ||
+            $this->option('notifications') ||
+            $this->option('tables')
         ) {
             $layout = $filesystem->get(resource_path('views/layouts/app.blade.php'));
             $layout = (string) str($layout)
