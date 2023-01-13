@@ -17,7 +17,7 @@ trait HasExtraAlpineAttributes
      */
     public function extraAlpineAttributes(array | Closure $attributes): static
     {
-        $this->extraAlpineAttributes = array_merge($this->extraAlpineAttributes, $attributes);
+        $this->extraAlpineAttributes = $attributes;
 
         return $this;
     }

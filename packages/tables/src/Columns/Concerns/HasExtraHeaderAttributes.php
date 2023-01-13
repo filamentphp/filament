@@ -17,7 +17,7 @@ trait HasExtraHeaderAttributes
      */
     public function extraHeaderAttributes(array | Closure $attributes): static
     {
-        $this->extraHeaderAttributes = array_merge($this->extraHeaderAttributes, $attributes);
+        $this->extraHeaderAttributes = $attributes;
 
         return $this;
     }
