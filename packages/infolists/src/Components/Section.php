@@ -3,7 +3,6 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
-use Filament\Infolists\Components\Concerns\EntanglesStateWithSingularRelationship;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;

@@ -5,7 +5,6 @@ namespace Filament\Infolists\Components;
 use Filament\Infolists\Concerns\HasColumns;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
-use Illuminate\Database\Eloquent\Model;
 
 class Component extends ViewComponent
 {

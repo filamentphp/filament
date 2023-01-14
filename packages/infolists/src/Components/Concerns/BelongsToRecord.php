@@ -2,7 +2,6 @@
 
 namespace Filament\Infolists\Components\Concerns;
 
-use Closure;
 use Illuminate\Database\Eloquent\Model;
 
 trait BelongsToRecord

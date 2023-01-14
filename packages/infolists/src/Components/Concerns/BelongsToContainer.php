@@ -3,7 +3,6 @@
 namespace Filament\Infolists\Components\Concerns;
 
 use Filament\Infolists\ComponentContainer;
-use Filament\Infolists\Contracts\HasInfolists;
 
 trait BelongsToContainer
 {

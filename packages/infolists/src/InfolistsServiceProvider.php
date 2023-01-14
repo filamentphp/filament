@@ -2,7 +2,6 @@
 
 namespace Filament\Infolists;
 
-use Filament\Infolists\Testing\TestsInfolists;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 

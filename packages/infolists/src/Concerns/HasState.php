@@ -2,10 +2,6 @@
 
 namespace Filament\Infolists\Concerns;
 
-use Filament\Forms\Components\BaseFileUpload;
-use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Arr;
-
 trait HasState
 {
     protected ?string $statePath = null;
