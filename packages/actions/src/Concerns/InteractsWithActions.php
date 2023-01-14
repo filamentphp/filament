@@ -269,7 +269,7 @@ trait InteractsWithActions
         );
 
         if (! $action instanceof Action) {
-            throw new InvalidArgumentException('Actions must be an instance of ' . Action::class . ". The [$name] method on the Livewire component returned an instance of [" . get_class($action) . '].');
+            throw new InvalidArgumentException('Actions must be an instance of ' . Action::class . ". The [{$name}] method on the Livewire component returned an instance of [" . get_class($action) . '].');
         }
 
         return $this->cacheAction($action, name: $name);
