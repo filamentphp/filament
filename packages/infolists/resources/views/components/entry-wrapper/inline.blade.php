@@ -10,11 +10,15 @@
     'hintAction' => null,
     'hintColor' => null,
     'hintIcon' => null,
+    'shouldOpenUrlInNewTab' => null,
     'statePath' => null,
+    'tooltip' => null,
+    'url' => null,
 ])
 
 @php
     if ($entry) {
+        $alignment ??= $entry->getAlignment();
         $id ??= $entry->getId();
         $label ??= $entry->getLabel();
         $labelSrOnly ??= $entry->isLabelHidden();
@@ -23,7 +27,10 @@
         $hintAction ??= $entry->getHintAction();
         $hintColor ??= $entry->getHintColor();
         $hintIcon ??= $entry->getHintIcon();
+        $shouldOpenUrlInNewTab ??= $entry->shouldOpenUrlInNewTab();
         $statePath ??= $entry->getStatePath();
+        $tooltip ??= $entry->getTooltip();
+        $url ??= $entry->getUrl();
     }
 @endphp
 
@@ -59,8 +66,34 @@
         @endif
 
         <div class="space-y-2 sm:space-y-1 sm:col-span-2">
-            <dd>
-                {{ $slot }}
+            <dd
+                @if ($tooltip)
+                    x-data="{}"
+                    x-tooltip.raw="{{ $tooltip }}"
+                @endif
+                @class([
+                    match ($alignment) {
+                        'center' => 'text-center',
+                        'end' => 'text-end',
+                        'justify' => 'text-justify',
+                        'left' => 'text-left',
+                        'right' => 'text-right',
+                        'start' => 'text-start',
+                        default => null,
+                    },
+                ])
+            >
+                @if ($url)
+                    <a
+                        href="{{ $url }}"
+                        @if ($shouldOpenUrlInNewTab) target="_blank" @endif
+                        class="block"
+                    >
+                        {{ $slot }}
+                    </a>
+                @else
+                    {{ $slot }}
+                @endif
             </dd>
 
             @if ($helperText)

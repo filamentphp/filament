@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tables\Columns\Concerns;
+namespace Filament\Infolists\Components\Concerns;
 
 use Closure;
 

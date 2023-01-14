@@ -12,6 +12,7 @@ class Component extends ViewComponent
     use Concerns\BelongsToContainer;
     use Concerns\BelongsToRecord;
     use Concerns\CanBeHidden;
+    use Concerns\CanGrow;
     use Concerns\CanSpanColumns;
     use Concerns\Cloneable;
     use Concerns\HasChildComponents;

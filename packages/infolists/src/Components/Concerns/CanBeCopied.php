@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tables\Columns\Concerns;
+namespace Filament\Infolists\Components\Concerns;
 
 use Closure;
 
@@ -35,7 +35,7 @@ trait CanBeCopied
 
     public function getCopyMessage(): string
     {
-        return $this->evaluate($this->copyMessage) ?? __('filament-tables::table.columns.messages.copied');
+        return $this->evaluate($this->copyMessage) ?? __('filament-infolists::components.messages.copied');
     }
 
     public function getCopyMessageDuration(): int

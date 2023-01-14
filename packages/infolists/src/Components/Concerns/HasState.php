@@ -2,6 +2,7 @@
 
 namespace Filament\Infolists\Components\Concerns;
 
+use BackedEnum;
 use Closure;
 use Filament\Infolists\Components\Component;
 use Filament\Infolists\Get;
@@ -13,9 +14,23 @@ use Livewire\Livewire;
 
 trait HasState
 {
+    protected mixed $defaultState = null;
+
     protected ?Closure $getStateUsing = null;
 
     protected ?string $statePath = null;
+
+    public function default(mixed $state): static
+    {
+        $this->defaultState = $state;
+
+        return $this;
+    }
+
+    public function getDefaultState(): mixed
+    {
+        return $this->evaluate($this->defaultState, exceptParameters: ['state']);
+    }
 
     public function getStateUsing(?Closure $callback): static
     {
@@ -54,12 +69,38 @@ trait HasState
     public function getState(): mixed
     {
         if ($this->getStateUsing) {
-            return $this->evaluate(
+            $state = $this->evaluate(
                 $this->getStateUsing,
                 exceptParameters: ['state'],
             );
+        } else {
+            $state = data_get($this->getRecord(), $this->getStatePath());
         }
 
-        return data_get($this->getRecord(), $this->getStatePath());
+        if (
+            interface_exists(BackedEnum::class) &&
+            ($state instanceof BackedEnum) &&
+            property_exists($state, 'value')
+        ) {
+            $state = $state->value;
+        }
+
+        if ($state === null) {
+            $state = value($this->getDefaultState());
+        }
+
+        if (is_array($state)) {
+            $state = $this->mutateArrayState($state);
+        }
+
+        return $state;
+    }
+
+    /**
+     * @param  array<array-key>  $state
+     */
+    protected function mutateArrayState(array $state): mixed
+    {
+        return $state;
     }
 }

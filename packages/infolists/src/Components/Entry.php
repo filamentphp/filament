@@ -6,10 +6,12 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class Entry extends Component
 {
+    use Concerns\CanOpenUrl;
     use Concerns\HasAlignment;
     use Concerns\HasHelperText;
     use Concerns\HasHint;
     use Concerns\HasName;
+    use Concerns\HasTooltip;
 
     protected string $viewIdentifier = 'entry';
 
