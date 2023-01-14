@@ -1,21 +1,17 @@
 <?php
 
-namespace Filament\Forms\Components;
+namespace Filament\Infolists\Components;
 
 use Illuminate\Contracts\Support\Htmlable;
 
-class Placeholder extends Component
+class Entry extends Component
 {
+    use Concerns\HasAlignment;
     use Concerns\HasHelperText;
     use Concerns\HasHint;
     use Concerns\HasName;
 
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.placeholder';
-
-    protected mixed $content = null;
+    protected string $viewIdentifier = 'entry';
 
     final public function __construct(string $name)
     {
@@ -31,20 +27,6 @@ class Placeholder extends Component
         return $static;
     }
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->dehydrated(false);
-    }
-
-    public function content(mixed $content): static
-    {
-        $this->content = $content;
-
-        return $this;
-    }
-
     public function getId(): string
     {
         return parent::getId() ?? $this->getStatePath();
@@ -52,17 +34,14 @@ class Placeholder extends Component
 
     public function getLabel(): string | Htmlable | null
     {
-        return parent::getLabel() ?? (string) str($this->getName())
+        $label = parent::getLabel() ?? (string) str($this->getName())
+            ->before('.')
             ->kebab()
             ->replace(['-', '_'], ' ')
             ->ucfirst();
-    }
 
-    public function getContent(): mixed
-    {
-        return $this->evaluate(
-            $this->content,
-            exceptParameters: ['state'],
-        );
+        return (is_string($label) && $this->shouldTranslateLabel) ?
+            __($label) :
+            $label;
     }
 }

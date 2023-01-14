@@ -12,6 +12,7 @@
         "danharrin/livewire-rate-limiting": "^0.3|^1.0",
         "filament/actions": "self.version",
         "filament/forms": "self.version",
+        "filament/infolists": "self.version",
         "filament/notifications": "self.version",
         "filament/support": "self.version",
         "filament/tables": "self.version",

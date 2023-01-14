@@ -1,12 +1,12 @@
 <?php
 
-namespace Filament\Tables\Columns\Concerns;
+namespace Filament\Infolists\Components\Concerns;
 
 use Akaunting\Money;
 use Closure;
-use Filament\Tables\Columns\Column;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use Filament\Infolists\Components\Component;
+use Filament\Infolists\Components\Entry;
+use Filament\Infolists\Components\TextEntry;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
@@ -25,16 +25,16 @@ trait CanFormatState
 
     public function date(?string $format = null, ?string $timezone = null): static
     {
-        $format ??= Table::$defaultDateDisplayFormat;
+        $format ??= 'M j, Y';
 
-        $this->formatStateUsing(static function (Column $column, $state) use ($format, $timezone): ?string {
-            /** @var TextColumn $column */
+        $this->formatStateUsing(static function (Component $component, $state) use ($format, $timezone): ?string {
+            /** @var TextComponent $component */
             if (blank($state)) {
                 return null;
             }
 
             return Carbon::parse($state)
-                ->setTimezone($timezone ?? $column->getTimezone())
+                ->setTimezone($timezone ?? $component->getTimezone())
                 ->translatedFormat($format);
         });
 
@@ -43,7 +43,7 @@ trait CanFormatState
 
     public function dateTime(?string $format = null, ?string $timezone = null): static
     {
-        $format ??= Table::$defaultDateTimeDisplayFormat;
+        $format ??= 'M j, Y H:i:s';
 
         $this->date($format, $timezone);
 
@@ -52,14 +52,14 @@ trait CanFormatState
 
     public function since(?string $timezone = null): static
     {
-        $this->formatStateUsing(static function (Column $column, $state) use ($timezone): ?string {
-            /** @var TextColumn $column */
+        $this->formatStateUsing(static function (Component $component, $state) use ($timezone): ?string {
+            /** @var TextComponent $component */
             if (blank($state)) {
                 return null;
             }
 
             return Carbon::parse($state)
-                ->setTimezone($timezone ?? $column->getTimezone())
+                ->setTimezone($timezone ?? $component->getTimezone())
                 ->diffForHumans();
         });
 
@@ -122,7 +122,7 @@ trait CanFormatState
 
     public function money(string | Closure | null $currency = null, bool $shouldConvert = true): static
     {
-        $this->formatStateUsing(static function (Column $column, $state) use ($currency, $shouldConvert): ?string {
+        $this->formatStateUsing(static function (Component $component, $state) use ($currency, $shouldConvert): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -133,7 +133,7 @@ trait CanFormatState
 
             return (new Money\Money(
                 $state,
-                (new Money\Currency(strtoupper($column->evaluate($currency)))),
+                (new Money\Currency(strtoupper($component->evaluate($currency)))),
                 $shouldConvert,
             ))->format();
         });
@@ -143,7 +143,7 @@ trait CanFormatState
 
     public function numeric(int | Closure $decimalPlaces = 0, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
     {
-        $this->formatStateUsing(static function (Column $column, $state) use ($decimalPlaces, $decimalSeparator, $thousandsSeparator): ?string {
+        $this->formatStateUsing(static function (Component $component, $state) use ($decimalPlaces, $decimalSeparator, $thousandsSeparator): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -154,9 +154,9 @@ trait CanFormatState
 
             return number_format(
                 $state,
-                $column->evaluate($decimalPlaces),
-                $column->evaluate($decimalSeparator),
-                $column->evaluate($thousandsSeparator),
+                $component->evaluate($decimalPlaces),
+                $component->evaluate($decimalSeparator),
+                $component->evaluate($thousandsSeparator),
             );
         });
 
@@ -187,7 +187,7 @@ trait CanFormatState
 
     public function time(?string $format = null, ?string $timezone = null): static
     {
-        $format ??= Table::$defaultTimeDisplayFormat;
+        $format ??= 'H:i:s';
 
         $this->date($format, $timezone);
 

@@ -107,8 +107,8 @@ trait CanFormatState
 
     public function formatState(mixed $state): mixed
     {
-        return $this->evaluate($this->formatStateUsing, [
+        return $this->evaluate($this->formatStateUsing ?? $state, [
             'state' => $state,
-        ]) ?? $state;
+        ]);
     }
 }
