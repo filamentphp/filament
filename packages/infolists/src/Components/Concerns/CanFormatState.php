@@ -5,8 +5,6 @@ namespace Filament\Infolists\Components\Concerns;
 use Akaunting\Money;
 use Closure;
 use Filament\Infolists\Components\Component;
-use Filament\Infolists\Components\Entry;
-use Filament\Infolists\Components\TextEntry;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;

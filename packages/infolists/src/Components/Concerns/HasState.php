@@ -4,13 +4,6 @@ namespace Filament\Infolists\Components\Concerns;
 
 use BackedEnum;
 use Closure;
-use Filament\Infolists\Components\Component;
-use Filament\Infolists\Get;
-use Filament\Infolists\Set;
-use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Livewire\Livewire;
 
 trait HasState
 {

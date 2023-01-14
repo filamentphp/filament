@@ -2,8 +2,6 @@
 
 namespace Filament\Infolists\Components;
 
-use Filament\Infolists\Components\Concerns\EntanglesStateWithSingularRelationship;
-
 class Card extends Component
 {
     use Concerns\EntanglesStateWithSingularRelationship;
