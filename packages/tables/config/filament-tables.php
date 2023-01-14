@@ -12,6 +12,6 @@ return [
     |
     */
 
-    'default_filesystem_disk' => env('TABLES_FILESYSTEM_DISK', 'public'),
+    'default_filesystem_disk' => env('FILAMENT_FILESYSTEM_DISK', 'public'),
 
 ];
