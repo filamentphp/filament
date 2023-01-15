@@ -2,6 +2,7 @@
 
 namespace Filament\Infolists\Components;
 
+use BackedEnum;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Illuminate\Contracts\Support\Arrayable;
 

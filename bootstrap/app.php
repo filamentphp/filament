@@ -3,6 +3,7 @@
 use Filament\Actions\ActionsServiceProvider;
 use Filament\FilamentServiceProvider;
 use Filament\Forms\FormsServiceProvider;
+use Filament\Infolists\InfolistsServiceProvider;
 use Filament\Notifications\NotificationsServiceProvider;
 use Filament\SpatieLaravelTranslatablePluginServiceProvider;
 use Filament\Support\SupportServiceProvider;
@@ -24,11 +25,12 @@ $app = (new Application($basePathLocator::applicationBasePath()))
     ])
     ->createApplication();
 
-$app->register(AdminContextProvider::class);
 $app->register(LivewireServiceProvider::class);
+$app->register(AdminContextProvider::class);
 $app->register(FilamentServiceProvider::class);
 $app->register(ActionsServiceProvider::class);
 $app->register(FormsServiceProvider::class);
+$app->register(InfolistsServiceProvider::class);
 $app->register(NotificationsServiceProvider::class);
 $app->register(SpatieLaravelTranslatablePluginServiceProvider::class);
 $app->register(SupportServiceProvider::class);

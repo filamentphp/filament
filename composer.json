@@ -54,6 +54,7 @@
             "Filament\\Billing\\Providers\\": "packages/spark-billing-provider/src",
             "Filament\\Forms\\": "packages/forms/src",
             "Filament\\FontProviders\\": "packages/spatie-laravel-google-fonts-plugin/src",
+            "Filament\\Infolists\\": "packages/infolists/src",
             "Filament\\Notifications\\": "packages/notifications/src",
             "Filament\\Support\\": "packages/support/src",
             "Filament\\Tables\\": "packages/tables/src",

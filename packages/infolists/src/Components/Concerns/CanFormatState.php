@@ -5,6 +5,7 @@ namespace Filament\Infolists\Components\Concerns;
 use Akaunting\Money;
 use Closure;
 use Filament\Infolists\Components\Component;
+use Filament\Infolists\Components\TextEntry;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
@@ -26,7 +27,7 @@ trait CanFormatState
         $format ??= 'M j, Y';
 
         $this->formatStateUsing(static function (Component $component, $state) use ($format, $timezone): ?string {
-            /** @var TextComponent $component */
+            /** @var TextEntry $component */
             if (blank($state)) {
                 return null;
             }
@@ -51,7 +52,7 @@ trait CanFormatState
     public function since(?string $timezone = null): static
     {
         $this->formatStateUsing(static function (Component $component, $state) use ($timezone): ?string {
-            /** @var TextComponent $component */
+            /** @var TextEntry $component */
             if (blank($state)) {
                 return null;
             }

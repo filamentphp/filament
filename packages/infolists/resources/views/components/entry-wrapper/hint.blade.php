@@ -1,5 +1,4 @@
 @props([
-    'action' => null,
     'color' => null,
     'icon' => null,
 ])
@@ -28,11 +27,5 @@
             alias="filament-infolists::entry-wrapper.hint"
             size="h-5 w-5"
         />
-    @endif
-
-    @if ($action && (! $action->isHidden()))
-        <div class="filament-infolists-entry-wrapper-hint-action">
-            {{ $action }}
-        </div>
     @endif
 </div>

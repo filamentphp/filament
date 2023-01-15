@@ -2,7 +2,7 @@
 
 namespace Filament\Infolists\Components;
 
-use Filament\Forms\ComponentContainer;
+use Filament\Infolists\ComponentContainer;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 

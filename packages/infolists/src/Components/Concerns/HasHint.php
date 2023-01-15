@@ -10,8 +10,6 @@ trait HasHint
 {
     protected string | HtmlString | Closure | null $hint = null;
 
-    protected Action | Closure | null $hintAction = null;
-
     protected string | Closure | null $hintColor = null;
 
     protected string | Closure | null $hintIcon = null;
@@ -37,13 +35,6 @@ trait HasHint
         return $this;
     }
 
-    public function hintAction(Action | Closure | null $action): static
-    {
-        $this->hintAction = $action;
-
-        return $this;
-    }
-
     public function getHint(): string | HtmlString | null
     {
         return $this->evaluate($this->hint);
@@ -57,23 +48,5 @@ trait HasHint
     public function getHintIcon(): ?string
     {
         return $this->evaluate($this->hintIcon);
-    }
-
-    public function getHintAction(): ?Action
-    {
-        return $this->evaluate($this->hintAction)?->component($this);
-    }
-
-    /**
-     * @return array<string, Action>
-     */
-    public function getActions(): array
-    {
-        $hintAction = $this->getHintAction();
-
-        return array_merge(
-            parent::getActions(),
-            $hintAction ? [$hintAction->getName() => $hintAction] : [],
-        );
     }
 }

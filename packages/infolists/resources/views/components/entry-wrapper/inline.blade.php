@@ -7,7 +7,6 @@
     'labelSuffix' => null,
     'helperText' => null,
     'hint' => null,
-    'hintAction' => null,
     'hintColor' => null,
     'hintIcon' => null,
     'shouldOpenUrlInNewTab' => null,
@@ -24,7 +23,6 @@
         $labelSrOnly ??= $entry->isLabelHidden();
         $helperText ??= $entry->getHelperText();
         $hint ??= $entry->getHint();
-        $hintAction ??= $entry->getHintAction();
         $hintColor ??= $entry->getHintColor();
         $hintIcon ??= $entry->getHintIcon();
         $shouldOpenUrlInNewTab ??= $entry->shouldOpenUrlInNewTab();
@@ -42,7 +40,7 @@
     @endif
 
     <div class="grid gap-2 sm:grid-cols-3 sm:gap-4 sm:items-start">
-        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hint || $hintIcon || $hintAction)
+        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hint || $hintIcon)
             <div class="flex items-center justify-between gap-2 sm:gap-1 sm:items-start sm:flex-col sm:pt-1">
                 @if ($label && (! $labelSrOnly))
                     <x-filament-infolists::entry-wrapper.label
@@ -57,8 +55,8 @@
                     {{ $labelSuffix }}
                 @endif
 
-                @if ($hint || $hintIcon || $hintAction)
-                    <x-filament-infolists::entry-wrapper.hint :action="$hintAction" :color="$hintColor" :icon="$hintIcon">
+                @if ($hint || $hintIcon)
+                    <x-filament-infolists::entry-wrapper.hint :color="$hintColor" :icon="$hintIcon">
                         {{ filled($hint) ? ($hint instanceof \Illuminate\Support\HtmlString ? $hint : str($hint)->markdown()->sanitizeHtml()->toHtmlString()) : null }}
                     </x-filament-infolists::entry-wrapper.hint>
                 @endif
