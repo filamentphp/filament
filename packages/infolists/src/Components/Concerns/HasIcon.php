@@ -6,7 +6,6 @@ use BackedEnum;
 use Closure;
 use Filament\Infolists\Components\Component;
 use Filament\Support\Contracts\HasIcon as IconInterface;
-use Filament\Tables\Columns\Column;
 
 trait HasIcon
 {

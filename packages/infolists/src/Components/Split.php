@@ -3,7 +3,6 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
-use Filament\Tables\Columns\Column;
 
 class Split extends Component
 {
