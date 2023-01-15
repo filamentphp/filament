@@ -17,7 +17,7 @@ trait HasState
     protected ?array $state = null;
 
     /**
-     * @param array<string, mixed> | null $state
+     * @param  array<string, mixed> | null  $state
      */
     public function state(?array $state): static
     {

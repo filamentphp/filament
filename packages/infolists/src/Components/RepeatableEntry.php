@@ -3,7 +3,6 @@
 namespace Filament\Infolists\Components;
 
 use Filament\Infolists\ComponentContainer;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 
 class RepeatableEntry extends Entry
