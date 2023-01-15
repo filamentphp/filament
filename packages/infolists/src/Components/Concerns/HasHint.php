@@ -3,7 +3,6 @@
 namespace Filament\Infolists\Components\Concerns;
 
 use Closure;
-use Filament\Infolists\Components\Actions\Action;
 use Illuminate\Support\HtmlString;
 
 trait HasHint
