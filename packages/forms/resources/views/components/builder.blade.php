@@ -90,10 +90,17 @@
                         class="relative rounded-xl bg-white shadow ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10"
                     >
                         @if ($isReorderable || $hasBlockLabels || $isDeletable || $isCollapsible || $isCloneable)
-                            <header class="flex items-center h-10 overflow-hidden border-b bg-gray-50 rounded-t-xl dark:bg-gray-800 dark:border-gray-700">
+                            <header
+                                @if ($isCollapsible) x-on:click.stop="isCollapsed = ! isCollapsed" @endif
+                                @class([
+                                    'flex items-center h-10 overflow-hidden border-b bg-gray-50 rounded-t-xl dark:bg-gray-800 dark:border-gray-700',
+                                    'cursor-pointer' => $isCollapsible,
+                                ])
+                            >
                                 @if ($isReorderable)
                                     <button
                                         title="{{ __('filament-forms::components.builder.buttons.reorder.label') }}"
+                                        x-on:click.stop
                                         x-sortable-handle
                                         wire:keydown.prevent.arrow-up="dispatchFormEvent('builder::moveUp', '{{ $statePath }}', '{{ $uuid }}')"
                                         wire:keydown.prevent.arrow-down="dispatchFormEvent('builder::moveDown', '{{ $statePath }}', '{{ $uuid }}')"
@@ -139,7 +146,7 @@
                                         <li>
                                             <button
                                                 title="{{ __('filament-forms::components.builder.buttons.clone.label') }}"
-                                                wire:click="dispatchFormEvent('builder::cloneItem', '{{ $statePath }}', '{{ $uuid }}')"
+                                                wire:click.stop="dispatchFormEvent('builder::cloneItem', '{{ $statePath }}', '{{ $uuid }}')"
                                                 type="button"
                                                 class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500 dark:border-gray-700"
                                             >
@@ -160,7 +167,7 @@
                                         <li>
                                             <button
                                                 title="{{ __('filament-forms::components.builder.buttons.delete.label') }}"
-                                                wire:click="dispatchFormEvent('builder::delete', '{{ $statePath }}', '{{ $uuid }}')"
+                                                wire:click.stop="dispatchFormEvent('builder::delete', '{{ $statePath }}', '{{ $uuid }}')"
                                                 type="button"
                                                 class="flex items-center justify-center flex-none w-10 h-10 text-danger-600 transition hover:text-danger-500 dark:text-danger-500 dark:hover:text-danger-400"
                                             >
@@ -181,7 +188,7 @@
                                         <li>
                                             <button
                                                 x-bind:title="(! isCollapsed) ? '{{ __('filament-forms::components.builder.buttons.collapse.label') }}' : '{{ __('filament-forms::components.builder.buttons.expand.label') }}'"
-                                                x-on:click="isCollapsed = ! isCollapsed"
+                                                x-on:click.stop="isCollapsed = ! isCollapsed"
                                                 type="button"
                                                 class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500"
                                             >
