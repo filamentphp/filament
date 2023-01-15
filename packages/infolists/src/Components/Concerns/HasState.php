@@ -4,6 +4,7 @@ namespace Filament\Infolists\Components\Concerns;
 
 use BackedEnum;
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 
 trait HasState
 {
@@ -61,14 +62,10 @@ trait HasState
 
     public function getState(): mixed
     {
-        if ($this->getStateUsing) {
-            $state = $this->evaluate(
-                $this->getStateUsing,
-                exceptParameters: ['state'],
-            );
-        } else {
-            $state = data_get($this->getRecord(), $this->getStatePath());
-        }
+        $state = $this->getStateUsing ? $this->evaluate(
+            $this->getStateUsing,
+            exceptParameters: ['state'],
+        ) : data_get($this->getContainer()->getState(), $this->getStatePath());
 
         if (
             interface_exists(BackedEnum::class) &&
@@ -95,5 +92,10 @@ trait HasState
     protected function mutateArrayState(array $state): mixed
     {
         return $state;
+    }
+
+    public function getRecord(): ?Model
+    {
+        return $this->getContainer()->getRecord();
     }
 }

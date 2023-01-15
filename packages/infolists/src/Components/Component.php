@@ -9,7 +9,6 @@ use Filament\Support\Concerns\HasExtraAttributes;
 class Component extends ViewComponent
 {
     use Concerns\BelongsToContainer;
-    use Concerns\BelongsToRecord;
     use Concerns\CanBeHidden;
     use Concerns\CanGrow;
     use Concerns\CanSpanColumns;

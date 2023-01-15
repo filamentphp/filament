@@ -7,7 +7,6 @@ use Filament\Support\Components\ViewComponent;
 class ComponentContainer extends ViewComponent
 {
     use Concerns\BelongsToParentComponent;
-    use Concerns\BelongsToRecord;
     use Concerns\CanBeHidden;
     use Concerns\Cloneable;
     use Concerns\HasColumns;

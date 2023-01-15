@@ -16,7 +16,7 @@
 <div {{ $attributes
     ->merge($getExtraAttributes(), escape: false)
     ->class([
-        'filament-tables-text-column text-sm',
+        'filament-tables-text-column',
         'px-4 py-3' => ! $isInline(),
         'text-primary-600 transition hover:underline hover:text-primary-500 focus:underline focus:text-primary-500' => $isClickable,
         match ($color = $getColor()) {
@@ -29,7 +29,8 @@
             default => $color,
         } => ! $isClickable,
         match ($size = $getSize()) {
-            'sm' => 'text-sm',
+            'sm', null => 'text-sm',
+            'base', 'md' => 'text-base',
             'lg' => 'text-lg',
             default => $size,
         },

@@ -45,7 +45,7 @@
 
                 {{ $action->getModalContent() }}
 
-                @if (count(($infolist = $action->getInfolist())->getComponents()))
+                @if (count(($infolist = $action->getInfolist())?->getComponents() ?? []))
                     {{ $infolist }}
                 @elseif ($this->mountedActionHasForm())
                     {{ $this->getMountedActionForm() }}
@@ -126,7 +126,7 @@
 
                 {{ $action->getModalContent() }}
 
-                @if (count(($infolist = $action->getInfolist())->getComponents()))
+                @if (count(($infolist = $action->getInfolist())?->getComponents() ?? []))
                     {{ $infolist }}
                 @elseif ($this->mountedTableActionHasForm())
                     {{ $this->getMountedTableActionForm() }}
@@ -193,7 +193,7 @@
 
                 {{ $action->getModalContent() }}
 
-                @if (count(($infolist = $action->getInfolist())->getComponents()))
+                @if (count(($infolist = $action->getInfolist())?->getComponents() ?? []))
                     {{ $infolist }}
                 @elseif ($this->mountedTableBulkActionHasForm())
                     {{ $this->getMountedTableBulkActionForm() }}
@@ -266,7 +266,7 @@
 
                 {{ $action->getModalContent() }}
 
-                @if (count(($infolist = $action->getInfolist())->getComponents()))
+                @if (count(($infolist = $action->getInfolist())?->getComponents() ?? []))
                     {{ $infolist }}
                 @elseif ($this->mountedFormComponentActionHasForm())
                     {{ $this->getMountedFormComponentActionForm() }}

@@ -32,7 +32,7 @@
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
             ->merge($getExtraAlpineAttributes(), escape: false)
-            ->class(['filament-infolists-tabs-component rounded-xl shadow-sm border border-gray-300 bg-white dark:bg-gray-800 dark:border-gray-700'])
+            ->class(['filament-infolists-tabs-component rounded-xl shadow-sm bg-white ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10'])
     }}
 >
     <div class="p-1">

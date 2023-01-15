@@ -17,7 +17,7 @@
     <div {{ $attributes
         ->merge($getExtraAttributes(), escape: false)
         ->class([
-            'filament-infolists-text-entry text-sm',
+            'filament-infolists-text-entry',
             'text-primary-600 transition hover:underline hover:text-primary-500 focus:underline focus:text-primary-500' => $url,
             match ($color = $getColor()) {
                 'danger' => 'text-danger-600',
@@ -29,7 +29,8 @@
                 default => $color,
             } => ! $url,
             match ($size = $getSize()) {
-                'sm' => 'text-sm',
+                'sm', null => 'text-sm',
+                'base', 'md' => 'text-base',
                 'lg' => 'text-lg',
                 default => $size,
             },
