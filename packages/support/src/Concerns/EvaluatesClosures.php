@@ -23,20 +23,20 @@ trait EvaluatesClosures
      */
     public function evaluate(mixed $value, array $parameters = [], array $exceptParameters = []): mixed
     {
-        $this->evaluationParametersToRemove = $exceptParameters;
-
-        if ($value instanceof Closure) {
-            return app()->call(
-                $value,
-                array_merge(
-                    isset($this->evaluationIdentifier) ? [$this->evaluationIdentifier => $this] : [],
-                    $this->getDefaultEvaluationParameters(),
-                    $parameters,
-                ),
-            );
+        if (! $value instanceof Closure) {
+            return $value;
         }
 
-        return $value;
+        $this->evaluationParametersToRemove = $exceptParameters;
+
+        return app()->call(
+            $value,
+            array_merge(
+                isset($this->evaluationIdentifier) ? [$this->evaluationIdentifier => $this] : [],
+                $this->getDefaultEvaluationParameters(),
+                $parameters,
+            ),
+        );
     }
 
     /**

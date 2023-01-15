@@ -6,7 +6,7 @@ return [
 
     'breadcrumb' => 'Angalia',
 
-    'form' => [
+    'content' => [
 
         'tab' => [
             'label' => 'Angalia',

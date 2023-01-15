@@ -6,7 +6,7 @@ return [
 
     'breadcrumb' => 'Afficher',
 
-    'form' => [
+    'content' => [
 
         'tab' => [
             'label' => 'Afficher',

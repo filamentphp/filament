@@ -165,9 +165,9 @@ trait CanFormatState
 
     public function formatState(mixed $state): mixed
     {
-        $state = $this->evaluate($this->formatStateUsing, [
+        $state = $this->evaluate($this->formatStateUsing ?? $state, [
             'state' => $state,
-        ]) ?? $state;
+        ]);
 
         if ($this->prefix) {
             $state = $this->evaluate($this->prefix) . $state;

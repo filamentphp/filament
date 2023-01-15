@@ -168,6 +168,7 @@ trait HasActions
         return $action->getModalSubheading() ||
             $action->getModalContent() ||
             $action->getModalFooter() ||
+            $action->getInfolist() ||
             $this->mountedTableActionHasForm();
     }
 

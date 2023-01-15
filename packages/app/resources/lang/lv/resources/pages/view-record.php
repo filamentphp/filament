@@ -6,7 +6,7 @@ return [
 
     'breadcrumb' => 'Skatīt',
 
-    'form' => [
+    'content' => [
 
         'tab' => [
             'label' => 'Skatīt',

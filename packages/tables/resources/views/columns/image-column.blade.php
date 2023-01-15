@@ -3,8 +3,10 @@
     'px-4 py-3' => ! $isInline(),
 ]) }}>
     @php
+        $isCircular = $isCircular();
+        $isSquare = $isSquare();
         $height = $getHeight();
-        $width = $getWidth() ?? ($isCircular() || $isSquare() ? $height : null);
+        $width = $getWidth() ?? ($isCircular || $isSquare ? $height : null);
     @endphp
 
     <div
@@ -13,8 +15,8 @@
             @if ($width) width: {{ $width }}; @endif
         "
         @class([
-            'overflow-hidden' => $isCircular() || $isSquare(),
-            'rounded-full' => $isCircular(),
+            'overflow-hidden' => $isCircular || $isSquare,
+            'rounded-full' => $isCircular,
         ])
     >
         @if ($path = $getImagePath())
@@ -25,7 +27,7 @@
                     @if ($width) width: {{ $width }}; @endif
                 "
                 {{ $getExtraImgAttributeBag()->class([
-                    'object-cover object-center' => $isCircular() || $isSquare(),
+                    'object-cover object-center' => $isCircular || $isSquare,
                 ]) }}
             >
        @endif

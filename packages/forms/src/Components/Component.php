@@ -47,12 +47,10 @@ class Component extends ViewComponent
             'operation' => $operation,
             'record' => $this->getRecord(),
             'set' => $this->getSetCallback(),
-            'state' => $this->shouldEvaluateWithState() ? $this->getState() : null,
+            'state' => $this->resolveEvaluationParameter(
+                'state',
+                fn (): mixed => $this->getState(),
+            ),
         ]);
-    }
-
-    protected function shouldEvaluateWithState(): bool
-    {
-        return true;
     }
 }

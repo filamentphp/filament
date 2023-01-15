@@ -9,6 +9,7 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Illuminate\Database\Eloquent\Model;
 
@@ -38,14 +39,16 @@ class ViewRecord extends Page
         'activeRelationManager',
     ];
 
+    protected ?Infolist $cachedInfolist = null;
+
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? __('filament::resources/pages/view-record.breadcrumb');
     }
 
-    public function getFormTabLabel(): ?string
+    public function getContentTabLabel(): ?string
     {
-        return __('filament::resources/pages/view-record.form.tab.label');
+        return __('filament::resources/pages/view-record.content.tab.label');
     }
 
     public function mount(int | string $record): void
@@ -56,7 +59,16 @@ class ViewRecord extends Page
 
         abort_unless(static::getResource()::canView($this->getRecord()), 403);
 
+        if ($this->hasInfolist()) {
+            return;
+        }
+
         $this->fillForm();
+    }
+
+    protected function hasInfolist(): bool
+    {
+        return (bool) count($this->getCachedInfolist()->getComponents());
     }
 
     protected function fillForm(): void
@@ -70,6 +82,11 @@ class ViewRecord extends Page
         $this->form->fill($data);
 
         $this->callHook('afterFill');
+    }
+
+    protected function getCachedInfolist(): Infolist
+    {
+        return $this->cachedInfolist ??= $this->getInfolist();
     }
 
     /**
@@ -176,8 +193,18 @@ class ViewRecord extends Page
                 ->disabled()
                 ->model($this->getRecord())
                 ->statePath('data')
-                ->columns($this->hasInlineFormLabels() ? 1 : 2)
-                ->inlineLabel($this->hasInlineFormLabels()),
+                ->columns($this->hasInlineLabels() ? 1 : 2)
+                ->inlineLabel($this->hasInlineLabels()),
+        );
+    }
+
+    public function getInfolist(): Infolist
+    {
+        return static::getResource()::infolist(
+            Infolist::make()
+                ->record($this->getRecord())
+                ->columns($this->hasInlineLabels() ? 1 : 2)
+                ->inlineLabel($this->hasInlineLabels()),
         );
     }
 

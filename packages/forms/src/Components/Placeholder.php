@@ -45,11 +45,6 @@ class Placeholder extends Component
         return $this;
     }
 
-    protected function shouldEvaluateWithState(): bool
-    {
-        return false;
-    }
-
     public function getId(): string
     {
         return parent::getId() ?? $this->getStatePath();
@@ -65,6 +60,9 @@ class Placeholder extends Component
 
     public function getContent(): mixed
     {
-        return $this->evaluate($this->content);
+        return $this->evaluate(
+            $this->content,
+            exceptParameters: ['state'],
+        );
     }
 }

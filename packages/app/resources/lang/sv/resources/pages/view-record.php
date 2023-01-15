@@ -6,7 +6,7 @@ return [
 
     'breadcrumb' => 'Visa',
 
-    'form' => [
+    'content' => [
 
         'tab' => [
             'label' => 'Visa',

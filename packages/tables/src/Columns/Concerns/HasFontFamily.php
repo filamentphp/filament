@@ -8,9 +8,9 @@ trait HasFontFamily
 {
     protected string | Closure | null $fontFamily = null;
 
-    public function fontFamily(string | Closure | null $fontFamily): static
+    public function fontFamily(string | Closure | null $family): static
     {
-        $this->fontFamily = $fontFamily;
+        $this->fontFamily = $family;
 
         return $this;
     }

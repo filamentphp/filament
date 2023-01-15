@@ -1,20 +1,20 @@
 @props([
     'activeManager',
-    'form' => null,
-    'formTabLabel' => null,
+    'content' => null,
+    'contentTabLabel' => null,
     'managers',
     'ownerRecord',
     'pageClass',
 ])
 
 <div class="filament-resources-relation-managers-container space-y-2">
-    @if ((count($managers) > 1) || $form)
+    @if ((count($managers) > 1) || $content)
         <div class="flex justify-center">
             <x-filament::tabs>
                 @php
                     $tabs = $managers;
 
-                    if ($form) {
+                    if ($content) {
                         $tabs = array_replace([null => null], $tabs);
                     }
                 @endphp
@@ -39,8 +39,8 @@
                     >
                         @if (filled($tabKey))
                             {{ $isGroup ? $manager->getLabel() : $manager::getTitle($ownerRecord, $pageClass) }}
-                        @elseif ($form)
-                            {{ $formTabLabel }}
+                        @elseif ($content)
+                            {{ $contentTabLabel }}
                         @endif
                     </x-filament::tabs.item>
                 @endforeach
@@ -69,7 +69,7 @@
                 @livewire(\Livewire\Livewire::getAlias($manager, $manager::getName()), ['ownerRecord' => $ownerRecord, 'pageClass' => $pageClass], key($manager))
             @endif
         </div>
-    @elseif ($form)
-        {{ $form }}
+    @elseif ($content)
+        {{ $content }}
     @endif
 </div>
