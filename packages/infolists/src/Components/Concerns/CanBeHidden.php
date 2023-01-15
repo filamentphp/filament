@@ -3,9 +3,6 @@
 namespace Filament\Infolists\Components\Concerns;
 
 use Closure;
-use Filament\Infolists\Contracts\HasInfolists;
-use Filament\Infolists\Get;
-use Illuminate\Support\Arr;
 
 trait CanBeHidden
 {
