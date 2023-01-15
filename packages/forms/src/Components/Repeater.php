@@ -23,6 +23,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     protected string | Closure | null $createItemButtonLabel = null;
 
+    protected string | Closure | null $createItemButtonColor = null;
+
     protected bool | Closure $isItemCreationDisabled = false;
 
     protected bool | Closure $isItemDeletionDisabled = false;
@@ -180,6 +182,13 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
+    public function createItemButtonColor(string | Closure | null $color): static
+    {
+        $this->createItemButtonColor = $color;
+
+        return $this;
+    }
+
     public function defaultItems(int | Closure $count): static
     {
         $this->default(static function (Repeater $component) use ($count): array {
@@ -252,6 +261,11 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     public function getCreateItemButtonLabel(): string
     {
         return $this->evaluate($this->createItemButtonLabel);
+    }
+
+    public function getCreateItemButtonColor(): ?string
+    {
+        return $this->evaluate($this->createItemButtonColor);
     }
 
     public function isItemMovementDisabled(): bool

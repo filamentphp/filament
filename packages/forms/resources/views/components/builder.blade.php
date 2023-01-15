@@ -251,7 +251,10 @@
         @if (! $isItemCreationDisabled)
             <x-forms::dropdown class="flex justify-center">
                 <x-slot name="trigger">
-                    <x-forms::button size="sm">
+                    <x-forms::button
+                        :color="$getCreateItemButtonColor()"
+                        size="sm"
+                    >
                         {{ $getCreateItemButtonLabel() }}
                     </x-forms::button>
                 </x-slot>

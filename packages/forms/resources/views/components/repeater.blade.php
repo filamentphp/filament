@@ -217,6 +217,7 @@
             <div class="relative flex justify-center">
                 <x-forms::button
                     :wire:click="'dispatchFormEvent(\'repeater::createItem\', \'' . $getStatePath() . '\')'"
+                    :color="$getCreateItemButtonColor()"
                     size="sm"
                     type="button"
                 >

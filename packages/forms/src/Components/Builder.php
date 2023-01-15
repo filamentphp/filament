@@ -22,6 +22,8 @@ class Builder extends Field implements Contracts\CanConcealComponents
 
     protected string | Closure | null $createItemButtonLabel = null;
 
+    protected string | Closure | null $createItemButtonColor = null;
+
     protected bool | Closure $isItemMovementDisabled = false;
 
     protected bool | Closure $isItemCreationDisabled = false;
@@ -210,6 +212,13 @@ class Builder extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
+    public function createItemButtonColor(string | Closure | null $color): static
+    {
+        $this->createItemButtonColor = $color;
+
+        return $this;
+    }
+
     public function disableItemMovement(bool | Closure $condition = true): static
     {
         $this->isItemMovementDisabled = $condition;
@@ -298,6 +307,11 @@ class Builder extends Field implements Contracts\CanConcealComponents
     public function getCreateItemButtonLabel(): string
     {
         return $this->evaluate($this->createItemButtonLabel);
+    }
+
+    public function getCreateItemButtonColor(): ?string
+    {
+        return $this->evaluate($this->createItemButtonColor);
     }
 
     public function hasBlock($name): bool
