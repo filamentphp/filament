@@ -50,7 +50,7 @@
     ]) }}>
         @if (count($containers))
             <ul
-                class="space-y-12"
+                class="space-y-6"
                 wire:sortable
                 wire:end.stop="dispatchFormEvent('builder::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
             >
