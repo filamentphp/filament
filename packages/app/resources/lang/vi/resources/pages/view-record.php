@@ -6,7 +6,7 @@ return [
 
     'breadcrumb' => 'Xem',
 
-    'form' => [
+    'content' => [
 
         'tab' => [
             'label' => 'Xem',

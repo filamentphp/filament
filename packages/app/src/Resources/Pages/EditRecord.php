@@ -10,6 +10,7 @@ use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Exceptions\Halt;
@@ -48,9 +49,9 @@ class EditRecord extends Page
         return static::$breadcrumb ?? __('filament::resources/pages/edit-record.breadcrumb');
     }
 
-    public function getFormTabLabel(): ?string
+    public function getContentTabLabel(): ?string
     {
-        return __('filament::resources/pages/edit-record.form.tab.label');
+        return __('filament::resources/pages/edit-record.content.tab.label');
     }
 
     public function mount(int | string $record): void
@@ -205,6 +206,7 @@ class EditRecord extends Page
             ->authorize($resource::canView($this->getRecord()))
             ->record($this->getRecord())
             ->recordTitle($this->getRecordTitle())
+            ->infolist(fn (Infolist $infolist): Infolist => static::getResource()::infolist($infolist->columns(2)))
             ->form(fn (Form $form): Form => static::getResource()::form($form));
 
         if ($resource::hasPage('view')) {
@@ -300,8 +302,8 @@ class EditRecord extends Page
                 ->operation('edit')
                 ->model($this->getRecord())
                 ->statePath('data')
-                ->columns($this->hasInlineFormLabels() ? 1 : 2)
-                ->inlineLabel($this->hasInlineFormLabels()),
+                ->columns($this->hasInlineLabels() ? 1 : 2)
+                ->inlineLabel($this->hasInlineLabels()),
         );
     }
 

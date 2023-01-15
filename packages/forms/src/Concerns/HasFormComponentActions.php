@@ -192,6 +192,7 @@ trait HasFormComponentActions
         return $action->getModalSubheading() ||
             $action->getModalContent() ||
             $action->getModalFooter() ||
+            $action->getInfolist() ||
             $this->mountedFormComponentActionHasForm();
     }
 

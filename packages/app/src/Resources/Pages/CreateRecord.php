@@ -235,8 +235,8 @@ class CreateRecord extends Page
                 ->operation('create')
                 ->model($this->getModel())
                 ->statePath('data')
-                ->columns($this->hasInlineFormLabels() ? 1 : 2)
-                ->inlineLabel($this->hasInlineFormLabels()),
+                ->columns($this->hasInlineLabels() ? 1 : 2)
+                ->inlineLabel($this->hasInlineLabels()),
         );
     }
 

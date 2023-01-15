@@ -5,6 +5,7 @@ namespace Filament\Resources\Pages;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ListRecords\Tab;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
@@ -80,6 +81,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return static::getResource()::form($form);
     }
 
+    public function infolist(Infolist $infolist): Infolist
+    {
+        return static::getResource()::infolist($infolist);
+    }
+
     protected function configureCreateAction(CreateAction $action): void
     {
         $resource = static::getResource();
@@ -151,6 +157,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
         $action
             ->authorize(fn (Model $record): bool => $resource::canView($record))
+            ->infolist(fn (Infolist $infolist): Infolist => $this->infolist($infolist->columns(2)))
             ->form(fn (Form $form): Form => $this->form($form->columns(2)));
 
         if ($resource::hasPage('view')) {

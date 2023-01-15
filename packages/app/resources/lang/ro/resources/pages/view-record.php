@@ -6,7 +6,7 @@ return [
 
     'breadcrumb' => 'Vizualizare',
 
-    'form' => [
+    'content' => [
 
         'tab' => [
             'label' => 'Vizualizare',

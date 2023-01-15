@@ -6,7 +6,7 @@ return [
 
     'breadcrumb' => 'Vis',
 
-    'form' => [
+    'content' => [
 
         'tab' => [
             'label' => 'Vis',

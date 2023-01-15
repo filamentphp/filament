@@ -6,7 +6,7 @@ return [
 
     'breadcrumb' => 'Перегляд',
 
-    'form' => [
+    'content' => [
 
         'tab' => [
             'label' => 'Перегляд',

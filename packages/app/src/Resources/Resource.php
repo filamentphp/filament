@@ -7,6 +7,7 @@ use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\GlobalSearch\Actions\Action;
 use Filament\GlobalSearch\GlobalSearchResult;
+use Filament\Infolists\Infolist;
 use Filament\Navigation\NavigationItem;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationGroup;
@@ -82,6 +83,11 @@ abstract class Resource
     public static function form(Form $form): Form
     {
         return $form;
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist;
     }
 
     public static function registerNavigationItems(): void

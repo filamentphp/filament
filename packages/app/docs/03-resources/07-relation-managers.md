@@ -516,10 +516,10 @@ public static function canView(Model $ownerRecord, string $pageClass): bool
 
 ## Combining the relation manager tabs with the form
 
-On the Edit or View page class, override the `hasCombinedRelationManagerTabsWithForm()` method:
+On the Edit or View page class, override the `hasCombinedRelationManagerTabsWithContent()` method:
 
 ```php
-public function hasCombinedRelationManagerTabsWithForm(): bool
+public function hasCombinedRelationManagerTabsWithContent(): bool
 {
     return true;
 }

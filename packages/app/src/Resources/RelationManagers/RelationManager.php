@@ -4,6 +4,7 @@ namespace Filament\Resources\RelationManagers;
 
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
@@ -166,6 +167,7 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     {
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => (! $livewire->isReadOnly()) && $livewire->canView($record))
+            ->infolist(fn (Infolist $infolist): Infolist => $this->infolist($infolist->columns(2)))
             ->form(fn (Form $form): Form => $this->form($form->columns(2)));
     }
 
@@ -267,6 +269,11 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     public function form(Form $form): Form
     {
         return $form;
+    }
+
+    public function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist;
     }
 
     public function getInverseRelationshipName(): ?string

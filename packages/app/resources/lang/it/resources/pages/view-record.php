@@ -6,7 +6,7 @@ return [
 
     'breadcrumb' => 'Guarda',
 
-    'form' => [
+    'content' => [
 
         'tab' => [
             'label' => 'Guarda',

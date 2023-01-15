@@ -6,7 +6,7 @@ return [
 
     'breadcrumb' => 'Προεπισκόπηση',
 
-    'form' => [
+    'content' => [
 
         'tab' => [
             'label' => 'Προεπισκόπηση',

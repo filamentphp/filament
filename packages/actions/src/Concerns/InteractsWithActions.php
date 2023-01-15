@@ -184,6 +184,7 @@ trait InteractsWithActions
         return $action->getModalSubheading() ||
             $action->getModalContent() ||
             $action->getModalFooter() ||
+            $action->getInfolist() ||
             $this->mountedActionHasForm();
     }
 

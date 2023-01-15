@@ -31,19 +31,19 @@ trait HasRelationManagers
     {
         $managers = $this->getRelationManagers();
 
-        if (array_key_exists($this->activeRelationManager, $managers) || $this->hasCombinedRelationManagerTabsWithForm()) {
+        if (array_key_exists($this->activeRelationManager, $managers) || $this->hasCombinedRelationManagerTabsWithContent()) {
             return;
         }
 
         $this->activeRelationManager = array_key_first($this->getRelationManagers()) ?? null;
     }
 
-    public function hasCombinedRelationManagerTabsWithForm(): bool
+    public function hasCombinedRelationManagerTabsWithContent(): bool
     {
         return false;
     }
 
-    public function getFormTabLabel(): ?string
+    public function getContentTabLabel(): ?string
     {
         return null;
     }
