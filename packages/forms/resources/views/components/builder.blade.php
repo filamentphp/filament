@@ -235,7 +235,11 @@
                                 x-transition
                                 class="absolute inset-x-0 bottom-0 flex items-center justify-center h-12 -mb-12"
                             >
-                                <x-filament::dropdown>
+                                <x-filament-forms::builder.block-picker
+                                    :blocks="$getBlocks()"
+                                    :after-item="$uuid"
+                                    :state-path="$statePath"
+                                >
                                     <x-slot name="trigger">
                                         <x-filament::icon-button
                                             :label="$getAddBetweenButtonLabel()"
@@ -243,13 +247,7 @@
                                             icon-alias="forms::builder.add-between.trigger"
                                         />
                                     </x-slot>
-
-                                    <x-filament-forms::builder.block-picker
-                                        :blocks="$getBlocks()"
-                                        :after-item="$uuid"
-                                        :state-path="$statePath"
-                                    />
-                                </x-filament::dropdown>
+                                </x-filament-forms::builder.block-picker>
                             </div>
                         @endif
                     </li>
@@ -258,18 +256,18 @@
         @endif
 
         @if ($isAddable)
-            <x-filament::dropdown class="flex justify-center">
+            <x-filament-forms::builder.block-picker
+                :blocks="$getBlocks()"
+                :after-item="$uuid"
+                :state-path="$statePath"
+                class="flex justify-center"
+            >
                 <x-slot name="trigger">
                     <x-filament::button size="sm">
                         {{ $getAddButtonLabel() }}
                     </x-filament::button>
                 </x-slot>
-
-                <x-filament-forms::builder.block-picker
-                    :blocks="$getBlocks()"
-                    :state-path="$statePath"
-                />
-            </x-filament::dropdown>
+            </x-filament-forms::builder.block-picker>
         @endif
     </div>
 </x-dynamic-component>
