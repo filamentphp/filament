@@ -3,5 +3,5 @@
     icon="heroicon-o-bell"
     :color="$unreadNotificationsCount ? 'primary' : 'secondary'"
     :indicator="$unreadNotificationsCount"
-    class="ml-4 -mr-1"
+    class="ltr:ml-4 ltr:-mr-1 rtl:mr-4 rtl:-ml-1"
 />
