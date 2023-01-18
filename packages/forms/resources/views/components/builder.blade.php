@@ -333,20 +333,18 @@
                                 x-transition
                                 class="absolute inset-x-0 bottom-0 flex items-center justify-center h-12 -mb-12"
                             >
-                                <x-forms::dropdown>
+                                <x-forms::builder.block-picker
+                                    :blocks="$getBlocks()"
+                                    :create-after-item="$uuid"
+                                    :state-path="$getStatePath()"
+                                >
                                     <x-slot name="trigger">
                                         <x-forms::icon-button
                                             :label="$getCreateItemBetweenButtonLabel()"
                                             icon="heroicon-o-plus"
                                         />
                                     </x-slot>
-
-                                    <x-forms::builder.block-picker
-                                        :blocks="$getBlocks()"
-                                        :create-after-item="$uuid"
-                                        :state-path="$getStatePath()"
-                                    />
-                                </x-forms::dropdown>
+                                </x-forms::builder.block-picker>
                             </div>
                         @endif
                     </li>
@@ -356,18 +354,17 @@
         @endif
 
         @if (! $isItemCreationDisabled)
-            <x-forms::dropdown class="flex justify-center">
+            <x-forms::builder.block-picker
+                :blocks="$getBlocks()"
+                :state-path="$getStatePath()"
+                class="flex justify-center"
+            >
                 <x-slot name="trigger">
                     <x-forms::button size="sm">
                         {{ $getCreateItemButtonLabel() }}
                     </x-forms::button>
                 </x-slot>
-
-                <x-forms::builder.block-picker
-                    :blocks="$getBlocks()"
-                    :state-path="$getStatePath()"
-                />
-            </x-forms::dropdown>
+            </x-forms::builder.block-picker>
         @endif
     </div>
 </x-dynamic-component>
