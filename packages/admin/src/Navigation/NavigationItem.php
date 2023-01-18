@@ -3,7 +3,6 @@
 namespace Filament\Navigation;
 
 use Closure;
-use function PHPUnit\Framework\isInstanceOf;
 
 class NavigationItem
 {
@@ -104,7 +103,7 @@ class NavigationItem
         return $this;
     }
 
-    public function setBadge(string|Closure $callback): static
+    public function setBadge(string | Closure $callback): static
     {
         $this->badge = $callback instanceof Closure
             ? $callback()
@@ -118,7 +117,7 @@ class NavigationItem
         return $this->badge;
     }
 
-    public function setBadgeColor(string|Closure $callback): static
+    public function setBadgeColor(string | Closure $callback): static
     {
         $this->badgeColor = $callback instanceof Closure
             ? $callback()
