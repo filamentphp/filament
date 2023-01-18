@@ -405,7 +405,7 @@ abstract class Resource
     }
 
     /**
-     * @return array<class-string, RelationGroup>
+     * @return array<class-string | RelationGroup>
      */
     public static function getRelations(): array
     {
