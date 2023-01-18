@@ -44,9 +44,8 @@ Filament ships with two main types of columns - static and editable.
 Static columns display data to the user:
 
 - [Text column](text)
-- [Boolean column](boolean)
-- [Image column](image)
 - [Icon column](icon)
+- [Image column](image)
 - [Badge column](badge)
 - [Tags column](tags)
 - [Color column](color)
@@ -176,6 +175,15 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('title')->searchable(isIndividual: true, isGlobal: false)
 ```
 
+You may optionally persist the searches in the query string:
+
+```php
+protected $queryString = [
+    // ...
+    'tableColumnSearchQueries',
+];
+```
+
 ### Persist search in session
 
 To persist the table or individual column search in the user's session, override the `shouldPersistTableSearchInSession()` or `shouldPersistTableColumnSearchInSession()` method on the Livewire component:
@@ -213,7 +221,7 @@ TextColumn::make('title')
 
 #### Action modals
 
-You may open [action modals](actions#modals) by passing in an `Action` object to the `action()` method:
+You may open [action modals](../actions#modals) by passing in an `Action` object to the `action()` method:
 
 ```php
 use Filament\Tables\Actions\Action;
@@ -294,6 +302,19 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('id')->toggleable(isToggledHiddenByDefault: true)
 ```
 
+## Calculated state
+
+Sometimes you need to calculate the state of a column, instead of directly reading it from a database column.
+
+By passing a callback function to the `getStateUsing()` method, you can customize the returned state for that column based on the `$record`:
+
+```php
+Tables\Columns\TextColumn::make('amount_including_vat')
+    ->getStateUsing(function (Model $record): float {
+        return $record->amount * (1 + $record->vat_rate);
+    })
+```
+
 ## Tooltips
 
 > If you want to use tooltips outside of the admin panel, make sure you have [`@ryangjchandler/alpine-tooltip` installed](https://github.com/ryangjchandler/alpine-tooltip#installation) in your app, including [`tippy.css`](https://atomiks.github.io/tippyjs/v6/getting-started/#1-package-manager). You'll also need to install [`tippy.css`](https://atomiks.github.io/tippyjs/v6/getting-started/#1-package-manager) if you're using a [custom admin theme](/docs/admin/appearance#building-themes).
@@ -346,9 +367,9 @@ Column::configureUsing(function (Column $column): void {
 Additionally, you can call this code on specific column types as well:
 
 ```php
-use Filament\Tables\Columns\BooleanColumn;
+use Filament\Tables\Columns\TextColumn;
 
-BooleanColumn::configureUsing(function (BooleanColumn $column): void {
+TextColumn::configureUsing(function (TextColumn $column): void {
     $column
         ->toggleable()
         ->sortable();
@@ -358,7 +379,7 @@ BooleanColumn::configureUsing(function (BooleanColumn $column): void {
 Of course, you are still able to overwrite this on each column individually:
 
 ```php
-use Filament\Tables\Columns\BooleanColumn;
+use Filament\Tables\Columns\TextColumn;
 
-BooleanColumn::make('is_admin')->toggleable(false)
+TextColumn::make('name')->toggleable(false)
 ```

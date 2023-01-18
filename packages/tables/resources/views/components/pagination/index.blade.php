@@ -27,7 +27,9 @@
             @endif
         </div>
 
-        <x-tables::pagination.records-per-page-selector :options="$recordsPerPageSelectOptions" />
+        @if (count($recordsPerPageSelectOptions) > 1)
+            <x-tables::pagination.records-per-page-selector :options="$recordsPerPageSelectOptions" />
+        @endif
 
         <div class="w-10">
             @if ($paginator->hasPages() && $paginator->hasMorePages())
@@ -72,7 +74,9 @@
         </div>
 
         <div class="flex items-center justify-center">
-            <x-tables::pagination.records-per-page-selector :options="$recordsPerPageSelectOptions" />
+            @if (count($recordsPerPageSelectOptions) > 1)
+                <x-tables::pagination.records-per-page-selector :options="$recordsPerPageSelectOptions" />
+            @endif
         </div>
 
         <div class="flex items-center justify-end">

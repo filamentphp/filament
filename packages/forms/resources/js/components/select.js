@@ -22,6 +22,8 @@ export default (Alpine) => {
             options,
             optionsLimit,
             placeholder,
+            position,
+            searchDebounce,
             searchingMessage,
             searchPrompt,
             state,
@@ -51,6 +53,7 @@ export default (Alpine) => {
                         noChoicesText: searchPrompt,
                         noResultsText: noSearchResultsMessage,
                         placeholderValue: placeholder,
+                        position: position ?? 'auto',
                         removeItemButton: true,
                         renderChoiceLimit: optionsLimit,
                         searchFields: ['label'],
@@ -133,7 +136,7 @@ export default (Alpine) => {
                                 })
 
                                 this.isSearching = false
-                            }, 1000),
+                            }, searchDebounce),
                         )
                     }
 
@@ -181,37 +184,15 @@ export default (Alpine) => {
                         return options
                     }
 
-                    let results = []
-
                     if (
                         search !== '' &&
                         search !== null &&
                         search !== undefined
                     ) {
-                        results = await getSearchResultsUsing(search)
-                    } else {
-                        results = await getOptionsUsing()
+                        return await getSearchResultsUsing(search)
                     }
 
-                    const selectOption = (option) => {
-                        option.selected = true
-
-                        return option
-                    }
-
-                    this.select.clearStore()
-
-                    return isMultiple
-                        ? results.map((option) =>
-                              this.state.includes(option.value)
-                                  ? selectOption(option)
-                                  : option,
-                          )
-                        : results.map((option) =>
-                              this.state === option.value
-                                  ? selectOption(option)
-                                  : option,
-                          )
+                    return await getOptionsUsing()
                 },
 
                 refreshPlaceholder: function () {

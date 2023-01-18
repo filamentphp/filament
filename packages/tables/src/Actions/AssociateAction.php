@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class AssociateAction extends Action
 {
@@ -54,7 +55,7 @@ class AssociateAction extends Action
             ];
         });
 
-        $this->successNotificationMessage(__('filament-support::actions/associate.single.messages.associated'));
+        $this->successNotificationTitle(__('filament-support::actions/associate.single.messages.associated'));
 
         $this->color('secondary');
 
@@ -64,7 +65,7 @@ class AssociateAction extends Action
 
         $this->action(function (array $arguments, ComponentContainer $form): void {
             $this->process(function (array $data) {
-                /** @var HasMany $relationship */
+                /** @var HasMany | MorphMany $relationship */
                 $relationship = $this->getRelationship();
 
                 $record = $relationship->getRelated()->query()->find($data['recordId']);
@@ -82,7 +83,7 @@ class AssociateAction extends Action
 
                 $form->fill();
 
-                $this->hold();
+                $this->halt();
 
                 return;
             }
@@ -162,7 +163,7 @@ class AssociateAction extends Action
     public function getRecordSelect(): Select
     {
         $getOptions = function (?string $search = null, ?array $searchColumns = []): array {
-            /** @var HasMany $relationship */
+            /** @var HasMany | MorphMany $relationship */
             $relationship = $this->getRelationship();
 
             $titleColumnName = $this->getRecordTitleAttribute();
@@ -193,9 +194,8 @@ class AssociateAction extends Action
                     foreach ($searchColumns as $searchColumnName) {
                         $whereClause = $isFirst ? 'where' : 'orWhere';
 
-                        $query->{$whereClause}(
-                            $searchColumnName,
-                            $searchOperator,
+                        $query->{"{$whereClause}Raw"}(
+                            "lower({$searchColumnName}) {$searchOperator} ?",
                             "%{$search}%",
                         );
 
@@ -210,6 +210,11 @@ class AssociateAction extends Action
 
             return $relationshipQuery
                 ->whereDoesntHave($this->getInverseRelationshipName(), function (Builder $query) use ($relationship): Builder {
+                    if ($relationship instanceof MorphMany) {
+                        return $query->where($relationship->getMorphType(), $relationship->getMorphClass())
+                            ->where($relationship->getQualifiedForeignKeyName(), $relationship->getParent()->getKey());
+                    }
+
                     return $query->where($relationship->getParent()->getQualifiedKeyName(), $relationship->getParent()->getKey());
                 })
                 ->get()

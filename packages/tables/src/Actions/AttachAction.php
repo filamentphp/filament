@@ -54,7 +54,7 @@ class AttachAction extends Action
             ];
         });
 
-        $this->successNotificationMessage(__('filament-support::actions/attach.single.messages.attached'));
+        $this->successNotificationTitle(__('filament-support::actions/attach.single.messages.attached'));
 
         $this->color('secondary');
 
@@ -81,7 +81,7 @@ class AttachAction extends Action
 
                 $form->fill();
 
-                $this->hold();
+                $this->halt();
 
                 return;
             }
@@ -192,9 +192,8 @@ class AttachAction extends Action
                     foreach ($searchColumns as $searchColumnName) {
                         $whereClause = $isFirst ? 'where' : 'orWhere';
 
-                        $query->{$whereClause}(
-                            $searchColumnName,
-                            $searchOperator,
+                        $query->{"{$whereClause}Raw"}(
+                            "lower({$searchColumnName}) {$searchOperator} ?",
                             "%{$search}%",
                         );
 

@@ -18,6 +18,11 @@ class MakePageCommand extends Command
 
     public function handle(): int
     {
+        $path = config('filament.pages.path', app_path('Filament/Pages/'));
+        $resourcePath = config('filament.resources.path', app_path('Filament/Resources/'));
+        $namespace = config('filament.pages.namespace', 'App\\Filament\\Pages');
+        $resourceNamespace = config('filament.resources.namespace', 'App\\Filament\\Resources');
+
         $page = (string) Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `Settings`)', 'name'))
             ->trim('/')
             ->trim('\\')
@@ -64,17 +69,22 @@ class MakePageCommand extends Command
         }
 
         $view = Str::of($page)
-            ->prepend($resource === null ? 'filament\\pages\\' : "filament\\resources\\{$resource}\\pages\\")
-            ->explode('\\')
-            ->map(fn ($segment) => Str::kebab($segment))
+            ->prepend(
+                (string) Str::of($resource === null ? "{$namespace}\\" : "{$resourceNamespace}\\{$resource}\\pages\\")
+                    ->replace('App\\', '')
+            )
+            ->replace('\\', '/')
+            ->explode('/')
+            ->map(fn ($segment) => Str::lower(Str::kebab($segment)))
             ->implode('.');
 
-        $path = app_path(
-            (string) Str::of($page)
-                ->prepend($resource === null ? 'Filament\\Pages\\' : "Filament\\Resources\\{$resource}\\Pages\\")
-                ->replace('\\', '/')
-                ->append('.php'),
-        );
+        $path = (string) Str::of($page)
+            ->prepend('/')
+            ->prepend($resource === null ? $path : "{$resourcePath}\\{$resource}\\Pages\\")
+            ->replace('\\', '/')
+            ->replace('//', '/')
+            ->append('.php');
+
         $viewPath = resource_path(
             (string) Str::of($view)
                 ->replace('.', '/')
@@ -94,15 +104,15 @@ class MakePageCommand extends Command
         if ($resource === null) {
             $this->copyStubToApp('Page', $path, [
                 'class' => $pageClass,
-                'namespace' => 'App\\Filament\\Pages' . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'namespace' => $namespace . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
                 'view' => $view,
             ]);
         } else {
             $this->copyStubToApp($resourcePage === 'custom' ? 'CustomResourcePage' : 'ResourcePage', $path, [
                 'baseResourcePage' => 'Filament\\Resources\\Pages\\' . ($resourcePage === 'custom' ? 'Page' : $resourcePage),
                 'baseResourcePageClass' => $resourcePage === 'custom' ? 'Page' : $resourcePage,
-                'namespace' => "App\\Filament\\Resources\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
-                'resource' => $resource,
+                'namespace' => "{$resourceNamespace}\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'resource' => "{$resourceNamespace}\\{$resource}",
                 'resourceClass' => $resourceClass,
                 'resourcePageClass' => $pageClass,
                 'view' => $view,

@@ -19,7 +19,7 @@ trait CanOpenUrl
 
     public function url(string | Closure | null $url, bool | Closure $shouldOpenInNewTab = false): static
     {
-        $this->shouldOpenUrlInNewTab = $shouldOpenInNewTab;
+        $this->openUrlInNewTab($shouldOpenInNewTab);
         $this->url = $url;
 
         return $this;

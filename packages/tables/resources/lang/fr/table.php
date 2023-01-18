@@ -8,6 +8,10 @@ return [
             'more' => ':count de plus',
         ],
 
+        'messages' => [
+            'copied' => 'Copié',
+        ],
+
     ],
 
     'fields' => [
@@ -28,7 +32,12 @@ return [
         'fields' => [
 
             'records_per_page' => [
+
                 'label' => 'par page',
+
+                'options' => [
+                    'all' => 'Tous',
+                ],
             ],
 
         ],
@@ -83,9 +92,17 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Supprimer le filtre',
+            ],
+
+            'remove_all' => [
+                'label' => 'Supprimer tous les filters',
+                'tooltip' => 'Supprimer tous les filtres',
+            ],
+
             'reset' => [
-                'label' => 'Réinitialiser',
-                'tooltip' => 'Réinitialiser',
+                'label' => 'Réinitialiser les filtres',
             ],
 
         ],

@@ -38,19 +38,13 @@ trait HasComponents
     public function getFlatComponents(bool $withHidden = false): array
     {
         return collect($this->getComponents($withHidden))
-            ->map(static function (Component $component) use ($withHidden) {
-                if ($component->hasChildComponentContainer($withHidden)) {
-                    return [
-                        $component,
-                        array_map(
-                            fn (ComponentContainer $container): array => $container->getFlatComponents($withHidden),
-                            $component->getChildComponentContainers($withHidden),
-                        ),
-                    ];
-                }
-
-                return $component;
-            })
+            ->map(static fn (Component $component): array => [
+                $component,
+                array_map(
+                    fn (ComponentContainer $container): array => $container->getFlatComponents($withHidden),
+                    $component->getChildComponentContainers($withHidden),
+                ),
+            ])
             ->flatten()
             ->all();
     }

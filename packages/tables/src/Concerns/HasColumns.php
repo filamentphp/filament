@@ -3,13 +3,10 @@
 namespace Filament\Tables\Concerns;
 
 use Closure;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\Column;
 use Filament\Tables\Columns\Contracts\Editable;
 use Filament\Tables\Columns\Layout\Component;
-use Filament\Tables\Contracts\HasRelationshipTable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 trait HasColumns
@@ -27,7 +24,12 @@ trait HasColumns
         $this->cachedTableColumns = [];
         $this->cachedTableColumnsLayout = [];
 
-        foreach ($this->getTableColumns() as $component) {
+        $components = Action::configureUsing(
+            Closure::fromCallable([$this, 'configureTableAction']),
+            fn (): array => $this->getTableColumns(),
+        );
+
+        foreach ($components as $component) {
             $component->table($this->getCachedTable());
 
             if ($component instanceof Component && $component->isCollapsible()) {
@@ -99,9 +101,8 @@ trait HasColumns
         return $this->getCachedTableColumns()[$name] ?? null;
     }
 
-    public function setColumnValue(string $column, string $record, $input): ?array
+    public function updateTableColumnState(string $column, string $record, $input): mixed
     {
-        $columnName = $column;
         $column = $this->getCachedTableColumn($column);
 
         if (! ($column instanceof Editable)) {
@@ -128,27 +129,7 @@ trait HasColumns
             ];
         }
 
-        if ($columnRelationship = $column->getRelationship($record)) {
-            $record = $columnRelationship->getResults();
-            $columnName = $column->getRelationshipTitleColumnName();
-        } elseif (
-            $this instanceof HasRelationshipTable &&
-            (($tableRelationship = $this->getRelationship()) instanceof BelongsToMany) &&
-            in_array($columnName, $tableRelationship->getPivotColumns())
-        ) {
-            $record = $record->{$tableRelationship->getPivotAccessor()};
-        } else {
-            $columnName = (string) Str::of($columnName)->replace('.', '->');
-        }
-
-        if (! ($record instanceof Model)) {
-            return null;
-        }
-
-        $record->setAttribute($columnName, $input);
-        $record->save();
-
-        return null;
+        return $column->updateState($input);
     }
 
     protected function getTableColumns(): array

@@ -8,12 +8,24 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'Clonar',
+            ],
+
             'create_item' => [
                 'label' => 'Adicionar em :label',
             ],
 
+            'create_item_between' => [
+                'label' => 'Inserir',
+            ],
+
             'delete_item' => [
-                'label' => 'Excluír',
+                'label' => 'Excluir',
+            ],
+
+            'move_item' => [
+                'label' => 'Mover',
             ],
 
             'move_item_down' => [
@@ -44,6 +56,22 @@ return [
 
     ],
 
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Desmarcar todos',
+            ],
+
+            'select_all' => [
+                'label' => 'Marcar todos',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [
@@ -53,7 +81,11 @@ return [
             ],
 
             'delete' => [
-                'label' => 'Excluír linha',
+                'label' => 'Excluir linha',
+            ],
+
+            'reorder' => [
+                'label' => 'Reordenar linha',
             ],
 
         ],
@@ -100,11 +132,15 @@ return [
             ],
 
             'delete_item' => [
-                'label' => 'Excluír',
+                'label' => 'Excluir',
             ],
 
             'clone_item' => [
                 'label' => 'Clonar',
+            ],
+
+            'move_item' => [
+                'label' => 'Mover',
             ],
 
             'move_item_down' => [
@@ -203,6 +239,8 @@ return [
         ],
 
         'loading_message' => 'Carregando...',
+
+        'max_items_message' => 'Apenas :count item pode ser selecionado.|Apenas :count itens podem ser selecionados.',
 
         'no_search_results_message' => 'Nenhuma opção corresponde à sua pesquisa.',
 

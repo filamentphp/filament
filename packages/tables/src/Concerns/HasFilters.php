@@ -181,7 +181,9 @@ trait HasFilters
         foreach ($this->getCachedTableFilters() as $filter) {
             $schema[$filter->getName()] = Forms\Components\Group::make()
                 ->schema($filter->getFormSchema())
-                ->statePath($filter->getName());
+                ->statePath($filter->getName())
+                ->columnSpan($filter->getColumnSpan())
+                ->columns($filter->getColumns());
         }
 
         return $schema;

@@ -4,11 +4,24 @@
         tab: null,
 
         init: function () {
+            this.$watch('tab', () => this.updateQueryString())
+
             this.tab = this.getTabs()[@js($getActiveTab()) - 1]
         },
 
         getTabs: function () {
             return JSON.parse(this.$refs.tabsData.value)
+        },
+
+        updateQueryString: function () {
+            if (! @js($isTabPersistedInQueryString())) {
+                return
+            }
+
+            const url = new URL(window.location.href)
+            url.searchParams.set(@js($getTabQueryStringKey()), this.tab)
+
+            history.pushState(null, document.title, url.toString())
         },
 
     }"

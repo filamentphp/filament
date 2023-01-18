@@ -13,7 +13,7 @@ return [
             'actions' => [
 
                 'save' => [
-                    'label' => 'Spara',
+                    'label' => 'Spara ändringar',
                 ],
 
             ],

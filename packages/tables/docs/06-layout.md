@@ -160,6 +160,75 @@ Stack::make([
 ])->space(1)
 ```
 
+## Controlling column width using a grid
+
+Sometimes, using a `Split` creates inconsistent widths when columns contain lots of content. This is because it's powered by Flexbox internally and each row individually controls how much space is allocated to content.
+
+Instead, you may use a `Grid` layout, which uses CSS Grid Layout to allow you to control column widths:
+
+```php
+use Filament\Tables\Columns\Layout\Grid;
+use Filament\Tables\Columns\TextColumn;
+
+Grid::make([
+    'lg' => 2,
+])
+    ->schema([
+        TextColumn::make('email'),
+        TextColumn::make('phone'),
+    ])
+```
+
+These columns will always consume equal width within the grid, from the `lg` [breakpoint](https://tailwindcss.com/docs/responsive-design#overview).
+
+You may choose to customize the number of columns within the grid at other breakpoints:
+
+```php
+use Filament\Tables\Columns\Layout\Grid;
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\TextColumn;
+
+Grid::make([
+    'lg' => 2,
+    '2xl' => 4,
+])
+    ->schema([
+        Stack::make([
+            TextColumn::make('name'),
+            TextColumn::make('job'),
+        ]),
+        TextColumn::make('email'),
+        TextColumn::make('phone'),
+    ])
+```
+
+And you can even control how many grid columns will be consumed by each component at each [breakpoint](https://tailwindcss.com/docs/responsive-design#overview):
+
+```php
+use Filament\Tables\Columns\Layout\Grid;
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\TextColumn;
+
+Grid::make([
+    'lg' => 2,
+    '2xl' => 5,
+])
+    ->schema([
+        Stack::make([
+            TextColumn::make('name'),
+            TextColumn::make('job'),
+        ])->columnSpan([
+            'lg' => 'full',
+            '2xl' => 2,
+        ]),
+        TextColumn::make('email')
+            ->columnSpan([
+                '2xl' => 2,
+            ]),
+        TextColumn::make('phone'),
+    ])
+```
+
 ## Collapsible content
 
 When you're using a column layout like split or stack, then you can also add collapsible content. This is very useful for when you don't want to display all data in the table at once, but still want it to be accessible to the user if they need to access it, without navigating away.

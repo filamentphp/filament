@@ -11,11 +11,11 @@ return [
         'actions' => [
 
             'cancel' => [
-                'label' => 'Odustani',
+                'label' => 'Prekiniti',
             ],
 
             'create' => [
-                'label' => 'Napravi',
+                'label' => 'Napraviti',
             ],
 
             'create_another' => [

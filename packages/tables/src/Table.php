@@ -13,6 +13,7 @@ use Filament\Tables\Columns\Layout\Component;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Layout;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -26,7 +27,7 @@ class Table extends ViewComponent
 
     protected string $viewIdentifier = 'table';
 
-    public const LOADING_TARGETS = ['previousPage', 'nextPage', 'gotoPage', 'sortTable', 'tableFilters', 'resetTableFiltersForm', 'tableSearchQuery', 'tableColumnSearchQueries', 'tableRecordsPerPage', '$set'];
+    public const LOADING_TARGETS = ['previousPage', 'nextPage', 'gotoPage', 'sortTable', 'tableFilters', 'resetTableFiltersForm', 'tableSearchQuery', 'tableColumnSearchQueries', 'tableRecordsPerPage'];
 
     final public function __construct(HasTable $livewire)
     {
@@ -55,7 +56,7 @@ class Table extends ViewComponent
         }
 
         if (! ($this->getContentGrid() || $this->hasColumnsLayout())) {
-            return Position::AfterCells;
+            return Position::AfterColumns;
         }
 
         $actions = $this->getActions();
@@ -139,7 +140,7 @@ class Table extends ViewComponent
         return invade($livewire)->getTableContentFooter();
     }
 
-    public function getDescription(): ?string
+    public function getDescription(): string | Htmlable | null
     {
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();
@@ -226,7 +227,7 @@ class Table extends ViewComponent
         return invade($livewire)->getTableColumnToggleFormWidth();
     }
 
-    public function getHeader(): ?View
+    public function getHeader(): View | Htmlable | null
     {
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();
@@ -242,7 +243,7 @@ class Table extends ViewComponent
         );
     }
 
-    public function getHeading(): ?string
+    public function getHeading(): string | Htmlable | null
     {
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();
@@ -338,6 +339,20 @@ class Table extends ViewComponent
         return $callback($record);
     }
 
+    public function isRecordSelectable(Model $record): bool
+    {
+        /** @var TableComponent $livewire */
+        $livewire = $this->getLivewire();
+
+        $callback = $livewire->isTableRecordSelectable();
+
+        if (! $callback) {
+            return true;
+        }
+
+        return $callback($record);
+    }
+
     public function getReorderColumn(): ?string
     {
         /** @var TableComponent $livewire */
@@ -390,6 +405,11 @@ class Table extends ViewComponent
     public function isSearchable(): bool
     {
         return $this->getLivewire()->isTableSearchable();
+    }
+
+    public function getRecordCheckboxPosition(): string
+    {
+        return $this->getLivewire()->getTableRecordCheckboxPosition();
     }
 
     public function isSearchableByColumn(): bool

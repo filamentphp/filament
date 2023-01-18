@@ -25,11 +25,15 @@ trait CanOpenModal
 
     protected View | Htmlable | Closure | null $modalContent = null;
 
-    protected string | Closure | null $modalHeading = null;
+    protected View | Htmlable | Closure | null $modalFooter = null;
 
-    protected string | Closure | null $modalSubheading = null;
+    protected string | Htmlable | Closure | null $modalHeading = null;
+
+    protected string | Htmlable | Closure | null $modalSubheading = null;
 
     protected string | Closure | null $modalWidth = null;
+
+    protected bool | Closure | null $isModalHidden = false;
 
     public function centerModal(bool | Closure | null $condition = true): static
     {
@@ -87,14 +91,21 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalHeading(string | Closure | null $heading = null): static
+    public function modalFooter(View | Htmlable | Closure | null $content = null): static
+    {
+        $this->modalFooter = $content;
+
+        return $this;
+    }
+
+    public function modalHeading(string | Htmlable | Closure | null $heading = null): static
     {
         $this->modalHeading = $heading;
 
         return $this;
     }
 
-    public function modalSubheading(string | Closure | null $subheading = null): static
+    public function modalSubheading(string | Htmlable | Closure | null $subheading = null): static
     {
         $this->modalSubheading = $subheading;
 
@@ -108,6 +119,13 @@ trait CanOpenModal
         return $this;
     }
 
+    public function modalHidden(bool | Closure | null $condition = false): static
+    {
+        $this->isModalHidden = $condition;
+
+        return $this;
+    }
+
     abstract protected function getLivewireCallActionName(): string;
 
     public function getModalActions(): array
@@ -117,7 +135,9 @@ trait CanOpenModal
         }
 
         if ($this->modalActions !== null) {
-            return $this->evaluate($this->modalActions);
+            return $this->filterHiddenModalActions(
+                $this->evaluate($this->modalActions),
+            );
         }
 
         $actions = array_merge(
@@ -130,7 +150,15 @@ trait CanOpenModal
             $actions = array_reverse($actions);
         }
 
-        return $actions;
+        return $this->filterHiddenModalActions($actions);
+    }
+
+    protected function filterHiddenModalActions(array $actions): array
+    {
+        return array_filter(
+            $actions,
+            fn (ModalAction $action): bool => ! $action->isHidden(),
+        );
     }
 
     public function getModalSubmitAction(): ModalAction
@@ -167,15 +195,7 @@ trait CanOpenModal
 
     public function getModalButtonLabel(): string
     {
-        if (filled($this->modalButtonLabel)) {
-            return $this->evaluate($this->modalButtonLabel);
-        }
-
-        if ($this->isConfirmationRequired()) {
-            return __('filament-support::actions/modal.actions.confirm.label');
-        }
-
-        return __('filament-support::actions/modal.actions.submit.label');
+        return $this->evaluate($this->modalButtonLabel) ?? __('filament-support::actions/modal.actions.submit.label');
     }
 
     public function getModalContent(): View | Htmlable | null
@@ -183,48 +203,29 @@ trait CanOpenModal
         return $this->evaluate($this->modalContent);
     }
 
-    public function getModalHeading(): string
+    public function getModalFooter(): View | Htmlable | null
+    {
+        return $this->evaluate($this->modalFooter);
+    }
+
+    public function getModalHeading(): string | Htmlable
     {
         return $this->evaluate($this->modalHeading) ?? $this->getLabel();
     }
 
-    public function getModalSubheading(): ?string
+    public function getModalSubheading(): string | Htmlable | null
     {
-        if (filled($this->modalSubheading)) {
-            return $this->evaluate($this->modalSubheading);
-        }
-
-        if ($this->isConfirmationRequired()) {
-            return __('filament-support::actions/modal.confirmation');
-        }
-
-        return null;
+        return $this->evaluate($this->modalSubheading);
     }
 
     public function getModalWidth(): string
     {
-        if (filled($this->modalWidth)) {
-            return $this->evaluate($this->modalWidth);
-        }
-
-        if ($this->isConfirmationRequired()) {
-            return 'sm';
-        }
-
-        return '4xl';
+        return $this->evaluate($this->modalWidth) ?? '4xl';
     }
 
     public function isModalCentered(): bool
     {
-        if ($this->isModalCentered !== null) {
-            return $this->evaluate($this->isModalCentered);
-        }
-
-        if (in_array($this->getModalWidth(), ['xs', 'sm'])) {
-            return true;
-        }
-
-        return $this->isConfirmationRequired();
+        return $this->evaluate($this->isModalCentered) ?? in_array($this->getModalWidth(), ['xs', 'sm']);
     }
 
     public function isModalSlideOver(): bool
@@ -232,9 +233,14 @@ trait CanOpenModal
         return $this->evaluate($this->isModalSlideOver);
     }
 
+    public function isModalHidden(): bool
+    {
+        return $this->evaluate($this->isModalHidden);
+    }
+
     public function shouldOpenModal(): bool
     {
-        return $this->isConfirmationRequired() || $this->hasFormSchema() || $this->getModalContent();
+        return (! $this->isModalHidden()) && ($this->hasFormSchema() || $this->getModalSubheading() || $this->getModalContent() || $this->getModalFooter());
     }
 
     protected function makeExtraModalAction(string $name, ?array $arguments = null): ModalAction

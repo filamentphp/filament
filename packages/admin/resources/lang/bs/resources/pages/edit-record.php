@@ -11,13 +11,17 @@ return [
         'actions' => [
 
             'cancel' => [
-                'label' => 'Otkaži',
+                'label' => 'Prekinit',
             ],
 
             'save' => [
                 'label' => 'Saćuvaj',
             ],
 
+        ],
+
+        'tab' => [
+            'label' => 'Uredi',
         ],
 
     ],

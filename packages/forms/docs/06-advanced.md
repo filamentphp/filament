@@ -2,7 +2,7 @@
 title: Advanced
 ---
 
-## Using closure customisation
+## Using closure customization
 
 All configuration methods for [fields](fields) and [layout components](layout) accept closures as parameters instead of hardcoded values:
 
@@ -133,7 +133,7 @@ A great example to give a use case for this is when you wish to generate a slug 
 
 ## Dependant fields / components
 
-You may use the techniques described in the [closure customization section](#using-closure-customisation) to build completely dependent fields and components, with full control over customization based on the values of other fields in your form.
+You may use the techniques described in the [closure customization section](#using-closure-customization) to build completely dependent fields and components, with full control over customization based on the values of other fields in your form.
 
 For example, you can build dependant [select](fields#select) inputs:
 

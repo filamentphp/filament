@@ -16,6 +16,10 @@ return [
                 'label' => 'Tambahkan :label',
             ],
 
+            'create_item_between' => [
+                'label' => 'Sisipkan',
+            ],
+
             'delete_item' => [
                 'label' => 'Hapus',
             ],
@@ -52,6 +56,22 @@ return [
 
     ],
 
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Batalkan semua pilihan',
+            ],
+
+            'select_all' => [
+                'label' => 'Pilih semua',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [
@@ -62,6 +82,10 @@ return [
 
             'delete' => [
                 'label' => 'Hapus baris',
+            ],
+
+            'reorder' => [
+                'label' => 'Ubah urutan baris',
             ],
 
         ],

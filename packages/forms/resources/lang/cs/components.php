@@ -8,12 +8,20 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'Klonovat',
+            ],
+
             'create_item' => [
                 'label' => 'Přidat k :label',
             ],
 
             'delete_item' => [
                 'label' => 'Smazat',
+            ],
+
+            'move_item' => [
+                'label' => 'Přesunout',
             ],
 
             'move_item_down' => [
@@ -54,6 +62,10 @@ return [
 
             'delete' => [
                 'label' => 'Smazat řádek',
+            ],
+
+            'reorder' => [
+                'label' => 'Přesunout řádek',
             ],
 
         ],
@@ -101,6 +113,14 @@ return [
 
             'delete_item' => [
                 'label' => 'Smazat',
+            ],
+
+            'clone_item' => [
+                'label' => 'Klonovat',
+            ],
+
+            'move_item' => [
+                'label' => 'Přesunout',
             ],
 
             'move_item_down' => [
@@ -193,7 +213,14 @@ return [
 
         ],
 
+        'boolean' => [
+            'true' => 'Ano',
+            'false' => 'Ne',
+        ],
+
         'loading_message' => 'Načítání...',
+
+        'max_items_message' => 'Lze vybrat pouze 1 položka.|Lze vybrat pouze :count položky.|Lze vybrat pouze :count položek.',
 
         'no_search_results_message' => 'Vašemu hledání neodpovídají žádné výsledky.',
 

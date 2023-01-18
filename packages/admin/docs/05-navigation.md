@@ -14,7 +14,7 @@ protected static ?string $navigationLabel = 'Custom Navigation Label';
 protected static ?int $navigationSort = 3;
 ```
 
-The `$navigationIcon` supports the name of any Blade component, and passes a set of formatting classes to it. By default, the [Blade Heroicons](https://github.com/blade-ui-kit/blade-heroicons) package is installed, so you may use the name of any [Heroicon](https://heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
+The `$navigationIcon` supports the name of any Blade component, and passes a set of formatting classes to it. By default, the [Blade Heroicons v1](https://github.com/blade-ui-kit/blade-heroicons/tree/1.3.1) package is installed, so you may use the name of any [Heroicons v1](https://v1.heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
 
 ## Navigation item badges
 
@@ -52,6 +52,7 @@ You may customize navigation groups by calling `Filament::registerNavigationGrou
 
 ```php
 use Filament\Facades\Filament;
+use Filament\Navigation\NavigationGroup;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -92,6 +93,23 @@ Filament::registerNavigationGroups([
 ]);
 ```
 
+## Active icons
+
+You may assign a navigation icon which will be displayed for active items using the `$activeNavigationIcon` property:
+
+```php
+protected static ?string $activeNavigationIcon = 'heroicon-s-document-text';
+```
+
+Alternatively, override the `getActiveNavigationIcon()` method:
+
+```php
+protected static function getActiveNavigationIcon(): string
+{
+    return 'heroicon-s-document-text';
+}
+```
+
 ## Registering custom navigation items
 
 You may register custom navigation items by calling `Filament::registerNavigationItems()` from the `boot()` method of any service provider:
@@ -105,6 +123,7 @@ Filament::serving(function () {
         NavigationItem::make('Analytics')
             ->url('https://filament.pirsch.io', shouldOpenInNewTab: true)
             ->icon('heroicon-o-presentation-chart-line')
+            ->activeIcon('heroicon-s-presentation-chart-line')
             ->group('Reports')
             ->sort(3),
     ]);
@@ -141,11 +160,13 @@ use App\Filament\Pages\Settings;
 use App\Filament\Resources\UserResource;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationBuilder;
+use Filament\Navigation\NavigationItem;
 
 Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
     return $builder->items([
         NavigationItem::make('Dashboard')
             ->icon('heroicon-o-home')
+            ->activeIcon('heroicon-s-home')
             ->isActiveWhen(fn (): bool => request()->routeIs('filament.pages.dashboard'))
             ->url(route('filament.pages.dashboard')),
         ...UserResource::getNavigationItems(),

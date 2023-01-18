@@ -6,9 +6,10 @@ use Closure;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Arrayable;
 
-class TagsInput extends Field
+class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
     use Concerns\HasExtraInputAttributes;
+    use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
 
@@ -35,7 +36,7 @@ class TagsInput extends Field
                 return;
             }
 
-            $state = explode($separator, $state);
+            $state = explode($separator, $state ?? '');
 
             if (count($state) === 1 && blank($state[0])) {
                 $state = [];

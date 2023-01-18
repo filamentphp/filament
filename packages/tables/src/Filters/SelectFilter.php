@@ -5,6 +5,7 @@ namespace Filament\Tables\Filters;
 use Closure;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 
 class SelectFilter extends BaseFilter
 {
@@ -13,6 +14,8 @@ class SelectFilter extends BaseFilter
     use Concerns\HasRelationship;
 
     protected string | Closure | null $attribute = null;
+
+    protected bool | Closure $isMultiple = false;
 
     protected bool | Closure $isStatic = false;
 
@@ -24,9 +27,29 @@ class SelectFilter extends BaseFilter
     {
         parent::setUp();
 
-        $this->placeholder(__('tables::table.filters.select.placeholder'));
+        $this->placeholder(
+            fn (SelectFilter $filter): string => $filter->isMultiple() ?
+                __('tables::table.filters.multi_select.placeholder') :
+                __('tables::table.filters.select.placeholder'),
+        );
 
-        $this->indicateUsing(function (array $state): array {
+        $this->indicateUsing(function (SelectFilter $filter, array $state): array {
+            if ($filter->isMultiple()) {
+                if (blank($state['values'] ?? null)) {
+                    return [];
+                }
+
+                $labels = Arr::only($this->getOptions(), $state['values']);
+
+                if (! count($labels)) {
+                    return [];
+                }
+
+                $labels = collect($labels)->join(', ', ' & ');
+
+                return ["{$this->getIndicator()}: {$labels}"];
+            }
+
             if (blank($state['value'] ?? null)) {
                 return [];
             }
@@ -51,19 +74,41 @@ class SelectFilter extends BaseFilter
             return parent::apply($query, $data);
         }
 
-        if (blank($data['value'] ?? null)) {
+        $isMultiple = $this->isMultiple();
+
+        $values = $isMultiple ?
+            $data['values'] ?? null :
+            $data['value'] ?? null;
+
+        if (! count(array_filter(
+            Arr::wrap($values),
+            fn ($value) => filled($value),
+        ))) {
             return $query;
         }
 
-        if ($this->queriesRelationships()) {
-            return $query->whereRelation(
-                $this->getRelationshipName(),
-                $this->getRelationshipKey(),
-                $data['value'],
+        if (! $this->queriesRelationships()) {
+            return $query->{$isMultiple ? 'whereIn' : 'where'}(
+                $this->getAttribute(),
+                $values,
             );
         }
 
-        return $query->where($this->getAttribute(), $data['value']);
+        if ($isMultiple) {
+            return $query->whereHas(
+                $this->getRelationshipName(),
+                fn (Builder $query) => $query->whereIn(
+                    $this->getRelationshipKey(),
+                    $values,
+                ),
+            );
+        }
+
+        return $query->whereRelation(
+            $this->getRelationshipName(),
+            $this->getRelationshipKey(),
+            $values,
+        );
     }
 
     public function attribute(string | Closure | null $name): static
@@ -86,6 +131,13 @@ class SelectFilter extends BaseFilter
     public function static(bool | Closure $condition = true): static
     {
         $this->isStatic = $condition;
+
+        return $this;
+    }
+
+    public function multiple(bool | Closure $condition = true): static
+    {
+        $this->isMultiple = $condition;
 
         return $this;
     }
@@ -120,19 +172,24 @@ class SelectFilter extends BaseFilter
      */
     protected function getFormSelectComponent(): Select
     {
-        $field = Select::make('value')
+        $field = Select::make($this->isMultiple() ? 'values' : 'value')
+            ->multiple($this->isMultiple())
             ->label($this->getLabel())
             ->options($this->getOptions())
             ->placeholder($this->getPlaceholder())
             ->searchable($this->isSearchable())
-            ->optionsLimit($this->getOptionsLimit())
-            ->columnSpan($this->getColumnSpan());
+            ->optionsLimit($this->getOptionsLimit());
 
         if (filled($defaultState = $this->getDefaultState())) {
             $field->default($defaultState);
         }
 
         return $field;
+    }
+
+    public function isMultiple(): bool
+    {
+        return (bool) $this->evaluate($this->isMultiple);
     }
 
     public function isSearchable(): bool

@@ -22,9 +22,12 @@
     {{ $attributes->class([
         'filament-tables-column-wrapper',
         match ($alignment) {
-            'left' => 'text-left',
+            'start' => 'text-start',
             'center' => 'text-center',
+            'end' => 'text-end',
+            'left' => 'text-left',
             'right' => 'text-right',
+            'justify' => 'text-justify',
             default => null,
         },
     ]) }}
@@ -38,7 +41,7 @@
     @elseif ($url || ($recordUrl && $action === null))
         <a
             href="{{ $url ?: $recordUrl }}"
-            {{ $shouldOpenUrlInNewTab ? 'target="_blank"' : null }}
+            {!! $shouldOpenUrlInNewTab ? 'target="_blank"' : null !!}
             class="block"
         >
             {{ $slot }}
@@ -62,9 +65,9 @@
             wire:click="{{ $wireClickAction }}"
             wire:target="{{ $wireClickAction }}"
             wire:loading.attr="disabled"
-            wire:loading.class="opacity-70 cursor-wait"
+            wire:loading.class="cursor-wait opacity-70"
             type="button"
-            class="block text-left rtl:text-right w-full"
+            class="block w-full text-start"
         >
             {{ $slot }}
         </button>
