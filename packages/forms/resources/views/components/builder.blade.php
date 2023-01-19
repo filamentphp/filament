@@ -51,8 +51,8 @@
         @if (count($containers))
             <ul
                 @class([
-                    "space-y-12" => (! $isItemCreationDisabled && ! $isItemMovementDisabled),
-                    "space-y-6" => ($isItemCreationDisabled || $isItemMovementDisabled),
+                    'space-y-12' => (! $isItemCreationDisabled) && (! $isItemMovementDisabled),
+                    'space-y-6' => $isItemCreationDisabled || $isItemMovementDisabled,
                 ])
                 wire:sortable
                 wire:end.stop="dispatchFormEvent('builder::moveItems', '{{ $getStatePath() }}', $event.target.sortable.toArray())"
