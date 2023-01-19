@@ -49,9 +49,12 @@
     >
         @if (count($containers))
             <ul
-                class="space-y-12"
                 x-sortable
                 x-on:end.stop="$wire.dispatchFormEvent('builder::reorder', '{{ $statePath }}', $event.target.sortable.toArray())"
+                @class([
+                    'space-y-12' => $isAddable && $isReorderable,
+                    'space-y-6' => ! ($isAddable && $isReorderable),
+                ])
             >
                 @php
                     $hasBlockLabels = $hasBlockLabels();
