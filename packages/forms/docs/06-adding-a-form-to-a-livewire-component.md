@@ -249,7 +249,7 @@ public function editPostForm(Form $form): Form
             MarkdownEditor::make('content'),
             // ...
         ])
-        ->statePath('postData');
+        ->statePath('postData')
         ->model($this->post);
 }
 
