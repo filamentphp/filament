@@ -42,7 +42,7 @@
         <a
             href="{{ $url ?: $recordUrl }}"
             @if ($shouldOpenUrlInNewTab) target="_blank" @endif
-            class="block"
+            class="inline-block"
         >
             {{ $slot }}
         </a>
@@ -66,7 +66,7 @@
             wire:target="{{ $wireClickAction }}"
             wire:loading.attr="disabled"
             type="button"
-            class="block w-full text-start disabled:opacity-70 disabled:pointer-events-none"
+            class="inline-block disabled:opacity-70 disabled:pointer-events-none"
         >
             {{ $slot }}
         </button>
