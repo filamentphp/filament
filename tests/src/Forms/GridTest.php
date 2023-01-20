@@ -89,6 +89,28 @@ test('can get component column span at all breakpoints', function () {
             ->toHaveKey('2xl', $spanAt2xl);
 });
 
+test('can get component column order at all breakpoints', function () {
+    $component = (new Component())
+        ->container(ComponentContainer::make(Livewire::make()))
+        ->columnOrder([
+            'default' => $defaultOrder = rand(1, 12),
+            'sm' => $orderAtSm = rand(1, 12),
+            'md' => $orderAtMd = rand(1, 12),
+            'lg' => $orderAtLg = rand(1, 12),
+            'xl' => $orderAtXl = rand(1, 12),
+            '2xl' => $orderAt2xl = rand(1, 12),
+        ]);
+
+    expect($component)
+        ->getColumnOrder()
+            ->toHaveKey('default', $defaultOrder)
+            ->toHaveKey('sm', $orderAtSm)
+            ->toHaveKey('md', $orderAtMd)
+            ->toHaveKey('lg', $orderAtLg)
+            ->toHaveKey('xl', $orderAtXl)
+            ->toHaveKey('2xl', $orderAt2xl);
+});
+
 test('can get component column span at one breakpoint', function () {
     $component = (new Component())
         ->container(ComponentContainer::make(Livewire::make()))

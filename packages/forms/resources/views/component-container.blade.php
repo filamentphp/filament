@@ -31,6 +31,12 @@
             :lg="$formComponent->getColumnSpan('lg')"
             :xl="$formComponent->getColumnSpan('xl')"
             :twoXl="$formComponent->getColumnSpan('2xl')"
+            :defaultOrder="$formComponent->getColumnOrder('default')"
+            :smOrder="$formComponent->getColumnOrder('sm')"
+            :mdOrder="$formComponent->getColumnOrder('md')"
+            :lgOrder="$formComponent->getColumnOrder('lg')"
+            :xlOrder="$formComponent->getColumnOrder('xl')"
+            :twoXlOrder="$formComponent->getColumnOrder('2xl')"
             :class="($maxWidth = $formComponent->getMaxWidth()) ? match ($maxWidth) {
                 'xs' => 'max-w-xs',
                 'sm' => 'max-w-sm',
