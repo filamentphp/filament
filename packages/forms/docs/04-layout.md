@@ -109,6 +109,41 @@ Grid::make([
     ])
 ```
 
+#### Controlling field column order
+
+You may specify the column order of component within a grid:
+
+```php
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\TextInput;
+
+Grid::make(3)
+    ->schema([
+        TextInput::make('name')
+            ->columnOrder(2),
+        // ...
+    ])
+```
+
+Also, you can even define the column order of a component at any breakpoint:
+
+```php
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\TextInput;
+
+Grid::make()
+    ->schema([
+        TextInput::make('name')
+            ->columnOrder([
+                'sm' => 'first',
+                'xl' => 2,
+                '2xl' => 'last',
+            ]),
+        // ...
+    ])
+```
+
 ### Setting an ID
 
 You may define an ID for the component using the `id()` method:
