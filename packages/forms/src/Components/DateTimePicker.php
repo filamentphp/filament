@@ -28,9 +28,9 @@ class DateTimePicker extends Field
     protected string | Closure | null $displayFormat = null;
 
     /**
-     * @var array<mixed> | Closure
+     * @var array<array<mixed> | Closure>
      */
-    protected array | Closure $extraTriggerAttributes = [];
+    protected array $extraTriggerAttributes = [];
 
     protected int | null $firstDayOfWeek = null;
 
@@ -148,9 +148,13 @@ class DateTimePicker extends Field
     /**
      * @param  array<mixed> | Closure  $attributes
      */
-    public function extraTriggerAttributes(array | Closure $attributes): static
+    public function extraTriggerAttributes(array | Closure $attributes, bool $merge = false): static
     {
-        $this->extraTriggerAttributes = $attributes;
+        if ($merge) {
+            $this->extraAttributes[] = $attributes;
+        } else {
+            $this->extraAttributes = [$attributes];
+        }
 
         return $this;
     }
@@ -347,7 +351,13 @@ class DateTimePicker extends Field
      */
     public function getExtraTriggerAttributes(): array
     {
-        return $this->evaluate($this->extraTriggerAttributes);
+        $temporaryAttributeBag = new ComponentAttributeBag();
+
+        foreach ($this->extraTriggerAttributes as $extraTriggerAttributes) {
+            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraTriggerAttributes));
+        }
+
+        return $temporaryAttributeBag->getAttributes();
     }
 
     public function getExtraTriggerAttributeBag(): ComponentAttributeBag
