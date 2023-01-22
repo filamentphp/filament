@@ -2,6 +2,8 @@
 
 namespace Filament\Widgets;
 
+use Filament\Support\RawJs;
+
 abstract class ChartWidget extends Widget
 {
     use Concerns\CanPoll;
@@ -83,9 +85,9 @@ abstract class ChartWidget extends Widget
     }
 
     /**
-     * @return array<string, mixed> | null
+     * @return array<string, mixed> | RawJs | null
      */
-    protected function getOptions(): ?array
+    protected function getOptions(): array | RawJs | null
     {
         return static::$options;
     }
