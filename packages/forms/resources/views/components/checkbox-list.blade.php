@@ -157,7 +157,10 @@
             <div
                 x-cloak
                 x-show="! visibleCheckboxListOptions.length"
-                class="filament-forms-checkbox-list-component-no-search-results-message text-sm text-gray-700"
+                @class([
+                    'filament-forms-checkbox-list-component-no-search-results-message text-sm text-gray-700',
+                    'dark:text-gray-200' => config('forms.dark_mode'),
+                ])
             >
                 {{ $getNoSearchResultsMessage() }}
             </div>
