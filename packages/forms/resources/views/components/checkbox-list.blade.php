@@ -64,11 +64,11 @@
                     x-model.debounce.{{ $getSearchDebounce() }}="search"
                     type="search"
                     placeholder="{{ $getSearchPrompt() }}"
-                    class="mb-2 block h-7 px-2 text-sm w-full rounded-lg border-gray-300 shadow-sm transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500"
+                    class="mb-2 block h-7 px-2 text-sm w-full rounded-lg border-gray-300 shadow-sm text-gray-700 transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 dark:text-gray-200 dark:bg-gray-700 dark:focus:border-primary-500 dark:border-gray-600"
                 />
             @endif
 
-            @if ($isBulkToggleable() && count($getOptions()))
+            @if ($isBulkToggleable && count($getOptions()))
                 <div
                     x-cloak
                     class="mb-2"
@@ -81,7 +81,7 @@
                         x-on:click="toggleAllCheckboxes()"
                         wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.buttons.select_all"
                     >
-                        {{ __('forms::components.checkbox_list.buttons.select_all.label') }}
+                        {{ __('filament-forms::components.checkbox_list.buttons.select_all.label') }}
                     </x-filament::link>
 
                     <x-filament::link
@@ -91,7 +91,7 @@
                         x-on:click="toggleAllCheckboxes()"
                         wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.buttons.deselect_all"
                     >
-                        {{ __('forms::components.checkbox_list.buttons.deselect_all.label') }}
+                        {{ __('filament-forms::components.checkbox_list.buttons.deselect_all.label') }}
                     </x-filament::link>
                 </div>
             @endif
@@ -138,7 +138,7 @@
                             }}
                         />
 
-                        <span class="filament-forms-checkbox-list-component-option-label-text text-sm font-medium text-gray-700 dark:text-gray-200">
+                        <span class="filament-forms-checkbox-list-component-option-label-text text-sm text-gray-700 dark:text-gray-200">
                             {{ $optionLabel }}
                         </span>
                     </label>
@@ -152,7 +152,7 @@
             <div
                 x-cloak
                 x-show="! visibleCheckboxListOptions.length"
-                class="filament-forms-checkbox-list-component-no-search-results-message text-sm text-gray-700"
+                class="filament-forms-checkbox-list-component-no-search-results-message text-sm text-gray-700 dark:text-gray-200"
             >
                 {{ $getNoSearchResultsMessage() }}
             </div>
