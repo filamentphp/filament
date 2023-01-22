@@ -170,6 +170,7 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
         @livewireScripts
         @filamentScripts
         @vite('resources/js/app.js')
+        <script src="//unpkg.com/alpinejs" defer></script>
     </body>
 </html>
 ```
