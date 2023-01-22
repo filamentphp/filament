@@ -12,7 +12,7 @@ trait CanResetState
     protected array | Closure | null $resetState = null;
 
     /**
-     * @param array<string, mixed> | Closure | null $state
+     * @param  array<string, mixed> | Closure | null  $state
      */
     public function resetState(array | Closure | null $state): static
     {
