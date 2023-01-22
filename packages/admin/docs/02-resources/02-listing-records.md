@@ -162,6 +162,27 @@ public static function table(Table $table): Table
 }
 ```
 
+### Record select checkbox position
+
+By default, the record select checkboxes are rendered at the start of the row. You may move them to the end of the row:
+
+```php
+use Filament\Resources\Table;
+use Filament\Tables\Actions\RecordCheckboxPosition;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->recordCheckboxPosition(RecordCheckboxPosition::AfterCells)
+        ->columns([
+            // ...
+        ])
+        ->bulkActions([
+            // ...
+        ]);
+}
+```
+
 ## Reordering records
 
 To allow the user to reorder records using drag and drop in your table, you can use the `reorderable()` method:

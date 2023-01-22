@@ -16,6 +16,10 @@ return [
                 'label' => 'Tambah ke :label',
             ],
 
+            'create_item_between' => [
+                'label' => 'Masukkan',
+            ],
+
             'delete_item' => [
                 'label' => 'Padam',
             ],
@@ -52,6 +56,22 @@ return [
 
     ],
 
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Nyahpilih semua',
+            ],
+
+            'select_all' => [
+                'label' => 'Pilih semua',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [
@@ -62,6 +82,10 @@ return [
 
             'delete' => [
                 'label' => 'Padam Baris',
+            ],
+
+            'reorder' => [
+                'label' => 'Susun Baris',
             ],
 
         ],

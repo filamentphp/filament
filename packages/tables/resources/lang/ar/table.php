@@ -4,16 +4,12 @@ return [
 
     'columns' => [
 
-        'color' => [
-
-            'messages' => [
-                'copied' => 'تم النسخ',
-            ],
-
-        ],
-
         'tags' => [
             'more' => 'و :count أكثر',
+        ],
+
+        'messages' => [
+            'copied' => 'تم النسخ',
         ],
 
     ],
@@ -98,21 +94,21 @@ return [
         'buttons' => [
 
             'remove' => [
-                'label' => 'إلغاء المصفيات',
+                'label' => 'إلغاء الفلاتر',
             ],
 
             'remove_all' => [
-                'label' => 'إلغاء كافة المصفيات',
-                'tooltip' => 'إلغاء كافة المصفيات',
+                'label' => 'إلغاء كافة الفلاتر',
+                'tooltip' => 'إلغاء كافة الفلاتر',
             ],
 
             'reset' => [
-                'label' => 'إعادة ضبط المصفيات',
+                'label' => 'إعادة ضبط الفلاتر',
             ],
 
         ],
 
-        'indicator' => 'المصفيات النشطة',
+        'indicator' => 'الفلاتر النشطة',
 
         'multi_select' => [
             'placeholder' => 'الكل',

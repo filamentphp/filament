@@ -223,7 +223,8 @@
                             'dark:caret-white dark:focus:border-primary-500': @js(config('forms.dark_mode')),
                             'border-gray-300': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
                             'dark:border-gray-600': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors) && @js(config('forms.dark_mode')),
-                            'border-danger-600 ring-1 ring-inset ring-danger-600': @js($getStatePath()) in $wire.__instance.serverMemo.errors,
+                            'border-danger-600 ring-inset ring-danger-600': @js($getStatePath()) in $wire.__instance.serverMemo.errors,
+                            'dark:border-danger-400 dark:ring-danger-400': (@js($getStatePath()) in $wire.__instance.serverMemo.errors) && @js(config('forms.dark_mode'))
                         }"
                     ></textarea>
                 </file-attachment>

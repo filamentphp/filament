@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
-class CheckboxList extends Field
+class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
+    use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasOptions;
 
     protected string $view = 'forms::components.checkbox-list';
@@ -18,6 +19,8 @@ class CheckboxList extends Field
     protected ?Closure $getOptionLabelFromRecordUsing = null;
 
     protected string | Closure | null $relationship = null;
+
+    protected bool | Closure $isBulkToggleable = false;
 
     protected function setUp(): void
     {
@@ -42,12 +45,16 @@ class CheckboxList extends Field
         $this->options(static function (CheckboxList $component) use ($callback): array {
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getRelationshipTitleColumnName());
+            $relationshipQuery = $relationship->getRelated()->query();
 
             if ($callback) {
                 $relationshipQuery = $component->evaluate($callback, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
+            }
+
+            if (empty($relationshipQuery->getQuery()->orders)) {
+                $relationshipQuery->orderBy($component->getRelationshipTitleColumnName());
             }
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
@@ -85,6 +92,13 @@ class CheckboxList extends Field
         });
 
         $this->dehydrated(false);
+
+        return $this;
+    }
+
+    public function bulkToggleable(bool | Closure $condition = true): static
+    {
+        $this->isBulkToggleable = $condition;
 
         return $this;
     }
@@ -138,5 +152,10 @@ class CheckboxList extends Field
     public function getRelationshipName(): ?string
     {
         return $this->evaluate($this->relationship);
+    }
+
+    public function isBulkToggleable(): bool
+    {
+        return (bool) $this->evaluate($this->isBulkToggleable);
     }
 }

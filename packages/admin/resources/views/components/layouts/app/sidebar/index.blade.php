@@ -18,17 +18,20 @@
         'dark:border-gray-700' => config('filament.dark_mode'),
     ])>
         <div
-            x-cloak
             @class([
-                'flex items-center jusify-center px-6 w-full',
+                'flex items-center justify-center px-6 w-full',
                 'lg:px-4' => config('filament.layout.sidebar.is_collapsible_on_desktop') && (config('filament.layout.sidebar.collapsed_width') !== 0),
             ])
             x-show="$store.sidebar.isOpen || @js(! config('filament.layout.sidebar.is_collapsible_on_desktop')) || @js(config('filament.layout.sidebar.collapsed_width') === 0)"
+            x-transition:enter="lg:transition delay-100"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
         >
             @if (config('filament.layout.sidebar.is_collapsible_on_desktop') && (config('filament.layout.sidebar.collapsed_width') !== 0))
                 <button
                     type="button"
                     class="filament-sidebar-collapse-button shrink-0 hidden lg:flex items-center justify-center w-10 h-10 text-primary-500 rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none"
+                    x-bind:aria-label="$store.sidebar.isOpen ? '{{ __('filament::layout.buttons.sidebar.collapse.label') }}' : '{{ __('filament::layout.buttons.sidebar.expand.label') }}'"
                     x-on:click.stop="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                     x-transition:enter="lg:transition delay-100"
                     x-transition:enter-start="opacity-0"
@@ -56,6 +59,7 @@
             <button
                 type="button"
                 class="filament-sidebar-close-button shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none"
+                x-bind:aria-label="$store.sidebar.isOpen ? '{{ __('filament::layout.buttons.sidebar.collapse.label') }}' : '{{ __('filament::layout.buttons.sidebar.expand.label') }}'"
                 x-on:click.stop="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                 x-show="(! $store.sidebar.isOpen) && @js(config('filament.layout.sidebar.collapsed_width') !== 0)"
                 x-transition:enter="lg:transition delay-100"
@@ -83,27 +87,19 @@
         @endphp
 
         <script>
-            if (localStorage.getItem('collapsedGroups') === null) {
+            if (JSON.parse(localStorage.getItem('collapsedGroups')) === null) {
                 localStorage.setItem('collapsedGroups', JSON.stringify(@js($collapsedNavigationGroupLabels)))
             }
         </script>
 
         <ul class="px-6 space-y-6">
             @foreach ($navigation as $group)
-                <x-filament::layouts.app.sidebar.group :label="$group->getLabel()" :icon="$group->getIcon()" :collapsible="$group->isCollapsible()">
-                    @foreach ($group->getItems() as $item)
-                        <x-filament::layouts.app.sidebar.item
-                            :active="$item->isActive()"
-                            :icon="$item->getIcon()"
-                            :url="$item->getUrl()"
-                            :badge="$item->getBadge()"
-                            :badgeColor="$item->getBadgeColor()"
-                            :shouldOpenUrlInNewTab="$item->shouldOpenUrlInNewTab()"
-                        >
-                            {{ $item->getLabel() }}
-                        </x-filament::layouts.app.sidebar.item>
-                    @endforeach
-                </x-filament::layouts.app.sidebar.group>
+                <x-filament::layouts.app.sidebar.group
+                    :label="$group->getLabel()"
+                    :icon="$group->getIcon()"
+                    :collapsible="$group->isCollapsible()"
+                    :items="$group->getItems()"
+                />
 
                 @if (! $loop->last)
                     <li>

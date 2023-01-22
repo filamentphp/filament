@@ -1,10 +1,14 @@
 @php
+    $state = $getFormattedState();
+
     $descriptionAbove = $getDescriptionAbove();
     $descriptionBelow = $getDescriptionBelow();
 
     $icon = $getIcon();
     $iconPosition = $getIconPosition();
     $iconClasses = 'w-4 h-4';
+
+    $isCopyable = $isCopyable();
 @endphp
 
 <div
@@ -40,6 +44,12 @@
             'black' => 'font-black',
             default => null,
         },
+        match ($getFontFamily()) {
+            'sans' => 'font-sans',
+            'serif' => 'font-serif',
+            'mono' => 'font-mono',
+            default => null,
+        },
         'whitespace-normal' => $canWrap(),
     ]) }}
 >
@@ -54,8 +64,18 @@
             <x-dynamic-component :component="$icon" :class="$iconClasses" />
         @endif
 
-        <span>
-            {{ $getFormattedState() }}
+        <span
+            @if ($isCopyable)
+                x-on:click="
+                    window.navigator.clipboard.writeText(@js($state))
+                    $tooltip(@js($getCopyMessage()), { timeout: @js($getCopyMessageDuration()) })
+                "
+            @endif
+            @class([
+                'cursor-pointer' => $isCopyable,
+            ])
+        >
+            {{ $state }}
         </span>
 
         @if ($icon && $iconPosition === 'after')

@@ -42,14 +42,16 @@
             aria-label="{{ $getPlaceholder() }}"
             dusk="filament.forms.{{ $getStatePath() }}.open"
             type="button"
+            tabindex="-1"
             @if ($isDisabled()) disabled @endif
             {{ $getExtraTriggerAttributeBag()->class([
-                'bg-white relative w-full border py-2 pl-3 pr-10 rtl:pl-10 rtl:pr-3 text-left cursor-default rounded-lg shadow-sm',
+                'bg-white relative w-full border py-2 pl-3 pr-10 rtl:pl-10 rtl:pr-3 text-start cursor-default rounded-lg shadow-sm',
                 'focus-within:ring-1 focus-within:border-primary-500 focus-within:ring-inset focus-within:ring-primary-500' => ! $isDisabled(),
                 'dark:bg-gray-700' => config('forms.dark_mode'),
                 'border-gray-300' => ! $errors->has($getStatePath()),
                 'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                 'border-danger-600' => $errors->has($getStatePath()),
+                'dark:border-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
                 'opacity-70' => $isDisabled(),
                 'dark:text-gray-300' => $isDisabled() && config('forms.dark_mode'),
             ]) }}
@@ -57,6 +59,7 @@
             <input
                 readonly
                 placeholder="{{ $getPlaceholder() }}"
+                wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.display-text"
                 x-model="displayText"
                 {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
                 @class([
@@ -109,7 +112,7 @@
                             inputmode="numeric"
                             x-model.debounce="focusedYear"
                             @class([
-                                'w-20 p-0 text-lg text-right border-0 focus:ring-0 focus:outline-none',
+                                'w-20 p-0 text-lg text-end border-0 focus:ring-0 focus:outline-none',
                                 'dark:bg-gray-700 dark:text-gray-200' => config('forms.dark_mode'),
                             ])
                             dusk="filament.forms.{{ $getStatePath() }}.focusedYear"
@@ -166,6 +169,7 @@
                         <input
                             max="23"
                             min="0"
+                            step="{{ $getHoursStep() }}"
                             type="number"
                             inputmode="numeric"
                             x-model.debounce="hour"
@@ -186,6 +190,7 @@
                         <input
                             max="59"
                             min="0"
+                            step="{{ $getMinutesStep() }}"
                             type="number"
                             inputmode="numeric"
                             x-model.debounce="minute"
@@ -208,6 +213,7 @@
                             <input
                                 max="59"
                                 min="0"
+                                step="{{ $getSecondsStep() }}"
                                 type="number"
                                 inputmode="numeric"
                                 x-model.debounce="second"

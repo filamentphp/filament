@@ -16,9 +16,14 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Macroable;
 
 class Resource
 {
+    use Macroable {
+        __call as dynamicMacroCall;
+    }
+
     protected static ?string $breadcrumb = null;
 
     protected static bool $isGloballySearchable = true;
@@ -35,6 +40,8 @@ class Resource
     protected static ?string $navigationGroup = null;
 
     protected static ?string $navigationIcon = null;
+
+    protected static ?string $activeNavigationIcon = null;
 
     protected static ?string $navigationLabel = null;
 
@@ -58,6 +65,8 @@ class Resource
     protected static string | array $middlewares = [];
 
     protected static int $globalSearchResultsLimit = 50;
+
+    protected static bool $shouldIgnorePolicies = false;
 
     public static function form(Form $form): Form
     {
@@ -85,6 +94,7 @@ class Resource
             NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
                 ->icon(static::getNavigationIcon())
+                ->activeIcon(static::getActiveNavigationIcon())
                 ->isActiveWhen(fn () => request()->routeIs("{$routeBaseName}.*"))
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->sort(static::getNavigationSort())
@@ -106,6 +116,10 @@ class Resource
 
     public static function can(string $action, ?Model $record = null): bool
     {
+        if (static::shouldIgnorePolicies()) {
+            return true;
+        }
+
         $policy = Gate::getPolicyFor($model = static::getModel());
         $user = Filament::auth()->user();
 
@@ -113,18 +127,21 @@ class Resource
             return true;
         }
 
-        if (
-            method_exists($policy, 'before') &&
-            is_bool($response = $policy->before($user, $action))
-        ) {
-            return $response;
-        }
-
         if (! method_exists($policy, $action)) {
             return true;
         }
 
         return Gate::forUser($user)->check($action, $record ?? $model);
+    }
+
+    public static function ignorePolicies(bool $condition = true): void
+    {
+        static::$shouldIgnorePolicies = $condition;
+    }
+
+    public static function shouldIgnorePolicies(): bool
+    {
+        return static::$shouldIgnorePolicies;
     }
 
     public static function canViewAny(): bool
@@ -248,6 +265,8 @@ class Resource
 
     public static function getGlobalSearchResults(string $searchQuery): Collection
     {
+        $searchQuery = strtolower($searchQuery);
+
         $query = static::getGlobalSearchEloquentQuery();
 
         foreach (explode(' ', $searchQuery) as $searchQueryWord) {
@@ -428,11 +447,9 @@ class Resource
             $query->when(
                 method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchAttribute),
                 function (Builder $query) use ($databaseConnection, $searchAttribute, $searchOperator, $searchQuery, $whereClause): Builder {
-                    $activeLocale = app()->getLocale();
-
                     $searchColumn = match ($databaseConnection->getDriverName()) {
-                        'pgsql' => "{$searchAttribute}->>'{$activeLocale}'",
-                        default => "json_extract({$searchAttribute}, \"$.{$activeLocale}\")",
+                        'pgsql' => "{$searchAttribute}::text",
+                        default => "json_extract({$searchAttribute}, '$')",
                     };
 
                     return $query->{"{$whereClause}Raw"}(
@@ -485,6 +502,11 @@ class Resource
     public static function navigationIcon(?string $icon): void
     {
         static::$navigationIcon = $icon;
+    }
+
+    protected static function getActiveNavigationIcon(): string
+    {
+        return static::$activeNavigationIcon ?? static::getNavigationIcon();
     }
 
     protected static function getNavigationLabel(): string

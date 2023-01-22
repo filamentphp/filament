@@ -40,6 +40,12 @@ class DateTimePicker extends Field
 
     protected array | Closure $disabledDates = [];
 
+    protected int | Closure | null $hoursStep = null;
+
+    protected int | Closure | null $minutesStep = null;
+
+    protected int | Closure | null $secondsStep = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -147,6 +153,27 @@ class DateTimePicker extends Field
     public function resetFirstDayOfWeek(): static
     {
         $this->firstDayOfWeek(null);
+
+        return $this;
+    }
+
+    public function hoursStep(int | Closure | null $hoursStep): static
+    {
+        $this->hoursStep = $hoursStep;
+
+        return $this;
+    }
+
+    public function minutesStep(int | Closure | null $minutesStep): static
+    {
+        $this->minutesStep = $minutesStep;
+
+        return $this;
+    }
+
+    public function secondsStep(int | Closure | null $secondsStep): static
+    {
+        $this->secondsStep = $secondsStep;
 
         return $this;
     }
@@ -294,6 +321,21 @@ class DateTimePicker extends Field
     public function hasTime(): bool
     {
         return ! $this->isWithoutTime;
+    }
+
+    public function getHoursStep(): int
+    {
+        return $this->evaluate($this->hoursStep) ?? 1;
+    }
+
+    public function getMinutesStep(): int
+    {
+        return $this->evaluate($this->minutesStep) ?? 1;
+    }
+
+    public function getSecondsStep(): int
+    {
+        return $this->evaluate($this->secondsStep) ?? 1;
     }
 
     public function shouldCloseOnDateSelection(): bool

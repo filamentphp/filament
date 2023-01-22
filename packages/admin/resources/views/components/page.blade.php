@@ -12,10 +12,18 @@
                 <x-slot name="heading">
                     {{ $heading }}
                 </x-slot>
+
+                @if ($subheading = $this->getSubheading())
+                    <x-slot name="subheading">
+                        {{ $subheading }}
+                    </x-slot>
+                @endif
             </x-filament::header>
         @endif
 
-        @if ($headerWidgets = $this->getHeaderWidgets())
+        {{ \Filament\Facades\Filament::renderHook('page.header-widgets.start') }}
+
+        @if ($headerWidgets = $this->getVisibleHeaderWidgets())
             <x-filament::widgets
                 :widgets="$headerWidgets"
                 :columns="$this->getHeaderWidgetsColumns()"
@@ -23,15 +31,21 @@
             />
         @endif
 
+        {{ \Filament\Facades\Filament::renderHook('page.header-widgets.end') }}
+
         {{ $slot }}
 
-        @if ($footerWidgets = $this->getFooterWidgets())
+        {{ \Filament\Facades\Filament::renderHook('page.footer-widgets.start') }}
+
+        @if ($footerWidgets = $this->getVisibleFooterWidgets())
             <x-filament::widgets
                 :widgets="$footerWidgets"
                 :columns="$this->getFooterWidgetsColumns()"
                 :data="$widgetData"
             />
         @endif
+
+        {{ \Filament\Facades\Filament::renderHook('page.footer-widgets.end') }}
 
         @if ($footer = $this->getFooter())
             {{ $footer }}
@@ -50,12 +64,16 @@
             :width="$action?->getModalWidth()"
             :slide-over="$action?->isModalSlideOver()"
             display-classes="block"
+            x-init="livewire = $wire.__instance"
+            x-on:modal-closed.stop="if ('mountedAction' in livewire?.serverMemo.data) livewire.set('mountedAction', null)"
         >
             @if ($action)
                 @if ($action->isModalCentered())
-                    <x-slot name="heading">
-                        {{ $action->getModalHeading() }}
-                    </x-slot>
+                    @if ($heading = $action->getModalHeading())
+                        <x-slot name="heading">
+                            {{ $heading }}
+                        </x-slot>
+                    @endif
 
                     @if ($subheading = $action->getModalSubheading())
                         <x-slot name="subheading">
@@ -64,9 +82,11 @@
                     @endif
                 @else
                     <x-slot name="header">
-                        <x-filament::modal.heading>
-                            {{ $action->getModalHeading() }}
-                        </x-filament::modal.heading>
+                        @if ($heading = $action->getModalHeading())
+                            <x-filament::modal.heading>
+                                {{ $heading }}
+                            </x-filament::modal.heading>
+                        @endif
 
                         @if ($subheading = $action->getModalSubheading())
                             <x-filament::modal.subheading>
@@ -81,6 +101,8 @@
                 @if ($action->hasFormSchema())
                     {{ $this->getMountedActionForm() }}
                 @endif
+
+                {{ $action->getModalFooter() }}
 
                 @if (count($action->getModalActions()))
                     <x-slot name="footer">

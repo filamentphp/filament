@@ -23,6 +23,8 @@ class Table
 
     protected ?string $filtersLayout = null;
 
+    protected ?string $recordCheckboxPosition = null;
+
     protected array $headerActions = [];
 
     protected ?array $contentGrid = null;
@@ -95,6 +97,13 @@ class Table
     public function filtersLayout(?string $filtersLayout): static
     {
         $this->filtersLayout = $filtersLayout;
+
+        return $this;
+    }
+
+    public function recordCheckboxPosition(?string $recordCheckboxPosition): static
+    {
+        $this->recordCheckboxPosition = $recordCheckboxPosition;
 
         return $this;
     }
@@ -235,6 +244,11 @@ class Table
     public function getFiltersLayout(): ?string
     {
         return $this->filtersLayout;
+    }
+
+    public function getRecordCheckboxPosition(): ?string
+    {
+        return $this->recordCheckboxPosition;
     }
 
     public function getHeaderActions(): array

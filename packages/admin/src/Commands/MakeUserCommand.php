@@ -17,14 +17,19 @@ class MakeUserCommand extends Command
 
     protected $description = 'Creates a Filament user.';
 
-    protected $signature = 'make:filament-user';
+    protected $signature = 'make:filament-user
+                            {--name= : The name of the user}
+                            {--email= : A valid and unique email address}
+                            {--password= : The password for the user (min. 8 characters)}';
+
+    protected array $options;
 
     protected function getUserData(): array
     {
         return [
-            'name' => $this->validateInput(fn () => $this->ask('Name'), 'name', ['required']),
-            'email' => $this->validateInput(fn () => $this->ask('Email address'), 'email', ['required', 'email', 'unique:' . $this->getUserModel()]),
-            'password' => Hash::make($this->validateInput(fn () => $this->secret('Password'), 'password', ['required', 'min:8'])),
+            'name' => $this->validateInput(fn () => $this->options['name'] ?? $this->ask('Name'), 'name', ['required'], fn () => $this->options['name'] = null),
+            'email' => $this->validateInput(fn () => $this->options['email'] ?? $this->ask('Email address'), 'email', ['required', 'email', 'unique:' . $this->getUserModel()], fn () => $this->options['email'] = null),
+            'password' => Hash::make($this->validateInput(fn () => $this->options['password'] ?? $this->secret('Password'), 'password', ['required', 'min:8'], fn () => $this->options['password'] = null)),
         ];
     }
 
@@ -73,6 +78,8 @@ class MakeUserCommand extends Command
 
     public function handle(): int
     {
+        $this->options = $this->options();
+
         $user = $this->createUser();
 
         $this->sendSuccessMessage($user);

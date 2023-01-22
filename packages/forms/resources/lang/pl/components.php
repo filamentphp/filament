@@ -16,6 +16,10 @@ return [
                 'label' => 'Dodaj do :label',
             ],
 
+            'create_item_between' => [
+                'label' => 'Wstaw',
+            ],
+
             'delete_item' => [
                 'label' => 'Usuń',
             ],
@@ -62,6 +66,10 @@ return [
 
             'delete' => [
                 'label' => 'Usuń wiersz',
+            ],
+
+            'reorder' => [
+                'label' => 'Przenieś wiersz',
             ],
 
         ],

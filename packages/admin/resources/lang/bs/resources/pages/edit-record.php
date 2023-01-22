@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => 'Uredite :label',
+    'title' => 'Uredi :label',
 
-    'breadcrumb' => 'Uredite',
+    'breadcrumb' => 'Uredi',
 
     'form' => [
 
@@ -18,6 +18,10 @@ return [
                 'label' => 'Saćuvaj',
             ],
 
+        ],
+
+        'tab' => [
+            'label' => 'Uredi',
         ],
 
     ],

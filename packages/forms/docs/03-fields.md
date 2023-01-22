@@ -67,16 +67,6 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')->id('name-field')
 ```
 
-### Validation attributes
-
-When fields fail validation, their label is used in the error message. To customize the label used in field error messages, use the `validationAttribute()` method:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('name')->validationAttribute('full name')
-```
-
 ### Setting a default value
 
 Fields may have a default value. This will be filled if the [form's `fill()` method](getting-started#default-data) is called without any arguments. To define a default value, use the `default()` method:
@@ -86,6 +76,8 @@ use Filament\Forms\Components\TextInput;
 
 TextInput::make('name')->default('John')
 ```
+
+Note that inside the admin panel this only works on Create Pages, as Edit Pages will always fill the data from the model.
 
 ### Helper messages and hints
 
@@ -140,11 +132,10 @@ TextInput::make('name')->extraAttributes(['title' => 'Text input'])
 To add additional HTML attributes to the input itself, use `extraInputAttributes()`:
 
 ```php
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
 
-TextInput::make('points')
-    ->numeric()
-    ->extraInputAttributes(['step' => '10'])
+Select::make('categories')
+    ->extraInputAttributes(['multiple' => true])
 ```
 
 ### Disabling
@@ -190,6 +181,24 @@ use Filament\Resources\Pages\Page;
 TextInput::make('slug')
     ->disabled()
     ->dehydrated(fn (Page $livewire) => $livewire instanceof CreateRecord)
+```
+
+### Hiding
+
+You may hide a field:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')->hidden()
+```
+
+Optionally, you may pass a boolean value to control if the field should be hidden or not:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')->hidden(! auth()->user()->isAdmin())
 ```
 
 ### Autofocusing
@@ -316,6 +325,30 @@ TextInput::make('password')
 
 For more complex autocomplete options, text inputs also support [datalists](#datalists).
 
+#### Phone number validation
+
+When using a `tel()` field, the value will be validated using: `/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/`.
+
+If you wish to change that, then you can use the `telRegex()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('phone')
+    ->tel()
+    ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')
+```
+
+Alternatively, to customize the `telRegex()` across all fields, use a service provider:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::configureUsing(function (TextInput $component): void {
+    $component->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/');
+});
+```
+
 ### Affixes
 
 You may place text before and after the input using the `prefix()` and `suffix()` methods:
@@ -349,11 +382,11 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('domain')
-    ->suffixAction(
+    ->suffixAction(fn (?string $state): Action =>
         Action::make('visit')
             ->icon('heroicon-s-external-link')
             ->url(
-                fn (?string $state): ?string => filled($state) ? "https://{$state}" : null,
+                filled($state) ? "https://{$state}" : null,
                 shouldOpenInNewTab: true,
             ),
     )
@@ -483,6 +516,8 @@ Select::make('status')
         'published' => 'Published',
     ])
 ```
+
+In the `options()` array, the array keys are saved, and the array values will be the label of each option in the dropdown.
 
 ![](https://user-images.githubusercontent.com/41773797/147612885-888dfd64-6256-482d-b4bc-840191306d2d.png)
 
@@ -893,6 +928,21 @@ CheckboxList::make('technologies')
 
 This method accepts the same options as the `columns()` method of the [grid](layout#grid). This allows you to responsively customize the number of columns at various breakpoints.
 
+You may also allow users to toggle all checkboxes at once using the `bulkToggleable()` method:
+
+```php
+use Filament\Forms\Components\CheckboxList;
+
+CheckboxList::make('technologies')
+    ->options([
+        'tailwind' => 'Tailwind CSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+    ])
+    ->bulkToggleable()
+```
+
 ### Populating automatically from a relationship
 
 You may employ the `relationship()` method to configure a relationship to automatically retrieve and save options from:
@@ -1054,6 +1104,17 @@ use Filament\Forms\Components\DateTimePicker;
 DateTimePicker::make('published_at')->withoutSeconds()
 ```
 
+You may also customize the input interval for increasing the hours / minutes / seconds using the `hoursStep()` , `minutesStep()` or `secondsStep()` methods:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::make('published_at')
+    ->hoursStep(2)
+    ->minutesStep(15)
+    ->secondsStep(10)
+```
+
 ![](https://user-images.githubusercontent.com/41773797/147613511-30d7b2d8-227a-42ff-a6c7-e080d22305ad.png)
 
 In some countries, the first day of the week is not Monday. To customize the first day of the week in the date picker, use the `forms.components.date_time_picker.first_day_of_week` config option, or the `firstDayOfWeek()` method on the component. 0 to 7 are accepted values, with Monday as 1 and Sunday as 7 or 0:
@@ -1178,13 +1239,14 @@ FileUpload::make('attachment')
 
 > To customize Livewire's default file upload validation rules, please refer to its [documentation](https://laravel-livewire.com/docs/file-uploads#global-validation).
 
-Filepond allows you to crop and resize images before they are uploaded. You can customize this behaviour using the `imageCropAspectRatio()`, `imageResizeTargetHeight()` and `imageResizeTargetWidth()` methods.
+Filepond allows you to crop and resize images before they are uploaded. You can customize this behaviour using the `imageResizeMode()`, `imageCropAspectRatio()`, `imageResizeTargetHeight()` and `imageResizeTargetWidth()` methods. `imageResizeMode()` should be set for the other methods to have an effect - either [`force`, `cover`, or `contain`](https://pqina.nl/filepond/docs/api/plugins/image-resize).
 
 ```php
 use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('image')
     ->image()
+    ->imageResizeMode('cover')
     ->imageCropAspectRatio('16:9')
     ->imageResizeTargetWidth('1920')
     ->imageResizeTargetHeight('1080')
@@ -1257,7 +1319,7 @@ You can add a button to open each file in a new tab with the `enableOpen()` meth
 use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('attachments')
-    ->multipe()
+    ->multiple()
     ->enableOpen()
 ```
 
@@ -1334,7 +1396,7 @@ RichEditor::make('content')
 
 ## Markdown editor
 
-The markdown editor allows you to edit and preview markdown content, as well as upload images.
+The markdown editor allows you to edit and preview markdown content, as well as upload images using drag and drop.
 
 ```php
 use Filament\Forms\Components\MarkdownEditor;
@@ -1641,7 +1703,7 @@ You are trying to retrieve the value of `client_id` from inside the repeater ite
 
 `$get()` is relative to the current repeater item, so `$get('client_id')` is looking for `$get('repeater.item1.client_id')`.
 
-You can use `../` to go up a level in the data structure, so `$get('../client_id')` is $get('repeater.client_id') and `$get('../../client_id')` is `$get('client_id')`.
+You can use `../` to go up a level in the data structure, so `$get('../client_id')` is `$get('repeater.client_id')` and `$get('../../client_id')` is `$get('client_id')`.
 
 ## Builder
 
@@ -1956,7 +2018,8 @@ The `$getStatePath()` closure may be used by the view to retrieve the Livewire p
 Using [Livewire's entangle](https://laravel-livewire.com/docs/alpine-js#sharing-state) allows sharing state with Alpine.js:
 
 ```blade
-<x-forms::field-wrapper
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isLabelHidden()"
@@ -1971,13 +2034,14 @@ Using [Livewire's entangle](https://laravel-livewire.com/docs/alpine-js#sharing-
     <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}').defer }">
         <!-- Interact with the `state` property in Alpine.js -->
     </div>
-</x-forms::field-wrapper>
+</x-dynamic-component>
 ```
 
 Or, you may bind the value to a Livewire property using [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding):
 
-```
-<x-forms::field-wrapper
+```blade
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isLabelHidden()"
@@ -1990,7 +2054,7 @@ Or, you may bind the value to a Livewire property using [`wire:model`](https://l
     :state-path="$getStatePath()"
 >
     <input wire:model.defer="{{ $getStatePath() }}" />
-</x-forms::field-wrapper>
+</x-dynamic-component>
 ```
 
 ## Building custom fields
@@ -2021,7 +2085,8 @@ Inside your view, you may interact with the state of the form component using Li
 The `$getStatePath()` closure may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
 
 ```blade
-<x-forms::field-wrapper
+<x-dynamic-component
+    :component="$getFieldWrapperView()"
     :id="$getId()"
     :label="$getLabel()"
     :label-sr-only="$isLabelHidden()"
@@ -2036,5 +2101,5 @@ The `$getStatePath()` closure may be used by the view to retrieve the Livewire p
     <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}').defer }">
         <!-- Interact with the `state` property in Alpine.js -->
     </div>
-</x-forms::field-wrapper>
+</x-dynamic-component>
 ```

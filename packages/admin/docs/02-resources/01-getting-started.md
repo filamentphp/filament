@@ -49,7 +49,7 @@ If you'd like to save time, Filament can automatically generate the [form](#form
 The `doctrine/dbal` package is required to use this functionality:
 
 ```bash
-composer require doctrine/dbal
+composer require doctrine/dbal --dev
 ```
 
 When creating your resource, you may now use `--generate`:
@@ -485,7 +485,7 @@ public static function getNavigationLabel(): string
 
 ### Icons
 
-The `$navigationIcon` property supports the name of any Blade component. By default, the [Blade Heroicons](https://github.com/blade-ui-kit/blade-heroicons) package is installed, so you may use the name of any [Heroicon](https://heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
+The `$navigationIcon` property supports the name of any Blade component. By default, the [Blade Heroicons v1](https://github.com/blade-ui-kit/blade-heroicons/tree/1.3.1) package is installed, so you may use the name of any [Heroicons v1](https://v1.heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
 
 ```php
 protected static ?string $navigationIcon = 'heroicon-o-user-group';
@@ -530,7 +530,7 @@ Alternatively, you may use the `getNavigationGroup()` method to set a dynamic gr
 ```php
 protected static function getNavigationGroup(): ?string
 {
-    return return __('filament/navigation.groups.shop');
+    return __('filament/navigation.groups.shop');
 }
 ```
 
@@ -563,6 +563,14 @@ public static function getEloquentQuery(): Builder
 ```
 
 More information about removing global scopes may be found in the [Laravel documentation](https://laravel.com/docs/eloquent#removing-global-scopes).
+
+## Customizing the URL slug
+
+By default, Filament will generate a resource URL based on the name of the model. You can customize this by setting the `$slug` property on the resource:
+
+```php
+protected static ?string $slug = 'pending-orders';
+```
 
 ## Multi-tenancy
 

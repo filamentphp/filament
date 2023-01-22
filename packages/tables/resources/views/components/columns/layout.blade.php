@@ -2,6 +2,7 @@
     'components',
     'record',
     'recordKey' => null,
+    'rowLoop' => null,
 ])
 
 @php
@@ -33,6 +34,7 @@
 @foreach ($components as $layoutComponent)
     @php
         $layoutComponent->record($record);
+        $layoutComponent->rowLoop($rowLoop);
 
         $isColumn = $layoutComponent instanceof \Filament\Tables\Columns\Column;
     @endphp

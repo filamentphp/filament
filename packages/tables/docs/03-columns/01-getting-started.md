@@ -175,6 +175,15 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('title')->searchable(isIndividual: true, isGlobal: false)
 ```
 
+You may optionally persist the searches in the query string:
+
+```php
+protected $queryString = [
+    // ...
+    'tableColumnSearchQueries',
+];
+```
+
 ### Persist search in session
 
 To persist the table or individual column search in the user's session, override the `shouldPersistTableSearchInSession()` or `shouldPersistTableColumnSearchInSession()` method on the Livewire component:
@@ -212,7 +221,7 @@ TextColumn::make('title')
 
 #### Action modals
 
-You may open [action modals](actions#modals) by passing in an `Action` object to the `action()` method:
+You may open [action modals](../actions#modals) by passing in an `Action` object to the `action()` method:
 
 ```php
 use Filament\Tables\Actions\Action;

@@ -8,6 +8,10 @@ return [
             'more' => 'und :count weitere',
         ],
 
+        'messages' => [
+            'copied' => 'Kopiert',
+        ],
+
     ],
 
     'fields' => [
@@ -142,6 +146,29 @@ return [
 
             'deselect_all' => [
                 'label' => 'Auswahl aufheben',
+            ],
+
+        ],
+
+    ],
+
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Sortieren nach',
+            ],
+
+            'direction' => [
+
+                'label' => 'Sortierrichtung',
+
+                'options' => [
+                    'asc' => 'Aufsteigend',
+                    'desc' => 'Absteigend',
+                ],
+
             ],
 
         ],

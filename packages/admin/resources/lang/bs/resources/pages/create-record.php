@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => 'Napravite :label',
+    'title' => 'Napravi :label',
 
-    'breadcrumb' => 'Napravite',
+    'breadcrumb' => 'Napravi',
 
     'form' => [
 
@@ -19,7 +19,7 @@ return [
             ],
 
             'create_another' => [
-                'label' => 'Napravite i napravite još jedan',
+                'label' => 'Napravi i napravi još jedan',
             ],
 
         ],

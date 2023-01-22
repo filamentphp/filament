@@ -13,11 +13,15 @@
         'text-gray-700' => ! $error,
         'dark:text-gray-300' => (! $error) && config('forms.dark_mode'),
         'text-danger-700' => $error,
+        'dark:text-danger-400' => $error && config('forms.dark_mode'),
     ])>
         {{ $slot }}
 
         @if ($required)
-            <sup class="font-medium text-danger-700">*</sup>
+            <sup @class([
+                'font-medium text-danger-700',
+                'dark:text-danger-400' => config('forms.dark_mode'),
+            ])>*</sup>
         @endif
     </span>
 

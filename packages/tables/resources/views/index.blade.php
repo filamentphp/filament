@@ -1,6 +1,7 @@
 @php
     use Filament\Tables\Actions\Position as ActionsPosition;
     use Filament\Tables\Filters\Layout as FiltersLayout;
+    use Filament\Tables\Actions\RecordCheckboxPosition;
 
     $actions = $getActions();
     $actionsPosition = $getActionsPosition();
@@ -24,6 +25,7 @@
     $isColumnSearchVisible = $isSearchableByColumn();
     $isGlobalSearchVisible = $isSearchable();
     $isSelectionEnabled = $isSelectionEnabled();
+    $recordCheckboxPosition = $getRecordCheckboxPosition();
     $isStriped = $isStriped();
     $hasFilters = $isFilterable();
     $hasFiltersPopover = $hasFilters && ($getFiltersLayout() === FiltersLayout::Popover);
@@ -199,7 +201,7 @@
             <div
                 x-show="@js($shouldRenderHeaderDiv = ($isReorderable || $isGlobalSearchVisible || $hasFiltersPopover || $isColumnToggleFormVisible)) || selectedRecords.length"
                 {!! ! $shouldRenderHeaderDiv ? 'x-cloak' : null !!}
-                class="flex items-center justify-between p-2 h-14"
+                class="filament-tables-header-toolbar flex items-center justify-between p-2 h-14"
                 x-bind:class="{
                     'gap-2': @js($isReorderable) || selectedRecords.length,
                 }"
@@ -222,7 +224,7 @@
                 @if ($isGlobalSearchVisible || $hasFiltersPopover || $isColumnToggleFormVisible)
                     <div class="flex items-center justify-end w-full gap-2 md:max-w-md">
                         @if ($isGlobalSearchVisible)
-                            <div class="flex items-center justify-end flex-1">
+                            <div class="filament-tables-search-container flex items-center justify-end flex-1">
                                 <x-tables::search-input />
                             </div>
                         @endif
@@ -363,7 +365,10 @@
                                         <select
                                             x-model="column"
                                             style="background-position: right 0.2rem center"
-                                            class="text-xs pl-2 pr-6 py-1 font-medium border-0 bg-gray-500/5 rounded-lg focus:ring-0 sm:text-sm"
+                                            @class([
+                                                'text-xs pl-2 pr-6 py-1 font-medium border-0 bg-gray-500/5 rounded-lg border-gray-300 sm:text-sm focus:ring-0 focus:border-primary-500 focus:ring-primary-500',
+                                                'dark:text-white dark:bg-gray-700 dark:border-gray-600 dark:focus:border-primary-500' => config('tables.dark_mode'),
+                                            ])
                                         >
                                             <option value="">-</option>
                                             @foreach ($sortableColumns as $column)
@@ -381,7 +386,10 @@
                                             x-show="column"
                                             x-model="direction"
                                             style="background-position: right 0.2rem center"
-                                            class="text-xs pl-2 pr-6 py-1 font-medium border-0 bg-gray-500/5 rounded-lg focus:ring-0 sm:text-sm"
+                                            @class([
+                                                'text-xs pl-2 pr-6 py-1 font-medium border-0 bg-gray-500/5 rounded-lg border-gray-300 sm:text-sm focus:ring-0 focus:border-primary-500 focus:ring-primary-500',
+                                                'dark:text-white dark:bg-gray-700 dark:border-gray-600 dark:focus:border-primary-500' => config('tables.dark_mode'),
+                                            ])
                                         >
                                             <option value="asc">{{ __('tables::table.sorting.fields.direction.options.asc') }}</option>
                                             <option value="desc">{{ __('tables::table.sorting.fields.direction.options.desc') }}</option>
@@ -424,6 +432,9 @@
                                 <div
                                     @if ($hasCollapsibleColumnsLayout)
                                         x-data="{ isCollapsed: true }"
+                                        x-init="$dispatch('collapsible-table-row-initialized')"
+                                        x-on:expand-all-table-rows.window="isCollapsed = false"
+                                        x-on:collapse-all-table-rows.window="isCollapsed = true"
                                     @endif
                                     wire:key="{{ $this->id }}.table.records.{{ $recordKey }}"
                                     @if ($isReordering)
@@ -492,12 +503,13 @@
                                             @if ($recordUrl)
                                                 <a
                                                     href="{{ $recordUrl }}"
-                                                    class="flex-1 block py-3"
+                                                    class="filament-tables-record-url-link flex-1 block py-3"
                                                 >
                                                     <x-tables::columns.layout
                                                         :components="$getColumnsLayout()"
                                                         :record="$record"
                                                         :record-key="$recordKey"
+                                                        :row-loop="$loop"
                                                     />
                                                 </a>
                                             @elseif ($recordAction)
@@ -513,14 +525,15 @@
                                                     wire:click="{{ $recordWireClickAction }}"
                                                     wire:target="{{ $recordWireClickAction }}"
                                                     wire:loading.attr="disabled"
-                                                    wire:loading.class="opacity-70 cursor-wait"
+                                                    wire:loading.class="cursor-wait opacity-70"
                                                     type="button"
-                                                    class="flex-1 block py-3"
+                                                    class="filament-tables-record-action-button flex-1 block py-3"
                                                 >
                                                     <x-tables::columns.layout
                                                         :components="$getColumnsLayout()"
                                                         :record="$record"
                                                         :record-key="$recordKey"
+                                                        :row-loop="$loop"
                                                     />
                                                 </button>
                                             @else
@@ -529,6 +542,7 @@
                                                         :components="$getColumnsLayout()"
                                                         :record="$record"
                                                         :record-key="$recordKey"
+                                                        :row-loop="$loop"
                                                     />
                                                 </div>
                                             @endif
@@ -554,6 +568,7 @@
                                             <div
                                                 x-show="! isCollapsed"
                                                 x-collapse
+                                                x-cloak
                                                 @class([
                                                     'pb-2 -mx-2',
                                                     'md:pl-20 rtl:md:pl-0 rtl:md:pr-20' => (! $contentGrid) && $isSelectionEnabled,
@@ -606,7 +621,7 @@
                                 @endif
                             @endif
 
-                            @if ($isSelectionEnabled)
+                            @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                 <x-tables::checkbox.cell>
                                     <x-tables::checkbox
                                         x-on:click="toggleSelectRecordsOnPage"
@@ -646,19 +661,52 @@
                                 :alignment="$column->getAlignment()"
                                 :sortable="$column->isSortable() && (! $isReordering)"
                                 :sort-direction="$getSortDirection()"
-                                :class="$getHiddenClasses($column)"
+                                class="filament-table-header-cell-{{ \Illuminate\Support\Str::of($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
                             >
                                 {{ $column->getLabel() }}
                             </x-tables::header-cell>
                         @endforeach
 
-                        @if (count($actions) && (! $isReordering) && $actionsPosition === ActionsPosition::AfterCells)
-                            @if ($actionsColumnLabel)
-                                <x-tables::header-cell alignment="right">
-                                    {{ $actionsColumnLabel }}
-                                </x-tables::header-cell>
-                            @else
-                                <th class="w-5"></th>
+                        @if (! $isReordering)
+                            @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns)
+                                @if ($actionsColumnLabel)
+                                    <x-tables::header-cell alignment="right">
+                                        {{ $actionsColumnLabel }}
+                                    </x-tables::header-cell>
+                                @else
+                                    <th class="w-5"></th>
+                                @endif
+                            @endif
+
+                            @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
+                                <x-tables::checkbox.cell>
+                                    <x-tables::checkbox
+                                        x-on:click="toggleSelectRecordsOnPage"
+                                        x-bind:checked="
+                                            let recordsOnPage = getRecordsOnPage()
+
+                                            if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
+                                                $el.checked = true
+
+                                                return 'checked'
+                                            }
+
+                                            $el.checked = false
+
+                                            return null
+                                        "
+                                    />
+                                </x-tables::checkbox.cell>
+                            @endif
+
+                            @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
+                                @if ($actionsColumnLabel)
+                                    <x-tables::header-cell alignment="right">
+                                        {{ $actionsColumnLabel }}
+                                    </x-tables::header-cell>
+                                @else
+                                    <th class="w-5"></th>
+                                @endif
                             @endif
                         @endif
                     </x-slot>
@@ -672,21 +720,27 @@
                                     <td></td>
                                 @endif
 
-                                @if ($isSelectionEnabled)
+                                @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                     <td></td>
                                 @endif
                             @endif
 
                             @foreach ($columns as $column)
-                                <x-tables::cell class="px-4 py-1">
+                                <x-tables::cell class="filament-table-individual-search-cell-{{ \Illuminate\Support\Str::of($column->getName())->camel()->kebab() }} px-4 py-1">
                                     @if ($column->isIndividuallySearchable())
                                         <x-tables::search-input wire-model="tableColumnSearchQueries.{{ $column->getName() }}" />
                                     @endif
                                 </x-tables::cell>
                             @endforeach
 
-                            @if (count($actions) && (! $isReordering) && $actionsPosition === ActionsPosition::AfterCells)
-                                <td></td>
+                            @if (! $isReordering)
+                                @if (count($actions) && in_array($actionsPosition, [ActionsPosition::AfterColumns, ActionsPosition::AfterCells]))
+                                    <td></td>
+                                @endif
+
+                                @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
+                                    <td></td>
+                                @endif
                             @endif
                         </x-tables::row>
                     @endif
@@ -720,7 +774,7 @@
                                     'hidden' => ! $isReordering,
                                 ])">
                                     @if ($isReordering)
-                                        <x-tables::reorder.handle />
+                                        <x-tables::reorder.handle/>
                                     @endif
                                 </x-tables::reorder.cell>
 
@@ -737,16 +791,20 @@
                                     </x-tables::actions.cell>
                                 @endif
 
-                                @if ($isSelectionEnabled)
-                                    <x-tables::checkbox.cell :class="\Illuminate\Support\Arr::toCssClasses([
-                                        'hidden' => $isReordering,
-                                    ])">
-                                        <x-tables::checkbox
-                                            x-model="selectedRecords"
-                                            :value="$recordKey"
-                                            class="filament-tables-record-checkbox"
-                                        />
-                                    </x-tables::checkbox.cell>
+                                @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
+                                    @if ($isRecordSelectable($record))
+                                        <x-tables::checkbox.cell :class="\Illuminate\Support\Arr::toCssClasses([
+                                            'hidden' => $isReordering,
+                                        ])">
+                                            <x-tables::checkbox
+                                                x-model="selectedRecords"
+                                                :value="$recordKey"
+                                                class="filament-tables-record-checkbox"
+                                            />
+                                        </x-tables::checkbox.cell>
+                                    @else
+                                        <x-tables::cell />
+                                    @endif
                                 @endif
 
                                 @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
@@ -765,10 +823,12 @@
                                 @foreach ($columns as $column)
                                     @php
                                         $column->record($record);
+                                        $column->rowLoop($loop->parent);
                                     @endphp
 
                                     <x-tables::cell
-                                        :class="$getHiddenClasses($column)"
+                                        class="filament-table-cell-{{ \Illuminate\Support\Str::of($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
+                                        wire:key="{{ $this->id }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
                                         wire:loading.remove.delay
                                         wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
                                     >
@@ -782,6 +842,35 @@
                                         />
                                     </x-tables::cell>
                                 @endforeach
+
+                                @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns)
+                                    <x-tables::actions.cell
+                                        :class="\Illuminate\Support\Arr::toCssClasses([
+                                            'hidden' => $isReordering,
+                                        ])"
+                                    >
+                                        <x-tables::actions
+                                            :actions="$actions"
+                                            :record="$record"
+                                        />
+                                    </x-tables::actions.cell>
+                                @endif
+
+                                @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
+                                    @if ($isRecordSelectable($record))
+                                        <x-tables::checkbox.cell :class="\Illuminate\Support\Arr::toCssClasses([
+                                            'hidden' => $isReordering,
+                                        ])">
+                                            <x-tables::checkbox
+                                                x-model="selectedRecords"
+                                                :value="$recordKey"
+                                                class="filament-tables-record-checkbox"
+                                            />
+                                        </x-tables::checkbox.cell>
+                                    @else
+                                        <x-tables::cell />
+                                    @endif
+                                @endif
 
                                 @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
                                     <x-tables::actions.cell
@@ -817,7 +906,7 @@
                         @else
                             <tr>
                                 <td colspan="{{ $columnsCount }}">
-                                    <div class="flex items-center justify-center p-4 w-full">
+                                    <div class="flex items-center justify-center w-full p-4">
                                         <x-tables::empty-state :icon="$getEmptyStateIcon()" :actions="$getEmptyStateActions()">
                                             <x-slot name="heading">
                                                 {{ $getEmptyStateHeading() }}
@@ -869,17 +958,29 @@
 
         <x-tables::modal
             :id="$this->id . '-table-action'"
-            :wire:key="$action ? $this->id . '.table' . ($getMountedActionRecordKey() ? '.records.' . $getMountedActionRecordKey() : null) . '.actions.' . $action->getName() . '.modal' : null"
+            :wire:key="$action ? $this->id . '.table.actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
             :slide-over="$action?->isModalSlideOver()"
             display-classes="block"
+            x-init="livewire = $wire.__instance"
+            x-on:modal-closed.stop="
+                if ('mountedTableAction' in livewire?.serverMemo.data) {
+                    livewire.set('mountedTableAction', null)
+                }
+
+                if ('mountedTableActionRecord' in livewire?.serverMemo.data) {
+                    livewire.set('mountedTableActionRecord', null)
+                }
+            "
         >
             @if ($action)
                 @if ($action->isModalCentered())
-                    <x-slot name="heading">
-                        {{ $action->getModalHeading() }}
-                    </x-slot>
+                    @if ($heading = $action->getModalHeading())
+                        <x-slot name="heading">
+                            {{ $heading }}
+                        </x-slot>
+                    @endif
 
                     @if ($subheading = $action->getModalSubheading())
                         <x-slot name="subheading">
@@ -888,9 +989,11 @@
                     @endif
                 @else
                     <x-slot name="header">
-                        <x-tables::modal.heading>
-                            {{ $action->getModalHeading() }}
-                        </x-tables::modal.heading>
+                        @if ($heading = $action->getModalHeading())
+                            <x-tables::modal.heading>
+                                {{ $heading }}
+                            </x-tables::modal.heading>
+                        @endif
 
                         @if ($subheading = $action->getModalSubheading())
                             <x-tables::modal.subheading>
@@ -905,6 +1008,8 @@
                 @if ($action->hasFormSchema())
                     {{ $getMountedActionForm() }}
                 @endif
+
+                {{ $action->getModalFooter() }}
 
                 @if (count($action->getModalActions()))
                     <x-slot name="footer">
@@ -931,12 +1036,16 @@
             :width="$action?->getModalWidth()"
             :slide-over="$action?->isModalSlideOver()"
             display-classes="block"
+            x-init="livewire = $wire.__instance"
+            x-on:modal-closed.stop="if ('mountedTableBulkAction' in livewire?.serverMemo.data) livewire.set('mountedTableBulkAction', null)"
         >
             @if ($action)
                 @if ($action->isModalCentered())
-                    <x-slot name="heading">
-                        {{ $action->getModalHeading() }}
-                    </x-slot>
+                    @if ($heading = $action->getModalHeading())
+                        <x-slot name="heading">
+                            {{ $heading }}
+                        </x-slot>
+                    @endif
 
                     @if ($subheading = $action->getModalSubheading())
                         <x-slot name="subheading">
@@ -945,9 +1054,11 @@
                     @endif
                 @else
                     <x-slot name="header">
-                        <x-tables::modal.heading>
-                            {{ $action->getModalHeading() }}
-                        </x-tables::modal.heading>
+                        @if ($heading = $action->getModalHeading())
+                            <x-tables::modal.heading>
+                                {{ $heading }}
+                            </x-tables::modal.heading>
+                        @endif
 
                         @if ($subheading = $action->getModalSubheading())
                             <x-tables::modal.subheading>
@@ -962,6 +1073,8 @@
                 @if ($action->hasFormSchema())
                     {{ $getMountedBulkActionForm() }}
                 @endif
+
+                {{ $action->getModalFooter() }}
 
                 @if (count($action->getModalActions()))
                     <x-slot name="footer">

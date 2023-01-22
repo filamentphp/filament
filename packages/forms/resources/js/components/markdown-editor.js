@@ -24,13 +24,17 @@ export default (Alpine) => {
                     })
                 }
 
-                this.$watch('state', () => {
+                this.$watch('state', (value) => {
+                    if (value === null) {
+                        this.state = ''
+                    }
+
                     this.render()
                 })
             },
 
             render: function () {
-                if (this.$refs.textarea.scrollHeight > 0) {
+                if ((this.$refs.textarea?.scrollHeight ?? 0) > 0) {
                     this.$refs.overlay.style.height = '150px'
                     this.$refs.overlay.style.height =
                         this.$refs.textarea.scrollHeight + 'px'

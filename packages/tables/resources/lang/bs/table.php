@@ -4,16 +4,12 @@ return [
 
     'columns' => [
 
-        'color' => [
-
-            'messages' => [
-                'copied' => 'Kopirano',
-            ],
-
-        ],
-
         'tags' => [
             'more' => 'i :count više',
+        ],
+
+        'messages' => [
+            'copied' => 'Kopirano',
         ],
 
     ],
@@ -68,11 +64,11 @@ return [
     'buttons' => [
 
         'disable_reordering' => [
-            'label' => 'Završite preuređivanje zapisa',
+            'label' => 'Završi preuređivanje zapisa',
         ],
 
         'enable_reordering' => [
-            'label' => 'Preuredite zapise',
+            'label' => 'Preuredi zapise',
         ],
 
         'filter' => [
@@ -98,12 +94,12 @@ return [
         'buttons' => [
 
             'remove' => [
-                'label' => 'Sklonite filter',
+                'label' => 'Skloni filter',
             ],
 
             'remove_all' => [
-                'label' => 'Sklonite svi filteri',
-                'tooltip' => 'Sklonite svi filteri',
+                'label' => 'Skloni svi filteri',
+                'tooltip' => 'Skloni svi filteri',
             ],
 
             'reset' => [
@@ -178,4 +174,5 @@ return [
         ],
 
     ],
+
 ];
