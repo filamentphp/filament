@@ -11,6 +11,7 @@ class BaseFilter extends Component
     use Concerns\BelongsToTable;
     use Concerns\CanBeHidden;
     use Concerns\CanSpanColumns;
+    use Concerns\CanResetState;
     use Concerns\HasColumns;
     use Concerns\HasDefaultState;
     use Concerns\HasFormSchema;
