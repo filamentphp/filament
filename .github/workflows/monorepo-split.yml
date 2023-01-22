@@ -5,13 +5,32 @@ on:
     tags: '*'
 
 jobs:
+  split-admin:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v2
+      - id: previous-tag
+        uses: 'WyriHaximus/github-action-get-previous-tag@master'
+      - name: Monorepo Split of admin
+        uses: symplify/github-action-monorepo-split@02755d9ac89929afb8d5aacff142fda76075e507
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        with:
+          package_directory: 'packages/admin'
+          repository_organization: 'filamentphp'
+          repository_name: 'app'
+          branch: 2.x
+          tag: ${{ steps.previous-tag.outputs.tag }}
+          user_name: 'Dan Harrin'
+          user_email: 'dan@danharrin.com'
   split-monorepo:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         package:
-          - admin
           - forms
           - notifications
           - spatie-laravel-media-library-plugin

@@ -2,6 +2,6 @@
 
 return [
 
-    'title' => 'Cruscotto',
+    'title' => 'Pannello',
 
 ];

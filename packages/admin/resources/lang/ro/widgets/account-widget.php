@@ -5,7 +5,7 @@ return [
     'buttons' => [
 
         'logout' => [
-            'label' => 'Delconectare',
+            'label' => 'Deconectare',
         ],
 
     ],

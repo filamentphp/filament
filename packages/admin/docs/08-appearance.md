@@ -163,7 +163,6 @@ Now, you may register the theme file in a service provider's `boot()` method:
 
 ```php
 use Filament\Facades\Filament;
-use Illuminate\Foundation\Vite;
 
 Filament::serving(function () {
     // Using Vite

@@ -58,13 +58,17 @@
         ])>
             <h3 @class([
                 'font-bold tracking-tight pointer-events-none',
-                'text-xl font-bold'=> ! $isCompact,
+                'text-xl font-bold' => ! $isCompact,
             ])>
                 {{ $getHeading() }}
             </h3>
 
             @if ($description = $getDescription())
-                <p class="text-gray-500 text-base">
+                <p @class([
+                    'text-gray-500',
+                    'text-sm' => $isCompact,
+                    'text-base' => ! $isCompact,
+                ])>
                     {{ $description }}
                 </p>
             @endif
