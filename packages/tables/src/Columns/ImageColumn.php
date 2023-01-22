@@ -25,7 +25,7 @@ class ImageColumn extends Column
 
     protected int | string | Closure | null $width = null;
 
-    protected array | Closure $extraImgAttributes = [];
+    protected array $extraImgAttributes = [];
 
     protected function setUp(): void
     {
@@ -188,16 +188,26 @@ class ImageColumn extends Column
         return $this->evaluate($this->isSquare);
     }
 
-    public function extraImgAttributes(array | Closure $attributes): static
+    public function extraImgAttributes(array | Closure $attributes, bool $merge = false): static
     {
-        $this->extraImgAttributes = $attributes;
+        if ($merge) {
+            $this->extraImgAttributes[] = $attributes;
+        } else {
+            $this->extraImgAttributes = [$attributes];
+        }
 
         return $this;
     }
 
     public function getExtraImgAttributes(): array
     {
-        return $this->evaluate($this->extraImgAttributes);
+        $temporaryAttributeBag = new ComponentAttributeBag();
+
+        foreach ($this->extraImgAttributes as $extraImgAttributes) {
+            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraImgAttributes));
+        }
+
+        return $temporaryAttributeBag->getAttributes();
     }
 
     public function getExtraImgAttributeBag(): ComponentAttributeBag
