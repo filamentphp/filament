@@ -44,9 +44,4 @@ trait HasExtraHeaderAttributes
     {
         return new ComponentAttributeBag($this->getExtraHeaderAttributes());
     }
-
-    public function getExtraHeaderAttributeBag(): ComponentAttributeBag
-    {
-        return new ComponentAttributeBag($this->getExtraHeaderAttributes());
-    }
 }
