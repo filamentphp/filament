@@ -44,8 +44,8 @@
     </style>
 
     @livewireStyles
-    {{ filament()->getTheme()->getHtml() }}
     @filamentStyles
+    {{ filament()->getTheme()->getHtml() }}
     {{ filament()->getFontHtml() }}
 
     <style>
