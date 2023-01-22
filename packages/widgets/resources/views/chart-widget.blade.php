@@ -1,5 +1,6 @@
 @php
     $heading = $this->getHeading();
+    $subheading = $this->getSubheading();
     $filters = $this->getFilters();
 @endphp
 
@@ -7,11 +8,19 @@
     <x-filament::card>
         @if ($heading || $filters)
             <div class="flex items-center justify-between gap-8">
-                @if ($heading)
-                    <x-filament::card.heading>
-                        {{ $heading }}
-                    </x-filament::card.heading>
-                @endif
+                <x-filament::card.header>
+                    @if ($heading)
+                        <x-filament::card.heading>
+                            {{ $heading }}
+                        </x-filament::card.heading>
+                    @endif
+
+                    @if ($subheading)
+                        <x-filament::card.subheading>
+                            {{ $subheading }}
+                        </x-filament::card.subheading>
+                    @endif
+                </x-filament::card.header>
 
                 @if ($filters)
                     <select

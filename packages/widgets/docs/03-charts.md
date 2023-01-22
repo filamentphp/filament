@@ -166,3 +166,14 @@ protected static ?array $options = [
     ],
 ];
 ```
+
+## Adding a subheading
+
+You may add a subheading, below the heading of the chart, using the `getSubheading()` method:
+
+```php
+public function getSubheading(): ?string
+{
+    return 'The number of blog posts published per month.';
+}
+```
