@@ -114,4 +114,4 @@ php artisan filament:check-translations es --source=app
 
 🤔 If you have a question or feature request, please [start a new discussion](https://github.com/filamentphp/filament/discussions/new). We also have a [Discord community](https://filamentphp.com/discord). For quick help, ask questions in the appropriate channel.
 
-🔐 If you discover a vulnerability, please review our [security policy](https://github.com/filamentphp/filament/blob/2.x/SECURITY.md).
+🔐 If you discover a vulnerability, please review our [security policy](https://github.com/filamentphp/filament/blob/3.x/SECURITY.md).
