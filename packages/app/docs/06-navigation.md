@@ -48,32 +48,28 @@ All items in the same navigation group will be displayed together under the same
 
 ### Customizing navigation groups
 
-You may customize navigation groups by calling `Filament::registerNavigationGroups()` from the `boot()` method of any service provider, and passing `NavigationGroup` objects in order:
+You may customize navigation groups by calling `navigationGroups()` in the [configuration](configuration), and passing `NavigationGroup` objects in order:
 
 ```php
-use Filament\Facades\Filament;
+use Filament\Context;
 use Filament\Navigation\NavigationGroup;
-use Illuminate\Support\ServiceProvider;
 
-class AppServiceProvider extends ServiceProvider
+public function context(Context $context): Context
 {
-    public function boot(): void
-    {
-        Filament::serving(function () {
-            Filament::registerNavigationGroups([
-                NavigationGroup::make()
-                     ->label('Shop')
-                     ->icon('heroicon-s-shopping-cart'),
-                NavigationGroup::make()
-                    ->label('Blog')
-                    ->icon('heroicon-s-pencil'),
-                NavigationGroup::make()
-                    ->label('Settings')
-                    ->icon('heroicon-s-cog-6-tooth')
-                    ->collapsed(),
-            ]);
-        });
-    }
+    return $context
+        // ...
+        ->navigationGroups([
+            NavigationGroup::make()
+                 ->label('Shop')
+                 ->icon('heroicon-s-shopping-cart'),
+            NavigationGroup::make()
+                ->label('Blog')
+                ->icon('heroicon-s-pencil'),
+            NavigationGroup::make()
+                ->label('Settings')
+                ->icon('heroicon-s-cog-6-tooth')
+                ->collapsed(),
+        ]);
 }
 ```
 
@@ -81,16 +77,15 @@ In this example, we pass in a custom `icon()` for the groups, and make one `coll
 
 #### Ordering navigation groups
 
-By using `registerNavigationGroups()`, you are defining a new order for the navigation groups in the sidebar. If you just want to reorder the groups and not define an entire `NavigationGroup` object, you may just pass the labels of the groups in the new order:
+By using `navigationGroups()`, you are defining a new order for the navigation groups in the sidebar. If you just want to reorder the groups and not define an entire `NavigationGroup` object, you may just pass the labels of the groups in the new order:
 
 ```php
-use Filament\Facades\Filament;
-
-Filament::registerNavigationGroups([
-    'Shop',
-    'Blog',
-    'Settings',
-]);
+$context
+    ->navigationGroups([
+        'Shop',
+        'Blog',
+        'Settings',
+    ])
 ```
 
 ### Making navigation groups not collapsible
@@ -198,39 +193,33 @@ protected static bool $shouldRegisterNavigation = false;
 
 ## Advanced navigation customization
 
-The `Filament::navigation()` method which can be called from the `boot` method of a `ServiceProvider`:
+The `navigation()` method can be called from the [configuration](configuration). Once you add this function, Filament's default automatic navigation will be disabled and your sidebar will be empty. This is done on purpose, since this API is designed to give you complete control over the navigation.
 
-```php
-use Filament\Facades\Filament;
-use Filament\Navigation\NavigationBuilder;
-
-Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
-    return $builder;
-});
-```
-
-Once you add this callback function, Filament's default automatic navigation will be disabled and your sidebar will be empty. This is done on purpose, since this API is designed to give you complete control over the navigation.
-
-To register navigation items, just call the `items()` method:
+To register navigation items, call the `items()` method:
 
 ```php
 use App\Filament\Pages\Settings;
 use App\Filament\Resources\UserResource;
-use Filament\Facades\Filament;
+use Filament\Context;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationItem;
 
-Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
-    return $builder->items([
-        NavigationItem::make('Dashboard')
-            ->icon('heroicon-o-home')
-            ->activeIcon('heroicon-s-home')
-            ->isActiveWhen(fn (): bool => request()->routeIs('filament.pages.dashboard'))
-            ->url(route('filament.pages.dashboard')),
-        ...UserResource::getNavigationItems(),
-        ...Settings::getNavigationItems(),
-    ]);
-});
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
+            return $builder->items([
+                NavigationItem::make('Dashboard')
+                    ->icon('heroicon-o-home')
+                    ->activeIcon('heroicon-s-home')
+                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.pages.dashboard'))
+                    ->url(route('filament.pages.dashboard')),
+                ...UserResource::getNavigationItems(),
+                ...Settings::getNavigationItems(),
+            ]);
+        });
+}
 ```
 
 If you want to register groups, you can call the `groups()` method:
@@ -239,21 +228,17 @@ If you want to register groups, you can call the `groups()` method:
 use App\Filament\Pages\HomePageSettings;
 use App\Filament\Resources\CategoryResource;
 use App\Filament\Resources\PageResource;
-use Filament\Facades\Filament;
-use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
 
-Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
-    return $builder
-        ->groups([
-            NavigationGroup::make('Website')
-                ->items([
-                    ...PageResource::getNavigationItems(),
-                    ...CategoryResource::getNavigationItems(),
-                    ...HomePageSettings::getNavigationItems(),
-                ]),
-        ]);
-});
+$builder
+    ->groups([
+        NavigationGroup::make('Website')
+            ->items([
+                ...PageResource::getNavigationItems(),
+                ...CategoryResource::getNavigationItems(),
+                ...HomePageSettings::getNavigationItems(),
+            ]),
+    ])
 ```
 
 ## Customizing the user menu
