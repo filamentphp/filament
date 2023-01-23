@@ -16,13 +16,12 @@
     $url = $column->getUrl();
 
     $alignmentClass = match ($alignment) {
-        'start' => 'text-start',
         'center' => 'text-center',
         'end' => 'text-end',
         'left' => 'text-left',
         'right' => 'text-right',
         'justify' => 'text-justify',
-        default => null,
+        default => 'text-start',
     };
 
     $slot = $column->viewData(['recordKey' => $recordKey]);
