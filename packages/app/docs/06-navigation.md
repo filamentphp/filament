@@ -166,22 +166,26 @@ public static function getActiveNavigationIcon(): string
 
 ## Registering custom navigation items
 
-You may register custom navigation items by calling `Filament::registerNavigationItems()` from the `boot()` method of any service provider:
+To register new navigation items, you can use the [configuration](configuration):
 
 ```php
-use Filament\Facades\Filament;
+use Filament\Context;
 use Filament\Navigation\NavigationItem;
 
-Filament::serving(function () {
-    Filament::registerNavigationItems([
-        NavigationItem::make('Analytics')
-            ->url('https://filament.pirsch.io', shouldOpenInNewTab: true)
-            ->icon('heroicon-o-presentation-chart-line')
-            ->activeIcon('heroicon-s-presentation-chart-line')
-            ->group('Reports')
-            ->sort(3),
-    ]);
-});
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->navigationItems([
+            NavigationItem::make('Analytics')
+                ->url('https://filament.pirsch.io', shouldOpenInNewTab: true)
+                ->icon('heroicon-o-presentation-chart-line')
+                ->activeIcon('heroicon-s-presentation-chart-line')
+                ->group('Reports')
+                ->sort(3),
+            // ...
+        ]);
+}
 ```
 
 ## Disabling resource or page navigation items
