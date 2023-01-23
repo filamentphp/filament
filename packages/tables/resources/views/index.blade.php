@@ -200,28 +200,27 @@
     <x-filament-tables::container>
         <div
             class="filament-tables-header-container"
-            x-show="hasHeader = (@js($renderHeader = ($header || $heading || ($headerActions && (! $isReordering)) || $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible)) || (selectedRecords.length && @js(count($groupedBulkActions))))"
+            x-show="hasHeader = (@js($renderHeader = ($header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible)) || (selectedRecords.length && @js(count($groupedBulkActions))))"
             @if (! $renderHeader) x-cloak @endif
         >
             @if ($header)
                 {{ $header }}
-            @elseif ($heading || $headerActions)
+            @elseif ($heading || $description || $headerActions)
                 <div @class([
                     'px-2 pt-2',
-                    'hidden' => ! $heading && $isReordering,
+                    'hidden' => ! ($heading || $description) && $isReordering,
                 ])>
-                    <x-filament-tables::header :actions="$isReordering ? [] : $headerActions" :actions-position="$headerActionsPosition" class="mb-2">
-                        <x-slot name="heading">
-                            {{ $heading }}
-                        </x-slot>
-
-                        <x-slot name="description">
-                            {{ $description }}
-                        </x-slot>
-                    </x-filament-tables::header>
+                    <x-filament-tables::header
+                        :actions="$isReordering ? [] : $headerActions"
+                        :actions-position="$headerActionsPosition"
+                        class="mb-2"
+                        :heading="$heading"
+                        :description="$description"
+                    />
 
                     <x-filament::hr
-                        :x-show="\Illuminate\Support\Js::from($isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible) . ' || (selectedRecords.length && ' . \Illuminate\Support\Js::from(count($groupedBulkActions)) . ')'"/>
+                        :x-show="\Illuminate\Support\Js::from($isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible) . ' || (selectedRecords.length && ' . \Illuminate\Support\Js::from(count($groupedBulkActions)) . ')'"
+                    />
                 </div>
             @endif
 
