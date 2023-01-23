@@ -504,9 +504,9 @@ class Table extends ViewComponent
     }
 
     /**
-     * @param  array<Action | ActionGroup> | ActionGroup | Closure  $actions
+     * @param  array<Action | ActionGroup> | ActionGroup  $actions
      */
-    public function emptyStateActions(array | ActionGroup | Closure $actions): static
+    public function emptyStateActions(array | ActionGroup $actions): static
     {
         foreach ($actions as $action) {
             if (! $action instanceof Action) {
@@ -599,9 +599,9 @@ class Table extends ViewComponent
     }
 
     /**
-     * @param  array<Action | BulkAction | ActionGroup> | ActionGroup | Closure  $actions
+     * @param  array<Action | BulkAction | ActionGroup> | ActionGroup  $actions
      */
-    public function headerActions(array | ActionGroup | Closure $actions, string | Closure | null $position = null): static
+    public function headerActions(array | ActionGroup $actions, string | Closure | null $position = null): static
     {
         foreach (Arr::wrap($actions) as $index => $action) {
             if ($action instanceof ActionGroup) {
