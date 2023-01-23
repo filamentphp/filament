@@ -87,7 +87,8 @@ class Register extends CardPage
                 TextInput::make('name')
                     ->label(__('filament::pages/auth/register.fields.name.label'))
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->autofocus(),
                 TextInput::make('email')
                     ->label(__('filament::pages/auth/register.fields.email.label'))
                     ->email()

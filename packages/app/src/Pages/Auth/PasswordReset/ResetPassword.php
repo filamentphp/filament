@@ -109,7 +109,8 @@ class ResetPassword extends CardPage
             ->schema([
                 TextInput::make('email')
                     ->label(__('filament::pages/auth/password-reset/reset-password.fields.email.label'))
-                    ->disabled(),
+                    ->disabled()
+                    ->autofocus(),
                 TextInput::make('password')
                     ->label(__('filament::pages/auth/password-reset/reset-password.fields.password.label'))
                     ->password()
