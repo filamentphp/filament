@@ -15,6 +15,16 @@
     $tooltip = $column->getTooltip();
     $url = $column->getUrl();
 
+    $alignmentClass = match ($alignment) {
+        'center' => 'text-center',
+        'end' => 'text-end',
+        'justify' => 'text-justify',
+        'left' => 'text-left',
+        'right' => 'text-right',
+        'start' => 'text-start',
+        default => null,
+    };
+
     $slot = $column->viewData(['recordKey' => $recordKey]);
 @endphp
 
@@ -23,30 +33,20 @@
         x-data="{}"
         x-tooltip.raw="{{ $tooltip }}"
     @endif
-    {{ $attributes->class([
-        'filament-tables-column-wrapper',
-        match ($alignment) {
-            'center' => 'text-center',
-            'end' => 'text-end',
-            'justify' => 'text-justify',
-            'left' => 'text-left',
-            'right' => 'text-right',
-            'start' => 'text-start',
-            default => null,
-        },
-    ]) }}
+    {{ $attributes->class(['filament-tables-column-wrapper']) }}
 >
-    @if ($isClickDisabled)
-        {{ $slot }}
-    @elseif ($url || ($recordUrl && $action === null))
+    @if (($url || ($recordUrl && $action === null)) && (! $isClickDisabled))
         <a
             href="{{ $url ?: $recordUrl }}"
             @if ($shouldOpenUrlInNewTab) target="_blank" @endif
-            class="inline-block"
+            @class([
+                'block w-full',
+                $alignmentClass,
+            ])
         >
             {{ $slot }}
         </a>
-    @elseif ($action || $recordAction)
+    @elseif (($action || $recordAction) && (! $isClickDisabled))
         @php
             if ($action instanceof \Filament\Tables\Actions\Action) {
                 $wireClickAction = "mountTableAction('{$action->getName()}', '{$recordKey}')";
@@ -66,11 +66,16 @@
             wire:target="{{ $wireClickAction }}"
             wire:loading.attr="disabled"
             type="button"
-            class="inline-block disabled:opacity-70 disabled:pointer-events-none"
+            @class([
+                'block w-full disabled:opacity-70 disabled:pointer-events-none',
+                $alignmentClass,
+            ])
         >
             {{ $slot }}
         </button>
     @else
-        {{ $slot }}
+        <div @class([$alignmentClass])>
+            {{ $slot }}
+        </div>
     @endif
 </div>
