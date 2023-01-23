@@ -61,7 +61,7 @@
                     'lg:ml-3' => filament()->isSidebarCollapsibleOnDesktop() && (! filament()->isSidebarFullyCollapsibleOnDesktop()),
                 ])
             >
-                <x-filament::brand />
+                <x-filament::logo />
             </a>
         </div>
 

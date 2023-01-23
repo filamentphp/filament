@@ -33,7 +33,7 @@
                     data-turbo="false"
                     class="hidden mr-12 lg:flex"
                 >
-                    <x-filament::brand />
+                    <x-filament::logo />
                 </a>
 
                 <ul class="hidden items-center flex-wrap gap-3 lg:flex">
