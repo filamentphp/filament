@@ -1234,10 +1234,7 @@ class Table extends ViewComponent
      */
     public function getHeaderActions(): array
     {
-        return array_filter(
-            $this->headerActions,
-            fn (Action | BulkAction | ActionGroup $action): bool => ! $action->isHidden(),
-        );
+        return $this->headerActions;
     }
 
     public function getHeaderAction(string $name): ?Action
