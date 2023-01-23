@@ -201,6 +201,7 @@
             <x-filament::icon
                 :name="$icon"
                 group="support::button.prefix"
+                :size="$iconSize"
                 :class="$iconClasses"
             />
         @endif
@@ -215,6 +216,7 @@
             <x-filament::icon
                 :name="$icon"
                 group="support::button.suffix"
+                :size="$iconSize"
                 :class="$iconClasses"
             />
         @endif
