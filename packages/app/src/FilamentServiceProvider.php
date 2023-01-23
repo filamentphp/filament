@@ -74,6 +74,10 @@ class FilamentServiceProvider extends PackageServiceProvider
         ]);
 
         if ($this->app->runningInConsole()) {
+            $this->publishes([
+                $this->package->basePath('/../config/filament.php') => config_path('filament.php'),
+            ], groups: 'filament-config');
+
             foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
                 $this->publishes([
                     $file->getRealPath() => base_path("stubs/filament/{$file->getFilename()}"),
