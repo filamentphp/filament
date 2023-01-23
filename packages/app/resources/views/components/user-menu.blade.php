@@ -90,7 +90,7 @@
 
         @foreach ($items as $key => $item)
             <x-filament::dropdown.list.item
-                :color="$item->getColor() ?? 'gray'"
+                :color="$item->getColor() ?? 'primary'"
                 :icon="$item->getIcon()"
                 :href="$item->getUrl()"
                 tag="a"
@@ -100,7 +100,7 @@
         @endforeach
 
         <x-filament::dropdown.list.item
-            :color="$logoutItem?->getColor() ?? 'gray'"
+            :color="$logoutItem?->getColor() ?? 'primary'"
             :icon="$logoutItem?->getIcon() ?? 'heroicon-m-arrow-left-on-rectangle'"
             :action="$logoutItem?->getUrl() ?? filament()->getLogoutUrl()"
             method="post"
