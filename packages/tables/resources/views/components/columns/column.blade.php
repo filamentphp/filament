@@ -21,8 +21,7 @@
         'justify' => 'text-justify',
         'left' => 'text-left',
         'right' => 'text-right',
-        'start' => 'text-start',
-        default => null,
+        default => 'text-start',
     };
 
     $slot = $column->viewData(['recordKey' => $recordKey]);
