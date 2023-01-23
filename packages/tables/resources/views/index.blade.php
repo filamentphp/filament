@@ -20,7 +20,10 @@
     $hasColumnsLayout = $hasColumnsLayout();
     $hasSummary = $hasSummary();
     $header = $getHeader();
-    $headerActions = $getHeaderActions();
+    $headerActions = array_filter(
+        $getHeaderActions(),
+        fn (\Filament\Tables\Actions\Action | \Filament\Tables\Actions\BulkAction | \Filament\Tables\Actions\ActionGroup $action): bool => ! $action->isHidden(),
+    );
     $headerActionsPosition = $getHeaderActionsPosition();
     $heading = $getHeading();
     $group = $getGrouping();
