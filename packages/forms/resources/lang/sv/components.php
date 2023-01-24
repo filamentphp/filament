@@ -16,6 +16,10 @@ return [
                 'label' => 'Lägg till i :label',
             ],
 
+            'create_item_between' => [
+                'label' => 'Infoga',
+            ],
+
             'delete_item' => [
                 'label' => 'Radera',
             ],
@@ -46,6 +50,22 @@ return [
 
             'expand_all' => [
                 'label' => 'Expandera alla',
+            ],
+
+        ],
+
+    ],
+
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Avmarkera alla',
+            ],
+
+            'select_all' => [
+                'label' => 'Markera alla',
             ],
 
         ],
