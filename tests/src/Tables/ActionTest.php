@@ -77,7 +77,7 @@ it('can disable an action', function () {
 
 it('can have an icon', function () {
     livewire(PostsTable::class)
-        ->assertTableActionHasIcon('has-icon', 'heroicon-m-pencil')
+        ->assertTableActionHasIcon('has-icon', 'heroicon-m-pencil-square')
         ->assertTableActionDoesNotHaveIcon('has-icon', 'heroicon-m-trash');
 });
 

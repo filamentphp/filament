@@ -89,7 +89,7 @@ it('can disable a bulk action', function () {
 
 it('can have an icon', function () {
     livewire(PostsTable::class)
-        ->assertTableBulkActionHasIcon('has-icon', 'heroicon-m-pencil')
+        ->assertTableBulkActionHasIcon('has-icon', 'heroicon-m-pencil-square')
         ->assertTableBulkActionDoesNotHaveIcon('has-icon', 'heroicon-m-trash');
 });
 
