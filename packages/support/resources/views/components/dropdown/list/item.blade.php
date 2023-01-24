@@ -76,7 +76,7 @@
     $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click'));
 
     if ($hasLoadingIndicator) {
-        $loadingIndicatorTarget = \Illuminate\Support\Str::before(html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click')), ENT_QUOTES), '(');
+        $loadingIndicatorTarget = (string) str(html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click')), ENT_QUOTES))->before('(');
     }
 @endphp
 
