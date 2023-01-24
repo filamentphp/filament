@@ -17,7 +17,7 @@ Action::make('edit')
     ->button()
 ```
 
-"Link" triggers have no background color. They must have a label and optionally an  [icon](#setting-an-icon). They look like a link that you might find embedded within text. You can switch to that style with the `link()` method:
+"Link" triggers have no background color. They must have a label and optionally an [icon](#setting-an-icon). They look like a link that you might find embedded within text. You can switch to that style with the `link()` method:
 
 ```php
 Action::make('edit')
@@ -28,7 +28,7 @@ Action::make('edit')
 
 ```php
 Action::make('edit')
-    ->icon('heroicon-o-pencil')
+    ->icon('heroicon-o-pencil-square')
     ->iconButton()
 ```
 
@@ -77,7 +77,7 @@ Buttons may have an icon to add more detail to the UI. You can set the icon usin
 ```php
 Action::make('edit')
     ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
-    ->icon('heroicon-m-pencil')
+    ->icon('heroicon-m-pencil-square')
 ```
 
 You can also change the icon's position to be after the label instead of before it, using the `iconPosition()` method:
@@ -85,7 +85,7 @@ You can also change the icon's position to be after the label instead of before 
 ```php
 Action::make('edit')
     ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
-    ->icon('heroicon-m-pencil')
+    ->icon('heroicon-m-pencil-square')
     ->iconPosition('after')
 ```
 

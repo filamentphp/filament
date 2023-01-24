@@ -83,7 +83,7 @@ it('can disable an action', function () {
 
 it('can have an icon', function () {
     livewire(Actions::class)
-        ->assertActionHasIcon('has-icon', 'heroicon-m-pencil')
+        ->assertActionHasIcon('has-icon', 'heroicon-m-pencil-square')
         ->assertActionDoesNotHaveIcon('has-icon', 'heroicon-m-trash');
 });
 

@@ -117,7 +117,7 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
                 Tables\Actions\Action::make('disabled')
                     ->disabled(),
                 Tables\Actions\Action::make('has-icon')
-                    ->icon('heroicon-m-pencil'),
+                    ->icon('heroicon-m-pencil-square'),
                 Tables\Actions\Action::make('has-label')
                     ->label('My Action'),
                 Tables\Actions\Action::make('has-color')
@@ -163,7 +163,7 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
                 Tables\Actions\BulkAction::make('disabled')
                     ->disabled(),
                 Tables\Actions\BulkAction::make('has-icon')
-                    ->icon('heroicon-m-pencil'),
+                    ->icon('heroicon-m-pencil-square'),
                 Tables\Actions\BulkAction::make('has-label')
                     ->label('My Action'),
                 Tables\Actions\BulkAction::make('has-color')
