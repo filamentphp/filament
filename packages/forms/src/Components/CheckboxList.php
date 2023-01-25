@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 
 class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
+    use Concerns\CanBeSearchable;
     use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasOptions;
 
@@ -35,6 +36,8 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
 
             $component->state([]);
         });
+
+        $this->searchDebounce(0);
     }
 
     public function relationship(string | Closure $relationshipName, string | Closure $titleColumnName, ?Closure $callback = null): static

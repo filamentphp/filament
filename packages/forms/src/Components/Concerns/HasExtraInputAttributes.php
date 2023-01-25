@@ -7,18 +7,28 @@ use Illuminate\View\ComponentAttributeBag;
 
 trait HasExtraInputAttributes
 {
-    protected array | Closure $extraInputAttributes = [];
+    protected array $extraInputAttributes = [];
 
-    public function extraInputAttributes(array | Closure $attributes): static
+    public function extraInputAttributes(array | Closure $attributes, bool $merge = false): static
     {
-        $this->extraInputAttributes = $attributes;
+        if ($merge) {
+            $this->extraInputAttributes[] = $attributes;
+        } else {
+            $this->extraInputAttributes = [$attributes];
+        }
 
         return $this;
     }
 
     public function getExtraInputAttributes(): array
     {
-        return $this->evaluate($this->extraInputAttributes);
+        $temporaryAttributeBag = new ComponentAttributeBag();
+
+        foreach ($this->extraInputAttributes as $extraInputAttributes) {
+            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraInputAttributes));
+        }
+
+        return $temporaryAttributeBag->getAttributes();
     }
 
     public function getExtraInputAttributeBag(): ComponentAttributeBag

@@ -22,6 +22,18 @@ return [
             'label' => 'Logga ut',
         ],
 
+        'sidebar' => [
+
+            'collapse' => [
+                'label' => 'Dölj sidopanel',
+            ],
+
+            'expand' => [
+                'label' => 'Visa sidopanel',
+            ],
+
+        ],
+
         'user_menu' => [
             'label' => 'Användarmeny',
         ],
