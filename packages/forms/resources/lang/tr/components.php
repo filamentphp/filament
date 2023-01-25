@@ -8,12 +8,24 @@ return [
 
         'buttons' => [
 
+            'clone_item' => [
+                'label' => 'Klonla',
+            ],
+
             'create_item' => [
                 'label' => ':label kaynağına ekle',
             ],
 
+            'create_item_between' => [
+                'label' => 'Ekle',
+            ],
+
             'delete_item' => [
                 'label' => 'Sil',
+            ],
+
+            'move_item' => [
+                'label' => 'Taşı',
             ],
 
             'move_item_down' => [
@@ -44,6 +56,22 @@ return [
 
     ],
 
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Seçimleri kaldır',
+            ],
+
+            'select_all' => [
+                'label' => 'Hepsini seç',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [
@@ -54,6 +82,10 @@ return [
 
             'delete' => [
                 'label' => 'Satırı Sil',
+            ],
+
+            'reorder' => [
+                'label' => 'Yeniden sırala',
             ],
 
         ],
@@ -101,6 +133,14 @@ return [
 
             'delete_item' => [
                 'label' => 'Sil',
+            ],
+
+            'clone_item' => [
+                'label' => 'Klonla',
+            ],
+
+            'move_item' => [
+                'label' => 'Taşı',
             ],
 
             'move_item_down' => [
@@ -199,6 +239,8 @@ return [
         ],
 
         'loading_message' => 'Yükleniyor...',
+
+        'max_items_message' => 'Sadece :count adet seçilebilir.',
 
         'no_search_results_message' => 'Aramayla eşleşen bir seçenek yok.',
 
