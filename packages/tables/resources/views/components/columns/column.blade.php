@@ -15,38 +15,37 @@
     $tooltip = $column->getTooltip();
     $url = $column->getUrl();
 
+    $alignmentClass = match ($alignment) {
+        'center' => 'text-center',
+        'end' => 'text-end',
+        'left' => 'text-left',
+        'right' => 'text-right',
+        'justify' => 'text-justify',
+        default => 'text-start',
+    };
+
     $slot = $column->viewData(['recordKey' => $recordKey]);
 @endphp
 
 <div
-    {{ $attributes->class([
-        'filament-tables-column-wrapper',
-        match ($alignment) {
-            'start' => 'text-start',
-            'center' => 'text-center',
-            'end' => 'text-end',
-            'left' => 'text-left',
-            'right' => 'text-right',
-            'justify' => 'text-justify',
-            default => null,
-        },
-    ]) }}
     @if ($tooltip)
         x-data="{}"
         x-tooltip.raw="{{ $tooltip }}"
     @endif
+    {{ $attributes->class(['filament-tables-column-wrapper']) }}
 >
-    @if ($isClickDisabled)
-        {{ $slot }}
-    @elseif ($url || ($recordUrl && $action === null))
+    @if (($url || ($recordUrl && $action === null)) && (! $isClickDisabled))
         <a
             href="{{ $url ?: $recordUrl }}"
             {!! $shouldOpenUrlInNewTab ? 'target="_blank"' : null !!}
-            class="block"
+            @class([
+                'block w-full',
+                $alignmentClass,
+            ])
         >
             {{ $slot }}
         </a>
-    @elseif ($action || $recordAction)
+    @elseif (($action || $recordAction) && (! $isClickDisabled))
         @php
             if ($action instanceof \Filament\Tables\Actions\Action) {
                 $wireClickAction = "mountTableAction('{$action->getName()}', '{$recordKey}')";
@@ -67,11 +66,16 @@
             wire:loading.attr="disabled"
             wire:loading.class="cursor-wait opacity-70"
             type="button"
-            class="block w-full text-start"
+            @class([
+                'block w-full',
+                $alignmentClass,
+            ])
         >
             {{ $slot }}
         </button>
     @else
-        {{ $slot }}
+        <div @class([$alignmentClass])>
+            {{ $slot }}
+        </div>
     @endif
 </div>
