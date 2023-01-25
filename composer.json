@@ -77,10 +77,6 @@
         {
             "type": "path",
             "url": "packages/support"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/danharrin/laravel-money"
         }
     ]
 }
