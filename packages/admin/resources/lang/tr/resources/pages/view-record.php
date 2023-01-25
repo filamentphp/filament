@@ -6,4 +6,12 @@ return [
 
     'breadcrumb' => 'Görüntüle',
 
+    'form' => [
+
+        'tab' => [
+            'label' => 'Görüntüle',
+        ],
+
+    ],
+
 ];
