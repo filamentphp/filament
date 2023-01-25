@@ -75,7 +75,7 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
     }
 
     /**
-     * @param  array<string> | Closure  $separators
+     * @param  array<string> | Closure  $keys
      */
     public function splitKeys(array | Closure $keys): static
     {
