@@ -47,7 +47,7 @@ class Page extends BasePage
 
     public static function getResource(): string
     {
-        return static::$resource;
+        return app()->getAlias(static::$resource);
     }
 
     protected function callHook(string $hook): void
