@@ -100,8 +100,8 @@ trait CanBeHidden
         $type = $this->authorization['type'] ?? null;
 
         return match ($type) {
-            'all' => $user->can($abilities, $arguments),
-            'any' => $user->canAny($abilities, $arguments),
+            'all' => $user?->can($abilities, $arguments) ?? false,
+            'any' => $user?->canAny($abilities, $arguments) ?? false,
             default => false,
         };
     }
