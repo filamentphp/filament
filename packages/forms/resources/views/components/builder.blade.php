@@ -155,46 +155,8 @@
                                     'flex divide-x rtl:divide-x-reverse',
                                     'dark:divide-gray-700' => config('forms.dark_mode'),
                                 ])>
-                                    @if (!$isItemMovementDisabled && config('forms.components.builder.up_and_down_buttons'))
-                                        @unless($loop->first)
-                                            <li>
-                                                <button
-                                                    title="{{ __('forms::components.builder.buttons.move_item_up.label') }}"
-                                                    type="button"
-                                                    wire:click.stop="dispatchFormEvent('builder::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
-                                                    @class([
-                                                        'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500',
-                                                        'dark:border-gray-700' => config('forms.dark_mode'),
-                                                    ])
-                                                >
-                                                        <span class="sr-only">
-                                                            {{ __('forms::components.builder.buttons.move_item_up.label') }}
-                                                        </span>
+                                    <x-forms::up-and-down-buttons component="builder" :is-item-movement-disabled="$isItemMovementDisabled" :loop="$loop" :state-path="$getStatePath()" :uuid="$uuid" />
 
-                                                    <x-heroicon-s-chevron-up class="w-4 h-4" />
-                                                </button>
-                                            </li>
-                                        @endunless
-                                        @unless($loop->last)
-                                            <li>
-                                                <button
-                                                    title="{{ __('forms::components.builder.buttons.move_item_down.label') }}"
-                                                    type="button"
-                                                    wire:click.stop="dispatchFormEvent('builder::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
-                                                    @class([
-                                                        'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500',
-                                                        'dark:border-gray-700' => config('forms.dark_mode'),
-                                                    ])
-                                                >
-                                                        <span class="sr-only">
-                                                            {{ __('forms::components.builder.buttons.move_item_down.label') }}
-                                                        </span>
-
-                                                    <x-heroicon-s-chevron-down class="w-4 h-4" />
-                                                </button>
-                                            </li>
-                                        @endunless
-                                    @endunless
                                     @if ($isCloneable)
                                         <li>
                                             <button
