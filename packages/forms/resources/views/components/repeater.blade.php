@@ -134,7 +134,6 @@
                                         'flex divide-x rtl:divide-x-reverse',
                                         'dark:divide-gray-700' => config('forms.dark_mode'),
                                     ])>
-
                                         <x-forms::up-and-down-buttons component="repeater" :is-item-movement-disabled="$isItemMovementDisabled" :loop="$loop" :state-path="$getStatePath()" :uuid="$uuid" />
 
                                         @if ($isCloneable)
