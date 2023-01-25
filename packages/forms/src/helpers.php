@@ -10,7 +10,7 @@ if (! function_exists('Filament\Forms\array_move_after')) {
         $indexToMoveAfter = array_search($keyToMoveAfter, $keys);
         $keyToMoveBefore = $keys[$indexToMoveAfter + 1] ?? null;
 
-        if (filled($keyToMoveBefore)) {
+        if ($indexToMoveAfter > count($keys) - 2) {
             return $array;
         }
 
@@ -35,7 +35,7 @@ if (! function_exists('Filament\Forms\array_move_before')) {
         $indexToMoveBefore = array_search($keyToMoveBefore, $keys);
         $keyToMoveAfter = $keys[$indexToMoveBefore - 1] ?? null;
 
-        if (filled($keyToMoveAfter)) {
+        if ($indexToMoveBefore < 1) {
             return $array;
         }
 

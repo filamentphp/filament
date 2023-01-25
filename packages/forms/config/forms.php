@@ -26,6 +26,10 @@ return [
 
         ],
 
+        'repeater' => [
+            'up_and_down_buttons' => true // true means, that we wanna show the up/down buttons on repeater and builder for sorting
+        ],
+
         'date_time_picker' => [
             'first_day_of_week' => 1, // 0 to 7 are accepted values, with Monday as 1 and Sunday as 7 or 0.
             'display_formats' => [
