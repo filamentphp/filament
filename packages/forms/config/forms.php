@@ -27,11 +27,11 @@ return [
         ],
 
         'repeater' => [
-            'up_and_down_buttons' => false // true means, that we wanna show the up/down buttons on repeater for sorting
+            'up_and_down_buttons' => false, // true means, that we wanna show the up/down buttons on repeater for sorting
         ],
 
         'builder' => [
-            'up_and_down_buttons' => false // true means, that we wanna show the up/down buttons on builder for sorting
+            'up_and_down_buttons' => false, // true means, that we wanna show the up/down buttons on builder for sorting
         ],
 
         'date_time_picker' => [
