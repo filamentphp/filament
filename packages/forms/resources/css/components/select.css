@@ -44,7 +44,7 @@
 }
 
 .choices__inner {
-    @apply inline-block w-full rounded-lg border border-gray-300 bg-white bg-no-repeat py-2 px-3 align-top shadow-sm transition duration-75 sm:text-sm;
+    @apply inline-block w-full rounded-lg border border-gray-300 bg-white bg-no-repeat py-2 px-3 align-top shadow-sm transition duration-75 text-sm;
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
     background-position: right 0.5rem center;
     background-size: 1.5em 1.5em;
@@ -160,7 +160,7 @@
 }
 
 .choices__item {
-    @apply cursor-default;
+    @apply cursor-default text-sm;
 }
 
 .choices__item--selectable {
@@ -254,7 +254,7 @@
 }
 
 .choices__input {
-    @apply inline-block max-w-full border-none;
+    @apply inline-block max-w-full border-none !text-sm;
     border-color: transparent !important;
     background-color: transparent !important;
     padding: 0 !important;
