@@ -23,7 +23,7 @@
             }
         @endphp
 
-        @if (! $action->isHidden())
+        @if ($action->isVisible())
             {{ $action }}
         @endif
     @endforeach

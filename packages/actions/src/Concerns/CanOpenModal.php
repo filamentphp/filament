@@ -177,7 +177,7 @@ trait CanOpenModal
     {
         return array_filter(
             $actions,
-            fn (ModalAction $action): bool => ! $action->isHidden(),
+            fn (ModalAction $action): bool => $action->isVisible(),
         );
     }
 

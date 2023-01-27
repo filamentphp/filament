@@ -10,7 +10,7 @@
     @php
         $actions = array_filter(
             $actions,
-            fn (\Filament\Actions\Action | \Filament\Actions\ActionGroup $action): bool => ! $action->isHidden(),
+            fn (\Filament\Actions\Action | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
         );
     @endphp
 
