@@ -48,6 +48,8 @@ class BaseFileUpload extends Field
 
     protected bool | Closure $shouldMoveFile = false;
 
+    protected bool | Closure $shouldStoreFile = true;
+
     protected string | Closure | null $fileNamesStatePath = null;
 
     protected string | Closure $visibility = 'public';
@@ -349,6 +351,13 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function storeFile(bool | Closure $condition = true): static
+    {
+        $this->shouldStoreFile = $condition;
+
+        return $this;
+    }
+
     public function visibility(string | Closure | null $visibility): static
     {
         $this->visibility = $visibility;
@@ -456,6 +465,11 @@ class BaseFileUpload extends Field
     public function shouldMoveFile(): bool
     {
         return $this->evaluate($this->shouldMoveFile);
+    }
+
+    public function shouldStoreFile(): bool
+    {
+        return $this->evaluate($this->shouldStoreFile);
     }
 
     public function getFileNamesStatePath(): ?string
@@ -626,6 +640,10 @@ class BaseFileUpload extends Field
         if (blank($this->getState())) {
             $this->state([]);
 
+            return;
+        }
+
+        if (! $this->shouldStoreFile()) {
             return;
         }
 
