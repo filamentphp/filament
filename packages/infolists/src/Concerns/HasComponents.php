@@ -49,7 +49,7 @@ trait HasComponents
 
         return array_filter(
             $components,
-            fn (Component $component) => ! $component->isHidden(),
+            fn (Component $component) => $component->isVisible(),
         );
     }
 }

@@ -40,7 +40,7 @@
         type="hidden"
         value='{{
             collect($getChildComponentContainer()->getComponents())
-                ->filter(static fn (\Filament\Forms\Components\Tabs\Tab $tab): bool => ! $tab->isHidden())
+                ->filter(static fn (\Filament\Forms\Components\Tabs\Tab $tab): bool => $tab->isVisible())
                 ->map(static fn (\Filament\Forms\Components\Tabs\Tab $tab) => $tab->getId())
                 ->values()
                 ->toJson()

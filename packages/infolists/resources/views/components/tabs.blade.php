@@ -7,7 +7,7 @@
             this.$watch('tab', () => this.updateQueryString())
 
             this.tab = @js(collect($getChildComponentContainer()->getComponents())
-                ->filter(static fn (\Filament\Infolists\Components\Tabs\Tab $tab): bool => ! $tab->isHidden())
+                ->filter(static fn (\Filament\Infolists\Components\Tabs\Tab $tab): bool => $tab->isVisible())
                 ->get($getActiveTab() - 1)
                 ->getId())
         },

@@ -8,4 +8,9 @@ trait CanBeHidden
     {
         return (bool) $this->getParentComponent()?->isHidden();
     }
+
+    public function isVisible(): bool
+    {
+        return ! $this->isHidden();
+    }
 }
