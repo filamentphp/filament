@@ -71,19 +71,6 @@ trait CanBeHidden
         return $this;
     }
 
-    public function isHidden(): bool
-    {
-        if ($this->evaluate($this->isHidden)) {
-            return true;
-        }
-
-        if (! $this->evaluate($this->isVisible)) {
-            return true;
-        }
-
-        return ! $this->isAuthorized();
-    }
-
     public function isAuthorized(): bool
     {
         if ($this->authorization === null) {
@@ -103,5 +90,23 @@ trait CanBeHidden
             'any' => Gate::any($abilities, $arguments),
             default => false,
         };
+    }
+
+    public function isHidden(): bool
+    {
+        if ($this->evaluate($this->isHidden)) {
+            return true;
+        }
+
+        if (! $this->evaluate($this->isVisible)) {
+            return true;
+        }
+
+        return ! $this->isAuthorized();
+    }
+
+    public function isVisible(): bool
+    {
+        return ! $this->isHidden();
     }
 }
