@@ -7,7 +7,7 @@ return [
     'buttons' => [
 
         'dark_mode' => [
-            'label' => 'Koyu temayı aç',
+            'label' => 'Koyu tema',
         ],
 
         'database_notifications' => [
@@ -15,7 +15,7 @@ return [
         ],
 
         'light_mode' => [
-            'label' => 'Açık temayı aç',
+            'label' => 'Açık tema',
         ],
 
         'logout' => [
