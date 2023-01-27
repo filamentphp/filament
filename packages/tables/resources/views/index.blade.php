@@ -22,7 +22,7 @@
     $header = $getHeader();
     $headerActions = array_filter(
         $getHeaderActions(),
-        fn (\Filament\Tables\Actions\Action | \Filament\Tables\Actions\BulkAction | \Filament\Tables\Actions\ActionGroup $action): bool => ! $action->isHidden(),
+        fn (\Filament\Tables\Actions\Action | \Filament\Tables\Actions\BulkAction | \Filament\Tables\Actions\ActionGroup $action): bool => $action->isVisible(),
     );
     $headerActionsPosition = $getHeaderActionsPosition();
     $heading = $getHeading();
@@ -457,7 +457,7 @@
                                     $recordGroupTitle = $group?->getTitle($record);
 
                                     $collapsibleColumnsLayout?->record($record);
-                                    $hasCollapsibleColumnsLayout = $collapsibleColumnsLayout && (! $collapsibleColumnsLayout->isHidden());
+                                    $hasCollapsibleColumnsLayout = (bool) $collapsibleColumnsLayout?->isVisible();
                                 @endphp
 
                                 @if ($recordGroupTitle !== $previousRecordGroupTitle)

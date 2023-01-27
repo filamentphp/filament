@@ -43,7 +43,7 @@
 
         <x-filament::dropdown.list>
             @foreach ($group->getActions() as $action)
-                @if (! $action->isHidden())
+                @if ($action->isVisible())
                     {{ $action }}
                 @endif
             @endforeach

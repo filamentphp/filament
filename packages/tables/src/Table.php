@@ -966,7 +966,7 @@ class Table extends ViewComponent
     {
         return array_filter(
             $this->getColumns(),
-            fn (Column $column): bool => (! $column->isHidden()) && (! $column->isToggledHidden()),
+            fn (Column $column): bool => $column->isVisible() && (! $column->isToggledHidden()),
         );
     }
 
@@ -1138,7 +1138,7 @@ class Table extends ViewComponent
     {
         return array_filter(
             $this->filters,
-            fn (BaseFilter $filter): bool => ! $filter->isHidden(),
+            fn (BaseFilter $filter): bool => $filter->isVisible(),
         );
     }
 
@@ -1362,7 +1362,7 @@ class Table extends ViewComponent
     {
         return (bool) count(array_filter(
             $this->getBulkActions(),
-            fn (BulkAction $action): bool => ! $action->isHidden(),
+            fn (BulkAction $action): bool => $action->isVisible(),
         ));
     }
 
