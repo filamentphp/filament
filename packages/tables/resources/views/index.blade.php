@@ -257,7 +257,7 @@
                     @if ((! $isReordering) && count($groupedBulkActions))
                         <x-filament-tables::bulk-actions
                             x-show="selectedRecords.length"
-                            x-cloak=""
+                            x-cloak="x-cloak"
                             :actions="$groupedBulkActions"
                         />
                     @endif
@@ -494,7 +494,7 @@
                                                         alias="tables::grouping.collapse"
                                                         size="h-4 w-4"
                                                         class="text-gray-600 transition dark:text-gray-300"
-                                                        x-cloak=""
+                                                        x-cloak="x-cloak"
                                                     />
                                                 </button>
                                             @endif
@@ -925,7 +925,7 @@
                                                             alias="tables::grouping.collapse"
                                                             size="h-4 w-4"
                                                             class="text-gray-600 transition dark:text-gray-300"
-                                                            x-cloak=""
+                                                            x-cloak="x-cloak"
                                                         />
                                                     </button>
                                                 @endif

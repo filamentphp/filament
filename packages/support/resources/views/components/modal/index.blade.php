@@ -64,7 +64,7 @@
         x-transition:leave="ease duration-300"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
-        x-cloak=""
+        x-cloak="x-cloak"
         @class([
             'fixed inset-0 z-40 min-h-screen overflow-y-auto overflow-x-hidden transition',
             'flex items-center' => ! $slideOver,
@@ -106,7 +106,7 @@
                 x-transition:leave-end="translate-y-8"
             @endif
             x-ref="modalContainer"
-            x-cloak=""
+            x-cloak="x-cloak"
             {{ $attributes->class([
                 'relative w-full pointer-events-none',
                 'my-auto p-4' => ! $slideOver,

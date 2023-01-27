@@ -211,7 +211,7 @@
                                                     alias="filament-forms::components.builder.buttons.expand"
                                                     size="h-4 w-4"
                                                     x-show="isCollapsed"
-                                                    x-cloak=""
+                                                    x-cloak="x-cloak"
                                                 />
 
                                                 <span class="sr-only" x-show="isCollapsed" x-cloak>
