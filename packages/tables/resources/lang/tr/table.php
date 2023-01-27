@@ -96,12 +96,12 @@ return [
             ],
 
             'remove_all' => [
-                'label' => 'Tüm filtrelemeleri kaldır',
-                'tooltip' => 'Tüm filtrelemeleri kaldır',
+                'label' => 'Tüm filtreleri kaldır',
+                'tooltip' => 'Tüm filtreleri kaldır',
             ],
 
             'reset' => [
-                'label' => 'Filtrelemeleri sıfırla',
+                'label' => 'Filtreleri sıfırla',
             ],
 
         ],

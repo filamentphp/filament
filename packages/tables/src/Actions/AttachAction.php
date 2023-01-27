@@ -70,7 +70,7 @@ class AttachAction extends Action
                 /** @var BelongsToMany $relationship */
                 $relationship = $table->getRelationship();
 
-                $record = $relationship->getRelated()->query()->find($data['recordId']);
+                $record = $relationship->getRelated()->query()->where($relationship->getQualifiedRelatedKeyName(), $data['recordId'])->first();
 
                 $relationship->attach(
                     $record,
