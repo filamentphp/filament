@@ -120,8 +120,8 @@ use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 
 DeleteAction::make()
-    ->before(function (DeleteAction $action) {
-        if (! $action->getRecord()->team->subscribed()) {
+    ->before(function () {
+        if (! $this->record->team->subscribed()) {
             Notification::make()
                 ->warning()
                 ->title('You don\'t have an active subscription!')
