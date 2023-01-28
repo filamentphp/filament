@@ -77,8 +77,9 @@ class AssociateAction extends Action
                 $record->save();
             });
 
+            $this->callAfter();
+
             if ($arguments['another'] ?? false) {
-                $this->callAfter();
                 $this->sendSuccessNotification();
 
                 $form->fill();
