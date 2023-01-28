@@ -59,7 +59,7 @@
         default => 'md',
     };
     
-    $iconSizeClasses = match ($iconSize) {
+    $iconSize = match ($iconSize) {
         'sm' => 'h-4 w-4',
         'md' => 'h-5 w-5',
         'lg' => 'h-6 w-6',
@@ -142,7 +142,7 @@
                 <x-filament::icon
                     :name="$icon"
                     group="support::button.prefix"
-                    :size="$iconSizeClasses"
+                    :size="$iconSize"
                     :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
@@ -154,43 +154,44 @@
                     x-cloak="x-cloak"
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses . ' ' . $iconSizeClasses"
+                    :class="$iconClasses . ' ' . $iconSize"
                 />
             @endif
-        @endif
 
-        <span class="flex items-center gap-1">
             @if ($hasFileUploadLoadingIndicator)
                 <x-filament::loading-indicator
                     x-show="isUploadingFile"
                     x-cloak="x-cloak"
-                    :class="$iconClasses . ' ' . $iconSizeClasses"
+                    :class="$iconClasses . ' ' . $iconSize"
                 />
-
-                <span x-show="isUploadingFile" x-cloak>
-                    {{ __('filament-support::components/button.messages.uploading_file') }}
-                </span>
-
-                <span x-show="! isUploadingFile" @class([
-                    'sr-only' => $labelSrOnly,
-                ])>
-                    {{ $slot }}
-                </span>
-            @else
-                <span @class([
-                    'sr-only' => $labelSrOnly,
-                ])>
-                    {{ $slot }}
-                </span>
             @endif
+        @endif
+
+        
+        <span
+            @if ($hasFileUploadLoadingIndicator)
+                x-show="!isUploadingFile"
+            @endif
+            @class(['sr-only' => $labelSrOnly])
+        >
+            {{ $slot }}
         </span>
+
+        @if ($hasFileUploadLoadingIndicator)
+            <span
+                x-show="isUploadingFile"
+                x-cloak
+            >
+                {{ __('filament-support::components/button.messages.uploading_file') }}
+            </span>
+        @endif
 
         @if ($iconPosition === 'after')
             @if ($icon)
                 <x-filament::icon
                     :name="$icon"
                     group="support::button.suffix"
-                    :size="$iconSizeClasses"
+                    :size="$iconSize"
                     :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
@@ -202,7 +203,15 @@
                     x-cloak="x-cloak"
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses . ' ' . $iconSizeClasses"
+                    :class="$iconClasses . ' ' . $iconSize"
+                />
+            @endif
+
+            @if ($hasFileUploadLoadingIndicator)
+                <x-filament::loading-indicator
+                    x-show="isUploadingFile"
+                    x-cloak="x-cloak"
+                    :class="$iconClasses . ' ' . $iconSize"
                 />
             @endif
         @endif
@@ -224,14 +233,12 @@
             <x-filament::icon
                 :name="$icon"
                 group="support::button.prefix"
-                :size="$iconSizeClasses"
+                :size="$iconSize"
                 :class="$iconClasses"
             />
         @endif
 
-        <span @class([
-            'sr-only' => $labelSrOnly,
-        ])>
+        <span @class(['sr-only' => $labelSrOnly])>
             {{ $slot }}
         </span>
 
@@ -239,7 +246,7 @@
             <x-filament::icon
                 :name="$icon"
                 group="support::button.suffix"
-                :size="$iconSizeClasses"
+                :size="$iconSize"
                 :class="$iconClasses"
             />
         @endif
