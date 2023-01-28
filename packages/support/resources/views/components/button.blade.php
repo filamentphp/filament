@@ -66,8 +66,28 @@
         default => $iconSize,
     };
 
-    // TODO: add back icon margin
-    $iconClasses = 'filament-button-icon';
+    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
+        'filament-button-icon',
+        match ($iconPosition) {
+            'before' => match ($size) {
+                'xs' => '-ml-0.5 rtl:ml-0 rtl:-mr-0.5',
+                'sm' => '-ml-0.5 rtl:ml-0 rtl:-mr-0.5',
+                'md' => '-ml-1 rtl:ml-0 rtl:-mr-1',
+                'lg' => '-ml-1 rtl:ml-0 rtl:-mr-1',
+                'xl' => '-ml-1 rtl:ml-0 rtl:-mr-1',
+                default => null,
+            },
+            'after' => match ($size) {
+                'xs' => '-mr-0.5 rtl:-ml-0.5 rtl:mr-0',
+                'sm' => '-mr-0.5 rtl:-ml-0.5 rtl:mr-0',
+                'md' => '-mr-1 rtl:-ml-1 rtl:mr-0',
+                'lg' => '-mr-1 rtl:-ml-1 rtl:mr-0',
+                'xl' => '-mr-1 rtl:-ml-1 rtl:mr-0',
+                default => null,
+            },
+            default => null,
+        } => ! $labelSrOnly,
+    ]);
 
     $hasFileUploadLoadingIndicator = ($type === 'submit') && filled($form);
     $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || $hasFileUploadLoadingIndicator;
