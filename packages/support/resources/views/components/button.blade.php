@@ -23,7 +23,7 @@
                 'sm' => 'filament-button-size-sm gap-1.5 py-[calc(theme(spacing.2)-1px)] px-[calc(theme(spacing.[3.5])-1px)] text-sm',
                 'md' => 'filament-button-size-md gap-2 py-[calc(theme(spacing[2.5])-1px)] px-[calc(theme(spacing.4)-1px)] text-sm',
                 'lg' => 'filament-button-size-lg gap-2 py-[calc(theme(spacing[3])-1px)] px-[calc(theme(spacing.5)-1px)] text-sm',
-                'xl' => 'filament-button-size-xl gap-3 py-[calc(theme(spacing[3])-1px)] px-[calc(theme(spacing.6)-1px)] text-base',
+                'xl' => 'filament-button-size-xl gap-2 py-[calc(theme(spacing[3])-1px)] px-[calc(theme(spacing.6)-1px)] text-base',
             },
         ],
         $outlined
