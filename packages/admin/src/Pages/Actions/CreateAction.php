@@ -50,7 +50,7 @@ class CreateAction extends Action
             $form->model($record)->saveRelationships();
 
             $this->callAfter();
-            
+
             if ($arguments['another'] ?? false) {
                 $this->sendSuccessNotification();
 
