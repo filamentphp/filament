@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'لکاندن',
+        'label' => 'هاوکار',
 
         'modal' => [
 
-            'heading' => ':label بیلکێنە',
+            'heading' => 'هاوکار کردنی :label',
 
             'fields' => [
 
@@ -20,12 +20,12 @@ return [
 
             'actions' => [
 
-                'attach' => [
-                    'label' => 'بیلکێنە',
+                'associate' => [
+                    'label' => 'هاوکار',
                 ],
 
-                'attach_another' => [
-                    'label' => 'لکاندن و دانەیەکی تر',
+                'associate_another' => [
+                    'label' => 'هاوکار و دانەیەکی تر',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'attached' => 'لکێنرا',
+            'associated' => 'هاوکار کرا',
         ],
 
     ],
