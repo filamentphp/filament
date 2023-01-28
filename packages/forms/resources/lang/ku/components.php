@@ -2,6 +2,76 @@
 
 return [
 
+    'builder' => [
+
+        'collapsed' => 'بابەت بچووک کرایەوە',
+
+        'buttons' => [
+
+            'clone_item' => [
+                'label' => 'پۆشتە',
+            ],
+
+            'create_item' => [
+                'label' => 'زیادکردن بۆ :label',
+            ],
+
+            'create_item_between' => [
+                'label' => 'زیادکردن',
+            ],
+
+            'delete_item' => [
+                'label' => 'سڕینەوە',
+            ],
+
+            'move_item' => [
+                'label' => 'جوڵاندن',
+            ],
+
+            'move_item_down' => [
+                'label' => 'جوڵاندن بۆ خوارەوە',
+            ],
+
+            'move_item_up' => [
+                'label' => 'جوڵاندن بۆ سەرەوە',
+            ],
+
+            'collapse_item' => [
+                'label' => 'بچووکردنەوە',
+            ],
+
+            'expand_item' => [
+                'label' => 'فراوانکردن',
+            ],
+
+            'collapse_all' => [
+                'label' => 'بچووکردنەوەی هەموو',
+            ],
+
+            'expand_all' => [
+                'label' => 'فراوانکردنی هەموو',
+            ],
+
+        ],
+
+    ],
+
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'لابردنی دیاریکردنی هەموو',
+            ],
+
+            'select_all' => [
+                'label' => 'دیاریکردنی هەموو',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [
@@ -14,6 +84,10 @@ return [
                 'label' => 'سڕینەوەی ڕیز',
             ],
 
+            'reorder' => [
+                'label' => 'ڕێکخستنی ڕیز',
+            ],
+
         ],
 
         'fields' => [
@@ -23,7 +97,7 @@ return [
             ],
 
             'value' => [
-                'label' => 'Value',
+                'label' => 'نرخ',
             ],
 
         ],
@@ -34,15 +108,65 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'لکاندنی فایل',
-            'bold' => 'ڕەشکردن',
-            'bullet_list' => 'خاڵ',
-            'code_block' => 'جۆد',
+            'bold' => 'تۆخ کردن',
+            'bullet_list' => 'لیستی خاڵ',
+            'code_block' => 'هێڵی کۆد',
             'edit' => 'نوسین',
-            'italic' => 'لارکردنەوە',
-            'link' => 'لینک',
-            'ordered_list' => 'ژمارە',
+            'italic' => 'لارکردن',
+            'link' => 'بەستەر',
+            'ordered_list' => 'لیستی ژمارە',
             'preview' => 'بینین',
-            'strike' => 'هێڵ بەسەردا',
+            'strike' => 'هێڵ بەسەرهێنان',
+        ],
+
+    ],
+
+    'repeater' => [
+
+        'collapsed' => 'بابەت بچووک کرایەوە',
+
+        'buttons' => [
+
+            'create_item' => [
+                'label' => 'زیادکردن بۆ :label',
+            ],
+
+            'delete_item' => [
+                'label' => 'سرینەوە',
+            ],
+
+            'clone_item' => [
+                'label' => 'پۆشتە',
+            ],
+
+            'move_item' => [
+                'label' => 'جوڵاندن',
+            ],
+
+            'move_item_down' => [
+                'label' => 'جوڵاندن بۆ خوارەوە',
+            ],
+
+            'move_item_up' => [
+                'label' => 'جوڵاندن بۆ سەرەوە',
+            ],
+
+            'collapse_item' => [
+                'label' => 'بچووکردنەوە',
+            ],
+
+            'expand_item' => [
+                'label' => 'فراوانکردن',
+            ],
+
+            'collapse_all' => [
+                'label' => 'بچووکردنەوەی هەموو',
+            ],
+
+            'expand_all' => [
+                'label' => 'فراوانکردنی هەموو',
+            ],
+
         ],
 
     ],
@@ -54,13 +178,13 @@ return [
             'link' => [
 
                 'buttons' => [
-                    'link' => 'لینک',
-                    'unlink' => 'لیکن لابردن',
+                    'link' => 'بەستەر',
+                    'unlink' => 'لابردنی بەستەر',
                 ],
 
-                'label' => 'لینک',
+                'label' => 'بەستەر',
 
-                'placeholder' => 'لینکێک بنوسە',
+                'placeholder' => 'بەستەرێک بنوسە',
 
             ],
 
@@ -68,31 +192,81 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'لکاندنی فایل',
-            'blockquote' => 'کۆت',
-            'bold' => 'ڕەشکردن',
-            'bullet_list' => 'خاڵ',
-            'code_block' => 'کۆد',
+            'blockquote' => 'هێڵی وتە',
+            'bold' => 'تۆخ کردن',
+            'bullet_list' => 'لیستی خاڵ',
+            'code_block' => 'هێڵی کۆد',
             'h1' => 'ناونیشان',
             'h2' => 'هێدەر',
             'h3' => 'ژێر هێدەر',
-            'italic' => 'لارکردنەوە',
-            'link' => 'لینک',
-            'ordered_list' => 'ژمارە',
-            'redo' => 'بیکەرەوە',
-            'strike' => 'هێڵ بەسەردا',
+            'italic' => 'لارکردن',
+            'link' => 'بەستەر',
+            'ordered_list' => 'لیستی ژمارە',
+            'redo' => 'دووبارەکردن',
+            'strike' => 'هێڵ بەسەرهێنان',
             'undo' => 'گەڕانەوە',
+
         ],
 
     ],
 
     'select' => [
+        'actions' => [
+
+            'create_option' => [
+
+                'modal' => [
+
+                    'heading' => 'دروستکردن',
+
+                    'actions' => [
+
+                        'create' => [
+                            'label' => 'دروستکردن',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+        'boolean' => [
+            'true' => 'بەڵێ',
+            'false' => 'نەخێر',
+        ],
+
+        'loading_message' => 'چاوەروان بە...',
+
+        'max_items_message' => 'تەنها :count دەتواندرێت دیاری بکرێت.',
+
         'no_search_results_message' => 'هیچ هەڵبژاردەیەک نەدۆزرایەوە بۆ گەڕانەکەت.',
         'placeholder' => 'هەڵبژاردەیەک دیاری بکە',
-        'search_prompt' => 'دەستبکە بە نوسین بۆ گەڕان ...',
+        'searching_message' => 'گەڕان...',
+
+        'search_prompt' => 'دەستبکە بە نوسین بۆ گەڕان...',
     ],
 
     'tags_input' => [
         'placeholder' => 'تاگی نوێ',
+    ],
+
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => 'پێشوو',
+            ],
+
+            'next_step' => [
+                'label' => 'دواتر',
+            ],
+
+        ],
+
     ],
 
 ];

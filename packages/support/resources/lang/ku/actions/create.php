@@ -13,7 +13,7 @@ return [
             'actions' => [
 
                 'create' => [
-                    'label' => 'دروستی بکە',
+                    'label' => 'دروستکردن',
                 ],
 
                 'create_another' => [

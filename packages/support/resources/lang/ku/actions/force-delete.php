@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'سڕینەوە',
+        'label' => 'سڕینەوەی بەهێز',
 
         'modal' => [
 
-            'heading' => 'سڕینەوەی :label',
+            'heading' => 'سڕینەوەی بەهێزی :label',
 
             'actions' => [
 
@@ -28,16 +28,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'دیاریکراوەکان بسڕەوە',
+        'label' => 'سڕینەوەی بەهێز دیاری کرا',
 
         'modal' => [
 
-            'heading' => 'دیاریکراوەکانی :label بسڕەوە',
+            'heading' => 'سڕینەوەی بەهێز بۆ دیاریکراوی :label',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'دیاریکراوەکان بسڕەوە',
+                    'label' => 'سڕینەوە',
                 ],
 
             ],
