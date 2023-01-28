@@ -70,8 +70,9 @@ class CreateAction extends Action
 
             $livewire->mountedTableActionRecord($record->getKey());
 
+            $this->callAfter();
+
             if ($arguments['another'] ?? false) {
-                $this->callAfter();
                 $this->sendSuccessNotification();
 
                 $this->record(null);

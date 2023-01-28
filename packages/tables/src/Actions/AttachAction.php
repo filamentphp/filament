@@ -75,8 +75,9 @@ class AttachAction extends Action
                 );
             });
 
+            $this->callAfter();
+
             if ($arguments['another'] ?? false) {
-                $this->callAfter();
                 $this->sendSuccessNotification();
 
                 $form->fill();
