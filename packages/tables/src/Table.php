@@ -825,7 +825,12 @@ class Table extends ViewComponent
      */
     public function getActions(): array
     {
-        return $this->actions;
+        return array_map(
+            fn (Action | ActionGroup $action): Action | ActionGroup => $action->getSize() === null
+                ? $action->size('sm')
+                : $action,
+            $this->actions,
+        );
     }
 
     public function getAction(string $name): ?Action
@@ -932,7 +937,12 @@ class Table extends ViewComponent
      */
     public function getGroupedBulkActions(): array
     {
-        return $this->groupedBulkActions;
+        return array_map(
+            fn (BulkAction | ActionGroup $action): BulkAction | ActionGroup => $action->getSize() === null
+                ? $action->size('xl')
+                : $action,
+            $this->groupedBulkActions,
+        );
     }
 
     /**
@@ -940,7 +950,17 @@ class Table extends ViewComponent
      */
     public function getBulkActions(): array
     {
-        return $this->bulkActions;
+        return array_map(
+            fn (BulkAction $action): BulkAction => $action->size('sm'),
+            $this->bulkActions,
+        );
+
+        return array_map(
+            fn (BulkAction $action): BulkAction => $action->getSize() === null
+                ? $action->size('xl')
+                : $action,
+            $this->bulkActions,
+        );
     }
 
     public function getBulkAction(string $name): ?BulkAction
@@ -1234,7 +1254,12 @@ class Table extends ViewComponent
      */
     public function getHeaderActions(): array
     {
-        return $this->headerActions;
+        return array_map(
+            fn (Action | BulkAction | ActionGroup $action): Action | BulkAction | ActionGroup => $action->getSize() === null
+                ? $action->size('sm')
+                : $action,
+            $this->headerActions,
+        );
     }
 
     public function getHeaderAction(string $name): ?Action
