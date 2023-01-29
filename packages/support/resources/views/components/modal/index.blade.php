@@ -2,6 +2,7 @@
     'actions' => null,
     'ariaLabelledby' => null,
     'closeButton' => true,
+    'closeByClickingAway' => true,
     'closeEventName' => 'close-modal',
     'darkMode' => false,
     'displayClasses' => 'inline-block',
@@ -13,7 +14,6 @@
     'id' => null,
     'openEventName' => 'open-modal',
     'slideOver' => false,
-		'closesByClickingAway' => null,
     'subheading' => null,
     'subheadingComponent' => 'filament-support::modal.subheading',
     'trigger' => null,
@@ -73,7 +73,7 @@
         ])
     >
         <div
-            @if ($closesByClickingAway)
+            @if ($closeByClickingAway)
                 @if (filled($id))
                     x-on:click="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
                 @else
@@ -83,7 +83,7 @@
             aria-hidden="true"
             @class([
                 'filament-modal-close-overlay fixed inset-0 w-full h-full bg-black/50',
-                'cursor-pointer' => $closesByClickingAway
+                'cursor-pointer' => $closeByClickingAway
             ])
         ></div>
 

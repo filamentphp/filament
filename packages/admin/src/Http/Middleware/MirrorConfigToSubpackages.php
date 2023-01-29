@@ -27,8 +27,6 @@ class MirrorConfigToSubpackages
         $config->set('notifications.layout.alignment.horizontal', $config->get('filament.layout.notifications.alignment'));
         $config->set('notifications.layout.alignment.vertical', $config->get('filament.layout.notifications.vertical_alignment'));
 
-        $config->set('filament-support.modal.is_closed_by_clicking_away', $config->get('filament.modal.is_closed_by_clicking_away'));
-
         return $next($request);
     }
 }
