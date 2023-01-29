@@ -35,11 +35,11 @@ trait CanOpenModal
 
     protected bool | Closure | null $isModalHidden = false;
 
-    protected bool | Closure | null $isClosedByClickingAway = null;
+    protected bool | Closure | null $isModalClosedByClickingAway = null;
 
-    public function closeByClickingAway(bool | Closure | null $condition = true): static
+    public function closeModalByClickingAway(bool | Closure | null $condition = true): static
     {
-        $this->isClosedByClickingAway = $condition;
+        $this->isModalClosedByClickingAway = $condition;
 
         return $this;
     }
@@ -247,9 +247,9 @@ trait CanOpenModal
         return $this->evaluate($this->isModalHidden);
     }
 
-    public function isClosedByClickingAway(): bool
+    public function isModalClosedByClickingAway(): bool
     {
-        return $this->evaluate($this->isClosedByClickingAway) ?? config('filament-support.modal.is_closed_by_clicking_away') ?? true;
+        return $this->evaluate($this->isModalClosedByClickingAway) ?? config('filament-support.modal.is_closed_by_clicking_away') ?? true;
     }
 
     public function shouldOpenModal(): bool
