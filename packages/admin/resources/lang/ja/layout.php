@@ -25,7 +25,7 @@ return [
         'sidebar' => [
 
             'collapse' => [
-                'label' => 'サイドバーを折りたたむ',
+                'label' => 'サイドバーを折り畳む',
             ],
 
             'expand' => [
