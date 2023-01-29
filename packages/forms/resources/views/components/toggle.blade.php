@@ -111,7 +111,7 @@
                                     default => $onColor,
                                 }"
                                 size="h-3 w-3"
-                                ^9.0|^10.0"
+                                x-cloak="x-cloak"
                             />
                         @endif
                     </span>
