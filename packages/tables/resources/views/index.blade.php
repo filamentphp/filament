@@ -703,8 +703,10 @@
                         {{ $emptyState }}
                     @else
                         <div class="flex items-center justify-center p-4">
-                            <x-filament-tables::empty-state :icon="$getEmptyStateIcon()"
-                                                            :actions="$getEmptyStateActions()">
+                            <x-filament-tables::empty-state
+                                :icon="$getEmptyStateIcon()"
+                                :actions="$getEmptyStateActions()"
+                            >
                                 <x-slot name="heading">
                                     {{ $getEmptyStateHeading() }}
                                 </x-slot>
