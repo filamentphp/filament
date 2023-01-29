@@ -5,6 +5,7 @@ namespace Filament\Actions\Concerns;
 use Closure;
 use Filament\Actions\Modal\Actions\Action;
 use Filament\Actions\Modal\Actions\Action as ModalAction;
+use Filament\Support\View\Components\Modal;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 
@@ -41,6 +42,15 @@ trait CanOpenModal
     protected string | Closure | null $modalWidth = null;
 
     protected bool | Closure | null $isModalHidden = false;
+
+    protected bool | Closure | null $isModalClosedByClickingAway = null;
+
+    public function closeModalByClickingAway(bool | Closure | null $condition = true): static
+    {
+        $this->isModalClosedByClickingAway = $condition;
+
+        return $this;
+    }
 
     public function centerModal(bool | Closure | null $condition = true): static
     {
@@ -259,6 +269,11 @@ trait CanOpenModal
     public function isModalHidden(): bool
     {
         return $this->evaluate($this->isModalHidden);
+    }
+
+    public function isModalClosedByClickingAway(): bool
+    {
+        return $this->evaluate($this->isModalClosedByClickingAway) ?? Modal::$isClosedByClickingAway;
     }
 
     /**
