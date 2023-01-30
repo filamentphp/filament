@@ -26,11 +26,11 @@ jobs:
           - tables
           - widgets
     steps:
-      - name: Change owner of container working directory
-        run: sudo chown root:root .
       - uses: actions/checkout@v2
       - id: previous-tag
         uses: 'WyriHaximus/github-action-get-previous-tag@master'
+      - name: Change owner of container working directory
+        run: sudo chown root:root .
       - name: Monorepo Split of ${{ matrix.package }}
         uses: symplify/github-action-monorepo-split@02755d9ac89929afb8d5aacff142fda76075e507
         env:
