@@ -31,7 +31,7 @@
         "spatie/laravel-tags": "^4.2",
         "staudenmeir/belongs-to-through": "^2.5",
         "symplify/monorepo-builder": "^10.0",
-        "tgalopin/html-sanitizer": "^1.5"
+        "symfony/html-sanitizer": "^6.2"
     },
     "autoload": {
         "files": [

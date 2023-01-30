@@ -13,7 +13,7 @@
         "illuminate/support": "^8.6|^9.0|^10.0",
         "illuminate/view": "^8.6|^9.0|^10.0",
         "spatie/laravel-package-tools": "^1.9",
-        "tgalopin/html-sanitizer": "^1.5"
+        "symfony/html-sanitizer": "^6.2"
     },
     "autoload": {
         "files": [

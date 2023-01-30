@@ -6,8 +6,6 @@ use Composer\InstalledVersions;
 use Filament\Support\Commands\CheckTranslationsCommand;
 use Filament\Support\Commands\UpgradeCommand;
 use Filament\Support\Testing\TestsActions;
-use HtmlSanitizer\Sanitizer;
-use HtmlSanitizer\SanitizerInterface;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
@@ -15,6 +13,9 @@ use Illuminate\Support\Stringable;
 use Livewire\Testing\TestableLivewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class SupportServiceProvider extends PackageServiceProvider
 {
@@ -34,9 +35,21 @@ class SupportServiceProvider extends PackageServiceProvider
     public function packageRegistered()
     {
         $this->app->scoped(
-            SanitizerInterface::class,
+            HtmlSanitizerInterface::class,
             function () {
-                return Sanitizer::create(require __DIR__ . '/../config/html-sanitizer.php');
+                $configArray = require __DIR__ . '/../config/html-sanitizer.php';
+
+                $config = new HtmlSanitizerConfig();
+                foreach ($configArray['tags'] as $tag => $tagConfig) {
+                    $config->allowElement(
+                        $tag,
+                        array_key_exists('allowed_attributes', $tagConfig)
+                            ? $tagConfig['allowed_attributes']
+                            : []
+                    );
+                }
+
+                return new HtmlSanitizer($config);
             },
         );
 
@@ -59,7 +72,7 @@ class SupportServiceProvider extends PackageServiceProvider
         });
 
         Str::macro('sanitizeHtml', function (string $html): string {
-            return app(SanitizerInterface::class)->sanitize($html);
+            return app(HtmlSanitizerInterface::class)->sanitize($html);
         });
 
         Stringable::macro('sanitizeHtml', function (): Stringable {
