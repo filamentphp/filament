@@ -12,6 +12,15 @@ return [
             'label' => 'Inloggen',
         ],
 
+        'register' => [
+            'before' => 'of',
+            'label' => 'maak een account aan',
+        ],
+
+        'request_password_reset' => [
+            'label' => 'Wachtwoord vergeten?',
+        ],
+
     ],
 
     'fields' => [

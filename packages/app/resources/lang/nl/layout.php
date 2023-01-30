@@ -6,6 +6,10 @@ return [
 
     'buttons' => [
 
+        'billing' => [
+            'label' => 'Abonnement beheren',
+        ],
+
         'dark_mode' => [
             'label' => 'Donkere weergave inschakelen',
         ],
