@@ -28,6 +28,7 @@
     :icon="$icon ?? $action->getIcon()"
     :size="$action->getSize() ?? 'sm'"
     dusk="filament.tables.action.{{ $action->getName() }}"
+    wire:loading.attr="disabled"
 >
     {{ $slot }}
 </x-dynamic-component>
