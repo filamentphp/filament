@@ -7,6 +7,7 @@ use Filament\Actions\Testing\TestsActions as BaseTestsActions;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
 use Livewire\Testing\TestableLivewire;
 
@@ -51,7 +52,9 @@ class TestsActions
     public function setTableActionData(): Closure
     {
         return function (array $data): static {
-            $this->set('mountedTableActionData', $data);
+            foreach (Arr::prependKeysWith($data, 'mountedTableActionData.') as $key => $value) {
+                $this->set($key, $value);
+            }
 
             return $this;
         };

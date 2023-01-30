@@ -7,6 +7,7 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\MountableAction;
+use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
 use Livewire\Testing\TestableLivewire;
 
@@ -47,7 +48,9 @@ class TestsActions
     public function setActionData(): Closure
     {
         return function (array $data): static {
-            $this->set('mountedActionData', $data);
+            foreach (Arr::prependKeysWith($data, 'mountedActionData.') as $key => $value) {
+                $this->set($key, $value);
+            }
 
             return $this;
         };
