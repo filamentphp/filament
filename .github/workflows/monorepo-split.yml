@@ -40,6 +40,8 @@ jobs:
           - support
           - tables
     steps:
+      - name: Change owner of container working directory
+        run: chown root:root .
       - uses: actions/checkout@v2
       - id: previous-tag
         uses: 'WyriHaximus/github-action-get-previous-tag@master'
