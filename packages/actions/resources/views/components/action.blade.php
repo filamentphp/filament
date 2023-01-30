@@ -19,7 +19,7 @@
     :target="($url && $action->shouldOpenUrlInNewTab()) ? '_blank' : null"
     :type="($action instanceof \Filament\Actions\Contracts\SubmitsForm && $action->canSubmitForm()) ? 'submit' : 'button'"
     :color="$action->getColor()"
-    :key-bindings="$action->getKeybindings()"
+    :key-bindings="$action->getKeyBindings()"
     :tooltip="$action->getTooltip()"
     :disabled="$isDisabled"
     :icon="$icon ?? $action->getIcon()"
