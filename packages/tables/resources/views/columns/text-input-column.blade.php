@@ -8,7 +8,7 @@
 <div
     x-data="{
         error: undefined,
-        state: '{{ $getState() }}',
+        state: @js($getState()),
         isLoading: false
     }"
     {{ $attributes->merge($getExtraAttributes())->class([
