@@ -23,7 +23,7 @@
                 </x-filament::card.header>
 
                 @if ($filters)
-                    <div class="flex items-center space-x-3">
+                    <div class="flex items-center gap-3">
                         @if ($showFilterLoadingIndicator)
                             <x-filament::loading-indicator
                                 x-cloak="x-cloak"
