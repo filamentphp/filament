@@ -21,10 +21,19 @@ class CheckTranslationsCommand extends Command
     public function handle(): int
     {
         $this->scan('filament');
+        $this->scan('actions');
         $this->scan('forms');
+        $this->scan('infolists');
         $this->scan('notifications');
+        $this->scan('spark-billing-provider');
+        $this->scan('spatie-laravel-google-fonts-plugin');
+        $this->scan('spatie-laravel-media-library-plugin');
+        $this->scan('spatie-laravel-settings-plugin');
+        $this->scan('spatie-laravel-tags-plugin');
+        $this->scan('spatie-laravel-translatable-plugin');
         $this->scan('support');
         $this->scan('tables');
+        $this->scan('widgets');
 
         return self::SUCCESS;
     }
