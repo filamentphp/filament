@@ -14,6 +14,8 @@ abstract class ChartWidget extends Widget
     protected ?array $cachedData = null;
 
     public string $dataChecksum;
+    
+    public bool $showFilterLoadingIndicator = true;
 
     public ?string $filter = null;
 
