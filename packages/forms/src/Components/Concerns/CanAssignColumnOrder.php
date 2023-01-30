@@ -30,16 +30,12 @@ trait CanAssignColumnOrder
 
     public function columnOrderFirst(): static
     {
-        $this->columnSpan('first');
-
-        return $this;
+        return $this->columnOrder('first');
     }
 
     public function columnOrderLast(): static
     {
-        $this->columnSpan('last');
-
-        return $this;
+        return $this->columnOrder('last');
     }
 
     public function getColumnOrder(int | string | null $breakpoint = null): array | int | string | null
