@@ -27,7 +27,6 @@ jobs:
           - widgets
     steps:
       - uses: actions/checkout@v2
-      - run: sudo git config --system --add safe.directory /tmp/monorepo_split/build_directory
       - id: previous-tag
         uses: 'WyriHaximus/github-action-get-previous-tag@master'
       - name: Monorepo Split of ${{ matrix.package }}
