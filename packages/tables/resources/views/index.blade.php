@@ -27,7 +27,10 @@
     $headerActionsPosition = $getHeaderActionsPosition();
     $heading = $getHeading();
     $group = $getGrouping();
-    $groupedBulkActions = $getGroupedBulkActions();
+    $groupedBulkActions = array_filter(
+        $getGroupedBulkActions(),
+        fn (\Filament\Tables\Actions\BulkAction | \Filament\Tables\Actions\ActionGroup $action): bool => $action->isVisible(),
+    );
     $groups = $getGroups();
     $description = $getDescription();
     $isGroupsOnly = $isGroupsOnly() && $group;
