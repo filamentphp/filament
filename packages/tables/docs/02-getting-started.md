@@ -308,6 +308,8 @@ In this example, clicking on each post will take you to the `posts.edit` route.
 
 If you'd like to [override the URL](columns/getting-started#opening-urls) for a specific column, or instead [run a Livewire action](columns#running-actions) when a column is clicked, see the [columns documentation](columns#opening-urls).
 
+## Disable clickable rows
+
 If you'd like to completely disable the click action for the entire row, you can override the `getTableRecordActionUsing()` method on your Livewire component, and return `null`:
 
 ```php
