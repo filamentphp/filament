@@ -67,7 +67,7 @@
         x-transition:leave-end="opacity-0"
         x-cloak="x-cloak"
         @class([
-            'fixed inset-0 z-40 min-h-screen overflow-y-auto overflow-x-hidden transition',
+            'fixed inset-0 z-40 min-h-full overflow-y-auto overflow-x-hidden transition',
             'flex items-center' => ! $slideOver,
         ])
     >
