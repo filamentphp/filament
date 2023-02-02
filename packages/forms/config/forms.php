@@ -1,5 +1,6 @@
 <?php
 
+
 return [
 
     /*
@@ -13,6 +14,7 @@ return [
     */
 
     'components' => [
+        'container' => Filament\Forms\ComponentContainer::class,
 
         'actions' => [
 

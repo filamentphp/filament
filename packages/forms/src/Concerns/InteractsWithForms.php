@@ -336,6 +336,7 @@ trait InteractsWithForms
 
     protected function makeForm(): ComponentContainer
     {
-        return ComponentContainer::make($this);
+        $container = config('forms.components.container', ComponentContainer::class);
+        return $container::make($this);
     }
 }
