@@ -121,6 +121,11 @@
                     this.chart.data.datasets[0].data = this.values
                     this.chart.update()
                 },
+                updateChartColors: function() {
+                    this.chart.data.datasets[0].backgroundColor = this.getBackgroundColor()
+                    this.chart.data.datasets[0].backgroundColor = this.getBorderColor()
+                    this.chart.update()
+                },
 
                 getBackgroundColor: function () {
                     return getComputedStyle($refs.backgroundColorElement).color
@@ -128,12 +133,6 @@
 
                 getBorderColor: function () {
                     return getComputedStyle($refs.borderColorElement).color
-                },
-
-                updateChartColors: function() {
-                    this.chart.data.datasets[0].backgroundColor = this.getBackgroundColor()
-                    this.chart.data.datasets[0].backgroundColor = this.getBorderColor()
-                    this.chart.update()
                 },
             }"
             x-on:dark-mode-toggled.window="updateChartColors()"
