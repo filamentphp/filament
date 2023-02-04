@@ -40,4 +40,4 @@ jobs:
           branch: 3.x
           tag: ${{ steps.previous-tag.outputs.tag }}
           user_name: 'Dan Harrin'
-          user_email: 'dan@danharrin.com'
+          user_email: 'git@danharrin.com'
