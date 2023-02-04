@@ -82,8 +82,8 @@
                             labels: this.labels,
                             datasets: [{
                                 data: this.values,
-                                backgroundColor: getComputedStyle($refs.backgroundColorElement).color,
-                                borderColor: getComputedStyle($refs.borderColorElement).color,
+                                backgroundColor: this.getBackgroundColor(),
+                                borderColor: this.getBorderColor(),
                                 borderWidth: 2,
                                 fill: 'start',
                                 tension: 0.5,
@@ -117,12 +117,29 @@
                 },
 
                 updateChart: function () {
+                    console.log('test')
                     this.chart.data.labels = this.labels
                     this.chart.data.datasets[0].data = this.values
                     this.chart.update()
                 },
+
+                getBackgroundColor: function () {
+                    return getComputedStyle($refs.backgroundColorElement).color
+                },
+
+                getBorderColor: function () {
+                    return getComputedStyle($refs.borderColorElement).color
+                },
+
+                updateChartColorMode: function() {
+                    this.chart.data.datasets[0].backgroundColor = this.getBackgroundColor()
+                    this.chart.data.datasets[0].backgroundColor = this.getBorderColor()
+                    this.chart.destroy()
+                    this.initChart()
+                }
             }"
             class="absolute bottom-0 inset-x-0 rounded-b-2xl overflow-hidden"
+            x-on:dark-mode-toggled.window="updateChartColorMode()"
         >
             <canvas
                 wire:ignore
