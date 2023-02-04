@@ -136,8 +136,8 @@
                     this.chart.update()
                 },
             }"
+            x-on:dark-mode-toggled.window="updateChartColors()"
             class="absolute bottom-0 inset-x-0 rounded-b-2xl overflow-hidden"
-            x-on:dark-mode-toggled.window="updateChartColorMode()"
         >
             <canvas
                 wire:ignore
