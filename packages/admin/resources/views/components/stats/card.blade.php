@@ -130,7 +130,7 @@
                     return getComputedStyle($refs.borderColorElement).color
                 },
 
-                updateChartColorMode: function() {
+                updateChartColors: function() {
                     this.chart.data.datasets[0].backgroundColor = this.getBackgroundColor()
                     this.chart.data.datasets[0].backgroundColor = this.getBorderColor()
                     this.chart.update()
