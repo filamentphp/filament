@@ -135,7 +135,7 @@
                     this.chart.data.datasets[0].backgroundColor = this.getBorderColor()
                     this.chart.destroy()
                     this.initChart()
-                }
+                },
             }"
             class="absolute bottom-0 inset-x-0 rounded-b-2xl overflow-hidden"
             x-on:dark-mode-toggled.window="updateChartColorMode()"
