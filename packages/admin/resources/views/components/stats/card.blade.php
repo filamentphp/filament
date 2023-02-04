@@ -123,7 +123,7 @@
                 },
                 updateChartColors: function() {
                     this.chart.data.datasets[0].backgroundColor = this.getBackgroundColor()
-                    this.chart.data.datasets[0].backgroundColor = this.getBorderColor()
+                    this.chart.data.datasets[0].borderColor = this.getBorderColor()
                     this.chart.update()
                 },
 
