@@ -133,8 +133,7 @@
                 updateChartColorMode: function() {
                     this.chart.data.datasets[0].backgroundColor = this.getBackgroundColor()
                     this.chart.data.datasets[0].backgroundColor = this.getBorderColor()
-                    this.chart.destroy()
-                    this.initChart()
+                    this.chart.update()
                 },
             }"
             class="absolute bottom-0 inset-x-0 rounded-b-2xl overflow-hidden"
