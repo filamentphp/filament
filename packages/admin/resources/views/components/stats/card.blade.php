@@ -121,6 +121,7 @@
                     this.chart.data.datasets[0].data = this.values
                     this.chart.update()
                 },
+
                 updateChartColors: function() {
                     this.chart.data.datasets[0].backgroundColor = this.getBackgroundColor()
                     this.chart.data.datasets[0].borderColor = this.getBorderColor()
