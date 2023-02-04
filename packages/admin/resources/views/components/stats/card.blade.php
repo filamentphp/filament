@@ -117,7 +117,6 @@
                 },
 
                 updateChart: function () {
-                    console.log('test')
                     this.chart.data.labels = this.labels
                     this.chart.data.datasets[0].data = this.values
                     this.chart.update()
