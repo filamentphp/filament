@@ -90,12 +90,12 @@
             ]) }}
         >
             <div
-                x-data="{ show: false }"
-                x-show="show"
+                x-data="{ isShown: false }"
                 x-init="$nextTick(()=> {
-                    show = isOpen
-                    $watch('isOpen', () => show = isOpen)
+                    isShown = isOpen
+                    $watch('isOpen', () => isShown = isOpen)
                 })"
+                x-show="isShown"
                 x-cloak
                 @if (filled($id))
                     x-on:keydown.window.escape="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
