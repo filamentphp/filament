@@ -141,13 +141,14 @@ class Mask implements Jsonable
         return $this;
     }
 
-    public function money(string $prefix = '$', string $thousandsSeparator = ',', int $decimalPlaces = 2, bool $isSigned = true): static
+    public function money(string $prefix = '$', string $thousandsSeparator = ',', string $decimalSeparator = '.', int $decimalPlaces = 2, bool $isSigned = true): static
     {
         $this
             ->patternBlocks([
                 'money' => fn (Mask $mask) => $mask
                     ->numeric()
                     ->thousandsSeparator($thousandsSeparator)
+                    ->decimalSeparator($decimalSeparator)
                     ->decimalPlaces($decimalPlaces)
                     ->signed($isSigned)
                     ->padFractionalZeros()
