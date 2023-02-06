@@ -39,12 +39,12 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     protected bool | Closure $isUrl = false;
 
     /**
-     * @var scalar
+     * @var scalar | Closure | null
      */
     protected $maxValue = null;
 
     /**
-     * @var scalar
+     * @var scalar | Closure | null
      */
     protected $minValue = null;
 
