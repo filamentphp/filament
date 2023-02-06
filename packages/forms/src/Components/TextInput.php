@@ -39,12 +39,12 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     protected bool | Closure $isUrl = false;
 
     /**
-     * @var scalar
+     * @var scalar | Closure
      */
     protected $maxValue = null;
 
     /**
-     * @var scalar
+     * @var scalar | Closure
      */
     protected $minValue = null;
 
@@ -85,7 +85,7 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     }
 
     /**
-     * @param  scalar  $value
+     * @param  scalar | Closure  $value
      */
     public function maxValue($value): static
     {
@@ -101,7 +101,7 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     }
 
     /**
-     * @param  scalar  $value
+     * @param  scalar | Closure  $value
      */
     public function minValue($value): static
     {
