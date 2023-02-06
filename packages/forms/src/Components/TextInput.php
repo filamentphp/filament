@@ -183,7 +183,7 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     }
 
     /**
-     * @return scalar
+     * @return scalar | Closure | null
      */
     public function getMaxValue()
     {
@@ -191,7 +191,7 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     }
 
     /**
-     * @return scalar
+     * @return scalar | Closure | null
      */
     public function getMinValue()
     {
