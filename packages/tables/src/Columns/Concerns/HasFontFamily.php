@@ -15,8 +15,10 @@ trait HasFontFamily
         return $this;
     }
 
-    public function getFontFamily(): ?string
+    public function getFontFamily(mixed $state): ?string
     {
-        return $this->evaluate($this->fontFamily);
+        return $this->evaluate($this->fontFamily, [
+            'state' => $state,
+        ]);
     }
 }

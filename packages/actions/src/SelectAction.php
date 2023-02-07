@@ -7,9 +7,8 @@ use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 
-class SelectAction extends StaticAction
+class SelectAction extends Action
 {
-    use Concerns\BelongsToLivewire;
     use Concerns\HasId;
 
     /**

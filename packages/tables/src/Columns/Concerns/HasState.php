@@ -53,10 +53,6 @@ trait HasState
             $state = value($this->getDefaultState());
         }
 
-        if (is_array($state)) {
-            $state = $this->mutateArrayState($state);
-        }
-
         return $state;
     }
 
@@ -90,13 +86,5 @@ trait HasState
         }
 
         return $state->all();
-    }
-
-    /**
-     * @param  array<array-key>  $state
-     */
-    protected function mutateArrayState(array $state): mixed
-    {
-        return $state;
     }
 }
