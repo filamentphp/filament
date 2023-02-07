@@ -133,7 +133,7 @@
                     ></div>
 
                     <div class="flex items-center gap-3 px-5 py-4 text-sm font-medium">
-                        <div class="flex-shrink-0">
+                        <div class="shrink-0">
                             <div
                                 x-bind:class="{
                                     'bg-primary-600': getStepIndex(step) > {{ $loop->index }},

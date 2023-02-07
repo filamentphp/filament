@@ -30,7 +30,7 @@
                         alias="app::sidebar.group"
                         color="text-gray-600 dark:text-gray-300"
                         size="h-3 w-3"
-                        class="ml-1 flex-shrink-0"
+                        class="ml-1 shrink-0"
                     />
                 @endif
 
