@@ -13,7 +13,7 @@
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
             x-init="livewire = $wire.__instance"
-            :x-on:modal-closed.stop="$action && $this->mountedActionShouldOpenModal() ? 'if (\'mountedAction\' in livewire?.serverMemo.data) livewire.set(\'mountedAction\', null)' : false"
+            :x-on:modal-closed.stop="($action && $this->mountedActionShouldOpenModal()) ? 'if (\'mountedAction\' in livewire?.serverMemo.data) livewire.set(\'mountedAction\', null)' : false"
         >
             @if ($action)
                 @if ($action->isModalCentered())
