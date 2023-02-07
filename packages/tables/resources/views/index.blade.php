@@ -246,7 +246,7 @@
                     'gap-3': @js($isReorderable) || @js(count($groups)) || (selectedRecords.length && @js(count($groupedBulkActions))),
                 }"
             >
-                <div class="flex-shrink-0 flex items-center sm:gap-3">
+                <div class="shrink-0 flex items-center sm:gap-3">
                     @if ($isReorderable)
                         <x-filament-tables::reorder.trigger
                             :enabled="$isReordering"

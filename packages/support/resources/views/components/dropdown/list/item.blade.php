@@ -30,9 +30,9 @@
         default => $iconSize,
     };
 
-    $iconClasses = 'filament-dropdown-list-item-icon flex-shrink-0';
+    $iconClasses = 'filament-dropdown-list-item-icon shrink-0';
 
-    $imageClasses = 'filament-dropdown-list-item-image h-5 w-5 flex-shrink-0 rounded-full bg-gray-200 bg-cover bg-center dark:bg-gray-900';
+    $imageClasses = 'filament-dropdown-list-item-image h-5 w-5 shrink-0 rounded-full bg-gray-200 bg-cover bg-center dark:bg-gray-900';
 
     $labelClasses = 'filament-dropdown-list-item-label w-full truncate text-start';
     
