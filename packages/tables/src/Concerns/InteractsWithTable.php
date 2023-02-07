@@ -22,6 +22,7 @@ trait InteractsWithTable
     use CanSelectRecords;
     use CanSortRecords;
     use CanToggleColumns;
+    use CanDeferLoading;
     use HasActions;
     use HasBulkActions;
     use HasColumns;

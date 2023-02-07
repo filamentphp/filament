@@ -27,6 +27,7 @@
     $isSelectionEnabled = $isSelectionEnabled();
     $recordCheckboxPosition = $getRecordCheckboxPosition();
     $isStriped = $isStriped();
+    $isDeferingLoading = $isLoadingDeferred();
     $hasFilters = $isFilterable();
     $hasFiltersPopover = $hasFilters && ($getFiltersLayout() === FiltersLayout::Popover);
     $hasFiltersAboveContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::AboveContent);
@@ -160,6 +161,9 @@
 
     }"
     class="filament-tables-component"
+    @if ($isDeferingLoading)
+    wire:init="allowLoadingData"
+    @endif
 >
     <x-tables::container>
         <div

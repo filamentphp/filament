@@ -442,4 +442,9 @@ class Table extends ViewComponent
 
         return invade($livewire)->isTableStriped();
     }
+
+    public function isLoadingDeferred(): bool
+    {
+        return $this->getLivewire()->isLoadingDeferred();
+    }
 }
