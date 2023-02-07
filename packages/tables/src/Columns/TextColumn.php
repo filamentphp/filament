@@ -28,6 +28,24 @@ class TextColumn extends Column
 
     protected ?string $enum = null;
 
+    protected bool | Closure $isBulleted = false;
+
+    protected bool | Closure $isListWithLineBreaks = false;
+
+    public function bulleted(bool | Closure $condition = true): static
+    {
+        $this->isBulleted = $condition;
+
+        return $this;
+    }
+
+    public function listWithLineBreaks(bool | Closure $condition = true): static
+    {
+        $this->isListWithLineBreaks = $condition;
+
+        return $this;
+    }
+
     /**
      * @param  string | array<scalar, scalar> | Arrayable  $enum
      */
@@ -75,11 +93,13 @@ class TextColumn extends Column
         return (bool) $this->evaluate($this->canWrap);
     }
 
-    /**
-     * @param  array<scalar>  $state
-     */
-    protected function mutateArrayState(array $state): string
+    public function isBulleted(): bool
     {
-        return implode(', ', $state);
+        return (bool) $this->evaluate($this->isBulleted);
+    }
+
+    public function isListWithLineBreaks(): bool
+    {
+        return $this->evaluate($this->isListWithLineBreaks) || $this->isBulleted();
     }
 }
