@@ -3,7 +3,6 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
-use Illuminate\Contracts\Support\Arrayable;
 
 class IconEntry extends Entry
 {
