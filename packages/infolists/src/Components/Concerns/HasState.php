@@ -5,7 +5,6 @@ namespace Filament\Infolists\Components\Concerns;
 use BackedEnum;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 
 trait HasState
 {
