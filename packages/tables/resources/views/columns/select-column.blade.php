@@ -21,7 +21,7 @@
             if (! error) state = response
             isLoading = false
         "
-        @if ($isDisabled)
+        @if (! $isDisabled)
             x-bind:disabled="isLoading"
         @endif
         x-tooltip="error"
