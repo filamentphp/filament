@@ -1,15 +1,18 @@
+@php
+    $isDisabled = $isDisabled();
+@endphp
+
 <div
     x-data="{
         error: undefined,
-        state: '{{ $getState() }}',
-        isLoading: false
+        state: @js($getState()),
+        isLoading: false,
     }"
     {{ $attributes->merge($getExtraAttributes())->class([
         'filament-tables-select-column',
     ]) }}
 >
     <select
-        {!! $isDisabled() ? 'disabled' : null !!}
         x-model="state"
         x-on:change="
             isLoading = true
@@ -18,6 +21,11 @@
             if (! error) state = response
             isLoading = false
         "
+        @if ($isDisabled)
+            disabled
+        @else
+            x-bind:disabled="isLoading"
+        @endif
         x-tooltip="error"
         {{ $attributes->merge($getExtraInputAttributes())->merge($getExtraAttributes())->class([
             'ml-0.5 text-gray-900 inline-block transition duration-75 rounded-lg shadow-sm focus:ring-primary-500 focus:ring-1 focus:ring-inset focus:border-primary-500 disabled:opacity-70',
@@ -29,17 +37,12 @@
             'border-danger-600 ring-1 ring-inset ring-danger-600': error,
         }"
     >
-        @php
-            $state = $getState();
-        @endphp
-
         @unless ($isPlaceholderSelectionDisabled())
             <option value="">{{ $getPlaceholder() }}</option>
         @endif
 
         @foreach ($getOptions() as $value => $label)
             <option
-                :disabled="isLoading"
                 value="{{ $value }}"
                 {!! $isOptionDisabled($value, $label) ? 'disabled' : null !!}
             >
