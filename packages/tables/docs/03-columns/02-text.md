@@ -10,6 +10,25 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('title')
 ```
 
+## Displaying as a "badge"
+
+By default, text is quite plain and has no background color. You can make it appear as a "badge" instead using the `badge()` method. A great use case for this is with statuses, where may want to display a badge with a [color](#customizing-the-color) that matches the status:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('status')
+    ->badge()
+    ->color(fn (string $status): string => match ($status) {
+        'draft' => 'gray',
+        'reviewing' => 'warning',
+        'published' => 'success',
+        'rejected' => 'danger',
+    })
+```
+
+You may add other things to the badge, like an [icon](#adding-an-icon).
+
 ## Displaying a description
 
 Descriptions may be used to easily render additional text above or below the column contents.
@@ -121,6 +140,29 @@ If you'd like your column's content to wrap if it's too long, you may use the `w
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('description')->wrap()
+```
+
+## Listing multiple values
+
+By default, if there are multiple values inside your text column, they will be comma-separated. You may use the `listWithLineBreaks()` method to display them on new lines instead:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('authors.name')
+    ->listWithLineBreaks()
+```
+
+### Adding bullet points to the list
+
+You may add a bullet point to each list item using the `bulleted()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('authors.name')
+    ->listWithLineBreaks()
+    ->bulleted()
 ```
 
 ## Rendering HTML
