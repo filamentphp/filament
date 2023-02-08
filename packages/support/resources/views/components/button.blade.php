@@ -58,7 +58,7 @@
         'md', 'lg', 'xl' => 'md',
         default => 'md',
     };
-    
+
     $iconSize = match ($iconSize) {
         'sm' => 'h-4 w-4',
         'md' => 'h-5 w-5',
@@ -93,7 +93,7 @@
     $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || $hasFileUploadLoadingIndicator;
 
     if ($hasLoadingIndicator) {
-        $loadingIndicatorTarget = (string) str(html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click', $form)), ENT_QUOTES))->before('(');
+        $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click', $form)), ENT_QUOTES);
     }
 @endphp
 
@@ -167,7 +167,7 @@
             @endif
         @endif
 
-        
+
         <span
             @if ($hasFileUploadLoadingIndicator)
                 x-show="!isUploadingFile"
