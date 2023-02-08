@@ -4,8 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'ir :count daugiau',
+        'text' => [
+            'more_list_items' => 'ir :count daugiau',
         ],
 
         'messages' => [

@@ -113,7 +113,7 @@ TextColumn::make('description')
     ->tooltip(function (TextColumn $column): ?string {
         $state = $column->getState();
 
-        if (strlen($state) <= $column->getLimit()) {
+        if (strlen($state) <= $column->getCharacterLimit()) {
             return null;
         }
 
@@ -163,6 +163,30 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('authors.name')
     ->listWithLineBreaks()
     ->bulleted()
+```
+
+### Limiting the number of values in the list
+
+You can limit the number of values in the list using the `limitList()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('authors.name')
+    ->listWithLineBreaks()
+    ->limitList(3)
+```
+
+### Using a list separator
+
+If you want to "explode" a text string from your model into multiple list items, you can do so with the `separator()` method. This is useful for displaying comma-separated tags [as badges](#displaying-as-a-badge), for example:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('tags')
+    ->badge()
+    ->separator(',')
 ```
 
 ## Rendering HTML

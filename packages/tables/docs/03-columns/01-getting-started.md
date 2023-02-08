@@ -35,7 +35,6 @@ Static columns display data to the user:
 - [Text column](text)
 - [Icon column](icon)
 - [Image column](image)
-- [Tags column](tags)
 - [Color column](color)
 
 Editable columns allow the user to update data in the database without leaving the table:

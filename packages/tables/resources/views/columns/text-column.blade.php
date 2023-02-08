@@ -4,8 +4,15 @@
     $isBadge = $isBadge();
 
     $arrayState = $getState();
-    if (is_array($arrayState) && (! $isListWithLineBreaks) && (! $isBadge)) {
-        $arrayState = implode(', ', $arrayState);
+    if (is_array($arrayState)) {
+        if ($listLimit = $getListLimit()) {
+            $limitedArrayState = array_slice($arrayState, $listLimit);
+            $arrayState = array_slice($arrayState, 0, $listLimit);
+        }
+
+        if ((! $isListWithLineBreaks) && (! $isBadge)) {
+            $arrayState = implode(', ', $arrayState);
+        }
     }
     $arrayState = \Illuminate\Support\Arr::wrap($arrayState);
 
@@ -130,6 +137,15 @@
                 </{{ $isListWithLineBreaks ? 'li' : 'div' }}>
             @endif
         @endforeach
+
+        @if ($limitedArrayStateCount = count($limitedArrayState ?? []))
+            <{{ $isListWithLineBreaks ? 'li' : 'div' }} @class([
+                'text-sm' => ! $isBadge,
+                'text-xs' => $isBadge,
+            ])>
+                {{ trans_choice('filament-tables::table.columns.text.more_list_items', $limitedArrayStateCount) }}
+            </{{ $isListWithLineBreaks ? 'li' : 'div' }}>
+        @endif
     </{{ $isListWithLineBreaks ? 'ul' : 'div' }}>
 
     @if (filled($descriptionBelow))

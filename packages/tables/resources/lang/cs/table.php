@@ -4,8 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'a 1 další|a :count další| a :count dalších',
+        'text' => [
+            'more_list_items' => 'a 1 další|a :count další| a :count dalších',
         ],
 
         'messages' => [

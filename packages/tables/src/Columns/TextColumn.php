@@ -34,6 +34,8 @@ class TextColumn extends Column
 
     protected bool | Closure $isListWithLineBreaks = false;
 
+    protected int | Closure | null $listLimit = null;
+
     public function badge(bool | Closure $condition = true): static
     {
         $this->isBadge = $condition;
@@ -51,6 +53,13 @@ class TextColumn extends Column
     public function listWithLineBreaks(bool | Closure $condition = true): static
     {
         $this->isListWithLineBreaks = $condition;
+
+        return $this;
+    }
+
+    public function limitList(int | Closure | null $limit = 3): static
+    {
+        $this->listLimit = $limit;
 
         return $this;
     }
@@ -115,5 +124,10 @@ class TextColumn extends Column
     public function isListWithLineBreaks(): bool
     {
         return $this->evaluate($this->isListWithLineBreaks) || $this->isBulleted();
+    }
+
+    public function getListLimit(): ?int
+    {
+        return $this->evaluate($this->listLimit);
     }
 }
