@@ -35,8 +35,7 @@ trait CanFormatState
     {
         $format ??= Table::$defaultDateDisplayFormat;
 
-        $this->formatStateUsing(static function (Column $column, $state) use ($format, $timezone): ?string {
-            /** @var TextColumn $column */
+        $this->formatStateUsing(static function (TextColumn $column, $state) use ($format, $timezone): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -60,8 +59,7 @@ trait CanFormatState
 
     public function since(?string $timezone = null): static
     {
-        $this->formatStateUsing(static function (Column $column, $state) use ($timezone): ?string {
-            /** @var TextColumn $column */
+        $this->formatStateUsing(static function (TextColumn $column, $state) use ($timezone): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -76,7 +74,7 @@ trait CanFormatState
 
     public function money(string | Closure | null $currency = null, bool $shouldConvert = true): static
     {
-        $this->formatStateUsing(static function (Column $column, $state) use ($currency, $shouldConvert): ?string {
+        $this->formatStateUsing(static function (TextColumn $column, $state) use ($currency, $shouldConvert): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -97,7 +95,7 @@ trait CanFormatState
 
     public function numeric(int | Closure $decimalPlaces = 0, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
     {
-        $this->formatStateUsing(static function (Column $column, $state) use ($decimalPlaces, $decimalSeparator, $thousandsSeparator): ?string {
+        $this->formatStateUsing(static function (TextColumn $column, $state) use ($decimalPlaces, $decimalSeparator, $thousandsSeparator): ?string {
             if (blank($state)) {
                 return null;
             }
