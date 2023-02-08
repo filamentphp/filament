@@ -9,6 +9,7 @@ use Filament\Tables\Table;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 
 trait CanFormatState
 {
@@ -29,6 +30,15 @@ trait CanFormatState
     protected string | Closure | null $timezone = null;
 
     protected bool | Closure $isHtml = false;
+
+    protected bool | Closure $isMarkdown = false;
+
+    public function markdown(bool | Closure $condition = true): static
+    {
+        $this->isMarkdown = $condition;
+
+        return $this;
+    }
 
     public function date(?string $format = null, ?string $timezone = null): static
     {
@@ -196,10 +206,15 @@ trait CanFormatState
             $state = $state . $suffix;
         }
 
+        if ($state instanceof HtmlString) {
+            return $state;
+        }
+
         if ($this->isHtml()) {
-            return $state instanceof HtmlString ?
-                $state :
-                str($state)->sanitizeHtml()->toHtmlString();
+            return str($state)
+                ->when($this->isMarkdown(), fn (Stringable $stringable) => $stringable->markdown())
+                ->sanitizeHtml()
+                ->toHtmlString();
         }
 
         return $state;
@@ -232,7 +247,7 @@ trait CanFormatState
 
     public function isHtml(): bool
     {
-        return (bool) $this->evaluate($this->isHtml);
+        return $this->evaluate($this->isHtml) || $this->isMarkdown();
     }
 
     public function getPrefix(): ?string
@@ -243,5 +258,10 @@ trait CanFormatState
     public function getSuffix(): ?string
     {
         return $this->evaluate($this->suffix);
+    }
+
+    public function isMarkdown(): bool
+    {
+        return (bool) $this->evaluate($this->isMarkdown);
     }
 }

@@ -31,6 +31,8 @@ class TextEntry extends Entry
 
     protected bool | Closure $isBulleted = false;
 
+    protected bool | Closure $isProse = false;
+
     protected bool | Closure $isListWithLineBreaks = false;
 
     protected int | Closure | null $listLimit = null;
@@ -105,6 +107,13 @@ class TextEntry extends Entry
         return $this;
     }
 
+    public function prose(bool | Closure $condition = true): static
+    {
+        $this->isProse = $condition;
+
+        return $this;
+    }
+
     public function canWrap(): bool
     {
         return (bool) $this->evaluate($this->canWrap);
@@ -118,6 +127,11 @@ class TextEntry extends Entry
     public function isBulleted(): bool
     {
         return (bool) $this->evaluate($this->isBulleted);
+    }
+
+    public function isProse(): bool
+    {
+        return (bool) $this->evaluate($this->isProse);
     }
 
     public function isListWithLineBreaks(): bool
