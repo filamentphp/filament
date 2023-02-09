@@ -29,7 +29,10 @@ class Block extends Component
 
     public static function make(string $name): static
     {
-        return app(static::class, ['name' => $name]);
+        $static = app(static::class, ['name' => $name]);
+        $static->configure();
+
+        return $static;
     }
 
     public function icon(string | Closure | null $icon): static
