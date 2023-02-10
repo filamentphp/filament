@@ -19,11 +19,11 @@
         [
             'filament-button inline-flex items-center justify-center rounded-lg border font-medium transition-colors focus:outline-none focus:ring-2 disabled:pointer-events-none disabled:opacity-70',
             match ($size) {
-                'xs' => 'filament-button-size-xs gap-1.5 py-[calc(theme(spacing.2)-1px)] px-[calc(theme(spacing[3])-1px)] text-xs',
+                'xs' => 'filament-button-size-xs gap-1.5 py-[calc(theme(spacing.2)-1px)] px-[calc(theme(spacing.3)-1px)] text-xs',
                 'sm' => 'filament-button-size-sm gap-1.5 py-[calc(theme(spacing.2)-1px)] px-[calc(theme(spacing.[3.5])-1px)] text-sm',
                 'md' => 'filament-button-size-md gap-2 py-[calc(theme(spacing[2.5])-1px)] px-[calc(theme(spacing.4)-1px)] text-sm',
-                'lg' => 'filament-button-size-lg gap-2 py-[calc(theme(spacing[3])-1px)] px-[calc(theme(spacing.5)-1px)] text-sm',
-                'xl' => 'filament-button-size-xl gap-2 py-[calc(theme(spacing[3])-1px)] px-[calc(theme(spacing.6)-1px)] text-base',
+                'lg' => 'filament-button-size-lg gap-2 py-[calc(theme(spacing.3)-1px)] px-[calc(theme(spacing.5)-1px)] text-sm',
+                'xl' => 'filament-button-size-xl gap-2 py-[calc(theme(spacing.3)-1px)] px-[calc(theme(spacing.6)-1px)] text-base',
             },
         ],
         $outlined
