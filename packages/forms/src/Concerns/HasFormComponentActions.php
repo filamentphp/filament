@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Concerns;
 
+use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
@@ -37,7 +38,7 @@ trait HasFormComponentActions
     {
         $action = $this->getMountedFormComponentAction();
 
-        if (! $action) {
+        if (! ($action instanceof Action)) {
             return null;
         }
 
@@ -110,7 +111,7 @@ trait HasFormComponentActions
         return $result;
     }
 
-    public function getMountedFormComponentAction(): ?Action
+    public function getMountedFormComponentAction(): Action | Closure | null
     {
         if (! $this->mountedFormComponentAction) {
             return null;
@@ -132,6 +133,18 @@ trait HasFormComponentActions
 
         if (! $action) {
             return null;
+        }
+
+        if ($action instanceof Closure) {
+            try {
+                return $this->getMountedFormComponentActionComponent()->evaluate(
+                    $action,
+                    $this->mountedFormComponentActionArguments,
+                );
+            } finally {
+                $this->mountedFormComponentActionComponent = null;
+                $this->mountedFormComponentAction = null;
+            }
         }
 
         if ($action->isDisabled()) {
