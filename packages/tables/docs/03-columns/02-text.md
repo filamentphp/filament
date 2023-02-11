@@ -140,9 +140,11 @@ You may want a column to contain the number of the current row in the table:
 ```php
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\TableComponent;
 
 TextColumn::make('index')->getStateUsing(
     static function (stdClass $rowLoop, HasTable $livewire): string {
+        /** @var TableComponent $livewire */
         return (string) ($rowLoop->iteration + ($livewire->tableRecordsPerPage * ($livewire->page - 1)));
     }
 ),
