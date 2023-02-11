@@ -2,8 +2,10 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
 use Filament\Forms\Components\Actions\Action;
 use Illuminate\Database\Eloquent\Model;
+use InvalidArgumentException;
 
 trait HasActions
 {
@@ -13,16 +15,34 @@ trait HasActions
 
     public function registerActions(array $actions): static
     {
-        foreach ($actions as $action) {
-            $this->actions[$action->getName()] = $action->component($this);
+        foreach ($actions as $actionName => $action) {
+            if ($action instanceof Action) {
+                $this->actions[$action->getName()] = $action->component($this);
+
+                continue;
+            }
+
+            if ($action instanceof Closure) {
+                $this->actions[$actionName] = $action;
+
+                continue;
+            }
+
+            throw new InvalidArgumentException('Form component actions must be an instance of ' . Action::class . ' or Closure.');
         }
 
         return $this;
     }
 
-    public function getAction(string $name): ?Action
+    public function getAction(string $name): Action | Closure | null
     {
-        return ($this->getActions()[$name] ?? null)?->component($this);
+        $action = $this->getActions()[$name] ?? null;
+
+        if ($action instanceof Action) {
+            $action->component($this);
+        }
+
+        return $action;
     }
 
     public function getActions(): array
