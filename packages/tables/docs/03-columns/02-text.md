@@ -139,10 +139,13 @@ You may want a column to contain the number of the current row in the table:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Contracts\HasTable;
 
-TextColumn::make('index')->getStateUsing(static function (stdClass $rowLoop): string {
-    return (string) $rowLoop->iteration;
-});
+TextColumn::make('index')->getStateUsing(
+    static function (stdClass $rowLoop, HasTable $livewire): string {
+        return (string) ($rowLoop->iteration + ($livewire->tableRecordsPerPage * ($livewire->page - 1)));
+    }
+),
 ```
 
 As `$rowLoop` is Laravel's Blade `$loop` object, you can reference all other `$loop` properties.
