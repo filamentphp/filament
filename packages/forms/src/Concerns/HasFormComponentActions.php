@@ -147,15 +147,6 @@ trait HasFormComponentActions
             }
         }
 
-        if ($action instanceof Closure) {
-            try {
-                return $this->getMountedFormComponentActionComponent()->evaluate($action);
-            } finally {
-                $this->mountedFormComponentActionComponent = null;
-                $this->mountedFormComponentAction = null;
-            }
-        }
-
         if ($action->isDisabled()) {
             return null;
         }

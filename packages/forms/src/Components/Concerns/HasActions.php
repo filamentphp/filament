@@ -22,19 +22,17 @@ trait HasActions
     public function registerActions(array $actions): static
     {
         foreach ($actions as $actionName => $action) {
-            if ($action instanceof Action) {
-                $this->actions[$action->getName()] = $action->component($this);
-
-                continue;
-            }
-
             if ($action instanceof Closure) {
                 $this->actions[$actionName] = $action;
 
                 continue;
             }
 
-            throw new InvalidArgumentException('Form component actions must be an instance of ' . Action::class . ' or Closure.');
+            if (! $action instanceof Action) {
+                throw new InvalidArgumentException('Form component actions must be an instance of ' . Action::class . ' or Closure.');
+            }
+
+            $this->actions[$action->getName()] = $action->component($this);
         }
 
         return $this;
