@@ -803,8 +803,8 @@
                                             <x-tables::checkbox
                                                 x-model="selectedRecords"
                                                 :value="$recordKey"
-                                                class="filament-tables-record-checkbox"
                                                 :label="__('tables::table.fields.bulk_item_select.label', ['key' => $recordKey])"
+                                                class="filament-tables-record-checkbox"
                                             />
                                         </x-tables::checkbox.cell>
                                     @else
