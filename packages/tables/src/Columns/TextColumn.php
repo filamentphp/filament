@@ -3,8 +3,6 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\TableComponent;
 use stdClass;
 
 class TextColumn extends Column
@@ -25,7 +23,7 @@ class TextColumn extends Column
     public function rowIndex(bool $isFromZero = false): static
     {
         $this->getStateUsing(static function (stdClass $rowLoop) use ($isFromZero): string {
-             return (string) $rowLoop->{$isFromZero ? 'index' : 'iteration'};
+            return (string) $rowLoop->{$isFromZero ? 'index' : 'iteration'};
         });
 
         return $this;
