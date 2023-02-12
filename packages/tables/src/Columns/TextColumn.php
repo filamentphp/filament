@@ -5,6 +5,7 @@ namespace Filament\Tables\Columns;
 use BackedEnum;
 use Closure;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
+use Filament\Tables\Contracts\HasTable;
 use Illuminate\Contracts\Support\Arrayable;
 use stdClass;
 
@@ -92,8 +93,10 @@ class TextColumn extends Column
 
     public function rowIndex(bool $isFromZero = false): static
     {
-        $this->getStateUsing(static function (stdClass $rowLoop) use ($isFromZero): string {
-            return (string) $rowLoop->{$isFromZero ? 'index' : 'iteration'};
+        $this->getStateUsing(static function (HasTable $livewire, stdClass $rowLoop) use ($isFromZero): string {
+            $rowIndex = $rowLoop->{$isFromZero ? 'index' : 'iteration'};
+
+            return (string) ($rowIndex + ($livewire->getTableRecordsPerPage() * ($livewire->getTablePage() - 1)));
         });
 
         return $this;

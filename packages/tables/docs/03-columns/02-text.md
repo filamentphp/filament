@@ -222,11 +222,11 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 
 TextColumn::make('index')->getStateUsing(
-    static function (stdClass $rowLoop, HasTable $livewire): string {
+    static function (HasTable $livewire, stdClass $rowLoop): string {
         return (string) (
             $rowLoop->iteration +
-            ($livewire->tableRecordsPerPage * (
-                $livewire->page - 1
+            ($livewire->getTableRecordsPerPage() * (
+                $livewire->getTablePage() - 1
             ))
         );
     }
@@ -234,6 +234,22 @@ TextColumn::make('index')->getStateUsing(
 ```
 
 As `$rowLoop` is Laravel Blade's `$loop` object, you can reference all other `$loop` properties.
+
+As a shortcut, you may use the `rowIndex()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('index')->rowIndex()
+```
+
+To start counting from 0 instead of 1, use `isFromZero: true`:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('index')->rowIndex(isFromZero: true)
+```
 
 ## Custom formatting
 

@@ -45,6 +45,11 @@ trait CanPaginateRecords
         return $this->tableRecordsPerPage;
     }
 
+    public function getTablePage(): int
+    {
+        return $this->page;
+    }
+
     public function getDefaultTableRecordsPerPageSelectOption(): int | string
     {
         $option = session()->get(

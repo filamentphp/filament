@@ -59,6 +59,8 @@ interface HasTable extends HasForms
 
     public function getTableRecordsPerPage(): int | string | null;
 
+    public function getTablePage(): int;
+
     public function getTableSortColumn(): ?string;
 
     public function getTableSortDirection(): ?string;
