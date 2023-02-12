@@ -24,11 +24,8 @@ class TextColumn extends Column
 
     public function rowIndex(bool $isFromZero = false): static
     {
-        $this->getStateUsing(static function (stdClass $rowLoop, HasTable $livewire) use ($isFromZero): string {
-            /** @var TableComponent $livewire */
-            $rowIndex = $rowLoop->{$isFromZero ? 'index' : 'iteration'};
-
-            return (string) ($rowIndex + ($livewire->tableRecordsPerPage * ($livewire->page - 1)));
+        $this->getStateUsing(static function (stdClass $rowLoop) use ($isFromZero): string {
+             return (string) $rowLoop->{$isFromZero ? 'index' : 'iteration'};
         });
 
         return $this;
