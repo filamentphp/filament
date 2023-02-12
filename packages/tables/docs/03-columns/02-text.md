@@ -140,33 +140,18 @@ You may want a column to contain the number of the current row in the table:
 ```php
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\TableComponent;
 
 TextColumn::make('index')->getStateUsing(
     static function (stdClass $rowLoop, HasTable $livewire): string {
-        /** @var TableComponent $livewire */
-        return (string) ($rowLoop->iteration + ($livewire->tableRecordsPerPage * ($livewire->page - 1)));
+        return (string) (
+            $rowLoop->iteration +
+            ($livewire->getTableRecordsPerPage() * ($livewire->page - 1))
+        );
     }
 ),
 ```
 
 As `$rowLoop` is Laravel's Blade `$loop` object, you can reference all other `$loop` properties.
-
-As a shortcut, you may use the `rowIndex()` method:
-
-```php
-use Filament\Tables\Columns\TextColumn;
-
-TextColumn::make('index')->rowIndex()
-```
-
-To start counting from 0 instead of 1, use `isFromZero: true`:
-
-```php
-use Filament\Tables\Columns\TextColumn;
-
-TextColumn::make('index')->rowIndex(isFromZero: true)
-```
 
 ## Custom formatting
 
