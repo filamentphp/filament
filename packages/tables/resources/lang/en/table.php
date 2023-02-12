@@ -28,6 +28,7 @@ return [
         'bulk_item_select' => [
             'label' => 'Select / Deselect item :key for bulk actions.',
         ],
+
     ],
 
     'pagination' => [
