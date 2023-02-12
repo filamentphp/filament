@@ -6,7 +6,6 @@ use BackedEnum;
 use Closure;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Illuminate\Contracts\Support\Arrayable;
-use stdClass;
 
 class TextEntry extends Entry
 {
