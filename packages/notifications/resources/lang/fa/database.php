@@ -4,7 +4,7 @@ return [
 
     'modal' => [
 
-        'heading' => 'یپام‌ها',
+        'heading' => 'پیام‌ها',
 
         'buttons' => [
 
