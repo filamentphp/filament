@@ -17,10 +17,13 @@
         @endforeach
     </select>
 
-    <label for="{{ $id }}" @class([
-        'text-sm font-medium',
-        'dark:text-white' => config('tables.dark_mode'),
-    ])>
+    <label
+        for="{{ $id }}"
+        @class([
+            'text-sm font-medium',
+            'dark:text-white' => config('tables.dark_mode'),
+        ])
+    >
         {{ __('tables::table.pagination.fields.records_per_page.label') }}
     </label>
 </div>
