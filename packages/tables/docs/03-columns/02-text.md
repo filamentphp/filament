@@ -145,13 +145,15 @@ TextColumn::make('index')->getStateUsing(
     static function (stdClass $rowLoop, HasTable $livewire): string {
         return (string) (
             $rowLoop->iteration +
-            ($livewire->getTableRecordsPerPage() * ($livewire->page - 1))
+            ($livewire->tableRecordsPerPage * (
+                $livewire->page - 1
+            ))
         );
     }
 ),
 ```
 
-As `$rowLoop` is Laravel's Blade `$loop` object, you can reference all other `$loop` properties.
+As `$rowLoop` is Laravel Blade's `$loop` object, you can reference all other `$loop` properties.
 
 ## Custom formatting
 
