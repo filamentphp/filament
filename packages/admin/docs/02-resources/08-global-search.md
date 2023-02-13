@@ -6,13 +6,14 @@ Global search allows you to search across all of your resource records, from any
 
 ## Title
 
-To enable global search on your model, you must [set a title attribute](#setting-a-title-attribute) for your resource:
+To enable global search on your model, you must [set a title attribute](#setting-a-title-attribute) for your resource.
 
 ```php
 protected static ?string $recordTitleAttribute = 'title';
 ```
 
 This attribute is used to retrieve the search result title for that record.
+**Note** you need to ensure that the resource has an edit/view page to allow the global search to link to the result, otherwise no results will be returned.
 
 You may customize the title further by overriding `getGlobalSearchResultTitle()` method:
 
