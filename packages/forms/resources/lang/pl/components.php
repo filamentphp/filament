@@ -16,7 +16,7 @@ return [
                 'label' => 'Dodaj do :label',
             ],
 
-            'createbetween' => [
+            'add_between' => [
                 'label' => 'Wstaw',
             ],
 
@@ -28,11 +28,11 @@ return [
                 'label' => 'Przesuń',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Przesuń w dół',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Przesuń w górę',
             ],
 
@@ -127,11 +127,11 @@ return [
                 'label' => 'Przesuń',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Przesuń w dół',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Przesuń w górę',
             ],
 

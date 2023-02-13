@@ -16,11 +16,11 @@ return [
                 'label' => 'Remover',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Mover para baixo',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Mover para cima',
             ],
 
@@ -40,7 +40,7 @@ return [
                 'label' => 'Expandir todos',
             ],
 
-            'createbetween' => [
+            'add_between' => [
                 'label' => 'Adicionar entre',
             ],
 
@@ -111,11 +111,11 @@ return [
                 'label' => 'Clonar',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Mover para baixo',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Mover para cima',
             ],
 

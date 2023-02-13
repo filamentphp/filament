@@ -16,7 +16,7 @@ return [
                 'label' => 'افزودن به :label',
             ],
 
-            'createbetween' => [
+            'add_between' => [
                 'label' => 'قرار دادن',
             ],
 
@@ -28,11 +28,11 @@ return [
                 'label' => 'جابه‌جایی',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'پایین آوردن',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'بالا بردن',
             ],
 
@@ -143,11 +143,11 @@ return [
                 'label' => 'جابه‌جایی',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'پایین آوردن',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'بالا بردن',
             ],
 

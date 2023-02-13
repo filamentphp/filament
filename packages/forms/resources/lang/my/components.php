@@ -10,7 +10,7 @@ return [
                 'label' => 'ထည့်သွင်း :label',
             ],
 
-            'createbetween' => [
+            'add_between' => [
                 'label' => 'ထည့်သွင်းပါ',
             ],
 
@@ -22,11 +22,11 @@ return [
                 'label' => 'ရွှေ့ပါ',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'အောက်သို့ရွှေ့ပါ',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'အပေါ်ကိုရွှေ့ပါ',
             ],
 
@@ -91,11 +91,11 @@ return [
                 'label' => 'ဖျက်ပါ',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'အောက်သို့ရွှေ့ပါ',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'အပေါ်ကိုရွှေ့ပါ',
             ],
 
