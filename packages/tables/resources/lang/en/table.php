@@ -22,11 +22,11 @@ return [
         ],
 
         'bulk_select_page' => [
-            'label' => 'Select / Deselect all items for bulk actions.'
+            'label' => 'Select / Deselect all items for bulk actions.',
         ],
 
         'bulk_select_record' => [
-            'label' => 'Select / Deselect item :key for bulk actions.'
+            'label' => 'Select / Deselect item :key for bulk actions.',
         ],
 
     ],
