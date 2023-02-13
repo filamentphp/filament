@@ -6,7 +6,7 @@
 <html
     lang="{{ str_replace('_', '-', app()->getLocale()) }}"
     dir="{{ __('filament::layout.direction') ?? 'ltr' }}"
-    class="filament antialiased h-full js-focus-visible"
+    class="filament antialiased min-h-screen js-focus-visible"
 >
 <head>
     {{ filament()->renderHook('head.start') }}
@@ -78,7 +78,7 @@
     {{ filament()->renderHook('head.end') }}
 </head>
 
-<body class="filament-body min-h-full overscroll-y-none bg-gray-100 text-gray-900 dark:text-gray-100 dark:bg-gray-900">
+<body class="filament-body min-h-screen overscroll-y-auto bg-gray-100 text-gray-900 dark:text-gray-100 dark:bg-gray-900">
     {{ filament()->renderHook('body.start') }}
 
     {{ $slot }}
