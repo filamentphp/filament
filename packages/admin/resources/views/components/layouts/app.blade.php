@@ -3,7 +3,7 @@
 ])
 
 <x-filament::layouts.base :title="$title">
-    <div class="filament-app-layout flex min-h-full w-full overflow-x-clip">
+    <div class="filament-app-layout flex h-full w-full overflow-x-clip">
         <div
             x-data="{}"
             x-cloak
