@@ -265,7 +265,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     public function isReorderableWithButtons(): bool
     {
-        return $this->evaluate($this->isReorderableWithButtons) && ! $this->isItemMovementDisabled();
+        return $this->evaluate($this->isReorderableWithButtons) && (! $this->isItemMovementDisabled());
     }
 
     public function isItemMovementDisabled(): bool

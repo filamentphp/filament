@@ -156,8 +156,8 @@
                                     'flex divide-x rtl:divide-x-reverse',
                                     'dark:divide-gray-700' => config('forms.dark_mode'),
                                 ])>
-                                    @if($isReorderableWithButtons)
-                                        @unless($loop->first)
+                                    @if ($isReorderableWithButtons)
+                                        @unless ($loop->first)
                                             <li>
                                                 <button
                                                     title="{{ __('forms::components.builder.buttons.move_item_up.label') }}"
@@ -168,15 +168,16 @@
                                                         'dark:border-gray-700' => config('forms.dark_mode'),
                                                     ])
                                                 >
-                                                        <span class="sr-only">
-                                                            {{ __('forms::components.builder.buttons.move_item_up.label') }}
-                                                        </span>
+                                                    <span class="sr-only">
+                                                        {{ __('forms::components.builder.buttons.move_item_up.label') }}
+                                                    </span>
 
                                                     <x-heroicon-s-chevron-up class="w-4 h-4" />
                                                 </button>
                                             </li>
                                         @endunless
-                                        @unless($loop->last)
+
+                                        @unless ($loop->last)
                                             <li>
                                                 <button
                                                     title="{{ __('forms::components.builder.buttons.move_item_down.label') }}"
@@ -187,9 +188,10 @@
                                                         'dark:border-gray-700' => config('forms.dark_mode'),
                                                     ])
                                                 >
-                                                        <span class="sr-only">
-                                                            {{ __('forms::components.builder.buttons.move_item_down.label') }}
-                                                        </span>
+                                                    <span class="sr-only">
+                                                        {{ __('forms::components.builder.buttons.move_item_down.label') }}
+                                                    </span>
+
                                                     <x-heroicon-s-chevron-down class="w-4 h-4" />
                                                 </button>
                                             </li>

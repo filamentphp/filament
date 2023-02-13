@@ -135,8 +135,8 @@
                                         'flex divide-x rtl:divide-x-reverse',
                                         'dark:divide-gray-700' => config('forms.dark_mode'),
                                     ])>
-                                        @if($isReorderableWithButtons)
-                                            @unless($loop->first)
+                                        @if ($isReorderableWithButtons)
+                                            @unless ($loop->first)
                                                 <li>
                                                     <button
                                                         title="{{ __('forms::components.repeater.buttons.move_item_up.label') }}"
@@ -155,7 +155,8 @@
                                                     </button>
                                                 </li>
                                             @endunless
-                                            @unless($loop->last)
+
+                                            @unless ($loop->last)
                                                 <li>
                                                     <button
                                                         title="{{ __('forms::components.repeater.buttons.move_item_down.label') }}"
@@ -169,6 +170,7 @@
                                                         <span class="sr-only">
                                                             {{ __('forms::components.repeater.buttons.move_item_down.label') }}
                                                         </span>
+
                                                         <x-heroicon-s-chevron-down class="w-4 h-4" />
                                                     </button>
                                                 </li>
