@@ -28,10 +28,7 @@
         </div>
 
         @if (count($recordsPerPageSelectOptions) > 1)
-            <x-tables::pagination.records-per-page-selector
-                :options="$recordsPerPageSelectOptions"
-                id="tableRecordsPerPageSelectMobile"
-            />
+            <x-tables::pagination.records-per-page-selector :options="$recordsPerPageSelectOptions" />
         @endif
 
         <div class="w-10">
