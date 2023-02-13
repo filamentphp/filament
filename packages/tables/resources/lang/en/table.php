@@ -16,17 +16,17 @@ return [
 
     'fields' => [
 
-        'search' => [
-            'label' => 'Search',
-            'placeholder' => 'Search',
-        ],
-
         'bulk_select_page' => [
-            'label' => 'Select / Deselect all items for bulk actions.',
+            'label' => 'Select/deselect all items for bulk actions.',
         ],
 
         'bulk_select_record' => [
-            'label' => 'Select / Deselect item :key for bulk actions.',
+            'label' => 'Select/deselect item :key for bulk actions.',
+        ],
+
+        'search' => [
+            'label' => 'Search',
+            'placeholder' => 'Search',
         ],
 
     ],
