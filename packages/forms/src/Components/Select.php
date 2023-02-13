@@ -244,7 +244,7 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
             ->modalButton(__('filament-forms::components.select.actions.create_option.modal.actions.create.label'))
             ->extraModalActions(fn (Action $action, Select $component): array => $component->isMultiple() ? [
                 $action->makeExtraModalAction('createAnother', ['another' => true])
-                    ->label(__('filament-forms::components.select.actions.create_option.modal.actions.create_another.label'))
+                    ->label(__('filament-forms::components.select.actions.create_option.modal.actions.create_another.label')),
             ] : [])
             ->hidden(fn (Component $component): bool => $component->isDisabled());
 
