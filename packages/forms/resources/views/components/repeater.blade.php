@@ -16,6 +16,7 @@
 
         $isCollapsible = $isCollapsible();
         $isCloneable = $isCloneable();
+        $isReorderableWithButtons = $isReorderableWithButtons();
         $isItemCreationDisabled = $isItemCreationDisabled();
         $isItemDeletionDisabled = $isItemDeletionDisabled();
         $isItemMovementDisabled = $isItemMovementDisabled();
@@ -134,6 +135,48 @@
                                         'flex divide-x rtl:divide-x-reverse',
                                         'dark:divide-gray-700' => config('forms.dark_mode'),
                                     ])>
+                                        @if ($isReorderableWithButtons)
+                                            @unless ($loop->first)
+                                                <li>
+                                                    <button
+                                                        title="{{ __('forms::components.repeater.buttons.move_item_up.label') }}"
+                                                        type="button"
+                                                        wire:click.stop="dispatchFormEvent('repeater::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                        @class([
+                                                            'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500',
+                                                            'dark:border-gray-700' => config('forms.dark_mode'),
+                                                        ])
+                                                    >
+                                                        <span class="sr-only">
+                                                            {{ __('forms::components.repeater.buttons.move_item_up.label') }}
+                                                        </span>
+
+                                                        <x-heroicon-s-chevron-up class="w-4 h-4" />
+                                                    </button>
+                                                </li>
+                                            @endunless
+
+                                            @unless ($loop->last)
+                                                <li>
+                                                    <button
+                                                        title="{{ __('forms::components.repeater.buttons.move_item_down.label') }}"
+                                                        type="button"
+                                                        wire:click.stop="dispatchFormEvent('repeater::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                        @class([
+                                                            'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500',
+                                                            'dark:border-gray-700' => config('forms.dark_mode'),
+                                                        ])
+                                                    >
+                                                        <span class="sr-only">
+                                                            {{ __('forms::components.repeater.buttons.move_item_down.label') }}
+                                                        </span>
+
+                                                        <x-heroicon-s-chevron-down class="w-4 h-4" />
+                                                    </button>
+                                                </li>
+                                            @endunless
+                                        @endif
+
                                         @if ($isCloneable)
                                             <li>
                                                 <button
