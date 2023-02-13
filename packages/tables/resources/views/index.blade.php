@@ -307,7 +307,7 @@
                         ])>
                             @if ($isSelectionEnabled)
                                 <x-tables::checkbox
-                                    :label="__('tables::table.fields.bulk_select.label')"
+                                    :label="__('tables::table.fields.bulk_select_record.label')"
                                     x-on:click="toggleSelectRecordsOnPage"
                                     x-bind:checked="
                                         let recordsOnPage = getRecordsOnPage()
@@ -479,7 +479,7 @@
                                                         'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
                                                         'hidden' => $isReordering,
                                                     ])"
-                                                    :label="__('tables::table.fields.bulk_item_select.label', ['key' => $recordKey])"
+                                                    :label="__('tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                                 />
                                             @endif
 
@@ -626,7 +626,7 @@
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                 <x-tables::checkbox.cell>
                                     <x-tables::checkbox
-                                        :label="__('tables::table.fields.bulk_select.label')"
+                                        :label="__('tables::table.fields.bulk_select_record.label')"
                                         x-on:click="toggleSelectRecordsOnPage"
                                         x-bind:checked="
                                             let recordsOnPage = getRecordsOnPage()
@@ -684,7 +684,7 @@
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
                                 <x-tables::checkbox.cell>
                                     <x-tables::checkbox
-                                        :label="__('tables::table.fields.bulk_select.label')"
+                                        :label="__('tables::table.fields.bulk_select_record.label')"
                                         x-on:click="toggleSelectRecordsOnPage"
                                         x-bind:checked="
                                             let recordsOnPage = getRecordsOnPage()
@@ -804,7 +804,7 @@
                                                 x-model="selectedRecords"
                                                 :value="$recordKey"
                                                 class="filament-tables-record-checkbox"
-                                                :label="__('tables::table.fields.bulk_item_select.label', ['key' => $recordKey])"
+                                                :label="__('tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                             />
                                         </x-tables::checkbox.cell>
                                     @else
@@ -870,7 +870,7 @@
                                                 x-model="selectedRecords"
                                                 :value="$recordKey"
                                                 class="filament-tables-record-checkbox"
-                                                :label="__('tables::table.fields.bulk_item_select.label', ['key' => $recordKey])"
+                                                :label="__('tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                             />
                                         </x-tables::checkbox.cell>
                                     @else
