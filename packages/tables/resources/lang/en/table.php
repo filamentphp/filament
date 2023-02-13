@@ -17,7 +17,7 @@ return [
     'fields' => [
 
         'bulk_select_page' => [
-            'label' => 'Select/Deselect all items for bulk actions.',
+            'label' => 'Select/deselect all items for bulk actions.',
         ],
 
         'bulk_select_record' => [
