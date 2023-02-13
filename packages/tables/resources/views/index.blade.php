@@ -341,7 +341,7 @@
                         <div class="bg-gray-500/5 flex items-center gap-4 px-4 border-b dark:border-gray-700">
                             @if ($isSelectionEnabled)
                                 <x-filament-tables::checkbox
-                                    :label="__('filament-tables::table.fields.bulk_select_record.label')"
+                                    :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                     x-on:click="toggleSelectRecordsOnPage"
                                     x-bind:checked="
                                         let recordsOnPage = getRecordsOnPage()
@@ -742,7 +742,7 @@
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                 <x-filament-tables::checkbox.cell>
                                     <x-filament-tables::checkbox
-                                        :label="__('filament-tables::table.fields.bulk_select_record.label')"
+                                        :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                         x-on:click="toggleSelectRecordsOnPage"
                                         x-bind:checked="
                                             let recordsOnPage = getRecordsOnPage()
@@ -807,7 +807,7 @@
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
                                 <x-filament-tables::checkbox.cell>
                                     <x-filament-tables::checkbox
-                                        :label="__('filament-tables::table.fields.bulk_select_record.label')"
+                                        :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                         x-on:click="toggleSelectRecordsOnPage"
                                         x-bind:checked="
                                             let recordsOnPage = getRecordsOnPage()
