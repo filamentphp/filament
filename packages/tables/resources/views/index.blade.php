@@ -474,12 +474,12 @@
                                                 <x-tables::checkbox
                                                     x-model="selectedRecords"
                                                     :value="$recordKey"
+                                                    :label="__('tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                                     :class="\Illuminate\Support\Arr::toCssClasses([
                                                         'filament-tables-record-checkbox absolute top-3 right-3 rtl:right-auto rtl:left-3',
                                                         'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
                                                         'hidden' => $isReordering,
                                                     ])"
-                                                    :label="__('tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                                 />
                                             @endif
 
