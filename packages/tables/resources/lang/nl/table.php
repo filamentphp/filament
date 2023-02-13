@@ -16,6 +16,14 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Alle items selecteren/deselecteren voor bulkacties.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Item :key selecteren/deselecteren voor bulkacties.',
+        ],
+
         'search_query' => [
             'label' => 'Zoeken',
             'placeholder' => 'Zoeken',

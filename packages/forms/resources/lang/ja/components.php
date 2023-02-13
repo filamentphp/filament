@@ -16,6 +16,10 @@ return [
                 'label' => ':labelを追加',
             ],
 
+            'create_item_between' => [
+                'label' => '挿入',
+            ],
+
             'delete_item' => [
                 'label' => '削除',
             ],
@@ -52,6 +56,22 @@ return [
 
     ],
 
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => '全選択解除',
+            ],
+
+            'select_all' => [
+                'label' => '全て選択',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [
@@ -62,6 +82,10 @@ return [
 
             'delete' => [
                 'label' => '行を削除',
+            ],
+
+            'reorder' => [
+                'label' => '行を並べ直す',
             ],
 
         ],

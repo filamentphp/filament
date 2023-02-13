@@ -63,6 +63,7 @@
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
             :slide-over="$action?->isModalSlideOver()"
+            :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
             x-init="livewire = $wire.__instance"
             x-on:modal-closed.stop="if ('mountedAction' in livewire?.serverMemo.data) livewire.set('mountedAction', null)"

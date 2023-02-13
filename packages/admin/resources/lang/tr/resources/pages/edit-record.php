@@ -20,6 +20,10 @@ return [
 
         ],
 
+        'tab' => [
+            'label' => 'Düzenle',
+        ],
+
     ],
 
     'messages' => [

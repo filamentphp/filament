@@ -206,8 +206,6 @@ class AssociateAction extends Action
                 });
             }
 
-            $localKeyName = $relationship->getLocalKeyName();
-
             return $relationshipQuery
                 ->whereDoesntHave($this->getInverseRelationshipName(), function (Builder $query) use ($relationship): Builder {
                     if ($relationship instanceof MorphMany) {
@@ -218,7 +216,7 @@ class AssociateAction extends Action
                     return $query->where($relationship->getParent()->getQualifiedKeyName(), $relationship->getParent()->getKey());
                 })
                 ->get()
-                ->mapWithKeys(fn (Model $record): array => [$record->{$localKeyName} => $this->getRecordTitle($record)])
+                ->mapWithKeys(fn (Model $record): array => [$record->getKey() => $this->getRecordTitle($record)])
                 ->toArray();
         };
 
