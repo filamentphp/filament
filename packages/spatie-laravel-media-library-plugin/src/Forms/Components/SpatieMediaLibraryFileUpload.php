@@ -29,12 +29,18 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
     protected array | Closure | null $properties = null;
 
+    protected string|null $relationName = null;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->loadStateFromRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component, HasMedia $record): void {
             /** @var Model&HasMedia $record */
+            if ($component->relationName != null) {
+                $record = $record->{$component->relationName};
+            }
+
             $files = $record->load('media')->getMedia($component->getCollection())
                 ->when(
                     ! $component->isMultiple(),
