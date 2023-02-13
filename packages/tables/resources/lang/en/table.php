@@ -27,7 +27,8 @@ return [
 
         'bulk_select_record' => [
             'label' => 'Select / Deselect item :key for bulk actions.'
-        ]
+        ],
+
     ],
 
     'pagination' => [

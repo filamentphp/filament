@@ -12,5 +12,8 @@
         wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
         type="checkbox"
     />
-    <span class="sr-only">{{ $label }}</span>
+
+    <span class="sr-only">
+        {{ $label }}
+    </span>
 </label>
