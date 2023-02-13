@@ -225,6 +225,10 @@ return [
                             'label' => 'Create',
                         ],
 
+                        'create_another' => [
+                            'label' => 'Create & create another',
+                        ],
+
                     ],
 
                 ],
