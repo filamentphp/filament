@@ -28,7 +28,7 @@ it('can create', function () {
     $this->assertDatabaseHas(Post::class, [
         'author_id' => $newData->author->getKey(),
         'content' => $newData->content,
-        'tags' => json_encode($newData->tags),
+        'tags' => $this->castAsJson($newData->tags),
         'title' => $newData->title,
         'rating' => $newData->rating,
     ]);
