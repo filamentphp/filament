@@ -307,7 +307,7 @@
                         ])>
                             @if ($isSelectionEnabled)
                                 <x-tables::checkbox
-                                    :label="__('tables::table.fields.bulk_select_record.label')"
+                                    :label="__('tables::table.fields.bulk_select_page.label')"
                                     x-on:click="toggleSelectRecordsOnPage"
                                     x-bind:checked="
                                         let recordsOnPage = getRecordsOnPage()
@@ -626,7 +626,7 @@
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                 <x-tables::checkbox.cell>
                                     <x-tables::checkbox
-                                        :label="__('tables::table.fields.bulk_select_record.label')"
+                                        :label="__('tables::table.fields.bulk_select_page.label')"
                                         x-on:click="toggleSelectRecordsOnPage"
                                         x-bind:checked="
                                             let recordsOnPage = getRecordsOnPage()
@@ -684,7 +684,7 @@
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
                                 <x-tables::checkbox.cell>
                                     <x-tables::checkbox
-                                        :label="__('tables::table.fields.bulk_select_record.label')"
+                                        :label="__('tables::table.fields.bulk_select_page.label')"
                                         x-on:click="toggleSelectRecordsOnPage"
                                         x-bind:checked="
                                             let recordsOnPage = getRecordsOnPage()
