@@ -21,7 +21,7 @@ return [
         ],
 
         'bulk_select_record' => [
-            'label' => 'Select/Deselect item :key for bulk actions.',
+            'label' => 'Select/deselect item :key for bulk actions.',
         ],
 
         'search_query' => [
