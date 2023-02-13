@@ -14,7 +14,7 @@ protected static ?string $recordTitleAttribute = 'title';
 
 This attribute is used to retrieve the search result title for that record.
 
-**Note** you need to ensure that the resource has an edit/view page to allow the global search to link to the result, otherwise no results will be returned.
+**Note:** Your resource needs to have an Edit or View page to allow the global search results to link to a URL, otherwise no results will be returned for this resource.
 
 You may customize the title further by overriding `getGlobalSearchResultTitle()` method:
 
