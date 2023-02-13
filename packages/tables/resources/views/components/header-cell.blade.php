@@ -28,9 +28,21 @@
             },
         ])
     >
+        @if ($sortable)
+            <span class="sr-only">
+                {{ __('tables::table.sorting.fields.column.label') }}
+            </span>
+        @endif
+
         <span>
             {{ $slot }}
         </span>
+
+        @if ($sortable)
+            <span class="sr-only">
+                {{ $sortDirection === 'asc' ? __('tables::table.sorting.fields.direction.options.desc') : __('tables::table.sorting.fields.direction.options.asc') }}
+            </span>
+        @endif
 
         @if ($sortable)
             <x-dynamic-component

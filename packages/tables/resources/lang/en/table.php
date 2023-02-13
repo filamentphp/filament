@@ -21,6 +21,14 @@ return [
             'placeholder' => 'Search',
         ],
 
+        'bulk_select_page' => [
+            'label' => 'Select / Deselect all items for bulk actions.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Select / Deselect item :key for bulk actions.',
+        ],
+
     ],
 
     'pagination' => [
