@@ -524,7 +524,9 @@ Card::make()
     ->columns(2)
 ```
 
-You may use the `inlineLabel()` method to inline the form labels. This method works on all layout components.
+## Inline labels
+
+You may use the `inlineLabel()` method to make the form labels and fields in separate columns, inline with each other. It works on all layout components, each field inside will have an inline label.
 
 ```php
 use Filament\Forms\Components\Card;
