@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Concerns;
 
+use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
 use Illuminate\Support\Str;
 
@@ -64,7 +65,7 @@ trait HasStateBindingModifiers
             return $this->getContainer()->getStateBindingModifiers();
         }
 
-        if ($this->getParentComponent()) {
+        if (($this instanceof ComponentContainer) && $this->getParentComponent()) {
             return $this->getParentComponent()->getStateBindingModifiers();
         }
 

@@ -8,7 +8,7 @@
         "composer-runtime-api": "^2.1"
     },
     "require-dev": {
-        "akaunting/laravel-money": "^1.2|^2.0|^3.0",
+        "akaunting/laravel-money": "^1.2|^2.0|^3.0|^4.0",
         "blade-ui-kit/blade-heroicons": "^1.2",
         "danharrin/livewire-rate-limiting": "^0.3|^1.0",
         "doctrine/dbal": "^3.2",
@@ -22,7 +22,7 @@
         "pestphp/pest-plugin-livewire": "^1.0",
         "pestphp/pest-plugin-parallel": "^0.3",
         "phpstan/extension-installer": "^1.1",
-        "phpstan/phpstan": "1.8.11",
+        "phpstan/phpstan": "^1.8",
         "ryangjchandler/blade-capture-directive": "^0.2|^0.3",
         "spatie/invade": "^1.0",
         "spatie/laravel-medialibrary": "^9.11|^10.0",
