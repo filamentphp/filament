@@ -55,6 +55,7 @@ class InstallCommand extends Command
             [
                 'alpinejs' => '^3.10.3',
                 'autoprefixer' => '^10.4.7',
+                'postcss' => '^8.4.14',
                 'tailwindcss' => '^3.1',
             ],
             Arr::except($packages, [

@@ -57,6 +57,7 @@ class InstallCommand extends Command
                 '@tailwindcss/typography' => '^0.5.4',
                 'alpinejs' => '^3.10.3',
                 'autoprefixer' => '^10.4.7',
+                'postcss' => '^8.4.14',
                 'tailwindcss' => '^3.1',
             ],
             Arr::except($packages, [
