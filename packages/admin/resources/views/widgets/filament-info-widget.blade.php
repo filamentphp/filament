@@ -26,7 +26,7 @@
                     target="_blank"
                     rel="noopener noreferrer"
                     @class([
-                        'text-gray-600 hover:text-primary-500 focus:outline-none focus:underline',
+                        'text-gray-600 outline-none hover:text-primary-500 focus:underline',
                         'dark:text-gray-300 dark:hover:text-primary-500' => config('filament.dark_mode'),
                     ])
                 >
@@ -42,7 +42,7 @@
                     target="_blank"
                     rel="noopener noreferrer"
                     @class([
-                        'text-gray-600 hover:text-primary-500 focus:outline-none focus:underline',
+                        'text-gray-600 outline-none hover:text-primary-500 focus:underline',
                         'dark:text-gray-300 dark:hover:text-primary-500' => config('filament.dark_mode'),
                     ])
                 >

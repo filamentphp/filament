@@ -63,7 +63,7 @@
                 x-model="displayText"
                 {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
                 @class([
-                    'w-full h-full p-0 placeholder-gray-400 bg-transparent border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none',
+                    'w-full h-full p-0 placeholder-gray-400 bg-transparent border-0 outline-none focus:placeholder-gray-500 focus:ring-0',
                     'dark:bg-gray-700 dark:placeholder-gray-400' => config('forms.dark_mode'),
                     'cursor-default' => $isDisabled(),
                 ])
@@ -97,7 +97,7 @@
                         <select
                             x-model="focusedMonth"
                             @class([
-                                'grow px-1 py-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none',
+                                'grow px-1 py-0 text-lg font-medium text-gray-800 border-0 cursor-pointer outline-none focus:ring-0',
                                 'dark:bg-gray-700 dark:text-gray-200' => config('forms.dark_mode'),
                             ])
                             dusk="filament.forms.{{ $getStatePath() }}.focusedMonth"
@@ -112,7 +112,7 @@
                             inputmode="numeric"
                             x-model.debounce="focusedYear"
                             @class([
-                                'w-20 p-0 text-lg text-end border-0 focus:ring-0 focus:outline-none',
+                                'w-20 p-0 text-lg text-end border-0 outline-none focus:ring-0',
                                 'dark:bg-gray-700 dark:text-gray-200' => config('forms.dark_mode'),
                             ])
                             dusk="filament.forms.{{ $getStatePath() }}.focusedYear"
@@ -174,7 +174,7 @@
                             inputmode="numeric"
                             x-model.debounce="hour"
                             @class([
-                                'w-16 p-0 pr-1 text-xl bg-gray-50 text-center text-gray-700 border-0 focus:ring-0 focus:outline-none',
+                                'w-16 p-0 pr-1 text-xl bg-gray-50 text-center text-gray-700 border-0 outline-none focus:ring-0',
                                 'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
                             ])
                             dusk="filament.forms.{{ $getStatePath() }}.hour"
@@ -195,7 +195,7 @@
                             inputmode="numeric"
                             x-model.debounce="minute"
                             @class([
-                                'w-16 p-0 pr-1 text-xl text-center bg-gray-50 text-gray-700 border-0 focus:ring-0 focus:outline-none',
+                                'w-16 p-0 pr-1 text-xl text-center bg-gray-50 text-gray-700 border-0 outline-none focus:ring-0',
                                 'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
                             ])
                             dusk="filament.forms.{{ $getStatePath() }}.minute"
@@ -219,7 +219,7 @@
                                 x-model.debounce="second"
                                 dusk="filament.forms.{{ $getStatePath() }}.second"
                                 @class([
-                                    'w-16 p-0 pr-1 text-xl text-center bg-gray-50 text-gray-700 border-0 focus:ring-0 focus:outline-none',
+                                    'w-16 p-0 pr-1 text-xl text-center bg-gray-50 text-gray-700 border-0 outline-none focus:ring-0',
                                     'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
                                 ])
                             />

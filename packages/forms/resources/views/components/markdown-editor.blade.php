@@ -26,7 +26,7 @@
                     <markdown-toolbar
                         for="{{ $getId() }}"
                         x-bind:class="{ 'pointer-events-none opacity-70': tab === 'preview' }"
-                        class="flex items-stretch space-x-4 rtl:space-x-reverse focus:outline-none"
+                        class="flex items-stretch space-x-4 outline-none rtl:space-x-reverse"
                     >
                         @if ($hasToolbarButton(['bold', 'italic', 'strike', 'link']))
                             <div class="flex items-stretch space-x-1 rtl:space-x-reverse">
@@ -218,7 +218,7 @@
                         @if (! $isConcealed())
                             {!! $isRequired() ? 'required' : null !!}
                         @endif
-                        class="tracking-normal overflow-y-hidden font-mono block absolute bg-transparent top-0 text-sm left-0 z-1 w-full h-full min-h-full resize-none transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 caret-black whitespace-pre-wrap rtl:whitespace-normal"
+                        class="tracking-normal overflow-y-hidden font-mono block absolute bg-transparent top-0 text-sm left-0 z-1 w-full h-full min-h-full resize-none transition duration-75 rounded-lg shadow-sm outline-none focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 caret-black whitespace-pre-wrap rtl:whitespace-normal"
                         x-bind:class="{
                             'dark:caret-white dark:focus:border-primary-500': @js(config('forms.dark_mode')),
                             'border-gray-300': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),

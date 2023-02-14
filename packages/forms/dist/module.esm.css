@@ -1620,10 +1620,7 @@ trix-toolbar .filament-forms-rich-editor-component-toolbar-button.trix-active {
 
 /* packages/forms/resources/css/components/select.css */
 .choices {
-  @apply relative;
-}
-.choices:focus {
-  @apply outline-none;
+  @apply relative outline-none;
 }
 .choices:last-child {
   @apply mb-0;
@@ -1750,11 +1747,8 @@ trix-toolbar .filament-forms-rich-editor-component-toolbar-button.trix-active {
   @apply opacity-70;
 }
 .choices__button {
-  @apply cursor-pointer appearance-none border-0 bg-transparent bg-center bg-no-repeat;
+  @apply cursor-pointer appearance-none border-0 bg-transparent bg-center bg-no-repeat outline-none;
   text-indent: -9999px;
-}
-.choices__button:focus {
-  @apply outline-none;
 }
 .choices[data-type*=select-one] .choices__button {
   @apply absolute right-0 mr-9 h-4 w-4 p-0 opacity-60;

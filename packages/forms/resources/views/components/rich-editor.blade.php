@@ -48,7 +48,7 @@
                 ])
             >
                 <div class="flex justify-between space-x-4 rtl:space-x-reverse overflow-x-auto items-stretch overflow-y-hidden">
-                    <div class="flex items-stretch space-x-4 rtl:space-x-reverse focus:outline-none">
+                    <div class="flex items-stretch space-x-4 outline-none rtl:space-x-reverse">
                         @if ($hasToolbarButton(['bold', 'italic', 'strike', 'link']))
                             <div data-trix-button-group="text-tools" class="flex items-stretch space-x-1 rtl:space-x-reverse">
                                 @if ($hasToolbarButton('bold'))
@@ -297,7 +297,7 @@
                 x-ref="trix"
                 dusk="filament.forms.{{ $getStatePath() }}"
                 {{ $getExtraInputAttributeBag()->class([
-                    'bg-white block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 prose max-w-none break-words',
+                    'bg-white block w-full transition duration-75 rounded-lg shadow-sm outline-none focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 prose max-w-none break-words',
                     'dark:prose-invert dark:bg-gray-700 dark:focus:border-primary-500' => config('forms.dark_mode'),
                 ]) }}
                 x-bind:class="{
