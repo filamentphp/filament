@@ -524,6 +524,17 @@ Card::make()
     ->columns(2)
 ```
 
+You may use the `inlineLabel()` method to inline the form labels. This method works on all layout components.
+
+```php
+use Filament\Forms\Components\Card;
+
+Card::make()
+    ->schema([
+        // ...
+    ])->inlineLabel()
+```
+
 ## View
 
 Aside from [building custom layout components](#building-custom-layout-components), you may create "view" components which allow you to create custom layouts without extra PHP classes.
