@@ -16,6 +16,14 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Aseta/poista massatoiminnon valinta kaikista kohteista.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Aseta/poista massatoiminnon valinta kohteelle :key.',
+        ],
+
         'search_query' => [
             'label' => 'Etsi',
             'placeholder' => 'Etsi',
