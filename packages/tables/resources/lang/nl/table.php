@@ -35,7 +35,7 @@ return [
 
         'label' => 'Paginering navigatie',
 
-        'overview' => 'Toont :first tot :last van :total resultaten',
+        'overview' => '{1} Toont 1 resultaat|[2,*] Toont :first tot :last van :total resultaten',
 
         'fields' => [
 
