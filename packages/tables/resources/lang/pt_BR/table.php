@@ -15,7 +15,7 @@ return [
     ],
 
     'fields' => [
-        
+
         'bulk_select_page' => [
             'label' => 'Marcar/desmarcar todos os itens para ações em massa.',
         ],
