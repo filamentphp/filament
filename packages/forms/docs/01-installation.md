@@ -39,6 +39,7 @@ You're now ready to start [building forms](getting-started)!
 The package uses the following dependencies:
 
 - [Alpine.js](https://alpinejs.dev)
+- [PostCSS](https://postcss.org)
 - [Tailwind CSS](https://tailwindcss.com)
 - [Tailwind CSS Forms plugin](https://github.com/tailwindlabs/tailwindcss-forms)
 - [Tailwind CSS Typography plugin](https://tailwindcss.com/docs/typography-plugin)
@@ -46,7 +47,7 @@ The package uses the following dependencies:
 You may install these through NPM:
 
 ```bash
-npm install alpinejs tailwindcss @tailwindcss/forms @tailwindcss/typography --save-dev
+npm install alpinejs postcss tailwindcss @tailwindcss/forms @tailwindcss/typography --save-dev
 ```
 
 ### Configuring Tailwind CSS
