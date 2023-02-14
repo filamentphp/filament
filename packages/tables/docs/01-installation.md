@@ -46,7 +46,7 @@ The package uses the following dependencies:
 You may install these through NPM:
 
 ```bash
-npm install alpinejs @alpinejs/focus tailwindcss @tailwindcss/forms @tailwindcss/typography --save-dev
+npm install alpinejs @alpinejs/focus postcss tailwindcss @tailwindcss/forms @tailwindcss/typography --save-dev
 ```
 
 ### Configuring Tailwind CSS
