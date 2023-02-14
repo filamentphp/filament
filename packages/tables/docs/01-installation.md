@@ -38,6 +38,7 @@ The package uses the following dependencies:
 
 - [Alpine.js](https://alpinejs.dev)
 - [Alpine.js Focus Plugin](https://alpinejs.dev/plugins/focus)
+- [PostCSS](https://postcss.org)
 - [Tailwind CSS](https://tailwindcss.com)
 - [Tailwind CSS Forms plugin](https://github.com/tailwindlabs/tailwindcss-forms)
 - [Tailwind CSS Typography plugin](https://tailwindcss.com/docs/typography-plugin)
