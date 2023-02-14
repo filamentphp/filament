@@ -35,7 +35,7 @@ return [
 
         'label' => 'Paginação',
 
-        'overview' => 'Exibindo :first a :last de :total resultados',
+        'overview' => '{1} Exibindo 1 resultado|[2,*] Exibindo :first a :last de :total resultados',
 
         'fields' => [
 
