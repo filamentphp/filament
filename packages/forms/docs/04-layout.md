@@ -532,7 +532,8 @@ use Filament\Forms\Components\Card;
 Card::make()
     ->schema([
         // ...
-    ])->inlineLabel()
+    ])
+    ->inlineLabel()
 ```
 
 ## View
