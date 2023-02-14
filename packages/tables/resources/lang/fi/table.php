@@ -35,7 +35,7 @@ return [
 
         'label' => 'Sivujen navigointi',
 
-        'overview' => 'Näytetään :first - :last / :total tulosta',
+        'overview' => '{1} Näytetään 1 tulos|[2,*] Näytetään :first - :last / :total tulosta',
 
         'fields' => [
 
