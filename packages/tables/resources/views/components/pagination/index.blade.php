@@ -62,11 +62,15 @@
                     'pl-2 text-sm font-medium',
                     'dark:text-white' => config('tables.dark_mode'),
                 ])>
-                    {{ __('tables::table.pagination.overview', [
-                        'first' => $paginator->firstItem(),
-                        'last' => $paginator->lastItem(),
-                        'total' => $paginator->total(),
-                    ]) }}
+                    {{ trans_choice(
+                        'tables::table.pagination.overview',
+                        $paginator->total(),
+                        [
+                            'first' => $paginator->firstItem(),
+                            'last' => $paginator->lastItem(),
+                            'total' => $paginator->total(),
+                        ],
+                    ) }}
                 </div>
             @endif
         </div>
