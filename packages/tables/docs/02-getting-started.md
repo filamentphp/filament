@@ -318,7 +318,6 @@ Alternatively, you may configure table rows to trigger an action instead of open
 use Closure;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\DeleteAction;
-use Illuminate\Database\Eloquent\Model;
 
 protected function getTableRecordActionUsing(): ?Closure
 {
