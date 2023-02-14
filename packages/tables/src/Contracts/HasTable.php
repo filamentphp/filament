@@ -98,4 +98,8 @@ interface HasTable extends HasForms
     public function toggleTableReordering(): void;
 
     public function isTableReordering(): bool;
+
+    public function isTableLoadingDeferred(): bool;
+
+    public function canTableDataBeLoaded(): bool;
 }

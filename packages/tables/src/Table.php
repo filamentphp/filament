@@ -443,8 +443,13 @@ class Table extends ViewComponent
         return invade($livewire)->isTableStriped();
     }
 
-    public function isLoadingDeferred(): bool
+    public function isTableLoadingDeferred(): bool
     {
-        return $this->getLivewire()->isLoadingDeferred();
+        return $this->getLivewire()->isTableLoadingDeferred();
+    }
+
+    public function canTableDataBeLoaded(): bool
+    {
+        return $this->getLivewire()->canTableDataBeLoaded();
     }
 }

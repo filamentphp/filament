@@ -27,14 +27,15 @@
     $isSelectionEnabled = $isSelectionEnabled();
     $recordCheckboxPosition = $getRecordCheckboxPosition();
     $isStriped = $isStriped();
-    $isDeferingLoading = $isLoadingDeferred();
+    $isDeferringLoading = $isTableLoadingDeferred();
+    $isTableLoaded = $canTableDataBeLoaded();
     $hasFilters = $isFilterable();
     $hasFiltersPopover = $hasFilters && ($getFiltersLayout() === FiltersLayout::Popover);
     $hasFiltersAboveContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::AboveContent);
     $hasFiltersAfterContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::BelowContent);
     $isColumnToggleFormVisible = $hasToggleableColumns();
-    $records = $getRecords();
-
+    $records = [];
+    if ($isTableLoaded) $records = $getRecords();
     $columnsCount = count($columns);
     if (count($actions) && (! $isReordering)) $columnsCount++;
     if ($isSelectionEnabled || $isReordering) $columnsCount++;
@@ -161,8 +162,8 @@
 
     }"
     class="filament-tables-component"
-    @if ($isDeferingLoading)
-    wire:init="allowLoadingData"
+    @if ($isDeferringLoading)
+    wire:init="allowTableLoadingData"
     @endif
 >
     <x-tables::container>

@@ -350,14 +350,9 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return $this->getResourceTable()->getBulkActions();
     }
 
-    public function isLoadingDeferred(): bool
+    public function isTableLoadingDeferred(): bool
     {
         return $this->getResourceTable()->getDeferLoading();
-    }
-
-    public function allowLoadingData(): void
-    {
-        $this->isReadyToLoadData();
     }
 
     protected function getTableColumns(): array

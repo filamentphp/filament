@@ -55,10 +55,6 @@ trait HasRecords
             return $this->records;
         }
 
-        if ($this->isLoadingDeferred() && ! $this->dataReadyToLoad) {
-            return $this->records = new Collection();
-        }
-
         $query = $this->getFilteredTableQuery();
 
         $this->applySortingToTableQuery($query);
