@@ -16,6 +16,14 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Marcar/desmarcar todos os itens para ações em massa.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Marcar/desmarcar o item :key para ações em massa.',
+        ],
+
         'search' => [
             'label' => 'Procurar',
             'placeholder' => 'Procurar',
