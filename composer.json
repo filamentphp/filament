@@ -26,7 +26,7 @@
         "pestphp/pest-plugin-parallel": "^0.3",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "1.8.8",
-        "ryangjchandler/blade-capture-directive": "^0.3",
+        "ryangjchandler/blade-capture-directive": "^0.2|^0.3",
         "spatie/color": "^1.5",
         "spatie/invade": "^1.0",
         "spatie/laravel-medialibrary": "^9.11|^10.0",
