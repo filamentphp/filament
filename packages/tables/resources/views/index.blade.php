@@ -305,9 +305,9 @@
         >
             @if ($content || $hasColumnsLayout)
                 @if (is_null($records))
-                <div class="flex items-center justify-center p-4">
-                    <x-filament-support::loading-indicator class="w-5 h-5" />
-                </div>
+                    <div class="flex items-center justify-center p-4">
+                        <x-filament-support::loading-indicator class="w-5 h-5" />
+                    </div>
                 @elseif (count($records))
                     @if (($content || $hasColumnsLayout) && (! $isReordering))
                         <div @class([
@@ -759,7 +759,7 @@
                     <tr>
                         <td colspan="{{ $columnsCount }}">
                             <div class="flex items-center justify-center w-full p-4">
-                            <x-filament-support::loading-indicator class="w-5 h-5"/>
+                                <x-filament-support::loading-indicator class="w-5 h-5"/>
                             </div>
                         </td>
                     </tr>
