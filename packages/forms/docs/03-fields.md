@@ -673,7 +673,7 @@ Select::make('authorId')
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
 
-For more information on how colsure agruments work inside of Filament read [using closure customization](advanced#using-closure-customization).
+For more information on how closure arguments work in Filament, read [using closure customization](advanced#using-closure-customization).
 
 #### Handling `MorphTo` relationships
 
