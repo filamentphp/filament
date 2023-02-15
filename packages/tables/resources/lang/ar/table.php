@@ -16,6 +16,14 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'تحديد / إلغاء تحديد كافة العناصر للإجراءات الجماعية.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'تحديد / إلغاء تحديد العنصر :key للإجراءات الجماعية',
+        ],
+
         'search_query' => [
             'label' => 'بحث',
             'placeholder' => 'بحث',
