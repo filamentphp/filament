@@ -149,7 +149,7 @@ return [
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Välj alla :count',
+                'label' => 'Markera alla :count',
             ],
 
             'deselect_all' => [
