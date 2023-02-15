@@ -21,7 +21,7 @@ return [
         ],
 
         'bulk_select_record' => [
-            'label' => 'Sélectionner/désélectionner l\'élément :key pour les actions groupées.',
+            'label' => "Sélectionner/désélectionner l'élément :key pour les actions groupées.",
         ],
 
         'search_query' => [
