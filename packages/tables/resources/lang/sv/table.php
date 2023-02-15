@@ -16,6 +16,14 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Markera/avmarkera alla rader för massåtgärder.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Markera/avmarkera rad :key för massåtgärder.',
+        ],
+
         'search_query' => [
             'label' => 'Sök',
             'placeholder' => 'Sök',
