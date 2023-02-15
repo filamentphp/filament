@@ -28,6 +28,12 @@
             },
         ])
     >
+        @if ($sortable)
+            <span class="sr-only">
+                {{ __('filament-tables::table.sorting.fields.column.label') }}
+            </span>
+        @endif
+
         <span>
             {{ $slot }}
         </span>
@@ -43,6 +49,10 @@
                     'opacity-25' => ! $activelySorted,
                 ]"
             />
+
+            <span class="sr-only">
+                {{ $sortDirection === 'asc' ? __('filament-tables::table.sorting.fields.direction.options.desc') : __('filament-tables::table.sorting.fields.direction.options.asc') }}
+            </span>
         @endif
     </button>
 </th>

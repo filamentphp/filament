@@ -38,7 +38,7 @@ class TestsActions
             $this->assertSet('mountedAction', $name);
 
             $this->assertDispatchedBrowserEvent('open-modal', [
-                'id' => 'action',
+                'id' => "{$this->instance()->id}-action",
             ]);
 
             return $this;
@@ -100,7 +100,7 @@ class TestsActions
 
             if ($this->get('mountedAction') !== $action->getName()) {
                 $this->assertDispatchedBrowserEvent('close-modal', [
-                    'id' => 'action',
+                    'id' => "{$this->instance()->id}-action",
                 ]);
             }
 

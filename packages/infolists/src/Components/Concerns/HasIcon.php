@@ -53,9 +53,11 @@ trait HasIcon
         return $this;
     }
 
-    public function getIcon(): ?string
+    public function getIcon(mixed $state): ?string
     {
-        $icon = $this->evaluate($this->icon);
+        $icon = $this->evaluate($this->icon, [
+            'state' => $state,
+        ]);
 
         $enum = $icon ?? $this->enum;
         if (
@@ -65,7 +67,7 @@ trait HasIcon
             is_a($enum, BackedEnum::class, allow_string: true) &&
             is_a($enum, IconInterface::class, allow_string: true)
         ) {
-            return $enum::tryFrom($this->getState())?->getIcon();
+            return $enum::tryFrom($state)?->getIcon();
         }
 
         return $icon;

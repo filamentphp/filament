@@ -14,6 +14,15 @@ trait HasState
 
     protected ?string $statePath = null;
 
+    protected string | Closure | null $separator = null;
+
+    public function getStateUsing(?Closure $callback): static
+    {
+        $this->getStateUsing = $callback;
+
+        return $this;
+    }
+
     public function default(mixed $state): static
     {
         $this->defaultState = $state;
@@ -26,9 +35,38 @@ trait HasState
         return $this->evaluate($this->defaultState, exceptParameters: ['state']);
     }
 
-    public function getStateUsing(?Closure $callback): static
+    public function getState(): mixed
     {
-        $this->getStateUsing = $callback;
+        $state = $this->getStateUsing ? $this->evaluate(
+            $this->getStateUsing,
+            exceptParameters: ['state'],
+        ) : data_get($this->getContainer()->getState(), $this->getStatePath());
+
+        if (
+            interface_exists(BackedEnum::class) &&
+            ($state instanceof BackedEnum) &&
+            property_exists($state, 'value')
+        ) {
+            $state = $state->value;
+        }
+
+        if (is_string($state) && ($separator = $this->getSeparator())) {
+            $state = explode($separator, $state);
+            $state = (count($state) === 1 && blank($state[0])) ?
+                [] :
+                $state;
+        }
+
+        if ($state === null) {
+            $state = value($this->getDefaultState());
+        }
+
+        return $state;
+    }
+
+    public function separator(string | Closure | null $separator = ','): static
+    {
+        $this->separator = $separator;
 
         return $this;
     }
@@ -38,6 +76,16 @@ trait HasState
         $this->statePath = $path;
 
         return $this;
+    }
+
+    public function getSeparator(): ?string
+    {
+        return $this->evaluate($this->separator);
+    }
+
+    public function getRecord(): ?Model
+    {
+        return $this->getContainer()->getRecord();
     }
 
     public function hasStatePath(): bool
@@ -58,44 +106,5 @@ trait HasState
         }
 
         return implode('.', $pathComponents);
-    }
-
-    public function getState(): mixed
-    {
-        $state = $this->getStateUsing ? $this->evaluate(
-            $this->getStateUsing,
-            exceptParameters: ['state'],
-        ) : data_get($this->getContainer()->getState(), $this->getStatePath());
-
-        if (
-            interface_exists(BackedEnum::class) &&
-            ($state instanceof BackedEnum) &&
-            property_exists($state, 'value')
-        ) {
-            $state = $state->value;
-        }
-
-        if ($state === null) {
-            $state = value($this->getDefaultState());
-        }
-
-        if (is_array($state)) {
-            $state = $this->mutateArrayState($state);
-        }
-
-        return $state;
-    }
-
-    /**
-     * @param  array<array-key>  $state
-     */
-    protected function mutateArrayState(array $state): mixed
-    {
-        return $state;
-    }
-
-    public function getRecord(): ?Model
-    {
-        return $this->getContainer()->getRecord();
     }
 }

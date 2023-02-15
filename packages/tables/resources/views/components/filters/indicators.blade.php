@@ -40,7 +40,7 @@
             @endforeach
         </div>
 
-        <div class="flex-shrink-0">
+        <div class="shrink-0">
             <button
                 wire:click="removeTableFilters"
                 type="button"

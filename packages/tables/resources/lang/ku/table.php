@@ -4,8 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'وە :count زیاتر',
+        'text' => [
+            'more_list_items' => 'وە :count زیاتر',
         ],
 
         'messages' => [

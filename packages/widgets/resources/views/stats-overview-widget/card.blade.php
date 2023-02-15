@@ -76,6 +76,10 @@
                 values: @js(array_values($chart)),
             })"
             wire:ignore
+            x-on:dark-mode-toggled.window="
+                chart.destroy()
+                initChart()
+            "
             class="absolute bottom-0 inset-x-0 rounded-b-xl overflow-hidden"
         >
             <canvas

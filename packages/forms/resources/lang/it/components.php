@@ -16,11 +16,11 @@ return [
                 'label' => 'Elimina',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Muovi giù',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Muovi su',
             ],
 
@@ -107,11 +107,11 @@ return [
                 'label' => 'Clona',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Muovi giù',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Muovi su',
             ],
 

@@ -213,7 +213,7 @@ class Table extends ViewComponent
 
     protected string | Closure | null $recordUrl = null;
 
-    protected Relation | Closure | null $relationship = null;
+    protected ?Closure $getRelationshipUsing = null;
 
     protected string | Closure | null $reorderColumn = null;
 
@@ -788,9 +788,9 @@ class Table extends ViewComponent
         return $this;
     }
 
-    public function relationship(Relation | Closure | null $relationship): static
+    public function relationship(?Closure $relationship): static
     {
-        $this->relationship = $relationship;
+        $this->getRelationshipUsing = $relationship;
 
         return $this;
     }
@@ -1427,7 +1427,7 @@ class Table extends ViewComponent
 
     public function getRelationship(): Relation | Builder | null
     {
-        return $this->evaluate($this->relationship);
+        return $this->evaluate($this->getRelationshipUsing);
     }
 
     public function getInverseRelationship(): ?string

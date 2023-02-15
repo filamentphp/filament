@@ -4,8 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'and :count more',
+        'text' => [
+            'more_list_items' => 'and :count more',
         ],
 
         'messages' => [
@@ -15,6 +15,14 @@ return [
     ],
 
     'fields' => [
+
+        'bulk_select_page' => [
+            'label' => 'Select/deselect all items for bulk actions.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Select/deselect item :key for bulk actions.',
+        ],
 
         'search' => [
             'label' => 'Search',
@@ -27,7 +35,7 @@ return [
 
         'label' => 'Pagination Navigation',
 
-        'overview' => 'Showing :first to :last of :total results',
+        'overview' => '{1} Showing 1 result|[2,*] Showing :first to :last of :total results',
 
         'fields' => [
 

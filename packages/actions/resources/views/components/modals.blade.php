@@ -5,7 +5,7 @@
         @endphp
 
         <x-filament::modal
-            id="action"
+            :id="$this->id . '-action'"
             :wire:key="$action ? $this->id . '.actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
             :width="$action?->getModalWidth()"

@@ -24,11 +24,11 @@ return [
                 'label' => 'העבר',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'הזז מטה',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'הזז מעלה',
             ],
 
@@ -119,11 +119,11 @@ return [
                 'label' => 'העבר',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'הזז מטה',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'הזז מעלה',
             ],
 

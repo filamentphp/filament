@@ -5,6 +5,7 @@ namespace Filament\Tables\Columns;
 use BackedEnum;
 use Closure;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
+use Filament\Tables\Contracts\HasTable;
 use Illuminate\Contracts\Support\Arrayable;
 use stdClass;
 
@@ -27,6 +28,42 @@ class TextColumn extends Column
     protected bool | Closure $canWrap = false;
 
     protected ?string $enum = null;
+
+    protected bool | Closure $isBadge = false;
+
+    protected bool | Closure $isBulleted = false;
+
+    protected bool | Closure $isListWithLineBreaks = false;
+
+    protected int | Closure | null $listLimit = null;
+
+    public function badge(bool | Closure $condition = true): static
+    {
+        $this->isBadge = $condition;
+
+        return $this;
+    }
+
+    public function bulleted(bool | Closure $condition = true): static
+    {
+        $this->isBulleted = $condition;
+
+        return $this;
+    }
+
+    public function listWithLineBreaks(bool | Closure $condition = true): static
+    {
+        $this->isListWithLineBreaks = $condition;
+
+        return $this;
+    }
+
+    public function limitList(int | Closure | null $limit = 3): static
+    {
+        $this->listLimit = $limit;
+
+        return $this;
+    }
 
     /**
      * @param  string | array<scalar, scalar> | Arrayable  $enum
@@ -56,8 +93,10 @@ class TextColumn extends Column
 
     public function rowIndex(bool $isFromZero = false): static
     {
-        $this->getStateUsing(static function (stdClass $rowLoop) use ($isFromZero): string {
-            return (string) $rowLoop->{$isFromZero ? 'index' : 'iteration'};
+        $this->getStateUsing(static function (HasTable $livewire, stdClass $rowLoop) use ($isFromZero): string {
+            $rowIndex = $rowLoop->{$isFromZero ? 'index' : 'iteration'};
+
+            return (string) ($rowIndex + ($livewire->getTableRecordsPerPage() * ($livewire->getTablePage() - 1)));
         });
 
         return $this;
@@ -75,11 +114,23 @@ class TextColumn extends Column
         return (bool) $this->evaluate($this->canWrap);
     }
 
-    /**
-     * @param  array<scalar>  $state
-     */
-    protected function mutateArrayState(array $state): string
+    public function isBadge(): bool
     {
-        return implode(', ', $state);
+        return (bool) $this->evaluate($this->isBadge);
+    }
+
+    public function isBulleted(): bool
+    {
+        return (bool) $this->evaluate($this->isBulleted);
+    }
+
+    public function isListWithLineBreaks(): bool
+    {
+        return $this->evaluate($this->isListWithLineBreaks) || $this->isBulleted();
+    }
+
+    public function getListLimit(): ?int
+    {
+        return $this->evaluate($this->listLimit);
     }
 }

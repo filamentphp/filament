@@ -16,7 +16,7 @@ return [
                 'label' => 'Добавить к :label',
             ],
 
-            'createbetween' => [
+            'add_between' => [
                 'label' => 'Вставить',
             ],
 
@@ -28,11 +28,11 @@ return [
                 'label' => 'Переместить',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Переместить вниз',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Переместить вверх',
             ],
 
@@ -142,11 +142,11 @@ return [
                 'label' => 'Переместить',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Переместить вниз',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Переместить вверх',
             ],
 

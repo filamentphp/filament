@@ -24,11 +24,11 @@ return [
                 'label' => 'Přesunout',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Posunout dolů',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Posunout nahoru',
             ],
 
@@ -123,11 +123,11 @@ return [
                 'label' => 'Přesunout',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Posunout dolů',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Posunout nahoru',
             ],
 

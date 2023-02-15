@@ -44,9 +44,11 @@ trait HasColor
         return $this;
     }
 
-    public function getColor(): ?string
+    public function getColor(mixed $state): ?string
     {
-        $color = $this->evaluate($this->color);
+        $color = $this->evaluate($this->color, [
+            'state' => $state,
+        ]);
 
         $enum = $color ?? $this->enum;
         if (

@@ -84,7 +84,7 @@
             @endif
         </div>
 
-        <div class="flex items-center flex-shrink-0">
+        <div class="flex items-center shrink-0">
             @livewire('filament.core.global-search')
 
             @livewire('filament.core.notifications')

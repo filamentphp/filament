@@ -25,13 +25,11 @@ trait CanSelectRecords
     {
         $query = $this->getFilteredTableQuery();
 
-        if ($this->getTable()->selectsCurrentPageOnly()) {
-            return $this->getTableRecords()
-                ->map(fn ($key): string => (string) $key->getKey())
-                ->all();
-        }
+        $records = $this->getTable()->selectsCurrentPageOnly() ?
+            $this->getTableRecords() :
+            $query;
 
-        return $query
+        return $records
             ->pluck($query->getModel()->getQualifiedKeyName())
             ->map(fn ($key): string => (string) $key)
             ->all();

@@ -9,7 +9,7 @@
     </div>
 
     <div class="max-w-md space-y-1">
-        <h2 class="text-lg font-bold tracking-tight dark:text-white">
+        <h2 class="text-lg font-medium tracking-tight dark:text-white">
             {{ __('filament-notifications::database.modal.empty.heading') }}
         </h2>
 

@@ -4,8 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'ja :count lisää',
+        'text' => [
+            'more_list_items' => 'ja :count lisää',
         ],
 
         'messages' => [
@@ -15,6 +15,14 @@ return [
     ],
 
     'fields' => [
+
+        'bulk_select_page' => [
+            'label' => 'Aseta/poista massatoiminnon valinta kaikista kohteista.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Aseta/poista massatoiminnon valinta kohteelle :key.',
+        ],
 
         'search_query' => [
             'label' => 'Etsi',

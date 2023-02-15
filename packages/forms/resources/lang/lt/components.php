@@ -24,11 +24,11 @@ return [
                 'label' => 'Pastumti',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Žemyn',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Aukštyn',
             ],
 
@@ -119,11 +119,11 @@ return [
                 'label' => 'Pastumti',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Žemyn',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Aukštyn',
             ],
 

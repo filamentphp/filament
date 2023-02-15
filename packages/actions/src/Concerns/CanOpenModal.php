@@ -279,7 +279,7 @@ trait CanOpenModal
     /**
      * @param  array<string, mixed> | null  $arguments
      */
-    protected function makeExtraModalAction(string $name, ?array $arguments = null): ModalAction
+    public function makeExtraModalAction(string $name, ?array $arguments = null): ModalAction
     {
         return static::makeModalAction($name)
             ->action($this->getLivewireCallActionName(), $arguments)

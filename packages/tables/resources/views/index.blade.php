@@ -27,7 +27,10 @@
     $headerActionsPosition = $getHeaderActionsPosition();
     $heading = $getHeading();
     $group = $getGrouping();
-    $groupedBulkActions = $getGroupedBulkActions();
+    $groupedBulkActions = array_filter(
+        $getGroupedBulkActions(),
+        fn (\Filament\Tables\Actions\BulkAction | \Filament\Tables\Actions\ActionGroup $action): bool => $action->isVisible(),
+    );
     $groups = $getGroups();
     $description = $getDescription();
     $isGroupsOnly = $isGroupsOnly() && $group;
@@ -243,7 +246,7 @@
                     'gap-3': @js($isReorderable) || @js(count($groups)) || (selectedRecords.length && @js(count($groupedBulkActions))),
                 }"
             >
-                <div class="flex-shrink-0 flex items-center sm:gap-3">
+                <div class="shrink-0 flex items-center sm:gap-3">
                     @if ($isReorderable)
                         <x-filament-tables::reorder.trigger
                             :enabled="$isReordering"
@@ -338,6 +341,7 @@
                         <div class="bg-gray-500/5 flex items-center gap-4 px-4 border-b dark:border-gray-700">
                             @if ($isSelectionEnabled)
                                 <x-filament-tables::checkbox
+                                    :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                     x-on:click="toggleSelectRecordsOnPage"
                                     x-bind:checked="
                                         let recordsOnPage = getRecordsOnPage()
@@ -551,13 +555,14 @@
 
                                             @if ($isSelectionEnabled && $isRecordSelectable($record))
                                                 <x-filament-tables::checkbox
+                                                    :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                                     x-model="selectedRecords"
                                                     :value="$recordKey"
-                                                    @class([
+                                                    :class="\Illuminate\Support\Arr::toCssClasses([
                                                         'filament-tables-record-checkbox absolute top-3 right-3 rtl:right-auto rtl:left-3',
                                                         'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
                                                         'hidden' => $isReordering,
-                                                    ])
+                                                    ])"
                                                 />
                                             @endif
 
@@ -737,6 +742,7 @@
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                 <x-filament-tables::checkbox.cell>
                                     <x-filament-tables::checkbox
+                                        :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                         x-on:click="toggleSelectRecordsOnPage"
                                         x-bind:checked="
                                             let recordsOnPage = getRecordsOnPage()
@@ -801,6 +807,7 @@
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
                                 <x-filament-tables::checkbox.cell>
                                     <x-filament-tables::checkbox
+                                        :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                         x-on:click="toggleSelectRecordsOnPage"
                                         x-bind:checked="
                                             let recordsOnPage = getRecordsOnPage()
@@ -996,6 +1003,7 @@
                                         ])>
                                             @if ($isRecordSelectable($record))
                                                 <x-filament-tables::checkbox
+                                                    :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                                     x-model="selectedRecords"
                                                     :value="$recordKey"
                                                     class="filament-tables-record-checkbox"
@@ -1057,9 +1065,10 @@
                                         ])>
                                             @if ($isRecordSelectable($record))
                                                 <x-filament-tables::checkbox
-                                                        x-model="selectedRecords"
-                                                        :value="$recordKey"
-                                                        class="filament-tables-record-checkbox"
+                                                    :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
+                                                    x-model="selectedRecords"
+                                                    :value="$recordKey"
+                                                    class="filament-tables-record-checkbox"
                                                 />
                                             @endif
                                         </x-filament-tables::checkbox.cell>
@@ -1133,8 +1142,10 @@
                             <tr>
                                 <td colspan="{{ $columnsCount }}">
                                     <div class="flex items-center justify-center w-full p-4">
-                                        <x-filament-tables::empty-state :icon="$getEmptyStateIcon()"
-                                                                        :actions="$getEmptyStateActions()">
+                                        <x-filament-tables::empty-state
+                                            :icon="$getEmptyStateIcon()"
+                                            :actions="$getEmptyStateActions()"
+                                        >
                                             <x-slot name="heading">
                                                 {{ $getEmptyStateHeading() }}
                                             </x-slot>

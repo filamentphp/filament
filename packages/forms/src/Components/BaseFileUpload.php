@@ -505,9 +505,10 @@ class BaseFileUpload extends Field
             $name = $this->getName();
 
             $validator = Validator::make(
-                data: [$name => $files],
-                rules: ["{$name}.*" => array_merge(['file'], parent::getValidationRules())],
-                customAttributes: ["{$name}.*" => $this->getValidationAttribute()],
+                [$name => $files],
+                ["{$name}.*" => array_merge(['file'], parent::getValidationRules())],
+                [],
+                ["{$name}.*" => $this->getValidationAttribute()],
             );
 
             if (! $validator->fails()) {

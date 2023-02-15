@@ -16,7 +16,7 @@ return [
                 'label' => 'Tambahkan :label',
             ],
 
-            'createbetween' => [
+            'add_between' => [
                 'label' => 'Sisipkan',
             ],
 
@@ -28,11 +28,11 @@ return [
                 'label' => 'Pindahkan',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Turunkan',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Naikkan',
             ],
 
@@ -143,11 +143,11 @@ return [
                 'label' => 'Pindahkan',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Turunkan',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Naikkan',
             ],
 

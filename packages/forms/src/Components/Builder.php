@@ -27,6 +27,8 @@ class Builder extends Field implements Contracts\CanConcealComponents
 
     protected bool | Closure $isReorderable = true;
 
+    protected bool | Closure $isReorderableWithButtons = false;
+
     protected bool | Closure $isAddable = true;
 
     protected bool | Closure $isDeletable = true;
@@ -298,6 +300,13 @@ class Builder extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
+    public function reorderableWithButtons(bool | Closure $condition = true): static
+    {
+        $this->isReorderableWithButtons = $condition;
+
+        return $this;
+    }
+
     /**
      * @deprecated Use `blockLabels()` instead.
      */
@@ -395,6 +404,11 @@ class Builder extends Field implements Contracts\CanConcealComponents
         }
 
         return $this->evaluate($this->isReorderable);
+    }
+
+    public function isReorderableWithButtons(): bool
+    {
+        return $this->evaluate($this->isReorderableWithButtons) && $this->isReorderable();
     }
 
     public function isAddable(): bool

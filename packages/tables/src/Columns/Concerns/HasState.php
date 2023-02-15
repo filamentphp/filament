@@ -12,6 +12,8 @@ trait HasState
 
     protected ?Closure $getStateUsing = null;
 
+    protected string | Closure | null $separator = null;
+
     public function getStateUsing(?Closure $callback): static
     {
         $this->getStateUsing = $callback;
@@ -49,12 +51,15 @@ trait HasState
             $state = $state->value;
         }
 
-        if ($state === null) {
-            $state = value($this->getDefaultState());
+        if (is_string($state) && ($separator = $this->getSeparator())) {
+            $state = explode($separator, $state);
+            $state = (count($state) === 1 && blank($state[0])) ?
+                [] :
+                $state;
         }
 
-        if (is_array($state)) {
-            $state = $this->mutateArrayState($state);
+        if ($state === null) {
+            $state = value($this->getDefaultState());
         }
 
         return $state;
@@ -92,11 +97,15 @@ trait HasState
         return $state->all();
     }
 
-    /**
-     * @param  array<array-key>  $state
-     */
-    protected function mutateArrayState(array $state): mixed
+    public function separator(string | Closure | null $separator = ','): static
     {
-        return $state;
+        $this->separator = $separator;
+
+        return $this;
+    }
+
+    public function getSeparator(): ?string
+    {
+        return $this->evaluate($this->separator);
     }
 }

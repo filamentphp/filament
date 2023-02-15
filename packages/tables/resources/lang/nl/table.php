@@ -4,8 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'en :count meer',
+        'text' => [
+            'more_list_items' => 'en :count meer',
         ],
 
         'messages' => [
@@ -15,6 +15,14 @@ return [
     ],
 
     'fields' => [
+
+        'bulk_select_page' => [
+            'label' => 'Alle items selecteren/deselecteren voor bulkacties.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Item :key selecteren/deselecteren voor bulkacties.',
+        ],
 
         'search' => [
             'label' => 'Zoeken',
@@ -27,7 +35,7 @@ return [
 
         'label' => 'Paginering navigatie',
 
-        'overview' => 'Toont :first tot :last van :total resultaten',
+        'overview' => '{1} Toont 1 resultaat|[2,*] Toont :first tot :last van :total resultaten',
 
         'fields' => [
 

@@ -16,7 +16,7 @@ return [
                 'label' => 'Adăugare la :label',
             ],
 
-            'createbetween' => [
+            'add_between' => [
                 'label' => 'Inserează',
             ],
 
@@ -28,11 +28,11 @@ return [
                 'label' => 'Mutare',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Mutare în jos',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Mutare în sus',
             ],
 
@@ -143,11 +143,11 @@ return [
                 'label' => 'Mutare',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Mutare în jos',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Mutare în sus',
             ],
 

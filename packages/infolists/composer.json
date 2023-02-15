@@ -11,12 +11,12 @@
         "php": "^8.0",
         "blade-ui-kit/blade-heroicons": "^2.0",
         "filament/support": "self.version",
-        "illuminate/console": "^9.0",
-        "illuminate/contracts": "^9.0",
-        "illuminate/database": "^9.0",
-        "illuminate/filesystem": "^9.0",
-        "illuminate/support": "^9.0",
-        "illuminate/view": "^9.0",
+        "illuminate/console": "^9.0|^10.0",
+        "illuminate/contracts": "^9.0|^10.0",
+        "illuminate/database": "^9.0|^10.0",
+        "illuminate/filesystem": "^9.0|^10.0",
+        "illuminate/support": "^9.0|^10.0",
+        "illuminate/view": "^9.0|^10.0",
         "spatie/laravel-package-tools": "^1.9"
     },
     "autoload": {

@@ -16,11 +16,11 @@ return [
                 'label' => '刪除',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => '上移',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => '下移',
             ],
 
@@ -103,11 +103,11 @@ return [
                 'label' => '刪除',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => '下移',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => '上移',
             ],
 

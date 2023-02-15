@@ -16,7 +16,7 @@ return [
                 'label' => 'Izveidot :label',
             ],
 
-            'createbetween' => [
+            'add_between' => [
                 'label' => 'Ievietot',
             ],
 
@@ -28,11 +28,11 @@ return [
                 'label' => 'Pārkārtot',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Pārvietot uz leju',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Pārvietot uz augšu',
             ],
 
@@ -143,11 +143,11 @@ return [
                 'label' => 'Pārvietot',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Pārvietot uz leju',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Pārvietot uz augšu',
             ],
 
