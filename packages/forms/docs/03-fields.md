@@ -673,6 +673,8 @@ Select::make('authorId')
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
 
+For more information on how colsure agruments work inside of Filament read [using closure customization](advanced#using-closure-customization).
+
 #### Handling `MorphTo` relationships
 
 `MorphTo` relationships are special, since they give the user the ability to select records from a range of different models. Because of this, we have a dedicated `MorphToSelect` component which is not actually a select field, rather 2 select fields inside a fieldset. The first select field allows you to select the type, and the second allows you to select the record of that type.
