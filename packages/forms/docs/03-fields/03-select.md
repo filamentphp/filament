@@ -262,4 +262,4 @@ MorphToSelect::make('commentable')
 
 > Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `allowHtml()`, and `optionsLimit()`.
 
-For more information on how closure arguments work inside of Filament read [using closure customization](advanced#using-closure-customization).
+For more information on how closure arguments work in Filament, read [using closure customization](advanced#using-closure-customization).
