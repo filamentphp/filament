@@ -16,6 +16,14 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Sélectionner/déselectionner tous les éléments pour les actions groupées.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => "Sélectionner/désélectionner l'élément :key pour les actions groupées.",
+        ],
+
         'search_query' => [
             'label' => 'Rechercher',
             'placeholder' => 'Rechercher',
@@ -27,7 +35,7 @@ return [
 
         'label' => 'Navigation par pagination',
 
-        'overview' => 'Affichage de :first à :last sur :total éléments',
+        'overview' => '{1} Affichage de 1 résultat|[2,*] Affichage de :first à :last sur :total résultats',
 
         'fields' => [
 
