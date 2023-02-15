@@ -139,7 +139,7 @@ return [
 
     ],
 
-    'reorder_indicator' => 'Faites glisser et déposez les enregistrements dans l\'ordre.',
+    'reorder_indicator' => "Faites glisser et déposez les enregistrements dans l'ordre.",
 
     'selection_indicator' => [
 
