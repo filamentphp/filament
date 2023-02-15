@@ -34,7 +34,7 @@
     $hasFiltersAboveContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::AboveContent);
     $hasFiltersAfterContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::BelowContent);
     $isColumnToggleFormVisible = $hasToggleableColumns();
-    $records = [];
+    $records = null;
     if ($isTableLoaded) $records = $getRecords();
     $columnsCount = count($columns);
     if (count($actions) && (! $isReordering)) $columnsCount++;
@@ -304,7 +304,11 @@
             }"
         >
             @if ($content || $hasColumnsLayout)
-                @if (count($records))
+                @if (is_null($records))
+                <div class="flex items-center justify-center p-4">
+                    <x-filament-support::loading-indicator class="w-5 h-5" />
+                </div>
+                @elseif (count($records))
                     @if (($content || $hasColumnsLayout) && (! $isReordering))
                         <div @class([
                             'bg-gray-500/5 flex items-center gap-4 px-4 border-b',
@@ -593,6 +597,7 @@
                     @if (($content || $hasColumnsLayout) && $contentFooter)
                         {{ $contentFooter->with(['columns' => $columns, 'records' => $records]) }}
                     @endif
+
                 @else
                     @if ($emptyState = $getEmptyState())
                         {{ $emptyState }}
@@ -750,7 +755,15 @@
                         </x-tables::row>
                     @endif
 
-                    @if (count($records))
+                    @if (is_null($records))
+                    <tr>
+                        <td colspan="{{ $columnsCount }}">
+                            <div class="flex items-center justify-center w-full p-4">
+                            <x-filament-support::loading-indicator class="w-5 h-5"/>
+                            </div>
+                        </td>
+                    </tr>
+                    @elseif (count($records))
                         @foreach ($records as $record)
                             @php
                                 $recordAction = $getRecordAction($record);
@@ -930,7 +943,7 @@
             @endif
         </div>
 
-        @if (
+        @if (!is_null($records) &&
             $records instanceof \Illuminate\Contracts\Pagination\Paginator &&
             ((! $records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) || $records->total())
         )
