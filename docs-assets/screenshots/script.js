@@ -9,16 +9,18 @@ for (const [file, options] of Object.entries(schema)) {
         fs.mkdirSync(`images/${directory}`, { recursive: true })
     }
 
-    (async () => {
-        const browser = await puppeteer.launch();
-        const page = await browser.newPage();
-        await page.goto(`http://localhost:8000/${options.url}`, { waitUntil: 'networkidle2' });
-        const element = await page.waitForSelector(options.selector);
+    ;(async () => {
+        const browser = await puppeteer.launch()
+        const page = await browser.newPage()
+        await page.goto(`http://localhost:8000/${options.url}`, {
+            waitUntil: 'networkidle2',
+        })
+        const element = await page.waitForSelector(options.selector)
 
         await element.screenshot({ path: `images/${file}.jpg` })
 
-        await element.dispose();
+        await element.dispose()
 
-        await browser.close();
-    })();
+        await browser.close()
+    })()
 }
