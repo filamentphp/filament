@@ -5,6 +5,7 @@ namespace Filament\Tables\Columns\Concerns;
 use BackedEnum;
 use Closure;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 trait HasState
 {
@@ -13,6 +14,15 @@ trait HasState
     protected ?Closure $getStateUsing = null;
 
     protected string | Closure | null $separator = null;
+
+    protected bool | Closure $isDistinctList = false;
+
+    public function distinctList(bool | Closure $condition = true): static
+    {
+        $this->isDistinctList = $condition;
+
+        return $this;
+    }
 
     public function getStateUsing(?Closure $callback): static
     {
@@ -26,6 +36,11 @@ trait HasState
         $this->defaultState = $state;
 
         return $this;
+    }
+
+    public function isDistinctList(): bool
+    {
+        return (bool) $this->evaluate($this->isDistinctList);
     }
 
     public function getDefaultState(): mixed
@@ -87,7 +102,7 @@ trait HasState
 
         $state = collect($this->getRelationshipResults($record))
             ->pluck($this->getRelationshipAttribute())
-            ->unique()
+            ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
             ->values();
 
         if (! $state->count()) {
