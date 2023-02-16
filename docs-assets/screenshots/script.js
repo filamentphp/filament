@@ -14,15 +14,19 @@ for (const [file, options] of Object.entries(schema)) {
     (async () => {
         const browser = await puppeteer.launch()
         const page = await browser.newPage()
+        await page.setViewport(options.viewport ?? {
+            width: 1920,
+            height: 1080,
+            deviceScaleFactor: 1,
+        })
         await page.goto(`http://localhost:8000/${options.url}`, {
             waitUntil: 'networkidle2',
         })
-        const element = await page.waitForSelector(options.selector)
 
+        const element = await page.waitForSelector(options.selector)
         await element.screenshot({ path: `images/${file}.jpg` })
 
         await element.dispose()
-
         await browser.close()
     })()
 }
