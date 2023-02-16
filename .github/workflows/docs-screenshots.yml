@@ -20,8 +20,8 @@ jobs:
           php-version: 8.2
           extensions: mbstring, pdo, pdo_sqlite
           coverage: none
-      - name: Install dependencies
+      - name: Set up app
         run: |
+          cd docs-assets/app
           composer update --prefer-dist --no-interaction
-      - name: Execute tests
-        run: ./vendor/bin/pest --verbose
+          php artisan serve &
