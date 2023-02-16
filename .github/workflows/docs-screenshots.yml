@@ -22,6 +22,10 @@ jobs:
           coverage: none
       - name: Setup Node
         uses: actions/setup-node@v2
+      - name: Install dependencies
+        run: |
+          cd docs-assets/screenshots
+          npm ci
       - name: Setup app
         run: |
           cd docs-assets/app
