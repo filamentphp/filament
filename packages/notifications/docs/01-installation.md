@@ -43,7 +43,7 @@ php artisan filament:install --notifications
 First, use NPM to install Tailwind CSS and its `forms` and `typography` plugins:
 
 ```bash
-npm install tailwindcss @tailwindcss/forms @tailwindcss/typography --save-dev
+npm install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss --save-dev
 ```
 
 Create a new `tailwind.config.js` file. Ensure that you add Filament's `content` path, custom `colors`, and the `plugins` you installed:
