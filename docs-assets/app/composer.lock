@@ -758,7 +758,7 @@
         },
         {
             "name": "filament/actions",
-            "version": "3.x-dev",
+            "version": "dev-docs-screenshots",
             "dist": {
                 "type": "path",
                 "url": "../../packages/actions",
@@ -804,7 +804,7 @@
         },
         {
             "name": "filament/filament",
-            "version": "3.x-dev",
+            "version": "dev-docs-screenshots",
             "dist": {
                 "type": "path",
                 "url": "../../packages/app",
@@ -865,7 +865,7 @@
         },
         {
             "name": "filament/forms",
-            "version": "3.x-dev",
+            "version": "dev-docs-screenshots",
             "dist": {
                 "type": "path",
                 "url": "../../packages/forms",
@@ -918,7 +918,7 @@
         },
         {
             "name": "filament/infolists",
-            "version": "3.x-dev",
+            "version": "dev-docs-screenshots",
             "dist": {
                 "type": "path",
                 "url": "../../packages/infolists",
@@ -964,7 +964,7 @@
         },
         {
             "name": "filament/notifications",
-            "version": "3.x-dev",
+            "version": "dev-docs-screenshots",
             "dist": {
                 "type": "path",
                 "url": "../../packages/notifications",
@@ -1013,7 +1013,7 @@
         },
         {
             "name": "filament/support",
-            "version": "3.x-dev",
+            "version": "dev-docs-screenshots",
             "dist": {
                 "type": "path",
                 "url": "../../packages/support",
@@ -1060,7 +1060,7 @@
         },
         {
             "name": "filament/tables",
-            "version": "3.x-dev",
+            "version": "dev-docs-screenshots",
             "dist": {
                 "type": "path",
                 "url": "../../packages/tables",
@@ -1113,7 +1113,7 @@
         },
         {
             "name": "filament/widgets",
-            "version": "3.x-dev",
+            "version": "dev-docs-screenshots",
             "dist": {
                 "type": "path",
                 "url": "../../packages/widgets",
