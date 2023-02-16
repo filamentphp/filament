@@ -16,6 +16,14 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Alle Einträge für Massenaktion auswählen/abwählen.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Eintrag :key für Massenaktion auswählen/abwählen.',
+        ],
+
         'search_query' => [
             'label' => 'Suche',
             'placeholder' => 'Suche',
