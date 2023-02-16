@@ -1,9 +1,7 @@
+<?php
 
-        <?php
+use Filament\Context;
 
-        use Filament\Context;
-
-        return function (Context $context) {
-            //
-        };
-    
+return function (Context $context) {
+    //
+};

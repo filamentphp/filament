@@ -38,13 +38,11 @@ for (const [file, options] of Object.entries(schema)) {
 configure()
 
 function configure(php = null) {
-    fs.writeFileSync('../app/app/Providers/Filament/configure.php', `
-        <?php
+    fs.writeFileSync('../app/app/Providers/Filament/configure.php', `<?php
 
-        use Filament\\Context;
+use Filament\\Context;
 
-        return function (Context $context) {
-            ${php ?? '//'}
-        };
-    `)
+return function (Context $context) {
+    ${php ?? '//'}
+};`)
 }

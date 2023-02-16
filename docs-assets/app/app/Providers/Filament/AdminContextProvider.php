@@ -24,7 +24,7 @@ class AdminContextProvider extends ContextProvider
     {
         $configure = require 'configure.php';
 
-        $configure($context
+        $context
             ->default()
             ->id('admin')
             ->path('admin')
@@ -53,7 +53,9 @@ class AdminContextProvider extends ContextProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])) ?? $context;
+            ]);
+
+        $configure($context);
 
         return $context;
     }
