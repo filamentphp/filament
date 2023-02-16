@@ -7,6 +7,7 @@ export default function selectFormComponent({
     getOptionsUsing,
     getSearchResultsUsing,
     isAutofocused,
+    isDisabled,
     isMultiple,
     hasDynamicOptions,
     hasDynamicSearchResults,
@@ -177,6 +178,10 @@ export default function selectFormComponent({
         },
 
         refreshPlaceholder: function () {
+            if (isDisabled) {
+                return
+            }
+
             if (isMultiple) {
                 return
             }
