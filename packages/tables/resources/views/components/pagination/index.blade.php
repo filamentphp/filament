@@ -62,7 +62,7 @@
             @else
                 <div class="pl-2 text-sm font-medium dark:text-white">
                     {{ trans_choice(
-                        'tables::table.pagination.overview',
+                        'filament-tables::table.pagination.overview',
                         $paginator->total(),
                         [
                             'first' => $paginator->firstItem(),
