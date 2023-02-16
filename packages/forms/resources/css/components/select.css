@@ -1,9 +1,5 @@
 .choices {
-    @apply relative;
-}
-
-.choices:focus {
-    @apply outline-none;
+    @apply relative outline-none;
 }
 
 .choices:last-child {
@@ -168,12 +164,8 @@
 }
 
 .choices__button {
-    @apply cursor-pointer appearance-none border-0 bg-transparent bg-center bg-no-repeat;
+    @apply cursor-pointer appearance-none border-0 bg-transparent bg-center bg-no-repeat outline-none;
     text-indent: -9999px;
-}
-
-.choices__button:focus {
-    @apply outline-none;
 }
 
 .choices[data-type*='select-one'] .choices__button {

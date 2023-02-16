@@ -33,7 +33,7 @@
                         role="tab"
                         type="button"
                         @class([
-                            'flex whitespace-nowrap items-center h-8 px-5 font-medium rounded-lg whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-inset',
+                            'flex whitespace-nowrap items-center h-8 px-5 font-medium rounded-lg whitespace-nowrap outline-none focus:ring-2 focus:ring-primary-600 focus:ring-inset',
                             'hover:text-gray-800 focus:text-primary-600' => $activeManager !== $tabKey,
                             'dark:text-gray-400 dark:hover:text-gray-300 dark:focus:text-gray-400' => ($activeManager !== $tabKey) && config('filament.dark_mode'),
                             'text-primary-600 shadow bg-white' => $activeManager === $tabKey,
@@ -58,7 +58,7 @@
                 role="tabpanel"
                 tabindex="0"
             @endif
-            class="space-y-4 focus:outline-none"
+            class="space-y-4 outline-none"
         >
             @if ($managers[$activeManager] instanceof \Filament\Resources\RelationManagers\RelationGroup)
                 @foreach($managers[$activeManager]->getManagers(ownerRecord: $ownerRecord) as $groupedManager)
