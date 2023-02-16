@@ -1,6 +1,6 @@
 module.exports = {
     'app/auth/login': {
-        url: "/admin/login",
-        element: "body",
+        url: '/admin/login',
+        element: 'body',
     },
 }
