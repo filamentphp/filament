@@ -97,7 +97,7 @@
                     tabindex="-1"
                     @disabled($isDisabled)
                     {{ $getExtraTriggerAttributeBag()->class([
-                        'bg-white relative w-full border py-2 pl-3 pr-10 rtl:pl-10 rtl:pr-3 text-start cursor-default shadow-sm sm:text-sm dark:bg-gray-700',
+                        'bg-white relative w-full border py-2 pl-3 pr-10 rtl:pl-10 rtl:pr-3 text-start cursor-default shadow-sm outline-none sm:text-sm dark:bg-gray-700',
                         'focus-within:ring-1 focus-within:border-primary-500 focus-within:ring-inset focus-within:ring-primary-500' => ! $isDisabled,
                         'border-gray-300 dark:border-gray-600' => ! $errors->has($statePath),
                         'border-danger-600 dark:border-danger-400' => $errors->has($statePath),
