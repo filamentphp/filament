@@ -1670,7 +1670,7 @@ trix-toolbar .filament-forms-rich-editor-component-toolbar-button.trix-active {
 }
 .is-focused .choices__inner,
 .is-open .choices__inner {
-  @apply border-primary-500 ring-1 ring-inset ring-primary-500;
+  @apply border-primary-500 outline-none ring-1 ring-inset ring-primary-500;
 }
 .choices__list {
   @apply m-0 list-none pl-0;
@@ -1804,7 +1804,7 @@ trix-toolbar .filament-forms-rich-editor-component-toolbar-button.trix-active {
   border-color: rgb(75 85 99) !important;
 }
 .choices__input {
-  @apply inline-block max-w-full border-none;
+  @apply inline-block max-w-full border-none outline-none;
   border-color: transparent !important;
   background-color: transparent !important;
   padding: 0 !important;
