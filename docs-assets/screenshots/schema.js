@@ -1,6 +1,6 @@
 export default {
-    'home': {
-        url: '',
+    home: {
+        url: '/',
         selector: 'body',
     },
     'app/auth/login': {
