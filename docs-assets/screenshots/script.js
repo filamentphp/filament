@@ -14,11 +14,13 @@ for (const [file, options] of Object.entries(schema)) {
     ;(async () => {
         const browser = await puppeteer.launch()
         const page = await browser.newPage()
-        await page.setViewport(options.viewport ?? {
-            width: 1920,
-            height: 1080,
-            deviceScaleFactor: 1,
-        })
+        await page.setViewport(
+            options.viewport ?? {
+                width: 1920,
+                height: 1080,
+                deviceScaleFactor: 1,
+            },
+        )
         await page.goto(`http://localhost:8000/${options.url}`, {
             waitUntil: 'networkidle2',
         })
