@@ -1,10 +1,10 @@
 export default {
     'home': {
-        url: '/',
+        url: '',
         selector: 'body',
     },
     'app/auth/login': {
-        url: '/admin/login',
+        url: 'admin/login',
         selector: 'body',
     },
 }
