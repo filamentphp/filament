@@ -16,6 +16,14 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Vybrat/odznačit všechny položky pro hromadné akce.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Vybrat/odznačit položku :key pro hromadné akce.',
+        ],
+
         'search_query' => [
             'label' => 'Vyhledávání',
             'placeholder' => 'Hledat',

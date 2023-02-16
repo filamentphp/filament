@@ -22,6 +22,18 @@ return [
             'label' => 'Odhlásit se',
         ],
 
+        'sidebar' => [
+
+            'collapse' => [
+                'label' => 'Skrýt boční panel',
+            ],
+
+            'expand' => [
+                'label' => 'Otevřít boční panel',
+            ],
+
+        ],
+
         'user_menu' => [
             'label' => 'Nabídka uživatele',
         ],
