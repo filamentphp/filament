@@ -1,5 +1,5 @@
 export default {
-    'home': {
+    home: {
         url: '/',
         selector: 'body',
     },
