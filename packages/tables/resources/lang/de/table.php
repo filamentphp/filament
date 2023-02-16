@@ -35,7 +35,7 @@ return [
 
         'label' => 'Seitennavigation',
 
-        'overview' => ':first bis :last von :total Ergebnissen',
+        'overview' => '{1} Zeige 1 Ergebnis|[2,*] Zeige :first bis :last von :total Ergebnissen',
 
         'fields' => [
 
