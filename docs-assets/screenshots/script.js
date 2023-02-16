@@ -38,7 +38,7 @@ for (const [file, options] of Object.entries(schema)) {
 configure()
 
 function configure(php = null) {
-    fs.writeFileSync('../app/Providers/Filament/configure.php', `
+    fs.writeFileSync('../app/app/Providers/Filament/configure.php', `
         <?php
 
         use Filament\\Context;
