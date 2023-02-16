@@ -5,6 +5,8 @@ import schema from './schema.js'
 fs.rmSync('images', { recursive: true, force: true })
 
 for (const [file, options] of Object.entries(schema)) {
+    configure(options.configure)
+
     const directory = file.substring(0, file.lastIndexOf('/'))
 
     if (directory) {
@@ -29,4 +31,18 @@ for (const [file, options] of Object.entries(schema)) {
         await element.dispose()
         await browser.close()
     })()
+}
+
+configure()
+
+function configure(php = null) {
+    fs.writeFileSync('../app/Providers/Filament/configure.php', `
+        <?php
+
+        use Filament\\Context;
+
+        return function (Context $context) {
+            ${php ?? '//'}
+        };
+    `)
 }
