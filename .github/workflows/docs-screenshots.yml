@@ -20,8 +20,21 @@ jobs:
           php-version: 8.2
           extensions: mbstring, pdo, pdo_sqlite
           coverage: none
-      - name: Set up app
+      - name: Setup Node
+        uses: actions/setup-node@v2
+      - name: Setup app
         run: |
           cd docs-assets/app
           composer update --prefer-dist --no-interaction
           php artisan serve &
+      - name: Run script
+        run: |
+          cd docs-assets/screenshots
+          node script
+      - name: Pull changes
+        run: git pull
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: >
+            chore: take docs screenshots

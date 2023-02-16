@@ -1,4 +1,6 @@
 {
-    "url": "/admin/login",
-    "element": "body"
+    "app/auth/login": {
+        "url": "/admin/login",
+        "element": "body"
+    }
 }
