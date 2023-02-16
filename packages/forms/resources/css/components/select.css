@@ -246,7 +246,7 @@
 }
 
 .choices__input {
-    @apply inline-block max-w-full border-none !text-sm outline-none;
+    @apply inline-block max-w-full border-none outline-none !text-sm;
     border-color: transparent !important;
     background-color: transparent !important;
     padding: 0 !important;
