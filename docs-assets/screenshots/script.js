@@ -2,6 +2,8 @@ import fs from 'fs'
 import puppeteer from 'puppeteer'
 import schema from './schema.js'
 
+fs.rmSync('images', { recursive: true, force: true })
+
 for (const [file, options] of Object.entries(schema)) {
     const directory = file.substring(0, file.lastIndexOf('/'))
 
