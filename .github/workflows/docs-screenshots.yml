@@ -1,0 +1,27 @@
+name: generate-docs-screenshots
+
+on: push
+
+jobs:
+  take-screenshots:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.composer/cache/files
+          key: dependencies-composer-${{ hashFiles('composer.json') }}
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, pdo, pdo_sqlite
+          coverage: none
+      - name: Install dependencies
+        run: |
+          composer update --prefer-dist --no-interaction
+      - name: Execute tests
+        run: ./vendor/bin/pest --verbose
