@@ -11,7 +11,7 @@ for (const [file, options] of Object.entries(schema)) {
         fs.mkdirSync(`images/${directory}`, { recursive: true })
     }
 
-    ;(async () => {
+    (async () => {
         const browser = await puppeteer.launch()
         const page = await browser.newPage()
         await page.setViewport(options.viewport ?? {
@@ -19,7 +19,7 @@ for (const [file, options] of Object.entries(schema)) {
             height: 1080,
             deviceScaleFactor: 1,
         })
-        await page.goto(`http://localhost:8000/${options.url}`, {
+        await page.goto(`http://127.0.0.1:8000/${options.url}`, {
             waitUntil: 'networkidle2',
         })
 

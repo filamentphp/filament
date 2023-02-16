@@ -1,6 +1,6 @@
 export default {
-    'app/auth/login': {
-        url: 'admin/login',
+    'app/dashboard': {
+        url: 'admin',
         selector: 'body',
     },
 }
