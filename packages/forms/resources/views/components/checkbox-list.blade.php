@@ -64,7 +64,7 @@
                     x-model.debounce.{{ $getSearchDebounce() }}="search"
                     type="search"
                     placeholder="{{ $getSearchPrompt() }}"
-                    class="mb-2 block h-7 px-2 text-sm w-full rounded-lg border-gray-300 shadow-sm text-gray-700 transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 dark:text-gray-200 dark:bg-gray-700 dark:focus:border-primary-500 dark:border-gray-600"
+                    class="mb-2 block h-7 px-2 text-sm w-full rounded-lg border-gray-300 shadow-sm text-gray-700 transition duration-75 outline-none focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 dark:text-gray-200 dark:bg-gray-700 dark:focus:border-primary-500 dark:border-gray-600"
                 />
             @endif
 

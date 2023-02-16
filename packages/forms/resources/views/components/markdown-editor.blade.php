@@ -30,7 +30,7 @@
                     <markdown-toolbar
                         for="{{ $id }}"
                         x-bind:class="{ 'pointer-events-none opacity-70': tab === 'preview' }"
-                        class="flex items-stretch space-x-4 rtl:space-x-reverse focus:outline-none"
+                        class="flex items-stretch space-x-4 outline-none rtl:space-x-reverse"
                     >
                         @if ($hasToolbarButton(['bold', 'italic', 'strike', 'link']))
                             <div class="flex items-stretch space-x-1 rtl:space-x-reverse">
@@ -281,7 +281,7 @@
                         "
                         x-ref="textarea"
                         @if ($isRequired() && (! $isConcealed())) required @endif
-                        class="z-1 absolute top-0 left-0 block h-full min-h-full w-full resize-none overflow-y-hidden whitespace-pre-wrap rounded-lg bg-transparent font-mono text-sm tracking-normal caret-black shadow-sm transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 rtl:whitespace-normal dark:caret-white dark:focus:border-primary-500"
+                        class="z-1 absolute top-0 left-0 block h-full min-h-full w-full resize-none overflow-y-hidden whitespace-pre-wrap rounded-lg bg-transparent font-mono text-sm tracking-normal caret-black shadow-sm transition duration-75 outline-none focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 rtl:whitespace-normal dark:caret-white dark:focus:border-primary-500"
                         x-bind:class="{
                             'border-gray-300 dark:border-gray-600 dark:border-gray-600': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
                             'border-danger-600 ring-1 ring-inset ring-danger-600 dark:border-danger-400 dark:ring-danger-400': @js($statePath) in $wire.__instance.serverMemo.errors,

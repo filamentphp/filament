@@ -33,7 +33,7 @@
                 'tabindex' => '0',
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['focus:outline-none filament-forms-wizard-component-step'])
+            ->class(['filament-forms-wizard-component-step outline-none'])
     }}
 >
     {{ $getChildComponentContainer() }}
