@@ -1,3 +1,5 @@
-for (const [file, screenshot] of Object.entries(require('schema.json'))) {
+import schema from 'schema'
+
+for (const [file, screenshot] of Object.entries(schema)) {
     console.log(`${file}: ${screenshot}`);
 }
