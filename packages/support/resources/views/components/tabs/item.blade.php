@@ -23,7 +23,7 @@
             'role' => 'tab',
         ])
         ->class([
-            'filament-tabs-item flex whitespace-nowrap items-center gap-3 h-8 px-5 font-medium rounded-md whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-inset',
+            'filament-tabs-item flex whitespace-nowrap items-center gap-3 h-8 px-5 font-medium rounded-md whitespace-nowrap outline-none focus:ring-2 focus:ring-primary-600 focus:ring-inset',
             'hover:text-gray-800 focus:text-primary-600 dark:text-gray-400 dark:hover:text-gray-300 dark:focus:text-gray-400' => (! $active) && (! $alpineActive),
             'text-primary-600 shadow bg-white dark:text-white dark:bg-primary-600' => $active,
         ]) }}
