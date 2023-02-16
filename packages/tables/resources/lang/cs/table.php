@@ -16,6 +16,14 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Vybrat/odznačit všechny položky pro hromadné akce.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Vybrat/odznačit položku :key pro hromadné akce.',
+        ],
+
         'search' => [
             'label' => 'Vyhledávání',
             'placeholder' => 'Hledat',
@@ -27,7 +35,7 @@ return [
 
         'label' => 'Stránkování',
 
-        'overview' => 'Zobrazeno od :first do :last z :total záznamů',
+        'overview' => '{1} Zobrazuji 1 výsledek|[2,*] Zobrazuji :first až :last z :total výsledků',
 
         'fields' => [
 

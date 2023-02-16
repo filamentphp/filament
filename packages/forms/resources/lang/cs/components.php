@@ -16,6 +16,10 @@ return [
                 'label' => 'Přidat k :label',
             ],
 
+            'add_between' => [
+                'label' => 'Vložit',
+            ],
+
             'delete' => [
                 'label' => 'Smazat',
             ],
@@ -46,6 +50,22 @@ return [
 
             'expand_all' => [
                 'label' => 'Zobrazit vše',
+            ],
+
+        ],
+
+    ],
+
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Odznačit vše',
+            ],
+
+            'select_all' => [
+                'label' => 'Vybrat vše',
             ],
 
         ],
