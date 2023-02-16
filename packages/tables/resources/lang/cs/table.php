@@ -35,7 +35,7 @@ return [
 
         'label' => 'Stránkování',
 
-        'overview' => 'Zobrazeno od :first do :last z :total záznamů',
+        'overview' => '{1} Zobrazuji 1 výsledek|[2,*] Zobrazuji :first až :last z :total výsledků',
 
         'fields' => [
 
