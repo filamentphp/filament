@@ -1,1 +1,6 @@
-{}
+{
+  "devDependencies": {
+    "puppeteer": "^19.7.1"
+  },
+  "type": "module"
+}

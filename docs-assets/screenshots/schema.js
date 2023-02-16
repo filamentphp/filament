@@ -1,6 +1,6 @@
-module.exports = {
+export default {
     'app/auth/login': {
         url: '/admin/login',
-        element: 'body',
+        selector: 'body',
     },
 }
