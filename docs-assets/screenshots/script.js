@@ -11,7 +11,7 @@ for (const [file, options] of Object.entries(schema)) {
         fs.mkdirSync(`images/${directory}`, { recursive: true })
     }
 
-    (async () => {
+    ;(async () => {
         const browser = await puppeteer.launch()
         const page = await browser.newPage()
         await page.setViewport(options.viewport ?? {
