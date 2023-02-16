@@ -32,10 +32,10 @@ for (const [file, options] of Object.entries(schema)) {
 
         await element.dispose()
         await browser.close()
+
+        configure()
     })()
 }
-
-configure()
 
 function configure(php = null) {
     fs.writeFileSync(
