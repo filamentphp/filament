@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
-use BackedEnum;
 use Closure;
 use Filament\Support\Contracts\HasColor as ColorInterface;
 use Filament\Tables\Columns\Column;

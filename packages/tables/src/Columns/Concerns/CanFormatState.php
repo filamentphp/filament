@@ -3,7 +3,6 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Akaunting\Money;
-use BackedEnum;
 use Closure;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Filament\Tables\Columns\TextColumn;
