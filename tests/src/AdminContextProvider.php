@@ -52,8 +52,8 @@ class AdminContextProvider extends ContextProvider
                 ShareErrorsFromSession::class,
                 VerifyCsrfToken::class,
                 SubstituteBindings::class,
-                DispatchServingFilamentEvent::class,
                 DisableBladeIconComponents::class,
+                DispatchServingFilamentEvent::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
