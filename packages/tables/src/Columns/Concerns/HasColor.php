@@ -57,6 +57,6 @@ trait HasColor
             return null;
         }
 
-        return $color->getColor();
+        return $state->getColor();
     }
 }
