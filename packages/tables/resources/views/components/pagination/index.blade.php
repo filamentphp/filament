@@ -62,13 +62,15 @@
                     'pl-2 text-sm font-medium',
                     'dark:text-white' => config('tables.dark_mode'),
                 ])>
-                    @if ($paginator->total() > 1)
-                        {{ __('tables::table.pagination.overview', [
+                    {{ trans_choice(
+                        'tables::table.pagination.overview',
+                        $paginator->total(),
+                        [
                             'first' => $paginator->firstItem(),
                             'last' => $paginator->lastItem(),
                             'total' => $paginator->total(),
-                        ]) }}
-                    @endif
+                        ],
+                    ) }}
                 </div>
             @endif
         </div>

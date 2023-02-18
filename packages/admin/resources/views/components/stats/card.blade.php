@@ -122,6 +122,10 @@
                     this.chart.update()
                 },
             }"
+            x-on:dark-mode-toggled.window="
+                chart.destroy()
+                initChart()
+            "
             class="absolute bottom-0 inset-x-0 rounded-b-2xl overflow-hidden"
         >
             <canvas

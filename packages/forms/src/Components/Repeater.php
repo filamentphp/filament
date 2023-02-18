@@ -29,6 +29,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     protected bool | Closure $isItemMovementDisabled = false;
 
+    protected bool | Closure $isReorderableWithButtons = false;
+
     protected bool | Closure $isInset = false;
 
     protected ?Collection $cachedExistingRecords = null;
@@ -222,6 +224,13 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
+    public function reorderableWithButtons(bool | Closure $condition = true): static
+    {
+        $this->isReorderableWithButtons = $condition;
+
+        return $this;
+    }
+
     public function inset(bool | Closure $condition = true): static
     {
         $this->isInset = $condition;
@@ -252,6 +261,11 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     public function getCreateItemButtonLabel(): string
     {
         return $this->evaluate($this->createItemButtonLabel);
+    }
+
+    public function isReorderableWithButtons(): bool
+    {
+        return $this->evaluate($this->isReorderableWithButtons) && (! $this->isItemMovementDisabled());
     }
 
     public function isItemMovementDisabled(): bool

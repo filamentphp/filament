@@ -290,7 +290,9 @@ protected function applySearchToTableQuery(Builder $query): Builder
 
 Scout uses this `whereIn()` method to retrieve results internally, so there is no performance penalty for using it.
 
-## Record URLs (clickable rows)
+## Clickable rows
+
+### Record URLs
 
 You may allow table rows to be completely clickable by overriding the `getTableRecordUrlUsing()` method on your Livewire component:
 
@@ -298,7 +300,7 @@ You may allow table rows to be completely clickable by overriding the `getTableR
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 
-protected function getTableRecordUrlUsing(): Closure
+protected function getTableRecordUrlUsing(): ?Closure
 {
     return fn (Model $record): string => route('posts.edit', ['record' => $record]);
 }
@@ -307,6 +309,34 @@ protected function getTableRecordUrlUsing(): Closure
 In this example, clicking on each post will take you to the `posts.edit` route.
 
 If you'd like to [override the URL](columns/getting-started#opening-urls) for a specific column, or instead [run a Livewire action](columns#running-actions) when a column is clicked, see the [columns documentation](columns#opening-urls).
+
+### Record actions
+
+Alternatively, you may configure table rows to trigger an action instead of opening a URL:
+
+```php
+use Closure;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\DeleteAction;
+
+protected function getTableRecordActionUsing(): ?Closure
+{
+    return fn (): Action => DeleteAction::make();
+}
+```
+
+### Disabling clickable rows
+
+If you'd like to completely disable the click action for the entire row, you may override the `getTableRecordActionUsing()` method on your Livewire component, and return `null`:
+
+```php
+use Closure;
+
+protected function getTableRecordActionUsing(): ?Closure
+{
+    return null;
+}
+```
 
 ## Record classes
 

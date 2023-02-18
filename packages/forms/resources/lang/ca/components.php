@@ -10,7 +10,7 @@ return [
 
                 'buttons' => [
                     'link' => 'Enllaç',
-                    'unlink' => 'Elimina l\'enllaç',
+                    'unlink' => "Elimina l'enllaç",
                 ],
 
                 'label' => 'URL',
@@ -41,7 +41,7 @@ return [
     ],
 
     'select' => [
-        'no_search_results_message' => 'No s\'ha trobat cap opció que coincideixi amb la vostra cerca',
+        'no_search_results_message' => "No s'ha trobat cap opció que coincideixi amb la vostra cerca",
         'placeholder' => 'Trieu una opció',
         'search_prompt' => 'Comenceu a escriure per cercar...',
     ],

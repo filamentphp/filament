@@ -47,7 +47,7 @@
                         {!! $isRequired() ? 'required' : null !!}
                     @endif
                     {{ $attributes->merge($getExtraInputAttributes())->merge($getExtraAttributes())->class([
-                        'text-gray-900 block w-full transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70',
+                        'text-gray-900 block w-full transition duration-75 rounded-lg shadow-sm outline-none focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70',
                         'dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('forms.dark_mode'),
                         'border-gray-300' => ! $errors->has($getStatePath()),
                         'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),

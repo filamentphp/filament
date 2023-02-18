@@ -15,7 +15,7 @@
 
 @php
     $buttonClasses = [
-        'filament-icon-button flex items-center justify-center rounded-full relative hover:bg-gray-500/5 focus:outline-none disabled:opacity-70 disabled:cursor-not-allowed disabled:pointer-events-none',
+        'filament-icon-button flex items-center justify-center rounded-full relative outline-none hover:bg-gray-500/5 disabled:opacity-70 disabled:cursor-not-allowed disabled:pointer-events-none',
         'text-primary-500 focus:bg-primary-500/10' => $color === 'primary',
         'text-danger-500 focus:bg-danger-500/10' => $color === 'danger',
         'text-gray-500 focus:bg-gray-500/10' => $color === 'secondary',
@@ -48,7 +48,7 @@
     $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || (($type === 'submit') && filled($form));
 
     if ($hasLoadingIndicator) {
-        $loadingIndicatorTarget = \Illuminate\Support\Str::before(html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click', $form)), ENT_QUOTES), '(');
+        $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click', $form)), ENT_QUOTES);
     }
 @endphp
 

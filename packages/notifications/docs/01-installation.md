@@ -40,12 +40,13 @@ The package uses the following dependencies:
 
 - [Alpine.js](https://alpinejs.dev)
 - [Alpine Floating UI](https://github.com/awcodes/alpine-floating-ui)
+- [PostCSS](https://postcss.org)
 - [Tailwind CSS](https://tailwindcss.com)
 
 You may install these through NPM:
 
 ```bash
-npm install alpinejs @awcodes/alpine-floating-ui tailwindcss --save-dev
+npm install alpinejs @awcodes/alpine-floating-ui postcss tailwindcss --save-dev
 ```
 
 ### Configuring Tailwind CSS

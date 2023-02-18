@@ -120,7 +120,7 @@ use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 
 DeleteAction::make()
-    ->before(function () {
+    ->before(function (DeleteAction $action) {
         if (! $this->record->team->subscribed()) {
             Notification::make()
                 ->warning()

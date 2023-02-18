@@ -71,9 +71,7 @@ class CheckTranslationsCommand extends Command
                         ];
                     })
                     ->tap(function (Collection $files) use ($locale, $package) {
-                        /** @phpstan-ignore-next-line */
                         $missingKeysCount = $files->sum(fn ($file): int => count($file['missing']));
-                        /** @phpstan-ignore-next-line */
                         $removedKeysCount = $files->sum(fn ($file): int => count($file['removed']));
 
                         $locale = locale_get_display_name($locale, 'en');

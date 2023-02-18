@@ -16,6 +16,14 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Select/deselect all items for bulk actions.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Select/deselect item :key for bulk actions.',
+        ],
+
         'search_query' => [
             'label' => 'Search',
             'placeholder' => 'Search',
@@ -27,7 +35,7 @@ return [
 
         'label' => 'Pagination Navigation',
 
-        'overview' => 'Showing :first to :last of :total results',
+        'overview' => '{1} Showing 1 result|[2,*] Showing :first to :last of :total results',
 
         'fields' => [
 

@@ -81,7 +81,7 @@
                     '-rotate-180': !isCollapsed,
                 }" type="button"
                 @class([
-                    'flex items-center justify-center transform rounded-full text-primary-500 hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none',
+                    'flex items-center justify-center transform rounded-full text-primary-500 outline-none hover:bg-gray-500/5 focus:bg-primary-500/10',
                     'w-10 h-10' => ! $isCompact,
                     'w-8 h-8 -my-1' => $isCompact,
                     '-rotate-180' => ! $isCollapsed,

@@ -16,7 +16,7 @@
 
 @php
     $buttonClasses = array_merge([
-        "filament-button filament-button-size-{$size} inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors focus:outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset",
+        "filament-button filament-button-size-{$size} inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset",
         'dark:focus:ring-offset-0' => $darkMode,
         'opacity-70 cursor-not-allowed pointer-events-none' => $disabled,
         'min-h-[2.25rem] px-4 text-sm' => $size === 'md',
@@ -63,7 +63,7 @@
     $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || (($type === 'submit') && filled($form));
 
     if ($hasLoadingIndicator) {
-        $loadingIndicatorTarget = \Illuminate\Support\Str::before(html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click', $form)), ENT_QUOTES), '(');
+        $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click', $form)), ENT_QUOTES);
     }
 @endphp
 

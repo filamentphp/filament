@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
@@ -76,6 +77,8 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
 
         $this->loadStateFromRelationshipsUsing(static function (CheckboxList $component, ?array $state): void {
             $relationship = $component->getRelationship();
+
+            /** @var Collection $relatedModels */
             $relatedModels = $relationship->getResults();
 
             $component->state(
