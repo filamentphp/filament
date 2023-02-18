@@ -758,7 +758,7 @@
         },
         {
             "name": "filament/actions",
-            "version": "3.x-dev",
+            "version": "dev-fix-colors-order",
             "dist": {
                 "type": "path",
                 "url": "../../packages/actions",
@@ -804,7 +804,7 @@
         },
         {
             "name": "filament/filament",
-            "version": "3.x-dev",
+            "version": "dev-fix-colors-order",
             "dist": {
                 "type": "path",
                 "url": "../../packages/app",
@@ -865,7 +865,7 @@
         },
         {
             "name": "filament/forms",
-            "version": "3.x-dev",
+            "version": "dev-fix-colors-order",
             "dist": {
                 "type": "path",
                 "url": "../../packages/forms",
@@ -918,7 +918,7 @@
         },
         {
             "name": "filament/infolists",
-            "version": "3.x-dev",
+            "version": "dev-fix-colors-order",
             "dist": {
                 "type": "path",
                 "url": "../../packages/infolists",
@@ -964,7 +964,7 @@
         },
         {
             "name": "filament/notifications",
-            "version": "3.x-dev",
+            "version": "dev-fix-colors-order",
             "dist": {
                 "type": "path",
                 "url": "../../packages/notifications",
@@ -1013,7 +1013,7 @@
         },
         {
             "name": "filament/support",
-            "version": "3.x-dev",
+            "version": "dev-fix-colors-order",
             "dist": {
                 "type": "path",
                 "url": "../../packages/support",
@@ -1060,7 +1060,7 @@
         },
         {
             "name": "filament/tables",
-            "version": "3.x-dev",
+            "version": "dev-fix-colors-order",
             "dist": {
                 "type": "path",
                 "url": "../../packages/tables",
@@ -1113,7 +1113,7 @@
         },
         {
             "name": "filament/widgets",
-            "version": "3.x-dev",
+            "version": "dev-fix-colors-order",
             "dist": {
                 "type": "path",
                 "url": "../../packages/widgets",
@@ -1764,16 +1764,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v10.0.2",
+            "version": "v10.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "399c8add8d23a18ba9482af4722af0dd9fa8dfcc"
+                "reference": "0bd303853444de33f4fcb16d13bd7574030aa3d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/399c8add8d23a18ba9482af4722af0dd9fa8dfcc",
-                "reference": "399c8add8d23a18ba9482af4722af0dd9fa8dfcc",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/0bd303853444de33f4fcb16d13bd7574030aa3d4",
+                "reference": "0bd303853444de33f4fcb16d13bd7574030aa3d4",
                 "shasum": ""
             },
             "require": {
@@ -1960,7 +1960,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2023-02-16T19:38:42+00:00"
+            "time": "2023-02-16T22:03:27+00:00"
         },
         {
             "name": "laravel/sanctum",
@@ -7165,22 +7165,23 @@
         },
         {
             "name": "nunomaduro/collision",
-            "version": "v7.0.3",
+            "version": "v7.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nunomaduro/collision.git",
-                "reference": "fbf3c8a8ee08068bee7d81ee0cee5ddf032aaa84"
+                "reference": "d9205550494a8e6865ae59eaa3fd0f77f6c916fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nunomaduro/collision/zipball/fbf3c8a8ee08068bee7d81ee0cee5ddf032aaa84",
-                "reference": "fbf3c8a8ee08068bee7d81ee0cee5ddf032aaa84",
+                "url": "https://api.github.com/repos/nunomaduro/collision/zipball/d9205550494a8e6865ae59eaa3fd0f77f6c916fb",
+                "reference": "d9205550494a8e6865ae59eaa3fd0f77f6c916fb",
                 "shasum": ""
             },
             "require": {
                 "filp/whoops": "^2.14.6",
                 "nunomaduro/termwind": "^1.15.1",
                 "php": "^8.1.0",
+                "sebastian/environment": "^6.0.0",
                 "symfony/console": "^6.2.5"
             },
             "require-dev": {
@@ -7252,7 +7253,7 @@
                     "type": "patreon"
                 }
             ],
-            "time": "2023-02-16T14:34:30+00:00"
+            "time": "2023-02-17T11:52:52+00:00"
         },
         {
             "name": "phar-io/manifest",
