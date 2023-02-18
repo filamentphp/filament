@@ -2,7 +2,6 @@
 
 namespace Filament\Infolists\Components\Concerns;
 
-use BackedEnum;
 use Closure;
 use Filament\Infolists\Components\Component;
 use Filament\Support\Contracts\HasIcon as IconInterface;

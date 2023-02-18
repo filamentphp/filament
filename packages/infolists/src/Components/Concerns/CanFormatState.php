@@ -3,7 +3,6 @@
 namespace Filament\Infolists\Components\Concerns;
 
 use Akaunting\Money;
-use BackedEnum;
 use Closure;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
