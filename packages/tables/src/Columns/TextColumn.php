@@ -2,11 +2,8 @@
 
 namespace Filament\Tables\Columns;
 
-use BackedEnum;
 use Closure;
-use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Filament\Tables\Contracts\HasTable;
-use Illuminate\Contracts\Support\Arrayable;
 use stdClass;
 
 class TextColumn extends Column
