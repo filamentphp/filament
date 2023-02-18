@@ -7,24 +7,24 @@ namespace Filament\Tables\Concerns;
  */
 trait CanDeferLoading
 {
-    public bool $tableDataReadyToLoad = false;
+    public bool $isTableLoaded = false;
 
     public function isTableLoadingDeferred(): bool
     {
         return false;
     }
 
-    public function allowTableLoadingData(): void
+    public function loadTable(): void
     {
-        $this->tableDataReadyToLoad = true;
+        $this->isTableLoaded = true;
     }
 
-    public function canTableDataBeLoaded(): bool
+    public function isTableLoaded(): bool
     {
         if (! $this->isTableLoadingDeferred()) {
             return true;
         }
 
-        return $this->tableDataReadyToLoad;
+        return $this->isTableLoaded;
     }
 }

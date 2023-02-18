@@ -27,15 +27,13 @@
     $isSelectionEnabled = $isSelectionEnabled();
     $recordCheckboxPosition = $getRecordCheckboxPosition();
     $isStriped = $isStriped();
-    $isDeferringLoading = $isTableLoadingDeferred();
-    $isTableLoaded = $canTableDataBeLoaded();
+    $isLoaded = $isLoaded();
     $hasFilters = $isFilterable();
     $hasFiltersPopover = $hasFilters && ($getFiltersLayout() === FiltersLayout::Popover);
     $hasFiltersAboveContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::AboveContent);
     $hasFiltersAfterContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::BelowContent);
     $isColumnToggleFormVisible = $hasToggleableColumns();
-    $records = null;
-    if ($isTableLoaded) $records = $getRecords();
+    $records = $isLoaded ? $getRecords() : null;
     $columnsCount = count($columns);
     if (count($actions) && (! $isReordering)) $columnsCount++;
     if ($isSelectionEnabled || $isReordering) $columnsCount++;
@@ -162,8 +160,8 @@
 
     }"
     class="filament-tables-component"
-    @if ($isDeferringLoading)
-    wire:init="allowTableLoadingData"
+    @if (! $isLoaded)
+        wire:init="loadTable"
     @endif
 >
     <x-tables::container>
@@ -304,7 +302,7 @@
             }"
         >
             @if ($content || $hasColumnsLayout)
-                @if (is_null($records))
+                @if ($records === null)
                     <div class="flex items-center justify-center p-4">
                         <x-filament-support::loading-indicator class="w-5 h-5" />
                     </div>
@@ -759,14 +757,14 @@
                         </x-tables::row>
                     @endif
 
-                    @if (is_null($records))
-                    <tr>
-                        <td colspan="{{ $columnsCount }}">
-                            <div class="flex items-center justify-center w-full p-4">
-                                <x-filament-support::loading-indicator class="w-5 h-5"/>
-                            </div>
-                        </td>
-                    </tr>
+                    @if ($records === null)
+                        <tr>
+                            <td colspan="{{ $columnsCount }}">
+                                <div class="flex items-center justify-center w-full p-4">
+                                    <x-filament-support::loading-indicator class="w-5 h-5"/>
+                                </div>
+                            </td>
+                        </tr>
                     @elseif (count($records))
                         @foreach ($records as $record)
                             @php
@@ -949,7 +947,7 @@
             @endif
         </div>
 
-        @if (!is_null($records) &&
+        @if (
             $records instanceof \Illuminate\Contracts\Pagination\Paginator &&
             ((! $records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) || $records->total())
         )

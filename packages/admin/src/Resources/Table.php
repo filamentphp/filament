@@ -31,7 +31,7 @@ class Table
 
     protected ?string $pollingInterval = null;
 
-    protected ?bool $deferLoading = false;
+    protected ?bool $isLoadingDeferred = false;
 
     protected ?string $reorderColumn = null;
 
@@ -166,9 +166,9 @@ class Table
         return $this;
     }
 
-    public function deferLoading(): static
+    public function deferLoading(bool $condition = true): static
     {
-        $this->deferLoading = true;
+        $this->isLoadingDeferred = $condition;
 
         return $this;
     }
@@ -275,8 +275,8 @@ class Table
         return $this->pollingInterval;
     }
 
-    public function getDeferLoading(): bool
+    public function isLoadingDeferred(): bool
     {
-        return $this->deferLoading;
+        return $this->isLoadingDeferred;
     }
 }
