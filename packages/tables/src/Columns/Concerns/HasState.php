@@ -58,14 +58,6 @@ trait HasState
             $this->evaluate($this->getStateUsing, exceptParameters: ['state']) :
             $this->getStateFromRecord();
 
-        if (
-            interface_exists(BackedEnum::class) &&
-            ($state instanceof BackedEnum) &&
-            property_exists($state, 'value')
-        ) {
-            $state = $state->value;
-        }
-
         if (is_string($state) && ($separator = $this->getSeparator())) {
             $state = explode($separator, $state);
             $state = (count($state) === 1 && blank($state[0])) ?
