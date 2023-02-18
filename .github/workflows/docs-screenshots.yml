@@ -29,7 +29,7 @@ jobs:
       - name: Setup app
         run: |
           cd docs-assets/app
-          composer update --prefer-dist --no-interaction
+          composer install --no-interaction
           php artisan serve &
       - name: Run script
         run: |
