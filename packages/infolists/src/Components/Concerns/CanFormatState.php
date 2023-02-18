@@ -181,14 +181,8 @@ trait CanFormatState
 
     public function formatState(mixed $state): mixed
     {
-        if (
-            filled($this->enum) &&
-            function_exists('enum_exists') &&
-            enum_exists($this->enum) &&
-            is_a($this->enum, BackedEnum::class, allow_string: true) &&
-            is_a($this->enum, LabelInterface::class, allow_string: true)
-        ) {
-            $state = $this->enum::tryFrom($state)?->getLabel();
+        if ($state instanceof LabelInterface) {
+            $state = $state->getLabel();
         }
 
         $state = $this->evaluate($this->formatStateUsing ?? $state, [

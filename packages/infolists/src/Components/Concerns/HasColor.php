@@ -50,17 +50,14 @@ trait HasColor
             'state' => $state,
         ]);
 
-        $enum = $color ?? $this->enum;
-        if (
-            is_string($enum) &&
-            function_exists('enum_exists') &&
-            enum_exists($enum) &&
-            is_a($enum, BackedEnum::class, allow_string: true) &&
-            is_a($enum, ColorInterface::class, allow_string: true)
-        ) {
-            return $enum::tryFrom($this->getState())?->getColor();
+        if (filled($color)) {
+            return $color;
         }
 
-        return $color;
+        if (! $state instanceof ColorInterface) {
+            return null;
+        }
+
+        return $color->getColor();
     }
 }

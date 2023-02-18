@@ -20,8 +20,6 @@ class IconColumn extends Column
      */
     protected string $view = 'filament-tables::columns.icon-column';
 
-    protected ?string $enum = null;
-
     protected bool | Closure $isBoolean = false;
 
     protected string | Closure | null $falseColor = null;
@@ -35,13 +33,6 @@ class IconColumn extends Column
     public function boolean(bool | Closure $condition = true): static
     {
         $this->isBoolean = $condition;
-
-        return $this;
-    }
-
-    public function enum(?string $enum): static
-    {
-        $this->enum = $enum;
 
         return $this;
     }

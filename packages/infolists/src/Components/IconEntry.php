@@ -19,8 +19,6 @@ class IconEntry extends Entry
      */
     protected string $view = 'filament-infolists::components.icon-entry';
 
-    protected ?string $enum = null;
-
     protected bool | Closure $isBoolean = false;
 
     protected string | Closure | null $falseColor = null;
@@ -34,13 +32,6 @@ class IconEntry extends Entry
     public function boolean(bool | Closure $condition = true): static
     {
         $this->isBoolean = $condition;
-
-        return $this;
-    }
-
-    public function enum(?string $enum): static
-    {
-        $this->enum = $enum;
 
         return $this;
     }

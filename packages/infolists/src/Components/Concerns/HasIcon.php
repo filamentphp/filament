@@ -59,18 +59,15 @@ trait HasIcon
             'state' => $state,
         ]);
 
-        $enum = $icon ?? $this->enum;
-        if (
-            is_string($enum) &&
-            function_exists('enum_exists') &&
-            enum_exists($enum) &&
-            is_a($enum, BackedEnum::class, allow_string: true) &&
-            is_a($enum, IconInterface::class, allow_string: true)
-        ) {
-            return $enum::tryFrom($state)?->getIcon();
+        if (filled($icon)) {
+            return $icon;
         }
 
-        return $icon;
+        if (! $state instanceof IconInterface) {
+            return null;
+        }
+
+        return $state->getIcon();
     }
 
     public function getIconPosition(): string

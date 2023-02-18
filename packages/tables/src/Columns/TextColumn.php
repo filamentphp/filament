@@ -27,8 +27,6 @@ class TextColumn extends Column
 
     protected bool | Closure $canWrap = false;
 
-    protected ?string $enum = null;
-
     protected bool | Closure $isBadge = false;
 
     protected bool | Closure $isBulleted = false;
@@ -61,13 +59,6 @@ class TextColumn extends Column
     public function limitList(int | Closure | null $limit = 3): static
     {
         $this->listLimit = $limit;
-
-        return $this;
-    }
-
-    public function enum(?string $enum): static
-    {
-        $this->enum = $enum;
 
         return $this;
     }
