@@ -178,7 +178,7 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
 If you wish, you may publish the configuration of the package using:
 
 ```bash
-php artisan vendor:publish --tag=filament-notifications-config
+php artisan vendor:publish --tag=filament-config
 ```
 
 ## Upgrading

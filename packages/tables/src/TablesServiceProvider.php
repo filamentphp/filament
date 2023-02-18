@@ -23,7 +23,6 @@ class TablesServiceProvider extends PackageServiceProvider
         $package
             ->name('filament-tables')
             ->hasCommands($this->getCommands())
-            ->hasConfigFile()
             ->hasTranslations()
             ->hasViews();
     }
