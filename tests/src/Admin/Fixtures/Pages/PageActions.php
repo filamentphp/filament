@@ -59,7 +59,7 @@ class PageActions extends Page
             Action::make('url_not_in_new_tab')
                 ->url('https://filamentphp.com', false),
             Action::make('shows_notification')
-                ->action(function() {
+                ->action(function () {
                     Notification::make()
                         ->title('A notification')
                         ->success()
@@ -67,7 +67,7 @@ class PageActions extends Page
                 }),
             Action::make('does_not_show_notification'),
             Action::make('shows_notification_with_id')
-                ->action(function() {
+                ->action(function () {
                     Notification::make('notification_with_id')
                         ->title('A notification')
                         ->success()

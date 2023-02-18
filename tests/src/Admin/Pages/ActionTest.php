@@ -108,7 +108,6 @@ it('can state whether a page action exists', function () {
 });
 
 it('can show a notification', function () {
-
     livewire(PageActions::class)
         ->callPageAction('shows_notification')
         ->assertNotified();
@@ -127,7 +126,6 @@ it('can show a notification', function () {
 });
 
 it('will raise an exception if a notification was not sent checking notification object', function () {
-
     $this->expectException('PHPUnit\Framework\ExpectationFailedException');
 
     livewire(PageActions::class)
@@ -140,7 +138,6 @@ it('will raise an exception if a notification was not sent checking notification
 });
 
 it('will raise an exception if a notification was not sent checking notification title', function () {
-
     $this->expectException('PHPUnit\Framework\ExpectationFailedException');
 
     livewire(PageActions::class)
@@ -149,7 +146,6 @@ it('will raise an exception if a notification was not sent checking notification
 });
 
 it('can show a notification with id', function () {
-
     livewire(PageActions::class)
         ->callPageAction('shows_notification_with_id')
         ->assertNotified();
@@ -168,7 +164,6 @@ it('can show a notification with id', function () {
 });
 
 it('will raise an exception if a notification was sent checking with a different notification title', function () {
-
     $this->expectException('PHPUnit\Framework\ExpectationFailedException');
 
     livewire(PageActions::class)
@@ -181,7 +176,6 @@ it('will raise an exception if a notification was sent checking with a different
 });
 
 test('assertNotified will remove notifications from the session', function () {
-
     livewire(PageActions::class)
         ->callPageAction('shows_notification_with_id')
         ->assertNotified(

@@ -161,7 +161,7 @@ it('can close notifications', function () {
         ->toHaveCount(0);
 });
 
-it('can confirm a notification was sent', function() {
+it('can confirm a notification was sent', function () {
     ($notification = Notification::make()
         ->success()
         ->title('This is a notification')
