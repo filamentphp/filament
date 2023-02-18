@@ -2,9 +2,6 @@
 
 namespace Filament\Tables\Concerns;
 
-/**
- * @property bool $tableDataReadyToLoad
- */
 trait CanDeferLoading
 {
     public bool $isTableLoaded = false;
