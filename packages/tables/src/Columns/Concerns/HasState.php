@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
-use BackedEnum;
 use Closure;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
