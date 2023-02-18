@@ -64,28 +64,9 @@ class TextEntry extends Entry
         return $this;
     }
 
-    /**
-     * @param  string | array<scalar, scalar> | Arrayable  $enum
-     */
-    public function enum(string | array | Arrayable $enum, mixed $default = null): static
+    public function enum(?string $enum): static
     {
-        if (is_array($enum) || $enum instanceof Arrayable) {
-            $this->formatStateUsing(static fn ($state): ?string => $enum[$state] ?? ($default ?? $state));
-
-            return $this;
-        }
-
         $this->enum = $enum;
-
-        if (
-            is_string($enum) &&
-            function_exists('enum_exists') &&
-            enum_exists($enum) &&
-            is_a($enum, BackedEnum::class, allow_string: true) &&
-            is_a($enum, LabelInterface::class, allow_string: true)
-        ) {
-            $this->formatStateUsing(static fn ($state): ?string => $enum::tryFrom($state)?->getLabel() ?? ($default ?? $state));
-        }
 
         return $this;
     }
