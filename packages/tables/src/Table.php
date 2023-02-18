@@ -1588,4 +1588,9 @@ class Table extends ViewComponent
     {
         return $this->checkIfRecordIsSelectableUsing !== null;
     }
+
+    public function isLoaded(): bool
+    {
+        return $this->getLivewire()->isTableLoaded();
+    }
 }
