@@ -8,9 +8,9 @@ use Filament\Support\Contracts\HasColor as ColorInterface;
 
 trait HasColor
 {
-    protected string | Closure | null $color = null;
+    protected string | bool | Closure | null $color = null;
 
-    public function color(string | Closure | null $color): static
+    public function color(string | bool | Closure | null $color): static
     {
         $this->color = $color;
 
@@ -48,6 +48,10 @@ trait HasColor
         $color = $this->evaluate($this->color, [
             'state' => $state,
         ]);
+
+        if ($color === false) {
+            return null;
+        }
 
         if (filled($color)) {
             return $color;

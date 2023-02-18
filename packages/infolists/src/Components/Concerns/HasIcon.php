@@ -8,11 +8,11 @@ use Filament\Support\Contracts\HasIcon as IconInterface;
 
 trait HasIcon
 {
-    protected string | Closure | null $icon = null;
+    protected string | bool | Closure | null $icon = null;
 
     protected string | Closure | null $iconPosition = null;
 
-    public function icon(string | Closure | null $icon): static
+    public function icon(string | bool | Closure | null $icon): static
     {
         $this->icon = $icon;
 
@@ -57,6 +57,10 @@ trait HasIcon
         $icon = $this->evaluate($this->icon, [
             'state' => $state,
         ]);
+
+        if ($icon === false) {
+            return null;
+        }
 
         if (filled($icon)) {
             return $icon;
