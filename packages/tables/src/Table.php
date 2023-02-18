@@ -169,6 +169,8 @@ class Table extends ViewComponent
 
     protected bool | Closure $isGroupsOnly = false;
 
+    protected bool | Closure $isLoadingDeferred = false;
+
     protected bool | Closure $isPaginated = true;
 
     protected bool | Closure $isPaginatedWhileReordering = true;
@@ -647,6 +649,13 @@ class Table extends ViewComponent
     public function heading(string | Htmlable | Closure | null $heading): static
     {
         $this->heading = $heading;
+
+        return $this;
+    }
+
+    public function deferLoading(bool | Closure $condition = true): static
+    {
+        $this->isLoadingDeferred = $condition;
 
         return $this;
     }
@@ -1592,5 +1601,10 @@ class Table extends ViewComponent
     public function isLoaded(): bool
     {
         return $this->getLivewire()->isTableLoaded();
+    }
+
+    public function isLoadingDeferred(): bool
+    {
+        return (bool) $this->evaluate($this->isLoadingDeferred);
     }
 }

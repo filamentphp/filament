@@ -9,6 +9,9 @@ trait CanDeferLoading
 {
     public bool $isTableLoaded = false;
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     public function isTableLoadingDeferred(): bool
     {
         return false;
@@ -21,7 +24,7 @@ trait CanDeferLoading
 
     public function isTableLoaded(): bool
     {
-        if (! $this->isTableLoadingDeferred()) {
+        if (! $this->getTable()->isLoadingDeferred()) {
             return true;
         }
 
