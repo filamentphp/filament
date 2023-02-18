@@ -206,7 +206,8 @@ class Notification extends ViewComponent implements Arrayable
 
         Assert::assertIsArray($notifications);
 
-        $expectedNotification = Arr::last($notifications);
+        $expectedNotification = array_pop($notifications);
+        session()->put('filament.notifications', $notifications);
 
         Assert::assertIsArray($expectedNotification);
 
@@ -215,7 +216,10 @@ class Notification extends ViewComponent implements Arrayable
         }
 
         if ($notification instanceof Notification) {
-            Assert::assertSame($expectedNotification, $notification->toArray());
+            Assert::assertSame(
+                collect($expectedNotification)->except(['id'])->toArray(),
+                collect($notification->toArray())->except(['id'])->toArray()
+            );
 
             return;
         }

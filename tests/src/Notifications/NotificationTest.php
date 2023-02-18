@@ -160,3 +160,12 @@ it('can close notifications', function () {
         ->toBeInstanceOf(Collection::class)
         ->toHaveCount(0);
 });
+
+it('can confirm a notification was sent', function() {
+    ($notification = Notification::make()
+        ->success()
+        ->title('This is a notification')
+        ->body('are you sure'))->send();
+
+    Notification::assertNotified($notification);
+});

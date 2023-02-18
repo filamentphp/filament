@@ -1,5 +1,6 @@
 <?php
 
+use Filament\Notifications\Notification;
 use Filament\Tests\Admin\Fixtures\Pages\PageActions;
 use Filament\Tests\Admin\Pages\TestCase;
 use Illuminate\Support\Str;
@@ -104,4 +105,98 @@ it('can state whether a page action exists', function () {
     livewire(PageActions::class)
         ->assertPageActionExists('exists')
         ->assertPageActionDoesNotExist('does_not_exist');
+});
+
+it('can show a notification', function () {
+
+    livewire(PageActions::class)
+        ->callPageAction('shows_notification')
+        ->assertNotified();
+
+    livewire(PageActions::class)
+        ->callPageAction('shows_notification')
+        ->assertNotified('A notification');
+
+    livewire(PageActions::class)
+        ->callPageAction('shows_notification')
+        ->assertNotified(
+            Notification::make()
+                ->title('A notification')
+                ->success()
+        );
+});
+
+it('will raise an exception if a notification was not sent checking notification object', function () {
+
+    $this->expectException('PHPUnit\Framework\ExpectationFailedException');
+
+    livewire(PageActions::class)
+        ->callPageAction('does_not_show_notification')
+        ->assertNotified(
+            Notification::make()
+                ->title('A notification')
+                ->success()
+        );
+});
+
+it('will raise an exception if a notification was not sent checking notification title', function () {
+
+    $this->expectException('PHPUnit\Framework\ExpectationFailedException');
+
+    livewire(PageActions::class)
+        ->callPageAction('does_not_show_notification')
+        ->assertNotified('A notification');
+});
+
+it('can show a notification with id', function () {
+
+    livewire(PageActions::class)
+        ->callPageAction('shows_notification_with_id')
+        ->assertNotified();
+
+    livewire(PageActions::class)
+        ->callPageAction('shows_notification_with_id')
+        ->assertNotified('A notification');
+
+    livewire(PageActions::class)
+        ->callPageAction('shows_notification_with_id')
+        ->assertNotified(
+            Notification::make('notification_with_id')
+                ->title('A notification')
+                ->success()
+        );
+});
+
+it('will raise an exception if a notification was sent checking with a different notification title', function () {
+
+    $this->expectException('PHPUnit\Framework\ExpectationFailedException');
+
+    livewire(PageActions::class)
+        ->callPageAction('shows_notification_with_id')
+        ->assertNotified(
+            Notification::make()
+                ->title('A different title')
+                ->success()
+        );
+});
+
+test('assertNotified will remove notifications from the session', function () {
+
+    livewire(PageActions::class)
+        ->callPageAction('shows_notification_with_id')
+        ->assertNotified(
+            Notification::make()
+                ->title('A notification')
+                ->success()
+        );
+
+    $this->expectException('PHPUnit\Framework\ExpectationFailedException');
+
+    livewire(PageActions::class)
+        ->callPageAction('does_not_show_notification')
+        ->assertNotified(
+            Notification::make()
+                ->title('A notification')
+                ->success()
+        );
 });
