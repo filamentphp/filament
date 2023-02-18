@@ -758,13 +758,16 @@
                     @endif
 
                     @if ($records === null)
-                        <tr>
-                            <td colspan="{{ $columnsCount }}">
-                                <div class="flex items-center justify-center w-full p-4">
-                                    <x-filament-support::loading-indicator class="w-5 h-5"/>
-                                </div>
-                            </td>
-                        </tr>
+                        @for ($i = 0; $i < 10; $i++)
+                            <tr 
+                                wire:key="{{ $this->id }}.table.records.{{ $i }}.loading-row"    
+                            >
+                                <x-tables::loading-cell
+                                    :colspan="$columnsCount"
+                                    :wire:key="$this->id . '.table.records.' . $i . '.loading-cell'"
+                                />
+                            </tr>
+                        @endfor
                     @elseif (count($records))
                         @foreach ($records as $record)
                             @php
