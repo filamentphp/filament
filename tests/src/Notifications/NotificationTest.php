@@ -162,17 +162,14 @@ it('can close notifications', function () {
 });
 
 it('can emit an event', function () {
-
     $action = Action::make('action')->emit('an_event');
     expect($action->getWireClickAction())->toBe("\$emit('an_event')");
 
     $action = Action::make('action')->emit('an_event', ['data']);
     expect($action->getWireClickAction())->toBe("\$emit('an_event', 'data')");
-
 });
 
 it('can emit an event to itself', function () {
-
     $action = Action::make('action')->emitSelf('an_event');
     expect($action->getWireClickAction())->toBe("\$emitSelf('an_event')");
 
@@ -192,7 +189,6 @@ it('can emit an event to a component', function () {
     $action = Action::make('action')->emitTo('a_component', 'an_event');
     expect($action->getWireClickAction())->toBe("\$emitTo('a_component', 'an_event')");
 
-    $action = Action::make('action')->emitTo('a_component', 'an_event', ['data'], );
+    $action = Action::make('action')->emitTo('a_component', 'an_event', ['data']);
     expect($action->getWireClickAction())->toBe("\$emitTo('a_component', 'an_event', 'data')");
 });
-

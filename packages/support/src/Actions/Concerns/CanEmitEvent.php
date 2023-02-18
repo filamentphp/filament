@@ -81,11 +81,11 @@ trait CanEmitEvent
         if ($this->getEvent()) {
             $emitArguments = collect([$this->getEvent()])
                 ->merge($this->getEventData())
-                ->when($this->emitToTarget, fn($collection, string $target) => $collection->prepend($target))
+                ->when($this->emitToTarget, fn ($collection, string $target) => $collection->prepend($target))
                 ->map(fn (mixed $value) => \Illuminate\Support\Js::from($value)->toHtml())
                 ->implode(', ');
 
-            $wireClickAction = match($this->emitDirection) {
+            $wireClickAction = match ($this->emitDirection) {
                 'self' => "\$emitSelf($emitArguments)",
                 'up' => "\$emitUp($emitArguments)",
                 'to' => "\$emitTo($emitArguments)",

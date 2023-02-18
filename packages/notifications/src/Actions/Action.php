@@ -56,7 +56,7 @@ class Action extends BaseAction implements Arrayable
         $static->color($data['color'] ?? null);
         $static->disabled($data['isDisabled'] ?? false);
 
-        match($data['emitDirection'] ?? '') {
+        match ($data['emitDirection'] ?? '') {
             'self' => $static->emitSelf($data['event'] ?? null, $data['eventData'] ?? []),
             'up' => $static->emitUp($data['event'] ?? null, $data['eventData'] ?? []),
             'to' => $static->emitTo($data['emitToTarget'] ?? null, $data['event'] ?? null, $data['eventData'] ?? []),
