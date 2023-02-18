@@ -14,7 +14,7 @@
         @endif
         type="button"
         @class([
-            'flex items-center w-full px-4 py-2 space-x-1 rtl:space-x-reverse font-medium text-sm text-gray-600 dark:text-gray-300',
+            'flex items-center w-full px-4 py-2 font-medium text-sm text-gray-600 dark:text-gray-300',
             'cursor-default' => ! $sortable,
             'whitespace-nowrap' => ! $wrap,
             'whitespace-normal' => $wrap,
@@ -45,7 +45,7 @@
                 color="dark:text-gray-300"
                 size="h-5 w-5"
                 :class="[
-                    'filament-tables-header-cell-sort-icon',
+                    'filament-tables-header-cell-sort-icon ml-1 rtl:ml-0 rtl:mr-1',
                     'opacity-25' => ! $activelySorted,
                 ]"
             />
