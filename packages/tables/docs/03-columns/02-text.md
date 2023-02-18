@@ -199,20 +199,6 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('description')->html()
 ```
 
-## Enum formatting
-
-You may also transform a set of known cell values using the `enum()` method:
-
-```php
-use Filament\Tables\Columns\TextColumn;
-
-TextColumn::make('status')->enum([
-    'draft' => 'Draft',
-    'reviewing' => 'Reviewing',
-    'published' => 'Published',
-])
-```
-
 ## Displaying the row index
 
 You may want a column to contain the number of the current row in the table:
