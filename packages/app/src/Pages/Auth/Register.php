@@ -12,6 +12,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\CardPage;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
@@ -116,8 +117,11 @@ class Register extends CardPage
             return $this->userModel;
         }
 
+        /** @var SessionGuard $authGuard */
+        $authGuard = Filament::auth();
+
         /** @var EloquentUserProvider $provider */
-        $provider = Filament::auth()->getProvider();
+        $provider = $authGuard->getProvider();
 
         return $this->userModel = $provider->getModel();
     }
