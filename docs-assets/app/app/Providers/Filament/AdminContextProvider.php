@@ -6,7 +6,7 @@ use Filament\Context;
 use Filament\ContextProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Http\Middleware\MirrorConfigToSubpackages;
+use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Pages;
 use Filament\Support\Color;
 use Filament\Widgets;
@@ -49,7 +49,7 @@ class AdminContextProvider extends ContextProvider
                 VerifyCsrfToken::class,
                 SubstituteBindings::class,
                 DispatchServingFilamentEvent::class,
-                MirrorConfigToSubpackages::class,
+                DisableBladeIconComponents::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

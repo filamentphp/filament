@@ -4,7 +4,7 @@ namespace Filament;
 
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Http\Middleware\MirrorConfigToSubpackages;
+use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\SetUpContext;
 use Filament\Http\Responses\Auth\Contracts\EmailVerificationResponse as EmailVerificationResponseContract;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse as LoginResponseContract;
@@ -59,8 +59,6 @@ class FilamentServiceProvider extends PackageServiceProvider
             ], 'filament/filament');
         });
 
-        $this->mergeConfigFrom(__DIR__ . '/../config/filament.php', 'filament');
-
         app(Router::class)->aliasMiddleware('context', SetUpContext::class);
     }
 
@@ -68,16 +66,12 @@ class FilamentServiceProvider extends PackageServiceProvider
     {
         Livewire::addPersistentMiddleware([
             Authenticate::class,
+            DisableBladeIconComponents::class,
             DispatchServingFilamentEvent::class,
-            MirrorConfigToSubpackages::class,
             SetUpContext::class,
         ]);
 
         if ($this->app->runningInConsole()) {
-            $this->publishes([
-                $this->package->basePath('/../config/filament.php') => config_path('filament.php'),
-            ], groups: 'filament-config');
-
             foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
                 $this->publishes([
                     $file->getRealPath() => base_path("stubs/filament/{$file->getFilename()}"),
@@ -112,44 +106,5 @@ class FilamentServiceProvider extends PackageServiceProvider
         }
 
         return array_merge($commands, $aliases);
-    }
-
-    /**
-     * @param  array<string, mixed>  $original
-     * @param  array<string, mixed>  $merging
-     * @return array<string, mixed>
-     */
-    protected function mergeConfig(array $original, array $merging): array
-    {
-        $array = array_merge($original, $merging);
-
-        foreach ($original as $key => $value) {
-            if (! is_array($value)) {
-                continue;
-            }
-
-            if (! Arr::exists($merging, $key)) {
-                continue;
-            }
-
-            if (is_numeric($key)) {
-                continue;
-            }
-
-            if ($key === 'middleware' || $key === 'register') {
-                continue;
-            }
-
-            $array[$key] = $this->mergeConfig($value, $merging[$key]);
-        }
-
-        return $array;
-    }
-
-    protected function mergeConfigFrom($path, $key): void
-    {
-        $config = $this->app['config']->get($key) ?? [];
-
-        $this->app['config']->set($key, $this->mergeConfig(require $path, $config));
     }
 }

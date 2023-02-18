@@ -37,7 +37,7 @@ class ImageEntry extends Entry
     {
         parent::setUp();
 
-        $this->disk(config('filament-infolists.default_filesystem_disk'));
+        $this->disk(config('filament.default_filesystem_disk'));
     }
 
     public function disk(string | Closure | null $disk): static
@@ -97,7 +97,7 @@ class ImageEntry extends Entry
 
     public function getDiskName(): string
     {
-        return $this->evaluate($this->disk) ?? config('filament-infolists.default_filesystem_disk');
+        return $this->evaluate($this->disk) ?? config('filament.default_filesystem_disk');
     }
 
     public function getHeight(): ?string

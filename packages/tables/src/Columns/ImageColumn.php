@@ -37,7 +37,7 @@ class ImageColumn extends Column
     {
         parent::setUp();
 
-        $this->disk(config('filament-tables.default_filesystem_disk'));
+        $this->disk(config('filament.default_filesystem_disk'));
     }
 
     public function disk(string | Closure | null $disk): static
@@ -105,7 +105,7 @@ class ImageColumn extends Column
 
     public function getDiskName(): string
     {
-        return $this->evaluate($this->disk) ?? config('filament-tables.default_filesystem_disk');
+        return $this->evaluate($this->disk) ?? config('filament.default_filesystem_disk');
     }
 
     public function getHeight(): ?string

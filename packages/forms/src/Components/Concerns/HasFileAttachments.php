@@ -88,7 +88,7 @@ trait HasFileAttachments
 
     public function getFileAttachmentsDiskName(): string
     {
-        return $this->evaluate($this->fileAttachmentsDiskName) ?? config('filament-forms.default_filesystem_disk');
+        return $this->evaluate($this->fileAttachmentsDiskName) ?? config('filament.default_filesystem_disk');
     }
 
     public function getFileAttachmentsVisibility(): string
