@@ -17,7 +17,7 @@
 @php
     $buttonClasses = array_merge(
         [
-            'filament-button inline-flex items-center justify-center rounded-lg border font-medium transition-colors outline-none focus:ring-2 disabled:pointer-events-none disabled:opacity-70',
+            'filament-button inline-grid grid-flow-col items-center justify-center rounded-lg border font-medium outline-none transition-colors focus:ring-2 disabled:pointer-events-none disabled:opacity-70',
             match ($size) {
                 'xs' => 'filament-button-size-xs gap-1.5 py-[calc(theme(spacing.2)-1px)] px-[calc(theme(spacing.3)-1px)] text-xs',
                 'sm' => 'filament-button-size-sm gap-1.5 py-[calc(theme(spacing.2)-1px)] px-[calc(theme(spacing.[3.5])-1px)] text-sm',
@@ -87,6 +87,11 @@
             },
             default => null,
         } => ! $labelSrOnly,
+    ]);
+
+    $labelClasses = \Illuminate\Support\Arr::toCssClasses([
+        'filament-button-label truncate',
+        'sr-only' => $labelSrOnly,
     ]);
 
     $hasFileUploadLoadingIndicator = ($type === 'submit') && filled($form);
@@ -167,12 +172,11 @@
             @endif
         @endif
 
-
         <span
             @if ($hasFileUploadLoadingIndicator)
                 x-show="!isUploadingFile"
             @endif
-            @class(['sr-only' => $labelSrOnly])
+            class="{{ $labelClasses }}"
         >
             {{ $slot }}
         </span>
@@ -238,7 +242,7 @@
             />
         @endif
 
-        <span @class(['sr-only' => $labelSrOnly])>
+        <span class="{{ $labelClasses }}">
             {{ $slot }}
         </span>
 
