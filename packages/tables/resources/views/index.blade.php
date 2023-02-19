@@ -758,16 +758,9 @@
                     @endif
 
                     @if ($records === null)
-                        @for ($i = 0; $i < 10; $i++)
-                            <tr 
-                                wire:key="{{ $this->id }}.table.records.{{ $i }}.loading-row"    
-                            >
-                                <x-tables::loading-cell
-                                    :colspan="$columnsCount"
-                                    :wire:key="$this->id . '.table.records.' . $i . '.loading-cell'"
-                                />
-                            </tr>
-                        @endfor
+                        <x-tables::defer-loading-indicator 
+                            :columnsCount="$columnsCount"
+                        />
                     @elseif (count($records))
                         @foreach ($records as $record)
                             @php
