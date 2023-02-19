@@ -6,7 +6,7 @@
 <html
     lang="{{ str_replace('_', '-', app()->getLocale()) }}"
     dir="{{ __('filament::layout.direction') ?? 'ltr' }}"
-    class="filament js-focus-visible min-h-screen bg-gray-100 antialiased"
+    class="filament js-focus-visible min-h-screen antialiased"
 >
     <head>
         {{ \Filament\Facades\Filament::renderHook('head.start') }}
