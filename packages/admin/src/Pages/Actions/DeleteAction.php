@@ -35,7 +35,7 @@ class DeleteAction extends Action
         $this->keyBindings(['mod+d']);
 
         $this->hidden(static function (Model $record): bool {
-            if (!method_exists($record, 'trashed')) {
+            if (! method_exists($record, 'trashed')) {
                 return false;
             }
 
