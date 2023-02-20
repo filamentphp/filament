@@ -5,7 +5,7 @@
 
 <x-filament::dropdown
     {{ $attributes->class(['filament-tables-column-toggling']) }}
-    placement="bottom-end"
+    placement="bottom-start"
     shift
     :width="$width"
     wire:key="{{ $this->id }}.table.toggle"
