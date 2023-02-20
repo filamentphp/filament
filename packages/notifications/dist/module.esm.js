@@ -469,6 +469,30 @@ var Action = class {
     this.eventData(data);
     return this;
   }
+  emitSelf(event, data) {
+    this.emit(event, data);
+    this.emitDirection = "self";
+    return this;
+  }
+  emitTo(to, event, data) {
+    this.emit(event, data);
+    this.emitDirection = "to";
+    this.emitToTarget = to;
+    return this;
+  }
+  emitUp(event, data) {
+    this.emit(event, data);
+    this.emitDirection = "up";
+    return this;
+  }
+  emitDirection(emitDirection) {
+    this.emitDirection = emitDirection;
+    return this;
+  }
+  emitToTarget(emitToTarget) {
+    this.emitToTarget = emitToTarget;
+    return this;
+  }
   event(event) {
     this.event = event;
     return this;
