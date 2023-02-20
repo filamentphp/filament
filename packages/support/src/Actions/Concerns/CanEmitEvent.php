@@ -13,7 +13,7 @@ trait CanEmitEvent
 
     protected string | bool $emitDirection = false;
 
-    protected string $emitToTarget = '';
+    protected ?string $emitToTarget = null;
 
     public function emit(
         string | Closure | null $event,
