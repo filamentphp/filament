@@ -101,6 +101,10 @@ trait InteractsWithActions
         } catch (Cancel $exception) {
         }
 
+        if (filled($this->redirectTo)) {
+            return $result;
+        }
+
         $this->mountedAction = null;
 
         $action->resetArguments();
