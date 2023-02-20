@@ -304,7 +304,7 @@
             @if ($content || $hasColumnsLayout)
                 @if ($records === null)
                     <div class="flex items-center justify-center p-4">
-                        <x-filament-support::loading-indicator class="w-5 h-5" />
+                        <x-tables::defer-loading-indicator />
                     </div>
                 @elseif (count($records))
                     @if (($content || $hasColumnsLayout) && (! $isReordering))
@@ -758,9 +758,13 @@
                     @endif
 
                     @if ($records === null)
-                        <x-tables::defer-loading-indicator 
-                            :columnsCount="$columnsCount"
-                        />
+                        <tr>
+                            <td colspan="{{ $columnsCount }}">
+                                <div class="flex items-center justify-center w-full p-4">
+                                    <x-tables::defer-loading-indicator />
+                                </div>
+                            </td>
+                        </tr>
                     @elseif (count($records))
                         @foreach ($records as $record)
                             @php
