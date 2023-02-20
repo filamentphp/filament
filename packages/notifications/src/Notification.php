@@ -211,11 +211,11 @@ class Notification extends ViewComponent implements Arrayable
         Assert::assertIsArray($notifications->toArray());
 
         if (is_string($notification)) {
-            $expectedNotification = $notifications->first(fn (Notification $notification): bool => $notification->title === $notification);
+            $expectedNotification = $notifications->first(fn (Notification $mountedNotification): bool => $mountedNotification->title === $notification);
         }
 
         if ($notification instanceof Notification) {
-            $expectedNotification = $notifications->first(fn (Notification $notification, string $key): bool => $notification->id === $key);
+            $expectedNotification = $notifications->first(fn (Notification $mountedNotification, string $key): bool => $mountedNotification->id === $key);
         }
 
         if (blank($notification)) {
