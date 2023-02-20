@@ -4,6 +4,7 @@ namespace Filament\Tests\Admin\Fixtures\Pages;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Pages\Actions\Action;
 use Filament\Pages\Page;
 
@@ -57,6 +58,32 @@ class PageActions extends Page
                 ->url('https://filamentphp.com', true),
             Action::make('url_not_in_new_tab')
                 ->url('https://filamentphp.com', false),
+            Action::make('shows_notification')
+                ->action(function () {
+                    Notification::make()
+                        ->title('A notification')
+                        ->success()
+                        ->send();
+                }),
+            Action::make('does_not_show_notification'),
+            Action::make('shows_notification_with_id')
+                ->action(function () {
+                    Notification::make('notification_with_id')
+                        ->title('A notification')
+                        ->success()
+                        ->send();
+                }),
+            Action::make('two_notifications')
+                ->action(function () {
+                    Notification::make('first_notification')
+                        ->title('First notification')
+                        ->success()
+                        ->send();
+                    Notification::make('second_notification')
+                        ->title('Second notification')
+                        ->success()
+                        ->send();
+                }),
         ];
     }
 }
