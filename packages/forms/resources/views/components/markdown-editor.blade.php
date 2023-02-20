@@ -251,33 +251,35 @@
                         dusk="filament.forms.{{ $statePath }}"
                         x-on:keyup.enter="checkForAutoInsertion"
                         x-on:file-attachment-accepted.window="
-                            attachment = $event.detail?.attachments?.[0]
+                            if ($event.explicitOriginalTarget.id === '{{ $getId() }}') {
+                                attachment = $event.detail?.attachments?.[0]
 
-                            if (! attachment || ! attachment.file) return
+                                if (! attachment || ! attachment.file) return
 
-                            $wire.upload(`componentFileAttachments.{{ $statePath }}`, attachment.file, () => {
-                                $wire.getComponentFileAttachmentUrl('{{ $statePath }}').then((url) => {
-                                    if (! url) {
-                                        return
-                                    }
+                                $wire.upload(`componentFileAttachments.{{ $statePath }}`, attachment.file, () => {
+                                    $wire.getComponentFileAttachmentUrl('{{ $statePath }}').then((url) => {
+                                        if (! url) {
+                                            return
+                                        }
 
-                                    $refs.imageTrigger.click()
+                                        $refs.imageTrigger.click()
 
-                                    const urlStart = $refs.textarea.selectionStart + 2
-                                    const urlEnd = urlStart + 3
+                                        const urlStart = $refs.textarea.selectionStart + 2
+                                        const urlEnd = urlStart + 3
 
-                                    state = [
-                                        $refs.textarea.value.substring(0, urlStart),
-                                        url,
-                                        $refs.textarea.value.substring(urlEnd)
-                                    ].join('')
+                                        state = [
+                                            $refs.textarea.value.substring(0, urlStart),
+                                            url,
+                                            $refs.textarea.value.substring(urlEnd)
+                                        ].join('')
 
-                                    $refs.textarea.selectionStart = urlStart - 2
-                                    $refs.textarea.selectionEnd = urlStart - 2
+                                        $refs.textarea.selectionStart = urlStart - 2
+                                        $refs.textarea.selectionEnd = urlStart - 2
 
-                                    render()
+                                        render()
+                                    })
                                 })
-                            })
+                            }
                         "
                         x-ref="textarea"
                         @if ($isRequired() && (! $isConcealed())) required @endif
