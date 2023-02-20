@@ -433,7 +433,7 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
             }
 
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleColumnName(), $keyName)
+                ->pluck($component->getRelationshipTitleColumnName() . ' as ' . $component->getRelationshipTitleColumnName(), $keyName)
                 ->toArray();
         });
 
@@ -472,7 +472,7 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
             }
 
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleColumnName(), $keyName)
+                ->pluck($component->getRelationshipTitleColumnName() . ' as ' . $component->getRelationshipTitleColumnName(), $keyName)
                 ->toArray();
         });
 
@@ -561,7 +561,7 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
             }
 
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleColumnName(), $relatedKeyName)
+                ->pluck($component->getRelationshipTitleColumnName() . ' as ' . $component->getRelationshipTitleColumnName(), $relatedKeyName)
                 ->toArray();
         });
 
