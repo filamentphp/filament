@@ -33,7 +33,7 @@ it('can list posts', function () {
 
 > Note that if your table uses pagination, `assertCanSeeTableRecords()` will only check for records on the first page. To switch page, call `set('page', 2)`.
 
-> Note that if your table uses deferLoading(), you must call `set('isTableLoaded', true)` before `assertCanSeeTableRecords()` to force the the component to render the records.
+> Note that if your table uses `deferLoading()`, you should call `set('isTableLoaded', true)` before `assertCanSeeTableRecords()` to render the table records directly.
 
 ## Columns
 
