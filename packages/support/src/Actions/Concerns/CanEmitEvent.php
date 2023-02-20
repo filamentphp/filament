@@ -3,6 +3,7 @@
 namespace Filament\Support\Actions\Concerns;
 
 use Closure;
+use Illuminate\Support\Collection;
 
 trait CanEmitEvent
 {
@@ -81,8 +82,8 @@ trait CanEmitEvent
         if ($this->getEvent()) {
             $emitArguments = collect([$this->getEvent()])
                 ->merge($this->getEventData())
-                ->when($this->emitToTarget, fn ($collection, string $target) => $collection->prepend($target))
-                ->map(fn (mixed $value) => \Illuminate\Support\Js::from($value)->toHtml())
+                ->when($this->emitToTarget, fn (Collection $collection, string $target) => $collection->prepend($target))
+                ->map(fn (mixed $value): string => \Illuminate\Support\Js::from($value)->toHtml())
                 ->implode(', ');
 
             $wireClickAction = match ($this->emitDirection) {
