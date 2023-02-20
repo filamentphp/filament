@@ -338,399 +338,374 @@
                 'border-t': hasHeader,
             }"
         >
-            @if ($content || $hasColumnsLayout)
-                @if ($records === null)
-                    <div class="flex items-center justify-center p-4">
-                        <x-filament::loading-indicator class="w-5 h-5" />
-                    </div>
-                @elseif (count($records))
-                    @if (($content || $hasColumnsLayout) && (! $isReordering))
-                        <div class="bg-gray-500/5 flex items-center gap-4 px-4 border-b dark:border-gray-700">
-                            @if ($isSelectionEnabled)
-                                <x-filament-tables::checkbox
-                                    :label="__('filament-tables::table.fields.bulk_select_page.label')"
-                                    x-on:click="toggleSelectRecordsOnPage"
-                                    x-bind:checked="
-                                        let recordsOnPage = getRecordsOnPage()
+            @if (($content || $hasColumnsLayout) && ($records !== null) && count($records))
+                @if (! $isReordering)
+                    <div class="bg-gray-500/5 flex items-center gap-4 px-4 border-b dark:border-gray-700">
+                        @if ($isSelectionEnabled)
+                            <x-filament-tables::checkbox
+                                :label="__('filament-tables::table.fields.bulk_select_page.label')"
+                                x-on:click="toggleSelectRecordsOnPage"
+                                x-bind:checked="
+                                    let recordsOnPage = getRecordsOnPage()
 
-                                        if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
-                                            $el.checked = true
+                                    if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
+                                        $el.checked = true
 
-                                            return 'checked'
+                                        return 'checked'
+                                    }
+
+                                    $el.checked = false
+
+                                    return null
+                                "
+                                @class(['hidden' => $isReordering])
+                            />
+                        @endif
+
+                        @php
+                            $sortableColumns = array_filter(
+                                $columns,
+                                fn (\Filament\Tables\Columns\Column $column): bool => $column->isSortable(),
+                            );
+                        @endphp
+
+                        @if (count($sortableColumns))
+                            <div
+                                x-data="{
+                                    column: $wire.entangle('tableSortColumn'),
+                                    direction: $wire.entangle('tableSortDirection'),
+                                }"
+                                x-init="
+                                    $watch('column', function (newColumn, oldColumn) {
+                                        if (! newColumn) {
+                                            direction = null
+
+                                            return
                                         }
 
-                                        $el.checked = false
+                                        if (oldColumn) {
+                                            return
+                                        }
 
-                                        return null
-                                    "
-                                    @class(['hidden' => $isReordering])
-                                />
-                            @endif
+                                        direction = 'asc'
+                                    })
+                                "
+                                class="flex flex-wrap items-center gap-1 py-1 text-xs sm:text-sm"
+                            >
+                                <label>
+                                    <span class="mr-1 font-medium">
+                                        {{ __('filament-tables::table.sorting.fields.column.label') }}
+                                    </span>
 
+                                    <select
+                                        x-model="column"
+                                        style="background-position: right 0.2rem center"
+                                        class="text-xs pl-2 pr-6 py-1 font-medium border-0 bg-gray-500/5 rounded-lg border-gray-300 sm:text-sm focus:ring-0 focus:border-primary-500 focus:ring-primary-500 dark:text-white dark:bg-gray-700 dark:border-gray-600 dark:focus:border-primary-500"
+                                    >
+                                        <option value="">-</option>
+                                        @foreach ($sortableColumns as $column)
+                                            <option value="{{ $column->getName() }}">
+                                                {{ $column->getLabel() }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </label>
+
+                                <label x-show="column" x-cloak>
+                                    <span class="sr-only">
+                                        {{ __('filament-tables::table.sorting.fields.direction.label') }}
+                                    </span>
+
+                                    <select
+                                        x-model="direction"
+                                        style="background-position: right 0.2rem center"
+                                        class="text-xs pl-2 pr-6 py-1 font-medium border-0 bg-gray-500/5 rounded-lg border-gray-300 sm:text-sm focus:ring-0 focus:border-primary-500 focus:ring-primary-500 dark:text-white dark:bg-gray-700 dark:border-gray-600 dark:focus:border-primary-500"
+                                    >
+                                        <option value="asc">{{ __('filament-tables::table.sorting.fields.direction.options.asc') }}</option>
+                                        <option value="desc">{{ __('filament-tables::table.sorting.fields.direction.options.desc') }}</option>
+                                    </select>
+                                </label>
+                            </div>
+                        @endif
+                    </div>
+                @endif
+
+                @if ($content)
+                    {{ $content->with(['records' => $records]) }}
+                @else
+                    <x-filament::grid
+                        x-sortable
+                        x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
+                        :default="$contentGrid['default'] ?? 1"
+                        :sm="$contentGrid['sm'] ?? null"
+                        :md="$contentGrid['md'] ?? null"
+                        :lg="$contentGrid['lg'] ?? null"
+                        :xl="$contentGrid['xl'] ?? null"
+                        :two-xl="$contentGrid['2xl'] ?? null"
+                        @class([
+                            'dark:divide-gray-700',
+                            'divide-y' => ! $contentGrid,
+                            'p-2 gap-2' => $contentGrid,
+                        ])
+                    >
+                        @php
+                            $previousRecord = null;
+                            $previousRecordGroupKey = null;
+                            $previousRecordGroupTitle = null;
+                        @endphp
+
+                        @foreach ($records as $record)
                             @php
-                                $sortableColumns = array_filter(
-                                    $columns,
-                                    fn (\Filament\Tables\Columns\Column $column): bool => $column->isSortable(),
-                                );
+                                $recordAction = $getRecordAction($record);
+                                $recordKey = $getRecordKey($record);
+                                $recordUrl = $getRecordUrl($record);
+                                $recordGroupKey = $group?->getKey($record);
+                                $recordGroupTitle = $group?->getTitle($record);
+
+                                $collapsibleColumnsLayout?->record($record);
+                                $hasCollapsibleColumnsLayout = (bool) $collapsibleColumnsLayout?->isVisible();
                             @endphp
 
-                            @if (count($sortableColumns))
-                                <div
-                                    x-data="{
-                                        column: $wire.entangle('tableSortColumn'),
-                                        direction: $wire.entangle('tableSortDirection'),
-                                    }"
-                                    x-init="
-                                        $watch('column', function (newColumn, oldColumn) {
-                                            if (! newColumn) {
-                                                direction = null
-
-                                                return
-                                            }
-
-                                            if (oldColumn) {
-                                                return
-                                            }
-
-                                            direction = 'asc'
-                                        })
-                                    "
-                                    class="flex flex-wrap items-center gap-1 py-1 text-xs sm:text-sm"
-                                >
-                                    <label>
-                                        <span class="mr-1 font-medium">
-                                            {{ __('filament-tables::table.sorting.fields.column.label') }}
-                                        </span>
-
-                                        <select
-                                            x-model="column"
-                                            style="background-position: right 0.2rem center"
-                                            class="text-xs pl-2 pr-6 py-1 font-medium border-0 bg-gray-500/5 rounded-lg border-gray-300 sm:text-sm focus:ring-0 focus:border-primary-500 focus:ring-primary-500 dark:text-white dark:bg-gray-700 dark:border-gray-600 dark:focus:border-primary-500"
-                                        >
-                                            <option value="">-</option>
-                                            @foreach ($sortableColumns as $column)
-                                                <option value="{{ $column->getName() }}">
-                                                    {{ $column->getLabel() }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </label>
-
-                                    <label x-show="column" x-cloak>
-                                        <span class="sr-only">
-                                            {{ __('filament-tables::table.sorting.fields.direction.label') }}
-                                        </span>
-
-                                        <select
-                                            x-model="direction"
-                                            style="background-position: right 0.2rem center"
-                                            class="text-xs pl-2 pr-6 py-1 font-medium border-0 bg-gray-500/5 rounded-lg border-gray-300 sm:text-sm focus:ring-0 focus:border-primary-500 focus:ring-primary-500 dark:text-white dark:bg-gray-700 dark:border-gray-600 dark:focus:border-primary-500"
-                                        >
-                                            <option value="asc">{{ __('filament-tables::table.sorting.fields.direction.options.asc') }}</option>
-                                            <option value="desc">{{ __('filament-tables::table.sorting.fields.direction.options.desc') }}</option>
-                                        </select>
-                                    </label>
-                                </div>
-                            @endif
-                        </div>
-                    @endif
-
-                    @if ($content)
-                        {{ $content->with(['records' => $records]) }}
-                    @else
-                        <x-filament::grid
-                            x-sortable
-                            x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
-                            :default="$contentGrid['default'] ?? 1"
-                            :sm="$contentGrid['sm'] ?? null"
-                            :md="$contentGrid['md'] ?? null"
-                            :lg="$contentGrid['lg'] ?? null"
-                            :xl="$contentGrid['xl'] ?? null"
-                            :two-xl="$contentGrid['2xl'] ?? null"
-                            @class([
-                                'dark:divide-gray-700',
-                                'divide-y' => ! $contentGrid,
-                                'p-2 gap-2' => $contentGrid,
-                            ])
-                        >
-                            @php
-                                $previousRecord = null;
-                                $previousRecordGroupKey = null;
-                                $previousRecordGroupTitle = null;
-                            @endphp
-
-                            @foreach ($records as $record)
-                                @php
-                                    $recordAction = $getRecordAction($record);
-                                    $recordKey = $getRecordKey($record);
-                                    $recordUrl = $getRecordUrl($record);
-                                    $recordGroupKey = $group?->getKey($record);
-                                    $recordGroupTitle = $group?->getTitle($record);
-
-                                    $collapsibleColumnsLayout?->record($record);
-                                    $hasCollapsibleColumnsLayout = (bool) $collapsibleColumnsLayout?->isVisible();
-                                @endphp
-
-                                @if ($recordGroupTitle !== $previousRecordGroupTitle)
-                                    @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
-                                        <x-filament-tables::table class="col-span-full">
-                                            <x-filament-tables::summary.row
-                                                :columns="$columns"
-                                                :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
-                                                :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
-                                                :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
-                                                extra-heading-column
-                                                :placeholder-columns="false"
-                                            />
-                                        </x-filament-tables::table>
-                                    @endif
-
-                                    <div @class([
-                                        'col-span-full bg-gray-500/5 flex items-center space-y-1 w-full px-4 py-2',
-                                        'rounded-xl shadow-sm' => $contentGrid,
-                                    ])>
-                                        <div class="flex items-center space-x-2">
-                                            <span class="font-medium text-base text-gray-600 dark:text-gray-300">
-                                                {{ $group->getLabel() }}: {{ $recordGroupTitle }}
-                                            </span>
-
-                                            @if ($group->isCollapsible())
-                                                <button
-                                                    x-on:click="toggleCollapseGroup(@js($recordGroupTitle))"
-                                                    x-bind:class="isGroupCollapsed(@js($recordGroupTitle)) || '-rotate-180'"
-                                                    type="button"
-                                                >
-                                                    <x-filament::icon
-                                                        name="heroicon-m-chevron-down"
-                                                        alias="tables::grouping.collapse"
-                                                        size="h-4 w-4"
-                                                        class="text-gray-600 transition dark:text-gray-300"
-                                                        x-cloak="x-cloak"
-                                                    />
-                                                </button>
-                                            @endif
-                                        </div>
-
-                                        @if (filled($recordGroupDescription = $group->getDescription($record, $recordGroupTitle)))
-                                            <div class="text-sm text-gray-500 dark:text-gray-400">
-                                                {{ $recordGroupDescription }}
-                                            </div>
-                                        @endif
-                                    </div>
+                            @if ($recordGroupTitle !== $previousRecordGroupTitle)
+                                @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
+                                    <x-filament-tables::table class="col-span-full">
+                                        <x-filament-tables::summary.row
+                                            :columns="$columns"
+                                            :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
+                                            :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
+                                            :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
+                                            extra-heading-column
+                                            :placeholder-columns="false"
+                                        />
+                                    </x-filament-tables::table>
                                 @endif
 
-                                <div
-                                    @if ($hasCollapsibleColumnsLayout)
-                                        x-data="{ isCollapsed: true }"
-                                        x-init="$dispatch('collapsible-table-row-initialized')"
-                                        x-on:expand-all-table-rows.window="isCollapsed = false"
-                                        x-on:collapse-all-table-rows.window="isCollapsed = true"
-                                    @endif
-                                    wire:key="{{ $this->id }}.table.records.{{ $recordKey }}"
-                                    @if ($isReordering)
-                                        x-sortable-item="{{ $recordKey }}"
-                                        x-sortable-handle
-                                    @endif
-                                    x-bind:class="{
-                                        'hidden': {{ $group?->isCollapsible() ? 'true' : 'false' }} && isGroupCollapsed('{{ $recordGroupTitle }}'),
-                                    }"
-                                >
-                                    <div
-                                        x-bind:class="{
-                                            'bg-gray-50 dark:bg-gray-500/10': isRecordSelected('{{ $recordKey }}'),
-                                        }"
-                                        @class(array_merge(
-                                            [
-                                                'h-full relative px-4 transition',
-                                                'hover:bg-gray-50 dark:hover:bg-gray-500/10' => $recordUrl || $recordAction,
-                                                'dark:border-gray-600' => ! $contentGrid,
-                                                'group' => $isReordering,
-                                                'rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 dark:bg-gray-700/40' => $contentGrid,
-                                            ],
-                                            $getRecordClasses($record),
-                                        ))
-                                    >
-                                        <div @class([
-                                            'items-center gap-4 md:flex md:mr-0 rtl:md:ml-0' => (! $contentGrid),
-                                            'mr-6 rtl:mr-0 rtl:ml-6' => $isSelectionEnabled || $hasCollapsibleColumnsLayout || $isReordering,
-                                        ])>
-                                            <x-filament-tables::reorder.handle @class([
-                                                'absolute top-3 right-3 rtl:right-auto rtl:left-3',
-                                                'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
-                                                'hidden' => ! $isReordering,
-                                            ]) />
+                                <div @class([
+                                    'col-span-full bg-gray-500/5 flex items-center space-y-1 w-full px-4 py-2',
+                                    'rounded-xl shadow-sm' => $contentGrid,
+                                ])>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="font-medium text-base text-gray-600 dark:text-gray-300">
+                                            {{ $group->getLabel() }}: {{ $recordGroupTitle }}
+                                        </span>
 
-                                            @if ($isSelectionEnabled && $isRecordSelectable($record))
-                                                <x-filament-tables::checkbox
-                                                    :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
-                                                    x-model="selectedRecords"
-                                                    :value="$recordKey"
-                                                    :class="\Illuminate\Support\Arr::toCssClasses([
-                                                        'filament-tables-record-checkbox absolute top-3 right-3 rtl:right-auto rtl:left-3',
-                                                        'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
-                                                        'hidden' => $isReordering,
-                                                    ])"
-                                                />
-                                            @endif
-
-                                            @if ($hasCollapsibleColumnsLayout)
-                                                <div @class([
-                                                    'absolute right-1 rtl:right-auto rtl:left-1',
-                                                    'top-10' => $isSelectionEnabled,
-                                                    'top-1' => ! $isSelectionEnabled,
-                                                    'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
-                                                    'hidden' => $isReordering,
-                                                ])>
-                                                    <x-filament::icon-button
-                                                        icon="heroicon-m-chevron-down"
-                                                        icon-alias="tables::collapsible-column.trigger"
-                                                        color="gray"
-                                                        size="sm"
-                                                        x-on:click="isCollapsed = ! isCollapsed"
-                                                        x-bind:class="isCollapsed || '-rotate-180'"
-                                                        class="transition"
-                                                    />
-                                                </div>
-                                            @endif
-
-                                            @if ($recordUrl)
-                                                <a
-                                                    href="{{ $recordUrl }}"
-                                                    class="filament-tables-record-url-link flex-1 block py-3"
-                                                >
-                                                    <x-filament-tables::columns.layout
-                                                        :components="$getColumnsLayout()"
-                                                        :record="$record"
-                                                        :record-key="$recordKey"
-                                                        :row-loop="$loop"
-                                                    />
-                                                </a>
-                                            @elseif ($recordAction)
-                                                @php
-                                                    if ($getAction($recordAction)) {
-                                                        $recordWireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
-                                                    } else {
-                                                        $recordWireClickAction = "{$recordAction}('{$recordKey}')";
-                                                    }
-                                                @endphp
-
-                                                <button
-                                                    wire:click="{{ $recordWireClickAction }}"
-                                                    wire:target="{{ $recordWireClickAction }}"
-                                                    wire:loading.attr="disabled"
-                                                    type="button"
-                                                    class="filament-tables-record-action-button flex-1 block py-3 disabled:opacity-70 disabled:pointer-events-none"
-                                                >
-                                                    <x-filament-tables::columns.layout
-                                                        :components="$getColumnsLayout()"
-                                                        :record="$record"
-                                                        :record-key="$recordKey"
-                                                        :row-loop="$loop"
-                                                    />
-                                                </button>
-                                            @else
-                                                <div class="flex-1 py-3">
-                                                    <x-filament-tables::columns.layout
-                                                        :components="$getColumnsLayout()"
-                                                        :record="$record"
-                                                        :record-key="$recordKey"
-                                                        :row-loop="$loop"
-                                                    />
-                                                </div>
-                                            @endif
-
-                                            @if (count($actions))
-                                                <x-filament-tables::actions
-                                                    :actions="$actions"
-                                                    :alignment="$actionsPosition === ActionsPosition::AfterContent ? 'start' : 'start md:end'"
-                                                    :record="$record"
-                                                    wrap="-md"
-                                                    @class([
-                                                        'absolute bottom-1 right-1 rtl:right-auto rtl:left-1' => $actionsPosition === ActionsPosition::BottomCorner,
-                                                        'md:relative md:bottom-0 md:right-0 rtl:md:left-0' => $actionsPosition === ActionsPosition::BottomCorner && (! $contentGrid),
-                                                        'mb-3' => $actionsPosition === ActionsPosition::AfterContent,
-                                                        'md:mb-0' => $actionsPosition === ActionsPosition::AfterContent && (! $contentGrid),
-                                                        'hidden' => $isReordering,
-                                                    ])
-                                                />
-                                            @endif
-                                        </div>
-
-                                        @if ($hasCollapsibleColumnsLayout)
-                                            <div
-                                                x-show="! isCollapsed"
-                                                x-collapse
-                                                @class([
-                                                    'pb-2 -mx-2',
-                                                    'md:pl-20 rtl:md:pl-0 rtl:md:pr-20' => (! $contentGrid) && $isSelectionEnabled,
-                                                    'md:pl-12 rtl:md:pl-0 rtl:md:pr-12' => (! $contentGrid) && (! $isSelectionEnabled),
-                                                    'hidden' => $isReordering,
-                                                ])
+                                        @if ($group->isCollapsible())
+                                            <button
+                                                x-on:click="toggleCollapseGroup(@js($recordGroupTitle))"
+                                                x-bind:class="isGroupCollapsed(@js($recordGroupTitle)) || '-rotate-180'"
+                                                type="button"
                                             >
-                                                {{ $collapsibleColumnsLayout->viewData(['recordKey' => $recordKey]) }}
-                                            </div>
+                                                <x-filament::icon
+                                                    name="heroicon-m-chevron-down"
+                                                    alias="tables::grouping.collapse"
+                                                    size="h-4 w-4"
+                                                    class="text-gray-600 transition dark:text-gray-300"
+                                                    x-cloak="x-cloak"
+                                                />
+                                            </button>
                                         @endif
                                     </div>
+
+                                    @if (filled($recordGroupDescription = $group->getDescription($record, $recordGroupTitle)))
+                                        <div class="text-sm text-gray-500 dark:text-gray-400">
+                                            {{ $recordGroupDescription }}
+                                        </div>
+                                    @endif
                                 </div>
-
-                                @php
-                                    $previousRecordGroupKey = $recordGroupKey;
-                                    $previousRecordGroupTitle = $recordGroupTitle;
-                                    $previousRecord = $record;
-                                @endphp
-                            @endforeach
-
-                            @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle) && ((! $records instanceof \Illuminate\Contracts\Pagination\Paginator) || (! $records->hasMorePages())))
-                                <x-filament-tables::table class="col-span-full">
-                                    <x-filament-tables::summary.row
-                                        :columns="$columns"
-                                        :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
-                                        :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
-                                        :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
-                                        extra-heading-column
-                                        :placeholder-columns="false"
-                                    />
-                                </x-filament-tables::table>
                             @endif
-                        </x-filament::grid>
-                    @endif
 
-                    @if (($content || $hasColumnsLayout) && $contentFooter)
-                        {{ $contentFooter->with(['columns' => $columns, 'records' => $records]) }}
-                    @endif
-
-                    @if ($hasSummary && (! $isReordering))
-                        <x-filament-tables::table class="border-t dark:border-gray-700">
-                            <x-filament-tables::summary
-                                :columns="$columns"
-                                :plural-model-label="$pluralModelLabel"
-                                :records="$records"
-                                extra-heading-column
-                                :placeholder-columns="false"
-                            />
-                        </x-filament-tables::table>
-                    @endif
-                @else
-                    @if ($emptyState = $getEmptyState())
-                        {{ $emptyState }}
-                    @else
-                        <div class="flex items-center justify-center p-4">
-                            <x-filament-tables::empty-state
-                                :icon="$getEmptyStateIcon()"
-                                :actions="$getEmptyStateActions()"
+                            <div
+                                @if ($hasCollapsibleColumnsLayout)
+                                    x-data="{ isCollapsed: true }"
+                                    x-init="$dispatch('collapsible-table-row-initialized')"
+                                    x-on:expand-all-table-rows.window="isCollapsed = false"
+                                    x-on:collapse-all-table-rows.window="isCollapsed = true"
+                                @endif
+                                wire:key="{{ $this->id }}.table.records.{{ $recordKey }}"
+                                @if ($isReordering)
+                                    x-sortable-item="{{ $recordKey }}"
+                                    x-sortable-handle
+                                @endif
+                                x-bind:class="{
+                                    'hidden': {{ $group?->isCollapsible() ? 'true' : 'false' }} && isGroupCollapsed('{{ $recordGroupTitle }}'),
+                                }"
                             >
-                                <x-slot name="heading">
-                                    {{ $getEmptyStateHeading() }}
-                                </x-slot>
+                                <div
+                                    x-bind:class="{
+                                        'bg-gray-50 dark:bg-gray-500/10': isRecordSelected('{{ $recordKey }}'),
+                                    }"
+                                    @class(array_merge(
+                                        [
+                                            'h-full relative px-4 transition',
+                                            'hover:bg-gray-50 dark:hover:bg-gray-500/10' => $recordUrl || $recordAction,
+                                            'dark:border-gray-600' => ! $contentGrid,
+                                            'group' => $isReordering,
+                                            'rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 dark:bg-gray-700/40' => $contentGrid,
+                                        ],
+                                        $getRecordClasses($record),
+                                    ))
+                                >
+                                    <div @class([
+                                        'items-center gap-4 md:flex md:mr-0 rtl:md:ml-0' => (! $contentGrid),
+                                        'mr-6 rtl:mr-0 rtl:ml-6' => $isSelectionEnabled || $hasCollapsibleColumnsLayout || $isReordering,
+                                    ])>
+                                        <x-filament-tables::reorder.handle @class([
+                                            'absolute top-3 right-3 rtl:right-auto rtl:left-3',
+                                            'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
+                                            'hidden' => ! $isReordering,
+                                        ]) />
 
-                                <x-slot name="description">
-                                    {{ $getEmptyStateDescription() }}
-                                </x-slot>
-                            </x-filament-tables::empty-state>
-                        </div>
-                    @endif
+                                        @if ($isSelectionEnabled && $isRecordSelectable($record))
+                                            <x-filament-tables::checkbox
+                                                :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
+                                                x-model="selectedRecords"
+                                                :value="$recordKey"
+                                                :class="\Illuminate\Support\Arr::toCssClasses([
+                                                    'filament-tables-record-checkbox absolute top-3 right-3 rtl:right-auto rtl:left-3',
+                                                    'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
+                                                    'hidden' => $isReordering,
+                                                ])"
+                                            />
+                                        @endif
+
+                                        @if ($hasCollapsibleColumnsLayout)
+                                            <div @class([
+                                                'absolute right-1 rtl:right-auto rtl:left-1',
+                                                'top-10' => $isSelectionEnabled,
+                                                'top-1' => ! $isSelectionEnabled,
+                                                'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
+                                                'hidden' => $isReordering,
+                                            ])>
+                                                <x-filament::icon-button
+                                                    icon="heroicon-m-chevron-down"
+                                                    icon-alias="tables::collapsible-column.trigger"
+                                                    color="gray"
+                                                    size="sm"
+                                                    x-on:click="isCollapsed = ! isCollapsed"
+                                                    x-bind:class="isCollapsed || '-rotate-180'"
+                                                    class="transition"
+                                                />
+                                            </div>
+                                        @endif
+
+                                        @if ($recordUrl)
+                                            <a
+                                                href="{{ $recordUrl }}"
+                                                class="filament-tables-record-url-link flex-1 block py-3"
+                                            >
+                                                <x-filament-tables::columns.layout
+                                                    :components="$getColumnsLayout()"
+                                                    :record="$record"
+                                                    :record-key="$recordKey"
+                                                    :row-loop="$loop"
+                                                />
+                                            </a>
+                                        @elseif ($recordAction)
+                                            @php
+                                                if ($getAction($recordAction)) {
+                                                    $recordWireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
+                                                } else {
+                                                    $recordWireClickAction = "{$recordAction}('{$recordKey}')";
+                                                }
+                                            @endphp
+
+                                            <button
+                                                wire:click="{{ $recordWireClickAction }}"
+                                                wire:target="{{ $recordWireClickAction }}"
+                                                wire:loading.attr="disabled"
+                                                type="button"
+                                                class="filament-tables-record-action-button flex-1 block py-3 disabled:opacity-70 disabled:pointer-events-none"
+                                            >
+                                                <x-filament-tables::columns.layout
+                                                    :components="$getColumnsLayout()"
+                                                    :record="$record"
+                                                    :record-key="$recordKey"
+                                                    :row-loop="$loop"
+                                                />
+                                            </button>
+                                        @else
+                                            <div class="flex-1 py-3">
+                                                <x-filament-tables::columns.layout
+                                                    :components="$getColumnsLayout()"
+                                                    :record="$record"
+                                                    :record-key="$recordKey"
+                                                    :row-loop="$loop"
+                                                />
+                                            </div>
+                                        @endif
+
+                                        @if (count($actions))
+                                            <x-filament-tables::actions
+                                                :actions="$actions"
+                                                :alignment="$actionsPosition === ActionsPosition::AfterContent ? 'start' : 'start md:end'"
+                                                :record="$record"
+                                                wrap="-md"
+                                                @class([
+                                                    'absolute bottom-1 right-1 rtl:right-auto rtl:left-1' => $actionsPosition === ActionsPosition::BottomCorner,
+                                                    'md:relative md:bottom-0 md:right-0 rtl:md:left-0' => $actionsPosition === ActionsPosition::BottomCorner && (! $contentGrid),
+                                                    'mb-3' => $actionsPosition === ActionsPosition::AfterContent,
+                                                    'md:mb-0' => $actionsPosition === ActionsPosition::AfterContent && (! $contentGrid),
+                                                    'hidden' => $isReordering,
+                                                ])
+                                            />
+                                        @endif
+                                    </div>
+
+                                    @if ($hasCollapsibleColumnsLayout)
+                                        <div
+                                            x-show="! isCollapsed"
+                                            x-collapse
+                                            @class([
+                                                'pb-2 -mx-2',
+                                                'md:pl-20 rtl:md:pl-0 rtl:md:pr-20' => (! $contentGrid) && $isSelectionEnabled,
+                                                'md:pl-12 rtl:md:pl-0 rtl:md:pr-12' => (! $contentGrid) && (! $isSelectionEnabled),
+                                                'hidden' => $isReordering,
+                                            ])
+                                        >
+                                            {{ $collapsibleColumnsLayout->viewData(['recordKey' => $recordKey]) }}
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+
+                            @php
+                                $previousRecordGroupKey = $recordGroupKey;
+                                $previousRecordGroupTitle = $recordGroupTitle;
+                                $previousRecord = $record;
+                            @endphp
+                        @endforeach
+
+                        @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle) && ((! $records instanceof \Illuminate\Contracts\Pagination\Paginator) || (! $records->hasMorePages())))
+                            <x-filament-tables::table class="col-span-full">
+                                <x-filament-tables::summary.row
+                                    :columns="$columns"
+                                    :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
+                                    :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
+                                    :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
+                                    extra-heading-column
+                                    :placeholder-columns="false"
+                                />
+                            </x-filament-tables::table>
+                        @endif
+                    </x-filament::grid>
                 @endif
-            @else
+
+                @if (($content || $hasColumnsLayout) && $contentFooter)
+                    {{ $contentFooter->with(['columns' => $columns, 'records' => $records]) }}
+                @endif
+
+                @if ($hasSummary && (! $isReordering))
+                    <x-filament-tables::table class="border-t dark:border-gray-700">
+                        <x-filament-tables::summary
+                            :columns="$columns"
+                            :plural-model-label="$pluralModelLabel"
+                            :records="$records"
+                            extra-heading-column
+                            :placeholder-columns="false"
+                        />
+                    </x-filament-tables::table>
+                @endif
+            @elseif (($records !== null) && count($records))
                 <x-filament-tables::table :reorderable="$isReorderable">
                     <x-slot name="header">
                         @if ($isReordering)
@@ -880,15 +855,7 @@
                         </x-filament-tables::row>
                     @endif
 
-                    @if ($records === null)
-                        <tr>
-                            <td colspan="{{ $columnsCount }}">
-                                <div class="flex items-center justify-center w-full p-4">
-                                    <x-filament::loading-indicator class="w-5 h-5"/>
-                                </div>
-                            </td>
-                        </tr>
-                    @elseif (count($records))
+                    @if (($records !== null) && count($records))
                         @php
                             $previousRecord = null;
                             $previousRecordGroupKey = null;
@@ -1150,31 +1117,37 @@
                                 :record-checkbox-position="$recordCheckboxPosition"
                             />
                         @endif
-                    @else
-                        @if ($emptyState = $getEmptyState())
-                            {{ $emptyState }}
-                        @else
-                            <tr>
-                                <td colspan="{{ $columnsCount }}">
-                                    <div class="flex items-center justify-center w-full p-4">
-                                        <x-filament-tables::empty-state
-                                            :icon="$getEmptyStateIcon()"
-                                            :actions="$getEmptyStateActions()"
-                                        >
-                                            <x-slot name="heading">
-                                                {{ $getEmptyStateHeading() }}
-                                            </x-slot>
-
-                                            <x-slot name="description">
-                                                {{ $getEmptyStateDescription() }}
-                                            </x-slot>
-                                        </x-filament-tables::empty-state>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endif
                     @endif
                 </x-filament-tables::table>
+            @elseif ($records === null)
+                <div class="filament-tables-defer-loading-indicator flex items-center justify-center p-6">
+                    <div class="flex items-center justify-center w-16 h-16 text-primary-500 rounded-full bg-primary-50 dark:bg-gray-700">
+                        <x-filament::loading-indicator class="w-6 h-6" />
+                    </div>
+                </div>
+            @else
+                @if ($emptyState = $getEmptyState())
+                    {{ $emptyState }}
+                @else
+                    <tr>
+                        <td colspan="{{ $columnsCount }}">
+                            <div class="flex items-center justify-center w-full p-4">
+                                <x-filament-tables::empty-state
+                                    :icon="$getEmptyStateIcon()"
+                                    :actions="$getEmptyStateActions()"
+                                >
+                                    <x-slot name="heading">
+                                        {{ $getEmptyStateHeading() }}
+                                    </x-slot>
+
+                                    <x-slot name="description">
+                                        {{ $getEmptyStateDescription() }}
+                                    </x-slot>
+                                </x-filament-tables::empty-state>
+                            </div>
+                        </td>
+                    </tr>
+                @endif
             @endif
         </div>
 
