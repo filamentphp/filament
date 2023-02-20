@@ -147,7 +147,7 @@ it('will raise an exception if a notification was not sent checking notification
         ->assertNotified('A notification');
 });
 
-it('can assert that a notification without an id was sent', function () {
+it('can assert that a notification without an ID was sent', function () {
     livewire(PageActions::class)
         ->callPageAction('shows_notification')
         ->assertNotified();
@@ -165,7 +165,7 @@ it('can assert that a notification without an id was sent', function () {
         );
 });
 
-it('can assert that a notification with an id was sent', function () {
+it('can assert that a notification with an ID was sent', function () {
     livewire(PageActions::class)
         ->callPageAction('shows_notification_with_id')
         ->assertNotified();
