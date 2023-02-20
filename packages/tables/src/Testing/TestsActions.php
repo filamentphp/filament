@@ -34,6 +34,10 @@ class TestsActions
 
             $this->call('mountTableAction', $name, $record);
 
+            if (filled($this->instance()->redirectTo)) {
+                return $this;
+            }
+
             $action = $livewire->getCachedTableAction($name) ?? $livewire->getCachedTableEmptyStateAction($name) ?? $livewire->getCachedTableHeaderAction($name);
 
             if (! $action->shouldOpenModal()) {
@@ -106,6 +110,10 @@ class TestsActions
             }
 
             $this->call('callMountedTableAction', json_encode($arguments));
+
+            if (filled($this->instance()->redirectTo)) {
+                return $this;
+            }
 
             if ($this->get('mountedTableAction') !== $action->getName()) {
                 $this->assertDispatchedBrowserEvent('close-modal', [

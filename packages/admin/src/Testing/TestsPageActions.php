@@ -27,6 +27,10 @@ class TestsPageActions
 
             $this->call('mountAction', $name);
 
+            if (filled($this->instance()->redirectTo)) {
+                return $this;
+            }
+
             $action = $this->instance()->getCachedAction($name);
 
             if (! $action->shouldOpenModal()) {
@@ -97,6 +101,10 @@ class TestsPageActions
             }
 
             $this->call('callMountedAction', json_encode($arguments));
+
+            if (filled($this->instance()->redirectTo)) {
+                return $this;
+            }
 
             if ($this->get('mountedAction') !== $action->getName()) {
                 $this->assertDispatchedBrowserEvent('close-modal', [
