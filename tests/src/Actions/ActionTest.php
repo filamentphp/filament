@@ -118,7 +118,6 @@ it('can state whether a page action exists', function () {
         ->assertActionDoesNotExist('does_not_exist');
 });
 
-
 it('can show a notification', function () {
     livewire(Actions::class)
         ->callAction('shows_notification')
