@@ -63,7 +63,7 @@ trait HasActions
         } catch (Cancel $exception) {
         }
 
-        if (blank($this->redirectTo)) {
+        if (filled($this->redirectTo)) {
             return $result;
         }
 
