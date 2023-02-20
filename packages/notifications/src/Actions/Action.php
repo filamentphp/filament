@@ -55,7 +55,14 @@ class Action extends BaseAction implements Arrayable
         $static->close($data['shouldCloseNotification'] ?? false);
         $static->color($data['color'] ?? null);
         $static->disabled($data['isDisabled'] ?? false);
-        $static->emit($data['event'] ?? null, $data['eventData'] ?? []);
+
+        match ($data['emitDirection'] ?? '') {
+            'self' => $static->emitSelf($data['event'] ?? null, $data['eventData'] ?? []),
+            'up' => $static->emitUp($data['event'] ?? null, $data['eventData'] ?? []),
+            'to' => $static->emitTo($data['emitToTarget'] ?? null, $data['event'] ?? null, $data['eventData'] ?? []),
+            default => $static->emit($data['event'] ?? null, $data['eventData'] ?? [])
+        };
+
         $static->extraAttributes($data['extraAttributes'] ?? []);
         $static->icon($data['icon'] ?? null);
         $static->iconPosition($data['iconPosition'] ?? null);

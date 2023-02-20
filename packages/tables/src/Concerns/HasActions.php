@@ -125,6 +125,10 @@ trait HasActions
         } catch (Cancel $exception) {
         }
 
+        if (filled($this->redirectTo)) {
+            return $result;
+        }
+
         $this->mountedTableAction = null;
 
         $action->record(null);

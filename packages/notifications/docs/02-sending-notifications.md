@@ -296,6 +296,22 @@ Notification::make()
     ->send();
 ```
 
+You can also `emitSelf`, `emitUp` and `emitTo`:
+
+```php
+Action::make('undo')
+    ->color('secondary')
+    ->emitSelf('undoEditingPost', [$post->id]) // [tl! focus]
+    
+Action::make('undo')
+    ->color('secondary')
+    ->emitUp('undoEditingPost', [$post->id]) // [tl! focus]
+    
+Action::make('undo')
+    ->color('secondary')
+    ->emitTo('another_component', 'undoEditingPost', [$post->id]) // [tl! focus]
+```
+
 Or with JavaScript:
 
 ```js
@@ -315,6 +331,21 @@ new Notification()
     .send()
 ```
 
+Similarly, `emitSelf`, `emitUp` and `emitTo` are also available:
+
+```js
+new NotificationAction('undo')
+    .color('secondary')
+    .emitSelf('undoEditingPost') // [tl! focus]
+
+new NotificationAction('undo')
+    .color('secondary')
+    .emitUp('undoEditingPost') // [tl! focus]
+
+new NotificationAction('undo')
+    .color('secondary')
+    .emitTo('another_component', 'undoEditingPost') // [tl! focus]
+```
 ### Closing notifications
 
 After opening a URL or emitting an event from your action, you may want to close the notification right away:
