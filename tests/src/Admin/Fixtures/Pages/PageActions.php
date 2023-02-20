@@ -74,7 +74,7 @@ class PageActions extends Page
                         ->send();
                 }),
             Action::make('two_notifications')
-                ->action(function() {
+                ->action(function () {
                     Notification::make('first_notification')
                         ->title('First notification')
                         ->success()
@@ -83,7 +83,7 @@ class PageActions extends Page
                         ->title('Second notification')
                         ->success()
                         ->send();
-                })
+                }),
         ];
     }
 }

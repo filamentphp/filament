@@ -210,12 +210,12 @@ class Notification extends ViewComponent implements Arrayable
 
         Assert::assertIsArray($notifications->toArray());
 
-        if(is_string($notification)) {
-            $expectedNotification = $notifications->first(fn($n) => $n->title == $notification);
-        };
+        if (is_string($notification)) {
+            $expectedNotification = $notifications->first(fn ($n) => $n->title == $notification);
+        }
 
         if ($notification instanceof Notification) {
-            $expectedNotification = $notifications->first(fn($n, $key) => $n->id == $key);
+            $expectedNotification = $notifications->first(fn ($n, $key) => $n->id == $key);
         }
 
         if (blank($notification)) {

@@ -218,7 +218,6 @@ it('will raise an exception if a notification is not sent but a previous notific
 });
 
 test('can assert that notifications are sent in any order', function () {
-
     livewire(PageActions::class)
         ->callPageAction('two_notifications')
         ->assertNotified('Second notification');
