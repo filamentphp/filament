@@ -52,7 +52,6 @@ class DeleteAction extends Action
             }
 
             $this->success();
-            $this->halt();
         });
     }
 }

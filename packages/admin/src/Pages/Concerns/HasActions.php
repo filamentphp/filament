@@ -63,6 +63,10 @@ trait HasActions
         } catch (Cancel $exception) {
         }
 
+        if (blank($this->redirectTo)) {
+            return $result;
+        }
+
         $this->mountedAction = null;
 
         $action->resetArguments();
