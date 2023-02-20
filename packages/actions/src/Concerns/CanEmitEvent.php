@@ -32,6 +32,9 @@ trait CanEmitEvent
         return $this;
     }
 
+    /**
+     * @param  array<int, mixed> | Closure  $data
+     */
     public function emitSelf(
         string | Closure | null $event,
         array | Closure $data = []
@@ -42,6 +45,9 @@ trait CanEmitEvent
         return $this;
     }
 
+    /**
+     * @param  array<int, mixed> | Closure  $data
+     */
     public function emitTo(
         string $to,
         string | Closure | null $event,
@@ -54,6 +60,9 @@ trait CanEmitEvent
         return $this;
     }
 
+    /**
+     * @param  array<int, mixed> | Closure  $data
+     */
     public function emitUp(
         string | Closure | null $event,
         array | Closure $data = []
