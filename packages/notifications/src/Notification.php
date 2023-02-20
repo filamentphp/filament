@@ -2,6 +2,7 @@
 
 namespace Filament\Notifications;
 
+use Filament\Http\Livewire\Notifications;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Actions\ActionGroup;
 use Filament\Notifications\Concerns\CanBeInline;
@@ -19,7 +20,6 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\DatabaseNotification as DatabaseNotificationModel;
 use Illuminate\Notifications\Messages\BroadcastMessage;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Assert;
@@ -217,24 +217,37 @@ class Notification extends ViewComponent implements Arrayable
 
     public static function assertNotified(Notification | string $notification = null): void
     {
-        $notifications = session()->get('filament.notifications');
+        $notificationsLivewireComponent = new Notifications();
+        $notificationsLivewireComponent->mount();
+        $notifications = $notificationsLivewireComponent->notifications;
 
-        Assert::assertIsArray($notifications);
+        $expectedNotification = null;
 
-        $expectedNotification = Arr::last($notifications);
+        Assert::assertIsArray($notifications->toArray());
 
-        Assert::assertIsArray($expectedNotification);
+        if (is_string($notification)) {
+            $expectedNotification = $notifications->first(fn (Notification $mountedNotification): bool => $mountedNotification->title === $notification);
+        }
+
+        if ($notification instanceof Notification) {
+            $expectedNotification = $notifications->first(fn (Notification $mountedNotification, string $key): bool => $mountedNotification->id === $key);
+        }
 
         if (blank($notification)) {
             return;
         }
 
+        Assert::assertNotNull($expectedNotification, 'A notification was not sent');
+
         if ($notification instanceof Notification) {
-            Assert::assertSame($expectedNotification, $notification->toArray());
+            Assert::assertSame(
+                collect($expectedNotification)->except(['id'])->toArray(),
+                collect($notification->toArray())->except(['id'])->toArray()
+            );
 
             return;
         }
 
-        Assert::assertSame($expectedNotification['title'], $notification);
+        Assert::assertSame($expectedNotification->title, $notification);
     }
 }
