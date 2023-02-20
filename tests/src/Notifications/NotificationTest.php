@@ -161,7 +161,6 @@ it('can close notifications', function () {
         ->toHaveCount(0);
 });
 
-
 it('can confirm a notification was sent', function () {
     $notification = Notification::make()
         ->success()
@@ -171,7 +170,7 @@ it('can confirm a notification was sent', function () {
 
     Notification::assertNotified($notification);
 });
-    
+
 it('can emit an event', function () {
     $action = Action::make('action')->emit('an_event');
     expect($action->getWireClickAction())->toBe("\$emit('an_event')");
