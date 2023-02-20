@@ -99,6 +99,10 @@ trait HasFormComponentActions
         } catch (Cancel $exception) {
         }
 
+        if (filled($this->redirectTo)) {
+            return $result;
+        }
+
         $this->mountedFormComponentAction = null;
 
         $action->resetArguments();

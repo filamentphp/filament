@@ -66,6 +66,10 @@ trait HasBulkActions
         } catch (Cancel $exception) {
         }
 
+        if (filled($this->redirectTo)) {
+            return $result;
+        }
+
         $this->mountedTableBulkAction = null;
         $this->selectedTableRecords = [];
 

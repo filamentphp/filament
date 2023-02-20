@@ -33,6 +33,10 @@ class TestsActions
 
             $this->call('mountTableAction', $name, $record);
 
+            if (filled($this->instance()->redirectTo)) {
+                return $this;
+            }
+
             if ($this->instance()->mountedTableAction === null) {
                 $this->assertNotDispatchedBrowserEvent('open-modal');
 
@@ -101,6 +105,10 @@ class TestsActions
             }
 
             $this->call('callMountedTableAction', $arguments);
+
+            if (filled($this->instance()->redirectTo)) {
+                return $this;
+            }
 
             if ($this->get('mountedTableAction') !== $action->getName()) {
                 $this->assertDispatchedBrowserEvent('close-modal', [
