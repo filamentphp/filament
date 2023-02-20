@@ -1,5 +1,5 @@
 <div {{ $attributes->class([
-    'filament-tables-empty-state flex flex-1 flex-col items-center justify-center p-6 mx-auto space-y-6 text-center bg-white',
+    'filament-tables-defer-loading-indicator flex flex-1 flex-col items-center justify-center p-6 mx-auto space-y-6 text-center bg-white',
     'dark:bg-gray-800' => config('tables.dark_mode'),
 ]) }}>
     <div @class([
