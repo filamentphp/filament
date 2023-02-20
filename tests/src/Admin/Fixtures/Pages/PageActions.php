@@ -73,6 +73,17 @@ class PageActions extends Page
                         ->success()
                         ->send();
                 }),
+            Action::make('two_notifications')
+                ->action(function() {
+                    Notification::make('first_notification')
+                        ->title('First notification')
+                        ->success()
+                        ->send();
+                    Notification::make('second_notification')
+                        ->title('Second notification')
+                        ->success()
+                        ->send();
+                })
         ];
     }
 }

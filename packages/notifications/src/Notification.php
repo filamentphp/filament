@@ -2,6 +2,7 @@
 
 namespace Filament\Notifications;
 
+use Filament\Http\Livewire\Notifications;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Actions\ActionGroup;
 use Filament\Notifications\Concerns\CanBeInline;
@@ -201,18 +202,27 @@ class Notification extends ViewComponent implements Arrayable
 
     public static function assertNotified(Notification | string $notification = null): void
     {
-        $notifications = session()->get('filament.notifications');
+        $notificationsLivewireComponent = new Notifications();
+        $notificationsLivewireComponent->mount();
+        $notifications = $notificationsLivewireComponent->notifications;
 
-        Assert::assertIsArray($notifications);
+        $expectedNotification = null;
 
-        $expectedNotification = array_pop($notifications);
-        session()->put('filament.notifications', $notifications);
+        Assert::assertIsArray($notifications->toArray());
 
-        Assert::assertIsArray($expectedNotification);
+        if(is_string($notification)) {
+            $expectedNotification = $notifications->first(fn($n) => $n->title == $notification);
+        };
+
+        if ($notification instanceof Notification) {
+            $expectedNotification = $notifications->first(fn($n, $key) => $n->id == $key);
+        }
 
         if (blank($notification)) {
             return;
         }
+
+        Assert::assertNotNull($expectedNotification, 'A notification was not sent');
 
         if ($notification instanceof Notification) {
             Assert::assertSame(
@@ -223,6 +233,6 @@ class Notification extends ViewComponent implements Arrayable
             return;
         }
 
-        Assert::assertSame($expectedNotification['title'], $notification);
+        Assert::assertSame($expectedNotification->title, $notification);
     }
 }

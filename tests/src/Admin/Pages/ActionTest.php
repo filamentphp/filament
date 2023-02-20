@@ -127,6 +127,7 @@ it('can show a notification', function () {
 
 it('will raise an exception if a notification was not sent checking notification object', function () {
     $this->expectException('PHPUnit\Framework\ExpectationFailedException');
+    $this->expectExceptionMessage('A notification was not sent');
 
     livewire(PageActions::class)
         ->callPageAction('does_not_show_notification')
@@ -139,13 +140,32 @@ it('will raise an exception if a notification was not sent checking notification
 
 it('will raise an exception if a notification was not sent checking notification title', function () {
     $this->expectException('PHPUnit\Framework\ExpectationFailedException');
+    $this->expectExceptionMessage('A notification was not sent');
 
     livewire(PageActions::class)
         ->callPageAction('does_not_show_notification')
         ->assertNotified('A notification');
 });
 
-it('can show a notification with id', function () {
+it('can assert that a notification without an id was sent', function () {
+    livewire(PageActions::class)
+        ->callPageAction('shows_notification')
+        ->assertNotified();
+
+    livewire(PageActions::class)
+        ->callPageAction('shows_notification')
+        ->assertNotified('A notification');
+
+    livewire(PageActions::class)
+        ->callPageAction('shows_notification')
+        ->assertNotified(
+            Notification::make()
+                ->title('A notification')
+                ->success()
+        );
+});
+
+it('can assert that a notification with an id was sent', function () {
     livewire(PageActions::class)
         ->callPageAction('shows_notification_with_id')
         ->assertNotified();
@@ -165,6 +185,7 @@ it('can show a notification with id', function () {
 
 it('will raise an exception if a notification was sent checking with a different notification title', function () {
     $this->expectException('PHPUnit\Framework\ExpectationFailedException');
+    $this->expectExceptionMessage('Failed asserting that two arrays are identical.');
 
     livewire(PageActions::class)
         ->callPageAction('shows_notification_with_id')
@@ -175,7 +196,7 @@ it('will raise an exception if a notification was sent checking with a different
         );
 });
 
-test('assertNotified will remove notifications from the session', function () {
+it('will raise an exception if a notification is not sent but a previous notification was sent', function () {
     livewire(PageActions::class)
         ->callPageAction('shows_notification_with_id')
         ->assertNotified(
@@ -185,6 +206,7 @@ test('assertNotified will remove notifications from the session', function () {
         );
 
     $this->expectException('PHPUnit\Framework\ExpectationFailedException');
+    $this->expectExceptionMessage('A notification was not sent');
 
     livewire(PageActions::class)
         ->callPageAction('does_not_show_notification')
@@ -193,4 +215,22 @@ test('assertNotified will remove notifications from the session', function () {
                 ->title('A notification')
                 ->success()
         );
+});
+
+test('can assert that notifications are sent in any order', function () {
+
+    livewire(PageActions::class)
+        ->callPageAction('two_notifications')
+        ->assertNotified('Second notification');
+
+    livewire(PageActions::class)
+        ->callPageAction('two_notifications')
+        ->assertNotified('First notification');
+
+    $this->expectException('PHPUnit\Framework\ExpectationFailedException');
+    $this->expectExceptionMessage('A notification was not sent');
+
+    livewire(PageActions::class)
+        ->callPageAction('two_notifications')
+        ->assertNotified('Third notification');
 });
