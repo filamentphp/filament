@@ -125,8 +125,6 @@ namespace Livewire\Testing {
 
         public function assertSelectColumnDoesNotHaveOptions(string $name, array $options, $record): static {}
 
-        public function loadTable(): static {}
-
         public function sortTable(?string $name = null, ?string $direction = null): static {}
 
         public function searchTable(?string $search = null): static {}
@@ -138,6 +136,8 @@ namespace Livewire\Testing {
         public function removeTableFilter(string $filter, ?string $field = null): static {}
 
         public function removeTableFilters(): static {}
+
+        public function loadTable(): static {}
 
         public function assertCanSeeTableRecords(array | Collection $records, bool $inOrder = false): static {}
 
