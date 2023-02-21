@@ -16,6 +16,14 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Chagua/acha kuchagua vipengee vyote kwa vitendo vingi.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Chagua/acha kuchagua kipengele :key kwa vitendo vingi.',
+        ],
+
         'search_query' => [
             'label' => 'Tafuta',
             'placeholder' => 'Tafuta',
