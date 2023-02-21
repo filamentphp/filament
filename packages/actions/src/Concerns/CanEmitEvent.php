@@ -3,8 +3,6 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Js;
 
 trait CanEmitEvent
 {
