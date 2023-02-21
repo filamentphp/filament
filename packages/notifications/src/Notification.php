@@ -20,6 +20,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\DatabaseNotification as DatabaseNotificationModel;
 use Illuminate\Notifications\Messages\BroadcastMessage;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use PHPUnit\Framework\Assert;
@@ -42,6 +43,9 @@ class Notification extends ViewComponent implements Arrayable
 
     protected string $viewIdentifier = 'notification';
 
+    /**
+     * @var array<string>
+     */
     protected array $safeViews = [];
 
     public function __construct(string $id)
@@ -57,6 +61,9 @@ class Notification extends ViewComponent implements Arrayable
         return $static;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getNotificationViewData(): array
     {
         return $this->viewData;
@@ -114,6 +121,9 @@ class Notification extends ViewComponent implements Arrayable
         return in_array($view, $this->safeViews, strict: true);
     }
 
+    /**
+     * @param string | array<string> $safeViews
+     */
     public function safeViews(string | array $safeViews): static
     {
         $this->safeViews = array_merge(
