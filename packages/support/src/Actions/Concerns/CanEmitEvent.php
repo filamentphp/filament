@@ -84,7 +84,7 @@ trait CanEmitEvent
             return null;
         }
 
-        $arguments = collect($event)
+        $arguments = collect([$event])
             ->merge($this->getEventData())
             ->when(
                 $this->emitToComponent,
