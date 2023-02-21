@@ -83,10 +83,10 @@ class Action extends StaticAction implements Arrayable, Groupable
         $static->color($data['color'] ?? null);
         $static->disabled($data['isDisabled'] ?? false);
 
-        match ($data['emitDirection'] ?? '') {
+        match ($data['emitDirection'] ?? null) {
             'self' => $static->emitSelf($data['event'] ?? null, $data['eventData'] ?? []),
             'up' => $static->emitUp($data['event'] ?? null, $data['eventData'] ?? []),
-            'to' => $static->emitTo($data['emitToTarget'] ?? null, $data['event'] ?? null, $data['eventData'] ?? []),
+            'to' => $static->emitTo($data['emitToComponent'] ?? null, $data['event'] ?? null, $data['eventData'] ?? []),
             default => $static->emit($data['event'] ?? null, $data['eventData'] ?? [])
         };
 
