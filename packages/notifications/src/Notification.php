@@ -39,6 +39,8 @@ class Notification extends ViewComponent implements Arrayable
 
     protected string $viewIdentifier = 'notification';
 
+    protected array $safeViews = [];
+
     public function __construct(string $id)
     {
         $this->id($id);
@@ -87,7 +89,7 @@ class Notification extends ViewComponent implements Arrayable
 
         $view = $data['view'] ?? null;
 
-        if (filled($view) && ($static->getView() !== $view) && static::isViewSafe($view)) {
+        if (filled($view) && ($static->getView() !== $view) && $static->isViewSafe($view)) {
             $static->view($data['view']);
         }
 
@@ -101,11 +103,18 @@ class Notification extends ViewComponent implements Arrayable
         return $static;
     }
 
-    protected static function isViewSafe(string $view): bool
+    protected function isViewSafe(string $view): bool
     {
-        return (bool) collect(config('notifications.safe_views', []))->first(function ($safeView) use ($view) {
+        return (bool) collect($this->safeViews)->first(function ($safeView) use ($view) {
             return Str::startsWith($view, $safeView);
         });
+    }
+
+    public function safeViews(string | array $safeViews): static
+    {
+        $this->safeViews = Arr::wrap($safeViews);
+
+        return $this;
     }
 
     public function send(): static
