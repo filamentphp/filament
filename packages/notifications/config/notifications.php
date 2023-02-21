@@ -56,5 +56,5 @@ return [
     | This is the whitelist of custom notification views that is allowed.
     |
     */
-    'safe_views' => []
+    'safe_views' => [],
 ];
