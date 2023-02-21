@@ -122,7 +122,7 @@ class Notification extends ViewComponent implements Arrayable
     }
 
     /**
-     * @param string | array<string> $safeViews
+     * @param  string | array<string>  $safeViews
      */
     public function safeViews(string | array $safeViews): static
     {
