@@ -90,11 +90,6 @@ abstract class ViewComponent extends Component implements Htmlable
         return $this;
     }
 
-    public function getViewData(): array
-    {
-        return $this->viewData;
-    }
-
     public function getView(): string
     {
         if (! isset($this->view)) {

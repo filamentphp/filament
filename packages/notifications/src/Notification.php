@@ -52,6 +52,11 @@ class Notification extends ViewComponent implements Arrayable
         return $static;
     }
 
+    public function getNotificationViewData(): array
+    {
+        return $this->viewData;
+    }
+
     public function toArray(): array
     {
         return [
@@ -63,7 +68,7 @@ class Notification extends ViewComponent implements Arrayable
             'iconColor' => $this->getIconColor(),
             'title' => $this->getTitle(),
             'view' => $this->getView(),
-            'viewData' => $this->getViewData(),
+            'viewData' => $this->getNotificationViewData(),
         ];
     }
 
@@ -79,17 +84,28 @@ class Notification extends ViewComponent implements Arrayable
                 $data['actions'] ?? [],
             ),
         );
+
+        $view = $data['view'] ?? null;
+
+        if (filled($view) && ($static->getView() !== $view) && static::isViewSafe($view)) {
+            $static->view($data['view']);
+        }
+
+        $static->viewData($data['viewData'] ?? []);
         $static->body($data['body'] ?? null);
         $static->duration($data['duration'] ?? null);
         $static->icon($data['icon'] ?? null);
         $static->iconColor($data['iconColor'] ?? $static->getIconColor());
         $static->title($data['title'] ?? null);
-        if (isset($data['view'])) {
-            $static->view($data['view']);
-        }
-        $static->viewData($data['viewData'] ?? []);
 
         return $static;
+    }
+
+    protected static function isViewSafe(string $view): bool
+    {
+        return (bool) collect(config('notifications.safe_views', []))->first(function ($safeView) use ($view) {
+            return Str::startsWith($view, $safeView);
+        });
     }
 
     public function send(): static
