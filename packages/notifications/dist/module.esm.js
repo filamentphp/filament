@@ -474,10 +474,10 @@ var Action = class {
     this.emitDirection = "self";
     return this;
   }
-  emitTo(to, event, data) {
+  emitTo(component, event, data) {
     this.emit(event, data);
     this.emitDirection = "to";
-    this.emitToTarget = to;
+    this.emitToComponent = component;
     return this;
   }
   emitUp(event, data) {
@@ -489,8 +489,8 @@ var Action = class {
     this.emitDirection = emitDirection;
     return this;
   }
-  emitToTarget(emitToTarget) {
-    this.emitToTarget = emitToTarget;
+  emitToComponent(component) {
+    this.emitToComponent = component;
     return this;
   }
   event(event) {
