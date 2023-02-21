@@ -105,9 +105,7 @@ class Notification extends ViewComponent implements Arrayable
 
     protected function isViewSafe(string $view): bool
     {
-        return (bool) collect($this->safeViews)->first(function ($safeView) use ($view) {
-            return Str::startsWith($view, $safeView);
-        });
+        return in_array($view, $this->safeViews, strict: true);
     }
 
     public function safeViews(string | array $safeViews): static
