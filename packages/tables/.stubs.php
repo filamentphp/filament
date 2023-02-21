@@ -142,6 +142,8 @@ namespace Livewire\Testing {
         public function assertCanNotSeeTableRecords(array | Collection $records): static {}
 
         public function assertCountTableRecords(int $count): static {}
+
+        public function loadTable(): static {}
     }
 
 }
