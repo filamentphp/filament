@@ -4,6 +4,7 @@ namespace Filament\Support\Actions\Concerns;
 
 use Closure;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Js;
 
 trait CanEmitEvent
 {
@@ -13,7 +14,7 @@ trait CanEmitEvent
 
     protected string | bool $emitDirection = false;
 
-    protected ?string $emitToTarget = null;
+    protected ?string $emitToComponent = null;
 
     public function emit(
         string | Closure | null $event,
@@ -28,7 +29,7 @@ trait CanEmitEvent
 
     public function emitSelf(
         string | Closure | null $event,
-        array | Closure $data = []
+        array | Closure $data = [],
     ): static {
         $this->emit($event, $data);
         $this->emitDirection = 'self';
@@ -37,13 +38,13 @@ trait CanEmitEvent
     }
 
     public function emitTo(
-        string $to,
+        string $component,
         string | Closure | null $event,
         array | Closure $data = [],
     ): static {
         $this->emit($event, $data);
         $this->emitDirection = 'to';
-        $this->emitToTarget = $to;
+        $this->emitToComponent = $component;
 
         return $this;
     }
@@ -75,25 +76,28 @@ trait CanEmitEvent
         return $this->evaluate($this->eventData);
     }
 
-    public function getWireClickAction(): ?string
+    public function getLivewireMountAction(): ?string
     {
-        $wireClickAction = null;
+        $event = $this->getEvent();
 
-        if ($this->getEvent()) {
-            $emitArguments = collect([$this->getEvent()])
-                ->merge($this->getEventData())
-                ->when($this->emitToTarget, fn (Collection $collection, string $target) => $collection->prepend($target))
-                ->map(fn (mixed $value): string => \Illuminate\Support\Js::from($value)->toHtml())
-                ->implode(', ');
-
-            $wireClickAction = match ($this->emitDirection) {
-                'self' => "\$emitSelf($emitArguments)",
-                'up' => "\$emitUp($emitArguments)",
-                'to' => "\$emitTo($emitArguments)",
-                default => "\$emit($emitArguments)"
-            };
+        if (blank($event)) {
+            return null;
         }
 
-        return $wireClickAction;
+        $arguments = collect($event)
+            ->merge($this->getEventData())
+            ->when(
+                $this->emitToComponent,
+                fn (Collection $collection, string $component) => $collection->prepend($component),
+            )
+            ->map(fn (mixed $value): string => Js::from($value)->toHtml())
+            ->implode(', ');
+
+        return match ($this->emitDirection) {
+            'self' => "\$emitSelf($arguments)",
+            'to' => "\$emitTo($arguments)",
+            'up' => "\$emitUp($arguments)",
+            default => "\$emit($arguments)"
+        };
     }
 }
