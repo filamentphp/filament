@@ -103,6 +103,18 @@ class Notification {
         return this
     }
 
+    view(view) {
+        this.view = view
+
+        return this
+    }
+
+    viewData(viewData) {
+        this.viewData = viewData
+
+        return this
+    }
+
     send() {
         Livewire.emit('notificationSent', this)
 
