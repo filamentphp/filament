@@ -219,6 +219,8 @@ public function table(Table $table): Table
 }
 ```
 
+If you're using mass assignment protection on your model, you will also need to add the `sort` attribute to the `$fillable` array there.
+
 When making the table reorderable, a new button will be available on the table to toggle reordering.
 
 The `reorderable()` method accepts the name of a column to store the record order in. If you use something like [`spatie/eloquent-sortable`](https://github.com/spatie/eloquent-sortable) with an order column such as `order_column`, you may use this instead:
