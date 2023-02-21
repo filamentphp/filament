@@ -198,7 +198,7 @@ public static function table(Table $table): Table
 }
 ```
 
-You will also need to add the `sort` property to the `$fillable` array on your `Model`.
+If you're using mass assignment protection on your model, you will also need to add the `sort` attribute to the `$fillable` array there.
 
 When making the table reorderable, a new button will be available on the table to toggle reordering. Pagination will be disabled in reorder mode to allow you to move records between pages.
 
