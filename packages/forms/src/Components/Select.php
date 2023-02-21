@@ -474,6 +474,7 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
             }
 
             $relationshipTitleColumnName = $component->getRelationshipTitleColumnName();
+
             return $relationshipQuery
                 ->pluck("{$relationshipTitleColumnName} as {$relationshipTitleColumnName}", $keyName)
                 ->toArray();
