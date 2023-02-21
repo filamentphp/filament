@@ -4597,24 +4597,24 @@
         },
         {
             "name": "orchestra/testbench",
-            "version": "v8.0.1",
+            "version": "v8.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/testbench.git",
-                "reference": "533e33d7051cba2d7f21d7e3e2dfc9975691636e"
+                "reference": "3400de3e60346132552835545ce1019a1e287fac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/testbench/zipball/533e33d7051cba2d7f21d7e3e2dfc9975691636e",
-                "reference": "533e33d7051cba2d7f21d7e3e2dfc9975691636e",
+                "url": "https://api.github.com/repos/orchestral/testbench/zipball/3400de3e60346132552835545ce1019a1e287fac",
+                "reference": "3400de3e60346132552835545ce1019a1e287fac",
                 "shasum": ""
             },
             "require": {
                 "composer-runtime-api": "^2.2",
                 "fakerphp/faker": "^1.21",
-                "laravel/framework": ">=10.0.3 <10.1.0",
+                "laravel/framework": ">=10.0.3 <10.2.0",
                 "mockery/mockery": "^1.5.1",
-                "orchestra/testbench-core": ">=8.0.1 <8.1.0",
+                "orchestra/testbench-core": ">=8.0.2 <8.1.0",
                 "php": "^8.1",
                 "phpunit/phpunit": "^9.6 || ^10.0.7",
                 "spatie/laravel-ray": "^1.32",
@@ -4646,22 +4646,22 @@
             ],
             "support": {
                 "issues": "https://github.com/orchestral/testbench/issues",
-                "source": "https://github.com/orchestral/testbench/tree/v8.0.1"
+                "source": "https://github.com/orchestral/testbench/tree/v8.0.2"
             },
-            "time": "2023-02-17T09:26:46+00:00"
+            "time": "2023-02-21T10:51:52+00:00"
         },
         {
             "name": "orchestra/testbench-core",
-            "version": "v8.0.1",
+            "version": "v8.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/orchestral/testbench-core.git",
-                "reference": "e7a2de7c6cd8fa8f221caa63e64499068a484c9c"
+                "reference": "dae014dd1e6ceef3ab31708a33496d4060dbe53f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/orchestral/testbench-core/zipball/e7a2de7c6cd8fa8f221caa63e64499068a484c9c",
-                "reference": "e7a2de7c6cd8fa8f221caa63e64499068a484c9c",
+                "url": "https://api.github.com/repos/orchestral/testbench-core/zipball/dae014dd1e6ceef3ab31708a33496d4060dbe53f",
+                "reference": "dae014dd1e6ceef3ab31708a33496d4060dbe53f",
                 "shasum": ""
             },
             "require": {
@@ -4735,7 +4735,7 @@
                 "issues": "https://github.com/orchestral/testbench/issues",
                 "source": "https://github.com/orchestral/testbench-core"
             },
-            "time": "2023-02-17T09:16:02+00:00"
+            "time": "2023-02-21T05:13:12+00:00"
         },
         {
             "name": "pestphp/pest",
@@ -7689,16 +7689,16 @@
         },
         {
             "name": "spatie/backtrace",
-            "version": "1.2.1",
+            "version": "1.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/backtrace.git",
-                "reference": "4ee7d41aa5268107906ea8a4d9ceccde136dbd5b"
+                "reference": "7b34fee6c1ad45f8ee0498d17cd8ea9a076402c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/backtrace/zipball/4ee7d41aa5268107906ea8a4d9ceccde136dbd5b",
-                "reference": "4ee7d41aa5268107906ea8a4d9ceccde136dbd5b",
+                "url": "https://api.github.com/repos/spatie/backtrace/zipball/7b34fee6c1ad45f8ee0498d17cd8ea9a076402c1",
+                "reference": "7b34fee6c1ad45f8ee0498d17cd8ea9a076402c1",
                 "shasum": ""
             },
             "require": {
@@ -7734,8 +7734,7 @@
                 "spatie"
             ],
             "support": {
-                "issues": "https://github.com/spatie/backtrace/issues",
-                "source": "https://github.com/spatie/backtrace/tree/1.2.1"
+                "source": "https://github.com/spatie/backtrace/tree/1.2.2"
             },
             "funding": [
                 {
@@ -7747,7 +7746,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2021-11-09T10:57:15+00:00"
+            "time": "2023-02-21T08:29:12+00:00"
         },
         {
             "name": "spatie/color",

@@ -96,29 +96,4 @@ trait CanEmitEvent
     {
         return $this->evaluate($this->eventData);
     }
-
-    public function getLivewireMountAction(): ?string
-    {
-        $event = $this->getEvent();
-
-        if (blank($event)) {
-            return null;
-        }
-
-        $arguments = collect([$event])
-            ->merge($this->getEventData())
-            ->when(
-                $this->emitToComponent,
-                fn (Collection $collection, string $component) => $collection->prepend($component),
-            )
-            ->map(fn (mixed $value): string => Js::from($value)->toHtml())
-            ->implode(', ');
-
-        return match ($this->emitDirection) {
-            'self' => "\$emitSelf($arguments)",
-            'to' => "\$emitTo($arguments)",
-            'up' => "\$emitUp($arguments)",
-            default => "\$emit($arguments)"
-        };
-    }
 }

@@ -11,6 +11,7 @@ use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\StaticAction;
 use Filament\Notifications\Actions\Concerns\CanCloseNotification;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 
@@ -125,12 +126,21 @@ class Action extends StaticAction implements Arrayable, Groupable
             return null;
         }
 
-        $emitArguments = collect([$event])
+        $arguments = collect([$event])
             ->merge($this->getEventData())
-            ->map(fn ($value): string => Js::from($value)->toHtml())
+            ->when(
+                $this->emitToComponent,
+                fn (Collection $collection, string $component) => $collection->prepend($component),
+            )
+            ->map(fn (mixed $value): string => Js::from($value)->toHtml())
             ->implode(', ');
 
-        return "\$emit({$emitArguments})";
+        return match ($this->emitDirection) {
+            'self' => "\$emitSelf($arguments)",
+            'to' => "\$emitTo($arguments)",
+            'up' => "\$emitUp($arguments)",
+            default => "\$emit($arguments)"
+        };
     }
 
     public function getAlpineMountAction(): ?string
