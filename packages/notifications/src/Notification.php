@@ -55,7 +55,7 @@ class Notification extends ViewComponent implements Arrayable
         return $static;
     }
 
-    public function getNotificationViewData(): array
+    public function getViewData(): array
     {
         return $this->viewData;
     }
@@ -71,7 +71,7 @@ class Notification extends ViewComponent implements Arrayable
             'iconColor' => $this->getIconColor(),
             'title' => $this->getTitle(),
             'view' => $this->getView(),
-            'viewData' => $this->getNotificationViewData(),
+            'viewData' => $this->getViewData(),
         ];
     }
 
