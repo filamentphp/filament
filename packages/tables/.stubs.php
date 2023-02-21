@@ -137,6 +137,8 @@ namespace Livewire\Testing {
 
         public function removeTableFilters(): static {}
 
+        public function loadTable(): static {}
+
         public function assertCanSeeTableRecords(array | Collection $records, bool $inOrder = false): static {}
 
         public function assertCanNotSeeTableRecords(array | Collection $records): static {}
