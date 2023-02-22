@@ -303,3 +303,10 @@ class ExampleServiceProvider extends PluginServiceProvider
 }
 
 ```
+### Tips 
+## Before you publish, remember:
+
+To make your plugin stand out, be sure to include **screenshots** and a good **description** of your package. This will help users understand what your plugin does and why it's valuable. You can also provide links to any related **resources**. It is always better to include proper **documentation** on the GitHub repository.
+
+
+
