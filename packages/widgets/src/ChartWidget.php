@@ -15,7 +15,7 @@ abstract class ChartWidget extends Widget
 
     public string $dataChecksum;
     
-    public bool $showFilterLoadingIndicator = true;
+    public bool $hasFilterLoadingIndicator = true;
 
     public ?string $filter = null;
 
