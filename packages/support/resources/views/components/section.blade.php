@@ -80,7 +80,7 @@
                 }"
                 type="button"
                 @class([
-                    'flex items-center justify-center transform rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none',
+                    'flex items-center justify-center transform rounded-full outline-none hover:bg-gray-500/5 focus:bg-primary-500/10',
                     'w-10 h-10' => ! $compact,
                     'w-8 h-8 -my-1' => $compact,
                     '-rotate-180' => ! $collapsed,

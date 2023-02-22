@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 
 trait InteractsWithTable
 {
+    use CanDeferLoading;
     use CanGroupRecords;
     use CanPaginateRecords;
     use CanReorderRecords;
@@ -137,6 +138,7 @@ trait InteractsWithTable
             ->contentFooter($this->getTableContentFooter())
             ->contentGrid($this->getTableContentGrid())
             ->defaultSort($this->getDefaultTableSortColumn(), $this->getDefaultTableSortDirection())
+            ->deferLoading($this->isTableLoadingDeferred())
             ->description($this->getTableDescription())
             ->emptyState($this->getTableEmptyState())
             ->emptyStateActions($this->getTableEmptyStateActions())

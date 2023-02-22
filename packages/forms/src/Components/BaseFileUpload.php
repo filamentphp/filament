@@ -439,7 +439,7 @@ class BaseFileUpload extends Field
 
     public function getDiskName(): string
     {
-        return $this->evaluate($this->diskName) ?? config('filament-forms.default_filesystem_disk');
+        return $this->evaluate($this->diskName) ?? config('filament.default_filesystem_disk');
     }
 
     public function getMaxSize(): ?int
@@ -505,9 +505,10 @@ class BaseFileUpload extends Field
             $name = $this->getName();
 
             $validator = Validator::make(
-                data: [$name => $files],
-                rules: ["{$name}.*" => array_merge(['file'], parent::getValidationRules())],
-                customAttributes: ["{$name}.*" => $this->getValidationAttribute()],
+                [$name => $files],
+                ["{$name}.*" => array_merge(['file'], parent::getValidationRules())],
+                [],
+                ["{$name}.*" => $this->getValidationAttribute()],
             );
 
             if (! $validator->fails()) {

@@ -1,0 +1,44 @@
+name: generate-docs-screenshots
+
+on: push
+
+jobs:
+  take-screenshots:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.composer/cache/files
+          key: dependencies-composer-${{ hashFiles('composer.json') }}
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: mbstring, pdo, pdo_sqlite
+          coverage: none
+      - name: Setup Node
+        uses: actions/setup-node@v2
+      - name: Install dependencies
+        run: |
+          cd docs-assets/screenshots
+          npm ci
+      - name: Setup app
+        run: |
+          cd docs-assets/app
+          composer install --no-interaction
+          php artisan serve &
+      - name: Run script
+        run: |
+          cd docs-assets/screenshots
+          node script
+      - name: Pull changes
+        run: git pull
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: >
+            chore: take docs screenshots

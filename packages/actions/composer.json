@@ -13,9 +13,9 @@
         "filament/forms": "self.version",
         "filament/infolists": "self.version",
         "filament/support": "self.version",
-        "illuminate/contracts": "^9.0",
-        "illuminate/database": "^9.0",
-        "illuminate/support": "^9.0",
+        "illuminate/contracts": "^9.0|^10.0",
+        "illuminate/database": "^9.0|^10.0",
+        "illuminate/support": "^9.0|^10.0",
         "livewire/livewire": "^2.10.7",
         "spatie/laravel-package-tools": "^1.9"
     },

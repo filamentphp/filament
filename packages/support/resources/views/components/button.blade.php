@@ -17,13 +17,13 @@
 @php
     $buttonClasses = array_merge(
         [
-            'filament-button inline-flex items-center justify-center rounded-lg border font-medium transition-colors focus:outline-none focus:ring-2 disabled:pointer-events-none disabled:opacity-70',
+            'filament-button inline-grid grid-flow-col items-center justify-center rounded-lg border font-medium outline-none transition-colors focus:ring-2 disabled:pointer-events-none disabled:opacity-70',
             match ($size) {
-                'xs' => 'filament-button-size-xs gap-1.5 py-[calc(theme(spacing.2)-1px)] px-[calc(theme(spacing[3])-1px)] text-xs',
+                'xs' => 'filament-button-size-xs gap-1.5 py-[calc(theme(spacing.2)-1px)] px-[calc(theme(spacing.3)-1px)] text-xs',
                 'sm' => 'filament-button-size-sm gap-1.5 py-[calc(theme(spacing.2)-1px)] px-[calc(theme(spacing.[3.5])-1px)] text-sm',
                 'md' => 'filament-button-size-md gap-2 py-[calc(theme(spacing[2.5])-1px)] px-[calc(theme(spacing.4)-1px)] text-sm',
-                'lg' => 'filament-button-size-lg gap-2 py-[calc(theme(spacing[3])-1px)] px-[calc(theme(spacing.5)-1px)] text-sm',
-                'xl' => 'filament-button-size-xl gap-2 py-[calc(theme(spacing[3])-1px)] px-[calc(theme(spacing.6)-1px)] text-base',
+                'lg' => 'filament-button-size-lg gap-2 py-[calc(theme(spacing.3)-1px)] px-[calc(theme(spacing.5)-1px)] text-sm',
+                'xl' => 'filament-button-size-xl gap-2 py-[calc(theme(spacing.3)-1px)] px-[calc(theme(spacing.6)-1px)] text-base',
             },
         ],
         $outlined
@@ -58,7 +58,7 @@
         'md', 'lg', 'xl' => 'md',
         default => 'md',
     };
-    
+
     $iconSize = match ($iconSize) {
         'sm' => 'h-4 w-4',
         'md' => 'h-5 w-5',
@@ -89,11 +89,16 @@
         } => ! $labelSrOnly,
     ]);
 
+    $labelClasses = \Illuminate\Support\Arr::toCssClasses([
+        'filament-button-label truncate',
+        'sr-only' => $labelSrOnly,
+    ]);
+
     $hasFileUploadLoadingIndicator = ($type === 'submit') && filled($form);
     $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || $hasFileUploadLoadingIndicator;
 
     if ($hasLoadingIndicator) {
-        $loadingIndicatorTarget = (string) str(html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click', $form)), ENT_QUOTES))->before('(');
+        $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click', $form)), ENT_QUOTES);
     }
 @endphp
 
@@ -167,12 +172,11 @@
             @endif
         @endif
 
-        
         <span
             @if ($hasFileUploadLoadingIndicator)
                 x-show="!isUploadingFile"
             @endif
-            @class(['sr-only' => $labelSrOnly])
+            class="{{ $labelClasses }}"
         >
             {{ $slot }}
         </span>
@@ -238,7 +242,7 @@
             />
         @endif
 
-        <span @class(['sr-only' => $labelSrOnly])>
+        <span class="{{ $labelClasses }}">
             {{ $slot }}
         </span>
 

@@ -68,7 +68,7 @@
                         $applyStateBindingModifiers('wire:model') => (! $hasMask) ? $statePath : null,
                     ], escape: false)
                     ->class([
-                        'block w-full transition duration-75 shadow-sm sm:text-sm focus:border-primary-500 focus:relative focus:z-[1] focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
+                        'block w-full transition duration-75 shadow-sm outline-none sm:text-sm focus:border-primary-500 focus:relative focus:z-[1] focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
                         'rounded-l-lg' => ! ($prefixLabel || $prefixIcon),
                         'rounded-r-lg' => ! ($suffixLabel || $suffixIcon),
                     ])

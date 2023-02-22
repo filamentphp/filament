@@ -169,6 +169,8 @@ class Table extends ViewComponent
 
     protected bool | Closure $isGroupsOnly = false;
 
+    protected bool | Closure $isLoadingDeferred = false;
+
     protected bool | Closure $isPaginated = true;
 
     protected bool | Closure $isPaginatedWhileReordering = true;
@@ -213,7 +215,7 @@ class Table extends ViewComponent
 
     protected string | Closure | null $recordUrl = null;
 
-    protected Relation | Closure | null $relationship = null;
+    protected ?Closure $getRelationshipUsing = null;
 
     protected string | Closure | null $reorderColumn = null;
 
@@ -232,7 +234,10 @@ class Table extends ViewComponent
 
     public static function make(HasTable $livewire): static
     {
-        return app(static::class, ['livewire' => $livewire]);
+        $static = app(static::class, ['livewire' => $livewire]);
+        $static->configure();
+
+        return $static;
     }
 
     /**
@@ -648,6 +653,13 @@ class Table extends ViewComponent
         return $this;
     }
 
+    public function deferLoading(bool | Closure $condition = true): static
+    {
+        $this->isLoadingDeferred = $condition;
+
+        return $this;
+    }
+
     public function groupsOnly(bool | Closure $condition = true): static
     {
         $this->isGroupsOnly = $condition;
@@ -788,9 +800,9 @@ class Table extends ViewComponent
         return $this;
     }
 
-    public function relationship(Relation | Closure | null $relationship): static
+    public function relationship(?Closure $relationship): static
     {
-        $this->relationship = $relationship;
+        $this->getRelationshipUsing = $relationship;
 
         return $this;
     }
@@ -1427,7 +1439,7 @@ class Table extends ViewComponent
 
     public function getRelationship(): Relation | Builder | null
     {
-        return $this->evaluate($this->relationship);
+        return $this->evaluate($this->getRelationshipUsing);
     }
 
     public function getInverseRelationship(): ?string
@@ -1584,5 +1596,15 @@ class Table extends ViewComponent
     public function checksIfRecordIsSelectable(): bool
     {
         return $this->checkIfRecordIsSelectableUsing !== null;
+    }
+
+    public function isLoaded(): bool
+    {
+        return $this->getLivewire()->isTableLoaded();
+    }
+
+    public function isLoadingDeferred(): bool
+    {
+        return (bool) $this->evaluate($this->isLoadingDeferred);
     }
 }

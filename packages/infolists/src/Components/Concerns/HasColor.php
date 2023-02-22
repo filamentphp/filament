@@ -2,16 +2,15 @@
 
 namespace Filament\Infolists\Components\Concerns;
 
-use BackedEnum;
 use Closure;
 use Filament\Infolists\Components\Component;
 use Filament\Support\Contracts\HasColor as ColorInterface;
 
 trait HasColor
 {
-    protected string | Closure | null $color = null;
+    protected string | bool | Closure | null $color = null;
 
-    public function color(string | Closure | null $color): static
+    public function color(string | bool | Closure | null $color): static
     {
         $this->color = $color;
 
@@ -44,21 +43,24 @@ trait HasColor
         return $this;
     }
 
-    public function getColor(): ?string
+    public function getColor(mixed $state): ?string
     {
-        $color = $this->evaluate($this->color);
+        $color = $this->evaluate($this->color, [
+            'state' => $state,
+        ]);
 
-        $enum = $color ?? $this->enum;
-        if (
-            is_string($enum) &&
-            function_exists('enum_exists') &&
-            enum_exists($enum) &&
-            is_a($enum, BackedEnum::class, allow_string: true) &&
-            is_a($enum, ColorInterface::class, allow_string: true)
-        ) {
-            return $enum::tryFrom($this->getState())?->getColor();
+        if ($color === false) {
+            return null;
         }
 
-        return $color;
+        if (filled($color)) {
+            return $color;
+        }
+
+        if (! $state instanceof ColorInterface) {
+            return null;
+        }
+
+        return $state->getColor();
     }
 }

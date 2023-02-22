@@ -4,8 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'und :count weitere',
+        'text' => [
+            'more_list_items' => 'und :count weitere',
         ],
 
         'messages' => [
@@ -15,6 +15,14 @@ return [
     ],
 
     'fields' => [
+
+        'bulk_select_page' => [
+            'label' => 'Alle Einträge für Massenaktion auswählen/abwählen.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Eintrag :key für Massenaktion auswählen/abwählen.',
+        ],
 
         'search' => [
             'label' => 'Suche',
@@ -27,7 +35,7 @@ return [
 
         'label' => 'Seitennavigation',
 
-        'overview' => ':first bis :last von :total Ergebnissen',
+        'overview' => '{1} Zeige 1 Ergebnis|[2,*] Zeige :first bis :last von :total Ergebnissen',
 
         'fields' => [
 

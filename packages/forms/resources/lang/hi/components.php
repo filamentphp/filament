@@ -10,7 +10,7 @@ return [
                 'label' => ':label में जोड़ें',
             ],
 
-            'createbetween' => [
+            'add_between' => [
                 'label' => 'के बीच जोड़ें',
             ],
 
@@ -18,11 +18,11 @@ return [
                 'label' => 'हटाएँ',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'नीचे करे',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'ऊपर करे',
             ],
 
@@ -87,11 +87,11 @@ return [
                 'label' => 'हटाएँ',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'नीचे करे',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'ऊपर करे',
             ],
 

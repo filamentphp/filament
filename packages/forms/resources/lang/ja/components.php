@@ -24,11 +24,11 @@ return [
                 'label' => '移動',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => '下に移動',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => '上に移動',
             ],
 
@@ -119,11 +119,11 @@ return [
                 'label' => '移動',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => '下に移動',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => '上に移動',
             ],
 

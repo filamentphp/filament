@@ -4,8 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'و :count أكثر',
+        'text' => [
+            'more_list_items' => 'و :count أكثر',
         ],
 
         'messages' => [
@@ -15,6 +15,14 @@ return [
     ],
 
     'fields' => [
+
+        'bulk_select_page' => [
+            'label' => 'تحديد / إلغاء تحديد كافة العناصر للإجراءات الجماعية.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'تحديد / إلغاء تحديد العنصر :key للإجراءات الجماعية',
+        ],
 
         'search' => [
             'label' => 'بحث',
@@ -27,7 +35,7 @@ return [
 
         'label' => 'التنقل بين الصفحات',
 
-        'overview' => 'عرض :first إلى :last من :total النتائج',
+        'overview' => '{1} عرض نتيجة واحدة|[3,10] عرض :first إلي :last من :total نتائج|[2,*] عرض :first إلي :last من :total نتيجة',
 
         'fields' => [
 
@@ -136,7 +144,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '{1} تم تحديد سجل واحد.|[2,*] :count سجل/سجلات تم تحديدها.',
+        'selected_count' => '{1} تم تحديد سجل واحد|[3,10] تم تحديد :count سجلات |[2,*] تم تحديد :count سجل',
 
         'buttons' => [
 

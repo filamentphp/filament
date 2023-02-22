@@ -2,22 +2,20 @@
 
 namespace {{ namespace }};
 
-use Closure;
 use Filament\Tables;
+use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
-use Illuminate\Database\Eloquent\Builder;
 
 class {{ class }} extends BaseWidget
 {
-    protected function getTableQuery(): Builder
+    public function table(Table $table): Table
     {
-        // ...
-    }
-
-    protected function getTableColumns(): array
-    {
-        return [
-            // ...
-        ];
+        return $table
+            ->query(
+                // ...
+            )
+            ->columns([
+                // ...
+            ]);
     }
 }

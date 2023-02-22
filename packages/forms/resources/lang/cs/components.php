@@ -16,6 +16,10 @@ return [
                 'label' => 'Přidat k :label',
             ],
 
+            'add_between' => [
+                'label' => 'Vložit',
+            ],
+
             'delete' => [
                 'label' => 'Smazat',
             ],
@@ -24,11 +28,11 @@ return [
                 'label' => 'Přesunout',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Posunout dolů',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Posunout nahoru',
             ],
 
@@ -46,6 +50,22 @@ return [
 
             'expand_all' => [
                 'label' => 'Zobrazit vše',
+            ],
+
+        ],
+
+    ],
+
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Odznačit vše',
+            ],
+
+            'select_all' => [
+                'label' => 'Vybrat vše',
             ],
 
         ],
@@ -123,11 +143,11 @@ return [
                 'label' => 'Přesunout',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Posunout dolů',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Posunout nahoru',
             ],
 

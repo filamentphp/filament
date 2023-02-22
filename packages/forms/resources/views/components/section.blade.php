@@ -7,7 +7,15 @@
     :collapsed="$isCollapsed()"
     :collapsible="$isCollapsible() && (! $isAside)"
     :compact="$isCompact()"
-    class="filament-forms-section-component"
+    {{
+        $attributes
+            ->merge([
+                'id' => $getId(),
+            ], escape: false)
+            ->merge($getExtraAttributes(), escape: false)
+            ->merge($getExtraAlpineAttributes(), escape: false)
+            ->class(['filament-forms-section-component'])
+    }}
 >
     <x-slot name="heading">
         {{ $getHeading() }}

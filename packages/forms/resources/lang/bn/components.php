@@ -16,7 +16,7 @@ return [
                 'label' => ':label এ যোগ করুন',
             ],
 
-            'createbetween' => [
+            'add_between' => [
                 'label' => 'প্রবেশ করান',
             ],
 
@@ -28,11 +28,11 @@ return [
                 'label' => 'সরান',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'নিচে সরান',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'উপরে সরান',
             ],
 
@@ -143,11 +143,11 @@ return [
                 'label' => 'সরান',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'নিচে সরান',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'উপরে সরান',
             ],
 

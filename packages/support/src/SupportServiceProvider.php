@@ -32,6 +32,7 @@ class SupportServiceProvider extends PackageServiceProvider
                 InstallCommand::class,
                 UpgradeCommand::class,
             ])
+            ->hasConfigFile('filament')
             ->hasTranslations()
             ->hasViews(namespace: 'filament');
     }

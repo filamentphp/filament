@@ -74,4 +74,13 @@ class TestsRecords
             return $this;
         };
     }
+
+    public function loadTable(): Closure
+    {
+        return function (): static {
+            $this->call('loadTable');
+
+            return $this;
+        };
+    }
 }

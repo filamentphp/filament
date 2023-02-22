@@ -5,8 +5,8 @@ namespace Filament\Tests;
 use Filament\Context;
 use Filament\ContextProvider;
 use Filament\Http\Middleware\Authenticate;
+use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use Filament\Http\Middleware\MirrorConfigToSubpackages;
 use Filament\Pages;
 use Filament\Tests\Actions\Fixtures\Pages\Actions;
 use Filament\Tests\App\Fixtures\Pages\Settings;
@@ -52,8 +52,8 @@ class AdminContextProvider extends ContextProvider
                 ShareErrorsFromSession::class,
                 VerifyCsrfToken::class,
                 SubstituteBindings::class,
+                DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                MirrorConfigToSubpackages::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

@@ -16,7 +16,7 @@ return [
                 'label' => 'Add to :label',
             ],
 
-            'createbetween' => [
+            'add_between' => [
                 'label' => 'Insert',
             ],
 
@@ -28,11 +28,11 @@ return [
                 'label' => 'Move',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Move down',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Move up',
             ],
 
@@ -143,11 +143,11 @@ return [
                 'label' => 'Move',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Move down',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Move up',
             ],
 
@@ -223,6 +223,10 @@ return [
 
                         'create' => [
                             'label' => 'Create',
+                        ],
+
+                        'create_another' => [
+                            'label' => 'Create & create another',
                         ],
 
                     ],

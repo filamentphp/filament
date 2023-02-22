@@ -461,7 +461,7 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     {
         return $this->makeBaseTable()
             ->query($this->getTableQuery())
-            ->relationship($this->getRelationship())
+            ->relationship(fn (): Relation | Builder => $this->getRelationship())
             ->inverseRelationship(static::getInverseRelationshipName())
             ->heading($this->getTableHeading() ?? static::getTitle($this->ownerRecord, $this->pageClass))
             ->modelLabel(static::getModelLabel())

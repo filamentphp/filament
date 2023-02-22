@@ -1,9 +1,5 @@
 .choices {
-    @apply relative;
-}
-
-.choices:focus {
-    @apply outline-none;
+    @apply relative outline-none;
 }
 
 .choices:last-child {
@@ -17,6 +13,10 @@
 .choices.is-disabled .choices__inner,
 .choices.is-disabled .choices__input {
     @apply select-none;
+}
+
+.choices.is-disabled .choices__input {
+    @apply hidden;
 }
 
 .choices.is-disabled .choices__item {
@@ -50,6 +50,10 @@
     background-size: 1.5em 1.5em;
 }
 
+.choices.is-disabled .choices__inner {
+    background-image: none;
+}
+
 .dark .choices__inner {
     @apply border-gray-600 bg-gray-700 text-white;
 }
@@ -76,7 +80,7 @@
 
 .is-focused .choices__inner,
 .is-open .choices__inner {
-    @apply border-primary-500 ring-1 ring-inset ring-primary-500;
+    @apply border-primary-500 outline-none ring-1 ring-inset ring-primary-500;
 }
 
 .choices__list {
@@ -176,12 +180,8 @@
 }
 
 .choices__button {
-    @apply cursor-pointer appearance-none border-0 bg-transparent bg-center bg-no-repeat;
+    @apply cursor-pointer appearance-none border-0 bg-transparent bg-center bg-no-repeat outline-none;
     text-indent: -9999px;
-}
-
-.choices__button:focus {
-    @apply outline-none;
 }
 
 .choices[data-type*='select-one'] .choices__button {
@@ -237,6 +237,10 @@
     @apply opacity-100;
 }
 
+.choices.is-disabled .choices__button {
+    @apply hidden;
+}
+
 /* !important is used to override default Tailwind input styling */
 
 .choices__list--dropdown .choices__input {
@@ -254,7 +258,7 @@
 }
 
 .choices__input {
-    @apply inline-block max-w-full border-none !text-sm;
+    @apply inline-block max-w-full border-none !text-sm outline-none;
     border-color: transparent !important;
     background-color: transparent !important;
     padding: 0 !important;

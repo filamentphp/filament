@@ -41,6 +41,10 @@ class TestsBulkActions
 
             $this->call('mountTableBulkAction', $name, $records);
 
+            if (filled($this->instance()->redirectTo)) {
+                return $this;
+            }
+
             if ($this->instance()->mountedTableBulkAction === null) {
                 $this->assertNotDispatchedBrowserEvent('open-modal');
 
@@ -109,6 +113,10 @@ class TestsBulkActions
             }
 
             $this->call('callMountedTableBulkAction', $arguments);
+
+            if (filled($this->instance()->redirectTo)) {
+                return $this;
+            }
 
             if ($this->get('mountedTableBulkAction') !== $action->getName()) {
                 $this->assertDispatchedBrowserEvent('close-modal', [

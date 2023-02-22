@@ -103,6 +103,18 @@ class Notification {
         return this
     }
 
+    view(view) {
+        this.view = view
+
+        return this
+    }
+
+    viewData(viewData) {
+        this.viewData = viewData
+
+        return this
+    }
+
     send() {
         Livewire.emit('notificationSent', this)
 
@@ -132,6 +144,40 @@ class Action {
     emit(event, data) {
         this.event(event)
         this.eventData(data)
+
+        return this
+    }
+
+    emitSelf(event, data) {
+        this.emit(event, data)
+        this.emitDirection = 'self'
+
+        return this
+    }
+
+    emitTo(component, event, data) {
+        this.emit(event, data)
+        this.emitDirection = 'to'
+        this.emitToComponent = component
+
+        return this
+    }
+
+    emitUp(event, data) {
+        this.emit(event, data)
+        this.emitDirection = 'up'
+
+        return this
+    }
+
+    emitDirection(emitDirection) {
+        this.emitDirection = emitDirection
+
+        return this
+    }
+
+    emitToComponent(component) {
+        this.emitToComponent = component
 
         return this
     }

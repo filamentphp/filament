@@ -16,7 +16,7 @@
     $iconSize ??= $size;
 
     $linkClasses = [
-        'filament-link inline-flex items-center justify-center gap-0.5 font-medium hover:underline focus:outline-none focus:underline disabled:opacity-70 disabled:pointer-events-none',
+        'filament-link inline-flex items-center justify-center gap-0.5 font-medium outline-none hover:underline focus:underline disabled:opacity-70 disabled:pointer-events-none',
         'opacity-70 pointer-events-none' => $disabled,
         match ($color) {
             'danger' => 'text-danger-600 hover:text-danger-500 dark:text-danger-500 dark:hover:text-danger-400',
@@ -50,7 +50,7 @@
     $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || (($type === 'submit') && filled($form));
 
     if ($hasLoadingIndicator) {
-        $loadingIndicatorTarget = (string) str(html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click', $form)), ENT_QUOTES))->before('(');
+        $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click', $form)), ENT_QUOTES);
     }
 @endphp
 

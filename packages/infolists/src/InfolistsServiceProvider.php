@@ -11,7 +11,6 @@ class InfolistsServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('filament-infolists')
-            ->hasConfigFile()
             ->hasTranslations()
             ->hasViews();
     }

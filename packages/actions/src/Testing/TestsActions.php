@@ -29,6 +29,10 @@ class TestsActions
 
             $this->call('mountAction', $name, $arguments);
 
+            if (filled($this->instance()->redirectTo)) {
+                return $this;
+            }
+
             if ($this->instance()->mountedAction === null) {
                 $this->assertNotDispatchedBrowserEvent('open-modal');
 
@@ -38,7 +42,7 @@ class TestsActions
             $this->assertSet('mountedAction', $name);
 
             $this->assertDispatchedBrowserEvent('open-modal', [
-                'id' => 'action',
+                'id' => "{$this->instance()->id}-action",
             ]);
 
             return $this;
@@ -98,9 +102,13 @@ class TestsActions
 
             $this->call('callMountedAction', $arguments);
 
+            if (filled($this->instance()->redirectTo)) {
+                return $this;
+            }
+
             if ($this->get('mountedAction') !== $action->getName()) {
                 $this->assertDispatchedBrowserEvent('close-modal', [
-                    'id' => 'action',
+                    'id' => "{$this->instance()->id}-action",
                 ]);
             }
 

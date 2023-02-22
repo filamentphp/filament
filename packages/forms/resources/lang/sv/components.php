@@ -28,11 +28,11 @@ return [
                 'label' => 'Flytta',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Flytta ned',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Flytta upp',
             ],
 
@@ -143,11 +143,11 @@ return [
                 'label' => 'Flytta',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Flytta ned',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Flytta upp',
             ],
 

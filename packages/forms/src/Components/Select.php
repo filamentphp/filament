@@ -211,7 +211,7 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
         $action = Action::make($this->getCreateOptionActionName())
             ->component($this)
             ->form($actionFormSchema)
-            ->action(static function (Select $component, array $data, ComponentContainer $form) {
+            ->action(static function (Action $action, array $arguments, Select $component, array $data, ComponentContainer $form) {
                 if (! $component->getCreateOptionUsing()) {
                     throw new Exception("Select field [{$component->getStatePath()}] must have a [createOptionUsing()] closure set.");
                 }
@@ -227,11 +227,25 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
 
                 $component->state($state);
                 $component->callAfterStateUpdated();
+
+                if (! ($arguments['another'] ?? false)) {
+                    return;
+                }
+
+                $action->callAfter();
+
+                $form->fill();
+
+                $action->halt();
             })
             ->icon('heroicon-m-plus')
             ->iconButton()
             ->modalHeading(__('filament-forms::components.select.actions.create_option.modal.heading'))
             ->modalButton(__('filament-forms::components.select.actions.create_option.modal.actions.create.label'))
+            ->extraModalActions(fn (Action $action, Select $component): array => $component->isMultiple() ? [
+                $action->makeExtraModalAction('createAnother', ['another' => true])
+                    ->label(__('filament-forms::components.select.actions.create_option.modal.actions.create_another.label')),
+            ] : [])
             ->hidden(fn (Component $component): bool => $component->isDisabled());
 
         if ($this->modifyCreateOptionActionUsing) {
@@ -474,8 +488,10 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
                     ->toArray();
             }
 
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleAttribute(), $keyName)
+                ->pluck("{$relationshipTitleAttribute} as {$relationshipTitleAttribute}", $keyName)
                 ->toArray();
         });
 
@@ -513,8 +529,10 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
                     ->toArray();
             }
 
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleAttribute(), $keyName)
+                ->pluck("{$relationshipTitleAttribute} as {$relationshipTitleAttribute}", $keyName)
                 ->toArray();
         });
 
@@ -602,8 +620,10 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
                     ->toArray();
             }
 
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleAttribute(), $relatedKeyName)
+                ->pluck("{$relationshipTitleAttribute} as {$relationshipTitleAttribute}", $relatedKeyName)
                 ->toArray();
         });
 

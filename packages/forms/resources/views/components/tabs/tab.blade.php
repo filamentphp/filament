@@ -28,7 +28,7 @@
                 'tabindex' => '0',
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['filament-forms-tabs-component-tab focus:outline-none'])
+            ->class(['filament-forms-tabs-component-tab outline-none'])
     }}
 >
     {{ $getChildComponentContainer() }}

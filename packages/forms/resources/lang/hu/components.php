@@ -24,11 +24,11 @@ return [
                 'label' => 'Mozgatás',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Mozgatás lefelé',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Mozgatás felfelé',
             ],
 
@@ -123,11 +123,11 @@ return [
                 'label' => 'Mozgatás',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Mozgatás lefelé',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Mozgatás felfelé',
             ],
 

@@ -57,6 +57,10 @@ interface HasTable extends HasForms
 
     public function getTableRecords(): Collection | Paginator;
 
+    public function getTableRecordsPerPage(): int | string | null;
+
+    public function getTablePage(): int;
+
     public function getTableSortColumn(): ?string;
 
     public function getTableSortDirection(): ?string;
@@ -78,4 +82,6 @@ interface HasTable extends HasForms
     public function toggleTableReordering(): void;
 
     public function isTableReordering(): bool;
+
+    public function isTableLoaded(): bool;
 }

@@ -4,17 +4,24 @@ namespace Filament\Infolists\Components\Concerns;
 
 use Akaunting\Money;
 use Closure;
-use Filament\Infolists\Components\Component;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 
 trait CanFormatState
 {
     protected ?Closure $formatStateUsing = null;
 
-    protected ?int $limit = null;
+    protected int | Closure | null $characterLimit = null;
+
+    protected string | Closure | null $characterLimitEnd = null;
+
+    protected int | Closure | null $wordLimit = null;
+
+    protected string | Closure | null $wordLimitEnd = null;
 
     protected string | Closure | null $prefix = null;
 
@@ -22,12 +29,20 @@ trait CanFormatState
 
     protected string | Closure | null $timezone = null;
 
-    public function date(?string $format = null, ?string $timezone = null): static
-    {
-        $format ??= 'M j, Y';
+    protected bool | Closure $isHtml = false;
 
-        $this->formatStateUsing(static function (Component $component, $state) use ($format, $timezone): ?string {
-            /** @var TextEntry $component */
+    protected bool | Closure $isMarkdown = false;
+
+    public function markdown(bool | Closure $condition = true): static
+    {
+        $this->isMarkdown = $condition;
+
+        return $this;
+    }
+
+    public function date(string $format = 'M j, Y', ?string $timezone = null): static
+    {
+        $this->formatStateUsing(static function (TextEntry $component, $state) use ($format, $timezone): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -40,10 +55,8 @@ trait CanFormatState
         return $this;
     }
 
-    public function dateTime(?string $format = null, ?string $timezone = null): static
+    public function dateTime(string $format = 'M j, Y H:i:s', ?string $timezone = null): static
     {
-        $format ??= 'M j, Y H:i:s';
-
         $this->date($format, $timezone);
 
         return $this;
@@ -51,8 +64,7 @@ trait CanFormatState
 
     public function since(?string $timezone = null): static
     {
-        $this->formatStateUsing(static function (Component $component, $state) use ($timezone): ?string {
-            /** @var TextEntry $component */
+        $this->formatStateUsing(static function (TextEntry $component, $state) use ($timezone): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -65,63 +77,9 @@ trait CanFormatState
         return $this;
     }
 
-    public function limit(int $length = 100, string $end = '...'): static
-    {
-        $this->limit = $length;
-
-        $this->formatStateUsing(static function ($state) use ($end, $length): ?string {
-            if (blank($state)) {
-                return null;
-            }
-
-            return Str::limit($state, $length, $end);
-        });
-
-        return $this;
-    }
-
-    public function words(int $words = 100, string $end = '...'): static
-    {
-        $this->formatStateUsing(static function ($state) use ($words, $end): ?string {
-            if (blank($state)) {
-                return null;
-            }
-
-            return Str::words($state, $words, $end);
-        });
-
-        return $this;
-    }
-
-    public function prefix(string | Closure $prefix): static
-    {
-        $this->prefix = $prefix;
-
-        return $this;
-    }
-
-    public function suffix(string | Closure $suffix): static
-    {
-        $this->suffix = $suffix;
-
-        return $this;
-    }
-
-    public function html(): static
-    {
-        return $this->formatStateUsing(static fn ($state): HtmlString => $state instanceof HtmlString ? $state : str($state)->sanitizeHtml()->toHtmlString());
-    }
-
-    public function formatStateUsing(?Closure $callback): static
-    {
-        $this->formatStateUsing = $callback;
-
-        return $this;
-    }
-
     public function money(string | Closure | null $currency = null, bool $shouldConvert = true): static
     {
-        $this->formatStateUsing(static function (Component $component, $state) use ($currency, $shouldConvert): ?string {
+        $this->formatStateUsing(static function (TextEntry $component, $state) use ($currency, $shouldConvert): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -142,7 +100,7 @@ trait CanFormatState
 
     public function numeric(int | Closure $decimalPlaces = 0, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
     {
-        $this->formatStateUsing(static function (Component $component, $state) use ($decimalPlaces, $decimalSeparator, $thousandsSeparator): ?string {
+        $this->formatStateUsing(static function (TextEntry $component, $state) use ($decimalPlaces, $decimalSeparator, $thousandsSeparator): ?string {
             if (blank($state)) {
                 return null;
             }
@@ -162,32 +120,8 @@ trait CanFormatState
         return $this;
     }
 
-    public function formatState(mixed $state): mixed
+    public function time(string $format = 'H:i:s', ?string $timezone = null): static
     {
-        $state = $this->evaluate($this->formatStateUsing ?? $state, [
-            'state' => $state,
-        ]);
-
-        if ($this->prefix) {
-            $state = $this->evaluate($this->prefix) . $state;
-        }
-
-        if ($this->suffix) {
-            $state = $state . $this->evaluate($this->suffix);
-        }
-
-        return $state;
-    }
-
-    public function getLimit(): ?int
-    {
-        return $this->limit;
-    }
-
-    public function time(?string $format = null, ?string $timezone = null): static
-    {
-        $format ??= 'H:i:s';
-
         $this->date($format, $timezone);
 
         return $this;
@@ -200,8 +134,132 @@ trait CanFormatState
         return $this;
     }
 
+    public function limit(int | Closure | null $length = 100, string | Closure | null $end = '...'): static
+    {
+        $this->characterLimit = $length;
+        $this->characterLimitEnd = $end;
+
+        return $this;
+    }
+
+    public function words(int $words = 100, string $end = '...'): static
+    {
+        $this->wordLimit = $words;
+        $this->wordLimitEnd = $end;
+
+        return $this;
+    }
+
+    public function prefix(string | Closure | null $prefix): static
+    {
+        $this->prefix = $prefix;
+
+        return $this;
+    }
+
+    public function suffix(string | Closure | null $suffix): static
+    {
+        $this->suffix = $suffix;
+
+        return $this;
+    }
+
+    public function html(bool | Closure $condition = true): static
+    {
+        $this->isHtml = $condition;
+
+        return $this;
+    }
+
+    public function formatStateUsing(?Closure $callback): static
+    {
+        $this->formatStateUsing = $callback;
+
+        return $this;
+    }
+
+    public function formatState(mixed $state): mixed
+    {
+        if ($state instanceof LabelInterface) {
+            $state = $state->getLabel();
+        }
+
+        $state = $this->evaluate($this->formatStateUsing ?? $state, [
+            'state' => $state,
+        ]);
+
+        if ($characterLimit = $this->getCharacterLimit()) {
+            $state = Str::limit($state, $characterLimit, $this->getCharacterLimitEnd());
+        }
+
+        if ($wordLimit = $this->getWordLimit()) {
+            $state = Str::words($state, $wordLimit, $this->getWordLimitEnd());
+        }
+
+        if (filled($prefix = $this->getPrefix())) {
+            $state = $prefix . $state;
+        }
+
+        if (filled($suffix = $this->getSuffix())) {
+            $state = $state . $suffix;
+        }
+
+        if ($state instanceof HtmlString) {
+            return $state;
+        }
+
+        if ($this->isHtml()) {
+            return str($state)
+                ->when($this->isMarkdown(), fn (Stringable $stringable) => $stringable->markdown())
+                ->sanitizeHtml()
+                ->toHtmlString();
+        }
+
+        return $state;
+    }
+
+    public function getCharacterLimit(): ?int
+    {
+        return $this->evaluate($this->characterLimit);
+    }
+
+    public function getCharacterLimitEnd(): ?string
+    {
+        return $this->evaluate($this->characterLimitEnd);
+    }
+
+    public function getWordLimit(): ?int
+    {
+        return $this->evaluate($this->wordLimit);
+    }
+
+    public function getWordLimitEnd(): ?string
+    {
+        return $this->evaluate($this->wordLimitEnd);
+    }
+
     public function getTimezone(): string
     {
         return $this->evaluate($this->timezone) ?? config('app.timezone');
+    }
+
+    public function isHtml(): bool
+    {
+        return $this->evaluate($this->isHtml) || $this->isMarkdown() || $this->isProse();
+    }
+
+    public function getPrefix(): ?string
+    {
+        return $this->evaluate($this->prefix);
+    }
+
+    public function getSuffix(): ?string
+    {
+        return $this->evaluate($this->suffix);
+    }
+
+    public function isMarkdown(): bool
+    {
+        return (bool) $this->evaluate($this->isMarkdown);
     }
 }

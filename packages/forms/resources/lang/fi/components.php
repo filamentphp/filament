@@ -16,7 +16,7 @@ return [
                 'label' => 'Lisää :label',
             ],
 
-            'createbetween' => [
+            'add_between' => [
                 'label' => 'Sijoita',
             ],
 
@@ -28,11 +28,11 @@ return [
                 'label' => 'Siirrä',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Siirrä alas',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Siirrä ylös',
             ],
 
@@ -143,11 +143,11 @@ return [
                 'label' => 'Kloonaa',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Siirrä alas',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Siirrä ylös',
             ],
 

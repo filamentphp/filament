@@ -62,6 +62,20 @@ protected function paginateTableQuery(Builder $query): Paginator
 }
 ```
 
+## Deferring loading
+
+Tables with lots of data might take a while to load, in which case you can load the table data asynchronously using the `deferLoading()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->deferLoading();
+}
+```
+
 ## Searching records with Laravel Scout
 
 While Filament doesn't provide a direct integration with [Laravel Scout](https://laravel.com/docs/scout), you may override methods to integrate it.
@@ -204,6 +218,8 @@ public function table(Table $table): Table
         ->reorderable('sort');
 }
 ```
+
+If you're using mass assignment protection on your model, you will also need to add the `sort` attribute to the `$fillable` array there.
 
 When making the table reorderable, a new button will be available on the table to toggle reordering.
 

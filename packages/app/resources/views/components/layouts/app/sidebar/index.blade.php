@@ -20,7 +20,7 @@
         'lg:translate-x-0 rtl:lg:-translate-x-0' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
     ])
 >
-    <header class="filament-sidebar-header border-b h-[4rem] shrink-0 flex items-center justify-center relative bg-white dark:bg-gray-800">
+    <header class="filament-sidebar-header border-b h-[4rem] shrink-0 flex items-center justify-center relative bg-white dark:bg-gray-800 dark:border-gray-700">
         <div
             @class([
                 'flex items-center justify-center px-6 w-full',
@@ -34,7 +34,7 @@
             @if (filament()->isSidebarCollapsibleOnDesktop() && (! filament()->isSidebarFullyCollapsibleOnDesktop()))
                 <button
                     type="button"
-                    class="filament-sidebar-collapse-button shrink-0 hidden lg:flex items-center justify-center w-10 h-10 text-primary-500 rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none"
+                    class="filament-sidebar-collapse-button shrink-0 hidden lg:flex items-center justify-center w-10 h-10 text-primary-500 rounded-full outline-none hover:bg-gray-500/5 focus:bg-primary-500/10"
                     x-bind:aria-label="$store.sidebar.isOpen ? '{{ __('filament::layout.buttons.sidebar.collapse.label') }}' : '{{ __('filament::layout.buttons.sidebar.expand.label') }}'"
                     x-on:click.stop="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                     x-transition:enter="lg:transition delay-100"
@@ -68,7 +68,7 @@
         @if (filament()->isSidebarCollapsibleOnDesktop())
             <button
                 type="button"
-                class="filament-sidebar-close-button shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 rounded-full hover:bg-gray-500/5 focus:bg-primary-500/10 focus:outline-none"
+                class="filament-sidebar-close-button shrink-0 flex items-center justify-center w-10 h-10 text-primary-500 rounded-full outline-none hover:bg-gray-500/5 focus:bg-primary-500/10"
                 x-bind:aria-label="$store.sidebar.isOpen ? '{{ __('filament::layout.buttons.sidebar.collapse.label') }}' : '{{ __('filament::layout.buttons.sidebar.expand.label') }}'"
                 x-on:click.stop="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                 x-show="(! $store.sidebar.isOpen) && @js(! filament()->isSidebarFullyCollapsibleOnDesktop())"

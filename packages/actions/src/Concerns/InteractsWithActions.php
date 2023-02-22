@@ -101,13 +101,17 @@ trait InteractsWithActions
         } catch (Cancel $exception) {
         }
 
+        if (filled($this->redirectTo)) {
+            return $result;
+        }
+
         $this->mountedAction = null;
 
         $action->resetArguments();
         $action->resetFormData();
 
         $this->dispatchBrowserEvent('close-modal', [
-            'id' => 'action',
+            'id' => "{$this->id}-action",
         ]);
 
         return $result;
@@ -167,7 +171,7 @@ trait InteractsWithActions
         $this->resetErrorBag();
 
         $this->dispatchBrowserEvent('open-modal', [
-            'id' => 'action',
+            'id' => "{$this->id}-action",
         ]);
 
         return null;

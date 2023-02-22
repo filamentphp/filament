@@ -16,7 +16,7 @@ return [
                 'label' => 'Dodaj :label',
             ],
 
-            'createbetween' => [
+            'add_between' => [
                 'label' => 'Ubaci',
             ],
 
@@ -28,11 +28,11 @@ return [
                 'label' => 'Pomjeri',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Dolje',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Gore',
             ],
 
@@ -143,11 +143,11 @@ return [
                 'label' => 'Pomjeriti',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Dolje',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Gore',
             ],
 

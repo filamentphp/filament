@@ -20,11 +20,11 @@ return [
                 'label' => 'Перемістити',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Перемістити вниз',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Перемістити вгору',
             ],
 
@@ -115,11 +115,11 @@ return [
                 'label' => 'Клонувати',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Перемістити вниз',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Перемістити вгору',
             ],
 

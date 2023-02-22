@@ -19,8 +19,6 @@ class IconEntry extends Entry
      */
     protected string $view = 'filament-infolists::components.icon-entry';
 
-    protected ?string $enum = null;
-
     protected bool | Closure $isBoolean = false;
 
     protected string | Closure | null $falseColor = null;
@@ -34,13 +32,6 @@ class IconEntry extends Entry
     public function boolean(bool | Closure $condition = true): static
     {
         $this->isBoolean = $condition;
-
-        return $this;
-    }
-
-    public function enum(?string $enum): static
-    {
-        $this->enum = $enum;
 
         return $this;
     }
@@ -93,17 +84,15 @@ class IconEntry extends Entry
         return $this;
     }
 
-    public function getIcon(): ?string
+    public function getIcon(mixed $state): ?string
     {
-        if (filled($icon = $this->getBaseIcon())) {
+        if (filled($icon = $this->getBaseIcon($state))) {
             return $icon;
         }
 
         if (! $this->isBoolean()) {
             return null;
         }
-
-        $state = $this->getState();
 
         if ($state === null) {
             return null;
@@ -112,17 +101,15 @@ class IconEntry extends Entry
         return $state ? $this->getTrueIcon() : $this->getFalseIcon();
     }
 
-    public function getColor(): ?string
+    public function getColor(mixed $state): ?string
     {
-        if (filled($color = $this->getBaseColor())) {
+        if (filled($color = $this->getBaseColor($state))) {
             return $color;
         }
 
         if (! $this->isBoolean()) {
             return null;
         }
-
-        $state = $this->getState();
 
         if ($state === null) {
             return null;

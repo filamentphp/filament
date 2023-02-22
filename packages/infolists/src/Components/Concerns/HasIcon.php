@@ -2,18 +2,17 @@
 
 namespace Filament\Infolists\Components\Concerns;
 
-use BackedEnum;
 use Closure;
 use Filament\Infolists\Components\Component;
 use Filament\Support\Contracts\HasIcon as IconInterface;
 
 trait HasIcon
 {
-    protected string | Closure | null $icon = null;
+    protected string | bool | Closure | null $icon = null;
 
     protected string | Closure | null $iconPosition = null;
 
-    public function icon(string | Closure | null $icon): static
+    public function icon(string | bool | Closure | null $icon): static
     {
         $this->icon = $icon;
 
@@ -53,22 +52,25 @@ trait HasIcon
         return $this;
     }
 
-    public function getIcon(): ?string
+    public function getIcon(mixed $state): ?string
     {
-        $icon = $this->evaluate($this->icon);
+        $icon = $this->evaluate($this->icon, [
+            'state' => $state,
+        ]);
 
-        $enum = $icon ?? $this->enum;
-        if (
-            is_string($enum) &&
-            function_exists('enum_exists') &&
-            enum_exists($enum) &&
-            is_a($enum, BackedEnum::class, allow_string: true) &&
-            is_a($enum, IconInterface::class, allow_string: true)
-        ) {
-            return $enum::tryFrom($this->getState())?->getIcon();
+        if ($icon === false) {
+            return null;
         }
 
-        return $icon;
+        if (filled($icon)) {
+            return $icon;
+        }
+
+        if (! $state instanceof IconInterface) {
+            return null;
+        }
+
+        return $state->getIcon();
     }
 
     public function getIconPosition(): string

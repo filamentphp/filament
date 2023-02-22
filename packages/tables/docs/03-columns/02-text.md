@@ -10,6 +10,25 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('title')
 ```
 
+## Displaying as a "badge"
+
+By default, text is quite plain and has no background color. You can make it appear as a "badge" instead using the `badge()` method. A great use case for this is with statuses, where may want to display a badge with a [color](#customizing-the-color) that matches the status:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('status')
+    ->badge()
+    ->color(fn (string $status): string => match ($status) {
+        'draft' => 'gray',
+        'reviewing' => 'warning',
+        'published' => 'success',
+        'rejected' => 'danger',
+    })
+```
+
+You may add other things to the badge, like an [icon](#adding-an-icon).
+
 ## Displaying a description
 
 Descriptions may be used to easily render additional text above or below the column contents.
@@ -94,7 +113,7 @@ TextColumn::make('description')
     ->tooltip(function (TextColumn $column): ?string {
         $state = $column->getState();
 
-        if (strlen($state) <= $column->getLimit()) {
+        if (strlen($state) <= $column->getCharacterLimit()) {
             return null;
         }
 
@@ -123,6 +142,53 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('description')->wrap()
 ```
 
+## Listing multiple values
+
+By default, if there are multiple values inside your text column, they will be comma-separated. You may use the `listWithLineBreaks()` method to display them on new lines instead:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('authors.name')
+    ->listWithLineBreaks()
+```
+
+### Adding bullet points to the list
+
+You may add a bullet point to each list item using the `bulleted()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('authors.name')
+    ->listWithLineBreaks()
+    ->bulleted()
+```
+
+### Limiting the number of values in the list
+
+You can limit the number of values in the list using the `limitList()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('authors.name')
+    ->listWithLineBreaks()
+    ->limitList(3)
+```
+
+### Using a list separator
+
+If you want to "explode" a text string from your model into multiple list items, you can do so with the `separator()` method. This is useful for displaying comma-separated tags [as badges](#displaying-as-a-badge), for example:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('tags')
+    ->badge()
+    ->separator(',')
+```
+
 ## Rendering HTML
 
 If your column value is HTML, you may render it using `html()`:
@@ -133,33 +199,27 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('description')->html()
 ```
 
-## Enum formatting
-
-You may also transform a set of known cell values using the `enum()` method:
-
-```php
-use Filament\Tables\Columns\TextColumn;
-
-TextColumn::make('status')->enum([
-    'draft' => 'Draft',
-    'reviewing' => 'Reviewing',
-    'published' => 'Published',
-])
-```
-
 ## Displaying the row index
 
 You may want a column to contain the number of the current row in the table:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Contracts\HasTable;
 
-TextColumn::make('index')->getStateUsing(static function (stdClass $rowLoop): string {
-    return (string) $rowLoop->iteration;
-});
+TextColumn::make('index')->getStateUsing(
+    static function (HasTable $livewire, stdClass $rowLoop): string {
+        return (string) (
+            $rowLoop->iteration +
+            ($livewire->getTableRecordsPerPage() * (
+                $livewire->getTablePage() - 1
+            ))
+        );
+    }
+),
 ```
 
-As `$rowLoop` is Laravel's Blade `$loop` object, you can reference all other `$loop` properties.
+As `$rowLoop` is Laravel Blade's `$loop` object, you can reference all other `$loop` properties.
 
 As a shortcut, you may use the `rowIndex()` method:
 

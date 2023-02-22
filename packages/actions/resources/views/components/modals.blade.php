@@ -5,7 +5,7 @@
         @endphp
 
         <x-filament::modal
-            id="action"
+            :id="$this->id . '-action'"
             :wire:key="$action ? $this->id . '.actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
@@ -13,7 +13,13 @@
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
             x-init="livewire = $wire.__instance"
-            x-on:modal-closed.stop="if ('mountedFormComponentAction' in livewire?.serverMemo.data) livewire.set('mountedAction', null)"
+            x-on:modal-closed.stop="
+                const mountedActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedActionShouldOpenModal()) }}
+
+                if (mountedActionShouldOpenModal && 'mountedAction' in livewire?.serverMemo.data) {
+                    livewire.set('mountedAction', null)
+                }
+            "
         >
             @if ($action)
                 @if ($action->isModalCentered())
@@ -88,11 +94,13 @@
             display-classes="block"
             x-init="livewire = $wire.__instance"
             x-on:modal-closed.stop="
-                if ('mountedTableAction' in livewire?.serverMemo.data) {
+                const mountedTableActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableActionShouldOpenModal()) }}
+
+                if (mountedTableActionShouldOpenModal && 'mountedTableAction' in livewire?.serverMemo.data) {
                     livewire.set('mountedTableAction', null)
                 }
 
-                if ('mountedTableActionRecord' in livewire?.serverMemo.data) {
+                if (mountedTableActionShouldOpenModal && 'mountedTableActionRecord' in livewire?.serverMemo.data) {
                     livewire.set('mountedTableActionRecord', null)
                 }
             "
@@ -163,7 +171,13 @@
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
             x-init="livewire = $wire.__instance"
-            x-on:modal-closed.stop="if ('mountedTableBulkAction' in livewire?.serverMemo.data) livewire.set('mountedTableBulkAction', null)"
+            x-on:modal-closed.stop="
+                const mountedTableBulkActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableBulkActionShouldOpenModal()) }}
+
+                if (mountedTableBulkActionShouldOpenModal && 'mountedTableBulkAction' in livewire?.serverMemo.data) {
+                    livewire.set('mountedTableBulkAction', null)
+                }
+            "
         >
             @if ($action)
                 @if ($action->isModalCentered())
@@ -237,7 +251,13 @@
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
             x-init="livewire = $wire.__instance"
-            x-on:modal-closed.stop="if ('mountedFormComponentAction' in livewire?.serverMemo.data) livewire.set('mountedFormComponentAction', null)"
+            x-on:modal-closed.stop="
+                const mountedFormComponentActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedFormComponentActionShouldOpenModal()) }}
+
+                if (mountedFormComponentActionShouldOpenModal && 'mountedFormComponentAction' in livewire?.serverMemo.data) {
+                    livewire.set('mountedFormComponentAction', null)
+                }
+            "
         >
             @if ($action)
                 @if ($action->isModalCentered())

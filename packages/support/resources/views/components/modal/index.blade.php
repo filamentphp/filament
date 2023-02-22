@@ -59,15 +59,10 @@
 
     <div
         x-show="isOpen"
-        x-transition:enter="ease duration-300"
-        x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="ease duration-300"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
-        x-cloak="x-cloak"
+        x-transition.duration.300ms.opacity
+        x-cloak
         @class([
-            'fixed inset-0 z-40 min-h-screen overflow-y-auto overflow-x-hidden transition',
+            'fixed inset-0 z-40 min-h-full overflow-y-auto overflow-x-hidden transition',
             'flex items-center' => ! $slideOver,
         ])
     >
@@ -87,33 +82,39 @@
         ></div>
 
         <div
-            x-show="isOpen"
-            @if (filled($id))
-                x-on:keydown.window.escape="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
-            @else
-                x-on:keydown.window.escape="close()"
-            @endif
-            x-transition:enter="ease duration-300"
-            x-transition:leave="ease duration-300"
-            @if ($slideOver)
-                x-transition:enter-start="translate-x-full rtl:-translate-x-full"
-                x-transition:enter-end="translate-x-0"
-                x-transition:leave-start="translate-x-0"
-                x-transition:leave-end="translate-x-full rtl:-translate-x-full"
-            @elseif ($width !== 'screen')
-                x-transition:enter-start="translate-y-8"
-                x-transition:enter-end="translate-y-0"
-                x-transition:leave-start="translate-y-0"
-                x-transition:leave-end="translate-y-8"
-            @endif
             x-ref="modalContainer"
-            x-cloak="x-cloak"
+            x-cloak
             {{ $attributes->class([
-                'relative w-full pointer-events-none',
+                'relative w-full pointer-events-none transition',
                 'my-auto p-4' => ! $slideOver,
             ]) }}
         >
             <div
+                x-data="{ isShown: false }"
+                x-init="$nextTick(()=> {
+                    isShown = isOpen
+                    $watch('isOpen', () => isShown = isOpen)
+                })"
+                x-show="isShown"
+                x-cloak
+                @if (filled($id))
+                    x-on:keydown.window.escape="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
+                @else
+                    x-on:keydown.window.escape="close()"
+                @endif
+                x-transition:enter="ease duration-300"
+                x-transition:leave="ease duration-300"
+                @if ($slideOver)
+                    x-transition:enter-start="translate-x-full rtl:-translate-x-full"
+                    x-transition:enter-end="translate-x-0"
+                    x-transition:leave-start="translate-x-0"
+                    x-transition:leave-end="translate-x-full rtl:-translate-x-full"
+                @elseif ($width !== 'screen')
+                    x-transition:enter-start="translate-y-8"
+                    x-transition:enter-end="translate-y-0"
+                    x-transition:leave-start="translate-y-0"
+                    x-transition:leave-end="translate-y-8"
+                @endif
                 @class([
                     'filament-modal-window w-full py-2 bg-white cursor-default pointer-events-auto dark:bg-gray-800',
                     'relative' => $width !== 'screen',

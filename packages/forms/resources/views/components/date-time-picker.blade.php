@@ -49,7 +49,7 @@
                             $applyStateBindingModifiers('wire:model') => $statePath,
                         ], escape: false)
                         ->class([
-                            'block w-full transition duration-75 shadow-sm sm:text-sm focus:border-primary-500 focus:relative focus:z-[1] focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
+                            'block w-full transition duration-75 shadow-sm outline-none sm:text-sm focus:border-primary-500 focus:relative focus:z-[1] focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
                             'rounded-l-lg' => ! ($prefixLabel || $prefixIcon),
                             'rounded-r-lg' => ! ($suffixLabel || $suffixIcon),
                         ])
@@ -97,7 +97,7 @@
                     tabindex="-1"
                     @disabled($isDisabled)
                     {{ $getExtraTriggerAttributeBag()->class([
-                        'bg-white relative w-full border py-2 pl-3 pr-10 rtl:pl-10 rtl:pr-3 text-start cursor-default shadow-sm sm:text-sm dark:bg-gray-700',
+                        'bg-white relative w-full border py-2 pl-3 pr-10 rtl:pl-10 rtl:pr-3 text-start cursor-default shadow-sm outline-none sm:text-sm dark:bg-gray-700',
                         'focus-within:ring-1 focus-within:border-primary-500 focus-within:ring-inset focus-within:ring-primary-500' => ! $isDisabled,
                         'border-gray-300 dark:border-gray-600' => ! $errors->has($statePath),
                         'border-danger-600 dark:border-danger-400' => $errors->has($statePath),
@@ -113,7 +113,7 @@
                         x-model="displayText"
                         @if ($id = $getId()) id="{{ $id }}" @endif
                         @class([
-                            'w-full h-full p-0 placeholder-gray-400 bg-transparent border-0 focus:placeholder-gray-500 focus:ring-0 focus:outline-none dark:bg-gray-700 dark:placeholder-gray-400',
+                            'w-full h-full p-0 placeholder-gray-400 bg-transparent border-0 outline-none focus:placeholder-gray-500 focus:ring-0 dark:bg-gray-700 dark:placeholder-gray-400',
                             'cursor-default' => $isDisabled,
                         ])
                     />
@@ -144,7 +144,7 @@
                             <div class="flex items-center justify-between space-x-1 rtl:space-x-reverse">
                                 <select
                                     x-model="focusedMonth"
-                                    class="grow px-1 py-0 text-lg font-medium text-gray-800 border-0 cursor-pointer focus:ring-0 focus:outline-none dark:bg-gray-700 dark:text-gray-200"
+                                    class="grow px-1 py-0 text-lg font-medium text-gray-800 border-0 cursor-pointer outline-none focus:ring-0 dark:bg-gray-700 dark:text-gray-200"
                                     dusk="filament.forms.{{ $statePath }}.focusedMonth"
                                 >
                                     <template x-for="(month, index) in months">
@@ -156,7 +156,7 @@
                                     type="number"
                                     inputmode="numeric"
                                     x-model.debounce="focusedYear"
-                                    class="w-20 p-0 text-lg text-end border-0 focus:ring-0 focus:outline-none dark:bg-gray-700 dark:text-gray-200"
+                                    class="w-20 p-0 text-lg text-end border-0 outline-none focus:ring-0 dark:bg-gray-700 dark:text-gray-200"
                                     dusk="filament.forms.{{ $statePath }}.focusedYear"
                                 />
                             </div>
@@ -207,7 +207,7 @@
                                     type="number"
                                     inputmode="numeric"
                                     x-model.debounce="hour"
-                                    class="w-16 p-0 pr-1 text-xl bg-gray-50 text-center text-gray-700 border-0 focus:ring-0 focus:outline-none dark:text-gray-200 dark:bg-gray-800"
+                                    class="w-16 p-0 pr-1 text-xl bg-gray-50 text-center text-gray-700 border-0 outline-none focus:ring-0 dark:text-gray-200 dark:bg-gray-800"
                                     dusk="filament.forms.{{ $statePath }}.hour"
                                 />
 
@@ -220,7 +220,7 @@
                                     type="number"
                                     inputmode="numeric"
                                     x-model.debounce="minute"
-                                    class="w-16 p-0 pr-1 text-xl text-center bg-gray-50 text-gray-700 border-0 focus:ring-0 focus:outline-none dark:text-gray-200 dark:bg-gray-800"
+                                    class="w-16 p-0 pr-1 text-xl text-center bg-gray-50 text-gray-700 border-0 outline-none focus:ring-0 dark:text-gray-200 dark:bg-gray-800"
                                     dusk="filament.forms.{{ $statePath }}.minute"
                                 />
 
@@ -235,7 +235,7 @@
                                         inputmode="numeric"
                                         x-model.debounce="second"
                                         dusk="filament.forms.{{ $statePath }}.second"
-                                        class="w-16 p-0 pr-1 text-xl text-center bg-gray-50 text-gray-700 border-0 focus:ring-0 focus:outline-none dark:text-gray-200 dark:bg-gray-800"
+                                        class="w-16 p-0 pr-1 text-xl text-center bg-gray-50 text-gray-700 border-0 outline-none focus:ring-0 dark:text-gray-200 dark:bg-gray-800"
                                     />
                                 @endif
                             </div>

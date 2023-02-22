@@ -4,8 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'و :count تا بیشتر',
+        'text' => [
+            'more_list_items' => 'و :count تا بیشتر',
         ],
 
         'messages' => [
@@ -15,6 +15,14 @@ return [
     ],
 
     'fields' => [
+
+        'bulk_select_page' => [
+            'label' => 'انتخاب/عدم انتخاب تمامی موارد برای اقدامات گروهی',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'انتخاب/عدم انتخاب مورد :key برای اقدامات گروهی',
+        ],
 
         'search' => [
             'label' => 'جستجو',

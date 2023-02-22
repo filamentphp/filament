@@ -7,7 +7,7 @@
         "build:js": "node bin/build",
         "build:css": "npx tailwindcss -c ./packages/app/tailwind.config.js -i ./packages/app/resources/css/theme.css -o ./packages/app/dist/theme.css --minify",
         "build": "npm-run-all build:*",
-        "prettier": "npx prettier --write '**/*.{css,js,yml}' '!**/dist' '!**/vendor'"
+        "prettier": "npx prettier --write '**/*.{css,js,yml}' '!**/dist' '!**/public' '!**/vendor'"
     },
     "devDependencies": {
         "@alpinejs/collapse": "^3.10.3",

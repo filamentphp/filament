@@ -16,11 +16,11 @@ return [
                 'label' => 'Sil',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Aşağı taşı',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Yukarı taşı',
             ],
 
@@ -103,11 +103,11 @@ return [
                 'label' => 'Sil',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Aşağı taşı',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Yukarı taşı',
             ],
 

@@ -13,15 +13,61 @@ trait CanEmitEvent
      */
     protected array | Closure $eventData = [];
 
+    protected string | bool $emitDirection = false;
+
+    protected ?string $emitToComponent = null;
+
     /**
      * @param  array<int, mixed> | Closure  $data
      */
     public function emit(
         string | Closure | null $event,
-        array | Closure $data = [],
+        array | Closure $data = []
     ): static {
         $this->event = $event;
         $this->eventData = $data;
+        $this->emitDirection = false;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<int, mixed> | Closure  $data
+     */
+    public function emitSelf(
+        string | Closure | null $event,
+        array | Closure $data = [],
+    ): static {
+        $this->emit($event, $data);
+        $this->emitDirection = 'self';
+
+        return $this;
+    }
+
+    /**
+     * @param  array<int, mixed> | Closure  $data
+     */
+    public function emitTo(
+        string $component,
+        string | Closure | null $event,
+        array | Closure $data = [],
+    ): static {
+        $this->emit($event, $data);
+        $this->emitDirection = 'to';
+        $this->emitToComponent = $component;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<int, mixed> | Closure  $data
+     */
+    public function emitUp(
+        string | Closure | null $event,
+        array | Closure $data = []
+    ): static {
+        $this->emit($event, $data);
+        $this->emitDirection = 'up';
 
         return $this;
     }

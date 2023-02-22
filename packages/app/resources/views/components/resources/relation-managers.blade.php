@@ -55,7 +55,7 @@
                 role="tabpanel"
                 tabindex="0"
             @endif
-            class="space-y-4 focus:outline-none"
+            class="space-y-4 outline-none"
         >
             @if ($managers[$activeManager] instanceof \Filament\Resources\RelationManagers\RelationGroup)
                 @foreach($managers[$activeManager]->ownerRecord($ownerRecord)->pageClass($pageClass)->getManagers() as $groupedManager)

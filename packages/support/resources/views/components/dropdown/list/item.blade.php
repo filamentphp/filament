@@ -11,7 +11,7 @@
 
 @php
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-list-item flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm transition-colors focus:outline-none disabled:pointer-events-none disabled:opacity-70',
+        'filament-dropdown-list-item flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm transition-colors outline-none disabled:pointer-events-none disabled:opacity-70',
         match ($color) {
             'danger' => 'filament-dropdown-list-item-color-danger text-danger-600 hover:bg-danger-500/10 focus:bg-danger-500/10 dark:text-danger-400',
             'gray' => 'filament-dropdown-list-item-color-gray text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10 dark:text-gray-200',
@@ -30,14 +30,14 @@
         default => $iconSize,
     };
 
-    $iconClasses = 'filament-dropdown-list-item-icon flex-shrink-0';
+    $iconClasses = 'filament-dropdown-list-item-icon shrink-0';
 
-    $imageClasses = 'filament-dropdown-list-item-image h-5 w-5 flex-shrink-0 rounded-full bg-gray-200 bg-cover bg-center dark:bg-gray-900';
+    $imageClasses = 'filament-dropdown-list-item-image h-5 w-5 shrink-0 rounded-full bg-gray-200 bg-cover bg-center dark:bg-gray-900';
 
     $labelClasses = 'filament-dropdown-list-item-label w-full truncate text-start';
-    
+
     $detailClasses = 'filament-dropdown-list-item-detail ml-auto text-xs';
-    
+
     $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click'));
 
     if ($hasLoadingIndicator) {

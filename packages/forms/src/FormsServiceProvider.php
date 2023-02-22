@@ -18,7 +18,6 @@ class FormsServiceProvider extends PackageServiceProvider
         $package
             ->name('filament-forms')
             ->hasCommands($this->getCommands())
-            ->hasConfigFile()
             ->hasTranslations()
             ->hasViews();
     }

@@ -8,6 +8,7 @@ use Filament\Actions\Concerns\CanOpenUrl;
 use Filament\Actions\Concerns\HasKeyBindings;
 use Filament\Actions\Concerns\HasTooltip;
 use Filament\Actions\StaticAction;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 
 class Action extends StaticAction
@@ -42,12 +43,21 @@ class Action extends StaticAction
             return null;
         }
 
-        $emitArguments = collect([$event])
+        $arguments = collect([$event])
             ->merge($this->getEventData())
-            ->map(fn ($value): string => Js::from($value)->toHtml())
+            ->when(
+                $this->emitToComponent,
+                fn (Collection $collection, string $component) => $collection->prepend($component),
+            )
+            ->map(fn (mixed $value): string => Js::from($value)->toHtml())
             ->implode(', ');
 
-        return "\$emit({$emitArguments})";
+        return match ($this->emitDirection) {
+            'self' => "\$emitSelf($arguments)",
+            'to' => "\$emitTo($arguments)",
+            'up' => "\$emitUp($arguments)",
+            default => "\$emit($arguments)"
+        };
     }
 
     public function getAlpineMountAction(): ?string
