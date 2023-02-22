@@ -2,15 +2,31 @@
     x-data="{
         error: undefined,
         state: @js((bool) $getState()),
-        isLoading: false
+        isLoading: false,
     }"
     x-init="
         $watch('state', () => $refs.button.dispatchEvent(new Event('change')))
+
+        Livewire.hook('message.processed', (component) => {
+            let newState = $refs.state.newState === '1' ? true : false
+
+            if (state === newState) {
+                return
+            }
+
+            state = newState
+        })
     "
     {{ $attributes->merge($getExtraAttributes(), escape: false)->class([
         'filament-tables-toggle-column',
     ]) }}
 >
+    <input
+        type="hidden"
+        value="{{ $getState() ? 1 : 0 }}"
+        x-ref="newState"
+    />
+
     @php
         $offColor = $getOffColor();
         $onColor = $getOnColor();
