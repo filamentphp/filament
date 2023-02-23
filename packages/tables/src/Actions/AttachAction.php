@@ -65,22 +65,26 @@ class AttachAction extends Action
 
         $this->form(fn (): array => [$this->getRecordSelect()]);
 
-        $this->action(function (array $arguments, Form $form): void {
-            $this->process(function (array $data, Table $table) {
-                /** @var BelongsToMany $relationship */
-                $relationship = $table->getRelationship();
+        $this->action(function (array $arguments, array $data, Form $form, Table $table): void {
+            /** @var BelongsToMany $relationship */
+            $relationship = $table->getRelationship();
 
-                $record = $relationship->getRelated()->query()->where($relationship->getQualifiedRelatedKeyName(), $data['recordId'])->first();
+            $record = $relationship->getRelated()->query()->where($relationship->getQualifiedRelatedKeyName(), $data['recordId'])->first();
 
+            $this->process(function () use ($data, $record, $relationship) {
                 $relationship->attach(
                     $record,
                     Arr::only($data, $relationship->getPivotColumns()),
                 );
             });
 
+            $this->record($record);
+
             if ($arguments['another'] ?? false) {
                 $this->callAfter();
                 $this->sendSuccessNotification();
+
+                $this->record(null);
 
                 $form->fill();
 

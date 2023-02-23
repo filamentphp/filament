@@ -66,23 +66,27 @@ class AssociateAction extends Action
 
         $this->form(fn (): array => [$this->getRecordSelect()]);
 
-        $this->action(function (array $arguments, Form $form): void {
-            $this->process(function (array $data, Table $table) {
-                /** @var HasMany | MorphMany $relationship */
-                $relationship = $table->getRelationship();
+        $this->action(function (array $arguments, array $data, Form $form, Table $table): void {
+            /** @var HasMany | MorphMany $relationship */
+            $relationship = $table->getRelationship();
 
-                $record = $relationship->getRelated()->query()->find($data['recordId']);
+            $record = $relationship->getRelated()->query()->find($data['recordId']);
 
-                /** @var BelongsTo $inverseRelationship */
-                $inverseRelationship = $table->getInverseRelationshipFor($record);
+            /** @var BelongsTo $inverseRelationship */
+            $inverseRelationship = $table->getInverseRelationshipFor($record);
 
+            $this->process(function () use ($inverseRelationship, $record, $relationship) {
                 $inverseRelationship->associate($relationship->getParent());
                 $record->save();
             });
 
+            $this->record($record);
+
             if ($arguments['another'] ?? false) {
                 $this->callAfter();
                 $this->sendSuccessNotification();
+
+                $this->record(null);
 
                 $form->fill();
 
