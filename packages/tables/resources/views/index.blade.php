@@ -430,11 +430,12 @@
 
                                 $collapsibleColumnsLayout?->record($record);
                                 $hasCollapsibleColumnsLayout = $collapsibleColumnsLayout && (! $collapsibleColumnsLayout->isHidden());
+                                $isCollapsed = ($collapsibleColumnsLayout instanceof \Filament\Tables\Columns\Layout\Panel)? $collapsibleColumnsLayout->isCollapsed():true;
                             @endphp
 
                             <div
                                 @if ($hasCollapsibleColumnsLayout)
-                                    x-data="{ isCollapsed: true }"
+                                    x-data="{ isCollapsed: {{$isCollapsed?'true':'false'}} }"
                                     x-init="$dispatch('collapsible-table-row-initialized')"
                                     x-on:expand-all-table-rows.window="isCollapsed = false"
                                     x-on:collapse-all-table-rows.window="isCollapsed = true"
