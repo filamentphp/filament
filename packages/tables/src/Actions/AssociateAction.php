@@ -80,7 +80,9 @@ class AssociateAction extends Action
                 $record->save();
             });
 
-            $this->record($record);
+            if ($record instanceof Model) {
+                $this->record($record);
+            }
 
             if ($arguments['another'] ?? false) {
                 $this->callAfter();

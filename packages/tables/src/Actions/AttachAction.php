@@ -78,7 +78,9 @@ class AttachAction extends Action
                 );
             });
 
-            $this->record($record);
+            if ($record instanceof Model) {
+                $this->record($record);
+            }
 
             if ($arguments['another'] ?? false) {
                 $this->callAfter();
