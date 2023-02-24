@@ -49,13 +49,13 @@
     @endif
 
     @if ($columnSearches)
-        <x-filament::link
+        <x-tables::link
             wire:click="$set('tableColumnSearchQueries', [])"
             color="danger"
             tag="button"
             size="sm"
         >
             {{ __('tables::table.empty.buttons.reset_column_searches.label') }}
-        </x-filament::link>
+        </x-tables::link>
     @endif
 </div>
