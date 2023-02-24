@@ -30,7 +30,7 @@ class Panel extends Component
         return $this;
     }
 
-    public function isCollapsed()
+    public function isCollapsed(): bool
     {
         return (bool) $this->evaluate($this->isCollapsed);
     }
