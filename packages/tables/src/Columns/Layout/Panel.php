@@ -32,6 +32,6 @@ class Panel extends Component
 
     public function isCollapsed()
     {
-        return $this->evaluate($this->collapsed);
+        return (bool) $this->evaluate($this->isCollapsed);
     }
 }
