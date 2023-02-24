@@ -447,4 +447,9 @@ class Table extends ViewComponent
     {
         return $this->getLivewire()->isTableLoaded();
     }
+
+    public function hasColumnSearches(): bool
+    {
+        return $this->getLivewire()->hasTableColumnSearches();
+    }
 }

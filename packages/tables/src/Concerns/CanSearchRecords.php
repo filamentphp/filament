@@ -52,7 +52,7 @@ trait CanSearchRecords
         $this->resetPage();
     }
 
-    public function updatedTableColumnSearchQueries($value, $key): void
+    public function updatedTableColumnSearchQueries($value = null, $key = null): void
     {
         if (blank($value)) {
             unset($this->tableColumnSearchQueries[$key]);
@@ -188,6 +188,12 @@ trait CanSearchRecords
         //     'number' => '12345',
         //     'customer.name' => 'john smith',
         // ]
+    }
+
+    public function hasTableColumnSearches(): bool
+    {
+        return collect($this->getTableColumnSearchQueries())
+            ->contains(fn (string $search): bool => filled($search));
     }
 
     public function getTableSearchSessionKey(): string

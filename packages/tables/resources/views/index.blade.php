@@ -908,7 +908,11 @@
                     {{ $emptyState }}
                 @else
                     <div class="flex items-center justify-center p-4">
-                        <x-tables::empty-state :icon="$getEmptyStateIcon()" :actions="$getEmptyStateActions()">
+                        <x-tables::empty-state
+                            :icon="$getEmptyStateIcon()"
+                            :actions="$getEmptyStateActions()"
+                            :column-searches="$hasColumnSearches()"
+                        >
                             <x-slot name="heading">
                                 {{ $getEmptyStateHeading() }}
                             </x-slot>

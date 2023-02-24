@@ -1,5 +1,6 @@
 @props([
     'actions' => null,
+    'columnSearches' => false,
     'description' => null,
     'heading',
     'icon',
@@ -45,5 +46,16 @@
             alignment="center"
             wrap
         />
+    @endif
+
+    @if ($columnSearches)
+        <x-filament::link
+            wire:click="$set('tableColumnSearchQueries', [])"
+            color="danger"
+            tag="button"
+            size="sm"
+        >
+            {{ __('tables::table.empty.buttons.reset_column_searches.label') }}
+        </x-filament::link>
     @endif
 </div>
