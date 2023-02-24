@@ -8,8 +8,6 @@ class Panel extends Component
 {
     protected string $view = 'tables::columns.layout.panel';
 
-    protected bool | Closure $isCollapsed = true;
-
     final public function __construct(array | Closure $schema)
     {
         $this->schema($schema);
@@ -21,18 +19,5 @@ class Panel extends Component
         $static->configure();
 
         return $static;
-    }
-
-    public function collapsed(bool | Closure $condition = true): static
-    {
-        $this->collapsible();
-        $this->isCollapsed = $condition;
-
-        return $this;
-    }
-
-    public function isCollapsed(): bool
-    {
-        return (bool) $this->evaluate($this->isCollapsed);
     }
 }

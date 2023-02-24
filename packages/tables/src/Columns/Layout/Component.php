@@ -35,6 +35,8 @@ class Component extends ViewComponent
 
     protected bool $isCollapsible = false;
 
+    protected bool | Closure $isCollapsed = true;
+
     public function schema(array | Closure $schema): static
     {
         $this->components($schema);
@@ -54,6 +56,19 @@ class Component extends ViewComponent
         $this->isCollapsible = $condition;
 
         return $this;
+    }
+
+    public function collapsed(bool | Closure $condition = true): static
+    {
+        $this->collapsible();
+        $this->isCollapsed = $condition;
+
+        return $this;
+    }
+
+    public function isCollapsed(): bool
+    {
+        return (bool) $this->evaluate($this->isCollapsed);
     }
 
     public function getColumns(): array
