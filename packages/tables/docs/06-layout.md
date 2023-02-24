@@ -256,7 +256,7 @@ use Filament\Tables\Columns\TextColumn;
 ]
 ```
 
-Also default collapse mode can be set for `Panel` Layout using `collapsed` method.
+You can collapse a panel by default using the `collapsed()` method:
 
 ```php
 use Filament\Tables\Columns\Layout\Panel;
