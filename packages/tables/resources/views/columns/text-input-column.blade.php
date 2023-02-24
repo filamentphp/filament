@@ -54,7 +54,6 @@
         {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
         {!! ($interval = $getStep()) ? "step=\"{$interval}\"" : null !!}
         x-on:change{{ $getType() === 'number' ? '.debounce.750ms' : null }}="update($event.target.value)"
-        x-on:keydown.enter="update($event.target.value)"
         :readonly="isLoading"
         x-tooltip="error"
         {{ $attributes->merge($getExtraInputAttributes())->merge($getExtraAttributes())->class([
