@@ -8,7 +8,7 @@ class Panel extends Component
 {
     protected string $view = 'tables::columns.layout.panel';
 
-    protected Closure | bool $collapsed = true;
+    protected bool | Closure $isCollapsed = true;
 
     final public function __construct(array | Closure $schema)
     {
@@ -25,7 +25,7 @@ class Panel extends Component
 
     public function collapsed(Closure | bool $collapsed = true)
     {
-        $this->collapsed = $collapsed;
+        $this->isCollapsed = $collapsed;
 
         return $this;
     }
