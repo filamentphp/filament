@@ -30,7 +30,8 @@
     $isLoaded = $isLoaded();
     $hasFilters = $isFilterable();
     $hasFiltersPopover = $hasFilters && ($getFiltersLayout() === FiltersLayout::Popover);
-    $hasFiltersAboveContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::AboveContent);
+    $hasFiltersAboveContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::AboveContent || FiltersLayout::AboveContentColapsable);
+    $hasFiltersAboveContentColapsable = $hasFilters && ($getFiltersLayout() === FiltersLayout::AboveContentColapsable);
     $hasFiltersAfterContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::BelowContent);
     $isColumnToggleFormVisible = $hasToggleableColumns();
     $records = $isLoaded ? $getRecords() : null;
@@ -193,8 +194,14 @@
             @endif
 
             @if ($hasFiltersAboveContent)
-                <div class="px-2 pt-2">
-                    <div class="p-4 mb-2">
+                <div class="px-2 pt-2" x-data="{ hasFilterAboveContentOpen: @js(!$hasFiltersAboveContentColapsable) }">
+                    @if($hasFiltersAboveContentColapsable)
+                        <div class="flex w-full justify-end">
+                            <x-tables::filters.trigger @click="hasFilterAboveContentOpen=!hasFilterAboveContentOpen" />
+                        </div>
+                    @endif
+
+                    <div class="p-4 mb-2" x-show="hasFilterAboveContentOpen">
                         <x-tables::filters :form="$getFiltersForm()" />
                     </div>
 
