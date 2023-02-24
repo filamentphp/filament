@@ -25,7 +25,7 @@ class Panel extends Component
 
     public function collapsed(Closure | bool $collapsed = true)
     {
-        $this->isCollapsed = $collapsed;
+        $this->isCollapsed = $condition;
 
         return $this;
     }
