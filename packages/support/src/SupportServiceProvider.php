@@ -117,5 +117,11 @@ class SupportServiceProvider extends PackageServiceProvider
                 },
             ]);
         }
+
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                $this->package->basePath('/../config/filament.php') => config_path('filament.php'),
+            ], 'filament-config');
+        }
     }
 }
