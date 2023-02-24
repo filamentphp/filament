@@ -30,7 +30,7 @@
     $isLoaded = $isLoaded();
     $hasFilters = $isFilterable();
     $hasFiltersPopover = $hasFilters && ($getFiltersLayout() === FiltersLayout::Popover);
-    $hasFiltersAboveContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::AboveContent || FiltersLayout::AboveContentColapsable);
+    $hasFiltersAboveContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::AboveContent || $getFiltersLayout() === FiltersLayout::AboveContentColapsable);
     $hasFiltersAboveContentColapsable = $hasFilters && ($getFiltersLayout() === FiltersLayout::AboveContentColapsable);
     $hasFiltersAfterContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::BelowContent);
     $isColumnToggleFormVisible = $hasToggleableColumns();
