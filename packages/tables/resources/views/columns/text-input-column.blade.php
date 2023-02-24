@@ -3,18 +3,42 @@
         'center' => 'text-center',
         'right' => 'text-right',
         default => 'text-left',
-    }
+    };
+
+    $state = $getState();
 @endphp
+
 <div
     x-data="{
         error: undefined,
-        state: @js($getState()),
-        isLoading: false
+        state: @js($state),
+        isLoading: false,
     }"
+    x-init="
+        Livewire.hook('message.processed', (component) => {
+            if (component.component.id !== @js($this->id)) {
+                return
+            }
+
+            let newState = $refs.newState.value
+
+            if (state === newState) {
+                return
+            }
+
+            state = newState
+        })
+    "
     {{ $attributes->merge($getExtraAttributes())->class([
         'filament-tables-text-input-column',
     ]) }}
 >
+    <input
+        type="hidden"
+        value="{{ str($state)->replace('"', '\\"') }}"
+        x-ref="newState"
+    />
+
     <input
         x-model="state"
         type="{{ $getType() }}"
