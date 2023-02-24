@@ -256,7 +256,7 @@ use Filament\Tables\Columns\TextColumn;
 ]
 ```
 
-You can collapse a panel by default using the `collapsed()` method:
+Also default collapse mode can be set for `Panel` Layout using `collapsed` method.
 
 ```php
 use Filament\Tables\Columns\Layout\Panel;
@@ -268,17 +268,7 @@ use Filament\Tables\Columns\TextColumn;
             TextColumn::make('email'),
             TextColumn::make('phone'),
         ]),
-    ])->collapsed(function($record){
-         return false;
-    }),
-    
-    Panel::make([
-        Stack::make([
-            TextColumn::make('address'),
-            TextColumn::make('addressline'),
-        ]),
-    ])->collapsed(false),
-    
+    ])->collapsed(false), 
 ]
 ```
 ![Collapsible content](https://user-images.githubusercontent.com/41773797/191834045-e423afd4-1ad3-4636-8635-fe9453423555.png)
