@@ -267,9 +267,7 @@ Panel::make([
         TextColumn::make('email'),
         TextColumn::make('phone'),
     ]),
-])
-    ->collapsible()
-    ->collapsed(false)
+])->collapsed(false)
 ```
 
 ![Collapsible content](https://user-images.githubusercontent.com/41773797/191834045-e423afd4-1ad3-4636-8635-fe9453423555.png)
