@@ -34,7 +34,7 @@
     $hasFiltersAfterContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::BelowContent);
     $isColumnToggleFormVisible = $hasToggleableColumns();
     $records = $isLoaded ? $getRecords() : null;
-    $allRecordsCount = $isLoaded ? $getAllRecordsCount(): null;
+    $allRecordsCount = $isLoaded ? $getAllRecordsCount() : null;
     $columnsCount = count($columns);
     if (count($actions) && (! $isReordering)) $columnsCount++;
     if ($isSelectionEnabled || $isReordering) $columnsCount++;
