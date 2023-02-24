@@ -84,4 +84,6 @@ interface HasTable extends HasForms
     public function isTableReordering(): bool;
 
     public function isTableLoaded(): bool;
+
+    public function hasTableColumnSearches(): bool;
 }

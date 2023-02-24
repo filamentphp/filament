@@ -1607,4 +1607,9 @@ class Table extends ViewComponent
     {
         return (bool) $this->evaluate($this->isLoadingDeferred);
     }
+
+    public function hasColumnSearches(): bool
+    {
+        return $this->getLivewire()->hasTableColumnSearches();
+    }
 }

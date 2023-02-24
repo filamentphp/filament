@@ -1136,6 +1136,7 @@
                                 <x-filament-tables::empty-state
                                     :icon="$getEmptyStateIcon()"
                                     :actions="$getEmptyStateActions()"
+                                    :column-searches="$hasColumnSearches()"
                                 >
                                     <x-slot name="heading">
                                         {{ $getEmptyStateHeading() }}
