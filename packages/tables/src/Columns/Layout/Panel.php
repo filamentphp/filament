@@ -23,7 +23,7 @@ class Panel extends Component
         return $static;
     }
 
-    public function collapsed(bool | Closure $condition = true)
+    public function collapsed(bool | Closure $condition = true): static
     {
         $this->isCollapsed = $condition;
 
