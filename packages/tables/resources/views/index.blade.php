@@ -430,7 +430,6 @@
 
                                 $collapsibleColumnsLayout?->record($record);
                                 $hasCollapsibleColumnsLayout = $collapsibleColumnsLayout && (! $collapsibleColumnsLayout->isHidden());
-                                $isCollapsed = ($collapsibleColumnsLayout instanceof \Filament\Tables\Columns\Layout\Panel)? $collapsibleColumnsLayout->isCollapsed():true;
                             @endphp
 
                             <div
