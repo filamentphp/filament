@@ -435,7 +435,7 @@
 
                             <div
                                 @if ($hasCollapsibleColumnsLayout)
-                                    x-data="{ isCollapsed: true }"
+                                    x-data="{ isCollapsed: @js($collapsibleColumnsLayout->isCollapsed()) }"
                                     x-init="$dispatch('collapsible-table-row-initialized')"
                                     x-on:expand-all-table-rows.window="isCollapsed = false"
                                     x-on:collapse-all-table-rows.window="isCollapsed = true"
