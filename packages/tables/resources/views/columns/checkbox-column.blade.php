@@ -1,13 +1,38 @@
+@php
+    $state = $getState();
+@endphp
+
 <div
     x-data="{
         error: undefined,
-        state: @js((bool) $getState()),
-        isLoading: false
+        state: @js((bool) $state),
+        isLoading: false,
     }"
+    x-init="
+        Livewire.hook('message.processed', (component) => {
+            if (component.component.id !== @js($this->id)) {
+                return
+            }
+
+            let newState = $refs.newState.value === '1' ? true : false
+
+            if (state === newState) {
+                return
+            }
+
+            state = newState
+        })
+    "
     {{ $attributes->merge($getExtraAttributes(), escape: false)->class([
         'filament-tables-checkbox-column',
     ]) }}
 >
+    <input
+        type="hidden"
+        value="{{ $state ? 1 : 0 }}"
+        x-ref="newState"
+    />
+
     <input
         x-model="state"
         @disabled($isDisabled())

@@ -1,14 +1,22 @@
+@php
+    $state = $getState();
+@endphp
+
 <div
     x-data="{
         error: undefined,
-        state: @js((bool) $getState()),
+        state: @js((bool) $state),
         isLoading: false,
     }"
     x-init="
         $watch('state', () => $refs.button.dispatchEvent(new Event('change')))
 
         Livewire.hook('message.processed', (component) => {
-            let newState = $refs.state.newState === '1' ? true : false
+            if (component.component.id !== @js($this->id)) {
+                return
+            }
+
+            let newState = $refs.newState.value === '1' ? true : false
 
             if (state === newState) {
                 return
@@ -23,7 +31,7 @@
 >
     <input
         type="hidden"
-        value="{{ $getState() ? 1 : 0 }}"
+        value="{{ $state ? 1 : 0 }}"
         x-ref="newState"
     />
 
@@ -67,6 +75,7 @@
             (isLoading ? ' opacity-70 pointer-events-none' : '')
         "
         @disabled($isDisabled())
+        wire:ignore.self
         type="button"
         class="relative inline-flex shrink-0 ml-4 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 outline-none disabled:opacity-70 disabled:pointer-events-none"
     >

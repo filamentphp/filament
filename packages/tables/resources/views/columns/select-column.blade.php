@@ -1,17 +1,39 @@
 @php
     $isDisabled = $isDisabled();
+    $state = $getState();
 @endphp
 
 <div
     x-data="{
         error: undefined,
-        state: @js($getState()),
+        state: @js($state ?? ''),
         isLoading: false,
     }"
+    x-init="
+        Livewire.hook('message.processed', (component) => {
+            if (component.component.id !== @js($this->id)) {
+                return
+            }
+
+            let newState = $refs.newState.value
+
+            if (state === newState) {
+                return
+            }
+
+            state = newState
+        })
+    "
     {{ $attributes->merge($getExtraAttributes(), escape: false)->class([
         'filament-tables-select-column',
     ]) }}
 >
+    <input
+        type="hidden"
+        value="{{ str($state)->replace('"', '\\"') }}"
+        x-ref="newState"
+    />
+
     <select
         x-model="state"
         x-on:change="

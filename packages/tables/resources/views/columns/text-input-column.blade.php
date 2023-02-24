@@ -1,15 +1,40 @@
+@php
+    $state = $getState();
+@endphp
+
 <div
     x-data="{
         error: undefined,
-        state: @js($getState()),
-        isLoading: false
+        state: @js($state),
+        isLoading: false,
     }"
+    x-init="
+        Livewire.hook('message.processed', (component) => {
+            if (component.component.id !== @js($this->id)) {
+                return
+            }
+
+            let newState = $refs.newState.value
+
+            if (state === newState) {
+                return
+            }
+
+            state = newState
+        })
+    "
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
             ->class(['filament-tables-text-input-column'])
     }}
 >
+    <input
+        type="hidden"
+        value="{{ str($state)->replace('"', '\\"') }}"
+        x-ref="newState"
+    />
+
     <input
         x-model="state"
         x-on:change="
