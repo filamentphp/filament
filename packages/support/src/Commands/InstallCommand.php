@@ -65,7 +65,7 @@ class InstallCommand extends Command
             ));
         }
 
-        $this->components->info('Successfully created AdminProvider.php!');
+        $this->components->info('Successfully created AdminContextProvider.php!');
     }
 
     protected function installScaffolding(): void
