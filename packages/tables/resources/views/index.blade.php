@@ -34,6 +34,7 @@
     $hasFiltersAfterContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::BelowContent);
     $isColumnToggleFormVisible = $hasToggleableColumns();
     $records = $isLoaded ? $getRecords() : null;
+    $allRecordsCount = $isLoaded ? $getAllRecordsCount(): null;
     $columnsCount = count($columns);
     if (count($actions) && (! $isReordering)) $columnsCount++;
     if ($isSelectionEnabled || $isReordering) $columnsCount++;
@@ -263,7 +264,7 @@
             />
         @elseif ($isSelectionEnabled)
             <x-tables::selection-indicator
-                :all-records-count="$getAllRecordsCount()"
+                :all-records-count="$allRecordsCount"
                 :colspan="$columnsCount"
                 x-show="selectedRecords.length"
                 :class="\Illuminate\Support\Arr::toCssClasses([
