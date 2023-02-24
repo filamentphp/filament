@@ -49,6 +49,7 @@
     $isColumnToggleFormVisible = $hasToggleableColumns();
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
+    $allRecordsCount = $isLoaded ? $getAllRecordsCount() : null;
     $columnsCount = count($columns);
     if (count($actions) && (! $isReordering)) $columnsCount++;
     if ($isSelectionEnabled || $isReordering) $columnsCount++;

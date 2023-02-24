@@ -251,7 +251,7 @@
                         dusk="filament.forms.{{ $statePath }}"
                         x-on:keyup.enter="checkForAutoInsertion"
                         x-on:file-attachment-accepted.window="
-                            if ($event.explicitOriginalTarget.id === '{{ $getId() }}') {
+                            if ($event?.srcElement.querySelector('textarea')?.id === '{{ $getId() }}') {
                                 attachment = $event.detail?.attachments?.[0]
 
                                 if (! attachment || ! attachment.file) return
