@@ -30,8 +30,8 @@
     $isLoaded = $isLoaded();
     $hasFilters = $isFilterable();
     $hasFiltersPopover = $hasFilters && ($getFiltersLayout() === FiltersLayout::Popover);
-    $hasFiltersAboveContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::AboveContent || $getFiltersLayout() === FiltersLayout::AboveContentColapsable);
-    $hasFiltersAboveContentColapsable = $hasFilters && ($getFiltersLayout() === FiltersLayout::AboveContentColapsable);
+    $hasFiltersAboveContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::AboveContent || $getFiltersLayout() === FiltersLayout::AboveContentCollapsable);
+    $hasFiltersAboveContentCollapsable = $hasFilters && ($getFiltersLayout() === FiltersLayout::AboveContentCollapsable);
     $hasFiltersAfterContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::BelowContent);
     $isColumnToggleFormVisible = $hasToggleableColumns();
     $records = $isLoaded ? $getRecords() : null;
@@ -194,8 +194,8 @@
             @endif
 
             @if ($hasFiltersAboveContent)
-                <div class="px-2 pt-2" x-data="{ hasFilterAboveContentOpen: @js(!$hasFiltersAboveContentColapsable) }">
-                    @if($hasFiltersAboveContentColapsable)
+                <div class="px-2 pt-2" x-data="{ hasFilterAboveContentOpen: @js(!$hasFiltersAboveContentCollapsable) }">
+                    @if($hasFiltersAboveContentCollapsable)
                         <div class="flex w-full justify-end">
                             <x-tables::filters.trigger @click="hasFilterAboveContentOpen=!hasFilterAboveContentOpen" />
                         </div>
