@@ -43,9 +43,11 @@
     $isStriped = $isStriped();
     $isLoaded = $isLoaded();
     $hasFilters = $isFilterable();
-    $hasFiltersDropdown = $hasFilters && ($getFiltersLayout() === FiltersLayout::Dropdown);
-    $hasFiltersAboveContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::AboveContent);
-    $hasFiltersAfterContent = $hasFilters && ($getFiltersLayout() === FiltersLayout::BelowContent);
+    $filtersLayout = $getFiltersLayout();
+    $hasFiltersDropdown = $hasFilters && ($filtersLayout === FiltersLayout::Dropdown);
+    $hasFiltersAboveContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::AboveContent, FiltersLayout::AboveContentCollapsible]);
+    $hasFiltersAboveContentCollapsible = $hasFilters && ($filtersLayout === FiltersLayout::AboveContentCollapsible);
+    $hasFiltersAfterContent = $hasFilters && ($filtersLayout === FiltersLayout::BelowContent);
     $isColumnToggleFormVisible = $hasToggleableColumns();
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
@@ -232,8 +234,14 @@
             @endif
 
             @if ($hasFiltersAboveContent)
-                <div class="px-2 pt-2">
-                    <div class="p-4 mb-2">
+                <div class="px-2 pt-2" x-data="{ areFiltersOpen: @js(! $hasFiltersAboveContentCollapsible) }">
+                    @if ($hasFiltersAboveContentCollapsible)
+                        <div class="flex w-full justify-end">
+                            <x-filament-tables::filters.trigger x-on:click="areFiltersOpen = ! areFiltersOpen" />
+                        </div>
+                    @endif
+
+                    <div class="p-4 mb-2" x-show="areFiltersOpen">
                         <x-filament-tables::filters :form="$getFiltersForm()"/>
                     </div>
 
