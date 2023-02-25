@@ -4,10 +4,8 @@ namespace Filament\Upgrade\App;
 
 use Closure;
 use PhpParser\Node;
-use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Class_;
-use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Property;
 use PhpParser\Node\VarLikeIdentifier;
 use Rector\Core\Rector\AbstractRector;
@@ -58,7 +56,6 @@ class SimplePropertyChangesRector extends AbstractRector
     public function refactor(Node $node): ?Node
     {
         /** @var Property $node */
-
         $class = $node->getAttribute(AttributeKey::PARENT_NODE);
 
         foreach ($this->getChanges() as $change) {

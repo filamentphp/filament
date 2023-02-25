@@ -11,7 +11,6 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
-use PhpParser\Node\Stmt\UseUse;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Naming\VariableRenamer;
 use Rector\NodeTypeResolver\Node\AttributeKey;
@@ -286,7 +285,6 @@ class SimpleMethodChangesRector extends AbstractRector
     public function refactor(Node $node): ?Node
     {
         /** @var ClassMethod $node */
-
         $class = $node->getAttribute(AttributeKey::PARENT_NODE);
 
         foreach ($this->getChanges() as $change) {

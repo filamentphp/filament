@@ -2,9 +2,7 @@
 
 namespace Filament\Upgrade;
 
-use Closure;
 use PhpParser\Node;
-use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\MethodCall;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -20,7 +18,6 @@ class SecondaryToGrayColorRector extends AbstractRector
     public function refactor(Node $node): ?Node
     {
         /** @var MethodCall $node */
-
         if (! in_array($node->name->name, ['color', 'iconColor', 'hintColor', 'offColor', 'onColor', 'falseColor', 'trueColor'])) {
             return null;
         }
