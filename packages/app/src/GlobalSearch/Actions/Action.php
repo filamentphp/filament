@@ -19,16 +19,13 @@ class Action extends StaticAction
     use HasKeyBindings;
     use HasTooltip;
 
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-actions::link-action';
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->size('sm');
+        $this->defaultView(static::LINK_VIEW);
+
+        $this->defaultSize('sm');
     }
 
     public function getLivewireMountAction(): ?string

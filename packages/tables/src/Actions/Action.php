@@ -13,14 +13,6 @@ class Action extends MountableAction implements Groupable, HasRecord
     use Concerns\BelongsToTable;
     use InteractsWithRecord;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->link();
-        $this->size('sm');
-    }
-
     public function getLivewireCallActionName(): string
     {
         return 'callMountedTableAction';
