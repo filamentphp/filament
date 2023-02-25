@@ -432,8 +432,8 @@ class TestsColumns
 
     public function searchTableColumns(): Closure
     {
-        return function (array $search): static {
-            $this->set('tableColumnSearchQueries', $search);
+        return function (array $searches): static {
+            $this->set('tableColumnSearchQueries', $searches);
 
             return $this;
         };
