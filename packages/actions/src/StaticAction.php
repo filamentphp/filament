@@ -19,8 +19,11 @@ abstract class StaticAction extends ViewComponent
     use HasExtraAttributes;
 
     public const BUTTON_VIEW = 'filament-actions::button-action';
+
     public const GROUPED_VIEW = 'filament-actions::grouped-action';
+
     public const ICON_BUTTON_VIEW = 'filament-actions::icon-button-action';
+
     public const LINK_VIEW = 'filament-actions::link-action';
 
     protected string $evaluationIdentifier = 'action';
