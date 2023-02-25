@@ -2,6 +2,7 @@
 
 namespace Filament\Upgrade\App;
 
+use phpDocumentor\Reflection\Types\Null_;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Expr\Variable;
@@ -10,7 +11,10 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\UnionType;
 use Rector\Core\Rector\AbstractRector;
+use Rector\Naming\Guard\BreakingVariableRenameGuard;
+use Rector\Naming\Naming\ExpectedNameResolver;
 use Rector\Naming\VariableRenamer;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
