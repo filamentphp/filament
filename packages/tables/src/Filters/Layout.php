@@ -6,7 +6,7 @@ class Layout
 {
     public const AboveContent = 'above_content';
 
-    public const AboveContentCollapsable = 'above_content_collapsable';
+    public const AboveContentCollapsible = 'above_content_collapsible';
 
     public const BelowContent = 'below_content';
 
