@@ -2,6 +2,7 @@
 
 namespace Filament\Upgrade\App;
 
+use Closure;
 use PhpParser\Node;
 use PhpParser\Node\Expr\ConstFetch;
 use PhpParser\Node\Expr\Variable;
@@ -10,6 +11,7 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Param;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\UseUse;
 use Rector\Core\Rector\AbstractRector;
 use Rector\Naming\VariableRenamer;
 use Rector\NodeTypeResolver\Node\AttributeKey;
@@ -25,6 +27,13 @@ class SimpleMethodChangesRector extends AbstractRector
         $this->variableRenamer = $variableRenamer;
     }
 
+    /**
+     * @return array<array{
+     *     class: class-string | array<class-string>,
+     *     classIdentifier: string,
+     *     changes: array<string, Closure>,
+     * }>
+     */
     public function getChanges(): array
     {
         return [
@@ -274,8 +283,10 @@ class SimpleMethodChangesRector extends AbstractRector
         return [ClassMethod::class];
     }
 
-    public function refactor(Node | ClassMethod $node): ?Node
+    public function refactor(Node $node): ?Node
     {
+        /** @var ClassMethod $node */
+
         $class = $node->getAttribute(AttributeKey::PARENT_NODE);
 
         foreach ($this->getChanges() as $change) {
@@ -310,6 +321,12 @@ class SimpleMethodChangesRector extends AbstractRector
         );
     }
 
+    /**
+     * @param array{
+     *     class: class-string | array<class-string>,
+     *     classIdentifier: string,
+     * } $change
+     */
     public function isClassMatchingChange(Class_ $class, array $change): bool
     {
         $classes = is_array($change['class']) ?

@@ -6,6 +6,7 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Name;
+use PhpParser\Node\Stmt\Property;
 use Rector\Core\Rector\AbstractRector;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
 use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
@@ -17,9 +18,13 @@ class FixGetSetClosureTypesRector extends AbstractRector
         return [ArrowFunction::class, Closure::class];
     }
 
-    public function refactor(Node | ArrowFunction | Closure $node): ?Node
+    public function refactor(Node $node): ?Node
     {
-        foreach ($node->params as $param) {
+        /** @var ArrowFunction | Closure $node */
+
+        $params = $node->params;
+
+        foreach ($params as $param) {
             if (! $param->type) {
                 continue;
             }

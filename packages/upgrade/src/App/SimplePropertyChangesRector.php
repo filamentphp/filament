@@ -2,11 +2,14 @@
 
 namespace Filament\Upgrade\App;
 
+use Closure;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Class_;
+use PhpParser\Node\Stmt\ClassMethod;
 use PhpParser\Node\Stmt\Property;
+use PhpParser\Node\VarLikeIdentifier;
 use Rector\Core\Rector\AbstractRector;
 use Rector\NodeTypeResolver\Node\AttributeKey;
 use Symplify\RuleDocGenerator\ValueObject\CodeSample\CodeSample;
@@ -14,6 +17,13 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 
 class SimplePropertyChangesRector extends AbstractRector
 {
+    /**
+     * @return array<array{
+     *     class: class-string | array<class-string>,
+     *     classIdentifier: string,
+     *     changes: array<string, Closure>,
+     * }>
+     */
     public function getChanges(): array
     {
         return [
@@ -33,7 +43,7 @@ class SimplePropertyChangesRector extends AbstractRector
                 'classIdentifier' => 'extends',
                 'changes' => [
                     'middlewares' => function (Property $node) {
-                        $node->props[0]->name = new Identifier('$routeMiddleware');
+                        $node->props[0]->name = new VarLikeIdentifier('$routeMiddleware');
                     },
                 ],
             ],
@@ -45,8 +55,10 @@ class SimplePropertyChangesRector extends AbstractRector
         return [Property::class];
     }
 
-    public function refactor(Node | Property $node): ?Node
+    public function refactor(Node $node): ?Node
     {
+        /** @var Property $node */
+
         $class = $node->getAttribute(AttributeKey::PARENT_NODE);
 
         foreach ($this->getChanges() as $change) {
@@ -81,6 +93,12 @@ class SimplePropertyChangesRector extends AbstractRector
         );
     }
 
+    /**
+     * @param array{
+     *     class: class-string | array<class-string>,
+     *     classIdentifier: string,
+     * } $change
+     */
     public function isClassMatchingChange(Class_ $class, array $change): bool
     {
         $classes = is_array($change['class']) ?
