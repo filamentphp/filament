@@ -58,7 +58,7 @@ it('can search individual column records', function () {
     $content = $posts->first()->content;
 
     livewire(PostsTable::class)
-        ->searchTableColumn('content', $content)
+        ->searchTableColumns(['content' => $content])
         ->assertCanSeeTableRecords($posts->where('content', $content))
         ->assertCanNotSeeTableRecords($posts->where('content', '!=', $content));
 });
@@ -80,7 +80,7 @@ it('can search individual column records with relationship', function () {
     $authorEmail = $posts->first()->author->email;
 
     livewire(PostsTable::class)
-        ->searchTableColumn('author.email', $authorEmail)
+        ->searchTableColumns(['author.email' => $authorEmail])
         ->assertCanSeeTableRecords($posts->where('author.email', $authorEmail))
         ->assertCanNotSeeTableRecords($posts->where('author.email', '!=', $authorEmail));
 });
@@ -92,7 +92,7 @@ it('can search multiple individual columns', function () {
     $authorEmail = $posts->first()->author->email;
 
     livewire(PostsTable::class)
-        ->searchTableColumn([
+        ->searchTableColumns([
             'content' => $content,
             'author.email' => $authorEmail,
         ])
