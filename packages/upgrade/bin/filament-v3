@@ -1,0 +1,1 @@
+vendor/bin/rector process app --config vendor/filament/upgrade/src/rector.php --clear-cache
