@@ -35,7 +35,9 @@ class Action extends StaticAction implements Arrayable, Groupable
     {
         parent::setUp();
 
-        $this->size('sm');
+        $this->defaultView(static::LINK_VIEW);
+
+        $this->defaultSize('sm');
     }
 
     /**

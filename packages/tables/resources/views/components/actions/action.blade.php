@@ -20,7 +20,7 @@
     :color="$action->getColor()"
     :tooltip="$action->getTooltip()"
     :icon="$icon ?? $action->getIcon()"
-    :size="$action->getSize() ?? 'sm'"
+    :size="$action->getSize()"
     dusk="filament.tables.action.{{ $action->getName() }}"
 >
     {{ $slot }}

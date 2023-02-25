@@ -18,6 +18,11 @@ abstract class StaticAction extends ViewComponent
     use Conditionable;
     use HasExtraAttributes;
 
+    public const BUTTON_VIEW = 'filament-actions::button-action';
+    public const GROUPED_VIEW = 'filament-actions::grouped-action';
+    public const ICON_BUTTON_VIEW = 'filament-actions::icon-button-action';
+    public const LINK_VIEW = 'filament-actions::link-action';
+
     protected string $evaluationIdentifier = 'action';
 
     protected string $viewIdentifier = 'action';
@@ -39,28 +44,28 @@ abstract class StaticAction extends ViewComponent
 
     public function button(): static
     {
-        $this->view('filament-actions::button-action');
+        $this->view(static::BUTTON_VIEW);
 
         return $this;
     }
 
     public function grouped(): static
     {
-        $this->view('filament-actions::grouped-action');
+        $this->view(static::GROUPED_VIEW);
 
         return $this;
     }
 
     public function iconButton(): static
     {
-        $this->view('filament-actions::icon-button-action');
+        $this->view(static::ICON_BUTTON_VIEW);
 
         return $this;
     }
 
     public function link(): static
     {
-        $this->view('filament-actions::link-action');
+        $this->view(static::LINK_VIEW);
 
         return $this;
     }

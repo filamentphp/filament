@@ -266,6 +266,8 @@ class Table extends ViewComponent
                 throw new InvalidArgumentException('Table actions must be an instance of ' . Action::class . ' or ' . ActionGroup::class . '.');
             }
 
+            $action->defaultSize('sm');
+            $action->defaultView($action::LINK_VIEW);
             $action->table($this);
 
             $this->actions[$action->getName()] = $action;
@@ -641,6 +643,7 @@ class Table extends ViewComponent
                 throw new InvalidArgumentException('Table header actions must be an instance of ' . Action::class . ', ' . BulkAction::class . ', or ' . ActionGroup::class . '.');
             }
 
+            $action->defaultSize('sm');
             $action->table($this);
 
             if ($action instanceof BulkAction) {
