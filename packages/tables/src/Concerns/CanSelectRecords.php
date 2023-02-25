@@ -21,6 +21,11 @@ trait CanSelectRecords
         $this->emitSelf('deselectAllTableRecords');
     }
 
+    public function shouldDeselectAllRecordsWhenTableFiltered(): bool
+    {
+        return true;
+    }
+
     public function getAllTableRecordKeys(): array
     {
         $query = $this->getFilteredTableQuery();
