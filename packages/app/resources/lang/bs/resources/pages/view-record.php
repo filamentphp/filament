@@ -6,7 +6,7 @@ return [
 
     'breadcrumb' => 'Pogled',
 
-    'form' => [
+    'content' => [
 
         'tab' => [
             'label' => 'Pogled',

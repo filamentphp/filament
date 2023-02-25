@@ -22,7 +22,7 @@
                     href="https://filamentphp.com/docs"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="text-gray-600 hover:text-primary-500 focus:outline-none focus:underline dark:text-gray-300 dark:hover:text-primary-500"
+                    class="text-gray-600 outline-none hover:text-primary-500 focus:underline dark:text-gray-300 dark:hover:text-primary-500"
                 >
                     {{ __('filament::widgets/filament-info-widget.buttons.visit_documentation.label') }}
                 </a>
@@ -35,7 +35,7 @@
                     href="https://github.com/filamentphp/filament"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="text-gray-600 hover:text-primary-500 focus:outline-none focus:underline dark:text-gray-300 dark:hover:text-primary-500"
+                    class="text-gray-600 outline-none hover:text-primary-500 focus:underline dark:text-gray-300 dark:hover:text-primary-500"
                 >
                     {{ __('filament::widgets/filament-info-widget.buttons.visit_github.label') }}
                 </a>

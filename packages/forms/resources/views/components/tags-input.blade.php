@@ -5,6 +5,7 @@
     @php
         $id = $getId();
         $isDisabled = $isDisabled();
+        $splitKeys = $getSplitKeys();
         $statePath = $getStatePath();
     @endphp
 
@@ -40,17 +41,27 @@
                         @if ($placeholder = $getPlaceholder()) placeholder="{{ $placeholder }}" @endif
                         type="text"
                         dusk="filament.forms.{{ $statePath }}"
-                        x-on:keydown.enter.stop.prevent="createTag()"
-                        x-on:keydown.,.stop.prevent="createTag()"
+                        x-on:keydown="() => {
+                            if (['Enter', ...@js($splitKeys)].includes($event.key)) {
+                                $event.preventDefault()
+                                $event.stopPropagation()
+
+                                createTag()
+                            }
+                        }"
                         x-on:blur="createTag()"
                         x-on:paste="$nextTick(() => {
-                            if (newTag.includes(',')) {
-                                newTag.split(',').forEach((tag) => {
+                            const pattern = @js($splitKeys)
+                                .map((key) => key.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&'))
+                                .join('|')
+
+                            newTag
+                                .split(new RegExp(pattern, 'g'))
+                                .forEach((tag) => {
                                     newTag = tag
 
                                     createTag()
                                 })
-                            }
                         })"
                         x-model="newTag"
                         {{ $getExtraInputAttributeBag()->class(['webkit-calendar-picker-indicator:opacity-0 block w-full border-0 sm:text-sm dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400']) }}

@@ -61,13 +61,15 @@
                 @endif
             @else
                 <div class="pl-2 text-sm font-medium dark:text-white">
-                    @if ($paginator->total() > 1)
-                        {{ __('filament-tables::table.pagination.overview', [
+                    {{ trans_choice(
+                        'filament-tables::table.pagination.overview',
+                        $paginator->total(),
+                        [
                             'first' => $paginator->firstItem(),
                             'last' => $paginator->lastItem(),
                             'total' => $paginator->total(),
-                        ]) }}
-                    @endif
+                        ],
+                    ) }}
                 </div>
             @endif
         </div>

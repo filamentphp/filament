@@ -4,8 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'e :count mais',
+        'text' => [
+            'more_list_items' => 'e :count mais',
         ],
 
         'messages' => [
@@ -15,6 +15,14 @@ return [
     ],
 
     'fields' => [
+
+        'bulk_select_page' => [
+            'label' => 'Marcar/desmarcar todos os itens para ações em massa.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Marcar/desmarcar o item :key para ações em massa.',
+        ],
 
         'search' => [
             'label' => 'Procurar',
@@ -27,7 +35,7 @@ return [
 
         'label' => 'Paginação',
 
-        'overview' => 'Exibindo :first a :last de :total resultados',
+        'overview' => '{1} Exibindo 1 resultado|[2,*] Exibindo :first a :last de :total resultados',
 
         'fields' => [
 

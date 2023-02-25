@@ -10,6 +10,7 @@
         $isCloneable = $isCloneable();
         $isDeletable = $isDeletable();
         $isReorderable = $isReorderable();
+        $isReorderableWithButtons = $isReorderableWithButtons();
         $hasItemLabels = $hasItemLabels();
 
         $statePath = $getStatePath();
@@ -85,7 +86,7 @@
 
                                 setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
                             "
-                            class="relative rounded-xl bg-white shadow ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10"
+                            class="relative rounded-xl bg-white shadow-sm ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10"
                         >
                             @if ($isReorderable || $isDeletable || $isCloneable || $isCollapsible || $hasItemLabels)
                                 <header
@@ -124,6 +125,50 @@
                                     <div class="flex-1"></div>
 
                                     <ul class="flex divide-x rtl:divide-x-reverse dark:divide-gray-700">
+                                        @if ($isReorderableWithButtons)
+                                            @unless ($loop->first)
+                                                <li>
+                                                    <button
+                                                        title="{{ __('filament-forms::components.repeater.buttons.move_item_up.label') }}"
+                                                        wire:click.stop="dispatchFormEvent('repeater::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                        type="button"
+                                                        class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500 dark:border-gray-700"
+                                                    >
+                                                        <span class="sr-only">
+                                                            {{ __('filament-forms::components.repeater.buttons.move_item_up.label') }}
+                                                        </span>
+
+                                                        <x-filament::icon
+                                                            name="heroicon-m-chevron-up"
+                                                            alias="filament-forms::components.repeater.buttons.move_item_up"
+                                                            size="h-4 w-4"
+                                                        />
+                                                    </button>
+                                                </li>
+                                            @endunless
+
+                                            @unless ($loop->last)
+                                                <li>
+                                                    <button
+                                                        title="{{ __('filament-forms::components.repeater.buttons.move_item_down.label') }}"
+                                                        wire:click.stop="dispatchFormEvent('repeater::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                        type="button"
+                                                        class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500 dark:border-gray-700"
+                                                    >
+                                                        <span class="sr-only">
+                                                            {{ __('filament-forms::components.repeater.buttons.move_item_down.label') }}
+                                                        </span>
+
+                                                        <x-filament::icon
+                                                            name="heroicon-m-chevron-down"
+                                                            alias="filament-forms::components.repeater.buttons.move_item_down"
+                                                            size="h-4 w-4"
+                                                        />
+                                                    </button>
+                                                </li>
+                                            @endunless
+                                        @endif
+
                                         @if ($isCloneable)
                                             <li>
                                                 <button
@@ -190,7 +235,7 @@
                                                         alias="filament-forms::components.repeater.buttons.expand"
                                                         size="h-4 w-4"
                                                         x-show="isCollapsed"
-                                                        x-cloak=""
+                                                        x-cloak="x-cloak"
                                                     />
 
                                                     <span class="sr-only" x-show="isCollapsed" x-cloak>

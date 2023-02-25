@@ -62,6 +62,8 @@ class SelectFilter extends BaseFilter
 
             return ["{$this->getIndicator()}: {$label}"];
         });
+
+        $this->resetState(['value' => null]);
     }
 
     /**

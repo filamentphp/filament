@@ -1,6 +1,6 @@
 <x-filament-actions::action
     :action="$action"
-    component="filament::button"
+    dynamic-component="filament::button"
     :outlined="$isOutlined()"
     :icon-position="$getIconPosition()"
     :icon-size="$getIconSize()"

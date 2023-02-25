@@ -1,6 +1,6 @@
 @props([
     'action',
-    'component',
+    'dynamicComponent',
     'icon' => null,
 ])
 
@@ -10,7 +10,7 @@
 @endphp
 
 <x-dynamic-component
-    :component="$component"
+    :component="$dynamicComponent"
     :form="$action instanceof \Filament\Actions\Contracts\SubmitsForm ? $action->getFormToSubmit() : null"
     :tag="$url ? 'a' : 'button'"
     :x-on:click="$action->getAlpineMountAction()"
@@ -19,7 +19,7 @@
     :target="($url && $action->shouldOpenUrlInNewTab()) ? '_blank' : null"
     :type="($action instanceof \Filament\Actions\Contracts\SubmitsForm && $action->canSubmitForm()) ? 'submit' : 'button'"
     :color="$action->getColor()"
-    :key-bindings="$action->getKeybindings()"
+    :key-bindings="$action->getKeyBindings()"
     :tooltip="$action->getTooltip()"
     :disabled="$isDisabled"
     :icon="$icon ?? $action->getIcon()"

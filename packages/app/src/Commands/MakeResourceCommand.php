@@ -2,7 +2,6 @@
 
 namespace Filament\Commands;
 
-use Arr;
 use Filament\Context;
 use Filament\Facades\Filament;
 use Filament\Forms\Commands\Concerns\CanGenerateForms;
@@ -12,6 +11,7 @@ use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Support\Commands\Concerns\CanValidateInput;
 use Filament\Tables\Commands\Concerns\CanGenerateTables;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 
 class MakeResourceCommand extends Command
 {
@@ -95,7 +95,7 @@ class MakeResourceCommand extends Command
         $editResourcePagePath = "{$resourcePagesDirectory}/{$editResourcePageClass}.php";
         $viewResourcePagePath = "{$resourcePagesDirectory}/{$viewResourcePageClass}.php";
 
-        if (! $this->hasOption('force') && $this->checkForCollision([
+        if (! $this->option('force') && $this->checkForCollision([
             $resourcePath,
             $listResourcePagePath,
             $manageResourcePagePath,
@@ -246,7 +246,7 @@ class MakeResourceCommand extends Command
             ]);
         }
 
-        $this->info("Successfully created {$resource}!");
+        $this->components->info("Successfully created {$resource}!");
 
         return static::SUCCESS;
     }

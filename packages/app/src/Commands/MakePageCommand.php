@@ -2,12 +2,12 @@
 
 namespace Filament\Commands;
 
-use Arr;
 use Filament\Context;
 use Filament\Facades\Filament;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class MakePageCommand extends Command
@@ -120,7 +120,7 @@ class MakePageCommand extends Command
             $resourcePage === 'custom' ? [$viewPath] : [],
         );
 
-        if (! $this->hasOption('force') && $this->checkForCollision($files)) {
+        if (! $this->option('force') && $this->checkForCollision($files)) {
             return static::INVALID;
         }
 
@@ -146,10 +146,10 @@ class MakePageCommand extends Command
             $this->copyStubToApp('PageView', $viewPath);
         }
 
-        $this->info("Successfully created {$page}!");
+        $this->components->info("Successfully created {$page}!");
 
         if ($resource !== null) {
-            $this->info("Make sure to register the page in `{$resourceClass}::getPages()`.");
+            $this->components->info("Make sure to register the page in `{$resourceClass}::getPages()`.");
         }
 
         return static::SUCCESS;

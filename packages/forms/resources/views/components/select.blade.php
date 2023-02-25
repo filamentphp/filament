@@ -4,6 +4,8 @@
         'filament-select-input-with-suffix' => ($hasSuffix = $getSuffixLabel() || $getSuffixIcon()),
     ];
 
+    $isDisabled = $isDisabled();
+
     $statePath = $getStatePath();
 @endphp
 
@@ -25,7 +27,7 @@
         @unless ($isSearchable() || $isMultiple())
             <x-filament::input.select
                 :autofocus="$isAutofocused()"
-                :disabled="$isDisabled()"
+                :disabled="$isDisabled"
                 :id="$getId()"
                 dusk="filament.forms.{{ $statePath }}"
                 :required="$isRequired() && (! ! $isConcealed())"
@@ -37,7 +39,7 @@
                 class="w-full"
             >
                 @if ($canSelectPlaceholder())
-                    <option value="">{{ $getPlaceholder() }}</option>
+                    <option value="">@if (! $isDisabled) {{ $getPlaceholder() }} @endif</option>
                 @endif
 
                 @foreach ($getOptions() as $value => $label)
@@ -69,6 +71,7 @@
                         return await $wire.getSelectSearchResults(@js($statePath), search)
                     },
                     isAutofocused: @js($isAutofocused()),
+                    isDisabled: @js($isDisabled),
                     isMultiple: @js($isMultiple()),
                     hasDynamicOptions: @js($hasDynamicOptions()),
                     hasDynamicSearchResults: @js($hasDynamicSearchResults()),
@@ -102,7 +105,7 @@
                     {{
                         $getExtraInputAttributeBag()
                             ->merge([
-                                'disabled' => $isDisabled(),
+                                'disabled' => $isDisabled,
                                 'id' => $getId(),
                                 'multiple' => $isMultiple(),
                             ], escape: false)

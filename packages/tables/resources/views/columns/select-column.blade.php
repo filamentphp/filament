@@ -1,13 +1,39 @@
+@php
+    $isDisabled = $isDisabled();
+    $state = $getState();
+@endphp
+
 <div
     x-data="{
         error: undefined,
-        state: '{{ $getState() }}',
-        isLoading: false
+        state: @js($state ?? ''),
+        isLoading: false,
     }"
+    x-init="
+        Livewire.hook('message.processed', (component) => {
+            if (component.component.id !== @js($this->id)) {
+                return
+            }
+
+            let newState = $refs.newState.value
+
+            if (state === newState) {
+                return
+            }
+
+            state = newState
+        })
+    "
     {{ $attributes->merge($getExtraAttributes(), escape: false)->class([
         'filament-tables-select-column',
     ]) }}
 >
+    <input
+        type="hidden"
+        value="{{ str($state)->replace('"', '\\"') }}"
+        x-ref="newState"
+    />
+
     <select
         x-model="state"
         x-on:change="
@@ -17,6 +43,9 @@
             if (! error) state = response
             isLoading = false
         "
+        @if (! $isDisabled)
+            x-bind:disabled="isLoading"
+        @endif
         x-tooltip="error"
         x-bind:class="{
             'border-gray-300 dark:border-gray-600': ! error,
@@ -27,22 +56,17 @@
                 ->merge($getExtraAttributes(), escape: false)
                 ->merge($getExtraInputAttributes(), escape: false)
                 ->merge([
-                    'disabled' => $isDisabled(),
+                    'disabled' => $isDisabled,
                 ])
-                ->class(['ml-0.5 text-gray-900 inline-block transition duration-75 rounded-lg shadow-sm sm:text-sm focus:ring-primary-500 focus:ring-1 focus:ring-inset focus:border-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500'])
+                ->class(['ml-0.5 text-gray-900 inline-block transition duration-75 rounded-lg shadow-sm outline-none sm:text-sm focus:ring-primary-500 focus:ring-1 focus:ring-inset focus:border-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500'])
         }}
     >
-        @php
-            $state = $getState();
-        @endphp
-
         @if ($canSelectPlaceholder())
             <option value="">{{ $getPlaceholder() }}</option>
         @endif
 
         @foreach ($getOptions() as $value => $label)
             <option
-                x-bind:disabled="isLoading"
                 value="{{ $value }}"
                 @disabled($isOptionDisabled($value, $label))
             >

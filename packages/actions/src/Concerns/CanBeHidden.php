@@ -5,6 +5,7 @@ namespace Filament\Actions\Concerns;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Gate;
 
 trait CanBeHidden
 {
@@ -70,23 +71,8 @@ trait CanBeHidden
         return $this;
     }
 
-    public function isHidden(): bool
-    {
-        if ($this->evaluate($this->isHidden)) {
-            return true;
-        }
-
-        if (! $this->evaluate($this->isVisible)) {
-            return true;
-        }
-
-        return ! $this->isAuthorized();
-    }
-
     public function isAuthorized(): bool
     {
-        $user = auth()->user();
-
         if ($this->authorization === null) {
             return true;
         }
@@ -100,9 +86,27 @@ trait CanBeHidden
         $type = $this->authorization['type'] ?? null;
 
         return match ($type) {
-            'all' => $user->can($abilities, $arguments),
-            'any' => $user->canAny($abilities, $arguments),
+            'all' => Gate::check($abilities, $arguments),
+            'any' => Gate::any($abilities, $arguments),
             default => false,
         };
+    }
+
+    public function isHidden(): bool
+    {
+        if ($this->evaluate($this->isHidden)) {
+            return true;
+        }
+
+        if (! $this->evaluate($this->isVisible)) {
+            return true;
+        }
+
+        return ! $this->isAuthorized();
+    }
+
+    public function isVisible(): bool
+    {
+        return ! $this->isHidden();
     }
 }

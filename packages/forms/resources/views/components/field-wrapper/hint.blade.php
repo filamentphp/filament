@@ -30,7 +30,7 @@
         />
     @endif
 
-    @if ($action && (! $action->isHidden()))
+    @if ($action?->isVisible())
         <div class="filament-forms-field-wrapper-hint-action">
             {{ $action }}
         </div>

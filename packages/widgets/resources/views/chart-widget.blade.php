@@ -1,5 +1,6 @@
 @php
     $heading = $this->getHeading();
+    $subheading = $this->getSubheading();
     $filters = $this->getFilters();
 @endphp
 
@@ -7,24 +8,43 @@
     <x-filament::card>
         @if ($heading || $filters)
             <div class="flex items-center justify-between gap-8">
-                @if ($heading)
-                    <x-filament::card.heading>
-                        {{ $heading }}
-                    </x-filament::card.heading>
-                @endif
+                <x-filament::card.header>
+                    @if ($heading)
+                        <x-filament::card.heading>
+                            {{ $heading }}
+                        </x-filament::card.heading>
+                    @endif
+
+                    @if ($subheading)
+                        <x-filament::card.subheading>
+                            {{ $subheading }}
+                        </x-filament::card.subheading>
+                    @endif
+                </x-filament::card.header>
 
                 @if ($filters)
-                    <select
-                        class="text-gray-900 border-gray-300 block h-10 transition duration-75 rounded-lg shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:focus:border-primary-500"
-                        wire:model="filter"
-                        wire:loading.class="animate-pulse"
-                    >
-                        @foreach ($filters as $value => $label)
-                            <option value="{{ $value }}">
-                                {{ $label }}
-                            </option>
-                        @endforeach
-                    </select>
+                    <div class="flex items-center gap-3">
+                        @if ($hasFilterLoadingIndicator)
+                            <x-filament::loading-indicator
+                                x-cloak="x-cloak"
+                                class="h-8 w-8 text-gray-500"
+                                wire:loading
+                                wire:target="filter"
+                            />
+                        @endif
+
+                        <select
+                            class="text-gray-900 border-gray-300 block h-10 transition duration-75 rounded-lg shadow-sm outline-none focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:focus:border-primary-500"
+                            wire:model="filter"
+                            wire:loading.class="animate-pulse"
+                        >
+                            @foreach ($filters as $value => $label)
+                                <option value="{{ $value }}">
+                                    {{ $label }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                 @endif
             </div>
         @endif

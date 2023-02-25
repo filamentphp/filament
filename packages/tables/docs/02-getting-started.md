@@ -22,7 +22,7 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-        ->schema([ // [tl! focus:start]
+        ->columns([ // [tl! focus:start]
             TextColumn::make('title'),
             TextColumn::make('slug'),
             IconColumn::make('is_featured')

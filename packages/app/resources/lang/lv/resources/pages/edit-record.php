@@ -20,6 +20,10 @@ return [
 
         ],
 
+    ],
+
+    'content' => [
+
         'tab' => [
             'label' => 'Rediģēt',
         ],

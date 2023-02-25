@@ -39,7 +39,7 @@
         $isColumn = $layoutComponent instanceof \Filament\Tables\Columns\Column;
     @endphp
 
-    @if (! $layoutComponent->isHidden())
+    @if ($layoutComponent->isVisible())
         <x-filament::grid.column
             :default="$layoutComponent->getColumnSpan('default')"
             :sm="$layoutComponent->getColumnSpan('sm')"

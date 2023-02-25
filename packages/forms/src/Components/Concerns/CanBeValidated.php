@@ -172,7 +172,7 @@ trait CanBeValidated
             if ($callback) {
                 $rule = $component->evaluate($callback, [
                     'rule' => $rule,
-                ]);
+                ]) ?? $rule;
             }
 
             return $rule;
@@ -505,7 +505,7 @@ trait CanBeValidated
             if ($callback) {
                 $rule = $component->evaluate($callback, [
                     'rule' => $rule,
-                ]);
+                ]) ?? $rule;
             }
 
             return $rule;

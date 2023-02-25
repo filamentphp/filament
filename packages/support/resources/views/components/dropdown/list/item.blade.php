@@ -10,54 +10,18 @@
 ])
 
 @php
-    $hasHoverAndFocusState = ($tag !== 'a' || filled($attributes->get('href')));
-
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-list-item group flex w-full items-center whitespace-nowrap rounded-md p-2 text-sm text-gray-900 dark:text-gray-100 disabled:opacity-70 disabled:pointer-events-none',
-        'opacity-70 pointer-events-none' => $disabled,
-        ...$hasHoverAndFocusState
-            ? [
-                'focus:outline-none hover:text-white focus:text-white',
-                match ($color) {
-                    'danger' => 'hover:bg-danger-500 focus:bg-danger-500',
-                    'gray', null => 'hover:bg-gray-500 focus:bg-gray-500',
-                    'primary' => 'hover:bg-primary-500 focus:bg-primary-500',
-                    'secondary' => 'hover:bg-secondary-500 focus:bg-secondary-500',
-                    'success' => 'hover:bg-success-500 focus:bg-success-500',
-                    'warning' => 'hover:bg-warning-500 focus:bg-warning-500',
-                    default => $color,
-                },
-            ]
-            : [],
-    ]);
-
-    $detailClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-list-item-detail ml-auto text-xs text-gray-500',
-        match ($hasHoverAndFocusState) {
-            true => match ($color) {
-                'danger' => 'group-hover:text-danger-100 group-focus:text-danger-100',
-                'gray', null => 'group-hover:text-gray-100 group-focus:text-gray-100',
-                'primary' => 'group-hover:text-primary-100 group-focus:text-primary-100',
-                'secondary' => 'group-hover:text-secondary-100 group-focus:text-secondary-100',
-                'success' => 'group-hover:text-success-100 group-focus:text-success-100',
-                'warning' => 'group-hover:text-warning-100 group-focus:text-warning-100',
-                default => $color,
-            },
-            false => null,
+        'filament-dropdown-list-item flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm transition-colors outline-none disabled:pointer-events-none disabled:opacity-70',
+        match ($color) {
+            'danger' => 'filament-dropdown-list-item-color-danger text-danger-600 hover:bg-danger-500/10 focus:bg-danger-500/10 dark:text-danger-400',
+            'gray' => 'filament-dropdown-list-item-color-gray text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10 dark:text-gray-200',
+            'primary' => 'filament-dropdown-list-item-color-primary text-primary-600 hover:bg-primary-500/10 focus:bg-primary-500/10 dark:text-primary-400',
+            'secondary' => 'filament-dropdown-list-item-color-secondary text-secondary-600 hover:bg-secondary-500/10 focus:bg-secondary-500/10 dark:text-secondary-400',
+            'success' => 'filament-dropdown-list-item-color-success text-success-600 hover:bg-success-500/10 focus:bg-success-500/10 dark:text-success-400',
+            'warning' => 'filament-dropdown-list-item-color-warning text-warning-600 hover:bg-warning-500/10 focus:bg-warning-500/10 dark:text-warning-400',
+            default => $color,
         },
     ]);
-
-    $labelClasses = 'filament-dropdown-list-item-label truncate w-full text-start';
-
-    $iconColor = match ($color) {
-        'danger' => 'text-danger-500',
-        'gray' => 'text-gray-500',
-        'primary' => 'text-primary-500',
-        'secondary' => 'text-secondary-500',
-        'success' => 'text-success-500',
-        'warning' => 'text-warning-500',
-        default => $color,
-    };
 
     $iconSize = match ($iconSize) {
         'sm' => 'h-4 w-4',
@@ -66,17 +30,18 @@
         default => $iconSize,
     };
 
-    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-list-item-icon flex-shrink-0 mr-2 rtl:ml-2 rtl:mr-0',
-        'group-hover:text-white group-focus:text-white' => $hasHoverAndFocusState,
-    ]);
+    $iconClasses = 'filament-dropdown-list-item-icon shrink-0';
 
-    $imageClasses = 'filament-dropdown-list-item-image flex-shrink-0 h-5 w-5 rounded-full bg-gray-200 bg-cover bg-center mr-2 dark:bg-gray-900 rtl:ml-2 rtl:mr-0';
+    $imageClasses = 'filament-dropdown-list-item-image h-5 w-5 shrink-0 rounded-full bg-gray-200 bg-cover bg-center dark:bg-gray-900';
+
+    $labelClasses = 'filament-dropdown-list-item-label w-full truncate text-start';
+
+    $detailClasses = 'filament-dropdown-list-item-detail ml-auto text-xs';
 
     $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click'));
 
     if ($hasLoadingIndicator) {
-        $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click')), ENT_QUOTES);
+        $loadingIndicatorTarget = (string) str(html_entity_decode($attributes->get('wire:target') ?? $attributes->get('wire:click'), ENT_QUOTES))->before('(');
     }
 @endphp
 
@@ -94,7 +59,6 @@
             <x-filament::icon
                 :name="$icon"
                 alias="support::dropdown.list.item"
-                :color="$iconColor"
                 :size="$iconSize"
                 :class="$iconClasses"
                 :wire:loading.remove.delay="$hasLoadingIndicator"
@@ -111,10 +75,10 @@
 
         @if ($hasLoadingIndicator)
             <x-filament::loading-indicator
-                x-cloak=""
+                x-cloak="x-cloak"
                 wire:loading.delay=""
                 :wire:target="$loadingIndicatorTarget"
-                :class="$iconClasses . ' ' . $iconColor . ' ' . $iconSize"
+                :class="$iconClasses . ' ' . $iconSize"
             />
         @endif
 
@@ -134,7 +98,6 @@
             <x-filament::icon
                 :name="$icon"
                 alias="support::dropdown.list.item"
-                :color="$iconColor"
                 :size="$iconSize"
                 :class="$iconClasses"
             />
@@ -163,13 +126,16 @@
 
         <button
             type="submit"
-            {{ $attributes->except(['action', 'class', 'method', 'wire:submit.prevent'])->class([$buttonClasses]) }}
+            {{
+                $attributes
+                    ->except(['action', 'class', 'method', 'wire:submit.prevent'])
+                    ->class([$buttonClasses])
+            }}
         >
             @if ($icon)
                 <x-filament::icon
                     :name="$icon"
                     alias="support::dropdown.list.item"
-                    :color="$iconColor"
                     :size="$iconSize"
                     :class="$iconClasses"
                 />

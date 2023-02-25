@@ -97,7 +97,8 @@ class RequestPasswordReset extends CardPage
                     ->label(__('filament::pages/auth/password-reset/request-password-reset.fields.email.label'))
                     ->email()
                     ->required()
-                    ->autocomplete(),
+                    ->autocomplete()
+                    ->autofocus(),
             ]);
     }
 

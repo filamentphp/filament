@@ -31,7 +31,7 @@ class MakeContextCommand extends Command
                 ->append('.php'),
         );
 
-        if (! $this->hasOption('force') && $this->checkForCollision([$path])) {
+        if (! $this->option('force') && $this->checkForCollision([$path])) {
             return static::INVALID;
         }
 

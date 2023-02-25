@@ -77,6 +77,10 @@ trait HasActions
         } catch (Cancel $exception) {
         }
 
+        if (filled($this->redirectTo)) {
+            return $result;
+        }
+
         $this->mountedTableAction = null;
 
         $action->record(null);
@@ -168,6 +172,7 @@ trait HasActions
         return $action->getModalSubheading() ||
             $action->getModalContent() ||
             $action->getModalFooter() ||
+            $action->getInfolist() ||
             $this->mountedTableActionHasForm();
     }
 

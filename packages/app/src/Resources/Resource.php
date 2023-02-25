@@ -7,6 +7,7 @@ use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\GlobalSearch\Actions\Action;
 use Filament\GlobalSearch\GlobalSearchResult;
+use Filament\Infolists\Infolist;
 use Filament\Navigation\NavigationItem;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationGroup;
@@ -82,6 +83,11 @@ abstract class Resource
     public static function form(Form $form): Form
     {
         return $form;
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist;
     }
 
     public static function registerNavigationItems(): void
@@ -399,7 +405,7 @@ abstract class Resource
     }
 
     /**
-     * @return array<class-string, RelationGroup>
+     * @return array<class-string | RelationGroup>
      */
     public static function getRelations(): array
     {
@@ -579,9 +585,10 @@ abstract class Resource
         static::$navigationGroup = $group;
     }
 
-    public static function getNavigationIcon(): string
+    public static function getNavigationIcon(): ?string
     {
-        return static::$navigationIcon ?? 'heroicon-o-rectangle-stack';
+        return static::$navigationIcon ??
+            (filament()->hasTopNavigation() ? null : 'heroicon-o-rectangle-stack');
     }
 
     public static function navigationIcon(?string $icon): void

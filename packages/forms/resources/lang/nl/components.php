@@ -16,7 +16,7 @@ return [
                 'label' => 'Toevoegen aan :label',
             ],
 
-            'createbetween' => [
+            'add_between' => [
                 'label' => 'Invoegen',
             ],
 
@@ -28,11 +28,11 @@ return [
                 'label' => 'Verplaatsen',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Naar beneden',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Naar boven',
             ],
 
@@ -143,11 +143,11 @@ return [
                 'label' => 'Verplaatsen',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Naar beneden',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Naar boven',
             ],
 

@@ -16,7 +16,7 @@ return [
                 'label' => 'Tambah ke :label',
             ],
 
-            'createbetween' => [
+            'add_between' => [
                 'label' => 'Masukkan',
             ],
 
@@ -28,11 +28,11 @@ return [
                 'label' => 'Pindah',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Pindah ke bawah',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Pindah ke atas',
             ],
 
@@ -143,11 +143,11 @@ return [
                 'label' => 'Klon',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Pindah ke atas',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Pindah ke bawah',
             ],
 

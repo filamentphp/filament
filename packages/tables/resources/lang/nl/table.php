@@ -4,8 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'en :count meer',
+        'text' => [
+            'more_list_items' => 'en :count meer',
         ],
 
         'messages' => [
@@ -15,6 +15,14 @@ return [
     ],
 
     'fields' => [
+
+        'bulk_select_page' => [
+            'label' => 'Alle items selecteren/deselecteren voor bulkacties.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Item :key selecteren/deselecteren voor bulkacties.',
+        ],
 
         'search' => [
             'label' => 'Zoeken',
@@ -27,7 +35,7 @@ return [
 
         'label' => 'Paginering navigatie',
 
-        'overview' => 'Toont :first tot :last van :total resultaten',
+        'overview' => '{1} Toont 1 resultaat|[2,*] Toont :first tot :last van :total resultaten',
 
         'fields' => [
 
@@ -61,6 +69,34 @@ return [
 
     ],
 
+    'summary' => [
+
+        'heading' => 'Samenvatting',
+
+        'subheadings' => [
+            'all' => 'Alle :label',
+            'group' => ':group samenvatting',
+            'page' => 'Deze pagina',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Gemiddelde',
+            ],
+
+            'count' => [
+                'label' => 'Aantal',
+            ],
+
+            'sum' => [
+                'label' => 'Som',
+            ],
+
+        ],
+
+    ],
+
     'buttons' => [
 
         'disable_reordering' => [
@@ -73,6 +109,10 @@ return [
 
         'filter' => [
             'label' => 'Filteren',
+        ],
+
+        'group' => [
+            'label' => 'Groeperen',
         ],
 
         'open_bulk_actions' => [
@@ -127,6 +167,30 @@ return [
             'with_trashed' => 'Met verwijderde records',
 
             'without_trashed' => 'Zonder verwijderde records',
+
+        ],
+
+    ],
+
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Groeperen op',
+                'placeholder' => 'Groeperen op',
+            ],
+
+            'direction' => [
+
+                'label' => 'Groeperingsrichting',
+
+                'options' => [
+                    'asc' => 'Oplopend',
+                    'desc' => 'Aflopend',
+                ],
+
+            ],
 
         ],
 

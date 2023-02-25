@@ -21,6 +21,11 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
     protected string | Closure | null $separator = null;
 
     /**
+     * @var array<string> | Closure
+     */
+    protected array | Closure $splitKeys = [];
+
+    /**
      * @var array<string> | Arrayable | Closure | null
      */
     protected array | Arrayable | Closure | null $suggestions = null;
@@ -70,6 +75,16 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
     }
 
     /**
+     * @param  array<string> | Closure  $keys
+     */
+    public function splitKeys(array | Closure $keys): static
+    {
+        $this->splitKeys = $keys;
+
+        return $this;
+    }
+
+    /**
      * @param  array<string> | Arrayable | Closure  $suggestions
      */
     public function suggestions(array | Arrayable | Closure $suggestions): static
@@ -82,6 +97,14 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
     public function getSeparator(): ?string
     {
         return $this->evaluate($this->separator);
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getSplitKeys(): array
+    {
+        return $this->evaluate($this->splitKeys) ?? [];
     }
 
     /**

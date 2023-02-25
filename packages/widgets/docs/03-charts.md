@@ -166,3 +166,48 @@ protected static ?array $options = [
     ],
 ];
 ```
+
+Alternative, you can override the `getOptions()` method to return a dynamic array of options:
+
+```php
+protected function getOptions(): array
+{
+    return [
+        'plugins' => [
+            'legend' => [
+                'display' => false,
+            ],
+        ],
+    ];
+}
+```
+
+These PHP arrays will get transformed into JSON objects when the chart is rendered. If you want to return raw JavaScript from this method instead, you can return a `RawJs` object. This is useful if you want to use a JavaScript callback function, for example:
+
+```php
+use Filament\Support\RawJs;
+
+protected function getOptions(): RawJs
+{
+    return new RawJs("{
+        scales: {
+            y: {
+                ticks: {
+                    callback: (value) => '$' + value,
+                },
+            },
+        },
+    }");
+}
+```
+
+## Adding a subheading
+
+You may add a subheading, below the heading of the chart, using the `getSubheading()` method:
+
+```php
+public function getSubheading(): ?string
+{
+    return 'The number of blog posts published per month.';
+}
+```

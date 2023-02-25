@@ -55,4 +55,16 @@ class Filter extends BaseFilter
 
         return $field;
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getResetState(): array
+    {
+        if ($this->hasFormSchema()) {
+            return parent::getResetState();
+        }
+
+        return ['isActive' => false];
+    }
 }

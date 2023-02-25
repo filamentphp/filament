@@ -13,7 +13,7 @@ class NavigationGroup
     protected ?string $icon = null;
 
     /**
-     * @var array<NavigationItem> | Arrayable
+     * @var array<NavigationItem | NavigationGroup> | Arrayable
      */
     protected array | Arrayable $items = [];
 
@@ -53,7 +53,7 @@ class NavigationGroup
     }
 
     /**
-     * @param  array<NavigationItem> | Arrayable  $items
+     * @param  array<NavigationItem | NavigationGroup> | Arrayable  $items
      */
     public function items(array | Arrayable $items): static
     {
@@ -75,7 +75,7 @@ class NavigationGroup
     }
 
     /**
-     * @return array<NavigationItem> | Arrayable
+     * @return array<NavigationItem | NavigationGroup> | Arrayable
      */
     public function getItems(): array | Arrayable
     {
@@ -95,5 +95,18 @@ class NavigationGroup
     public function isCollapsible(): bool
     {
         return $this->isCollapsible ?? filament()->hasCollapsibleNavigationGroups();
+    }
+
+    public function isActive(): bool
+    {
+        foreach ($this->getItems() as $item) {
+            if (! $item->isActive()) {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }

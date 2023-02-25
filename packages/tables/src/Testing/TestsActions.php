@@ -7,6 +7,7 @@ use Filament\Actions\Testing\TestsActions as BaseTestsActions;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
 use Livewire\Testing\TestableLivewire;
 
@@ -32,6 +33,10 @@ class TestsActions
 
             $this->call('mountTableAction', $name, $record);
 
+            if (filled($this->instance()->redirectTo)) {
+                return $this;
+            }
+
             if ($this->instance()->mountedTableAction === null) {
                 $this->assertNotDispatchedBrowserEvent('open-modal');
 
@@ -51,7 +56,9 @@ class TestsActions
     public function setTableActionData(): Closure
     {
         return function (array $data): static {
-            $this->set('mountedTableActionData', $data);
+            foreach (Arr::prependKeysWith($data, 'mountedTableActionData.') as $key => $value) {
+                $this->set($key, $value);
+            }
 
             return $this;
         };
@@ -98,6 +105,10 @@ class TestsActions
             }
 
             $this->call('callMountedTableAction', $arguments);
+
+            if (filled($this->instance()->redirectTo)) {
+                return $this;
+            }
 
             if ($this->get('mountedTableAction') !== $action->getName()) {
                 $this->assertDispatchedBrowserEvent('close-modal', [

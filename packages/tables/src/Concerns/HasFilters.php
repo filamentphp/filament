@@ -40,28 +40,37 @@ trait HasFilters
             );
         }
 
-        $this->deselectAllTableRecords();
+        if ($this->getTable()->shouldDeselectAllRecordsWhenFiltered()) {
+            $this->deselectAllTableRecords();
+        }
 
         $this->resetPage();
     }
 
-    public function removeTableFilter(string $filter, ?string $field = null): void
+    public function removeTableFilter(string $filterName, ?string $field = null, bool $shouldTriggerUpdatedFiltersHook = true): void
     {
-        $filterGroup = $this->getTableFiltersForm()->getComponents()[$filter] ?? null;
-        $fields = $filterGroup?->getChildComponentContainer()->getFlatFields();
+        $filter = $this->getTable()->getFilter($filterName);
+        $filterResetState = $filter->getResetState();
 
-        if (filled($field) && array_key_exists($field, $fields)) {
-            $fields = [$fields[$field]];
+        $filterFormGroup = $this->getTableFiltersForm()->getComponents()[$filterName] ?? null;
+        $filterFields = $filterFormGroup?->getChildComponentContainer()->getFlatFields();
+
+        if (filled($field) && array_key_exists($field, $filterFields)) {
+            $filterFields = [$field => $filterFields[$field]];
         }
 
-        foreach ($fields as $field) {
+        foreach ($filterFields as $fieldName => $field) {
             $state = $field->getState();
 
-            $field->state(match (true) {
+            $field->state($filterResetState[$fieldName] ?? match (true) {
                 is_array($state) => [],
                 $state === true => false,
                 default => null,
             });
+        }
+
+        if (! $shouldTriggerUpdatedFiltersHook) {
+            return;
         }
 
         $this->updatedTableFilters();
@@ -69,14 +78,13 @@ trait HasFilters
 
     public function removeTableFilters(): void
     {
-        foreach ($this->getTableFiltersForm()->getFlatFields(withAbsolutePathKeys: true) as $field) {
-            $state = $field->getState();
+        $filters = $this->getTable()->getFilters();
 
-            $field->state(match (true) {
-                is_array($state) => [],
-                $state === true => false,
-                default => null,
-            });
+        foreach ($filters as $filterName => $filter) {
+            $this->removeTableFilter(
+                $filterName,
+                shouldTriggerUpdatedFiltersHook: false,
+            );
         }
 
         $this->updatedTableFilters();

@@ -1,4 +1,4 @@
-/* Prevent excessive date input height in Webkit */
+/* Prevent excessive date input height in WebKit */
 /* https://github.com/twbs/bootstrap/issues/34433 */
 
 input::-webkit-datetime-edit {

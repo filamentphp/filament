@@ -66,6 +66,10 @@ trait HasBulkActions
         } catch (Cancel $exception) {
         }
 
+        if (filled($this->redirectTo)) {
+            return $result;
+        }
+
         $this->mountedTableBulkAction = null;
         $this->selectedTableRecords = [];
 
@@ -149,6 +153,7 @@ trait HasBulkActions
         return $action->getModalSubheading() ||
             $action->getModalContent() ||
             $action->getModalFooter() ||
+            $action->getInfolist() ||
             $this->mountedTableBulkActionHasForm();
     }
 

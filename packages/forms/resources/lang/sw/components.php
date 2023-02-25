@@ -16,7 +16,7 @@ return [
                 'label' => 'Ongeza kwenye :label',
             ],
 
-            'createbetween' => [
+            'add_between' => [
                 'label' => 'Ingiza',
             ],
 
@@ -28,11 +28,11 @@ return [
                 'label' => 'Hamisha',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Sogeza chini',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Sogeza juu',
             ],
 
@@ -127,11 +127,11 @@ return [
                 'label' => 'Hamisha',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Sogeza chini',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Sogeza juu',
             ],
 

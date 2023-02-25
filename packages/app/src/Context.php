@@ -7,27 +7,28 @@ use Filament\Support\Facades\FilamentIcon;
 
 class Context
 {
-    use Concerns\HasAuth;
-    use Concerns\HasAvatars;
-    use Concerns\HasBrandName;
-    use Concerns\HasColors;
-    use Concerns\HasComponents;
-    use Concerns\HasDarkMode;
-    use Concerns\HasFavicon;
-    use Concerns\HasFont;
-    use Concerns\HasGlobalSearch;
-    use Concerns\HasIcons;
-    use Concerns\HasId;
-    use Concerns\HasMiddleware;
-    use Concerns\HasNavigation;
-    use Concerns\HasNotifications;
-    use Concerns\HasPlugins;
-    use Concerns\HasRenderHooks;
-    use Concerns\HasRoutes;
-    use Concerns\HasSidebar;
-    use Concerns\HasTenancy;
-    use Concerns\HasTheme;
-    use Concerns\HasUserMenu;
+    use Context\Concerns\HasAuth;
+    use Context\Concerns\HasAvatars;
+    use Context\Concerns\HasBrandName;
+    use Context\Concerns\HasColors;
+    use Context\Concerns\HasComponents;
+    use Context\Concerns\HasDarkMode;
+    use Context\Concerns\HasFavicon;
+    use Context\Concerns\HasFont;
+    use Context\Concerns\HasGlobalSearch;
+    use Context\Concerns\HasIcons;
+    use Context\Concerns\HasId;
+    use Context\Concerns\HasMiddleware;
+    use Context\Concerns\HasNavigation;
+    use Context\Concerns\HasNotifications;
+    use Context\Concerns\HasPlugins;
+    use Context\Concerns\HasRenderHooks;
+    use Context\Concerns\HasRoutes;
+    use Context\Concerns\HasSidebar;
+    use Context\Concerns\HasTenancy;
+    use Context\Concerns\HasTheme;
+    use Context\Concerns\HasTopNavigation;
+    use Context\Concerns\HasUserMenu;
 
     protected bool $isDefault = false;
 

@@ -5,6 +5,7 @@ namespace Filament\Resources\Pages\EditRecord\Concerns;
 use Filament\Resources\Pages\Concerns\HasActiveLocaleSwitcher;
 use Filament\Resources\Pages\Concerns\HasTranslatableRecordTitle;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 trait Translatable
 {
@@ -46,7 +47,13 @@ trait Translatable
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        $record->setLocale($this->activeLocale)->fill($data)->save();
+        $record->fill(Arr::except($data, $record->getTranslatableAttributes()));
+
+        foreach (Arr::only($data, $record->getTranslatableAttributes()) as $key => $value) {
+            $record->setTranslation($key, $this->activeLocale, $value);
+        }
+
+        $record->save();
 
         return $record;
     }

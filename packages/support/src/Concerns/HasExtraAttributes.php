@@ -8,16 +8,20 @@ use Illuminate\View\ComponentAttributeBag;
 trait HasExtraAttributes
 {
     /**
-     * @var array<mixed> | Closure
+     * @var array<array<mixed> | Closure>
      */
-    protected array | Closure $extraAttributes = [];
+    protected array $extraAttributes = [];
 
     /**
      * @param  array<mixed> | Closure  $attributes
      */
-    public function extraAttributes(array | Closure $attributes): static
+    public function extraAttributes(array | Closure $attributes, bool $merge = false): static
     {
-        $this->extraAttributes = array_merge($this->extraAttributes, $attributes);
+        if ($merge) {
+            $this->extraAttributes[] = $attributes;
+        } else {
+            $this->extraAttributes = [$attributes];
+        }
 
         return $this;
     }
@@ -27,7 +31,13 @@ trait HasExtraAttributes
      */
     public function getExtraAttributes(): array
     {
-        return $this->evaluate($this->extraAttributes);
+        $temporaryAttributeBag = new ComponentAttributeBag();
+
+        foreach ($this->extraAttributes as $extraAttributes) {
+            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraAttributes));
+        }
+
+        return $temporaryAttributeBag->getAttributes();
     }
 
     public function getExtraAttributeBag(): ComponentAttributeBag

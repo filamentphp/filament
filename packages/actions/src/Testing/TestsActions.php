@@ -7,6 +7,7 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\MountableAction;
+use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
 use Livewire\Testing\TestableLivewire;
 
@@ -28,6 +29,10 @@ class TestsActions
 
             $this->call('mountAction', $name, $arguments);
 
+            if (filled($this->instance()->redirectTo)) {
+                return $this;
+            }
+
             if ($this->instance()->mountedAction === null) {
                 $this->assertNotDispatchedBrowserEvent('open-modal');
 
@@ -37,7 +42,7 @@ class TestsActions
             $this->assertSet('mountedAction', $name);
 
             $this->assertDispatchedBrowserEvent('open-modal', [
-                'id' => 'page-action',
+                'id' => "{$this->instance()->id}-action",
             ]);
 
             return $this;
@@ -47,7 +52,9 @@ class TestsActions
     public function setActionData(): Closure
     {
         return function (array $data): static {
-            $this->set('mountedActionData', $data);
+            foreach (Arr::prependKeysWith($data, 'mountedActionData.') as $key => $value) {
+                $this->set($key, $value);
+            }
 
             return $this;
         };
@@ -95,9 +102,13 @@ class TestsActions
 
             $this->call('callMountedAction', $arguments);
 
+            if (filled($this->instance()->redirectTo)) {
+                return $this;
+            }
+
             if ($this->get('mountedAction') !== $action->getName()) {
                 $this->assertDispatchedBrowserEvent('close-modal', [
-                    'id' => 'page-action',
+                    'id' => "{$this->instance()->id}-action",
                 ]);
             }
 

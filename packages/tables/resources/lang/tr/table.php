@@ -4,8 +4,12 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 've :count daha',
+        'text' => [
+            'more_list_items' => 've :count daha',
+        ],
+
+        'messages' => [
+            'copied' => 'Kopyalandı',
         ],
 
     ],
@@ -29,6 +33,10 @@ return [
 
             'records_per_page' => [
                 'label' => 'sayfa başına',
+
+                'options' => [
+                    'all' => 'Tümü',
+                ],
             ],
 
         ],
@@ -53,6 +61,14 @@ return [
 
     'buttons' => [
 
+        'disable_reordering' => [
+            'label' => 'Sıralamayı kapat',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Sıralamayı aç',
+        ],
+
         'filter' => [
             'label' => 'Filtrele',
         ],
@@ -75,11 +91,22 @@ return [
 
         'buttons' => [
 
+            'remove' => [
+                'label' => 'Filtreyi kaldır',
+            ],
+
+            'remove_all' => [
+                'label' => 'Tüm filtreleri kaldır',
+                'tooltip' => 'Tüm filtreleri kaldır',
+            ],
+
             'reset' => [
-                'label' => 'Filtrelemeleri sıfırla',
+                'label' => 'Filtreleri sıfırla',
             ],
 
         ],
+
+        'indicator' => 'Aktif filtreler',
 
         'multi_select' => [
             'placeholder' => 'Tümü',
@@ -103,6 +130,8 @@ return [
 
     ],
 
+    'reorder_indicator' => 'Sıralamayı değiştirmek için sürükleyin.',
+
     'selection_indicator' => [
 
         'selected_count' => '1 kayıt seçildi.|:count kayıt seçildi.',
@@ -115,6 +144,29 @@ return [
 
             'deselect_all' => [
                 'label' => 'Tüm seçimleri kaldır',
+            ],
+
+        ],
+
+    ],
+
+    'sorting' => [
+
+        'fields' => [
+
+            'column' => [
+                'label' => 'Sırala',
+            ],
+
+            'direction' => [
+
+                'label' => 'Sıralama türü',
+
+                'options' => [
+                    'asc' => 'Artan',
+                    'desc' => 'Azalan',
+                ],
+
             ],
 
         ],

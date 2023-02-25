@@ -11,6 +11,7 @@ use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\StaticAction;
 use Filament\Notifications\Actions\Concerns\CanCloseNotification;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 
@@ -82,7 +83,14 @@ class Action extends StaticAction implements Arrayable, Groupable
         $static->close($data['shouldCloseNotification'] ?? false);
         $static->color($data['color'] ?? null);
         $static->disabled($data['isDisabled'] ?? false);
-        $static->emit($data['event'] ?? null, $data['eventData'] ?? []);
+
+        match ($data['emitDirection'] ?? null) {
+            'self' => $static->emitSelf($data['event'] ?? null, $data['eventData'] ?? []),
+            'up' => $static->emitUp($data['event'] ?? null, $data['eventData'] ?? []),
+            'to' => $static->emitTo($data['emitToComponent'] ?? null, $data['event'] ?? null, $data['eventData'] ?? []),
+            default => $static->emit($data['event'] ?? null, $data['eventData'] ?? [])
+        };
+
         $static->extraAttributes($data['extraAttributes'] ?? []);
         $static->icon($data['icon'] ?? null);
         $static->iconPosition($data['iconPosition'] ?? null);
@@ -118,12 +126,21 @@ class Action extends StaticAction implements Arrayable, Groupable
             return null;
         }
 
-        $emitArguments = collect([$event])
+        $arguments = collect([$event])
             ->merge($this->getEventData())
-            ->map(fn ($value): string => Js::from($value)->toHtml())
+            ->when(
+                $this->emitToComponent,
+                fn (Collection $collection, string $component) => $collection->prepend($component),
+            )
+            ->map(fn (mixed $value): string => Js::from($value)->toHtml())
             ->implode(', ');
 
-        return "\$emit({$emitArguments})";
+        return match ($this->emitDirection) {
+            'self' => "\$emitSelf($arguments)",
+            'to' => "\$emitTo($arguments)",
+            'up' => "\$emitUp($arguments)",
+            default => "\$emit($arguments)"
+        };
     }
 
     public function getAlpineMountAction(): ?string

@@ -6,7 +6,7 @@ return [
 
     'breadcrumb' => 'Megtekintés',
 
-    'form' => [
+    'content' => [
 
         'tab' => [
             'label' => 'Megtekintés',

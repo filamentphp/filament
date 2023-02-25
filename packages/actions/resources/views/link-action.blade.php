@@ -1,6 +1,6 @@
 <x-filament-actions::action
     :action="$action"
-    component="filament::link"
+    dynamic-component="filament::link"
     :icon-position="$getIconPosition()"
     :icon-size="$getIconSize()"
     class="filament-actions-link-action"

@@ -16,7 +16,7 @@ return [
                 'label' => 'إضافة إلى :label',
             ],
 
-            'createbetween' => [
+            'add_between' => [
                 'label' => 'إدراج',
             ],
 
@@ -28,11 +28,11 @@ return [
                 'label' => 'نقل',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'تحريك لأسفل',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'تحريك لأعلى',
             ],
 
@@ -143,11 +143,11 @@ return [
                 'label' => 'نقل',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'تحريك لأسفل',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'تحريك لأعلى',
             ],
 

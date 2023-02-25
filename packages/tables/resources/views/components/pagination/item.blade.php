@@ -14,7 +14,7 @@
                 'type' => 'button',
             ], escape: false)
             ->class([
-                'filament-tables-pagination-item relative flex items-center justify-center font-medium min-w-[2rem] px-1.5 h-8 -my-3 rounded-md focus:outline-none disabled:opacity-70 disabled:pointer-events-none',
+                'filament-tables-pagination-item relative flex items-center justify-center font-medium min-w-[2rem] px-1.5 h-8 -my-3 rounded-md outline-none disabled:opacity-70 disabled:pointer-events-none',
                 'hover:bg-gray-500/5 focus:bg-primary-500/10 focus:ring-2 focus:ring-primary-500 dark:hover:bg-gray-400/5' => (! $active) && (! $disabled) && (! $separator),
                 'focus:text-primary-600' => (! $active) && (! $disabled) && (! $icon) && (! $separator),
                 'transition' => ((! $active) && (! $disabled) && (! $separator)) || $active,

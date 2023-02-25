@@ -5,9 +5,12 @@ namespace Filament\Resources\Pages;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ListRecords\Tab;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -26,6 +29,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
      * @var array<int | string, string | array<mixed>>
      */
     protected $queryString = [
+        'activeTab' => ['except' => ''],
         'isTableReordering' => ['except' => false],
         'tableFilters',
         'tableGrouping' => ['except' => ''],
@@ -35,9 +39,18 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         'tableSearch' => ['except' => ''],
     ];
 
+    public ?string $activeTab = null;
+
     public function mount(): void
     {
         static::authorizeResourceAccess();
+
+        if (
+            blank($this->activeTab) &&
+            count($tabs = $this->getTabs())
+        ) {
+            $this->activeTab = array_key_first($tabs);
+        }
     }
 
     public function getBreadcrumb(): ?string
@@ -66,6 +79,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     public function form(Form $form): Form
     {
         return static::getResource()::form($form);
+    }
+
+    public function infolist(Infolist $infolist): Infolist
+    {
+        return static::getResource()::infolist($infolist);
     }
 
     protected function configureCreateAction(CreateAction $action): void
@@ -139,6 +157,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
         $action
             ->authorize(fn (Model $record): bool => $resource::canView($record))
+            ->infolist(fn (Infolist $infolist): Infolist => $this->infolist($infolist->columns(2)))
             ->form(fn (Form $form): Form => $this->form($form->columns(2)));
 
         if ($resource::hasPage('view')) {
@@ -198,7 +217,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function makeTable(): Table
     {
         return $this->makeBaseTable()
-            ->query($this->getTableQuery() ?? static::getResource()::getEloquentQuery())
+            ->query(fn (): Builder => $this->getTableQuery())
             ->modelLabel($this->getModelLabel() ?? static::getResource()::getModelLabel())
             ->pluralModelLabel($this->getPluralModelLabel() ?? static::getResource()::getPluralModelLabel())
             ->recordAction(function (Model $record, Table $table): ?string {
@@ -267,11 +286,42 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->reorderable(condition: static::getResource()::canReorder());
     }
 
+    protected function getTableQuery(): Builder
+    {
+        $query = static::getResource()::getEloquentQuery();
+
+        $tabs = $this->getTabs();
+
+        if (
+            filled($this->activeTab) &&
+            array_key_exists($this->activeTab, $tabs)
+        ) {
+            $tabs[$this->activeTab]->modifyQuery($query);
+        }
+
+        return $query;
+    }
+
     /**
      * @return array<int | string, string | Form>
      */
     protected function getForms(): array
     {
         return [];
+    }
+
+    /**
+     * @return array<string | int, Tab>
+     */
+    public function getTabs(): array
+    {
+        return [];
+    }
+
+    public function generateTabLabel(string $key): string
+    {
+        return (string) str($key)
+            ->replace(['_', '-'], ' ')
+            ->ucfirst();
     }
 }

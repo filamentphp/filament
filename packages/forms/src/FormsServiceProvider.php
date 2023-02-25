@@ -18,7 +18,6 @@ class FormsServiceProvider extends PackageServiceProvider
         $package
             ->name('filament-forms')
             ->hasCommands($this->getCommands())
-            ->hasConfigFile()
             ->hasTranslations()
             ->hasViews();
     }
@@ -47,7 +46,7 @@ class FormsServiceProvider extends PackageServiceProvider
             foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
                 $this->publishes([
                     $file->getRealPath() => base_path("stubs/filament/{$file->getFilename()}"),
-                ], 'forms-stubs');
+                ], 'filament-forms-stubs');
             }
         }
 

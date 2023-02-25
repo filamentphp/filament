@@ -8,16 +8,20 @@ use Illuminate\View\ComponentAttributeBag;
 trait HasExtraHeaderAttributes
 {
     /**
-     * @var array<mixed> | Closure
+     * @var array<mixed>
      */
-    protected array | Closure $extraHeaderAttributes = [];
+    protected array $extraHeaderAttributes = [];
 
     /**
-     * @param  array<mixed> | Closure  $attributes
+     * @param  array<array<mixed> | Closure>  $attributes
      */
-    public function extraHeaderAttributes(array | Closure $attributes): static
+    public function extraHeaderAttributes(array | Closure $attributes, bool $merge = false): static
     {
-        $this->extraHeaderAttributes = array_merge($this->extraHeaderAttributes, $attributes);
+        if ($merge) {
+            $this->extraHeaderAttributes[] = $attributes;
+        } else {
+            $this->extraHeaderAttributes = [$attributes];
+        }
 
         return $this;
     }
@@ -27,7 +31,13 @@ trait HasExtraHeaderAttributes
      */
     public function getExtraHeaderAttributes(): array
     {
-        return $this->evaluate($this->extraHeaderAttributes);
+        $temporaryAttributeBag = new ComponentAttributeBag();
+
+        foreach ($this->extraHeaderAttributes as $extraHeaderAttributes) {
+            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraHeaderAttributes));
+        }
+
+        return $temporaryAttributeBag->getAttributes();
     }
 
     public function getExtraHeaderAttributeBag(): ComponentAttributeBag

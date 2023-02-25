@@ -2,15 +2,26 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
-use BackedEnum;
 use Closure;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 trait HasState
 {
     protected mixed $defaultState = null;
 
     protected ?Closure $getStateUsing = null;
+
+    protected string | Closure | null $separator = null;
+
+    protected bool | Closure $isDistinctList = false;
+
+    public function distinctList(bool | Closure $condition = true): static
+    {
+        $this->isDistinctList = $condition;
+
+        return $this;
+    }
 
     public function getStateUsing(?Closure $callback): static
     {
@@ -24,6 +35,11 @@ trait HasState
         $this->defaultState = $state;
 
         return $this;
+    }
+
+    public function isDistinctList(): bool
+    {
+        return (bool) $this->evaluate($this->isDistinctList);
     }
 
     public function getDefaultState(): mixed
@@ -41,20 +57,15 @@ trait HasState
             $this->evaluate($this->getStateUsing, exceptParameters: ['state']) :
             $this->getStateFromRecord();
 
-        if (
-            interface_exists(BackedEnum::class) &&
-            ($state instanceof BackedEnum) &&
-            property_exists($state, 'value')
-        ) {
-            $state = $state->value;
+        if (is_string($state) && ($separator = $this->getSeparator())) {
+            $state = explode($separator, $state);
+            $state = (count($state) === 1 && blank($state[0])) ?
+                [] :
+                $state;
         }
 
         if ($state === null) {
             $state = value($this->getDefaultState());
-        }
-
-        if (is_array($state)) {
-            $state = $this->mutateArrayState($state);
         }
 
         return $state;
@@ -82,7 +93,7 @@ trait HasState
 
         $state = collect($this->getRelationshipResults($record))
             ->pluck($this->getRelationshipAttribute())
-            ->unique()
+            ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
             ->values();
 
         if (! $state->count()) {
@@ -92,11 +103,15 @@ trait HasState
         return $state->all();
     }
 
-    /**
-     * @param  array<array-key>  $state
-     */
-    protected function mutateArrayState(array $state): mixed
+    public function separator(string | Closure | null $separator = ','): static
     {
-        return $state;
+        $this->separator = $separator;
+
+        return $this;
+    }
+
+    public function getSeparator(): ?string
+    {
+        return $this->evaluate($this->separator);
     }
 }

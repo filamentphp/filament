@@ -10,25 +10,33 @@
         $relationManagers = $this->getRelationManagers();
     @endphp
 
-    @if ((! $this->hasCombinedRelationManagerTabsWithForm()) || (! count($relationManagers)))
-        {{ $this->form }}
+    @if ((! $this->hasCombinedRelationManagerTabsWithContent()) || (! count($relationManagers)))
+        @if ($this->hasInfolist())
+            {{ $this->getCachedInfolist() }}
+        @else
+            {{ $this->form }}
+        @endif
     @endif
 
     @if (count($relationManagers))
-        @if (! $this->hasCombinedRelationManagerTabsWithForm())
+        @if (! $this->hasCombinedRelationManagerTabsWithContent())
             <x-filament::hr />
         @endif
 
         <x-filament::resources.relation-managers
             :active-manager="$activeRelationManager"
-            :form-tab-label="$this->getFormTabLabel()"
+            :content-tab-label="$this->getContentTabLabel()"
             :managers="$relationManagers"
             :owner-record="$record"
             :page-class="static::class"
         >
-            @if ($this->hasCombinedRelationManagerTabsWithForm())
-                <x-slot name="form">
-                    {{ $this->form }}
+            @if ($this->hasCombinedRelationManagerTabsWithContent())
+                <x-slot name="content">
+                    @if ($this->hasInfolist())
+                        {{ $this->getCachedInfolist() }}
+                    @else
+                        {{ $this->form }}
+                    @endif
                 </x-slot>
             @endif
         </x-filament::resources.relation-managers>

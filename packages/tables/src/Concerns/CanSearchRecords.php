@@ -27,7 +27,9 @@ trait CanSearchRecords
             );
         }
 
-        $this->deselectAllTableRecords();
+        if ($this->getTable()->shouldDeselectAllRecordsWhenFiltered()) {
+            $this->deselectAllTableRecords();
+        }
 
         $this->resetPage();
     }
@@ -35,7 +37,7 @@ trait CanSearchRecords
     /**
      * @param  string | null  $value
      */
-    public function updatedTableColumnSearches($value, string $key): void
+    public function updatedTableColumnSearches($value = null, ?string $key = null): void
     {
         if (blank($value)) {
             unset($this->tableColumnSearches[$key]);
@@ -48,7 +50,9 @@ trait CanSearchRecords
             );
         }
 
-        $this->deselectAllTableRecords();
+        if ($this->getTable()->shouldDeselectAllRecordsWhenFiltered()) {
+            $this->deselectAllTableRecords();
+        }
 
         $this->resetPage();
     }
@@ -193,6 +197,12 @@ trait CanSearchRecords
         //     'number' => '12345',
         //     'customer.name' => 'john smith',
         // ]
+    }
+
+    public function hasTableColumnSearches(): bool
+    {
+        return collect($this->getTableColumnSearches())
+            ->contains(fn (string $search): bool => filled($search));
     }
 
     public function getTableSearchSessionKey(): string

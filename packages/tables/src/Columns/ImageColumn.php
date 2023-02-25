@@ -29,15 +29,15 @@ class ImageColumn extends Column
     protected int | string | Closure | null $width = null;
 
     /**
-     * @var array<mixed> | Closure
+     * @var array<array<mixed> | Closure>
      */
-    protected array | Closure $extraImgAttributes = [];
+    protected array $extraImgAttributes = [];
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->disk(config('filament-tables.default_filesystem_disk'));
+        $this->disk(config('filament.default_filesystem_disk'));
     }
 
     public function disk(string | Closure | null $disk): static
@@ -105,7 +105,7 @@ class ImageColumn extends Column
 
     public function getDiskName(): string
     {
-        return $this->evaluate($this->disk) ?? config('filament-tables.default_filesystem_disk');
+        return $this->evaluate($this->disk) ?? config('filament.default_filesystem_disk');
     }
 
     public function getHeight(): ?string
@@ -197,9 +197,13 @@ class ImageColumn extends Column
     /**
      * @param  array<mixed> | Closure  $attributes
      */
-    public function extraImgAttributes(array | Closure $attributes): static
+    public function extraImgAttributes(array | Closure $attributes, bool $merge = false): static
     {
-        $this->extraImgAttributes = $attributes;
+        if ($merge) {
+            $this->extraImgAttributes[] = $attributes;
+        } else {
+            $this->extraImgAttributes = [$attributes];
+        }
 
         return $this;
     }
@@ -209,7 +213,13 @@ class ImageColumn extends Column
      */
     public function getExtraImgAttributes(): array
     {
-        return $this->evaluate($this->extraImgAttributes);
+        $temporaryAttributeBag = new ComponentAttributeBag();
+
+        foreach ($this->extraImgAttributes as $extraImgAttributes) {
+            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraImgAttributes));
+        }
+
+        return $temporaryAttributeBag->getAttributes();
     }
 
     public function getExtraImgAttributeBag(): ComponentAttributeBag

@@ -23,7 +23,6 @@ class TablesServiceProvider extends PackageServiceProvider
         $package
             ->name('filament-tables')
             ->hasCommands($this->getCommands())
-            ->hasConfigFile()
             ->hasTranslations()
             ->hasViews();
     }
@@ -43,7 +42,7 @@ class TablesServiceProvider extends PackageServiceProvider
             foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
                 $this->publishes([
                     $file->getRealPath() => base_path("stubs/filament/{$file->getFilename()}"),
-                ], 'tables-stubs');
+                ], 'filament-tables-stubs');
             }
         }
 

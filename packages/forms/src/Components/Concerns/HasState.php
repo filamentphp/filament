@@ -308,7 +308,7 @@ trait HasState
 
     public function hasStatePath(): bool
     {
-        return filled($statePath = $this->statePath);
+        return filled($this->statePath);
     }
 
     protected function hasDefaultState(): bool

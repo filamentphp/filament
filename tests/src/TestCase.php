@@ -7,6 +7,7 @@ use BladeUI\Icons\BladeIconsServiceProvider;
 use Filament\Actions\ActionsServiceProvider;
 use Filament\FilamentServiceProvider;
 use Filament\Forms\FormsServiceProvider;
+use Filament\Infolists\InfolistsServiceProvider;
 use Filament\Notifications\NotificationsServiceProvider;
 use Filament\SpatieLaravelSettingsPluginServiceProvider;
 use Filament\SpatieLaravelTranslatablePluginServiceProvider;
@@ -32,6 +33,7 @@ abstract class TestCase extends BaseTestCase
             BladeIconsServiceProvider::class,
             FilamentServiceProvider::class,
             FormsServiceProvider::class,
+            InfolistsServiceProvider::class,
             LivewireServiceProvider::class,
             NotificationsServiceProvider::class,
             SpatieLaravelSettingsPluginServiceProvider::class,
@@ -50,6 +52,7 @@ abstract class TestCase extends BaseTestCase
 
     protected function getEnvironmentSetUp($app): void
     {
+        $app['config']->set('auth.passwords.users.table', 'password_reset_tokens');
         $app['config']->set('auth.providers.users.model', User::class);
         $app['config']->set('view.paths', array_merge(
             $app['config']->get('view.paths'),

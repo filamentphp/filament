@@ -16,7 +16,7 @@ return [
                 'label' => 'Thêm :label mới',
             ],
 
-            'createbetween' => [
+            'add_between' => [
                 'label' => 'Chèn',
             ],
 
@@ -28,11 +28,11 @@ return [
                 'label' => 'Di chuyển',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Chuyển xuống',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Chuyển lên',
             ],
 
@@ -143,11 +143,11 @@ return [
                 'label' => 'Nhân bản',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Chuyển xuống',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Chuyển lên',
             ],
 

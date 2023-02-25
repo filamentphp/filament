@@ -4,8 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'あと:count個あります',
+        'text' => [
+            'more_list_items' => 'あと:count個あります',
         ],
 
         'messages' => [

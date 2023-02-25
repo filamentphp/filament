@@ -11,7 +11,7 @@ abstract class CardPage extends BasePage
         return 'md';
     }
 
-    public function hasBrand(): bool
+    public function hasLogo(): bool
     {
         return true;
     }

@@ -3,28 +3,34 @@
 namespace Filament\Actions;
 
 use Filament\Actions\Concerns\CanBeHidden;
+use Filament\Actions\Concerns\CanBeOutlined;
 use Filament\Actions\Concerns\HasColor;
 use Filament\Actions\Concerns\HasDropdown;
+use Filament\Actions\Concerns\HasGroupedIcon;
 use Filament\Actions\Concerns\HasIcon;
 use Filament\Actions\Concerns\HasLabel;
 use Filament\Actions\Concerns\HasSize;
 use Filament\Actions\Concerns\HasTooltip;
 use Filament\Actions\Contracts\Groupable;
 use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\HasExtraAttributes;
 
 class ActionGroup extends ViewComponent
 {
     use CanBeHidden {
         isHidden as baseIsHidden;
     }
+    use CanBeOutlined;
     use HasColor;
     use HasDropdown;
-    use HasIcon;
+    use HasExtraAttributes;
+    use HasGroupedIcon;
+    use HasIcon {
+        getIcon as getBaseIcon;
+    }
     use HasLabel;
     use HasSize;
     use HasTooltip;
-
-    protected string $view = 'filament-actions::group';
 
     protected string $evaluationIdentifier = 'group';
 
@@ -43,12 +49,50 @@ class ActionGroup extends ViewComponent
      */
     public static function make(array $actions): static
     {
-        return app(static::class, ['actions' => $actions]);
+        $static = app(static::class, ['actions' => $actions]);
+        $static->configure();
+
+        return $static;
     }
 
-    public function getLabel(): ?string
+    protected function setUp(): void
     {
-        $label = $this->evaluate($this->label);
+        parent::setUp();
+
+        $this->iconButton();
+    }
+
+    public function button(): static
+    {
+        $this->view('filament-actions::button-group');
+
+        return $this;
+    }
+
+    public function grouped(): static
+    {
+        $this->view('filament-actions::grouped-group');
+
+        return $this;
+    }
+
+    public function iconButton(): static
+    {
+        $this->view('filament-actions::icon-button-group');
+
+        return $this;
+    }
+
+    public function link(): static
+    {
+        $this->view('filament-actions::link-group');
+
+        return $this;
+    }
+
+    public function getLabel(): string
+    {
+        $label = $this->evaluate($this->label) ?? __('filament-actions::group.trigger.label');
 
         return $this->shouldTranslateLabel ? __($label) : $label;
     }
@@ -65,6 +109,11 @@ class ActionGroup extends ViewComponent
         }
 
         return $actions;
+    }
+
+    public function getIcon(): string
+    {
+        return $this->getBaseIcon() ?? 'heroicon-m-ellipsis-vertical';
     }
 
     public function isHidden(): bool

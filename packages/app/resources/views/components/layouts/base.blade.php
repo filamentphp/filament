@@ -6,7 +6,7 @@
 <html
     lang="{{ str_replace('_', '-', app()->getLocale()) }}"
     dir="{{ __('filament::layout.direction') ?? 'ltr' }}"
-    class="antialiased bg-gray-100 filament js-focus-visible"
+    class="filament antialiased min-h-screen js-focus-visible"
 >
 <head>
     {{ filament()->renderHook('head.start') }}
@@ -44,13 +44,13 @@
     </style>
 
     @livewireStyles
-    {{ filament()->getTheme()->getHtml() }}
     @filamentStyles
+    {{ filament()->getTheme()->getHtml() }}
     {{ filament()->getFontHtml() }}
 
     <style>
         :root {
-            --font-family: {!! filament()->getFontName() !!};
+            --font-family: {!! filament()->getFontFamily() !!};
             --filament-widgets-chart-font-family: var(--font-family);
             --sidebar-width: {{ filament()->getSidebarWidth() }};
             --collapsed-sidebar-width: {{ filament()->getCollapsedSidebarWidth() }};
@@ -78,7 +78,7 @@
     {{ filament()->renderHook('head.end') }}
 </head>
 
-<body class="filament-body bg-gray-100 text-gray-900 dark:text-gray-100 dark:bg-gray-900">
+<body class="filament-body min-h-screen overscroll-y-auto bg-gray-100 text-gray-900 dark:text-gray-100 dark:bg-gray-900">
     {{ filament()->renderHook('body.start') }}
 
     {{ $slot }}

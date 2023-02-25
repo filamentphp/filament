@@ -16,6 +16,10 @@ return [
                 'label' => 'Lägg till i :label',
             ],
 
+            'add_item_between' => [
+                'label' => 'Infoga',
+            ],
+
             'delete' => [
                 'label' => 'Radera',
             ],
@@ -24,11 +28,11 @@ return [
                 'label' => 'Flytta',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Flytta ned',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Flytta upp',
             ],
 
@@ -46,6 +50,22 @@ return [
 
             'expand_all' => [
                 'label' => 'Expandera alla',
+            ],
+
+        ],
+
+    ],
+
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Avmarkera alla',
+            ],
+
+            'select_all' => [
+                'label' => 'Markera alla',
             ],
 
         ],
@@ -123,11 +143,11 @@ return [
                 'label' => 'Flytta',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Flytta ned',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Flytta upp',
             ],
 

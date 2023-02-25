@@ -16,7 +16,7 @@
     $iconSize ??= $size;
 
     $linkClasses = [
-        'filament-link inline-flex items-center justify-center gap-0.5 font-medium hover:underline focus:outline-none focus:underline disabled:opacity-70 disabled:pointer-events-none',
+        'filament-link inline-flex items-center justify-center gap-0.5 font-medium outline-none hover:underline focus:underline disabled:opacity-70 disabled:pointer-events-none',
         'opacity-70 pointer-events-none' => $disabled,
         match ($color) {
             'danger' => 'text-danger-600 hover:text-danger-500 dark:text-danger-500 dark:hover:text-danger-400',
@@ -121,7 +121,7 @@
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
-                    x-cloak=""
+                    x-cloak="x-cloak"
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
                     :class="$iconClasses . ' ' . $iconSize"
@@ -145,7 +145,7 @@
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
-                    x-cloak=""
+                    x-cloak="x-cloak"
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
                     :class="$iconClasses . ' ' . $iconSize"

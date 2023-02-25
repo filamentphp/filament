@@ -36,7 +36,7 @@ class ManagePost extends Component implements HasActions
     
     public Post $post;
     
-    public function delete(): Action
+    public function deleteAction(): Action
     {
         return Action::make('delete')
             ->requiresConfirmation()
@@ -47,11 +47,11 @@ class ManagePost extends Component implements HasActions
 }
 ```
 
-Finally, you need to render the action in your view. To do this, you can use `{{ $this->delete }}`, where you replace `delete` with the name of your action method:
+Finally, you need to render the action in your view. To do this, you can use `{{ $this->deleteAction }}`, where you replace `deleteAction` with the name of your action method:
 
 ```blade
 <div>
-    {{ $this->delete }}
+    {{ $this->deleteAction }}
     
     <x-filament-actions::modals />
 </div>
@@ -81,7 +81,7 @@ Now, you can access the post ID in your action method:
 use App\Models\Post;
 use Filament\Actions\Action;
 
-public function delete(): Action
+public function deleteAction(): Action
 {
     return Action::make('delete')
         ->requiresConfirmation()
@@ -100,9 +100,9 @@ You may group actions together into a dropdown menu by using the `<x-filament-ac
 ```blade
 <div>
     <x-filament-actions::group :actions="[
-        $this->edit,
-        $this->view,
-        $this->delete,
+        $this->editAction,
+        $this->viewAction,
+        $this->deleteAction,
     ]" />
     
     <x-filament-actions::modals />
@@ -115,16 +115,16 @@ You can also pass in a `label`, `icon`, `color`, `size`, `tooltip`, and `dropdow
 <div>
     <x-filament-actions::group
         :actions="[
-            $this->edit,
-            $this->view,
-            $this->delete,
+            $this->editAction,
+            $this->viewAction,
+            $this->deleteAction,
         ]"
         label="Actions"
         icon="heroicon-m-ellipsis-vertical"
         color="primary"
         size="md"
         tooltip="More actions"
-        dropdown-placement="bottom-end"
+        dropdown-placement="bottom-start"
     />
     
     <x-filament-actions::modals />

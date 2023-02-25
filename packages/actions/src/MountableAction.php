@@ -21,6 +21,7 @@ abstract class MountableAction extends StaticAction
     use Concerns\HasArguments;
     use Concerns\HasForm;
     use Concerns\HasGroupedIcon;
+    use Concerns\HasInfolist;
     use Concerns\HasKeyBindings;
     use Concerns\HasLifecycleHooks;
     use Concerns\HasTooltip;

@@ -21,24 +21,24 @@
         $relationManagers = $this->getRelationManagers();
     @endphp
 
-    @if ((! $this->hasCombinedRelationManagerTabsWithForm()) || (! count($relationManagers)))
+    @if ((! $this->hasCombinedRelationManagerTabsWithContent()) || (! count($relationManagers)))
         {{ $form() }}
     @endif
 
     @if (count($relationManagers))
-        @if (! $this->hasCombinedRelationManagerTabsWithForm())
+        @if (! $this->hasCombinedRelationManagerTabsWithContent())
             <x-filament::hr />
         @endif
 
         <x-filament::resources.relation-managers
             :active-manager="$activeRelationManager"
-            :form-tab-label="$this->getFormTabLabel()"
+            :content-tab-label="$this->getContentTabLabel()"
             :managers="$relationManagers"
             :owner-record="$record"
             :page-class="static::class"
         >
-            @if ($this->hasCombinedRelationManagerTabsWithForm())
-                <x-slot name="form">
+            @if ($this->hasCombinedRelationManagerTabsWithContent())
+                <x-slot name="content">
                     {{ $form() }}
                 </x-slot>
             @endif

@@ -2,13 +2,13 @@
 
 namespace Filament\Commands;
 
-use Arr;
 use Filament\Context;
 use Filament\Facades\Filament;
 use Filament\Support\Commands\Concerns\CanIndentStrings;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
+use Illuminate\Support\Arr;
 
 class MakeRelationManagerCommand extends Command
 {
@@ -70,7 +70,7 @@ class MakeRelationManagerCommand extends Command
             ->replace('\\', '/')
             ->append('.php');
 
-        if (! $this->hasOption('force') && $this->checkForCollision([
+        if (! $this->option('force') && $this->checkForCollision([
             $path,
         ])) {
             return static::INVALID;

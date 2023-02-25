@@ -43,6 +43,11 @@ trait HasFormSchema
         return [$field];
     }
 
+    public function hasFormSchema(): bool
+    {
+        return $this->evaluate($this->formSchema) !== null;
+    }
+
     public function getFormField(): ?Field
     {
         return null;

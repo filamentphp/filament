@@ -5,14 +5,21 @@
         @endphp
 
         <x-filament::modal
-            id="page-action"
+            :id="$this->id . '-action'"
             :wire:key="$action ? $this->id . '.actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
             :slide-over="$action?->isModalSlideOver()"
+            :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
-            x-init="this.livewire = $wire.__instance"
-            x-on:modal-closed.stop="if ('mountedFormComponentAction' in this.livewire?.serverMemo.data) this.livewire.set('mountedAction', null)"
+            x-init="livewire = $wire.__instance"
+            x-on:modal-closed.stop="
+                const mountedActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedActionShouldOpenModal()) }}
+
+                if (mountedActionShouldOpenModal && 'mountedAction' in livewire?.serverMemo.data) {
+                    livewire.set('mountedAction', null)
+                }
+            "
         >
             @if ($action)
                 @if ($action->isModalCentered())
@@ -45,7 +52,9 @@
 
                 {{ $action->getModalContent() }}
 
-                @if ($this->mountedActionHasForm())
+                @if (count(($infolist = $action->getInfolist())?->getComponents() ?? []))
+                    {{ $infolist }}
+                @elseif ($this->mountedActionHasForm())
                     {{ $this->getMountedActionForm() }}
                 @endif
 
@@ -81,15 +90,18 @@
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
             :slide-over="$action?->isModalSlideOver()"
+            :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
-            x-init="this.livewire = $wire.__instance"
+            x-init="livewire = $wire.__instance"
             x-on:modal-closed.stop="
-                if ('mountedTableAction' in this.livewire?.serverMemo.data) {
-                    this.livewire.set('mountedTableAction', null)
+                const mountedTableActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableActionShouldOpenModal()) }}
+
+                if (mountedTableActionShouldOpenModal && 'mountedTableAction' in livewire?.serverMemo.data) {
+                    livewire.set('mountedTableAction', null)
                 }
 
-                if ('mountedTableActionRecord' in this.livewire?.serverMemo.data) {
-                    this.livewire.set('mountedTableActionRecord', null)
+                if (mountedTableActionShouldOpenModal && 'mountedTableActionRecord' in livewire?.serverMemo.data) {
+                    livewire.set('mountedTableActionRecord', null)
                 }
             "
         >
@@ -124,7 +136,9 @@
 
                 {{ $action->getModalContent() }}
 
-                @if ($this->mountedTableActionHasForm())
+                @if (count(($infolist = $action->getInfolist())?->getComponents() ?? []))
+                    {{ $infolist }}
+                @elseif ($this->mountedTableActionHasForm())
                     {{ $this->getMountedTableActionForm() }}
                 @endif
 
@@ -154,9 +168,16 @@
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
             :slide-over="$action?->isModalSlideOver()"
+            :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
-            x-init="this.livewire = $wire.__instance"
-            x-on:modal-closed.stop="if ('mountedTableBulkAction' in this.livewire?.serverMemo.data) this.livewire.set('mountedTableBulkAction', null)"
+            x-init="livewire = $wire.__instance"
+            x-on:modal-closed.stop="
+                const mountedTableBulkActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableBulkActionShouldOpenModal()) }}
+
+                if (mountedTableBulkActionShouldOpenModal && 'mountedTableBulkAction' in livewire?.serverMemo.data) {
+                    livewire.set('mountedTableBulkAction', null)
+                }
+            "
         >
             @if ($action)
                 @if ($action->isModalCentered())
@@ -189,7 +210,9 @@
 
                 {{ $action->getModalContent() }}
 
-                @if ($this->mountedTableBulkActionHasForm())
+                @if (count(($infolist = $action->getInfolist())?->getComponents() ?? []))
+                    {{ $infolist }}
+                @elseif ($this->mountedTableBulkActionHasForm())
                     {{ $this->getMountedTableBulkActionForm() }}
                 @endif
 
@@ -225,9 +248,16 @@
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
             :slide-over="$action?->isModalSlideOver()"
+            :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
-            x-init="this.livewire = $wire.__instance"
-            x-on:modal-closed.stop="if ('mountedFormComponentAction' in this.livewire?.serverMemo.data) this.livewire.set('mountedFormComponentAction', null)"
+            x-init="livewire = $wire.__instance"
+            x-on:modal-closed.stop="
+                const mountedFormComponentActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedFormComponentActionShouldOpenModal()) }}
+
+                if (mountedFormComponentActionShouldOpenModal && 'mountedFormComponentAction' in livewire?.serverMemo.data) {
+                    livewire.set('mountedFormComponentAction', null)
+                }
+            "
         >
             @if ($action)
                 @if ($action->isModalCentered())
@@ -260,7 +290,9 @@
 
                 {{ $action->getModalContent() }}
 
-                @if ($this->mountedFormComponentActionHasForm())
+                @if (count(($infolist = $action->getInfolist())?->getComponents() ?? []))
+                    {{ $infolist }}
+                @elseif ($this->mountedFormComponentActionHasForm())
                     {{ $this->getMountedFormComponentActionForm() }}
                 @endif
 

@@ -2,6 +2,8 @@
 
 namespace Filament\Navigation;
 
+use Closure;
+
 class MenuItem
 {
     protected ?string $color = null;
@@ -12,7 +14,7 @@ class MenuItem
 
     protected ?int $sort = null;
 
-    protected ?string $url = null;
+    protected string | Closure | null $url = null;
 
     final public function __construct()
     {
@@ -51,7 +53,7 @@ class MenuItem
         return $this;
     }
 
-    public function url(?string $url): static
+    public function url(string | Closure | null $url): static
     {
         $this->url = $url;
 
@@ -80,6 +82,6 @@ class MenuItem
 
     public function getUrl(): ?string
     {
-        return $this->url;
+        return value($this->url);
     }
 }

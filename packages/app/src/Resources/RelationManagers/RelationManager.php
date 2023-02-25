@@ -4,6 +4,7 @@ namespace Filament\Resources\RelationManagers;
 
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
@@ -29,6 +30,10 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     protected static string $relationship;
 
     protected static ?string $title = null;
+
+    protected static ?string $icon = null;
+
+    protected static ?string $badge = null;
 
     /**
      * @var view-string
@@ -162,6 +167,7 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     {
         $action
             ->authorize(static fn (RelationManager $livewire, Model $record): bool => (! $livewire->isReadOnly()) && $livewire->canView($record))
+            ->infolist(fn (Infolist $infolist): Infolist => $this->infolist($infolist->columns(2)))
             ->form(fn (Form $form): Form => $this->form($form->columns(2)));
     }
 
@@ -237,7 +243,7 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
         return static::$shouldIgnorePolicies;
     }
 
-    public static function canViewForRecord(Model $ownerRecord): bool
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
         if (static::shouldIgnorePolicies()) {
             return true;
@@ -265,6 +271,11 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
         return $form;
     }
 
+    public function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist;
+    }
+
     public function getInverseRelationshipName(): ?string
     {
         return static::$inverseRelationship;
@@ -283,6 +294,16 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     public function table(Table $table): Table
     {
         return $table;
+    }
+
+    public static function getIcon(Model $ownerRecord, string $pageClass): ?string
+    {
+        return static::$icon;
+    }
+
+    public static function getBadge(Model $ownerRecord, string $pageClass): ?string
+    {
+        return static::$badge;
     }
 
     public static function getRelationshipName(): string
@@ -440,7 +461,7 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     {
         return $this->makeBaseTable()
             ->query($this->getTableQuery())
-            ->relationship($this->getRelationship())
+            ->relationship(fn (): Relation | Builder => $this->getRelationship())
             ->inverseRelationship(static::getInverseRelationshipName())
             ->heading($this->getTableHeading() ?? static::getTitle($this->ownerRecord, $this->pageClass))
             ->modelLabel(static::getModelLabel())

@@ -333,63 +333,6 @@ By default, Filament will generate a URL based on the name of the resource. You 
 protected static ?string $slug = 'pending-orders';
 ```
 
-## Multi-tenancy
-
-Multi-tenancy, simply, is the concept of users "owning" records, and only being able to access the records that they own within Filament.
-
-### Simple multi-tenancy from scratch
-
-Simple multi-tenancy is easy to set up with Filament.
-
-First, scope the [base Eloquent query](#customizing-the-eloquent-query) for every "owned" resource by defining the `getEloquentQuery()` method:
-
-```php
-public static function getEloquentQuery(): Builder
-{
-    return parent::getEloquentQuery()->whereBelongsTo(auth()->user());
-}
-```
-
-In this example we use `whereBelongsTo()` to scope the records to only those that belong to the currently authenticated user. However, you may use whatever Eloquent method you wish here, including a manual `where()` clause, or a [scope](https://laravel.com/docs/eloquent#local-scopes).
-
-Finally, you need to ensure that records are attached to the current user when they are first created. The easiest way to do this is through a [model observer](https://laravel.com/docs/eloquent#observers):
-
-```php
-public function creating(Post $post): void
-{
-    $post->user()->associate(auth()->user());
-}
-```
-
-Additionally, you may want to scope the options available in the [relation manager](relation-managers) `AttachAction` or `AssociateAction`:
-
-```php
-use Filament\Tables\Actions\AttachAction;
-use Illuminate\Database\Eloquent\Builder;
-
-AttachAction::make()
-    ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
-```
-
-### `stancl/tenancy`
-
-To set up [`stancl/tenancy`](https://tenancyforlaravel.com/docs) to work with Filament, you just need to add the `InitializeTenancyByDomain::class` middleware to [Livewire](https://tenancyforlaravel.com/docs/v3/integrations/livewire) and the [configuration](../configuration):
-
-```php
-use Filament\Context;
-use Stancl\Tenancy\Middleware\InitializeTenancyByDomain;
-
-public function context(Context $context): Context
-{
-    return $context
-        // ...
-        ->middleware([
-            // ...
-            InitializeTenancyByDomain::class,
-        ]);
-}
-```
-
 ## Deleting pages
 
 If you'd like to delete a page from your resource, you can just delete the page file from the `Pages` directory of your resource, and its entry in the `getPages()` method.

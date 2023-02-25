@@ -15,8 +15,10 @@ trait HasWeight
         return $this;
     }
 
-    public function getWeight(): ?string
+    public function getWeight(mixed $state): ?string
     {
-        return $this->evaluate($this->weight);
+        return $this->evaluate($this->weight, [
+            'state' => $state,
+        ]);
     }
 }

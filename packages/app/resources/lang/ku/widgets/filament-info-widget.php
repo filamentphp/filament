@@ -5,11 +5,11 @@ return [
     'buttons' => [
 
         'visit_documentation' => [
-            'label' => 'دۆکیومێنتەیشن',
+            'label' => 'پەڕگەی یارماتیدەر',
         ],
 
         'visit_github' => [
-            'label' => 'گیتهەب',
+            'label' => 'گیت هەب',
         ],
 
     ],

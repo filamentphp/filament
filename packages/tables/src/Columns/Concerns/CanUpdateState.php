@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 
 trait CanUpdateState
 {
@@ -45,7 +44,7 @@ trait CanUpdateState
         ) {
             $record = $record->{$tableRelationship->getPivotAccessor()};
         } else {
-            $columnName = (string) Str::of($columnName)->replace('.', '->');
+            $columnName = (string) str($columnName)->replace('.', '->');
         }
 
         if (! ($record instanceof Model)) {

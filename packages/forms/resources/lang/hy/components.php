@@ -16,11 +16,11 @@ return [
                 'label' => 'Ջնջել',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Իջեցնել',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Բարձրացնել',
             ],
 
@@ -103,11 +103,11 @@ return [
                 'label' => 'Ջնջել',
             ],
 
-            'movedown' => [
+            'move_down' => [
                 'label' => 'Իջեցնել',
             ],
 
-            'moveup' => [
+            'move_up' => [
                 'label' => 'Բարձրացնել',
             ],
 

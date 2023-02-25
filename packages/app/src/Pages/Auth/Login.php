@@ -83,7 +83,8 @@ class Login extends CardPage
                     ->label(__('filament::pages/auth/login.fields.email.label'))
                     ->email()
                     ->required()
-                    ->autocomplete(),
+                    ->autocomplete()
+                    ->autofocus(),
                 TextInput::make('password')
                     ->label(__('filament::pages/auth/login.fields.password.label'))
                     ->hint(filament()->hasPasswordReset() ? new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()"> {{ __(\'filament::pages/auth/login.buttons.request_password_reset.label\') }}</x-filament::link>')) : null)

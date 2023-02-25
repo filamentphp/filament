@@ -98,7 +98,7 @@
         type="hidden"
         value='{{
             collect($getChildComponentContainer()->getComponents())
-                ->filter(static fn (\Filament\Forms\Components\Wizard\Step $step): bool => ! $step->isHidden())
+                ->filter(static fn (\Filament\Forms\Components\Wizard\Step $step): bool => $step->isVisible())
                 ->map(static fn (\Filament\Forms\Components\Wizard\Step $step) => $step->getId())
                 ->values()
                 ->toJson()
@@ -133,7 +133,7 @@
                     ></div>
 
                     <div class="flex items-center gap-3 px-5 py-4 text-sm font-medium">
-                        <div class="flex-shrink-0">
+                        <div class="shrink-0">
                             <div
                                 x-bind:class="{
                                     'bg-primary-600': getStepIndex(step) > {{ $loop->index }},
@@ -149,7 +149,7 @@
                                     color="text-white"
                                     size="h-5 w-5"
                                     x-show="getStepIndex(step) > {{ $loop->index }}"
-                                    x-cloak=""
+                                    x-cloak="x-cloak"
                                 />
 
                                 @if ($icon = $step->getIcon())
@@ -158,7 +158,7 @@
                                         alias="filament-forms::components.wizard.current-step"
                                         size="h-5 w-5"
                                         x-show="getStepIndex(step) <= {{ $loop->index }}"
-                                        x-cloak=""
+                                        x-cloak="x-cloak"
                                         x-bind:class="{
                                             'text-gray-500 dark:text-gray-400': getStepIndex(step) !== {{ $loop->index }},
                                             'text-primary-500': getStepIndex(step) === {{ $loop->index }},
@@ -219,7 +219,7 @@
             <x-filament::button
                 :icon="$previousArrowIcon"
                 x-show="! isFirstStep()"
-                x-cloak=""
+                x-cloak="x-cloak"
                 x-on:click="previousStep"
                 color="gray"
                 size="sm"
@@ -237,7 +237,7 @@
                 :icon="$nextArrowIcon"
                 icon-position="after"
                 x-show="! isLastStep()"
-                x-cloak=""
+                x-cloak="x-cloak"
                 x-on:click="$wire.dispatchFormEvent('wizard::nextStep', '{{ $statePath }}', getStepIndex(step))"
                 size="sm"
             >

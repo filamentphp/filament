@@ -1,16 +1,40 @@
+@php
+    $state = $getState();
+@endphp
+
 <div
     x-data="{
         error: undefined,
-        state: @js((bool) $getState()),
-        isLoading: false
+        state: @js((bool) $state),
+        isLoading: false,
     }"
     x-init="
         $watch('state', () => $refs.button.dispatchEvent(new Event('change')))
+
+        Livewire.hook('message.processed', (component) => {
+            if (component.component.id !== @js($this->id)) {
+                return
+            }
+
+            let newState = $refs.newState.value === '1' ? true : false
+
+            if (state === newState) {
+                return
+            }
+
+            state = newState
+        })
     "
     {{ $attributes->merge($getExtraAttributes(), escape: false)->class([
         'filament-tables-toggle-column',
     ]) }}
 >
+    <input
+        type="hidden"
+        value="{{ $state ? 1 : 0 }}"
+        x-ref="newState"
+    />
+
     @php
         $offColor = $getOffColor();
         $onColor = $getOnColor();
@@ -51,8 +75,9 @@
             (isLoading ? ' opacity-70 pointer-events-none' : '')
         "
         @disabled($isDisabled())
+        wire:ignore.self
         type="button"
-        class="relative inline-flex shrink-0 ml-4 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none disabled:opacity-70 disabled:pointer-events-none"
+        class="relative inline-flex shrink-0 ml-4 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 outline-none disabled:opacity-70 disabled:pointer-events-none"
     >
         <span
             class="pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 ease-in-out transition duration-200"
@@ -110,7 +135,7 @@
                             default => $onColor,
                         }"
                         size="h-3 w-3"
-                        x-cloak=""
+                        x-cloak="x-cloak"
                     />
                 @endif
             </span>

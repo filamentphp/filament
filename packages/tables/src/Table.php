@@ -146,7 +146,7 @@ class Table extends ViewComponent
     protected array $groups = [];
 
     /**
-     * @var array<string, BulkAction>
+     * @var array<string, BulkAction | ActionGroup>
      */
     protected array $groupedBulkActions = [];
 
@@ -168,6 +168,8 @@ class Table extends ViewComponent
     protected string | Closure | null $inverseRelationship = null;
 
     protected bool | Closure $isGroupsOnly = false;
+
+    protected bool | Closure $isLoadingDeferred = false;
 
     protected bool | Closure $isPaginated = true;
 
@@ -213,11 +215,13 @@ class Table extends ViewComponent
 
     protected string | Closure | null $recordUrl = null;
 
-    protected Relation | Closure | null $relationship = null;
+    protected ?Closure $getRelationshipUsing = null;
 
     protected string | Closure | null $reorderColumn = null;
 
     protected bool | Closure | null $selectsCurrentPageOnly = false;
+
+    protected bool | Closure $shouldDeselectAllRecordsWhenFiltered = true;
 
     public static string $defaultDateDisplayFormat = 'M j, Y';
 
@@ -232,7 +236,10 @@ class Table extends ViewComponent
 
     public static function make(HasTable $livewire): static
     {
-        return app(static::class, ['livewire' => $livewire]);
+        $static = app(static::class, ['livewire' => $livewire]);
+        $static->configure();
+
+        return $static;
     }
 
     /**
@@ -312,18 +319,36 @@ class Table extends ViewComponent
     }
 
     /**
-     * @param  array<BulkAction>  $actions
+     * @param  array<BulkAction | ActionGroup>  $actions
      */
-    public function bulkActions(array $actions): static
+    public function bulkActions(array | ActionGroup $actions): static
     {
-        foreach ($actions as $action) {
+        foreach (Arr::wrap($actions) as $index => $action) {
+            if ($action instanceof ActionGroup) {
+                foreach ($action->getActions() as $groupedAction) {
+                    if (! $groupedAction instanceof BulkAction) {
+                        throw new InvalidArgumentException('Table bulk actions must be an instance of ' . BulkAction::class . '.');
+                    }
+
+                    $groupedAction->table($this);
+                    $this->registerBulkAction($groupedAction);
+                }
+
+                $action->dropdownPlacement('right-top');
+                $action->grouped();
+                $this->groupedBulkActions[$index] = $action;
+
+                continue;
+            }
+
             if (! $action instanceof BulkAction) {
                 throw new InvalidArgumentException('Table bulk actions must be an instance of ' . BulkAction::class . '.');
             }
 
             $action->table($this);
+
             $this->registerBulkAction($action);
-            $this->groupedBulkActions[$action->getName()] = $action;
+            $this->groupedBulkActions[$index] = $action;
         }
 
         return $this;
@@ -471,6 +496,13 @@ class Table extends ViewComponent
         return $this;
     }
 
+    public function deselectAllRecordsWhenFiltered(bool | Closure $condition = true): static
+    {
+        $this->shouldDeselectAllRecordsWhenFiltered = $condition;
+
+        return $this;
+    }
+
     public function emptyStateDescription(string | Htmlable | Closure | null $description): static
     {
         $this->emptyStateDescription = $description;
@@ -486,9 +518,9 @@ class Table extends ViewComponent
     }
 
     /**
-     * @param  array<Action | ActionGroup> | ActionGroup | Closure  $actions
+     * @param  array<Action | ActionGroup> | ActionGroup  $actions
      */
-    public function emptyStateActions(array | ActionGroup | Closure $actions): static
+    public function emptyStateActions(array | ActionGroup $actions): static
     {
         foreach ($actions as $action) {
             if (! $action instanceof Action) {
@@ -581,9 +613,9 @@ class Table extends ViewComponent
     }
 
     /**
-     * @param  array<Action | BulkAction | ActionGroup> | ActionGroup | Closure  $actions
+     * @param  array<Action | BulkAction | ActionGroup> | ActionGroup  $actions
      */
-    public function headerActions(array | ActionGroup | Closure $actions, string | Closure | null $position = null): static
+    public function headerActions(array | ActionGroup $actions, string | Closure | null $position = null): static
     {
         foreach (Arr::wrap($actions) as $index => $action) {
             if ($action instanceof ActionGroup) {
@@ -626,6 +658,13 @@ class Table extends ViewComponent
     public function heading(string | Htmlable | Closure | null $heading): static
     {
         $this->heading = $heading;
+
+        return $this;
+    }
+
+    public function deferLoading(bool | Closure $condition = true): static
+    {
+        $this->isLoadingDeferred = $condition;
 
         return $this;
     }
@@ -770,9 +809,9 @@ class Table extends ViewComponent
         return $this;
     }
 
-    public function relationship(Relation | Closure | null $relationship): static
+    public function relationship(?Closure $relationship): static
     {
-        $this->relationship = $relationship;
+        $this->getRelationshipUsing = $relationship;
 
         return $this;
     }
@@ -910,7 +949,7 @@ class Table extends ViewComponent
     }
 
     /**
-     * @return array<string, BulkAction>
+     * @return array<string, BulkAction | ActionGroup>
      */
     public function getGroupedBulkActions(): array
     {
@@ -948,7 +987,7 @@ class Table extends ViewComponent
     {
         return array_filter(
             $this->getColumns(),
-            fn (Column $column): bool => (! $column->isHidden()) && (! $column->isToggledHidden()),
+            fn (Column $column): bool => $column->isVisible() && (! $column->isToggledHidden()),
         );
     }
 
@@ -1120,7 +1159,7 @@ class Table extends ViewComponent
     {
         return array_filter(
             $this->filters,
-            fn (BaseFilter $filter): bool => ! $filter->isHidden(),
+            fn (BaseFilter $filter): bool => $filter->isVisible(),
         );
     }
 
@@ -1344,7 +1383,7 @@ class Table extends ViewComponent
     {
         return (bool) count(array_filter(
             $this->getBulkActions(),
-            fn (BulkAction $action): bool => ! $action->isHidden(),
+            fn (BulkAction $action): bool => $action->isVisible(),
         ));
     }
 
@@ -1409,7 +1448,7 @@ class Table extends ViewComponent
 
     public function getRelationship(): Relation | Builder | null
     {
-        return $this->evaluate($this->relationship);
+        return $this->evaluate($this->getRelationshipUsing);
     }
 
     public function getInverseRelationship(): ?string
@@ -1566,5 +1605,25 @@ class Table extends ViewComponent
     public function checksIfRecordIsSelectable(): bool
     {
         return $this->checkIfRecordIsSelectableUsing !== null;
+    }
+
+    public function isLoaded(): bool
+    {
+        return $this->getLivewire()->isTableLoaded();
+    }
+
+    public function isLoadingDeferred(): bool
+    {
+        return (bool) $this->evaluate($this->isLoadingDeferred);
+    }
+
+    public function hasColumnSearches(): bool
+    {
+        return $this->getLivewire()->hasTableColumnSearches();
+    }
+
+    public function shouldDeselectAllRecordsWhenFiltered(): bool
+    {
+        return (bool) $this->evaluate($this->shouldDeselectAllRecordsWhenFiltered);
     }
 }

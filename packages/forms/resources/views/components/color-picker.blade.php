@@ -48,7 +48,7 @@
                                 'type' => 'text',
                             ], escape: false)
                             ->class([
-                                'text-gray-900 block w-full transition duration-75 shadow-sm sm:text-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
+                                'text-gray-900 block w-full transition duration-75 shadow-sm outline-none sm:text-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
                                 'border-gray-300 dark:border-gray-600' => ! $errors->has($statePath),
                                 'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($statePath),
                                 'rounded-l-lg' => ! ($getPrefixLabel() || $getPrefixIcon()),

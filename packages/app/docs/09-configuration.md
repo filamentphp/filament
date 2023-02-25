@@ -58,44 +58,6 @@ public function context(Context $context): Context
 }
 ```
 
-## Authentication features
-
-You can easily enable authentication features for a context in the configuration file:
-
-```php
-use Filament\Context;
-
-public function context(Context $context): Context
-{
-    return $context
-        // ...
-        ->login()
-        ->registration()
-        ->passwordReset()
-        ->emailVerification();
-}
-```
-
-### Customizing the authentication features
-
-If you'd like to replace these pages with your own, you can pass in a "route action" to any of these methods.
-
-A route action could be a callback function that gets executed when you visit the page, or the name of a controller, or a Livewire component - anything that works when using `Route::get()` in Laravel normally.
-
-Most people will be able to make their desired customizations by extending the default Livewire class from the Filament codebase, overriding methods like `form()`, and then passing the new Livewire class in as the route action:
-
-```php
-use App\Http\Livewire\Auth\Login;
-use Filament\Context;
-
-public function context(Context $context): Context
-{
-    return $context
-        // ...
-        ->login(Login::class);
-}
-```
-
 ## Render hooks
 
 Filament allows you to render Blade content at various points in the app layout. This is useful for integrations with packages like [`wire-elements/modal`](https://github.com/wire-elements/modal) which require you to add a Livewire component to your app.

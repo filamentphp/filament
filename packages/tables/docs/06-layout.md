@@ -256,6 +256,20 @@ use Filament\Tables\Columns\TextColumn;
 ]
 ```
 
+You can expand a panel by default using the `collapsed(false)` method:
+
+```php
+use Filament\Tables\Columns\Layout\Panel;
+use Filament\Tables\Columns\TextColumn;
+
+Panel::make([
+    Stack::make([
+        TextColumn::make('email'),
+        TextColumn::make('phone'),
+    ]),
+])->collapsed(false)
+```
+
 ![Collapsible content](https://user-images.githubusercontent.com/41773797/191834045-e423afd4-1ad3-4636-8635-fe9453423555.png)
 
 ### Adding a collapse animation

@@ -14,6 +14,7 @@ jobs:
           - actions
           - app
           - forms
+          - infolists
           - notifications
           - spark-billing-provider
           - spatie-laravel-google-fonts-plugin
@@ -29,14 +30,14 @@ jobs:
       - id: previous-tag
         uses: 'WyriHaximus/github-action-get-previous-tag@master'
       - name: Monorepo Split of ${{ matrix.package }}
-        uses: symplify/github-action-monorepo-split@02755d9ac89929afb8d5aacff142fda76075e507
+        uses: danharrin/monorepo-split-github-action@v2.3.0
         env:
           GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         with:
           package_directory: 'packages/${{ matrix.package }}'
           repository_organization: 'filamentphp'
           repository_name: '${{ matrix.package }}'
-          branch: 2.x
+          branch: 3.x
           tag: ${{ steps.previous-tag.outputs.tag }}
           user_name: 'Dan Harrin'
-          user_email: 'dan@danharrin.com'
+          user_email: 'git@danharrin.com'

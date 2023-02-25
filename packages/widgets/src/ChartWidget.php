@@ -2,6 +2,8 @@
 
 namespace Filament\Widgets;
 
+use Filament\Support\RawJs;
+
 abstract class ChartWidget extends Widget
 {
     use Concerns\CanPoll;
@@ -13,9 +15,13 @@ abstract class ChartWidget extends Widget
 
     public string $dataChecksum;
 
+    public bool $hasFilterLoadingIndicator = true;
+
     public ?string $filter = null;
 
     protected static ?string $heading = null;
+
+    protected static ?string $subheading = null;
 
     protected static ?string $maxHeight = null;
 
@@ -70,15 +76,20 @@ abstract class ChartWidget extends Widget
         return static::$heading;
     }
 
+    public function getSubheading(): ?string
+    {
+        return static::$subheading;
+    }
+
     protected function getMaxHeight(): ?string
     {
         return static::$maxHeight;
     }
 
     /**
-     * @return array<string, mixed> | null
+     * @return array<string, mixed> | RawJs | null
      */
-    protected function getOptions(): ?array
+    protected function getOptions(): array | RawJs | null
     {
         return static::$options;
     }

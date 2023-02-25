@@ -5,13 +5,23 @@ namespace Filament\Tables\Columns;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
-class SpatieTagsColumn extends TagsColumn
+class SpatieTagsColumn extends TextColumn
 {
     protected ?string $type = null;
 
-    public function getTags(): array
+    protected function setUp(): void
     {
-        $state = $this->getState();
+        parent::setUp();
+
+        $this->badge();
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getState(): array
+    {
+        $state = parent::getState();
 
         if ($state && (! $state instanceof Collection)) {
             return $state;

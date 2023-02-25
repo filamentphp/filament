@@ -8,16 +8,20 @@ use Illuminate\View\ComponentAttributeBag;
 trait HasExtraAlpineAttributes
 {
     /**
-     * @var array<mixed> | Closure
+     * @var array<array<mixed> | Closure>
      */
-    protected array | Closure $extraAlpineAttributes = [];
+    protected array $extraAlpineAttributes = [];
 
     /**
      * @param  array<mixed> | Closure  $attributes
      */
-    public function extraAlpineAttributes(array | Closure $attributes): static
+    public function extraAlpineAttributes(array | Closure $attributes, bool $merge = false): static
     {
-        $this->extraAlpineAttributes = array_merge($this->extraAlpineAttributes, $attributes);
+        if ($merge) {
+            $this->extraAlpineAttributes[] = $attributes;
+        } else {
+            $this->extraAlpineAttributes = [$attributes];
+        }
 
         return $this;
     }
@@ -27,7 +31,13 @@ trait HasExtraAlpineAttributes
      */
     public function getExtraAlpineAttributes(): array
     {
-        return $this->evaluate($this->extraAlpineAttributes);
+        $temporaryAttributeBag = new ComponentAttributeBag();
+
+        foreach ($this->extraAlpineAttributes as $extraAlpineAttributes) {
+            $temporaryAttributeBag = $temporaryAttributeBag->merge($this->evaluate($extraAlpineAttributes));
+        }
+
+        return $temporaryAttributeBag->getAttributes();
     }
 
     public function getExtraAlpineAttributeBag(): ComponentAttributeBag

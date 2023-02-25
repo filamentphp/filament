@@ -4,8 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'i :count više',
+        'text' => [
+            'more_list_items' => 'i :count više',
         ],
 
         'messages' => [
@@ -15,6 +15,14 @@ return [
     ],
 
     'fields' => [
+
+        'bulk_select_page' => [
+            'label' => 'Odaberi/poništi odabir svih stavki za grupne radnje.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Odaberi/poništi odabir stavke :key za grupne radnje.',
+        ],
 
         'search' => [
             'label' => 'Pretraga',
@@ -27,7 +35,7 @@ return [
 
         'label' => 'Navigacija po stranicama',
 
-        'overview' => 'Prikazivanje :first od :last od ukupno :total rezultata',
+        'overview' => '{1} Prikazuje 1 rezultat|[2,*]Prikazivanje :first od :last od ukupno :total rezultata',
 
         'fields' => [
 

@@ -121,6 +121,16 @@ class FilamentManager
         return $this->getCurrentContext()->getTenantModel();
     }
 
+    public function getTenantOwnershipRelationshipName(): string
+    {
+        return $this->getCurrentContext()->getTenantOwnershipRelationshipName();
+    }
+
+    public function hasTopNavigation(): bool
+    {
+        return $this->getCurrentContext()->hasTopNavigation();
+    }
+
     public function getRoutableTenant(): ?Model
     {
         if (! $this->getCurrentContext()->hasRoutableTenancy()) {
@@ -523,9 +533,9 @@ class FilamentManager
         return $this->getCurrentContext()->getFontHtml();
     }
 
-    public function getFontName(): string
+    public function getFontFamily(): string
     {
-        return $this->getCurrentContext()->getFontName();
+        return $this->getCurrentContext()->getFontFamily();
     }
 
     public function getFontProvider(): string

@@ -48,6 +48,8 @@ class BaseFileUpload extends Field
 
     protected bool | Closure $shouldMoveFile = false;
 
+    protected bool | Closure $shouldStoreFile = true;
+
     protected string | Closure | null $fileNamesStatePath = null;
 
     protected string | Closure $visibility = 'public';
@@ -101,7 +103,7 @@ class BaseFileUpload extends Field
             $component->saveUploadedFiles();
         });
 
-        $this->dehydrateStateUsing(static function (BaseFileUpload $component, ?array $state): string | array | null {
+        $this->dehydrateStateUsing(static function (BaseFileUpload $component, ?array $state): string | array | null | TemporaryUploadedFile {
             $files = array_values($state ?? []);
 
             if ($component->isMultiple()) {
@@ -349,6 +351,13 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function storeFile(bool | Closure $condition = true): static
+    {
+        $this->shouldStoreFile = $condition;
+
+        return $this;
+    }
+
     public function visibility(string | Closure | null $visibility): static
     {
         $this->visibility = $visibility;
@@ -430,7 +439,7 @@ class BaseFileUpload extends Field
 
     public function getDiskName(): string
     {
-        return $this->evaluate($this->diskName) ?? config('filament-forms.default_filesystem_disk');
+        return $this->evaluate($this->diskName) ?? config('filament.default_filesystem_disk');
     }
 
     public function getMaxSize(): ?int
@@ -456,6 +465,11 @@ class BaseFileUpload extends Field
     public function shouldMoveFile(): bool
     {
         return $this->evaluate($this->shouldMoveFile);
+    }
+
+    public function shouldStoreFile(): bool
+    {
+        return $this->evaluate($this->shouldStoreFile);
     }
 
     public function getFileNamesStatePath(): ?string
@@ -491,9 +505,10 @@ class BaseFileUpload extends Field
             $name = $this->getName();
 
             $validator = Validator::make(
-                data: [$name => $files],
-                rules: ["{$name}.*" => array_merge(['file'], parent::getValidationRules())],
-                customAttributes: ["{$name}.*" => $this->getValidationAttribute()],
+                [$name => $files],
+                ["{$name}.*" => array_merge(['file'], parent::getValidationRules())],
+                [],
+                ["{$name}.*" => $this->getValidationAttribute()],
             );
 
             if (! $validator->fails()) {
@@ -626,6 +641,10 @@ class BaseFileUpload extends Field
         if (blank($this->getState())) {
             $this->state([]);
 
+            return;
+        }
+
+        if (! $this->shouldStoreFile()) {
             return;
         }
 

@@ -30,7 +30,7 @@ abstract class Page extends BasePage
 
     public static string $formActionsAlignment = 'left';
 
-    public static bool $hasInlineFormLabels = false;
+    public static bool $hasInlineLabels = false;
 
     /**
      * @param  array<mixed>  $parameters
@@ -95,9 +95,10 @@ abstract class Page extends BasePage
         return static::$activeNavigationIcon ?? static::getNavigationIcon();
     }
 
-    public static function getNavigationIcon(): string
+    public static function getNavigationIcon(): ?string
     {
-        return static::$navigationIcon ?? 'heroicon-o-document-text';
+        return static::$navigationIcon ??
+            (filament()->hasTopNavigation() ? null : 'heroicon-o-document-text');
     }
 
     public static function getNavigationLabel(): string
@@ -220,9 +221,9 @@ abstract class Page extends BasePage
         return static::$formActionsAlignment;
     }
 
-    public function hasInlineFormLabels(): bool
+    public function hasInlineLabels(): bool
     {
-        return static::$hasInlineFormLabels;
+        return static::$hasInlineLabels;
     }
 
     public static function isDiscovered(): bool
@@ -235,8 +236,8 @@ abstract class Page extends BasePage
         static::$formActionsAlignment = $alignment;
     }
 
-    public static function inlineFormLabels(bool $condition = true): void
+    public static function inlineLabels(bool $condition = true): void
     {
-        static::$hasInlineFormLabels = $condition;
+        static::$hasInlineLabels = $condition;
     }
 }

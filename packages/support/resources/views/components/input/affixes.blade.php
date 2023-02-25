@@ -13,7 +13,7 @@
 @endphp
 
 <div {{ $attributes->class(['filament-input-affix-container flex rtl:space-x-reverse group']) }}>
-    @if ($prefixAction && (! $prefixAction->isHidden()))
+    @if ($prefixAction?->isVisible())
         <div class="self-stretch flex items-center pr-2">
             {{ $prefixAction }}
         </div>
@@ -103,7 +103,7 @@
         </span>
     @endif
 
-    @if ($suffixAction && (! $suffixAction->isHidden()))
+    @if ($suffixAction?->isVisible())
         <div class="self-stretch flex items-center pl-2">
             {{ $suffixAction }}
         </div>

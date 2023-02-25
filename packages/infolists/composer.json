@@ -1,0 +1,39 @@
+{
+    "name": "filament/infolists",
+    "description": "Effortlessly build TALL-powered description-lists (infolists).",
+    "license": "MIT",
+    "homepage": "https://github.com/filamentphp/filament",
+    "support": {
+        "issues": "https://github.com/filamentphp/filament/issues",
+        "source": "https://github.com/filamentphp/filament"
+    },
+    "require": {
+        "php": "^8.0",
+        "blade-ui-kit/blade-heroicons": "^2.0",
+        "filament/support": "self.version",
+        "illuminate/console": "^9.0|^10.0",
+        "illuminate/contracts": "^9.0|^10.0",
+        "illuminate/database": "^9.0|^10.0",
+        "illuminate/filesystem": "^9.0|^10.0",
+        "illuminate/support": "^9.0|^10.0",
+        "illuminate/view": "^9.0|^10.0",
+        "spatie/laravel-package-tools": "^1.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Filament\\Infolists\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Filament\\Infolists\\InfolistsServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

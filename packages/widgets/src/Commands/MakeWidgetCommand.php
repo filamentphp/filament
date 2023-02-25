@@ -108,7 +108,7 @@ class MakeWidgetCommand extends Command
                 ->append('.blade.php'),
         );
 
-        if (! $this->hasOption('force') && $this->checkForCollision([
+        if (! $this->option('force') && $this->checkForCollision([
             $path,
             ($this->option('stats-overview') || $this->option('chart')) ?: $viewPath,
         ])) {
@@ -164,10 +164,10 @@ class MakeWidgetCommand extends Command
             $this->copyStubToApp('WidgetView', $viewPath);
         }
 
-        $this->info("Successfully created {$widget}!");
+        $this->components->info("Successfully created {$widget}!");
 
         if ($resource !== null) {
-            $this->info("Make sure to register the widget in `{$resourceClass}::getWidgets()`, and then again in `getHeaderWidgets()` or `getFooterWidgets()` of any `{$resourceClass}` page.");
+            $this->components->info("Make sure to register the widget in `{$resourceClass}::getWidgets()`, and then again in `getHeaderWidgets()` or `getFooterWidgets()` of any `{$resourceClass}` page.");
         }
 
         return static::SUCCESS;

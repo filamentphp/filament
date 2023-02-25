@@ -2,8 +2,10 @@
 
 namespace Filament\Resources\Pages;
 
+use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
@@ -139,7 +141,29 @@ class CreateRecord extends Page
      */
     protected function handleRecordCreation(array $data): Model
     {
-        return $this->getModel()::create($data);
+        $record = new ($this->getModel())($data);
+
+        if ($tenant = Filament::getTenant()) {
+            $this->associateRecordWithTenant($record, $tenant);
+        }
+
+        $record->save();
+
+        return $record;
+    }
+
+    protected function associateRecordWithTenant(Model $record, Model $tenant): void
+    {
+        $relationshipName = Filament::getTenantOwnershipRelationshipName();
+
+        if (! $record->isRelation($relationshipName)) {
+            $pageClass = static::class;
+            $recordClass = $record::class;
+
+            throw new Exception("The model [{$recordClass}] does not have a relationship named [{$relationshipName}]. This relationship is required to associate the record with the tenant. You can change the relationship being used by passing it to the [ownershipRelationship] argument of the [tenant()] method in configuration. Alternatively, you can override the [associateRecordWithTenant()] method on the [{$pageClass}] class to associate the record with the tenant in a different way.");
+        }
+
+        $record->{$relationshipName}()->associate($tenant);
     }
 
     /**
@@ -211,8 +235,8 @@ class CreateRecord extends Page
                 ->operation('create')
                 ->model($this->getModel())
                 ->statePath('data')
-                ->columns($this->hasInlineFormLabels() ? 1 : 2)
-                ->inlineLabel($this->hasInlineFormLabels()),
+                ->columns($this->hasInlineLabels() ? 1 : 2)
+                ->inlineLabel($this->hasInlineLabels()),
         );
     }
 

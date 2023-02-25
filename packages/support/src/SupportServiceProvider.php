@@ -32,6 +32,7 @@ class SupportServiceProvider extends PackageServiceProvider
                 InstallCommand::class,
                 UpgradeCommand::class,
             ])
+            ->hasConfigFile('filament')
             ->hasTranslations()
             ->hasViews(namespace: 'filament');
     }
@@ -115,6 +116,12 @@ class SupportServiceProvider extends PackageServiceProvider
                     return "<fg=red;options=bold>PUBLISHED:</> {$publishedViewPaths->join(', ')}";
                 },
             ]);
+        }
+
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                $this->package->basePath('/../config/filament.php') => config_path('filament.php'),
+            ], 'filament-config');
         }
     }
 }

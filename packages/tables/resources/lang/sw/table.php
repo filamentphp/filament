@@ -4,8 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'na :count zaidi',
+        'text' => [
+            'more_list_items' => 'na :count zaidi',
         ],
 
         'messages' => [
@@ -15,6 +15,14 @@ return [
     ],
 
     'fields' => [
+
+        'bulk_select_page' => [
+            'label' => 'Chagua/acha kuchagua vipengee vyote kwa vitendo vingi.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Chagua/acha kuchagua kipengele :key kwa vitendo vingi.',
+        ],
 
         'search' => [
             'label' => 'Tafuta',

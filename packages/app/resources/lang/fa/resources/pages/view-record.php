@@ -6,7 +6,7 @@ return [
 
     'breadcrumb' => 'مشاهده',
 
-    'form' => [
+    'content' => [
 
         'tab' => [
             'label' => 'مشاهده',
