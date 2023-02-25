@@ -129,7 +129,7 @@ namespace Livewire\Testing {
 
         public function searchTable(?string $search = null): static {}
 
-        public function searchTableColumn(string $column, ?string $search = null): static {}
+        public function searchTableColumn(array|string $column, ?string $search = null): static {}
 
         public function filterTable(string $name, $data = null): static {}
 

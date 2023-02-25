@@ -76,6 +76,21 @@ it('can search posts with relationship', function () {
 
 it('can search individual column records with relationship', function () {
     $posts = Post::factory()->count(10)->create();
+
+    $content = $posts->first()->content;
+    $authorEmail = $posts->first()->author->email;
+
+    livewire(PostsTable::class)
+        ->searchTableColumn([
+            'content' => $content,
+            'author.email' => $authorEmail,
+        ])
+        ->assertCanSeeTableRecords($posts->where('author.email', $authorEmail))
+        ->assertCanNotSeeTableRecords($posts->where('author.email', '!=', $authorEmail));
+});
+
+it('can search multiple individual columns', function () {
+    $posts = Post::factory()->count(10)->create();
     $authorEmail = $posts->first()->author->email;
 
     livewire(PostsTable::class)
