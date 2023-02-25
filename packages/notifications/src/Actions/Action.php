@@ -24,11 +24,6 @@ class Action extends StaticAction implements Arrayable, Groupable
     use HasKeyBindings;
     use HasTooltip;
 
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-actions::link-action';
-
     protected string $viewIdentifier = 'action';
 
     protected function setUp(): void
