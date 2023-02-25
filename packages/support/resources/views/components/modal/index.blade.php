@@ -149,7 +149,7 @@
                     >
                         <x-heroicon-s-x
                             class="filament-modal-close-button h-4 w-4 cursor-pointer text-gray-400"
-                            title="__('filament-support::components/modal.actions.close.label')"
+                            :title="__('filament-support::components/modal.actions.close.label')"
                             tabindex="-1"
                         />
 
