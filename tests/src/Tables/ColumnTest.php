@@ -52,6 +52,17 @@ it('can search records', function () {
         ->assertCanNotSeeTableRecords($posts->where('title', '!=', $title));
 });
 
+it('can search individual column records', function () {
+    $posts = Post::factory()->count(10)->create();
+
+    $content = $posts->first()->content;
+
+    livewire(PostsTable::class)
+        ->searchTableColumn('content', $content)
+        ->assertCanSeeTableRecords($posts->where('content', $content))
+        ->assertCanNotSeeTableRecords($posts->where('content', '!=', $content));
+});
+
 it('can search posts with relationship', function () {
     $posts = Post::factory()->count(10)->create();
 
@@ -61,6 +72,16 @@ it('can search posts with relationship', function () {
         ->searchTable($author)
         ->assertCanSeeTableRecords($posts->where('author.name', $author))
         ->assertCanNotSeeTableRecords($posts->where('author.name', '!=', $author));
+});
+
+it('can search individual column records with relationship', function () {
+    $posts = Post::factory()->count(10)->create();
+    $authorEmail = $posts->first()->author->email;
+
+    livewire(PostsTable::class)
+        ->searchTableColumn('author.email', $authorEmail)
+        ->assertCanSeeTableRecords($posts->where('author.email', $authorEmail))
+        ->assertCanNotSeeTableRecords($posts->where('author.email', '!=', $authorEmail));
 });
 
 it('can hide a column', function () {

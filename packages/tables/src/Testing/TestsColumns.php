@@ -429,4 +429,13 @@ class TestsColumns
             return $this;
         };
     }
+
+    public function searchTableColumn(): Closure
+    {
+        return function (string $column, ?string $search = null): static {
+            $this->set('tableColumnSearchQueries', [$column => $search]);
+
+            return $this;
+        };
+    }
 }
