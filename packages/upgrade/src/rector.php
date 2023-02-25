@@ -1,9 +1,9 @@
 <?php
 
-use Filament\Upgrade\App\SimplePropertyChangesRector;
-use Filament\Upgrade\SecondaryToGrayColorRector;
 use Filament\Upgrade\App\MoveImportedClassesRector;
 use Filament\Upgrade\App\SimpleMethodChangesRector;
+use Filament\Upgrade\App\SimplePropertyChangesRector;
+use Filament\Upgrade\SecondaryToGrayColorRector;
 use Rector\Config\RectorConfig;
 use Rector\Renaming\Rector\String_\RenameStringRector;
 
