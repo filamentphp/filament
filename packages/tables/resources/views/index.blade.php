@@ -195,14 +195,14 @@
             @endif
 
             @if ($hasFiltersAboveContent)
-                <div class="px-2 pt-2" x-data="{ hasFilterAboveContentOpen: @js(! $hasFiltersAboveContentCollapsible) }">
+                <div class="px-2 pt-2" x-data="{ areFiltersOpen: @js(! $hasFiltersAboveContentCollapsible) }">
                     @if ($hasFiltersAboveContentCollapsible)
                         <div class="flex w-full justify-end">
-                            <x-tables::filters.trigger @click="hasFilterAboveContentOpen=!hasFilterAboveContentOpen" />
+                            <x-tables::filters.trigger x-on:click="areFiltersOpen = ! areFiltersOpen" />
                         </div>
                     @endif
 
-                    <div class="p-4 mb-2" x-show="hasFilterAboveContentOpen">
+                    <div class="p-4 mb-2" x-show="areFiltersOpen">
                         <x-tables::filters :form="$getFiltersForm()" />
                     </div>
 
