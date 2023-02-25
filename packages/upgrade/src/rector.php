@@ -9,12 +9,12 @@ use Rector\Renaming\Rector\String_\RenameStringRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rules([
-//        MoveImportedClassesRector::class,
-//        SecondaryToGrayColorRector::class,
+        MoveImportedClassesRector::class,
+        SecondaryToGrayColorRector::class,
         SimpleMethodChangesRector::class,
         SimplePropertyChangesRector::class,
     ]);
 
-//    $heroiconChanges = require 'heroicon-changes.php';
-//    $rectorConfig->ruleWithConfiguration(RenameStringRector::class, $heroiconChanges);
+    $heroiconChanges = require 'heroicon-changes.php';
+    $rectorConfig->ruleWithConfiguration(RenameStringRector::class, $heroiconChanges);
 };
