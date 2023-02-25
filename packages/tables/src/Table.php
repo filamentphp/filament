@@ -221,6 +221,8 @@ class Table extends ViewComponent
 
     protected bool | Closure | null $selectsCurrentPageOnly = false;
 
+    protected bool | Closure $shouldDeselectAllRecordsWhenFiltered = true;
+
     public static string $defaultDateDisplayFormat = 'M j, Y';
 
     public static string $defaultDateTimeDisplayFormat = 'M j, Y H:i:s';
@@ -490,6 +492,13 @@ class Table extends ViewComponent
     public function description(string | Htmlable | Closure | null $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    public function deselectAllRecordsWhenFiltered(bool | Closure $condition = true): static
+    {
+        $this->shouldDeselectAllRecordsWhenFiltered = $condition;
 
         return $this;
     }
@@ -1611,5 +1620,10 @@ class Table extends ViewComponent
     public function hasColumnSearches(): bool
     {
         return $this->getLivewire()->hasTableColumnSearches();
+    }
+
+    public function shouldDeselectAllRecordsWhenFiltered(): bool
+    {
+        return (bool) $this->evaluate($this->shouldDeselectAllRecordsWhenFiltered);
     }
 }

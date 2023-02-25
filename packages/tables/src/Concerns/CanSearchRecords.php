@@ -27,7 +27,7 @@ trait CanSearchRecords
             );
         }
 
-        if ($this->shouldDeselectAllRecordsWhenTableFiltered()) {
+        if ($this->getTable()->shouldDeselectAllRecordsWhenFiltered()) {
             $this->deselectAllTableRecords();
         }
 
@@ -50,7 +50,7 @@ trait CanSearchRecords
             );
         }
 
-        if ($this->shouldDeselectAllRecordsWhenTableFiltered()) {
+        if ($this->getTable()->shouldDeselectAllRecordsWhenFiltered()) {
             $this->deselectAllTableRecords();
         }
 

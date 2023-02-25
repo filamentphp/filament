@@ -21,11 +21,6 @@ trait CanSelectRecords
         $this->emitSelf('deselectAllTableRecords');
     }
 
-    public function shouldDeselectAllRecordsWhenTableFiltered(): bool
-    {
-        return true;
-    }
-
     public function getAllTableRecordKeys(): array
     {
         $query = $this->getFilteredTableQuery();
@@ -87,5 +82,13 @@ trait CanSelectRecords
     public function shouldSelectCurrentPageOnly(): bool
     {
         return $this->shouldSelectCurrentPageOnly;
+    }
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    public function shouldDeselectAllRecordsWhenTableFiltered(): bool
+    {
+        return true;
     }
 }

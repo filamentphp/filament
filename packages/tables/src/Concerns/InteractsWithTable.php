@@ -140,6 +140,7 @@ trait InteractsWithTable
             ->defaultSort($this->getDefaultTableSortColumn(), $this->getDefaultTableSortDirection())
             ->deferLoading($this->isTableLoadingDeferred())
             ->description($this->getTableDescription())
+            ->deselectAllRecordsWhenFiltered($this->shouldDeselectAllRecordsWhenTableFiltered())
             ->emptyState($this->getTableEmptyState())
             ->emptyStateActions($this->getTableEmptyStateActions())
             ->emptyStateDescription($this->getTableEmptyStateDescription())
