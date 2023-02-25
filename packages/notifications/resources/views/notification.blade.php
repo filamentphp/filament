@@ -38,7 +38,7 @@
                 'warning' => 'border-warning-500/40 bg-warning-500/10 dark:bg-warning-500/20',
                 null => 'border-transparent',
                 default => $color,
-            }
+            },
         ])
     >
         @if ($icon = $getIcon())
