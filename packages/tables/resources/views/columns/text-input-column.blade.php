@@ -13,13 +13,6 @@
         error: undefined,
         state: @js($state),
         isLoading: false,
-        update: async function(value) {
-            this.isLoading = true
-            this.response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), value)
-            this.error = response?.error ?? undefined
-            if (! this.error) this.state = response
-            this.isLoading = false
-        }
     }"
     x-init="
         Livewire.hook('message.processed', (component) => {
@@ -53,7 +46,13 @@
         {!! ($inputMode = $getInputMode()) ? "inputmode=\"{$inputMode}\"" : null !!}
         {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
         {!! ($interval = $getStep()) ? "step=\"{$interval}\"" : null !!}
-        x-on:change{{ $getType() === 'number' ? '.debounce.750ms' : null }}="update($event.target.value)"
+        x-on:change{{ $getType() === 'number' ? '.debounce.1s' : null }}="
+            isLoading = true
+            response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), $event.target.value)
+            error = response?.error ?? undefined
+            if (! error) state = response
+            isLoading = false
+        "
         :readonly="isLoading"
         x-tooltip="error"
         {{ $attributes->merge($getExtraInputAttributes())->merge($getExtraAttributes())->class([
