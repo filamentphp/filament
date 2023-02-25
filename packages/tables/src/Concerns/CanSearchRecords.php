@@ -47,7 +47,9 @@ trait CanSearchRecords
             );
         }
 
-        $this->deselectAllTableRecords();
+        if ($this->shouldDeselectAllRecordsWhenTableFiltered()) {
+            $this->deselectAllTableRecords();
+        }
 
         $this->resetPage();
     }
@@ -65,7 +67,9 @@ trait CanSearchRecords
             );
         }
 
-        $this->deselectAllTableRecords();
+        if ($this->shouldDeselectAllRecordsWhenTableFiltered()) {
+            $this->deselectAllTableRecords();
+        }
 
         $this->resetPage();
     }
