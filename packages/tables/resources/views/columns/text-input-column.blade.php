@@ -46,7 +46,7 @@
         {!! ($inputMode = $getInputMode()) ? "inputmode=\"{$inputMode}\"" : null !!}
         {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
         {!! ($interval = $getStep()) ? "step=\"{$interval}\"" : null !!}
-        x-on:change="
+        x-on:change{{ $getType() === 'number' ? '.debounce.1s' : null }}="
             isLoading = true
             response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), $event.target.value)
             error = response?.error ?? undefined
