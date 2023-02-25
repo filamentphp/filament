@@ -23,7 +23,6 @@
         'center' => 'justify-center',
         'end' => 'justify-end',
         'left' => 'justify-start rtl:flex-row-reverse',
-        'center' => 'justify-center',
         'right' => 'justify-end rtl:flex-row-reverse',
         default => null,
     },
