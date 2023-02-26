@@ -2,7 +2,7 @@
 title: Upgrading from v2.x
 ---
 
-> If you see anything missing from this guide, please do not hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/3.x/packages/notifications/docs/11-upgrade-guide.md) to our repository! Any help is appreciated!
+> If you see anything missing from this guide, please do not hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/3.x/packages/notifications/docs/07-upgrade-guide.md) to our repository! Any help is appreciated!
 
 ## New requirements
 
