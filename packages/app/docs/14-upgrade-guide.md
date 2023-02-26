@@ -134,6 +134,17 @@ The Heroicons library has been updated to v2. This means that any icons you use 
 
 ### Medium impact changes
 
+#### Date-time pickers
+
+The date-time picker form field now uses the browser's native date picker by default. It usually has a better UX than the old date picker, but you may notice features missing, bad browser compatibility, or behavioural bugs. If you want to revert to the old date picker, you can use the `native(false)` method:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::make('published_at')
+    ->native(false)
+```
+
 #### Secondary color
 
 Filament v2 had a `secondary` color for many components which was gray. Now, you can define a non-gray `secondary` color alongside `primary`. All references to `secondary` should be replaced with `gray` to preserve the same appearance.

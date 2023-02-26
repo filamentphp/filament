@@ -64,12 +64,3 @@ The Heroicons library has been updated to v2. This means that any icons you use 
 #### Secondary color
 
 Filament v2 had a `secondary` color for many components which was gray. Now, you can define a non-gray `secondary` color alongside `primary`. All references to `secondary` should be replaced with `gray` to preserve the same appearance.
-
-#### `$get` and `$set` closure parameters
-
-In the forms package, `$get` and `$set` parameters now use a type of either `\Filament\Forms\Get` or `\Filament\Forms\Set` instead of `\Closure`. This allows for better IDE autocomplete support of the parameters of each function.
-
-An easy way to upgrade your code quickly is to find and replace:
-
-- `Closure $get` to `\Filament\Forms\Get $get`
-- `Closure $set` to `\Filament\Forms\Set $set`
