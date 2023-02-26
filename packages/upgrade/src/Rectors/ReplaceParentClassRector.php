@@ -14,7 +14,7 @@ use Symplify\RuleDocGenerator\ValueObject\RuleDefinition;
 class ReplaceParentClassRector extends AbstractRector
 {
     /**
-     * @return array<class-string, class-string>
+     * @return array<string, string>
      */
     public function getChanges(): array
     {
