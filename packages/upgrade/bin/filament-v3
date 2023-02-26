@@ -1,20 +1,106 @@
 #!/usr/bin/env php
 <?php
 
+use function Termwind\{ask, render};
+
+require 'vendor/autoload.php';
+
+render(<<<'HTML'
+    <div>
+        <div class="space-y-1">
+            <div class="py-1 px-3 bg-amber-600 text-amber-50">
+                <strong>Filament v3</strong> Upgrade
+            </div>
+
+            <div>
+                Welcome to the <strong>Filament v3</strong> upgrade process!
+
+                <br />
+
+                This script will attempt to handle most of the breaking changes for you.
+
+                <br />
+
+                If you have any questions, please reach out to us on <a href="https://filamentphp.com/discord" class="underline font-bold">Discord</a> or <a href="https://github.com/filamentphp/filament/discussions/new?category=q-a" class="underline font-bold">GitHub</a>.
+            </div>
+
+            <div>
+                To begin, please ensure that you are using a version control system such as Git.
+
+                <br />
+
+                We will make changes directly to your files, and you will need to be able to revert them if something goes wrong.
+
+                <br />
+
+                <strong>Please commit any changes you have made to your project before continuing.</strong>
+            </div>
+        </div>
+
+        <br />
+    </div>
+HTML);
+
+$isReady = strtolower(trim(ask(<<<HTML
+    <span class="bg-amber-600 text-amber-50 mr-1">
+        Are you ready to continue? y/n
+    </span>
+HTML))) === 'y';
+
+if (! $isReady) {
+    render(<<<HTML
+        <p class="bg-rose-600 text-rose-50">
+            Aborting upgrade process.
+        </p>
+    HTML);
+
+    return;
+}
+
+render(<<<HTML
+    <p class="bg-green-600 text-green-50">
+        Starting upgrade...
+    </p>
+HTML);
+
 if (file_exists('config/filament-support.php')) {
     unlink('config/filament-support.php');
+
+    render(<<<HTML
+        <p>
+            Removed <strong>config/filament-support.php</strong>. All config files have been merged into <strong>config/filament.php</strong>.
+        </p>
+    HTML);
 }
 
 if (file_exists('config/forms.php')) {
     unlink('config/forms.php');
+
+    render(<<<HTML
+        <p>
+            Removed <strong>config/forms.php</strong>. All config files have been merged into <strong>config/filament.php</strong>.
+        </p>
+    HTML);
 }
 
 if (file_exists('config/notifications.php')) {
     unlink('config/notifications.php');
+
+    render(<<<HTML
+        <p>
+            Removed <stong>config/notifications.php</stong>. All config files have been merged into <strong>config/filament.php</strong>.
+        </p>
+    HTML);
 }
 
 if (file_exists('config/tables.php')) {
     unlink('config/tables.php');
+
+    render(<<<HTML
+        <p>
+            Removed <strong>config/tables.php</strong>. All config files have been merged into <strong>config/filament.php</strong>.
+        </p>
+    HTML);
 }
 
 $hasIndividualFilamentPackagesInstalled = false;
@@ -27,6 +113,12 @@ foreach (array_merge(
 
     if (str_contains($fileContents, 'filament/forms/dist/module.esm.css')) {
         $hasIndividualFilamentPackagesInstalled = true;
+
+        render(<<<HTML
+            <p>
+                Fixed path to the form builder CSS file in <strong>{$file}</strong>.
+            </p>
+        HTML);
     }
 
     $fileContents = str_replace('filament/forms/dist/module.esm.css', 'filament/forms/dist/index.css', $fileContents);
@@ -45,6 +137,12 @@ foreach (array_merge(
         str_contains($fileContents, 'NotificationsAlpinePlugin')
     ) {
         $hasIndividualFilamentPackagesInstalled = true;
+
+        render(<<<HTML
+            <p>
+                Removed Filament Alpine.js plugins from <strong>{$file}</strong>.
+            </p>
+        HTML);
     }
 
     $fileContents = preg_replace('/import FormsAlpinePlugin from \'..\/..\/vendor\/filament\/forms\/dist\/module\.esm\';?\n/', '', $fileContents);
@@ -62,6 +160,12 @@ if (file_exists('tailwind.config.js')) {
         $config = str_replace('module.exports = {', "module.exports = {\n    darkMode: 'class',", $config);
 
         file_put_contents('tailwind.config.js', $config);
+
+        render(<<<HTML
+            <p>
+                Enabled class-based dark mode in <strong>tailwind.config.js</strong> to prevent potential design inconsistencies.
+            </p>
+        HTML);
     }
 }
 
@@ -72,8 +176,31 @@ if ($hasIndividualFilamentPackagesInstalled) {
     ) as $file) {
         $fileContents = file_get_contents($file);
 
-        $fileContents = str_replace('@livewireStyles', "@livewireStyles\n        @filamentStyles", $fileContents);
-        $fileContents = str_replace('@livewireScripts', "@filamentScripts\n        @livewireScripts", $fileContents);
+        if (
+            str_contains($fileContents, '@livewireScripts') &&
+            (! str_contains($fileContents, '@filamentScripts'))
+        ) {
+            $fileContents = str_replace('@livewireScripts', "@filamentScripts\n        @livewireScripts", $fileContents);
+
+            render(<<<HTML
+                <p>
+                    Added <strong>@filamentScripts</strong> to <strong>{$file}</strong>.
+                </p>
+            HTML);
+        }
+
+        if (
+            str_contains($fileContents, '@livewireStyles') &&
+            (! str_contains($fileContents, '@filamentStyles'))
+        ) {
+            $fileContents = str_replace('@livewireStyles', "@filamentStyles\n        @livewireStyles", $fileContents);
+
+            render(<<<HTML
+                <p>
+                    Added <strong>@filamentStyles</strong> to <strong>{$file}</strong>.
+                </p>
+            HTML);
+        }
 
         file_put_contents($file, $fileContents);
     }
@@ -117,7 +244,7 @@ foreach (['.env', '.env.ci', '.env.example', '.env.testing'] as $envFile) {
     if (file_exists($envFile)) {
         $env = file_get_contents($envFile);
 
-        $env = (function (string $env) use ($getEnvValue, $hasEnvVariable, $removeEnvVariable, $renameEnvVariable, $setEnvVariable) {
+        $env = (function (string $env) use ($envFile, $getEnvValue, $hasEnvVariable, $removeEnvVariable, $renameEnvVariable, $setEnvVariable) {
             $disk = $getEnvValue($env, 'FILAMENT_FILESYSTEM_DRIVER') ??
                 $getEnvValue($env, 'FORMS_FILESYSTEM_DRIVER') ??
                 $getEnvValue($env, 'TABLES_FILESYSTEM_DRIVER');
@@ -129,6 +256,12 @@ foreach (['.env', '.env.ci', '.env.example', '.env.testing'] as $envFile) {
 
                 return $env;
             }
+
+            render(<<<HTML
+                <p>
+                    Replacing Filament <strong>FILESYSTEM_DRIVER</strong> .env variables with a single <strong>FILAMENT_FILESYSTEM_DISK</strong> in {$envFile}.
+                </p>
+            HTML);
 
             if ($hasEnvVariable($env, 'FILAMENT_FILESYSTEM_DRIVER')) {
                 $renameEnvVariable($env, 'FILAMENT_FILESYSTEM_DRIVER', 'FILAMENT_FILESYSTEM_DISK');
@@ -164,4 +297,61 @@ foreach (['.env', '.env.ci', '.env.example', '.env.testing'] as $envFile) {
 }
 
 $appDirectory = $argv[1] ?? 'app';
+
+render(<<<HTML
+    <p>
+        Start processing <strong>/{$appDirectory}</strong> to fix code affected by breaking changes.
+    </p>
+HTML);
+
 exec("vendor/bin/rector process {$appDirectory} --config vendor/filament/upgrade/src/rector.php --clear-cache");
+
+render(<<<HTML
+    <p class="pt-2">
+        Finished processing <strong>/{$appDirectory}</strong>.
+    </p>
+HTML);
+
+$requireCommands = [];
+
+foreach (json_decode(file_get_contents('composer.json'), true)['require'] as $package => $version) {
+    if (! str_starts_with($package, 'filament/')) {
+        continue;
+    }
+
+    $requireCommands[] = "composer require {$package}:\"^3.0\" --no-update";
+}
+
+$requireCommands = implode("</strong><br /><strong>", $requireCommands);
+
+render(<<<HTML
+    <div>
+        <span class="bg-green-600 text-green-50">
+            Now you're ready to update your Composer dependencies!
+        </span>
+
+        <br /> <br />
+
+        First require new versions of Filament packages:
+
+        <br />
+
+        <strong>{$requireCommands}</strong>
+
+        <br /> <br />
+
+        If you have any 3rd party plugins that need to be upgraded, you should bump those dependencies as well.
+
+        <br /> <br />
+
+        And then run:
+
+        <br />
+
+        <strong>composer update</strong>
+
+        <br /> <br />
+
+        If you have any questions, please reach out to us on <a href="https://filamentphp.com/discord" class="underline font-bold">Discord</a> or <a href="https://github.com/filamentphp/filament/discussions/new?category=q-a" class="underline font-bold">GitHub</a>.
+    </div>
+HTML);
