@@ -30,7 +30,7 @@ You can now `composer remove filament/upgrade` as you don't need it any more.
 
 ### High impact changes
 
-#### Context service provider instead of tbe config file
+#### Context service provider instead of the config file
 
 The Filament v2 config file grew pretty big, and now it is incredibly small. Most of the configuration is now done in a service provider, which providers a cleaner API, more type safety, IDE autocomplete support, and [the ability to create multiple admin panels in your app](configuration#introducing-contexts). We call these special configuration service providers **"context providers"**.
 
@@ -47,8 +47,12 @@ Most configuration transfer is very self-explanatory, but if you get stuck pleas
 Finally, you can run the following command to replace the old config file with the shiny new one:
 
 ```bash
-php artisan vendor:publish --tag=filament-config
+php artisan vendor:publish --tag=filament-config --force
 ```
+
+#### `FILAMENT_FILESYSTEM_DRIVER` .env variable
+
+The `FILAMENT_FILESYSTEM_DRIVER` .env variable has been renamed to `FILAMENT_FILESYSTEM_DISK`. This is to make it more consistent with Laravel, as Laravel 9 introduced this change as well. Please ensure that you update your .env files accordingly, and don't forget production!
 
 #### Resource and relation manager imports
 
@@ -133,6 +137,15 @@ The Heroicons library has been updated to v2. This means that any icons you use 
 #### Secondary color
 
 Filament v2 had a `secondary` color for many components which was gray. Now, you can define a non-gray `secondary` color alongside `primary`. All references to `secondary` should be replaced with `gray` to preserve the same appearance.
+
+#### `$get` and `$set` closure parameters
+
+In the forms package, `$get` and `$set` parameters now use a type of either `\Filament\Forms\Get` or `\Filament\Forms\Set` instead of `\Closure`. This allows for better IDE autocomplete support of the parameters of each function.
+
+An easy way to upgrade your code quickly is to find and replace:
+
+- `Closure $get` to `\Filament\Forms\Get $get`
+- `Closure $set` to `\Filament\Forms\Set $set`
 
 #### Blade icon components have been disabled
 
