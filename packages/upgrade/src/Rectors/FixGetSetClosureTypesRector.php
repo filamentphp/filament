@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Upgrade\Forms;
+namespace Filament\Upgrade\Rectors;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\ArrowFunction;
