@@ -18,7 +18,7 @@ trait CanEmitEvent
 
     public function emit(
         string | Closure | null $event,
-        array | Closure $data = []
+        array | Closure $data = [],
     ): static {
         $this->event = $event;
         $this->eventData = $data;
@@ -51,7 +51,7 @@ trait CanEmitEvent
 
     public function emitUp(
         string | Closure | null $event,
-        array | Closure $data = []
+        array | Closure $data = [],
     ): static {
         $this->emit($event, $data);
         $this->emitDirection = 'up';
