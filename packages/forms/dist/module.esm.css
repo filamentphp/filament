@@ -1624,7 +1624,7 @@ trix-toolbar .filament-forms-rich-editor-component-toolbar-button.trix-active {
 }
 [dir=rtl] .prose :where(ul > li):not(:where([class~="not-prose"] *)),
 [dir=rtl] .prose :where(ol > li):not(:where([class~="not-prose"] *)) {
-  padding-right: .375em !important;
+  padding-right: 0.375em !important;
   padding-left: 0em !important;
 }
 
