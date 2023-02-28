@@ -673,7 +673,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             );
         });
 
-        $this->getOptionLabelUsing(static function (Select $component) use ($callback) {
+        $this->getOptionLabelUsing(static function (Select $component) {
             $record = $component->getSelectedRecord();
 
             if (! $record) {
