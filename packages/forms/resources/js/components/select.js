@@ -130,18 +130,21 @@ export default function selectFormComponent({
                 )
             }
 
-            if (! isMultiple) {
-                window.addEventListener('filament-forms::select/refreshSelectedOptionLabel', async (event) => {
-                    if (event.detail.livewireId !== livewireId) {
-                        return
-                    }
+            if (!isMultiple) {
+                window.addEventListener(
+                    'filament-forms::select/refreshSelectedOptionLabel',
+                    async (event) => {
+                        if (event.detail.livewireId !== livewireId) {
+                            return
+                        }
 
-                    if (event.detail.statePath !== statePath) {
-                        return
-                    }
+                        if (event.detail.statePath !== statePath) {
+                            return
+                        }
 
-                    await this.refreshSelectedOption()
-                })
+                        await this.refreshSelectedOption()
+                    },
+                )
             }
 
             this.$watch('state', async () => {
