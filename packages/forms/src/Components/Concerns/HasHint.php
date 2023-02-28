@@ -54,7 +54,7 @@ trait HasHint
     }
 
     /**
-     * @param array<Action | Closure> $actions
+     * @param  array<Action | Closure>  $actions
      */
     public function hintActions(array $actions): static
     {
