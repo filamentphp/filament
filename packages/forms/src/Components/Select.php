@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
+use Livewire\Component as LivewireComponent;
 
 class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNestedRecursiveValidationRules
 {
@@ -342,6 +343,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                     'form' => $form,
                 ]);
 
+                /** @var LivewireComponent $livewire */
                 $livewire = $component->getLivewire();
                 $livewire->dispatchBrowserEvent('filament-forms::select/refreshSelectedOptionLabel', [
                     'livewireId' => $livewire->id,
