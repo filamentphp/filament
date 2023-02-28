@@ -73,6 +73,7 @@
                     isAutofocused: @js($isAutofocused()),
                     isDisabled: @js($isDisabled),
                     isMultiple: @js($isMultiple()),
+                    livewireId: @js($this->id),
                     hasDynamicOptions: @js($hasDynamicOptions()),
                     hasDynamicSearchResults: @js($hasDynamicSearchResults()),
                     loadingMessage: @js($getLoadingMessage()),
@@ -87,6 +88,7 @@
                     searchingMessage: @js($getSearchingMessage()),
                     searchPrompt: @js($getSearchPrompt()),
                     state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
+                    statePath: @js($statePath),
                 })"
                 x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                 wire:ignore

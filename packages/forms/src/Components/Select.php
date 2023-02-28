@@ -47,14 +47,16 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
     protected ?Closure $modifyCreateOptionActionUsing = null;
 
+    protected ?Closure $modifyManageOptionActionsUsing = null;
+
     /**
      * @var array<Component> | Closure | null
      */
     protected array | Closure | null $editOptionActionFormSchema = null;
 
-    protected ?Closure $getEditOptionActionFormDataUsing = null;
+    protected ?Closure $fillEditOptionActionFormUsing = null;
 
-    protected ?Closure $editOptionUsing = null;
+    protected ?Closure $updateOptionUsing = null;
 
     protected ?Closure $modifyEditOptionActionUsing = null;
 
@@ -128,8 +130,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         $this->placeholder(__('filament-forms::components.select.placeholder'));
 
         $this->suffixActions([
-            Closure::fromCallable([$this, 'getCreateOptionAction']),
             Closure::fromCallable([$this, 'getEditOptionAction']),
+            Closure::fromCallable([$this, 'getCreateOptionAction']),
         ]);
     }
 
@@ -148,6 +150,13 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     public function createOptionAction(?Closure $callback): static
     {
         $this->modifyCreateOptionActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function manageOptionActions(?Closure $callback): static
+    {
+        $this->modifyManageOptionActionsUsing = $callback;
 
         return $this;
     }
@@ -240,6 +249,12 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                     ->label(__('filament-forms::components.select.actions.create_option.modal.actions.create_another.label')),
             ] : []);
 
+        if ($this->modifyManageOptionActionsUsing) {
+            $action = $this->evaluate($this->modifyManageOptionActionsUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
         if ($this->modifyCreateOptionActionUsing) {
             $action = $this->evaluate($this->modifyCreateOptionActionUsing, [
                 'action' => $action,
@@ -270,20 +285,21 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     public function editOptionForm(array | Closure | null $schema): static
     {
         $this->editOptionActionFormSchema = $schema;
+        $this->reactive();
 
         return $this;
     }
 
-    public function editOptionUsing(Closure $callback): static
+    public function updateOptionUsing(Closure $callback): static
     {
-        $this->editOptionUsing = $callback;
+        $this->updateOptionUsing = $callback;
 
         return $this;
     }
 
-    public function getEditOptionUsing(): ?Closure
+    public function getUpdateOptionUsing(): ?Closure
     {
-        return $this->editOptionUsing;
+        return $this->updateOptionUsing;
     }
 
     public function getEditOptionActionName(): string
@@ -315,19 +331,33 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             ->form(fn (Form $form) => $form->model($this->getSelectedRecord())->schema($actionFormSchema))
             ->fillForm($this->getEditOptionActionFormData())
             ->action(static function (Action $action, array $arguments, Select $component, array $data, ComponentContainer $form) {
-                if (! $component->getEditOptionUsing()) {
-                    throw new Exception("Select field [{$component->getStatePath()}] must have a [editOptionUsing()] closure set.");
+                $statePath = $component->getStatePath();
+
+                if (! $component->getUpdateOptionUsing()) {
+                    throw new Exception("Select field [{$statePath}] must have a [updateOptionUsing()] closure set.");
                 }
 
-                $component->evaluate($component->getEditOptionUsing(), [
+                $component->evaluate($component->getUpdateOptionUsing(), [
                     'data' => $data,
                     'form' => $form,
+                ]);
+
+                $livewire = $component->getLivewire();
+                $livewire->dispatchBrowserEvent('filament-forms::select/refreshSelectedOptionLabel', [
+                    'livewireId' => $livewire->id,
+                    'statePath' => $statePath,
                 ]);
             })
             ->icon('heroicon-m-pencil-square')
             ->iconButton()
             ->modalHeading(__('filament-forms::components.select.actions.edit_option.modal.heading'))
             ->modalButton(__('filament-forms::components.select.actions.edit_option.modal.actions.save.label'));
+
+        if ($this->modifyManageOptionActionsUsing) {
+            $action = $this->evaluate($this->modifyManageOptionActionsUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
 
         if ($this->modifyEditOptionActionUsing) {
             $action = $this->evaluate($this->modifyEditOptionActionUsing, [
@@ -351,12 +381,12 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
      */
     public function getEditOptionActionFormData(): array
     {
-        return $this->evaluate($this->getEditOptionActionFormDataUsing);
+        return $this->evaluate($this->fillEditOptionActionFormUsing);
     }
 
-    public function getEditOptionActionFormDataUsing(?Closure $callback): static
+    public function fillEditOptionActionFormUsing(?Closure $callback): static
     {
-        $this->getEditOptionActionFormDataUsing = $callback;
+        $this->fillEditOptionActionFormUsing = $callback;
 
         return $this;
     }
@@ -765,11 +795,11 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             return $record->getKey();
         });
 
-        $this->getEditOptionActionFormDataUsing(static function (Select $component): ?array {
+        $this->fillEditOptionActionFormUsing(static function (Select $component): ?array {
             return $component->getSelectedRecord()?->attributesToArray();
         });
 
-        $this->editOptionUsing(static function (array $data, Form $form) {
+        $this->updateOptionUsing(static function (array $data, Form $form) {
             $form->getRecord()?->update($data);
         });
 
