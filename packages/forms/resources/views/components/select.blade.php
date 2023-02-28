@@ -68,6 +68,7 @@
                 </select>
             @else
                 <div
+                    dusk="filament.forms.{{ $getStatePath() }}"
                     x-data="selectFormComponent({
                         isHtmlAllowed: @js($isHtmlAllowed()),
                         getOptionLabelUsing: async () => {
