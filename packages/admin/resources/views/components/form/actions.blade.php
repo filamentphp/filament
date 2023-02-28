@@ -1,4 +1,7 @@
-@props(['actions', 'fullWidth' => false])
+@props([
+    'actions',
+    'fullWidth' => false,
+])
 
 <div
     @if(config('filament.layout.forms.actions.sticky'))
