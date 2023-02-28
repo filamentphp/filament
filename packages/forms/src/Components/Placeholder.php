@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Components;
 
-use Filament\Forms\Components\Contracts\HasHintActions;
 use Illuminate\Contracts\Support\Htmlable;
 
 class Placeholder extends Component implements Contracts\HasHintActions

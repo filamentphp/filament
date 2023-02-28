@@ -56,7 +56,7 @@ trait HasAffixes
     }
 
     /**
-     * @param array<Action | Closure> $actions
+     * @param  array<Action | Closure>  $actions
      */
     public function prefixActions(array $actions): static
     {
@@ -73,7 +73,7 @@ trait HasAffixes
     }
 
     /**
-     * @param array<Action | Closure> $actions
+     * @param  array<Action | Closure>  $actions
      */
     public function suffixActions(array $actions): static
     {

@@ -8,7 +8,6 @@ use Filament\Forms\Components\Contracts\HasAffixActions;
 use Filament\Forms\Components\Contracts\HasHintActions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
-use InvalidArgumentException;
 
 trait HasActions
 {
