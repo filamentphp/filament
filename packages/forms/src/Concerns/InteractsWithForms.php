@@ -402,7 +402,7 @@ trait InteractsWithForms
      */
     protected function getValidationAttributes(): array
     {
-        $attributes = [];
+        $attributes = parent::getValidationAttributes();
 
         foreach ($this->getCachedForms() as $form) {
             $attributes = array_merge($attributes, $form->getValidationAttributes());
