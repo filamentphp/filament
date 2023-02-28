@@ -17,10 +17,10 @@
     <x-filament::input.affixes
         :state-path="$statePath"
         :prefix="$prefixLabel"
-        :prefix-action="$getPrefixAction()"
+        :prefix-actions="$getPrefixActions()"
         :prefix-icon="$prefixIcon"
         :suffix="$suffixLabel"
-        :suffix-action="$getSuffixAction()"
+        :suffix-actions="$getSuffixActions()"
         :suffix-icon="$suffixIcon"
         class="filament-forms-text-input-component"
         :attributes="$getExtraAttributeBag()"

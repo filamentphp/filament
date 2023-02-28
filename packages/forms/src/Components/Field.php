@@ -4,7 +4,7 @@ namespace Filament\Forms\Components;
 
 use Illuminate\Contracts\Support\Htmlable;
 
-class Field extends Component implements Contracts\HasValidationRules
+class Field extends Component implements Contracts\HasHintActions, Contracts\HasValidationRules
 {
     use Concerns\CanBeAutofocused;
     use Concerns\CanBeMarkedAsRequired;

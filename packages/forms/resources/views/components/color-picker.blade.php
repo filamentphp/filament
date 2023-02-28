@@ -5,10 +5,10 @@
     <x-filament::input.affixes
         :state-path="$statePath"
         :prefix="$getPrefixLabel()"
-        :prefix-action="$getPrefixAction()"
+        :prefix-actions="$getPrefixActions()"
         :prefix-icon="$getPrefixIcon()"
         :suffix="$getSuffixLabel()"
-        :suffix-action="$getSuffixAction()"
+        :suffix-actions="$getSuffixActions()"
         :suffix-icon="$getSuffixIcon()"
         class="filament-forms-text-input-component"
         :attributes="$getExtraAttributeBag()"
