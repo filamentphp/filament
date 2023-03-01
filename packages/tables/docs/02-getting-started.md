@@ -321,9 +321,11 @@ use Filament\Tables\Actions\DeleteAction;
 
 protected function getTableRecordActionUsing(): ?Closure
 {
-    return fn (): Action => DeleteAction::make();
+    return fn (): string => 'edit';
 }
 ```
+
+In this case, if an `EditAction` or another action with the name `edit` exists on the table row, that will be called. If not, a Livewire public method with the name `edit()` will be called, and the selected record will be passed.
 
 ### Disabling clickable rows
 
