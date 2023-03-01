@@ -98,6 +98,8 @@
         </script>
     @endif
 
+    @stack('scripts')
+
     {{ filament()->renderHook('scripts.end') }}
 
     {{ filament()->renderHook('body.end') }}
