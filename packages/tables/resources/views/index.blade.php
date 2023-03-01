@@ -490,41 +490,48 @@
                                 @endif
 
                                 <div @class([
-                                    'col-span-full bg-gray-500/5 flex items-center space-y-1 w-full px-4 py-2',
+                                    'col-span-full bg-gray-500/5 w-full',
                                     'rounded-xl shadow-sm' => $contentGrid,
                                 ])>
-                                    <div class="flex items-center space-x-2">
-                                        <span class="font-medium text-sm text-gray-600 dark:text-gray-300">
-                                            @if ($group->isTitlePrefixedWithLabel())
-                                                {{ $group->getLabel() }}:
-                                            @endif
+                                    @php
+                                        $tag = $group->isCollapsible() ? 'button' : 'div';
+                                    @endphp
 
-                                             {{ $recordGroupTitle }}
-                                        </span>
-
+                                    <{{ $tag }}
                                         @if ($group->isCollapsible())
-                                            <button
-                                                x-on:click="toggleCollapseGroup(@js($recordGroupTitle))"
-                                                x-bind:class="isGroupCollapsed(@js($recordGroupTitle)) || '-rotate-180'"
-                                                type="button"
-                                            >
-                                                <x-filament::icon
-                                                    name="heroicon-m-chevron-down"
-                                                    alias="tables::grouping.collapse"
-                                                    size="h-5 w-5"
-                                                    color="text-gray-600 dark:text-gray-300"
-                                                    class="transition"
-                                                    x-cloak="x-cloak"
-                                                />
-                                            </button>
+                                            type="button"
+                                            x-on:click="toggleCollapseGroup(@js($recordGroupTitle))"
                                         @endif
-                                    </div>
+                                        class="flex w-full justify-start gap-x-2 whitespace-nowrap px-4 py-2"
+                                    >
+                                        @if ($group->isCollapsible())
+                                            <x-filament::icon
+                                                name="heroicon-m-chevron-down"
+                                                alias="tables::grouping.collapse"
+                                                size="h-5 w-5"
+                                                color="text-gray-600 dark:text-gray-300"
+                                                class="transition"
+                                                x-bind:class="isGroupCollapsed({{ \Illuminate\Support\Js::from($recordGroupTitle) }}) || '-rotate-180'"
+                                                x-cloak="x-cloak"
+                                            />
+                                        @endif
 
-                                    @if (filled($recordGroupDescription = $group->getDescription($record, $recordGroupTitle)))
-                                        <div class="text-sm text-gray-500 dark:text-gray-400">
-                                            {{ $recordGroupDescription }}
+                                        <div class="flex flex-col items-start gap-y-1">
+                                            <span class="text-sm font-medium text-gray-600 dark:text-gray-300">
+                                                @if ($group->isTitlePrefixedWithLabel())
+                                                    {{ $group->getLabel() }}:
+                                                @endif
+
+                                                {{ $recordGroupTitle }}
+                                            </span>
+
+                                            @if (filled($recordGroupDescription = $group->getDescription($record, $recordGroupTitle)))
+                                                <span class="text-sm text-gray-500 dark:text-gray-400">
+                                                    {{ $recordGroupDescription }}
+                                                </span>
+                                            @endif
                                         </div>
-                                    @endif
+                                    </{{ $tag }}>
                                 </div>
                             @endif
 
@@ -902,59 +909,47 @@
 
                                 @if (! $isGroupsOnly)
                                     <x-filament-tables::row class="filament-tables-group-header-row bg-gray-500/5">
-                                        @if (count($actions) && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
-                                            <td></td>
-                                        @endif
+                                        <td colspan="{{ $columnsCount }}">
+                                            @php
+                                                $tag = $group->isCollapsible() ? 'button' : 'div';
+                                            @endphp
 
-                                        @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
-                                            <td></td>
-                                        @endif
-
-                                        <td
-                                            colspan="{{ count($columns) }}"
-                                            class="px-4 py-2 space-y-1 whitespace-nowrap"
-                                        >
-                                            <div class="flex items-center space-x-2">
-                                                <span class="font-medium text-sm text-gray-600 dark:text-gray-300">
-                                                    @if ($group->isTitlePrefixedWithLabel())
-                                                        {{ $group->getLabel() }}:
-                                                    @endif
-
-                                                    {{ $recordGroupTitle }}
-                                                </span>
-
+                                            <{{ $tag }}
                                                 @if ($group->isCollapsible())
-                                                    <button
-                                                        x-on:click="toggleCollapseGroup(@js($recordGroupTitle))"
-                                                        x-bind:class="isGroupCollapsed(@js($recordGroupTitle)) || '-rotate-180'"
-                                                        type="button"
-                                                    >
-                                                        <x-filament::icon
-                                                            name="heroicon-m-chevron-down"
-                                                            alias="tables::grouping.collapse"
-                                                            size="h-5 w-5"
-                                                            color="text-gray-600 dark:text-gray-300"
-                                                            class="transition"
-                                                            x-cloak="x-cloak"
-                                                        />
-                                                    </button>
+                                                    type="button"
+                                                    x-on:click="toggleCollapseGroup(@js($recordGroupTitle))"
                                                 @endif
-                                            </div>
+                                                class="flex w-full justify-start gap-x-2 whitespace-nowrap px-4 py-2"
+                                            >
+                                                @if ($group->isCollapsible())
+                                                    <x-filament::icon
+                                                        name="heroicon-m-chevron-down"
+                                                        alias="tables::grouping.collapse"
+                                                        size="h-5 w-5"
+                                                        color="text-gray-600 dark:text-gray-300"
+                                                        class="transition"
+                                                        x-bind:class="isGroupCollapsed({{ \Illuminate\Support\Js::from($recordGroupTitle) }}) || '-rotate-180'"
+                                                        x-cloak="x-cloak"
+                                                    />
+                                                @endif
 
-                                            @if (filled($recordGroupDescription = $group->getDescription($record, $recordGroupTitle)))
-                                                <div class="text-sm text-gray-500 dark:text-gray-400">
-                                                    {{ $recordGroupDescription }}
+                                                <div class="flex flex-col items-start gap-y-1">
+                                                    <span class="text-sm font-medium text-gray-600 dark:text-gray-300">
+                                                        @if ($group->isTitlePrefixedWithLabel())
+                                                            {{ $group->getLabel() }}:
+                                                        @endif
+
+                                                        {{ $recordGroupTitle }}
+                                                    </span>
+
+                                                    @if (filled($recordGroupDescription = $group->getDescription($record, $recordGroupTitle)))
+                                                        <span class="text-sm text-gray-500 dark:text-gray-400">
+                                                            {{ $recordGroupDescription }}
+                                                        </span>
+                                                    @endif
                                                 </div>
-                                            @endif
+                                            </{{ $tag }}>
                                         </td>
-
-                                        @if (count($actions) && in_array($actionsPosition, [ActionsPosition::AfterColumns, ActionsPosition::AfterCells]))
-                                            <td></td>
-                                        @endif
-
-                                        @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
-                                            <td></td>
-                                        @endif
                                     </x-filament-tables::row>
                                 @endif
                             @endif
