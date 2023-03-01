@@ -506,13 +506,12 @@
                                     >
                                         @if ($group->isCollapsible())
                                             <x-filament::icon
-                                                name="heroicon-m-chevron-down"
+                                                name="heroicon-m-chevron-up"
                                                 alias="tables::grouping.collapse"
                                                 size="h-5 w-5"
                                                 color="text-gray-600 dark:text-gray-300"
                                                 class="transition"
-                                                x-bind:class="isGroupCollapsed({{ \Illuminate\Support\Js::from($recordGroupTitle) }}) || '-rotate-180'"
-                                                x-cloak="x-cloak"
+                                                x-bind:class="isGroupCollapsed({{ \Illuminate\Support\Js::from($recordGroupTitle) }}) && 'rotate-180'"
                                             />
                                         @endif
 
@@ -923,13 +922,12 @@
                                             >
                                                 @if ($group->isCollapsible())
                                                     <x-filament::icon
-                                                        name="heroicon-m-chevron-down"
+                                                        name="heroicon-m-chevron-up"
                                                         alias="tables::grouping.collapse"
                                                         size="h-5 w-5"
                                                         color="text-gray-600 dark:text-gray-300"
                                                         class="transition"
-                                                        x-bind:class="isGroupCollapsed({{ \Illuminate\Support\Js::from($recordGroupTitle) }}) || '-rotate-180'"
-                                                        x-cloak="x-cloak"
+                                                        x-bind:class="isGroupCollapsed({{ \Illuminate\Support\Js::from($recordGroupTitle) }}) && 'rotate-180'"
                                                     />
                                                 @endif
 
