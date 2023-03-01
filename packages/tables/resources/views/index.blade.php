@@ -511,8 +511,9 @@
                                                 <x-filament::icon
                                                     name="heroicon-m-chevron-down"
                                                     alias="tables::grouping.collapse"
-                                                    size="h-4 w-4"
-                                                    class="text-gray-600 transition dark:text-gray-300"
+                                                    size="h-5 w-5"
+                                                    color="text-gray-600 dark:text-gray-300"
+                                                    class="transition"
                                                     x-cloak="x-cloak"
                                                 />
                                             </button>
@@ -931,8 +932,9 @@
                                                         <x-filament::icon
                                                             name="heroicon-m-chevron-down"
                                                             alias="tables::grouping.collapse"
-                                                            size="h-4 w-4"
-                                                            class="text-gray-600 transition dark:text-gray-300"
+                                                            size="h-5 w-5"
+                                                            color="text-gray-600 dark:text-gray-300"
+                                                            class="transition"
                                                             x-cloak="x-cloak"
                                                         />
                                                     </button>
