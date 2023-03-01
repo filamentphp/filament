@@ -29,6 +29,8 @@ class Group
 
     protected bool $isCollapsible = false;
 
+    protected bool $isTitlePrefixedWithLabel = true;
+
     final public function __construct(string $id = null)
     {
         $this->id($id);
@@ -102,9 +104,21 @@ class Group
         return $this;
     }
 
+    public function titlePrefixedWithLabel(bool $condition = true): static
+    {
+        $this->isTitlePrefixedWithLabel = $condition;
+
+        return $this;
+    }
+
     public function isCollapsible(): bool
     {
         return $this->isCollapsible;
+    }
+
+    public function isTitlePrefixedWithLabel(): bool
+    {
+        return $this->isTitlePrefixedWithLabel;
     }
 
     public function getColumn(): string
