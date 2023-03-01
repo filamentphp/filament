@@ -378,7 +378,7 @@ The field value must not exist in the database. [See the Laravel documentation](
 Field::make('email')->unique()
 ```
 
-By default, the form's model will be searched, [if it is registered](#registering-a-model). You may specify a custom table name or model to search:
+By default, the form's model will be searched, [if it is registered](getting-started#registering-a-model). You may specify a custom table name or model to search:
 
 ```php
 use App\Models\User;
