@@ -29,8 +29,6 @@ class EditAction extends Action
 
         $this->successNotificationTitle(__('filament-actions::edit.single.messages.saved'));
 
-        $this->button();
-
         $this->groupedIcon('heroicon-m-pencil-square');
 
         $this->fillForm(function (Model $record): array {

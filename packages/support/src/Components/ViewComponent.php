@@ -28,6 +28,11 @@ abstract class ViewComponent extends Component implements Htmlable
     protected string $view;
 
     /**
+     * @var view-string | Closure | null
+     */
+    protected string | Closure | null $defaultView = null;
+
+    /**
      * @var array<string, mixed>
      */
     protected array $viewData = [];
@@ -54,6 +59,16 @@ abstract class ViewComponent extends Component implements Htmlable
         }
 
         $this->view = $view;
+
+        return $this;
+    }
+
+    /**
+     * @param  view-string | Closure | null  $view
+     */
+    public function defaultView(string | Closure | null $view): static
+    {
+        $this->defaultView = $view;
 
         return $this;
     }
@@ -114,13 +129,28 @@ abstract class ViewComponent extends Component implements Htmlable
         return $this;
     }
 
+    /**
+     * @return view-string
+     */
     public function getView(): string
     {
-        if (! isset($this->view)) {
-            throw new Exception('Class [' . static::class . '] extends [' . ViewComponent::class . '] but does not have a [$view] property defined.');
+        if (isset($this->view)) {
+            return $this->view;
         }
 
-        return $this->view;
+        if (filled($defaultView = $this->getDefaultView())) {
+            return $defaultView;
+        }
+
+        throw new Exception('Class [' . static::class . '] extends [' . ViewComponent::class . '] but does not have a [$view] property defined.');
+    }
+
+    /**
+     * @return view-string | null
+     */
+    public function getDefaultView(): ?string
+    {
+        return $this->evaluate($this->defaultView);
     }
 
     public function toHtml(): string

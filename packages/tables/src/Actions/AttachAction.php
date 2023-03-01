@@ -61,8 +61,6 @@ class AttachAction extends Action
 
         $this->color('gray');
 
-        $this->button();
-
         $this->form(fn (): array => [$this->getRecordSelect()]);
 
         $this->action(function (array $arguments, array $data, Form $form, Table $table): void {

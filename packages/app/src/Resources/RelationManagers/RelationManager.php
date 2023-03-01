@@ -463,7 +463,7 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
             ->query($this->getTableQuery())
             ->relationship(fn (): Relation | Builder => $this->getRelationship())
             ->inverseRelationship(static::getInverseRelationshipName())
-            ->heading($this->getTableHeading() ?? static::getTitle($this->ownerRecord, $this->pageClass))
+            ->heading($this->getTableHeading() ?? static::getTitle($this->getOwnerRecord(), $this->pageClass))
             ->modelLabel(static::getModelLabel())
             ->pluralModelLabel(static::getPluralModelLabel())
             ->queryStringIdentifier(Str::lcfirst(class_basename(static::class)))

@@ -235,6 +235,24 @@ return [
 
             ],
 
+            'edit_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Edit',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Save',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
         ],
 
         'boolean' => [

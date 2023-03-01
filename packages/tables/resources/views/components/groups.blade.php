@@ -31,8 +31,9 @@
     >
         <x-slot name="trigger">
             <x-filament::icon-button
-                icon="heroicon-o-rectangle-stack"
+                icon="heroicon-m-rectangle-stack"
                 icon-alias="tables::grouping.trigger"
+                color="gray"
                 :label="__('filament-tables::table.buttons.group.label')"
             />
         </x-slot>

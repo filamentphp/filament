@@ -94,7 +94,17 @@ return [
     ],
 
     'empty' => [
+
         'heading' => 'Sem registros',
+
+        'buttons' => [
+
+            'reset_column_searches' => [
+                'label' => 'Limpar pesquisa de colunas',
+            ],
+
+        ],
+
     ],
 
     'filters' => [

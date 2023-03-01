@@ -27,11 +27,11 @@ abstract class MountableAction extends StaticAction
     use Concerns\HasTooltip;
     use Concerns\HasWizard;
 
-    protected string $view = 'filament-actions::button-action';
-
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->defaultView(static::BUTTON_VIEW);
 
         $this->failureNotification(fn (Notification $notification): Notification => $notification);
         $this->successNotification(fn (Notification $notification): Notification => $notification);

@@ -2,6 +2,7 @@
     ->merge($getExtraAttributes(), escape: false)
     ->class([
         'filament-tables-icon-column flex flex-wrap gap-1',
+        'flex-col' => $isListWithLineBreaks(),
         'px-4 py-3' => ! $isInline(),
     ])
 }}>

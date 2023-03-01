@@ -4,14 +4,31 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Filament\Forms\Components\Actions\Action;
+use Illuminate\Support\Arr;
 
 trait HasAffixes
 {
-    protected Action | Closure | null $suffixAction = null;
+    /**
+     * @var array<Action> | null
+     */
+    protected ?array $cachedSuffixActions = null;
+
+    /**
+     * @var array<Action | Closure>
+     */
+    protected array $suffixActions = [];
 
     protected string | Closure | null $suffixLabel = null;
 
-    protected Action | Closure | null $prefixAction = null;
+    /**
+     * @var array<Action> | null
+     */
+    protected ?array $cachedPrefixActions = null;
+
+    /**
+     * @var array<Action | Closure>
+     */
+    protected array $prefixActions = [];
 
     protected string | Closure | null $prefixLabel = null;
 
@@ -31,16 +48,36 @@ trait HasAffixes
         return $this->suffix($label);
     }
 
-    public function prefixAction(Action | Closure | null $action): static
+    public function prefixAction(Action | Closure $action): static
     {
-        $this->prefixAction = $action;
+        $this->prefixActions([$action]);
 
         return $this;
     }
 
-    public function suffixAction(Action | Closure | null $action): static
+    /**
+     * @param  array<Action | Closure>  $actions
+     */
+    public function prefixActions(array $actions): static
     {
-        $this->suffixAction = $action;
+        $this->prefixActions = array_merge($this->prefixActions, $actions);
+
+        return $this;
+    }
+
+    public function suffixAction(Action | Closure $action): static
+    {
+        $this->suffixActions([$action]);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Action | Closure>  $actions
+     */
+    public function suffixActions(array $actions): static
+    {
+        $this->suffixActions = array_merge($this->suffixActions, $actions);
 
         return $this;
     }
@@ -66,14 +103,52 @@ trait HasAffixes
         return $this;
     }
 
-    public function getPrefixAction(): ?Action
+    /**
+     * @return array<Action>
+     */
+    public function getPrefixActions(): array
     {
-        return $this->evaluate($this->prefixAction)?->component($this);
+        return $this->cachedPrefixActions ?? $this->cachePrefixActions();
     }
 
-    public function getSuffixAction(): ?Action
+    /**
+     * @return array<Action>
+     */
+    public function cachePrefixActions(): array
     {
-        return $this->evaluate($this->suffixAction)?->component($this);
+        $this->cachedPrefixActions = [];
+
+        foreach ($this->prefixActions as $prefixAction) {
+            foreach (Arr::wrap($this->evaluate($prefixAction)) as $action) {
+                $this->cachedPrefixActions[$action->getName()] = $this->prepareAction($action);
+            }
+        }
+
+        return $this->cachedPrefixActions;
+    }
+
+    /**
+     * @return array<Action>
+     */
+    public function getSuffixActions(): array
+    {
+        return $this->cachedSuffixActions ?? $this->cacheSuffixActions();
+    }
+
+    /**
+     * @return array<Action>
+     */
+    public function cacheSuffixActions(): array
+    {
+        $this->cachedSuffixActions = [];
+
+        foreach ($this->suffixActions as $suffixAction) {
+            foreach (Arr::wrap($this->evaluate($suffixAction)) as $action) {
+                $this->cachedSuffixActions[$action->getName()] = $this->prepareAction($action);
+            }
+        }
+
+        return $this->cachedSuffixActions;
     }
 
     public function getPrefixLabel(): ?string
@@ -99,20 +174,5 @@ trait HasAffixes
     public function getSuffixIcon(): ?string
     {
         return $this->evaluate($this->suffixIcon);
-    }
-
-    /**
-     * @return array<string, Action>
-     */
-    public function getActions(): array
-    {
-        $prefixAction = $this->getPrefixAction();
-        $suffixAction = $this->getSuffixAction();
-
-        return array_merge(
-            parent::getActions(),
-            $prefixAction ? [$prefixAction->getName() => $prefixAction] : [],
-            $suffixAction ? [$suffixAction->getName() => $suffixAction] : [],
-        );
     }
 }

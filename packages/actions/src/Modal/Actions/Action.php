@@ -16,13 +16,20 @@ class Action extends StaticAction implements SubmitsForm
     use Concerns\CanCancelAction;
     use Concerns\HasAction;
 
-    protected string $view = 'filament-actions::modal.actions.button-action';
+    public const BUTTON_VIEW = 'filament-actions::modal.actions.button-action';
 
     public static string $alignment = 'left';
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->defaultView(static::BUTTON_VIEW);
+    }
+
     public function button(): static
     {
-        $this->view('filament-actions::modal.actions.button-action');
+        $this->view(static::BUTTON_VIEW);
 
         return $this;
     }

@@ -31,11 +31,7 @@
     @endif
 
     @if ($extraHeadingColumn || $groupsOnly)
-        <td @class([
-            'align-top px-4 py-3 font-medium',
-            'text-sm' => ! $strong,
-            'text-base' => $strong,
-        ])>
+        <td class="align-top px-4 py-3 font-medium text-sm">
             {{ $heading }}
         </td>
     @else
@@ -76,11 +72,7 @@
                 ])
             >
                 @if ($loop->first && (! $extraHeadingColumn) && (! $groupsOnly))
-                    <div @class([
-                        'px-4 py-3 font-medium',
-                        'text-sm' => ! $strong,
-                        'text-base' => $strong,
-                    ])>
+                    <div class="px-4 py-3 font-medium text-sm">
                         {{ $heading }}
                     </div>
                 @elseif ((! $placeholderColumns) || $column->hasSummary())

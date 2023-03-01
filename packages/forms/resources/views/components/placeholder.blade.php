@@ -5,7 +5,7 @@
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
-    :hint-action="$getHintAction()"
+    :hint-actions="$getHintActions()"
     :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :state-path="$getStatePath()"
