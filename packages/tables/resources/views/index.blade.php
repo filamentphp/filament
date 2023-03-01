@@ -494,7 +494,7 @@
                                     'rounded-xl shadow-sm' => $contentGrid,
                                 ])>
                                     <div class="flex items-center space-x-2">
-                                        <span class="font-medium text-base text-gray-600 dark:text-gray-300">
+                                        <span class="font-medium text-sm text-gray-600 dark:text-gray-300">
                                             {{ $group->getLabel() }}: {{ $recordGroupTitle }}
                                         </span>
 
@@ -910,7 +910,7 @@
                                             class="px-4 py-2 space-y-1 whitespace-nowrap"
                                         >
                                             <div class="flex items-center space-x-2">
-                                                <span class="font-medium text-base text-gray-600 dark:text-gray-300">
+                                                <span class="font-medium text-sm text-gray-600 dark:text-gray-300">
                                                     {{ $group->getLabel() }}: {{ $recordGroupTitle }}
                                                 </span>
 
