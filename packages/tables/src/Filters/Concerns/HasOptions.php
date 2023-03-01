@@ -32,6 +32,8 @@ trait HasOptions
             $options = $options->toArray();
         }
 
+        $this->options = $options;
+
         return $options;
     }
 }
