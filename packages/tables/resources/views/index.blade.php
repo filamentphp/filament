@@ -490,7 +490,7 @@
                                 @endif
 
                                 <div @class([
-                                    'col-span-full bg-gray-500/5 w-full',
+                                    'col-span-full bg-gray-500/5',
                                     'rounded-xl shadow-sm' => $contentGrid,
                                 ])>
                                     @php
