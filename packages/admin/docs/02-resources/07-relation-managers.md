@@ -218,8 +218,8 @@ At any time, you may call `$action->halt()` from inside a lifecycle hook or muta
 ```php
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
-use Filament\Tables\Actions\CreateAction;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Actions\CreateAction;
 
 CreateAction::make()
     ->before(function (CreateAction $action, RelationManager $livewire) {
