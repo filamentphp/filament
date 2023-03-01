@@ -495,7 +495,11 @@
                                 ])>
                                     <div class="flex items-center space-x-2">
                                         <span class="font-medium text-sm text-gray-600 dark:text-gray-300">
-                                            {{ $group->getLabel() }}: {{ $recordGroupTitle }}
+                                            @if ($group->isTitlePrefixedWithLabel())
+                                                {{ $group->getLabel() }}:
+                                            @endif
+
+                                             {{ $recordGroupTitle }}
                                         </span>
 
                                         @if ($group->isCollapsible())
@@ -911,7 +915,11 @@
                                         >
                                             <div class="flex items-center space-x-2">
                                                 <span class="font-medium text-sm text-gray-600 dark:text-gray-300">
-                                                    {{ $group->getLabel() }}: {{ $recordGroupTitle }}
+                                                    @if ($group->isTitlePrefixedWithLabel())
+                                                        {{ $group->getLabel() }}:
+                                                    @endif
+
+                                                    {{ $recordGroupTitle }}
                                                 </span>
 
                                                 @if ($group->isCollapsible())
