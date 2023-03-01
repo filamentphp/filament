@@ -1308,9 +1308,19 @@ class Table extends ViewComponent
 
     public function getRecordAction(Model $record): ?string
     {
-        return $this->evaluate($this->recordAction, [
+        $action = $this->evaluate($this->recordAction, [
             'record' => $record,
         ]);
+
+        if (! class_exists($action)) {
+            return $action;
+        }
+
+        if (! is_subclass_of($action, Action::class)) {
+            return $action;
+        }
+
+        return $action::getDefaultName() ?? $action;
     }
 
     /**
