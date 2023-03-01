@@ -651,8 +651,8 @@ At any time, you may call `$action->halt()` from inside a lifecycle hook or muta
 ```php
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
-use Filament\Tables\Actions\DeleteAction;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Actions\DeleteAction;
 
 DeleteAction::make()
     ->before(function (DeleteAction $action, RelationManager $livewire) {
