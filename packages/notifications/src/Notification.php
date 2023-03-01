@@ -2,7 +2,7 @@
 
 namespace Filament\Notifications;
 
-use Filament\Http\Livewire\Notifications;
+use Filament\Notifications\Http\Livewire\Notifications;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Actions\ActionGroup;
 use Filament\Notifications\Concerns\CanBeInline;
