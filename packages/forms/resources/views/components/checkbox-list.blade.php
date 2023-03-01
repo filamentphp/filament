@@ -21,7 +21,6 @@
 
         init: function () {
             this.updateVisibleCheckboxListOptions()
-
             this.checkIfAllCheckboxesAreChecked()
 
             Livewire.hook('message.processed', () => {
