@@ -20,13 +20,13 @@
         visibleCheckboxListOptions: [],
 
         init: function () {
+            this.updateVisibleCheckboxListOptions()
+
             this.checkIfAllCheckboxesAreChecked()
 
             Livewire.hook('message.processed', () => {
                 this.checkIfAllCheckboxesAreChecked()
             })
-
-            this.updateVisibleCheckboxListOptions()
 
             $watch('search', () => {
                 this.updateVisibleCheckboxListOptions()
