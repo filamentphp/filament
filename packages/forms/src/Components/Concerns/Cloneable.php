@@ -6,7 +6,11 @@ trait Cloneable
 {
     public function cloneChildComponents(): static
     {
-        $components = $this->getChildComponentContainer()->getClone()->getComponents();
+        $components = [];
+
+        foreach ($this->getChildComponents() as $component) {
+            $components[] = $component->getClone();
+        }
 
         return $this->childComponents($components);
     }
