@@ -281,10 +281,16 @@ export default (Alpine) => {
                         return true
                     }
 
-                    if (this.getMaxDate() && date.isAfter(this.getMaxDate(), 'day')) {
+                    if (
+                        this.getMaxDate() &&
+                        date.isAfter(this.getMaxDate(), 'day')
+                    ) {
                         return true
                     }
-                    if (this.getMinDate() && date.isBefore(this.getMinDate(), 'day')) {
+                    if (
+                        this.getMinDate() &&
+                        date.isBefore(this.getMinDate(), 'day')
+                    ) {
                         return true
                     }
 
