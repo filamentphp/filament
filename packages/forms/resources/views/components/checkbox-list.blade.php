@@ -110,9 +110,12 @@
             :lg="$getColumns('lg')"
             :xl="$getColumns('xl')"
             :two-xl="$getColumns('2xl')"
-            direction="column"
+            :direction="$getDirection()"
             :x-show="$isSearchable() ? 'visibleCheckboxListOptions.length' : null"
-            :attributes="$attributes->class(['filament-forms-checkbox-list-component gap-1 space-y-2'])"
+            :attributes="$attributes->class([
+                'filament-forms-checkbox-list-component gap-1',
+                'space-y-2' => $getDirection() == 'column'
+                ])"
         >
             @forelse ($getOptions() as $optionValue => $optionLabel)
                 <div wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.options.{{ $optionValue }}">

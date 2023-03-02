@@ -13,6 +13,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
     use Concerns\CanBeSearchable;
     use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasOptions;
+    use Concerns\HasDirection;
 
     protected string $view = 'forms::components.checkbox-list';
 
