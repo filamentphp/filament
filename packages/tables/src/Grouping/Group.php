@@ -3,6 +3,7 @@
 namespace Filament\Tables\Grouping;
 
 use Closure;
+use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -155,7 +156,13 @@ class Group
 
     public function getKey(Model $record): ?string
     {
-        return Arr::get($record, $this->getColumn());
+        $key = Arr::get($record, $this->getColumn());
+
+        if ($key instanceof LabelInterface) {
+            $key = $key->getLabel();
+        }
+
+        return filled($key) ? strval($key) : null;
     }
 
     public function getTitle(Model $record): ?string
