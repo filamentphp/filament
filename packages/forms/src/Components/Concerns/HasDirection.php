@@ -6,32 +6,17 @@ use Closure;
 
 trait HasDirection
 {
-    protected bool | Closure | null $isRow = null;
+    protected string | Closure | null $gridDirection = null;
 
-    protected array | int | null $rowColumns = null;
-
-    public function row(bool | Closure $condition = true, array | int | null $columns = 2): static
+    public function gridDirection(string | Closure | null $gridDirection = null): static
     {
-        $this->isRow = fn () => $condition;
-
-        $this->rowColumns = $columns;
+        $this->gridDirection = $gridDirection;
 
         return $this;
     }
 
-    public function isRow(): bool
+    public function getGridDirection(): ?string
     {
-        return (bool) $this->evaluate($this->isRow);
-    }
-
-    public function getDirection(): string
-    {
-        if ($this->isRow()) {
-            $this->columns($this->rowColumns);
-
-            return 'row';
-        }
-
-        return 'column';
+        return $this->evaluate($this->gridDirection);
     }
 }

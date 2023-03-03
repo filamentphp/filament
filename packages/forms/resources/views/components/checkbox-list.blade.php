@@ -110,11 +110,11 @@
             :lg="$getColumns('lg')"
             :xl="$getColumns('xl')"
             :two-xl="$getColumns('2xl')"
-            :direction="$getDirection()"
+            :direction="$getGridDirection() ?? 'column'"
             :x-show="$isSearchable() ? 'visibleCheckboxListOptions.length' : null"
             :attributes="$attributes->class([
                 'filament-forms-checkbox-list-component gap-1',
-                'space-y-2' => $getDirection() == 'column'
+                'space-y-2' => $getGridDirection() !== 'row'
                 ])"
         >
             @forelse ($getOptions() as $optionValue => $optionLabel)
