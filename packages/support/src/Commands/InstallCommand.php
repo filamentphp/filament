@@ -170,7 +170,11 @@ class InstallCommand extends Command
 
         file_put_contents(
             $path,
-            json_encode($configuration, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) . PHP_EOL,
+            str_replace(
+                search: "    \"keywords\": [\n        \"framework\",\n        \"laravel\"\n    ],",
+                replace: '    "keywords": ["framework", "laravel"],',
+                subject: json_encode($configuration, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . PHP_EOL,
+            ),
         );
     }
 }
