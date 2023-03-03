@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
@@ -91,8 +92,11 @@ trait HasState
             return null;
         }
 
+        $relationshipAttribute = $this->getRelationshipAttribute();
+
         $state = collect($this->getRelationshipResults($record))
-            ->pluck($this->getRelationshipAttribute())
+            ->filter(fn (Model $record): bool => array_key_exists($relationshipAttribute, $record->getAttributes()))
+            ->pluck($relationshipAttribute)
             ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
             ->values();
 
