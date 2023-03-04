@@ -2,17 +2,20 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Filament\Forms\Components\Component;
+
 trait Cloneable
 {
-    public function cloneChildComponents(): static
+    protected function cloneChildComponents(): static
     {
-        $components = [];
-
-        foreach ($this->getChildComponents() as $component) {
-            $components[] = $component->getClone();
+        if (is_array($this->childComponents)) {
+            $this->childComponents = array_map(
+                fn (Component $component): Component => $component->getClone(),
+                $this->childComponents,
+            );
         }
 
-        return $this->childComponents($components);
+        return $this;
     }
 
     public function getClone(): static
