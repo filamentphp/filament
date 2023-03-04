@@ -153,6 +153,7 @@
                                                     title="{{ __('filament-forms::components.builder.buttons.move_item_up.label') }}"
                                                     wire:click.stop="dispatchFormEvent('builder::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                     type="button"
+                                                    wire:loading.attr="disabled"
                                                     class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500 dark:border-gray-700"
                                                 >
                                                     <span class="sr-only">
@@ -163,6 +164,15 @@
                                                         name="heroicon-m-chevron-up"
                                                         alias="filament-forms::components.builder.buttons.move_item_up"
                                                         size="h-4 w-4"
+                                                        wire:loading.remove.delay
+                                                        wire:target="dispatchFormEvent('builder::moveItemUp', '{{ $statePath }}', '{{ $uuid }}')"
+                                                    />
+
+                                                    <x-filament::loading-indicator
+                                                        class="w-4 h-4 text-primary-500"
+                                                        wire:loading.delay
+                                                        wire:target="dispatchFormEvent('builder::moveItemUp', '{{ $statePath }}', '{{ $uuid }}')"
+                                                        x-cloak
                                                     />
                                                 </button>
                                             </li>
@@ -174,6 +184,7 @@
                                                     title="{{ __('filament-forms::components.builder.buttons.move_item_down.label') }}"
                                                     wire:click.stop="dispatchFormEvent('builder::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                     type="button"
+                                                    wire:loading.attr="disabled"
                                                     class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500 dark:border-gray-700"
                                                 >
                                                     <span class="sr-only">
@@ -184,6 +195,15 @@
                                                         name="heroicon-m-chevron-down"
                                                         alias="filament-forms::components.builder.buttons.move_item_down"
                                                         size="h-4 w-4"
+                                                        wire:loading.remove.delay
+                                                        wire:target="dispatchFormEvent('builder::moveItemDown', '{{ $statePath }}', '{{ $uuid }}')"
+                                                    />
+
+                                                    <x-filament::loading-indicator
+                                                        class="w-4 h-4 text-primary-500"
+                                                        wire:loading.delay
+                                                        wire:target="dispatchFormEvent('builder::moveItemDown', '{{ $statePath }}', '{{ $uuid }}')"
+                                                        x-cloak
                                                     />
                                                 </button>
                                             </li>
@@ -196,6 +216,7 @@
                                                 title="{{ __('filament-forms::components.builder.buttons.clone.label') }}"
                                                 wire:click.stop="dispatchFormEvent('builder::cloneItem', '{{ $statePath }}', '{{ $uuid }}')"
                                                 type="button"
+                                                wire:loading.attr="disabled"
                                                 class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500 dark:border-gray-700"
                                             >
                                                 <span class="sr-only">
@@ -206,6 +227,15 @@
                                                     name="heroicon-m-square-2-stack"
                                                     alias="filament-forms::components.builder.buttons.clone"
                                                     size="h-4 w-4"
+                                                    wire:loading.remove.delay
+                                                    wire:target="dispatchFormEvent('builder::cloneItem', '{{ $statePath }}', '{{ $uuid }}')"
+                                                />
+
+                                                <x-filament::loading-indicator
+                                                    class="w-4 h-4 text-primary-500"
+                                                    wire:loading.delay
+                                                    wire:target="dispatchFormEvent('builder::cloneItem', '{{ $statePath }}', '{{ $uuid }}')"
+                                                    x-cloak
                                                 />
                                             </button>
                                         </li>
@@ -217,6 +247,7 @@
                                                 title="{{ __('filament-forms::components.builder.buttons.delete.label') }}"
                                                 wire:click.stop="dispatchFormEvent('builder::delete', '{{ $statePath }}', '{{ $uuid }}')"
                                                 type="button"
+                                                wire:loading.attr="disabled"
                                                 class="flex items-center justify-center flex-none w-10 h-10 text-danger-600 transition hover:text-danger-500 dark:text-danger-500 dark:hover:text-danger-400"
                                             >
                                                 <span class="sr-only">
@@ -227,6 +258,15 @@
                                                     name="heroicon-m-trash"
                                                     alias="filament-forms::components.builder.buttons.delete"
                                                     size="h-4 w-4"
+                                                    wire:loading.remove.delay
+                                                    wire:target="dispatchFormEvent('builder::deleteItem', '{{ $statePath }}', '{{ $uuid }}')"
+                                                />
+
+                                                <x-filament::loading-indicator
+                                                    class="w-4 h-4 text-primary-500"
+                                                    wire:loading.delay
+                                                    wire:target="dispatchFormEvent('builder::deleteItem', '{{ $statePath }}', '{{ $uuid }}')"
+                                                    x-cloak
                                                 />
                                             </button>
                                         </li>

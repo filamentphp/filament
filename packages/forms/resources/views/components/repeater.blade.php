@@ -132,6 +132,7 @@
                                                         title="{{ __('filament-forms::components.repeater.buttons.move_item_up.label') }}"
                                                         wire:click.stop="dispatchFormEvent('repeater::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                         type="button"
+                                                        wire:loading.attr="disabled"
                                                         class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500 dark:border-gray-700"
                                                     >
                                                         <span class="sr-only">
@@ -142,6 +143,15 @@
                                                             name="heroicon-m-chevron-up"
                                                             alias="filament-forms::components.repeater.buttons.move_item_up"
                                                             size="h-4 w-4"
+                                                            wire:loading.remove.delay
+                                                            wire:target="dispatchFormEvent('repeater::moveItemUp', '{{ $statePath }}', '{{ $uuid }}')"
+                                                        />
+
+                                                        <x-filament::loading-indicator
+                                                            class="w-4 h-4 text-primary-500"
+                                                            wire:loading.delay
+                                                            wire:target="dispatchFormEvent('repeater::moveItemUp', '{{ $statePath }}', '{{ $uuid }}')"
+                                                            x-cloak
                                                         />
                                                     </button>
                                                 </li>
@@ -153,6 +163,7 @@
                                                         title="{{ __('filament-forms::components.repeater.buttons.move_item_down.label') }}"
                                                         wire:click.stop="dispatchFormEvent('repeater::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                         type="button"
+                                                        wire:loading.attr="disabled"
                                                         class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500 dark:border-gray-700"
                                                     >
                                                         <span class="sr-only">
@@ -163,6 +174,15 @@
                                                             name="heroicon-m-chevron-down"
                                                             alias="filament-forms::components.repeater.buttons.move_item_down"
                                                             size="h-4 w-4"
+                                                            wire:loading.remove.delay
+                                                            wire:target="dispatchFormEvent('repeater::moveItemDown', '{{ $statePath }}', '{{ $uuid }}')"
+                                                        />
+
+                                                        <x-filament::loading-indicator
+                                                            class="w-4 h-4 text-primary-500"
+                                                            wire:loading.delay
+                                                            wire:target="dispatchFormEvent('repeater::moveItemDown', '{{ $statePath }}', '{{ $uuid }}')"
+                                                            x-cloak
                                                         />
                                                     </button>
                                                 </li>
@@ -175,6 +195,7 @@
                                                     title="{{ __('filament-forms::components.repeater.buttons.clone.label') }}"
                                                     wire:click.stop="dispatchFormEvent('repeater::cloneItem', '{{ $statePath }}', '{{ $uuid }}')"
                                                     type="button"
+                                                    wire:loading.attr="disabled"
                                                     class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500 dark:border-gray-700"
                                                 >
                                                     <span class="sr-only">
@@ -185,6 +206,15 @@
                                                         name="heroicon-m-square-2-stack"
                                                         alias="filament-forms::components.repeater.buttons.clone"
                                                         size="h-4 w-4"
+                                                        wire:loading.remove.delay
+                                                        wire:target="dispatchFormEvent('repeater::cloneItem', '{{ $statePath }}', '{{ $uuid }}')"
+                                                    />
+
+                                                    <x-filament::loading-indicator
+                                                        class="w-4 h-4 text-primary-500"
+                                                        wire:loading.delay
+                                                        wire:target="dispatchFormEvent('repeater::cloneItem', '{{ $statePath }}', '{{ $uuid }}')"
+                                                        x-cloak
                                                     />
                                                 </button>
                                             </li>
@@ -196,6 +226,7 @@
                                                     title="{{ __('filament-forms::components.repeater.buttons.delete.label') }}"
                                                     wire:click.stop="dispatchFormEvent('repeater::delete', '{{ $statePath }}', '{{ $uuid }}')"
                                                     type="button"
+                                                    wire:loading.attr="disabled"
                                                     class="flex items-center justify-center flex-none w-10 h-10 text-danger-600 transition hover:text-danger-500 dark:text-danger-500 dark:hover:text-danger-400"
                                                 >
                                                     <span class="sr-only">
@@ -206,6 +237,15 @@
                                                         name="heroicon-m-trash"
                                                         alias="filament-forms::components.repeater.buttons.delete"
                                                         size="h-4 w-4"
+                                                        wire:loading.remove.delay
+                                                        wire:target="dispatchFormEvent('repeater::deleteItem', '{{ $statePath }}', '{{ $uuid }}')"
+                                                    />
+
+                                                    <x-filament::loading-indicator
+                                                        class="w-4 h-4 text-primary-500"
+                                                        wire:loading.delay
+                                                        wire:target="dispatchFormEvent('repeater::deleteItem', '{{ $statePath }}', '{{ $uuid }}')"
+                                                        x-cloak
                                                     />
                                                 </button>
                                             </li>
