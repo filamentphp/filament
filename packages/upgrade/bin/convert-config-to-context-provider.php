@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Str;
-
 $config = file_exists('config/filament.php') ? file_get_contents('config/filament.php') : '';
 
 $path = $config['path'] ?? 'admin';
