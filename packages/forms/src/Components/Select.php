@@ -433,7 +433,7 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
             }
 
             $relationshipTitleColumnName = $component->getRelationshipTitleColumnName();
-            
+
             if (
                 str_contains($relationshipTitleColumnName, '->') &&
                 (! str_contains($relationshipTitleColumnName, ' as '))
@@ -481,7 +481,7 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
             }
 
             $relationshipTitleColumnName = $component->getRelationshipTitleColumnName();
-            
+
             if (
                 str_contains($relationshipTitleColumnName, '->') &&
                 (! str_contains($relationshipTitleColumnName, ' as '))
@@ -579,7 +579,7 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
             }
 
             $relationshipTitleColumnName = $component->getRelationshipTitleColumnName();
-            
+
             if (
                 str_contains($relationshipTitleColumnName, '->') &&
                 (! str_contains($relationshipTitleColumnName, ' as '))
