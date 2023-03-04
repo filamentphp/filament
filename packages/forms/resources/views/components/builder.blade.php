@@ -306,7 +306,6 @@
         @if ($isAddable)
             <x-filament-forms::builder.block-picker
                 :blocks="$getBlocks()"
-                :after-item="$uuid"
                 :state-path="$statePath"
                 class="flex justify-center"
             >
