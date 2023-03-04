@@ -103,6 +103,16 @@ if (file_exists('config/tables.php')) {
     HTML);
 }
 
+if (file_exists('config/filament.php')) {
+    require 'convert-config-to-context-provider.php';
+
+    render(<<<HTML
+        <p>
+            Merged <stong>config/filament.php</stong> into a context service provider.
+        </p>
+    HTML);
+}
+
 $hasIndividualFilamentPackagesInstalled = false;
 
 foreach (array_merge(
