@@ -22,3 +22,19 @@
 trix-toolbar .filament-forms-rich-editor-component-toolbar-button.trix-active {
     @apply bg-primary-600 text-white;
 }
+
+[dir='rtl'] trix-editor.prose :where(ul):not(:where([class~='not-prose'] *)),
+[dir='rtl'] trix-editor.prose :where(ol):not(:where([class~='not-prose'] *)) {
+    padding-right: 1.625em !important;
+    padding-left: 0em !important;
+}
+
+[dir='rtl']
+    trix-editor.prose
+    :where(ul > li):not(:where([class~='not-prose'] *)),
+[dir='rtl']
+    trix-editor.prose
+    :where(ol > li):not(:where([class~='not-prose'] *)) {
+    padding-right: 0.375em !important;
+    padding-left: 0em !important;
+}

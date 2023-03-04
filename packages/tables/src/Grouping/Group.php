@@ -3,6 +3,7 @@
 namespace Filament\Tables\Grouping;
 
 use Closure;
+use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -28,6 +29,8 @@ class Group
     protected string $id;
 
     protected bool $isCollapsible = false;
+
+    protected bool $isTitlePrefixedWithLabel = true;
 
     final public function __construct(string $id = null)
     {
@@ -102,9 +105,21 @@ class Group
         return $this;
     }
 
+    public function titlePrefixedWithLabel(bool $condition = true): static
+    {
+        $this->isTitlePrefixedWithLabel = $condition;
+
+        return $this;
+    }
+
     public function isCollapsible(): bool
     {
         return $this->isCollapsible;
+    }
+
+    public function isTitlePrefixedWithLabel(): bool
+    {
+        return $this->isTitlePrefixedWithLabel;
     }
 
     public function getColumn(): string
@@ -141,7 +156,13 @@ class Group
 
     public function getKey(Model $record): ?string
     {
-        return Arr::get($record, $this->getColumn());
+        $key = Arr::get($record, $this->getColumn());
+
+        if ($key instanceof LabelInterface) {
+            $key = $key->getLabel();
+        }
+
+        return filled($key) ? strval($key) : null;
     }
 
     public function getTitle(Model $record): ?string

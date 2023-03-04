@@ -25,6 +25,9 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
                     ->sortable()
                     ->searchable()
                     ->action(fn () => $this->emit('title-action-called')),
+                Tables\Columns\TextColumn::make('content')
+                    ->words(10)
+                    ->searchable(isIndividual: true, isGlobal: false),
                 Tables\Columns\TextColumn::make('author.name')
                     ->sortable()
                     ->searchable()
@@ -37,6 +40,8 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
                         Tables\Columns\Summarizers\Range::make('published_range')
                             ->query(fn (Builder $query) => $query->where('is_published', true)),
                     ]),
+                Tables\Columns\TextColumn::make('author.email')
+                    ->searchable(isIndividual: true, isGlobal: false),
                 Tables\Columns\IconColumn::make('is_published')
                     ->boolean()
                     ->summarize([

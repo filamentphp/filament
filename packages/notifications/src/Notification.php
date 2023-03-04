@@ -2,7 +2,6 @@
 
 namespace Filament\Notifications;
 
-use Filament\Http\Livewire\Notifications;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Actions\ActionGroup;
 use Filament\Notifications\Concerns\CanBeInline;
@@ -14,6 +13,7 @@ use Filament\Notifications\Concerns\HasIcon;
 use Filament\Notifications\Concerns\HasId;
 use Filament\Notifications\Concerns\HasTitle;
 use Filament\Notifications\Events\DatabaseNotificationsSent;
+use Filament\Notifications\Http\Livewire\Notifications;
 use Filament\Support\Components\ViewComponent;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Arrayable;

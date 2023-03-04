@@ -4,11 +4,18 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Contracts\HasAffixActions;
+use Filament\Forms\Components\Contracts\HasHintActions;
 use Illuminate\Database\Eloquent\Model;
-use InvalidArgumentException;
+use Illuminate\Support\Arr;
 
 trait HasActions
 {
+    /**
+     * @var array<Action> | null
+     */
+    protected ?array $cachedActions = null;
+
     /**
      * @var array<string, Action | Closure>
      */
@@ -17,36 +24,18 @@ trait HasActions
     protected Model | string | null $actionFormModel = null;
 
     /**
-     * @param  array<string, Action | Closure>  $actions
+     * @param  array<Action | Closure>  $actions
      */
     public function registerActions(array $actions): static
     {
-        foreach ($actions as $actionName => $action) {
-            if ($action instanceof Closure) {
-                $this->actions[$actionName] = $action;
-
-                continue;
-            }
-
-            if (! $action instanceof Action) {
-                throw new InvalidArgumentException('Form component actions must be an instance of ' . Action::class . ' or Closure.');
-            }
-
-            $this->actions[$action->getName()] = $action->component($this);
-        }
+        $this->actions = array_merge($this->actions, $actions);
 
         return $this;
     }
 
     public function getAction(string $name): Action | Closure | null
     {
-        $action = $this->getActions()[$name] ?? null;
-
-        if ($action instanceof Action) {
-            $action->component($this);
-        }
-
-        return $action;
+        return $this->getActions()[$name] ?? null;
     }
 
     /**
@@ -54,7 +43,43 @@ trait HasActions
      */
     public function getActions(): array
     {
-        return $this->actions;
+        return $this->cachedActions ??= $this->cacheActions();
+    }
+
+    /**
+     * @return array<Action>
+     */
+    public function cacheActions(): array
+    {
+        $this->cachedActions = [];
+
+        if ($this instanceof HasAffixActions) {
+            $this->cachedActions = array_merge(
+                $this->cachedActions,
+                $this->getPrefixActions(),
+                $this->getSuffixActions(),
+            );
+        }
+
+        if ($this instanceof HasHintActions) {
+            $this->cachedActions = array_merge(
+                $this->cachedActions,
+                $this->getHintActions(),
+            );
+        }
+
+        foreach ($this->actions as $registeredAction) {
+            foreach (Arr::wrap($this->evaluate($registeredAction)) as $action) {
+                $this->cachedActions[$action->getName()] = $this->prepareAction($action);
+            }
+        }
+
+        return $this->cachedActions;
+    }
+
+    public function prepareAction(Action $action): Action
+    {
+        return $action->component($this);
     }
 
     public function actionFormModel(Model | string | null $model): static

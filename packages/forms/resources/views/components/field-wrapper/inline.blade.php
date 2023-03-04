@@ -8,7 +8,7 @@
     'hasNestedRecursiveValidationRules' => false,
     'helperText' => null,
     'hint' => null,
-    'hintAction' => null,
+    'hintActions' => null,
     'hintColor' => null,
     'hintIcon' => null,
     'isDisabled' => null,
@@ -25,7 +25,7 @@
         $hasNestedRecursiveValidationRules ??= $field instanceof \Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
         $helperText ??= $field->getHelperText();
         $hint ??= $field->getHint();
-        $hintAction ??= $field->getHintAction();
+        $hintActions ??= $field->getHintActions();
         $hintColor ??= $field->getHintColor();
         $hintIcon ??= $field->getHintIcon();
         $isDisabled ??= $field->isDisabled();
@@ -33,6 +33,11 @@
         $required ??= $field->isRequired();
         $statePath ??= $field->getStatePath();
     }
+
+    $hintActions = array_filter(
+        $hintActions ?? [],
+        fn (\Filament\Forms\Components\Actions\Action $hintAction): bool => $hintAction->isVisible(),
+    );
 @endphp
 
 <div {{ $attributes->class(['filament-forms-field-wrapper']) }}>
@@ -43,7 +48,7 @@
     @endif
 
     <div class="grid gap-2 sm:grid-cols-3 sm:gap-4 sm:items-start">
-        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hint || $hintIcon || $hintAction)
+        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hint || $hintIcon || count($hintActions))
             <div class="flex items-center justify-between gap-2 sm:gap-1 sm:items-start sm:flex-col sm:pt-2">
                 @if ($label && (! $labelSrOnly))
                     <x-filament-forms::field-wrapper.label
@@ -63,8 +68,8 @@
                     {{ $labelSuffix }}
                 @endif
 
-                @if ($hint || $hintIcon || $hintAction)
-                    <x-filament-forms::field-wrapper.hint :action="$hintAction" :color="$hintColor" :icon="$hintIcon">
+                @if ($hint || $hintIcon || count($hintActions))
+                    <x-filament-forms::field-wrapper.hint :actions="$hintActions" :color="$hintColor" :icon="$hintIcon">
                         {{ filled($hint) ? ($hint instanceof \Illuminate\Support\HtmlString ? $hint : str($hint)->markdown()->sanitizeHtml()->toHtmlString()) : null }}
                     </x-filament-forms::field-wrapper.hint>
                 @endif

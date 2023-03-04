@@ -3,6 +3,7 @@
     :field="$field"
 >
     @php
+        $gridDirection = $getGridDirection();
         $isBulkToggleable = $isBulkToggleable();
         $isDisabled = $isDisabled();
         $isSearchable = $isSearchable();
@@ -20,13 +21,12 @@
         visibleCheckboxListOptions: [],
 
         init: function () {
+            this.updateVisibleCheckboxListOptions()
             this.checkIfAllCheckboxesAreChecked()
 
             Livewire.hook('message.processed', () => {
                 this.checkIfAllCheckboxesAreChecked()
             })
-
-            this.updateVisibleCheckboxListOptions()
 
             $watch('search', () => {
                 this.updateVisibleCheckboxListOptions()
@@ -104,9 +104,12 @@
             :lg="$getColumns('lg')"
             :xl="$getColumns('xl')"
             :two-xl="$getColumns('2xl')"
-            direction="column"
+            :direction="$gridDirection ?? 'column'"
             :x-show="$isSearchable ? 'visibleCheckboxListOptions.length' : null"
-            :attributes="$attributes->class(['filament-forms-checkbox-list-component gap-1 space-y-2'])"
+            :attributes="$attributes->class([
+                'filament-forms-checkbox-list-component gap-1',
+                'space-y-2' => $gridDirection !== 'row',
+            ])"
         >
             @forelse ($getOptions() as $optionValue => $optionLabel)
                 <div wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.options.{{ $optionValue }}">

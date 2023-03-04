@@ -4,13 +4,22 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Filament\Forms\Components\Actions\Action;
+use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 
 trait HasHint
 {
     protected string | HtmlString | Closure | null $hint = null;
 
-    protected Action | Closure | null $hintAction = null;
+    /**
+     * @var array<Action> | null
+     */
+    protected ?array $cachedHintActions = null;
+
+    /**
+     * @var array<Action | Closure>
+     */
+    protected array $hintActions = [];
 
     protected string | Closure | null $hintColor = null;
 
@@ -37,9 +46,19 @@ trait HasHint
         return $this;
     }
 
-    public function hintAction(Action | Closure | null $action): static
+    public function hintAction(Action | Closure $action): static
     {
-        $this->hintAction = $action;
+        $this->hintActions([$action]);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Action | Closure>  $actions
+     */
+    public function hintActions(array $actions): static
+    {
+        $this->hintActions = array_merge($this->hintActions, $actions);
 
         return $this;
     }
@@ -59,21 +78,27 @@ trait HasHint
         return $this->evaluate($this->hintIcon);
     }
 
-    public function getHintAction(): ?Action
+    /**
+     * @return array<Action>
+     */
+    public function getHintActions(): array
     {
-        return $this->evaluate($this->hintAction)?->component($this);
+        return $this->cachedHintActions ?? $this->cacheHintActions();
     }
 
     /**
-     * @return array<string, Action>
+     * @return array<Action>
      */
-    public function getActions(): array
+    public function cacheHintActions(): array
     {
-        $hintAction = $this->getHintAction();
+        $this->cachedHintActions = [];
 
-        return array_merge(
-            parent::getActions(),
-            $hintAction ? [$hintAction->getName() => $hintAction] : [],
-        );
+        foreach ($this->hintActions as $hintAction) {
+            foreach (Arr::wrap($this->evaluate($hintAction)) as $action) {
+                $this->cachedHintActions[$action->getName()] = $this->prepareAction($action);
+            }
+        }
+
+        return $this->cachedHintActions;
     }
 }
