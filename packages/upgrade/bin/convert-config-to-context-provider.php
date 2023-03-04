@@ -1,6 +1,8 @@
 <?php
 
-$config = file_get_contents('config/filament.php');
+use Illuminate\Support\Str;
+
+$config = file_exists('config/filament.php') ? file_get_contents('config/filament.php') : '';
 
 $path = $config['path'] ?? 'admin';
 
@@ -21,13 +23,13 @@ if ($authGuardPhp === 'env(\'FILAMENT_AUTH_GUARD\', \'web\')') {
 $authGuardPhp = $authGuardPhp ? "\n            ->authGuard({$authGuardPhp})" : '';
 
 $resourcesNamespacePhp = preg_match("/'resources'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[1] : 'app_path(\'Filament/Resources\')';
-$resourcesPathPhp = preg_match("/'resources'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[2] : '\'App\\Filament\\Resources\'';
+$resourcesPathPhp = preg_match("/'resources'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[2] : '\'App\\\\Filament\\\\Resources\'';
 
 $pagesNamespacePhp = preg_match("/'pages'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[1] : 'app_path(\'Filament/Pages\')';
-$pagesPathPhp = preg_match("/'pages'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[2] : '\'App\\Filament\\Pages\'';
+$pagesPathPhp = preg_match("/'pages'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[2] : '\'App\\\\Filament\\\\Pages\'';
 
 $widgetsNamespacePhp = preg_match("/'widgets'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[1] : 'app_path(\'Filament/Widgets\')';
-$widgetsPathPhp = preg_match("/'widgets'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[2] : '\'App\\Filament\\Widgets\'';
+$widgetsPathPhp = preg_match("/'widgets'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[2] : '\'App\\\\Filament\\\\Widgets\'';
 
 $databaseNotificationsPhp = preg_match("/'database_notifications'\s*=>\s*\[\s*'enabled'\s*=>\s*(.*),/", $config, $matches) ? $matches[1] : null;
 if ($databaseNotificationsPhp === 'false') {
@@ -103,3 +105,52 @@ class {$className} extends ContextProvider
             ]);
     }
 }");
+
+file_put_contents('config/app.php', str_replace(
+    'App\\Providers\\RouteServiceProvider::class,' . PHP_EOL,
+    "App\\Providers\\Filament\\{$className}::class," . PHP_EOL . '        App\\Providers\\RouteServiceProvider::class,' . PHP_EOL,
+    file_get_contents('config/app.php'),
+));
+
+if (file_exists('config/filament.php')) {
+    file_put_contents('config/filament.php', '<?php
+
+return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Broadcasting
+    |--------------------------------------------------------------------------
+    |
+    | By uncommenting the Laravel Echo configuration, you may connect Filament
+    | to any Pusher-compatible websockets server.
+    |
+    | This will allow your users to receive real-time notifications.
+    |
+    */
+
+    \'broadcasting\' => [
+
+        // \'echo\' => [
+        //     \'broadcaster\' => \'pusher\',
+        //     \'key\' => env(\'VITE_PUSHER_APP_KEY\'),
+        //     \'cluster\' => env(\'VITE_PUSHER_APP_CLUSTER\'),
+        //     \'forceTLS\' => true,
+        // ],
+
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Default Filesystem Disk
+    |--------------------------------------------------------------------------
+    |
+    | This is the storage disk Filament will use to put media. You may use any
+    | of the disks defined in the `config/filesystems.php`.
+    |
+    */
+
+    \'default_filesystem_disk\' => env(\'FILAMENT_FILESYSTEM_DISK\', \'public\'),
+
+];');
+}

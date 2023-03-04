@@ -1,6 +1,7 @@
 #!/usr/bin/env php
 <?php
 
+use Composer\InstalledVersions;
 use function Termwind\{ask, render};
 
 require 'vendor/autoload.php';
@@ -103,12 +104,12 @@ if (file_exists('config/tables.php')) {
     HTML);
 }
 
-if (file_exists('config/filament.php')) {
+if (InstalledVersions::isInstalled('filament/filament')) {
     require 'convert-config-to-context-provider.php';
 
     render(<<<HTML
         <p>
-            Merged <stong>config/filament.php</stong> into a context service provider.
+            Created an app framework service provider.
         </p>
     HTML);
 }
