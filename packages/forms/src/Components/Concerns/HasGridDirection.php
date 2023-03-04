@@ -4,11 +4,11 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 
-trait HasDirection
+trait HasGridDirection
 {
     protected string | Closure | null $gridDirection = null;
 
-    public function gridDirection(string | Closure | null $gridDirection = null): static
+    public function gridDirection(string | Closure | null $gridDirection): static
     {
         $this->gridDirection = $gridDirection;
 

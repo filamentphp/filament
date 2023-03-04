@@ -112,10 +112,7 @@
             :two-xl="$getColumns('2xl')"
             :direction="$getGridDirection() ?? 'column'"
             :x-show="$isSearchable() ? 'visibleCheckboxListOptions.length' : null"
-            :attributes="$attributes->class([
-                'filament-forms-checkbox-list-component gap-1',
-                'space-y-2' => $getGridDirection() !== 'row'
-                ])"
+            :attributes="$attributes->class(['filament-forms-checkbox-list-component gap-1'])"
         >
             @forelse ($getOptions() as $optionValue => $optionLabel)
                 <div wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.options.{{ $optionValue }}">
