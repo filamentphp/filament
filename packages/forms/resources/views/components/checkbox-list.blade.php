@@ -1,3 +1,7 @@
+@php
+    $gridDirection = $getGridDirection();
+@endphp
+
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :id="$getId()"
@@ -110,9 +114,12 @@
             :lg="$getColumns('lg')"
             :xl="$getColumns('xl')"
             :two-xl="$getColumns('2xl')"
-            :direction="$getGridDirection() ?? 'column'"
+            :direction="$gridDirection ?? 'column'"
             :x-show="$isSearchable() ? 'visibleCheckboxListOptions.length' : null"
-            :attributes="$attributes->class(['filament-forms-checkbox-list-component gap-1'])"
+            :attributes="$attributes->class([
+                'filament-forms-checkbox-list-component gap-1',
+                'space-y-2' => $gridDirection !== 'row',
+            ])"
         >
             @forelse ($getOptions() as $optionValue => $optionLabel)
                 <div wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.options.{{ $optionValue }}">
