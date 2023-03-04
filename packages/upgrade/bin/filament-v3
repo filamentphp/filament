@@ -105,7 +105,7 @@ if (file_exists('config/tables.php')) {
 }
 
 if (InstalledVersions::isInstalled('filament/filament')) {
-    require 'convert-config-to-context-provider.php';
+    require 'create-filament-v3-app-context-provider.php';
 
     render(<<<HTML
         <p>

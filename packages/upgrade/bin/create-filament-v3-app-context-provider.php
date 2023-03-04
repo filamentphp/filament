@@ -44,6 +44,33 @@ if ($databaseNotificationsPollingIntervalPhp === '\'30s\'') {
 }
 $databaseNotificationsPollingIntervalPhp = $databaseNotificationsPollingIntervalPhp ? "\n            ->databaseNotificationsPollingInterval({$databaseNotificationsPollingIntervalPhp})" : '';
 
+$navigationGroupsPhp = null;
+
+$serviceProviders = new RecursiveIteratorIterator(new RecursiveDirectoryIterator('app/Providers'), RecursiveIteratorIterator::SELF_FIRST);
+
+foreach ($serviceProviders as $serviceProvider) {
+    if ($serviceProvider->isDir()) {
+        continue;
+    }
+
+    $serviceProviderContents = file_get_contents($serviceProvider->getPathname());
+
+    if (! preg_match('/Filament::registerNavigationGroups\((\[[^\]]*\])\)/', $serviceProviderContents, $matches)) {
+        continue;
+    }
+
+    $navigationGroupsPhp = preg_replace('/\n\s*/', "\n                ", $matches[1]);
+    $navigationGroupsPhp = str_replace("\n                ]", "\n            ]", $navigationGroupsPhp);
+
+    $serviceProviderContents = preg_replace('/Filament::registerNavigationGroups\((\[[^\]]*\])\);/', '', $serviceProviderContents);
+
+    file_put_contents($serviceProvider->getPathname(), $serviceProviderContents);
+
+    break;
+}
+
+$navigationGroupsPhp = $navigationGroupsPhp ? "\n            ->navigationGroups({$navigationGroupsPhp})" : '';
+
 if (! file_exists('app/Providers/Filament')) {
     mkdir('app/Providers/Filament', 0777, true);
 }
@@ -56,6 +83,7 @@ use Filament\ContextProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Pages;
 use Filament\Support\Color;
 use Filament\Widgets;
@@ -86,7 +114,7 @@ class {$className} extends ContextProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
-            ]){$databaseNotificationsPhp}{$databaseNotificationsPollingIntervalPhp}
+            ]){$navigationGroupsPhp}{$databaseNotificationsPhp}{$databaseNotificationsPollingIntervalPhp}
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
