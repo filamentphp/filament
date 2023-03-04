@@ -432,8 +432,11 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
                     ->toArray();
             }
 
+            $relationshipTitleColumnName = $component->getRelationshipTitleColumnName();
+            if (str_contains($relationshipTitleColumnName, '->') && !str_contains($relationshipTitleColumnName, ' as ')) $relationshipTitleColumnName .= ' as ' . $relationshipTitleColumnName;
+
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleColumnName(), $keyName)
+                ->pluck($relationshipTitleColumnName, $keyName)
                 ->toArray();
         });
 
@@ -471,8 +474,11 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
                     ->toArray();
             }
 
+            $relationshipTitleColumnName = $component->getRelationshipTitleColumnName();
+            if (str_contains($relationshipTitleColumnName, '->') && !str_contains($relationshipTitleColumnName, ' as ')) $relationshipTitleColumnName .= ' as ' . $relationshipTitleColumnName;
+
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleColumnName(), $keyName)
+                ->pluck($relationshipTitleColumnName, $keyName)
                 ->toArray();
         });
 
@@ -560,8 +566,11 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
                     ->toArray();
             }
 
+            $relationshipTitleColumnName = $component->getRelationshipTitleColumnName();
+            if (str_contains($relationshipTitleColumnName, '->') && !str_contains($relationshipTitleColumnName, ' as ')) $relationshipTitleColumnName .= ' as ' . $relationshipTitleColumnName;
+
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleColumnName(), $relatedKeyName)
+                ->pluck($relationshipTitleColumnName, $relatedKeyName)
                 ->toArray();
         });
 
