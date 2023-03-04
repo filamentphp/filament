@@ -7,9 +7,9 @@ The select column allows you to render a select field inside the table, which ca
 You must pass options to the column:
 
 ```php
-use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Columns\Select;
 
-SelectColumn::make('status')
+Select::make('status')
     ->options([
         'draft' => 'Draft',
         'reviewing' => 'Reviewing',
@@ -22,9 +22,9 @@ SelectColumn::make('status')
 You can validate the input by passing any [Laravel validation rules](https://laravel.com/docs/validation#available-validation-rules) in an array:
 
 ```php
-use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Columns\Select;
 
-SelectColumn::make('status')
+Select::make('status')
     ->options([
         'draft' => 'Draft',
         'reviewing' => 'Reviewing',
@@ -38,9 +38,9 @@ SelectColumn::make('status')
 You can prevent the placeholder from being selected using the `disablePlaceholderSelection()` method:
 
 ```php
-use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Columns\Select;
 
-SelectColumn::make('status')
+Select::make('status')
     ->options([
         'draft' => 'Draft',
         'reviewing' => 'Reviewing',
