@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
     use Concerns\CanBeSearchable;
+    use Concerns\HasGridDirection;
     use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasOptions;
 
