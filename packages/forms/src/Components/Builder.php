@@ -292,9 +292,9 @@ class Builder extends Field implements Contracts\CanConcealComponents
                 fn (array $itemData, $itemIndex): ComponentContainer => $this
                     ->getBlock($itemData['type'])
                     ->getChildComponentContainer()
-                    ->getClone()
                     ->statePath("{$itemIndex}.data")
-                    ->inlineLabel(false),
+                    ->inlineLabel(false)
+                    ->getClone(),
             )
             ->all();
     }
