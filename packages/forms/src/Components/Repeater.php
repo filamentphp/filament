@@ -249,10 +249,10 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         foreach ($this->getState() ?? [] as $itemKey => $itemData) {
             $containers[$itemKey] = $this
                 ->getChildComponentContainer()
-                ->getClone()
                 ->statePath($itemKey)
                 ->model($relationship ? $records[$itemKey] ?? $this->getRelatedModel() : null)
-                ->inlineLabel(false);
+                ->inlineLabel(false)
+                ->getClone();
         }
 
         return $containers;
