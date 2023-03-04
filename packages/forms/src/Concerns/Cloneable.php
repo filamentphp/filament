@@ -10,7 +10,9 @@ trait Cloneable
     {
         if (is_array($this->components)) {
             $this->components = array_map(
-                fn (Component $component): Component => $component->getClone(),
+                fn (Component $component): Component => $component
+                    ->container($this)
+                    ->getClone(),
                 $this->components,
             );
         }
