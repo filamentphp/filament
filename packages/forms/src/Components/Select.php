@@ -623,8 +623,17 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                     ->toArray();
             }
 
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
+            if (
+                str_contains($relationshipTitleAttribute, '->') &&
+                (! str_contains($relationshipTitleAttribute, ' as '))
+            ) {
+                $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+            }
+
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleAttribute(), $keyName)
+                ->pluck($relationshipTitleAttribute, $keyName)
                 ->toArray();
         });
 
@@ -662,8 +671,17 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                     ->toArray();
             }
 
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
+            if (
+                str_contains($relationshipTitleAttribute, '->') &&
+                (! str_contains($relationshipTitleAttribute, ' as '))
+            ) {
+                $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+            }
+
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleAttribute(), $keyName)
+                ->pluck($relationshipTitleAttribute, $keyName)
                 ->toArray();
         });
 
@@ -755,8 +773,17 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                     ->toArray();
             }
 
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
+            if (
+                str_contains($relationshipTitleAttribute, '->') &&
+                (! str_contains($relationshipTitleAttribute, ' as '))
+            ) {
+                $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+            }
+
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleAttribute(), $relatedKeyName)
+                ->pluck($relationshipTitleAttribute, $relatedKeyName)
                 ->toArray();
         });
 
