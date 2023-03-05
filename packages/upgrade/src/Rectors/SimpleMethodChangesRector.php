@@ -338,6 +338,11 @@ class SimpleMethodChangesRector extends AbstractRector
             $change['class'] :
             [$change['class']];
 
+        $classes = array_merge(
+            array_map(fn (string $class): string => ltrim($class, '\\'), $classes),
+            array_map(fn (string $class): string => '\\' . ltrim($class, '\\'), $classes),
+        );
+
         if ($change['classIdentifier'] === 'extends') {
             return $class->extends && $this->isNames($class->extends, $classes);
         }

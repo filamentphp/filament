@@ -37,7 +37,10 @@ class ReplaceParentClassRector extends AbstractRector
         $changes = $this->getChanges();
 
         foreach ($changes as $parentClassToRemove => $parentClassToAdd) {
-            if (! $this->isName($node->extends, $parentClassToRemove)) {
+            if (! (
+                $this->isName($node->extends, ltrim($parentClassToRemove, '\\')) ||
+                $this->isName($node->extends, '\\' . ltrim($parentClassToRemove, '\\'))
+            )) {
                 continue;
             }
 

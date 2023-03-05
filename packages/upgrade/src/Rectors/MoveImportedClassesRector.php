@@ -19,9 +19,9 @@ class MoveImportedClassesRector extends AbstractRector
     public function refactor(Node $node): ?Node
     {
         /** @var UseUse $node */
-        if ($this->isName($node->name, 'Filament\\Resources\\Form')) {
+        if ($this->isName($node->name, 'Filament\\Resources\\Form') || $this->isName($node->name, '\\Filament\\Resources\\Form')) {
             $node->name = new Name('Filament\\Forms\\Form');
-        } elseif ($this->isName($node->name, 'Filament\\Resources\\Table')) {
+        } elseif ($this->isName($node->name, 'Filament\\Resources\\Table') || $this->isName($node->name, '\\Filament\\Resources\\Table')) {
             $node->name = new Name('Filament\\Tables\\Table');
         } else {
             return null;

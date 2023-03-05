@@ -27,11 +27,11 @@ class FixGetSetClosureTypesRector extends AbstractRector
                 continue;
             }
 
-            if (($param->var->name === 'get') && $this->isName($param->type, 'Closure')) {
+            if (($param->var->name === 'get') && ($this->isName($param->type, 'Closure') || $this->isName($param->type, '\\Closure'))) {
                 $param->type = new Name('\\Filament\\Forms\\Get');
             }
 
-            if (($param->var->name === 'set') && $this->isName($param->type, 'Closure')) {
+            if (($param->var->name === 'set') && ($this->isName($param->type, 'Closure') || $this->isName($param->type, '\\Closure'))) {
                 $param->type = new Name('\\Filament\\Forms\\Set');
             }
         }
