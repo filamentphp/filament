@@ -3,7 +3,9 @@
 use Filament\Upgrade\Rectors;
 use Rector\Config\RectorConfig;
 use Rector\Removing\Rector\Class_\RemoveTraitUseRector;
+use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\String_\RenameStringRector;
+use Rector\Renaming\ValueObject\MethodCallRename;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rules([
@@ -30,6 +32,16 @@ return static function (RectorConfig $rectorConfig): void {
         'Filament\\Resources\\RelationManagers\\Concerns\\CanEditRecords',
         'Filament\\Resources\\RelationManagers\\Concerns\\CanViewRecords',
     ]);
+
+    $rectorConfig->ruleWithConfiguration(
+        RenameMethodRector::class,
+        [
+            new MethodCallRename('Filament\\Tables\\Table', 'prependActions', 'actions'),
+            new MethodCallRename('Filament\\Tables\\Table', 'pushActions', 'actions'),
+            new MethodCallRename('Filament\\Tables\\Table', 'prependBulkActions', 'bulkActions'),
+            new MethodCallRename('Filament\\Tables\\Table', 'pushBulkActions', 'bulkActions'),
+        ],
+    );
 
     $rectorConfig->ruleWithConfiguration(
         RenameStringRector::class,
