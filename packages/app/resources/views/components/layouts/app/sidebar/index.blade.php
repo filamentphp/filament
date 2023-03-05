@@ -8,7 +8,7 @@
         x-cloak
         x-bind:class="$store.sidebar.isOpen ? 'filament-sidebar-open translate-x-0 max-w-[20em] lg:max-w-[var(--sidebar-width)]' : '-translate-x-full lg:translate-x-0 lg:max-w-[var(--collapsed-sidebar-width)] rtl:lg:-translate-x-0 rtl:translate-x-full'"
     @else
-        @if (filament()->hasTopNavigation())
+        @if (filament()->hasTopNavigation() || filament()->isSidebarFullyCollapsibleOnDesktop())
             x-cloak
         @else
             x-cloak="-lg"
