@@ -257,7 +257,14 @@ class SimpleMethodChangesRector extends AbstractRector
                 ],
             ],
             [
-                'class' => 'Filament\\Resources\\RelationManagers\\RelationManager',
+                'class' => [
+                    'Filament\\Resources\\RelationManagers\\RelationManager',
+                    'Filament\\Resources\\RelationManagers\\BelongsToManyRelationManager',
+                    'Filament\\Resources\\RelationManagers\\HasManyRelationManager',
+                    'Filament\\Resources\\RelationManagers\\HasManyThroughRelationManager',
+                    'Filament\\Resources\\RelationManagers\\MorphManyRelationManager',
+                    'Filament\\Resources\\RelationManagers\\MorphToManyRelationManager',
+                ],
                 'classIdentifier' => 'extends',
                 'changes' => [
                     'form' => function (ClassMethod $node) {

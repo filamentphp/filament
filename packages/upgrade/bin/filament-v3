@@ -326,6 +326,10 @@ HTML);
 $requireCommands = [];
 
 foreach (json_decode(file_get_contents('composer.json'), true)['require'] as $package => $version) {
+    if ($package === 'filament/upgrade') {
+        continue;
+    }
+
     if (! str_starts_with($package, 'filament/')) {
         continue;
     }

@@ -5,7 +5,7 @@ $config = file_exists('config/filament.php') ? file_get_contents('config/filamen
 $path = $config['path'] ?? 'admin';
 
 $pathPhp = preg_match('/\'path\'\s*=>\s*(.*),/', $config, $matches) ? $matches[1] : '\'admin\'';
-$path = preg_match('/env\(\'FILAMENT_PATH\',\s*(.*)\)/', $pathPhp, $matches) ? $matches[1] : 'admin';
+$path = preg_match('/env\(\'FILAMENT_PATH\',\s*\'(.*)\'\)/', $pathPhp, $matches) ? $matches[1] : 'admin';
 
 $isAdmin = trim($path, '/') === 'admin';
 $className = $isAdmin ? 'AdminContextProvider' : 'AppContextProvider';
@@ -20,14 +20,14 @@ if ($authGuardPhp === 'env(\'FILAMENT_AUTH_GUARD\', \'web\')') {
 }
 $authGuardPhp = $authGuardPhp ? "\n            ->authGuard({$authGuardPhp})" : '';
 
-$resourcesNamespacePhp = preg_match("/'resources'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[1] : 'app_path(\'Filament/Resources\')';
-$resourcesPathPhp = preg_match("/'resources'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[2] : '\'App\\\\Filament\\\\Resources\'';
+$resourcesNamespacePhp = preg_match("/'resources'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[1] : '\'App\\\\Filament\\\\Resources\'';
+$resourcesPathPhp = preg_match("/'resources'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[2] : 'app_path(\'Filament/Resources\')';
 
-$pagesNamespacePhp = preg_match("/'pages'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[1] : 'app_path(\'Filament/Pages\')';
-$pagesPathPhp = preg_match("/'pages'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[2] : '\'App\\\\Filament\\\\Pages\'';
+$pagesNamespacePhp = preg_match("/'pages'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[1] : '\'App\\\\Filament\\\\Pages\'';
+$pagesPathPhp = preg_match("/'pages'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[2] : 'app_path(\'Filament/Pages\')';
 
-$widgetsNamespacePhp = preg_match("/'widgets'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[1] : 'app_path(\'Filament/Widgets\')';
-$widgetsPathPhp = preg_match("/'widgets'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[2] : '\'App\\\\Filament\\\\Widgets\'';
+$widgetsNamespacePhp = preg_match("/'widgets'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[1] : '\'App\\\\Filament\\\\Widgets\'';
+$widgetsPathPhp = preg_match("/'widgets'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[2] : 'app_path(\'Filament/Widgets\')';
 
 $databaseNotificationsPhp = preg_match("/'database_notifications'\s*=>\s*\[\s*'enabled'\s*=>\s*(.*),/", $config, $matches) ? $matches[1] : null;
 if ($databaseNotificationsPhp === 'false') {
