@@ -958,6 +958,22 @@ var require_ka = __commonJS((exports, module) => {
   });
 });
 
+// node_modules/dayjs/locale/km.js
+var require_km = __commonJS((exports, module) => {
+  !function(_, e2) {
+    typeof exports == "object" && typeof module != "undefined" ? module.exports = e2(require_dayjs_min()) : typeof define == "function" && define.amd ? define(["dayjs"], e2) : (_ = typeof globalThis != "undefined" ? globalThis : _ || self).dayjs_locale_km = e2(_.dayjs);
+  }(exports, function(_) {
+    "use strict";
+    function e2(_2) {
+      return _2 && typeof _2 == "object" && "default" in _2 ? _2 : {default: _2};
+    }
+    var t2 = e2(_), d = {name: "km", weekdays: "\u17A2\u17B6\u1791\u17B7\u178F\u17D2\u1799_\u1785\u17D0\u1793\u17D2\u1791_\u17A2\u1784\u17D2\u1782\u17B6\u179A_\u1796\u17BB\u1792_\u1796\u17D2\u179A\u17A0\u179F\u17D2\u1794\u178F\u17B7\u17CD_\u179F\u17BB\u1780\u17D2\u179A_\u179F\u17C5\u179A\u17CD".split("_"), months: "\u1798\u1780\u179A\u17B6_\u1780\u17BB\u1798\u17D2\u1797\u17C8_\u1798\u17B8\u1793\u17B6_\u1798\u17C1\u179F\u17B6_\u17A7\u179F\u1797\u17B6_\u1798\u17B7\u1790\u17BB\u1793\u17B6_\u1780\u1780\u17D2\u1780\u178A\u17B6_\u179F\u17B8\u17A0\u17B6_\u1780\u1789\u17D2\u1789\u17B6_\u178F\u17BB\u179B\u17B6_\u179C\u17B7\u1785\u17D2\u1786\u17B7\u1780\u17B6_\u1792\u17D2\u1793\u17BC".split("_"), weekStart: 1, weekdaysShort: "\u17A2\u17B6_\u1785_\u17A2_\u1796_\u1796\u17D2\u179A_\u179F\u17BB_\u179F".split("_"), monthsShort: "\u1798\u1780\u179A\u17B6_\u1780\u17BB\u1798\u17D2\u1797\u17C8_\u1798\u17B8\u1793\u17B6_\u1798\u17C1\u179F\u17B6_\u17A7\u179F\u1797\u17B6_\u1798\u17B7\u1790\u17BB\u1793\u17B6_\u1780\u1780\u17D2\u1780\u178A\u17B6_\u179F\u17B8\u17A0\u17B6_\u1780\u1789\u17D2\u1789\u17B6_\u178F\u17BB\u179B\u17B6_\u179C\u17B7\u1785\u17D2\u1786\u17B7\u1780\u17B6_\u1792\u17D2\u1793\u17BC".split("_"), weekdaysMin: "\u17A2\u17B6_\u1785_\u17A2_\u1796_\u1796\u17D2\u179A_\u179F\u17BB_\u179F".split("_"), ordinal: function(_2) {
+      return _2;
+    }, formats: {LT: "HH:mm", LTS: "HH:mm:ss", L: "DD/MM/YYYY", LL: "D MMMM YYYY", LLL: "D MMMM YYYY HH:mm", LLLL: "dddd, D MMMM YYYY HH:mm"}, relativeTime: {future: "%s\u1791\u17C0\u178F", past: "%s\u1798\u17BB\u1793", s: "\u1794\u17C9\u17BB\u1793\u17D2\u1798\u17B6\u1793\u179C\u17B7\u1793\u17B6\u1791\u17B8", m: "\u1798\u17BD\u1799\u1793\u17B6\u1791\u17B8", mm: "%d \u1793\u17B6\u1791\u17B8", h: "\u1798\u17BD\u1799\u1798\u17C9\u17C4\u1784", hh: "%d \u1798\u17C9\u17C4\u1784", d: "\u1798\u17BD\u1799\u1790\u17D2\u1784\u17C3", dd: "%d \u1790\u17D2\u1784\u17C3", M: "\u1798\u17BD\u1799\u1781\u17C2", MM: "%d \u1781\u17C2", y: "\u1798\u17BD\u1799\u1786\u17D2\u1793\u17B6\u17C6", yy: "%d \u1786\u17D2\u1793\u17B6\u17C6"}};
+    return t2.default.locale(d, null, true), d;
+  });
+});
+
 // node_modules/dayjs/locale/ku.js
 var require_ku = __commonJS((exports, module) => {
   !function(e2, t2) {
@@ -13100,6 +13116,7 @@ var locales = {
   it: require_it(),
   ja: require_ja(),
   ka: require_ka(),
+  km: require_km(),
   ku: require_ku(),
   ms: require_ms(),
   my: require_my(),
