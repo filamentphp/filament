@@ -46,6 +46,9 @@
         <div
             @if (filament()->isSidebarCollapsibleOnDesktop())
                 x-show="$store.sidebar.isOpen"
+                x-transition:enter="lg:transition delay-100"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
             @endif
             class="flex flex-1"
         >
