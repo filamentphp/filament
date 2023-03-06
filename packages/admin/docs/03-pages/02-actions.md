@@ -93,22 +93,6 @@ protected function getActions(): array
 }
 ```
 
-You may customize the size of a button using the `size()` method:
-
-```php
-use Filament\Pages\Actions\Action;
-
-protected function getActions(): array
-{
-    return [
-        Action::make('settings')
-            ->label('Settings')
-            ->url(route('settings'))
-            ->size('lg'), // `sm`, `md` or `lg`
-    ];
-}
-```
-
 ## Modals
 
 Actions may require additional confirmation or form information before they run. You may open a modal before an action is executed to do this.
