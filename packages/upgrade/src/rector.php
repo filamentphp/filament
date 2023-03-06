@@ -1,15 +1,12 @@
 <?php
 
 use Filament\Upgrade\Rector;
-use PhpParser\Node\Stmt\Class_;
 use Rector\Config\RectorConfig;
 use Rector\Removing\Rector\Class_\RemoveTraitUseRector;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
 use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\Rector\String_\RenameStringRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
-use Rector\Visibility\Rector\ClassMethod\ChangeMethodVisibilityRector;
-use Rector\Visibility\ValueObject\ChangeMethodVisibility;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rules([
