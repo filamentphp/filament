@@ -182,7 +182,6 @@ it('can emit an event', function () {
 
     $notification = Notification::make()->actions([$action])->send();
     expect(getLastNotificationAction()->getLivewireMountAction())->toBe("\$emit('an_event', 'data')");
-
 });
 
 it('can emit an event to itself', function () {
@@ -220,10 +219,9 @@ it('can emit an event to a component', function () {
     $notification = Notification::make()->actions([$action])->send();
     expect(getLastNotificationAction()->getLivewireMountAction())->toBe("\$emitTo('a_component', 'an_event')");
 
-    $action = Action::make('action')->emitTo('a_component', 'an_event', ['data'], );
+    $action = Action::make('action')->emitTo('a_component', 'an_event', ['data']);
     expect($action->getLivewireMountAction())->toBe("\$emitTo('a_component', 'an_event', 'data')");
 
     $notification = Notification::make()->actions([$action])->send();
     expect(getLastNotificationAction()->getLivewireMountAction())->toBe("\$emitTo('a_component', 'an_event', 'data')");
 });
-
