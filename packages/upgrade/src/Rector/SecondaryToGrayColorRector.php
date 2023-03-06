@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Upgrade\Rectors;
+namespace Filament\Upgrade\Rector;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;

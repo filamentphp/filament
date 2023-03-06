@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Upgrade\Rectors;
+namespace Filament\Upgrade\Rector;
 
 use Closure;
 use PhpParser\Node;
@@ -62,9 +62,6 @@ class SimpleMethodChangesRector extends AbstractRector
                 ],
                 'classIdentifier' => 'extends',
                 'changes' => [
-                    'getActions' => function (ClassMethod $node) {
-                        $node->name = new Identifier('getHeaderActions');
-                    },
                     'getBreadcrumbs' => function (ClassMethod $node) {
                         $node->flags &= ~Class_::MODIFIER_PROTECTED;
                         $node->flags |= Class_::MODIFIER_PUBLIC;

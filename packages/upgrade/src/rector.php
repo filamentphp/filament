@@ -1,21 +1,36 @@
 <?php
 
-use Filament\Upgrade\Rectors;
+use Filament\Upgrade\Rector;
+use PhpParser\Node\Stmt\Class_;
 use Rector\Config\RectorConfig;
 use Rector\Removing\Rector\Class_\RemoveTraitUseRector;
 use Rector\Renaming\Rector\MethodCall\RenameMethodRector;
+use Rector\Renaming\Rector\Name\RenameClassRector;
 use Rector\Renaming\Rector\String_\RenameStringRector;
 use Rector\Renaming\ValueObject\MethodCallRename;
+use Rector\Visibility\Rector\ClassMethod\ChangeMethodVisibilityRector;
+use Rector\Visibility\ValueObject\ChangeMethodVisibility;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->rules([
-        Rectors\FixGetSetClosureTypesRector::class,
-        Rectors\MoveImportedClassesRector::class,
-        Rectors\ReplaceParentClassRector::class,
-        Rectors\SecondaryToGrayColorRector::class,
-        Rectors\SimpleMethodChangesRector::class,
-        Rectors\SimplePropertyChangesRector::class,
+        Rector\FixGetSetClosureTypesRector::class,
+        Rector\MoveImportedClassesRector::class,
+        Rector\SecondaryToGrayColorRector::class,
+        Rector\SimpleMethodChangesRector::class,
+        Rector\SimplePropertyChangesRector::class,
     ]);
+
+    $rectorConfig->ruleWithConfiguration(
+        RenameClassRector::class,
+        [
+            'Filament\\PluginServiceProvider' => 'Spatie\\LaravelPackageTools\\PackageServiceProvider',
+            'Filament\\Resources\\RelationManagers\\BelongsToManyRelationManager' => 'Filament\\Resources\\RelationManagers\\RelationManager',
+            'Filament\\Resources\\RelationManagers\\HasManyRelationManager' => 'Filament\\Resources\\RelationManagers\\RelationManager',
+            'Filament\\Resources\\RelationManagers\\HasManyThroughRelationManager' => 'Filament\\Resources\\RelationManagers\\RelationManager',
+            'Filament\\Resources\\RelationManagers\\MorphManyRelationManager' => 'Filament\\Resources\\RelationManagers\\RelationManager',
+            'Filament\\Resources\\RelationManagers\\MorphToManyRelationManager' => 'Filament\\Resources\\RelationManagers\\RelationManager',
+        ],
+    );
 
     $rectorConfig->ruleWithConfiguration(RemoveTraitUseRector::class, [
         'Filament\\Http\\Livewire\\Concerns\\CanNotify',
@@ -36,6 +51,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(
         RenameMethodRector::class,
         [
+            new MethodCallRename('Filament\\Pages\\Page', 'getActions', 'getHeaderActions'),
             new MethodCallRename('Filament\\Tables\\Table', 'prependActions', 'actions'),
             new MethodCallRename('Filament\\Tables\\Table', 'pushActions', 'actions'),
             new MethodCallRename('Filament\\Tables\\Table', 'prependBulkActions', 'bulkActions'),

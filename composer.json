@@ -61,6 +61,7 @@
             "Filament\\Tables\\": "packages/tables/src",
             "Filament\\Tests\\": "tests/src",
             "Filament\\Tests\\Database\\Factories\\": "tests/database/factories",
+            "Filament\\Upgrade\\": "packages/upgrade/src",
             "Filament\\Widgets\\": "packages/widgets/src"
         }
     },
