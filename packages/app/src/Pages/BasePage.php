@@ -28,6 +28,8 @@ abstract class BasePage extends Component implements HasActions, RendersActionMo
 
     public static ?Closure $reportValidationErrorUsing = null;
 
+    protected ?string $maxContentWidth = null;
+
     public function render(): View
     {
         return view(static::$view, $this->getViewData())
@@ -52,12 +54,19 @@ abstract class BasePage extends Component implements HasActions, RendersActionMo
                 ->title();
     }
 
+    protected function getMaxContentWidth(): ?string
+    {
+        return $this->maxContentWidth;
+    }
+    
     /**
      * @return array<string, mixed>
      */
     protected function getLayoutData(): array
     {
-        return [];
+        return [
+            'maxContentWidth' => $this->getMaxContentWidth(),
+        ];
     }
 
     /**
