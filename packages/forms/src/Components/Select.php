@@ -213,7 +213,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         }
 
         $action = Action::make($this->getCreateOptionActionName())
-            ->form(fn (Form $form) => $form->model($this->getRelationship()?->getModel()::class)->schema($actionFormSchema))
+            ->form(fn (Form $form) => $form->model(
+                $this->getRelationship() ? $this->getRelationship()->getModel()::class : null,
+            )->schema($actionFormSchema))
             ->action(static function (Action $action, array $arguments, Select $component, array $data, ComponentContainer $form) {
                 if (! $component->getCreateOptionUsing()) {
                     throw new Exception("Select field [{$component->getStatePath()}] must have a [createOptionUsing()] closure set.");
