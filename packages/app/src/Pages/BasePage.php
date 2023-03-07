@@ -58,7 +58,7 @@ abstract class BasePage extends Component implements HasActions, RendersActionMo
     {
         return $this->maxContentWidth;
     }
-    
+
     /**
      * @return array<string, mixed>
      */
