@@ -1,6 +1,9 @@
+@props([
+    'maxContentWidth' => filament()->getMaxContentWidth(),
+])
+
 @php
     $navigation = filament()->getNavigation();
-    $maxContentWidth = filament()->getMaxContentWidth();
 @endphp
 
 <x-filament::layouts.base :livewire="$livewire">
