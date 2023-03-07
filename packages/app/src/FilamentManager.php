@@ -265,10 +265,10 @@ class FilamentManager
     }
 
      public function getMaxContentWidth(): ?string
-    {
-        return $this->getCurrentContext()->getMaxContentWidth();
-    }
-    
+     {
+         return $this->getCurrentContext()->getMaxContentWidth();
+     }
+
     /**
      * @return array<NavigationGroup>
      */
