@@ -4,7 +4,6 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
-use Illuminate\Support\Str;
 
 class Tabs extends Component
 {
@@ -19,7 +18,6 @@ class Tabs extends Component
     final public function __construct(string $label)
     {
         $this->label($label);
-        $this->id(Str::slug($label));
     }
 
     public static function make(string $label): static

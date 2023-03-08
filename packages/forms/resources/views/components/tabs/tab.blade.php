@@ -20,6 +20,7 @@
         setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
     "
     {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-tabs-component-tab outline-none']) }}
+    wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $getId() }}.tab"
 >
     {{ $getChildComponentContainer() }}
 </div>
