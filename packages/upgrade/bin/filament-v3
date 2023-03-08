@@ -191,7 +191,7 @@ if ($hasIndividualFilamentPackagesInstalled) {
             str_contains($fileContents, '@livewireScripts') &&
             (! str_contains($fileContents, '@filamentScripts'))
         ) {
-            $fileContents = str_replace('@livewireScripts', "@filamentScripts\n        @livewireScripts", $fileContents);
+            $fileContents = str_replace('@livewireScripts', "@livewireScripts\n        @filamentScripts", $fileContents);
 
             render(<<<HTML
                 <p>
@@ -204,7 +204,7 @@ if ($hasIndividualFilamentPackagesInstalled) {
             str_contains($fileContents, '@livewireStyles') &&
             (! str_contains($fileContents, '@filamentStyles'))
         ) {
-            $fileContents = str_replace('@livewireStyles', "@filamentStyles\n        @livewireStyles", $fileContents);
+            $fileContents = str_replace('@livewireStyles', "@livewireStyles\n        @filamentStyles", $fileContents);
 
             render(<<<HTML
                 <p>
