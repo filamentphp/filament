@@ -516,7 +516,7 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
 
                 return null;
             })
-            ->reorderable(condition: static fn (RelationManager $livewire): bool => $livewire->canReorder());
+            ->reorderable(condition: fn (): bool => $this->canReorder());
     }
 
     /**
