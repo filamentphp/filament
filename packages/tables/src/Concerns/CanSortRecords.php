@@ -22,8 +22,8 @@ trait CanSortRecords
             $direction ??= 'asc';
         }
 
-        $this->tableSortColumn = $direction ? $column : null;
-        $this->tableSortDirection = $direction;
+        $this->tableSortColumn = $direction ? $column : $this->getDefaultTableSortColumn();
+        $this->tableSortDirection = $direction ?? $this->getDefaultTableSortDirection();
 
         $this->updatedTableSort();
     }
