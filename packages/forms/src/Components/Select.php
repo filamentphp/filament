@@ -42,6 +42,8 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
 
     protected ?Closure $createOptionUsing = null;
 
+    protected string | Closure | null $createOptionFormLabelUsing = null;
+
     protected ?Closure $modifyCreateOptionActionUsing = null;
 
     protected bool | Closure $isMultiple = false;
@@ -216,7 +218,7 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
             })
             ->icon('heroicon-o-plus')
             ->iconButton()
-            ->modalHeading(__('forms::components.select.actions.create_option.modal.heading'))
+            ->modalHeading($this->getCreateOptionFormLabelUsing() ?? __('forms::components.select.actions.create_option.modal.heading'))
             ->modalButton(__('forms::components.select.actions.create_option.modal.actions.create.label'))
             ->hidden(fn (Component $component): bool => $component->isDisabled());
 
@@ -232,6 +234,18 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
     public function getCreateOptionActionFormSchema(): ?array
     {
         return $this->evaluate($this->createOptionActionFormSchema);
+    }
+
+    public function createOptionFormLabelUsing(string | Closure | null $callback): static
+    {
+        $this->createOptionFormLabelUsing = $callback;
+
+        return $this;
+    }
+
+    public function getCreateOptionFormLabelUsing(): ?string
+    {
+        return $this->evaluate($this->createOptionFormLabelUsing);
     }
 
     public function getOptionLabelUsing(?Closure $callback): static
@@ -505,10 +519,10 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
                 $relatedModels = $relationship->getResults();
 
                 $component->state(
-                    // Cast the related keys to a string, otherwise JavaScript does not
-                    // know how to handle deselection.
-                    //
-                    // https://github.com/filamentphp/filament/issues/1111
+                // Cast the related keys to a string, otherwise JavaScript does not
+                // know how to handle deselection.
+                //
+                // https://github.com/filamentphp/filament/issues/1111
                     $relatedModels
                         ->pluck($relationship->getRelatedKeyName())
                         ->map(static fn ($key): string => strval($key))
