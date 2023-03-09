@@ -17,18 +17,12 @@ class TenantSet
     ) {
     }
 
-    /**
-     * @return Model
-     */
     public function getTenant(): Model
     {
         return $this->tenant;
     }
 
-    /**
-     * @return HasTenants | Authenticatable | Model
-     */
-    public function getUser(): Model | HasTenants | Authenticatable
+    public function getUser(): Model | Authenticatable | HasTenants
     {
         return $this->user;
     }
