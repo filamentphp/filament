@@ -270,7 +270,7 @@
                     'dark:border-gray-700' => config('tables.dark_mode'),
                 ])"
             />
-        @elseif ($isSelectionEnabled)
+        @elseif ($isSelectionEnabled && $isLoaded)
             <x-tables::selection-indicator
                 :all-records-count="$allRecordsCount"
                 :colspan="$columnsCount"
