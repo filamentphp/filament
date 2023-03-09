@@ -109,7 +109,7 @@ export default (Alpine) => {
                             uploadProgressIndicatorPosition,
                         server: {
                             load: async (source, load) => {
-                                let response = await fetch(source)
+                                let response = await fetch(source, { cache: 'no-store' })
                                 let blob = await response.blob()
 
                                 load(blob)
