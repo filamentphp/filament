@@ -12,8 +12,24 @@ class TenantSet
     use Dispatchable;
 
     public function __construct(
-        public Model $tenant,
-        public Model | Authenticatable | HasTenants $user,
+        protected Model $tenant,
+        protected Model | Authenticatable | HasTenants $user,
     ) {
+    }
+
+    /**
+     * @return Model
+     */
+    public function getTenant(): Model
+    {
+        return $this->tenant;
+    }
+
+    /**
+     * @return HasTenants | Authenticatable | Model
+     */
+    public function getUser(): Model | HasTenants | Authenticatable
+    {
+        return $this->user;
     }
 }
