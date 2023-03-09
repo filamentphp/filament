@@ -19,7 +19,7 @@
             'text-primary-600' => ((! $active) && (! $disabled) && $icon && (! $separator)) || $active,
             'filament-tables-pagination-item-active focus:underline bg-primary-500/10 ring-2 ring-primary-500' => $active,
             'filament-tables-pagination-item-disabled cursor-not-allowed pointer-events-none opacity-70' => $disabled,
-            'filament-tables-pagination-item-seperator cursor-default' => $separator,
+            'filament-tables-pagination-item-separator cursor-default' => $separator,
         ]) }}
     >
         @if ($icon)
