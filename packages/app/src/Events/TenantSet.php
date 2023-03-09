@@ -12,8 +12,8 @@ class TenantSet
     use Dispatchable;
 
     public function __construct(
-        protected Model $tenant,
-        protected Model | Authenticatable | HasTenants $user,
+        public readonly Model $tenant,
+        public readonly Model | Authenticatable | HasTenants $user,
     ) {
     }
 }
