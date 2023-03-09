@@ -131,8 +131,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         $this->placeholder(__('filament-forms::components.select.placeholder'));
 
         $this->suffixActions([
-            Closure::fromCallable([$this, 'getEditOptionAction']),
-            Closure::fromCallable([$this, 'getCreateOptionAction']),
+            fn (Select $component): ?Action => $component->getEditOptionAction(),
+            fn (Select $component): ?Action => $component->getCreateOptionAction(),
         ]);
     }
 
@@ -213,8 +213,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         }
 
         $action = Action::make($this->getCreateOptionActionName())
-            ->form(fn (Form $form) => $form->model(
-                $this->getRelationship() ? $this->getRelationship()->getModel()::class : null,
+            ->form(fn (Select $component, Form $form) => $form->model(
+                $component->getRelationship() ? $component->getRelationship()->getModel()::class : null,
             )->schema($actionFormSchema))
             ->action(static function (Action $action, array $arguments, Select $component, array $data, ComponentContainer $form) {
                 if (! $component->getCreateOptionUsing()) {
@@ -331,7 +331,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         }
 
         $action = Action::make($this->getEditOptionActionName())
-            ->form(fn (Form $form) => $form->model($this->getSelectedRecord())->schema($actionFormSchema))
+            ->form(fn (Select $component, Form $form) => $form->model($component->getSelectedRecord())->schema($actionFormSchema))
             ->fillForm($this->getEditOptionActionFormData())
             ->action(static function (Action $action, array $arguments, Select $component, array $data, ComponentContainer $form) {
                 $statePath = $component->getStatePath();
