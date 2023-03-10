@@ -22,6 +22,8 @@ class Builder extends Field implements Contracts\CanConcealComponents
 
     protected string | Closure | null $createItemButtonLabel = null;
 
+    protected bool | Closure $isCreateItemButtonOutlined = false;
+
     protected bool | Closure $isItemMovementDisabled = false;
 
     protected bool | Closure $isReorderableWithButtons = false;
@@ -219,6 +221,13 @@ class Builder extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
+    public function createItemButtonIsOutlined(bool | Closure $condition = false): static
+    {
+        $this->isCreateItemButtonOutlined = $condition;
+
+        return $this;
+    }
+
     public function disableItemCreation(bool | Closure $condition = true): static
     {
         $this->isItemCreationDisabled = $condition;
@@ -322,6 +331,11 @@ class Builder extends Field implements Contracts\CanConcealComponents
     public function isItemMovementDisabled(): bool
     {
         return $this->evaluate($this->isItemMovementDisabled) || $this->isDisabled();
+    }
+
+    public function isCreateItemButtonOutlined(): bool
+    {
+        return $this->evaluate($this->isCreateItemButtonOutlined);
     }
 
     public function isItemCreationDisabled(): bool
