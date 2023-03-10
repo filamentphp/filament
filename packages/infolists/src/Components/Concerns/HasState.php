@@ -4,7 +4,6 @@ namespace Filament\Infolists\Components\Concerns;
 
 use BackedEnum;
 use Closure;
-use Filament\Tables\Columns\Concerns\InteractsWithTableQuery;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
