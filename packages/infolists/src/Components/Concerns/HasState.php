@@ -4,10 +4,15 @@ namespace Filament\Infolists\Components\Concerns;
 
 use BackedEnum;
 use Closure;
+use Filament\Tables\Columns\Concerns\InteractsWithTableQuery;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 trait HasState
 {
+    use InteractsWithTableQuery;
+
     protected mixed $defaultState = null;
 
     protected ?Closure $getStateUsing = null;
@@ -15,6 +20,8 @@ trait HasState
     protected ?string $statePath = null;
 
     protected string | Closure | null $separator = null;
+
+    protected bool | Closure $isDistinctList = false;
 
     public function getStateUsing(?Closure $callback): static
     {
@@ -30,6 +37,18 @@ trait HasState
         return $this;
     }
 
+    public function distinctList(bool | Closure $condition = true): static
+    {
+        $this->isDistinctList = $condition;
+
+        return $this;
+    }
+
+    public function isDistinctList(): bool
+    {
+        return (bool) $this->evaluate($this->isDistinctList);
+    }
+
     public function getDefaultState(): mixed
     {
         return $this->evaluate($this->defaultState, exceptParameters: ['state']);
@@ -40,7 +59,7 @@ trait HasState
         $state = $this->getStateUsing ? $this->evaluate(
             $this->getStateUsing,
             exceptParameters: ['state'],
-        ) : data_get($this->getContainer()->getState(), $this->getStatePath());
+        ) : $this->getStateFromRecord($this->getContainer()->getState());
 
         if (
             interface_exists(BackedEnum::class) &&
@@ -106,5 +125,42 @@ trait HasState
         }
 
         return implode('.', $pathComponents);
+    }
+
+    public function getName(): string
+    {
+        return $this->getStatePath();
+    }
+    public function getStateFromRecord(Model $record): mixed
+    {
+        $state = data_get($record, $this->getStatePath());
+
+        if ($state !== null) {
+            return $state;
+        }
+
+        if (! $this->queriesRelationships($record)) {
+            return null;
+        }
+
+        $relationship = $this->getRelationship($record);
+
+        if (! $relationship) {
+            return null;
+        }
+
+        $relationshipAttribute = $this->getRelationshipAttribute();
+
+        $state = collect($this->getRelationshipResults($record))
+            ->filter(fn (Model $record): bool => array_key_exists($relationshipAttribute, $record->getAttributes()))
+            ->pluck($relationshipAttribute)
+            ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
+            ->values();
+
+        if (! $state->count()) {
+            return null;
+        }
+
+        return $state->all();
     }
 }
