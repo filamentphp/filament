@@ -42,7 +42,7 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
 
     protected ?Closure $createOptionUsing = null;
 
-    protected string | Closure | null $createOptionModalHeadingUsing = null;
+    protected string | Closure | null $createOptionModalHeading = null;
 
     protected ?Closure $modifyCreateOptionActionUsing = null;
 
@@ -218,7 +218,7 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
             })
             ->icon('heroicon-o-plus')
             ->iconButton()
-            ->modalHeading($this->getCreateOptionModalHeadingUsing() ?? __('forms::components.select.actions.create_option.modal.heading'))
+            ->modalHeading($this->getCreateOptionModalHeading() ?? __('forms::components.select.actions.create_option.modal.heading'))
             ->modalButton(__('forms::components.select.actions.create_option.modal.actions.create.label'))
             ->hidden(fn (Component $component): bool => $component->isDisabled());
 
@@ -236,16 +236,16 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
         return $this->evaluate($this->createOptionActionFormSchema);
     }
 
-    public function createOptionModalHeadingUsing(string | Closure | null $callback): static
+    public function createOptionModalHeading(string | Closure | null $callback): static
     {
-        $this->createOptionModalHeadingUsing = $callback;
+        $this->createOptionModalHeading = $callback;
 
         return $this;
     }
 
-    public function getCreateOptionModalHeadingUsing(): ?string
+    public function getCreateOptionModalHeading(): ?string
     {
-        return $this->evaluate($this->createOptionModalHeadingUsing);
+        return $this->evaluate($this->createOptionModalHeading);
     }
 
     public function getOptionLabelUsing(?Closure $callback): static
