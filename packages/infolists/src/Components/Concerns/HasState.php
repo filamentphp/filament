@@ -6,7 +6,6 @@ use BackedEnum;
 use Closure;
 use Filament\Tables\Columns\Concerns\InteractsWithTableQuery;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 trait HasState
@@ -131,6 +130,7 @@ trait HasState
     {
         return $this->getStatePath();
     }
+
     public function getStateFromRecord(Model $record): mixed
     {
         $state = data_get($record, $this->getStatePath());
