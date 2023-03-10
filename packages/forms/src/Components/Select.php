@@ -236,9 +236,9 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
         return $this->evaluate($this->createOptionActionFormSchema);
     }
 
-    public function createOptionModalHeading(string | Closure | null $callback): static
+    public function createOptionModalHeading(string | Closure | null $heading): static
     {
-        $this->createOptionModalHeading = $callback;
+        $this->createOptionModalHeading = $heading;
 
         return $this;
     }
