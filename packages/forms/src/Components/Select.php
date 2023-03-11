@@ -67,6 +67,7 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
     protected string | Closure | null $relationship = null;
 
     protected int | Closure $optionsLimit = 50;
+    protected bool | Closure $isModalSlideOver = false;
 
     protected function setUp(): void
     {
@@ -220,6 +221,7 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
             ->iconButton()
             ->modalHeading($this->getCreateOptionModalHeading() ?? __('forms::components.select.actions.create_option.modal.heading'))
             ->modalButton(__('forms::components.select.actions.create_option.modal.actions.create.label'))
+            ->slideOver($this->isModalSlideOver())
             ->hidden(fn (Component $component): bool => $component->isDisabled());
 
         if ($this->modifyCreateOptionActionUsing) {
@@ -776,5 +778,17 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
         return $this->evaluate($this->maxItemsMessage) ?? trans_choice('forms::components.select.max_items_message', $maxItems, [
             ':count' => $maxItems,
         ]);
+    }
+
+    public function slideOver(bool | Closure $condition = true): static
+    {
+        $this->isModalSlideOver = $condition;
+
+        return $this;
+    }
+
+    public function isModalSlideOver(): bool | Closure
+    {
+        return $this->evaluate($this->isModalSlideOver);
     }
 }
