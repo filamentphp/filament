@@ -37,7 +37,7 @@ return [
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Відокремити вибране',
+                    'label' => 'Відокремити',
                 ],
 
             ],
