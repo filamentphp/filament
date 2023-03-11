@@ -780,7 +780,7 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
         ]);
     }
 
-    public function slideOver(bool | Closure $condition = true): static
+    public function createOptionFormSlideOver(bool | Closure $condition = true): static
     {
         $this->isModalSlideOver = $condition;
 
