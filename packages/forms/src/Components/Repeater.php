@@ -23,8 +23,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     protected string | Closure | null $createItemButtonLabel = null;
 
-    protected bool | Closure $isCreateItemButtonOutlined = false;
-
     protected bool | Closure $isItemCreationDisabled = false;
 
     protected bool | Closure $isItemDeletionDisabled = false;
@@ -180,13 +178,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     public function createItemButtonLabel(string | Closure | null $label): static
     {
         $this->createItemButtonLabel = $label;
-
-        return $this;
-    }
-
-    public function createItemButtonIsOutlined(bool | Closure $condition = false): static
-    {
-        $this->isCreateItemButtonOutlined = $condition;
 
         return $this;
     }
@@ -500,11 +491,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     public function hasItemLabels(): bool
     {
         return $this->itemLabel !== null;
-    }
-
-    public function isCreateItemButtonOutlined(): bool
-    {
-        return $this->evaluate($this->isCreateItemButtonOutlined);
     }
 
     public function clearCachedExistingRecords(): void
