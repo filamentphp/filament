@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'Видалити',
+        'label' => 'Видалити назавжди',
 
         'modal' => [
 
-            'heading' => 'Видалити :label',
+            'heading' => 'Назавжди видалити :label',
 
             'actions' => [
 
@@ -28,11 +28,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'Видалити вибране',
+        'label' => 'Назавжди видалити вибране',
 
         'modal' => [
 
-            'heading' => 'Видалити вибране :label',
+            'heading' => 'Назавжди видалити вибране :label',
 
             'actions' => [
 
