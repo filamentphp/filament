@@ -61,10 +61,10 @@ export default (Alpine) => {
             let animation
 
             Livewire.hook('message.received', (_, component) => {
-                if (component.fingerprint.name !== 'notifications') {
+                if (component.fingerprint.name !== 'filament.core.notifications') {
                     return
                 }
-
+                
                 const getTop = () => this.$el.getBoundingClientRect().top
                 const oldTop = getTop()
 
@@ -87,7 +87,7 @@ export default (Alpine) => {
             })
 
             Livewire.hook('message.processed', (_, component) => {
-                if (component.fingerprint.name !== 'notifications') {
+                if (component.fingerprint.name !== 'filament.core.notifications') {
                     return
                 }
 
