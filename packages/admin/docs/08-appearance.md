@@ -320,3 +320,49 @@ The available hooks are as follows:
 - `page.footer-widgets.end` - after page footer widgets
 - `page.actions.start` - before page actions
 - `page.actions.end` - after page actions
+
+## Laravel Octane
+
+When using Laravel octane, the filament serving and hooks will only fire on the first request.
+
+To work around this you can create an event listener to run the hooks in Octane:
+
+```php
+<?php
+
+namespace App\Listeners;
+
+use Filament\Facades\Filament;
+
+class InjectFilamentListener
+{
+    public function handle($event): void
+    {
+        Filament::serving(static function () {
+            Filament::registerViteTheme('resources/css/app.css');
+        });
+    }
+}
+``` 
+
+In the `octane.php` config file add the event listener:
+
+```php
+    RequestReceived::class => [
+        \App\Listeners\InjectFilamentListener::class,
+        ...Octane::prepareApplicationForNextOperation(),
+        ...Octane::prepareApplicationForNextRequest(),
+        //
+    ],
+```
+
+In order to keep the non-octane version working as well, we can use the bootstrapped event in `EventServiceProvider` to trigger
+the same event:
+
+```php
+    protected $listen = [
+        'bootstrapped: ' . \Illuminate\Foundation\Bootstrap\BootProviders::class => [
+            InjectFilamentListener::class
+        ]
+    ];
+```
