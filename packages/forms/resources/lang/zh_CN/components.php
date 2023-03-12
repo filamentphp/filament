@@ -6,7 +6,7 @@ return [
 
         'collapsed' => '内容已收起',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => '添加 :label',
@@ -46,7 +46,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => '添加行',
@@ -93,7 +93,7 @@ return [
 
         'collapsed' => '内容已收起',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => '添加 :label',
@@ -137,7 +137,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => '链接',
                     'unlink' => '取消链接',
                 ],
@@ -216,7 +216,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => '上一步',

@@ -79,9 +79,9 @@
                         size="sm"
                         x-show="! areAllCheckboxesChecked"
                         x-on:click="toggleAllCheckboxes()"
-                        wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.buttons.select_all"
+                        wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.actions.select_all"
                     >
-                        {{ __('filament-forms::components.checkbox_list.buttons.select_all.label') }}
+                        {{ __('filament-forms::components.checkbox_list.actions.select_all.label') }}
                     </x-filament::link>
 
                     <x-filament::link
@@ -89,9 +89,9 @@
                         size="sm"
                         x-show="areAllCheckboxesChecked"
                         x-on:click="toggleAllCheckboxes()"
-                        wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.buttons.deselect_all"
+                        wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.actions.deselect_all"
                     >
-                        {{ __('filament-forms::components.checkbox_list.buttons.deselect_all.label') }}
+                        {{ __('filament-forms::components.checkbox_list.actions.deselect_all.label') }}
                     </x-filament::link>
                 </div>
             @endif

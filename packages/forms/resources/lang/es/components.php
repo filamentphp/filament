@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Contenido contraido',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Clonar',
@@ -58,7 +58,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Añadir fila',
@@ -109,7 +109,7 @@ return [
 
         'collapsed' => 'Contenido contraido',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Añadir a :label',
@@ -161,7 +161,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Enlace',
                     'unlink' => 'Quitar enlace',
                 ],
@@ -242,7 +242,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Anterior',

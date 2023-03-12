@@ -6,7 +6,7 @@ return [
 
         'collapsed' => '折り畳まれたコンテンツ',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => '複製',
@@ -54,7 +54,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => '行を追加',
@@ -101,7 +101,7 @@ return [
 
         'collapsed' => '折り畳まれたコンテンツ',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => ':labelを追加',
@@ -153,7 +153,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'リンク追加',
                     'unlink' => 'リンク解除',
                 ],
@@ -234,7 +234,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => '前へ',

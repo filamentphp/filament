@@ -23,7 +23,7 @@
                     tag="button"
                     size="sm"
                 >
-                    {{ __('filament-forms::components.builder.buttons.collapse_all.label') }}
+                    {{ __('filament-forms::components.builder.actions.collapse_all.label') }}
                 </x-filament::link>
 
                 <x-filament::link
@@ -31,7 +31,7 @@
                     tag="button"
                     size="sm"
                 >
-                    {{ __('filament-forms::components.builder.buttons.expand_all.label') }}
+                    {{ __('filament-forms::components.builder.actions.expand_all.label') }}
                 </x-filament::link>
             </div>
         @endif
@@ -103,7 +103,7 @@
                             >
                                 @if ($isReorderable)
                                     <button
-                                        title="{{ __('filament-forms::components.builder.buttons.reorder.label') }}"
+                                        title="{{ __('filament-forms::components.builder.actions.reorder.label') }}"
                                         x-on:click.stop
                                         x-sortable-handle
                                         wire:keydown.prevent.arrow-up="dispatchFormEvent('builder::moveUp', '{{ $statePath }}', '{{ $uuid }}')"
@@ -112,12 +112,12 @@
                                         class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-r rtl:border-l rtl:border-r-0 transition hover:text-gray-500 dark:border-gray-700"
                                     >
                                         <span class="sr-only">
-                                            {{ __('filament-forms::components.builder.buttons.reorder.label') }}
+                                            {{ __('filament-forms::components.builder.actions.reorder.label') }}
                                         </span>
 
                                         <x-filament::icon
                                             name="heroicon-m-arrows-up-down"
-                                            alias="filament-forms::components.builder.buttons.reorder"
+                                            alias="filament-forms::components.builder.actions.reorder"
                                             size="h-4 w-4"
                                         />
                                     </button>
@@ -150,19 +150,19 @@
                                         @unless ($loop->first)
                                             <li>
                                                 <button
-                                                    title="{{ __('filament-forms::components.builder.buttons.move_item_up.label') }}"
+                                                    title="{{ __('filament-forms::components.builder.actions.move_item_up.label') }}"
                                                     wire:click.stop="dispatchFormEvent('builder::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                     type="button"
                                                     wire:loading.attr="disabled"
                                                     class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500 dark:border-gray-700"
                                                 >
                                                     <span class="sr-only">
-                                                        {{ __('filament-forms::components.builder.buttons.move_item_up.label') }}
+                                                        {{ __('filament-forms::components.builder.actions.move_item_up.label') }}
                                                     </span>
 
                                                     <x-filament::icon
                                                         name="heroicon-m-chevron-up"
-                                                        alias="filament-forms::components.builder.buttons.move_item_up"
+                                                        alias="filament-forms::components.builder.actions.move_item_up"
                                                         size="h-4 w-4"
                                                         wire:loading.remove.delay
                                                         wire:target="dispatchFormEvent('builder::moveItemUp', '{{ $statePath }}', '{{ $uuid }}')"
@@ -181,19 +181,19 @@
                                         @unless ($loop->last)
                                             <li>
                                                 <button
-                                                    title="{{ __('filament-forms::components.builder.buttons.move_item_down.label') }}"
+                                                    title="{{ __('filament-forms::components.builder.actions.move_item_down.label') }}"
                                                     wire:click.stop="dispatchFormEvent('builder::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                     type="button"
                                                     wire:loading.attr="disabled"
                                                     class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500 dark:border-gray-700"
                                                 >
                                                     <span class="sr-only">
-                                                        {{ __('filament-forms::components.builder.buttons.move_item_down.label') }}
+                                                        {{ __('filament-forms::components.builder.actions.move_item_down.label') }}
                                                     </span>
 
                                                     <x-filament::icon
                                                         name="heroicon-m-chevron-down"
-                                                        alias="filament-forms::components.builder.buttons.move_item_down"
+                                                        alias="filament-forms::components.builder.actions.move_item_down"
                                                         size="h-4 w-4"
                                                         wire:loading.remove.delay
                                                         wire:target="dispatchFormEvent('builder::moveItemDown', '{{ $statePath }}', '{{ $uuid }}')"
@@ -213,19 +213,19 @@
                                     @if ($isCloneable)
                                         <li>
                                             <button
-                                                title="{{ __('filament-forms::components.builder.buttons.clone.label') }}"
+                                                title="{{ __('filament-forms::components.builder.actions.clone.label') }}"
                                                 wire:click.stop="dispatchFormEvent('builder::cloneItem', '{{ $statePath }}', '{{ $uuid }}')"
                                                 type="button"
                                                 wire:loading.attr="disabled"
                                                 class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500 dark:border-gray-700"
                                             >
                                                 <span class="sr-only">
-                                                    {{ __('filament-forms::components.builder.buttons.clone.label') }}
+                                                    {{ __('filament-forms::components.builder.actions.clone.label') }}
                                                 </span>
 
                                                 <x-filament::icon
                                                     name="heroicon-m-square-2-stack"
-                                                    alias="filament-forms::components.builder.buttons.clone"
+                                                    alias="filament-forms::components.builder.actions.clone"
                                                     size="h-4 w-4"
                                                     wire:loading.remove.delay
                                                     wire:target="dispatchFormEvent('builder::cloneItem', '{{ $statePath }}', '{{ $uuid }}')"
@@ -244,19 +244,19 @@
                                     @if ($isDeletable)
                                         <li>
                                             <button
-                                                title="{{ __('filament-forms::components.builder.buttons.delete.label') }}"
+                                                title="{{ __('filament-forms::components.builder.actions.delete.label') }}"
                                                 wire:click.stop="dispatchFormEvent('builder::delete', '{{ $statePath }}', '{{ $uuid }}')"
                                                 type="button"
                                                 wire:loading.attr="disabled"
                                                 class="flex items-center justify-center flex-none w-10 h-10 text-danger-600 transition hover:text-danger-500 dark:text-danger-500 dark:hover:text-danger-400"
                                             >
                                                 <span class="sr-only">
-                                                    {{ __('filament-forms::components.builder.buttons.delete.label') }}
+                                                    {{ __('filament-forms::components.builder.actions.delete.label') }}
                                                 </span>
 
                                                 <x-filament::icon
                                                     name="heroicon-m-trash"
-                                                    alias="filament-forms::components.builder.buttons.delete"
+                                                    alias="filament-forms::components.builder.actions.delete"
                                                     size="h-4 w-4"
                                                     wire:loading.remove.delay
                                                     wire:target="dispatchFormEvent('builder::deleteItem', '{{ $statePath }}', '{{ $uuid }}')"
@@ -275,32 +275,32 @@
                                     @if ($isCollapsible)
                                         <li>
                                             <button
-                                                x-bind:title="(! isCollapsed) ? '{{ __('filament-forms::components.builder.buttons.collapse.label') }}' : '{{ __('filament-forms::components.builder.buttons.expand.label') }}'"
+                                                x-bind:title="(! isCollapsed) ? '{{ __('filament-forms::components.builder.actions.collapse.label') }}' : '{{ __('filament-forms::components.builder.actions.expand.label') }}'"
                                                 x-on:click.stop="isCollapsed = ! isCollapsed"
                                                 type="button"
                                                 class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500"
                                             >
                                                 <x-filament::icon
                                                     name="heroicon-m-minus"
-                                                    alias="filament-forms::components.builder.buttons.collapse"
+                                                    alias="filament-forms::components.builder.actions.collapse"
                                                     size="h-4 w-4"
                                                     x-show="!isCollapsed"
                                                 />
 
                                                 <span class="sr-only" x-show="! isCollapsed">
-                                                    {{ __('filament-forms::components.builder.buttons.collapse.label') }}
+                                                    {{ __('filament-forms::components.builder.actions.collapse.label') }}
                                                 </span>
 
                                                 <x-filament::icon
                                                     name="heroicon-m-plus"
-                                                    alias="filament-forms::components.builder.buttons.expand"
+                                                    alias="filament-forms::components.builder.actions.expand"
                                                     size="h-4 w-4"
                                                     x-show="isCollapsed"
                                                     x-cloak="x-cloak"
                                                 />
 
                                                 <span class="sr-only" x-show="isCollapsed" x-cloak>
-                                                    {{ __('filament-forms::components.builder.buttons.expand.label') }}
+                                                    {{ __('filament-forms::components.builder.actions.expand.label') }}
                                                 </span>
                                             </button>
                                         </li>

@@ -8,7 +8,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'დამატება',
                     'unlink' => 'გაუქმება',
                 ],

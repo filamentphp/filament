@@ -224,7 +224,7 @@
                 color="gray"
                 size="sm"
             >
-                {{ __('filament-forms::components.wizard.buttons.previous_step.label') }}
+                {{ __('filament-forms::components.wizard.actions.previous_step.label') }}
             </x-filament::button>
 
             <div x-show="isFirstStep()">
@@ -241,7 +241,7 @@
                 x-on:click="$wire.dispatchFormEvent('wizard::nextStep', '{{ $statePath }}', getStepIndex(step))"
                 size="sm"
             >
-                {{ __('filament-forms::components.wizard.buttons.next_step.label') }}
+                {{ __('filament-forms::components.wizard.actions.next_step.label') }}
             </x-filament::button>
 
             <div x-show="isLastStep()">

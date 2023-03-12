@@ -106,7 +106,7 @@
                                             >
                                                 <x-filament::icon
                                                     name="heroicon-m-arrows-up-down"
-                                                    alias="filament-forms::components.key-value.buttons.reorder"
+                                                    alias="filament-forms::components.key-value.actions.reorder"
                                                     size="h-4 w-4"
                                                 />
 
@@ -124,7 +124,7 @@
                                             >
                                                 <x-filament::icon
                                                     name="heroicon-m-trash"
-                                                    alias="filament-forms::components.key-value.buttons.delete"
+                                                    alias="filament-forms::components.key-value.actions.delete"
                                                     size="h-4 w-4"
                                                 />
 
@@ -149,7 +149,7 @@
                 >
                     <x-filament::icon
                         name="heroicon-m-plus"
-                        alias="filament-forms::components.key-value.buttons.add"
+                        alias="filament-forms::components.key-value.actions.add"
                         size="h-4 w-4"
                     />
 

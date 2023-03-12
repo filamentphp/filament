@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Innehåll komprimerat',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Klona',
@@ -58,7 +58,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Avmarkera alla',
@@ -74,7 +74,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Lägg till rad',
@@ -125,7 +125,7 @@ return [
 
         'collapsed' => 'Innehåll komprimerat',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Lägg till i :label',
@@ -177,7 +177,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Länka',
                     'unlink' => 'Ta bort länk',
                 ],
@@ -258,7 +258,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Föregående',

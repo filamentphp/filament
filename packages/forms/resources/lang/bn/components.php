@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'কন্টেন্ট ছোট হয়েছে',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'অনুলিপি করুন',
@@ -58,7 +58,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'সব নির্বাচিত করুন',
@@ -74,7 +74,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'সারি যোগ করুন',
@@ -125,7 +125,7 @@ return [
 
         'collapsed' => 'কন্টেন্ট ছোট হয়েছে',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => ':label এ যোগ করুন',
@@ -177,7 +177,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'লিংক',
                     'unlink' => 'আনলিংক',
                 ],
@@ -258,7 +258,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'পেছনে',

@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Treść zwinięta',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Duplikuj',
@@ -58,7 +58,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Dodaj wiersz',
@@ -109,7 +109,7 @@ return [
 
         'collapsed' => 'Treść zwinięta',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Dodaj do :label',
@@ -161,7 +161,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Linkuj',
                     'unlink' => 'Usuń link',
                 ],
@@ -242,7 +242,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Poprzedni',

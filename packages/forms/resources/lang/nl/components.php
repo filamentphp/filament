@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Inhoud ingeklapt',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Klonen',
@@ -58,7 +58,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Alles deselecteren',
@@ -74,7 +74,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Rij toevoegen',
@@ -125,7 +125,7 @@ return [
 
         'collapsed' => 'Inhoud ingeklapt',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Toevoegen aan :label',
@@ -177,7 +177,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Link',
                     'unlink' => 'Unlink',
                 ],
@@ -258,7 +258,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Vorige',

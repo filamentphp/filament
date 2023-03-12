@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Saturs sakļauts',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Klonēt',
@@ -58,7 +58,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Noņemt atlasi visiem',
@@ -74,7 +74,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Pievienot rindu',
@@ -125,7 +125,7 @@ return [
 
         'collapsed' => 'Saturs sakļauts',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Pievienot :label',
@@ -177,7 +177,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Saistīt',
                     'unlink' => 'Noņemt saiti',
                 ],
@@ -258,7 +258,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Iepriekšējais',

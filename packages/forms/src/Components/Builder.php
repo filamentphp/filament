@@ -185,14 +185,6 @@ class Builder extends Field implements Contracts\CanConcealComponents
             ],
         ]);
 
-        $this->addBetweenButtonLabel(__('filament-forms::components.builder.buttons.add_between.label'));
-
-        $this->addButtonLabel(static function (Builder $component) {
-            return __('filament-forms::components.builder.buttons.add.label', [
-                'label' => Str::lcfirst($component->getLabel()),
-            ]);
-        });
-
         $this->mutateDehydratedStateUsing(static function (?array $state): array {
             return array_values($state ?? []);
         });
@@ -384,12 +376,14 @@ class Builder extends Field implements Contracts\CanConcealComponents
 
     public function getAddBetweenButtonLabel(): string
     {
-        return $this->evaluate($this->addBetweenButtonLabel);
+        return $this->evaluate($this->addBetweenButtonLabel) ?? __('filament-forms::components.builder.actions.add_between.label');
     }
 
     public function getAddButtonLabel(): string
     {
-        return $this->evaluate($this->addButtonLabel);
+        return $this->evaluate($this->addButtonLabel) ?? __('filament-forms::components.builder.actions.add.label', [
+            'label' => Str::lcfirst($this->getLabel()),
+        ]);
     }
 
     public function hasBlock(string $name): bool

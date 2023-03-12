@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Conținutul este comprimat',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Clonează',
@@ -58,7 +58,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Deselectează toate',
@@ -74,7 +74,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Adăugare linie',
@@ -125,7 +125,7 @@ return [
 
         'collapsed' => 'Conținutul este comprimat',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Adăugare la :label',
@@ -177,7 +177,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Link',
                     'unlink' => 'Unlink',
                 ],
@@ -258,7 +258,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Pasul anterior',

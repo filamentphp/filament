@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'بابەت بچووک کرایەوە',
 
-        'buttons' => [
+        'actions' => [
 
             'clone_item' => [
                 'label' => 'پۆشتە',
@@ -58,7 +58,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'لابردنی دیاریکردنی هەموو',
@@ -74,7 +74,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'زیادکردنی ڕیز',
@@ -125,7 +125,7 @@ return [
 
         'collapsed' => 'بابەت بچووک کرایەوە',
 
-        'buttons' => [
+        'actions' => [
 
             'create_item' => [
                 'label' => 'زیادکردن بۆ :label',
@@ -177,7 +177,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'بەستەر',
                     'unlink' => 'لابردنی بەستەر',
                 ],
@@ -255,7 +255,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'پێشوو',

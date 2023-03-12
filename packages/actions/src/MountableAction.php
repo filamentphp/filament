@@ -2,6 +2,7 @@
 
 namespace Filament\Actions;
 
+use Filament\Actions\Concerns\CanBeInline;
 use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
@@ -10,6 +11,7 @@ use Livewire\Component;
 abstract class MountableAction extends StaticAction
 {
     use Concerns\CanBeDisabled;
+    use CanBeInline;
     use Concerns\CanBeMounted;
     use Concerns\CanBeOutlined;
     use Concerns\CanNotify;

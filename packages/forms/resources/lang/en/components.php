@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Content collapsed',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Clone',
@@ -58,7 +58,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Deselect all',
@@ -74,7 +74,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Add row',
@@ -125,7 +125,7 @@ return [
 
         'collapsed' => 'Content collapsed',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Add to :label',
@@ -177,7 +177,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Link',
                     'unlink' => 'Unlink',
                 ],
@@ -280,7 +280,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Back',

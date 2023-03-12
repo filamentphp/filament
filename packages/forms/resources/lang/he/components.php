@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'ערכים מצומצמים',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'שכפל',
@@ -54,7 +54,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'הוסף שורה',
@@ -101,7 +101,7 @@ return [
 
         'collapsed' => 'ערכים מצומצים',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'הוסף ל :label',
@@ -153,7 +153,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'קישור',
                     'unlink' => 'הסר קישור',
                 ],
@@ -234,7 +234,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'הקודם',

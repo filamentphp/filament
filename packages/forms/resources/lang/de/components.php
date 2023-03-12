@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Inhalt eingeklappt',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Klonen',
@@ -58,7 +58,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Alle deselektieren',
@@ -74,7 +74,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Zeile hinzufügen',
@@ -125,7 +125,7 @@ return [
 
         'collapsed' => 'Inhalt eingeklappt',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Zu :label hinzufügen',
@@ -177,7 +177,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Verlinken',
                     'unlink' => 'Verlinkung aufheben',
                 ],
@@ -258,7 +258,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Zurück',

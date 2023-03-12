@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Turinys suskleistas',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Klonuoti',
@@ -54,7 +54,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Pridėti eilutę',
@@ -101,7 +101,7 @@ return [
 
         'collapsed' => 'Turinys suskleistas',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Pridėti prie :label',
@@ -153,7 +153,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Link',
                     'unlink' => 'Unlink',
                 ],
@@ -234,7 +234,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Atgal',

@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Բովանդակությունը ծալվեց',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Ավելացնել :label',
@@ -46,7 +46,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Ավելացնել տող',
@@ -93,7 +93,7 @@ return [
 
         'collapsed' => 'Բովանդակությունը ծալվեց',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Ավելացնել :label',
@@ -137,7 +137,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Հղում',
                     'unlink' => 'Չեղարկել հղումը',
                 ],
@@ -216,7 +216,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Ետ',
