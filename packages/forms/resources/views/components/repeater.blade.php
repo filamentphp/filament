@@ -306,7 +306,7 @@
                 <x-filament::button
                     :wire:click="'dispatchFormEvent(\'repeater::add\', \'' . $statePath . '\')'"
                     size="sm"
-                    type="button"
+                    outlined
                 >
                     {{ $getAddButtonLabel() }}
                 </x-filament::button>

@@ -350,7 +350,7 @@
                 class="flex justify-center"
             >
                 <x-slot name="trigger">
-                    <x-filament::button size="sm">
+                    <x-filament::button size="sm" outlined>
                         {{ $getAddButtonLabel() }}
                     </x-filament::button>
                 </x-slot>

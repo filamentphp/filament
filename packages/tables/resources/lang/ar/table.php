@@ -94,7 +94,17 @@ return [
     ],
 
     'empty' => [
+
         'heading' => 'لا توجد سجلات',
+
+        'buttons' => [
+
+            'reset_column_searches' => [
+                'label' => 'مسح البحث في العمود',
+            ],
+
+        ],
+
     ],
 
     'filters' => [
