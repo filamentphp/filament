@@ -43,7 +43,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     /**
      * @var array<Component> | Closure | null
      */
-    protected array | Closure | null $createOptionActionFormSchema = null;
+    protected array | Closure | null $createOptionActionForm = null;
 
     protected ?Closure $createOptionUsing = null;
 
@@ -58,7 +58,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     /**
      * @var array<Component> | Closure | null
      */
-    protected array | Closure | null $editOptionActionFormSchema = null;
+    protected array | Closure | null $editOptionActionForm = null;
 
     protected ?Closure $fillEditOptionActionFormUsing = null;
 
@@ -183,7 +183,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
      */
     public function createOptionForm(array | Closure | null $schema): static
     {
-        $this->createOptionActionFormSchema = $schema;
+        $this->createOptionActionForm = $schema;
 
         return $this;
     }
@@ -211,16 +211,16 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             return null;
         }
 
-        $actionFormSchema = $this->getCreateOptionActionFormSchema();
-
-        if (! $actionFormSchema) {
+        if (! $this->hasCreateOptionActionFormSchema()) {
             return null;
         }
 
         $action = Action::make($this->getCreateOptionActionName())
-            ->form(fn (Select $component, Form $form) => $form->model(
-                $component->getRelationship() ? $component->getRelationship()->getModel()::class : null,
-            )->schema($actionFormSchema))
+            ->form(function (Select $component, Form $form): array | Form | null {
+                return $component->getCreateOptionActionForm($form->model(
+                    $component->getRelationship() ? $component->getRelationship()->getModel()::class : null,
+                ));
+            })
             ->action(static function (Action $action, array $arguments, Select $component, array $data, ComponentContainer $form) {
                 if (! $component->getCreateOptionUsing()) {
                     throw new Exception("Select field [{$component->getStatePath()}] must have a [createOptionUsing()] closure set.");
@@ -272,14 +272,6 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         return $action;
     }
 
-    /**
-     * @return array<Component> | null
-     */
-    public function getCreateOptionActionFormSchema(): ?array
-    {
-        return $this->evaluate($this->createOptionActionFormSchema);
-    }
-
     public function createOptionModalHeading(string | Closure | null $heading): static
     {
         $this->createOptionModalHeading = $heading;
@@ -302,11 +294,37 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     }
 
     /**
+     * @return array<Component> | Form | null
+     */
+    public function getCreateOptionActionForm(Form $form): array | Form | null
+    {
+        return $this->evaluate($this->createOptionActionForm, ['form' => $form]);
+    }
+
+    public function hasCreateOptionActionFormSchema(): bool
+    {
+        return (bool) $this->createOptionActionForm;
+    }
+
+    /**
+     * @return array<Component> | Form | null
+     */
+    public function getEditOptionActionForm(Form $form): array | Form | null
+    {
+        return $this->evaluate($this->editOptionActionForm, ['form' => $form]);
+    }
+
+    public function hasEditOptionActionFormSchema(): bool
+    {
+        return (bool) $this->editOptionActionForm;
+    }
+
+    /**
      * @param  array<Component> | Closure | null  $schema
      */
     public function editOptionForm(array | Closure | null $schema): static
     {
-        $this->editOptionActionFormSchema = $schema;
+        $this->editOptionActionForm = $schema;
         $this->reactive();
 
         return $this;
@@ -343,14 +361,16 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             return null;
         }
 
-        $actionFormSchema = $this->getEditOptionActionFormSchema();
-
-        if (! $actionFormSchema) {
+        if (! $this->hasCreateOptionActionFormSchema()) {
             return null;
         }
 
         $action = Action::make($this->getEditOptionActionName())
-            ->form(fn (Select $component, Form $form) => $form->model($component->getSelectedRecord())->schema($actionFormSchema))
+            ->form(function (Select $component, Form $form): array | Form | null {
+                return $component->getEditOptionActionForm(
+                    $form->model($component->getSelectedRecord()),
+                );
+            })
             ->fillForm($this->getEditOptionActionFormData())
             ->action(static function (Action $action, array $arguments, Select $component, array $data, ComponentContainer $form) {
                 $statePath = $component->getStatePath();
@@ -389,14 +409,6 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         }
 
         return $action;
-    }
-
-    /**
-     * @return array<Component> | null
-     */
-    public function getEditOptionActionFormSchema(): ?array
-    {
-        return $this->evaluate($this->editOptionActionFormSchema);
     }
 
     /**
