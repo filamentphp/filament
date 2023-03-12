@@ -19,8 +19,9 @@
                 'focus:text-primary-600' => (! $active) && (! $disabled) && (! $icon) && (! $separator),
                 'transition' => ((! $active) && (! $disabled) && (! $separator)) || $active,
                 'text-primary-600' => ((! $active) && (! $disabled) && $icon && (! $separator)) || $active,
-                'focus:underline bg-primary-500/10 ring-2 ring-primary-500' => $active,
-                'cursor-default' => $separator,
+                'filament-tables-pagination-item-active focus:underline bg-primary-500/10 ring-2 ring-primary-500' => $active,
+                'filament-tables-pagination-item-disabled' => $disabled,
+                'filament-tables-pagination-item-separator cursor-default' => $separator,
             ])
     }}>
         @if ($icon)

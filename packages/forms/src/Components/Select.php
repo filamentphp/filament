@@ -46,6 +46,10 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
     protected ?Closure $createOptionUsing = null;
 
+    protected string | Closure | null $createOptionModalHeading = null;
+
+    protected string | Closure | null $editOptionModalHeading = null;
+
     protected ?Closure $modifyCreateOptionActionUsing = null;
 
     protected ?Closure $modifyManageOptionActionsUsing = null;
@@ -245,7 +249,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             })
             ->icon('heroicon-m-plus')
             ->iconButton()
-            ->modalHeading(__('filament-forms::components.select.actions.create_option.modal.heading'))
+            ->modalHeading($this->getCreateOptionModalHeading() ?? __('filament-forms::components.select.actions.create_option.modal.heading'))
             ->modalButton(__('filament-forms::components.select.actions.create_option.modal.actions.create.label'))
             ->extraModalActions(fn (Action $action, Select $component): array => $component->isMultiple() ? [
                 $action->makeExtraModalAction('createAnother', ['another' => true])
@@ -273,6 +277,20 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     public function getCreateOptionActionFormSchema(): ?array
     {
         return $this->evaluate($this->createOptionActionFormSchema);
+    }
+
+    public function createOptionModalHeading(string | Closure | null $heading): static
+    {
+        $this->createOptionModalHeading = $heading;
+
+        return $this;
+    }
+
+    public function editOptionModalHeading(string | Closure | null $heading): static
+    {
+        $this->editOptionModalHeading = $heading;
+
+        return $this;
     }
 
     public function editOptionAction(?Closure $callback): static
@@ -354,7 +372,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             })
             ->icon('heroicon-m-pencil-square')
             ->iconButton()
-            ->modalHeading(__('filament-forms::components.select.actions.edit_option.modal.heading'))
+            ->modalHeading($this->getEditOptionModalHeading() ?? __('filament-forms::components.select.actions.edit_option.modal.heading'))
             ->modalButton(__('filament-forms::components.select.actions.edit_option.modal.actions.save.label'));
 
         if ($this->modifyManageOptionActionsUsing) {
@@ -393,6 +411,16 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         $this->fillEditOptionActionFormUsing = $callback;
 
         return $this;
+    }
+
+    public function getCreateOptionModalHeading(): ?string
+    {
+        return $this->evaluate($this->createOptionModalHeading);
+    }
+
+    public function getEditOptionModalHeading(): ?string
+    {
+        return $this->evaluate($this->editOptionModalHeading);
     }
 
     public function getOptionLabelUsing(?Closure $callback): static
@@ -895,11 +923,13 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     public function getLabel(): string
     {
         if ($this->label === null && $this->hasRelationship()) {
-            return (string) str($this->getRelationshipName())
+            $label = (string) str($this->getRelationshipName())
                 ->before('.')
                 ->kebab()
                 ->replace(['-', '_'], ' ')
                 ->ucfirst();
+
+            return ($this->shouldTranslateLabel) ? __($label) : $label;
         }
 
         return parent::getLabel();

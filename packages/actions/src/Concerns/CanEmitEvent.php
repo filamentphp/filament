@@ -94,4 +94,14 @@ trait CanEmitEvent
     {
         return $this->evaluate($this->eventData);
     }
+
+    public function getEmitDirection(): bool | string
+    {
+        return $this->emitDirection;
+    }
+
+    public function getEmitToComponent(): ?string
+    {
+        return $this->emitToComponent;
+    }
 }

@@ -501,11 +501,13 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     public function getLabel(): string
     {
         if ($this->label === null && $this->hasRelationship()) {
-            return (string) str($this->getRelationshipName())
+            $label = (string) str($this->getRelationshipName())
                 ->before('.')
                 ->kebab()
                 ->replace(['-', '_'], ' ')
                 ->ucfirst();
+
+            return ($this->shouldTranslateLabel) ? __($label) : $label;
         }
 
         return parent::getLabel();

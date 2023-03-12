@@ -137,11 +137,13 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
     public function getLabel(): string
     {
         if ($this->label === null && $this->getRelationship()) {
-            return (string) str($this->getRelationshipName())
+            $label = (string) str($this->getRelationshipName())
                 ->before('.')
                 ->kebab()
                 ->replace(['-', '_'], ' ')
                 ->ucfirst();
+
+            return ($this->shouldTranslateLabel) ? __($label) : $label;
         }
 
         return parent::getLabel();

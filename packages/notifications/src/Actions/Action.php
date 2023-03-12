@@ -45,6 +45,8 @@ class Action extends StaticAction implements Arrayable, Groupable
             'color' => $this->getColor(),
             'event' => $this->getEvent(),
             'eventData' => $this->getEventData(),
+            'emitDirection' => $this->getEmitDirection(),
+            'emitToComponent' => $this->getEmitToComponent(),
             'extraAttributes' => $this->getExtraAttributes(),
             'icon' => $this->getIcon(),
             'iconPosition' => $this->getIconPosition(),
