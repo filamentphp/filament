@@ -105,8 +105,8 @@
 
         @if ($indicator)
             <span class="{{ $indicatorClasses }}">
-            {{ $indicator }}
-        </span>
+                {{ $indicator }}
+            </span>
         @endif
     </a>
 @elseif ($tag === 'button')
