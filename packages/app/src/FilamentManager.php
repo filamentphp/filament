@@ -264,10 +264,10 @@ class FilamentManager
         return $this->getCurrentContext()->getLogoutUrl();
     }
 
-     public function getMaxContentWidth(): ?string
-     {
-         return $this->getCurrentContext()->getMaxContentWidth();
-     }
+    public function getMaxContentWidth(): ?string
+    {
+        return $this->getCurrentContext()->getMaxContentWidth();
+    }
 
     /**
      * @return array<NavigationGroup>

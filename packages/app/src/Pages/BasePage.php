@@ -57,7 +57,7 @@ abstract class BasePage extends Component implements HasActions, RendersActionMo
                 ->title();
     }
 
-    protected function getMaxContentWidth(): ?string
+    public function getMaxContentWidth(): ?string
     {
         return $this->maxContentWidth;
     }
