@@ -125,11 +125,6 @@ trait HasState
         return implode('.', $pathComponents);
     }
 
-    public function getName(): string
-    {
-        return $this->getStatePath();
-    }
-
     public function getStateFromRecord(Model $record): mixed
     {
         $state = data_get($record, $this->getStatePath());

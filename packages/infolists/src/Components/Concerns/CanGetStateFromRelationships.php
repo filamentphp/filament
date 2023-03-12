@@ -13,15 +13,15 @@ trait CanGetStateFromRelationships
         return $this->getRelationship($record) !== null;
     }
 
-    public function getRelationship(Model $record, ?string $name = null): ?Relation
+    public function getRelationship(Model $record, ?string $statePath = null): ?Relation
     {
-        if (blank($name) && (! str($this->getName())->contains('.'))) {
+        if (blank($statePath) && (! str($this->getStatePath())->contains('.'))) {
             return null;
         }
 
         $relationship = null;
 
-        foreach (explode('.', $name ?? $this->getRelationshipName()) as $nestedRelationshipName) {
+        foreach (explode('.', $statePath ?? $this->getRelationshipName()) as $nestedRelationshipName) {
             if (! $record->isRelation($nestedRelationshipName)) {
                 $relationship = null;
 
@@ -86,25 +86,25 @@ trait CanGetStateFromRelationships
         return $results;
     }
 
-    public function getRelationshipAttribute(?string $name = null): string
+    public function getRelationshipAttribute(?string $statePath = null): string
     {
-        $name ??= $this->getName();
+        $statePath ??= $this->getStatePath();
 
-        if (! str($name)->contains('.')) {
-            return $name;
+        if (! str($statePath)->contains('.')) {
+            return $statePath;
         }
 
-        return (string) str($name)->afterLast('.');
+        return (string) str($statePath)->afterLast('.');
     }
 
-    public function getRelationshipName(?string $name = null): ?string
+    public function getRelationshipName(?string $statePath = null): ?string
     {
-        $name ??= $this->getName();
+        $statePath ??= $this->getStatePath();
 
-        if (! str($name)->contains('.')) {
+        if (! str($statePath)->contains('.')) {
             return null;
         }
 
-        return (string) str($name)->beforeLast('.');
+        return (string) str($statePath)->beforeLast('.');
     }
 }
