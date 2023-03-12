@@ -3,7 +3,11 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Illuminate\Support\Str;
+use function Filament\Forms\array_move_after;
+use function Filament\Forms\array_move_before;
 
 class KeyValue extends Field
 {
@@ -14,11 +18,11 @@ class KeyValue extends Field
      */
     protected string $view = 'filament-forms::components.key-value';
 
-    protected string | Closure | null $addButtonLabel = null;
+    protected string | Closure | null $addActionLabel = null;
 
-    protected string | Closure | null $deleteButtonLabel = null;
+    protected string | Closure | null $deleteActionLabel = null;
 
-    protected string | Closure | null $reorderButtonLabel = null;
+    protected string | Closure | null $reorderActionLabel = null;
 
     protected bool | Closure $isAddable = true;
 
@@ -38,6 +42,12 @@ class KeyValue extends Field
 
     protected bool | Closure $isReorderable = false;
 
+    protected ?Closure $modifyAddActionUsing = null;
+
+    protected ?Closure $modifyDeleteActionUsing = null;
+
+    protected ?Closure $modifyReorderActionUsing = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -51,34 +61,165 @@ class KeyValue extends Field
                 ->all();
         });
 
-        $this->addButtonLabel(__('filament-forms::components.key_value.buttons.add.label'));
-
-        $this->deleteButtonLabel(__('filament-forms::components.key_value.buttons.delete.label'));
-
-        $this->reorderButtonLabel(__('filament-forms::components.key_value.buttons.reorder.label'));
-
-        $this->keyLabel(__('filament-forms::components.key_value.fields.key.label'));
-
-        $this->valueLabel(__('filament-forms::components.key_value.fields.value.label'));
+        $this->registerActions([
+            fn (KeyValue $component): ?Action => $component->getAddAction(),
+            fn (KeyValue $component): ?Action => $component->getDeleteAction(),
+            fn (KeyValue $component): ?Action => $component->getReorderAction(),
+        ]);
     }
 
+    public function getAddAction(): ?Action
+    {
+        if (! $this->isAddable()) {
+            return null;
+        }
+
+        $action = Action::make($this->getAddActionName())
+            ->label(fn (KeyValue $component) => $component->getAddActionLabel())
+            ->mountedOnClick(false)
+            ->link()
+            ->size('sm');
+
+        if ($this->modifyAddActionUsing) {
+            $action = $this->evaluate($this->modifyAddActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function addAction(?Closure $callback): static
+    {
+        $this->modifyAddActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getAddActionName(): string
+    {
+        return 'add';
+    }
+
+    public function getDeleteAction(): ?Action
+    {
+        if (! $this->isDeletable()) {
+            return null;
+        }
+
+        $action = Action::make($this->getDeleteActionName())
+            ->label(__('filament-forms::components.key_value.actions.delete.label'))
+            ->icon('heroicon-m-trash')
+            ->color('danger')
+            ->mountedOnClick(false)
+            ->iconButton()
+            ->inline()
+            ->size('sm');
+
+        if ($this->modifyDeleteActionUsing) {
+            $action = $this->evaluate($this->modifyDeleteActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function deleteAction(?Closure $callback): static
+    {
+        $this->modifyDeleteActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getDeleteActionName(): string
+    {
+        return 'delete';
+    }
+
+    public function getReorderAction(): ?Action
+    {
+        if (! $this->isReorderable()) {
+            return null;
+        }
+
+        $action = Action::make($this->getReorderActionName())
+            ->label(__('filament-forms::components.key_value.actions.reorder.label'))
+            ->icon('heroicon-m-arrows-up-down')
+            ->color('gray')
+            ->mountedOnClick(false)
+            ->iconButton()
+            ->inline()
+            ->size('sm');
+
+        if ($this->modifyReorderActionUsing) {
+            $action = $this->evaluate($this->modifyReorderActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function reorderAction(?Closure $callback): static
+    {
+        $this->modifyReorderActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getReorderActionName(): string
+    {
+        return 'reorder';
+    }
+
+    public function addActionLabel(string | Closure | null $label): static
+    {
+        $this->addActionLabel = $label;
+
+        return $this;
+    }
+
+    public function deleteActionLabel(string | Closure | null $label): static
+    {
+        $this->deleteActionLabel = $label;
+
+        return $this;
+    }
+
+    public function reorderActionLabel(string | Closure | null $label): static
+    {
+        $this->reorderActionLabel = $label;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `addActionLabel()` instead.
+     */
     public function addButtonLabel(string | Closure | null $label): static
     {
-        $this->addButtonLabel = $label;
+        $this->addActionLabel($label);
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `deleteActionLabel()` instead.
+     */
     public function deleteButtonLabel(string | Closure | null $label): static
     {
-        $this->deleteButtonLabel = $label;
+        $this->deleteActionLabel($label);
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `reorderActionLabel()` instead.
+     */
     public function reorderButtonLabel(string | Closure | null $label): static
     {
-        $this->reorderButtonLabel = $label;
+        $this->reorderActionLabel($label);
 
         return $this;
     }
@@ -206,29 +347,29 @@ class KeyValue extends Field
         return (bool) $this->evaluate($this->canEditValues);
     }
 
-    public function getAddButtonLabel(): string
+    public function getAddActionLabel(): string
     {
-        return $this->evaluate($this->addButtonLabel);
+        return $this->evaluate($this->addActionLabel) ?? __('filament-forms::components.key_value.actions.add.label');
     }
 
-    public function getDeleteButtonLabel(): string
+    public function getDeleteActionLabel(): string
     {
-        return $this->evaluate($this->deleteButtonLabel);
+        return $this->evaluate($this->deleteActionLabel) ?? __('filament-forms::components.key_value.actions.delete.label');
     }
 
-    public function getReorderButtonLabel(): string
+    public function getReorderActionLabel(): string
     {
-        return $this->evaluate($this->reorderButtonLabel);
+        return $this->evaluate($this->reorderActionLabel) ?? __('filament-forms::components.key_value.actions.reorder.label');
     }
 
     public function getKeyLabel(): string
     {
-        return $this->evaluate($this->keyLabel);
+        return $this->evaluate($this->keyLabel) ?? __('filament-forms::components.key_value.fields.key.label');
     }
 
     public function getValueLabel(): string
     {
-        return $this->evaluate($this->valueLabel);
+        return $this->evaluate($this->valueLabel) ?? __('filament-forms::components.key_value.fields.value.label');
     }
 
     public function getKeyPlaceholder(): ?string

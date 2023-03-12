@@ -22,21 +22,13 @@
     <div>
         @if ((count($containers) > 1) && $isCollapsible)
             <div class="space-x-2 rtl:space-x-reverse" x-data="{}">
-                <x-filament::link
-                    x-on:click="$dispatch('builder-collapse', '{{ $statePath }}')"
-                    tag="button"
-                    size="sm"
-                >
-                    {{ __('filament-forms::components.builder.actions.collapse_all.label') }}
-                </x-filament::link>
+                <span x-on:click="$dispatch('builder-collapse', '{{ $statePath }}')">
+                    {{ $getAction('collapseAll') }}
+                </span>
 
-                <x-filament::link
-                    x-on:click="$dispatch('builder-expand', '{{ $statePath }}')"
-                    tag="button"
-                    size="sm"
-                >
-                    {{ __('filament-forms::components.builder.actions.expand_all.label') }}
-                </x-filament::link>
+                <span x-on:click="$dispatch('builder-expand', '{{ $statePath }}')">
+                    {{ $getAction('expandAll') }}
+                </span>
             </div>
         @endif
     </div>
@@ -106,10 +98,7 @@
                                 ])
                             >
                                 @if ($reorderAction)
-                                    <div
-                                        x-on:click.stop
-                                        x-sortable-handle
-                                    >
+                                    <div x-sortable-handle>
                                         {{ $reorderAction }}
                                     </div>
                                 @endif
@@ -164,36 +153,14 @@
                                     @endif
 
                                     @if ($isCollapsible)
-                                        <li>
-                                            <button
-                                                x-bind:title="(! isCollapsed) ? '{{ __('filament-forms::components.builder.actions.collapse.label') }}' : '{{ __('filament-forms::components.builder.actions.expand.label') }}'"
-                                                x-on:click.stop="isCollapsed = ! isCollapsed"
-                                                type="button"
-                                                class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500"
-                                            >
-                                                <x-filament::icon
-                                                    name="heroicon-m-minus"
-                                                    alias="filament-forms::components.builder.actions.collapse"
-                                                    size="h-4 w-4"
-                                                    x-show="!isCollapsed"
-                                                />
+                                        <li x-on:click.stop="isCollapsed = ! isCollapsed">
+                                            <div x-show="!isCollapsed">
+                                                {{ $getAction('collapse') }}
+                                            </div>
 
-                                                <span class="sr-only" x-show="! isCollapsed">
-                                                    {{ __('filament-forms::components.builder.actions.collapse.label') }}
-                                                </span>
-
-                                                <x-filament::icon
-                                                    name="heroicon-m-plus"
-                                                    alias="filament-forms::components.builder.actions.expand"
-                                                    size="h-4 w-4"
-                                                    x-show="isCollapsed"
-                                                    x-cloak="x-cloak"
-                                                />
-
-                                                <span class="sr-only" x-show="isCollapsed" x-cloak>
-                                                    {{ __('filament-forms::components.builder.actions.expand.label') }}
-                                                </span>
-                                            </button>
+                                            <div x-show="isCollapsed" x-cloak>
+                                                {{ $getAction('expand') }}
+                                            </div>
                                         </li>
                                     @endif
                                 </ul>

@@ -61,6 +61,14 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     protected ?Closure $modifyReorderActionUsing = null;
 
+    protected ?Closure $modifyCollapseActionUsing = null;
+
+    protected ?Closure $modifyExpandActionUsing = null;
+
+    protected ?Closure $modifyCollapseAllActionUsing = null;
+
+    protected ?Closure $modifyExpandAllActionUsing = null;
+
     protected ?Closure $mutateRelationshipDataBeforeAddUsing = null;
 
     protected ?Closure $mutateRelationshipDataBeforeFillUsing = null;
@@ -86,7 +94,11 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         $this->registerActions([
             fn (Repeater $component): ?Action => $component->getAddAction(),
             fn (Repeater $component): ?Action => $component->getCloneAction(),
+            fn (Repeater $component): ?Action => $component->getCollapseAction(),
+            fn (Repeater $component): ?Action => $component->getCollapseAllAction(),
             fn (Repeater $component): ?Action => $component->getDeleteAction(),
+            fn (Repeater $component): ?Action => $component->getExpandAction(),
+            fn (Repeater $component): ?Action => $component->getExpandAllAction(),
             fn (Repeater $component): ?Action => $component->getMoveDownAction(),
             fn (Repeater $component): ?Action => $component->getMoveUpAction(),
             fn (Repeater $component): ?Action => $component->getReorderAction(),
@@ -323,6 +335,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
                 $component->state($items);
             })
+            ->mountedOnClick(false)
             ->iconButton()
             ->inline()
             ->size('sm');
@@ -346,6 +359,128 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     public function getReorderActionName(): string
     {
         return 'reorder';
+    }
+
+    public function getCollapseAction(): ?Action
+    {
+        $action = Action::make($this->getCollapseActionName())
+            ->label(__('filament-forms::components.repeater.actions.collapse.label'))
+            ->icon('heroicon-m-minus')
+            ->color('gray')
+            ->mountedOnClick(false)
+            ->iconButton()
+            ->inline()
+            ->size('sm');
+
+        if ($this->modifyCollapseActionUsing) {
+            $action = $this->evaluate($this->modifyCollapseActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function collapseAction(?Closure $callback): static
+    {
+        $this->modifyCollapseActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getCollapseActionName(): string
+    {
+        return 'collapse';
+    }
+
+    public function getExpandAction(): ?Action
+    {
+        $action = Action::make($this->getExpandActionName())
+            ->label(__('filament-forms::components.repeater.actions.expand.label'))
+            ->icon('heroicon-m-plus')
+            ->color('gray')
+            ->mountedOnClick(false)
+            ->iconButton()
+            ->inline()
+            ->size('sm');
+
+        if ($this->modifyExpandActionUsing) {
+            $action = $this->evaluate($this->modifyExpandActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function expandAction(?Closure $callback): static
+    {
+        $this->modifyExpandActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getExpandActionName(): string
+    {
+        return 'expand';
+    }
+
+    public function getCollapseAllAction(): ?Action
+    {
+        $action = Action::make($this->getCollapseAllActionName())
+            ->label(__('filament-forms::components.repeater.actions.collapse_all.label'))
+            ->mountedOnClick(false)
+            ->link()
+            ->size('sm');
+
+        if ($this->modifyCollapseAllActionUsing) {
+            $action = $this->evaluate($this->modifyCollapseAllActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function collapseAllAction(?Closure $callback): static
+    {
+        $this->modifyCollapseAllActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getCollapseAllActionName(): string
+    {
+        return 'collapseAll';
+    }
+
+    public function getExpandAllAction(): ?Action
+    {
+        $action = Action::make($this->getExpandAllActionName())
+            ->label(__('filament-forms::components.repeater.actions.expand_all.label'))
+            ->mountedOnClick(false)
+            ->link()
+            ->size('sm');
+
+        if ($this->modifyExpandAllActionUsing) {
+            $action = $this->evaluate($this->modifyExpandAllActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function expandAllAction(?Closure $callback): static
+    {
+        $this->modifyExpandAllActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getExpandAllActionName(): string
+    {
+        return 'expandAll';
     }
 
     public function addActionLabel(string | Closure | null $label): static

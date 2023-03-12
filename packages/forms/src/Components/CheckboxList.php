@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Forms\Components\Actions\Action;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -28,6 +29,10 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
 
     protected bool | Closure $isBulkToggleable = false;
 
+    protected ?Closure $modifySelectAllActionUsing = null;
+
+    protected ?Closure $modifyDeselectAllActionUsing = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -43,6 +48,69 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
         });
 
         $this->searchDebounce(0);
+
+        $this->registerActions([
+            fn (CheckboxList $component): ?Action => $component->getSelectAllAction(),
+            fn (CheckboxList $component): ?Action => $component->getDeselectAllAction(),
+        ]);
+    }
+
+    public function getSelectAllAction(): ?Action
+    {
+        $action = Action::make($this->getSelectAllActionName())
+            ->label(__('filament-forms::components.checkbox_list.actions.select_all.label'))
+            ->mountedOnClick(false)
+            ->link()
+            ->size('sm');
+
+        if ($this->modifySelectAllActionUsing) {
+            $action = $this->evaluate($this->modifySelectAllActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function selectAllAction(?Closure $callback): static
+    {
+        $this->modifySelectAllActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getSelectAllActionName(): string
+    {
+        return 'selectAll';
+    }
+
+    public function getDeselectAllAction(): ?Action
+    {
+        $action = Action::make($this->getDeselectAllActionName())
+            ->label(__('filament-forms::components.checkbox_list.actions.deselect_all.label'))
+            ->mountedOnClick(false)
+            ->link()
+            ->size('sm');
+
+        if ($this->modifyDeselectAllActionUsing) {
+            $action = $this->evaluate($this->modifyDeselectAllActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function deselectAllAction(?Closure $callback): static
+    {
+        $this->modifyDeselectAllActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getDeselectAllActionName(): string
+    {
+        return 'deselectAll';
     }
 
     public function relationship(string | Closure $relationshipName, string | Closure $titleAttribute, ?Closure $callback = null): static

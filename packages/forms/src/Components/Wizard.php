@@ -93,6 +93,7 @@ class Wizard extends Component
             ->label(__('filament-forms::components.wizard.actions.next_step.label'))
             ->icon((__('filament::layout.direction') === 'rtl') ? 'heroicon-m-chevron-left' : 'heroicon-m-chevron-right')
             ->iconPosition('after')
+            ->mountedOnClick(false)
             ->button()
             ->outlined()
             ->size('sm');
@@ -124,6 +125,7 @@ class Wizard extends Component
             ->label(__('filament-forms::components.wizard.actions.previous_step.label'))
             ->icon((__('filament::layout.direction') === 'rtl') ? 'heroicon-m-chevron-right' : 'heroicon-m-chevron-left')
             ->color('gray')
+            ->mountedOnClick(false)
             ->button()
             ->size('sm');
 

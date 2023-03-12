@@ -3,10 +3,12 @@
     :field="$field"
 >
     @php
+        $addAction = $getAction('add');
+        $deleteAction = $getAction('delete');
+        $reorderAction = $getAction('reorder');
+
         $debounce = $getDebounce();
-        $isDeletable = $isDeletable();
         $isDisabled = $isDisabled();
-        $isReorderable = $isReorderable();
         $statePath = $getStatePath();
     @endphp
 
@@ -42,11 +44,11 @@
                             {{ $getValueLabel() }}
                         </th>
 
-                        @if (($isDeletable || $isReorderable) && (! $isDisabled))
+                        @if (($deleteAction || $reorderAction) && (! $isDisabled))
                             <th
                                 scope="col"
                                 x-show="rows.length > 1"
-                                class="{{ ($isDeletable && $isReorderable) ? 'w-16' : 'w-12' }}"
+                                class="{{ ($deleteAction && $reorderAction) ? 'w-16' : 'w-12' }}"
                             >
                                 <span class="sr-only"></span>
                             </th>
@@ -55,7 +57,7 @@
                 </thead>
 
                 <tbody
-                    @if ($isReorderable)
+                    @if ($reorderAction)
                         x-sortable
                         x-on:end="reorderRows($event)"
                     @endif
@@ -64,7 +66,7 @@
                 >
                     <template x-for="(row, index) in rows" x-bind:key="index" x-ref="rowTemplate">
                         <tr
-                            @if ($isReorderable)
+                            @if ($reorderAction)
                                 x-bind:x-sortable-item="row.key"
                             @endif
                             class="divide-x rtl:divide-x-reverse dark:divide-gray-600"
@@ -95,43 +97,19 @@
                                 >
                             </td>
 
-                            @if (($isDeletable || $isReorderable) && (! $isDisabled))
+                            @if (($deleteAction || $reorderAction) && (! $isDisabled))
                                 <td x-show="rows.length > 1" class="whitespace-nowrap">
-                                    <div class="flex items-center justify-center gap-2">
-                                        @if ($isReorderable)
-                                            <button
-                                                x-sortable-handle
-                                                type="button"
-                                                class="text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                                            >
-                                                <x-filament::icon
-                                                    name="heroicon-m-arrows-up-down"
-                                                    alias="filament-forms::components.key-value.actions.reorder"
-                                                    size="h-4 w-4"
-                                                />
-
-                                                <span class="sr-only">
-                                                    {{ $getReorderButtonLabel() }}
-                                                </span>
-                                            </button>
+                                    <div class="flex items-center justify-center px-2">
+                                        @if ($reorderAction)
+                                            <div x-sortable-handle>
+                                                {{ $reorderAction }}
+                                            </div>
                                         @endif
 
-                                        @if ($isDeletable)
-                                            <button
-                                                x-on:click="deleteRow(index)"
-                                                type="button"
-                                                class="text-danger-600 hover:text-danger-700"
-                                            >
-                                                <x-filament::icon
-                                                    name="heroicon-m-trash"
-                                                    alias="filament-forms::components.key-value.actions.delete"
-                                                    size="h-4 w-4"
-                                                />
-
-                                                <span class="sr-only">
-                                                    {{ $getDeleteButtonLabel() }}
-                                                </span>
-                                            </button>
+                                        @if ($deleteAction)
+                                            <div x-on:click="deleteRow(index)">
+                                                {{ $deleteAction }}
+                                            </div>
                                         @endif
                                     </div>
                                 </td>
@@ -141,22 +119,10 @@
                 </tbody>
             </table>
 
-            @if ($isAddable() && (! $isDisabled))
-                <button
-                    x-on:click="addRow"
-                    type="button"
-                    class="w-full px-4 py-2 flex items-center space-x-1 rtl:space-x-reverse text-sm font-medium text-gray-800 hover:bg-gray-50 focus:bg-gray-50 dark:text-white dark:bg-gray-800/60 dark:hover:bg-gray-800/30"
-                >
-                    <x-filament::icon
-                        name="heroicon-m-plus"
-                        alias="filament-forms::components.key-value.actions.add"
-                        size="h-4 w-4"
-                    />
-
-                    <span>
-                        {{ $getAddButtonLabel() }}
-                    </span>
-                </button>
+            @if ($addAction && (! $isDisabled))
+                <div x-on:click="addRow" class="px-4 py-3">
+                    {{ $addAction }}
+                </div>
             @endif
         </div>
     </div>

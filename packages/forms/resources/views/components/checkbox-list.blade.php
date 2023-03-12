@@ -72,27 +72,23 @@
                 <div
                     x-cloak
                     class="mb-2"
-                    wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.buttons"
+                    wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.actions"
                 >
-                    <x-filament::link
-                        tag="button"
-                        size="sm"
+                    <span
                         x-show="! areAllCheckboxesChecked"
                         x-on:click="toggleAllCheckboxes()"
                         wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.actions.select_all"
                     >
-                        {{ __('filament-forms::components.checkbox_list.actions.select_all.label') }}
-                    </x-filament::link>
+                        {{ $getAction('selectAll') }}
+                    </span>
 
-                    <x-filament::link
-                        tag="button"
-                        size="sm"
+                    <span
                         x-show="areAllCheckboxesChecked"
                         x-on:click="toggleAllCheckboxes()"
                         wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.actions.deselect_all"
                     >
-                        {{ __('filament-forms::components.checkbox_list.actions.deselect_all.label') }}
-                    </x-filament::link>
+                        {{ $getAction('deselectAll') }}
+                    </span>
                 </div>
             @endif
         @endif
