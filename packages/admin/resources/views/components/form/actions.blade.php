@@ -4,7 +4,7 @@
 ])
 
 <div
-    @if(config('filament.layout.forms.actions.sticky'))
+    @if (config('filament.layout.forms.actions.are_sticky'))
         x-data="{
             sticky: false,
             scrollPage() {
