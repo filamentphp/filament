@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
+use Illuminate\Contracts\Support\Htmlable;
 
 class Select extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
@@ -701,7 +702,7 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
         return $this->evaluate($this->relationshipTitleColumnName);
     }
 
-    public function getLabel(): string
+    public function getLabel(): string | Htmlable | null
     {
         if ($this->label === null && $this->hasRelationship()) {
             $label = (string) Str::of($this->getRelationshipName())
