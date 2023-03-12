@@ -28,10 +28,15 @@ abstract class BasePage extends Component implements HasActions, RendersActionMo
 
     public static ?Closure $reportValidationErrorUsing = null;
 
+    protected ?string $maxContentWidth = null;
+
     public function render(): View
     {
         return view(static::$view, $this->getViewData())
-            ->layout(static::$layout, array_merge(['livewire' => $this], $this->getLayoutData()));
+            ->layout(static::$layout, array_merge([
+                'livewire' => $this,
+                'maxContentWidth' => $this->getMaxContentWidth(),
+            ], $this->getLayoutData()));
     }
 
     public function getHeading(): string | Htmlable
@@ -50,6 +55,11 @@ abstract class BasePage extends Component implements HasActions, RendersActionMo
                 ->kebab()
                 ->replace('-', ' ')
                 ->title();
+    }
+
+    public function getMaxContentWidth(): ?string
+    {
+        return $this->maxContentWidth;
     }
 
     /**

@@ -18,6 +18,7 @@ class Context
     use Context\Concerns\HasGlobalSearch;
     use Context\Concerns\HasIcons;
     use Context\Concerns\HasId;
+    use Context\Concerns\HasMaxContentWidth;
     use Context\Concerns\HasMiddleware;
     use Context\Concerns\HasNavigation;
     use Context\Concerns\HasNotifications;
