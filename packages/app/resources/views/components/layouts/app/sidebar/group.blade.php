@@ -20,6 +20,9 @@
             @endif
             @if (filament()->isSidebarCollapsibleOnDesktop())
                 x-show="$store.sidebar.isOpen"
+                x-transition:enter="lg:transition delay-100"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
             @endif
             class="flex items-center justify-between w-full"
         >
@@ -54,6 +57,11 @@
 
     <ul
         x-show="! ($store.sidebar.groupIsCollapsed(label) && {{ filament()->isSidebarCollapsibleOnDesktop() ? '$store.sidebar.isOpen' : 'true' }})"
+        @if (filament()->isSidebarCollapsibleOnDesktop())
+            x-transition:enter="lg:transition delay-100"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+        @endif
         x-collapse.duration.200ms
         @class([
             'text-sm space-y-1 -mx-3',
