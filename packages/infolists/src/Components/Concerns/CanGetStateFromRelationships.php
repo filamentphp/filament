@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 
 trait CanGetStateFromRelationships
 {
-    public function queriesRelationships(Model $record): bool
+    public function hasRelationship(Model $record): bool
     {
         return $this->getRelationship($record) !== null;
     }

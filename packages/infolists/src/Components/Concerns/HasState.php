@@ -138,7 +138,7 @@ trait HasState
             return $state;
         }
 
-        if (! $this->queriesRelationships($record)) {
+        if (! $this->hasRelationship($record)) {
             return null;
         }
 
