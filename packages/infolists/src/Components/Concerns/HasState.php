@@ -54,10 +54,15 @@ trait HasState
 
     public function getState(): mixed
     {
-        $state = $this->getStateUsing ? $this->evaluate(
-            $this->getStateUsing,
-            exceptParameters: ['state'],
-        ) : $this->getStateFromRecord($this->getContainer()->getState());
+        if ($this->getStateUsing) {
+            $state = $this->evaluate($this->getStateUsing, exceptParameters: ['state']);
+        } else {
+            $containerState = $this->getContainer()->getState();
+
+            $state = $containerState instanceof Model ?
+                $this->getStateFromRecord($containerState) :
+                data_get($containerState, $this->getStatePath());
+        }
 
         if (
             interface_exists(BackedEnum::class) &&
