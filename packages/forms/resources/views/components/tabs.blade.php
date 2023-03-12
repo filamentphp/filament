@@ -32,6 +32,7 @@
         'dark:bg-gray-800 dark:border-gray-700' => config('forms.dark_mode'),
     ]) }}
     {{ $getExtraAlpineAttributeBag() }}
+    wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ \Filament\Forms\Components\Tabs::class }}.container"
 >
     <input
         type="hidden"
